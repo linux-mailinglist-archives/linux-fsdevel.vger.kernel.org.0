@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-31884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2581599C9D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF9599C9E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986221F21FA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 12:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38DF81C22A60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 12:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF191A0BC4;
-	Mon, 14 Oct 2024 12:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2051A0BDB;
+	Mon, 14 Oct 2024 12:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MSkRzHJL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9eOjRoJL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MSkRzHJL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9eOjRoJL"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uvsaXnRt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hvFDJ9eT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uvsaXnRt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hvFDJ9eT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1287156F3F;
-	Mon, 14 Oct 2024 12:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6EA7E574;
+	Mon, 14 Oct 2024 12:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908072; cv=none; b=oRqVTsmWbw0t2+vpjVOObNaVfTw2AInsdFZkr3T9sRc83lAvCr+PqfthrG/RftCjzyA8HptC7+20cmfeoyfcElE2NFjL5mth73pmoeCNpUutVDk6+YSaPW9ZU7RRT37EqnrQ+cje4agU5jCmpCjIFiYuo4t5LcfyIQMfoov1C8E=
+	t=1728908153; cv=none; b=UicYAtYiPDptdfWB78MSx09PoQ8uNYEZgQi0W/0UJmtJbklcdHRLihZBzbyXG52jxQ+wSCgcvjCfgqtqDPK37xRisvg23bTi7TGeHOf3pEEppm2AXtd3hIPvLBWL7cq/N2fSkAgJkdAjJ9Ta5n6kBHAPzTVtzXRlwzjgHiag3L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908072; c=relaxed/simple;
-	bh=hI9GQ3vWz+dBlWIaegULE8LirCEC8ki5cfl4RmMwbPA=;
+	s=arc-20240116; t=1728908153; c=relaxed/simple;
+	bh=5d2c7ZAEnzATLLjfWg9H82Rdb9FEcueex7OdpeKxgpc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKX6tUv6Zi3DQaXYELqfOoBxepzHPgihFD+1+DTeTs1qGa7fbX6yY7iwQgLuDdFCsrl7cbt5yN6Hv4PGbZu476LJ5JYlnfDKRy0fQjq/Ip2wov41wOe51LmsJwCI2HTNOpi6UPLcv7cUOLHrqNkuL0YaXVVBwjezxv6TxjucuEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MSkRzHJL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9eOjRoJL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MSkRzHJL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9eOjRoJL; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDkm2roH1Y6lfZiAS4nfS4SPlN+wduOdU7F3X2UqmjehL7L2pR2A8JHC+rYtl2piMFKcWt6NMCSY/GIqj8z3wjExojXTmyNc1zAx6q77n5m8irC47gPAMePdFBtzelLR+xD53JJhg/Gdec97ditD8He3XwDa+5M/7COAVOO+Hv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uvsaXnRt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hvFDJ9eT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uvsaXnRt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hvFDJ9eT; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 110F321B5D;
-	Mon, 14 Oct 2024 12:14:28 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 412C221D9B;
+	Mon, 14 Oct 2024 12:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728908068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728908150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
-	b=MSkRzHJL2U9tNILZ53M7T+G7hBt5Gu3qsdJDFOEQGfiSTxYSNoTxDzdn7XosPoeklNOD8O
-	eZz7rgPHanpLc0QREwoMWLe0gXVWK5oHqMM6l65GTF2/zp2vqDfbQCN1/mMyFxh1iMJjFy
-	xuTVOaZ/H7tyyf9Nlxs5WeIboGM/qAg=
+	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
+	b=uvsaXnRtmvBy5j9IlTnxcI+HUt6yoCF8TGK2pJufwUH7wQO8F5HdsfV32pU0iQtWpwONh6
+	HZHc91sSYVVjVArI3tsA8wrBHX3ryPRteLMeuh4Tts3GgE1K+BXbGM9tDCHOHg7Xg0yCNk
+	dSSzNgSiNfMntIGi3OeLALa/2jWAAio=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728908068;
+	s=susede2_ed25519; t=1728908150;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
-	b=9eOjRoJLlTvz5l4PYWguZW27Xg22LNgu4zu/8XkcB0ssuDH50N40nmDYnhSbcx8qRjKZcM
-	DmVFF+M12aAo5wAg==
+	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
+	b=hvFDJ9eT2lywgt5kxuJQn4/mpkgtOZicv0yV3DEbky4wq9eppRT3cxFXECJ7G9zeNGxOuL
+	4USkNmr0JZ/IdlCQ==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728908068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1728908150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
-	b=MSkRzHJL2U9tNILZ53M7T+G7hBt5Gu3qsdJDFOEQGfiSTxYSNoTxDzdn7XosPoeklNOD8O
-	eZz7rgPHanpLc0QREwoMWLe0gXVWK5oHqMM6l65GTF2/zp2vqDfbQCN1/mMyFxh1iMJjFy
-	xuTVOaZ/H7tyyf9Nlxs5WeIboGM/qAg=
+	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
+	b=uvsaXnRtmvBy5j9IlTnxcI+HUt6yoCF8TGK2pJufwUH7wQO8F5HdsfV32pU0iQtWpwONh6
+	HZHc91sSYVVjVArI3tsA8wrBHX3ryPRteLMeuh4Tts3GgE1K+BXbGM9tDCHOHg7Xg0yCNk
+	dSSzNgSiNfMntIGi3OeLALa/2jWAAio=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728908068;
+	s=susede2_ed25519; t=1728908150;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WDvMMHa5hCU5rljm//6SmMBj9GhVvVjaeKHjUwQCpNw=;
-	b=9eOjRoJLlTvz5l4PYWguZW27Xg22LNgu4zu/8XkcB0ssuDH50N40nmDYnhSbcx8qRjKZcM
-	DmVFF+M12aAo5wAg==
+	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
+	b=hvFDJ9eT2lywgt5kxuJQn4/mpkgtOZicv0yV3DEbky4wq9eppRT3cxFXECJ7G9zeNGxOuL
+	4USkNmr0JZ/IdlCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECE9513A79;
-	Mon, 14 Oct 2024 12:14:27 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3277B13A51;
+	Mon, 14 Oct 2024 12:15:50 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BA6EOSMLDWe2PQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 12:14:27 +0000
+	id 89RPDHYLDWdDPgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 12:15:50 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8A807A0896; Mon, 14 Oct 2024 14:14:27 +0200 (CEST)
-Date: Mon, 14 Oct 2024 14:14:27 +0200
+	id C9447A0896; Mon, 14 Oct 2024 14:15:45 +0200 (CEST)
+Date: Mon, 14 Oct 2024 14:15:45 +0200
 From: Jan Kara <jack@suse.cz>
 To: Kaixiong Yu <yukaixiong@huawei.com>
 Cc: akpm@linux-foundation.org, mcgrof@kernel.org,
@@ -112,11 +112,11 @@ Cc: akpm@linux-foundation.org, mcgrof@kernel.org,
 	ying.huang@intel.com, yang@os.amperecomputing.com,
 	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com,
 	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-Subject: Re: [PATCH v3 -next 09/15] fs: fs-writeback: move sysctl to
- fs/fs-writeback.c
-Message-ID: <20241014121427.vuebknsmdlrtbveh@quack3>
+Subject: Re: [PATCH v3 -next 10/15] fs: drop_caches: move sysctl to
+ fs/drop_caches.c
+Message-ID: <20241014121545.bdgwsw66i2yborjo@quack3>
 References: <20241010152215.3025842-1-yukaixiong@huawei.com>
- <20241010152215.3025842-10-yukaixiong@huawei.com>
+ <20241010152215.3025842-11-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -125,13 +125,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010152215.3025842-10-yukaixiong@huawei.com>
-X-Spam-Level: 
+In-Reply-To: <20241010152215.3025842-11-yukaixiong@huawei.com>
+X-Spam-Score: -3.80
 X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
 	MISSING_XM_UA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -147,14 +147,13 @@ X-Spamd-Result: default: False [-3.80 / 50.00];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCPT_COUNT_GT_50(0.00)[61];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email]
-X-Spam-Score: -3.80
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu 10-10-24 23:22:09, Kaixiong Yu wrote:
-> The dirtytime_expire_interval belongs to fs/fs-writeback.c, move it to
-> fs/fs-writeback.c from /kernel/sysctl.c. And remove the useless extern
-> variable declaration and the function declaration from
-> include/linux/writeback.h
+On Thu 10-10-24 23:22:10, Kaixiong Yu wrote:
+> The sysctl_drop_caches to fs/drop_caches.c, move it to
+> fs/drop_caches.c from /kernel/sysctl.c. And remove the
+> useless extern variable declaration from include/linux/mm.h
 > 
 > Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 > Reviewed-by: Kees Cook <kees@kernel.org>
@@ -167,105 +166,95 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 
 > ---
 > v3:
->  - change dirtytime_expire_interval to static type
 >  - change the title
 > ---
->  fs/fs-writeback.c         | 30 +++++++++++++++++++++---------
->  include/linux/writeback.h |  4 ----
->  kernel/sysctl.c           |  8 --------
->  3 files changed, 21 insertions(+), 21 deletions(-)
+>  fs/drop_caches.c   | 23 +++++++++++++++++++++--
+>  include/linux/mm.h |  6 ------
+>  kernel/sysctl.c    |  9 ---------
+>  3 files changed, 21 insertions(+), 17 deletions(-)
 > 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index d8bec3c1bb1f..4fedefdb8e15 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -65,7 +65,7 @@ struct wb_writeback_work {
->   * timestamps written to disk after 12 hours, but in the worst case a
->   * few inodes might not their timestamps updated for 24 hours.
->   */
-> -unsigned int dirtytime_expire_interval = 12 * 60 * 60;
-> +static unsigned int dirtytime_expire_interval = 12 * 60 * 60;
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d45ef541d848..f2551ace800f 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -14,7 +14,7 @@
+>  #include "internal.h"
 >  
->  static inline struct inode *wb_inode(struct list_head *head)
+>  /* A global variable is a bit ugly, but it keeps the code simple */
+> -int sysctl_drop_caches;
+> +static int sysctl_drop_caches;
+>  
+>  static void drop_pagecache_sb(struct super_block *sb, void *unused)
 >  {
-> @@ -2413,14 +2413,7 @@ static void wakeup_dirtytime_writeback(struct work_struct *w)
->  	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+> @@ -48,7 +48,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+>  	iput(toput_inode);
 >  }
 >  
-> -static int __init start_dirtytime_writeback(void)
-> -{
-> -	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
-> -	return 0;
-> -}
-> -__initcall(start_dirtytime_writeback);
-> -
-> -int dirtytime_interval_handler(const struct ctl_table *table, int write,
-> +static int dirtytime_interval_handler(const struct ctl_table *table, int write,
->  			       void *buffer, size_t *lenp, loff_t *ppos)
+> -int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+> +static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  		void *buffer, size_t *length, loff_t *ppos)
 >  {
 >  	int ret;
-> @@ -2431,6 +2424,25 @@ int dirtytime_interval_handler(const struct ctl_table *table, int write,
->  	return ret;
+> @@ -77,3 +77,22 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  	}
+>  	return 0;
 >  }
->  
-> +static struct ctl_table vm_fs_writeback_table[] = {
+> +
+> +static struct ctl_table drop_caches_table[] = {
 > +	{
-> +		.procname	= "dirtytime_expire_seconds",
-> +		.data		= &dirtytime_expire_interval,
-> +		.maxlen		= sizeof(dirtytime_expire_interval),
-> +		.mode		= 0644,
-> +		.proc_handler	= dirtytime_interval_handler,
-> +		.extra1		= SYSCTL_ZERO,
+> +		.procname	= "drop_caches",
+> +		.data		= &sysctl_drop_caches,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0200,
+> +		.proc_handler	= drop_caches_sysctl_handler,
+> +		.extra1		= SYSCTL_ONE,
+> +		.extra2		= SYSCTL_FOUR,
 > +	},
 > +};
 > +
-> +static int __init start_dirtytime_writeback(void)
+> +static int __init init_vm_drop_caches_sysctls(void)
 > +{
-> +	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
-> +	register_sysctl_init("vm", vm_fs_writeback_table);
+> +	register_sysctl_init("vm", drop_caches_table);
 > +	return 0;
 > +}
-> +__initcall(start_dirtytime_writeback);
-> +
->  /**
->   * __mark_inode_dirty -	internal function to mark an inode dirty
->   *
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index d6db822e4bb3..5f35b24aff7b 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -351,12 +351,8 @@ extern struct wb_domain global_wb_domain;
->  /* These are exported to sysctl. */
->  extern unsigned int dirty_writeback_interval;
->  extern unsigned int dirty_expire_interval;
-> -extern unsigned int dirtytime_expire_interval;
->  extern int laptop_mode;
+> +fs_initcall(init_vm_drop_caches_sysctls);
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c7f73bf32024..ed2e7425c838 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3791,12 +3791,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
 >  
-> -int dirtytime_interval_handler(const struct ctl_table *table, int write,
-> -		void *buffer, size_t *lenp, loff_t *ppos);
+>  extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
+>  
+> -#ifdef CONFIG_SYSCTL
+> -extern int sysctl_drop_caches;
+> -int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
+> -		loff_t *);
+> -#endif
 > -
->  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
->  unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
->  unsigned long cgwb_calc_thresh(struct bdi_writeback *wb);
+>  void drop_slab(void);
+>  
+>  #ifndef CONFIG_MMU
 > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index d3de31ec74bf..373e018b950c 100644
+> index 373e018b950c..d638a1bac9af 100644
 > --- a/kernel/sysctl.c
 > +++ b/kernel/sysctl.c
-> @@ -2024,14 +2024,6 @@ static struct ctl_table kern_table[] = {
+> @@ -2024,15 +2024,6 @@ static struct ctl_table kern_table[] = {
 >  };
 >  
 >  static struct ctl_table vm_table[] = {
 > -	{
-> -		.procname	= "dirtytime_expire_seconds",
-> -		.data		= &dirtytime_expire_interval,
-> -		.maxlen		= sizeof(dirtytime_expire_interval),
-> -		.mode		= 0644,
-> -		.proc_handler	= dirtytime_interval_handler,
-> -		.extra1		= SYSCTL_ZERO,
+> -		.procname	= "drop_caches",
+> -		.data		= &sysctl_drop_caches,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0200,
+> -		.proc_handler	= drop_caches_sysctl_handler,
+> -		.extra1		= SYSCTL_ONE,
+> -		.extra2		= SYSCTL_FOUR,
 > -	},
 >  	{
->  		.procname	= "drop_caches",
->  		.data		= &sysctl_drop_caches,
+>  		.procname	= "vfs_cache_pressure",
+>  		.data		= &sysctl_vfs_cache_pressure,
 > -- 
 > 2.34.1
 > 
