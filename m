@@ -1,199 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-31915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1566899D6A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 20:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 473DC99D6F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 21:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8567284FA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 18:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556DC2841E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3F21C877E;
-	Mon, 14 Oct 2024 18:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8631C9B87;
+	Mon, 14 Oct 2024 19:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="abRtzuYf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kzevtmp0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA011AB6FC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 18:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553626296
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 19:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728931137; cv=none; b=scobcFnIJAXtSOSCd1WpEOoPAkhVbwCG75erxEEg1jO892YTqPS1Nin6vGn3roC6l+ZhqdYMyn/4vEj6ggPUq4B9Cy+mVIBk3J7yMEU55TXwlL9HXgmuRDTQ1QhoJpMBfyfyLeNAlq05voeLVjMMrkQbsNIM+fo9gi7baxlV8N4=
+	t=1728932582; cv=none; b=UrDns9liL+3rjK4EIHjHoA0X+wan7P6yv1N25yk3FjAeEoL1z+7QpQ/vhmZ8+mqGVhxkQgi84+76YUUPm0LDiZ5bYAi4OX5+HuH/lSTSj//ULRkLdN2Vynx2KOEvCFOJm9PrPe13n/ys1oE4r3LgoHjP5ZpaGQq/iJNSudJwkrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728931137; c=relaxed/simple;
-	bh=dkmSpM35trMSJEcdTX++/bAQIHWRFYVefdglpgpQg9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=inebJVke3oHHlTmChal+hxuRDZHSZfyUNVv7WL22c2ShpzRjcmhp3HCty2NYr9ot8N05Xpbon2PWi2Ds+7AOqDCZnboNmRqZVF8P9wf5HkBBtWbDNAouLv2F3U/h7DcwaxVp97uIQTUZQZwI1/n7gKvguOYfi4mC6p1C+7yd2Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=abRtzuYf; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Oct 2024 11:38:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728931132;
+	s=arc-20240116; t=1728932582; c=relaxed/simple;
+	bh=vuM6giDHQnqPchWEaVJdjYCTAWTFy9iX2aRerVbFtBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qj8FLlZTUC8kVTnXCeaaIEqQ2jmsmPsIr/+yb9sE7CAXZOV7hdxkOq9vQi2r4kzlvxBLRXA5DJXWCJgFYY0Mxzodc1ItiusJXMn5Q12G813kAfIpIjEXWOUEgZPTWgGhAZeQVJo35tTgBy0wL2RuNO5rYe3PGALJQ8vJD92xqcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kzevtmp0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728932580;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqlvY1cmnsPONjSxitMWFO4oU3mXdPExHv7VOQKaoE8=;
-	b=abRtzuYfqExHRbn1ZNvhyM3nl48wV2cfPCC/2XVniLXYM0PmDPqOwlWdvRy/WgImTFwscS
-	QXy3m49XgkR3ItWwncrHp5RYxT0jtZmE7yjog8Uh9EFJTDr4Wqg8yUdd4BJcDU6aYdrV2I
-	TWSXk49uBT4XLiKmMlwCeuEP/9Q8puI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, hannes@cmpxchg.org, 
-	linux-mm@kvack.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 1/2] mm: skip reclaiming folios in writeback contexts
- that may trigger deadlock
-Message-ID: <265keu5uzo3gzqrvhcn2cagii4sak3e2a372ra7jlav35fnkrx@aicyzyftun3l>
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <20241014182228.1941246-2-joannelkoong@gmail.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SqsWiL8acSHPEBRQ0NsndKrZE4UQGuUTL2BTNpytimw=;
+	b=Kzevtmp069EtInLBZnNgYldL2n66LsgmPx6Y50o+oV6XY/Mm0jVzqCosxpQuMTkSrSXi3y
+	35nvEthbB3GZn/vTl9smXHd3eX6mhizMWRSp/jJOhXP2g81zSooXysrvW4+r5CT4Ne8pAy
+	M7/kV2w0yCdjj6mC7fw21IcZs0YtXDc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-BoMzE21jPYepweGCDykQng-1; Mon,
+ 14 Oct 2024 15:02:56 -0400
+X-MC-Unique: BoMzE21jPYepweGCDykQng-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03A1819560A6;
+	Mon, 14 Oct 2024 19:02:56 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.34.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D018B1955F42;
+	Mon, 14 Oct 2024 19:02:54 +0000 (UTC)
+From: Bill O'Donnell <bodonnel@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: brauner@kernel.org,
+	sandeen@redhat.com,
+	Bill O'Donnell <bodonnel@redhat.com>
+Subject: [PATCH] efs: fix the efs new mount api implementation
+Date: Mon, 14 Oct 2024 14:02:41 -0500
+Message-ID: <20241014190241.4093825-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014182228.1941246-2-joannelkoong@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Oct 14, 2024 at 11:22:27AM GMT, Joanne Koong wrote:
-> Currently in shrink_folio_list(), reclaim for folios under writeback
-> falls into 3 different cases:
-> 1) Reclaim is encountering an excessive number of folios under
->    writeback and this folio has both the writeback and reclaim flags
->    set
-> 2) Dirty throttling is enabled (this happens if reclaim through cgroup
->    is not enabled, if reclaim through cgroupv2 memcg is enabled, or
->    if reclaim is on the root cgroup), or if the folio is not marked for
->    immediate reclaim, or if the caller does not have __GFP_FS (or
->    __GFP_IO if it's going to swap) set
-> 3) Legacy cgroupv1 encounters a folio that already has the reclaim flag
->    set and the caller did not have __GFP_FS (or __GFP_IO if swap) set
-> 
-> In cases 1) and 2), we activate the folio and skip reclaiming it while
-> in case 3), we wait for writeback to finish on the folio and then try
-> to reclaim the folio again. In case 3, we wait on writeback because
-> cgroupv1 does not have dirty folio throttling, as such this is a
-> mitigation against the case where there are too many folios in writeback
-> with nothing else to reclaim.
-> 
-> The issue is that for filesystems where writeback may block, sub-optimal
-> workarounds need to be put in place to avoid potential deadlocks that may
-> arise from the case where reclaim waits on writeback. (Even though case
-> 3 above is rare given that legacy cgroupv1 is on its way to being
-> deprecated, this case still needs to be accounted for)
-> 
-> For example, for FUSE filesystems, when a writeback is triggered on a
-> folio, a temporary folio is allocated and the pages are copied over to
-> this temporary folio so that writeback can be immediately cleared on the
-> original folio. This additionally requires an internal rb tree to keep
-> track of writeback state on the temporary folios. Benchmarks show
-> roughly a ~20% decrease in throughput from the overhead incurred with 4k
-> block size writes. The temporary folio is needed here in order to avoid
-> the following deadlock if reclaim waits on writeback:
-> * single-threaded FUSE server is in the middle of handling a request that
->   needs a memory allocation
-> * memory allocation triggers direct reclaim
-> * direct reclaim waits on a folio under writeback (eg falls into case 3
->   above) that needs to be written back to the fuse server
-> * the FUSE server can't write back the folio since it's stuck in direct
->   reclaim
-> 
-> This commit adds a new flag, AS_NO_WRITEBACK_RECLAIM, to "enum
-> mapping_flags" which filesystems can set to signify that reclaim
-> should not happen when the folio is already in writeback. This only has
-> effects on the case where cgroupv1 memcg encounters a folio under
-> writeback that already has the reclaim flag set (eg case 3 above), and
-> allows for the suboptimal workarounds added to address the "reclaim wait
-> on writeback" deadlock scenario to be removed.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  include/linux/pagemap.h | 11 +++++++++++
->  mm/vmscan.c             |  6 ++++--
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 68a5f1ff3301..513a72b8451b 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -210,6 +210,7 @@ enum mapping_flags {
->  	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
->  				   folio contents */
->  	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
-> +	AS_NO_WRITEBACK_RECLAIM = 9, /* Do not reclaim folios under writeback */
+Commit 39a6c668e4 (efs: convert efs to use the new mount api)
+did not include anything from v2 and v3 that were also submitted.
+Fix this by bringing in those changes that were proposed in v2 and
+v3.
 
-Isn't it "Do not wait for writeback completion for folios of this
-mapping during reclaim"?
+Fixes: 39a6c668e4 efs: convert efs to use the new mount api.
 
->  	/* Bits 16-25 are used for FOLIO_ORDER */
->  	AS_FOLIO_ORDER_BITS = 5,
->  	AS_FOLIO_ORDER_MIN = 16,
-> @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct address_space *mapping)
->  	return test_bit(AS_INACCESSIBLE, &mapping->flags);
->  }
->  
-> +static inline void mapping_set_no_writeback_reclaim(struct address_space *mapping)
-> +{
-> +	set_bit(AS_NO_WRITEBACK_RECLAIM, &mapping->flags);
-> +}
-> +
-> +static inline int mapping_no_writeback_reclaim(struct address_space *mapping)
-> +{
-> +	return test_bit(AS_NO_WRITEBACK_RECLAIM, &mapping->flags);
-> +}
-> +
->  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
->  {
->  	return mapping->gfp_mask;
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 749cdc110c74..885d496ae652 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1110,6 +1110,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->  		if (writeback && folio_test_reclaim(folio))
->  			stat->nr_congested += nr_pages;
->  
-> +		mapping = folio_mapping(folio);
-> +
->  		/*
->  		 * If a folio at the tail of the LRU is under writeback, there
->  		 * are three cases to consider.
-> @@ -1165,7 +1167,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->  			/* Case 2 above */
->  			} else if (writeback_throttling_sane(sc) ||
->  			    !folio_test_reclaim(folio) ||
-> -			    !may_enter_fs(folio, sc->gfp_mask)) {
-> +			    !may_enter_fs(folio, sc->gfp_mask) ||
-> +			    (mapping && mapping_no_writeback_reclaim(mapping))) {
->  				/*
->  				 * This is slightly racy -
->  				 * folio_end_writeback() might have
-> @@ -1320,7 +1323,6 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->  		if (folio_maybe_dma_pinned(folio))
->  			goto activate_locked;
->  
-> -		mapping = folio_mapping(folio);
+Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+---
+ fs/efs/super.c | 43 +++----------------------------------------
+ 1 file changed, 3 insertions(+), 40 deletions(-)
 
-We should not remove the above line as it will make anon pages added to
-the swap in this code path skip reclaim. Basically the mapping of anon
-pages which are not yet in swap cache, will be null at the newly added
-mapping = folio_mapping(folio) but will be swapcache mapping at this
-location (there is add_to_swap() in between), so if we remove this line,
-the kernel will skip the reclaim of that folio in this iteration. This
-will increase memory pressure.
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index e4421c10caeb..c59086b7eabf 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -15,7 +15,6 @@
+ #include <linux/vfs.h>
+ #include <linux/blkdev.h>
+ #include <linux/fs_context.h>
+-#include <linux/fs_parser.h>
+ #include "efs.h"
+ #include <linux/efs_vh.h>
+ #include <linux/efs_fs_sb.h>
+@@ -49,15 +48,6 @@ static struct pt_types sgi_pt_types[] = {
+ 	{0,		NULL}
+ };
+ 
+-enum {
+-	Opt_explicit_open,
+-};
+-
+-static const struct fs_parameter_spec efs_param_spec[] = {
+-	fsparam_flag    ("explicit-open",       Opt_explicit_open),
+-	{}
+-};
+-
+ /*
+  * File system definition and registration.
+  */
+@@ -67,7 +57,6 @@ static struct file_system_type efs_fs_type = {
+ 	.kill_sb		= efs_kill_sb,
+ 	.fs_flags		= FS_REQUIRES_DEV,
+ 	.init_fs_context	= efs_init_fs_context,
+-	.parameters		= efs_param_spec,
+ };
+ MODULE_ALIAS_FS("efs");
+ 
+@@ -265,7 +254,8 @@ static int efs_fill_super(struct super_block *s, struct fs_context *fc)
+ 	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
+ 		pr_err("device does not support %d byte blocks\n",
+ 			EFS_BLOCKSIZE);
+-		return -EINVAL;
++		return invalf(fc, "device does not support %d byte blocks\n",
++			      EFS_BLOCKSIZE);
+ 	}
+ 
+ 	/* read the vh (volume header) block */
+@@ -327,43 +317,22 @@ static int efs_fill_super(struct super_block *s, struct fs_context *fc)
+ 	return 0;
+ }
+ 
+-static void efs_free_fc(struct fs_context *fc)
+-{
+-	kfree(fc->fs_private);
+-}
+-
+ static int efs_get_tree(struct fs_context *fc)
+ {
+ 	return get_tree_bdev(fc, efs_fill_super);
+ }
+ 
+-static int efs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+-{
+-	int token;
+-	struct fs_parse_result result;
+-
+-	token = fs_parse(fc, efs_param_spec, param, &result);
+-	if (token < 0)
+-		return token;
+-	return 0;
+-}
+-
+ static int efs_reconfigure(struct fs_context *fc)
+ {
+ 	sync_filesystem(fc->root->d_sb);
++	fc->sb_flags |= SB_RDONLY;
+ 
+ 	return 0;
+ }
+ 
+-struct efs_context {
+-	unsigned long s_mount_opts;
+-};
+-
+ static const struct fs_context_operations efs_context_opts = {
+-	.parse_param	= efs_parse_param,
+ 	.get_tree	= efs_get_tree,
+ 	.reconfigure	= efs_reconfigure,
+-	.free		= efs_free_fc,
+ };
+ 
+ /*
+@@ -371,12 +340,6 @@ static const struct fs_context_operations efs_context_opts = {
+  */
+ static int efs_init_fs_context(struct fs_context *fc)
+ {
+-	struct efs_context *ctx;
+-
+-	ctx = kzalloc(sizeof(struct efs_context), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
+-	fc->fs_private = ctx;
+ 	fc->ops = &efs_context_opts;
+ 
+ 	return 0;
+-- 
+2.47.0
 
->  		if (folio_test_dirty(folio)) {
->  			/*
->  			 * Only kswapd can writeback filesystem folios
-> -- 
-> 2.43.5
-> 
 
