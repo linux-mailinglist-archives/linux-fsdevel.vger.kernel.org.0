@@ -1,237 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-31861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB5499C3A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 10:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3AC99C433
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 10:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD67C1C229DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 08:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E5A1C22B13
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 08:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E31531E1;
-	Mon, 14 Oct 2024 08:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BCB1487F4;
+	Mon, 14 Oct 2024 08:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZD/yKvuN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKZ6nNtC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D4E1494C3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 08:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880D1514F8;
+	Mon, 14 Oct 2024 08:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895331; cv=none; b=Vlof16UeYfZhE5MdIrepXypJ3Ouvybmkg7ND8kslAJ72MTT6JHPnnznZ7mtEgqccZ4RSCoe05aSIXGVjsv45M6iiCOKHzrZVAolHFn2QBpjrGup/t67lqqxqSXQlDDeSZaZkB70IjYz53mKUJeZCCfWI/wzJRksXT2v9qMTdKwc=
+	t=1728896121; cv=none; b=PHsKPkRcE+CejRlHjcK1+0blfUL7Pdc0gkmu3H/WCvwlaQG4ynbdEsE6rWaRRhfWr5omKEkUdos8snYUr8UR0eEsT/X5ds6JK1vsgwR17D+jKReqn3g9are8Yr1CXRdK/ZMyAfPrT8KduX45WCerpvmte2bHOU0FW5qA4IjWLH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895331; c=relaxed/simple;
-	bh=5IEaU3e+DEHoxPtbx3NoSgiE7Z+Bz7wCkupqP5bHilI=;
+	s=arc-20240116; t=1728896121; c=relaxed/simple;
+	bh=om/tRqBgsXcGLf3tAtcW/TXrx5PGQXAZXl8KC/74rwE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oaf9iFV8D4xpMDpfEVhzs/zaUiugpxVr+1ds2hPDXpKNskFlkH+VEhYPyx5VPx41OAQCulR0teAsfQvKO31rN8tZ1pPQuKpvgF2HSfdvpAlVtOR93/ZgwOo18h3G7GmRYMGSzfmUF3XDJRcUKCFIbstymCRnrcAbf4z2MN6z3zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZD/yKvuN; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fadb636abaso33995781fa.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 01:42:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=W3c0x2/83eEcwVdt4FmmMBsfq/zaIGsMW6GvM04qlWwjNR7s8SoInzewajbVEZ/ZsKbGMR2zAzTOi5KezmS6V9NWE1RJEIb4WroEeV/3pWtbQ4hhOYNL3dWmZoOk8N/78C9sCaQ/iyIAx4Q39UBM0JiQeflAyMR1DbZnYzzoMBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKZ6nNtC; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b10ed5e7cdso475375485a.3;
+        Mon, 14 Oct 2024 01:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728895326; x=1729500126; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728896118; x=1729500918; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VSv+xwq+z3p6YBh0iihgCLzRA7mMnGfXBEJed04Tcj4=;
-        b=ZD/yKvuN1Jl4WQwmWFAlK/7CXL2jWHK9BL8gUhpRt2Vj1FUy1I18eZOXNlqTuY1YKW
-         fqZAwuLlKbekVlsjoxFbiwquvdBf9odk8UiXWdxCH0ME4a3HjSATUVx1jdXrPxRCSi4U
-         zkbiVlBBzA5UC38z4tYMNoTpbGxXMyXrC1UOBayEVu0Pf1T8jNrVhV1rjupDNSO/MxuP
-         NwjHfK3tkDpUKNvmYEy5Ev9UCkqtjQGoN+w20u4K/URE/3dLQoEqZME5+do1olRhA3od
-         ATYthvB0Uk101LDC444B6S3738UBWx+GlPz8PlIu+au+4LuyC55xTbm5jZkTz9CafHIi
-         29aQ==
+        bh=fHxU8H8UsoeCoiILOhNNQeR6j+46WsSuvgSbOOVdp38=;
+        b=hKZ6nNtCBDyjwuN1OckYT4FOiwteV9hFrita/Km6aWtaYyNhU739D+qRwDIA1aScix
+         1MlECmLQJG475arKaAnFeB0XhbIfPmurjkrzerT7xKsk9+PwpFsx5YeEd440LIauIL9G
+         0yZgNfYNTTpe4DIYoxz5Lm2ZaLWWWz8RZ17ZRerUwnk1YowFEQ+ffRN9U8Hn+FYVOxpw
+         edPu9Vp/Us0OTYU+30yj/HGGyuS6CFiqjm56oEZHphRPRWXiKz72Cisfv2jV4yrtnVo+
+         pWTc9TOetemAOp94RSaTyBlLM5mMwl2WJdu/PIvGn7pBClGoEc58ScaFWy4lyseZtGUW
+         pUUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895326; x=1729500126;
+        d=1e100.net; s=20230601; t=1728896118; x=1729500918;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VSv+xwq+z3p6YBh0iihgCLzRA7mMnGfXBEJed04Tcj4=;
-        b=OM2EGO2WhZaHwW6qtW36tYYYvCZBsAFpbQOKxIY/2IZWEXW/xDbLr3jCQJBa9HUxq1
-         oqvZZRDHOv4WIjqjL09EqrIbDJS4WWoJDczqdubEPMfiOecidp2T+Bs4HNxvKU3/2CSO
-         8GANthEZrb5wt+q99lvjQQQLFmuh8jK0aTeLBbppChHjXrBw0kJ0prHy/VyvCwNj29P2
-         m5EpzvbBBu4DjYwvc16b614sK7ti+ocWgBNfgNetpqLF84wskzb+Vnz6Fqto2yDMpXBd
-         FXlGLAxC3KAA10b4UI7YKZHk4rG8Kqyf7sfLYt+DfOt3uIUWSc9cHpc/foNDWRd54Nmp
-         w4HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Xsg6qynsKzhM5u8dW3DdMZkApEFwxeh5st+eYtRxaV/ZB4r2F3lXE8vYeIGY+KnOU1+4TMhuA6h7WVUY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdf9QKlCOKQ0aALdFgZTv8qO+F4rRLWIHyl0vdrESAxmXHcUud
-	E//HocsDRDgnAcq6XYN67+qi7DxDuS6OIMO5kNTJF49PwVYwZagsY8HFElQVaUVpoXNWZWfIpUn
-	8KDNsIJuMcGkZ5eVpOM3cgHOh7NOUO0CnAZgc
-X-Google-Smtp-Source: AGHT+IF2uYJCbsJkyDBWyM5xTWoycN/RNE3CIRPq0iQCNjhjuXvs4DvMzreZ3NkwxXh7K9h1fLiTRosINDYsDdTZmy8=
-X-Received: by 2002:a05:651c:1990:b0:2fb:4f0c:e3d8 with SMTP id
- 38308e7fff4ca-2fb4f0cea31mr10438791fa.27.1728895326189; Mon, 14 Oct 2024
- 01:42:06 -0700 (PDT)
+        bh=fHxU8H8UsoeCoiILOhNNQeR6j+46WsSuvgSbOOVdp38=;
+        b=CHcggAm5Jn4TtARu0c5KCXsz8jcwxhFjJY6r7L2u2O0vnanl0f7RGlGZQlxvH5+pww
+         h7fUlBJY05yXaVEW2ppTtXydfDk7XVEDq93UiPKPmTu6DhHMquyxx+kdMBYeP2VjpM6P
+         74TOBYLSGbqLLASbR1+dMh6a7dWsT9VczWUILphHwZSPMAVq1Ljvj5Yfu+Q8ZJJSyXn+
+         fJWhIX6leDvNPUEIzDtREz3CFwB2TAcacu/Jky+/X+i8xfw8h7KzPQmQcFwXzC+zmAgj
+         CTf3rhSL4BtS8KRUescn+g/xdVeg/eVaA5JbAA5Vs1tNUcNKJpC0MiOV5olB+Ys9VxT+
+         mknQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUajwYfA34DLw5uenlu3mwgkzy2bWz8SMwP+OXNjZeSdqqD0QDhGWqA0fkX8mkPCzlZsGAxfyL1+iBJ@vger.kernel.org, AJvYcCVxuR7d4I/Y8NeU4IkIEhNYoZOQ7QiJuKtNaOZ0Yy4XvG11U07VAleQkOIu4P4XEIBXsy5t9hPXrP/7lm53@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt74SzT75kHCjCYQlUjtVWCEZ74Hk8PspchBFXdZRKyNm1pdGn
+	cQOdhZQc8Qt92twvGsg5SFTVVI97F2cHHFsGY+w3f7vGg4kchuA9LH3NPuVRi/h6VSt6ryBUiEW
+	3I3tfX/OLINk4ofcQmqBJstATF/m1WGjONoByzA==
+X-Google-Smtp-Source: AGHT+IHRL7c/m4WvThqTz0DcWBQ0zwMM/JAlU7jR361HxhdEn03+7ssDGFCw6W9itYCTS5nTHeP0WHIVBuyy2jWT2KM=
+X-Received: by 2002:a05:620a:4481:b0:7a9:c0b8:9343 with SMTP id
+ af79cd13be357-7b120fc3e06mr1297497885a.31.1728896118305; Mon, 14 Oct 2024
+ 01:55:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <670ba885.050a0220.4cbc0.002e.GAE@google.com>
-In-Reply-To: <670ba885.050a0220.4cbc0.002e.GAE@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 14 Oct 2024 10:41:51 +0200
-Message-ID: <CACT4Y+bbG_pthEYyG5mCYZVdA1Rzch2rZ5Yoit6gPaKjssPAJg@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] stack segment fault in folio_wait_writeback
-To: syzbot <syzbot+8cb2efaaad483f65f56c@syzkaller.appspotmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
+References: <20241011090023.655623-1-amir73il@gmail.com> <A1265158-06E7-40AA-8D61-985557CD9841@oracle.com>
+ <CAOQ4uxgX+PqUeLuqD47S5PxeYqJ3OMs0bfmnUE+D7dcnpr-UNw@mail.gmail.com> <743E221E-6137-4525-9F89-20E06CD404E4@oracle.com>
+In-Reply-To: <743E221E-6137-4525-9F89-20E06CD404E4@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 14 Oct 2024 10:55:06 +0200
+Message-ID: <CAOQ4uxi+ztQGDNeoWJDL_jawKyDqEdQYbjDvWvJYat73zhuoXg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] API for exporting connectable file handles to userspace
+To: Chuck Lever III <chuck.lever@oracle.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>
+Content-Type: multipart/mixed; boundary="000000000000fc6e5206246bfe85"
+
+--000000000000fc6e5206246bfe85
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 13 Oct 2024 at 13:01, syzbot
-<syzbot+8cb2efaaad483f65f56c@syzkaller.appspotmail.com> wrote:
+On Fri, Oct 11, 2024 at 8:40=E2=80=AFPM Chuck Lever III <chuck.lever@oracle=
+.com> wrote:
 >
-> Hello,
 >
-> syzbot found the following issue on:
 >
-> HEAD commit:    7234e2ea0edd Merge tag 'scsi-fixes' of git://git.kernel.or..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=157a085f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8cb2efaaad483f65f56c
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c7fd0580000
+> > On Oct 11, 2024, at 2:22=E2=80=AFPM, Amir Goldstein <amir73il@gmail.com=
+> wrote:
+> >
+> > On Fri, Oct 11, 2024 at 4:24=E2=80=AFPM Chuck Lever III <chuck.lever@or=
+acle.com> wrote:
+> >>
+> >>
+> >>
+> >>> On Oct 11, 2024, at 5:00=E2=80=AFAM, Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> >>>
+> >>> Christian,
+> >>>
+> >>> These patches bring the NFS connectable file handles feature to
+> >>> userspace servers.
+> >>>
+> >>> They rely on your and Aleksa's changes recently merged to v6.12.
+> >>>
+> >>> This v4 incorporates the review comments on Jeff and Jan (thanks!)
+> >>> and there does not seem to be any objection for this new API, so
+> >>> I think it is ready for staging.
+> >>>
+> >>> The API I chose for encoding conenctable file handles is pretty
+> >>> conventional (AT_HANDLE_CONNECTABLE).
+> >>>
+> >>> open_by_handle_at(2) does not have AT_ flags argument, but also, I fi=
+nd
+> >>> it more useful API that encoding a connectable file handle can mandat=
+e
+> >>> the resolving of a connected fd, without having to opt-in for a
+> >>> connected fd independently.
+> >>>
+> >>> I chose to implemnent this by using upper bits in the handle type fie=
+ld
+> >>> It may be that out-of-tree filesystems return a handle type with uppe=
+r
+> >>> bits set, but AFAIK, no in-tree filesystem does that.
+> >>> I added some warnings just in case we encouter that.
+> >>>
+> >>> I have written an fstest [4] and a man page draft [5] for the feature=
+.
+> >>>
+> >>> Thanks,
+> >>> Amir.
+> >>>
+> >>> Changes since v3 [3]:
+> >>> - Relax WARN_ON in decode and replace with pr_warn in encode (Jeff)
+> >>> - Loose the macro FILEID_USER_TYPE_IS_VALID() (Jan)
+> >>> - Add explicit check for negative type values (Jan)
+> >>> - Added fstest and man-page draft
+> >>>
+> >>> Changes since v2 [2]:
+> >>> - Use bit arithmetics instead of bitfileds (Jeff)
+> >>> - Add assertions about use of high type bits
+> >>>
+> >>> Changes since v1 [1]:
+> >>> - Assert on encode for disconnected path (Jeff)
+> >>> - Don't allow AT_HANDLE_CONNECTABLE with AT_EMPTY_PATH
+> >>> - Drop the O_PATH mount_fd API hack (Jeff)
+> >>> - Encode an explicit "connectable" flag in handle type
+> >>>
+> >>> [1] https://lore.kernel.org/linux-fsdevel/20240919140611.1771651-1-am=
+ir73il@gmail.com/
+> >>> [2] https://lore.kernel.org/linux-fsdevel/20240923082829.1910210-1-am=
+ir73il@gmail.com/
+> >>> [3] https://lore.kernel.org/linux-fsdevel/20241008152118.453724-1-ami=
+r73il@gmail.com/
+> >>> [4] https://github.com/amir73il/xfstests/commits/connectable-fh/
+> >>> [5] https://github.com/amir73il/man-pages/commits/connectable-fh/
+> >>>
+> >>> Amir Goldstein (3):
+> >>> fs: prepare for "explicit connectable" file handles
+> >>> fs: name_to_handle_at() support for "explicit connectable" file
+> >>>   handles
+> >>> fs: open_by_handle_at() support for decoding "explicit connectable"
+> >>>   file handles
+> >>>
+> >>> fs/exportfs/expfs.c        | 17 ++++++++-
+> >>> fs/fhandle.c               | 75 +++++++++++++++++++++++++++++++++++--=
+-
+> >>> include/linux/exportfs.h   | 13 +++++++
+> >>> include/uapi/linux/fcntl.h |  1 +
+> >>> 4 files changed, 98 insertions(+), 8 deletions(-)
+> >>>
+> >>> --
+> >>> 2.34.1
+> >>>
+> >>
+> >> Acked-by: Chuck Lever <chuck.lever@oracle.com <mailto:chuck.lever@orac=
+le.com>>
+> >>
+> >> Assuming this is going directly to Christian's tree.
+> >>
+> >> I'm a little concerned about how this new facility might be
+> >> abused to get access to parts of the file system that a user
+> >> is not authorized to access.
+> >
+> > That's exactly the sort of thing I would like to be reviewed,
+> > but what makes you feel concerned?
+> >
+> > Are you concerned about handcrafted file handles?
 >
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7234e2ea.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/aa111520a0b7/vmlinux-7234e2ea.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/07889fadba3b/bzImage-7234e2ea.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/178fe4a5f5e7/mount_1.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7847e1862894/mount_2.gz
+> Yes; a user could construct a file handle that could bypass
+> the usual authorization checks when it gets connected. It's
+> a little hare-brained and hand-wavy because this is a new
+> area for me.
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+8cb2efaaad483f65f56c@syzkaller.appspotmail.com
->
-> loop0: detected capacity change from 0 to 256
-> exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0xcc9b7de9, utbl_chksum : 0xe619d30d)
-> Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5340 Comm: syz.0.50 Not tainted 6.12.0-rc2-syzkaller-00305-g7234e2ea0edd #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:PageTail include/linux/page-flags.h:281 [inline]
-> RIP: 0010:const_folio_flags include/linux/page-flags.h:309 [inline]
-> RIP: 0010:folio_test_writeback include/linux/page-flags.h:555 [inline]
-> RIP: 0010:folio_wait_writeback+0x2f/0x1e0 mm/page-writeback.c:3187
-> Code: 41 57 41 56 41 55 41 54 53 48 83 ec 18 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 ac 7e c4 ff 4c 8d 73 08 4c 89 f5 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 f7 e8 11 2f 2e 00 4d 8b 3e 4c 89 fe
-> RSP: 0018:ffffc900025a7190 EFLAGS: 00010202
-> RAX: ffffffff81d068a4 RBX: 0000000000000000 RCX: ffff888000c3c880
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: ffffffff81cc460e R09: 1ffffd4000003328
-> R10: dffffc0000000000 R11: fffff94000003329 R12: dffffc0000000000
-> R13: dffffc0000000000 R14: 0000000000000008 R15: 0000000000000001
-> FS:  00007f7a897816c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7a88a75c60 CR3: 000000003f406000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __filemap_fdatawait_range+0x17c/0x2b0 mm/filemap.c:533
->  file_write_and_wait_range+0x1e3/0x280 mm/filemap.c:792
->  __generic_file_fsync+0x6f/0x1a0 fs/libfs.c:1528
->  exfat_file_fsync+0xf9/0x1d0 fs/exfat/file.c:524
->  exfat_file_write_iter+0x312/0x3f0 fs/exfat/file.c:608
->  iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
->  do_splice_from fs/splice.c:941 [inline]
->  direct_splice_actor+0x11b/0x220 fs/splice.c:1164
->  splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
->  do_splice_direct_actor fs/splice.c:1207 [inline]
->  do_splice_direct+0x289/0x3e0 fs/splice.c:1233
->  do_sendfile+0x561/0xe10 fs/read_write.c:1388
->  __do_sys_sendfile64 fs/read_write.c:1455 [inline]
->  __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1441
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f7a8897dff9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f7a89781038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-> RAX: ffffffffffffffda RBX: 00007f7a88b35f80 RCX: 00007f7a8897dff9
-> RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
-> RBP: 00007f7a889f0296 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000100001 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007f7a88b35f80 R15: 00007fffbdf78608
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:PageTail include/linux/page-flags.h:281 [inline]
-> RIP: 0010:const_folio_flags include/linux/page-flags.h:309 [inline]
-> RIP: 0010:folio_test_writeback include/linux/page-flags.h:555 [inline]
-> RIP: 0010:folio_wait_writeback+0x2f/0x1e0 mm/page-writeback.c:3187
-> Code: 41 57 41 56 41 55 41 54 53 48 83 ec 18 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 ac 7e c4 ff 4c 8d 73 08 4c 89 f5 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 f7 e8 11 2f 2e 00 4d 8b 3e 4c 89 fe
-> RSP: 0018:ffffc900025a7190 EFLAGS: 00010202
-> RAX: ffffffff81d068a4 RBX: 0000000000000000 RCX: ffff888000c3c880
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: ffffffff81cc460e R09: 1ffffd4000003328
-> R10: dffffc0000000000 R11: fffff94000003329 R12: dffffc0000000000
-> R13: dffffc0000000000 R14: 0000000000000008 R15: 0000000000000001
-> FS:  00007f7a897816c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7a8975ff98 CR3: 000000003f406000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:   41 57                   push   %r15
->    2:   41 56                   push   %r14
->    4:   41 55                   push   %r13
->    6:   41 54                   push   %r12
->    8:   53                      push   %rbx
->    9:   48 83 ec 18             sub    $0x18,%rsp
->    d:   48 89 fb                mov    %rdi,%rbx
->   10:   49 bd 00 00 00 00 00    movabs $0xdffffc0000000000,%r13
->   17:   fc ff df
->   1a:   e8 ac 7e c4 ff          call   0xffc47ecb
->   1f:   4c 8d 73 08             lea    0x8(%rbx),%r14
->   23:   4c 89 f5                mov    %r14,%rbp
->   26:   48 c1 ed 03             shr    $0x3,%rbp
-> * 2a:   42 80 7c 2d 00 00       cmpb   $0x0,0x0(%rbp,%r13,1) <-- trapping instruction
 
-+tracing maintainers
+A malformed file handle is indeed a concern - it has always been,
+but in order to exploit one, an attacker would actually need to have
+a filesystem exported to nfs (to the attacking client machine).
 
-Not sure how this instruction can cause stack segment violation.
-The reproducer does something with raw tracepoints:
-https://syzkaller.appspot.com/text?tag=ReproSyz&x=146c7fd0580000
+With commit 620c266f3949 ("fhandle: relax open_by_handle_at()
+permission checks"), attackers that have non-root access to a machine
+could also try to exploit filesystem bugs with malformed file handles.
 
-Can raw tracepoints legally arbitrary corrupt kernel state?
-If yes, is there some safe subset at least?
+By adding support for connectable file handles, attackers could try
+to exploit bugs in ->fh_to_parent() implementations - bugs that would
+not have been exploitable so far unless filesystem is exported to nfs with
+subtree_check, which is quite rare IIUC.
 
+So I did an audit of the in-tree ->fh_to_{dentry,parent}() implementations.
+AFAICT all implementations properly check buffer length before trying
+to decode the handle... except for ceph.
 
->   30:   74 08                   je     0x3a
->   32:   4c 89 f7                mov    %r14,%rdi
->   35:   e8 11 2f 2e 00          call   0x2e2f4b
->   3a:   4d 8b 3e                mov    (%r14),%r15
->   3d:   4c 89 fe                mov    %r15,%rsi
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+It looks to me like __snapfh_to_dentry() does not check buffer length
+before assuming that ceph_nfs_snapfh can be accessed.
+
+Ilya,
+
+Do you agree with my analysis?
+Please see the attached fix patch.
+Let me know if you want me to post it on ceph list or if that is sufficient=
+.
+
+Thanks,
+Amir.
+
+--000000000000fc6e5206246bfe85
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ceph-fix-bounds-check-for-decoding-fh-of-snapshot-fi.patch"
+Content-Disposition: attachment; 
+	filename="0001-ceph-fix-bounds-check-for-decoding-fh-of-snapshot-fi.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m28rz3th0>
+X-Attachment-Id: f_m28rz3th0
+
+RnJvbSAyMjljMGI2NjYzZWVmNjU0MzYwMzFiNzgyZjg1OGQwMmQ1ZGVjOTM4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBNb24sIDE0IE9jdCAyMDI0IDEwOjQ2OjIwICswMjAwClN1YmplY3Q6IFtQQVRDSF0gY2Vw
+aDogZml4IGJvdW5kcyBjaGVjayBmb3IgZGVjb2RpbmcgZmggb2Ygc25hcHNob3QgZmlsZQoKUHJl
+dmVudCBhdHRhY2tlcnMgZnJvbSB1c2luZyBtYWxmb3JtZWQgY2VwaCBmaWxlIGhhbmRsZSB3aXRo
+IHR5cGUKRklMRUlEX0JUUkZTX1dJVEhfUEFSRU5UIHRvIGNhdXNlIG91dCBvZiBib3VuZHMgYWNj
+ZXNzLgoKRml4ZXM6IDU3MGRmNGU5YzIzZiAoImNlcGg6IHNuYXBzaG90IG5mcyByZS1leHBvcnQi
+KQpTaWduZWQtb2ZmLWJ5OiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgotLS0K
+IGZzL2NlcGgvZXhwb3J0LmMgfCA0ICsrKysKIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMo
+KykKCmRpZmYgLS1naXQgYS9mcy9jZXBoL2V4cG9ydC5jIGIvZnMvY2VwaC9leHBvcnQuYwppbmRl
+eCA0NDQ1MTc0OWM1NDQuLjRhOGQwMGU5OTEwYSAxMDA2NDQKLS0tIGEvZnMvY2VwaC9leHBvcnQu
+YworKysgYi9mcy9jZXBoL2V4cG9ydC5jCkBAIC0zMDIsNiArMzAyLDggQEAgc3RhdGljIHN0cnVj
+dCBkZW50cnkgKmNlcGhfZmhfdG9fZGVudHJ5KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsCiAKIAlp
+ZiAoZmhfdHlwZSA9PSBGSUxFSURfQlRSRlNfV0lUSF9QQVJFTlQpIHsKIAkJc3RydWN0IGNlcGhf
+bmZzX3NuYXBmaCAqc2ZoID0gKHZvaWQgKilmaWQtPnJhdzsKKwkJaWYgKGZoX2xlbiA8IHNpemVv
+Zigqc2ZoKSAvIDQpCisJCQlyZXR1cm4gTlVMTDsKIAkJcmV0dXJuIF9fc25hcGZoX3RvX2RlbnRy
+eShzYiwgc2ZoLCBmYWxzZSk7CiAJfQogCkBAIC00MjIsNiArNDI0LDggQEAgc3RhdGljIHN0cnVj
+dCBkZW50cnkgKmNlcGhfZmhfdG9fcGFyZW50KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsCiAKIAlp
+ZiAoZmhfdHlwZSA9PSBGSUxFSURfQlRSRlNfV0lUSF9QQVJFTlQpIHsKIAkJc3RydWN0IGNlcGhf
+bmZzX3NuYXBmaCAqc2ZoID0gKHZvaWQgKilmaWQtPnJhdzsKKwkJaWYgKGZoX2xlbiA8IHNpemVv
+Zigqc2ZoKSAvIDQpCisJCQlyZXR1cm4gTlVMTDsKIAkJcmV0dXJuIF9fc25hcGZoX3RvX2RlbnRy
+eShzYiwgc2ZoLCB0cnVlKTsKIAl9CiAKLS0gCjIuMzQuMQoK
+--000000000000fc6e5206246bfe85--
 
