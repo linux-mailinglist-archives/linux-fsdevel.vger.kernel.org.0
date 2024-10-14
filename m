@@ -1,215 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-31921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B314D99D8CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 23:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D5C99DA25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 01:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70BC1C212EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 21:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA18B283089
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 23:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CC31D0940;
-	Mon, 14 Oct 2024 21:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A861D9A46;
+	Mon, 14 Oct 2024 23:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnIDC6Rl"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F2FY5YMt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7201D0B9B;
-	Mon, 14 Oct 2024 21:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9730E1D968F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 23:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728940415; cv=none; b=HwdIrQ91xU4QExaOQ1KLcwU//CLzV5SFkGKeFn4w3ddjSGdIggsmJZD6caF8bzqSVnbXkmn3rKy74Yaz/XKDe5MoAIvOOqM3K5bdpD+v+K7BcpRMw/V9jKNfH6BjG8s/QIxD8PAGWKsXfSIlPu17BNeRy9NJ9G/ovC7mnAwRh7k=
+	t=1728949007; cv=none; b=LcuMfngTdif/7SNNjrYiW/UPS7/2ete86Q79d00NPuS7xFik3fmK5XH++OBwztSceQpcxXDpY8jtt6Q+b3FkkrNyAY8WnMQzw3sg9DaRUDnIbBtFLusJyPxYmYoEerV5rAAsmSx1c71lwYyyIn39EcDIha0wHbjZ6c8LD33+wks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728940415; c=relaxed/simple;
-	bh=hZ4sZBjojl8AVeRz94L+xmF0lc4B91BT4wKsw0/97uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSmBk4u67rbzSquSvoq+rajbdETdzX67xUD/bC8LT0RAPyqCph4ufo0NTNXoMW2AI0n4hyYYKtS34KjHNKstsiqjMO4MnnEYsh7qa8STTLpUVRCVR4O0IDztt2sH/7CwaTkz6aH4cPqQrxTESEICB/2KykY40Itgj5axa4fYzFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnIDC6Rl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4241C4CEC3;
-	Mon, 14 Oct 2024 21:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728940414;
-	bh=hZ4sZBjojl8AVeRz94L+xmF0lc4B91BT4wKsw0/97uA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cnIDC6Rlf5QyxMldNmF2WIuElwqTChk8cYTloV+tjUtl5nDqPp19DzMqQvX/TWvJc
-	 B3QDF8U9SpCJBVSu41XFqJxVPIbF60GgJuE+YL+HaLmLH4BJhNDuFTW0WJ0WXZpqLm
-	 JzDRd1qJ8W8lQHwWNFuNL/j41jajAJ0LlVKqJytcijLVnejYjMIs1hgH2KRRXNGL0L
-	 C9xwhpi2cpBP5gH4ffpM3EDu2KWy6iOpO5dfmcEH1rfl7wN4hKlTOchacQUoL4BJZ7
-	 7StJVQ6ha8eECsf6mh0PKJr590C1cOpsJm8mw2jC9DS7fk5QqP89Vu55nbI+0/rOca
-	 iNlqkbt2pgjvw==
-Date: Mon, 14 Oct 2024 14:13:32 -0700
-From: Kees Cook <kees@kernel.org>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <202410141403.D8B6671@keescook>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
- <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
- <Zv1aA4I6r4py-8yW@kawka3.in.waw.pl>
- <ZwaWG/ult2P7HR5A@tycho.pizza>
+	s=arc-20240116; t=1728949007; c=relaxed/simple;
+	bh=YYiSmCPN3TvqJgCL4LqcmX67TPAVLvdjqxfU7qETvaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ErghVI66vhYNJKMcELsprp2k5z+cS6y0hyddV3irLrJkC9B7Rq0c18flDZZjNoxbktSpvIzsdjv6hz947uaE7o36Vb/sVGPjwRyMWqmJFKnSHnaYsPKMV1je2mcroD5gGMPs1nak4rUPLDxUAFzG2N/jajxkm7jgRyE7rnmgbfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F2FY5YMt; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e291f1d659aso2797332276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 16:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728949003; x=1729553803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U7EptkXWnpaL/k/9PWhawROS2K5xJQhwh/HCtCSp7fE=;
+        b=F2FY5YMtfY8LTdR83BaogIdDfZw31DZW2IZuq3TkE4TYsBnDPWJP65FDDflBgD850P
+         hgn9nMVY2Xu3rEPNYqeiP77QalKBXAsY880pdIILjDRKp9vJtErmvtWP6JKLPI6i+B0o
+         tIm+VkQHbCK5Q1DREz60HKIsnVkbd4dlZzMqGxAvqU65dDeDsYgPfrUNfTNxSuLrIQpJ
+         3KMIzxR9dZJnQkPK1JF2BKaR7DuTKTTiABr7+I8ywUBd+aaNEpogAQwn8uXBzDT5tWux
+         XKhSFMWHuE/r+EBXvwKbD0h4JRl8G7HKCanIOOGveG74AyQJ5ShNjwYCg9G+NhFvfUQW
+         QDPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728949003; x=1729553803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U7EptkXWnpaL/k/9PWhawROS2K5xJQhwh/HCtCSp7fE=;
+        b=ccG5XUXmB6EI1eqh95QIv9GJmcGGnu9fp7uzTDLPl8EWJ3iMnqpN+jzgjhJ5UpxJBO
+         yhzcQttv/llIoamPbexmEJfw8uEAykiXyk8ToDJneG62UvOs+zRAF2Jz2DPfrSb3X8hy
+         VYf5Zlv3W8g2hVZIQwfJj8YejdZCKoP+J4jK/3NIBEkMpLX4KW/qdlqOPWIhRakxfEy4
+         E/c5tD2o24ITMxGCh24TDhzaHvGYIw9JyrozvupunWqEYisgRHKc3jWsV3o4yBSpkhFr
+         zvcu2Bkl29E6EpTZ1FmQwaEkCbNhPja43hHohgoNeCpjpJ0SHjt4S3R1qztjFsDUEyOb
+         clHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqGTNNJ+i7PT2CV+Az7dCwPBbP+SRj7rUlY6W/MxVqGXPrStNKohspWpOFZIdftS0Qoae5EcVE5Z+K1poy@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh9E7Y4cK/0OAlwwRNzgllPWUQ9N+AXoB2nAgyaKqJ23DnO2Jo
+	wus1EiiuQ0ffx+haQPcJrgZbYHnG1IeIz1doEwMRGY7DDRoDDQwmqTmU2J+y+eznqyf5AIkR6c4
+	QuWjD04pJOciAZf7ptjLQEn6BmJ0r/yFvINUt
+X-Google-Smtp-Source: AGHT+IFt8evXayClmB6u6crNOqWAGK/LqQS6YoxjB76sqksYLFIC+tuagD9Z6iZG7/Bs3SVNOb5KLHTYwWn1DWcVZV4=
+X-Received: by 2002:a05:6902:e07:b0:e29:23f7:ccf8 with SMTP id
+ 3f1490d57ef6-e2931b38df4mr6839532276.14.1728949003636; Mon, 14 Oct 2024
+ 16:36:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwaWG/ult2P7HR5A@tycho.pizza>
+References: <20241010152649.849254-1-mic@digikod.net> <20241010152649.849254-2-mic@digikod.net>
+ <CAHC9VhR8AFZN4tU1oAkaHb+CQDCe2_4T4X0oq7xekxCYkFYv6A@mail.gmail.com> <20241014.Ahhahz2ux0ga@digikod.net>
+In-Reply-To: <20241014.Ahhahz2ux0ga@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 14 Oct 2024 19:36:32 -0400
+Message-ID: <CAHC9VhTn=hb7DmB7Py3okcow89OGR31abHrcniSPt+K7ecW_ow@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/7] audit: Fix inode numbers
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 08:41:31AM -0600, Tycho Andersen wrote:
-> On Wed, Oct 02, 2024 at 02:34:43PM +0000, Zbigniew Jędrzejewski-Szmek wrote:
-> > On Tue, Sep 24, 2024 at 12:39:35PM -0500, Eric W. Biederman wrote:
-> > > Tycho Andersen <tycho@tycho.pizza> writes:
-> > > 
-> > > > From: Tycho Andersen <tandersen@netflix.com>
-> > > >
-> > > > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > > > switching to execveat() for service execution, but can't, because the
-> > > > contents of /proc/pid/comm are the file descriptor which was used,
-> > > > instead of the path to the binary. This makes the output of tools like
-> > > > top and ps useless, especially in a world where most fds are opened
-> > > > CLOEXEC so the number is truly meaningless.
-> > > >
-> > > > This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
-> > > > contents of argv[0], instead of the fdno.
-> > 
-> > I tried this version (with a local modification to drop the flag and
-> > enable the new codepath if get_user_arg_ptr(argv, 0) returns nonnull
-> > as suggested later in the thread), and it seems to work as expected.
-> > In particular, 'pgrep' finds for the original name in case of
-> > symlinks.
-> 
-> Here is a version that only affects /proc/pid/comm, without a flag. We
-> still have to do the dance of keeping the user argv0 before actually
-> doing __set_task_comm(), since we want to surface the resulting fault
-> if people pass a bad argv0. Thoughts?
-> 
-> Tycho
-> 
-> 
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index dad402d55681..61de8a71f316 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1416,7 +1416,16 @@ int begin_new_exec(struct linux_binprm * bprm)
->  		set_dumpable(current->mm, SUID_DUMP_USER);
->  
->  	perf_event_exec();
-> -	__set_task_comm(me, kbasename(bprm->filename), true);
-> +
-> +	/*
-> +	 * If fdpath was set, execveat() made up a path that will
-> +	 * probably not be useful to admins running ps or similar.
-> +	 * Let's fix it up to be something reasonable.
-> +	 */
-> +	if (bprm->argv0)
-> +		__set_task_comm(me, kbasename(bprm->argv0), true);
-> +	else
-> +		__set_task_comm(me, kbasename(bprm->filename), true);
+On Mon, Oct 14, 2024 at 9:30=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Fri, Oct 11, 2024 at 05:34:21PM -0400, Paul Moore wrote:
+> > On Thu, Oct 10, 2024 at 11:26=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> > >
+> > > Use the new inode_get_ino() helper to log the user space's view of
+> > > inode's numbers instead of the private kernel values.
+> > >
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: Eric Paris <eparis@redhat.com>
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >  security/lsm_audit.c | 10 +++++-----
+> > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > While answering some off-list questions regarding audit, I realized
+> > we've got similar issues with audit_name->ino and audit_watch->ino.
+> > It would be nice if you could also fix that in this patchset.
+>
+> I can do that with the next version, but I'm wondering how it would fit
+> with the UAPI's struct audit_rule_data which has only 32-bit
+> fields/values.
 
-This isn't checking fdpath?
+Don't worry about audit_rule_data for the moment, that's obviously
+going to require a userspace update as well to supply 64-bit inode
+numbers.  My guess is we'll probably want to introduce a new field
+type, e.g. AUDIT_INODE64 or similar, that either carries the high
+32-bits and is used in conjunction with AUDIT_INODE, or we create the
+new AUDIT_INODE64 field as a "special" filter field which takes up two
+of the u32 value spots.  Regardless, let's not worry about that for
+this patchset and focus on ensuring the underlying kernel filtering
+and reporting mechanisms work as expected so that when we do sort out
+the UAPI issues everything *should* work.
 
->  
->  	/* An exec changes our domain. We are no longer part of the thread
->  	   group */
-> @@ -1566,9 +1575,30 @@ static void free_bprm(struct linux_binprm *bprm)
->  	if (bprm->interp != bprm->filename)
->  		kfree(bprm->interp);
->  	kfree(bprm->fdpath);
-> +	kfree(bprm->argv0);
->  	kfree(bprm);
->  }
->  
-> +static int bprm_add_fixup_comm(struct linux_binprm *bprm, struct user_arg_ptr argv)
-> +{
-> +	const char __user *p = get_user_arg_ptr(argv, 0);
-> +
-> +	/*
-> +	 * In keeping with the logic in do_execveat_common(), we say p == NULL
-> +	 * => "" for comm.
-> +	 */
-> +	if (!p) {
-> +		bprm->argv0 = kstrdup("", GFP_KERNEL);
-> +		return 0;
-> +	}
-> +
-> +	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
-> +	if (bprm->argv0)
-> +		return 0;
-> +
-> +	return -EFAULT;
-> +}
+> Does 64-bit inode filtering currently work?
 
-I'd rather this logic got done in copy_strings() and to avoid duplicating
-a copy for all exec users. I think it should be possible to just do
-this, to find the __user char *:
+Likely not :/
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 77364806b48d..e12fd706f577 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -642,6 +642,8 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
- 				goto out;
- 			}
- 		}
-+		if (argc == 0)
-+			bprm->argv0 = str;
- 	}
- 	ret = 0;
- out:
-
-
-Once we get to begin_new_exec(), only if we need to do the work (fdpath
-set), then we can do the strndup_user() instead of making every exec
-hold a copy regardless of whether it will be needed.
-
--Kees
-
-> +
->  static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
->  {
->  	struct linux_binprm *bprm;
-> @@ -1975,6 +2005,10 @@ static int do_execveat_common(int fd, struct filename *filename,
->  		goto out_ret;
->  	}
->  
-> +	retval = bprm_add_fixup_comm(bprm, argv);
-> +	if (retval != 0)
-> +		goto out_free;
-> +
->  	retval = count(argv, MAX_ARG_STRINGS);
->  	if (retval == 0)
->  		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index e6c00e860951..0cd1f2d0e8c6 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -55,6 +55,7 @@ struct linux_binprm {
->  				   of the time same as filename, but could be
->  				   different for binfmt_{misc,script} */
->  	const char *fdpath;	/* generated filename for execveat */
-> +	const char *argv0;	/* argv0 from execveat */
->  	unsigned interp_flags;
->  	int execfd;		/* File descriptor of the executable */
->  	unsigned long loader, exec;
-
--- 
-Kees Cook
+--=20
+paul-moore.com
 
