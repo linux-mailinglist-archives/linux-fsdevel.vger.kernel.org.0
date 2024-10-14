@@ -1,101 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-31898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AE899CF80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 16:55:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B19E99CFCF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 16:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3FE1F21D28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:55:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08447B24C25
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C441AE876;
-	Mon, 14 Oct 2024 14:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C231B4F0A;
+	Mon, 14 Oct 2024 14:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVAcsYcR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNDqD7xh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AC21ABEA1;
-	Mon, 14 Oct 2024 14:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FDC1A4F20;
+	Mon, 14 Oct 2024 14:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917547; cv=none; b=Yc0a2P/pYkCOR90LrP3j084FT/fPdbdt6jMuSyB4D3wF0lt5FlU0djRpS2JihhugymLpJV5hrK5KE9s2zBA4x/mVXnn6PmF6v9rKe8Hk+5pf28innIWER1ytvZpMTjIHLTcbYp2aujK4om65QENrJr9ecDMo1klV+KeJSl8vRZQ=
+	t=1728917737; cv=none; b=gPtMUvawbmwuXtoGUd1cgSN0SeF8xEQZJyk7Unu4vtETATYs2pM23E3Mdu2UNBXbDzDnFjaJO6qA89g4hLuYL1zXflUXnnhH2MO2kjb4jb6UCzrMM+1ETypXHnvaRo0s81TCk9KoFD7VYCqO778i/WRPBfPJQByXyWGhwBYdkKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917547; c=relaxed/simple;
-	bh=b3J/8+uVKd506+tG92/OScywiPp2zfEA7v8OVWRBegs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y9CzS56hcqY7HULsgrfYhc2ztxcFTlpPf51sFm2rd5HC1tM4j0KGq6Sw7L0PFTvBU3ADjXRuQMNzToKP6tKsr7PcWGAnxfyCf3GXBvQCPjHkjQSPWD5bgR3AhPt0A5eaYtRlqE+g2znX+UllbLnWRg430RXIWRKNHYFghPGI4qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVAcsYcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B78C4CEC7;
-	Mon, 14 Oct 2024 14:52:24 +0000 (UTC)
+	s=arc-20240116; t=1728917737; c=relaxed/simple;
+	bh=kMc4iusA9vjrAOO2EnzfX6U2//CAjSVpSx54a9ql8jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhrQKqgFmS6n7Py9gXH4MEB81OmcSMOBv0BrTBZ3gLss/QjDNJuQHMdqzRFgxV8OScPCuKsbCvDSHT/WRsh/LaTq6fgR4vwNG/mYWcGwAwp62gov2EfJEn0j2jaJ8kGPJ4XT41BqCmHZc9w90bd0Y3wmWdxu9tzKU5U+4yYjxq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNDqD7xh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFDAC4CEC7;
+	Mon, 14 Oct 2024 14:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728917546;
-	bh=b3J/8+uVKd506+tG92/OScywiPp2zfEA7v8OVWRBegs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FVAcsYcRTYfTmhs2BJXaqsfU4v5XkfeUN5LmuW/+bjREGILdIYk8K4nnrqX9CFYeN
-	 8XgSS6FGVWZXhOsjpcVa+HdMXgWFzhOZbVRuDPEocduL/vQ2Sp16yiE1QXY/Ey0ckP
-	 SuNjqLV3MIxkOiNVH73UA6B1foRBKJk4YdPAcmS9f2MM0osu6iU9MGJr6KcM+SzBOS
-	 yS3unmmYKD9g81DNbCRHdlviGnhwN/H/n/Melv3xmAH7HkaO9jun2Rz5hyTpncoyoa
-	 NE3Awd3/hT3RbOe1HrlV8fGSmPfHqwzYN8DFeshaY5AlmfJ/7VKSkr+8bMQzfPdjgX
-	 b5bBG/ru7U5SA==
+	s=k20201202; t=1728917737;
+	bh=kMc4iusA9vjrAOO2EnzfX6U2//CAjSVpSx54a9ql8jo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mNDqD7xhv668r3LmHOAyHcCWGZw2ud0lqj33ATM/cwyUNFWms3tpfrYCezLzDxar+
+	 BipJaOc4ZVrcqJodyVtkd6ficho3P4clRqYcrmFwMckwDIWqYlPfg7uKmhJaM/7ebl
+	 eiF8xCVLw+qnEplYX9B04dIbMRELNdfQHX2Xw3+MFO19jSCcoWEP5zpTCDztlmO/s/
+	 b1qbvqbtsfeNpIvNzr01d0QhMiJGnYemGyLpCtEFNxQwHA2WDm15fFUAvBiWJtbCqa
+	 0za+T1nw+yxN1d0mLbPMGKedDrMWLoqLKQMxtwqCR3bUzyPdc4rgLeuUjWLXnN87Wm
+	 MvuRfEb5eV9/g==
+Date: Mon, 14 Oct 2024 16:55:32 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] API for exporting connectable file handles to userspace
-Date: Mon, 14 Oct 2024 16:52:19 +0200
-Message-ID: <20241014-loswerden-schrubben-3104ed04e382@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241011090023.655623-1-amir73il@gmail.com>
-References: <20241011090023.655623-1-amir73il@gmail.com>
+To: kernel test robot <oliver.sang@intel.com>, 
+	Jeff Layton <jlayton@kernel.org>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+Subject: Re: [linus:master] [fs]  e747e15156:  aim9.creat-clo.ops_per_sec
+ 4.2% improvement
+Message-ID: <20241014-unflexibel-umorientieren-f37bedead363@brauner>
+References: <202410141350.a747ff5e-oliver.sang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1299; i=brauner@kernel.org; h=from:subject:message-id; bh=b3J/8+uVKd506+tG92/OScywiPp2zfEA7v8OVWRBegs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTzGqjI9V2ZNb/y34yjEbbSW/6dTOleeK94SmCvz+K8b 494mdb+7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI4ZuMDBN/MJiFnf8de0n3 86qCXnYWgS0Lnl3/ZibMdXQR87LdXx8y/E9Sufun+LVI2d67nddmtkhXcB4L61itLpTM9YDl1v9 T+7gB
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202410141350.a747ff5e-oliver.sang@intel.com>
 
-On Fri, 11 Oct 2024 11:00:20 +0200, Amir Goldstein wrote:
-> Christian,
+On Mon, Oct 14, 2024 at 01:58:28PM +0800, kernel test robot wrote:
 > 
-> These patches bring the NFS connectable file handles feature to
-> userspace servers.
 > 
-> They rely on your and Aleksa's changes recently merged to v6.12.
+> Hello,
 > 
-> [...]
+> kernel test robot noticed a 4.2% improvement of aim9.creat-clo.ops_per_sec on:
+> 
+> 
+> commit: e747e15156b79efeea0ad056df8de14b93d318c2 ("fs: try an opportunistic lookup for O_CREAT opens too")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-Applied to the vfs.exportfs branch of the vfs/vfs.git tree.
-Patches in the vfs.exportfs branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.exportfs
-
-[1/3] fs: prepare for "explicit connectable" file handles
-      https://git.kernel.org/vfs/vfs/c/7f0e6b304c6c
-[2/3] fs: name_to_handle_at() support for "explicit connectable" file handles
-      https://git.kernel.org/vfs/vfs/c/4142418cafc9
-[3/3] fs: open_by_handle_at() support for decoding "explicit connectable" file handles
-      https://git.kernel.org/vfs/vfs/c/81667fcf9b82
+For once a positive gift that give keeps on giving.
 
