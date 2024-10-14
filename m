@@ -1,185 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-31907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93F499D4E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 18:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AD499D557
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315971F23F10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 16:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034AA1C23142
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 17:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4161B85E2;
-	Mon, 14 Oct 2024 16:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4002D1C32FE;
+	Mon, 14 Oct 2024 17:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n5v7vU2x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZuGXBvf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483071A76DE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 16:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E071C3043;
+	Mon, 14 Oct 2024 17:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728924181; cv=none; b=FXMVyADBFvwlnOM83pGVTPZLSZ+HO8hLFuPNgE/HcwnhmY7gVT3TyJzTwIGGZ2kd44S9Dke/g8Pj4AukmhbqiSB+cOWdiOVPXeuraUomA4YseElsxUsV5rsQgCIdV8ZHw4oSA8lUqMG9SzQZ+EFh9JTVIkzsXry06rKgkQWG1+s=
+	t=1728925831; cv=none; b=jAWd9hWdu+nD6kkA8y+sjdu/zLMQSigvN5DsKDKq/uft6j60j8yXz7sZB6qwNYOkoEjwrx+ZChQUJ1R6w9wj5bYVXSwT+MPyF2P/Ivm0FW4J7ln7boxI5EQEbwToxOZfSkIFTl0Lnk+vw+rRM0YTJlEWFxB2ueIyRWmBjLEGLPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728924181; c=relaxed/simple;
-	bh=H2zhOSr7rTC8ZsWXwDwe+xuL80mIu1E4LgMqQFZ62p4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rdzl/XfOohKcG6T7CJJovxTPs3DDaMYWrJNX1SCrMp2LN7zH8sowyeP1vxqMbnAux95FSJ22vtmhZI88qLozO9y15T58XEWxm92UCTM0vyjLPWOACnnuKkdaj/F47Bo+qfuscYyrAFZ/yvppPGn9IASfr+djRlL5Hw1Qp+mjORk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n5v7vU2x; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so3375715a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 09:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728924179; x=1729528979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/vRohclFyb1yVLVIIYVU3Grng2JMSExeWOOVlHqN8Zo=;
-        b=n5v7vU2xDlWxecjFsm0O53UAcBS7iG4k617Cycdwdgu/Oa1uoroXA53n/4dP2j36Hk
-         YIvAa8eNay/BSQStv+s/Q6v900fPa3ffnbGwT6O4HYhnZOymaxOa/4LumhnWyVsQlLgE
-         BneSKH3NFd4i4Aqla6ljeQPrtnXHI9lTIPSoivqbVqK8YvS5N/PTIbiBw7FeI7iul76S
-         Z4rTckyhFmnLpvKL8fZ5xzlbdO7dofPnFDQ/pNgy3DwPw8RhAphN7+kLB17fPn6v+Pxc
-         rFMG6Ji6tfESQHgqSp1fO0n883B8aspa4Tn957zy2KKvJ0Pm2gB9uc7cXV9tUaru2F9H
-         ZLXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728924179; x=1729528979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/vRohclFyb1yVLVIIYVU3Grng2JMSExeWOOVlHqN8Zo=;
-        b=u/9NgamDwqWphw/Usd/CEyZ/V/VooS4OcKAqMGMe8uLn09EJgz18PXbJ2oMeXMjH60
-         1CUJ3GIQJrZ078annjtgoW9Ts3zjg673Nivy7i7cpkMQRxSI8bbPol7Urv65spDIcReG
-         yEfZBBSkEee0VKfsMM4PEWf4SNrP53K7pGSb8nu4uSa1X0aVAI5+jEiZfy63Gdpt8wTk
-         rWd4h1aASaKZGNHgy6/txqGYQ359eMukB/Hhe2deteKZgVHfddlVJVNi5JElzslwyljk
-         770BMPWoV1RIzDa4MrYcmmS0h5lM2Rpm3ubMrjCKmlFnb5ZDUz8YXmDomxay4E4CswDM
-         fOqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtCs6fMvInYwyHJKx8ShGKi2TxagOX/9fNYopGgspGkSkKVZBNlRGQsDqzBkRpLzcI/oVahseZyuu3+h9r@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgnNuL8k/fvBF1rSoM0ZTS3Mg0TsVHvYpJpNpomZ+un4T9WPao
-	WiCpVvDrIQylG+m/+mxg8yYaKPUoA5nxbl9ejJdGmsx/uS9iPLqpZMoDw4mqJyIU3+/Lfxnzdc/
-	GZSbXrRuqoWBiJLMgCd+gUMbfjOC/MSNVUw16
-X-Google-Smtp-Source: AGHT+IEDVP2DotlNS2VvFJeOmAwWOSyXXgTf9UNwef/K0IjxmgAvZwtAL/FzLEwdlqdRyFWgivR/JbF5bg2V10bn2e4=
-X-Received: by 2002:a05:6a21:393:b0:1d2:f00e:47bb with SMTP id
- adf61e73a8af0-1d8bcf3e69fmr17588474637.21.1728924179200; Mon, 14 Oct 2024
- 09:42:59 -0700 (PDT)
+	s=arc-20240116; t=1728925831; c=relaxed/simple;
+	bh=iLl0lXkXeALAMr5KDjF+8vkYFyZnHpji9UAQw4I8NLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ld6kisKV+KGqo+BXNqB61tMsmjXeGDPFYFW++iBXJGaGHqBmXaeCxahyFbsrpuffq/4Y5z9C9m2BHzrUs9SdlCdXPS8ug5Fy1/zMqG3lTZObZjZ1hmJCXOQNkEH/VKBaauVZaAJ6rlQcvq1cJC7Iy8CcZp7IV0ejFD3XUuu8yp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZuGXBvf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932D4C4CEC3;
+	Mon, 14 Oct 2024 17:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728925831;
+	bh=iLl0lXkXeALAMr5KDjF+8vkYFyZnHpji9UAQw4I8NLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fZuGXBvfqai+/3NsOa9W9cD3IlOY9aT3U0WbINyOpuWErGCK6ZB6IOUBzMOrcOcny
+	 pu72RD2Q/eOijBUJKudsa5AgJol2pWXeoLojf4MNniYLbSJgH2kEtVhDGVb6Gm14Df
+	 9EGatG41Z1BUkjfjmG1t0dtC3E9OVP/UsR4ZXtN7/cC9OYFti03Mmwc+YQYgMcx9FF
+	 id1TyF5286pt2Y3czQbj/ZxkcUQEN2KJW1lxao1NLV3WYoMqD/KKpW+g9w8uWA2Aqn
+	 /L7Px0nG8PKBofrF7r6MreT7d1B0i8Jz1iBY6w6RO2ZAzUeeOvYCehz+aQLkdHLfpI
+	 KopOxy2RDs1Dw==
+Date: Mon, 14 Oct 2024 18:10:23 +0100
+From: Will Deacon <will@kernel.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org,
+	nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
+Message-ID: <20241014171023.GA18295@willie-the-truck>
+References: <20240822151113.1479789-1-joey.gouly@arm.com>
+ <20240822151113.1479789-20-joey.gouly@arm.com>
+ <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
+ <20241009144301.GA12453@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <670cb562.050a0220.4cbc0.0042.GAE@google.com> <CACzwLxgJb=xUCO+TFN_Y6SZ6YxoRn=pg0yfif3+GuHK8kL3x0Q@mail.gmail.com>
-In-Reply-To: <CACzwLxgJb=xUCO+TFN_Y6SZ6YxoRn=pg0yfif3+GuHK8kL3x0Q@mail.gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Mon, 14 Oct 2024 18:42:21 +0200
-Message-ID: <CANpmjNM3DVrO0vT2x3OiqQKLKf8kQ0qK3EdM+Wqi6ru66ZNBaQ@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in xas_create / xas_find (8)
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: syzbot <syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009144301.GA12453@willie-the-truck>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, 14 Oct 2024 at 08:40, Sabyrzhan Tasbolatov <snovitoll@gmail.com> wr=
-ote:
->
-> On Mon, Oct 14, 2024 at 11:08=E2=80=AFAM syzbot
-> <syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    2f91ff27b0ee Merge tag 'sound-6.12-rc2' of git://git.ke=
-rne..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D155c879f980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D95098faba89=
-c70c9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Db79be83906cd9=
-bab16ff
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/14933c4ac457/d=
-isk-2f91ff27.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/6725831fc1a1/vmli=
-nux-2f91ff27.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/98d64e038e72=
-/bzImage-2f91ff27.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com
-> >
-> > loop4: detected capacity change from 0 to 4096
-> > EXT4-fs: Ignoring removed nobh option
-> > EXT4-fs: Ignoring removed i_version option
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > BUG: KCSAN: data-race in xas_create / xas_find
-> >
-> > write to 0xffff888106819919 of 1 bytes by task 3435 on cpu 0:
-> >  xas_expand lib/xarray.c:613 [inline]
-> >  xas_create+0x666/0xbd0 lib/xarray.c:654
-> >  xas_store+0x6f/0xc90 lib/xarray.c:788
->
-> AFAIU, xas_store() itself, doesn't have a locking mechanism,
-> but is locked in xa_* functions. Example:
->
-> void *xa_store_range(...)
-> {
->    XA_STATE(xas, xa, 0);
->    ...
->    do {
->       xas_lock(&xas);
->       if (entry) {
->       ...
->          xas_create(&xas, true);
->    }
-> ...
-> unlock:
->    xas_unlock(&xas);
-> }
->
-> Same thing is for the another racing xas_find() function:
->
-> void *xa_find(...)
-> {
->    XA_STATE(xas, xa, *indexp);
->    void *entry;
->    rcu_read_lock();
->    do {
->       if (...)
->          entry =3D xas_find_marked(&xas, max, filter);
->       else
->          entry =3D xas_find(&xas, max);
->       ...
->    rcu_read_unlock();
-> }
->
-> In this KCSAN report, xas_create() and xas_find() are racing for `offset`=
- field.
+Kevin, Joey,
 
-If you search the mailing list archives, there are several such
-reports: https://lore.kernel.org/all/20230914080811.465zw662sus4uznq@quack3=
-/
-And have all been deemed benign.
+On Wed, Oct 09, 2024 at 03:43:01PM +0100, Will Deacon wrote:
+> On Tue, Sep 24, 2024 at 01:27:58PM +0200, Kevin Brodsky wrote:
+> > On 22/08/2024 17:11, Joey Gouly wrote:
+> > > @@ -1178,6 +1237,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+> > >  		sme_smstop();
+> > >  	}
+> > >  
+> > > +	if (system_supports_poe())
+> > > +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+> > 
+> > At the point where setup_return() is called, the signal frame has
+> > already been written to the user stack. In other words, we write to the
+> > user stack first, and then reset POR_EL0. This may be problematic,
+> > especially if we are using the alternate signal stack, which the
+> > interrupted POR_EL0 may not grant access to. In that situation uaccess
+> > will fail and we'll end up with a SIGSEGV.
+> > 
+> > This issue has already been discussed on the x86 side, and as it happens
+> > patches to reset PKRU early [1] have just landed. I don't think this is
+> > a blocker for getting this series landed, but we should try and align
+> > with x86. If there's no objection, I'm planning to work on a counterpart
+> > to the x86 series (resetting POR_EL0 early during signal delivery).
+> 
+> Did you get a chance to work on that? It would be great to land the
+> fixes for 6.12, if possible, so that the first kernel release with POE
+> support doesn't land with known issues.
 
-The code might benefit from markings, per:
-https://github.com/torvalds/linux/blob/master/tools/memory-model/Documentat=
-ion/access-marking.txt
+Looking a little more at this, I think we have quite a weird behaviour
+on arm64 as it stands. It looks like we rely on the signal frame to hold
+the original POR_EL0 so, if for some reason we fail to allocate space
+for the POR context, I think we'll return back from the signal with
+POR_EL0_INIT. That seems bad?
 
-But that's entirely up to the maintainer's preference:
-https://lwn.net/Articles/816854/
+Will
 
