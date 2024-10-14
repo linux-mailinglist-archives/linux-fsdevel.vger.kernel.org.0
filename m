@@ -1,111 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-31908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AD499D557
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:10:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B65999D56F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 19:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034AA1C23142
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 17:10:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E251F23A3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 17:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4002D1C32FE;
-	Mon, 14 Oct 2024 17:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3171BDABD;
+	Mon, 14 Oct 2024 17:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZuGXBvf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyNbvsMl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E071C3043;
-	Mon, 14 Oct 2024 17:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D03F1AE877
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 17:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728925831; cv=none; b=jAWd9hWdu+nD6kkA8y+sjdu/zLMQSigvN5DsKDKq/uft6j60j8yXz7sZB6qwNYOkoEjwrx+ZChQUJ1R6w9wj5bYVXSwT+MPyF2P/Ivm0FW4J7ln7boxI5EQEbwToxOZfSkIFTl0Lnk+vw+rRM0YTJlEWFxB2ueIyRWmBjLEGLPE=
+	t=1728926300; cv=none; b=MTson4M8tNTU3kjzwzF/A3UcTXeysYa14/mjEGZSG4gq1pJM7Hn3vnz4BHb1qUFAy5GZvSRK0hgWFVsJ05G61Ceet9kWpJMXpf0flIyp0OqulkDAaxI2VlaQnsWgGb4SGAaptCZFvhAd4h8jndxcTrd7TyRY5pvZncPLPvD0OEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728925831; c=relaxed/simple;
-	bh=iLl0lXkXeALAMr5KDjF+8vkYFyZnHpji9UAQw4I8NLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ld6kisKV+KGqo+BXNqB61tMsmjXeGDPFYFW++iBXJGaGHqBmXaeCxahyFbsrpuffq/4Y5z9C9m2BHzrUs9SdlCdXPS8ug5Fy1/zMqG3lTZObZjZ1hmJCXOQNkEH/VKBaauVZaAJ6rlQcvq1cJC7Iy8CcZp7IV0ejFD3XUuu8yp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZuGXBvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932D4C4CEC3;
-	Mon, 14 Oct 2024 17:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728925831;
-	bh=iLl0lXkXeALAMr5KDjF+8vkYFyZnHpji9UAQw4I8NLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fZuGXBvfqai+/3NsOa9W9cD3IlOY9aT3U0WbINyOpuWErGCK6ZB6IOUBzMOrcOcny
-	 pu72RD2Q/eOijBUJKudsa5AgJol2pWXeoLojf4MNniYLbSJgH2kEtVhDGVb6Gm14Df
-	 9EGatG41Z1BUkjfjmG1t0dtC3E9OVP/UsR4ZXtN7/cC9OYFti03Mmwc+YQYgMcx9FF
-	 id1TyF5286pt2Y3czQbj/ZxkcUQEN2KJW1lxao1NLV3WYoMqD/KKpW+g9w8uWA2Aqn
-	 /L7Px0nG8PKBofrF7r6MreT7d1B0i8Jz1iBY6w6RO2ZAzUeeOvYCehz+aQLkdHLfpI
-	 KopOxy2RDs1Dw==
-Date: Mon, 14 Oct 2024 18:10:23 +0100
-From: Will Deacon <will@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org,
-	nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
-Message-ID: <20241014171023.GA18295@willie-the-truck>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-20-joey.gouly@arm.com>
- <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
- <20241009144301.GA12453@willie-the-truck>
+	s=arc-20240116; t=1728926300; c=relaxed/simple;
+	bh=wnUdKODfAGcfIVRGhb8l3BIMuqcz1HxlhNrixbz+7k8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmP7Renab7RCPZ73qrYshGN/vW3yIwVeSiDsxcNfSsIC46NZVH2dOUe/j0kIE4dEGyI85pwzmooVp0FLONDit+U/SH0gxzLm5cYhnLodyXnmYHL/LkMHfvuStcO3EbMgAuICD/E5r2eiLHAPH2w2jMaIrkaIU/9D3hPOjdRFjjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyNbvsMl; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46071514c6fso6099311cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 10:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728926297; x=1729531097; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6GjKiroA4ql0lEHofgbnDwiGAfJixcOP1LU5Sya9WQ=;
+        b=RyNbvsMlNe0/m5y3XoDQtuXTdDpPjvLluZMGE4cM9KD9POnkuoQcX+rRHnmva9Mxyp
+         ERKIsZf1sFMx8fK1nq57FyfyF1LeuD1381spW22Uvmi/BG0xAqU/6kfwk9da0xiB86pX
+         SF0beKhkpINjZ3mkyV5YNfjijCBGZom46/q8Cm/e90RuWsZ1ZiPvNZsWlL4hRim4YReC
+         /rYY/uNhN21f9DkKzOmk4ms5KHAbBAJWLNEAMyiNtmGLdwwwEZ2BYWPnBSJstSDaqn/S
+         BvWdQ3crfLQkJrFjbWk53IPctcO96fPbYKfgwomeARkPtWtyeM+ATRg4jwJ7OeQtyBs8
+         P4Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728926297; x=1729531097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c6GjKiroA4ql0lEHofgbnDwiGAfJixcOP1LU5Sya9WQ=;
+        b=AXewFcrFZPIwTynBtfklJqS7sIukCgVtdydg6tQK4krjQWGULHZ9455+q6DqlM8c11
+         e/oACRTz0Ej+bNrYPLZg0aZexboNOFhLglN9GOgx75AXZo13sowQghj3tMHnWWOvUBpv
+         nHESgoqciJGD9Os0n4xMhIRot79+LjkQO8rAaVyaHdlzSwOfABcG40h+RCcTBfrjQLEf
+         YW2KUz+RR6NQtuVRqngAUlum0eJcQ3oVof9/1XvgyKZNCxHdV0t3+wsoiCd1nC0SHeOL
+         /veKh0N2wqi7y28geXUaFYSzM/bzbApVz6RF/yi8jPXKo/CTuTksIt+UH+S0c1uYYbSl
+         56Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXL+QjTnJnTuRbjEZ5PENcSkg+7U/X0h6d/z+P51ZLv+bV0wsvwHwdWkfTR54afXRXW+KjUEThEqWJyuUME@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7+uLwxbEYuVCW8jfO7LMJ3q3C72s5Prc+8pKhgkaOg6SIBs7Z
+	DPRmlWJZ0ZTVeuIbbRRKiT/RWb6bevaGXgd+rSgH8wl021ptS6NHKrTctUQ25kWwTQjYU17kG8O
+	cTd8kvte/ATcKWCWMR2Q6whNRpQl6hw==
+X-Google-Smtp-Source: AGHT+IG7XUNvTVPoEsMkLtNckOcRYYSZWECevnmpgCY2UmmEZ8NlqS20kYMUcpP4vODA57/MIdHezQoP14Mo4ZXPAEA=
+X-Received: by 2002:a05:622a:2c5:b0:458:4a68:7d15 with SMTP id
+ d75a77b69052e-4604bc45d49mr213815351cf.44.1728926297318; Mon, 14 Oct 2024
+ 10:18:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009144301.GA12453@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20241011223434.1307300-1-joannelkoong@gmail.com>
+ <20241011223434.1307300-2-joannelkoong@gmail.com> <prx7opxb3zqofuejohnqikxqbau6mde3lqxkistcwqun2xzr36@rpxky5oltnvs>
+In-Reply-To: <prx7opxb3zqofuejohnqikxqbau6mde3lqxkistcwqun2xzr36@rpxky5oltnvs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 14 Oct 2024 10:18:05 -0700
+Message-ID: <CAJnrk1b0d_svhF=LmSZHJ3LEeHX0_s+UZz4wHxwc5=JQ5tYEUw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: skip reclaiming folios in writeback contexts that
+ may trigger deadlock
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, hannes@cmpxchg.org, 
+	linux-mm@kvack.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Kevin, Joey,
+On Sat, Oct 12, 2024 at 9:55=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Fri, Oct 11, 2024 at 03:34:33PM GMT, Joanne Koong wrote:
+> > Currently in shrink_folio_list(), reclaim for folios under writeback
+> > falls into 3 different cases:
+> > 1) Reclaim is encountering an excessive number of folios under
+> >    writeback and this folio has both the writeback and reclaim flags
+> >    set
+> > 2) Dirty throttling is enabled (this happens if reclaim through cgroup
+> >    is not enabled, if reclaim through cgroupv2 memcg is enabled, or
+> >    if reclaim is on the root cgroup), or if the folio is not marked for
+> >    immediate reclaim, or if the caller does not have __GFP_FS (or
+> >    __GFP_IO if it's going to swap) set
+> > 3) Legacy cgroupv1 encounters a folio that already has the reclaim flag
+> >    set and the caller did not have __GFP_FS (or __GFP_IO if swap) set
+> >
+> > In cases 1) and 2), we activate the folio and skip reclaiming it while
+> > in case 3), we wait for writeback to finish on the folio and then try
+> > to reclaim the folio again. In case 3, we wait on writeback because
+> > cgroupv1 does not have dirty folio throttling, as such this is a
+> > mitigation against the case where there are too many folios in writebac=
+k
+> > with nothing else to reclaim.
+> >
+> > The issue is that for filesystems where writeback may block, sub-optima=
+l
+> > workarounds need to be put in place to avoid potential deadlocks that m=
+ay
+> > arise from the case where reclaim waits on writeback. (Even though case
+> > 3 above is rare given that legacy cgroupv1 is on its way to being
+> > deprecated, this case still needs to be accounted for)
+> >
+> > For example, for FUSE filesystems, when a writeback is triggered on a
+> > folio, a temporary folio is allocated and the pages are copied over to
+> > this temporary folio so that writeback can be immediately cleared on th=
+e
+> > original folio. This additionally requires an internal rb tree to keep
+> > track of writeback state on the temporary folios. Benchmarks show
+> > roughly a ~20% decrease in throughput from the overhead incurred with 4=
+k
+> > block size writes. The temporary folio is needed here in order to avoid
+> > the following deadlock if reclaim waits on writeback:
+> > * single-threaded FUSE server is in the middle of handling a request th=
+at
+> >   needs a memory allocation
+> > * memory allocation triggers direct reclaim
+> > * direct reclaim waits on a folio under writeback (eg falls into case 3
+> >   above) that needs to be written back to the fuse server
+> > * the FUSE server can't write back the folio since it's stuck in direct
+> >   reclaim
+> >
+> > This commit allows filesystems to set a ASOP_NO_RECLAIM_IN_WRITEBACK
+> > flag in the address_space_operations struct to signify that reclaim
+> > should not happen when the folio is already in writeback. This only has
+> > effects on the case where cgroupv1 memcg encounters a folio under
+> > writeback that already has the reclaim flag set (eg case 3 above), and
+> > allows for the suboptimal workarounds added to address the "reclaim wai=
+t
+> > on writeback" deadlock scenario to be removed.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  include/linux/fs.h | 14 ++++++++++++++
+> >  mm/vmscan.c        |  6 ++++--
+> >  2 files changed, 18 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index e3c603d01337..808164e3dd84 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -394,7 +394,10 @@ static inline bool is_sync_kiocb(struct kiocb *kio=
+cb)
+> >       return kiocb->ki_complete =3D=3D NULL;
+> >  }
+> >
+> > +typedef unsigned int __bitwise asop_flags_t;
+> > +
+> >  struct address_space_operations {
+> > +     asop_flags_t asop_flags;
+> >       int (*writepage)(struct page *page, struct writeback_control *wbc=
+);
+> >       int (*read_folio)(struct file *, struct folio *);
+> >
+> > @@ -438,6 +441,12 @@ struct address_space_operations {
+> >       int (*swap_rw)(struct kiocb *iocb, struct iov_iter *iter);
+> >  };
+> >
+> > +/**
+> > + * This flag is only to be used by filesystems whose folios cannot be
+> > + * reclaimed when in writeback (eg fuse)
+> > + */
+> > +#define ASOP_NO_RECLAIM_IN_WRITEBACK ((__force asop_flags_t)(1 << 0))
+> > +
+> >  extern const struct address_space_operations empty_aops;
+> >
+> >  /**
+> > @@ -586,6 +595,11 @@ static inline void mapping_allow_writable(struct a=
+ddress_space *mapping)
+> >       atomic_inc(&mapping->i_mmap_writable);
+> >  }
+> >
+> > +static inline bool mapping_no_reclaim_in_writeback(struct address_spac=
+e *mapping)
+> > +{
+> > +     return mapping->a_ops->asop_flags & ASOP_NO_RECLAIM_IN_WRITEBACK;
+>
+> Any reason not to add this flag in enum mapping_flags and use
+> mapping->flags field instead of adding a field in struct
+> address_space_operations?
 
-On Wed, Oct 09, 2024 at 03:43:01PM +0100, Will Deacon wrote:
-> On Tue, Sep 24, 2024 at 01:27:58PM +0200, Kevin Brodsky wrote:
-> > On 22/08/2024 17:11, Joey Gouly wrote:
-> > > @@ -1178,6 +1237,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
-> > >  		sme_smstop();
-> > >  	}
-> > >  
-> > > +	if (system_supports_poe())
-> > > +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
-> > 
-> > At the point where setup_return() is called, the signal frame has
-> > already been written to the user stack. In other words, we write to the
-> > user stack first, and then reset POR_EL0. This may be problematic,
-> > especially if we are using the alternate signal stack, which the
-> > interrupted POR_EL0 may not grant access to. In that situation uaccess
-> > will fail and we'll end up with a SIGSEGV.
-> > 
-> > This issue has already been discussed on the x86 side, and as it happens
-> > patches to reset PKRU early [1] have just landed. I don't think this is
-> > a blocker for getting this series landed, but we should try and align
-> > with x86. If there's no objection, I'm planning to work on a counterpart
-> > to the x86 series (resetting POR_EL0 early during signal delivery).
-> 
-> Did you get a chance to work on that? It would be great to land the
-> fixes for 6.12, if possible, so that the first kernel release with POE
-> support doesn't land with known issues.
+No, thanks for the suggestion - I really like your idea of adding this
+to enum mapping_flags instead as AS_NO_WRITEBACK_RECLAIM. I don't know
+why I didn't see mapping_flags when I was looking at this. I'll make
+this change for v2.
 
-Looking a little more at this, I think we have quite a weird behaviour
-on arm64 as it stands. It looks like we rely on the signal frame to hold
-the original POR_EL0 so, if for some reason we fail to allocate space
-for the POR context, I think we'll return back from the signal with
-POR_EL0_INIT. That seems bad?
 
-Will
+Thanks,
+Joanne
+
+>
+> > +}
+> > +
+> >  /*
+> >   * Use sequence counter to get consistent i_size on 32-bit processors.
+> >   */
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 749cdc110c74..2beffbdae572 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -1110,6 +1110,8 @@ static unsigned int shrink_folio_list(struct list=
+_head *folio_list,
+> >               if (writeback && folio_test_reclaim(folio))
+> >                       stat->nr_congested +=3D nr_pages;
+> >
+> > +             mapping =3D folio_mapping(folio);
+> > +
+> >               /*
+> >                * If a folio at the tail of the LRU is under writeback, =
+there
+> >                * are three cases to consider.
+> > @@ -1165,7 +1167,8 @@ static unsigned int shrink_folio_list(struct list=
+_head *folio_list,
+> >                       /* Case 2 above */
+> >                       } else if (writeback_throttling_sane(sc) ||
+> >                           !folio_test_reclaim(folio) ||
+> > -                         !may_enter_fs(folio, sc->gfp_mask)) {
+> > +                         !may_enter_fs(folio, sc->gfp_mask) ||
+> > +                         (mapping && mapping_no_reclaim_in_writeback(m=
+apping))) {
+> >                               /*
+> >                                * This is slightly racy -
+> >                                * folio_end_writeback() might have
+> > @@ -1320,7 +1323,6 @@ static unsigned int shrink_folio_list(struct list=
+_head *folio_list,
+> >               if (folio_maybe_dma_pinned(folio))
+> >                       goto activate_locked;
+> >
+> > -             mapping =3D folio_mapping(folio);
+> >               if (folio_test_dirty(folio)) {
+> >                       /*
+> >                        * Only kswapd can writeback filesystem folios
+> > --
+> > 2.43.5
+> >
 
