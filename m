@@ -1,129 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-31922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D5C99DA25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 01:36:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC14099DA46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 01:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA18B283089
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 23:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447291F234A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 23:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A861D9A46;
-	Mon, 14 Oct 2024 23:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06271C302E;
+	Mon, 14 Oct 2024 23:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F2FY5YMt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3BPhbdB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9730E1D968F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 23:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49321D9A72;
+	Mon, 14 Oct 2024 23:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728949007; cv=none; b=LcuMfngTdif/7SNNjrYiW/UPS7/2ete86Q79d00NPuS7xFik3fmK5XH++OBwztSceQpcxXDpY8jtt6Q+b3FkkrNyAY8WnMQzw3sg9DaRUDnIbBtFLusJyPxYmYoEerV5rAAsmSx1c71lwYyyIn39EcDIha0wHbjZ6c8LD33+wks=
+	t=1728949298; cv=none; b=W3T58psZ4tFM1WDAH2Yj1a6CKgz7loh2vHNGYRa19TF+V10dQy8L4OZBsHTwDa1Lg7Oof8zzKmpnCngt2RbdCMu/I3oG1KJCF3YJV+7DHEjSiW1e9zPOmyo8iYRxW0WAPPk2g0ZVYkDV05JyFCr2uj70XsxLfy7dQtRmh9pqj+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728949007; c=relaxed/simple;
-	bh=YYiSmCPN3TvqJgCL4LqcmX67TPAVLvdjqxfU7qETvaU=;
+	s=arc-20240116; t=1728949298; c=relaxed/simple;
+	bh=cLUPw0Bz7x/nGX/d2z/uMfeiTBz40vEKx7ZRUMDCIXY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErghVI66vhYNJKMcELsprp2k5z+cS6y0hyddV3irLrJkC9B7Rq0c18flDZZjNoxbktSpvIzsdjv6hz947uaE7o36Vb/sVGPjwRyMWqmJFKnSHnaYsPKMV1je2mcroD5gGMPs1nak4rUPLDxUAFzG2N/jajxkm7jgRyE7rnmgbfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F2FY5YMt; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e291f1d659aso2797332276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2024 16:36:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=DdxkD3hG0E47nPQhf/4CGoghlMUz7zOYpGP6QbvuvvMolCaJXjr4O1z+IuFjL9ctLgGIDN+RT4jW9qzSHbtBWMCqSykWA7o/odefy2BEBbFJgIr4UbKP3Sipm05xXuSQWBDijNWwBukf1i74G/74Oep2FbMYY4+OHVNu7NR0nIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3BPhbdB; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e7086c231so580133b3a.0;
+        Mon, 14 Oct 2024 16:41:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728949003; x=1729553803; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728949296; x=1729554096; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U7EptkXWnpaL/k/9PWhawROS2K5xJQhwh/HCtCSp7fE=;
-        b=F2FY5YMtfY8LTdR83BaogIdDfZw31DZW2IZuq3TkE4TYsBnDPWJP65FDDflBgD850P
-         hgn9nMVY2Xu3rEPNYqeiP77QalKBXAsY880pdIILjDRKp9vJtErmvtWP6JKLPI6i+B0o
-         tIm+VkQHbCK5Q1DREz60HKIsnVkbd4dlZzMqGxAvqU65dDeDsYgPfrUNfTNxSuLrIQpJ
-         3KMIzxR9dZJnQkPK1JF2BKaR7DuTKTTiABr7+I8ywUBd+aaNEpogAQwn8uXBzDT5tWux
-         XKhSFMWHuE/r+EBXvwKbD0h4JRl8G7HKCanIOOGveG74AyQJ5ShNjwYCg9G+NhFvfUQW
-         QDPA==
+        bh=bK52o27K/sxt9HmES53yJ6IXLDUKoQtM4kWshgQf9a4=;
+        b=f3BPhbdBCkOKap25qa6qVgfibs17k4O9i4PBS1HBNiwL+THx3v/ctXtrJficIRmGJn
+         lZpthln/PwGhN4xJYCOCYcBdIQTG/TLSw02L4GEyt1aJAnEAO5bSVAMKU1tYytyDurPx
+         t5jScleRvhdRAAKYLFgXzZ0A6UfkJoUj6ietlB3O33MeRnmfP0P2fPNRonYHxxwONCY7
+         V+FwDb7m1sHxQNQxae3BWBL59mGf5Lbh6CZ7n/LBx9zgXCbjTN68lmazKEvyCRQ/F/Rw
+         q21o4ald7I/Y5g4VUniuw72xUYQv2BfxbuKbNAfau2hH1FbQ/yk7gEXh4jZe52MXIOeI
+         pC3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728949003; x=1729553803;
+        d=1e100.net; s=20230601; t=1728949296; x=1729554096;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U7EptkXWnpaL/k/9PWhawROS2K5xJQhwh/HCtCSp7fE=;
-        b=ccG5XUXmB6EI1eqh95QIv9GJmcGGnu9fp7uzTDLPl8EWJ3iMnqpN+jzgjhJ5UpxJBO
-         yhzcQttv/llIoamPbexmEJfw8uEAykiXyk8ToDJneG62UvOs+zRAF2Jz2DPfrSb3X8hy
-         VYf5Zlv3W8g2hVZIQwfJj8YejdZCKoP+J4jK/3NIBEkMpLX4KW/qdlqOPWIhRakxfEy4
-         E/c5tD2o24ITMxGCh24TDhzaHvGYIw9JyrozvupunWqEYisgRHKc3jWsV3o4yBSpkhFr
-         zvcu2Bkl29E6EpTZ1FmQwaEkCbNhPja43hHohgoNeCpjpJ0SHjt4S3R1qztjFsDUEyOb
-         clHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGTNNJ+i7PT2CV+Az7dCwPBbP+SRj7rUlY6W/MxVqGXPrStNKohspWpOFZIdftS0Qoae5EcVE5Z+K1poy@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh9E7Y4cK/0OAlwwRNzgllPWUQ9N+AXoB2nAgyaKqJ23DnO2Jo
-	wus1EiiuQ0ffx+haQPcJrgZbYHnG1IeIz1doEwMRGY7DDRoDDQwmqTmU2J+y+eznqyf5AIkR6c4
-	QuWjD04pJOciAZf7ptjLQEn6BmJ0r/yFvINUt
-X-Google-Smtp-Source: AGHT+IFt8evXayClmB6u6crNOqWAGK/LqQS6YoxjB76sqksYLFIC+tuagD9Z6iZG7/Bs3SVNOb5KLHTYwWn1DWcVZV4=
-X-Received: by 2002:a05:6902:e07:b0:e29:23f7:ccf8 with SMTP id
- 3f1490d57ef6-e2931b38df4mr6839532276.14.1728949003636; Mon, 14 Oct 2024
- 16:36:43 -0700 (PDT)
+        bh=bK52o27K/sxt9HmES53yJ6IXLDUKoQtM4kWshgQf9a4=;
+        b=r61CxouDWYfoPhxiOBLiyERDCFijZ3QxmXCn6QJQWvSXEB9Zl56OYhXRO60bS8kuM0
+         NoGjpFTDG7nzWTGVnag/bF7+alUyL0iNsE3HrFrT4/Vd7doh6u/mSBUOmEC6bjIGatMi
+         SI+Apj1EnuE+M6lcvZyUAIwW0nOMSkzhUcFeXASXYYHAxOWoGdzqKM94iF1qF4qgJYX4
+         3/blwdeKvvkGBFZGkWX3FwtcBKPlWPABXMg5FF2WlsNDN1SheUkEi85l6pyq1Yu8XSdC
+         lbID/JeUoiHTqoEgSqz/01LCMS5qWfSp8UKJc3HNFoPVMORUvxKTszywB0GuqrDIOCRm
+         T+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmmCfVybk+WoDb6umj3d3dG94zbHkfFAc8vAMmzBqV9nx2avIsqZU6spwHwQLSKVVifG0=@vger.kernel.org, AJvYcCVvdYbuXKg9J20xcvsNvIPwsjnG31QfL/w+BUr4ELeXEsj8ilpNYx8bXZ7SJ7iviV3S/LLZK7JrR2wR3pTD0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaT1XRi699hVqXaRX7gl1Uve4xIjH3UY6Ol9XbV7kiCjX2kVka
+	LveSDoiAg6padAmdZNHP1bQXgukyHofjKCCXYunFZJSiHRkxiDixfjxXz+KP1jMImQ9hdH1/t1r
+	CG35XuTswJBvcL2zKtYQ7k9xLIeehbw==
+X-Google-Smtp-Source: AGHT+IGHFa1V22MLVRYcRiiXB0DFIYqasAQr00M5QX3r/+G7CJO1LHeIByP4GF1F4OSYMedSo+2A/WzhQZbDCMnLGY4=
+X-Received: by 2002:a05:6a00:1256:b0:71e:58be:3604 with SMTP id
+ d2e1a72fcca58-71e58be513dmr12072639b3a.4.1728949295897; Mon, 14 Oct 2024
+ 16:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010152649.849254-1-mic@digikod.net> <20241010152649.849254-2-mic@digikod.net>
- <CAHC9VhR8AFZN4tU1oAkaHb+CQDCe2_4T4X0oq7xekxCYkFYv6A@mail.gmail.com> <20241014.Ahhahz2ux0ga@digikod.net>
-In-Reply-To: <20241014.Ahhahz2ux0ga@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 Oct 2024 19:36:32 -0400
-Message-ID: <CAHC9VhTn=hb7DmB7Py3okcow89OGR31abHrcniSPt+K7ecW_ow@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/7] audit: Fix inode numbers
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	audit@vger.kernel.org, Eric Paris <eparis@redhat.com>
+References: <20240829174232.3133883-1-andrii@kernel.org> <20240829174232.3133883-6-andrii@kernel.org>
+ <ZwyG8Uro/SyTXAni@ly-workstation>
+In-Reply-To: <ZwyG8Uro/SyTXAni@ly-workstation>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 14 Oct 2024 16:41:23 -0700
+Message-ID: <CAEf4Bzak_+LzFZxRu-OvJrjgHgF81KMyF0S4nx1haoaQkAdnDg@mail.gmail.com>
+Subject: Re: [PATCH v7 bpf-next 05/10] lib/buildid: rename build_id_parse()
+ into build_id_parse_nofault()
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
+	jannh@google.com, linux-fsdevel@vger.kernel.org, willy@infradead.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, yi1.lai@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 9:30=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Fri, Oct 11, 2024 at 05:34:21PM -0400, Paul Moore wrote:
-> > On Thu, Oct 10, 2024 at 11:26=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
-digikod.net> wrote:
-> > >
-> > > Use the new inode_get_ino() helper to log the user space's view of
-> > > inode's numbers instead of the private kernel values.
-> > >
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Cc: Eric Paris <eparis@redhat.com>
-> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > ---
-> > >  security/lsm_audit.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >
-> > While answering some off-list questions regarding audit, I realized
-> > we've got similar issues with audit_name->ino and audit_watch->ino.
-> > It would be nice if you could also fix that in this patchset.
+On Sun, Oct 13, 2024 at 7:51=E2=80=AFPM Lai, Yi <yi1.lai@linux.intel.com> w=
+rote:
 >
-> I can do that with the next version, but I'm wondering how it would fit
-> with the UAPI's struct audit_rule_data which has only 32-bit
-> fields/values.
+> Hi Andrii Nakryiko,
+>
+> Greetings!
+>
+> I used Syzkaller and found that there is BUG: unable to handle kernel pag=
+ing request in build_id_parse_nofault
+>
 
-Don't worry about audit_rule_data for the moment, that's obviously
-going to require a userspace update as well to supply 64-bit inode
-numbers.  My guess is we'll probably want to introduce a new field
-type, e.g. AUDIT_INODE64 or similar, that either carries the high
-32-bits and is used in conjunction with AUDIT_INODE, or we create the
-new AUDIT_INODE64 field as a "special" filter field which takes up two
-of the u32 value spots.  Regardless, let's not worry about that for
-this patchset and focus on ensuring the underlying kernel filtering
-and reporting mechanisms work as expected so that when we do sort out
-the UAPI issues everything *should* work.
+This is a memfd_secret() file, which needs a special treatment, I'll
+post a fix soon, thanks for reporting!
 
-> Does 64-bit inode filtering currently work?
+> After bisection and the first bad commit is:
+> "
+> 45b8fc309654 lib/buildid: rename build_id_parse() into build_id_parse_nof=
+ault()
+> "
+>
+> All detailed into can be found at:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault
+> Syzkaller repro code:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault/repro.c
+> Syzkaller repro syscall steps:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault/repro.prog
+> Syzkaller report:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault/repro.report
+> Kconfig(make olddefconfig):
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault/kconfig_origin
+> Bisect info:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/241012_225717_build=
+_id_parse_nofault/bisect_info.log
+> bzImage:
+> https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/241012_22=
+5717_build_id_parse_nofault/bzImage_8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7=
+b
+> Issue dmesg:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/241012_225717_build=
+_id_parse_nofault/8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b_dmesg.log
+>
+> "
+> [   26.168603]  ? __pfx___build_id_parse.isra.0+0x10/0x10
+> [   26.169447]  ? __pfx_d_path+0x10/0x10
+> [   26.170068]  ? __kasan_kmalloc+0x88/0xa0
+> [   26.170743]  build_id_parse_nofault+0x4d/0x60
+> [   26.171473]  perf_event_mmap+0xb44/0xd90
+> [   26.172134]  ? __pfx_perf_event_mmap+0x10/0x10
+> [   26.172895]  mmap_region+0x4e7/0x29d0
+> [   26.173526]  ? __pfx_mmap_region+0x10/0x10
+> [   26.174210]  ? lockdep_hardirqs_on+0x89/0x110
+> [   26.174956]  ? __kasan_check_read+0x15/0x20
+> [   26.175655]  ? mark_lock.part.0+0xf3/0x17b0
+> [   26.176369]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+> [   26.177277]  ? arch_get_unmapped_area_topdown+0x3d6/0x710
+> [   26.178195]  ? rcu_read_unlock+0x3b/0xc0
+> [   26.178879]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
+> [   26.179808]  ? __sanitizer_cov_trace_cmp8+0x1c/0x30
+> [   26.180634]  ? cap_mmap_addr+0x60/0x330
+> [   26.181300]  ? security_mmap_addr+0x63/0x1b0
+> [   26.182029]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+> [   26.182930]  ? __get_unmapped_area+0x1a9/0x3b0
+> [   26.183705]  do_mmap+0xd9b/0x11f0
+> [   26.184291]  ? __pfx_do_mmap+0x10/0x10
+> [   26.184938]  ? __pfx_down_write_killable+0x10/0x10
+> [   26.185758]  vm_mmap_pgoff+0x1ea/0x390
+> [   26.186413]  ? __pfx_vm_mmap_pgoff+0x10/0x10
+> [   26.187129]  ? __fget_files+0x23c/0x4b0
+> [   26.187803]  ksys_mmap_pgoff+0x3dc/0x520
+> [   26.188490]  __x64_sys_mmap+0x139/0x1d0
+> [   26.189143]  x64_sys_call+0x18c6/0x20d0
+> [   26.189805]  do_syscall_64+0x6d/0x140
+> [   26.190425]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   26.191238] RIP: 0033:0x7fb10be3ee5d
+> [   26.191837] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 4=
+8 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <=
+48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 93 af 1b 00 f7 d8 64 89 01 48
+> [   26.194753] RSP: 002b:00007ffe95b14e28 EFLAGS: 00000212 ORIG_RAX: 0000=
+000000000009
+> [   26.195976] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb10=
+be3ee5d
+> [   26.197126] RDX: 0000000000000001 RSI: 0000000000002000 RDI: 000000002=
+0000000
+> [   26.198282] RBP: 00007ffe95b14f50 R08: 0000000000000004 R09: 000000000=
+0000000
+> [   26.199471] R10: 0000000000000011 R11: 0000000000000212 R12: 00007ffe9=
+5b150a8
+> [   26.200606] R13: 0000000000402eb7 R14: 0000000000404e08 R15: 00007fb10=
+c078000
+> [   26.201757]  </TASK>
+> [   26.202132] Modules linked in:
+> [   26.202663] CR2: ffff888010a44000
+> [   26.203219] ---[ end trace 0000000000000000 ]---
+> [   26.204002] RIP: 0010:memcmp+0x32/0x50
+> [   26.204685] Code: 06 48 39 07 75 17 48 83 c7 08 48 83 c6 08 48 83 ea 0=
+8 48 83 fa 07 77 e6 48 85 d2 74 20 31 c9 eb 09 48 83 c1 01 48 39 ca 74 0e <=
+0f> b6 04 0f 44 0f b6 04 0e 44 29 c0 74 e9 c3 cc cc cc cc 31 c0 c3
+> [   26.207669] RSP: 0018:ffff88801fa675f0 EFLAGS: 00010246
+> [   26.208529] RAX: 0000000000000000 RBX: ffff88801fa67728 RCX: 000000000=
+0000000
+> [   26.209655] RDX: 0000000000000004 RSI: ffffffff86583240 RDI: ffff88801=
+0a44000
+> [   26.210801] RBP: ffff88801fa67750 R08: 0000000000000000 R09: fffff9400=
+0085220
+> [   26.211929] R10: 0000000000000012 R11: 0000000000000001 R12: ffff88801=
+0a17c00
+> [   26.213053] R13: ffff888010a44000 R14: dffffc0000000000 R15: 000000000=
+0000000
+> [   26.214186] FS:  00007fb10c02d800(0000) GS:ffff88806c500000(0000) knlG=
+S:0000000000000000
+> [   26.215467] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   26.216393] CR2: ffff888010a44000 CR3: 00000000124e8000 CR4: 000000000=
+0750ef0
+> [   26.217533] PKRU: 55555554
+> [   26.217989] note: repro[728] exited with irqs disabled
+> "
+>
+> I hope you find it useful.
+>
+> Regards,
+> Yi Lai
+>
+> ---
+>
 
-Likely not :/
-
---=20
-paul-moore.com
+[...]
 
