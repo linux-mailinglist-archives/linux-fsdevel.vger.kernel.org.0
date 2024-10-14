@@ -1,221 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-31891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307CA99CC6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 16:12:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDFD99CC96
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 16:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542001C220E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:12:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5772B23435
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2024 14:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987A01AAE09;
-	Mon, 14 Oct 2024 14:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A70A1A0BDB;
+	Mon, 14 Oct 2024 14:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AVEwdfJz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyTmS8na";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AVEwdfJz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jyTmS8na"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ah9OCc3j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B0AE571;
-	Mon, 14 Oct 2024 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33709E571;
+	Mon, 14 Oct 2024 14:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915122; cv=none; b=OKsugl0gS3/8X2LQSdxtMP0EXmE6K26njzNVV3d1qohAkpyXuNyDHoZb7mcIvn650e+yGHN7+l0Z2HyvkxwUzzeRM0HVLCGBFzkE65YqzooCGIk1zhj+BrBpZL7aE8qRI7TAIKf9UpgRkMuy5uzM9s7x5RR/LI11EBAleRTWUPg=
+	t=1728915419; cv=none; b=P6xCFWkBXclKq8kF5BxbARsubalKUjD5+XaJH78yWtQUNxLAQzoe5zSc6elxEDcj80M9eN35kI7SU5AIIQ47EHx4A3Kzir4ZKtqMGXwZoCfpLHEP381pm4m7LBhdWb0c5ZGzEDBhlKDMKQ53LTLXarJeseiiMqILL5x3R+ubY7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915122; c=relaxed/simple;
-	bh=dSf4L2whuvkbcI3nEOvgGxh1I2nvQsWTfruIQ8S6ei4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhtdEXBsP1W04l8mKHvYsBBMTAoJr5+6QqkqJhX+EwRwt4EIAu3Jp95r93HyIvQcEwimPJOyPaWLtjTmj21PYlSch8VBMyf1rnroaJURD68GYTjZfACyD+UO9LL6VEuVYbmSeOlsmztdyGAvRshitxMJwR7lECqSWml3oRiwwUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AVEwdfJz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyTmS8na; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AVEwdfJz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jyTmS8na; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2794B1F790;
-	Mon, 14 Oct 2024 14:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728915118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aNiAvtzI6q96KeEs/j2nWQ1DffOJQcr3Q26A1F6d4Uw=;
-	b=AVEwdfJzbIuX67WCCKxQLRuzM/BUyJaM0Ub+Sh3tjuMYGfMxpOuH1pPI3OmpsohPn/T6rr
-	EIzovc5r1SVrNz73eBbmwVzJYD99DLZOJGtku+bAvOWxBufoucp0oaZlrNn5DFljwi11ej
-	S8w3ErKKxTGR70qOFEZpFK5tCOtKM9Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728915118;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aNiAvtzI6q96KeEs/j2nWQ1DffOJQcr3Q26A1F6d4Uw=;
-	b=jyTmS8naPWKK/QwUgtdc1qGuXh3wJ3inRufjuGOwzRRdgNb2dAsl/AVHWKMPCsl+HR39/0
-	ZPbdcEBvXWvTeNCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AVEwdfJz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jyTmS8na
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728915118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aNiAvtzI6q96KeEs/j2nWQ1DffOJQcr3Q26A1F6d4Uw=;
-	b=AVEwdfJzbIuX67WCCKxQLRuzM/BUyJaM0Ub+Sh3tjuMYGfMxpOuH1pPI3OmpsohPn/T6rr
-	EIzovc5r1SVrNz73eBbmwVzJYD99DLZOJGtku+bAvOWxBufoucp0oaZlrNn5DFljwi11ej
-	S8w3ErKKxTGR70qOFEZpFK5tCOtKM9Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728915118;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aNiAvtzI6q96KeEs/j2nWQ1DffOJQcr3Q26A1F6d4Uw=;
-	b=jyTmS8naPWKK/QwUgtdc1qGuXh3wJ3inRufjuGOwzRRdgNb2dAsl/AVHWKMPCsl+HR39/0
-	ZPbdcEBvXWvTeNCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 055C713A51;
-	Mon, 14 Oct 2024 14:11:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Q4lIAa4mDWdXYwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 14:11:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B419FA0896; Mon, 14 Oct 2024 16:11:53 +0200 (CEST)
-Date: Mon, 14 Oct 2024 16:11:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, kernel-team@fb.com
-Subject: Re: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and
- security_file_open()
-Message-ID: <20241014141153.swwzlqa22ndkzbhn@quack3>
-References: <20241011203722.3749850-1-song@kernel.org>
+	s=arc-20240116; t=1728915419; c=relaxed/simple;
+	bh=90Iz6hvNZU7IBUC+PcJv1z2+26k+1HjcYupMFBXvIsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTzmSVEjTeU0Sfjeid1zbZcNe1jJICS9SNE+47yQ3GHc81fVNt9le2CVGDUJ8qPSo0KJmCJkh9vqerCr/Pe8Cunub8Yuz9edZRHdrR+XCNhdtsf9hs8X4GuuZU9Qhz7wp9yWIL9uZVfYj6OuUORnykj7pys2O/4B/c/y5e2H4Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ah9OCc3j; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7afc658810fso400682385a.3;
+        Mon, 14 Oct 2024 07:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728915417; x=1729520217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P+aZfNdhDbLhcnNI+c0/kje2c/Gjh70Xqm13tBc72L4=;
+        b=ah9OCc3jW5WoacW9syeofx9GqkNEdY40XDFtm+KTJzghKnMotPLqAEd/TkIvYqP929
+         AJeqq+jDJsN75Qj0WHQxqrxmQTs+h4ux+3Wi4AKtamZOPx+90hvg+zFfoRe33h9o9fJN
+         XF+ChOFjStic+tjbpp/WHANLHOCf22uyU0uLwskf9BCxTSNG12yyHDx51ijcL1vpDgFW
+         5weLPCb8jaQtxqprgQSv4FgiIQdYaeoS73wbGJeFdaIjB0oMvCyXjY7tqWxMYvF7mHBz
+         nZXsLREOjCDua/oBm1ZTSgUJXCqljhoRhzcdzbbzc4WyXqzD43LlasDbhxjCdk9iABWF
+         36Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728915417; x=1729520217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P+aZfNdhDbLhcnNI+c0/kje2c/Gjh70Xqm13tBc72L4=;
+        b=Qwr4i9sMK2o7XjTnTST+7G3GNWjlmXG4sKlmT9P9hLE4UsRgIi7CJAPsJvNGjhpZV1
+         tdnBN9LKUCNiE0FJiK9iucuoHoSH2CJmDBzg/h7Qji7mliXQAiZRh3vSdBUYggZK1G58
+         BT7y1wvZ+ujlTbKCnu+teciR0G2PwgGb88Y/fDZ8CypPxeKDJ9Rp0zHALwxEl06+VnSp
+         lQuHaifHLbW3oojYmTkEl1DOdiwRX118uxzH4VOaCUTHGzZIw+1xPiaXe19rAcpEYyWi
+         NAsShutV08g9pnHxOfsJ4OLtOWTAQmed+3j3DZG7OJDcKbPy/vNt86kGdjm+KaUQEJdk
+         M4Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWaqZ6b3hORRQ6lpVmARYkMtb6RiBUZcxSCoUEsCiHYr1ORd01PaJHFuBGULKBQCAeOoX7dAm6NVHgBDc6W@vger.kernel.org, AJvYcCX9VlnxE76S3W04pN8BT0QKZuZO1YfYL80QfdiQ9XKA8lMXVCqXj9GHTr0jYlBTvJd4eRWJimOWCAEywKxf8g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX22Q0Fi15H1ul14MV8LutaEd889Xkz3oGNXxjaald+lthA292
+	CrL3KzFO7DVKJITuYPTc6702Bg9IglDYuUL5EilSH78ZIq2taHhbP7uugSVM4zY//Lf5kno4b9l
+	yzZt5KHkaU85/kDIzjRABW117rJzABRQDmFnMtQ==
+X-Google-Smtp-Source: AGHT+IGfZa7EZFKiTIeYSP9jB5fz5bFVwOvmOB0AiskgxlLNbDi3ehEcs8Wx3U3lUGfB6QnxmmQcN/pK4h8n7NbzJwM=
+X-Received: by 2002:a05:620a:2904:b0:7a9:bdd4:b4ea with SMTP id
+ af79cd13be357-7b11a34308fmr1932990585a.9.1728915416971; Mon, 14 Oct 2024
+ 07:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011203722.3749850-1-song@kernel.org>
-X-Rspamd-Queue-Id: 2794B1F790
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+References: <20241014-work-overlayfs-v3-0-32b3fed1286e@kernel.org>
+In-Reply-To: <20241014-work-overlayfs-v3-0-32b3fed1286e@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 14 Oct 2024 16:16:45 +0200
+Message-ID: <CAOQ4uxjYzkxcOXXcxYtjZ2qvvV7cet2jopqDU0iGAAHcG4REXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] ovl: file descriptors based layer setup
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 11-10-24 13:37:22, Song Liu wrote:
-> Currently, fsnotify_open_perm() is called from security_file_open(). This
-> is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-> security_file_open() in this combination will be a no-op and not call
-> fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> 
+On Mon, Oct 14, 2024 at 11:41=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> Hey,
+>
+> Currently overlayfs only allows specifying layers through path names.
+> This is inconvenient for users such as systemd that want to assemble an
+> overlayfs mount purely based on file descriptors.
+>
+> When porting overlayfs to the new mount api I already mentioned this.
+> This enables user to specify both:
+>
+>      fsconfig(fd_overlay, FSCONFIG_SET_FD, "upperdir+", NULL, fd_upper);
+>      fsconfig(fd_overlay, FSCONFIG_SET_FD, "workdir+",  NULL, fd_work);
+>      fsconfig(fd_overlay, FSCONFIG_SET_FD, "lowerdir+", NULL, fd_lower1);
+>      fsconfig(fd_overlay, FSCONFIG_SET_FD, "lowerdir+", NULL, fd_lower2);
+>
+> in addition to:
+>
+>      fsconfig(fd_overlay, FSCONFIG_SET_STRING, "upperdir+", "/upper",  0)=
+;
+>      fsconfig(fd_overlay, FSCONFIG_SET_STRING, "workdir+",  "/work",   0)=
+;
+>      fsconfig(fd_overlay, FSCONFIG_SET_STRING, "lowerdir+", "/lower1", 0)=
+;
+>      fsconfig(fd_overlay, FSCONFIG_SET_STRING, "lowerdir+", "/lower2", 0)=
+;
+>
+> The selftest contains an example for this.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+For the series:
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Let me know if you want me to pick those up through the ovl tree.
+I don't expect any merge conflicts with other pending ovl patches.
+
+Thanks,
+Amir.
+
 > ---
-> 
-> PS: I didn't included a Fixes tag. This issue was probably introduced 15
-> years ago in [1]. If we want to back port this to stable, we will need
-> another version for older kernel because of [2].
-
-Well, this is not a problem because CONFIG_FANOTIFY_ACCESS_PERMISSIONS has
-"depends on SECURITY". So fsnotify_open_perm() can have anything to do only
-if CONFIG_SECURITY is enabled. That being said I agree it makes sense to
-decouple security & fsnotify because there's no significant benefit and
-only confusion. So I like the patch but please update the changelog and
-also finish the split as Amir suggests.
-
-								Honza
-
-> [1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-> [2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
+> Changes in v3:
+> - Add documentation into overlayfs.rst.
+> - Rename new mount api parsing helper.
+> - Change cleanup scope in helper.
+> - Link to v2: https://lore.kernel.org/r/20241011-work-overlayfs-v2-0-1b43=
+328c5a31@kernel.org
+>
+> Changes in v2:
+> - Alias fd and path based mount options.
+> - Link to v1: https://lore.kernel.org/r/20241011-work-overlayfs-v1-0-e342=
+43841279@kernel.org
+>
 > ---
->  fs/open.c           | 4 ++++
->  security/security.c | 9 +--------
->  2 files changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index acaeb3e25c88..6c4950f19cfb 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
->  	if (error)
->  		goto cleanup_all;
->  
-> +	error = fsnotify_open_perm(f);
-> +	if (error)
-> +		goto cleanup_all;
-> +
->  	error = break_lease(file_inode(f), f->f_flags);
->  	if (error)
->  		goto cleanup_all;
-> diff --git a/security/security.c b/security/security.c
-> index 6875eb4a59fc..a72cc62c0a07 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -19,7 +19,6 @@
->  #include <linux/kernel.h>
->  #include <linux/kernel_read_file.h>
->  #include <linux/lsm_hooks.h>
-> -#include <linux/fsnotify.h>
->  #include <linux/mman.h>
->  #include <linux/mount.h>
->  #include <linux/personality.h>
-> @@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
->   */
->  int security_file_open(struct file *file)
->  {
-> -	int ret;
-> -
-> -	ret = call_int_hook(file_open, file);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return fsnotify_open_perm(file);
-> +	return call_int_hook(file_open, file);
->  }
->  
->  /**
-> -- 
-> 2.43.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Christian Brauner (5):
+>       fs: add helper to use mount option as path or fd
+>       ovl: specify layers via file descriptors
+>       Documentation,ovl: document new file descriptor based layers
+>       selftests: use shared header
+>       selftests: add overlayfs fd mounting selftests
+>
+>  Documentation/filesystems/overlayfs.rst            |  17 +++
+>  fs/fs_parser.c                                     |  20 +++
+>  fs/overlayfs/params.c                              | 116 ++++++++++++---=
+-
+>  include/linux/fs_parser.h                          |   5 +-
+>  .../selftests/filesystems/overlayfs/.gitignore     |   1 +
+>  .../selftests/filesystems/overlayfs/Makefile       |   2 +-
+>  .../selftests/filesystems/overlayfs/dev_in_maps.c  |  27 +---
+>  .../filesystems/overlayfs/set_layers_via_fds.c     | 152 +++++++++++++++=
+++++++
+>  .../selftests/filesystems/overlayfs/wrappers.h     |  47 +++++++
+>  9 files changed, 334 insertions(+), 53 deletions(-)
+> ---
+> base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+> change-id: 20241011-work-overlayfs-dbcfa9223e87
+>
 
