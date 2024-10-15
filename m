@@ -1,73 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-31937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0938299DD7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 07:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AB899DD7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 07:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3D4D1F23A0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29331F243CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56AC176231;
-	Tue, 15 Oct 2024 05:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4/7yZqc/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC85175D5D;
+	Tue, 15 Oct 2024 05:30:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E936158D9C;
-	Tue, 15 Oct 2024 05:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B127B3C3C;
+	Tue, 15 Oct 2024 05:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728969958; cv=none; b=cU+HZKsCLiXIzmERiQzUixv8i6u0NrJO9crtUvmTkAD3wZ/qvGENiimXPioXPzvh3YRGmUXuw/+nArg2RS+c/SBljTaFYpsLuywdBXhPrnypcPIa63isIRD+ycPdezFLu7Hq5KNTBQ54gQGvC9jzLhjhdIDpJnXbLg7T7eivMMQ=
+	t=1728970220; cv=none; b=Yteb+GO1G9FUreSv6lX3KY8GuDE9+HYl4JSVX/luTX/4lj9nzQeORMugDZmQPI3K0Iaw5lleDdEhLw2WzfUBWRT6y7toOAi4hjzFKZZmp21o7ffOv7QKdc3fCdrPL0veTYn8WJCTKS5k4GYcBQ17SHVe2viqapwQGf422YI+QQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728969958; c=relaxed/simple;
-	bh=w3NvioodbzuHowQ5dRt9a9MQJLsZvOqryodBp0IN5NY=;
+	s=arc-20240116; t=1728970220; c=relaxed/simple;
+	bh=EzU5mI03zFsx88x+566qvzOC2d73swVM+mldoP2G3lQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5Ujitu/t76+IAu4lFQpNMY4pBRTzmIyguXGldpPIDUrNmQTP4mlJZLza5liliDrbb6GAB8hwj/xSVVNprusjQtbN5F7/eItMSRPLb7AGW6B0RziW+ECcx2+oDmOYCNC0YHzpFXnmZatjV77UWMAh6lWBMmhxIh0KQefd1ro4Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4/7yZqc/; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X61thiCQ2MrPzuNzqJSyAOXJpMPhhB5o1RAuj5AlnTs=; b=4/7yZqc/y3R0G1x5i4COOsUBn7
-	y5SGuQzsgEEqTOTut/qkDz//qtfn7gKjPLfRQON/c5cuUVvVn1Dyc0bvNx7WeyjnPdBsZS25Y/1t+
-	OMJc0R1Qo0X8DITjUXNeLBtBXewEOIjKGmC2EiZIQ3odmeXOSLVLpkO3uW1/91713JiyDyl99Di/d
-	MuZ1Uc7uvSaWKdcrXqSEUTOTOF9KZSnvpEoIekYSHqst6WTG062Z7tUH7V+ZpSudcp2MAxdMvS3Zk
-	m5nPOOAOXJA3gJeWSyvNkHTrY4R6mj6GPzQsTk150b2KRMIeWqC5PJcvlU6RU8dM5J8yJkXgPoQQP
-	1GPT874Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0a49-000000076SB-2YGp;
-	Tue, 15 Oct 2024 05:25:53 +0000
-Date: Mon, 14 Oct 2024 22:25:53 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <Zw384bed3yVgZpoc@infradead.org>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQ7xLyNEBGi+O7JV/rDM2ZW8IxrdoYh6MbHjs5QpLd58RiuNIcBoKPwome/3Ojo7VWDymd/YVbsCMl4Gpuk4u9aszz630+UD3+TfJKteg3sj9tXTzzxeo0l0aHkqk5cgKtl7VVFKjWgzgM+C8R+KCrgmWSJL3TfLJsEIKVMiozE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7BC57227AA8; Tue, 15 Oct 2024 07:30:13 +0200 (CEST)
+Date: Tue, 15 Oct 2024 07:30:13 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Javier Gonzalez <javier.gonz@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
+	"sagi@grimberg.me" <sagi@grimberg.me>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+	"bcrl@kvack.org" <bcrl@kvack.org>,
+	"dhowells@redhat.com" <dhowells@redhat.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-aio@kvack.org" <linux-aio@kvack.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>,
+	"vishak.g@samsung.com" <vishak.g@samsung.com>
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+Message-ID: <20241015053013.GA18580@lst.de>
+References: <20241010091333.GB9287@lst.de> <20241010115914.eokdnq2cmcvwoeis@ArmHalley.local> <20241011090224.GC4039@lst.de> <5e9f7f1c-48fd-477f-b4ba-c94e6b50b56f@kernel.dk> <20241014062125.GA21033@lst.de> <34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local> <20241014074708.GA22575@lst.de> <9e3792eebf7f427db7c466374972fb99@CAMSVWEXC02.scsc.local> <20241014115052.GA32302@lst.de> <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,25 +65,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 15, 2024 at 05:21:48AM +0000, Song Liu wrote:
-> >> Extend test_progs fs_kfuncs to cover different xattr names. Specifically:
-> >> xattr name "user.kfuncs", "security.bpf", and "security.bpf.xxx" can be
-> >> read from BPF program with kfuncs bpf_get_[file|dentry]_xattr(); while
-> >> "security.bpfxxx" and "security.selinux" cannot be read.
+On Tue, Oct 15, 2024 at 03:07:57AM +0000, Javier Gonzalez wrote:
+> > On Mon, Oct 14, 2024 at 09:08:24AM +0000, Javier Gonzalez wrote:
+> > > > Especially as it directly undermindes any file system work to actually make use
+> > of it.
+> > >
+> > > I do not think it does. If a FS wants to use the temperatures, then they
+> > > would be able to leverage FDP besides SCSI.
 > > 
-> > So you read code from untrusted user.* xattrs?  How can you carve out
-> > that space and not known any pre-existing userspace cod uses kfuncs
-> > for it's own purpose?
+> > What do you mean with that?  This is a bit too much whitepaper vocabularly.
+> > 
+> > We have code in XFS that can make use of the temperature hint.  But to
+> > make them work it actually needs to do real stream separation on the
+> > device.  I.e. the file system consumes the temperature hints.
 > 
-> I don't quite follow the comment here. 
+> The device can guarantee the stream separation without knowing the temperature.
+
+Of course.  But that's entirely not the point.
+
+> > What space from VFS folks do you need for hints?  And why does it
+> > matter?
 > 
-> Do you mean user.* xattrs are untrusted (any user can set it), so we 
-> should not allow BPF programs to read them? Or do you mean xattr 
-> name "user.kfuncs" might be taken by some use space?
+> We need space in the inode to store the hint ID.
+> 
+> Look, this feels like going in circles. All this gaslighting is what makes it difficult to 
 
-All of the above.
+I'm so fucking tired of this.  You are not even listening to my arguments
+at all, even when explaing every detail to you again and again.  And then
+you acuse me of "gaslighting". 
 
+> push patches when you just do not like the feature. It is the 3rd time I propose you 
+> a way forward and you simply cannot provide any specific technical feedback - in the 
+> past email I posted several questions about the interface you seem to be talking 
+> about and you explicitly omit that.
+
+???
+
+You are throwing random buzzwords and not even replying to all the
+low level technical points.  If you think I missed something please
+just ask again instead of this crap.
 
