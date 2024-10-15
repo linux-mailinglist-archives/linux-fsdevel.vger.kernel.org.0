@@ -1,220 +1,363 @@
-Return-Path: <linux-fsdevel+bounces-31928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3436199DC9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2DF99DCA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2CFB2289B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 03:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEE31F2336B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 03:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910C316EB7C;
-	Tue, 15 Oct 2024 03:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869BE16F8E9;
+	Tue, 15 Oct 2024 03:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BaCF9P4J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ND9Hp13D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F395D15C145
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4134C8C;
+	Tue, 15 Oct 2024 03:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728961686; cv=none; b=WT/DSV9BKzzLZfUEoiix85CIXX4mjI4ZFc821Bsnyo4po8A7t+yqWNi8dM3B4RhKtbi+CAH+yqwQDXu0kNQB/vLnOAFjrwI7fc+zNRgzhG9OjUzirPFIrqB4C26VDMz5gom8Anymw4Lzhd8mKm8uT/5YtYdWvTrGuEqEV6Jv5As=
+	t=1728962125; cv=none; b=VdfkUm25xtxkMaI4jxximZpWTzZD7r4EfrmmkwuytoSn2fFQlS40YXqtngWjw5izi0Vlnp3NaoN094+j+KVafbqHJLDsA+DgsomjLdVO+5qNbjPSW17+6QTI5TjWgxA2jR2dAKOFI82xbOergwJ27PDCcYkj07bYiM/SEew/INc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728961686; c=relaxed/simple;
-	bh=Q/SW4RakySLAJ+vlnVIdkbXUQssSXnwfcIMI4oelo+M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=KBNeYrydnX4woBV0TIuIn9tcwGfGxYGAbpuKOJKafjfzeHWKAnxaOGaioCN1fhBX4ybugZOrrlDXRoHj38bIEmZSAW1EnPQWHBeh7eKmAOeqfNmsVJZJ6QiRHFCgeJkIneItKSysSLAKG0Sz2/5NUP41TVE1TSVzJK5zcVNu44k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BaCF9P4J; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241015030801euoutp026edc07f0102a8dd8767c60b87a765c50~_gX1D-3Cn2533325333euoutp02-
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:08:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241015030801euoutp026edc07f0102a8dd8767c60b87a765c50~_gX1D-3Cn2533325333euoutp02-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728961682;
-	bh=V6MxMARZ/fd8PmMdfu49JsoNqWc/GHuLb3BoVceTtYU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=BaCF9P4JAi2MxUpruwqGy4YAL2y7VcHE5rQlQyrSbybSng+Q5kVMxVAQpz7Ns3xSw
-	 X0R311QayLw9oz2TsjtvzxEQVoQMcJFIv5p5L0ErNatPz7FtjGUD8cxR1KS8ioGkc2
-	 AgcKWjrjooOxWRr8R3W+q9Z11RT6EgiAhZMAmV4M=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241015030801eucas1p27c948a33fa3c21d627da897266683415~_gX0dt1TQ2989529895eucas1p2d;
-	Tue, 15 Oct 2024 03:08:01 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 3C.3E.09624.19CDD076; Tue, 15
-	Oct 2024 04:08:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241015030800eucas1p1e2584459613eaa885539d58f9c8ec4b8~_gXzXS0mL1042710427eucas1p1k;
-	Tue, 15 Oct 2024 03:08:00 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241015030800eusmtrp25976737c3a3da77806b8aaf3ab1decfb~_gXzWjKpz0951909519eusmtrp2t;
-	Tue, 15 Oct 2024 03:08:00 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-95-670ddc91e98a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 24.6F.14621.F8CDD076; Tue, 15
-	Oct 2024 04:08:00 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241015030759eusmtip2b042992190a2a3ca6745c77ee402d385~_gXzK2Mrz3239132391eusmtip2j;
-	Tue, 15 Oct 2024 03:07:59 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Tue, 15 Oct 2024 04:07:59 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 15 Oct
-	2024 04:07:58 +0100
-From: Javier Gonzalez <javier.gonz@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, "Martin
- K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi
-	<joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>, "sagi@grimberg.me"
-	<sagi@grimberg.me>, "brauner@kernel.org" <brauner@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
-	<jack@suse.cz>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "bcrl@kvack.org"
-	<bcrl@kvack.org>, "dhowells@redhat.com" <dhowells@redhat.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>, "asml.silence@gmail.com"
-	<asml.silence@gmail.com>, "linux-nvme@lists.infradead.org"
-	<linux-nvme@lists.infradead.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "io-uring@vger.kernel.org"
-	<io-uring@vger.kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-aio@kvack.org" <linux-aio@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>, "vishak.g@samsung.com"
-	<vishak.g@samsung.com>
-Subject: RE: [PATCH v7 0/3] FDP and per-io hints
-Thread-Topic: [PATCH v7 0/3] FDP and per-io hints
-Thread-Index: AQHbG7xJFahlOOmkRUWBz3B/P2gFpLKBuCIAgAQCOYCAABtsUP///IcAgAAiAcCAACIYAIABC7FQ
-Date: Tue, 15 Oct 2024 03:07:57 +0000
-Message-ID: <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
-In-Reply-To: <20241014115052.GA32302@lst.de>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728962125; c=relaxed/simple;
+	bh=E0WJ4rjhnWu0MB+l2de6nNeOUQNVkHTbUXniZh7gi8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLsAxYvPUSzelFEhG+B+6TIAtp/OGW3yYy/KfJ+SL8M6B0m3YTIJMr1zwqspZPkaWdu2VeA8TmsobL1ay0/C0qNWiA0T7tQd9Q5pkgUYFQsB+YazPOTdpdlh9eEnyhS1FxZ8pgPM78lC7124/08WLpHcwdoRgqcP70pCGvNOfWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ND9Hp13D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD07C4CEC3;
+	Tue, 15 Oct 2024 03:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728962124;
+	bh=E0WJ4rjhnWu0MB+l2de6nNeOUQNVkHTbUXniZh7gi8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ND9Hp13D7S+5DQEP8BSTW6fpdb2LgqjdKb/k/74goht9dUl96it6uqFtX/Zndektg
+	 14sLKUyWPurZNYyUX+/wgKrRLvAcq4JUVWEDpy6U0DiRKNtCKuOWbF6lhAAhxTiHRL
+	 eMSj5kqysF+eEbabDMXN4ryzc9vAPrDu62mXUab0kEZvq33BYcblHqBQbeSTxgYHlc
+	 fYjpEBWl+yIMP18KIFpeOat/jAtLBrjyNMC+Tud79WmSRR/5ydlwG8XioWxC3ifRbd
+	 AYjWX7hjLzpHQBcOKyRm493jdRKGyYsZh5rhhAcevjkHTebTddqAfy80zPZ1sTsPV1
+	 VWpDJhqJ9i4nQ==
+Date: Tue, 15 Oct 2024 03:15:11 +0000
+From: sergeh@kernel.org
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v20 2/6] security: Add EXEC_RESTRICT_FILE and
+ EXEC_DENY_INTERACTIVE securebits
+Message-ID: <Zw3d5ZmyK2mLBeeJ@lei>
+References: <20241011184422.977903-1-mic@digikod.net>
+ <20241011184422.977903-3-mic@digikod.net>
+ <20241013025150.GA1056399@mail.hallyn.com>
+ <20241014.jahHeitoo0uo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGOfdebi8dxUtReoLbiE3IEmEFDI7jImxZxN1FZSbbJCMqNnJT
-	iKWQFizzY3QwFAFlq4KzMKFOi4WArjL5xlCGDEUNqeKKVmSUyYqDQl0WLcIotyz893s/nvO8
-	75tD4cJjZAiVrshmlQqpXEzyies3X9599/vHAlnUObc/qqq7DlC9rYxExfNNBJrsmQWowvkS
-	R1P5bgJ1XNBiyFjfi6GpwrsEqjxbgCH7FR2OtOYhgM5U5APUORyOOjr7CVRtGOeh2r55DDVO
-	ThPo3us+3w+DGMv9bUyrzsZj7j35mWAsd3IYU90JkjHNannMtYt5TLtVQzIz48MEM931gGQG
-	an5dzN8+zLhMbzMm+9/YzoBk/uZUVp5+kFVGxu/jpw06Ps9yr8otbCnjaUC9fzHwoyAdA38f
-	7eUVAz4lpC8DmN/Z4MsFLwAsnzCRXOAC0Nr1kLcscdlmcK5QC+DVljnf/7smDBpvMACg02on
-	PBIhbQTw35lcD5N0JKxrvgU8vJoWw3HHHeAR4PQQD3aXDmCeQhAdBQsudnmbouGUQe/lZKgx
-	ji8xQYfBVlMp6WEBnQAbftLiHvajI+B5W+MSA/ot+Ifx1dLcOC2Cw/ZqjNshEF6o7MA5Dobz
-	baMkx1Hwl0tdBMfr4KnqaYLTRsCa9lmS43Bo0E/inG8g7D/nWZK/2N/Ph9dKGrxH2gLPzp33
-	PhoEHX1N3vybcKF1eYjDUNP/G/YdWK9bMZ9uhZ9uhZ9uhV8NIOqAiM1RZchYVbSCVUtU0gxV
-	jkIm2Z+ZYQKLX/X2fN9sC/jRMSMxA4wCZgApXLxaoC0WyISCVOlXh1hlZooyR86qzGAtRYhF
-	grDUUFZIy6TZ7AGWzWKVy1WM8gvRYDGDceWyFskRufrF14+cuZu/tMZuGwkP7zaQlrkbRT9Q
-	TEy3a7f7TPYjdV6Y4Z245nb8yPE/ZfGKocyC2FfPUxKjsQT/wWP6rZ9Onf4scDRhQ8le88ba
-	piLLITygNGRUXBl8ac1HVek7ch8bB65m/LXjRlJFXtLJHkf2lpDETfh97Z735SdHfAxtC5iP
-	69Q3jt6x7RL18zcCdn4c5/RTuj94DWxJESlrpcEHiaInX2Bbs8qePbPjw43J5SXv8dsSHnbG
-	X0kTHQ0NFVkcRxv5iTrdJy61uXmsZ2Pygl5/wmq82e6jaf628OnuDf+YV3XzMPtTZ1S1duT4
-	xGRV5K5NTbHsmJhQpUmj1+NKlfQ/z41RExkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsVy+t/xe7oT7vCmGyzewGwxZ9U2RovVd/vZ
-	LLr+bWGxeH34E6PFtA8/mS3eNf1msdizaBKTxcrVR5ks3rWeY7GYPb2ZyeLJ+lnMFpMOXWO0
-	mDKtidFi7y1tiz17T7JYzF/2lN1i+fF/TBbrXr9nsTj/9zirg7DH5SveHjtn3WX3OH9vI4vH
-	5bOlHptWdbJ5bPo0id1j85J6j903G9g8Pj69xeLxft9VNo8zC44AxU9Xe3zeJOex6clbpgC+
-	KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mi69C
-	Cn7zV7Tu6GdvYFzN08XIySEhYCLx+e5H5i5GLg4hgaWMEse/XWaHSMhIbPxylRXCFpb4c62L
-	DaLoI6PExCl/WSCcM4wSbT/WMkE4Kxklfp2dxAzSwiagL7Fq+ylGEFtEQEni6auzjCBFzAJX
-	2CWaFz0HSwgLGEg0L9kHVWQo8W7ZQig7SqJh5VMwm0VAVWLnph42EJtXwFVi7eJJUMfOYJF4
-	sHAuWIJTQEdi3t11YJsZBWQlHq38BfYEs4C4xK0n85kgnhCQWLLnPDOELSrx8vE/qOcMJLYu
-	3ccCYStK9M1/zwLRqyOxYPcnNghbW2LZwtfMEEcISpyc+YRlAqPULCQrZiFpmYWkZRaSlgWM
-	LKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECU+C2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIryT
-	unjThXhTEiurUovy44tKc1KLDzGaAgNmIrOUaHI+MAnnlcQbmhmYGpqYWRqYWpoZK4nzul0+
-	nyYkkJ5YkpqdmlqQWgTTx8TBKdXAlJEa8n/TTDN3ztr3+n8Yb2+Y7r362rfklBuuHl/57TNv
-	Gh4yOvx9Rgnz0uKTtqLGC+rzcs+ezXm4XU6F78L0hklBxZOn35jVzGnzu7KCxXix2PX5ORsS
-	uHM7b2w69fywczqXiqr2Md7N9yWEKo6FPEpqVGrhYSrsjsi6q1TiG/DTO0dq/U3m+HcJp5Y5
-	7oy6GaPxzF9zdezHRbMvzn3Q2ct7VP0/X7TfQ6vqeXP2+/MkM12qqTj082HWBmOXuJNXnq3u
-	W3g47G9MqhK3+3oW8b9bm7zsTZYdWjLravfdp/Ylnrdz4nc9ujLX32QOn4iuneLKnVtP/fMv
-	2Xz34OVJqY/6mLtUa8QvLM780/rMS4mlOCPRUIu5qDgRABIoUg4KBAAA
-X-CMS-MailID: 20241015030800eucas1p1e2584459613eaa885539d58f9c8ec4b8
-X-Msg-Generator: CA
-X-RootMTR: 20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed
-References: <CGME20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed@eucas1p2.samsung.com>
-	<20241010070736.de32zgad4qmfohhe@ArmHalley.local>
-	<20241010091333.GB9287@lst.de>
-	<20241010115914.eokdnq2cmcvwoeis@ArmHalley.local>
-	<20241011090224.GC4039@lst.de>
-	<5e9f7f1c-48fd-477f-b4ba-c94e6b50b56f@kernel.dk>
-	<20241014062125.GA21033@lst.de>
-	<34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local>
-	<20241014074708.GA22575@lst.de>
-	<9e3792eebf7f427db7c466374972fb99@CAMSVWEXC02.scsc.local>
-	<20241014115052.GA32302@lst.de>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241014.jahHeitoo0uo@digikod.net>
 
-> On Mon, Oct 14, 2024 at 09:08:24AM +0000, Javier Gonzalez wrote:
-> > > Especially as it directly undermindes any file system work to actuall=
-y make use
-> of it.
-> >
-> > I do not think it does. If a FS wants to use the temperatures, then the=
-y
-> > would be able to leverage FDP besides SCSI.
->=20
-> What do you mean with that?  This is a bit too much whitepaper vocabularl=
-y.
->=20
-> We have code in XFS that can make use of the temperature hint.  But to
-> make them work it actually needs to do real stream separation on the
-> device.  I.e. the file system consumes the temperature hints.
+On Mon, Oct 14, 2024 at 09:40:34AM +0200, Mickaël Salaün wrote:
+> On Sat, Oct 12, 2024 at 09:51:50PM -0500, Serge E. Hallyn wrote:
+> > On Fri, Oct 11, 2024 at 08:44:18PM +0200, Mickaël Salaün wrote:
+> > > The new SECBIT_EXEC_RESTRICT_FILE, SECBIT_EXEC_DENY_INTERACTIVE, and
+> > > their *_LOCKED counterparts are designed to be set by processes setting
+> > > up an execution environment, such as a user session, a container, or a
+> > > security sandbox.  Unlike other securebits, these ones can be set by
+> > > unprivileged processes.  Like seccomp filters or Landlock domains, the
+> > > securebits are inherited across processes.
+> > > 
+> > > When SECBIT_EXEC_RESTRICT_FILE is set, programs interpreting code should
+> > > control executable resources according to execveat(2) + AT_CHECK (see
+> > > previous commit).
+> > > 
+> > > When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should deny
+> > > execution of user interactive commands (which excludes executable
+> > > regular files).
+> > > 
+> > > Being able to configure each of these securebits enables system
+> > > administrators or owner of image containers to gradually validate the
+> > > related changes and to identify potential issues (e.g. with interpreter
+> > > or audit logs).
+> > > 
+> > > It should be noted that unlike other security bits, the
+> > > SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE bits are
+> > > dedicated to user space willing to restrict itself.  Because of that,
+> > > they only make sense in the context of a trusted environment (e.g.
+> > > sandbox, container, user session, full system) where the process
+> > > changing its behavior (according to these bits) and all its parent
+> > > processes are trusted.  Otherwise, any parent process could just execute
+> > > its own malicious code (interpreting a script or not), or even enforce a
+> > > seccomp filter to mask these bits.
+> > > 
+> > > Such a secure environment can be achieved with an appropriate access
+> > > control (e.g. mount's noexec option, file access rights, LSM policy) and
+> > > an enlighten ld.so checking that libraries are allowed for execution
+> > > e.g., to protect against illegitimate use of LD_PRELOAD.
+> > > 
+> > > Ptrace restrictions according to these securebits would not make sense
+> > > because of the processes' trust assumption.
+> > > 
+> > > Scripts may need some changes to deal with untrusted data (e.g. stdin,
+> > > environment variables), but that is outside the scope of the kernel.
+> > > 
+> > > See chromeOS's documentation about script execution control and the
+> > > related threat model:
+> > > https://www.chromium.org/chromium-os/developer-library/guides/security/noexec-shell-scripts/
+> > > 
+> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > Cc: Andy Lutomirski <luto@amacapital.net>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: Serge Hallyn <serge@hallyn.com>
+> > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > Link: https://lore.kernel.org/r/20241011184422.977903-3-mic@digikod.net
+> > > ---
+> > > 
+> > > Changes since v19:
+> > > * Replace SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT with
+> > >   SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE:
+> > >   https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
+> > > * Remove the ptrace restrictions, suggested by Andy.
+> > > * Improve documentation according to the discussion with Jeff.
+> > > 
+> > > New design since v18:
+> > > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
+> > > ---
+> > >  include/uapi/linux/securebits.h | 113 +++++++++++++++++++++++++++++++-
+> > >  security/commoncap.c            |  29 ++++++--
+> > >  2 files changed, 135 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
+> > > index d6d98877ff1a..351b6ecefc76 100644
+> > > --- a/include/uapi/linux/securebits.h
+> > > +++ b/include/uapi/linux/securebits.h
+> > > @@ -52,10 +52,121 @@
+> > >  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
+> > >  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
+> > >  
+> > > +/*
+> > > + * The SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE securebits
+> > > + * are intended for script interpreters and dynamic linkers to enforce a
+> > > + * consistent execution security policy handled by the kernel.
+> > > + *
+> > > + * Whether an interpreter should check these securebits or not depends on the
+> > > + * security risk of running malicious scripts with respect to the execution
+> > > + * environment, and whether the kernel can check if a script is trustworthy or
+> > > + * not.  For instance, Python scripts running on a server can use arbitrary
+> > > + * syscalls and access arbitrary files.  Such interpreters should then be
+> > > + * enlighten to use these securebits and let users define their security
+> > > + * policy.  However, a JavaScript engine running in a web browser should
+> > > + * already be sandboxed and then should not be able to harm the user's
+> > > + * environment.
+> > > + *
+> > > + * When SECBIT_EXEC_RESTRICT_FILE is set, a process should only interpret or
+> > > + * execute a file if a call to execveat(2) with the related file descriptor and
+> > > + * the AT_CHECK flag succeed.
+> > > + *
+> > > + * This secure bit may be set by user session managers, service managers,
+> > > + * container runtimes, sandboxer tools...  Except for test environments, the
+> > > + * related SECBIT_EXEC_RESTRICT_FILE_LOCKED bit should also be set.
+> > > + *
+> > > + * Programs should only enforce consistent restrictions according to the
+> > > + * securebits but without relying on any other user-controlled configuration.
+> > > + * Indeed, the use case for these securebits is to only trust executable code
+> > > + * vetted by the system configuration (through the kernel), so we should be
+> > > + * careful to not let untrusted users control this configuration.
+> > > + *
+> > > + * However, script interpreters may still use user configuration such as
+> > > + * environment variables as long as it is not a way to disable the securebits
+> > > + * checks.  For instance, the PATH and LD_PRELOAD variables can be set by a
+> > > + * script's caller.  Changing these variables may lead to unintended code
+> > > + * executions, but only from vetted executable programs, which is OK.  For this
+> > > + * to make sense, the system should provide a consistent security policy to
+> > > + * avoid arbitrary code execution e.g., by enforcing a write xor execute
+> > > + * policy.
+> > > + *
+> > > + * SECBIT_EXEC_RESTRICT_FILE is complementary and should also be checked.
+> > > + */
+> > > +#define SECURE_EXEC_RESTRICT_FILE		8
+> > > +#define SECURE_EXEC_RESTRICT_FILE_LOCKED	9  /* make bit-8 immutable */
+> > > +
+> > > +#define SECBIT_EXEC_RESTRICT_FILE (issecure_mask(SECURE_EXEC_RESTRICT_FILE))
+> > > +#define SECBIT_EXEC_RESTRICT_FILE_LOCKED \
+> > > +			(issecure_mask(SECURE_EXEC_RESTRICT_FILE_LOCKED))
+> > > +
+> > > +/*
+> > > + * When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should never interpret
+> > > + * interactive user commands (e.g. scripts).  However, if such commands are
+> > > + * passed through a file descriptor (e.g. stdin), its content should be
+> > > + * interpreted if a call to execveat(2) with the related file descriptor and
+> > > + * the AT_CHECK flag succeed.
+> > > + *
+> > > + * For instance, script interpreters called with a script snippet as argument
+> > > + * should always deny such execution if SECBIT_EXEC_DENY_INTERACTIVE is set.
+> > > + *
+> > > + * This secure bit may be set by user session managers, service managers,
+> > > + * container runtimes, sandboxer tools...  Except for test environments, the
+> > > + * related SECBIT_EXEC_DENY_INTERACTIVE_LOCKED bit should also be set.
+> > > + *
+> > > + * See the SECBIT_EXEC_RESTRICT_FILE documentation.
+> > > + *
+> > > + * Here is the expected behavior for a script interpreter according to
+> > > + * combination of any exec securebits:
+> > > + *
+> > > + * 1. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=0 (default)
+> > > + *    Always interpret scripts, and allow arbitrary user commands.
+> > > + *    => No threat, everyone and everything is trusted, but we can get ahead of
+> > > + *       potential issues thanks to the call to execveat with AT_CHECK which
+> > > + *       should always be performed but ignored by the script interpreter.
+> > > + *       Indeed, this check is still important to enable systems administrators
+> > > + *       to verify requests (e.g. with audit) and prepare for migration to a
+> > > + *       secure mode.
+> > > + *
+> > > + * 2. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=0
+> > > + *    Deny script interpretation if they are not executable, but allow
+> > > + *    arbitrary user commands.
+> > > + *    => The threat is (potential) malicious scripts run by trusted (and not
+> > > + *       fooled) users.  That can protect against unintended script executions
+> > > + *       (e.g. sh /tmp/*.sh).  This makes sense for (semi-restricted) user
+> > > + *       sessions.
+> > > + *
+> > > + * 3. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=1
+> > > + *    Always interpret scripts, but deny arbitrary user commands.
+> > > + *    => This use case may be useful for secure services (i.e. without
+> > > + *       interactive user session) where scripts' integrity is verified (e.g.
+> > > + *       with IMA/EVM or dm-verity/IPE) but where access rights might not be
+> > > + *       ready yet.  Indeed, arbitrary interactive commands would be much more
+> > > + *       difficult to check.
+> > > + *
+> > > + * 4. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=1
+> > > + *    Deny script interpretation if they are not executable, and also deny
+> > > + *    any arbitrary user commands.
+> > > + *    => The threat is malicious scripts run by untrusted users (but trusted
+> > > + *       code).  This makes sense for system services that may only execute
+> > > + *       trusted scripts.
+> > > + */
+> > > +#define SECURE_EXEC_DENY_INTERACTIVE		10
+> > > +#define SECURE_EXEC_DENY_INTERACTIVE_LOCKED	11  /* make bit-10 immutable */
+> > > +
+> > > +#define SECBIT_EXEC_DENY_INTERACTIVE \
+> > > +			(issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+> > > +#define SECBIT_EXEC_DENY_INTERACTIVE_LOCKED \
+> > > +			(issecure_mask(SECURE_EXEC_DENY_INTERACTIVE_LOCKED))
+> > > +
+> > >  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
+> > >  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
+> > >  				 issecure_mask(SECURE_KEEP_CAPS) | \
+> > > -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
+> > > +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
+> > > +				 issecure_mask(SECURE_EXEC_RESTRICT_FILE) | \
+> > > +				 issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+> > >  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+> > >  
+> > > +#define SECURE_ALL_UNPRIVILEGED (issecure_mask(SECURE_EXEC_RESTRICT_FILE) | \
+> > > +				 issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+> > > +
+> > >  #endif /* _UAPI_LINUX_SECUREBITS_H */
+> > > diff --git a/security/commoncap.c b/security/commoncap.c
+> > > index cefad323a0b1..52ea01acb453 100644
+> > > --- a/security/commoncap.c
+> > > +++ b/security/commoncap.c
+> > > @@ -1302,21 +1302,38 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+> > >  		     & (old->securebits ^ arg2))			/*[1]*/
+> > >  		    || ((old->securebits & SECURE_ALL_LOCKS & ~arg2))	/*[2]*/
+> > >  		    || (arg2 & ~(SECURE_ALL_LOCKS | SECURE_ALL_BITS))	/*[3]*/
+> > > -		    || (cap_capable(current_cred(),
+> > > -				    current_cred()->user_ns,
+> > > -				    CAP_SETPCAP,
+> > > -				    CAP_OPT_NONE) != 0)			/*[4]*/
+> > >  			/*
+> > >  			 * [1] no changing of bits that are locked
+> > >  			 * [2] no unlocking of locks
+> > >  			 * [3] no setting of unsupported bits
+> > > -			 * [4] doing anything requires privilege (go read about
+> > > -			 *     the "sendmail capabilities bug")
+> > >  			 */
+> > >  		    )
+> > >  			/* cannot change a locked bit */
+> > >  			return -EPERM;
+> > >  
+> > > +		/*
+> > > +		 * Doing anything requires privilege (go read about the
+> > > +		 * "sendmail capabilities bug"), except for unprivileged bits.
+> > > +		 * Indeed, the SECURE_ALL_UNPRIVILEGED bits are not
+> > > +		 * restrictions enforced by the kernel but by user space on
+> > > +		 * itself.
+> > > +		 */
+> > > +		if (cap_capable(current_cred(), current_cred()->user_ns,
+> > > +				CAP_SETPCAP, CAP_OPT_NONE) != 0) {
+> > > +			const unsigned long unpriv_and_locks =
+> > > +				SECURE_ALL_UNPRIVILEGED |
+> > > +				SECURE_ALL_UNPRIVILEGED << 1;
+> > > +			const unsigned long changed = old->securebits ^ arg2;
+> > > +
+> > > +			/* For legacy reason, denies non-change. */
+> > > +			if (!changed)
+> > > +				return -EPERM;
+> > 
+> > This is odd to me.  You say for legacy reasons, but, currently, calling
+> > PR_SET_SECUREBITS with no changes returns 0.  So you may be breaking
+> > a lot of programs here, unless I'm mistaken.
+> 
+> When we call PR_SET_SECUREBITS with 0 (and if it was 0 too), it
+> currently goes through the capability check and return -EPERM if the
+> caller doesn't have CAP_SETCAP.  This is tested with
+> TEST_F(secbits, legacy) in tools/testing/selftests/exec/check-exec.c
+> (patch 3/6).
 
-The device can guarantee the stream separation without knowing the temperat=
-ure.
+Drat, my manual test case had a typo.  Right you are - it fails now.
 
-> > And if we come up with a better interface later on, we can make the cha=
-nges
-> then.
-> > I really do not see the issue. If we were adding a temperature abstract=
-ion now, I
-> would agree with
-> > You that we would need to cover the use-case you mention for FSs from t=
-he
-> beginning, but this
-> > Is already here. Seems like a fair compromise to support current users.
->=20
-> Again, I think the temperature hints at the syscall level aren't all
-> bad.  There's definitively a few things I'd like to do better in hindsigh=
-t,
-> but that's not the point.  The problem is trying to turn them into
-> stream separation all the way down in the driver, which is fundamentally
-> broken.
->=20
-> >   - How do we convince VFS folks to give us more space for hints at thi=
-s point?
->=20
-> What space from VFS folks do you need for hints?  And why does it
-> matter?
-
-We need space in the inode to store the hint ID.
-
-Look, this feels like going in circles. All this gaslighting is what makes =
-it difficult to=20
-push patches when you just do not like the feature. It is the 3rd time I pr=
-opose you=20
-a way forward and you simply cannot provide any specific technical feedback=
- - in the=20
-past email I posted several questions about the interface you seem to be ta=
-lking=20
-about and you explicitly omit that.
-
-
+thanks,
+-serge
 
