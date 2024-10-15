@@ -1,122 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-31979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603E799ED6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:27:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB6799ED76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25316285C38
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D889D288060
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77021FC7D7;
-	Tue, 15 Oct 2024 13:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4221D5ABD;
+	Tue, 15 Oct 2024 13:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrKsNHUr"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HXVu+an1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1783C1FC7CA;
-	Tue, 15 Oct 2024 13:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3551D517F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 13:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728998778; cv=none; b=g1U5SHNls26M+pZF4dMWAzFrvIP0vR1U3RG8BqEH7oxNcELRevSzZGP4pSwdIAu6ZyE2LccBMff+5jhsOK50vs+0qdB0V5ceOQR9BNDWAv3rXS3aaH2OogyCJg00HGuAsQxkS7STUtDsV2K+dWipieBneVgry+mFEIq3dmHVNNw=
+	t=1728998808; cv=none; b=AHCN9LEwa9p+BtSrkZiUdbN4wLl0YKWfiiGccr94A6O4RI8OQzPJssNK1GTtHleoNCPAu0m+132XLNuxBGC8Q45Px2kq9Bp5NrCtTD1TkvQIWIjujfc/og1TXH0vMgMlDRKbnmnrkjRD9u9opl/qWty5RIXEWVKDCtX7xXwqgRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728998778; c=relaxed/simple;
-	bh=oFFPT5mvvt/DlJJSCGR58VuLSdcKbAv5xgnJpcGR0tY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uv4ZWx8A83md4DDfKqrCr7P06qAgT2ZY7tbohlgHW1+aQsLXrkgey/G32+Wg6M5PbNAI3o/PtM9dUPJVCUPsT6WgftROGTeTquVfW3MNvdYem4TIIoncrCbuAThF8nH0sDl28J/W7hGsG2+Ui70Pg8MDFZ96n0ocXXzdDVZ/UGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrKsNHUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B3CCC4CECE;
-	Tue, 15 Oct 2024 13:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728998777;
-	bh=oFFPT5mvvt/DlJJSCGR58VuLSdcKbAv5xgnJpcGR0tY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FrKsNHUrBSbtPVikj1FML7vlz2mzC3ZXIoGIfrjrUd5GNlvj7byXhK69OID1comZ3
-	 ERsc0zdXy2HK9A2Z7G99T+h/RV2RmGFRkCXOSx8aShAqDswaIjUsafckOOSl1skiEU
-	 I2tf+OBx0u4OvVcY4HsF2UpTQUhJbpZzsK31x/FIIThfUQgmq8SNCnsUS81S2+rnJn
-	 JbezWxhO8+rA32VdG2XOwewpI/bX783q2XyJgeqNS477KHazRAG5kVkrecFNa/Tgu6
-	 T9M85n1LAvOk5DzGVWzOFVwwmW+vDtjPlBvN5IHs9Pu+Y+jgPolGy/RrDmde4Rw9M3
-	 Bn4LSqGCTRfig==
-Date: Tue, 15 Oct 2024 14:26:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: Will Deacon <will@kernel.org>, Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, nd@arm.com,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
-Message-ID: <e9eb6cf1-1ed4-45b0-85c1-39028728f952@sirena.org.uk>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-20-joey.gouly@arm.com>
- <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
- <20241009144301.GA12453@willie-the-truck>
- <20241014171023.GA18295@willie-the-truck>
- <20241015095911.GA3777204@e124191.cambridge.arm.com>
- <20241015114116.GA19334@willie-the-truck>
- <20241015122529.GA3820764@e124191.cambridge.arm.com>
+	s=arc-20240116; t=1728998808; c=relaxed/simple;
+	bh=EE+mwIJ8EdN6E5Nrc+ehEO6VYGIoaWe5dQFGFmdxNbI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fWZnmzWe2czH/uDeNBd3GHRZjcdCOYFSc+fMWb3ZHAVus3qNGVL9cBvbl5NRz7MEHRuWoUkRyCJ+9vrqvfqyHFailPL8Y/TpxemCrmm5uAwNCTdrpT7k+O9RJvT7zfrPqy6QutrWi2N66yHKoynRJ1vVqcAQmTkWp6eQ/X45o/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HXVu+an1; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a01810fffso384473666b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 06:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1728998803; x=1729603603; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRZXUpffY97rnBRIDS+MokMhh64COlCpPreMnjnNvZs=;
+        b=HXVu+an1FR+h+vgbFbYAcXb2yHJAnLx1yrIZzhRKkHfh4rscp2uD2I5PZhm5IGy0Iw
+         adOv723JjU4W+uNYC3sWv19/5wrH855qFJVv1LZcLrhkvcCIPJEZ9rTPq06g52wZpGRo
+         z7RWfnSE0P56IT7PbSZNYBbq+lUrouEIcw2u8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728998803; x=1729603603;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mRZXUpffY97rnBRIDS+MokMhh64COlCpPreMnjnNvZs=;
+        b=ev2u1sRjjJjzv6yRQnOhyP8RnMDlfzuQxOQ/IeWCRHSSGvwq1mn6Td9y3HAxF4h8W8
+         wT2LNMFaqQdiVEuZkKRyVx87n+ytO8STCL9Ze2m8W0DBH4t/P7OlniczLHpSRbpSQhCH
+         fb8kvEr54sEU6OozU80Jj52jnLIUODDg7sMioJJYZre72X3L2gczkbNcfUSpmNP7jtHP
+         OZuBlcd8nwdfGStAFi9l0UT9d8Ud7D27ADmFI5SQgif6Hc94bRHPEfbtWzOxnfmhQ5hN
+         uKM1zclAnKAYFF7AA4gdroI+uuNsRcwOqheW+m1CKy18UuPxSyfZYHTOS3CKQHWiEMe1
+         x7QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBeTjzsmLffNowkUGRI/Y+/izEDA64Tzt5E5luTurp+gHnhhLjUZIrGAaAgA9WKP+pVDZH9dIsMgl87wHR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd2YX8KO2Xp1biVMb4sUOvgq3NYTC4LKyU3FtECXIDTTJU/FfP
+	4nuQY9lXE30Ju5qr/o0foOYKaO9yNBg+wG9U0P0Bzgc/Ws8Hv/6ughTHawukvLp3lRcq4kPRR1Q
+	x0NjNqAodQh6y7GGTr0gkKcx0VnjhupDU7Ou6RBrnQDKu23x3
+X-Google-Smtp-Source: AGHT+IEqUl8aGmHFCwd7iaPq9cNnaSEnfX0KhaS09sAlRU6JegSD7VxVWGlDEanfTxM4ESAr0E0oY4Kpo5i+cEOI0UM=
+X-Received: by 2002:a17:906:6a2a:b0:a9a:1575:23e2 with SMTP id
+ a640c23a62f3a-a9a157525c9mr546282866b.1.1728998803445; Tue, 15 Oct 2024
+ 06:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VY579BsplRjShns6"
-Content-Disposition: inline
-In-Reply-To: <20241015122529.GA3820764@e124191.cambridge.arm.com>
-X-Cookie: New customers only.
+References: <20241014192759.863031-1-amir73il@gmail.com>
+In-Reply-To: <20241014192759.863031-1-amir73il@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 15 Oct 2024 15:26:31 +0200
+Message-ID: <CAJfpegs1kxyy72+b3ViMuMzwsRdEKVY05mm=CSJMyKwDmc5piw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix regression in libfuse test_copy_file_range()
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, yangyun <yangyun50@huawei.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 14 Oct 2024 at 21:28, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Miklos,
+>
+> I figured it was best to split the backing_file interface change from
+> the fix, but both changes should be targetting stable.
 
---VY579BsplRjShns6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks good.  Applied and pushed.
 
-On Tue, Oct 15, 2024 at 01:25:29PM +0100, Joey Gouly wrote:
-> On Tue, Oct 15, 2024 at 12:41:16PM +0100, Will Deacon wrote:
-
-> > 	if (system_supports_poe() && err == 0 && user->poe_offset) {
-> > 		...
-
-> > which gives the wrong impression that the POR is somehow optional, even
-> > if the CPU supports POE. So we should drop that check of
-> > 'user->poe_offset' as it cannot be NULL here.
-
-> That was cargo culted (by me) from the rest of the function (apart from TPIDR2
-> and FPMR). I think Kevin is planning on sending his signal changes still, but
-> is on holiday, maybe he can remove the last part of the condition as part of
-> his series.
-
-That's there because the decisions about "should we save this thing" are
-taken in setup_sigframe_layout() and for a bunch of the extensions we
-suppress the saving if they're in some sort of default state (eg, when
-we don't have TIF_SVE set we don't output the SVE sigframe).
-
---VY579BsplRjShns6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcObXAACgkQJNaLcl1U
-h9Buxgf7B6JxtnaQV7bcQdxU3W/45vjVnsJAj4oq+mBBFjqBV2314SqKcMSBrcJ1
-xE3cGR9A04qVmbrPzOkCkiHLXWFD6I/JAZP9eAZGwJXU0Jr8fJWBnXFqDEUdWstw
-XRJtiGFQkpdq/e0ijRt5DymHm18i/lEE/eg6Zi2o621Abzx9QNS+LMKkn9WpTOk8
-W/xOE+DMhh2zpccEJ8VU2HgFJxZ/EcqC/fgkBlJTTApUuvHNdhue2DyBAgzIIsoq
-2UYiKeiDTIkN07oUwJ7pRlftHSrLAZyM6WfK8+SZ2rQ1QzhTX8KUz5WzBw3BBpz5
-7nn2tj3oFNHFeCRd88yFJnu0JH0lIw==
-=yrSH
------END PGP SIGNATURE-----
-
---VY579BsplRjShns6--
+Thanks,
+Miklos
 
