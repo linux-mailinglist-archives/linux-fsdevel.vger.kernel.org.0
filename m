@@ -1,99 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-31997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233C599EE91
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 16:01:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7AF99EE93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 16:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F571C22ECF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 14:01:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6026284BA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 14:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9C91B2190;
-	Tue, 15 Oct 2024 14:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B9A1B2181;
+	Tue, 15 Oct 2024 14:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAD7GhDU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UjOlTXn4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB991AF0DA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 14:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F551BF2B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 14:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000893; cv=none; b=Ng/kocN3XrbL1800oQLSKhnpYGy2i8UytgJsN7L6T81H177/469tLq7RRUTzPnW/fg6MgLx66bojeonxc4oWZqJVLUrLoVC/m8FRoiBFeAn2wil+mNUyoUtvTjmfYZnAiBVnWC0UKR051kzrUi3BXOwjn/Zux7ZdLZAC7zupB6c=
+	t=1729000941; cv=none; b=TQV1c9XjGfXcjXIUrZVatWuMdU2ycKsMFpIpv4xVz35QNKQfgaKO49yr1U5jTtd9L9UWjqXoTaAvmnGrXk/vDvk4kbvr7/dt897aoGLO5EoLUihWps/5v97wPXCi++49JSw8XmEIZeikMqOzB8+yOPDuyeGvnoDWitXV7pPzVqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000893; c=relaxed/simple;
-	bh=REM+2JFObwLN4MpwBXCHS5Z4Amz8NlEpI5oRoF1I5mA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgVAW7JsAWh78nLF5ApwCcOfWLPdiFagFRLJek0SmUj4TiYCG6XvrORejpZI1EjYipdKrI7hzE2TsYpTgQsT18+J0SSmD4y7g18XQdFChSfIM8S9tIISiJznB87Xl5inzmjeohbrWV8PXvt0nftzUFAHKcxZgjkWyiQU53ZN6cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAD7GhDU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB69C4CEC6;
-	Tue, 15 Oct 2024 14:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729000893;
-	bh=REM+2JFObwLN4MpwBXCHS5Z4Amz8NlEpI5oRoF1I5mA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eAD7GhDUZkvxU3eBShCfaw3E6p+UH13NAnCE2XYYqfm4SwUP5uGqxDzQ8ur7GwZH9
-	 zQKVmvs/tA9dG7RYC/edeJcmFvnCyI7D4mMUu+rKJLoLj4+cbfx+mr6RljCnh8OyU6
-	 Dhe63cesZM9myH3gGVAdEMuoMqRxiTI3ovkgFVJWAbGV6H06qdScR6W/LJTGu3zaEE
-	 NsmduNLzT3gD3KGnUQUtbX2nVZvgMvA9tsH2Pn+qk26lvzKkPL8VJqrvkCkk05ZQmb
-	 EztwJYkkjemQuZ4x6LtdD6u1oElVd71W1N8QVaCVJB+3vlto3Z7+snCh2g+MW/1LHP
-	 pWbZUhO3nOzZQ==
-Date: Tue, 15 Oct 2024 16:01:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] : fhandle: relax open_by_handle_at() permission
- checks
-Message-ID: <20241015-geehrt-kaution-c9b3f1381b6f@brauner>
-References: <20240524-vfs-open_by_handle_at-v1-1-3d4b7d22736b@kernel.org>
- <CAOQ4uxhjQwvJZEcuPyOg02rcDgcLfHQL-zhUGUmTf1VD8cCg4w@mail.gmail.com>
- <CAOQ4uxgjY=upKo7Ry9NxahJHhU8jV193EjsRbK80=yXd5yikYg@mail.gmail.com>
+	s=arc-20240116; t=1729000941; c=relaxed/simple;
+	bh=uiJM4rSUOQpRuJzKCUCsVPKJFZberrG38PKUqst0GRU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=REjX9K4n1zhZw8dP9byuFyZIQ2CMRYL++ob7UpGF7h4rdMtVQzcYt7NEFiAjdA9K0FhR+jHtMJ0Dk7Yge9GydxjW80PZ/tHfxv8El5D4kEqWyq+355vCkrfIsvoubSfoXPkPiayCWxHRfjnamXnSAqFFy8zNuS334b+L3x2DFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UjOlTXn4; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4311a383111so26098575e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 07:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729000938; x=1729605738; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D3UvK17eSPt8UOicM/0eqJEABn/661zuSOEvnahhcrQ=;
+        b=UjOlTXn4z1SgFi4cJjdzEQaiyE/af8Z/vi/TmCqPe7uhR75iKGqJ1RKKGk+QnaqASB
+         ZyX+9F4OMqXQ2la9OZZjvuey+mRUHLLMVhh8vnXPa98bQydF46/qXqglrAJ7MO9JOWn4
+         7eNLSQpz5smqpohq7JOG+DutCLnNpL/Hnm/Z3XS6LbOocEXW/dxKkiwOh673YwX1uqBt
+         6A8PGOdWhtxA4RYMuSFlgNTkbUU6myOdHEXnsU31tEo1q6noD9U9rr8qUd7pu3dtAeGv
+         ECed8JB2ZyBz65E1JSlb/TkSPHEBC6LjtT0vykARNitVZ2e3F4u09qIz4o358FGpfRjU
+         Bh2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729000938; x=1729605738;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D3UvK17eSPt8UOicM/0eqJEABn/661zuSOEvnahhcrQ=;
+        b=rj1QFIsfRNDX04z8LhQmTAzfaZOwdxdHjQsRzKnRPDKUWEWQs0sgutPo8eOBfoMhiC
+         l7HHG0pkxU2Qr0OKF+xNt9OSei1ex3ygHr7UpLUHasFmfFM82XNY65kJI+saczZsk2DM
+         xqcQ7+BXp76ZyunCpMl4+mwP5l8mvFat100uWHIRSRg/yNYF9b0ONJzPJGPumtazF87i
+         OE4Q2k2gAgvmzjZxf9sV0YEdusUx1/7XcoDldKU753HpRPnBSh4vildm3mjW/2tLpY+k
+         hC1aJ0X0E2vnE6J0MkPkVx6xmrVlnkxZyfaYfep0sbnfcr3OrYOCef/TzBWktd/xJ0Ri
+         qDQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGdT6Iivl+CPNpLDvSsehQU1CgEAjX/f607+w3C9gWl5GJSUWbu7FZVGhlN84DqA2sm+GgmH7N/ECjfIQo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy00QZvZIrdx27afrkjwQJIFzOZ3Rkqytn44HMiBJ/FAo2HUj8E
+	RKxk+PgNL5si8bHId0hiX5DcbY1wwX9N7Tdloez/jNA2DP8l7wJ/pHvlE/cfiaPCxKKPfsZr2uf
+	b6oyerd4etfWaGA==
+X-Google-Smtp-Source: AGHT+IGU78NPTvkFziD53eUU1HzliQBcjp57k9rG0VlMlSkUOEZYF0iVT9DAZ6/MiIGfP+K1uxt2QF8cbr3ayec=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:600c:793:b0:431:4b20:c7f9 with SMTP
+ id 5b1f17b1804b1-4314b20c90fmr21015e9.5.1729000937986; Tue, 15 Oct 2024
+ 07:02:17 -0700 (PDT)
+Date: Tue, 15 Oct 2024 14:02:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgjY=upKo7Ry9NxahJHhU8jV193EjsRbK80=yXd5yikYg@mail.gmail.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAON1DmcC/x3MQQqAIBBA0avErBtQMYKuEi3MxhoiC0eiiO6et
+ HyL/x8QSkwCXfVAopOF91ig6wr84uJMyFMxGGWsVrrB7GRFcYHyjX6LWdC1PpAdjbetgtIdiQJ f/7Mf3vcDzqqUCmMAAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5281; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=uiJM4rSUOQpRuJzKCUCsVPKJFZberrG38PKUqst0GRU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnDnXlT0P9OH45c6iZwippHyMTLUkxyS14qWHIW
+ C90/syoimyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZw515QAKCRAEWL7uWMY5
+ RjJeEAC4nJb3elnKdDzL5/RoMJ3lgi3cdw40bmjgthB/t2mjkEnDxrVXpD6avxj5DXUhIfeX90o
+ 4Mg05WTn5yXHvjwdTDn4oW7sMwU0Yy5xYrWJMDJWrAumWU7bYSl2NI+jx2/Gb8FMuxMBIyg6Ud/
+ bjRSsMuqnkVvlx3xKNGSWo9ERmQ8Y+yZO3TYPx6GdoUGhVmegC0DoDjyuPwYaeu0xCGV3L2cM1S
+ TC9WRefQQVs5QXCZWJgyIgOzDaj3y6SeAUVcN9K80awo6Gm5mXu7Klr3A1RO9Bo1TrG2/eHBlSK
+ yt16d+qSL/UxAxvQvz3eDE+bpkUS2N3crC2hADzdgMg0n9Gz2I0f4rhAWtU+ykGvjjCEzCI+6pS
+ 3ajsT8fszK7F3eWZXBnVDhv1Hr91ADY84NXhCg3EtC270Eul7OebK86tTfyMI9vJi2cJAxXgV9Q
+ F2nB6OtEKAojVaWuzwL6X5OhNxMfPCCBSJbbl3MihTgZx0gBhd4GNzeqBWlOXed5F5vcxfxv4Bb
+ ck7nDrTqhInxq4rDw5Ptbt3Vlr4mTjWTiygcBQB8W5JYc5Y5qIrR5qA6VSqlvW7pQQgiwIKGRTw
+ +g6dmypdfgWNC1tegdYUTyYjaN8SOXnBo9kU6gptOaEcVxJRsoMySbxm9Br22x4BIGcq2pN6/kI 2FrW5cbBWCYgBlg==
+X-Mailer: b4 0.13.0
+Message-ID: <20241015-task-safety-cmnts-v1-1-46ee92c82768@google.com>
+Subject: [PATCH] rust: task: adjust safety comments in Task methods
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Oct 13, 2024 at 06:34:18PM +0200, Amir Goldstein wrote:
-> On Fri, May 24, 2024 at 2:35 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Fri, May 24, 2024 at 1:19 PM Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > A current limitation of open_by_handle_at() is that it's currently not possible
-> > > to use it from within containers at all because we require CAP_DAC_READ_SEARCH
-> > > in the initial namespace. That's unfortunate because there are scenarios where
-> > > using open_by_handle_at() from within containers.
-> > >
-> > > Two examples:
-> > >
-> > > (1) cgroupfs allows to encode cgroups to file handles and reopen them with
-> > >     open_by_handle_at().
-> > > (2) Fanotify allows placing filesystem watches they currently aren't usable in
-> > >     containers because the returned file handles cannot be used.
-> > >
-> 
-> Christian,
-> 
-> Follow up question:
-> Now that open_by_handle_at(2) is supported from non-root userns,
-> What about this old patch to allow sb/mount watches from non-root userns?
-> https://lore.kernel.org/linux-fsdevel/20230416060722.1912831-1-amir73il@gmail.com/
-> 
-> Is it useful for any of your use cases?
-> Should I push it forward?
+The `Task` struct has several safety comments that aren't so great. For
+example, the reason that it's okay to read the `pid` is that the field
+is immutable, so there is no data race, which is not what the safety
+comment says.
 
-Dammit, I answered that message already yesterday but somehow it didn't
-get sent or lost in some other way.
+Thus, improve the safety comments. Also add an `as_ptr` helper. This
+makes it easier to read the various accessors on Task, as `self.0` may
+be confusing syntax for new Rust users.
 
-I personally don't have a use-case for it but the systemd folks might
-and it would be best to just rope them in.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+This is based on top of vfs.rust.file as the file series adds some new
+task methods. Christian, can you take this through that tree?
+---
+ rust/kernel/task.rs | 43 ++++++++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
+
+diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+index 1a36a9f19368..080599075875 100644
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@ -145,11 +145,17 @@ fn deref(&self) -> &Self::Target {
+         }
+     }
+ 
++    /// Returns a raw pointer to the task.
++    #[inline]
++    pub fn as_ptr(&self) -> *mut bindings::task_struct {
++        self.0.get()
++    }
++
+     /// Returns the group leader of the given task.
+     pub fn group_leader(&self) -> &Task {
+-        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+-        // have a valid `group_leader`.
+-        let ptr = unsafe { *ptr::addr_of!((*self.0.get()).group_leader) };
++        // SAFETY: The group leader of a task never changes after initialization, so reading this
++        // field is not a data race.
++        let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
+ 
+         // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
+         // and given that a task has a reference to its group leader, we know it must be valid for
+@@ -159,42 +165,41 @@ pub fn group_leader(&self) -> &Task {
+ 
+     /// Returns the PID of the given task.
+     pub fn pid(&self) -> Pid {
+-        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+-        // have a valid pid.
+-        unsafe { *ptr::addr_of!((*self.0.get()).pid) }
++        // SAFETY: The pid of a task never changes after initialization, so reading this field is
++        // not a data race.
++        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+     }
+ 
+     /// Returns the UID of the given task.
+     pub fn uid(&self) -> Kuid {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        Kuid::from_raw(unsafe { bindings::task_uid(self.0.get()) })
++        // SAFETY: It's always safe to call `task_uid` on a valid task.
++        Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
+     }
+ 
+     /// Returns the effective UID of the given task.
+     pub fn euid(&self) -> Kuid {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        Kuid::from_raw(unsafe { bindings::task_euid(self.0.get()) })
++        // SAFETY: It's always safe to call `task_euid` on a valid task.
++        Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+     }
+ 
+     /// Determines whether the given task has pending signals.
+     pub fn signal_pending(&self) -> bool {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        unsafe { bindings::signal_pending(self.0.get()) != 0 }
++        // SAFETY: It's always safe to call `signal_pending` on a valid task.
++        unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
+     }
+ 
+     /// Returns the given task's pid in the current pid namespace.
+     pub fn pid_in_current_ns(&self) -> Pid {
+-        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
+-        // pointer as the namespace is correct for using the current namespace.
+-        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
++        // SAFETY: It's valid to pass a null pointer as the namespace (defaults to current
++        // namespace). The task pointer is also valid.
++        unsafe { bindings::task_tgid_nr_ns(self.as_ptr(), ptr::null_mut()) }
+     }
+ 
+     /// Wakes up the task.
+     pub fn wake_up(&self) {
+-        // SAFETY: By the type invariant, we know that `self.0.get()` is non-null and valid.
+-        // And `wake_up_process` is safe to be called for any valid task, even if the task is
++        // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
+         // running.
+-        unsafe { bindings::wake_up_process(self.0.get()) };
++        unsafe { bindings::wake_up_process(self.as_ptr()) };
+     }
+ }
+ 
+@@ -202,7 +207,7 @@ pub fn wake_up(&self) {
+ unsafe impl crate::types::AlwaysRefCounted for Task {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+-        unsafe { bindings::get_task_struct(self.0.get()) };
++        unsafe { bindings::get_task_struct(self.as_ptr()) };
+     }
+ 
+     unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+
+---
+base-commit: 22018a5a54a3d353bf0fee7364b2b8018ed4c5a6
+change-id: 20241015-task-safety-cmnts-a7cfe4b2c470
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
