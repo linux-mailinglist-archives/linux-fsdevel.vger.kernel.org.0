@@ -1,89 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-31958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8580C99E375
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 12:09:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4B799E43B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 12:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF821C222F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 10:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18D3AB22C46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 10:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B68F1E32D0;
-	Tue, 15 Oct 2024 10:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0961E7669;
+	Tue, 15 Oct 2024 10:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IxAhr+1Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B99219F132
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 10:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620451E378F;
+	Tue, 15 Oct 2024 10:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986945; cv=none; b=EEqO1BmmsHMMdk4v4PONQhxyGF0fzr6jG0ZOgBmf5KuxFSlSzsfpQLp2ke3KRrBzh2zWrt2FCZzgO6d7h66JJad5g4qCZnBx8TS3sdxaTFBVY5ZkMARNc+Zo9WPTeCG2SsuCidQSoQ0JDe5zXfiqjhczhv6zpJtKmaIKrAOk6IE=
+	t=1728988748; cv=none; b=kH6nzPbvpBie65EnQuNu6BTXGOt6jpN6cZSERe8JBpOwl/OOxynXaLluK0Ql3fl5KvS98WhqirPpvmizwi87Cgqg/gON1jzTrxtCuv2x70pdaBFMNuuZyCptzixeo5qTrqGQ+xArYuzvBA5/I5wk5yN8xz4QTBoEv/s5yDpYILQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986945; c=relaxed/simple;
-	bh=IWiPpCQxMvLF+uRCz+z9yoECRgrW+yEQRXfRrZIKtVY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sGp4wmHpc8rflzyIsKOQTLaiH0kDRvYIHsu0la0feQDojUB4q1wYaWtP2mia+xrcuYETJtvbEOY06wEi9i0bm5skAP8bYPkDty/TEIGOaM4tQmjb/94oVv4DJiPsXqekdlZXO1r1rFfR00zpCcM+kkKklnkFPar75S72rBV+G/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bcae85a5so20685755ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728986943; x=1729591743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJ1XgZLD06jZgmdfCG0BxwXZqAtgXOjAbyLjBcsgS6M=;
-        b=KvKRwPTaCBrduXO8NAjZRFdB5Nu6TMPeAkNVZ8m/X2yMycnebpOT/wIyvEu8kF/xFF
-         4qSGymqL2P08Cb1u2AVPJtcKZzt8afmI6EW63oMd52fJoWA2TOT4IcQdHyrsd3z1OZ2e
-         8ha7WN//kx7eMmqB1Ix/oSZD6AkxDejet/HBgmAGRUVmTDHWqVbShhX3EgyLvoUmSXLu
-         sQod5Pf3HjYv6XS+f0BAgp+oQ+G2jBg183t2VQOwkrG88Ro2+tdit62/WRLa6frIjN1h
-         0f8z5lMkKSwXZ2x758hJYm/Ce/GgSKEXbaA6Ne+bOySAKMy21AdVoF8FdDJiPyBKnvZt
-         FUeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1jup7MKh8H9QHgRtvZt2AakL4E418xkNLAG7067d3irt5dWnN5DT7rDLkBDot1bKoUFsKc/aiWCV6GYuN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH3l8+Nn6j63WivfVf6klvWy5dwRSDckPLUcwUDFcQiE9Z7vfP
-	CTRgSAEZPndmpkMkckL5ehdYnvzudHR6O3P4PpfsPjvwpqq1FbQx02WHRNKQ93vNZs91J6B8BPU
-	zHVpsIK7/YR0lxTUgR4bQJ7YWcTAZhBSjmHUpt4hhjbUHYenkMoULruY=
-X-Google-Smtp-Source: AGHT+IF1ACL8+aT3InlSzj0jgkv7uhzXC6SoU1xoFZig0zYBBt1vpWJKJJP0NyURctI+RjUawz8qZZtyWUOP4xk2iAc+NLmKXANC
+	s=arc-20240116; t=1728988748; c=relaxed/simple;
+	bh=UoMHr3WzhbxE3hx8+va/FD/uR7PV83fez2EgfQRf5xs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=PaUCaYqMMYb1pbc03eRg/D3kGd89v+vBjhnueVpO7tcMvi7p8cYYO8rzHK2FSGvu9OS2v+sE0I5Qj54b5cltrM9qeElm7WQ+3JEe0PWHQrlVo4Mnz4QuvcnYkUoTj6ANdbOMfJNXGfl7aMhHAIyy2Kh2O79IpMtuxGUmT2S8ExI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IxAhr+1Y; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728988744; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=v+dwRPCTeAm3f9Cj5qx8sZFX+iLjtJLr7D++fvDIKQk=;
+	b=IxAhr+1YHE6bz8sED4xf/WFdHBcOjsSeNYFm4ZXik2Gtm7WwVXK8DjjNakRu/EqqN2XW2kHomLcO5j6jRLQipFVYjogNpZ/c7O6zZ3OUElHBn8s6oP1qVWCbXUszs7D9mAN5o8M/VzxhSFvD+xQt9sGwQscbjqvIWYQoeNyLlc8=
+Received: from 30.221.130.176(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHDPpua_1728988742 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 18:39:03 +0800
+Message-ID: <62f54645-53cc-46d3-aaab-8583ed7f1a68@linux.alibaba.com>
+Date: Tue, 15 Oct 2024 18:39:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3dc2:b0:39d:3c87:1435 with SMTP id
- e9e14a558f8ab-3a3a709de06mr122817055ab.1.1728986943585; Tue, 15 Oct 2024
- 03:09:03 -0700 (PDT)
-Date: Tue, 15 Oct 2024 03:09:03 -0700
-In-Reply-To: <120ff6bf-3607-4f6b-9ec4-f1af9bdbdbd0@linux.alibaba.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670e3f3f.050a0220.f16b.000b.GAE@google.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [syzbot] [iomap?] WARNING in iomap_iter (3)
-From: syzbot <syzbot+74cc7d98ae5484c2744d@syzkaller.appspotmail.com>
-To: hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, xiang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: syzbot <syzbot+74cc7d98ae5484c2744d@syzkaller.appspotmail.com>,
+ brauner@kernel.org, chao@kernel.org, dhavale@google.com, djwong@kernel.org,
+ huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, xiang@kernel.org
+References: <670e2fe1.050a0220.d5849.0004.GAE@google.com>
+ <5f85c28d-5d06-4639-9453-41c38854173e@linux.alibaba.com>
+In-Reply-To: <5f85c28d-5d06-4639-9453-41c38854173e@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+74cc7d98ae5484c2744d@syzkaller.appspotmail.com
-Tested-by: syzbot+74cc7d98ae5484c2744d@syzkaller.appspotmail.com
+On 2024/10/15 17:10, Gao Xiang wrote:
+> Hi,
+> 
+> On 2024/10/15 17:03, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    d61a00525464 Add linux-next specific files for 20241011
+>> git tree:       linux-next
 
-Tested on:
+..
 
-commit:         ae54567e erofs: get rid of kaddr in `struct z_erofs_ma..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git erofs-for-6.12-rc4-fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bac030580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=74cc7d98ae5484c2744d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>
+>> commit 56bd565ea59192bbc7d5bbcea155e861a20393f4
+>> Author: Gao Xiang <hsiangkao@linux.alibaba.com>
+>> Date:   Thu Oct 10 09:04:20 2024 +0000
+>>
+>>      erofs: get rid of kaddr in `struct z_erofs_maprecorder`
+> 
+> I will look into that, but it seems it's just a trivial cleanup,
+> not quite sure what happens here...
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+It seems that it's only caused by an outdated version in
+next-20241011, which doesn't impact to upstream or the
+latest -next:
+https://lore.kernel.org/r/670e399e.050a0220.d9b66.014e.GAE@google.com
+https://lore.kernel.org/r/670e3f3f.050a0220.f16b.000b.GAE@google.com
+
+so
+
+#syz set subsystems: erofs
+
+#syz invalid
 
