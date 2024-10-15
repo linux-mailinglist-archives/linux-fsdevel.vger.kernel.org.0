@@ -1,193 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-32035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F6F99F842
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 22:46:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD0099FA1C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 23:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80C91F22175
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 20:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6024D2846A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5591F81B8;
-	Tue, 15 Oct 2024 20:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37FC201029;
+	Tue, 15 Oct 2024 21:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RxzU04ba"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkhLr5d6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AB11B6CF3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 20:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F57C2003DD;
+	Tue, 15 Oct 2024 21:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729025190; cv=none; b=otXlfrRJ1gJ/FlRKtluvqXlRi4UZ+jXDA0t5iGjcUtna3HvjOt5CsPHdocGwrGRXIUkMRGSofnhwZreCZWHbv3sKYe/LEgKH7bxqLgq6KRY5b6KH0d2HR3+006uibvZa27mW5Xhp2D/OOOOt1Lox21jYHkVMK33LGtfgznsyTKM=
+	t=1729027988; cv=none; b=REhCToGfK0Nmf/qHt3gQZ35Qyq5jacKaUrxrJY57ZvnnZr1vvWctqczzxKK1X2Tn7PT6oWS/usfg4MkmT8faTlcwtmRajfFynqkYi8k1QqMUhsbGKrWk5ae2jGsHZ8qyLTd+rA22GPRZFe1Qy6ZtGENRbgIbzUqHRrFDcjDpMBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729025190; c=relaxed/simple;
-	bh=AqUdafXKTY6DDHGLzTGsizAxqmBoMgpVRl5AemWKIAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmrSUsQIsHIGJhLUFDdDdsRFmKxbrwtsDhjgf2uoQ1CsRPNw1zON/lJPmXPQA2mGaa4Hwr0GNP8UkxYS4Us2peGIgdC0uIzehGrs5srjCK+w7N8z2jPoL0nC/wY8ltxQq3ab0fGnzOJ5yZmBlrt8xjKjJw0qF2+37QI7bYBkBj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RxzU04ba; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4608dddaa35so55581cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 13:46:28 -0700 (PDT)
+	s=arc-20240116; t=1729027988; c=relaxed/simple;
+	bh=NezhgycQLAQIQcDYDKSY4BGfzzueVAmkJQhNThtdlI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u1N9O4HJNGkYCqs5P7NskzYkyg0nlrMZcs5xBB1Z01FALEf2LbBc2+rXUwiwjxWfh6BdFqqjjk0kd4hPyIm5Pzln8nJ6boF5e/v6Vl03txbzqoWRr2LbpmMzvZwGk9DJ37l9L5jZ/HyB3OhMPx+pO/WiG6uhPm1TXLW/xK2JGqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkhLr5d6; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so22833755ad.1;
+        Tue, 15 Oct 2024 14:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729025187; x=1729629987; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
-        b=RxzU04ba3Lmk/Zs/I/wzKrca5WFbJKJ2Hg4RoTg7X3ZxloAxbQzFUXW7lOLxyUKsUC
-         p3hGA/7vnFbiqrsbKh/5lNmbgijeEopsGaHaG1SEcgeHv5eNHdAk6J+4+BVhcg97dMMU
-         cFurJp1CyFP/N0al4tmw3PPuqtaO5C24Ehgf/I1w6Bod+Jqmfc5H/Uvg2pVOE5RwoZF9
-         UfkSfiEt0Vlt2PgAc0O+qhfJhZSbW6u/4WYRNdBvFgjMVFv7Dn4l8cTiQoMaUI9nR8hV
-         lu1BMTBrgbK82iuUCPE1lSlg1hFCCuqtugju4CmEvTTM4+93wYL6A+UrqtxBwqkEZKDT
-         yH8Q==
+        d=gmail.com; s=20230601; t=1729027986; x=1729632786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XVAm6BNE00O0scacTdQbYjMo5XjngWN20FrkxdPAapA=;
+        b=jkhLr5d6Yn6QdRuxz4Avz9RxO3djh6Whjzo2QfeKvQVCgoqM41H3zwJ3kBVJWBhxVX
+         ZQP3izBblUpw6wsJ/3LaNANv+8gfyEjjeAz80u+zjPs6BUtOj5Q0QXYJRxhhQ1IDDSS8
+         okyAMJ+eFoaWNPZCyBrR6zxd+UeAneLSILRoi/uZapLfO0IDoSmfavRScKupaij1Awyu
+         XZ3yEOPFYKjMfSAoYASrI9V5MyO6O5kJjI1GeEKN12ac+qvCK/fsZaMeNh1hlKwusdsA
+         paZX9db/6+b4U8Jc3FYqcLE2Ty51ozniUT27RXpXH0kvJpjilLLfgAWyhYpGNWYONngg
+         UXmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729025187; x=1729629987;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
-        b=HaRSXDoVM5tDRZY/gdaWBxnyAOcsV4caOcfuIoL9z13YJ0e8UuaOIlVu0PTpzvVds2
-         VxX0svV0dQMywDw9oxlCwh9k0a7/63tZYlyYimJHH+mFyEoq8jyt3yWLc5FvE/p1lQo4
-         ZwzDq/jiZiTVrN69FpaUxlzlrLshUi+INRzdyBKkXI6lIv7zUKSXPOPEgIOfwH0ic8Ep
-         mdQL+HyG81ZIWKfUjOIk1674O2Ji55StEC1rvLEItxWDlVFOGGOq4vIhac16zB3lRS26
-         hmNlJ5bhIxntY4R10GtQX7bDGBU+gpBjuiutzdUHGBl25Abc5aRhiyAWVFzKYCOAXZey
-         PF+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbFz22QzdwnLvcEb+cOo9usHwnQ756rWBb2aPZ4w/90f96IlfjKfnADnwI/PD/fUh0qvnrnA2wxdIW7S2R@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeYSulT+KdwIAjr77DPSlK8Bs5j/uDZxtfVzQE6KzbkEUgnGjp
-	Hx40NhNMJzMntinukzlna5zdnBW5LsAIVPOv9vsgzVkWC8n60czlIot+thRPsQ==
-X-Google-Smtp-Source: AGHT+IETthPrudZ1fSdhkTk5TGYZfzkYyH24kZnnVgT0XIy0sRJSH6T8V1s8YXXPWc2XhTzfDsBVJA==
-X-Received: by 2002:a05:622a:47cd:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4608db32e70mr907251cf.10.1729025186861;
-        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
-Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363c9d24sm108524485a.133.2024.10.15.13.46.26
+        d=1e100.net; s=20230601; t=1729027986; x=1729632786;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XVAm6BNE00O0scacTdQbYjMo5XjngWN20FrkxdPAapA=;
+        b=sNKuDNx4cuQjtn5RD0J5VpTpmNvxL8CZyzrgeXhkpbhxQfbjy5RVm7+e8ih9Sc5CRP
+         P43CGHg2a2q3fZ77Wn+cpgBOSWdvhgonW2I3rFgYnIsNsoI44xHHkNmyYxMfpT9u3Ju0
+         K4WTrIXPBNKwx1+ub4cYn9auFTIRx1CuSw97ROFr9yqbIkVl3gvlNRHn14VPtycND6sL
+         sqGM3ZEq03U9SVwLHocFe4pANcUgYGFPDg9pqWrn7lw6awYVIQiVXs5km9czjuKj25qR
+         yPvkPD+e9XtNW6HqYkkp23E0TVAU+YoZVB+3jtma5DrNcmhnFbgEK0l+S/U9YYRwX+PK
+         143g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3E6jO6skntLHNuGlAU4rDgFN23vqMf69TIRIF7hY9vHvS4Le7qDhdqTFEJmhAJnixelbMVIx8HepjPv4l@vger.kernel.org, AJvYcCXX5ejJgAkkmUvE+1hXdoY1ywC3Hrpr5coE0NIntkb6hRbUVRyJ44yEujoSoDDV6FP/QDr3X6pbUl4spMYY@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywuqu+WMILzDzJdgC4d4hwI48v8G8IMF36w8yNshBNrJzfHxd8m
+	VD3Ar6YujOCZ9F48sRq3yWfb8/no7My57PHBd9bW4vRiWM9skMud1+ZFWg==
+X-Google-Smtp-Source: AGHT+IE2k8JjtGFY8J21CW8gY4rJ5C8TPoXMzrZQWce/UKEpuNUCsECgkTSwDiCAZKj8SJZ4ejN+sQ==
+X-Received: by 2002:a17:903:2344:b0:20b:6e74:b712 with SMTP id d9443c01a7336-20ca16cadd7mr212783355ad.45.1729027985903;
+        Tue, 15 Oct 2024 14:33:05 -0700 (PDT)
+Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805cc09sm16768935ad.275.2024.10.15.14.33.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:46:23 -0400
-From: Brian Geffon <bgeffon@google.com>
-To: brauner@kernel.org
-Cc: bristot@redhat.com, bsegall@google.com, cmllamas@google.com,
-	dietmar.eggemann@arm.com, ebiggers@kernel.org, jack@suse.cz,
-	jing.xia@unisoc.com, juri.lelli@redhat.com, ke.wang@unisoc.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, vincent.guittot@linaro.org,
-	viro@zeniv.linux.org.uk, vschneid@redhat.com,
-	xuewen.yan94@gmail.com, xuewen.yan@unisoc.com,
-	Benoit Lize <lizeb@google.com>
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <Zw7Un-Cr8JA4oMv0@google.com>
-References: <20240426-zupfen-jahrzehnt-5be786bcdf04@brauner>
- <20240919123635.2472105-1-bgeffon@google.com>
- <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
+        Tue, 15 Oct 2024 14:33:05 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix kernel bug due to missing clearing of buffer delay flag
+Date: Wed, 16 Oct 2024 06:32:07 +0900
+Message-ID: <20241015213300.7114-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
+References: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
 
-On Wed, Sep 25, 2024 at 02:38:02PM -0400, Brian Geffon wrote:
-> I think this patch really needs help with the commit message, something like:
-> 
-> wait_queue_func_t accepts 4 arguments (struct wait_queue_entry
-> *wq_entry, unsigned mode, int flags, void *key);
-> 
-> In the case of poll and select the wait queue function is pollwake in
-> fs/select.c, this wake function passes
-> the third argument flags as the sync parameter to the
-> default_wake_function defined in kernel/sched/core.c. This
-> argument is passed along to try_to_wake_up which continues to pass
-> down the wake flags to select_task_rq and finally
-> in the case of CFS select_task_rq_fair. In select_task_rq_fair the
-> sync flag is passed down to the wake_affine_* functions
-> in kernel/sched/fair.c which accept and honor the sync flag.
-> 
-> Epoll however when reciving the WF_SYNC flag completely drops it on
-> the floor, the wakeup function used
-> by epoll is defined in fs/eventpoll.c, ep_poll_callback. This callback
-> receives a sync flag just like pollwake;
-> however, it never does anything with it. Ultimately it wakes up the
-> waiting task directly using wake_up.
-> 
-> This shows that there seems to be a divergence between poll/select and
-> epoll regarding honoring sync wakeups.
-> 
-> I have tested this patch through self tests and numerous runs of the
-> perf benchmarks for epoll. All tests past and
-> I did not see any observable performance changes in epoll_wait.
-> 
-> Reviewed-by: Brian Geffon <bgeffon@google.com>
-> Tested-by: Brian Geffon <bgeffon@google.com>
-> Reported-by: Benoit Lize <lizeb@google.com>
+Syzbot reported that after nilfs2 reads a corrupted file system image
+and degrades to read-only, the BUG_ON check for the buffer delay flag
+in submit_bh_wbc() may fail, causing a kernel bug.
 
-Friendly ping on this. Would someone mind taking a look and picking this
-up?
+This is because the buffer delay flag is not cleared when clearing the
+buffer state flags to discard a page/folio or a buffer head. So, fix
+this.
 
-> 
-> 
-> On Thu, Sep 19, 2024 at 8:36 AM Brian Geffon <bgeffon@google.com> wrote:
-> >
-> > We've also observed this issue on ChromeOS, it seems like it might long-standing epoll bug as it diverges from the behavior of poll. Any chance a maintainer can take a look?
-> >
-> > Thanks
-> > Brian
-> >
-> > On Fri, Apr 26, 2024 at 04:05:48PM +0800, Xuewen Yan wrote:
-> > > Now, the epoll only use wake_up() interface to wake up task.
-> > > However, sometimes, there are epoll users which want to use
-> > > the synchronous wakeup flag to hint the scheduler, such as
-> > > Android binder driver.
-> > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > when the sync is true in ep_poll_callback().
-> > >
-> > > Co-developed-by: Jing Xia <jing.xia@unisoc.com>
-> > > Signed-off-by: Jing Xia <jing.xia@unisoc.com>
-> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > > ---
-> > >  fs/eventpoll.c       | 5 ++++-
-> > >  include/linux/wait.h | 1 +
-> > >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > index 882b89edc52a..9b815e0a1ac5 100644
-> > > --- a/fs/eventpoll.c
-> > > +++ b/fs/eventpoll.c
-> > > @@ -1336,7 +1336,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> > >                               break;
-> > >                       }
-> > >               }
-> > > -             wake_up(&ep->wq);
-> > > +             if (sync)
-> > > +                     wake_up_sync(&ep->wq);
-> > > +             else
-> > > +                     wake_up(&ep->wq);
-> > >       }
-> > >       if (waitqueue_active(&ep->poll_wait))
-> > >               pwake++;
-> > > diff --git a/include/linux/wait.h b/include/linux/wait.h
-> > > index 8aa3372f21a0..2b322a9b88a2 100644
-> > > --- a/include/linux/wait.h
-> > > +++ b/include/linux/wait.h
-> > > @@ -221,6 +221,7 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head);
-> > >  #define wake_up_all(x)                       __wake_up(x, TASK_NORMAL, 0, NULL)
-> > >  #define wake_up_locked(x)            __wake_up_locked((x), TASK_NORMAL, 1)
-> > >  #define wake_up_all_locked(x)                __wake_up_locked((x), TASK_NORMAL, 0)
-> > > +#define wake_up_sync(x)                      __wake_up_sync(x, TASK_NORMAL)
-> > >
-> > >  #define wake_up_interruptible(x)     __wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
-> > >  #define wake_up_interruptible_nr(x, nr)      __wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
-> > > --
-> > > 2.25.1
-> > >
-> >
+This became necessary when the use of nilfs2's own page clear routine
+was expanded.  This state inconsistency does not occur if the buffer
+is written normally by log writing.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=985ada84bf055a575c07
+Fixes: 8c26c4e2694a ("nilfs2: fix issue with flush kernel thread after remount in RO mode because of driver's internal error or metadata corruption")
+Cc: stable@vger.kernel.org
+---
+Andrew, please apply this as a bug fix.
+
+This fixes a kernel bug recently reported by Syzbot.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/page.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 9c0b7cddeaae..5436eb0424bd 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -77,7 +77,8 @@ void nilfs_forget_buffer(struct buffer_head *bh)
+ 	const unsigned long clear_bits =
+ 		(BIT(BH_Uptodate) | BIT(BH_Dirty) | BIT(BH_Mapped) |
+ 		 BIT(BH_Async_Write) | BIT(BH_NILFS_Volatile) |
+-		 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected));
++		 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected) |
++		 BIT(BH_Delay));
+ 
+ 	lock_buffer(bh);
+ 	set_mask_bits(&bh->b_state, clear_bits, 0);
+@@ -406,7 +407,8 @@ void nilfs_clear_folio_dirty(struct folio *folio)
+ 		const unsigned long clear_bits =
+ 			(BIT(BH_Uptodate) | BIT(BH_Dirty) | BIT(BH_Mapped) |
+ 			 BIT(BH_Async_Write) | BIT(BH_NILFS_Volatile) |
+-			 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected));
++			 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected) |
++			 BIT(BH_Delay));
+ 
+ 		bh = head;
+ 		do {
+-- 
+2.43.0
+
 
