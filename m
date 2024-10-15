@@ -1,175 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-31990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852D999EE01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:42:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3B99EE12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A35E1F220CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044E62880C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885A328691;
-	Tue, 15 Oct 2024 13:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C301DD0CE;
+	Tue, 15 Oct 2024 13:40:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BBE1B2181;
-	Tue, 15 Oct 2024 13:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F414A1C07CC;
+	Tue, 15 Oct 2024 13:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999601; cv=none; b=cU8Xe3L8AqrDqk5x2CqjKX51mX45OJs7A8tVFI0eRAkaKm4aH8lwC7CWcXVY3vKciHwEuzJY+cHdbqA/8n6cY3fIguR45EkW9Zp5YZPDyWAPqidI7IBAlEbjeBNA1cAa0x6xRw5u3DRHXzFhspmUe29bt1szevlp7Cae5z+lCIM=
+	t=1728999642; cv=none; b=GV7j6OJoXKJR4TxP0nC7Hzd8Eno3Lx4eJRSmPDv4vgUY8eJJdF5XAOOp4ievQ6yqqZq72hgGg7VQKZ9EkGtlJSEecKb6nLpFTuGxL6OTE3Sesde41EuuoLbL3HPZ2LEWu6NZ1jSUOFg9aWkY38+EBzR/eIOmzfPwV427uDUIKW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999601; c=relaxed/simple;
-	bh=SkNyj+3crdzW7cJachTesaxxbmUIxu0p5toJvApTMaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEnDKo5RzBvFoe19n1l/Ctg0c1LQsbwN88reDxDfdZ3qEGxza61g3ZZNTvh9gxcEw82O9MxbIiY5dOaSYAD3sAQ/hryPCxTKdSjymxf2iGpmIzAYHXFmMntOhdQ/quNc2gbQm/hOqxnim1bEoy6NEW0Nr9cqbqIxQPEuNNaLezI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 911ABFEC;
-	Tue, 15 Oct 2024 06:40:28 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.51])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C40753F51B;
-	Tue, 15 Oct 2024 06:39:54 -0700 (PDT)
-Date: Tue, 15 Oct 2024 14:39:49 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Joey Gouly <joey.gouly@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, nd@arm.com,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
-Message-ID: <Zw5wpTWgNC+aC+Vk@e133380.arm.com>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-20-joey.gouly@arm.com>
- <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
- <20241009144301.GA12453@willie-the-truck>
- <20241014171023.GA18295@willie-the-truck>
- <20241015095911.GA3777204@e124191.cambridge.arm.com>
- <20241015114116.GA19334@willie-the-truck>
+	s=arc-20240116; t=1728999642; c=relaxed/simple;
+	bh=BzYWAhoI0axCue+kv6wY0di0ivbwBcXcR4ZVqGGktH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fQBGnqEioRNj1p+eMYpQYahuoRX+aNiVd1LBo4Iz3u7yaWvgvd1UrxegkmGsqq5b2RDxBYL3uFNUf0pKexgg1+VEN4MLMfmwOw21DZiHRN6vQAyhmNN7iSLqDvtV0Lw1Dd1MdwzHRyLcHAi0AbZhh4Ux6i11NzdUVlnj+DfvOl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrAB3fc3DcA5n9f4QAQ--.8912S2;
+	Tue, 15 Oct 2024 21:40:19 +0800 (CST)
+Received: from [10.12.164.29] (unknown [10.12.164.29])
+	by gateway (Coremail) with SMTP id _____wAHckLBcA5nX5dIAA--.51398S2;
+	Tue, 15 Oct 2024 21:40:18 +0800 (CST)
+Message-ID: <769f0267-f09d-46e8-854f-52f6c65996f8@hust.edu.cn>
+Date: Tue, 15 Oct 2024 21:40:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015114116.GA19334@willie-the-truck>
-
-On Tue, Oct 15, 2024 at 12:41:16PM +0100, Will Deacon wrote:
-> On Tue, Oct 15, 2024 at 10:59:11AM +0100, Joey Gouly wrote:
-> > On Mon, Oct 14, 2024 at 06:10:23PM +0100, Will Deacon wrote:
-> > > Kevin, Joey,
-> > > 
-> > > On Wed, Oct 09, 2024 at 03:43:01PM +0100, Will Deacon wrote:
-> > > > On Tue, Sep 24, 2024 at 01:27:58PM +0200, Kevin Brodsky wrote:
-> > > > > On 22/08/2024 17:11, Joey Gouly wrote:
-> > > > > > @@ -1178,6 +1237,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
-> > > > > >  		sme_smstop();
-> > > > > >  	}
-> > > > > >  
-> > > > > > +	if (system_supports_poe())
-> > > > > > +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
-> > > > > 
-> > > > > At the point where setup_return() is called, the signal frame has
-> > > > > already been written to the user stack. In other words, we write to the
-> > > > > user stack first, and then reset POR_EL0. This may be problematic,
-> > > > > especially if we are using the alternate signal stack, which the
-> > > > > interrupted POR_EL0 may not grant access to. In that situation uaccess
-> > > > > will fail and we'll end up with a SIGSEGV.
-> > > > > 
-> > > > > This issue has already been discussed on the x86 side, and as it happens
-> > > > > patches to reset PKRU early [1] have just landed. I don't think this is
-> > > > > a blocker for getting this series landed, but we should try and align
-> > > > > with x86. If there's no objection, I'm planning to work on a counterpart
-> > > > > to the x86 series (resetting POR_EL0 early during signal delivery).
-> > > > 
-> > > > Did you get a chance to work on that? It would be great to land the
-> > > > fixes for 6.12, if possible, so that the first kernel release with POE
-> > > > support doesn't land with known issues.
-> > > 
-> > > Looking a little more at this, I think we have quite a weird behaviour
-> > > on arm64 as it stands. It looks like we rely on the signal frame to hold
-> > > the original POR_EL0 so, if for some reason we fail to allocate space
-> > > for the POR context, I think we'll return back from the signal with
-> > > POR_EL0_INIT. That seems bad?
-> > 
-> > If we don't allocate space for POR_EL0, I think the program recieves SIGSGEV?
-> > 
-> > setup_sigframe_layout()
-> >         if (system_supports_poe()) {
-> >                 err = sigframe_alloc(user, &user->poe_offset,
-> >                                      sizeof(struct poe_context));
-> >                 if (err)
-> >                         return err;
-> >         }
-> > 
-> > Through get_sigframe() and setup_rt_frame(), that eventually hets here:
-> > 
-> > handle_signal()
-> > 	ret = setup_rt_frame(usig, ksig, oldset, regs);
-> > 
-> > 	[..]
-> > 
-> >         signal_setup_done(ret, ksig, test_thread_flag(TIF_SINGLESTEP));
-> > 
-> > void signal_setup_done(int failed, struct ksignal *ksig, int stepping)                                                                                                                         
-> > {                                                                                                                                                                                              
-> >         if (failed)                                                                                                                                                                            
-> >                 force_sigsegv(ksig->sig);                                                                                                                                                      
-> >         else                                                                                                                                                                                   
-> >                 signal_delivered(ksig, stepping);                                                                                                                                              
-> > }  
-> > 
-> > So I think it's "fine"?
-> 
-> Ah, yes, sorry about that. I got confused by the conditional push in
-> setup_sigframe():
-> 
-> 	if (system_supports_poe() && err == 0 && user->poe_offset) {
-> 		...
-> 
-> which gives the wrong impression that the POR is somehow optional, even
-> if the CPU supports POE. So we should drop that check of
-> 'user->poe_offset' as it cannot be NULL here.
-
-From memory and a quick glance at the code:
-
-For other "conditionally unconditional" things, we don't have a
-corresponding check on user->foo.
-
-For conditional stuff, non-NULLness of user->foo is used to track
-whether we decided to dump the corresponding record; for consistency
-here, if we have system_supports_poe() && err == 0, then that's
-sufficient (though in prior versions of this code, POR_EL0 dumping was
-conditional and so the extra check did do something...)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: fix a reference of a removed file
+To: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+ Jeff Layton <jlayton@kernel.org>
+Cc: hust-os-kernel-patches@googlegroups.com, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015092356.1526387-1-dzm91@hust.edu.cn>
+ <87jze9qyha.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <87jze9qyha.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:HwEQrAB3fc3DcA5n9f4QAQ--.8912S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWDJF48tw48ur43Zr1xAFb_yoWDJFb_JF
+	97AFs3ZryDArs7AF18KFn8WF13A3WxCry8Xw1fAws3ta4UJ395CF93J3sYyr43Wrs29rn5
+	JFWkZr9xXFy2gjkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbPAYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
+	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26F
+	4j6r4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
+	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1ec_3UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
 
-In any case, if some allocation fails then we splat out with a SIGSEGV
-before modifying the user task state to deliver the signal (in
-setup_return() etc.)
+On 10/15/24 21:36, Jonathan Corbet wrote:
+> Dongliang Mu <dzm91@hust.edu.cn> writes:
+>
+>> Since 86b374d061ee ("netfs: Remove fs/netfs/io.c") removed
+>> fs/netfs/io.c, we need to delete its reference in the documentation.
+>>
+>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>> ---
+>>   Documentation/filesystems/netfs_library.rst | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
+>> index f0d2cb257bb8..73f0bfd7e903 100644
+>> --- a/Documentation/filesystems/netfs_library.rst
+>> +++ b/Documentation/filesystems/netfs_library.rst
+>> @@ -592,4 +592,3 @@ API Function Reference
+>>   
+>>   .. kernel-doc:: include/linux/netfs.h
+>>   .. kernel-doc:: fs/netfs/buffered_read.c
+>> -.. kernel-doc:: fs/netfs/io.c
+> Already fixed by 368196e50194 in linux-next.
 
-If The user's POR_EL0 value is being clobbered before we get here, we
-would save the wrong value -- so the code would be broken anyway.
+Okay, I see. Thanks for the reminder.
 
+Dongliang Mu
 
-So, as Joey says, this is probably fine, but the user->poe_offset check
-looks superfluous.  The kernel will splat on us here and kill the thread
-if it's NULL anyway.
+>
+> Thanks,
+>
+> jon
 
-[...]
-
-Cheers
----Dave
 
