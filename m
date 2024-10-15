@@ -1,173 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-31965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8030999E7C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3B799E92E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 14:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F57C1F23495
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 11:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A45284046
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 12:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556791E766C;
-	Tue, 15 Oct 2024 11:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BI+7WdpH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5BE1F893F;
+	Tue, 15 Oct 2024 12:12:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B41E6339;
-	Tue, 15 Oct 2024 11:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AEE1EF945;
+	Tue, 15 Oct 2024 12:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728993475; cv=none; b=iRX3CJu0Pxt/I74BrWovmlYOuDWBafcZIaGfTMzPdvpghEYaR2UxdZPcnBGZQ11mVBy9njf03R95VvS8EYkmQvaCSaabbxQQFicPDX/PhoImk5ZdfVR79VEj+ps0xAJ6idiYAHm/v1d+gv/Vrqn/suhZJU9pAWseKo1PbgDL98U=
+	t=1728994342; cv=none; b=pTNwAnmK4OHo5mcmwBk6S8XPZFUaOrje4KOH2LxZIm8X99DWHr19DZADfU1fFn4Lm7L7BHi6gTZ6VSMWvJRhM0A03GKaL0ei539sosST+XQMrtl4bvYnxU7gZdDzFdKWmSRrKs9FMzikWMXWkEeQQL274c6ZpolOAj1EoBBscC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728993475; c=relaxed/simple;
-	bh=og7fTE1d8NsHVgj1tMmLOC1ZMPfJ/PL3G72GW+EOOdc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sE9FwK4Eqx/9XaRI1/AixVWfkGybkx2hw/YGa2xNR5HjqQOHOMgEp1FLDwCWvl0R/l9PUZqVS5P9HadTnx0G1rpcP7Zh66KjeVhWXV+NCSLHT4O2J0PKo7guW6W470sw+mbAHS9W3yV59jAiVTfzJ1YM+od72RQ1cTcgPmeqd28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BI+7WdpH; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso5646168a12.2;
-        Tue, 15 Oct 2024 04:57:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728993472; x=1729598272; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZdiZfnvhG5YsMD0eaXsVxZWVn5zxKhg6IVuE5un0X8E=;
-        b=BI+7WdpHyzhpn+E/BWuFAA7Rb2O3dAiLDSjKGw1yKAozAObxsMeaIzUfcO7k30xIX9
-         Sc5Yd/z4ThcUBM/DOsfXxtDi0XNk/4jwmTd0TzcG940us3/3oPJbnvuasEF0W7kf1I8w
-         dM5fkCdc1IfRXuMiKw1htiP/TWkhjl0Qay4Kx+phxqh/aLZrcSa6FmKSndDz059jv6Lb
-         dqP9AYKOJ267zgnJU+Smxn7btmxSD1mQr1ZzY1YmdBngqmehjRj6Z4Jor66pek/85UxN
-         v3vGlBkLE011/DQa0jrZQp3TR7IIuYh9KUIMvK6rOCw+zlFCZp0P738tSozVKollNCMG
-         gbZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728993472; x=1729598272;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdiZfnvhG5YsMD0eaXsVxZWVn5zxKhg6IVuE5un0X8E=;
-        b=pcExUL9C0aIGSFT3dwXfAZimcMi8aO02Xc/alqnxGDro0TNLm5OPm3j96br5WEI7S4
-         ldFmG/hFt9IzH0FX4TcJYbaBvVi4RmlDwoMAZXI45zntACRuvzOBZkKPuM5i2Gr/v74p
-         XmgxE5sqedxXCGchRT4w2uGborM2LISWiaUNnkPc1tIvoekEoffD4debQe+pnlMtoDv+
-         2SBSy8N/hFx5Yr7oDoB6AtErIFG+gPBj1LMbaPRx9d+vgB5/SPuzw0DkOOSyHoiKmV7s
-         43Dd18sZcQkRAFAk9HWGKt2SXKjS1ba6J59ooysgjx2Iumo74LbYloowSoUmbh++KjoG
-         oB4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQc6JIvzEKmdGRy8NML7dFURIbzqPjZkatzDdbhC478aMV6HAvsnBmRXUVoTQ1pYLyUSZJ1AqUYwwGdSvz@vger.kernel.org, AJvYcCXsddwa9ZXAd1FQ5ckIe+wM/5MEqjsRSeaa8leYG79w5ElztFAH0JES6DfaRSe7VugkiMOZ4qsRPZhjT5y/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUCg2nvq7pGq+DFu/1KDaQZMrYtvPaDE/OUX8Sro9JIwIF+sZ5
-	hwS9BoMEAC8fd8G23HT579cPAZOhdUyP3z+8l9WAU+ycBK8sG4/H
-X-Google-Smtp-Source: AGHT+IE7aQ12blyPbk3gKJQP1ZO2wA/0lbJ9xXyHgPphIpxaYqg6nyZBIGmlSM4oQ1yLDDxqbJAiPg==
-X-Received: by 2002:a05:6402:2753:b0:5c9:4c7a:b001 with SMTP id 4fb4d7f45d1cf-5c95ac60455mr8278461a12.30.1728993472057;
-        Tue, 15 Oct 2024 04:57:52 -0700 (PDT)
-Received: from ?IPV6:2a01:e11:5400:7400:5411:6fe9:5d33:c711? ([2a01:e11:5400:7400:5411:6fe9:5d33:c711])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d778b80sm613820a12.78.2024.10.15.04.57.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 04:57:51 -0700 (PDT)
-Message-ID: <8bb6722b-52d8-4585-8377-194c241462f1@gmail.com>
-Date: Tue, 15 Oct 2024 13:57:50 +0200
+	s=arc-20240116; t=1728994342; c=relaxed/simple;
+	bh=JVaN+276foz8D467uVisbk7ZPfas8KFjh0xX60dO7v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVdFpr2qXM1FPb7EKEL5FX9BpgRnta+nwpf756Ce2x/lQyEs8sIeTb8hxJHYXTRy0BShlh4P52ehWR/wg6aBoDGHGRUd2ywoPZQDO+KO5fOrwPYVxtH3BudCgNneBF+0Gy/LCEMBypqLr/5DtCYRnpVdb5+zAcVM2grhBfOpAHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 29EBB227AAC; Tue, 15 Oct 2024 14:12:13 +0200 (CEST)
+Date: Tue, 15 Oct 2024 14:12:12 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
+	hch@lst.de, cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v8 4/7] fs: iomap: Atomic write support
+Message-ID: <20241015121212.GA32583@lst.de>
+References: <20241015090142.3189518-1-john.g.garry@oracle.com> <20241015090142.3189518-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: fix null pointer dereference in read_cache_folio
-From: Gianfranco Trad <gianf.trad@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, skhan@linuxfoundation.org,
- syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
-References: <20240929230548.370027-3-gianf.trad@gmail.com>
- <20240930090225.28517-2-gianf.trad@gmail.com>
- <ZvrqotTfw06vAK9Y@casper.infradead.org>
- <991c8404-1c1c-47c7-ab27-2117d134b59b@gmail.com>
-Content-Language: en-US, it
-In-Reply-To: <991c8404-1c1c-47c7-ab27-2117d134b59b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015090142.3189518-5-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 04/10/24 14:07, Gianfranco Trad wrote:
-> On 30/09/24 20:14, Matthew Wilcox wrote:
->> On Mon, Sep 30, 2024 at 11:02:26AM +0200, Gianfranco Trad wrote:
->>> @@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file 
->>> *file, filler_t filler,
->>>       /* Start the actual read. The read will unlock the page. */
->>>       if (unlikely(workingset))
->>>           psi_memstall_enter(&pflags);
->>> +    if (!filler)
->>> +        return -EIO;
->>
->> This is definitely wrong because you enter memstall, but do not exit it.
+On Tue, Oct 15, 2024 at 09:01:39AM +0000, John Garry wrote:
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
 > 
-> Got it, thanks.
+> Initially FSes (XFS) should only support writing a single FS block
+> atomically.
 > 
->>
->> As Andrew says, the underlying problem is that the filesystem does not
->> implement ->read_folio.  Which filesystem is this?
+> As with any atomic write, we should produce a single bio which covers the
+> complete write length.
 > 
-> Reproducer via procfs accesses a bpf map backed by an anonymous
-> inode (anon_inode_fs_type), with mapping->a_ops pointing to anon_aops,
-> hence, read_folio() undefined.
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  .../filesystems/iomap/operations.rst          | 11 ++++++
+>  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
+>  fs/iomap/trace.h                              |  3 +-
+>  include/linux/iomap.h                         |  1 +
+>  4 files changed, 48 insertions(+), 5 deletions(-)
 > 
->>
->>>       error = filler(file, folio);
->>>       if (unlikely(workingset))
->>>           psi_memstall_leave(&pflags);
->>> -- 
->>> 2.43.0
->>>
-> 
-> I suppose the next step would be to contact the proper maintainers(?)
-> If you have any additional suggestions, I'd be more than glad to listen.
-> 
-> Thanks to both of you for your time,
-> 
-> --Gian
-> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index 8e6c721d2330..fb95e99ca1a0 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -513,6 +513,17 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+>  
+> + * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> +   protection. Only a single bio can be created for the write, and the
+> +   write must not be split into multiple I/O requests, i.e. flag
+> +   REQ_ATOMIC must be set.
+> +   The file range to write must be aligned to satisfy the requirements
+> +   of both the filesystem and the underlying block device's atomic
+> +   commit capabilities.
+> +   If filesystem metadata updates are required (e.g. unwritten extent
+> +   conversion or copy on write), all updates for the entire file range
+> +   must be committed atomically as well.
+> +
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+>  
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f637aa0706a3..c968a0e2a60b 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> +	if (atomic && (length != fs_block_size))
 
-Hello,
+Nit: no need for the inner braces here.
 
-While studying how to implement read_folio in anon_aops for this 
-specific case (bpf map backed by anon_inode_fs_type) I've come up with 
-an intermediate solution that mitigates the null pointer dereference and 
-avoids the memstall issue (compared to my previous patch) immediately, 
-for all filesystems that do not implement read_folio in their 
-address_space_operations.
+> +		if (atomic && n != length) {
+> +			/*
+> +			 * This bio should have covered the complete length,
+> +			 * which it doesn't, so error. We may need to zero out
+> +			 * the tail (complete FS block), similar to when
+> +			 * bio_iov_iter_get_pages() returns an error, above.
+> +			 */
+> +			ret = -EINVAL;
 
-The patch [1] looks like this:
+Do we want a WARN_ON_ONCE here because this is a condition that should be
+impossible to hit?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 4f3753f0a158..680d98086c00 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3775,6 +3775,8 @@ static struct folio *do_read_cache_folio(struct 
-address_space *mapping,
-  	struct folio *folio;
-  	int err;
+Otherwise looks good:
 
-+	if (!filler && (!mapping->a_ops || !mapping->a_ops->read_folio))
-+		return ERR_PTR(-ENOSYS);
-  	if (!filler)
-  		filler = mapping->a_ops->read_folio;
-  repeat:
-
-Patch was already tested with syzbot on the same reproducer case. 
-Reproducer did not trigger any issue [2].
-
-Let me know if for now this patch looks good enough, therefore I'll send 
-it to you, or if I should work on it more.
-
-Thanks for your time,
-
-[1] https://syzkaller.appspot.com/text?tag=Patch&x=142e045f980000
-[2] https://syzkaller.appspot.com/x/log.txt?x=1551045f980000
-
--- Gian
-
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
