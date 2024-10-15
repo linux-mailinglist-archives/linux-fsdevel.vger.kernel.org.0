@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-31977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2844E99ED28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:25:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C3599ED35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3934B20EF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAFD287420
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BF61FC7EE;
-	Tue, 15 Oct 2024 13:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F4C227BA6;
+	Tue, 15 Oct 2024 13:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gQ9AzmYd"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="KIXolSSU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC2D1FC7CA;
-	Tue, 15 Oct 2024 13:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C39227B99;
+	Tue, 15 Oct 2024 13:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728998471; cv=none; b=bQHT3KcD5kdfxtsPE/Djym4kzzDwpsORp6GTz0dMpjJZ9aMFp8mQuLVvPiqGaEwGiHi/lYPuMIXBOAokWPuC2zEZ9M9OeMJXJJRfynpmT0Wq0w7Ed94CUonOQNZNZ8yU9d5eIgKK73IGcVqRSjBRE8rEe0LoECMwrGADtBrM6Ao=
+	t=1728998482; cv=none; b=c5a7qwAQvufq9Mls9YIsU6R65hPfE1MqlKQP9p8IwUs7IxMEWNu4/CDf0vn5Fue9l1U1OA4WlRqujBD60GJsy0mcUhXM+axlo8hR8a7f9AXDTY1pP8dZi5lbz32YdT7VJu5s6MEmhjrRPaMiNs5LUDQAnGKxZZCXDgcSiWFJKpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728998471; c=relaxed/simple;
-	bh=U7+SL2Dsj3x9o3x8Ayq9bwF0PHRYf5iIymEoLyJT7hs=;
+	s=arc-20240116; t=1728998482; c=relaxed/simple;
+	bh=SXUiZI6sK5jeXdKGbJyo4LmI6N5glU7kUgkJxapNnaY=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cKK1cf8f4fUScSbm1Q0SjJzMm1MzhrRqyzRJmKDzsCHhFRKuaPRx2WV2BRoEqqKoIVBYfYsys/Lq1qdLKtoftAohu23mazig1yslaB9nWqji1W6L4RYA2mbaQB/OY91y5iEo1yWH+Kiy3j6Sv+UubtX0/C6AaainE3ZG1yFIE30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gQ9AzmYd; arc=none smtp.client-ip=217.70.183.195
+	 MIME-Version:Content-Type; b=BG97ft2JqsoKNtwomdd7wfv0bWNdpOFswUibroDm+J2pMvx/5jUrtJ2lm2XwE2KeyklkSYtCt+3KYCFPR/RO2Wy9e/ssGx1RSpu9HJBTHXTh8xrdkGR2G/ck26vButHBp0otUTV+qbET/T54xkni1zCMTztdwLyM3K712nd9/7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=KIXolSSU; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 027C760009;
-	Tue, 15 Oct 2024 13:20:58 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6EC1B60015;
+	Tue, 15 Oct 2024 13:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1728998461;
+	t=1728998479;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hzsywUYuiwbhx55bjvyt2J4KNPE7dcZU7e49a12afaU=;
-	b=gQ9AzmYdc7GYvx5XULf/FocUXELlEKjfT3q8+wLZsyrnR+SIXM67RSnKQEuxaN+8qqq1Yx
-	mhiWLzb1VwXCu6jGZsHm1fQahQV5PoAyvm5KCkLeEjPnjzId+/Pv9QIszNwFMGSG4OE7NV
-	CXMBC8YwhV9cC7nyvghCzdvHB1fOW8q8B9QfGdJcM8RIUjCYO327BuY6fxQgZ1qUO1BdHc
-	Kk5fYJCKwuQH6W3FoRSITiC3L0KWZ0OHK3/eiKHvIuTmb5PNkDtqoPH3FjTb9j2PYu1C2S
-	n3ZxxvA6hYpv0oQ6r8LJOWrilbRCw6A10Eg2w4xpgtLD7CRskhX29aAwh4WGOQ==
+	bh=sImSw9B4ICMqgAhAeUbnH9m4Nhw5sQSlUjxcISehZgI=;
+	b=KIXolSSUAoAa/dxj+mI3mdlcGQmhA+6+cAWyhWt/X4lK660Tvd+pszcMqWRtYALswqMak4
+	eQqVv/u3bFC11r3qtJgjK/ShdHYdLMCET8jYdQ57fcCW/nli6BqYm11Tmp36/XNeB/xs++
+	OFrm2tP0/vNpXP2euYTWaVDzEFvE2MoO/+1DwPlvnktCLX15uPjb4dBHtrRYGgSQR+7Y8u
+	lM8lANku61M48EB04o70VgH4CfgcYPRAjzfMlMUXlpd4MNbsXKJftKudUSpx08Hf3fLEey
+	JtFrGR00zpYm/ptlAaLEainKQb1fMHb3ls4ijZ0BzsZ6QCAjCT5JBjPP9k3Eng==
 From: Gabriel Krisman Bertazi <gabriel@krisman.be>
 To: David Gow <davidgow@google.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,  Shuah Khan
@@ -55,13 +55,13 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,  Shuah Khan
   linux-fsdevel@vger.kernel.org,  ~lkcamp/patches@lists.sr.ht,  Pedro
  Orlando <porlando@lkcamp.dev>,  Danilo Pereira <dpereira@lkcamp.dev>,
   Gabriel Krisman Bertazi <gabriel@krisman.be>
-Subject: Re: [PATCH 5/6] unicode: kunit: refactor selftest to kunit tests
-In-Reply-To: <20241011072509.3068328-7-davidgow@google.com> (David Gow's
-	message of "Fri, 11 Oct 2024 15:25:09 +0800")
+Subject: Re: [PATCH 6/6] unicode: kunit: change tests filename and path
+In-Reply-To: <20241011072509.3068328-8-davidgow@google.com> (David Gow's
+	message of "Fri, 11 Oct 2024 15:25:10 +0800")
 References: <20241011072509.3068328-2-davidgow@google.com>
-	<20241011072509.3068328-7-davidgow@google.com>
-Date: Tue, 15 Oct 2024 09:20:57 -0400
-Message-ID: <87wmi9sds6.fsf@mailhost.krisman.be>
+	<20241011072509.3068328-8-davidgow@google.com>
+Date: Tue, 15 Oct 2024 09:21:16 -0400
+Message-ID: <87sesxsdrn.fsf@mailhost.krisman.be>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,18 +76,17 @@ David Gow <davidgow@google.com> writes:
 
 > From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
 >
-> Refactoring 'test' functions into kunit tests, to test utf-8 support in
-> unicode subsystem.
+> Change utf8 kunit test filename and path to follow the style
+> convention on Documentation/dev-tools/kunit/style.rst
 >
-> This allows the utf8 tests to be run alongside the KUnit test suite
-> using kunit-tool, quickly compiling and running all desired tests as
-> part of the KUnit test suite, instead of compiling the selftest module
-> and loading it.
->
-> The refactoring kept the original testing logic intact, while adopting a
-> testing pattern across different kernel modules and leveraging KUnit's
-> benefits.
->
+> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
+> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
+> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
+> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+> Reviewed-by: David Gow <davidgow@google.com>
+> [Rebased, fixed module build (Gabriel Krisman Bertazi)]
+> Signed-off-by: David Gow <davidgow@google.com>
 
 Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
