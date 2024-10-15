@@ -1,157 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-31927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFF699DB48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 03:28:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3436199DC9D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708091F23178
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 01:28:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2CFB2289B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 03:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC539155336;
-	Tue, 15 Oct 2024 01:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910C316EB7C;
+	Tue, 15 Oct 2024 03:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PMW2WQcC"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BaCF9P4J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFC414B965
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 01:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F395D15C145
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728955687; cv=none; b=es0V6C2AbZVbQu2EeV7m7IEdm+sh3VdIAS7ds/dODMYhXhXL3i77IOo6oNZG55UtINeKV5i0yDjJTCOm1i25oQjQ6w+hxBcK0ecEkVAfi+QOipgckLfuwH0/FI3Amw873BjUsbAfNdyD7Hh1e0w47q+q0Do8tsn36h/Lzt9J3zE=
+	t=1728961686; cv=none; b=WT/DSV9BKzzLZfUEoiix85CIXX4mjI4ZFc821Bsnyo4po8A7t+yqWNi8dM3B4RhKtbi+CAH+yqwQDXu0kNQB/vLnOAFjrwI7fc+zNRgzhG9OjUzirPFIrqB4C26VDMz5gom8Anymw4Lzhd8mKm8uT/5YtYdWvTrGuEqEV6Jv5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728955687; c=relaxed/simple;
-	bh=gS0yxpQN86jLAWvfeaNTzay/a4WG+ypSZ9NOBXk/+n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PXqBU2MNuwhKdTVuHORqysrwCRJugTqqAQKmPNzvEwGWgG0RkPwSF9/Ga+W2V6O5d4HcGSiqWtCGYZY6yAF15DgobxsiHncYtHzNcQMaTPKPCGmI3iIvpfDXGwSHPMWJ8g696qlDXAE910z/6iMLbvOzrNi8sb1zNhUtTv+rcGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PMW2WQcC; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Oct 2024 21:27:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728955677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=EBKI0jhPyCaBxpT3oWhn2T9UWRj8G6nH6l3Lm03f80A=;
-	b=PMW2WQcCGq9D7z5wsVzgbyMkEULuGdNp9Z842hnrWFvOhxt1uHtMS0OtcCk589Q1NFxD+q
-	anrTGChpKmbhG1dZHzGoVjWCMR28+yedykBqGWLsrg0Mpfv2aeVAz1g1lFL/xFWKLEq8wl
-	VrQAF5NSdHhvUALMkK16DtS40eUuTRM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc4
-Message-ID: <lazo4f4eueknrlk5odp37fboznvfxnizhdeqttnmxkbgp7szjj@m3sjqp7mxm5d>
+	s=arc-20240116; t=1728961686; c=relaxed/simple;
+	bh=Q/SW4RakySLAJ+vlnVIdkbXUQssSXnwfcIMI4oelo+M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=KBNeYrydnX4woBV0TIuIn9tcwGfGxYGAbpuKOJKafjfzeHWKAnxaOGaioCN1fhBX4ybugZOrrlDXRoHj38bIEmZSAW1EnPQWHBeh7eKmAOeqfNmsVJZJ6QiRHFCgeJkIneItKSysSLAKG0Sz2/5NUP41TVE1TSVzJK5zcVNu44k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BaCF9P4J; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241015030801euoutp026edc07f0102a8dd8767c60b87a765c50~_gX1D-3Cn2533325333euoutp02-
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:08:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241015030801euoutp026edc07f0102a8dd8767c60b87a765c50~_gX1D-3Cn2533325333euoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728961682;
+	bh=V6MxMARZ/fd8PmMdfu49JsoNqWc/GHuLb3BoVceTtYU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=BaCF9P4JAi2MxUpruwqGy4YAL2y7VcHE5rQlQyrSbybSng+Q5kVMxVAQpz7Ns3xSw
+	 X0R311QayLw9oz2TsjtvzxEQVoQMcJFIv5p5L0ErNatPz7FtjGUD8cxR1KS8ioGkc2
+	 AgcKWjrjooOxWRr8R3W+q9Z11RT6EgiAhZMAmV4M=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241015030801eucas1p27c948a33fa3c21d627da897266683415~_gX0dt1TQ2989529895eucas1p2d;
+	Tue, 15 Oct 2024 03:08:01 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 3C.3E.09624.19CDD076; Tue, 15
+	Oct 2024 04:08:01 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241015030800eucas1p1e2584459613eaa885539d58f9c8ec4b8~_gXzXS0mL1042710427eucas1p1k;
+	Tue, 15 Oct 2024 03:08:00 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241015030800eusmtrp25976737c3a3da77806b8aaf3ab1decfb~_gXzWjKpz0951909519eusmtrp2t;
+	Tue, 15 Oct 2024 03:08:00 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-95-670ddc91e98a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 24.6F.14621.F8CDD076; Tue, 15
+	Oct 2024 04:08:00 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241015030759eusmtip2b042992190a2a3ca6745c77ee402d385~_gXzK2Mrz3239132391eusmtip2j;
+	Tue, 15 Oct 2024 03:07:59 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Tue, 15 Oct 2024 04:07:59 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 15 Oct
+	2024 04:07:58 +0100
+From: Javier Gonzalez <javier.gonz@samsung.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, "Martin
+ K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi
+	<joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>, "sagi@grimberg.me"
+	<sagi@grimberg.me>, "brauner@kernel.org" <brauner@kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
+	<jack@suse.cz>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "bcrl@kvack.org"
+	<bcrl@kvack.org>, "dhowells@redhat.com" <dhowells@redhat.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>, "asml.silence@gmail.com"
+	<asml.silence@gmail.com>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "linux-aio@kvack.org" <linux-aio@kvack.org>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>, "vishak.g@samsung.com"
+	<vishak.g@samsung.com>
+Subject: RE: [PATCH v7 0/3] FDP and per-io hints
+Thread-Topic: [PATCH v7 0/3] FDP and per-io hints
+Thread-Index: AQHbG7xJFahlOOmkRUWBz3B/P2gFpLKBuCIAgAQCOYCAABtsUP///IcAgAAiAcCAACIYAIABC7FQ
+Date: Tue, 15 Oct 2024 03:07:57 +0000
+Message-ID: <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
+In-Reply-To: <20241014115052.GA32302@lst.de>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGOfdebi8dxUtReoLbiE3IEmEFDI7jImxZxN1FZSbbJCMqNnJT
+	iKWQFizzY3QwFAFlq4KzMKFOi4WArjL5xlCGDEUNqeKKVmSUyYqDQl0WLcIotyz893s/nvO8
+	75tD4cJjZAiVrshmlQqpXEzyies3X9599/vHAlnUObc/qqq7DlC9rYxExfNNBJrsmQWowvkS
+	R1P5bgJ1XNBiyFjfi6GpwrsEqjxbgCH7FR2OtOYhgM5U5APUORyOOjr7CVRtGOeh2r55DDVO
+	ThPo3us+3w+DGMv9bUyrzsZj7j35mWAsd3IYU90JkjHNannMtYt5TLtVQzIz48MEM931gGQG
+	an5dzN8+zLhMbzMm+9/YzoBk/uZUVp5+kFVGxu/jpw06Ps9yr8otbCnjaUC9fzHwoyAdA38f
+	7eUVAz4lpC8DmN/Z4MsFLwAsnzCRXOAC0Nr1kLcscdlmcK5QC+DVljnf/7smDBpvMACg02on
+	PBIhbQTw35lcD5N0JKxrvgU8vJoWw3HHHeAR4PQQD3aXDmCeQhAdBQsudnmbouGUQe/lZKgx
+	ji8xQYfBVlMp6WEBnQAbftLiHvajI+B5W+MSA/ot+Ifx1dLcOC2Cw/ZqjNshEF6o7MA5Dobz
+	baMkx1Hwl0tdBMfr4KnqaYLTRsCa9lmS43Bo0E/inG8g7D/nWZK/2N/Ph9dKGrxH2gLPzp33
+	PhoEHX1N3vybcKF1eYjDUNP/G/YdWK9bMZ9uhZ9uhZ9uhV8NIOqAiM1RZchYVbSCVUtU0gxV
+	jkIm2Z+ZYQKLX/X2fN9sC/jRMSMxA4wCZgApXLxaoC0WyISCVOlXh1hlZooyR86qzGAtRYhF
+	grDUUFZIy6TZ7AGWzWKVy1WM8gvRYDGDceWyFskRufrF14+cuZu/tMZuGwkP7zaQlrkbRT9Q
+	TEy3a7f7TPYjdV6Y4Z245nb8yPE/ZfGKocyC2FfPUxKjsQT/wWP6rZ9Onf4scDRhQ8le88ba
+	piLLITygNGRUXBl8ac1HVek7ch8bB65m/LXjRlJFXtLJHkf2lpDETfh97Z735SdHfAxtC5iP
+	69Q3jt6x7RL18zcCdn4c5/RTuj94DWxJESlrpcEHiaInX2Bbs8qePbPjw43J5SXv8dsSHnbG
+	X0kTHQ0NFVkcRxv5iTrdJy61uXmsZ2Pygl5/wmq82e6jaf628OnuDf+YV3XzMPtTZ1S1duT4
+	xGRV5K5NTbHsmJhQpUmj1+NKlfQ/z41RExkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsVy+t/xe7oT7vCmGyzewGwxZ9U2RovVd/vZ
+	LLr+bWGxeH34E6PFtA8/mS3eNf1msdizaBKTxcrVR5ks3rWeY7GYPb2ZyeLJ+lnMFpMOXWO0
+	mDKtidFi7y1tiz17T7JYzF/2lN1i+fF/TBbrXr9nsTj/9zirg7DH5SveHjtn3WX3OH9vI4vH
+	5bOlHptWdbJ5bPo0id1j85J6j903G9g8Pj69xeLxft9VNo8zC44AxU9Xe3zeJOex6clbpgC+
+	KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mi69C
+	Cn7zV7Tu6GdvYFzN08XIySEhYCLx+e5H5i5GLg4hgaWMEse/XWaHSMhIbPxylRXCFpb4c62L
+	DaLoI6PExCl/WSCcM4wSbT/WMkE4Kxklfp2dxAzSwiagL7Fq+ylGEFtEQEni6auzjCBFzAJX
+	2CWaFz0HSwgLGEg0L9kHVWQo8W7ZQig7SqJh5VMwm0VAVWLnph42EJtXwFVi7eJJUMfOYJF4
+	sHAuWIJTQEdi3t11YJsZBWQlHq38BfYEs4C4xK0n85kgnhCQWLLnPDOELSrx8vE/qOcMJLYu
+	3ccCYStK9M1/zwLRqyOxYPcnNghbW2LZwtfMEEcISpyc+YRlAqPULCQrZiFpmYWkZRaSlgWM
+	LKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECU+C2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIryT
+	unjThXhTEiurUovy44tKc1KLDzGaAgNmIrOUaHI+MAnnlcQbmhmYGpqYWRqYWpoZK4nzul0+
+	nyYkkJ5YkpqdmlqQWgTTx8TBKdXAlJEa8n/TTDN3ztr3+n8Yb2+Y7r362rfklBuuHl/57TNv
+	Gh4yOvx9Rgnz0uKTtqLGC+rzcs+ezXm4XU6F78L0hklBxZOn35jVzGnzu7KCxXix2PX5ORsS
+	uHM7b2w69fywczqXiqr2Md7N9yWEKo6FPEpqVGrhYSrsjsi6q1TiG/DTO0dq/U3m+HcJp5Y5
+	7oy6GaPxzF9zdezHRbMvzn3Q2ct7VP0/X7TfQ6vqeXP2+/MkM12qqTj082HWBmOXuJNXnq3u
+	W3g47G9MqhK3+3oW8b9bm7zsTZYdWjLravfdp/Ylnrdz4nc9ujLX32QOn4iuneLKnVtP/fMv
+	2Xz34OVJqY/6mLtUa8QvLM780/rMS4mlOCPRUIu5qDgRABIoUg4KBAAA
+X-CMS-MailID: 20241015030800eucas1p1e2584459613eaa885539d58f9c8ec4b8
+X-Msg-Generator: CA
+X-RootMTR: 20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed
+References: <CGME20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed@eucas1p2.samsung.com>
+	<20241010070736.de32zgad4qmfohhe@ArmHalley.local>
+	<20241010091333.GB9287@lst.de>
+	<20241010115914.eokdnq2cmcvwoeis@ArmHalley.local>
+	<20241011090224.GC4039@lst.de>
+	<5e9f7f1c-48fd-477f-b4ba-c94e6b50b56f@kernel.dk>
+	<20241014062125.GA21033@lst.de>
+	<34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local>
+	<20241014074708.GA22575@lst.de>
+	<9e3792eebf7f427db7c466374972fb99@CAMSVWEXC02.scsc.local>
+	<20241014115052.GA32302@lst.de>
 
-The following changes since commit 0f25eb4b60771f08fbcca878a8f7f88086d0c885:
+> On Mon, Oct 14, 2024 at 09:08:24AM +0000, Javier Gonzalez wrote:
+> > > Especially as it directly undermindes any file system work to actuall=
+y make use
+> of it.
+> >
+> > I do not think it does. If a FS wants to use the temperatures, then the=
+y
+> > would be able to leverage FDP besides SCSI.
+>=20
+> What do you mean with that?  This is a bit too much whitepaper vocabularl=
+y.
+>=20
+> We have code in XFS that can make use of the temperature hint.  But to
+> make them work it actually needs to do real stream separation on the
+> device.  I.e. the file system consumes the temperature hints.
 
-  bcachefs: Rework logged op error handling (2024-10-04 20:25:32 -0400)
+The device can guarantee the stream separation without knowing the temperat=
+ure.
 
-are available in the Git repository at:
+> > And if we come up with a better interface later on, we can make the cha=
+nges
+> then.
+> > I really do not see the issue. If we were adding a temperature abstract=
+ion now, I
+> would agree with
+> > You that we would need to cover the use-case you mention for FSs from t=
+he
+> beginning, but this
+> > Is already here. Seems like a fair compromise to support current users.
+>=20
+> Again, I think the temperature hints at the syscall level aren't all
+> bad.  There's definitively a few things I'd like to do better in hindsigh=
+t,
+> but that's not the point.  The problem is trying to turn them into
+> stream separation all the way down in the driver, which is fundamentally
+> broken.
+>=20
+> >   - How do we convince VFS folks to give us more space for hints at thi=
+s point?
+>=20
+> What space from VFS folks do you need for hints?  And why does it
+> matter?
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-14
+We need space in the inode to store the hint ID.
 
-for you to fetch changes up to 5e3b72324d32629fa013f86657308f3dbc1115e1:
+Look, this feels like going in circles. All this gaslighting is what makes =
+it difficult to=20
+push patches when you just do not like the feature. It is the 3rd time I pr=
+opose you=20
+a way forward and you simply cannot provide any specific technical feedback=
+ - in the=20
+past email I posted several questions about the interface you seem to be ta=
+lking=20
+about and you explicitly omit that.
 
-  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
 
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc4
-
-- New metadata version inode_has_child_snapshots
-  This fixes bugs with handling of unlinked inodes + snapshots, in
-  particular when an inode is reattached after taking a snapshot;
-  deleted inodes now get correctly cleaned up across snapshots.
-
-- Disk accounting rewrite fixes
-  - validation fixes for when a device has been removed
-  - fix journal replay failing with "journal_reclaim_would_deadlock"
-
-- Some more small fixes for erasure coding + device removal
-
-- Assorted small syzbot fixes
-
-----------------------------------------------------------------
-Alan Huang (2):
-      bcachefs: Release transaction before wake up
-      bcachefs: Fix state lock involved deadlock
-
-Kent Overstreet (23):
-      bcachefs: Fix lockdep splat in bch2_accounting_read
-      bcachefs: Split out check_unreachable_inodes() pass
-      bcachefs: reattach_inode() now correctly handles interior snapshot nodes
-      bcachefs: btree_iter_peek_upto() now handles BTREE_ITER_all_snapshots
-      bcachefs: Delete vestigal check_inode() checks
-      bcachefs: bcachefs_metadata_version_inode_has_child_snapshots
-      bcachefs: Kill bch2_propagate_key_to_snapshot_leaves()
-      bcachefs: bch2_inode_or_descendents_is_open()
-      bcachefs: Disk accounting device validation fixes
-      closures: Add closure_wait_event_timeout()
-      bcachefs: Check if stuck in journal_res_get()
-      bcachefs: __wait_for_freeing_inode: Switch to wait_bit_queue_entry
-      bcachefs: Fix bch2_have_enough_devs() for BCH_SB_MEMBER_INVALID
-      bcachefs: Fix invalid shift in member_to_text()
-      bcachefs: Fix accounting replay flags
-      bcachefs: Fix bkey_nocow_lock()
-      bcachefs: Improve check_snapshot_exists()
-      bcachefs: fix uaf in bch2_dio_write_done()
-      bcachefs: Fix missing bounds checks in bch2_alloc_read()
-      bcachefs: Add missing validation for bch_stripe.csum_granularity_bits
-      bcachefs: Fix kasan splat in new_stripe_alloc_buckets()
-      bcachefs: Handle race between stripe reuse, invalidate_stripe_to_dev
-      bcachefs: Fix sysfs warning in fstests generic/730,731
-
-Mohammed Anees (1):
-      bcachefs: Fix NULL pointer dereference in bch2_opt_to_text
-
-Piotr Zalewski (1):
-      bcachefs: add check for btree id against max in try read node
-
- fs/bcachefs/alloc_background.c      |  10 +
- fs/bcachefs/bcachefs_format.h       |   3 +-
- fs/bcachefs/btree_gc.c              |  15 +-
- fs/bcachefs/btree_io.c              |   5 +-
- fs/bcachefs/btree_iter.c            |   6 +-
- fs/bcachefs/btree_iter.h            |   8 +
- fs/bcachefs/btree_node_scan.c       |   3 +
- fs/bcachefs/data_update.c           |   1 +
- fs/bcachefs/disk_accounting.c       | 149 ++++++++++----
- fs/bcachefs/ec.c                    |  94 ++++++---
- fs/bcachefs/errcode.h               |   3 +-
- fs/bcachefs/extents.h               |  10 +
- fs/bcachefs/fs-io-direct.c          |   3 +-
- fs/bcachefs/fs.c                    | 102 +++++++++-
- fs/bcachefs/fs.h                    |   9 +-
- fs/bcachefs/fsck.c                  | 384 ++++++++++++++++++++++--------------
- fs/bcachefs/fsck.h                  |   1 +
- fs/bcachefs/inode.c                 | 275 ++++++++++++++++++++++----
- fs/bcachefs/inode.h                 |  10 +
- fs/bcachefs/inode_format.h          |   3 +-
- fs/bcachefs/journal.c               |  13 ++
- fs/bcachefs/opts.c                  |   4 +-
- fs/bcachefs/recovery.c              |   3 +-
- fs/bcachefs/recovery_passes_types.h |   1 +
- fs/bcachefs/replicas.c              |  39 +++-
- fs/bcachefs/sb-downgrade.c          |   5 +-
- fs/bcachefs/sb-errors_format.h      |   6 +-
- fs/bcachefs/sb-members.c            |  10 +-
- fs/bcachefs/snapshot.c              | 129 +++---------
- fs/bcachefs/snapshot.h              |   3 -
- fs/bcachefs/super.c                 |  34 +++-
- include/linux/closure.h             |  35 ++++
- 32 files changed, 976 insertions(+), 400 deletions(-)
 
