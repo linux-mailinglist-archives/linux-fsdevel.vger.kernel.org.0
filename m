@@ -1,106 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-31975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17EE99EB57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:05:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473C599EBC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2B51F209AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D73DDB20D0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FE01D5ABD;
-	Tue, 15 Oct 2024 13:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7981C07ED;
+	Tue, 15 Oct 2024 13:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P+2ROisv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649631C07DB;
-	Tue, 15 Oct 2024 13:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EBA1C07DF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 13:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997546; cv=none; b=usNFuBUxBrV9m9Ek6i+H5bEIlw3FZOMH/LbJU6KdotJPmf1+brzskWY5OvZQFDV1WWyCqHG6gj02EsA8QRqcs85DCRm0y6A0wqOZ+GTBXECFouItDJIjwyYXSPUOLZtfNU7hpzoT+V+TZoBWmdkiEor1deJZOf3rtv5oTf5NQ+s=
+	t=1728997841; cv=none; b=DTLeI4RN8s4mmApm649zRQrzJSYTtlcPKI7Hh+Q6V0tB7IyQI67+2q1HuIoiFRA3f335RpWOqPZ+hl+7VFBhC9JdOajW6sNMEslR8Xi4yrLz5voOa3vLNjpJBcdWq7CZYy7rHtMS+N1G9raCKvlOi5vFVtqPEATLITsSTy905Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997546; c=relaxed/simple;
-	bh=gK4QnrS2Sm+VO7VdVB+g+vOjiZv1ni06CPOZFvH/IkI=;
+	s=arc-20240116; t=1728997841; c=relaxed/simple;
+	bh=Icd1CTLa3HUKpZaYkWuGGC7Yj5qwYe37DUCu4UgcvXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ef+2CogbkcsYs0XuxO5/HeKmVSFxr95HKyJr7G1NeiS6x43uY0Kz0qfdnBqIKsMoixmIs1hXJlASq8j85cJvNQzZ79NMj5PuNpJ1GXLMgSMRPi3vWCRj7cokcyfVysRjuIZN806NK3o4e1I3lduvgqwQH2MliagmpdMSVi7RVmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25155C4CEC6;
-	Tue, 15 Oct 2024 13:05:39 +0000 (UTC)
-Date: Tue, 15 Oct 2024 14:05:37 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v13 11/40] arm64/gcs: Provide basic EL2 setup to allow
- GCS usage at EL0 and EL1
-Message-ID: <Zw5oofuDjuCemq19@arm.com>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
- <20241001-arm64-gcs-v13-11-222b78d87eee@kernel.org>
- <20241009204903.GA3353168@thelio-3990X>
- <86msjc56mi.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJnkqYTvQ9YE4NdYn73aZRehEJVn60nQLVXRVgYd0K7X2yreMBkb2PVcLtZ/E2QBCvQPtmFVJWrz6fWpzix9qKD4Q/e0ZwlzK2p3PcmdoqwxcfoU3o1K3F2iCIkWL0sdFcmMOrLx2ZMAaHEFpxZb2XyGrUv4R5qNtjKN5CSIszQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P+2ROisv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728997838;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=so8jeFClFkTvv/ldCrw0QLpFv7/rrriOsiZ+RRZqQGQ=;
+	b=P+2ROisvMPAdmQRnu0U+Y0cLzd17yJk8i+yQMuSruWHFUxf2/y4TEBTGjdRENCbZ66UCD8
+	YY3SXV8MUFn7KS0R+rv16XgLgUrE4luk0R9NvgyTxcNN5Dex/Cy6Uh/h1VRgZu9QNXXTV9
+	wcCpM7fhLqG8d0VlFUU5u2mQsveuGQU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-Zfx-vJtJM1mEyeO8RIoj9A-1; Tue,
+ 15 Oct 2024 09:10:34 -0400
+X-MC-Unique: Zfx-vJtJM1mEyeO8RIoj9A-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42D5E19560BD;
+	Tue, 15 Oct 2024 13:10:33 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.74])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E5A41956054;
+	Tue, 15 Oct 2024 13:10:31 +0000 (UTC)
+Date: Tue, 15 Oct 2024 09:11:53 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iomap: turn iomap_want_unshare_iter into an inline
+ function
+Message-ID: <Zw5qGY8asl0grLAD@bfoster>
+References: <20241015041350.118403-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <86msjc56mi.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015041350.118403-1-hch@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Oct 10, 2024 at 04:18:13PM +0100, Marc Zyngier wrote:
-> From 20c98d2647c11db1e40768f92c5998ff5d764a3a Mon Sep 17 00:00:00 2001
-> From: Marc Zyngier <maz@kernel.org>
-> Date: Thu, 10 Oct 2024 16:13:26 +0100
-> Subject: [PATCH] KVM: arm64: Shave a few bytes from the EL2 idmap code
+On Tue, Oct 15, 2024 at 06:13:50AM +0200, Christoph Hellwig wrote:
+> iomap_want_unshare_iter currently sits in fs/iomap/buffered-io.c, which
+> depends on CONFIG_BLOCK.  It is also in used in fs/dax.c whіch has no
+> such dependency.  Given that it is a trivial check turn it into an inline
+> in include/linux/iomap.h to fix the DAX && !BLOCK build.
 > 
-> Our idmap is becoming too big, to the point where it doesn't fit in
-> a 4kB page anymore.
-> 
-> There are some low-hanging fruits though, such as the el2_init_state
-> horror that is expanded 3 times in the kernel. Let's at least limit
-> ourselves to two copies, which makes the kernel link again.
-> 
-> At some point, we'll have to have a better way of doing this.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/20241009204903.GA3353168@thelio-3990X
+> Fixes: 6ef6a0e821d3 ("iomap: share iomap_unshare_iter predicate code with fsdax")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-Please merge it as a KVM fix if you can. Thanks.
+>  fs/iomap/buffered-io.c | 17 -----------------
+>  include/linux/iomap.h  | 19 +++++++++++++++++++
+>  2 files changed, 19 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 604f786be4bc54..ef0b68bccbb612 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1270,23 +1270,6 @@ void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_write_delalloc_release);
+>  
+> -bool iomap_want_unshare_iter(const struct iomap_iter *iter)
+> -{
+> -	/*
+> -	 * Don't bother with blocks that are not shared to start with; or
+> -	 * mappings that cannot be shared, such as inline data, delalloc
+> -	 * reservations, holes or unwritten extents.
+> -	 *
+> -	 * Note that we use srcmap directly instead of iomap_iter_srcmap as
+> -	 * unsharing requires providing a separate source map, and the presence
+> -	 * of one is a good indicator that unsharing is needed, unlike
+> -	 * IOMAP_F_SHARED which can be set for any data that goes into the COW
+> -	 * fork for XFS.
+> -	 */
+> -	return (iter->iomap.flags & IOMAP_F_SHARED) &&
+> -		iter->srcmap.type == IOMAP_MAPPED;
+> -}
+> -
+>  static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+>  {
+>  	struct iomap *iomap = &iter->iomap;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e04c060e8fe185..664c5f2f0aaa2d 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -270,6 +270,25 @@ static inline loff_t iomap_last_written_block(struct inode *inode, loff_t pos,
+>  	return round_up(pos + written, i_blocksize(inode));
+>  }
+>  
+> +/*
+> + * Check if the range needs to be unshared for a FALLOC_FL_UNSHARE_RANGE
+> + * operation.
+> + *
+> + * Don't bother with blocks that are not shared to start with; or mappings that
+> + * cannot be shared, such as inline data, delalloc reservations, holes or
+> + * unwritten extents.
+> + *
+> + * Note that we use srcmap directly instead of iomap_iter_srcmap as unsharing
+> + * requires providing a separate source map, and the presence of one is a good
+> + * indicator that unsharing is needed, unlike IOMAP_F_SHARED which can be set
+> + * for any data that goes into the COW fork for XFS.
+> + */
+> +static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
+> +{
+> +	return (iter->iomap.flags & IOMAP_F_SHARED) &&
+> +		iter->srcmap.type == IOMAP_MAPPED;
+> +}
+> +
+>  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+>  		const struct iomap_ops *ops, void *private);
+>  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+> -- 
+> 2.45.2
+> 
+> 
 
--- 
-Catalin
 
