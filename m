@@ -1,83 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-31995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694D899EE40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E16999EE80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F29B21519
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A18C1C20A59
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 13:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B39170A3A;
-	Tue, 15 Oct 2024 13:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA361AF0C7;
+	Tue, 15 Oct 2024 13:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlCWvCuP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dD99J5HE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2E1FC7D1;
-	Tue, 15 Oct 2024 13:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E541FC7D1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 13:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000520; cv=none; b=r/wgRg6GHpOtQXh8y4afBf8OcWKeE4p+2xTfjksIoZOzeSO1ZaaNxasZ734tSMq/zIlvMci0Ze6vwERT/EEsLcXcJwKyd9K/hvmuAPhvqXn0R+L+RTW4qxNpXMULnoJgTJj4UFWYVOVkPsFsdag/BX5fn+SbvJAAesskEnwDXmM=
+	t=1729000773; cv=none; b=SICPgJD6KFcfCmMoPzK5u+rMskYR+hQ5h3gTw9YT+PRdBcAObg37U/FWxcoZLOCWlt5LW48dx0OXA4pIs5ghAXMXDVLfIJCLFTzksqBgtrXcwEv5MSGt8iJCD8cwxmU0fAh0B+/q7EzeR2K6yV+GWSdAF15z4gzh8mgJdhuN1sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000520; c=relaxed/simple;
-	bh=E4FPpLgjFwsYfCi9LlTWwHuWNpi+DGCMZLApZtrVeXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lr3vkHME1MGWR85xQW6iOX+LA1qFj5xLNXJwkv96PfVTmHUc8oxsIP8VnIkhsIM6fRG5pDcWyjpFqFUVLANYren/2h445OYuMSQLsu4jCUKr5P20Ou2QpeL7HjgadH1atGXYkLgl1koFZsjNtV/ri/0I/yXsZOiJXBfQjraKnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlCWvCuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5105FC4CEC6;
-	Tue, 15 Oct 2024 13:55:19 +0000 (UTC)
+	s=arc-20240116; t=1729000773; c=relaxed/simple;
+	bh=9xGHMicw48Bm2hrafS8cGqp/5zcB1mgChWuAO2zp4TY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vma626n/LX77/tIlvU2r4pJSjQzSiMbkhnmbAO9jJm41Jn90UC6NU6sRZK18Y4VIY3J26nBhyYL3S1OxSSWv/GaDlGexL+kHjT7CPo6Z4TFn3d0GezR/ne2k2WM/6u1eRVQYVq8kCB0wn7IneQZGG1d6JTx9TpkUcg5o2cNb8vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dD99J5HE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D55C4CEC6;
+	Tue, 15 Oct 2024 13:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729000520;
-	bh=E4FPpLgjFwsYfCi9LlTWwHuWNpi+DGCMZLApZtrVeXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DlCWvCuPBtuscz5EGcb6N12yPsVhqmTbHjCHJE6Dui+zjwVs/auicPZrt9gR0R5U1
-	 MeDe4TU8UXtpYSCtfIHjv8Ukisgkhjp73fcSXN6y2NRhGM0drllHVAJRoUWeb4ZfEI
-	 JOezb8/y1YZh9r0KpXC++Pdyqk7QFN+ylkbwcL5p3k25MTNqVC1ef8tIUUl2kd1gNH
-	 BZkRFesmi9txoIn2BeLMRYfbldGlBUzFEBBxRofe5kbsp9S2aqoPDjTAxRF3hOP9Ql
-	 6pAtEZxdEJWaLU59uhZZVnWFYnQ8Dn+tOjb2/RUD01ShX5E9539aeWbiSO62Nh/D/h
-	 bXh4ZELOJvLHQ==
-Date: Tue, 15 Oct 2024 15:55:16 +0200
+	s=k20201202; t=1729000772;
+	bh=9xGHMicw48Bm2hrafS8cGqp/5zcB1mgChWuAO2zp4TY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dD99J5HEfk4wDXHqDTboCJ/PQi/xu1ES+cz4FDkQ5VELGcyCy5z710fOmrQG0hxIH
+	 LNcpbS7MBnFgL2qeNGcOY0m56hs3Wx5rXkwDpjIhHVH4HdTS6Wic5tLgXNO2r3LE1J
+	 eoFmpdb0CTwQB01cQmf+VlzjtUbTnZorqk3bFuEQ17zwppNXVaTLoP8o6de8CGcisJ
+	 Kfv4PNzINd7T+ZnEtYygmDVyU8a3EdAKtEXEjfn4rbCl331+CMBv/sO6gAXv/d5oNt
+	 Umpf9rvOtiu4QeAxEtaskJkvR19RLchYbbYf3X4NJQh9XdIVLVKc9yy81NLpj2K1HL
+	 eXucUlHFGmwow==
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH] selftests: add test for specifying 500 lower layers
-Message-ID: <20241015-altstadt-kaffee-fc665c40c46e@brauner>
-References: <20241015-leiht-filmabend-a86eed4ff304@brauner>
- <CAOQ4uxi8=BKjBt04OQi8weFUDoXYA5+cWq51EMTocyjTf2Fx5A@mail.gmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	Bill O'Donnell <bodonnel@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	sandeen@redhat.com
+Subject: Re: [PATCH] efs: fix the efs new mount api implementation
+Date: Tue, 15 Oct 2024 15:59:27 +0200
+Message-ID: <20241015-vorabend-tapeziert-53327ea1b391@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241014190241.4093825-1-bodonnel@redhat.com>
+References: <20241014190241.4093825-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1123; i=brauner@kernel.org; h=from:subject:message-id; bh=9xGHMicw48Bm2hrafS8cGqp/5zcB1mgChWuAO2zp4TY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTzldqLWim6JCVqbUj12HQ6RPDyolhGR0/nuU0rZRYYB FUZzpjRUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJH1hYwMR9TlAsOmnyneqSka LThJbG01N9fdu119avzxfCWnS498YPgrV2AYkqSjEhArkNGuM/n+KhPGContiUZiB+5uVw4yFmc AAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxi8=BKjBt04OQi8weFUDoXYA5+cWq51EMTocyjTf2Fx5A@mail.gmail.com>
 
-On Tue, Oct 15, 2024 at 01:35:31PM +0200, Amir Goldstein wrote:
-> On Tue, Oct 15, 2024 at 1:15 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Verify that we can actually specify 500 lower layers and fail at the
-> > 501st one.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> > Just noticed that we didn't have that and we'd already regressed that
-> > once and now that I've done new selftests already just add a selftest
-> > for this on top.
+On Mon, 14 Oct 2024 14:02:41 -0500, Bill O'Donnell wrote:
+> Commit 39a6c668e4 (efs: convert efs to use the new mount api)
+> did not include anything from v2 and v3 that were also submitted.
+> Fix this by bringing in those changes that were proposed in v2 and
+> v3.
 > 
-> Thanks!
+> Fixes: 39a6c668e4 efs: convert efs to use the new mount api.
 > 
-> I guess this is going to be added to your vfs.ovl branch, so
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> [...]
 
-Yes, thanks!
+Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
+Patches in the vfs.mount.api branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.mount.api
+
+[1/1] efs: fix the efs new mount api implementation
+      https://git.kernel.org/vfs/vfs/c/51ceeb1a8142
 
