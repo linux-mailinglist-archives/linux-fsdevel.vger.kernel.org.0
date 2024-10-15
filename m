@@ -1,135 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-31956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E7C99E33E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 11:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFC899E346
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 12:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872102841AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 09:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3341C2204D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 10:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BADB1E2841;
-	Tue, 15 Oct 2024 09:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC3818BC13;
+	Tue, 15 Oct 2024 10:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hbJvBxYl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6553317DFEC;
-	Tue, 15 Oct 2024 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089581E3765
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 10:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986363; cv=none; b=CwkHRpfFNF8MBtwr6W8Wi5AnY2dDmAe+KwZe6G3TCoWsVoTcjOfQzW5pWcTcUyaMJV0LfSPak/PQiaN6yN9x26ajM39G2DZ0zdqrRK541QpGVsQTYvxuZgJa4hKoUKJFu4+GKEB4XfGBjpwKpGNeoL63UpGBaZOcuY7VmuUjV2g=
+	t=1728986478; cv=none; b=YXOZtubBhEUEQMDCpoSsRsgDkdEXeoZks9wo7EazE6weCaVi5IoUXGG9XvbZNtBhqsbc5X5yKh9aKTCSEmluM1gv1rlFsN+BKLS+eMcthT3w5qO1bAm560G6e90F1LLZJMvM+dwuU5MAHo2oklsXphpliqz9OuI/az1G6W5CiLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986363; c=relaxed/simple;
-	bh=1RaCQuWH5s4AT7QPJwA17NMrH/oRCvf9JK37eD4b5S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RyBo85PFjUi7x2lHLTdvc7YbK5rey9D0+CrVvbKOYrIFlL7+t+x3isfudBkciYQOILwSx+C8mvJOziOHom8ofX2WRHNDaiR9QcjFc9AabuNNxeVj+X7eGdnAmy5QbihJnl7ugV3zWWQwjwxt2JZhdThywFqZNBok3w5JX8NsLjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 577591007;
-	Tue, 15 Oct 2024 02:59:50 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A909B3F71E;
-	Tue, 15 Oct 2024 02:59:16 -0700 (PDT)
-Date: Tue, 15 Oct 2024 10:59:11 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, nd@arm.com,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
-Message-ID: <20241015095911.GA3777204@e124191.cambridge.arm.com>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-20-joey.gouly@arm.com>
- <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
- <20241009144301.GA12453@willie-the-truck>
- <20241014171023.GA18295@willie-the-truck>
+	s=arc-20240116; t=1728986478; c=relaxed/simple;
+	bh=2cwX/br97fHP2+rD38JwoSqWF4VpNCBmKTCBkZi51So=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ek760raoYRZ41YRc6eCwow/Di0reJ0dbcmLLfeN8ih1wkbioZyJ6eRJf3FycQ1oOlL1fW1C1sZIOcmYAn5+RhNfT/3NkAt8VftCfqKhuHApnPUohgMJBkdo5KS+LkS6CMSlioJNV0SBkEKeEuXwudzbPhiIoj4IAPzp8HYjBGTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hbJvBxYl; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so3026910a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 03:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1728986474; x=1729591274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZkXujz+AkPMr+hXtOemRGyDp0iKQ1I/BZJu2qkSfe2s=;
+        b=hbJvBxYlzZPsho3aT5nqmFG76Mdj1x2yEylRwXDw83+hm6wMPNV6xWOf3NmdOkzb9S
+         1nb5J6f7Y44hP61NVxr7IfYc71X8CZXETDFc7olFNXyAQrndePslBo6S3UOdgNixbq84
+         1C3bN2GI2ycoS4NDj12EBP3eXg3eTzFEYKlyw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728986474; x=1729591274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZkXujz+AkPMr+hXtOemRGyDp0iKQ1I/BZJu2qkSfe2s=;
+        b=Cbb/ACh1Amh9i6d9ltprYXorhYIRItWx9Z4dvS10r8AwoAIh8YRgPNKAVdxEmnGsyI
+         xp8UadO7n8xI3Akw7d3CwP3lpcM4CJK0mBuCJZW/dNTABRBperhkECR+Vxk/Ba58PxU0
+         cip7pmlhdBZo9QPKCrOFjZ4V3O5BvAidorJTWTDcBINuz8DPb6dIzTomfG6gdVj5lP1u
+         4VDJmdNBB9oSag7nX8yGtLuU1/NqjgRtv6Fy2+fzBs9FYrxL7STlpfNrmqIxMCCWeAOh
+         g5tjIs9R6PR/460ihm93tdesYzFX7H/OILIMy7gSLfW1H4e4n4wLtf98snzxITV6NyMf
+         5TeQ==
+X-Gm-Message-State: AOJu0YzRi9OUCfTC/Y1rvfM+m+RuEdkeSRALBStExXTODeveo7QYyTBk
+	SOXi8fLaGqTaRng/vKO2bljuHBeWdfmClVe8GrStkao1cVtL6VfnFlLuHji2uLfC5O4NFPtmXgM
+	yadCeRun+HNr5vZPdREbk/Bs5nVw/i79NwKa1Wa0Lp3Kb8QOb
+X-Google-Smtp-Source: AGHT+IGVXoQx9gJzbIH3x6IQ9zFCkGUg4As7h8fjBdik3kQjUSrUhjbURXqnVglvr0JZ1FSxYtJee0vidTJZcPmCSGA=
+X-Received: by 2002:a17:906:4fcd:b0:a99:e505:2089 with SMTP id
+ a640c23a62f3a-a99e50522d4mr1095725866b.45.1728986473980; Tue, 15 Oct 2024
+ 03:01:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014171023.GA18295@willie-the-truck>
+References: <20241014182228.1941246-1-joannelkoong@gmail.com> <20241014182228.1941246-3-joannelkoong@gmail.com>
+In-Reply-To: <20241014182228.1941246-3-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 15 Oct 2024 12:01:02 +0200
+Message-ID: <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, hannes@cmpxchg.org, 
+	shakeel.butt@linux.dev, linux-mm@kvack.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 06:10:23PM +0100, Will Deacon wrote:
-> Kevin, Joey,
-> 
-> On Wed, Oct 09, 2024 at 03:43:01PM +0100, Will Deacon wrote:
-> > On Tue, Sep 24, 2024 at 01:27:58PM +0200, Kevin Brodsky wrote:
-> > > On 22/08/2024 17:11, Joey Gouly wrote:
-> > > > @@ -1178,6 +1237,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
-> > > >  		sme_smstop();
-> > > >  	}
-> > > >  
-> > > > +	if (system_supports_poe())
-> > > > +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
-> > > 
-> > > At the point where setup_return() is called, the signal frame has
-> > > already been written to the user stack. In other words, we write to the
-> > > user stack first, and then reset POR_EL0. This may be problematic,
-> > > especially if we are using the alternate signal stack, which the
-> > > interrupted POR_EL0 may not grant access to. In that situation uaccess
-> > > will fail and we'll end up with a SIGSEGV.
-> > > 
-> > > This issue has already been discussed on the x86 side, and as it happens
-> > > patches to reset PKRU early [1] have just landed. I don't think this is
-> > > a blocker for getting this series landed, but we should try and align
-> > > with x86. If there's no objection, I'm planning to work on a counterpart
-> > > to the x86 series (resetting POR_EL0 early during signal delivery).
-> > 
-> > Did you get a chance to work on that? It would be great to land the
-> > fixes for 6.12, if possible, so that the first kernel release with POE
-> > support doesn't land with known issues.
-> 
-> Looking a little more at this, I think we have quite a weird behaviour
-> on arm64 as it stands. It looks like we rely on the signal frame to hold
-> the original POR_EL0 so, if for some reason we fail to allocate space
-> for the POR context, I think we'll return back from the signal with
-> POR_EL0_INIT. That seems bad?
+On Mon, 14 Oct 2024 at 20:23, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-If we don't allocate space for POR_EL0, I think the program recieves SIGSGEV?
+> This change sets AS_NO_WRITEBACK_RECLAIM on the inode mapping so that
+> FUSE folios are not reclaimed and waited on while in writeback, and
+> removes the temporary folio + extra copying and the internal rb tree.
 
-setup_sigframe_layout()
-        if (system_supports_poe()) {
-                err = sigframe_alloc(user, &user->poe_offset,
-                                     sizeof(struct poe_context));
-                if (err)
-                        return err;
-        }
+What about sync(2)?   And page migration?
 
-Through get_sigframe() and setup_rt_frame(), that eventually hets here:
-
-handle_signal()
-	ret = setup_rt_frame(usig, ksig, oldset, regs);
-
-	[..]
-
-        signal_setup_done(ret, ksig, test_thread_flag(TIF_SINGLESTEP));
-
-void signal_setup_done(int failed, struct ksignal *ksig, int stepping)                                                                                                                         
-{                                                                                                                                                                                              
-        if (failed)                                                                                                                                                                            
-                force_sigsegv(ksig->sig);                                                                                                                                                      
-        else                                                                                                                                                                                   
-                signal_delivered(ksig, stepping);                                                                                                                                              
-}  
-
-So I think it's "fine"?
+Hopefully there are no other cases, but I think a careful review of
+places where generic code waits for writeback is needed before we can
+say for sure.
 
 Thanks,
-Joey
+Miklos
 
