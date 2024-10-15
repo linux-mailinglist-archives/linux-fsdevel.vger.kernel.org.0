@@ -1,100 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-32032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE9299F71A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:20:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37EB99F752
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19A6282D1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 19:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9820128313C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 19:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029421EBA0B;
-	Tue, 15 Oct 2024 19:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3201B6CEA;
+	Tue, 15 Oct 2024 19:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="heRGDCJA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFNWg8e5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32E31F80D8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 19:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C981F80B1;
+	Tue, 15 Oct 2024 19:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729019852; cv=none; b=GVsFwZGUT5hp79RkHz68IH698q5GSWXvyzFEQ/RvcrGCQU6QElPPprtOQxJ4OBm+BcV2C2kjo7e7jQYppU9cBkazNzh5qMJM/Gy0ObDerHqNgunze9mGEDfKqR7/9Pyhd78wg9TPDW6hTKex/uZBMHHHnVBPSX0XiqpFwLZuVJg=
+	t=1729020597; cv=none; b=UqbqYNeyCPOLfuf3XKzBWmF7g3aWXnfy9b1H5QyR+nUemo1WbP5+8zC6GhyOU2xd2LESTkuWLGVDmVSZX/uwF3QxRtnOz6hVYzy76K0qXMeJjX0XP5AqcQVW48FxzXU2Yu6FdsW+GbQuyY6Me9JefPpMt9PXbCU0wUVhZHK3H6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729019852; c=relaxed/simple;
-	bh=DHDu6dLOdLzntjWcEhDWHDq5FCg2oReJ3SICL4KpBow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InHMAxlbWgk3NB2UFwsXtV4hGKtu+ciHD7rQioif5HtsblfkVn1OF8x05HAUYB2tgrgW/1MBSy/kUiZU7Bvdk8fQTe679V4GpEvUpTWI7jJsT2n4P0JD+vurej+ZqMS2BGPpeVpjQi/LaSJDAXzz2xu/7PrfWU5NaqTzruiiPK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=heRGDCJA; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 15 Oct 2024 12:17:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729019846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xMk7NYWnpFsmIrjE2x+tJklQeOWwKwQSoxh5vfQIXC8=;
-	b=heRGDCJAruY94iowmaFXuDd8xlyZiFBCY228BaF4OWzjHfLsVrenr9Qbx09qL/f47NgJaY
-	2oMDoAuch5zt39oON/DGkaGdVJ86aOT2bj67BaHQcmBJMmoFoJEp4Mc77zH4PPxkIhSbPJ
-	LoFzp91AIil1NCF4wGgyFdT5q2NjMnk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
-	hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
- internal rb tree
-Message-ID: <ntkzydgiju5b5y4w6hzd6of2o6jh7u2bj6ptt24erri3ujkrso@7gbjrat65mfn>
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <20241014182228.1941246-3-joannelkoong@gmail.com>
- <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
- <CAJnrk1a5UaVP0qSKcuww2dhLkeUqdkri_FEyVMAuTtvv3NMu9Q@mail.gmail.com>
+	s=arc-20240116; t=1729020597; c=relaxed/simple;
+	bh=3MlQeXB5Uu9IDEgbalmWpVhMVbn+v0dHKwOLs+42xro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DW5xQtPOgpT3a5lW3ijXNNmIpZCuPhzEfomUj9iAjadbeELRy531wR13WhYDYz2rxg6JMBvBa70cmHdwHcRkRY9lzkesuu8Pb+nRawegNunpURrA9bQeu7h+WIEceicJJyRFjOfV5T33seKx6Q1GDE3iNAkSG9+S/AhJZAjWbgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFNWg8e5; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d43a34a0cso296399f8f.1;
+        Tue, 15 Oct 2024 12:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729020594; x=1729625394; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MlQeXB5Uu9IDEgbalmWpVhMVbn+v0dHKwOLs+42xro=;
+        b=CFNWg8e58CFZIVQZG8K+3KpSKJPxKV437lxNzmUEWHdjSpmoynyFDqpAo9FvvVD80r
+         G19jYDNH3p9+Qr98IyQu50fLTiWux45wP3gn9siCYRnmhDGsXV4fjaRKo8t3jgoHqp7c
+         NLpOjupywot0AKavJSltACi/Hzs3df00HjnjbggMkNFBLkC/4dgd5NDGufYIca4tbxli
+         YRvKy7i7i+2rD5mojVa9DMhq8RY2mskEi0mvIfrlJbYNx4dbrA2V/s91B8LOZDfaXBy8
+         iQjZplUzjuiPpqbcOyCHM1XxhYuoOKM5gDaeOOZyxqhBfnGbbw1FuU6kNfDdmM/Z+57S
+         3Uhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729020594; x=1729625394;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3MlQeXB5Uu9IDEgbalmWpVhMVbn+v0dHKwOLs+42xro=;
+        b=TmRihBQb6NIHq1FNgMuEikSGNr0c8D1X4pp3o6XsyIoBKdzKzfvUzHEBjTSEuupYVM
+         Hs/DKlGzDa2K/1ni+J+8S9TdJD2RXGUHoLuhFt4AvcKbZHp7Vjc2cdN2r0sHqtcBfb/F
+         V9rMB3mMFz3Gamf7ZGKD0ssSfFbuzQSqUvFAY9U8PFI8CcEZTO71YSsrQcBqwhCdemXV
+         oLZq9S4KDe4BFov3ym5WQ8DypVhjvSdclZI2KkTLFOa458oZSysvt6siWw7zANHCcNUz
+         mFodU6fdG57la7Emow+l9DCsrcR25ZjGhfOMWnqjJKGt5ke3OEdgnJbeJMyDyEcXIXTr
+         rIhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhMO6yWfqEg7tFtRBuqwThPjwBspfZ2JCxZFQf6+eKCF5qtFM9qBuAYBMBWXjqLJyTF91123WddX+dAYxn@vger.kernel.org, AJvYcCWm+Edp9je05nb3t1WeCNf7oO2BO0zFPpj3ex2Tc2OdROo6XHMO6hgbDyhvLqmnVx/fPS0EB4jeNlWxw6BJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkxSvKw6JH+sGTZbNBq5Q8F5HRbbRDv0dWh+kwoCvuC0e8+s5J
+	jFLJV8Hg6p2VcdoLEHHf8uPfF+y3SfN5BL4BZJHNHzV4uLE0hjKfdFKue7BLP7pDNOz5uiDKCVT
+	gIJKkisr2MVqCOsWOdx02ZcdRSpU=
+X-Google-Smtp-Source: AGHT+IGPdIyu+Re+h6AdGMA7dR8cTOxAkTJmBqt/2MNdugsUtA6h2XWeKz9G/gGs5zqDwL09aI4HEsuz3GIqDWmQOsg=
+X-Received: by 2002:a5d:47a7:0:b0:37d:3ec9:a01e with SMTP id
+ ffacd0b85a97d-37d553505f3mr5712067f8f.13.1729020593683; Tue, 15 Oct 2024
+ 12:29:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1a5UaVP0qSKcuww2dhLkeUqdkri_FEyVMAuTtvv3NMu9Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <CAJg=8jz4OwA9LdXtWJuPup+wGVJ8kKFXSboT3G8kjPXBSa-qHA@mail.gmail.com>
+ <20240612-hofiert-hymne-11f5a03b7e73@brauner> <CAJg=8jxMZ16pCEHTyv3Xr0dcHRYdwEZ6ZshXkQPYMXbNfkVTvg@mail.gmail.com>
+In-Reply-To: <CAJg=8jxMZ16pCEHTyv3Xr0dcHRYdwEZ6ZshXkQPYMXbNfkVTvg@mail.gmail.com>
+From: Marius Fleischer <fleischermarius@gmail.com>
+Date: Tue, 15 Oct 2024 12:29:42 -0700
+Message-ID: <CAJg=8jyAtJh6Mbj88Ri3J9fXBN0BM+Fh3qwaChGLL0ECuD7w+w@mail.gmail.com>
+Subject: Re: possible deadlock in freeze_super
+To: brauner@kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, 
+	harrisonmichaelgreen@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 10:06:52AM GMT, Joanne Koong wrote:
-> On Tue, Oct 15, 2024 at 3:01 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 14 Oct 2024 at 20:23, Joanne Koong <joannelkoong@gmail.com> wrote:
-> >
-> > > This change sets AS_NO_WRITEBACK_RECLAIM on the inode mapping so that
-> > > FUSE folios are not reclaimed and waited on while in writeback, and
-> > > removes the temporary folio + extra copying and the internal rb tree.
-> >
-> > What about sync(2)?   And page migration?
-> >
-> > Hopefully there are no other cases, but I think a careful review of
-> > places where generic code waits for writeback is needed before we can
-> > say for sure.
-> 
-> Sounds good, that's a great point. I'll audit the other places in the
-> mm code where we might call folio_wait_writeback() and report back
-> what I find.
-> 
-> 
+Hi,
 
-So, any operation that the fuse server can do which can cause wait on
-writeback on the folios backed by the fuse is problematic. We know about
-one scenario i.e. memory allocation causing reclaim which may do the
-wait on unrelated folios which may be backed by the fuse server.
+Hope you are doing well!
 
-Now there are ways fuse server can shoot itself on the foot. Like sync()
-syscall or accessing the folios backed by itself. The quesion is should
-we really need to protect fuse from such cases?
+Quick update from our side: The reproducers from the previous email
+still trigger the deadlock on v5.15.167 (commit hash
+3a5928702e7120f83f703fd566082bfb59f1a57e). Happy to also test on
+other kernel versions if that helps.
 
+Please let us know if there is any other helpful information we can provide.
+
+Wishing you a nice day!
+
+Best,
+Marius
 
