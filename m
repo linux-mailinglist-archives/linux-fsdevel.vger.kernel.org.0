@@ -1,191 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-32025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3495C99F5B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 20:36:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D840699F5AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 20:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB761C237C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 18:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086011C26DFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 18:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322E22036F8;
-	Tue, 15 Oct 2024 18:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A854B1FBF57;
+	Tue, 15 Oct 2024 18:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OYks4C3z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d2oXo14o";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OYks4C3z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d2oXo14o"
+	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="tvfpz6Tu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Nfuw7vZb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06492036E0;
-	Tue, 15 Oct 2024 18:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE331FAF1C;
+	Tue, 15 Oct 2024 18:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729017325; cv=none; b=HFU7HENySsU23COb2OOOx7/KAARYRg2c9CDaST66xzC6bklwVyfSZQkcTwgYU/VMHdjYbjHUxovgQKabB0sMLD3C5nTrAnXn49WIO+pzUS/ECGaGd5+ZIcyMXythM4nFdnnwQWLlh2kLHPm090h6dT9/ujclen3oHRmcanPYLWw=
+	t=1729017278; cv=none; b=i0pwGxy156yBBf0gBA9u6QEiAA9CMXZaAp/3NzDXLWFI0rytRuoI2gNT/8pyEFFhQlCZcr3Y97mIwYS+ftGuVafwv80FoD7KWwiMQxS3OmkjOyj4P8Z1o1SgCjSQ9x9ZSun7xLgGmCcqKlt2vGdnvLH6yc8lmAhSEo/eurn/w98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729017325; c=relaxed/simple;
-	bh=sXBjcMEip2iMYc6Cb9tM3ec1NMU3XjJtMG0zksq4F8E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UPvT5jfIUITtoRiqYAMlRiN/egn/vlVHrtzCckUxqctTHYbnrCoSAy+LO2kQpgP4vV9miu1T3nnYEqXhrAHe6I/YsZV0hy/D5DI6rGTRuTn0elEl/pdb+1EUmeLGgETQb2MS5ePcvWoesRtGnXL4Hs+k0REWd3BL4YJD0Zy0vxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OYks4C3z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d2oXo14o; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OYks4C3z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d2oXo14o; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1CC5721B9B;
-	Tue, 15 Oct 2024 18:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729017322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ZstxhVk9QOrcNizGJVVQwN2mCzQEZY3vaa7cVcnk/k=;
-	b=OYks4C3zNQfaTB0uJRa597TOaL1xPd5XsUl+zquiDOI2keIPIA9VPl6RcMRUE5tqXmdLD8
-	hKx+QhgkSbGqJoce02xRLEUwICxqRlq7xUN7uHRPrvCKgbE0u1gKCCOcqe+WWu9HRyaxVr
-	yxat4EWnlUyYQBgKmc2ik2G8QsDcADI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729017322;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ZstxhVk9QOrcNizGJVVQwN2mCzQEZY3vaa7cVcnk/k=;
-	b=d2oXo14ovteimlXL6Ac5e5DJ+Di4YEbS/EkR5bQgMaxxV7+/gVFD4ffVwwISEs26y+Qz/b
-	ryOd5Kyr966hXdDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729017322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ZstxhVk9QOrcNizGJVVQwN2mCzQEZY3vaa7cVcnk/k=;
-	b=OYks4C3zNQfaTB0uJRa597TOaL1xPd5XsUl+zquiDOI2keIPIA9VPl6RcMRUE5tqXmdLD8
-	hKx+QhgkSbGqJoce02xRLEUwICxqRlq7xUN7uHRPrvCKgbE0u1gKCCOcqe+WWu9HRyaxVr
-	yxat4EWnlUyYQBgKmc2ik2G8QsDcADI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729017322;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ZstxhVk9QOrcNizGJVVQwN2mCzQEZY3vaa7cVcnk/k=;
-	b=d2oXo14ovteimlXL6Ac5e5DJ+Di4YEbS/EkR5bQgMaxxV7+/gVFD4ffVwwISEs26y+Qz/b
-	ryOd5Kyr966hXdDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFF8D13A53;
-	Tue, 15 Oct 2024 18:35:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T6M/J+m1DmeoTQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 15 Oct 2024 18:35:21 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>,  Hugh Dickins <hughd@google.com>,  Andrew
- Morton <akpm@linux-foundation.org>,  Jonathan Corbet <corbet@lwn.net>,
-  smcv@collabora.com,  kernel-dev@igalia.com,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
-  linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 07/10] tmpfs: Add casefold lookup support
-In-Reply-To: <20241010-tonyk-tmpfs-v6-7-79f0ae02e4c8@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 10 Oct 2024 16:39:42 -0300")
-References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
-	<20241010-tonyk-tmpfs-v6-7-79f0ae02e4c8@igalia.com>
-Date: Tue, 15 Oct 2024 14:35:20 -0400
-Message-ID: <87wmi9qknr.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729017278; c=relaxed/simple;
+	bh=5h4yJYD6mj749ehtFoj/pa6R5CAlrx/gSF34IkWjRkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cRaC8pq+SCTOBw4XMx6EizvmFxBPRlipAhNwxkOuK5GPaiypypmMF96Csi6fGyI5/fOxggg3Mj/Ue+B3EnQWFwb2d/92QkfyQLyy1fLQFRfHQnGdaIEBCOVREc8Oedl3HVQRFpvOHw32KlgVHlKUswEcE/t73o34PYPI/7YUjyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=tvfpz6Tu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Nfuw7vZb; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 93CBA138021E;
+	Tue, 15 Oct 2024 14:34:35 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Tue, 15 Oct 2024 14:34:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729017275;
+	 x=1729103675; bh=2ofm0Km157SSWcgNu+R/b0e4iC0q+FyX4UDhyX2UdbU=; b=
+	tvfpz6TuGyrCZm7B2zCL38nXnJZE0OhzUTujPCRl5VsUpkKwnWAt4DxxYaoKMScu
+	M40Cgq5qljrfecrxaUTPYdnuEt4t9gwMd6Lo1u0nAqbZSMqzChpnkrpkQ2xfHHsQ
+	vHvbDbXNehsxSK3GxKhetg+Ww9eYKnV412qPBtTL0nHSFveEoUIUv3KYZYWS6mdr
+	QbTOvmYeeD2aZ+/eQLRwhRH6LB8GNNMUHdCPN1YDgnTC9zYOh2ZUTspbhagjRcaR
+	GB4CWu3glA+AHNhmXgnbyFn6DF2dQWy4stW6EjmGRuyCWjmq9ZAxbBVIp36N1YvV
+	YYdEylVYXP32RUoWdYuoPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729017275; x=
+	1729103675; bh=2ofm0Km157SSWcgNu+R/b0e4iC0q+FyX4UDhyX2UdbU=; b=N
+	fuw7vZbh/PDW+w8I9GkfkLs64bs2Szvb6+KLGwEZiW5fPgzalTw9i43nlMFP1epA
+	pp+uiqsjALa7rV0luFR3Zs38Gx/Y477soFQERgLmZgnr2riOjoaf2yoBLYiSH0XT
+	2bEFzPwBgU8nURBoErODisuZTtVo4LNlP7pzRgjEO1L3YZXP8Dg7Jx5zZkvUESEi
+	rVhZFp1oKr6nysPre/Nh6B/y2Q455fwK27RO+3y/kTOtJIoICcRr7ihywei+pWeK
+	1sCf2kXWPzkun9iSwZwnxxnycDiLtajH2pZ0kmiLVE4Z10OLhA9oGXKp/+i6iwBa
+	V8PziMjVswkw3lw5yid6Q==
+X-ME-Sender: <xms:u7UOZ7rm0WAl9uloqGjdveH6Zxp7fReY4JbRNC08RXHf4-OPWGZq6w>
+    <xme:u7UOZ1p1GBZOhmGXmGGDmtLQapW752DmPXbGHWq7i8odMLsAaLJ4mnoDi8HtOs-2j
+    RyfN0qreBsrKhI1_A>
+X-ME-Received: <xmr:u7UOZ4MrMZQ-WtXEFfsrZqTIY9cYzaymHrxNg2CT9FSfK1pw6cFJ0Xqf4A-byEN2mNQylXDuwhWs1GdanIb4Y71F0qv8NEQ88udo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedguddvjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqne
+    cuggftrfgrthhtvghrnhepfefguefgtdeghfeuieduffejhfevueehueehkedvteefgfeh
+    hedtffdutdfgudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomheprghlihgtvgesrhihhhhlrdhiohdpnhgspghrtghpthhtohepudehpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphht
+    thhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidr
+    ohhrghdruhhkpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheprg
+    hlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgr
+    rhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrg
+    hilhdrtghomh
+X-ME-Proxy: <xmx:u7UOZ-6krkHgJEnvWCs-VSfbNDGkD-opBEZAoD0LNJjfSCYC243QSA>
+    <xmx:u7UOZ67RNYuKW8RyDrTfBA78KRPy_sr1Vgpg_APtULE-ooxx0XD3zw>
+    <xmx:u7UOZ2g3m1EiMfcTYnAc6b9zIoWBPDayUoxISGLA929npthF5fgNlQ>
+    <xmx:u7UOZ86YW-kxNjnSwrcqk1_CEev5D2ETdx-psrHPfLz22BWnHT_rAA>
+    <xmx:u7UOZ9oC41FGfx0OnFbv_8L_z7jx6OX4kgPf82UtRI3GbKKzBG8dAWS_>
+Feedback-ID: i56684263:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Oct 2024 14:34:32 -0400 (EDT)
+Message-ID: <23a73a6f-160d-4d06-8d45-ec77293ff258@ryhl.io>
+Date: Tue, 15 Oct 2024 20:37:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: task: adjust safety comments in Task methods
+To: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015-task-safety-cmnts-v1-1-46ee92c82768@google.com>
+ <Zw6zZ00LOa1fkTTF@boqun-archlinux>
+Content-Language: en-US, da
+From: Alice Ryhl <alice@ryhl.io>
+In-Reply-To: <Zw6zZ00LOa1fkTTF@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On 10/15/24 8:24 PM, Boqun Feng wrote:
+> On Tue, Oct 15, 2024 at 02:02:12PM +0000, Alice Ryhl wrote:
+>> The `Task` struct has several safety comments that aren't so great. For
+>> example, the reason that it's okay to read the `pid` is that the field
+>> is immutable, so there is no data race, which is not what the safety
+>> comment says.
+>>
+>> Thus, improve the safety comments. Also add an `as_ptr` helper. This
+>> makes it easier to read the various accessors on Task, as `self.0` may
+>> be confusing syntax for new Rust users.
+>>
+>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>> ---
+>> This is based on top of vfs.rust.file as the file series adds some new
+>> task methods. Christian, can you take this through that tree?
+>> ---
+>>   rust/kernel/task.rs | 43 ++++++++++++++++++++++++-------------------
+>>   1 file changed, 24 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+>> index 1a36a9f19368..080599075875 100644
+>> --- a/rust/kernel/task.rs
+>> +++ b/rust/kernel/task.rs
+>> @@ -145,11 +145,17 @@ fn deref(&self) -> &Self::Target {
+>>           }
+>>       }
+>>   
+>> +    /// Returns a raw pointer to the task.
+>> +    #[inline]
+>> +    pub fn as_ptr(&self) -> *mut bindings::task_struct {
+> 
+> FWIW, I think the name convention is `as_raw()` for a wrapper type of
+> `Opaque<T>` to return `*mut T`, e.g. `kernel::device::Device`.
+> 
+> Otherwise this looks good to me.
+Both names are in use. See e.g. Page and File that use as_ptr.
 
+In fact, I was asked to change the name on File *to* as_ptr.
 
-> @@ -4663,10 +4756,24 @@ static int shmem_fill_super(struct super_block *s=
-b, struct fs_context *fc)
->  	sb->s_export_op =3D &shmem_export_ops;
->  	sb->s_flags |=3D SB_NOSEC | SB_I_VERSION;
->=20=20
-> -	sb->s_d_op =3D &simple_dentry_operations;
-> +	if (!ctx->encoding && ctx->strict_encoding) {
-> +		pr_err("tmpfs: strict_encoding option without encoding is forbidden\n"=
-);
-> +		error =3D -EINVAL;
-> +		goto failed;
-> +	}
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +	if (ctx->encoding) {
-> +		sb->s_encoding =3D ctx->encoding;
-> +		sb->s_d_op =3D &shmem_ci_dentry_ops;
-> +		if (ctx->strict_encoding)
-> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
-> +	}
-> +#endif
-
-Actually...
-
-The previous patch moved the dentry ops configuration for the !casefolded c=
-ase to this
-place, only for thsi patch to remove it.  Drop patch 6, instead?
-
-> +
->  #else
->  	sb->s_flags |=3D SB_NOUSER;
-> -#endif
-> +#endif /* CONFIG_TMPFS */
->  	sbinfo->max_blocks =3D ctx->blocks;
->  	sbinfo->max_inodes =3D ctx->inodes;
->  	sbinfo->free_ispace =3D sbinfo->max_inodes * BOGO_INODE_SIZE;
-> @@ -4940,6 +5047,8 @@ int shmem_init_fs_context(struct fs_context *fc)
->  	ctx->uid =3D current_fsuid();
->  	ctx->gid =3D current_fsgid();
->=20=20
-> +	ctx->encoding =3D NULL;
-> +
->  	fc->fs_private =3D ctx;
->  	fc->ops =3D &shmem_fs_context_ops;
->  	return 0;
-
---=20
-Gabriel Krisman Bertazi
+Alice
 
