@@ -1,146 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-32036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD0099FA1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 23:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFABD99FA87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 23:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6024D2846A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2D71C208F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37FC201029;
-	Tue, 15 Oct 2024 21:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E164521E3C4;
+	Tue, 15 Oct 2024 21:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkhLr5d6"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Qcx4UqRC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F57C2003DD;
-	Tue, 15 Oct 2024 21:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A511D21E3A4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 21:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027988; cv=none; b=REhCToGfK0Nmf/qHt3gQZ35Qyq5jacKaUrxrJY57ZvnnZr1vvWctqczzxKK1X2Tn7PT6oWS/usfg4MkmT8faTlcwtmRajfFynqkYi8k1QqMUhsbGKrWk5ae2jGsHZ8qyLTd+rA22GPRZFe1Qy6ZtGENRbgIbzUqHRrFDcjDpMBY=
+	t=1729029065; cv=none; b=ZSLORPoupOsDLdzYvenLDeLjXHtXaPP3ur/vuPvEgDgGl5V1AfnlWRoOpUXQhvBNVoiaN7YwcpuAIDXe/pQuvpjjH0eNIVQPX9bjSxWg60qUohuY1pfOyX6xNuZL3SMDAdjSuwbEjgDL+xBiGeivWgBiqGVGpG/TzBFwv6mSY0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027988; c=relaxed/simple;
-	bh=NezhgycQLAQIQcDYDKSY4BGfzzueVAmkJQhNThtdlI0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u1N9O4HJNGkYCqs5P7NskzYkyg0nlrMZcs5xBB1Z01FALEf2LbBc2+rXUwiwjxWfh6BdFqqjjk0kd4hPyIm5Pzln8nJ6boF5e/v6Vl03txbzqoWRr2LbpmMzvZwGk9DJ37l9L5jZ/HyB3OhMPx+pO/WiG6uhPm1TXLW/xK2JGqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkhLr5d6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so22833755ad.1;
-        Tue, 15 Oct 2024 14:33:06 -0700 (PDT)
+	s=arc-20240116; t=1729029065; c=relaxed/simple;
+	bh=hSozEFv8m/TbtSvxb0FHznXq89oiylmQ9bp16lbzkB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXwJBRu1S5I5fMCu6ChFu+c+AV1yzRIaj0ZWw4pbVlOezFc4xP18YWGfLrDDGx9ddlVrWTckybMFULp0ICZUyG3Bq3iwfm3rtWA2m2lzw+V92s40ZuupSMPpupyOeDVrSJaI+MJKEsI++5D6EE485bLaWCs7nCTsa4P0GHyuDK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Qcx4UqRC; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb7088cbcso32231595ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 14:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729027986; x=1729632786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVAm6BNE00O0scacTdQbYjMo5XjngWN20FrkxdPAapA=;
-        b=jkhLr5d6Yn6QdRuxz4Avz9RxO3djh6Whjzo2QfeKvQVCgoqM41H3zwJ3kBVJWBhxVX
-         ZQP3izBblUpw6wsJ/3LaNANv+8gfyEjjeAz80u+zjPs6BUtOj5Q0QXYJRxhhQ1IDDSS8
-         okyAMJ+eFoaWNPZCyBrR6zxd+UeAneLSILRoi/uZapLfO0IDoSmfavRScKupaij1Awyu
-         XZ3yEOPFYKjMfSAoYASrI9V5MyO6O5kJjI1GeEKN12ac+qvCK/fsZaMeNh1hlKwusdsA
-         paZX9db/6+b4U8Jc3FYqcLE2Ty51ozniUT27RXpXH0kvJpjilLLfgAWyhYpGNWYONngg
-         UXmg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729029063; x=1729633863; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RIbql7FxBLA7l3QYk3auusd9TTm3/LPL/t4lU1Jlbps=;
+        b=Qcx4UqRC0/q1yvmF0cq6qb2ln2IOw0V7pz660dh7RGdkrk9rzaZH7urKzToL4PAy2d
+         g9KxHAKcx7V8Enq8r+lKjmicN/YYMsGLb8AXTGNIq7ZRZuwOnR3I0/JM+4JvTfD5L9aj
+         jZUENy2VWH605SvNfCN29LL5G2RZBSQ6LCwH8gm8P334ZgZPhQlCMmqguCJcXP2hbku7
+         YV7O/Tu7gBOAOhiLbKaCu13iRJ6PR+enu0MiaJSgN/fo6pe+24n0sy25aevI2CH1qlPY
+         iWjsfwIvdhartKxi2mlbQFSB+Uh5PF1dCUhIizekvx48scQJI6IK8psAQyAIsWhCEg/I
+         aFlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729027986; x=1729632786;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XVAm6BNE00O0scacTdQbYjMo5XjngWN20FrkxdPAapA=;
-        b=sNKuDNx4cuQjtn5RD0J5VpTpmNvxL8CZyzrgeXhkpbhxQfbjy5RVm7+e8ih9Sc5CRP
-         P43CGHg2a2q3fZ77Wn+cpgBOSWdvhgonW2I3rFgYnIsNsoI44xHHkNmyYxMfpT9u3Ju0
-         K4WTrIXPBNKwx1+ub4cYn9auFTIRx1CuSw97ROFr9yqbIkVl3gvlNRHn14VPtycND6sL
-         sqGM3ZEq03U9SVwLHocFe4pANcUgYGFPDg9pqWrn7lw6awYVIQiVXs5km9czjuKj25qR
-         yPvkPD+e9XtNW6HqYkkp23E0TVAU+YoZVB+3jtma5DrNcmhnFbgEK0l+S/U9YYRwX+PK
-         143g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3E6jO6skntLHNuGlAU4rDgFN23vqMf69TIRIF7hY9vHvS4Le7qDhdqTFEJmhAJnixelbMVIx8HepjPv4l@vger.kernel.org, AJvYcCXX5ejJgAkkmUvE+1hXdoY1ywC3Hrpr5coE0NIntkb6hRbUVRyJ44yEujoSoDDV6FP/QDr3X6pbUl4spMYY@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuqu+WMILzDzJdgC4d4hwI48v8G8IMF36w8yNshBNrJzfHxd8m
-	VD3Ar6YujOCZ9F48sRq3yWfb8/no7My57PHBd9bW4vRiWM9skMud1+ZFWg==
-X-Google-Smtp-Source: AGHT+IE2k8JjtGFY8J21CW8gY4rJ5C8TPoXMzrZQWce/UKEpuNUCsECgkTSwDiCAZKj8SJZ4ejN+sQ==
-X-Received: by 2002:a17:903:2344:b0:20b:6e74:b712 with SMTP id d9443c01a7336-20ca16cadd7mr212783355ad.45.1729027985903;
-        Tue, 15 Oct 2024 14:33:05 -0700 (PDT)
-Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805cc09sm16768935ad.275.2024.10.15.14.33.03
+        d=1e100.net; s=20230601; t=1729029063; x=1729633863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RIbql7FxBLA7l3QYk3auusd9TTm3/LPL/t4lU1Jlbps=;
+        b=ifutPK0xAMNMtzAvgTge1Motz4V6WUZpSiheGca6/5SbsOiBNx3QZisnSTK3oodI6M
+         2GG19zxvMWdePBWrZtWSqtFRiCRZyVonjkyBfbd+cfpFJK9eroc1sLywhhk58vYLoDQl
+         Lq65RScgN+6jksAAqF9NqQzMI3VT68dytpoJMG6BED2/jqIuF0NupztTTN4NU1EDFwkt
+         TcE7kGQKFx15fL7sKAU7TnEyCmcTWnX6V4P93mlNo9d5gbP0QUd00l8V7vulOSRLu3n0
+         X+6QRzhJfFGeVWnxTjq9pPHdgSGclz2SKCw/pE8rsttBzQcZbwl2+TIi2ZnuKOZtN+qr
+         QMeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt0Y1xYvyvUnJI1q36MBKWBsEmUDnw3SGUGMDhkm50TwhZZNmuZP2hf7Szc0X1l2G0EPwhiFdTF+aIvTFq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvVEWJ8QkWbnK5VOeIErYMaPG65AAR/dgSpaYxubK+nK5rK7FZ
+	bjWf4lhmSy5dzq4q+eUCFizJgKV2Vz+VLxsRK0f6HH4TpiJkwhRYuX4PEvGWIdM=
+X-Google-Smtp-Source: AGHT+IE/XMxkLQRQ+1ybzN2RlD4aGRDcGf735MJ5FdQ2NG2Jfi6aKsAKSmpvMZQwyvpmVGmFPZWcpA==
+X-Received: by 2002:a17:902:d490:b0:20c:f3cf:50eb with SMTP id d9443c01a7336-20cf3cf5379mr85213165ad.44.1729029062976;
+        Tue, 15 Oct 2024 14:51:02 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-209-182.pa.vic.optusnet.com.au. [49.186.209.182])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f844b0sm16990155ad.38.2024.10.15.14.51.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 14:33:05 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix kernel bug due to missing clearing of buffer delay flag
-Date: Wed, 16 Oct 2024 06:32:07 +0900
-Message-ID: <20241015213300.7114-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
-References: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
+        Tue, 15 Oct 2024 14:51:02 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1t0pRT-001IyZ-02;
+	Wed, 16 Oct 2024 08:50:59 +1100
+Date: Wed, 16 Oct 2024 08:50:58 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Brian Foster <bfoster@redhat.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
+	feng.tang@intel.com, fengwei.yin@intel.com
+Subject: Re: [linus:master] [iomap]  c5c810b94c:
+ stress-ng.metamix.ops_per_sec -98.4% regression
+Message-ID: <Zw7jwnvBaMwloHXG@dread.disaster.area>
+References: <202410141536.1167190b-oliver.sang@intel.com>
+ <Zw1IHVLclhiBjDkP@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw1IHVLclhiBjDkP@bfoster>
 
-Syzbot reported that after nilfs2 reads a corrupted file system image
-and degrades to read-only, the BUG_ON check for the buffer delay flag
-in submit_bh_wbc() may fail, causing a kernel bug.
+On Mon, Oct 14, 2024 at 12:34:37PM -0400, Brian Foster wrote:
+> On Mon, Oct 14, 2024 at 03:55:24PM +0800, kernel test robot wrote:
+> > 
+> > 
+> > Hello,
+> > 
+> > kernel test robot noticed a -98.4% regression of stress-ng.metamix.ops_per_sec on:
+> > 
+> > 
+> > commit: c5c810b94cfd818fc2f58c96feee58a9e5ead96d ("iomap: fix handling of dirty folios over unwritten extents")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > 
+> > testcase: stress-ng
+> > config: x86_64-rhel-8.3
+> > compiler: gcc-12
+> > test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
+> > parameters:
+> > 
+> > 	nr_threads: 100%
+> > 	disk: 1HDD
+> > 	testtime: 60s
+> > 	fs: xfs
+> > 	test: metamix
+> > 	cpufreq_governor: performance
+> > 
+> > 
+> > 
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202410141536.1167190b-oliver.sang@intel.com
+> > 
+> > 
+> > Details are as below:
+> > -------------------------------------------------------------------------------------------------->
+> > 
+> > 
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20241014/202410141536.1167190b-oliver.sang@intel.com
+> > 
+> 
+> So I basically just run this on a >64xcpu guest and reproduce the delta:
+> 
+>   stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
+> 
+> The short of it is that with tracing enabled, I see a very large number
+> of extending writes across unwritten mappings, which basically means XFS
+> eof zeroing is calling zero range and hitting the newly introduced
+> flush. This is all pretty much expected given the patch.
 
-This is because the buffer delay flag is not cleared when clearing the
-buffer state flags to discard a page/folio or a buffer head. So, fix
-this.
+Ouch.
 
-This became necessary when the use of nilfs2's own page clear routine
-was expanded.  This state inconsistency does not occur if the buffer
-is written normally by log writing.
+The conditions required to cause this regression are that we either
+first use fallocate() to preallocate beyond EOF, or buffered writes
+trigger specualtive delalloc beyond EOF and they get converted to
+unwritten beyond EOF through background writeback or fsync
+operations. Both of these lead to unwritten extents beyond EOF that
+extending writes will fall into.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=985ada84bf055a575c07
-Fixes: 8c26c4e2694a ("nilfs2: fix issue with flush kernel thread after remount in RO mode because of driver's internal error or metadata corruption")
-Cc: stable@vger.kernel.org
----
-Andrew, please apply this as a bug fix.
+All we need now is the extending writes to be slightly
+non-sequential and those non-sequential extending writes will not
+land at EOF but at some distance beyond it. At this point, we
+trigger the new flush code. Unfortunately, this is actually a fairly
+common workload pattern.
 
-This fixes a kernel bug recently reported by Syzbot.
+For example, experience tells me that NFS server processing of async
+sequential write requests from a client will -always- end up with
+slightly out of order extending writes because the incoming async
+write requests are processed concurrently. Hence they always race to
+extend the file and slightly out of order file extension happens
+quite frequently.
 
-Thanks,
-Ryusuke Konishi
+Further, the NFS client will also periodically be sending a write
+commit request (i.e. server side fsync), the
+NFS server writeback will convert the speculative delalloc that
+extends beyond EOF into unwritten extents beyond EOF whilst the
+incoming extending write requests are still incoming from the
+client.
 
- fs/nilfs2/page.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Hence I think that there are common workloads (e.g. large sequential
+writes on a NFS client) that set up the exact conditions and IO
+patterns necessary to trigger this performance regression in
+production systems...
 
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 9c0b7cddeaae..5436eb0424bd 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -77,7 +77,8 @@ void nilfs_forget_buffer(struct buffer_head *bh)
- 	const unsigned long clear_bits =
- 		(BIT(BH_Uptodate) | BIT(BH_Dirty) | BIT(BH_Mapped) |
- 		 BIT(BH_Async_Write) | BIT(BH_NILFS_Volatile) |
--		 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected));
-+		 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected) |
-+		 BIT(BH_Delay));
- 
- 	lock_buffer(bh);
- 	set_mask_bits(&bh->b_state, clear_bits, 0);
-@@ -406,7 +407,8 @@ void nilfs_clear_folio_dirty(struct folio *folio)
- 		const unsigned long clear_bits =
- 			(BIT(BH_Uptodate) | BIT(BH_Dirty) | BIT(BH_Mapped) |
- 			 BIT(BH_Async_Write) | BIT(BH_NILFS_Volatile) |
--			 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected));
-+			 BIT(BH_NILFS_Checked) | BIT(BH_NILFS_Redirected) |
-+			 BIT(BH_Delay));
- 
- 		bh = head;
- 		do {
+> I ran a quick experiment to skip the flush on sub-4k ranges in favor of
+> doing explicit folio zeroing. The idea with that is that the range is
+> likely restricted to single folio and since it's dirty, we can assume
+> unwritten conversion is imminent and just explicitly zero the range. I
+> still see a decent number of flushes from larger ranges in that
+> experiment, but that still seems to get things pretty close to my
+> baseline test (on a 6.10 distro kernel).
+
+What filesystems other than XFS actually need this iomap bandaid
+right now?  If there are none (which I think is the case), then we
+should just revert this change it until a more performant fix is
+available for XFS.
+
+-Dave.
 -- 
-2.43.0
-
+Dave Chinner
+david@fromorbit.com
 
