@@ -1,58 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-32003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9237E99F091
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 17:02:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F05D99F0B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 17:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1671C2346A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049CB1F245C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 15:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39CD1CB9F0;
-	Tue, 15 Oct 2024 15:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BACE1CBA0B;
+	Tue, 15 Oct 2024 15:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3yRHmo0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8AB1CB9E0;
-	Tue, 15 Oct 2024 15:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7481CB9E4;
+	Tue, 15 Oct 2024 15:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004515; cv=none; b=Rfylwwrg0gykhH2hGVhkWUkj94GbZcDV8XJIcwiAOtpK73sQZVUoDhZ/UHVAIP3m0U8pya0fdSprYvytPty4DDEKgLiuNIVFlkVefhhzZ2AI/eGpzcaGFQMqXUaBFOYPairOD0e9klOGA4pi4PaSd8jErOBjDGVRysSlX/YBDL0=
+	t=1729004964; cv=none; b=NSOWI005ta7SHAO5LzGt08vf//oMg/mqNllds9HF5Y9a4QtnaX+euy9fuKUZNTmYX9YIsPZ8kNkuMffwEF5hjZ1JOTGWhYGeWgD9uC1Z2RVEHK0CyOIEuUhzKrq19VR1AYAMnuE+WGerJw+ik8Sd0uj3lbtz9+SwYTyXmtgnXZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004515; c=relaxed/simple;
-	bh=eJiYstpk1WK1R4lbmpBGfqhnbHP9qsBG/eF+PTVYAHk=;
+	s=arc-20240116; t=1729004964; c=relaxed/simple;
+	bh=HrjQM8lcvtnIvBc0KLhp1g8XVVe9kH8v4PrPbcSFfpk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDRFTKxwXGdrAp4Xf36luVQl8NtF+EcBuoN7G/P62IijEOoOJ5yRiL+wtDSHbz2PCJAxjRcvG7RIH1BuWnXo1u8b1mATlcsRtFcZCmEpDbRZGz7lE0OJOXPVH0BFSjljaPeqn3GkaqbKRmEDxregeBT26L+LjQdQx9gyg1Em3qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18141C4CEC6;
-	Tue, 15 Oct 2024 15:01:49 +0000 (UTC)
-Date: Tue, 15 Oct 2024 16:01:47 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Joey Gouly <joey.gouly@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, nd@arm.com,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
-	broonie@kernel.org, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 19/30] arm64: add POE signal support
-Message-ID: <Zw6D2waVyIwYE7wd@arm.com>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
- <20240822151113.1479789-20-joey.gouly@arm.com>
- <47e1537f-5b60-4541-aed1-a20e804c137d@arm.com>
- <20241009144301.GA12453@willie-the-truck>
- <20241014171023.GA18295@willie-the-truck>
- <20241015095911.GA3777204@e124191.cambridge.arm.com>
- <20241015114116.GA19334@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tukwb8lyA8KaWqLLMIH7GIc474IGpjKocMGLDcT7aW2ZiWPYk1lefT/mRjCNKZG8FAurDe/ZdzIWJY+Y3LspbE2W5knvCc66UIoc1KAMQFa5yxom03UxIALQjcUBWjOhD17jPXcpFEdYZSahceJydvJsphoeYZ57NudXiNDdxaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3yRHmo0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE876C4CEC6;
+	Tue, 15 Oct 2024 15:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729004964;
+	bh=HrjQM8lcvtnIvBc0KLhp1g8XVVe9kH8v4PrPbcSFfpk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h3yRHmo00PbZ4Kkgix4TfSGcO+OO60xnq1qVIUelpWP11a8ggBa/65HbcXOBES0qv
+	 ZP1arbfvD4UB70U1Qtao5PovoVng8ecBS8pBbyaCjJbUnEIJxwieDm2nYKEfyQbGLd
+	 mqX6NlyaiiO3I/PfaRBapeaGHwNKZyBU7aKdRUBFYgF+3gsKQ1TGOoJa8hjHu5gjZE
+	 VP4Gr+Ekk0rLz14GIbB2bre2RyPVvClC8ewDCmUIDLecbdTEhIvetGhyugIZes1r4N
+	 MBMJC2VH7Qh69mguw3TTayT/byRUyvLhK+CVpgfTSD6wwzkAUvEcu84HlEE3JZfXSE
+	 bw2w/CDIH0G6A==
+Date: Tue, 15 Oct 2024 09:09:20 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hare@suse.de,
+	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+	bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
+	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+Message-ID: <Zw6FoPCEJ0-rARGT@kbusch-mbp>
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
+ <20240930181305.17286-1-joshi.k@samsung.com>
+ <20241015055006.GA18759@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,78 +65,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015114116.GA19334@willie-the-truck>
+In-Reply-To: <20241015055006.GA18759@lst.de>
 
-On Tue, Oct 15, 2024 at 12:41:16PM +0100, Will Deacon wrote:
-> On Tue, Oct 15, 2024 at 10:59:11AM +0100, Joey Gouly wrote:
-> > On Mon, Oct 14, 2024 at 06:10:23PM +0100, Will Deacon wrote:
-> > > Looking a little more at this, I think we have quite a weird behaviour
-> > > on arm64 as it stands. It looks like we rely on the signal frame to hold
-> > > the original POR_EL0 so, if for some reason we fail to allocate space
-> > > for the POR context, I think we'll return back from the signal with
-> > > POR_EL0_INIT. That seems bad?
-> > 
-> > If we don't allocate space for POR_EL0, I think the program recieves SIGSGEV?
-> > 
-> > setup_sigframe_layout()
-> >         if (system_supports_poe()) {
-> >                 err = sigframe_alloc(user, &user->poe_offset,
-> >                                      sizeof(struct poe_context));
-> >                 if (err)
-> >                         return err;
-> >         }
-> > 
-> > Through get_sigframe() and setup_rt_frame(), that eventually hets here:
-> > 
-> > handle_signal()
-> > 	ret = setup_rt_frame(usig, ksig, oldset, regs);
-> > 
-> > 	[..]
-> > 
-> >         signal_setup_done(ret, ksig, test_thread_flag(TIF_SINGLESTEP));
-> > 
-> > void signal_setup_done(int failed, struct ksignal *ksig, int stepping)
-> > {
-> >         if (failed)
-> >                 force_sigsegv(ksig->sig);
-> >         else
-> >                 signal_delivered(ksig, stepping);
-> > }  
-> > 
-> > So I think it's "fine"?
+On Tue, Oct 15, 2024 at 07:50:06AM +0200, Christoph Hellwig wrote:
+> 1) While the current per-file temperature hints interface is not perfect
+> it is okay and make sense to reuse until we need something more fancy.
+> We make good use of it in f2fs and the upcoming zoned xfs code to help
+> with data placement and have numbers to show that it helps.
+
+So we're okay to proceed with patch 1?
+ 
+> 2) A per-I/O interface to set these temperature hint conflicts badly
+> with how placement works in file systems.  If we have an urgent need
+> for it on the block device it needs to be opt-in by the file operations
+> so it can be enabled on block device, but not on file systems by
+> default.  This way you can implement it for block device, but not
+> provide it on file systems by default.  If a given file system finds
+> a way to implement it it can still opt into implementing it of course.
+
+If we add a new fop_flag that only block fops enables, then it's okay?
+
+> 3) Mapping from temperature hints to separate write streams needs to
+> happen above the block layer, because file systems need to be in
+> control of it to do intelligent placement.  That means if you want to
+> map from temperature hints to stream separation it needs to be
+> implemented at the file operation layer, not in the device driver.
+> The mapping implemented in this series is probably only useful for
+> block devices.  Maybe if dumb file systems want to adopt it, it could
+> be split into library code for reuse, but as usual that's probably
+> best done only when actually needed.
+
+IMO, I don't even think the io_uring per-io hint needs to be limited to
+the fcntl lifetime values. It could just be a u16 value opaque to the
+block layer that just gets forwarded to the device.
+
+> 4) To support this the block layer, that is bios and requests need
+> to support a notion of stream separation.   Kanchan's previous series
+> had most of the bits for that, it just needs to be iterated on.
 > 
-> Ah, yes, sorry about that. I got confused by the conditional push in
-> setup_sigframe():
-> 
-> 	if (system_supports_poe() && err == 0 && user->poe_offset) {
-> 		...
-> 
-> which gives the wrong impression that the POR is somehow optional, even
-> if the CPU supports POE. So we should drop that check of
-> 'user->poe_offset' as it cannot be NULL here.
-
-I agree, we should remove this check as it's confusing.
-
-> We also still need to resolve Kevin's concern, which probably means
-> keeping the thread's original POR around someplace.
-
-If we fail to allocate context for POR_EL0 (or anything else), we'll
-deliver a SIGSEGV. I think it's quite likely that the SIGSEGV will also
-fail to allocate context we end up with a fatal SIGSEGV. Not sure the
-user can affect the allocation/layout, though it can change stack
-attributes where the frame is written.
-
-Assuming that the user tricks the kernel into failing to write the
-context but allows it to succeed on the resulting SIGSEGV, POR_EL0
-wouldn't have been reset and the SIGSEGV context will still have the
-original value. I don't think we need to do anything here for 6.12.
-
-However, in for-next/core, we have gcs_signal_entry() called after
-resetting POR_EL0. If this fails, we can end up with a new POR_EL0 on
-sigreturn (subject to the above user toggling permissions). I think this
-needs to be fixed, POR_EL0 only reset when we know we are going to
-deliver the signal.
-
--- 
-Catalin
+> All of this could have probably be easily done in the time spent on
+> this discussion.
 
