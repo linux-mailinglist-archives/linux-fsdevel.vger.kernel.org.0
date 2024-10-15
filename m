@@ -1,362 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-32034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B512499F769
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 21:41:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F6F99F842
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 22:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7527B2846A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 19:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80C91F22175
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 20:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C061F5824;
-	Tue, 15 Oct 2024 19:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5591F81B8;
+	Tue, 15 Oct 2024 20:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gxAziQd4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RxzU04ba"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DD31F80C3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 19:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AB11B6CF3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 20:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729021258; cv=none; b=ZA5lUjNoTSXNR6ZLcYW3cTX/z0K91rsOiLqFN9OPzn9Qjbx5pBVU1V3gXnyiSedMb1DxTo8WD1gr0MXRjZ8je+9K04Wqw619DJwwLej1mGG+6GDRAlFFEV3AEMElOzFQqCIcXInHFylloURlg4PuRpv+CYpB3bPfmgJghCMZ5Io=
+	t=1729025190; cv=none; b=otXlfrRJ1gJ/FlRKtluvqXlRi4UZ+jXDA0t5iGjcUtna3HvjOt5CsPHdocGwrGRXIUkMRGSofnhwZreCZWHbv3sKYe/LEgKH7bxqLgq6KRY5b6KH0d2HR3+006uibvZa27mW5Xhp2D/OOOOt1Lox21jYHkVMK33LGtfgznsyTKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729021258; c=relaxed/simple;
-	bh=Bqfpb+t4WNi8V2vZPnnl3epLNOJ5tJQSg9QSd+ycL9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eyA/dBW2G7y9xlhnk92Yf4U46uS0H3R6J8G58CKEQXlD0Rof7aUOc63/DC7mpqNqWyF66MedyMSnu40/Erdl5r9HqAlQH2UQEy9iun0d7A3Ww8ACnBhZW07eZ1uN7D07ji0IniFHYVXpwo5HIP2WL09R2DLPeUVVqVSYCxe3nxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gxAziQd4; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1729025190; c=relaxed/simple;
+	bh=AqUdafXKTY6DDHGLzTGsizAxqmBoMgpVRl5AemWKIAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmrSUsQIsHIGJhLUFDdDdsRFmKxbrwtsDhjgf2uoQ1CsRPNw1zON/lJPmXPQA2mGaa4Hwr0GNP8UkxYS4Us2peGIgdC0uIzehGrs5srjCK+w7N8z2jPoL0nC/wY8ltxQq3ab0fGnzOJ5yZmBlrt8xjKjJw0qF2+37QI7bYBkBj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RxzU04ba; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca03687fdso602615ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 12:40:55 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4608dddaa35so55581cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 13:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729021255; x=1729626055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ceSrgwFmVnFYDMnDeioPXKsc+zj1mu3wINeJBmSiYkI=;
-        b=gxAziQd4umNZt6XD+TkNHYt2MwpjTfsM9EmVQY44Z6cSCDE8rt1SNbGtIlzi66zyox
-         9UbfG1068IiVhU4QWDNXUKKLJQ1XQEwMDHU24dSCF83J13MgriZGDR8Bl8Y+tbVYc05G
-         v0PCy0YUuZFEhXoPlBkRlU2c/gGmWSxHxpzadaLwARl8U72tjl9Huwr4eXI9bn/U1H3J
-         HdPInAxoSH1IXk1kI3K4U8+yn/ZDlUx0py73ulk/teYzJpCzT1pZU4IP4vCIehtgmTbC
-         Va7GeAAz81r/GN2DDNjYG39rC7cT1WNmjn6aIicMU3Xq+OGCr8rpmWSCExRWHVDfy1nf
-         RNGw==
+        d=google.com; s=20230601; t=1729025187; x=1729629987; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
+        b=RxzU04ba3Lmk/Zs/I/wzKrca5WFbJKJ2Hg4RoTg7X3ZxloAxbQzFUXW7lOLxyUKsUC
+         p3hGA/7vnFbiqrsbKh/5lNmbgijeEopsGaHaG1SEcgeHv5eNHdAk6J+4+BVhcg97dMMU
+         cFurJp1CyFP/N0al4tmw3PPuqtaO5C24Ehgf/I1w6Bod+Jqmfc5H/Uvg2pVOE5RwoZF9
+         UfkSfiEt0Vlt2PgAc0O+qhfJhZSbW6u/4WYRNdBvFgjMVFv7Dn4l8cTiQoMaUI9nR8hV
+         lu1BMTBrgbK82iuUCPE1lSlg1hFCCuqtugju4CmEvTTM4+93wYL6A+UrqtxBwqkEZKDT
+         yH8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729021255; x=1729626055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ceSrgwFmVnFYDMnDeioPXKsc+zj1mu3wINeJBmSiYkI=;
-        b=w0DBMIM42gYQ3Siq574j15f5Y+xMNSz7UGX4nJKNULsr7BjQPCCcFiPQ7HuLdEk7ff
-         u4zts8RJR4CZsv1R7FRUh8wezvRGOz28zHgEDkSC2FDm1yCdqFykoZzJTQJMZXAgLZDo
-         BwVQ2bHDth+52zO6PhyH/uu5m7NUsyy00i2743Wsb3RS9OwB8+bPKRWrB6QYoPfYMs22
-         UtRBqsgKucYJkault3Bc1Heqf82b1PNUVytipALBXotEJljAp7OozjuE02madt94lzdb
-         DC3il1eDAVfR4sSphKWmN1CRG7oa1KbeKMz3PbH62yawWXFF+JQv4rxkfBoNKTGzVXYo
-         mbHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGertTwadUQ5Ti9dBt6qXU8PuUQgEM6xT4NrbBAJ5grh1SdV1L7jdHggeOBASmyOJAbnLCg0q5hSzUT/UK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTFvysfhVhEsO9ZTaVMQbgAlT9quATh5MarW1cxeHm96ngWsTa
-	FL+GxDa09QGohGI8HDJUqyIFET7gglvnE+n2RtKid3AYvM/cKVVMW//O70iylS1V/lGW7MDi2cJ
-	dziGXofrB4uf6jvvoxuz9Vv+/HpS3nJ/NPmjv
-X-Google-Smtp-Source: AGHT+IHxCAq4eZcP1OzyDqLt5O4MIrDNock6f5an6pNRsDIMwufvJRat1zbWgpWXbP0gwK1J8tBn2vAWiTLIW7GCC6g=
-X-Received: by 2002:a17:902:f552:b0:202:3a49:ace7 with SMTP id
- d9443c01a7336-20d2d05cba5mr517545ad.20.1729021254327; Tue, 15 Oct 2024
- 12:40:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729025187; x=1729629987;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
+        b=HaRSXDoVM5tDRZY/gdaWBxnyAOcsV4caOcfuIoL9z13YJ0e8UuaOIlVu0PTpzvVds2
+         VxX0svV0dQMywDw9oxlCwh9k0a7/63tZYlyYimJHH+mFyEoq8jyt3yWLc5FvE/p1lQo4
+         ZwzDq/jiZiTVrN69FpaUxlzlrLshUi+INRzdyBKkXI6lIv7zUKSXPOPEgIOfwH0ic8Ep
+         mdQL+HyG81ZIWKfUjOIk1674O2Ji55StEC1rvLEItxWDlVFOGGOq4vIhac16zB3lRS26
+         hmNlJ5bhIxntY4R10GtQX7bDGBU+gpBjuiutzdUHGBl25Abc5aRhiyAWVFzKYCOAXZey
+         PF+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbFz22QzdwnLvcEb+cOo9usHwnQ756rWBb2aPZ4w/90f96IlfjKfnADnwI/PD/fUh0qvnrnA2wxdIW7S2R@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeYSulT+KdwIAjr77DPSlK8Bs5j/uDZxtfVzQE6KzbkEUgnGjp
+	Hx40NhNMJzMntinukzlna5zdnBW5LsAIVPOv9vsgzVkWC8n60czlIot+thRPsQ==
+X-Google-Smtp-Source: AGHT+IETthPrudZ1fSdhkTk5TGYZfzkYyH24kZnnVgT0XIy0sRJSH6T8V1s8YXXPWc2XhTzfDsBVJA==
+X-Received: by 2002:a05:622a:47cd:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4608db32e70mr907251cf.10.1729025186861;
+        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
+Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363c9d24sm108524485a.133.2024.10.15.13.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:46:23 -0400
+From: Brian Geffon <bgeffon@google.com>
+To: brauner@kernel.org
+Cc: bristot@redhat.com, bsegall@google.com, cmllamas@google.com,
+	dietmar.eggemann@arm.com, ebiggers@kernel.org, jack@suse.cz,
+	jing.xia@unisoc.com, juri.lelli@redhat.com, ke.wang@unisoc.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
+	rostedt@goodmis.org, vincent.guittot@linaro.org,
+	viro@zeniv.linux.org.uk, vschneid@redhat.com,
+	xuewen.yan94@gmail.com, xuewen.yan@unisoc.com,
+	Benoit Lize <lizeb@google.com>
+Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
+ ep_poll_callback
+Message-ID: <Zw7Un-Cr8JA4oMv0@google.com>
+References: <20240426-zupfen-jahrzehnt-5be786bcdf04@brauner>
+ <20240919123635.2472105-1-bgeffon@google.com>
+ <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728643714.git.lorenzo.stoakes@oracle.com> <8e7edaf2f648fb01a71def749f17f76c0502dee1.1728643714.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <8e7edaf2f648fb01a71def749f17f76c0502dee1.1728643714.git.lorenzo.stoakes@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Oct 2024 12:40:41 -0700
-Message-ID: <CAJuCfpHLGyrBWZ9JyJ5FdJQtGO1-tuUqHawjKX_mtwnAhSY6Ow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] pidfd: extend pidfd_get_pid() and de-duplicate pid lookup
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
 
-On Fri, Oct 11, 2024 at 4:06=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> The means by which a pid is determined from a pidfd is duplicated, with
-> some callers holding a reference to the (pid)fd, and others explicitly
-> pinning the pid.
->
-> Introduce __pidfd_get_pid() which abstracts both approaches and provide
-> optional output parameters for file->f_flags and the fd (the latter of
-> which, if provided, prevents the function from decrementing the fd's
-> refernce count).
->
-> Additionally, allow the ability to open a pidfd by opening a /proc/<pid>
-> directory, utilised by the pidfd_send_signal() system call, providing a
-> pidfd_get_pid_proc() helper function to do so.
->
-> Doing this allows us to eliminate open-coded pidfd pid lookup and to
-> consistently handle this in one place.
->
-> This lays the groundwork for a subsequent patch which adds a new sentinel
-> pidfd to explicitly reference the current process (i.e. thread group
-> leader) without the need for a pidfd.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  include/linux/pid.h | 42 +++++++++++++++++++++++++++++++-
->  kernel/pid.c        | 58 ++++++++++++++++++++++++++++++---------------
->  kernel/signal.c     | 22 ++++-------------
->  3 files changed, 84 insertions(+), 38 deletions(-)
->
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index a3aad9b4074c..68b02eab7509 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -2,6 +2,7 @@
->  #ifndef _LINUX_PID_H
->  #define _LINUX_PID_H
->
-> +#include <linux/file.h>
->  #include <linux/pid_types.h>
->  #include <linux/rculist.h>
->  #include <linux/rcupdate.h>
-> @@ -72,8 +73,47 @@ extern struct pid init_struct_pid;
->
->  struct file;
->
-> +
-> +/**
-> + * __pidfd_get_pid() - Retrieve a pid associated with the specified pidf=
-d.
-> + *
-> + * @pidfd:      The pidfd whose pid we want, or the fd of a /proc/<pid> =
-file if
-> + *              @alloc_proc is also set.
-> + * @pin_pid:    If set, then the reference counter of the returned pid i=
-s
-> + *              incremented. If not set, then @fd should be provided to =
-pin the
-> + *              pidfd.
-> + * @allow_proc: If set, then an fd of a /proc/<pid> file can be passed i=
-nstead
-> + *              of a pidfd, and this will be used to determine the pid.
-> + * @flags:      Output variable, if non-NULL, then the file->f_flags of =
-the
-> + *              pidfd will be set here.
-> + * @fd:         Output variable, if non-NULL, then the pidfd reference w=
-ill
-> + *              remain elevated and the caller will need to decrement it
-> + *              themselves.
-> + *
-> + * Returns: If successful, the pid associated with the pidfd, otherwise =
-an
-> + *          error.
-> + */
-> +struct pid *__pidfd_get_pid(unsigned int pidfd, bool pin_pid,
-> +                           bool allow_proc, unsigned int *flags,
-> +                           struct fd *fd);
-> +
-> +static inline struct pid *pidfd_get_pid(unsigned int pidfd, unsigned int=
- *flags)
-> +{
-> +       return __pidfd_get_pid(pidfd, /* pin_pid =3D */ true,
-> +                              /* allow_proc =3D */ false,
-> +                              flags, /* fd =3D */ NULL);
-> +}
-> +
-> +static inline struct pid *pidfd_to_pid_proc(unsigned int pidfd,
-> +                                           unsigned int *flags,
-> +                                           struct fd *fd)
-> +{
-> +       return __pidfd_get_pid(pidfd, /* pin_pid =3D */ false,
-> +                              /* allow_proc =3D */ true,
-> +                              flags, fd);
-> +}
-> +
->  struct pid *pidfd_pid(const struct file *file);
-> -struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags);
->  struct task_struct *pidfd_get_task(int pidfd, unsigned int *flags);
->  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret=
-);
->  void do_notify_pidfd(struct task_struct *task);
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 2715afb77eab..25cc1c36a1b1 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -36,6 +36,7 @@
->  #include <linux/pid_namespace.h>
->  #include <linux/init_task.h>
->  #include <linux/syscalls.h>
-> +#include <linux/proc_fs.h>
->  #include <linux/proc_ns.h>
->  #include <linux/refcount.h>
->  #include <linux/anon_inodes.h>
-> @@ -534,22 +535,46 @@ struct pid *find_ge_pid(int nr, struct pid_namespac=
-e *ns)
->  }
->  EXPORT_SYMBOL_GPL(find_ge_pid);
->
-> -struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
-> +struct pid *__pidfd_get_pid(unsigned int pidfd, bool pin_pid,
-> +                           bool allow_proc, unsigned int *flags,
-> +                           struct fd *fd)
->  {
-> -       struct fd f;
-> +       struct file *file;
->         struct pid *pid;
-> +       struct fd f =3D fdget(pidfd);
->
-> -       f =3D fdget(fd);
-> -       if (!fd_file(f))
-> +       file =3D fd_file(f);
-> +       if (!file)
->                 return ERR_PTR(-EBADF);
->
-> -       pid =3D pidfd_pid(fd_file(f));
-> -       if (!IS_ERR(pid)) {
-> -               get_pid(pid);
-> -               *flags =3D fd_file(f)->f_flags;
-> +       pid =3D pidfd_pid(file);
-> +       /* If we allow opening a pidfd via /proc/<pid>, do so. */
-> +       if (IS_ERR(pid) && allow_proc)
-> +               pid =3D tgid_pidfd_to_pid(file);
-> +
-> +       if (IS_ERR(pid)) {
-> +               fdput(f);
-> +               return pid;
->         }
->
-> -       fdput(f);
-> +       if (pin_pid)
-> +               get_pid(pid);
-> +       else
-> +               WARN_ON_ONCE(!fd); /* Nothing to keep pid/pidfd around? *=
-/
-> +
-> +       if (flags)
-> +               *flags =3D file->f_flags;
-> +
-> +       /*
-> +        * If the user provides an fd output then it will handle decremen=
-ting
-> +        * its reference counter.
-> +        */
-> +       if (fd)
-> +               *fd =3D f;
-> +       else
-> +               /* Otherwise we release it. */
-> +               fdput(f);
-> +
->         return pid;
->  }
+On Wed, Sep 25, 2024 at 02:38:02PM -0400, Brian Geffon wrote:
+> I think this patch really needs help with the commit message, something like:
+> 
+> wait_queue_func_t accepts 4 arguments (struct wait_queue_entry
+> *wq_entry, unsigned mode, int flags, void *key);
+> 
+> In the case of poll and select the wait queue function is pollwake in
+> fs/select.c, this wake function passes
+> the third argument flags as the sync parameter to the
+> default_wake_function defined in kernel/sched/core.c. This
+> argument is passed along to try_to_wake_up which continues to pass
+> down the wake flags to select_task_rq and finally
+> in the case of CFS select_task_rq_fair. In select_task_rq_fair the
+> sync flag is passed down to the wake_affine_* functions
+> in kernel/sched/fair.c which accept and honor the sync flag.
+> 
+> Epoll however when reciving the WF_SYNC flag completely drops it on
+> the floor, the wakeup function used
+> by epoll is defined in fs/eventpoll.c, ep_poll_callback. This callback
+> receives a sync flag just like pollwake;
+> however, it never does anything with it. Ultimately it wakes up the
+> waiting task directly using wake_up.
+> 
+> This shows that there seems to be a divergence between poll/select and
+> epoll regarding honoring sync wakeups.
+> 
+> I have tested this patch through self tests and numerous runs of the
+> perf benchmarks for epoll. All tests past and
+> I did not see any observable performance changes in epoll_wait.
+> 
+> Reviewed-by: Brian Geffon <bgeffon@google.com>
+> Tested-by: Brian Geffon <bgeffon@google.com>
+> Reported-by: Benoit Lize <lizeb@google.com>
 
-There is an EXPORT_SYMBOL_GPL(pidfd_get_pid) right after this line. It
-should also be changed to EXPORT_SYMBOL_GPL(__pidfd_get_pid),
-otherwise __pidfd_get_pid() will not be exported. A module calling
-pidfd_get_pid() now inlined in the header file will try to call
-__pidfd_get_pid() and will have trouble resolving this symbol.
+Friendly ping on this. Would someone mind taking a look and picking this
+up?
 
->
-> @@ -747,23 +772,18 @@ SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd,
->                 unsigned int, flags)
->  {
->         struct pid *pid;
-> -       struct fd f;
->         int ret;
->
->         /* flags is currently unused - make sure it's unset */
->         if (flags)
->                 return -EINVAL;
->
-> -       f =3D fdget(pidfd);
-> -       if (!fd_file(f))
-> -               return -EBADF;
-> -
-> -       pid =3D pidfd_pid(fd_file(f));
-> +       pid =3D pidfd_get_pid(pidfd, NULL);
->         if (IS_ERR(pid))
-> -               ret =3D PTR_ERR(pid);
-> -       else
-> -               ret =3D pidfd_getfd(pid, fd);
-> +               return PTR_ERR(pid);
->
-> -       fdput(f);
-> +       ret =3D pidfd_getfd(pid, fd);
-> +
-> +       put_pid(pid);
->         return ret;
->  }
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 4344860ffcac..868bfa674c62 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -3875,17 +3875,6 @@ static int copy_siginfo_from_user_any(kernel_sigin=
-fo_t *kinfo,
->         return copy_siginfo_from_user(kinfo, info);
->  }
->
-> -static struct pid *pidfd_to_pid(const struct file *file)
-> -{
-> -       struct pid *pid;
-> -
-> -       pid =3D pidfd_pid(file);
-> -       if (!IS_ERR(pid))
-> -               return pid;
-> -
-> -       return tgid_pidfd_to_pid(file);
-> -}
-> -
->  #define PIDFD_SEND_SIGNAL_FLAGS                            \
->         (PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
->          PIDFD_SIGNAL_PROCESS_GROUP)
-> @@ -3908,10 +3897,11 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, in=
-t, sig,
->                 siginfo_t __user *, info, unsigned int, flags)
->  {
->         int ret;
-> -       struct fd f;
->         struct pid *pid;
->         kernel_siginfo_t kinfo;
->         enum pid_type type;
-> +       unsigned int f_flags;
-> +       struct fd f;
->
->         /* Enforce flags be set to 0 until we add an extension. */
->         if (flags & ~PIDFD_SEND_SIGNAL_FLAGS)
-> @@ -3921,12 +3911,8 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int=
-, sig,
->         if (hweight32(flags & PIDFD_SEND_SIGNAL_FLAGS) > 1)
->                 return -EINVAL;
->
-> -       f =3D fdget(pidfd);
-> -       if (!fd_file(f))
-> -               return -EBADF;
-> -
->         /* Is this a pidfd? */
-> -       pid =3D pidfd_to_pid(fd_file(f));
-> +       pid =3D pidfd_to_pid_proc(pidfd, &f_flags, &f);
->         if (IS_ERR(pid)) {
->                 ret =3D PTR_ERR(pid);
->                 goto err;
-> @@ -3939,7 +3925,7 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int,=
- sig,
->         switch (flags) {
->         case 0:
->                 /* Infer scope from the type of pidfd. */
-> -               if (fd_file(f)->f_flags & PIDFD_THREAD)
-> +               if (f_flags & PIDFD_THREAD)
->                         type =3D PIDTYPE_PID;
->                 else
->                         type =3D PIDTYPE_TGID;
-> --
-> 2.46.2
->
+> 
+> 
+> On Thu, Sep 19, 2024 at 8:36 AM Brian Geffon <bgeffon@google.com> wrote:
+> >
+> > We've also observed this issue on ChromeOS, it seems like it might long-standing epoll bug as it diverges from the behavior of poll. Any chance a maintainer can take a look?
+> >
+> > Thanks
+> > Brian
+> >
+> > On Fri, Apr 26, 2024 at 04:05:48PM +0800, Xuewen Yan wrote:
+> > > Now, the epoll only use wake_up() interface to wake up task.
+> > > However, sometimes, there are epoll users which want to use
+> > > the synchronous wakeup flag to hint the scheduler, such as
+> > > Android binder driver.
+> > > So add a wake_up_sync() define, and use the wake_up_sync()
+> > > when the sync is true in ep_poll_callback().
+> > >
+> > > Co-developed-by: Jing Xia <jing.xia@unisoc.com>
+> > > Signed-off-by: Jing Xia <jing.xia@unisoc.com>
+> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > > ---
+> > >  fs/eventpoll.c       | 5 ++++-
+> > >  include/linux/wait.h | 1 +
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > > index 882b89edc52a..9b815e0a1ac5 100644
+> > > --- a/fs/eventpoll.c
+> > > +++ b/fs/eventpoll.c
+> > > @@ -1336,7 +1336,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+> > >                               break;
+> > >                       }
+> > >               }
+> > > -             wake_up(&ep->wq);
+> > > +             if (sync)
+> > > +                     wake_up_sync(&ep->wq);
+> > > +             else
+> > > +                     wake_up(&ep->wq);
+> > >       }
+> > >       if (waitqueue_active(&ep->poll_wait))
+> > >               pwake++;
+> > > diff --git a/include/linux/wait.h b/include/linux/wait.h
+> > > index 8aa3372f21a0..2b322a9b88a2 100644
+> > > --- a/include/linux/wait.h
+> > > +++ b/include/linux/wait.h
+> > > @@ -221,6 +221,7 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head);
+> > >  #define wake_up_all(x)                       __wake_up(x, TASK_NORMAL, 0, NULL)
+> > >  #define wake_up_locked(x)            __wake_up_locked((x), TASK_NORMAL, 1)
+> > >  #define wake_up_all_locked(x)                __wake_up_locked((x), TASK_NORMAL, 0)
+> > > +#define wake_up_sync(x)                      __wake_up_sync(x, TASK_NORMAL)
+> > >
+> > >  #define wake_up_interruptible(x)     __wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
+> > >  #define wake_up_interruptible_nr(x, nr)      __wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
+> > > --
+> > > 2.25.1
+> > >
+> >
 
