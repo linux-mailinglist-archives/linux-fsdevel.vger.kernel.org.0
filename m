@@ -1,148 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-32010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B7299F288
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 18:18:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DEA99F2E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 18:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23CA1F234ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 16:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A41B1C215E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 16:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D761D515B;
-	Tue, 15 Oct 2024 16:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C511F76AD;
+	Tue, 15 Oct 2024 16:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5SufUZW"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="UPJz3miN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7D158DD8;
-	Tue, 15 Oct 2024 16:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DCC1B3931
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 16:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009099; cv=none; b=FwTX3ba3X2Q0feQ90ZlB8UVSUuVg+a0D0NFsapQZ+/Flgix/VctEpoQndld8QNdpf1oX1b16IK4WqI11BxH7SKuLU8TLxmlnCgMjYedY2xbej30TjlxE9JzNQPACKHmq3ENLNfcoBtqHxxX98AwE2odxK83v5ysj9TY8xG/6TyU=
+	t=1729010483; cv=none; b=cB8slMwEuQkhyM2cJ5DpT2alnRuMzAkDiiXQJygERRzUQhF9b5rfuQI1yEDB0x7ixcqPKf6nUw2IgohlkxWDIYGufyJtuMxIotYd0GqhcLNvKuILETsVb03//eX8t6/4fHZ49Oxo1LA3dMciaT9GsK5BJKhB0CgvQ7uGtx8BQa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009099; c=relaxed/simple;
-	bh=Bk49CuJokSHPaab62GUaULtutUpU6OzNlpWflEjwOcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgpAi8WQAeN3papiMHH3PJ56fet9bLH5uOAku5EFz1mjIaft5BjLuadx6CpJh4DX8K1sVpYxlx+Kts73pubf0LXjtuwbNQQbMqE7YwO8GpE7IZHED+muSkj1YroWAut77baaIhIC4QnTJd6lgOEpCkwB+GDOONkWVB4rUm9ZIkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5SufUZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A03C4CEC6;
-	Tue, 15 Oct 2024 16:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729009099;
-	bh=Bk49CuJokSHPaab62GUaULtutUpU6OzNlpWflEjwOcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5SufUZWl61Jcm7xuFgHRIHPLssGxS254lFv92PYN+eXBDrr5tNbx5defeW4lYpux
-	 tI2U60FkxdRmunm+0H3IC11rhG+MjZKvsxvTfOmyAwns1zhLeRRyAOQeOg/lrkMvoO
-	 HtMRjvIDVgsuVqQ///eBxjZUIOInZ6GEYceLnW/X3bIVWU5UBC+W6WhI8SBYApt19w
-	 HC9MAdmC2QRFwWsbx9EzXDnefRXOrsM/axQDmXfaTwVtQmhxIDCh64fEjKefpRQOMx
-	 IHlrwwcrPT7Ok7hl30Az9kqqavglv8bTM/J/MFdcGEqHb+9xiiZHVLO1EMsDOcOj/d
-	 LmLz115VVK3JQ==
-Date: Tue, 15 Oct 2024 09:18:18 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] iomap: turn iomap_want_unshare_iter into an inline
- function
-Message-ID: <20241015161818.GV21853@frogsfrogsfrogs>
-References: <20241015041350.118403-1-hch@lst.de>
+	s=arc-20240116; t=1729010483; c=relaxed/simple;
+	bh=mjpJvQF6rABzW8S5SV9hQf11anHKHVy31OBwcfXEzHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lCh3LgLmW4Q+aQL+QeStKhYeYreUU3kbuWuE2jQnCwzZNi94CY2s65YPqDpby+URhmYb7041eW8F8uoIKBF/lPhF8A/uK4fdgPDXHHwnQZ/5kPwLtwTCxAoNaikNZQt7GJ8sdX3Fv2SzKVN6DVvEWFDkkbzaxogrW0vQyWEcrNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=UPJz3miN; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XSfxK5960z9sv3;
+	Tue, 15 Oct 2024 18:41:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1729010469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MocHuP0EhrLPN/nAkv+wZUpjwH3uim1hitLn0pXPYFA=;
+	b=UPJz3miNQ52YWS/6Q66WKBZk160F0liquQwrCTWyelkPTDcQTvR3eEa4GrN8SbGCOiCU+a
+	4RNhyDnreaHPFkaTC1VrR51TcPkU3dVCZ7Duyaua2YLbAeIw1XfGK0nK5frBqNBdLFkPGI
+	C1tYeUHuGRM90SLpNmFADNZ+gTfzXbFyCzn+/OAGOkrn/BQLy5THUZZ4aA8mJfUvlbvruG
+	vznqpa0w1e5z0vsniL9u/gcT7gohOtk6N6YvPySSaLEyClJLZeFehlj6/nebWAfNVJO4WM
+	TGiUfQh9jYfBhMQt2LDTQ+lue+VAoYpQ2OMmDqdfbI31Nfp2Hx0VY2faKAlbRQ==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	willy@infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	kernel@pankajraghav.com,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH v14] mm: don't set readahead flag on a folio when lookahead_size > nr_to_read
+Date: Tue, 15 Oct 2024 18:41:06 +0200
+Message-ID: <20241015164106.465253-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241015041350.118403-1-hch@lst.de>
 
-On Tue, Oct 15, 2024 at 06:13:50AM +0200, Christoph Hellwig wrote:
-> iomap_want_unshare_iter currently sits in fs/iomap/buffered-io.c, which
-> depends on CONFIG_BLOCK.  It is also in used in fs/dax.c whіch has no
-> such dependency.  Given that it is a trivial check turn it into an inline
-> in include/linux/iomap.h to fix the DAX && !BLOCK build.
-> 
-> Fixes: 6ef6a0e821d3 ("iomap: share iomap_unshare_iter predicate code with fsdax")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Heh, whoops.  I forgot (a) that DAX && !BLOCK is a thing; and that
-FS_DAX != DAX and was puzzling over this report yesterday.
+The readahead flag is set on a folio based on the lookahead_size and
+nr_to_read. For example, when the readahead happens from index to index
++ nr_to_read, then the readahead `mark` offset from index is set at
+nr_to_read - lookahead_size.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+There are some scenarios where the lookahead_size > nr_to_read. If this
+happens, readahead flag is not set on any folio on the current
+readahead window.
 
---D
+There are two problems at the moment in the way `mark` is calculated
+when lookahead_size > nr_to_read:
 
-> ---
->  fs/iomap/buffered-io.c | 17 -----------------
->  include/linux/iomap.h  | 19 +++++++++++++++++++
->  2 files changed, 19 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 604f786be4bc54..ef0b68bccbb612 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1270,23 +1270,6 @@ void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
->  }
->  EXPORT_SYMBOL_GPL(iomap_write_delalloc_release);
->  
-> -bool iomap_want_unshare_iter(const struct iomap_iter *iter)
-> -{
-> -	/*
-> -	 * Don't bother with blocks that are not shared to start with; or
-> -	 * mappings that cannot be shared, such as inline data, delalloc
-> -	 * reservations, holes or unwritten extents.
-> -	 *
-> -	 * Note that we use srcmap directly instead of iomap_iter_srcmap as
-> -	 * unsharing requires providing a separate source map, and the presence
-> -	 * of one is a good indicator that unsharing is needed, unlike
-> -	 * IOMAP_F_SHARED which can be set for any data that goes into the COW
-> -	 * fork for XFS.
-> -	 */
-> -	return (iter->iomap.flags & IOMAP_F_SHARED) &&
-> -		iter->srcmap.type == IOMAP_MAPPED;
-> -}
-> -
->  static loff_t iomap_unshare_iter(struct iomap_iter *iter)
->  {
->  	struct iomap *iomap = &iter->iomap;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index e04c060e8fe185..664c5f2f0aaa2d 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -270,6 +270,25 @@ static inline loff_t iomap_last_written_block(struct inode *inode, loff_t pos,
->  	return round_up(pos + written, i_blocksize(inode));
->  }
->  
-> +/*
-> + * Check if the range needs to be unshared for a FALLOC_FL_UNSHARE_RANGE
-> + * operation.
-> + *
-> + * Don't bother with blocks that are not shared to start with; or mappings that
-> + * cannot be shared, such as inline data, delalloc reservations, holes or
-> + * unwritten extents.
-> + *
-> + * Note that we use srcmap directly instead of iomap_iter_srcmap as unsharing
-> + * requires providing a separate source map, and the presence of one is a good
-> + * indicator that unsharing is needed, unlike IOMAP_F_SHARED which can be set
-> + * for any data that goes into the COW fork for XFS.
-> + */
-> +static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
-> +{
-> +	return (iter->iomap.flags & IOMAP_F_SHARED) &&
-> +		iter->srcmap.type == IOMAP_MAPPED;
-> +}
-> +
->  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
->  		const struct iomap_ops *ops, void *private);
->  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
-> -- 
-> 2.45.2
-> 
-> 
+- unsigned long `mark` will be assigned a negative value which can lead
+  to unexpected results in extreme cases due to wrap around.
+
+- The current calculation for `mark` with mapping_min_order > 0 gives
+  incorrect results when lookahead_size > nr_to_read due to rounding
+  up operation.
+
+Explicitly initialize `mark` to be ULONG_MAX and only calculate it
+when lookahead_size is within the readahead window.
+
+Fixes: 26cfdb395eef ("readahead: allocate folios with mapping_min_order in readahead")
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+ mm/readahead.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3dc6c7a128dd..475d2940a1ed 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -206,9 +206,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 		unsigned long nr_to_read, unsigned long lookahead_size)
+ {
+ 	struct address_space *mapping = ractl->mapping;
+-	unsigned long ra_folio_index, index = readahead_index(ractl);
++	unsigned long index = readahead_index(ractl);
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+-	unsigned long mark, i = 0;
++	unsigned long mark = ULONG_MAX, i = 0;
+ 	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
+ 
+ 	/*
+@@ -232,9 +232,14 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 	 * index that only has lookahead or "async_region" to set the
+ 	 * readahead flag.
+ 	 */
+-	ra_folio_index = round_up(readahead_index(ractl) + nr_to_read - lookahead_size,
+-				  min_nrpages);
+-	mark = ra_folio_index - index;
++	if (lookahead_size <= nr_to_read) {
++		unsigned long ra_folio_index;
++
++		ra_folio_index = round_up(readahead_index(ractl) +
++					  nr_to_read - lookahead_size,
++					  min_nrpages);
++		mark = ra_folio_index - index;
++	}
+ 	nr_to_read += readahead_index(ractl) - index;
+ 	ractl->_index = index;
+ 
+
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+-- 
+2.44.1
+
 
