@@ -1,124 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-31932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-31933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2590B99DD0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 05:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5320E99DD23
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 06:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85BACB21EED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 03:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28921F23166
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2024 04:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBD0172BCC;
-	Tue, 15 Oct 2024 03:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E6B172767;
+	Tue, 15 Oct 2024 04:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ/lnWLJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wopLP0AC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E930F1714B5;
-	Tue, 15 Oct 2024 03:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873912B9A4;
+	Tue, 15 Oct 2024 04:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728964505; cv=none; b=rhnQKwQfrDG3IS5Sk4iPRcnrZfF7l5T1AqtFvwW0hm4XUe4TFUyOc3+lxvjfyMJFisngfbDg1alG8R0BqEnSVAykZCZmKDMTDDpZRqLGAIFUiseY5oGpRMJw7cfAaD94xMpMzUr5mH2HrcsseDZwbcVfqi3XyIyBbj2Td0BwK4k=
+	t=1728965636; cv=none; b=CamSizNyb29v8w3ijqV3Sj3fiUVZOURP6NAQ62ZvUmSI0pF9ZvL0KIYa2U2yKHbYoTnZWdyAIWbMgsIdm30pB6BKhbW3Zu29HavVPa/aPX7mPNHtgubop8R5702+NbnrS2RnWRr6mYEmi/8VOy2Z73Nz7cU9y4FGmgYGd4GmMGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728964505; c=relaxed/simple;
-	bh=KI/Qz7cxw65EHK5Bp+NdZUO/jaY8mHil+i/4r1vDHd0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=i4BkefY+uYuvADZNy+/rdP+9gitkrSaxh6zNMqmoj5Ag6A+KqcDJqvjAa3SPxEUIgn7anZZmzl3ERPOf0LkSSJnYTX64lb51LdqCcTpHDmbw1wfcjbGCJMrEEqXPSkWi5tXdFg5/o9et2RK3uPGxtPCB7C8LgU8e+e69RBBhVgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ/lnWLJ; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so2657319a91.0;
-        Mon, 14 Oct 2024 20:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728964503; x=1729569303; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EwhfU04qa08VdpSL0tNj51VKQuJPyj0qdelSnsnP5Es=;
-        b=SJ/lnWLJrjV5ZO312Efr6RFzVaSSpxRO7r4Uq8Cxq6kTT7fmRkNcknTC+dGp6ZBBCt
-         ecMLGnn2U0rCjfALBNaruPxNRIXFlze6GIEQf+6F5xv86c2/xoWJRUbpMUTEyH0QbUJL
-         oLemP/H66QwbVJp8q/4nLqC12w5idDK9GaaalNo8mZz1PZVKsyzhqyYQQ/P606E9klBN
-         uvopdt5xPU15utlHNWjNRHtRXek2X4nYodOdu2RI+pBV2ePPnOPBIDDLPssbA0KoDdt3
-         cCRbBZi2JuwQxppeIGTl3eryQY6fHnq3Gf684gRJVnOly7FskE6jUyszc7dnec/bWlkP
-         75zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728964503; x=1729569303;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwhfU04qa08VdpSL0tNj51VKQuJPyj0qdelSnsnP5Es=;
-        b=UcLqSTY7c/n6Ev0VCqpLJosQI7iW6Nw/1mmYLItM/FsoTGNFH17XpLwiZWalsCf+1A
-         cYTi2GBgg67N5qixG+8zMyhaJuS1besl+rRL/X8zo/MWZxImSsuRmaGt9LzEHSl0Sfn7
-         pb0x0iGHUvC8c19G34UximTQhwGG6TcqUyr5nchobH64xpUmtAU/nkPaS4ITUl3Uyopi
-         HG1tqT5E6s3LF2H7fSBzNKJyVZOiSGqBpTt+ktvFjVOnHNwtRgqj/nmDa5MtljoIrQBU
-         VGvEuO6T18oI+jomSAuoc8aO7k4Oyfg0eZ0hpLx1sYkzXz7oqgVjF0tPn6UGui3S3ghD
-         d1sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjhMV70uvNglqxd8hGC2WCNEuCprkiyDM+xV7+Dgx8I+RzTDq8AszhDo5cdUazA0rLPH1gV0wcfY2b7et9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIt3Y1RFUYaVQleLSxTbHOjN0/6WWSvPW6QMmu7Gx3O4txNDFd
-	z658NYgTX8PeiZnTXbJvxkPNZ/TagcBBS65+N+Q5tEm/G9RJNAH2
-X-Google-Smtp-Source: AGHT+IE5uz8bQGnSjGv7Zq4zoHqC75C9XdFXBNAqfmc2Qvu6+tYDj3jsq21cphHruML1ji5dqk6CJg==
-X-Received: by 2002:a17:90b:1b42:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e315431d7amr12707892a91.29.1728964502982;
-        Mon, 14 Oct 2024 20:55:02 -0700 (PDT)
-Received: from dw-tp ([171.76.80.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392f5f6f4sm404415a91.43.2024.10.14.20.55.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 20:55:02 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>, Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 05/12] iomap: Introduce IOMAP_ENCODED
-In-Reply-To: <ZwehmQt52_iSMLeL@infradead.org>
-Date: Tue, 15 Oct 2024 09:13:32 +0530
-Message-ID: <878quqyqsb.fsf@gmail.com>
-References: <cover.1728071257.git.rgoldwyn@suse.com> <d886ab58b1754342797d84b1fa06fea98b6363f8.1728071257.git.rgoldwyn@suse.com> <ZwT_-7RGl6ygY6dz@infradead.org> <ZwehmQt52_iSMLeL@infradead.org>
+	s=arc-20240116; t=1728965636; c=relaxed/simple;
+	bh=qhm5/G1t4ORR7apeSmEmhPgjtHdwcIyO3zWRObKhidk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=osckDCiO5eIW/LiPN0acNBwQ88reg5VSOiGxwjsUV5T1NVthjYXz+DsL8mOMqynaVSJtlyGP3BYvi/0O94h7Ii+IHm6ww0OLoGkz3B7kzxY7y9Ie+8gIyRXwYm5GCDlYSfYYoKFy3VPScQHQBxGV4ygVM1rsULdTOXop/f2GA2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wopLP0AC; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=mk9AtiTBk0FKZgZvBif+eyLF92Y0AH1k0wOKr5Ar35o=; b=wopLP0ACvM5+Oa0vg4sUvcmRmv
+	gZNCYRvE134XOP6kXp6iaECcznoZgzU1PF/qSn7hEUIPlTOA3vTU+KEzKLMuIQ1XgtkvD/A6n3GM1
+	xdMBAjDdQJ/uMn9C9eWF+olfKAQfW8KLi0vNW6EnEmUXKv81Y5x5mIiqjNs/IWU/v1vHoLBGJQIbH
+	dr+D4A98ZcMfDmDQuuAhJduA3aFCyLDHX4EZEYCYjp2puVIfmupM2YJn8k4+5XIoU/GA9pYTr7BWy
+	abrvy3oij2UoPJxxRq331JA8vwak1txW6ba5qqnUOK4NzX/o4Q1oU/Ga21qTMH1eOeZ32EehNn6tJ
+	et/O8H7w==;
+Received: from 2a02-8389-2341-5b80-a6f6-1cc3-c123-683b.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:a6f6:1cc3:c123:683b] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0YwT-000000072C4-2lrU;
+	Tue, 15 Oct 2024 04:13:54 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: brauner@kernel.org
+Cc: djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] iomap: turn iomap_want_unshare_iter into an inline function
+Date: Tue, 15 Oct 2024 06:13:50 +0200
+Message-ID: <20241015041350.118403-1-hch@lst.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Christoph Hellwig <hch@infradead.org> writes:
+iomap_want_unshare_iter currently sits in fs/iomap/buffered-io.c, which
+depends on CONFIG_BLOCK.  It is also in used in fs/dax.c whіch has no
+such dependency.  Given that it is a trivial check turn it into an inline
+in include/linux/iomap.h to fix the DAX && !BLOCK build.
 
-> On Tue, Oct 08, 2024 at 02:48:43AM -0700, Christoph Hellwig wrote:
->> In general I'm not a huge fan of the encoded magic here, but I'll
->> need to take a closer look at the caller if I can come up with
->> something better.
->
-> I looked a bit more at the code.  I'm not entirely sure I fully
-> understand it yet, but:
->
-> I think most of the read side special casing would be handled by
-> always submitting the bio at the end of an iomap.  Ritesh was
-> looking into that for supporting ext2-like file systems that
-> read indirect block ondemand, but I think it actually is fundamentally
-> the right thing to do anyway.
+Fixes: 6ef6a0e821d3 ("iomap: share iomap_unshare_iter predicate code with fsdax")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/iomap/buffered-io.c | 17 -----------------
+ include/linux/iomap.h  | 19 +++++++++++++++++++
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
-yes, it was... 
-    This patch optimizes the data access patterns for filesystems with
-    indirect block mapping by implementing BH_Boundary handling within
-    iomap.
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 604f786be4bc54..ef0b68bccbb612 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1270,23 +1270,6 @@ void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
+ }
+ EXPORT_SYMBOL_GPL(iomap_write_delalloc_release);
+ 
+-bool iomap_want_unshare_iter(const struct iomap_iter *iter)
+-{
+-	/*
+-	 * Don't bother with blocks that are not shared to start with; or
+-	 * mappings that cannot be shared, such as inline data, delalloc
+-	 * reservations, holes or unwritten extents.
+-	 *
+-	 * Note that we use srcmap directly instead of iomap_iter_srcmap as
+-	 * unsharing requires providing a separate source map, and the presence
+-	 * of one is a good indicator that unsharing is needed, unlike
+-	 * IOMAP_F_SHARED which can be set for any data that goes into the COW
+-	 * fork for XFS.
+-	 */
+-	return (iter->iomap.flags & IOMAP_F_SHARED) &&
+-		iter->srcmap.type == IOMAP_MAPPED;
+-}
+-
+ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ {
+ 	struct iomap *iomap = &iter->iomap;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index e04c060e8fe185..664c5f2f0aaa2d 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -270,6 +270,25 @@ static inline loff_t iomap_last_written_block(struct inode *inode, loff_t pos,
+ 	return round_up(pos + written, i_blocksize(inode));
+ }
+ 
++/*
++ * Check if the range needs to be unshared for a FALLOC_FL_UNSHARE_RANGE
++ * operation.
++ *
++ * Don't bother with blocks that are not shared to start with; or mappings that
++ * cannot be shared, such as inline data, delalloc reservations, holes or
++ * unwritten extents.
++ *
++ * Note that we use srcmap directly instead of iomap_iter_srcmap as unsharing
++ * requires providing a separate source map, and the presence of one is a good
++ * indicator that unsharing is needed, unlike IOMAP_F_SHARED which can be set
++ * for any data that goes into the COW fork for XFS.
++ */
++static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
++{
++	return (iter->iomap.flags & IOMAP_F_SHARED) &&
++		iter->srcmap.type == IOMAP_MAPPED;
++}
++
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops, void *private);
+ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+-- 
+2.45.2
 
-    Currently the bios for reads within iomap are only submitted at
-    2 places -
-    1. If we cannot merge the new req. with previous bio, only then we
-    submit the previous bio.
-    2. Submit the bio at the end of the entire read processing.
-
-    This means for filesystems with indirect block mapping, we call into
-    ->iomap_begin() again w/o submitting the previous bios. That causes
-    unoptimized data access patterns for blocks which are of BH_Boundary type.
-
-Here is the change which describes this [1]. The implementation part
-needed to be change to reduce the complexity. Willy gave a better
-implementation alternative here [2].  
-
-[1]: https://lore.kernel.org/all/4e2752e99f55469c4eb5f2fe83e816d529110192.1714046808.git.ritesh.list@gmail.com/
-[2]: https://lore.kernel.org/all/Zivu0gzb4aiazSNu@casper.infradead.org/
-
-Sorry once I am done with the other priority work on my plate - I can
-resume this work. Meanwhile I would be happy to help if someone would
-like to work on this.
-
--ritesh
 
