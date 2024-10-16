@@ -1,127 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-32074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1839A040D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 10:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920109A03F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 10:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8AC62852BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 08:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8BE9B251B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 08:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8346C1CBA1B;
-	Wed, 16 Oct 2024 08:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083AD1C7B75;
+	Wed, 16 Oct 2024 08:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfpNQFPX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b8bqMKyq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66D34C8C;
-	Wed, 16 Oct 2024 08:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B1EB641
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 08:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066778; cv=none; b=NVp+/5n8qllriKgzdx1t7dTPdywElEIozhXn2c0+7HI1KWBFAhMC9klrA/XDd2lWDcVmDvaRHakBX1of27ni/UzMayUgD82O/f2Qgf1LjPxW6kh57osr398H0HhPA6imKqaFqzbQt8mT7F7cIvM4tDgCZEcQXXDJEje7v0BzphE=
+	t=1729066592; cv=none; b=J71/6o27ymWIH5r8YsjCxZdschLJbcrgAjg8ylj8KGKIy26Jda4xu/fb0/lOnYGU+kX2oKGTfzKXGoCZsFOFpmcx1oBIbXh+ERidoNSLVI6+IXM2CFxA3xZEukRAWNspm7C8obJaEpC/OpRWLYz3hB+M0XBg7myG/TQOpng0dvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066778; c=relaxed/simple;
-	bh=9AH5k/z4iXFxcwP3WulKOJkfDhRHtQFg0uwCzH/zy2o=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=AR0SQu229qg8Q12ZBYpdARkp7NINfqTzoyqTI0IarguGpcT+xVtVjt9uv6wLHYx6CaU+qIs9Q1hxIh3z4tbciUL5UK7gtKAJMUA8dG9hOyDHR3XTb37MEUkipWou7kKnjRDVpe55lXFob2H17TPQRVY/kF5j6uNv4UBeGSWixd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfpNQFPX; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea79711fd4so2231070a12.0;
-        Wed, 16 Oct 2024 01:19:36 -0700 (PDT)
+	s=arc-20240116; t=1729066592; c=relaxed/simple;
+	bh=aZzBS///BSglCO7bAgRb4LBHBRA4AAo0fMG96UUE6g8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YJ62srvIOuglYvgMQOeOhMYq7PyefCo84QCet7OdYbYLyu3arrSUTTPDSEjZzBwZYe7uWwBq5Hl12iPfxs35YB5CZRdHi7m8hIso+EhdVTnAaHR9MqJTk8r/p7jaiSNu1V3vzvl6aqF9WLe5Vxkh3vrKvmoI0edmHimqwyk9+KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b8bqMKyq; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso124795ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 01:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729066775; x=1729671575; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5Zz1AaXGqY/G5RDMad5jXoggb30t1iQFCpAiJuNflHA=;
-        b=cfpNQFPXzQIgMGXuVue1UkKMS+V3sZXWaX3PHfZsr5iQeT30bTN1obziTbc0VXBXiT
-         RZKBFQsLjV+GiP1bPLq08K+BlkpsQLyqxmjyWZchkYC0pwuhSTwC9jLW8jeGDsjM1+Sd
-         pYci/5vH9nNE8aTkM0XJoko2elP4ijE4hxKCY6qN5O7Yk8ijpWDGN6+33hEzOBagzcWW
-         scaiSz5uz6eyo1xDSfxK+Zf2XQyp9mC6nwWCIUcqwv2EO2lnqO0tqPjBCKxmyFV6MmiZ
-         rJ5JWAr0pW7ooJGguwkwnGxN0UAs20bzJjpjWoEpTsaApTRJUaJu4G7vMH8VXE8197t5
-         My6A==
+        d=google.com; s=20230601; t=1729066590; x=1729671390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kgkFDlG4Cc94tDRNFfU395wBqz91HSfYstCHnXlDxso=;
+        b=b8bqMKyqok5lgpMedi8InEZeU1KSPReYZb0KhhDsg+K++DL54rn3XpgPeq1uEQYopT
+         lFZ6qBdadw7KMRLFDJL6U/+fSh85uwndwEcs7eNICEw9vGh6/ya60Iyn9elGPBMvORS/
+         8ViUO/cxaOq+DYhW86HxQ/FGNjNctZcbhZqPH+f2yLWUrzPhgZNRWcwcnnfbCXf0lmao
+         f7GfClFjq9OZA8vLEDUvIto53svS3nduUKPrbEOD+jr+0e3HDG8O8juhqRzIwZf6GhCv
+         6c3ulDqd9xR+WYFx59uTiQcZFLtrHLM+Tkf55KE4OL9LYk29KHksXNUaRwbThMTojK71
+         vELA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729066775; x=1729671575;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Zz1AaXGqY/G5RDMad5jXoggb30t1iQFCpAiJuNflHA=;
-        b=ZJCk9hbNw2wv7qeqgtlHjaFz5y0YNB9sOsHHzQi7M7TNDMjtYe+SehTgqo0OUjBiQf
-         3eJAMX9+d2td6Tfzvfw7q0G0tVDgzjU0HC6XD2UMomP5GGw0jc7wW3SwJblcJjEnKy7o
-         icEjJOKGNWDkgDCYtRnSwyXz0xeiWbYP4jwwJ7bMsnzTm4mspYXoLMga2WPTx3GCCMv9
-         uQfTzYLfK2CPD8qjONbExc9ayEe4OmkU132ZWIJM2KDGHXZff/VuEUV22drkXLNLU+pt
-         2RhvkTTXcBALZbqELQ1NV2BHlAAbL4+1oDv4uZCEwE7jaY+5gKYS3aoTXaXlVAKY1ivi
-         iPPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDKhRzQjVkeVx8xm7halptF+GAkjkVfOWfbC5J9CR8rXvghjyDQPDP1Dl67diiHRZKi2LXdm7sZuGnwf7e@vger.kernel.org, AJvYcCVoLHC+6+CbaU1xaN6Db1EQDH/7z55xpiLmaZFGC9gWrv10smUz2muypwxwsg0f1eHdXE69aR9DQo1v@vger.kernel.org, AJvYcCXrEWak6hPmEDJaf2BpMrrHGN6SMF8UNGAlb18R2YyJdzY6nWAqzLy4JYMYAIoQvyGTOTLV5CVwvLJehtk9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW3uEFnV86ln5yOs2jxQQk5z0/3VQYc5PCBw3ljDr41drjPx3g
-	ffmtuDgWo1R1PdPt+/koeVjLAa3DteNWCuyn56rTKOgRlRvcjFAL+BatHA==
-X-Google-Smtp-Source: AGHT+IEc9skK6d76EajafBRZgfm8Sy/T5svD1YzxOuBJXHFP361Ejw2sL+OkCkzsAVJGpeVArQ9qrA==
-X-Received: by 2002:a05:6a21:39b:b0:1cf:ff65:22f4 with SMTP id adf61e73a8af0-1d905f72df1mr3728444637.41.1729066775409;
-        Wed, 16 Oct 2024 01:19:35 -0700 (PDT)
-Received: from dw-tp ([171.76.80.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a41ffsm2538597b3a.136.2024.10.16.01.19.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:19:34 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>, Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Josef Bacik <josef@toxicpanda.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: provide iomap_want_unshare_iter() stub for !CONFIG_BLOCK
-In-Reply-To: <20241016062344.2571015-1-arnd@kernel.org>
-Date: Wed, 16 Oct 2024 13:45:54 +0530
-Message-ID: <87bjzkihtx.fsf@gmail.com>
-References: <20241016062344.2571015-1-arnd@kernel.org>
+        d=1e100.net; s=20230601; t=1729066590; x=1729671390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kgkFDlG4Cc94tDRNFfU395wBqz91HSfYstCHnXlDxso=;
+        b=FCqr0WIEzMHn87IPqmGKk2GD2Udmopp6Fcn4puD4bi3TonOdZJIIt5X6Yn1ZVtGhc+
+         O+5IWShR1ZdZjrolIJV5oQjjAzuRXF4L/ywNKfJheH/ftr1sjbih9GdUcH2lfN302fpr
+         YgH7RDznQqq/difMMPOsnQv1Z3jyGgXTOQ2lOJSWLiWNhsmvohjEW7Ol5rC2/X44rdep
+         6vvYpQU5Vp1fGFCS6afvpb6JRB9tfI4kAvCTrJu1oxw8JdQ6NReKek7OIji+9i8O1Gao
+         IZNVs7TCSFpjGrVT74T60a32JFAFTOMII496k7/iiqCNuLPpoPbDjkNLUhMW8Kkba8D4
+         Lsww==
+X-Forwarded-Encrypted: i=1; AJvYcCWrLO26X6jNu5hBrOdX+FpEHfcjPf72EYa17KVaysw7GOE5o1wjwZwCr0rPiV9vHrSYhpZqRPfoEbQL3erM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTVmNc6HoUAq7/Cs52HVnX8ePBFpHb2xy5iMcsk9pjw2Tuh9DV
+	+9jADarSuoUDBMIqpGd7SLNBH0Wy3auS476QGwzJNDBE3aIyfsDXvLJOWe/PSeZOQVP69KGJUCc
+	oreMxz5QYNTtwLTakHKguN/yH7gwSi93hUffp
+X-Google-Smtp-Source: AGHT+IHg8i8DFzH0lYUNHyBhvBQcinwiYGOJz+CRzHPKgnZGXVtSbC1G197aqoPM+MoZ1HbhHUg7l0fhpmH/BWsWz0k=
+X-Received: by 2002:a05:6e02:b22:b0:3a3:632e:efed with SMTP id
+ e9e14a558f8ab-3a3ddec7c68mr3406025ab.26.1729066589889; Wed, 16 Oct 2024
+ 01:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1728643714.git.lorenzo.stoakes@oracle.com>
+ <8e7edaf2f648fb01a71def749f17f76c0502dee1.1728643714.git.lorenzo.stoakes@oracle.com>
+ <CAJuCfpHLGyrBWZ9JyJ5FdJQtGO1-tuUqHawjKX_mtwnAhSY6Ow@mail.gmail.com> <8c75620d-8920-4c19-8ebc-0f2b056d49fa@lucifer.local>
+In-Reply-To: <8c75620d-8920-4c19-8ebc-0f2b056d49fa@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 16 Oct 2024 01:16:15 -0700
+Message-ID: <CAJuCfpFXCKAH+fc6=fg-nVC5tjpGG--Pvk4D2NOn-zdA1LXS=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] pidfd: extend pidfd_get_pid() and de-duplicate pid lookup
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Arnd Bergmann <arnd@kernel.org> writes:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Oct 15, 2024 at 11:05=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> When block device support is disabled, DAX fails to link with:
+> On Tue, Oct 15, 2024 at 12:40:41PM -0700, Suren Baghdasaryan wrote:
+> [snip]
+> > > -struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
+> > > +struct pid *__pidfd_get_pid(unsigned int pidfd, bool pin_pid,
+> > > +                           bool allow_proc, unsigned int *flags,
+> > > +                           struct fd *fd)
+> > >  {
+> > > -       struct fd f;
+> > > +       struct file *file;
+> > >         struct pid *pid;
+> > > +       struct fd f =3D fdget(pidfd);
+> > >
+> > > -       f =3D fdget(fd);
+> > > -       if (!fd_file(f))
+> > > +       file =3D fd_file(f);
+> > > +       if (!file)
+> > >                 return ERR_PTR(-EBADF);
+> > >
+> > > -       pid =3D pidfd_pid(fd_file(f));
+> > > -       if (!IS_ERR(pid)) {
+> > > -               get_pid(pid);
+> > > -               *flags =3D fd_file(f)->f_flags;
+> > > +       pid =3D pidfd_pid(file);
+> > > +       /* If we allow opening a pidfd via /proc/<pid>, do so. */
+> > > +       if (IS_ERR(pid) && allow_proc)
+> > > +               pid =3D tgid_pidfd_to_pid(file);
+> > > +
+> > > +       if (IS_ERR(pid)) {
+> > > +               fdput(f);
+> > > +               return pid;
+> > >         }
+> > >
+> > > -       fdput(f);
+> > > +       if (pin_pid)
+> > > +               get_pid(pid);
+> > > +       else
+> > > +               WARN_ON_ONCE(!fd); /* Nothing to keep pid/pidfd aroun=
+d? */
+> > > +
+> > > +       if (flags)
+> > > +               *flags =3D file->f_flags;
+> > > +
+> > > +       /*
+> > > +        * If the user provides an fd output then it will handle decr=
+ementing
+> > > +        * its reference counter.
+> > > +        */
+> > > +       if (fd)
+> > > +               *fd =3D f;
+> > > +       else
+> > > +               /* Otherwise we release it. */
+> > > +               fdput(f);
+> > > +
+> > >         return pid;
+> > >  }
+> >
+> > There is an EXPORT_SYMBOL_GPL(pidfd_get_pid) right after this line. It
+> > should also be changed to EXPORT_SYMBOL_GPL(__pidfd_get_pid),
+> > otherwise __pidfd_get_pid() will not be exported. A module calling
+> > pidfd_get_pid() now inlined in the header file will try to call
+> > __pidfd_get_pid() and will have trouble resolving this symbol.
 >
-> aarch64-linux/bin/aarch64-linux-ld: fs/dax.o: in function `dax_file_unshare':
-> dax.c:(.text+0x2694): undefined reference to `iomap_want_unshare_iter'
+> Hmm hang on not there isn't? I don't see that anywhere?
+
+Doh! Sorry, I didn't realize the export was an out-of-tree Android
+change. Never mind...
+
 >
-> Return false in this case, as far as I can tell, this cannot happen
-> without block devices.
->
-> Fixes: 6ef6a0e821d3 ("iomap: share iomap_unshare_iter predicate code with fsdax")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Looks like a fix was submitted already for this [1]
-
-[1]: https://lore.kernel.org/all/20241015041350.118403-1-hch@lst.de/
-
--ritesh
-
-> ---
->  include/linux/iomap.h | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index e04c060e8fe1..84ec2b7419c5 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -281,7 +281,14 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
->  bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
->  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  		const struct iomap_ops *ops);
-> +#ifdef CONFIG_BLOCK
->  bool iomap_want_unshare_iter(const struct iomap_iter *iter);
-> +#else
-> +static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
-> +{
-> +	return false;
-> +}
-> +#endif
->  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
->  		bool *did_zero, const struct iomap_ops *ops);
->  int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
-> -- 
-> 2.39.5
+> [snip]
 
