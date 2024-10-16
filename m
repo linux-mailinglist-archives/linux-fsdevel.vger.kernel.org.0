@@ -1,67 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-32122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D433A9A0D46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:51:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DBF9A0D6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581B01F24008
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB61BB24AE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0861620E003;
-	Wed, 16 Oct 2024 14:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2270120E012;
+	Wed, 16 Oct 2024 14:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ne/K0iNO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJeMUGMS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6083020ADEA;
-	Wed, 16 Oct 2024 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836102141A1;
+	Wed, 16 Oct 2024 14:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090304; cv=none; b=rLEyHGnalnMPJ4Rxkl/6e+DwXh6NfQqv96NEbcHfLP+bF9CGIz9Ipc9xa3k9dhMt3WSq08V3s2IX1BT95l+rxKpZi1wI/9Z4QIshVL6WPiqoEg7zdtjkZ9o55X8Fdfalry4R9+U09FSdi+5wUV63fIu1an9Y004ksdIHViQvn94=
+	t=1729090384; cv=none; b=bQ+bm4vSHPN1104NIHcJUMV5Vf6CfxqylBrGIwHYL5m4m0Y97eAYsRn4OJUY5P84q2IDrVAaat47FSJhDOJa4nsaO6Dz+9XTnvKtcEf1ScSqtPbsJrORiFfuNKxcJ3jlXNuNdDUh9htaxixrGX0HC3ckFwtnSN2tezeFqm4m4kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090304; c=relaxed/simple;
-	bh=bUJhhQ8g376NHKbQ6j9vlx1OTk2JcxGmdHodaX8yHcI=;
+	s=arc-20240116; t=1729090384; c=relaxed/simple;
+	bh=vipUYaVNF/6jEiyj4XoyWQ08zskOkWfRYKrVvfRCPcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AFoFAFDrRLgAWJJJOkF6VkZLQh7QQQvA0QV8hHLsXCjjzEGrCFQlz85L3VwuMeUf0kdYZMZINiZJEvuLq/6Q41x1JSJIveY2xrQpFcvtpGwVADdhRdMsEyxCQnHQ0CJFBwS97qOMD4Rt2kdGePUwpOeXqaafoclfvFhUQGcLuws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ne/K0iNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D38FC4CEC5;
-	Wed, 16 Oct 2024 14:51:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVF7TYaZTlfhD/uPCF2JFqRE6z+H8WBofv3Gt9BcFH98wS7luArCsrGF6nyWHZAy/NK80O/qYX4KX2Mhx/oI9CIhB2O6vL7jSxMjOrolfoJG02wWfnEzTjFrHSne+GLlfnvldO0cQzckOtSuLtAQ61lU7RxXNwBeK9BoGX3hfes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJeMUGMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B55DC4CECF;
+	Wed, 16 Oct 2024 14:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729090304;
-	bh=bUJhhQ8g376NHKbQ6j9vlx1OTk2JcxGmdHodaX8yHcI=;
+	s=k20201202; t=1729090384;
+	bh=vipUYaVNF/6jEiyj4XoyWQ08zskOkWfRYKrVvfRCPcY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ne/K0iNOJ5pP7VzyBUN9yTYkxawvs0hYx8fsjY0aMEY+GJg1moxPZL+EmcAVp+2Yr
-	 KW5pPQtcNhwIy2MSK6Y8B5GGbcJFJpjjp88J6t3vgPtwPv12prtthKuQpZHsHEH8LU
-	 CzBNUpslMZ2aF2MmZit/BZuwTM/t4zzy/rQVoB3ieu3jO5y1V8sg0284OnAyzUG1UZ
-	 LdntCHimIjojMlHlT2FiEKPjLXbsKz9PpKzqils72ViCZdW8TBAx9iCOkvEamI5v5v
-	 A1uN1xR0NWC+qiFvNCq79+DfX82hLRfSyYXZVWTngadRA/7aH4GiyIgbrFFpqr56vJ
-	 kdxWeFx9wb9QQ==
-Date: Wed, 16 Oct 2024 16:51:37 +0200
+	b=IJeMUGMShZWxdMURyBFv8HKLnUD7jQ+Pp1DkoIVvyGgoJRPe0zEVMNfd7rVLgawxD
+	 HFJk+jfsNtzx9cshvrh2Q7k7kJ3WuoII+Ca+LW3Rl94J/FZFhCuKpTllqGAOj5k9wR
+	 m/EQ8qBgprLE2MVNdot6aji15GuNg2OJ79DynrZgW7YAODFJn/MeQ/6+dBde4qS63t
+	 PDTOEkQx5eQZtVLn72cjTFZJ2VqzPloEy9xqe2AmbEEyFyQN92cpQ2gCsysddvKPcU
+	 BiAb9jsTiMIthwk9xqN0aH5z9oDkGbznig0akI2Bdvhy4/3X/gmXpUFUIp75Kqnx11
+	 yUeaG++eAroDA==
+Date: Wed, 16 Oct 2024 16:52:59 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Jan Kara <jack@suse.cz>
-Cc: Song Liu <songliubraving@meta.com>, 
-	Christoph Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <20241016-luxus-winkt-4676cfdf25ff@brauner>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
- <20241016135155.otibqwcyqczxt26f@quack3>
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, 
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com, alessandrozanni.dev@gmail.com, 
+	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fs: Fix uninitialized value issue in from_kuid
+Message-ID: <20241016-einpacken-ebnen-bcd0924480e1@brauner>
+References: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
+ <20241016132339.cq5qnklyblfxw4xl@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,53 +60,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241016135155.otibqwcyqczxt26f@quack3>
+In-Reply-To: <20241016132339.cq5qnklyblfxw4xl@quack3>
 
-On Wed, Oct 16, 2024 at 03:51:55PM +0200, Jan Kara wrote:
-> On Tue 15-10-24 05:52:02, Song Liu wrote:
-> > > On Oct 14, 2024, at 10:25 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> > > On Tue, Oct 15, 2024 at 05:21:48AM +0000, Song Liu wrote:
-> > >>>> Extend test_progs fs_kfuncs to cover different xattr names. Specifically:
-> > >>>> xattr name "user.kfuncs", "security.bpf", and "security.bpf.xxx" can be
-> > >>>> read from BPF program with kfuncs bpf_get_[file|dentry]_xattr(); while
-> > >>>> "security.bpfxxx" and "security.selinux" cannot be read.
-> > >>> 
-> > >>> So you read code from untrusted user.* xattrs?  How can you carve out
-> > >>> that space and not known any pre-existing userspace cod uses kfuncs
-> > >>> for it's own purpose?
-> > >> 
-> > >> I don't quite follow the comment here. 
-> > >> 
-> > >> Do you mean user.* xattrs are untrusted (any user can set it), so we 
-> > >> should not allow BPF programs to read them? Or do you mean xattr 
-> > >> name "user.kfuncs" might be taken by some use space?
-> > > 
-> > > All of the above.
-> > 
-> > This is a selftest, "user.kfunc" is picked for this test. The kfuncs
-> > (bpf_get_[file|dentry]_xattr) can read any user.* xattrs. 
-> > 
-> > Reading untrusted xattrs from trust BPF LSM program can be useful. 
-> > For example, we can sign a binary with private key, and save the
-> > signature in the xattr. Then the kernel can verify the signature
-> > and the binary matches the public key. If the xattr is modified by
-> > untrusted user space, the BPF program will just deny the access. 
+On Wed, Oct 16, 2024 at 03:23:39PM +0200, Jan Kara wrote:
+> On Wed 16-10-24 14:37:19, Alessandro Zanni wrote:
+> > Fix uninitialized value issue in from_kuid by initializing the newattrs
+> > structure in do_truncate() method.
 > 
-> So I tend to agree with Christoph that e.g. for the above LSM usecase you
-> mention, using user. xattr space is a poor design choice because you have
-> to very carefully validate any xattr contents (anybody can provide
-> malicious content) and more importantly as different similar usecases
-> proliferate the chances of name collisions and resulting funcionality
-> issues increase. It is similar as if you decided to store some information
-> in a specially named file in each directory. If you choose special enough
-> name, it will likely work but long-term someone is going to break you :)
+> Thanks for the fix. It would be helpful to provide a bit more information
+> in the changelog so that one doesn't have to open the referenced syzbot
+> report to understand the problem. In this case I'd write something like:
 > 
-> I think that getting user.* xattrs from bpf hooks can still be useful for
-> introspection and other tasks so I'm not convinced we should revert that
-> functionality but maybe it is too easy to misuse? I'm not really decided.
+> ocfs2_setattr() uses attr->ia_uid in a trace point even though ATTR_UID
+> isn't set. Initialize all fields of newattrs to avoid uninitialized
+> variable use.
+> 
+> But see below as I don't think this is really the right fix.
 
-Reading user.* xattr is fine. If an LSM decides to built a security
-model around it then imho that's their business and since that happens
-in out-of-tree LSM programs: shrug.
+Agreed.
+
+> 
+> > Fixes: uninit-value in from_kuid reported here
+> >  https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
+> 
+> Fixes tag should reference some preexisting commit this patch is fixing. As
+> such this tag is not really applicable here. Keeping the syzbot reference
+> in Reported-by and Closes (or possibly change that to References) is good
+> enough.
+> 
+> > Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
+> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> > ---
+> >  fs/open.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/open.c b/fs/open.c
+> > index acaeb3e25c88..57c298b1db2c 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -40,7 +40,7 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
+> >  		loff_t length, unsigned int time_attrs, struct file *filp)
+> >  {
+> >  	int ret;
+> > -	struct iattr newattrs;
+> > +	struct iattr newattrs = {0};
+> 
+> We usually perform such initialization as:
+> 	struct iattr newattrs = {};
+> 
+> That being said there are many more places calling notify_change() and none
+> of them is doing the initialization so this patch only fixes that one
+> particular syzbot reproducer but doesn't really deal with the problem.
+> Looking at the bigger picture I think the right solution really is to fix
+> ocfs2_setattr() to not touch attr->ia_uid when ATTR_UID isn't set and
+> similarly for attr->ia_gid and ATTR_GID.
+
+Yes, that's what we did for similar bugs.
 
