@@ -1,190 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-32140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC719A130E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:00:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552259A131C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16ABB22B17
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3861F21FB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D668D215F5C;
-	Wed, 16 Oct 2024 19:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7DF2170BA;
+	Wed, 16 Oct 2024 20:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ADUoIMa2"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ASdb4gVT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="p0OAdhVB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB82144D3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 19:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108795; cv=none; b=X2SmmrV3Jw7B7W1haitKYgdc5p7SPIuC1+hp77C0jF/nBCRx5NtAzYhvJ4LoWKM5lcCxiKr4Td2Y/MEfSe44UvnQWnNOliT1RyTkBTxGm/K2P9p2SlLq7AFjq78b0KHW5aRXkGzIWSu2HLmLLu/MofvQvX8xCuH2OyfALdkKon8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108795; c=relaxed/simple;
-	bh=/ZtkV779/ytLCI0J/cbkxqqXWmY0bXLd/xN+SO3bDw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdoBANkHwKWiXOoM5cFFbnN0NhwKVp2DrZRfVY5v1+t7XIhNGgApohzU2RBernfSufKM2R0dG9x3wg4twQkUGySU0anK/vDNm1b4ZlxjezKGNf5YdouwIT3onBFGKDamAajmNp4PDkXJu0wsW9GWDQDuN4amQnrJsVI/yMxYP54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ADUoIMa2; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a156513a1so26301566b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 12:59:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338CB1C2324;
+	Wed, 16 Oct 2024 20:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729108833; cv=fail; b=Bg/5duycgn1Lyo7Kf3b717nNQQ2q1brg8GaNjLRfX8A+zoAi4IHIF5o1DQmzK3CZHGvxte4YpNK+W2Anbp91AHeyG7kGwR8N/xWp7szhnIaSYjJAhc/1BFjN9nXSqEG9noJBF4AkaBlyFy7pnveGQkN+kSxn/Zbur+t12GREZHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729108833; c=relaxed/simple;
+	bh=IRC/XOeIUNVapc/mbAS4OR/YiraRBN7zwqXlrCKaG6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Mfh/rQWtPJoW17kImcsb5quIe+C5U44UO53wU4qyMz6RdY8It2gtkzcEnmK2HBtyPYNM4vzSjQVpmDLBGW6zqRxsoHq0LrqsTSBj/a70c9Bifg4zrvQsuVFixz6ilSQL7aUVZd48fE6Jh44sTaVX7E7CVkuXyynTVYa017a5AGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ASdb4gVT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=p0OAdhVB; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GHte6C004874;
+	Wed, 16 Oct 2024 20:00:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=ChEUAvslQT82XQhpA6
+	VkV3t+NAdEM5VW0BhjpuzoClU=; b=ASdb4gVTen/Pl/LuiDrvNYy6Ta60xSPDn0
+	R8VF+xV96AYEOlJbUM6GrxUvXf64lMX61mRN9dmelwB5sarjv28gfDSR5JRM0YBh
+	oUyW8CsVI/t3PXa3Eg8S0j1sqAhcLmYYn24L73a4E67Jqy1fOTRTkpolnq3Fa+uA
+	v+9ocG5SM7z3dnQrfGvbFZKNyiWTWKWNrLVk30pfemU03GYWtKF70exXyuwfRfcg
+	uXRSGtNyskdsCmI54iU8ypwOF6pO6WIzXdbMwWP0XmqXTxlVBH7dMNJcbDrGAiaR
+	A1LybB66vxsuIj0xFsMjHfNyUcPx3hAEqbKI+z1N4WZUlXrod1LA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427fw2mvte-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 20:00:11 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49GJ3tZm019983;
+	Wed, 16 Oct 2024 20:00:10 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fj9arja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 20:00:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nQEpFLV5puoj1TIFKWcCIZZBySBwFax/Y7KbDFutbWTek0ZIj+r318uPLBFqAMq0Crmpg7nDgqOjCDNy1efNN39QR0Ghy0UJoYrfPKivUQ6fagS+0AtGbEEt8trOUpCx2TZKUUMFMzwAgs9p0KCviKsbZP6s9pRDUoP4sxAbs9JXaM8zJEd/Hj4yJqckq/N99fAWnj8529YuBTegPBsvSrvY6odjAFHJdrgc8xVqAF2HdxAG3DGOgw+cZSLIGS0XhLWMMyi+g/8zAyAxEjIy/PZGlBrqYkPI8lxVx31my987/nwdx2pVJUCPiLm8YZZJL2wPGJ5P1NS5YJoiv2YiwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ChEUAvslQT82XQhpA6VkV3t+NAdEM5VW0BhjpuzoClU=;
+ b=EVjPAqYNUcl3LiVlypeULwAJ/HSV1gE/2F/2WpSVp17fneOLs9dMPWJYHEm9Cy7uJGs7bi7hjwme9Qhe+2hY1ENqZZt4x8+NZsbo/ezVGJPxCPCrnC5PeqkSrP6OtxNfHqJ5u8QMWCnRFY4TGQEwx6gzI7Wf4QOO/5ZqtrEqr0IgtiZGYMhKTS3kzYnHZHfaV2d6fH3+1TEMQN9SyxlcggQ2MtZRFRZuQXjc/2nLT0ORfW68L4+wTasyXiG8prIXP9X4SLti9boOwWT+c41GFahhngUAb44v8JaxydOb1IG3BxVv/UJwbxW8hF7DCsOYhCbHgq76JjCGH3VwtBmFsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729108792; x=1729713592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+lPf3FNOmE8pMU/2Iycp1XnYxIydARXrVQNA1uL0No=;
-        b=ADUoIMa2s+9DQ2EaNc3U00HPIBmyZ/dqzWJMR/kUt4DqIP7kmBNylM5/QFVQXGGdpg
-         IREOqLlR0FwQzeJOLuDDoCPzvlve0VsUOVPecl1g2rYx30d9Fxls0ka09Yl+AQ9T+3u9
-         y6cmnc7OZKXVxVlz/J9HWJ6TyBzfbPjQ/MkLc1KI57qDiG3+goIiB35KH6mLhOpObZ0f
-         UNce0sZrpwsvrs3Vf18bnu/gOboa1fwO2clAbtyF6AIdzgoyKfJ0+Qi6tbBbMWOkv6mI
-         1f53l0l3vPaxqlRr9uootXR8YQUHWNL7VVO3/P/RHyFx6Tb1DyirgFL4cmZ+qlKx5pea
-         OIZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729108792; x=1729713592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y+lPf3FNOmE8pMU/2Iycp1XnYxIydARXrVQNA1uL0No=;
-        b=UwSe5NrjJfdY+UJ6IBGeuZ8fMrMEtVIe5Ary5AH6hCE603tNlixEDPH5ihoMFJBepO
-         b286WT1gbFU+VlaH4FK/GLKt/I2QHmJMwfx4Q1DCROg+PlDFfVdFaC6EZ1niNTlqhlqG
-         WIs5JI8Mxs4LY/L8XHxf2VOnP3ycLWYnqJAFesxBi1+S8qdCTTQH5WgcQFX7g7fOfkAI
-         BikDdJcDM8qtNlI/KF+z8SdLaYohebDEfHUWxKqV6bfdalqk0g1bLl9IP7m9Qfaux+4v
-         axKkFELIoqdRZMzsR/ufWYZhjEoy1btT3MZmzEvi1qx+xfKiR5x0+AkEBnFo9zyaJwNV
-         OEig==
-X-Forwarded-Encrypted: i=1; AJvYcCWlnCdA81W1DSE+6LhNMyPSzHzqNWBMOPdOm0RK21rSdVfbcxvyQUx4q6ONIMqPF9hScEwkaSlQlBjxwk2t@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL8ATD24gbI/M+IAKcyUwQR8Yguf68r9BpDwChz9kneELNWznh
-	V3ZZMOPHr/CQ4yaY4tA3XLdMwLAMBjABKhkFPXnHcyvd+TiZQYweznkyWJmsz9FLdXzNX08yZoj
-	1aDqJ7ZEM7jz1u9vKE/BWtbRivvlr/G0MzOKg
-X-Google-Smtp-Source: AGHT+IHeHGSJGST3y7pnbjWTe7yANkgiRQ1Q+ewN/4YgOGby4P6amBbfCGy33IqgOgmGsE0A8OhBdeVemB3UzdU3xTM=
-X-Received: by 2002:a17:907:9815:b0:a99:5d4c:7177 with SMTP id
- a640c23a62f3a-a9a34c80793mr404655566b.6.1729108791587; Wed, 16 Oct 2024
- 12:59:51 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ChEUAvslQT82XQhpA6VkV3t+NAdEM5VW0BhjpuzoClU=;
+ b=p0OAdhVByw36B+NQd19wN5UdJYlTGdc25mmuH0D+PZVtoh1xJhlTejCYRaseUAH2fxEGWV1jAmzV5lFVDkGF7kNdPtLTg3Tpui/8kCUlRpiEeEm+UNx5lyZt1HxHcCLF6o/MuWz7gm41yu1GBwlgBF/AjmWVnytap+P8OWLI5Fo=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by CH0PR10MB4986.namprd10.prod.outlook.com (2603:10b6:610:c7::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 16 Oct
+ 2024 20:00:07 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 20:00:07 +0000
+Date: Wed, 16 Oct 2024 21:00:03 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] pidfd: extend pidfd_get_pid() and de-duplicate
+ pid lookup
+Message-ID: <9294a556-345e-4766-9b54-1a429bfb917e@lucifer.local>
+References: <cover.1728643714.git.lorenzo.stoakes@oracle.com>
+ <8e7edaf2f648fb01a71def749f17f76c0502dee1.1728643714.git.lorenzo.stoakes@oracle.com>
+ <20241016-beinbruch-zeltplatz-4bfdedca1ee8@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-beinbruch-zeltplatz-4bfdedca1ee8@brauner>
+X-ClientProxiedBy: LO4P265CA0303.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:391::14) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014235631.1229438-1-andrii@kernel.org> <2rweiiittlxcio6kknwy45wez742mlgjnfdg3tq3xdkmyoq5nn@g7bfoqy4vdwt>
-In-Reply-To: <2rweiiittlxcio6kknwy45wez742mlgjnfdg3tq3xdkmyoq5nn@g7bfoqy4vdwt>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 16 Oct 2024 12:59:13 -0700
-Message-ID: <CAJD7tkbpEMx-eC4A-z8Jm1ikrY_KJVjWO+mhhz1_fni4x+COKw@mail.gmail.com>
-Subject: Re: [PATCH bpf] lib/buildid: handle memfd_secret() files in build_id_parse()
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@kernel.org, linux-mm@kvack.org, 
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Yi Lai <yi1.lai@intel.com>, pbonzini@redhat.com, seanjc@google.com, 
-	tabba@google.com, david@redhat.com, jackmanb@google.com, jannh@google.com, 
-	rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH0PR10MB4986:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ff2ea36-f579-45f4-4c79-08dcee1d2216
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YQiWXbl+k24QIAXLLY3O83Gcq9zH7/lLHH7i0RtOC91EksJ8o1NfaVmAP/UW?=
+ =?us-ascii?Q?ftKVAKnVy3JoqjDx8PgaIMDhevadnz4VxkKZj/5dah0Y33rfmpvjEGUa0nV1?=
+ =?us-ascii?Q?D5kWu7aT5GvbY3+++u9qIBgUTWNTdtuDuVdVwGjvoMIwj8Gr0Sj8zxkrGY0c?=
+ =?us-ascii?Q?bYWu4tTkDx0NnOoWmowwA7VpCVXkfIqVe7AHbKPEgvL1q417ClY3cpNtxuo3?=
+ =?us-ascii?Q?bapYDvhnTNH3iFQRRnHaMmTSHBmIOAJ772jFhjz1fv1MQ//P9JuHd1qeCB67?=
+ =?us-ascii?Q?MKPls1eeMHySIKdIWMS1upIQ2krjX7wzrs02R/UE+IWogepyRvneYTF+Z8/f?=
+ =?us-ascii?Q?qp2XpsmYweTks0DHHvMF1PH70OvlDhbFaHEQhIi/Aq/GWTGVhX5CZHymSdxX?=
+ =?us-ascii?Q?mS2LyePNnJrAHmEXzyRbeEcbqcQHShVR/egrXOLOxHwbOFQSlqRwktRd2arO?=
+ =?us-ascii?Q?0XEu0EY2XulTr6QMlQyBRntT4MBPEH9xzFMvU5BIWdClaDXUarsvC1EICLh9?=
+ =?us-ascii?Q?OHaaYYrwcZ5qkhETgRQ7mDRSB/xEVWcnvBb5IPeEzJ6lfQysEpwPEHaBl3Yl?=
+ =?us-ascii?Q?zXiE1DpxiLdpNeMYvDBP0110gw3rJr+98EID4eRbz8t6JCDV9xkNE1C7D3xD?=
+ =?us-ascii?Q?xV4awI+XKh+IIXkxQ/WqHgge+F2at0i7Hjdhk8g9n3822NfpENIccFlU0Unx?=
+ =?us-ascii?Q?hieZE1Z2Hqkew2+nlS15+58W5UZ9EwymtX95p500NjuS2ybjlg50Myou4DqS?=
+ =?us-ascii?Q?0FqKcZZrhKxx/fnBwnOkb250bHr2eBrQVxKL39HA8vFDXFRViv6hrWr8HGGe?=
+ =?us-ascii?Q?Bsj3Ti+8gninOXu5yxIFVH59eIJVVhY/TKLAxX80ylT6q9iyC7LrbBKGfexR?=
+ =?us-ascii?Q?WFOsXF3i/iFhsTImpRB7sb9N5tvVHEVSdawJOYvy9LDVw3uRGtBckDyGIkeF?=
+ =?us-ascii?Q?KQS4hjPLnHKw+gGk9NOsCakvp6Dn3y+8kzXcMr96tIJdNdyZMsJt+qnJGYGP?=
+ =?us-ascii?Q?DlE94t3AxjW6z63Py8R3CmwEWFoE/A3KbcpBsMTCzaq6MzA4cb7yqwwDUW0A?=
+ =?us-ascii?Q?tuaXENVl0xsLPBLTrhglHWxsQyPug/XyzI0YDdrwOKJh9CbzZqsMXTBtS62+?=
+ =?us-ascii?Q?e0cmiFRYGutT1hEhTDK+VKGXlTUreOWWy0Tj5732q6gzR7M/x74dCwk0YV1c?=
+ =?us-ascii?Q?dRaCf0pniK55JafzRMjYgRxXtfMuiXX7JpRDS1cMlw0IyHYxaHy4TjYzSr1U?=
+ =?us-ascii?Q?oPbrO3/iH3gseHxLSAfxK/4DmM0/Dj4zR8kWiXrkaw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?V60CyV7VsT0dP3tojy+Rjb+yDxY8AlIwvvKn27SKcXxKs7M35AOl26V7BMPP?=
+ =?us-ascii?Q?G1ElXT577+r+LIa8W19v2TLVqAJxikiSbbIPyoRIjQoeq7nrCAVRzouqrwDm?=
+ =?us-ascii?Q?JBKf0xClAk2M+UaHVlA3deizE/HhWu+/C2rCJDhdzmSsjpHW5LUI2NYJzcJD?=
+ =?us-ascii?Q?H8DnPoDj5rPHOY1OpnJJ0xzbcAYxHhnLuKBnLbFXR1/sWqype9QrsvokAck2?=
+ =?us-ascii?Q?jYAEsGqgoAqxTaTssDO/QcFhvOi483GPd+8KurX0Hf9Sx+OxzIQPrukIvfP5?=
+ =?us-ascii?Q?2lWXidnZaP0pvRUaI/uWijBKM7IO2krA41nst4ZdXODgLtiqPjIaLvp8btKf?=
+ =?us-ascii?Q?on4yMD3GXqyuh8rc3BF76LYqZS+38LX/ea2//MrHk26A8mFlZFaI6QGfWuV7?=
+ =?us-ascii?Q?fgEMAn5Mf9hbGpuP3sk4Z/icFWOOghFh/Ki5EF4MGH1Ldmvp490NNVZiQ/sE?=
+ =?us-ascii?Q?rmm4wc4jbzHPpGDJuZQhT1Wcr5RVgsycGYxrh1pXiikZWdXJRpfAhWa6a/jX?=
+ =?us-ascii?Q?t9van4Hd4z0Q37CkXFFU683iDi9n/g8A4FX8TqRn5tUB0xH8QygL3XgtWO16?=
+ =?us-ascii?Q?Dbo/HYw4aoN4bhr495whPu1NUn3G7IY/HBZORuIiOrzyGLLU8yNG5FUa0FYz?=
+ =?us-ascii?Q?3L4Uv4+iIp+TqFDwUcrvnL9ia5xFDPj4OV/URL8r+tIoqyBxqjwQe5V/2ifJ?=
+ =?us-ascii?Q?qa6U4gins0H4X7l6uvoA7pHFQvtIht/yUqheNIr98GvZLhF6esE/Z8wUMpBz?=
+ =?us-ascii?Q?r+84mG8Sn9goancOjAXeg9lK1bBr3uk0YTkNT6LcWrmPD/rHNwFDMA5YzbpX?=
+ =?us-ascii?Q?evitFpabDenKivSgpf50aZrrhJsbo1p8ZSO0bMPzgWnw0xkCr3Znl0noiZCK?=
+ =?us-ascii?Q?kAj7R/GwkMZxKDD7z/9vIR3pJny/gOZtxSAv9Qp7Dk5OJ48dZjRPzEvU03mk?=
+ =?us-ascii?Q?aXhCsUCBO2n2qOyosbzVihqmia3Xh3x0A8jFbJvo76JXTh17uGPj4F8lI7HY?=
+ =?us-ascii?Q?5R1PSmUpcF+C6MV+Ag1bAu8rlxAwHmC2Ha0pS5/dXD6ug2Fasvdl9muhNHZS?=
+ =?us-ascii?Q?pl15ZuFugro0V5PXE1/fDGvXC7RrnBFXz/l30QLUz0h0P5bXBqdm8xmsjhPx?=
+ =?us-ascii?Q?taCbHNirPqrUhFMg4puUbcg6xK6NaIBFiF2vUCsagDr9CB5FaAN7ulpQWBh5?=
+ =?us-ascii?Q?HkHLfA3Nc/ol2Y7D84NvfbYc8a/f/kVb8IhXit5RCucR2P4SY5UQBuBg8a/M?=
+ =?us-ascii?Q?WlTHJt9V0JjSzKrDQ3azBoQStUXgt5ik8+i7wwy7m6urhTWqD4Uhechc1+uz?=
+ =?us-ascii?Q?gkjHGHUxHmHBSm8ySC1ddbRDX4+iiUWhxjjJsPjmt+UJcwXnDSdZ4cy+wPmT?=
+ =?us-ascii?Q?PQ5B3Zdkt1hzI0uM4wAKPyA29Xmmia7g016mQjSGw/5MqKarLtWvMCf2fb4Q?=
+ =?us-ascii?Q?cXHAWsZfFErN1icv19dC7+xEnTpURrr5Ae4BbKUH/dZZnIlikQsvaw46/9yP?=
+ =?us-ascii?Q?AbqJw4aUCInj8zKxhJsscIxeaxKohXIK5L5D6S/xvMCAaXRippyZEKjTM6AH?=
+ =?us-ascii?Q?N+z4P2Da/PO7z9gSZQsleCzioUQ8+ByrgLrkLPo6k1mpzYDtX5im2dVS1eMh?=
+ =?us-ascii?Q?MwHRqyrkZEjxu7RH2Cy3P950/YTwgZ2kUx2+JJIfSs1q/qzIZqHD/sM4bbfc?=
+ =?us-ascii?Q?bsiMvQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	0yzLvoef5SiBEM9p8c9LgANlaBvp3TCXqLXw64EKoQDesnAQrSToLkpuj7Vi4/MBdcbqvs5g2XnGiAoSgzRgkSQcltD/mH9yUaON0NeRxe5wwUAZY2UqasLZjkwsvktPfXRtRZUlQwJx3YHbUp+SEG+cfSgnRrsvB4AAUXMIuub7GyE3o4WXxjoV6HIqu482dgnpvLkixBtLAHDczF7AnAD9tupNnRcz5gfxWe06moGNqXoObz3peRC2zdL0U+JVnpsmN0WTRMSzqFYse2/2DY6k+5V77fONruKCSTrrKKeEPj+xHjaGPDbjr91OGduXcPi2vg+RofpYdEyhRP7TSIHPHqtvtO+XI6rhk6XEnhSFJZ0vSfwfTt3IARHtv82+yrzYtICgfic2GpuhD8XXbVwdFKdRTd2XJ9M8RT45NRZZhCKChfRLsAyGWLdh4UXSl/tum9dsFqd2O3wlIp5m+s+9OrOteXUNKwg1coV6EJ8ubqqaDMkosNIM6RqpHHmh+sISVut4fdfP/M4xeVJwNiQK81tT4NgtqUv+ozUI0hiyRPaWPly3VoDj/lzLXS59o/jF/SRMU6s0h3MRibn05AeznrttfLzGbwyylfTHU1k=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ff2ea36-f579-45f4-4c79-08dcee1d2216
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 20:00:07.5918
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NxDk8aIeIS1mDSpK4GimX+tvfxEdy4ajcutpzmNtp1V+FJZVpEg1qgXSMtuhZFwXPhob92xUMd1N/ookQDM8j6xLy0tAHInL2U6DHtzBJ5Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4986
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-16_16,2024-10-16_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410160126
+X-Proofpoint-GUID: Rkh604OcEQphwIlsT625AIyDvYrjdCFv
+X-Proofpoint-ORIG-GUID: Rkh604OcEQphwIlsT625AIyDvYrjdCFv
 
-On Wed, Oct 16, 2024 at 11:39=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> Ccing couple more folks who are doing similar work (ASI, guest_memfd)
->
-> Folks, what is the generic way to check if a given mapping has folios
-> unmapped from kernel address space?
-
-I suppose you mean specifically if a folio is not mapped in the direct
-map, because a folio can also be mapped in other regions of the kernel
-address space (e.g. vmalloc).
-
-From my perspective of working on ASI on the x86 side, I think
-lookup_address() is
-the right API to use. It returns a PTE and you can check if it is
-present.
-
-Based on that, I would say that the generic way is perhaps
-kernel_page_present(), which does the above on x86, not sure about
-other architectures. It seems like kernel_page_present() always
-returns true with !CONFIG_ARCH_HAS_SET_DIRECT_MAP, which assumes that
-unmapping folios from the direct map uses set_direct_map_*().
-
-For secretmem, it seems like set_direct_map_*() is indeed the method
-used to unmap folios. I am not sure if the same stands for
-guest_memfd, but I don't see why not.
-
-ASI does not use set_direct_map_*(), but it doesn't matter in this
-context, read below if you care about the reasoning.
-
-ASI does not unmap folios from the direct map in the kernel address
-space, but it creates a new "restricted" address space that has the
-folios unmapped from the direct map by default. However, I don't think
-this is relevant here. IIUC, the purpose of this patch is to check if
-the folio is accessible by the kernel, which should be true even in
-the ASI restricted address space, because ASI will just transparently
-switch to the unrestricted kernel address space where the folio is
-mapped if needed.
-
-I hope this helps.
-
-
->
-> On Mon, Oct 14, 2024 at 04:56:31PM GMT, Andrii Nakryiko wrote:
-> > From memfd_secret(2) manpage:
+On Wed, Oct 16, 2024 at 03:00:55PM +0200, Christian Brauner wrote:
+> On Fri, Oct 11, 2024 at 12:05:55PM +0100, Lorenzo Stoakes wrote:
+> > The means by which a pid is determined from a pidfd is duplicated, with
+> > some callers holding a reference to the (pid)fd, and others explicitly
+> > pinning the pid.
 > >
-> >   The memory areas backing the file created with memfd_secret(2) are
-> >   visible only to the processes that have access to the file descriptor=
-.
-> >   The memory region is removed from the kernel page tables and only the
-> >   page tables of the processes holding the file descriptor map the
-> >   corresponding physical memory. (Thus, the pages in the region can't b=
-e
-> >   accessed by the kernel itself, so that, for example, pointers to the
-> >   region can't be passed to system calls.)
+> > Introduce __pidfd_get_pid() which abstracts both approaches and provide
+> > optional output parameters for file->f_flags and the fd (the latter of
+> > which, if provided, prevents the function from decrementing the fd's
+> > refernce count).
 > >
-> > We need to handle this special case gracefully in build ID fetching
-> > code. Return -EACCESS whenever secretmem file is passed to build_id_par=
-se()
-> > family of APIs. Original report and repro can be found in [0].
+> > Additionally, allow the ability to open a pidfd by opening a /proc/<pid>
+> > directory, utilised by the pidfd_send_signal() system call, providing a
+> > pidfd_get_pid_proc() helper function to do so.
 > >
-> >   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+> > Doing this allows us to eliminate open-coded pidfd pid lookup and to
+> > consistently handle this in one place.
 > >
-> > Reported-by: Yi Lai <yi1.lai@intel.com>
-> > Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader a=
-bstraction")
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > This lays the groundwork for a subsequent patch which adds a new sentinel
+> > pidfd to explicitly reference the current process (i.e. thread group
+> > leader) without the need for a pidfd.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > > ---
-> >  lib/buildid.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
+> >  include/linux/pid.h | 42 +++++++++++++++++++++++++++++++-
+> >  kernel/pid.c        | 58 ++++++++++++++++++++++++++++++---------------
+> >  kernel/signal.c     | 22 ++++-------------
+> >  3 files changed, 84 insertions(+), 38 deletions(-)
 > >
-> > diff --git a/lib/buildid.c b/lib/buildid.c
-> > index 290641d92ac1..f0e6facf61c5 100644
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -5,6 +5,7 @@
-> >  #include <linux/elf.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/pagemap.h>
-> > +#include <linux/secretmem.h>
+> > diff --git a/include/linux/pid.h b/include/linux/pid.h
+> > index a3aad9b4074c..68b02eab7509 100644
+> > --- a/include/linux/pid.h
+> > +++ b/include/linux/pid.h
+> > @@ -2,6 +2,7 @@
+> >  #ifndef _LINUX_PID_H
+> >  #define _LINUX_PID_H
 > >
-> >  #define BUILD_ID 3
+> > +#include <linux/file.h>
+> >  #include <linux/pid_types.h>
+> >  #include <linux/rculist.h>
+> >  #include <linux/rcupdate.h>
+> > @@ -72,8 +73,47 @@ extern struct pid init_struct_pid;
 > >
-> > @@ -64,6 +65,10 @@ static int freader_get_folio(struct freader *r, loff=
-_t file_off)
+> >  struct file;
 > >
-> >       freader_put_folio(r);
-> >
-> > +     /* reject secretmem folios created with memfd_secret() */
-> > +     if (secretmem_mapping(r->file->f_mapping))
-> > +             return -EACCES;
 > > +
-> >       r->folio =3D filemap_get_folio(r->file->f_mapping, file_off >> PA=
-GE_SHIFT);
+> > +/**
+> > + * __pidfd_get_pid() - Retrieve a pid associated with the specified pidfd.
+> > + *
+> > + * @pidfd:      The pidfd whose pid we want, or the fd of a /proc/<pid> file if
+> > + *              @alloc_proc is also set.
+> > + * @pin_pid:    If set, then the reference counter of the returned pid is
+> > + *              incremented. If not set, then @fd should be provided to pin the
+> > + *              pidfd.
+> > + * @allow_proc: If set, then an fd of a /proc/<pid> file can be passed instead
+> > + *              of a pidfd, and this will be used to determine the pid.
+> > + * @flags:      Output variable, if non-NULL, then the file->f_flags of the
+> > + *              pidfd will be set here.
+> > + * @fd:         Output variable, if non-NULL, then the pidfd reference will
+> > + *              remain elevated and the caller will need to decrement it
+> > + *              themselves.
+> > + *
+> > + * Returns: If successful, the pid associated with the pidfd, otherwise an
+> > + *          error.
+> > + */
+> > +struct pid *__pidfd_get_pid(unsigned int pidfd, bool pin_pid,
+> > +			    bool allow_proc, unsigned int *flags,
+> > +			    struct fd *fd);
+> > +
+> > +static inline struct pid *pidfd_get_pid(unsigned int pidfd, unsigned int *flags)
+> > +{
+> > +	return __pidfd_get_pid(pidfd, /* pin_pid = */ true,
+> > +			       /* allow_proc = */ false,
+> > +			       flags, /* fd = */ NULL);
+> > +}
+> > +
+> > +static inline struct pid *pidfd_to_pid_proc(unsigned int pidfd,
+> > +					    unsigned int *flags,
+> > +					    struct fd *fd)
+> > +{
+> > +	return __pidfd_get_pid(pidfd, /* pin_pid = */ false,
+> > +			       /* allow_proc = */ true,
+> > +			       flags, fd);
+> > +}
+> > +
+> >  struct pid *pidfd_pid(const struct file *file);
+> > -struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags);
+> >  struct task_struct *pidfd_get_task(int pidfd, unsigned int *flags);
+> >  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret);
+> >  void do_notify_pidfd(struct task_struct *task);
+> > diff --git a/kernel/pid.c b/kernel/pid.c
+> > index 2715afb77eab..25cc1c36a1b1 100644
+> > --- a/kernel/pid.c
+> > +++ b/kernel/pid.c
+> > @@ -36,6 +36,7 @@
+> >  #include <linux/pid_namespace.h>
+> >  #include <linux/init_task.h>
+> >  #include <linux/syscalls.h>
+> > +#include <linux/proc_fs.h>
+> >  #include <linux/proc_ns.h>
+> >  #include <linux/refcount.h>
+> >  #include <linux/anon_inodes.h>
+> > @@ -534,22 +535,46 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
+> >  }
+> >  EXPORT_SYMBOL_GPL(find_ge_pid);
 > >
-> >       /* if sleeping is allowed, wait for the page, if necessary */
-> > --
-> > 2.43.5
-> >
+> > -struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
+> > +struct pid *__pidfd_get_pid(unsigned int pidfd, bool pin_pid,
+> > +			    bool allow_proc, unsigned int *flags,
+> > +			    struct fd *fd)
+>
+> Hm, we should never return a struct fd. A struct fd is an inherently
+> scoped-bound concept - or at least aims to be. Simply put, we always
+> want to have the fdget() and the fdput() in the same scope as the file
+> pointer you can access via fd_file() is only valid as long as we're in
+> the syscall.
+>
+> Ideally we mostly use CLASS(fd/fd_raw) and nearly never fdget(). The
+> point is that this is the wrong api to expose.
+>
+> It would probably be wiser if you added a pidfd based fdget() inspired
+> primitive.
+
+I think we can actually probably just avoid passing it back and pin the pid
+instead of the fd, which keeps the scope as before and simplifies things
+generally.
+
+Let me experiment with that!
 
