@@ -1,89 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-32135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E929A1241
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 21:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C0F9A1286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 21:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DDF3B24484
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 19:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6317E286415
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 19:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877BB2141A0;
-	Wed, 16 Oct 2024 19:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC25B2144AE;
+	Wed, 16 Oct 2024 19:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0GWx5zV"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cCtVL1MC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5518BC33
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 19:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9F212EF9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 19:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729105545; cv=none; b=pTz9aYnB6MLucvrynue9uwXYI9oaynz14PMaEWdOoc3R3daBSl5OHDSCMU21jmQVN1cHyJg9NrcLnGJ08am3zO9xsY/qFdwsQimYXSfGytCGqcwrJmsDOMk7Dr502Xr97NtgFsIT4go7cZAA3QKlUGvlhcy0IkRyYPygwrfUQQ4=
+	t=1729106908; cv=none; b=VA5xmEOcj5FHSEtu9GPyqGCYs5mbKNRCRGQPHZKpNiUlyE4plkCAWYDE4T92i7TZoms/+oqeg/mtKes4oZxpzh/ZgS/hqrp+NtJLFvpsPSY6fgF0IrbQmrRawIskCw3KCy22mBIMvq+L8qDe5X0glPoiPdIBTI38h0e8w8zrQTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729105545; c=relaxed/simple;
-	bh=8AJc7nnOVnEcgZoFHh8+qQ064B2g1njgKpyNk4S+kxA=;
+	s=arc-20240116; t=1729106908; c=relaxed/simple;
+	bh=qum8g+Ez9i9rxAyYrgyJ7I8C0I7jc/1NhuIWjYoVA3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eo4yPszRmKxx0mWQWHEfgUAqmGOJSveQ9WhDGIoqMAJQZVXcoZQsCE43tk9xdc2XEYw8ANDHAinxynjWu7qMmiutmz9fr5MOuuuiKdA+P2ouO8KHAOFNWcjMj/XdAvUFR+KpGElUasTssFvt5etCvqLrROHaQE2mGvHjVeeQ2zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0GWx5zV; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608dddaa35so51421cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 12:05:43 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEDkeAE9Qr/T+V+YKTel902WhkGMsVSQ8VY+/HhoIz5i/5pBksfhKoGIp3XCWCPKuLNWG1+lALhhoxepbaGUp05QgQxI96aM4KulGZYE1b8pQrUvn2d6bAXu4XF3BAtJ158e4iY6nuRV8eKLJQxZ+MqKHz+uYWeY0dDc44e7QqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=cCtVL1MC; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e3dfc24a80so125883b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 12:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729105542; x=1729710342; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1729106905; x=1729711705; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4fS3U7sZSvRVdJyoUhS3TF3Nb+W11QQ+SMyGO80/sw=;
-        b=D0GWx5zVsXJGXrLVN3Z1PKbfrK559qbciGomzq51fZ5A11ObhY3KPZqPmeVSV+9zIs
-         PdHjAf/+lSNAfegGle1b/wTRvCc1oNsFSbqim4SpsOFoyl900/8s/AtNw3dQ9RJUQXTo
-         OQBYCGxDib+WQhcdE9RAvLXvuWfnirC00vcmkaaOTPj8n9K4sbSY8tMf+kQhwOGm+fet
-         SnEyk3Z9Xc7CWUWgugt/AHXRV3HgD+vkaLdZbv12eCQ11IOUL0rmowMwkhLPLsdyOukT
-         E5sLyS24p2mkioOfMrpFKoYKmDLr8HpLQRTdfmQ/nT/nWZaxKF4+5mdDYQe75jRvhWOM
-         059Q==
+        bh=pQMboBStj+YoCZfdptRzj0iw9r0BoDmLsEERRiT2CJc=;
+        b=cCtVL1MCPBMRNBUlLlSJLZ38o+ZFKDLwuTj18L+VBdJ+CZE33A0rISdR44mxMW0wvB
+         9ZhDWk6oCBh1IW8KthRncgB0c9OCtx6qhuo84riXC3deSz23uKxZi7r7XBsb6YgWtGUG
+         Lhw0MYMKXJG/4ldLTALGmRUrd384pzM1I+hqiEwHcK00thAyvHqNiHlbd3tbb7yJWBQk
+         Kjr1S4w4z81DNQKM9hqzNHeyOw+cR1ef+PCY3XQlz3796UubOAztcwMU1KFf7DvMIHMW
+         Afs7ZjGuTA8GD+sDbt2/oKV28JMrUo85qLpsAkjg/r5yqZNOxGXUn8+qOoTE6qOXYca9
+         VQlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729105542; x=1729710342;
+        d=1e100.net; s=20230601; t=1729106905; x=1729711705;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o4fS3U7sZSvRVdJyoUhS3TF3Nb+W11QQ+SMyGO80/sw=;
-        b=kOG7QQ4Ntzvx/X1QU8tkNNXlq8UxFwVXVD/X8w9OBzUOsYMjuQdF/CR4viY1Xgwzut
-         Cb1LVO0mfSZEciv6LPVs+mus9Vu5jd/uYJAD8PXcknyb6XkA5F8xPOpsHSkRlLzVEKCy
-         0VHtRNck07barJ+ZCUdX25O7hPYbZcDcjmep4k7I6wLidE/GSLO8nQC+o9GoP75usGUt
-         tqov8zOIFmJeaWTSCA15La/y4+gyp3lT7jk3SrGhZCaHCqA9JrUMZSv/u1Qq7ioPgMp4
-         fNBUwDUETdfZqpXoZQDK2+AIjMpZ22PJFcXUYXQaewGfPYNPd053aNP4Qk9FSR+/i4pX
-         eyeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYR2CRo6fnwnwmnFn27W2X97Ut1jukgx4xxil481At+5Gv1GqucqWMRWdvw5R+jCobEg+BSDe0pCtkAIHf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd4OHcm9R7HwJMr/KFhs5qWYOiFf48gvwIzxOVrrpvtN1GiAiv
-	MF/Tx/2gwDz2UYxq7P0xpHc9LBvpUy3KRJSA8u8b+82mVnICK4Mz3ClpB7lVKQ==
-X-Google-Smtp-Source: AGHT+IE5vMu8b7tn/Vo4Stb0Ua1CGr54lW9KQb9aB0aHmUEk+fl1QrOBTLpAkMbB5h460JEQLGsq5A==
-X-Received: by 2002:a05:622a:a313:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4609c7856e5mr528301cf.10.1729105542146;
-        Wed, 16 Oct 2024 12:05:42 -0700 (PDT)
-Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc229245fcsm20946876d6.58.2024.10.16.12.05.40
+        bh=pQMboBStj+YoCZfdptRzj0iw9r0BoDmLsEERRiT2CJc=;
+        b=BhK731yef8zjHrvwkWz7gH7gubRanjfg7k5mOubiFFo9lmHQIn+uPRKdHy2lpAJ//i
+         GhbQcHiDZfj8b97UFkThNHvxMtlfAegF5KWDfV7OpcvYgpvoMUPhFwbEYfA2IX5d4Lmq
+         oGHwuYDw/jOdFazC6bHXkxYwwGZmbslKT71gg2l5SL7V8x6l5l+bsp9ls5sqqX30QyO1
+         kdh4o2m8BPniAAt/iMMWhZwBt/4Lq5NpLKlBEp6/kSKZTkNJDgTI3UP9PlW10l0g7vwK
+         kIpsfZi0PErYN2HrmWF5NqyzzfL9dm1n7RHzVxgGS7l6/q2OT5HYPmXHOsXB6ORE2e8o
+         3kpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAjr5YBosWZZqHftZviSujr3GlgX8iWakS0qhVhN1TBxxQCNdXmfBb3mLAhpSRTEp4mr7ci6oGv9M5Aw5+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVjzmeddqEl7NJjpUrhNgiEjoj55A8chVCuGapSZceVmqqtwFb
+	dDoLQencmWsAHjrv2GzIMsIftWaKlwvNGlO+Khfa0sNimYdZSocSA8jl0HsldySPY0FI76GMgOb
+	oVA4=
+X-Google-Smtp-Source: AGHT+IEA96QyDlGaCqXqp1Ned/WFV8dItd/N02cyuUDyK24hkHSbf8iWpGdn/upWVfjxgtazY4odyA==
+X-Received: by 2002:a05:6808:1813:b0:3e3:e0d1:b157 with SMTP id 5614622812f47-3e5c912a6d0mr15343505b6e.47.1729106905157;
+        Wed, 16 Oct 2024 12:28:25 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc229714d0sm20847766d6.131.2024.10.16.12.28.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 12:05:41 -0700 (PDT)
-Date: Wed, 16 Oct 2024 15:05:38 -0400
-From: Brian Geffon <bgeffon@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, jack@suse.cz,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	cmllamas@google.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-	jing.xia@unisoc.com, xuewen.yan94@gmail.com,
-	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	Brian Geffon <bgeffon@google.com>, stable@vger.kernel.org,
-	lizeb@google.com
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <ZxAOgj9RWm4NTl9d@google.com>
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com>
- <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
+        Wed, 16 Oct 2024 12:28:24 -0700 (PDT)
+Date: Wed, 16 Oct 2024 15:28:23 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [GIT PULL] Fsnotify changes for 6.12-rc1
+Message-ID: <20241016192823.GA2377558@perftesting>
+References: <20240923110348.tbwihs42dxxltabc@quack3>
+ <CAHk-=wiE1QQ-_kTKSf4Ur6JEjMtieu7twcLqu_CH4r1daTBiCw@mail.gmail.com>
+ <20240923191322.3jbkvwqzxvopt3kb@quack3>
+ <CAHk-=whm4QfqzSJvBQFrCi4V5SP_iD=DN0VkxfpXaA02PKCb6Q@mail.gmail.com>
+ <20240924092757.lev6mwrmhpcoyjtu@quack3>
+ <CAHk-=wgzLHTi7s50-BE7oq_egpDnUqhrba+EKux0NyLvgphsEw@mail.gmail.com>
+ <e46d20c8-c201-41fd-93ea-6d5bc1e38c6d@linux.alibaba.com>
+ <CAHk-=wijqCH+9HUkOgwT_f1o4Tp05ACQUFG9YrxLpOVdRoCwpw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,65 +90,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
+In-Reply-To: <CAHk-=wijqCH+9HUkOgwT_f1o4Tp05ACQUFG9YrxLpOVdRoCwpw@mail.gmail.com>
 
-On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > Now, the epoll only use wake_up() interface to wake up task.
-> > However, sometimes, there are epoll users which want to use
-> > the synchronous wakeup flag to hint the scheduler, such as
-> > Android binder driver.
-> > So add a wake_up_sync() define, and use the wake_up_sync()
-> > when the sync is true in ep_poll_callback().
-> > 
-> > [...]
+On Tue, Sep 24, 2024 at 06:15:51PM -0700, Linus Torvalds wrote:
+> On Tue, 24 Sept 2024 at 17:17, Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> >
+> > Just side note: I think `generic_file_vm_ops` already prepares this
+> > feature, so generic_file_mmap users also have fault around behaviors.
 > 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
+> Hmm. Maybe. But it doesn't really change the fundamental issue - the
+> code in question seems to be just *random*.
 > 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
+> And I mean that in a very real and very immediate sense: the
+> fault-around code and filemap_map_pages() only maps in pages that are
+> uptodate, so it literally DEPENDS ON TIMING whether some previous IO
+> has completed or not, and thus on whether the page fault is handled by
+> the fault-around in filemap_map_pages() or by the filemap_fault()
+> code.
 > 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
+> In other words - I think this is all completely broken.
 > 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
+> Put another way: explain to me why random IO timing details should
+> matter for the whether we do __filemap_fsnotify_fault() on a page
+> fault or not?
 
-This is a bug that's been present for all of time, so I think we should:
+They don't, or at least I don't understand what you're getting at here.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") 
-Cc: stable@vger.kernel.org
+I have a file with these precontent watches on, no IO is going to occur on these
+pages without calling the fanotify hook first.  We have readahead disabled in
+this case for this very reason, we need to make sure that every single page
+access is caught by fanotify before we allow the IO to proceed, otherwise we do
+get random garbage (well really we just get empty pages because these files are
+just truncated to the final size).
 
-I sent a patch which adds a benchmark for nonblocking pipes using epoll:
-https://lore.kernel.org/lkml/20241016190009.866615-1-bgeffon@google.com/
+Now there is the case where userspace could have just done a normal pwrite() to
+fill in the file, so any subsequent faults would find uptodate pages and thus
+we'd not get an event.  My original code disabled this, specifically because I
+wanted to have the consistency of "any access == event".  But we decided in one
+of our many discussions around this code that it would be a bit too heavy
+handed, and if there were uptodate pages it would be because the HSM application
+filled them in.
 
-Using this new benchmark I get the following results without this fix
-and with this fix:
+As Jan pointed out, I'm fine going back to that model, as it does have more
+consistent behavior.  But I don't want to go rework this code for a 6th time
+just to have you reject it and it take me a couple of weeks to notice that it
+didn't go in.
 
-$ tools/perf/perf bench sched pipe -n
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
+I realize to you that "we're already using this" doesn't matter, but it matters
+to me.  As a rule we don't like carrying patches that aren't upstream, the only
+reason we do it is for these cases where we need to see how it works in
+production to see if it's actually worth chasing and implementing.  In this case
+the answer overwhelmingly is yes, this feature is extremely useful and pretty
+greatly improves the launch times of our containers and our applications.  So
+I'd really like some concrete guidance on how exactly you want this to look
+before I go back to rework it again.  Thanks,
 
-     Total time: 12.194 [sec]
-
-      12.194376 usecs/op
-          82005 ops/sec
-
-
-$ tools/perf/perf bench sched pipe -n
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
-
-     Total time: 9.229 [sec]
-
-       9.229738 usecs/op
-         108345 ops/sec
-
-> 
-> [1/1] epoll: Add synchronous wakeup support for ep_poll_callback
->       https://git.kernel.org/vfs/vfs/c/2ce0e17660a7
+Josef
 
