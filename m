@@ -1,120 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-32123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DBF9A0D6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:55:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3529A0D6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB61BB24AE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FB9286FCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2270120E012;
-	Wed, 16 Oct 2024 14:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E020F5B7;
+	Wed, 16 Oct 2024 14:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJeMUGMS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjAo4+PJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836102141A1;
-	Wed, 16 Oct 2024 14:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759F420F5AE;
+	Wed, 16 Oct 2024 14:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090384; cv=none; b=bQ+bm4vSHPN1104NIHcJUMV5Vf6CfxqylBrGIwHYL5m4m0Y97eAYsRn4OJUY5P84q2IDrVAaat47FSJhDOJa4nsaO6Dz+9XTnvKtcEf1ScSqtPbsJrORiFfuNKxcJ3jlXNuNdDUh9htaxixrGX0HC3ckFwtnSN2tezeFqm4m4kM=
+	t=1729090439; cv=none; b=un+RVmoLni3aZ534GQPGqD98xmv8Jpf2OHpd7tKWkszVz8lv/EmRv67bVDY6opZ6ux1UfBoordjbFwkKLUv6uTNzwyWTK5w6JmdUhn/tABM9XPZSH8BnvBgTbbn9KmXA0kJ1ptE3H7liVtcrVIlmbYTMv60QTWzPQFDvSgtfGoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090384; c=relaxed/simple;
-	bh=vipUYaVNF/6jEiyj4XoyWQ08zskOkWfRYKrVvfRCPcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVF7TYaZTlfhD/uPCF2JFqRE6z+H8WBofv3Gt9BcFH98wS7luArCsrGF6nyWHZAy/NK80O/qYX4KX2Mhx/oI9CIhB2O6vL7jSxMjOrolfoJG02wWfnEzTjFrHSne+GLlfnvldO0cQzckOtSuLtAQ61lU7RxXNwBeK9BoGX3hfes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJeMUGMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B55DC4CECF;
-	Wed, 16 Oct 2024 14:53:01 +0000 (UTC)
+	s=arc-20240116; t=1729090439; c=relaxed/simple;
+	bh=30rE6efOoF/qr6wkKdMnEi82qUo60ReIqblq6jhOy9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mscgvh8uIpjbDx3z8iyBT8Xvip3V2HJoedq9Y8A1BEMyJoGMUhL+gzx8o72HjAwp2X38tIGlgCQbqDv3J2UFzv/AXPUiCJdmHtx2JhD/BNdEWyMKTxMEOAvdIA+9XxWww2MPwxCuSRRMBhzyUaS8afRIXEsA24wCMaal5zxc8FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mjAo4+PJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91736C4CEC5;
+	Wed, 16 Oct 2024 14:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729090384;
-	bh=vipUYaVNF/6jEiyj4XoyWQ08zskOkWfRYKrVvfRCPcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IJeMUGMShZWxdMURyBFv8HKLnUD7jQ+Pp1DkoIVvyGgoJRPe0zEVMNfd7rVLgawxD
-	 HFJk+jfsNtzx9cshvrh2Q7k7kJ3WuoII+Ca+LW3Rl94J/FZFhCuKpTllqGAOj5k9wR
-	 m/EQ8qBgprLE2MVNdot6aji15GuNg2OJ79DynrZgW7YAODFJn/MeQ/6+dBde4qS63t
-	 PDTOEkQx5eQZtVLn72cjTFZJ2VqzPloEy9xqe2AmbEEyFyQN92cpQ2gCsysddvKPcU
-	 BiAb9jsTiMIthwk9xqN0aH5z9oDkGbznig0akI2Bdvhy4/3X/gmXpUFUIp75Kqnx11
-	 yUeaG++eAroDA==
-Date: Wed, 16 Oct 2024 16:52:59 +0200
+	s=k20201202; t=1729090439;
+	bh=30rE6efOoF/qr6wkKdMnEi82qUo60ReIqblq6jhOy9E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mjAo4+PJzvNlCimyqhtonmMT9daWmwMt6HPVL4D/lbe6b656Zb7U1F6Ey6gOLKLSL
+	 sGt01b7LN+m6PYbZnE9swc3VUoKtJru7xv/G2G7U4S9mohVeqfOFK0TXezVb+UgyQc
+	 ok2upR/ltvvZl6iXV3SCNTYaPKmBtI29Ho7BjASYg2wpiEgm7CJFAqRwPgUO2x3mpt
+	 QSqifwlqGmqRwbDTkXuT0BBDGMmYQxnPrM6OSaPQoBg8aYM2vgiWpNv1vQOwvPYKZf
+	 A49PhGHeup2X80+itZeUrfjMpuXiESSSI+0VfgmO/HosLDhLPM9I3rt2JAHWypEDTw
+	 L9ngEqD0tdUwQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, 
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com, alessandrozanni.dev@gmail.com, 
-	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fs: Fix uninitialized value issue in from_kuid
-Message-ID: <20241016-einpacken-ebnen-bcd0924480e1@brauner>
-References: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
- <20241016132339.cq5qnklyblfxw4xl@quack3>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix lock recursion
+Date: Wed, 16 Oct 2024 16:53:53 +0200
+Message-ID: <20241016-klebt-kontinental-a976b274f90c@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <1114103.1729083271@warthog.procyon.org.uk>
+References: <1114103.1729083271@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016132339.cq5qnklyblfxw4xl@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1292; i=brauner@kernel.org; h=from:subject:message-id; bh=30rE6efOoF/qr6wkKdMnEi82qUo60ReIqblq6jhOy9E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTzX26y+D3h1qGjK79mWPY9YxCrC3ugH5WS31Cqv+pXz LSnQs+3d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkyA9Ghq/1n95v9p2xecdk wWuBofdn/ZlTr7ZfiLHo7sLWWk+mFXaMDFtuFc8U2WwhNvPRXk2nYOE5qj9Fy5gFA8+tl6vl+PV tEi8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 03:23:39PM +0200, Jan Kara wrote:
-> On Wed 16-10-24 14:37:19, Alessandro Zanni wrote:
-> > Fix uninitialized value issue in from_kuid by initializing the newattrs
-> > structure in do_truncate() method.
+On Wed, 16 Oct 2024 13:54:31 +0100, David Howells wrote:
+> afs_wake_up_async_call() can incur lock recursion.  The problem is that it
+> is called from AF_RXRPC whilst holding the ->notify_lock, but it tries to
+> take a ref on the afs_call struct in order to pass it to a work queue - but
+> if the afs_call is already queued, we then have an extraneous ref that must
+> be put... calling afs_put_call() may call back down into AF_RXRPC through
+> rxrpc_kernel_shutdown_call(), however, which might try taking the
+> ->notify_lock again.
 > 
-> Thanks for the fix. It would be helpful to provide a bit more information
-> in the changelog so that one doesn't have to open the referenced syzbot
-> report to understand the problem. In this case I'd write something like:
-> 
-> ocfs2_setattr() uses attr->ia_uid in a trace point even though ATTR_UID
-> isn't set. Initialize all fields of newattrs to avoid uninitialized
-> variable use.
-> 
-> But see below as I don't think this is really the right fix.
+> [...]
 
-Agreed.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-> 
-> > Fixes: uninit-value in from_kuid reported here
-> >  https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-> 
-> Fixes tag should reference some preexisting commit this patch is fixing. As
-> such this tag is not really applicable here. Keeping the syzbot reference
-> in Reported-by and Closes (or possibly change that to References) is good
-> enough.
-> 
-> > Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> > ---
-> >  fs/open.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/open.c b/fs/open.c
-> > index acaeb3e25c88..57c298b1db2c 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -40,7 +40,7 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  		loff_t length, unsigned int time_attrs, struct file *filp)
-> >  {
-> >  	int ret;
-> > -	struct iattr newattrs;
-> > +	struct iattr newattrs = {0};
-> 
-> We usually perform such initialization as:
-> 	struct iattr newattrs = {};
-> 
-> That being said there are many more places calling notify_change() and none
-> of them is doing the initialization so this patch only fixes that one
-> particular syzbot reproducer but doesn't really deal with the problem.
-> Looking at the bigger picture I think the right solution really is to fix
-> ocfs2_setattr() to not touch attr->ia_uid when ATTR_UID isn't set and
-> similarly for attr->ia_gid and ATTR_GID.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Yes, that's what we did for similar bugs.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] afs: Fix lock recursion
+      https://git.kernel.org/vfs/vfs/c/dabae7218d1c
 
