@@ -1,222 +1,425 @@
-Return-Path: <linux-fsdevel+bounces-32118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCCE9A0C89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FF89A0CE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 16:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6121C212D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B05E1F21FAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 14:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D6C20C011;
-	Wed, 16 Oct 2024 14:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSZUiYyT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4920C014;
+	Wed, 16 Oct 2024 14:38:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8803D502BE;
-	Wed, 16 Oct 2024 14:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766CD156225;
+	Wed, 16 Oct 2024 14:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088587; cv=none; b=D3Jc98cSqFuqLI44TiW0uLczwHPvwA/1Cc0nzxezf7P8OO3qOo7BrMvMinBNbYoYVgOc04t+yBpM1PWgF6aSocVi3Sjs5N3YfRxM1kmKnFYLBPzmMONEKMyw/EWRRilEo1JIwbak34BC6wjeEBjMf5C7vCiHXns7d7slpXM9nGI=
+	t=1729089487; cv=none; b=OzAhOgHaHhqvYKAREi57V5o1gNk/Tdl6fV9qIJVStM9pl/G6Hhzam4t5J49Rreuoft/uI0ErMIHRK8vQvB+DQBh0icbLzn8sabsAIPEL3xHVmZqYx25sqBkug0dYdpW9XBKrhfGOt/HPBPvqAVo3y+DGogvcMrHF0skBZXPy3eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088587; c=relaxed/simple;
-	bh=jD6ZYgj249WXE3YgGo+kGl7esi6CCSX0C5qgagYAYIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hV8x5xkPXHfxbr1mLs/gJ0DM+V66GgVPCjy0AOE1ZAI/fiykx8MbPr89SRugMUECVEJCYjr/ouj0VvWWFrJJdhONOt+Au7aTRhoiYGC7Y9gHTWnQD3WDAptHtN3OIb6SssdTXGxPraF7idjN0M5yq69J9tiHHReLWnrD13yYnCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSZUiYyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9EE4C4CEC7;
-	Wed, 16 Oct 2024 14:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729088587;
-	bh=jD6ZYgj249WXE3YgGo+kGl7esi6CCSX0C5qgagYAYIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gSZUiYyTGbnxwEtnXpQe7swluYTRtTMbhW0Zo9YwBJuSp/DaIhpNLAdDnxcDAltWI
-	 Ighd5wfWR+JZAu5k+bSd+q9HiFRNIhJbbLjt5QqEfM4e3i3S29WpLUL3pf6TmzojCd
-	 zaeDtDtcuKzewuvWJ1cJvDK9Id0M0JbsHlTwZ21cF9wEFvwAj0nebZR6CtCDxbTH57
-	 9v4/gu1I8tWE71TcxHwad0OuFHrD3oCti7JZ928lDsIy3rPmCfHsWHnym3Jx3QrUVl
-	 obej86Qtl1vQ97Qd55tqiWmpjwDQqJe6JFx/uwE18Jy7blZSq5htHsulKc9IPoHDTd
-	 KIg2+5Ycqyzqw==
-Date: Wed, 16 Oct 2024 16:23:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <20241016-mitdenken-bankdaten-afb403982468@brauner>
-References: <20241010152649.849254-1-mic@digikod.net>
+	s=arc-20240116; t=1729089487; c=relaxed/simple;
+	bh=wE+Tk0teM1O/8JvtpEGGB5Mc/ioX6WvBEmyunfQU9us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV00xRumKCDZnkWqgm4fl7DRFjjPh33Lg9/KiQL54OdYrEYgNEtEJ4gw/XRvRE1iOpoG3Pk0yMw+eshDH4EjABXq5m0NdVOESCbR7oTdfit+xt4FgDdLi6ttOuw5MzdQqXu0eoIjRBu3O2+H5pCJ5uXTN1/BEg/g4nztrlYFlcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9160BFEC;
+	Wed, 16 Oct 2024 07:38:34 -0700 (PDT)
+Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77FA33F71E;
+	Wed, 16 Oct 2024 07:37:59 -0700 (PDT)
+Message-ID: <18546e4a-81c7-41f4-b07f-2e6501a936b8@arm.com>
+Date: Wed, 16 Oct 2024 15:37:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010152649.849254-1-mic@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 06/57] mm: Remove PAGE_SIZE compile-time constant
+ assumption
+Content-Language: en-GB
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christoph Lameter <cl@linux.com>, David Hildenbrand <david@redhat.com>,
+ David Rientjes <rientjes@google.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Michal Hocko <mhocko@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Miroslav Benes <mbenes@suse.cz>, Pekka Enberg <penberg@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Matthew Wilcox <willy@infradead.org>
+Cc: cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-mtd@lists.infradead.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20241014105912.3207374-6-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 05:26:41PM +0200, Mickaël Salaün wrote:
-> When a filesystem manages its own inode numbers, like NFS's fileid shown
-> to user space with getattr(), other part of the kernel may still expose
-> the private inode->ino through kernel logs and audit.
++ Matthew Wilcox
+
+This was a rather tricky series to get the recipients correct for and my script
+did not realize that "supporter" was a pseudonym for "maintainer" so you were
+missed off the original post. Appologies!
+
+More context in cover letter:
+https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+
+
+On 14/10/2024 11:58, Ryan Roberts wrote:
+> To prepare for supporting boot-time page size selection, refactor code
+> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+> intended to be equivalent when compile-time page size is active.
 > 
-> Another issue is on 32-bit architectures, on which ino_t is 32 bits,
-> whereas the user space's view of an inode number can still be 64 bits.
+> Refactor "struct vmap_block" to use a flexible array for used_mmap since
+> VMAP_BBMAP_BITS is not a compile time constant for the boot-time page
+> size case.
 > 
-> Add a new inode_get_ino() helper calling the new struct
-> inode_operations' get_ino() when set, to get the user space's view of an
-> inode number.  inode_get_ino() is called by generic_fillattr().
+> Update various BUILD_BUG_ON() instances to check against appropriate
+> page size limit.
 > 
-> Implement get_ino() for NFS.
+> Re-define "union swap_header" so that it's no longer exactly page-sized.
+> Instead define a flexible "magic" array with a define which tells the
+> offset to where the magic signature begins.
 > 
-> Cc: Trond Myklebust <trondmy@kernel.org>
-> Cc: Anna Schumaker <anna@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Consider page size limit in some CPP condditionals.
+> 
+> Wrap global variables that are initialized with PAGE_SIZE derived values
+> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
+> deferred for boot-time page size builds.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
 > 
-> I'm not sure about nfs_namespace_getattr(), please review carefully.
+> ***NOTE***
+> Any confused maintainers may want to read the cover note here for context:
+> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 > 
-> I guess there are other filesystems exposing inode numbers different
-> than inode->i_ino, and they should be patched too.
-
-What are the other filesystems that are presumably affected by this that
-would need an inode accessor?
-
-If this is just about NFS then just add a helper function that audit and
-whatever can call if they need to know the real inode number without
-forcing a new get_inode() method onto struct inode_operations.
-
-I'm against adding a new inode_operations method unless we really have
-to because it means that we grow a nasty interface that filesystem can
-start using and we absolutely don't want them to.
-
-And I don't buy that is suddenly rush hour for this. Seemingly no one
-noticed this in the past idk how many years.
-
-> ---
->  fs/nfs/inode.c     | 6 ++++--
->  fs/nfs/internal.h  | 1 +
->  fs/nfs/namespace.c | 2 ++
->  fs/stat.c          | 2 +-
->  include/linux/fs.h | 9 +++++++++
->  5 files changed, 17 insertions(+), 3 deletions(-)
+>  drivers/mtd/mtdswap.c         |  4 ++--
+>  include/linux/mm.h            |  2 +-
+>  include/linux/mm_types_task.h |  2 +-
+>  include/linux/mmzone.h        |  3 ++-
+>  include/linux/slab.h          |  7 ++++---
+>  include/linux/swap.h          | 17 ++++++++++++-----
+>  include/linux/swapops.h       |  6 +++++-
+>  mm/memcontrol.c               |  2 +-
+>  mm/memory.c                   |  4 ++--
+>  mm/mmap.c                     |  2 +-
+>  mm/page-writeback.c           |  2 +-
+>  mm/slub.c                     |  2 +-
+>  mm/sparse.c                   |  2 +-
+>  mm/swapfile.c                 |  2 +-
+>  mm/vmalloc.c                  |  7 ++++---
+>  15 files changed, 39 insertions(+), 25 deletions(-)
 > 
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index 542c7d97b235..5dfc176b6d92 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
+> diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+> index 680366616da24..7412a32708114 100644
+> --- a/drivers/mtd/mtdswap.c
+> +++ b/drivers/mtd/mtdswap.c
+> @@ -1062,13 +1062,13 @@ static int mtdswap_auto_header(struct mtdswap_dev *d, char *buf)
+>  {
+>  	union swap_header *hd = (union swap_header *)(buf);
 >  
->  /**
->   * nfs_compat_user_ino64 - returns the user-visible inode number
-> - * @fileid: 64-bit fileid
-> + * @inode: inode pointer
->   *
->   * This function returns a 32-bit inode number if the boot parameter
->   * nfs.enable_ino64 is zero.
+> -	memset(buf, 0, PAGE_SIZE - 10);
+> +	memset(buf, 0, SWAP_HEADER_MAGIC);
+>  
+>  	hd->info.version = 1;
+>  	hd->info.last_page = d->mbd_dev->size - 1;
+>  	hd->info.nr_badpages = 0;
+>  
+> -	memcpy(buf + PAGE_SIZE - 10, "SWAPSPACE2", 10);
+> +	memcpy(buf + SWAP_HEADER_MAGIC, "SWAPSPACE2", 10);
+>  
+>  	return 0;
+>  }
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 09a840517c23a..49c2078354e6e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2927,7 +2927,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>  static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+>  {
+>  	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+> -	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
+> +	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE_MAX);
+>  	return ptlock_ptr(virt_to_ptdesc(pte));
+>  }
+>  
+> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+> index a2f6179b672b8..c356897d5f41c 100644
+> --- a/include/linux/mm_types_task.h
+> +++ b/include/linux/mm_types_task.h
+> @@ -37,7 +37,7 @@ struct page;
+>  
+>  struct page_frag {
+>  	struct page *page;
+> -#if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
+> +#if (BITS_PER_LONG > 32) || (PAGE_SIZE_MAX >= 65536)
+>  	__u32 offset;
+>  	__u32 size;
+>  #else
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 1dc6248feb832..cd58034b82c81 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -1744,6 +1744,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
 >   */
-> -u64 nfs_compat_user_ino64(u64 fileid)
-> +u64 nfs_compat_user_ino64(const struct *inode)
->  {
->  #ifdef CONFIG_COMPAT
->  	compat_ulong_t ino;
->  #else	
->  	unsigned long ino;
+>  #define PA_SECTION_SHIFT	(SECTION_SIZE_BITS)
+>  #define PFN_SECTION_SHIFT	(SECTION_SIZE_BITS - PAGE_SHIFT)
+> +#define PFN_SECTION_SHIFT_MIN	(SECTION_SIZE_BITS - PAGE_SHIFT_MAX)
+>  
+>  #define NR_MEM_SECTIONS		(1UL << SECTIONS_SHIFT)
+>  
+> @@ -1753,7 +1754,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
+>  #define SECTION_BLOCKFLAGS_BITS \
+>  	((1UL << (PFN_SECTION_SHIFT - pageblock_order)) * NR_PAGEBLOCK_BITS)
+>  
+> -#if (MAX_PAGE_ORDER + PAGE_SHIFT) > SECTION_SIZE_BITS
+> +#if (MAX_PAGE_ORDER + PAGE_SHIFT_MAX) > SECTION_SIZE_BITS
+>  #error Allocator MAX_PAGE_ORDER exceeds SECTION_SIZE
 >  #endif
-> +	u64 fileid = NFS_FILEID(inode);
 >  
->  	if (enable_ino64)
->  		return fileid;
-> @@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
->  		ino ^= fileid >> (sizeof(fileid)-sizeof(ino)) * 8;
->  	return ino;
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index eb2bf46291576..11c6ff3a12579 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -347,7 +347,7 @@ static inline unsigned int arch_slab_minalign(void)
+>   */
+>  #define __assume_kmalloc_alignment __assume_aligned(ARCH_KMALLOC_MINALIGN)
+>  #define __assume_slab_alignment __assume_aligned(ARCH_SLAB_MINALIGN)
+> -#define __assume_page_alignment __assume_aligned(PAGE_SIZE)
+> +#define __assume_page_alignment __assume_aligned(PAGE_SIZE_MIN)
+>  
+>  /*
+>   * Kmalloc array related definitions
+> @@ -358,6 +358,7 @@ static inline unsigned int arch_slab_minalign(void)
+>   * (PAGE_SIZE*2).  Larger requests are passed to the page allocator.
+>   */
+>  #define KMALLOC_SHIFT_HIGH	(PAGE_SHIFT + 1)
+> +#define KMALLOC_SHIFT_HIGH_MAX	(PAGE_SHIFT_MAX + 1)
+>  #define KMALLOC_SHIFT_MAX	(MAX_PAGE_ORDER + PAGE_SHIFT)
+>  #ifndef KMALLOC_SHIFT_LOW
+>  #define KMALLOC_SHIFT_LOW	3
+> @@ -426,7 +427,7 @@ enum kmalloc_cache_type {
+>  	NR_KMALLOC_TYPES
+>  };
+>  
+> -typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH + 1];
+> +typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH_MAX + 1];
+>  
+>  extern kmem_buckets kmalloc_caches[NR_KMALLOC_TYPES];
+>  
+> @@ -524,7 +525,7 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
+>  	/* Will never be reached. Needed because the compiler may complain */
+>  	return -1;
 >  }
-> +EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
+> -static_assert(PAGE_SHIFT <= 20);
+> +static_assert(PAGE_SHIFT_MAX <= 20);
+>  #define kmalloc_index(s) __kmalloc_index(s, true)
 >  
->  int nfs_drop_inode(struct inode *inode)
+>  #include <linux/alloc_tag.h>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index ba7ea95d1c57a..e85df0332979f 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -132,10 +132,17 @@ static inline int current_is_kswapd(void)
+>   * bootbits...
+>   */
+>  union swap_header {
+> -	struct {
+> -		char reserved[PAGE_SIZE - 10];
+> -		char magic[10];			/* SWAP-SPACE or SWAPSPACE2 */
+> -	} magic;
+> +	/*
+> +	 * Exists conceptually, but since PAGE_SIZE may not be known at compile
+> +	 * time, we must access through pointer arithmetic at run time.
+> +	 *
+> +	 * struct {
+> +	 * 	char reserved[PAGE_SIZE - 10];
+> +	 * 	char magic[10];			   SWAP-SPACE or SWAPSPACE2
+> +	 * } magic;
+> +	 */
+> +#define SWAP_HEADER_MAGIC	(PAGE_SIZE - 10)
+> +	char magic[1];
+>  	struct {
+>  		char		bootbits[1024];	/* Space for disklabel etc. */
+>  		__u32		version;
+> @@ -201,7 +208,7 @@ struct swap_extent {
+>   * Max bad pages in the new format..
+>   */
+>  #define MAX_SWAP_BADPAGES \
+> -	((offsetof(union swap_header, magic.magic) - \
+> +	((SWAP_HEADER_MAGIC - \
+>  	  offsetof(union swap_header, info.badpages)) / sizeof(int))
+>  
+>  enum {
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index cb468e418ea11..890fe6a3e6702 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -34,10 +34,14 @@
+>   */
+>  #ifdef MAX_PHYSMEM_BITS
+>  #define SWP_PFN_BITS		(MAX_PHYSMEM_BITS - PAGE_SHIFT)
+> +#define SWP_PFN_BITS_MAX	(MAX_PHYSMEM_BITS - PAGE_SHIFT_MIN)
+>  #else  /* MAX_PHYSMEM_BITS */
+>  #define SWP_PFN_BITS		min_t(int, \
+>  				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT, \
+>  				      SWP_TYPE_SHIFT)
+> +#define SWP_PFN_BITS_MAX	min_t(int, \
+> +				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT_MIN, \
+> +				      SWP_TYPE_SHIFT)
+>  #endif	/* MAX_PHYSMEM_BITS */
+>  #define SWP_PFN_MASK		(BIT(SWP_PFN_BITS) - 1)
+>  
+> @@ -519,7 +523,7 @@ static inline struct folio *pfn_swap_entry_folio(swp_entry_t entry)
+>  static inline bool is_pfn_swap_entry(swp_entry_t entry)
 >  {
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index 430733e3eff2..f5555a71a733 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode *inode);
->  extern void nfs_set_cache_invalid(struct inode *inode, unsigned long flags);
->  extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
->  extern int nfs_wait_bit_killable(struct wait_bit_key *key, int mode);
-> +extern u64 nfs_compat_user_ino64(const struct *inode);
+>  	/* Make sure the swp offset can always store the needed fields */
+> -	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS);
+> +	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS_MAX);
 >  
->  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
->  /* localio.c */
-> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-> index e7494cdd957e..d9b1e0606833 100644
-> --- a/fs/nfs/namespace.c
-> +++ b/fs/nfs/namespace.c
-> @@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  const struct inode_operations nfs_mountpoint_inode_operations = {
->  	.getattr	= nfs_getattr,
->  	.setattr	= nfs_setattr,
-> +	.get_ino	= nfs_compat_user_ino64,
->  };
+>  	return is_migration_entry(entry) || is_device_private_entry(entry) ||
+>  	       is_device_exclusive_entry(entry) || is_hwpoison_entry(entry);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c5f9195f76c65..4b17bec566fbd 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4881,7 +4881,7 @@ static int __init mem_cgroup_init(void)
+>  	 * to work fine, we should make sure that the overfill threshold can't
+>  	 * exceed S32_MAX / PAGE_SIZE.
+>  	 */
+> -	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE);
+> +	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE_MIN);
 >  
->  const struct inode_operations nfs_referral_inode_operations = {
->  	.getattr	= nfs_namespace_getattr,
->  	.setattr	= nfs_namespace_setattr,
-> +	.get_ino	= nfs_compat_user_ino64,
->  };
->  
->  static void nfs_expire_automounts(struct work_struct *work)
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 41e598376d7e..05636919f94b 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
->  	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
->  
->  	stat->dev = inode->i_sb->s_dev;
-> -	stat->ino = inode->i_ino;
-> +	stat->ino = inode_get_ino(inode);
->  	stat->mode = inode->i_mode;
->  	stat->nlink = inode->i_nlink;
->  	stat->uid = vfsuid_into_kuid(vfsuid);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e3c603d01337..0eba09a21cf7 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2165,6 +2165,7 @@ struct inode_operations {
->  			    struct dentry *dentry, struct fileattr *fa);
->  	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
->  	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-> +	u64 (*get_ino)(const struct inode *inode);
->  } ____cacheline_aligned;
->  
->  static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
-> @@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
->  	return file->f_op->mmap(file, vma);
+>  	cpuhp_setup_state_nocalls(CPUHP_MM_MEMCQ_DEAD, "mm/memctrl:dead", NULL,
+>  				  memcg_hotplug_cpu_dead);
+> diff --git a/mm/memory.c b/mm/memory.c
+> index ebfc9768f801a..14b5ef6870486 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4949,8 +4949,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>  	return ret;
 >  }
 >  
-> +static inline u64 inode_get_ino(struct inode *inode)
-> +{
-> +	if (unlikely(inode->i_op->get_ino))
-> +		return inode->i_op->get_ino(inode);
-> +
-> +	return inode->i_ino;
-> +}
-> +
->  extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
->  extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
->  extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
-> -- 
-> 2.46.1
-> 
+> -static unsigned long fault_around_pages __read_mostly =
+> -	65536 >> PAGE_SHIFT;
+> +static __DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, fault_around_pages,
+> +				     __read_mostly, 65536 >> PAGE_SHIFT);
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  static int fault_around_bytes_get(void *data, u64 *val)
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d0dfc85b209bb..d9642aba07ac4 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2279,7 +2279,7 @@ int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+>  }
+>  
+>  /* enforced gap between the expanding stack and other mappings. */
+> -unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
+> +DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, stack_guard_gap, 256UL<<PAGE_SHIFT);
+>  
+>  static int __init cmdline_parse_stack_guard_gap(char *p)
+>  {
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 4430ac68e4c41..8fc9ac50749bd 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2292,7 +2292,7 @@ static int page_writeback_cpu_online(unsigned int cpu)
+>  #ifdef CONFIG_SYSCTL
+>  
+>  /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
+> -static const unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
+> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(unsigned long, dirty_bytes_min, 2 * PAGE_SIZE);
+>  
+>  static struct ctl_table vm_page_writeback_sysctls[] = {
+>  	{
+> diff --git a/mm/slub.c b/mm/slub.c
+> index a77f354f83251..82f6e98cf25bb 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5001,7 +5001,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
+>  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
+>  {
+>  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
+> -			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH *
+> +			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH_MAX *
+>  			sizeof(struct kmem_cache_cpu));
+>  
+>  	/*
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index dc38539f85603..2491425930c4d 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -277,7 +277,7 @@ static unsigned long sparse_encode_mem_map(struct page *mem_map, unsigned long p
+>  {
+>  	unsigned long coded_mem_map =
+>  		(unsigned long)(mem_map - (section_nr_to_pfn(pnum)));
+> -	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT);
+> +	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT_MIN);
+>  	BUG_ON(coded_mem_map & ~SECTION_MAP_MASK);
+>  	return coded_mem_map;
+>  }
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 38bdc439651ac..6311a1cc7e46b 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -2931,7 +2931,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
+>  	unsigned long swapfilepages;
+>  	unsigned long last_page;
+>  
+> -	if (memcmp("SWAPSPACE2", swap_header->magic.magic, 10)) {
+> +	if (memcmp("SWAPSPACE2", &swap_header->magic[SWAP_HEADER_MAGIC], 10)) {
+>  		pr_err("Unable to find swap-space signature\n");
+>  		return 0;
+>  	}
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index a0df1e2e155a8..b4fbba204603c 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2497,12 +2497,12 @@ struct vmap_block {
+>  	spinlock_t lock;
+>  	struct vmap_area *va;
+>  	unsigned long free, dirty;
+> -	DECLARE_BITMAP(used_map, VMAP_BBMAP_BITS);
+>  	unsigned long dirty_min, dirty_max; /*< dirty range */
+>  	struct list_head free_list;
+>  	struct rcu_head rcu_head;
+>  	struct list_head purge;
+>  	unsigned int cpu;
+> +	unsigned long used_map[];
+>  };
+>  
+>  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+> @@ -2600,11 +2600,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+>  	unsigned long vb_idx;
+>  	int node, err;
+>  	void *vaddr;
+> +	size_t size;
+>  
+>  	node = numa_node_id();
+>  
+> -	vb = kmalloc_node(sizeof(struct vmap_block),
+> -			gfp_mask & GFP_RECLAIM_MASK, node);
+> +	size = struct_size(vb, used_map, BITS_TO_LONGS(VMAP_BBMAP_BITS));
+> +	vb = kmalloc_node(size, gfp_mask & GFP_RECLAIM_MASK, node);
+>  	if (unlikely(!vb))
+>  		return ERR_PTR(-ENOMEM);
+>  
+
 
