@@ -1,119 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-32055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2095F99FCFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 02:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5534299FD6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 02:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9967286B47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 00:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8767D1C22165
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 00:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91913AD31;
-	Wed, 16 Oct 2024 00:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC6A4879B;
+	Wed, 16 Oct 2024 00:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dGDehaZp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaqrnVhn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868454A1B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 00:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AE3B1AF;
+	Wed, 16 Oct 2024 00:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729037770; cv=none; b=I8aaKbgpQGe+OsN5Bt1NBpEbOcOHwy6JX4m4FfMVEFNW40YQHZ/fdZ4J2cqWzxlbfAi07cwabSvGubTslhhVjs5BaEhvkDSyi0/8EvEad1codkl5331cIv8G6BL8T2Le/9shtN48eKXBuxBUX7CobLcMrCCOaOUsAepz1zjhUd4=
+	t=1729039922; cv=none; b=GEfMRKNh0jR91QnfdOP0wplTy8crCVLxdriRtdOicQRFMj3rt7qjV7FtYEOcNK4XjaVzkBUYTuvOfKKx6nGPaYMKxUxB7fRPqGGQpo3j+f25nQo6jVO2+QEVPvdXjTU/N0ZKKmo5xWZU8gbLSuWVQ0EHdlwqhCsVq5F7ocTV0kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729037770; c=relaxed/simple;
-	bh=0RR+M6O+iq8XIjRHinrWxf3DoFEOcB1Lx9Es2nZTe7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WcXwJUChUskcsPOo84nWkXka9D2t2l7kk7fN6PDs/DcG1C0W5Aogeb8yZ7PrjyCM5Y+9v5zfvhnVrrM6MBvlLhyywkSVhGRFAvwjN53TFvw3j268q+3vCaSrEWiQR9xgOv5d94P/z8xsk6xIwyL3pgLEaa9zasOtlC3RwyYelN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dGDehaZp; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2f4c1f79bso52392517b3.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2024 17:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729037767; x=1729642567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwIVXsv+0K/tRmuz74E0Mk7+OGVGSOJtC2LxGockSrQ=;
-        b=dGDehaZpDW550MqhEsubuL0aypwzrX+ohNp1JqHP0Hs+rHzC4CpkSSKRsfZRBvPO8a
-         ERfYEh4QNBihDwgaASzOEhV5vbi/OiluvS6YRM9iURxg2dEET4bQwOUnXT9N8qIz2HbF
-         Nbho2eXwGJBggUJYqhvi+W06qM5lqkOpo5KTGQ31gI1NUgU2dsC1g/orSbwv+Cgaa3Zc
-         WW4vwAvsdn+gg1Vaii/eU4In/QbMrCXhEXDouaJhpW+tSmpzwn8CXxbR86q5vg2V2prR
-         yS8I3d+5o5pG9m2HdnyLWnF4jQDeEieodCU+/uWQKn/nfBD3zLVvnV7/MrI36nCOIa8f
-         /Euw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729037767; x=1729642567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwIVXsv+0K/tRmuz74E0Mk7+OGVGSOJtC2LxGockSrQ=;
-        b=X++R3A12nuDO+5g0wlByk82spYGfpqaLPaMdoA+SA8SudHfu8AbvZ2eNcY7z2L319/
-         cDCc5NnFnHuvekhhAPacFpsCf0eQGQNcW6q6WLaS9FeTxiTtZ/bLxwdFTH4QKg8o7e6Y
-         70wdwbusKMNCNq8Are9zG2KIPNhJuY1HGaLmjF+xBvaaXYBDfXBMSlcsJJmz68ZORvfk
-         nSykA5O6cQKTBbjWv+ouxRqBPAJrCbPXryr/E2Ln3N3BnstHK5POeMH1bxcyb/dP257/
-         DAUvAusIUBSlgfLb2RH7C/LRNwrsjPlR/Xg9OeBsAwhGBXWWQ42oVDIarF9DAEsmRMT+
-         0oHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW07yZsBwYvCd3c4rT9ndk7rsskPIIPER3tRVLeMkTmqS73lNmNDj/L5i3soDAWfVA5kXZw5IuvaNSaKMNm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgLYR6V5v8N7WFqWUOj8kxXv5OmlvGueEWjUuvOBd2OmmGB+jg
-	RwUhxsF+ooUK73aTyZFQSJARN2usC1NqBvWRr/XA/3orUGUl9JEPpNbaFX8/R6XkA7LkI+eoFWX
-	676WOOBKJlSglevP+4XBEd+z5HJLgzDsHV12n
-X-Google-Smtp-Source: AGHT+IESf3Jz8ORecE7b8c1bkUbZCtOoJ2cisSrtY1CixXa6d/r44qsu/muJ6kPqg3NbhmLKJVsXrujBGNQ70iaASHI=
-X-Received: by 2002:a05:690c:5719:b0:6e2:50a:f43b with SMTP id
- 00721157ae682-6e347b368c0mr95998737b3.35.1729037767509; Tue, 15 Oct 2024
- 17:16:07 -0700 (PDT)
+	s=arc-20240116; t=1729039922; c=relaxed/simple;
+	bh=Bx/dFlbKzH10Je0iK3Rb4Fy5a5F7DDy4gj4hZJOTdTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxTkq9WRwxhxYjk4ImhGMQDlQJK6TBNCKltuJOyEjjeWjlvVK2q8Iia26+R8K44TTDfr7m4SDt+0XWI3SRhgsf5Gu8gTajdY7g4nXgFSiX+/ED7Bn/o+6IScmcMG2bqE2NgOLCUqWw6kHKwo/aUicNNpj0KPw8QB8T+W8poEeKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaqrnVhn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506CAC4CECD;
+	Wed, 16 Oct 2024 00:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729039922;
+	bh=Bx/dFlbKzH10Je0iK3Rb4Fy5a5F7DDy4gj4hZJOTdTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RaqrnVhnhESaXVBIKzWMfLPyKquNczQJ7PzExRn42zw9+dgbiq8qx8uwILmNzk1UW
+	 8Bd0aW4NAPxaPaGTm623pMyCrxc3jseEv+YTfFldZa1qdBRZ5VDvarAlN8PUt0Yge2
+	 qMHW9JXDdTeSdeq0fwBo/R9rByna0/qfCBh7VLkyJ5W4PvtLhcox0bAfO6rOPBukHz
+	 LJF1QbuRRfMUAv71xqPmkdk8p1x803S2qm4FN2RwqZu8u1qAulkTCMrXa248hOy6JK
+	 DtP205u1obmFlmj9hVqGFNk0i13tKJ1LVkLp66zhK0dy69f1hRzVDTWR987Ca/KvxB
+	 F5NOgY4Bin5Lw==
+Date: Tue, 15 Oct 2024 17:52:01 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
+	cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v7 5/8] xfs: Support FS_XFLAG_ATOMICWRITES
+Message-ID: <20241016005201.GH21836@frogsfrogsfrogs>
+References: <20241004092254.3759210-1-john.g.garry@oracle.com>
+ <20241004092254.3759210-6-john.g.garry@oracle.com>
+ <20241004123520.GB19295@lst.de>
+ <f4d2180a-8baa-4636-a0a1-36e474fcd157@oracle.com>
+ <20241007054229.GA307@lst.de>
+ <f0febabf-25ee-4fbe-9dfe-77a240cc29db@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010152649.849254-1-mic@digikod.net> <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net> <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net> <Zwkm5HADvc5743di@infradead.org>
- <20241011.aetou9haeCah@digikod.net> <Zwk4pYzkzydwLRV_@infradead.org>
- <20241011.uu1Bieghaiwu@digikod.net> <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
- <20241014-turmbau-ansah-37d96a5fd780@brauner>
-In-Reply-To: <20241014-turmbau-ansah-37d96a5fd780@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 15 Oct 2024 20:15:56 -0400
-Message-ID: <CAHC9VhRdkByXa7SA9LqNrRyU6EfhezHENdrToQxYJCakPS-YcA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0febabf-25ee-4fbe-9dfe-77a240cc29db@oracle.com>
 
-On Mon, Oct 14, 2024 at 10:45=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> On Sun, Oct 13, 2024 at 06:17:43AM -0400, Jeff Layton wrote:
-> > On Fri, 2024-10-11 at 17:30 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > On Fri, Oct 11, 2024 at 07:39:33AM -0700, Christoph Hellwig wrote:
-> > > > On Fri, Oct 11, 2024 at 03:52:42PM +0200, Micka=C3=ABl Sala=C3=BCn =
-wrote:
+On Sun, Oct 13, 2024 at 10:06:04PM +0100, John Garry wrote:
+> On 07/10/2024 06:42, Christoph Hellwig wrote:
+> > On Fri, Oct 04, 2024 at 02:07:05PM +0100, John Garry wrote:
+> > > Sure, that is true (about being able to atomically write 1x FS block if the
+> > > bdev support it).
+> > > 
+> > > But if we are going to add forcealign or similar later, then it would make
+> > > sense (to me) to have FS_XFLAG_ATOMICWRITES (and its other flags) from the
+> > > beginning. I mean, for example, if FS_XFLAG_FORCEALIGN were enabled and we
+> > > want atomic writes, setting FS_XFLAG_ATOMICWRITES would be rejected if AG
+> > > count is not aligned with extsize, or extsize is not a power-of-2, or
+> > > extsize exceeds bdev limits. So FS_XFLAG_ATOMICWRITES could have some value
+> > > there.
+> > > 
+> > > As such, it makes sense to have a consistent user experience and require
+> > > FS_XFLAG_ATOMICWRITES from the beginning.
+> > 
+> > Well, even with forcealign we're not going to lose support for atomic
+> > writes <= block size, are we?
+> > 
+> 
+> forcealign would not be required for atomic writes <= FS block size.
+> 
+> How about this modified approach:
+> 
+> a. Drop FS_XFLAG_ATOMICWRITES support from this series, and so we can always
+> atomic write 1x FS block (if the bdev supports it)
+> 
+> b. If we agree to support forcealign afterwards, then we can introduce 2x
+> new flags:
+> 	- FS_XFLAG_FORCEALIGN - as before
+> 	- FS_XFLAG_BIG_ATOMICWRITES - this depends on  FS_XFLAG_FORCEALIGN being
+> enabled per inode, and allows us to atomically write > 1 FS block
+> 
+> c. Later support writing < 1 FS block
+> 	- this would not depend on forcealign
+> 	- would require a real user, and I don't know one yet
+> 
+> better?
 
-...
+Sounds fine to /me/, but that's just my opinion. :)
 
-> > A better solution here would be to make inode->i_ino a u64, and just
-> > fix up all of the places that touch it to expect that. Then, just
->
-> I would like us to try and see to make this happen. I really dislike
-> that struct inode is full of non-explicity types.
-
-Presumably this would include moving all of the filesystems to use
-inode->i_ino instead of their own private file ID number, e.g. the NFS
-issue pointed out in the original patch?  If not, I think most of us
-in the LSM/audit space still have a need for a filesystem agnostic way
-to determine the inode number from an inode struct.
-
---=20
-paul-moore.com
+--D
 
