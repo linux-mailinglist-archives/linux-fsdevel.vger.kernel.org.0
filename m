@@ -1,134 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-32130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326089A10E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 19:46:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7A19A10ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 19:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACDEFB21A34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 17:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7674A285B09
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 17:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6244207211;
-	Wed, 16 Oct 2024 17:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA65210C37;
+	Wed, 16 Oct 2024 17:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOut0aqI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUb/mmYo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6F8290F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 17:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CAD18BC23;
+	Wed, 16 Oct 2024 17:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729100789; cv=none; b=pmcUgfilX3NaDuAuPxhMQFjVoKt8k8pkWXm3VtJd1x+kj32SHum0gssk/dVRJghW8huH8DiUnFlQSQrWmmLq4JxXL8WVg4XetDw7VTCDlefMQErjcU2yjW2im6FEetUq8iWe5zOiwOzpzlei6n8HUjcgcuEjnyKGKyu5YK0qOs0=
+	t=1729100996; cv=none; b=MxD5RbLNc6dPr7EHnkfbaJNieLKyWAPLeDqLoXfcnFlvl94S+JUY+sVOffjwss8dn17IJxkU9LDKYJT0+IK58KJKRkawTbGPxa07BINAM/okXxNCE938jFAza/JPebpjq8jkcT+OEMNEv8Z5CMZ/WfehhDjaPMUKTdNOeSNSDIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729100789; c=relaxed/simple;
-	bh=ob755kLZw2ZpokzXhJd/ZcjmpuYfFF1fbeDzWtGBcUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSBXZbuJSbOYAEXzjQILDhH086+ufad13x0GO2hVaoTc+yg48JHdg8eskD6+rg5ET1Lw5FCIx/SpFd8siXyZOLfTJqcmsnLZ1ggox4/zXCHADr2T2tiOANiLH9J3iPMHD0DfEdTHJVyq845dpkoL59tZEfFme9mL+PY005eogT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOut0aqI; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b13b3fa372so7337385a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 10:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729100786; x=1729705586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o0Noyr0n0Izi3nrlCNYhxf7X5LDup0Zn2kIBeGwp8/M=;
-        b=XOut0aqIcRq85WgTGrBKH/MKR65Y110ZIhVJw79WBDr1AmKAioCzhxc34eL98aYtpL
-         epfM5RbRrjwvhjsKFWqJ0OrIi49dMeH9LalCY/AkhmDI6gpP5NAqjsN8mBbCMKlhDi9Y
-         VWBKRGFS/sdfBXGhOmAmbw8Ev466fW3YIy/Fo3So2w/BtVl/bUx7NiUoVLN2m8MeFpgj
-         QnJ3mTNRK2arboX+h+7qzIuaywW4cqvDxmcdf0iwc1Fw5OL76OiplNxr99xBJOW0IVtk
-         1vKGb784zR5+4fJvhOwgeEU/6/YAFUc2/IZMVYpkVOPToFlCjuA6GaLDfdY5Q0duavzU
-         v68Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729100786; x=1729705586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o0Noyr0n0Izi3nrlCNYhxf7X5LDup0Zn2kIBeGwp8/M=;
-        b=Y8CNvCC3SH/nMDNx94DFyF8nSrpMcNfPndbGqqHEi4uI2QIgtGdLFh6+m/YW9p6Aan
-         jyddDOhqaX8jGnlGAwp2i43YgaduJdNzOHV1069C4eVt6DBWnok+o8Fd92HRaGoSqsru
-         AsEBeCYW73IYM/IYpxqz59dNbN8fAWPX0gP1udwoAoOEaCcPRE0eo3eoXVAx9Hs6mjt6
-         N/EAmtYwmdDc7XA9tktZeJMNhCwreKYz/MFtwoYZMUDVCxDE3ilvghk3YPwCUuoq/RiD
-         iWfkxxmsWyBkEFof1EHFIR99ZoRROnEiPtZdV/16ehy64TPwickR1uxsVF5FLgowN9Y0
-         CSlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCcBkVG6XRe8phTFaNPSy3mvvwzce4X2Ti5hG9q+jskhbdCgh5suk82FsV78zB1f0WJ33HO31RE/OrHtva@vger.kernel.org
-X-Gm-Message-State: AOJu0YykwnmvNsQ3fuTUq/RgcZu8XwZCjOjzPvWC7L/0pYZncRL2p/8U
-	8JpqHuMRXWc3h57T/lyL6BD/Ec4/MFnII+d3e1DGXVqU3nebBYAXE/cGdNQXHI19oJi+hUdWPE9
-	CsZ8As+VT9LUcD4sUbii+Gk8i/ED1U7Xk
-X-Google-Smtp-Source: AGHT+IG7vurbW/oswt88ajmiA4bgA5SnRc0QdnXpU+20GLf0/C+LFwBEHQwsNZR/FWoYeYTUDmFBpcanV43aRGwQNqc=
-X-Received: by 2002:a05:620a:4154:b0:7a9:bf33:c17a with SMTP id
- af79cd13be357-7b1417f84b4mr735313385a.33.1729100785489; Wed, 16 Oct 2024
- 10:46:25 -0700 (PDT)
+	s=arc-20240116; t=1729100996; c=relaxed/simple;
+	bh=BYimcUhWbKXz9APz4douIFEmI3RMmXp3Pucc9V3D4+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N8J6Xc96IXG23aBWX6sdWKi/WSA0qb13nDyTYRKBesRMwLyPNVrdFouYwD6uXhgChW8pDqLoHsq5xV2sgzbsCNrxPFfIrwggIEgANSL5wMo6D7fnUCVoIQ+akSyu+XUBblu5P3sO/j31wlGs3e7AjCJdLA4MwyqdN1w8S+eTl0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUb/mmYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB5CC4CECE;
+	Wed, 16 Oct 2024 17:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729100995;
+	bh=BYimcUhWbKXz9APz4douIFEmI3RMmXp3Pucc9V3D4+g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UUb/mmYot/mVtseLROoMEXoIw67Sqc8AI34Kjmus8LuPfHJRmkCu32TxJndYe6MeF
+	 iwKxy3oAHrrKP79SfQBiONa0Vzcf/Q2YAHtYjnENF+g92aBUdNsozOTJXYfGQQsa1c
+	 vki3LzQ3/pa1JKzyyvedE9TV2hCfTWmNlkGLmom1361uKweiI1bNmnHICZENM+54EP
+	 wNu3vnv7bhpIy3sa091QBdNF9GtxGHsqA/DCc/nrdDbkTEXa67rTkibUo0F4sDiqeC
+	 dzVr2cEDLHRUyJhq7B7+qs3aa2ywDScf7H7luQEsu32RnHObKrLDg4xPjGXG6zyoIj
+	 UiP8t6ldrTN8A==
+From: Christian Brauner <brauner@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Brad Spengler <spender@grsecurity.net>,
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] fs: don't try and remove empty rbtree node
+Date: Wed, 16 Oct 2024 19:49:48 +0200
+Message-ID: <20241016-adapter-seilwinde-83c508a7bde1@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003142922.111539-1-amir73il@gmail.com> <20241016154853.ndrdn6ldivww33px@quack3>
-In-Reply-To: <20241016154853.ndrdn6ldivww33px@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 16 Oct 2024 19:46:13 +0200
-Message-ID: <CAOQ4uxjO3u9dKOO3XO8JZp_8Swgx7driLc1SeHaWBxSXnoWaRw@mail.gmail.com>
-Subject: Re: [PATCH v2] fanotify: allow reporting errors on failure to open fd
-To: Jan Kara <jack@suse.cz>
-Cc: Krishna Vivek Vitta <kvitta@microsoft.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1238; i=brauner@kernel.org; h=from:subject:message-id; bh=BYimcUhWbKXz9APz4douIFEmI3RMmXp3Pucc9V3D4+g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTz/9mzSsMrUso6WEEoLfvu+pYpwbfqjxyMrm6IZfqzy +5I+R3RjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInwdjH8r9yoYjapenc766rr r49kbjBZFPBowgvXgh2ZDyR+xUcnTmX4p1BtwVLyNXjhydvMCef3Hjz2ImHFtnfM6ybsLSt/6fb iEgcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 5:48=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> Hello Amir!
->
-> On Thu 03-10-24 16:29:22, Amir Goldstein wrote:
-> > When working in "fd mode", fanotify_read() needs to open an fd
-> > from a dentry to report event->fd to userspace.
-> >
-> > Opening an fd from dentry can fail for several reasons.
-> > For example, when tasks are gone and we try to open their
-> > /proc files or we try to open a WRONLY file like in sysfs
-> > or when trying to open a file that was deleted on the
-> > remote network server.
-> >
-> > Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
-> > For a group with FAN_REPORT_FD_ERROR, we will send the
-> > event with the error instead of the open fd, otherwise
-> > userspace may not get the error at all.
-> >
-> > The FAN_REPORT_FD_ERROR flag is not allowed for groups in "fid mode"
-> > which do not use open fd's as the object identifier.
-> >
-> > For ean overflow event, we report -EBADF to avoid confusing FAN_NOFD
-> > with -EPERM.  Similarly for pidfd open errors we report either -ESRCH
-> > or the open error instead of FAN_NOPIDFD and FAN_EPIDFD.
-> >
-> > In any case, userspace will not know which file failed to
-> > open, so add a debug print for further investigation.
-> >
-> > Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
-> > Closes: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F3424619EDD=
-D1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> I was mulling over this becase I wasn't quite happy with the result but I
-> could not clearly formulate my problems with the patch. So I've just sat
-> down and played with the code. Attached is what I've ended up with - plea=
-se
-> have a look if it looks OK to you as well, it passes the LTP test you've
-> created. Functionally, I've just removed the check that FAN_REPORT_FD_ERR=
-OR
-> cannot be used in "fid mode" because when we decided to use the flag for
-> pidfd, it makes sense to combine it with "fid mode". I've also moved
-> EOPENSTALE special handling to a more logical place now.
->
+When copying a namespace we won't have added the new copy into the
+namespace rbtree until after the copy succeeded. Calling free_mnt_ns()
+will try to remove the copy from the rbtree which is invalid. Simply
+free the namespace skeleton directly.
 
-Yeh this looks nicer.
-Thanks for the touch up.
-Amir.
+Fixes: 1901c92497bd ("fs: keep an index of current mount namespaces")
+Cc: stable@vger.kernel.org # v6.11+
+Reported-by: Brad Spengler <spender@grsecurity.net>
+Tested-by: Brad Spengler <spender@grsecurity.net>
+Suggested-by: Brad Spengler <spender@grsecurity.net>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+In vfs.fixes unless I hear objections.
+---
+ fs/namespace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 93c377816d75..d26f5e6d2ca3 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3944,7 +3944,9 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
+ 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
+ 	if (IS_ERR(new)) {
+ 		namespace_unlock();
+-		free_mnt_ns(new_ns);
++		ns_free_inum(&new_ns->ns);
++		dec_mnt_namespaces(new_ns->ucounts);
++		mnt_ns_release(new_ns);
+ 		return ERR_CAST(new);
+ 	}
+ 	if (user_ns != ns->user_ns) {
+-- 
+2.45.2
+
 
