@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-32068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8269A022E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 09:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22969A0230
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 09:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75A36B2484B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 07:10:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E71285FC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 07:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEFB1C07E6;
-	Wed, 16 Oct 2024 07:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95371C4A1C;
+	Wed, 16 Oct 2024 07:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cs1JD7F3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="As0Rb8I6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF5D433CE;
-	Wed, 16 Oct 2024 07:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF82433CE;
+	Wed, 16 Oct 2024 07:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729062612; cv=none; b=pgYRiR+C8g7rqvpMLJCxKziXrxpi8a9hXmQwCjDlpleEkC/w5Ae67zn6j/O8QLFffYdnalHR4bzgVTTDyDEWejOqDhW8RMOv5Mgro66NzTsD+/VNIPGsoWl09RUzbiGREyaIQMsWlUi5+6SqeKJuJ7PzV6BZSXnX3mmmlIprr1M=
+	t=1729062620; cv=none; b=jwgtKJ4pVJXf9DnFaXEWqCN0nZx97EU8aVlKirEubFaMUAGqnY8rPuV461naKhKp10WbGtJaZK6/W5XIgeDrip6oJ97lOFolgWwPEXc49uQU2WRVvB1Qzoq7CZFJ/3bvrRnuo1Bt2PNctpzXseo/vuaYbv9+D2AXlG9J7QlHFQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729062612; c=relaxed/simple;
-	bh=qjkUQnj7X1HSIZmhhRqEIfNPxQwTNUIMw0n/JwW80xA=;
+	s=arc-20240116; t=1729062620; c=relaxed/simple;
+	bh=nxakek7sL8xSsKVj/KOi6ZNyLMe9MbAwDA2OugPeeVU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GxXJ+1JeMpOaNvlxtyaJ+r6/Fmb67FSoOPpD7tZw1zCL6VXMsDAoiCSyP/j25/K4/fasgEGyEr81OXSe1hwAJv3uOXvYqAlJgVdz9fJtIe9v3BEfbnX1Ra2KZiVvvp7qm0ppu/SXLgB9Bfwhy5MWNVMv720b79AWNPxRo+9zyHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cs1JD7F3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F7FC4CEC5;
-	Wed, 16 Oct 2024 07:10:09 +0000 (UTC)
+	 MIME-Version; b=cpEv9nt2EcptwgpxKiHItNJFld75vblqxkcZmLfH+1ZPxnn0RKYXoFFwOdeB9B2UqCZ1hlT4JaGTQif64c3xYm2ON+TWr5AZmiuB1ON58+dNxchlFkyGh4f6vGE1RIftHOtjA8RR0QFfpQURwn7USrnttDK/XwK14iEbNfykbBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=As0Rb8I6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278EDC4CEC5;
+	Wed, 16 Oct 2024 07:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729062611;
-	bh=qjkUQnj7X1HSIZmhhRqEIfNPxQwTNUIMw0n/JwW80xA=;
+	s=k20201202; t=1729062618;
+	bh=nxakek7sL8xSsKVj/KOi6ZNyLMe9MbAwDA2OugPeeVU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cs1JD7F3Ya0WX27sQO00tIeWSoSSVq2+1upGoN9hEAxGW+57HboIXbHAs0l/u8jSV
-	 xS4+Lv42AXmH3SK13nRJSLOeQPUJSyGIctZ6uYYgR6yu8w8y2Xf440NehS4AQyH+XR
-	 0dCWS9Prgf3IGUOagl1rwO/Jag5/EvevvaD4IlM6oIZUE0SpK/Zo/AWujxPfbckeup
-	 phn9+0yxNdhpmfwFtWTroAM9TfVz63BB10c8fzEfEBhw5hUz5aonFdWBx1ZM4cb2v8
-	 omGqXZY2XtHiQP0U/vJ/A4gcSq2aaEPEE51e92nymdPLZi4Qo2XjtmAvd0n3lrYgz6
-	 IPxDa5QzCypOw==
+	b=As0Rb8I6dDb0Stxb/0N2Fifxx+geVc2xE9QI4GcQnZI7XYmJOT8IJPnNjsgUmLlI3
+	 1Anw74eII70lJoBIyQkC22lEkh6rm/yqQ2ZPPd+6LTMmOyqTHhrXg/I3/gGsGoHYqC
+	 ODAvfYB7n/pz3tBQPLIIq5+MmuYEuohAAk5cXaKlP+EFem2QdoMQOq2XHvqRBte+GW
+	 PCEOqZv1Piex9sw7XXU73fGXjRtM+xfKUt6GrBzS0CUMf05c1mTHutDiKL79oBKT5n
+	 4KG+eu5G1nfFpc5IBLef0e9BilgXk0vHYGe6G8OZJABJ7iAmy0m41ah2N+mIYbVsAe
+	 eaPYMk0F8jUxQ==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc: kernel-team@meta.com,
 	kpsingh@kernel.org,
 	mattbobrowski@google.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH v2 bpf-next 1/2] fs/xattr: bpf: Introduce security.bpf xattr name prefix
-Date: Wed, 16 Oct 2024 00:09:54 -0700
-Message-ID: <20241016070955.375923-2-song@kernel.org>
+Subject: [PATCH v2 bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to cover security.bpf xattr names
+Date: Wed, 16 Oct 2024 00:09:55 -0700
+Message-ID: <20241016070955.375923-3-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241016070955.375923-1-song@kernel.org>
 References: <20241016070955.375923-1-song@kernel.org>
@@ -71,101 +71,160 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduct new xattr name prefix security.bpf, and enable reading these
-xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr(). Note that
-"security.bpf" could be the name of the xattr or the prefix of the
-name. For example, both "security.bpf" and "security.bpf.xxx" are
-valid xattr name; while "security.bpfxxx" is not valid.
-
-As we are on it, correct the comments for return value of
-bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-successl.
+Extend test_progs fs_kfuncs to cover different xattr names. Specifically:
+xattr name "user.kfuncs", "security.bpf", and "security.bpf.xxx" can be
+read from BPF program with kfuncs bpf_get_[file|dentry]_xattr(); while
+"security.bpfxxx" and "security.selinux" cannot be read.
 
 Signed-off-by: Song Liu <song@kernel.org>
-Acked-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c         | 29 ++++++++++++++++++++++++-----
- include/uapi/linux/xattr.h |  4 ++++
- 2 files changed, 28 insertions(+), 5 deletions(-)
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 40 ++++++++++++++-----
+ .../selftests/bpf/progs/test_get_xattr.c      | 30 ++++++++++++--
+ 2 files changed, 56 insertions(+), 14 deletions(-)
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 3fe9f59ef867..be78a13f1d82 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -93,6 +93,23 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
- 	return len;
- }
+diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+index 5a0b51157451..986dd5eabaa6 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
++++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+@@ -12,7 +12,7 @@
  
-+static bool bpf_xattr_name_allowed(const char *name__str)
-+{
-+	/* Allow xattr names with user. prefix */
-+	if (!strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-+		return true;
+ static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
+ 
+-static void test_xattr(void)
++static void test_get_xattr(const char *name, const char *value, bool allow_access)
+ {
+ 	struct test_get_xattr *skel = NULL;
+ 	int fd = -1, err;
+@@ -25,7 +25,7 @@ static void test_xattr(void)
+ 	close(fd);
+ 	fd = -1;
+ 
+-	err = setxattr(testfile, "user.kfuncs", "hello", sizeof("hello"), 0);
++	err = setxattr(testfile, name, value, strlen(value) + 1, 0);
+ 	if (err && errno == EOPNOTSUPP) {
+ 		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
+ 		       "To run this test, make sure /tmp filesystem supports xattr.\n",
+@@ -48,16 +48,23 @@ static void test_xattr(void)
+ 		goto out;
+ 
+ 	fd = open(testfile, O_RDONLY, 0644);
 +
-+	/* Allow security.bpf. prefix or just security.bpf */
-+	if (!strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN) &&
-+	    (name__str[XATTR_NAME_BPF_LSM_LEN] == '\0' ||
-+	     name__str[XATTR_NAME_BPF_LSM_LEN] == '.')) {
-+		return true;
+ 	if (!ASSERT_GE(fd, 0, "open_file"))
+ 		goto out;
+ 
+-	ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_file");
+-
+ 	/* Trigger security_inode_getxattr */
+-	err = getxattr(testfile, "user.kfuncs", v, sizeof(v));
+-	ASSERT_EQ(err, -1, "getxattr_return");
+-	ASSERT_EQ(errno, EINVAL, "getxattr_errno");
+-	ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_from_dentry");
++	err = getxattr(testfile, name, v, sizeof(v));
++
++	if (allow_access) {
++		ASSERT_EQ(err, -1, "getxattr_return");
++		ASSERT_EQ(errno, EINVAL, "getxattr_errno");
++		ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_file");
++		ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_from_dentry");
++	} else {
++		ASSERT_EQ(err, strlen(value) + 1, "getxattr_return");
++		ASSERT_EQ(skel->bss->found_xattr_from_file, 0, "found_xattr_from_file");
++		ASSERT_EQ(skel->bss->found_xattr_from_dentry, 0, "found_xattr_from_dentry");
 +	}
-+
-+	/* Disallow anything else */
-+	return false;
-+}
-+
- /**
-  * bpf_get_dentry_xattr - get xattr of a dentry
-  * @dentry: dentry to get xattr from
-@@ -101,9 +118,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
-  *
-  * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
-  *
-- * For security reasons, only *name__str* with prefix "user." is allowed.
-+ * For security reasons, only *name__str* with prefix "user." or
-+ * "security.bpf" is allowed.
-  *
-- * Return: 0 on success, a negative value on error.
-+ * Return: length of the xattr value on success, a negative value on error.
-  */
- __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__str,
- 				     struct bpf_dynptr *value_p)
-@@ -117,7 +135,7 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
- 	if (WARN_ON(!inode))
- 		return -EINVAL;
  
--	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-+	if (!bpf_xattr_name_allowed(name__str))
- 		return -EPERM;
+ out:
+ 	close(fd);
+@@ -141,8 +148,21 @@ static void test_fsverity(void)
  
- 	value_len = __bpf_dynptr_size(value_ptr);
-@@ -139,9 +157,10 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
-  *
-  * Get xattr *name__str* of *file* and store the output in *value_ptr*.
-  *
-- * For security reasons, only *name__str* with prefix "user." is allowed.
-+ * For security reasons, only *name__str* with prefix "user." or
-+ * "security.bpf" is allowed.
-  *
-- * Return: 0 on success, a negative value on error.
-+ * Return: length of the xattr value on success, a negative value on error.
-  */
- __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
- 				   struct bpf_dynptr *value_p)
-diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-index 9463db2dfa9d..166ef2f1f1b3 100644
---- a/include/uapi/linux/xattr.h
-+++ b/include/uapi/linux/xattr.h
-@@ -76,6 +76,10 @@
- #define XATTR_CAPS_SUFFIX "capability"
- #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
- 
-+#define XATTR_BPF_LSM_SUFFIX "bpf"
-+#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
-+#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
+ void test_fs_kfuncs(void)
+ {
+-	if (test__start_subtest("xattr"))
+-		test_xattr();
++	/* Matches xattr_names in progs/test_get_xattr.c */
++	if (test__start_subtest("user_xattr"))
++		test_get_xattr("user.kfuncs", "hello", true);
 +
- #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
- #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
- #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
++	if (test__start_subtest("security_bpf_xattr_1"))
++		test_get_xattr("security.bpf", "hello", true);
++
++	if (test__start_subtest("security_bpf_xattr_2"))
++		test_get_xattr("security.bpf.xxx", "hello", true);
++
++	if (test__start_subtest("security_bpfxxx_xattr_error"))
++		test_get_xattr("security.bpfxxx", "hello", false);
++
++	if (test__start_subtest("security_selinux_xattr_error"))
++		test_get_xattr("security.selinux", "hello", false);
+ 
+ 	if (test__start_subtest("fsverity"))
+ 		test_fsverity();
+diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+index 66e737720f7c..0be8120683cd 100644
+--- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
++++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+@@ -17,12 +17,26 @@ static const char expected_value[] = "hello";
+ char value1[32];
+ char value2[32];
+ 
++#define NUM_OF_XATTR_NAME 5
++
++/* Matches caller of test_get_xattr() in prog_tests/fs_kfuncs.c */
++static const char *xattr_names[NUM_OF_XATTR_NAME] = {
++	/* The following work. */
++	"user.kfuncs",
++	"security.bpf",
++	"security.bpf.xxx",
++
++	/* The following do not work. */
++	"security.bpfxxx",
++	"security.selinux"
++};
++
+ SEC("lsm.s/file_open")
+ int BPF_PROG(test_file_open, struct file *f)
+ {
+ 	struct bpf_dynptr value_ptr;
+ 	__u32 pid;
+-	int ret;
++	int ret, i;
+ 
+ 	pid = bpf_get_current_pid_tgid() >> 32;
+ 	if (pid != monitored_pid)
+@@ -30,7 +44,11 @@ int BPF_PROG(test_file_open, struct file *f)
+ 
+ 	bpf_dynptr_from_mem(value1, sizeof(value1), 0, &value_ptr);
+ 
+-	ret = bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
++	for (i = 0; i < NUM_OF_XATTR_NAME; i++) {
++		ret = bpf_get_file_xattr(f, xattr_names[i], &value_ptr);
++		if (ret == sizeof(expected_value))
++			break;
++	}
+ 	if (ret != sizeof(expected_value))
+ 		return 0;
+ 	if (bpf_strncmp(value1, ret, expected_value))
+@@ -44,7 +62,7 @@ int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
+ {
+ 	struct bpf_dynptr value_ptr;
+ 	__u32 pid;
+-	int ret;
++	int ret, i;
+ 
+ 	pid = bpf_get_current_pid_tgid() >> 32;
+ 	if (pid != monitored_pid)
+@@ -52,7 +70,11 @@ int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
+ 
+ 	bpf_dynptr_from_mem(value2, sizeof(value2), 0, &value_ptr);
+ 
+-	ret = bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
++	for (i = 0; i < NUM_OF_XATTR_NAME; i++) {
++		ret = bpf_get_dentry_xattr(dentry, xattr_names[i], &value_ptr);
++		if (ret == sizeof(expected_value))
++			break;
++	}
+ 	if (ret != sizeof(expected_value))
+ 		return 0;
+ 	if (bpf_strncmp(value2, ret, expected_value))
 -- 
 2.43.5
 
