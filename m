@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-32144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6019A1393
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:13:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774469A139D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505CB282240
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:13:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10222B203A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1BC215F6E;
-	Wed, 16 Oct 2024 20:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080B92170A8;
+	Wed, 16 Oct 2024 20:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1ZfgBAq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6vQ30zw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F095A20FA84;
-	Wed, 16 Oct 2024 20:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFAB2144C3;
+	Wed, 16 Oct 2024 20:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729109621; cv=none; b=jM3Ey746HeTRFKEKVVkCTgtpAtr5JkbLc2iGl0iax3YLwUWXpqqofhQOOb+D14hNQ5e5uzBKaQZnN79MDuQlG2Pp0sTBAQzMxA+7Uco9EcgrghKrmRmF8C93mFQV1o4JOPql92cvayncJBXcDkZAT/fL3Y2XYponMdRfp9HbzyA=
+	t=1729109634; cv=none; b=nNnpH8gHSXfxAeODilLcxXdb00iRmYAkLhJOWBK+w2A/vAMXeEFQWJGI/rCXovxdhMaQnKVJFRB0TmpYx3gGixUw5K09/Lfe+mr7h8c699fFohoC9ScBzbLmsFLGVva93sNVpQqJ//zYPtNt/MXWPYFNS6H5J7jf6MpcDGIZLdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729109621; c=relaxed/simple;
-	bh=XeEmwdlnrGCmiPuThMEx8Sc0rwthBwlI1gzpvmO+KOs=;
+	s=arc-20240116; t=1729109634; c=relaxed/simple;
+	bh=VgjQ478YncvsdTabXKQrMpIeuCGxwKtvvuK8UNlZgNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTMgmupktbc+7Cm7T/zbqcpSlSGs+HlwbShbAMnP3yBm/t4gb4aF9+UysgGCuxzNEtnAJgSL44/HwpzKfO3ZlLWTSOMa0RPjR+9i9prM8MIzYlhUllfklH32FCpsrlW8XCesLUMWaMCv2dhQ/nV7s3wULWDyxGlbQHMEeT1XhQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1ZfgBAq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C201DC4CEC5;
-	Wed, 16 Oct 2024 20:13:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBd198g3pIMsaVSo0b4DWowSqpL3ydUsgdrpoEcJyR1LC10WgSuuEjX9qkZhed8MwYqT/zvmAS5vBKQBACIpXM06EOoOGcTj3UEbuCYWUhwkIJ4zt2MabeLN4tfVWAQRZS7KN79hAzat8Ag5EswZNyL85IRubjuJJzWKcJDDrvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6vQ30zw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283A3C4CEC5;
+	Wed, 16 Oct 2024 20:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729109620;
-	bh=XeEmwdlnrGCmiPuThMEx8Sc0rwthBwlI1gzpvmO+KOs=;
+	s=k20201202; t=1729109634;
+	bh=VgjQ478YncvsdTabXKQrMpIeuCGxwKtvvuK8UNlZgNc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G1ZfgBAqw2Mw3eYLg0oNxy37wLer5/GQ9CSwX7uIoTfEy84OwSHuYZxbyB5BhtYsZ
-	 3o/cmAEsyhDn7AiNGhBwj0AU+QhWcFmmBA4IlL+pizxaFf7mUStsO0ghIw6KqDlmYd
-	 SulN/67f+AKdVABNmyB9VCHPIocB4hvqaXiVI/mS4VSu9cyPWbJkWkkQqYyof9RyNM
-	 wWLxkjoQsvBOmjXEgO1lfOWa6Jjh5auDqE9wddIAQv0Gq31ax1EoXqkC7ulUCZpQlq
-	 P5FkXSUBM0MqkZu0OvQZFbwVnYb+6+/G1fAk1wpoS0g5+IAd40LWr/sFqigtqVwas0
-	 5YAxQQIv9/Jsw==
-Date: Wed, 16 Oct 2024 13:13:40 -0700
+	b=D6vQ30zwmphZ0bxRiDwuaOKD5DTXX4cVU0SH4moU5ODvqWcnRye1kpALnEwcuPTfZ
+	 JLRSXCQJRkkSR00UJkZwfTOH/B87uqcMeHNQdAmsgd6d5mqdyAHEWhXOZLM2M1pefk
+	 uy7js/8y/03I05tXr501BWqGoCA0k0ZBWwmEAMFNOcLIxeX40lIRbQTPGNm4x38VNE
+	 1yQ98DMX9l0RWIL0hU8HUQJ042zsp8i1PE05p9G82Sa41ChcSFPP8qd5BwTJEcFm1d
+	 9sXIO4ogjo1hhi6EekCszaPAPQP07wbaaT0KIVvNmYl0b/Sq6uQkZVlcovdyriyDyh
+	 N3LHWyB2iXg+Q==
+Date: Wed, 16 Oct 2024 13:13:53 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
@@ -51,10 +51,10 @@ Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
 	hare@suse.de, martin.petersen@oracle.com,
 	catherine.hoang@oracle.com, mcgrof@kernel.org,
 	ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v9 7/8] xfs: Validate atomic writes
-Message-ID: <20241016201340.GQ21853@frogsfrogsfrogs>
+Subject: Re: [PATCH v9 8/8] xfs: Support setting FMODE_CAN_ATOMIC_WRITE
+Message-ID: <20241016201353.GR21853@frogsfrogsfrogs>
 References: <20241016100325.3534494-1-john.g.garry@oracle.com>
- <20241016100325.3534494-8-john.g.garry@oracle.com>
+ <20241016100325.3534494-9-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,52 +63,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016100325.3534494-8-john.g.garry@oracle.com>
+In-Reply-To: <20241016100325.3534494-9-john.g.garry@oracle.com>
 
-On Wed, Oct 16, 2024 at 10:03:24AM +0000, John Garry wrote:
-> Validate that an atomic write adheres to length/offset rules. Currently
-> we can only write a single FS block.
+On Wed, Oct 16, 2024 at 10:03:25AM +0000, John Garry wrote:
+> Set FMODE_CAN_ATOMIC_WRITE flag if we can atomic write for that inode.
 > 
-> For an IOCB with IOCB_ATOMIC set to get as far as xfs_file_write_iter(),
-> FMODE_CAN_ATOMIC_WRITE will need to be set for the file; for this,
-> ATOMICWRITES flags would also need to be set for the inode.
-> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-This looks ok to me now,
+Woot!
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/xfs/xfs_file.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  fs/xfs/xfs_file.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index b19916b11fd5..1ccbc1eb75c9 100644
+> index 1ccbc1eb75c9..ca47cae5a40a 100644
 > --- a/fs/xfs/xfs_file.c
 > +++ b/fs/xfs/xfs_file.c
-> @@ -852,6 +852,20 @@ xfs_file_write_iter(
->  	if (IS_DAX(inode))
->  		return xfs_file_dax_write(iocb, from);
+> @@ -1253,6 +1253,8 @@ xfs_file_open(
+>  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+>  		return -EIO;
+>  	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+> +	if (xfs_inode_can_atomicwrite(XFS_I(inode)))
+> +		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
+>  	return generic_file_open(inode, file);
+>  }
 >  
-> +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> +		/*
-> +		 * Currently only atomic writing of a single FS block is
-> +		 * supported. It would be possible to atomic write smaller than
-> +		 * a FS block, but there is no requirement to support this.
-> +		 * Note that iomap also does not support this yet.
-> +		 */
-> +		if (ocount != ip->i_mount->m_sb.sb_blocksize)
-> +			return -EINVAL;
-> +		ret = generic_atomic_write_valid(iocb, from);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	if (iocb->ki_flags & IOCB_DIRECT) {
->  		/*
->  		 * Allow a directio write to fall back to a buffered
 > -- 
 > 2.31.1
 > 
