@@ -1,152 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-32141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990AE9A1316
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:00:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A029A1322
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 22:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0AAD1C2260A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:00:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7986AB20ECC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2024 20:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7138B216A1D;
-	Wed, 16 Oct 2024 20:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D832139DB;
+	Wed, 16 Oct 2024 20:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bH9msgWp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgnBwV3n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6C3215F4B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 20:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ABA12E75;
+	Wed, 16 Oct 2024 20:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108831; cv=none; b=fFXGdlei4vc86PDh+cLr6bvHKvTfpKCqU6xKRQ7cjLy1FKg9Tnikk/XgEcV7AeVrv9fiiEQEgKCftSxeS1mLDJiJ2jqTPJB7WAU1x+G78Jm16Bkv/j9dxSqLkgybO5IuyDFUpyIhnnN5Fsd5sXppthoRAt0nbe8NFV668iREV1M=
+	t=1729109028; cv=none; b=Q0xiCWC/dVIEBlZm8mlVp3TKhR6hLOEAm1YR2iueT+Jxmm5bgW5q2iDxzSGDRGNLoAiIN6eY+Os89v+6Yt8q1r8/QwN4tsYC6szXo8ntIDVfrM937uDlNzAkFWd9lc/47Sfro30QRh/6CsL153WnhaL/+gFjbWbMIbr66fU/ev0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108831; c=relaxed/simple;
-	bh=GXWa88oli4PWmA5+fzUJhszGi/k7b0FRJFJ5Zof4XW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvIdAy5b3jjtRSMiPkbU0e/WxXhP9noeNWly0uUIULp1m/CzkxE8z2cqcR2AkQTh/y0mmB4L7ETmo2CIcLfF7HzdEwE5CQrmkI+0AmWtOiwsBZOsbLX3auDf8yuZi3CsvmW24MDLz1rRNmSWzOz7IQOe5rcv46dV9zxbnmfNK6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bH9msgWp; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8323b555a6aso9026339f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 13:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729108829; x=1729713629; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
-        b=bH9msgWpZgjmM5tcDOFe5xlK6iQ5HoiF8Elbmk3nLjD9EoLb1Sv++CRN/jByRQEgx8
-         18gAemz9xd6Bh/9Nbr/8gH2vRskgxmrwInye065u39Ff3PRtnK5ItCwBRR1AnLlxFqoA
-         EEeGLL8/cZy2otxIcm0E2EU91WADcx/iTtkzg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729108829; x=1729713629;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
-        b=PhNqiII7Y7UtlNbV+0reyZwO7J4v5anex7qOY6vRJBHKbsNSbm9iqkatDfhAMvk08e
-         PI2jmAQEyo9GJPta6Q1swozFyby+0bQ2p8/8mXhXyEg1yMlgj9C/nV9iYjfrN0fLNcNz
-         r0JkjtdIilTX4ZZyJE8g5nPpY5FjAtFk74a+fvsKmOwdf2EZ1ZP5B+Bhn72i/lhTBwbh
-         6htqAscIYQoThLeqeDfrjSMi7Prs/j/6lwHxA2cSF2dYokDQfrpx1tx5C6D/uv7ZSkAU
-         qUhtD98AG12n2mgROtFStAw4CiDQZamDCBl7IUsQD/8p3iSaeguTcbjMvOeUmPbtjaeu
-         0rzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGb37bEjih1H9JU396CUYWhUC12V/qL2a2eA0GwgBuM2gNt66ipHBkSFZ9HRn4Ki59SCIB4OUftuEvaQxM@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbp4UqLe7W4cDzQOPVOd26RnlSuT3Rn3LgGfePiApZq8zui7jA
-	BJ8klKONKh8CTQ/YmG1ypQX2wEMfcTo17StiRakPf4cdw+WR5GTSIfqg/QuFWK8=
-X-Google-Smtp-Source: AGHT+IFhemGMrTXm0sMyQyLUJ9gqBzqux5ju24bsXrdrLEcJKKlddo3PTMuUfwbHsZl+/lq10WstqQ==
-X-Received: by 2002:a05:6602:6403:b0:837:7f69:eac2 with SMTP id ca18e2360f4ac-8379241ac0emr1848647239f.1.1729108829163;
-        Wed, 16 Oct 2024 13:00:29 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc44a2asm981213173.154.2024.10.16.13.00.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 13:00:28 -0700 (PDT)
-Message-ID: <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 14:00:27 -0600
+	s=arc-20240116; t=1729109028; c=relaxed/simple;
+	bh=siHADyCOksevsW3dlLz/5xynMSqTra9QywIhGTEVtDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd+ZmNHkhkx+Pa2RL9NviGqJoR2ibwlKajf+BYQA3cY7D7zRUKxmVtqhQQXtSCd3BNfgwz3VyS5tMZ705alUVJU0ZsyD7HcjZIL61bmrbFyvJOyx9k8msD0v7Symq91RvNKp1QVJny1UQyuZFzUHjN0HFkcAnV77YH6gu8jwVEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgnBwV3n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C98C4CEC5;
+	Wed, 16 Oct 2024 20:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729109028;
+	bh=siHADyCOksevsW3dlLz/5xynMSqTra9QywIhGTEVtDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RgnBwV3nddKeJBVuzwucRW+AxnjgT7yLROZjU1y17ugKQFPnjZI9rUaoUXfQLO16l
+	 5PlEgu03hW8CXpxwQs4rBq9WV6rEW6Q+2yQLtBWKQg/pFE7hiJxWrzRTmP7pSmpwLf
+	 TGjWp0MbnSN/AeWnvhC8b+vwP1lK+UKj5o6AqW4gY8JTLV13t3LpRi6iVGmwfGMAXQ
+	 haRbULk6fO81kh8KHqoEpw4ghQmVN88rcSDxy43pgGmgySAm1//ABVchULIUGKjvR4
+	 iMtXKttkLsGDGlMQpJ46BkwVMUqCicd9XnsdB2lZBVj/IYNKzrniZjtkz9teFxLMF4
+	 uxUbeqgRuAavg==
+Date: Wed, 16 Oct 2024 13:03:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, martin.petersen@oracle.com,
+	catherine.hoang@oracle.com, mcgrof@kernel.org,
+	ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v9 5/8] fs: iomap: Atomic write support
+Message-ID: <20241016200347.GP21853@frogsfrogsfrogs>
+References: <20241016100325.3534494-1-john.g.garry@oracle.com>
+ <20241016100325.3534494-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Christian Brauner <christian@brauner.io>
-Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016100325.3534494-6-john.g.garry@oracle.com>
 
-On 10/16/24 04:20, Lorenzo Stoakes wrote:
-> Add tests to assert that PIDFD_SELF_* correctly refers to the current
-> thread and process.
+On Wed, Oct 16, 2024 at 10:03:22AM +0000, John Garry wrote:
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
 > 
-> This is only practically meaningful to pidfd_send_signal() and
-> pidfd_getfd(), but also explicitly test that we disallow this feature for
-> setns() where it would make no sense.
+> Initially FSes (XFS) should only support writing a single FS block
+> atomically.
 > 
-> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
-> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
+> As with any atomic write, we should produce a single bio which covers the
+> complete write length.
 > 
-> We defer testing of mm-specific functionality which uses pidfd, namely
-> process_madvise() and process_mrelease() to mm testing (though note the
-> latter can not be sensibly tested as it would require the testing process
-> to be dying).
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->   tools/testing/selftests/pidfd/pidfd.h         |   8 +
->   .../selftests/pidfd/pidfd_getfd_test.c        | 141 ++++++++++++++++++
->   .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
->   tools/testing/selftests/pidfd/pidfd_test.c    |  76 ++++++++--
->   4 files changed, 224 insertions(+), 12 deletions(-)
+>  .../filesystems/iomap/operations.rst          | 11 ++++++
+>  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
+>  fs/iomap/trace.h                              |  3 +-
+>  include/linux/iomap.h                         |  1 +
+>  4 files changed, 48 insertions(+), 5 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> index 88d6830ee004..1640b711889b 100644
-> --- a/tools/testing/selftests/pidfd/pidfd.h
-> +++ b/tools/testing/selftests/pidfd/pidfd.h
-> @@ -50,6 +50,14 @@
->   #define PIDFD_NONBLOCK O_NONBLOCK
->   #endif
->   
-> +/* System header file may not have this available. */
-> +#ifndef PIDFD_SELF_THREAD
-> +#define PIDFD_SELF_THREAD -100
-> +#endif
-> +#ifndef PIDFD_SELF_THREAD_GROUP
-> +#define PIDFD_SELF_THREAD_GROUP -200
-> +#endif
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index b93115ab8748..5f382076db67 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -513,6 +513,17 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+>  
+> + * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> +   protection. Only a single bio can be created for the write, and the
+
+Dumb nit:        ^^ start new sentences on a new line like the rest of
+the file, please.
+
+With that fixed,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> +   write must not be split into multiple I/O requests, i.e. flag
+> +   REQ_ATOMIC must be set.
+> +   The file range to write must be aligned to satisfy the requirements
+> +   of both the filesystem and the underlying block device's atomic
+> +   commit capabilities.
+> +   If filesystem metadata updates are required (e.g. unwritten extent
+> +   conversion or copy on write), all updates for the entire file range
+> +   must be committed atomically as well.
 > +
-
-As mentioned in my response to v1 patch:
-
-kselftest has dependency on "make headers" and tests include
-headers from linux/ directory
-
-These local make it difficult to maintain these tests in the
-longer term. Somebody has to go clean these up later.
-
-The import will be fine and you can control that with -I flag in
-the makefile. Remove these and try to get including linux/pidfd.h
-working.
-
-Please revise this patch to include the header file and remove
-these local defines.
-
-thanks,
--- Shuah
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+>  
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f637aa0706a3..ed4764e3b8f0 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> +	if (atomic && length != fs_block_size)
+> +		return -EINVAL;
+> +
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>  		return -EINVAL;
+> @@ -382,7 +388,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	 * can set up the page vector appropriately for a ZONE_APPEND
+>  	 * operation.
+>  	 */
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
+> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+>  
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+> @@ -415,6 +421,17 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> +		if (WARN_ON_ONCE(atomic && n != length)) {
+> +			/*
+> +			 * This bio should have covered the complete length,
+> +			 * which it doesn't, so error. We may need to zero out
+> +			 * the tail (complete FS block), similar to when
+> +			 * bio_iov_iter_get_pages() returns an error, above.
+> +			 */
+> +			ret = -EINVAL;
+> +			bio_put(bio);
+> +			goto zero_tail;
+> +		}
+>  		if (dio->flags & IOMAP_DIO_WRITE) {
+>  			task_io_account_write(n);
+>  		} else {
+> @@ -598,6 +615,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> +	if (iocb->ki_flags & IOCB_ATOMIC)
+> +		iomi.flags |= IOMAP_ATOMIC;
+> +
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> @@ -659,7 +679,17 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			if (ret != -EAGAIN) {
+>  				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
+>  								iomi.len);
+> -				ret = -ENOTBLK;
+> +				if (iocb->ki_flags & IOCB_ATOMIC) {
+> +					/*
+> +					 * folio invalidation failed, maybe
+> +					 * this is transient, unlock and see if
+> +					 * the caller tries again.
+> +					 */
+> +					ret = -EAGAIN;
+> +				} else {
+> +					/* fall back to buffered write */
+> +					ret = -ENOTBLK;
+> +				}
+>  			}
+>  			goto out_free_dio;
+>  		}
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 0a991c4ce87d..4118a42cdab0 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -98,7 +98,8 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_REPORT,		"REPORT" }, \
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+> -	{ IOMAP_NOWAIT,		"NOWAIT" }
+> +	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> +	{ IOMAP_ATOMIC,		"ATOMIC" }
+>  
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index d0420e962ffd..84282db3e4c1 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -178,6 +178,7 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> +#define IOMAP_ATOMIC		(1 << 9)
+>  
+>  struct iomap_ops {
+>  	/*
+> -- 
+> 2.31.1
+> 
+> 
 
