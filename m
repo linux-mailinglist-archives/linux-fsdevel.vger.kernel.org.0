@@ -1,97 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-32259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AFB9A2DF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 21:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B069A2E0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 21:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C08283D2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 19:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96675282BE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 19:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3942281DC;
-	Thu, 17 Oct 2024 19:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0088E1C233C;
+	Thu, 17 Oct 2024 19:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mv7Pu+CY"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Pg4BoAjA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9322738B;
-	Thu, 17 Oct 2024 19:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBD313D24C;
+	Thu, 17 Oct 2024 19:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729194023; cv=none; b=Z1ECXWUeK4TW18ts9/hlJ9ErHcQDnpIxdskbHUidtL58WBXSvbQFPVb+y6hseTujUIBQzuYzOQBDND23tnWFqlH/YCLFSAnsFFgkAPF3ht8UpP2IQrTylF89JHoIz691+SJZFAjF8hRMk7w6/tq8jOkdnP8YBT3hDzBtASJlUlU=
+	t=1729194450; cv=none; b=WQdyLtiS2l4/ZXv0UwhO7y1yyUH7vC/Gu9OeyKkwb+J4w/1PA/bU8EU2TVofjNUYOiQBf246ybiuU26lEueMsZtoHcdDxXs/HWwo5kA+9sknQWIKgCmiPkNt5jAsnmv9O2g6cb2+dZL2ggDOlFJlWW2gjCRkwQIqPNHDp+Wm/Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729194023; c=relaxed/simple;
-	bh=iH5RiH1vuDk1iDeH/6hgf5SGk7IQ7OCmR7HIM2uyw2U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ijhagHnEoCAhK4ft+rt0narDLXci3gVI2wf4vhfUvS0dk3pQveHFd4BULqFJnyjitHKVYJXZsaKQ+T4hqCBWAycvPpCbelXx+L4DV/EGx/eWAXVSFW9vig48dSRDC/5zgP8REA0nYbzT4PgDLV1ymQjrWsyPfhP5kn+cgnYUeUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mv7Pu+CY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C21C4CED1;
-	Thu, 17 Oct 2024 19:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729194022;
-	bh=iH5RiH1vuDk1iDeH/6hgf5SGk7IQ7OCmR7HIM2uyw2U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Mv7Pu+CYhdP+0ujlYoD0t4QMFBdm1eHZtrZmYJ77Ed+OaAiJUq7/T2a7HWb6uVBt3
-	 pDGs4hi3Nmyz/a7se+PazJUS3hqdEanSawzYPoLYaLXgAH9l7SooNFP/RY4juiNt10
-	 ftfQMVJjS7ZDUkVfhWaehsRBidH6Vxx4qCS4bEVg2kZoGyiTEuVb8xpmU5ZPDFkoAF
-	 mrZY5ZrLPvo9vBpoMpl6yQr1kb429OQVhWZyZo0t2EputFL94avtBt0EwIwLD6M1SL
-	 q44dOPWncYVK/8/F/JYe7RdmPkF0KfkwJZeEvgRzlFloBSwDIMRU0Li5uLUPh/mv0k
-	 yCOHTiD0GGAyg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710543809A8A;
-	Thu, 17 Oct 2024 19:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729194450; c=relaxed/simple;
+	bh=XW3f/Wbh98h0phcw1W9jFysotT6hms77v1pNz7sLkRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RNOEETErILou0yisuYBkmXXoI/vc4gt332QhmdQHmwEeqXYIosLDtTivNC4keoG6Q2waLdp7uwsrT55sn5pV7AdQW+WmEEpePAfVXFscTzqN4r71Nt6ETwN3Nf/5/zP5747iRLoZcG+MtT4EXFGhKVXukrD2Wn40xNiRolCPlTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Pg4BoAjA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=piSvJWFFEO4RubCC5E7jON/ciF7R8UnqtbDkLoxlou0=; b=Pg4BoAjAqcb5QrKo2Ppv2/OOU0
+	GG2hjdx4UwnUe1svJm5+4acF1MIT04UGi/4kXbufS4vLc7adUoDAEX1iLVufLAQS7fHQ/bfyI5VU3
+	yOxbpfVLG/WBXDZmn/LSfX7yV+dRI/yQMo/vdaptj8A9p3+65iyKjv8wc5nS1IGoq9cJJ5VcJ52uX
+	QhUMj4g/OIsVfwk0j9nAvxzFy8Af4w7xl5yOdlvuUA2NZ6QavpenP/pXztaJl2EzOi+3vCX11L2mG
+	xXV87XJxInaj2CTVuJ7Bx2DPqkdabRd7QspcYgxjeUG4E8e0wgcWnugKt7WHSqU2mfhEEch5TbB7J
+	Q3fox+hw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1WSz-00000004nui-1ynR;
+	Thu, 17 Oct 2024 19:47:25 +0000
+Date: Thu, 17 Oct 2024 20:47:25 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+	overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: introduce struct fderr, convert overlayfs uses to that
+Message-ID: <20241017194725.GM4017910@ZenIV>
+References: <20241003234534.GM4017910@ZenIV>
+ <20241003234732.GB147780@ZenIV>
+ <CAOQ4uxjS0CX+nA4xqmrrMYDPXRPWMT00+S8z8OMhMWc9omSvMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 bpf] lib/buildid: handle memfd_secret() files in
- build_id_parse()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172919402828.2588042.15937382646203304211.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Oct 2024 19:40:28 +0000
-References: <20241017174713.2157873-1-andrii@kernel.org>
-In-Reply-To: <20241017174713.2157873-1-andrii@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@kernel.org, linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, rppt@kernel.org, david@redhat.com,
- yosryahmed@google.com, shakeel.butt@linux.dev, yi1.lai@intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjS0CX+nA4xqmrrMYDPXRPWMT00+S8z8OMhMWc9omSvMw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello:
+On Fri, Oct 04, 2024 at 12:47:09PM +0200, Amir Goldstein wrote:
 
-This patch was applied to bpf/bpf.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+> I had already posted an alternative code for overlayfs, but in case this
+> is going to be used anyway in overlayfs or in another code, see some
+> comments below...
 
-On Thu, 17 Oct 2024 10:47:13 -0700 you wrote:
-> From memfd_secret(2) manpage:
+As far as I can see, the current #overlayfs-next kills the case for
+struct fderr; we might eventually get a valid use for it, but for the
+time being I'm going to strip the overlayfs-related parts of that branch
+(obviously), fix the braino you've spotted in fdput() and archive the
+branch in case it's ever needed.
+
+> > +#define fd_empty(f)    _Generic((f), \
+> > +                               struct fd: unlikely(!(f).word), \
+> > +                               struct fderr: IS_ERR_VALUE((f).word))
 > 
->   The memory areas backing the file created with memfd_secret(2) are
->   visible only to the processes that have access to the file descriptor.
->   The memory region is removed from the kernel page tables and only the
->   page tables of the processes holding the file descriptor map the
->   corresponding physical memory. (Thus, the pages in the region can't be
->   accessed by the kernel itself, so that, for example, pointers to the
->   region can't be passed to system calls.)
 > 
-> [...]
+> I suggest adding a fd_is_err(f) helper to rhyme with IS_ERR().
 
-Here is the summary with links:
-  - [v3,bpf] lib/buildid: handle memfd_secret() files in build_id_parse()
-    https://git.kernel.org/bpf/bpf/c/5ac9b4e935df
+Umm...  Dropping fd_empty() for that one, you mean?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> > +#define fdput(f)       (void) (_Generic((f), \
+> > +                               struct fderr: IS_ERR_VALUE((f).word),   \
+> 
+> Should that be !IS_ERR_VALUE((f).word)?
 
+It should, thanks for spotting that braino.
+ 
+> or better yet
+> 
+> #define fd_is_err(f) _Generic((f), \
+>                                 struct fd: false, \
+>                                 struct fderr: IS_ERR_VALUE((f).word))
 
+I think that's a bad idea; too likely to spill into struct fd users,
+with "it's never false here" being a nasty surprise.
 
