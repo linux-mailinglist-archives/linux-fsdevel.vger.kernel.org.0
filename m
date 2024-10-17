@@ -1,108 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-32193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037299A23D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 15:32:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4819A23DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 15:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5801C211B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 13:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1312528352B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 13:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2F81DE2BF;
-	Thu, 17 Oct 2024 13:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9AF1DE2BF;
+	Thu, 17 Oct 2024 13:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="axJOx5ry"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsloRRa+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317031DD865
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 13:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA931DDC02;
+	Thu, 17 Oct 2024 13:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729171926; cv=none; b=abbaYOjbP3tEGGfKCmtzhAgnoAttS8H8uY1klq8+2EeCFFzPOR1BxIX65Vupi64PFhiTatSAmMRdwT7ekcZdDEDyK3RMIRbAZA86kAt13celPABfZvYedU9QLbIGOxRQb6H6uTtmR4MmpnneQjTKedV3HOMRuTLYm5c5QECcMZ0=
+	t=1729171951; cv=none; b=uvh98HK6+XwVTwyumTYqOrTIauicNl0juBesKMIOOx3SGoYlHcjLMiS78n/rwO2aBsnRfvPY9tKoxtUeg/Z69bxaCvSKA7Bj1PeJT1y2+4b9K6y+9p/WmTWDtIUOCwKb8jN85YtU+ySlPV7VRWecTDz4QFDjxMNMG377xn9LmyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729171926; c=relaxed/simple;
-	bh=CXDG0CpMACRsM/Px0sOzeda6OG2ZRxsTCzzNq8UopGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0Mo1A0yO3HYZXYqMkv3A7iYvsSz+2YhuJbwAcwU++xT/bAQu1F0c8xkljrnp2SgTACH8isbmgg4KfXqf7gmJCB8YajiZ2lkjT/dpm9iGcb2bBppJlpwXPaXLWA326F2f8CD/UV20k6d1gZ4sX6p50CwguT5eUFUSQJU8QRFvR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=axJOx5ry; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso122237766b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 06:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1729171920; x=1729776720; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n0xUPg8DerCIz6V/HZF0+CcXh6twcld8dn75u2EFj8s=;
-        b=axJOx5rynkJIfuSWwyAw5/pnXMgINMCI8CuygYLPi/nGeLryQ8NI7giUPlIDOM2TKW
-         vVYyL7x8qXvlreV74SATqkQzRJJOSQXGeyrrpU8pbKRwAfUs1Lh84NIZVr0WsqtK+kP0
-         GNrwGfkrWVBBeAWr9MO/KxZwbU97mmrOLfQf4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729171920; x=1729776720;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n0xUPg8DerCIz6V/HZF0+CcXh6twcld8dn75u2EFj8s=;
-        b=ZSBxAF6O51QsN12RB19VwJ5onuIGyBqvfc2gns84IT9Jd3JkLxa4luDbC7J+nHDvjv
-         Zlzsq4DdE8mUrwb8DhC9mmOLKlapxUZCODIGU9Kai0rUy1Fe+7LIRZqjs4n5Pgip7okI
-         E0njown7c55Ejaqd6NYFaL+oB+iFppqE87lenoGrRo0VB/IYuaT/aQp56ORl2fQbALsn
-         pkiuG9P/IfaHpSbJJYiZnfFGdeWY6JZitk6nE/juOL1ZPXbwrmTMHS/btcNdS0qOb+2n
-         4L9/XHVdGQyJqsKUMbcdWodTSZYBAt9fsV/nBU39yr3fTtoRQ47XPiw1sI9llRTgD46o
-         GjIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL5WAXE9MyTvCyO7r70X2cowyDN3xkv3M9Jy5RvcRdppokglXvz5W36inE4GheCHBQ3stlPio9fvpptmyo@vger.kernel.org
-X-Gm-Message-State: AOJu0YziLSsEwMolA61A421E1k5f60Kip+FSEyklinwFVWZuaojm+Scz
-	8fIEfXKUIHkhmAtcpdSHuMxfpXA+31sXNAQm24rfiOrR7PBiya/YxqoqpNl0HcK2+wBPbr+Opp2
-	LJyn4EAM1kEZti5oZ1rIKQ74Bga0wvc/yjg/pMQ==
-X-Google-Smtp-Source: AGHT+IGnYz1Jvyo4kGJFPIYiCi4UEaEAM278v9qTw7npdTih6yLvzsINdaYPGhYg0uO8kLo+J7xJ9yhFtdjqdXsFMR8=
-X-Received: by 2002:a17:907:724f:b0:a99:ee83:2b19 with SMTP id
- a640c23a62f3a-a99ee832da8mr1656551466b.35.1729171920287; Thu, 17 Oct 2024
- 06:32:00 -0700 (PDT)
+	s=arc-20240116; t=1729171951; c=relaxed/simple;
+	bh=ldOdKIHpLBswL6IKGggg+kE70tHTp89hi9GupjMUZrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q7svPGJJnEPzt2onYDjouPVfi3Gn2xO/pG4/RP85BJu4gWCR15ltIHWKmY8bStBJ+fcGN38op8l+aZQ5x2rGnBDq0/L19XDmTvAC6pu8RJCGv9OFDDscDWWfRinyqOmhqg7QztlwgFZczlAHNrcTPHHroyhAWWJ//SP+5EE78O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsloRRa+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487E2C4CED0;
+	Thu, 17 Oct 2024 13:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729171950;
+	bh=ldOdKIHpLBswL6IKGggg+kE70tHTp89hi9GupjMUZrs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rsloRRa+5RQAr6PG5chQ6cpXlq//myllx7V2nA0PB6hLq+zFH7+VCDeB3DNVQW3ee
+	 B43gSAohiBvwzGaCETNjwC4QerJv/LBXaTHtSgkMr1H6tNikf0KqmK5S3Ypw7s67rI
+	 yZ8rvsuledxdB5BUR8YHVLRlG0lfOau5Cc00eaSlarKRMkIsGI6S6ek4PWnBfvD/+s
+	 qw75mf48VW2T5lkMFTzzkIUBJ4bmljLxUG9EwmxWHFabNIUeSJjUhP5eF+fZ5UthYl
+	 QQfzVBoQvsuHXKJVsnPPRjbFvYns5bB8A0JNiXTJ+5aST+NKGszGCPh9xC2CotsS3T
+	 QzM+Eht76HeyA==
+From: Christian Brauner <brauner@kernel.org>
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	alessandrozanni.dev@gmail.com,
+	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [PATCH v2] fs: Fix uninitialized value issue in from_kuid and from_kgid
+Date: Thu, 17 Oct 2024 15:32:16 +0200
+Message-ID: <20241017-flausen-verwoben-b07eb6d72070@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241017120553.55331-1-alessandro.zanni87@gmail.com>
+References: <20241017120553.55331-1-alessandro.zanni87@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <20241014182228.1941246-3-joannelkoong@gmail.com> <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
- <CAJnrk1a5UaVP0qSKcuww2dhLkeUqdkri_FEyVMAuTtvv3NMu9Q@mail.gmail.com>
- <ntkzydgiju5b5y4w6hzd6of2o6jh7u2bj6ptt24erri3ujkrso@7gbjrat65mfn>
- <CAJfpeguS-xSjmH2ATTp-BmtTgT0iTk2_4EMtnoxPPcepP=BCpQ@mail.gmail.com>
- <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
- <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com> <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
-In-Reply-To: <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 17 Oct 2024 15:31:48 +0200
-Message-ID: <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
-	hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1152; i=brauner@kernel.org; h=from:subject:message-id; bh=ldOdKIHpLBswL6IKGggg+kE70tHTp89hi9GupjMUZrs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQLCj6XajStNRbda/h48ZRDj6UPrjm77I7t3fxbhetcS 2a8nmHY2FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRE9aMDNPMLz0tlp21eo65 jfzMwlZX7Zk9vDV9Ky7mhR/MVth4exHD/0j9R6KrnMsv11+dvmDx3YLPXHcTrI5N3Jr99i3zhqk b1ZgA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Oct 2024 at 23:27, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+On Thu, 17 Oct 2024 14:05:51 +0200, Alessandro Zanni wrote:
+> ocfs2_setattr() uses attr->ia_mode, attr->ia_uid and attr->ia_gid in
+> a trace point even though ATTR_MODE, ATTR_UID and ATTR_GID aren't set.
+> 
+> Initialize all fields of newattrs to avoid uninitialized variables, by
+> checking if ATTR_MODE, ATTR_UID, ATTR_GID are initialized, otherwise 0.
+> 
+> 
+> [...]
 
-> Why is it bad? I can understand fuse server getting blocked on fuse
-> folios is bad but why it is bad for other applications/tasks? I am
-> wondering network filesystems have to handle similar situation then why
-> is it bad just for fuse?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-You need privileges (physical access) to unplug the network cable.
-You don't need privileges (in most setups) to run a fuse server.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> It might be a bit more than sprinkling. The reclaim code has to activate
-> the folio to avoid reclaiming the folio in near future. I am not sure
-> what we will need to do for move_pages() syscall.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Maybe move_pages() is okay, because it is explicitly targeting a fuse
-mmap.   Is this the only way to trigger MIGRATE_SYNC?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Thanks,
-Miklos
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: Fix uninitialized value issue in from_kuid and from_kgid
+      https://git.kernel.org/vfs/vfs/c/eeb1277262f8
 
