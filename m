@@ -1,97 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-32207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB6D9A25FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 17:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FAF9A263C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 17:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A73B1C212C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 15:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25CF01C21795
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 15:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807DC1DE8AE;
-	Thu, 17 Oct 2024 15:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857455FDA7;
+	Thu, 17 Oct 2024 15:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vqgslW9o"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eT6TuZJ8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ECE1BFE18;
-	Thu, 17 Oct 2024 15:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0B0770ED
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 15:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729177434; cv=none; b=tfkIPnoM/2FBto/xiln1Xh3rkE4flZ7RXC224vl1grcddwzFzWTF9XmTZp84ucOsBmcP8PeAUvQYrIMjN6P2O+UzSrdupb4jJB5pnZ9eLUVM4Fkm/lrBxX1pOBPSpMQDWgR/tmzCx8nPWS8gddcFMT9IJPDRfp7xgtFeNSnH7bE=
+	t=1729178166; cv=none; b=C3C+ieWY6iU1gpyRX5pSj0lgUwDDPr0ykmBOiv3TKkq66ujGZjK8SoKbhn6Y5uvA0CJlGs2U+vMdIumtmByTmeEouoMiVKpBDPY9ZlklIuqU3t5P5zqc7laww5GsDSWh31AaWlUdSHi5W514q0brPUKB4C9fPK92Q94cqzIRpcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729177434; c=relaxed/simple;
-	bh=3qm6NgTuW0lhFS3vYXsnXw1oGCETRzI/WvgBa19K3Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmMbEkZzACebrOyPc46kYJkYW1y8pO6Xrn6cwW6DGsLArvrbP+lb3dONsHWT87+dLzwJQfrF5+ler2WgFIlKsBy7Gk7v4NwTcJHDoD056gzimzlE+57IRDrE/Dsc91MuJpU/rKaRQfTcBmE6cmBnU7gFbQkU8KJxpT3H9q+9bHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vqgslW9o; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8Zhh1z8tPQXl42tBRgf6ZXx4A5UIJKDHWuGsL+vtBrE=; b=vqgslW9orPMeEGcvw7++3CiiPA
-	dG5qQ9F5j5z5AFJXoDPq16Kc1pG5IG7una9NkPSOMVFOXMopPgT+QJ8uO8BRg+nW4zmtQR+Q+3RI5
-	Q6u278QsPAxxh/ZwLkQC8jtaRSm11s30vWFeXCa5mAmL0AgsOZtx7gmguLPf9lgsjDL28xEcJOFfK
-	xRAYcxO3NJUPePX/V49DPZwek7tldT14qMAZCiERJ7ztjjgttgl3FJkAJx7JED02Q8dWYEFFtQs06
-	J5AegZjvnJ6/J14ldmHre/HR9TOox2NoYvav9hby09PXL6xmI/9KDD7YhATsvq2EY1oCkKbNIy+l4
-	rroFRR0g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1S2Z-0000000FD9J-2KGM;
-	Thu, 17 Oct 2024 15:03:51 +0000
-Date: Thu, 17 Oct 2024 08:03:51 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>,
-	Christoph Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <ZxEnV353YshfkmXe@infradead.org>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
- <20241016135155.otibqwcyqczxt26f@quack3>
- <20241016-luxus-winkt-4676cfdf25ff@brauner>
+	s=arc-20240116; t=1729178166; c=relaxed/simple;
+	bh=ilKsvk3bdbOxk7tshNk5blrflPsFv+4Wo29i4YrrjG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JmSArmromHukwAqV3dK5e8O6M6kFTNQ34wsYo0ywojoykr2umab6D42sc8j+jt7pcN0bKBoIMc85BECfv6rxoE6DS2+DRvAE0nqlN7B8FkkTXi1uK3r2fvus4INeaialG/Tm9lJsGg5O+9aRtwPEUYpxbby+rN3edf24rRztXz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eT6TuZJ8; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e2972a311c1so1112942276.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 08:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729178160; x=1729782960; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5GdE6eTDGyaNw5M2W3MzymeJfSSH0mPrAR2SroJEoBg=;
+        b=eT6TuZJ8rdFpB5U/mm1JBj6OOo5Wtn+gZ+g1SxOEaQTa+KLZIXnljUR7rcpX6+CTMr
+         iKKc2RGc4I3IKb4Cp9RLFD2SfZ4Nmnpc3q8+PExXfmj2yM0rf0epjNUhDlo2XduBIhwI
+         X34ZtQQz6nZR8EwwW2kb+s7ml1fIHCfX0XN/eCWKdWjLq4pnEugazKaAlYXytNlG5Z7P
+         WykVmrupm1Fs9/VbPf6jGrCJmKFBQKjPtu0G9jjYZ2xiw9rvRSovEK1V1nZ9Vy7Lbhf3
+         3iMz9nnGEfJa7sdmb4RYNqHMKoD4fs1+pXrvS6yQF4UfiHwYi7a/XyPdSfOzMr+CL7Yn
+         MmXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729178160; x=1729782960;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5GdE6eTDGyaNw5M2W3MzymeJfSSH0mPrAR2SroJEoBg=;
+        b=eBCvBvQv8M0YhwBGKJ9g16+PpJRjy1BVIOmRlIEhMZvC7R/ejB8Rypg/L0H6QxdYT5
+         sq+/CMFOIKP/fZNb4JKxfliTuvi4HVUwuThYIZe5sKyFKG3q3K+3ytMp3VIDiKYjedaf
+         rBiSkgBDAiq2+xYWeH0YC4N3Ss7yz97E6Xmym791HmgjK2AIj5QsYfMD4LC8CsPzXrkP
+         tRY/aFy1d5vV6KBzWbvyvVTruZnGL9HnbYI2q3cuoev3lnODEEDWskbVcoL0Xo2VrTQw
+         NcZpy80tR37QW93J4tBZrtWAta5wYK5ZI74B1pwtEx0ElSwGBulQi/dzpyqfEsv+4dgk
+         b/HA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzGS+Dfdjv35bgg1T01e1WkZzM5lYmM5HhQH44blZ7bBoky1Vi2uDIM0Wb3l9NTq8zKtlUt4m632NZ/meK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4yZlVYqX3dp87E7Lyu1wIrbOgS89DiAr2wzYnh7dAMhhoc9j0
+	raO8ujpvl87EHvcmHXe0/DRL2R6Yf4dA6ky6efQkI6X6jysc2eef/FVKmLHGPJeh2ORweDQOtm+
+	7YFy6IdaqaNDvls13IIzyqqtdTyBLa55Z1j3NyBL38ijMxSQ=
+X-Google-Smtp-Source: AGHT+IEbjoCbzHbsLdZDEuUv9h5xDfQJd0zNjesQoMMZNIJjdQDsgALaaqqdPXxo2sDraVO4AHzq8qH2zBoKPszhXps=
+X-Received: by 2002:a05:690c:2913:b0:6e5:625c:5ad8 with SMTP id
+ 00721157ae682-6e5625c6e42mr38775387b3.37.1729178160115; Thu, 17 Oct 2024
+ 08:16:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-luxus-winkt-4676cfdf25ff@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20241010152649.849254-1-mic@digikod.net> <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com> <ZxEmDbIClGM1F7e6@infradead.org>
+In-Reply-To: <ZxEmDbIClGM1F7e6@infradead.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 17 Oct 2024 11:15:49 -0400
+Message-ID: <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "mic@digikod.net" <mic@digikod.net>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "anna@kernel.org" <anna@kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 04:51:37PM +0200, Christian Brauner wrote:
-> > 
-> > I think that getting user.* xattrs from bpf hooks can still be useful for
-> > introspection and other tasks so I'm not convinced we should revert that
-> > functionality but maybe it is too easy to misuse? I'm not really decided.
-> 
-> Reading user.* xattr is fine. If an LSM decides to built a security
-> model around it then imho that's their business and since that happens
-> in out-of-tree LSM programs: shrug.
+On Thu, Oct 17, 2024 at 10:58=E2=80=AFAM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+> On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
+> > Okay, good to know, but I was hoping that there we could come up with
+> > an explicit list of filesystems that maintain their own private inode
+> > numbers outside of inode-i_ino.
+>
+> Anything using iget5_locked is a good start.  Add to that file systems
+> implementing their own inode cache (at least xfs and bcachefs).
 
-By that argument user.kfuncs is even more useless as just being able
-to read all xattrs should be just as fine.
+Also good to know, thanks.  However, at this point the lack of a clear
+answer is making me wonder a bit more about inode numbers in the view
+of VFS developers; do you folks care about inode numbers?  I'm not
+asking to start an argument, it's a genuine question so I can get a
+better understanding about the durability and sustainability of
+inode->i_no.  If all of you (the VFS folks) aren't concerned about
+inode numbers, I suspect we are going to have similar issues in the
+future and we (the LSM folks) likely need to move away from reporting
+inode numbers as they aren't reliably maintained by the VFS layer.
+
+--=20
+paul-moore.com
 
