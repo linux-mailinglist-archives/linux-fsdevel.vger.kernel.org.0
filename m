@@ -1,91 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-32163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3D09A189B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 04:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 228F79A18E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 04:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B341F245B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 02:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A4F1F2310D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 02:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5F340858;
-	Thu, 17 Oct 2024 02:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0oB4kbdn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4D7137932;
+	Thu, 17 Oct 2024 02:57:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2249126AF3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 02:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D864A8F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 02:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729131946; cv=none; b=HvhXvTe4r/on/+kIEJuspi5GEh1UfV7sPE5WJ/0AipjLKILEYy5ZNumDvP3BAQzBncefIgYYOWlImfJKhoolk86qLeX5iPSIyaAYTlpfLm2M6MUKL7PasqlKNMze6baV0iogQ5ie79VSeeNb+4u6oPBxpedyF9n1E7jLWE3M428=
+	t=1729133828; cv=none; b=nLt4Y1aElAvtAYflKC2PosFBBoBg72IWfy11d8E/ezckDBE86S5qZTJkFKAadCd1vNYSQ0mGFM59qDXHR70pdRlKCxtYzhhrPrv1tY4EZN9cb6N8XEX7+IGBJSXO9G8ZPra5cK6EIBfzhZLthFTHKoDQgBE/VvwlBV3CRNo89WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729131946; c=relaxed/simple;
-	bh=wCXbIJUe86ygDOAsxu1IOsgumVMsgNInaS8mLesw5fA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dPNzGN8n3hXjmc5iP4lxmqBN2algwJazBa5RHcOeewOnmUCQa0fvftW5R0tTvLRERCLJUW5VpBbNwd8L9dSF6H4Yq4VSwK6kyzkYX84SQoKOQkMA4vVXH9viBeM0H6FwvfKDh9nD+OHO3Kp3s/y9Y1s6WRqkjI/1lpMF5AmsHDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0oB4kbdn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=hE1UxQBVQrdtqi+BJo7WZMEeyQP5GKEXivMsE3kADmk=; b=0oB4kbdn4bEbkLdlh8wr5oScnx
-	2/HEm5rHCmksJkm6MkTjhIMAzBJPquwq6Vh/XmL7guBKks0FjBrCv1Hq4ZL4q1li+yguVFSLVDClD
-	1s7HDsABpq5WB9Xty0vHzPfGNBpIWtNi1UD40dCaEwklrQxUUlpyLV9TU/n08LGkP2rNkVHMGo5NV
-	ZUVHWx+7IjrU1id5ldNs50wq2AWlrFHYXEfXaNiCa5RnIndGai2mmg0RDzIYuddRAaHByuICwrcM2
-	cxGSq5la4K2cpZzg/cvC2m/cDBPRZy39Kx3yr3SG4eI8Yy9j0ozJxBPMUDfMpoei2veM06yT9k0yu
-	fH0Kl1Pg==;
-Received: from [50.53.2.24] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1GCr-0000000DYIe-0Sni;
-	Thu, 17 Oct 2024 02:25:41 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] fs: fix f_ref kernel-doc struct member name
-Date: Wed, 16 Oct 2024 19:25:36 -0700
-Message-ID: <20241017022536.58966-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729133828; c=relaxed/simple;
+	bh=Nd67Jp00RXLPiVdexnjEKooKYzGEtzYZb/4vilnk2BU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SZqykJC5F4FLxa2mni2nmCqbLdWej4RbyWO/2HWY6YKQjTLZNHbUnSETlzTOS5LsH4qEgAPLLFLxi3+i7afrx/8Q3jDnWdreaEVcPl2LA+Yr2PZzRHEkAmwlyjZQPUBcu8HJtZNSV5wXItqFmbGE/f8kqUJrIEbfzEcb9IwAHEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so5440035ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2024 19:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729133824; x=1729738624;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XxWeyhD4DCS8Tj5utd6tQ7ogo4K7gLVG21FBXYaqDKM=;
+        b=vl0fuFw2r2jkVonwT8gtAHrPuYtBFiBMQPo2u8XxVfI3PiRsTc+szxWclzMNaYGNGN
+         D4g4cNCeh/hOzJtDZgIKXQ+/DV68lEZhsiOTcg8Nt9eZnZiRoihY8RPKry88rWYmVc18
+         EF/f8YgJ++L6cxuX3C5S5HFkYkbGTEA3wO0XrepiZqtNGfuhzc02oJ6jjNkyVd7aRaLI
+         62MfjhRCYiWfiobs61K5l2CxRYHMYk6ZPpjvXryNPiOht1bY/jPpSQ7TU4FLcRFoQJ+f
+         gBHKJmBo+hvOVN3CQyKYgk5E1zP7fv+ka1o1edkaGH3CtvEWkJJevSXUIuFUzovowGRz
+         lNUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5VVzeYSDJcBTVlExLr7mt0gGiNfUf/erOJIom8v1gRsve+IqQkkX9/wxEC4SbZOV1bUZoz2qoHS6oh3gd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzkpyDXsa8FKJQho8jvavHqt8h8xalPJ1feIjPrpHb9HThaaZv
+	WH91y4KSZrfyZhnPjeMiqG1wG32MRGvNuRwlFWFsKR+8OPekcgQ09gmSpvHNjL0D8Bc/qeMv6V5
+	IDbQtRoB9TohYkb4UW9tE4GAnzcnn9pD64+Koo6r4r4ZB/O58SfKsPnk=
+X-Google-Smtp-Source: AGHT+IFMb6oj4p4WyOWBYvx2fxkNdWCnvHQYiKx/4cURjtylfxV05F5ONegNfJQPldnmZEcJqAcWZJ90nGID9vMq0uRO0p5rk/5z
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:188e:b0:3a3:9461:66a4 with SMTP id
+ e9e14a558f8ab-3a3b5f596ccmr191029495ab.10.1729133823937; Wed, 16 Oct 2024
+ 19:57:03 -0700 (PDT)
+Date: Wed, 16 Oct 2024 19:57:03 -0700
+In-Reply-To: <PUZPR04MB631653574B414EF831C1FEDC81472@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67107cff.050a0220.d5849.001d.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-Eliminate 2 kernel-doc warnings by using the correct struct member name:
+Hello,
 
-include/linux/fs.h:1071: warning: Function parameter or struct member 'f_ref' not described in 'file'
-include/linux/fs.h:1071: warning: Excess struct member 'f_count' description in 'file'
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes: c0390d541128 ("fs: pack struct file")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
----
-L: linux-fsdevel@vger.kernel.org
-L: patches@lists.linux.dev
+Reported-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
+Tested-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
 
- include/linux/fs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on:
 
---- linux-next-20241016.orig/include/linux/fs.h
-+++ linux-next-20241016/include/linux/fs.h
-@@ -1006,7 +1006,7 @@ static inline int ra_has_index(struct fi
- 
- /**
-  * struct file - Represents a file
-- * @f_count: reference count
-+ * @f_ref: reference count
-  * @f_lock: Protects f_ep, f_flags. Must not be taken from IRQ context.
-  * @f_mode: FMODE_* flags often used in hotpaths
-  * @f_op: file operations
+commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c43030580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1738345f980000
+
+Note: testing is done by a robot and is best-effort only.
 
