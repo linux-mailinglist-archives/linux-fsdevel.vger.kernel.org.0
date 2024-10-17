@@ -1,115 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-32231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBD19A2840
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 18:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1269A287B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 18:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451381F22EA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB5EC1C20EF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B8E1DEFD9;
-	Thu, 17 Oct 2024 16:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CA41DEFFB;
+	Thu, 17 Oct 2024 16:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Wchb2Z5X"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FXCDni8M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29EB7DA84;
-	Thu, 17 Oct 2024 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46661DE2DD
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 16:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729181745; cv=none; b=HYA6lVXDSMU5aLVVXkZAcFZHo9WEMQnD+RojwqhLS8oNt3gaJlfEiH4qCdP9CHJ/7ss2SrUJX/Rx3SrpeW+5pvQAuzqQeKZnurGaget/lQuZdpdePJnTBYIVh1rV8moaYKKZiMHVLGqPgA6X9ZKvDWEagaMQMdRi/dFoHmOWSEA=
+	t=1729182167; cv=none; b=BtBX+maSZ61ikUuRX0BgqlTa/H8ajtS5pbAL9Lo3DRFu2jklxRzPCLrrFc+5VgAB5mPFCL12HVEek5nEgY4hSdBSpgSBMT+Il8NCFAkbjtr9N5en2QQMJN15gZVpKfMYSuTSN9ZEAX5gLMsI7DwycpfTmLouUeAIVnYCLD8ehBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729181745; c=relaxed/simple;
-	bh=zHcihhJxzUl73rzLdnTyPA7to6bVri5EKZRmag60bvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O88Ccu+PFTir69Q5WckBh8xhlnSlumdcpoqMwKMgjMqioQFnUQCYLz+w5x0wl9bczdo2laxAk/ue6GeQVqiVqVcKGt6Qh9pKyn5faMi3PWlE0f8mBycUb8hzQpCMU6YOm4Hf3/hE1Rg/yEVT/zPhpgO9Sl+u7CvnKbT4ygv4MSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Wchb2Z5X; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XTtH262R8z6ClY9q;
-	Thu, 17 Oct 2024 16:15:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729181730; x=1731773731; bh=eOvuzv/ivWqYohoOrZsk5GZx
-	XsPGRis/218uLdUYAGI=; b=Wchb2Z5XYlvD9yLHrkWMJ6WZ18gP6EzjpoiMon7w
-	/ioP2BWSDakTfnlY9OKkoEjRyzCE2NOOA18+7w41OSCq0uXcSnxahdlv9J0aiPEW
-	QgakT5aZFbr0akzCcs2YLtQ65bxWjFRd42Uw4sow2fAxYDW7xum2vunzfqAbpOdN
-	wAvlVAszWgYMPxmJkBivBK0AyykLmVV2k+9Znv/0hwxsQlvsKVePSBGAyJBX01e+
-	QZS1/pTpqYT9bJvAKIITbijxh8ut7514vlLSZeturgZkOCEfwQroFlQvQC8d1wSb
-	gsv59uKMu29HvZspqvF5XwKGHg8pluu4iD6ys3S5/VrpBA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id tuKOjPfACqLi; Thu, 17 Oct 2024 16:15:30 +0000 (UTC)
-Received: from [IPV6:2a00:79e0:2e14:8:c8b0:b4d2:d689:c93d] (unknown [104.135.204.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XTtGj6bSlz6ClSqH;
-	Thu, 17 Oct 2024 16:15:25 +0000 (UTC)
-Message-ID: <37af5088-6f09-4e75-b5d0-559e92d625bb@acm.org>
-Date: Thu, 17 Oct 2024 09:15:21 -0700
+	s=arc-20240116; t=1729182167; c=relaxed/simple;
+	bh=sZ6KP8thmTQCJtU/avHHKXCRMvWA2RP/s9vg/0Sk7og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AddpYR9kgW5BcZw4iUTCpIEIezGTraVTfeb84R10apf379iprzfcxD2lCKDMcpp8lBjs4E6Op8FPePyQfhNd0ZeClk2HPm10XhGtG5xsO+Dc6FUukk8md+/2WE9Dpxz/jDEQjH+0L+Mu1p3wt8TprPPIiWS/P0IgcPcp3pGRkS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FXCDni8M; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 17 Oct 2024 09:22:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729182163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+HYfWHc3rTW2bhCLrf3pt7lBtznTfZpZDS4hxXdJ55M=;
+	b=FXCDni8MUUcF8NX37WVf0D34cbKzVjXdly64eEk1LUbBlBp/ehUutZfN8QsUej6iamafWM
+	QDe4QI2gZleF8ZMr32sHL62oy5q5dPhkGRYnexo7RWaHeQ79EepHt4BTU8tucPoZcqYbLr
+	nlXdF5cFp2Q9t4b6BqcagKPzUYvzqnM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org, linux-mm@kvack.org, 
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, Yi Lai <yi1.lai@intel.com>, 
+	pbonzini@redhat.com, seanjc@google.com, tabba@google.com, jackmanb@google.com, 
+	yosryahmed@google.com, jannh@google.com, rppt@kernel.org
+Subject: Re: [PATCH bpf] lib/buildid: handle memfd_secret() files in
+ build_id_parse()
+Message-ID: <d62whv7kff5yshsyzkykgxpgfycfivygyhlqwifvudnj5adun7@kqd6hcsbmee6>
+References: <20241014235631.1229438-1-andrii@kernel.org>
+ <2rweiiittlxcio6kknwy45wez742mlgjnfdg3tq3xdkmyoq5nn@g7bfoqy4vdwt>
+ <d62bd511-13ac-4030-a4f3-ff81025170c1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hare@suse.de,
- sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org,
- dhowells@redhat.com, asml.silence@gmail.com, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org, linux-aio@kvack.org, gost.dev@samsung.com,
- vishak.g@samsung.com, javier.gonz@samsung.com
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
- <20240930181305.17286-1-joshi.k@samsung.com> <20241015055006.GA18759@lst.de>
- <8be869a7-c858-459a-a34b-063bc81ce358@samsung.com>
- <20241017152336.GA25327@lst.de>
- <ZxEw5-l6DtlXCQRO@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ZxEw5-l6DtlXCQRO@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d62bd511-13ac-4030-a4f3-ff81025170c1@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/17/24 8:44 AM, Keith Busch wrote:
-> On Thu, Oct 17, 2024 at 05:23:37PM +0200, Christoph Hellwig wrote:
->> If you want to do useful stream separation you need to write data
->> sequentially into the stream.  Now with streams or FDP that does not
->> actually imply sequentially in LBA space, but if you want the file
->> system to not actually deal with fragmentation from hell, and be
->> easily track what is grouped together you really want it sequentially
->> in the LBA space as well.  In other words, any kind of write placement
->> needs to be intimately tied to the file system block allocator.
+On Thu, Oct 17, 2024 at 11:17:19AM GMT, David Hildenbrand wrote:
+> On 16.10.24 20:39, Shakeel Butt wrote:
+> > Ccing couple more folks who are doing similar work (ASI, guest_memfd)
+> > 
+> > Folks, what is the generic way to check if a given mapping has folios
+> > unmapped from kernel address space?
 > 
-> I'm replying just to make sure I understand what you're saying:
 > 
-> If we send per IO hints on a file, we could have interleaved hot and
-> cold pages at various offsets of that file, so the filesystem needs an
-> efficient way to allocate extents and track these so that it doesn't
-> interleave these in LBA space. I think that makes sense.
+> Can't we just lookup the mapping and refuse these folios that really
+> shouldn't be looked at?
 > 
-> We can add a fop_flags and block/fops.c can be the first one to turn it
-> on since that LBA access is entirely user driven.
+> See gup_fast_folio_allowed() where we refuse secretmem_mapping().
 
-Does anyone care about buffered I/O to block devices? When using
-buffered I/O, the write_hint information from the inode is used and the 
-per I/O write_hint information is ignored.
+That is exactly what this patch is doing. See [1]. The reason I asked
+this question was because I see parallel efforts related to guest_memfd
+and ASI are going to unmap folios from direct map. (Yosry already
+explained ASI is a bit different). We want a more robust and future
+proof solution.
 
-Thanks,
 
-Bart.
+[1] https://lore.kernel.org/all/20241014235631.1229438-1-andrii@kernel.org/
+
+> 
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
