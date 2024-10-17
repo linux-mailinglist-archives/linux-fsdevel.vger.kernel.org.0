@@ -1,199 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-32175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A779A1DBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 11:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A889A1DC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 11:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9C41F23581
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 09:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E67281A44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 09:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD271D2B0E;
-	Thu, 17 Oct 2024 09:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="mMTWYWsi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575101D88AC;
+	Thu, 17 Oct 2024 09:02:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF971D6DBC;
-	Thu, 17 Oct 2024 09:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165B818C348
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729155608; cv=none; b=aNhW4oaUfsdIqjKDSCo3kjMi2ixyOgi5Egqvd3ckL9SXUn9OIF22NPc9d88Q0qox1fmedeIzHd1p4bT5tzUftQdWhtmzN5bGeBChwYhtoSv0VDYc24NE4kLHCEFwJF84PTbV7e/agmpwT/XNng06+A1YnrSImbbdX/nPaEz1yAY=
+	t=1729155751; cv=none; b=HLRx3El8GuVsctyaKbrhQiXOFceUjqGG3hhZoMXi/oN20LOJXkWzj9uOYYl6MFcnAqeAN2/K+t2IxL7uIOHQgEXq/nYB76aDTuWzPMX9kg860OtJ4hLbxcoxLifHlFc6m9LziUt1p3mMr5DDOjEqWjH/OpdNjYqbGEo3f1nS+nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729155608; c=relaxed/simple;
-	bh=lnK4doi9pJ8KyKDMusHOxMoOAQYIbsWJ5ScWd/uRYh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bXtECf8BnzKBfaohRRspzPBFllnetbdiyHxY8lJ8ZJIC1AikZHp8PX1xZIrVlRc0ZzlwCZ0xP/MDz0CrPuB+LDw1VO4LnjNhwAg2ZPyNz8DAihvst6t09tRprBI3jrdzXYTezIPI+r9JWNirng6CH/xhQE9gHlLfhBVSjCq/qb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=mMTWYWsi; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=KNVS107AIclv5ArrKA4z0mqtApOgznYqT/yrCS3aN4k=; b=mMTWYWsi3X73s/G8EE2PdmqlpG
-	ke5ONBNoL3uodkK6u8RiP8BR53EqpUY/SUgYPO3A/0ztO/OwKZ3TMITihPGPoUiTV9V46pc+1l1XP
-	YFkPQg84KUuItR6kWxjYJ/XsOu/lesj8ZIk/IowpwR6RoE28NUcnOyhN7eD/MKR5ztiKvjnEnkdK9
-	2+Lw+DgEdf7wCRezTaFog6fc+V+vTRnW12XVhjcGvo3+2eyZfBeCUIx86phV3DZRQx3mBOkSJL73Z
-	o5s4cJ1cSiGAyj5YHUrPWhrdknNrGCBtpmd32aYbtWmD9JmNLAdhuMsuHftTf+M1ATbvN/LYWCcf3
-	rK1WCUsQ==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t1MM4-0004Bz-Ok; Thu, 17 Oct 2024 10:59:36 +0200
-Received: from [178.197.248.44] (helo=[192.168.1.114])
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t1MM3-000Cln-2j;
-	Thu, 17 Oct 2024 10:59:35 +0200
-Message-ID: <045de961-ac69-40cc-b141-ab70ec9377ec@iogearbox.net>
-Date: Thu, 17 Oct 2024 10:59:34 +0200
+	s=arc-20240116; t=1729155751; c=relaxed/simple;
+	bh=ynej3tE6z+IjENCF94V6jx4lK+8FjzJTIC7+eSa9f0c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NxnkstRl71u8/KJKtKeiamcZj21d1cpciNKYkQS7HiwIlRjlxUnrZ+rNJSS194v3f0qhEwHRVLZ8Lj29VvGf7RNeOUoIMyyqn4xKbWY3poEVxLxVPKnHRPJzPZnCYiLx+h/b61cxmPbvICu1QkoiS35hjEr2WsbUQMH73J2qFXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c38d2b91so7180635ab.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 02:02:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729155746; x=1729760546;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3IbfTcZfMfwFOXm3kudPuLyWNrjMVrqsU0eXvcHD06w=;
+        b=kKLIKmjR1q33xe9y/4BBqLU/YmXSWNZFuIgg9LMFHgx+4mhrBrM6H6NLnKP3TAPQ74
+         qYc4aMrAEv7ftX/JKGeKBFChrH/v1Q0lg28y+jsKl5iVK+uOLQyDIqkv3y8yqejDWxT7
+         Xeilva9A5Ooj3MPup+CHnVPN2F87WJNf8JogOpSCSTCQFtNnlennPPrb8NzhusO0uCZY
+         FI3L5R/p0sDeKkvL3pqSkeZUdD3gGLHUblC44/udjFuKLEEFJ4JAsi+EVqlk86cfJGjp
+         FWCzrctDnImX3M+U1BgjwKq7PbJCboLXYYYBlOcVXmmqwiCEJIslhN0RuyR6S5Wpn00A
+         fGUA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1CWWHp2GJrhjhGUXt3D/wq9YPsN5shtvj435DBfGLgaMQpWTNTBbYJLQ9xH5ykZm/frET7uz1yJsYA2dC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjoK4/UDaHW5Bmun/3d03kqPhsDwV1jMuprEEqwXmwqHJHlsdi
+	symIkgTBFOwVfX/uzmDcTiMJ00cbKVooLQhtJcXGZu7m3dUlaeZ1uAukYWjJ7QtG9uxjx1MR/z8
+	36MxcHFe2cqiiChoSgSbl+eARlO/J06XgXCU+AxJAOw1ugKf59nwVBVk=
+X-Google-Smtp-Source: AGHT+IGaSDKBWOBFP1lzOzdm2/8hj9mkiv5JAp0TIXLMkhriV6ilmz7uNRoJPfaTkLTOiyyylzISBSGoc0jupb3clBLpnyE1Y6n0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 bpf] lib/buildid: handle memfd_secret() files in
- build_id_parse()
-To: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, ast@kernel.org,
- martin.lau@kernel.org
-Cc: linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, rppt@kernel.org, david@redhat.com,
- yosryahmed@google.com, shakeel.butt@linux.dev, Yi Lai <yi1.lai@intel.com>,
- iii@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com
-References: <20241016221629.1043883-1-andrii@kernel.org>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20241016221629.1043883-1-andrii@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27429/Wed Oct 16 10:34:11 2024)
+X-Received: by 2002:a05:6e02:2167:b0:3a3:983a:874f with SMTP id
+ e9e14a558f8ab-3a3bcdc6bfamr164993065ab.12.1729155746484; Thu, 17 Oct 2024
+ 02:02:26 -0700 (PDT)
+Date: Thu, 17 Oct 2024 02:02:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6710d2a2.050a0220.d9b66.0189.GAE@google.com>
+Subject: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
+From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/17/24 12:16 AM, Andrii Nakryiko wrote:
->  From memfd_secret(2) manpage:
-> 
->    The memory areas backing the file created with memfd_secret(2) are
->    visible only to the processes that have access to the file descriptor.
->    The memory region is removed from the kernel page tables and only the
->    page tables of the processes holding the file descriptor map the
->    corresponding physical memory. (Thus, the pages in the region can't be
->    accessed by the kernel itself, so that, for example, pointers to the
->    region can't be passed to system calls.)
-> 
-> So folios backed by such secretmem files are not mapped into kernel
-> address space and shouldn't be accessed, in general.
-> 
-> To make this a bit more generic of a fix and prevent regression in the
-> future for similar special mappings, do a generic check of whether the
-> folio we got is mapped with kernel_page_present(), as suggested in [1].
-> This will handle secretmem, and any future special cases that use
-> a similar approach.
-> 
-> Original report and repro can be found in [0].
-> 
->    [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
->    [1] https://lore.kernel.org/bpf/CAJD7tkbpEMx-eC4A-z8Jm1ikrY_KJVjWO+mhhz1_fni4x+COKw@mail.gmail.com/
-> 
-> Reported-by: Yi Lai <yi1.lai@intel.com>
-> Suggested-by: Yosry Ahmed <yosryahmed@google.com>
-> Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->   lib/buildid.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/lib/buildid.c b/lib/buildid.c
-> index 290641d92ac1..90df64fd64c1 100644
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -5,6 +5,7 @@
->   #include <linux/elf.h>
->   #include <linux/kernel.h>
->   #include <linux/pagemap.h>
-> +#include <linux/set_memory.h>
->   
->   #define BUILD_ID 3
->   
-> @@ -74,7 +75,9 @@ static int freader_get_folio(struct freader *r, loff_t file_off)
->   		filemap_invalidate_unlock_shared(r->file->f_mapping);
->   	}
->   
-> -	if (IS_ERR(r->folio) || !folio_test_uptodate(r->folio)) {
-> +	if (IS_ERR(r->folio) ||
-> +	    !kernel_page_present(&r->folio->page) ||
-> +	    !folio_test_uptodate(r->folio)) {
+Hello,
 
-BPF CI fails to build this on s390 (+ Ilya & others):
+syzbot found the following issue on:
 
-   [...]
-     CC      crypto/ctr.o
-   ../lib/buildid.c: In function ‘freader_get_folio’:
-   ../lib/buildid.c:79:14: error: implicit declaration of function ‘kernel_page_present’ [-Werror=implicit-function-declaration]
-      79 |             !kernel_page_present(&r->folio->page) ||
-         |              ^~~~~~~~~~~~~~~~~~~
-     CC      net/sched/cls_bpf.o
-   [...]
+HEAD commit:    c964ced77262 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13dbcf27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64667415a04ab9c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Interestingly, the generic kernel_page_present() which returns true under
-!CONFIG_ARCH_HAS_SET_DIRECT_MAP is not used here since s390 selects the
-CONFIG_ARCH_HAS_SET_DIRECT_MAP, but does not provide an implementation of
-the function compared to the others which select it (x86, arm64, riscv).
-Relevant commit is 0490d6d7ba0a ("s390/mm: enable ARCH_HAS_SET_DIRECT_MAP").
+Unfortunately, I don't have any reproducer for this issue yet.
 
->   		if (!IS_ERR(r->folio))
->   			folio_put(r->folio);
->   		r->folio = NULL;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8e033b304e7a/disk-c964ced7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4f886da219e0/vmlinux-c964ced7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/814a8b44477f/bzImage-c964ced7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
+
+INFO: task syz.0.801:10223 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.801       state:D stack:28592 pid:10223 tgid:10220 ppid:9895   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6774
+ schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:264
+ coredump_wait fs/coredump.c:418 [inline]
+ do_coredump+0x82f/0x4160 fs/coredump.c:575
+ get_signal+0x237c/0x26d0 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f282b37dff9
+RSP: 002b:00007f282c1850e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007f282b536060 RCX: 00007f282b37dff9
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f282b536064
+RBP: 00007f282b536058 R08: 00007f282c1a7080 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f282b536064
+R13: 0000000000000000 R14: 00007ffcdfcd02c0 R15: 00007ffcdfcd03a8
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/u8:1/12:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1212/0x1b30 kernel/workqueue.c:3204
+ #1: ffffc90000117d80 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work+0x8bb/0x1b30 kernel/workqueue.c:3205
+ #2: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0x51/0xc0 net/core/link_watch.c:276
+1 lock held by khungtaskd/30:
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
+5 locks held by kworker/u8:5/1104:
+ #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work+0x1212/0x1b30 kernel/workqueue.c:3204
+ #1: ffffc90003e27d80 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work+0x8bb/0x1b30 kernel/workqueue.c:3205
+ #2: ffffffff8faae510 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0xbb/0xb40 net/core/net_namespace.c:580
+ #3: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: default_device_exit_batch+0x8f/0x9b0 net/core/dev.c:11934
+ #4: ffffffff8ddc30f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock+0x282/0x3b0 kernel/rcu/tree_exp.h:297
+3 locks held by kworker/u8:7/2921:
+ #0: ffff88814c578948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x1212/0x1b30 kernel/workqueue.c:3204
+ #1: ffffc90009917d80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work+0x8bb/0x1b30 kernel/workqueue.c:3205
+ #2: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xcf/0x14d0 net/ipv6/addrconf.c:4196
+2 locks held by dhcpcd/4901:
+ #0: ffff88803129c6c8 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x154/0x980 net/netlink/af_netlink.c:2405
+ #1: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #1: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x18f/0x1f0 net/core/rtnetlink.c:6534
+2 locks held by getty/4989:
+ #0: ffff888031d4a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
+1 lock held by syz.1.644/8939:
+1 lock held by syz.0.801/10221:
+1 lock held by syz-executor/11581:
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6672
+1 lock held by syz-executor/11673:
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6672
+1 lock held by syz-executor/11679:
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6672
+1 lock held by syz-executor/11682:
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fac4128 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6672
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xf0c/0x1240 kernel/hung_task.c:379
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 8939 Comm: syz.1.644 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:sha256_transform_rorx+0x491/0x1120 arch/x86/crypto/sha256-avx2-asm.S:600
+Code: 00 c2 45 31 e6 c4 63 7b f0 e1 02 c4 c1 7d fe c0 45 31 e6 41 89 cc 41 21 d4 45 01 ef c5 fd 70 d0 50 44 09 e6 44 01 f3 45 01 f9 <44> 01 fb 01 f3 89 de c4 43 7b f0 e9 19 c4 43 7b f0 f1 0b 03 44 3c
+RSP: 0018:ffffc900115f7200 EFLAGS: 00000207
+RAX: 000000003357dd5f RBX: 0000000090041468 RCX: 00000000a7e785dd
+RDX: 000000009f51b31d RSI: 000000008f51b59d RDI: 0000000000000080
+RBP: ffffc900115f7420 R08: 00000000cd5035ab R09: 0000000068c009dd
+R10: 00000000ca0dc7c0 R11: 00000000ff34e361 R12: 000000008741811d
+R13: 00000000fdd296c2 R14: 00000000d903a8d4 R15: 00000000f9297221
+FS:  00007f704af0b6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000556573553680 CR3: 0000000050cbe000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_base_do_update include/crypto/sha256_base.h:81 [inline]
+ _sha256_update arch/x86/crypto/sha256_ssse3_glue.c:74 [inline]
+ _sha256_update+0x17e/0x220 arch/x86/crypto/sha256_ssse3_glue.c:58
+ ima_calc_file_hash_tfm+0x302/0x3e0 security/integrity/ima/ima_crypto.c:491
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+ ima_file_mmap+0x1b1/0x1d0 security/integrity/ima/ima_main.c:462
+ security_mmap_file+0x8bd/0x990 security/security.c:2979
+ vm_mmap_pgoff+0xdb/0x360 mm/util.c:584
+ ksys_mmap_pgoff+0x1c8/0x5c0 mm/mmap.c:542
+ __do_sys_mmap arch/x86/kernel/sys_x86_64.c:86 [inline]
+ __se_sys_mmap arch/x86/kernel/sys_x86_64.c:79 [inline]
+ __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:79
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f704a17dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f704af0b038 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f704a335f80 RCX: 00007f704a17dff9
+RDX: 00004000000000df RSI: 0000002000000004 RDI: 0000000000000002
+RBP: 00007f704a1f0296 R08: 0000000000000404 R09: 0000300000000000
+R10: 0000000000040eb2 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f704a335f80 R15: 00007ffeb08cd318
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
