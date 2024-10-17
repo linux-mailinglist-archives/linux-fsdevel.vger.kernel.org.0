@@ -1,190 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-32202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98C39A2530
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:36:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F10A9A259D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591431F21E5C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 14:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED9A284A65
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 14:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AF01DE4EA;
-	Thu, 17 Oct 2024 14:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A3F1D27A6;
+	Thu, 17 Oct 2024 14:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pKQCveuT"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NSmFYHNq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207BC1D47AC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 14:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AD65FDA7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 14:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175756; cv=none; b=tRHLRHsSJ2RbpywoW9OND4gZno3XRKFHZitjHjkv681aAa6IMs7fBmHeSD4FQD/YBfe4gCL4GKwJiFqg7Cju9DVF0ekKrJAg1tGbmUHHi//FsG8zltOg+tOwWAQRxJq8ZVIrHYALKdFOY6VSmxhWuen89f4KEOW/mbJkKAIsKto=
+	t=1729176870; cv=none; b=Z/eCrhMfU4lnBZCtKcX18rQ5lBsT/h5SWykhL0wh/B5jMJEQBWHULQiYOb0pZ6k8+Lt52NbNerrnIolIXcjYUlNrv7euMwC6x7n50eHPaYYzoUZo/4yLAZ7Mzie7l7BVYWagX0hb90U28Ze+WEJGizeXZbm+a7peTpKVekm20ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175756; c=relaxed/simple;
-	bh=Zgq6ZPXvdJ4wSdfTAO0nAmzBNzI6U16se38SG5gXshw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=bP6vNc0Pry7OE9B9VzhGThN1M611U39hrLto27gT82fgheVaYdJVqeUnvLgbGTFHMrKe7Q2204xR2EaApVUePWk9aAOtp6Thcp95s10sGVB1LP71c7la8RsFjDr1o44i+u5PkJMrMivoIcO0TUoqExntgq322TpRt6mUAHFJzCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pKQCveuT; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241017143545epoutp049254e54c967d53b5add3823aac6e3f74~-RC3qo7cP0479904799epoutp04Q
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 14:35:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241017143545epoutp049254e54c967d53b5add3823aac6e3f74~-RC3qo7cP0479904799epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729175745;
-	bh=iOBcp7aP5HM3dUP7gIM6o5ClGnNylDTBCP21YgwbY7M=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=pKQCveuTncWs1SOA5k8eGF3hD7wZDpxs1lfR73qGsgPBvsNVhuOSz6o61Bm6Viqe3
-	 StLjt7LiE12U3+th9MpVXGv7ViwnhiEwIykQ2MjXW9+WM+dHVdyz45/FD8bqjxIz1i
-	 0UvL5neSzL/nydTxchup44T4a6B2Jin7vFSehm8A=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241017143545epcas5p3d270ce2c807b777f642577ca836ad739~-RC3FlkKJ1086510865epcas5p3P;
-	Thu, 17 Oct 2024 14:35:45 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XTr3g4C2gz4x9Pt; Thu, 17 Oct
-	2024 14:35:43 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8F.A4.09420.FB021176; Thu, 17 Oct 2024 23:35:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241017143542epcas5p21ab337a0e4d4e5b47195aecf2c0527ad~-RC02BwEq2057020570epcas5p2w;
-	Thu, 17 Oct 2024 14:35:42 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241017143542epsmtrp15897660aaeef9a2881d6ec4b840f8403~-RC01MACr1088810888epsmtrp1G;
-	Thu, 17 Oct 2024 14:35:42 +0000 (GMT)
-X-AuditID: b6c32a49-33dfa700000024cc-04-671120bfae7c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0E.E7.18937.EB021176; Thu, 17 Oct 2024 23:35:42 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241017143539epsmtip2d862c9c441a66f8fcf68dfe632b0e2f3~-RCxtBgXX3101031010epsmtip2T;
-	Thu, 17 Oct 2024 14:35:39 +0000 (GMT)
-Message-ID: <8be869a7-c858-459a-a34b-063bc81ce358@samsung.com>
-Date: Thu, 17 Oct 2024 20:05:38 +0530
+	s=arc-20240116; t=1729176870; c=relaxed/simple;
+	bh=aPFi16dTpGtSmfoTVzGeOMSB6a/MnGXB2j2S2hHCDEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ibr9Y/r9SOgiaHv5C5P2F4d5z7MUKxdg5RBcedPQez5IiyoIL8UJ+MewOGfhjUyBH6+T1UE7pg8lLlWjfsu8PISmcGgKL6obuTiHrM9yG9Bf0TUudiBdSKUZunDk2yP1rSSloXui2eekEWyVrnPMQxU/O9IDRbGKvpsUD85QXFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NSmFYHNq; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e2915f00c12so1021502276.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 07:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729176863; x=1729781663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uy5MkDBxA1s3HnIZfrqDdrowqL2bpIiIb4waOMHS1vY=;
+        b=NSmFYHNq/aW3/VrIkLPTKsxHvmUEn58+D//NA/5E+VpsZxxEd0EiUidTj+ARRRo+EV
+         ABum5RovixdfY+3z378IFcNa01Ock4yYsX4+1/bvhwNImgBoGfucrte/Jndi+9y0Yy4I
+         Vz8XwXDZ4qko5lByq4luWlUPjWxP1E6f7Ac/9j8T6+qUSe3OxF4Bfr0pljAhrw4xlzKW
+         ddo3d3Y0xhnPirwBFgl4ApOGg8/mESKlDpJ4CYsY1YFAcjeFIsTfTxwbveIgDBATCR/d
+         dpHy/bPjch2Hc20dDiUURxO1fngPCUo/PhXB8pUCdO7MDVj/VMFWw0e4WjdCmJXD+erM
+         FRiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729176863; x=1729781663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uy5MkDBxA1s3HnIZfrqDdrowqL2bpIiIb4waOMHS1vY=;
+        b=Ci/XjrafYaAjqOFXAMrq+gAohR8wxlcXLPfWF2sn/mE1bqBt9QCwpWbfSvBIQcBuT9
+         2RRFTgzcN+YYjvCyRofj99Xp6rPbtvbJMnAHaR2bJwCmJSC1YVSASOs7FFFz+ZDg+3Tg
+         yTuOVs0KBCnAPMXrx68O7XUwDO7CgHT/Jdp6yJAhmE5/X88rKGODY1VXrdBdsSLgFPpS
+         z8awQbKnw8yVOwDIDAkBGDWr6WgR3Kw2OiedW1/gT0PmQlyK+zwemcwqo8c+q62JGLIC
+         Aj2phwKcbWNwY1a1MSaAp9WpiF8pRBkfcTyzptiezY0XkkAAbUtBptZXfdDMrsiO8dDP
+         RmJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfG4ci6RXpABCVAxT/vxD46jEFpTwpP4cseh9ZoNy2Oenlm0DlEeGI1RtVxeIo1BDR8haCCiwi17n9pbHX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVcpm7ggDG42OfkTAFgWfZIPFKQcjnq5kPc7YeEYQNqRFM6Wet
+	bDbfTVUo1gBa6Y8MRR3AGklOHNmIUCTapx025DTlOKs/PquNyGkdp7wNYchKMYQjqGC59tlsE/x
+	AeeDUaLWp/Xy8ifWH+A/Js7yLO025i6ikb/y/
+X-Google-Smtp-Source: AGHT+IGB+JWQW/OGhh1CM1ibfSC+A2nV8Euoort0xc+V+erLnsw2qw27PjzOwh3YJZIhK34sXSErdtF1EiIuWcdbKy8=
+X-Received: by 2002:a25:9087:0:b0:e29:7e0a:38f4 with SMTP id
+ 3f1490d57ef6-e297e0a3a18mr4276392276.52.1729176863657; Thu, 17 Oct 2024
+ 07:54:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hare@suse.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
-	bvanassche@acm.org, asml.silence@gmail.com, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-aio@kvack.org, gost.dev@samsung.com,
-	vishak.g@samsung.com, javier.gonz@samsung.com
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241015055006.GA18759@lst.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTZxTG9957aS9g3eVDeIEwups4o+OjZdBdmBQTiF7nQogjTt0y7OCu
-	xZbS9QMUTKgWmRLQWoxiwdAxhAkKoaClgpsDCRBkuMGmdsJwthqBgsPFqQyzlqLjv9855zl5
-	znnfHBz1r2SH4jlyNaOUi2Qkywe73Lt+XdQPXD8xr0MbTtU0XQZU8/hxFlX2sgOjpnvnAXXq
-	8XOUmj20gFF3rlkRqrvOgFDnm/sQavbwTxhVfVqHUPZWI0rdv/uETRl6fgPUyVOHAHXV9i7V
-	fXUQo2obHGyqsf8lQrVMz2HUyGK/FzVirGFvCqJHx7bRVuM4mx6ZaMPo0WENbW46yqLN8wY2
-	3V5fTHfd0bLovxw2jJ77/lcWfayjCdA3TNddxaEi+on5LdpsdyLpb+6WbpQwomxGyWXkWXnZ
-	OXJxErnt48yUzHgBjx/FT6DeJ7lyUS6TRKZ+lB61OUfmWp/k5otkGlcqXaRSkTHCjco8jZrh
-	SvJU6iSSUWTLFHGKaJUoV6WRi6PljDqRz+PFxruEe6QSZ3mJl6IrcN/5B72IFpiJMuCNQyIO
-	2n/RIW72J7oAtJ0sKgM+Lp4H8PQ5Pft1oNM1s1516CvvAk/BCmB7iw7zBE4Avysd8nKrOIQQ
-	NjT+vMQYsRY6quZZnrwfHDxjx9y8hoiAf9iq2G4OIHhw7p+KJU0gQULH1PCSA0pMoLDfdA91
-	F1AiGNrsta5hcZxFrIc3KzXutDcRCS/d0iMeSQS0OGtQdy8kLN7wxtk5zDN2Kjyor17mADjV
-	38H2cCh8dLx0maVw8s/JZc0B2Nl+zMvDyVD7720vty/q8m29EuPxWg0rFuxL40CCA4+U+nvU
-	b8MJg2O5Mxjeq6pfZhoarWMsz1tdAPDF9a9RPeAaVzyLccWWxhXrGP93NgGsCYQwClWumFHF
-	K/hypuD1h2fl5ZrB0nVs2NoJxicfR/cABAc9AOIoGcgxlHHE/pxs0f5CRpmXqdTIGFUPiHf9
-	zwk0dE1Wnuu85OpMflwCL04gEMQlvCfgk8Gc6cNns/0JsUjNSBlGwShf9SG4d6gWEYCQ2JnE
-	tA9WLbC27+8bL9/RmXy/Fw8YS9lruiD4hJX2mSTi2QI+2t2Gp9ZGch/NdliKpb1p0vAjvoaZ
-	zNUg5sPSxBzviqJpY+PU8MzuvkvnLhpyYgfqRkoCj2YV+vpWBzF+4tjcsKorB7bfXNy689PF
-	4JACXnJLmza4KOGNE9b8XfPPkvf341+GFvh1vWMJpVdJKs78KCzR336ge5H0VIiBmoUh0jYQ
-	1LbXGRQRlSrbVZ4YFmbJl4Q/N9Xhnb+3HPzq4g5h/brRTQ31KTJ/m84ZIBmoMu2J7Lc8zLim
-	XjuYocrY8o3pW+HfDV8UtnYyPUmOfQ99AnYi6NMt1s+LNbdITCUR8TegSpXoPzkoOE+mBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCSvO4+BcF0g6XLdC3mrNrGaLH6bj+b
-	Rde/LSwWrw9/YrSY9uEns8W7pt8sFjcP7GSy2LNoEpPFytVHmSzetZ5jsZg9vZnJ4sn6WcwW
-	j+98ZreYdOgao8WUaU2MFntvaVvs2XuSxWL+sqfsFsuP/2OyWPf6PYvF+b/HWS3Oz5rD7iDm
-	cfmKt8fOWXfZPc7f28jicflsqcemVZ1sHps+TWL32Lyk3mP3zQY2j49Pb7F4vN93lc2jb8sq
-	Ro8zC44AJU9Xe3zeJOex6clbpgD+KC6blNSczLLUIn27BK6Mtz0trAW7RSpWPjvM1MC4SaCL
-	kZNDQsBEYsLkO4xdjFwcQgLbGSWefnrMCpEQl2i+9oMdwhaWWPnvOZgtJPCaUeLZXCEQm1fA
-	TmLZ8otg9SwCqhJPZ3xig4gLSpyc+YQFxBYVkJe4f2sGWK+wgIHE+++9YDUiAkoST1+dBVvM
-	LHCPWWLdnE5WiCvWMEps/TUfrIMZ6IpbT+YzdTFycLAJaEpcmFwKEuYU0JHYen0CE0SJmUTX
-	1i5GCFteYvvbOcwTGIVmIbljFpJJs5C0zELSsoCRZRWjaGpBcW56bnKBoV5xYm5xaV66XnJ+
-	7iZGcHrQCtrBuGz9X71DjEwcjIcYJTiYlUR4J3XxpgvxpiRWVqUW5ccXleakFh9ilOZgURLn
-	Vc7pTBESSE8sSc1OTS1ILYLJMnFwSjUwzZxaKrrgjbSnzJGH1U7r+Z+63oiverwv5NjTx+v2
-	b37oM9M2Vj1sN8NhvZmfAkOFjWc+rLQri1/b1cc+4Upf2P6KGYvPtXzi4W+Uz760/lLU45r1
-	61+tMd3Ndeb1NdXp57bKpj2VlZRRLBOxLuku/G0i03Uz+5yI/48zkY7fHbNLt/a3Ok8p/iTh
-	rOciac18SuPLq29PpF6aq9pLnpxxc4dp1T/DiMrci+zH814fCIsPOPzGndmqVEH4yU9GhlNS
-	cySUJ12X5d18aSXPmgqvm5UvrMTNavWf/PvGtvB5yAFPpbqP75IYr/5dcyxwb/beGLYqt6OG
-	83kS3gqKFi6azWwYcHifn+ffySGhZZu9lFiKMxINtZiLihMBemXmH34DAAA=
-X-CMS-MailID: 20241017143542epcas5p21ab337a0e4d4e5b47195aecf2c0527ad
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930182052epcas5p37edefa7556b87c3fbb543275756ac736
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
-	<20240930181305.17286-1-joshi.k@samsung.com> <20241015055006.GA18759@lst.de>
+References: <20241010152649.849254-1-mic@digikod.net> <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com> <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+In-Reply-To: <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 17 Oct 2024 10:54:12 -0400
+Message-ID: <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
+	"mic@digikod.net" <mic@digikod.net>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "anna@kernel.org" <anna@kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Seems per-I/O hints are not getting the love they deserve.
-Apart from the block device, the usecase is when all I/Os of VM (or 
-container) are to be grouped together or placed differently.
+On Thu, Oct 17, 2024 at 10:30=E2=80=AFAM Trond Myklebust
+<trondmy@hammerspace.com> wrote:
+> On Wed, 2024-10-16 at 19:05 -0400, Paul Moore wrote:
+> > On Wed, Oct 16, 2024 at 10:23=E2=80=AFAM Christian Brauner
+> > <brauner@kernel.org> wrote:
+> > >
+> > > On Thu, Oct 10, 2024 at 05:26:41PM +0200, Micka=C3=ABl Sala=C3=BCn wr=
+ote:
+> > > > When a filesystem manages its own inode numbers, like NFS's
+> > > > fileid shown
+> > > > to user space with getattr(), other part of the kernel may still
+> > > > expose
+> > > > the private inode->ino through kernel logs and audit.
+> > > >
+> > > > Another issue is on 32-bit architectures, on which ino_t is 32
+> > > > bits,
+> > > > whereas the user space's view of an inode number can still be 64
+> > > > bits.
+> > > >
+> > > > Add a new inode_get_ino() helper calling the new struct
+> > > > inode_operations' get_ino() when set, to get the user space's
+> > > > view of an
+> > > > inode number.  inode_get_ino() is called by generic_fillattr().
+> > > >
+> > > > Implement get_ino() for NFS.
+> > > >
+> > > > Cc: Trond Myklebust <trondmy@kernel.org>
+> > > > Cc: Anna Schumaker <anna@kernel.org>
+> > > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > > > Cc: Christian Brauner <brauner@kernel.org>
+> > > > Cc: Jan Kara <jack@suse.cz>
+> > > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > > ---
+> > > >
+> > > > I'm not sure about nfs_namespace_getattr(), please review
+> > > > carefully.
+> > > >
+> > > > I guess there are other filesystems exposing inode numbers
+> > > > different
+> > > > than inode->i_ino, and they should be patched too.
+> > >
+> > > What are the other filesystems that are presumably affected by this
+> > > that
+> > > would need an inode accessor?
+> >
+> > I don't want to speak for Micka=C3=ABl, but my reading of the patchset =
+was
+> > that he was suspecting that other filesystems had the same issue
+> > (privately maintained inode numbers) and was posting this as a RFC
+> > partly for clarity on this from the VFS developers such as yourself.
+> >
+> > > If this is just about NFS then just add a helper function that
+> > > audit and
+> > > whatever can call if they need to know the real inode number
+> > > without
+> > > forcing a new get_inode() method onto struct inode_operations.
+> >
+> > If this really is just limited to NFS, or perhaps NFS and a small
+> > number of filesystems, then a a helper function is a reasonable
+> > solution.  I think Micka=C3=ABl was worried that private inode numbers
+> > would be more common, in which case a get_ino() method makes a bit
+> > more sense.
+> >
+> > > And I don't buy that is suddenly rush hour for this.
+> >
+> > I don't think Micka=C3=ABl ever characterized this as a "rush hour" iss=
+ue
+> > and I know I didn't.  It definitely caught us by surprise to learn
+> > that inode->i_no wasn't always maintained, and we want to find a
+> > solution, but I'm not hearing anyone screaming for a solution
+> > "yesterday".
+> >
+> > > Seemingly no one noticed this in the past idk how many years.
+> >
+> > Yet the issue has been noticed and we would like to find a solution,
+> > one that is acceptable both to the VFS and LSM folks.
+> >
+> > Can we start with compiling a list of filesystems that maintain their
+> > inode numbers outside of inode->i_no?  NFS is obviously first on that
+> > list, are there others that the VFS devs can add?
+> >
+>
+> Pretty much any filesystem that uses 64-bit inode numbers has the same
+> problem: if the application calls stat(), 32-bit glibc will happily
+> convert that into a call to fstatat64() and then cry foul if the kernel
+> dares return an inode number that doesn't fit in 32 bits.
 
-Per-IO hints are fine-granular (enough for userspace to build 
-per-process/vm/file/whatever etc.) and add the flexibility we have 
-lacked so far.
-As for conflict, I doubt if that exists. Please see below:
+Okay, good to know, but I was hoping that there we could come up with
+an explicit list of filesystems that maintain their own private inode
+numbers outside of inode-i_ino.
 
-> 2) A per-I/O interface to set these temperature hint conflicts badly
-> with how placement works in file systems.  If we have an urgent need
-> for it on the block device it needs to be opt-in by the file operations
-> so it can be enabled on block device, but not on file systems by
-> default.  This way you can implement it for block device, but not
-> provide it on file systems by default.  If a given file system finds
-> a way to implement it it can still opt into implementing it of course.
-
-Why do you see this as something that is so different across filesystems 
-that they would need to "find a way to implement"?
-Both per-file and per-io hints are supplied by userspace. Inode and 
-kiocb only happen to be the mean to receive the hint information.
-FS is free to use this information (iff it wants) or simply forward this 
-down.
-
-Per-file hint just gets stored (within inode) without individual FS 
-involvement. Per-io hint follows the same model (i.e., it is set by 
-upper layer like io_uring/aio) and uses kiocb to store the hint. It does 
-not alter the stored inode hint value!
-
-After patch #3, filesystems have both per-file and per-io information 
-available. And as before, they can use that hint info (from kiocb or 
-inode) and/or simply forward.
-
-The generic code (like fs/direct-io.c, fs/iomap/direct-io.c etc.,) 
-already forwards the incoming hints, without any intelligence.
-And we need just that because with user-passed hints, the onus of 
-intelligence is on the userspace. This is how hints work on 
-xfs/ext4/btrfs files at this point.
-
-The owner of the file (filesystem, block, whatever) can still use the 
-incoming hints to do any custom/extra feature. Either from inode or from 
-kiocb depending on what information (per-file or per-io hint) it finds 
-more useful for that custom feature. For example, F2FS is using 
-per-inode information to do something custom and that part has not been 
-changed by these patches.
-
-Overall, I do not see the conflict. It's all user-driven. No?
-
-For the currently uncommon case when FS decides to generate its own 
-hints (as opposed to userspace hint consumer/forwarder), it can directly 
-put the hint value in bio.
+--=20
+paul-moore.com
 
