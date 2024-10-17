@@ -1,108 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-32233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D84B9A2883
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 18:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894799A28F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 18:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284151F210AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB031C218BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 16:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B071DF254;
-	Thu, 17 Oct 2024 16:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCDA1DF966;
+	Thu, 17 Oct 2024 16:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftAo7CuQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H/KTB3Yb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543E31C1AA5;
-	Thu, 17 Oct 2024 16:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10B11DF74C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 16:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182241; cv=none; b=OE3Ss8euLK0BfbAkzsmHr33Wsp8Lnw1/QbbtPBB/6XjCMAXCD67inskqhAm0YwLGt9KFKe9ycNNWOR+quMl76LCE97VR3+mA/snna9WLNnNeEZTlGasyrbLSdxHoqsiE+vhW8CrRk1yafVpbdD8cGW7RdtpfYaK7lCvSBztPOZA=
+	t=1729182823; cv=none; b=LFzbi7se78KNgT8V7oUow/C+Isn5qLcs+zrOJuLMzkTaAd08IKGy1blgMRWVsgD4v1rdO25N7uNbQKlnPlz8GpzWquxjamaDLM8sbTb0z6PenOj9UMlSZIf2T7IFj4InjBGfj2dPcfCGDRpy/qncqaariI5WZujvcTb0xFAOWqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182241; c=relaxed/simple;
-	bh=RjDlQZTkGZvAnkqNZFuzz/RFQ82YGlXnuCXfg/gs4cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvIh9elCGd/CuBhi9ngm+Ubnv/ADyEvjmQ9ZP2WSFSwPJSog661AAeQ6TCjQSKBLV/qC7G+DInXtZaOYFfg3gZSMDs706nh3H6B0ht4vOyr1+04zcHqNS4M69tnCnORL6gu7Mo5HFDzmlqsIWA+X6yoP8HB5c9HVQdfdNiYEcPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftAo7CuQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FFDC4CEC3;
-	Thu, 17 Oct 2024 16:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729182240;
-	bh=RjDlQZTkGZvAnkqNZFuzz/RFQ82YGlXnuCXfg/gs4cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftAo7CuQ4OQIWh1hU+NgHZhkzh+0FAswQMwWcVSNJE5zXBFdNGB/VIxsIA5pKB6AN
-	 3Lr5M3uyOFeSB94cgkq6M9LT1C5UHhWW6q9Ql2JFCTzbFh10bxOZ4QLOH+ksP8X+sP
-	 IIACWncBrUJWvzd441ZuKK5p1lQnopNeOSQJY8qIi6fx93iX5krdO4l8zFlkCZtnyW
-	 0caoodB3qWS8twWihXtERAgMcc7lf1RLnQiojXa/hTdItF+nl4bueHKCZNbToGO21w
-	 KX/BZYgnQKi/ZZOsCab8EBgQvs9sY2UrJLdRweybpbeYff/5bCLRzyx2w0fN48nvQk
-	 eX+gqJQfy14zA==
-Date: Thu, 17 Oct 2024 10:23:57 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
-	axboe@kernel.dk, hare@suse.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, asml.silence@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-aio@kvack.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <ZxE6HWwKPXJPtShT@kbusch-mbp.dhcp.thefacebook.com>
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
- <20240930181305.17286-1-joshi.k@samsung.com>
- <20241015055006.GA18759@lst.de>
- <8be869a7-c858-459a-a34b-063bc81ce358@samsung.com>
- <20241017152336.GA25327@lst.de>
- <ZxEw5-l6DtlXCQRO@kbusch-mbp.dhcp.thefacebook.com>
- <37af5088-6f09-4e75-b5d0-559e92d625bb@acm.org>
+	s=arc-20240116; t=1729182823; c=relaxed/simple;
+	bh=yoEuYNpDLTcqlOrcwsDe+hvhIkPXA709M40hhaLRE1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iGAZXDimE8ILCESx4IEcXJqrZ13GJ9VnVsOxpg5Zc2WuKaf0rQuCAUq7mPCuByItfBrpRGfL1e6TAW9QV7wPsanl4sUJAjoM4FoHBlvmPhzKt9dKvoZKKhOW688T4z5PY5C7KrY7takQs7NDy+esZuILTwS6QL6rWAZL0EUGZ48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H/KTB3Yb; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-836d2437852so52205839f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 09:33:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729182820; x=1729787620; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W0ti0XsvTZ/XzR+pwVr3tLSQQ+95HGH92FNh0wKLCeg=;
+        b=H/KTB3YbKW93VN+yF/1sDZTk4UnJDsJx6MWqBLRqWGqGpAAL/QqtYzO8YSXaFBnPwA
+         XLYg3E5+PWBX89hCnFBYY89XPngsHg+Y2JOQkKtdR1iP0DNTqQq9KVETD4sQDYhPVgA6
+         vd3fmtLU5+m+53D8wRzXvx3nKPtzBVQD8lHlw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729182820; x=1729787620;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W0ti0XsvTZ/XzR+pwVr3tLSQQ+95HGH92FNh0wKLCeg=;
+        b=YAnPW8ZPjoR9+2LaPdbNV9XC0/Cj5z5VJ9Z4ZHDEO7oQV7L8mj2c5pZU/tD5CTnkIr
+         4pB+gHQpDNvNjqyEg3pAyw69eExaiW/u16PPpAoAUJc52OfP26/rIHS/8f2OHsD3akdV
+         2ZSO122cExIWqp8WXKR8EkuPp7xmd9vxASDTnGU5me83NKPHvFlkjvater423OekmV4m
+         m42cTqJoieqJETnHVc8dXEi7eiaXstVczcGMaTBqCY1y1e5dDacESn7MTHGgVCFKhMSa
+         k7u1VY8oG2akUbQcsQh2REXrLLdO0e8v+N49V86RTHXQt9fFHiX5bR5ylSumaV53tkRi
+         Gofw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn1VdvhBJDuFAp4mAmqUSLrD+sHn2BoP6zRuLaZHCaeGNIx7iPpSsUSBt8iIbHAsYtG7cS9TiyeQAHwiW/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyntgJ0/jcx/6C9pbmeneraX+Ltsjah/lflTBGbHHDX3EApZ+OI
+	hxGYO+yDGXU00l5qyeXM+noDN5OZYNezfNzFeCwxWNBFrhtY2L4UfsHijZKUQPw=
+X-Google-Smtp-Source: AGHT+IGZj5VTEGoyvHrGcQoBTDUL1ECuKHmy2uuHvPmgVMAluVOKOTXVY2rCJ8eR0erFZ+BzRAd48w==
+X-Received: by 2002:a92:b701:0:b0:3a3:dadc:12d9 with SMTP id e9e14a558f8ab-3a3dadc1780mr74371115ab.25.1729182819840;
+        Thu, 17 Oct 2024 09:33:39 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec9b252bsm1417359173.57.2024.10.17.09.33.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 09:33:39 -0700 (PDT)
+Message-ID: <e0b9d4ad-0d47-499a-9ec8-7307b67cae5c@linuxfoundation.org>
+Date: Thu, 17 Oct 2024 10:33:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37af5088-6f09-4e75-b5d0-559e92d625bb@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: The "make headers" requirement, revisited: [PATCH v3 3/3]
+ selftests: pidfd: add tests for PIDFD_SELF_*
+To: John Hubbard <jhubbard@nvidia.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Christian Brauner <christian@brauner.io>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
+ <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
+ <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
+ <6dd57f0e-34b4-4456-854b-a8abdba9163b@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <6dd57f0e-34b4-4456-854b-a8abdba9163b@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 09:15:21AM -0700, Bart Van Assche wrote:
-> On 10/17/24 8:44 AM, Keith Busch wrote:
-> > On Thu, Oct 17, 2024 at 05:23:37PM +0200, Christoph Hellwig wrote:
-> > > If you want to do useful stream separation you need to write data
-> > > sequentially into the stream.  Now with streams or FDP that does not
-> > > actually imply sequentially in LBA space, but if you want the file
-> > > system to not actually deal with fragmentation from hell, and be
-> > > easily track what is grouped together you really want it sequentially
-> > > in the LBA space as well.  In other words, any kind of write placement
-> > > needs to be intimately tied to the file system block allocator.
-> > 
-> > I'm replying just to make sure I understand what you're saying:
-> > 
-> > If we send per IO hints on a file, we could have interleaved hot and
-> > cold pages at various offsets of that file, so the filesystem needs an
-> > efficient way to allocate extents and track these so that it doesn't
-> > interleave these in LBA space. I think that makes sense.
-> > 
-> > We can add a fop_flags and block/fops.c can be the first one to turn it
-> > on since that LBA access is entirely user driven.
+On 10/16/24 20:01, John Hubbard wrote:
+> On 10/16/24 1:00 PM, Shuah Khan wrote:
+>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
+> ...
+>>> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
+>>> index 88d6830ee004..1640b711889b 100644
+>>> --- a/tools/testing/selftests/pidfd/pidfd.h
+>>> +++ b/tools/testing/selftests/pidfd/pidfd.h
+>>> @@ -50,6 +50,14 @@
+>>>   #define PIDFD_NONBLOCK O_NONBLOCK
+>>>   #endif
+>>> +/* System header file may not have this available. */
+>>> +#ifndef PIDFD_SELF_THREAD
+>>> +#define PIDFD_SELF_THREAD -100
+>>> +#endif
+>>> +#ifndef PIDFD_SELF_THREAD_GROUP
+>>> +#define PIDFD_SELF_THREAD_GROUP -200
+>>> +#endif
+>>> +
+>>
+>> As mentioned in my response to v1 patch:
+>>
+>> kselftest has dependency on "make headers" and tests include
+>> headers from linux/ directory
 > 
-> Does anyone care about buffered I/O to block devices? When using
-> buffered I/O, the write_hint information from the inode is used and the per
-> I/O write_hint information is ignored.
+> Wait, what?! Noooo!
+> 
+> Hi, Shuah! :)
+> 
+> We have had this conversation before. And there were fireworks coming from
+> various core kernel developers who found that requirement to be unacceptable.
+> 
+> And in response, I made at selftests/mm tests buildable *without* requiring
+> a "make headers" first, in [1].
+> 
+> I haven't followed up with other subsystems, but...maybe I should. Because
+> otherwise we're just going to keep having this discussion.
+> 
+> The requirement to do "make headers" is not a keeper. Really.
 
-I'm pretty sure there are applications that use buffered IO on raw block
-(ex: postgresql), but it's a moot point: the block file_operations that
-provide the fops_flags also provide the callbacks for O_DIRECT, which is
-where this matters.
+The reason we added the requirement to avoid duplicate defines
+such as this one added to kselftest source files. These are
+error prone and hard to resolve.
 
-We can't really use per-io write_hints on buffered-io. At least not yet,
-and maybe never. I'm not sure if it makes sense for raw block because
-the page writes won't necessarily match writes to storage.
+In some cases, these don't become uapi and don't make it into
+system headers. selftests are in a category of depending on
+kernel headers to be able to test some features.
+
+Getting rid of this dependency mean, tests will be full of local
+defines such as this one which will become unmanageable overtime.
+
+The discussion should be: "How do we get rid of the dependency without
+introducing local defines?" not just "Let's get rid of the dependency"
+
+thanks,
+-- Shuah
 
