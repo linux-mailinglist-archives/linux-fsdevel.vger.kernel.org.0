@@ -1,97 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-32283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6619A30F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 00:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E0A9A3136
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 01:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8562B2865DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 22:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C781F22B3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 23:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2971D7986;
-	Thu, 17 Oct 2024 22:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A822739A;
+	Thu, 17 Oct 2024 23:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXCC9vs0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iSw3Gz6y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3B1D278C;
-	Thu, 17 Oct 2024 22:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A821D958F;
+	Thu, 17 Oct 2024 23:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729205275; cv=none; b=fbCVmrKVkGfkz/c/d3d+4tFPG0UNxXLP542MKVBN7j+cYYFjEGnqWIinr7dpvPWhBzoAi42K9JxtRixc2EfHCAaUepJ8SGUzJyqv1j2DxUPzyF3HBZeNOV4rD2uj4+YLUvSChURauV+tTR0m6FAdlVJ2N+CgpXgKA+kDlTjgiDA=
+	t=1729206811; cv=none; b=YAoCjUHHDxR8w+dOlNSWICa+Sf+CP9QaMmbknV4qSPjMjh14cke4HPMbssOXwn0c7FaWdcyp/WsmzqeAkihAokpRglMaNG0N5Te+jMSob5XhokbpNTpQ2H1SmtpwqQBJPmNS8kweM4IympA+5puYpSR7c5jTHmYJ/KkRhumQyKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729205275; c=relaxed/simple;
-	bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URRIv9WgUoLukt4zal99qqthTkZkbyFpDgt75GeZyh2K6v+CHzaF3JDVtSXT7rinfMVyEJ36sPvT64+6XT0Jmp2yiTRtV/Bmlplke4KrfQR/8Q+ZPQT2G14kyBfcn+EawFTevSv9yrUKMKSJN+5QQD1VCioS1UKBDxZMO+9bY1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXCC9vs0; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43158124a54so1807425e9.3;
-        Thu, 17 Oct 2024 15:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729205272; x=1729810072; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-        b=TXCC9vs0WRM1YD6l9AsnFfzs+0caGK6Y1OS48pKpzjXMbOm8PmuswYCtMm02BBd4n9
-         kPO4Tse7n6L/oIFPBxBiml4hil+g4lx8D/h9ZaDzrT46hLcFlTKQDLHmpfmLPRqZmQYS
-         xF6whGJ3ixYeOZGitf/OZkhRwUTR5+WFcP86WzzxsBvhCjik7Xt85B2OhZVOciVEkVcu
-         t6/hC1aqpdfHkZtOnwWtm4gTXDkisWztZvNRslN0lM6geCE0MBPp0dfnVPPtc20BggDC
-         S9u7DFUcyolGGQu/C+kBTy2kcXbwJxm3rwxCMzLt+SmzRqe0BIzHP09rLE1FiIZeZ8zr
-         bT9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729205272; x=1729810072;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-        b=YL1WnLMw86G30UOFkKWZyobv6bJVaIONh20uGsa9feGCO/Q7/UyljbBxk6x/yL4+9g
-         rATYlKzMKXy397OEW2x2NtenXPqNBEPG4NDpTlbAOSPk3KXi3wxgVQVbk++HAYHcai1H
-         1fb1ncl6PTaP9By8ptC4gaSochsxlnuMa7WdjK4vf1RVxiEGpFV2r7ImAfVeuDXJUxTl
-         kJFocrFY5xJ3rxwnNevaAv5iuXjzvIVkFZFBO5nkO5ekJyhVQ86pl7KjOzXZKV+WJkaF
-         q8XTHjbPRB5T42vhI1zCXUJuFZPkNfxjb/peJj2f09dXgInUEOksDg+hOah/XBnC0EhS
-         aO8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUTPGHdjEwx0uyLcsCv4ld+jHBIgmvCxc/1SjubC9WghFMKk3l7ulngu04epUyRrZUAv3AeljxBlBR9vtyN@vger.kernel.org, AJvYcCVMlIrmkG2Cc8JYsuSgDOeROkgrL2Ku57EU1WXVnS4lVb/+PXvyNqr/MaTCqJNiWYzTXXmeI2HofA8cNId/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS5ohYQgDsbObHiVmK4m19lbpFU8rDUPJLJm92EscQo5jN2RuX
-	J9DrnIkQYMuvCHuqG+aQlzuP/NFStEd+9ULkooTLtems/AuMIV56W6Mv4nqLP7QctjE2jKG7s12
-	TVxAY6aAkWL4KsIxVqnSakJY7DZyRE8ge
-X-Google-Smtp-Source: AGHT+IEj3Bezk3oy/u5PlhV0gduFBYFDDk4hQmhS2jsHk6PcYNkNX6O+zW6SHbKUMZZmQCP43pxBC9eIl4PRTW574PE=
-X-Received: by 2002:a05:6000:1fa1:b0:37d:4864:397f with SMTP id
- ffacd0b85a97d-37ea21da66emr149426f8f.3.1729205272264; Thu, 17 Oct 2024
- 15:47:52 -0700 (PDT)
+	s=arc-20240116; t=1729206811; c=relaxed/simple;
+	bh=Tm57HR5NFw2CYwx4uunjmcx++qzhwMBgCorqbzmbFv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4mKIE+gnuWYHDranGz1If7ycwfT+oAbHAWq5mh/u/4Cex6rwLO93nPbMbxJm3bJxvCom6RdxTEajaLWA6hHgHxHy00GvjkJ1sZIVN4iTSBA95OQYaA6UmV9LlDwD4W6P6vzmjptsfEn/gnlMpMlwtY5XBdbBa2K/CF9C2+9Jsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iSw3Gz6y; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=B8mX33s5nApem0yXGWM3AlBpANvFaXCy2a1aCEwgJeo=; b=iSw3Gz6ynGTxgONka5L3hPlc3N
+	/4XdFxJmX1AruX9PaoPovNzVy33I4Ckvjy8akXWg6JhVT3jDXHbtkaBuL7XgxDUGaQv4vPYruLmSt
+	gblrn3zUlypdRdTbTKJrWHav8lq6lV13cJOLmfBlnvkMBTRpKTEQq6PK3jje1+1zQLjA39NFGqODU
+	jI+SUCRO0RZNPvetNjxyYoPbNdgXTR1T6601aHK5GaUGaUlldiZ8ASE2j0/x9vskE0GklCKtWKby2
+	8fDbw01oXItQYIU9WSbA1R426YfATIrrdj1HO9YshMzdw877UgI3uecWYbaRdximbEDkiP42pqUOl
+	aHFBfNmw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1Zg6-00000007F1I-0HtV;
+	Thu, 17 Oct 2024 23:13:11 +0000
+Message-ID: <787b22d1-7072-4ab7-8314-3f1fd15e5a22@infradead.org>
+Date: Thu, 17 Oct 2024 16:13:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJg=8jz4OwA9LdXtWJuPup+wGVJ8kKFXSboT3G8kjPXBSa-qHA@mail.gmail.com>
- <20240612-hofiert-hymne-11f5a03b7e73@brauner> <CAJg=8jxMZ16pCEHTyv3Xr0dcHRYdwEZ6ZshXkQPYMXbNfkVTvg@mail.gmail.com>
- <CAJg=8jyAtJh6Mbj88Ri3J9fXBN0BM+Fh3qwaChGLL0ECuD7w+w@mail.gmail.com> <CACT4Y+YS+mSjvx8JheONVbrnA0FZUdm6ciWcvEJOCUzsMwWqXA@mail.gmail.com>
-In-Reply-To: <CACT4Y+YS+mSjvx8JheONVbrnA0FZUdm6ciWcvEJOCUzsMwWqXA@mail.gmail.com>
-From: Marius Fleischer <fleischermarius@gmail.com>
-Date: Thu, 17 Oct 2024 15:47:40 -0700
-Message-ID: <CAJg=8jyj=pRA_dW9DNA0O841W9jRzg8jV6a3KFtD2Nn=seCwyg@mail.gmail.com>
-Subject: Re: possible deadlock in freeze_super
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: brauner@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com, harrisonmichaelgreen@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 9/9] docs: tmpfs: Add casefold options
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com
+Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>
+References: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
+ <20241017-tonyk-tmpfs-v7-9-a9c056f8391f@igalia.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241017-tonyk-tmpfs-v7-9-a9c056f8391f@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+Hi,
 
-Thank you for the pointer!
+On 10/17/24 2:14 PM, André Almeida wrote:
+> Document mounting options for casefold support in tmpfs.
+> 
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> ---
+> Changes from v3:
+> - Rewrote note about "this doesn't enable casefold by default" (Krisman)
+> ---
+>  Documentation/filesystems/tmpfs.rst | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+> index 56a26c843dbe964086503dda9b4e8066a1242d72..0385310f225808f55483413f2c69d3b6dc1b9913 100644
+> --- a/Documentation/filesystems/tmpfs.rst
+> +++ b/Documentation/filesystems/tmpfs.rst
+> @@ -241,6 +241,28 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
+>  will give you tmpfs instance on /mytmpfs which can allocate 10GB
+>  RAM/SWAP in 10240 inodes and it is only accessible by root.
+>  
+> +tmpfs has the following mounting options for case-insensitive lookup support:
+> +
+> +================= ==============================================================
+> +casefold          Enable casefold support at this mount point using the given
+> +                  argument as the encoding standard. Currently only UTF-8
+> +                  encodings are supported. If no argument is used, it will load
+> +                  the latest UTF-8 encoding available.
+> +strict_encoding   Enable strict encoding at this mount point (disabled by
+> +                  default). In this mode, the filesystem refuses to create file
+> +                  and directory with names containing invalid UTF-8 characters.
+> +================= ==============================================================
+> +
+> +This option doesn't render the entire filesystem case-insensitive. One needs to
+> +still set the casefold flag per directory, by flipping +F attribute in an empty
 
-I tested the reproducer on 6.12-rc3 - it does not seem to trigger the bug there.
+I would say:                                     flipping the +F attribute
 
-Thank you and wishing you a nice day!
+> +directory. Nevertheless, new directories will inherit the attribute. The
+> +mountpoint itself cannot be made case-insensitive.
+> +
+> +Example::
+> +
+> +    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name /mytmpfs
+> +    $ mount -t tmpfs -o casefold fs_name /mytmpfs
+> +
+>  
+>  :Author:
+>     Christoph Rohland <cr@sap.com>, 1.12.01
+> @@ -250,3 +272,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
+>     KOSAKI Motohiro, 16 Mar 2010
+>  :Updated:
+>     Chris Down, 13 July 2020
+> +:Updated:
+> +   André Almeida, 23 Aug 2024
+> 
 
-Best,
-Marius
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+-- 
+~Randy
+
 
