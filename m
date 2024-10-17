@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-32277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFFA9A2F97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 23:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7764E9A2F9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 23:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6021C247CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 21:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5F41C24B01
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 21:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F02A1D7999;
-	Thu, 17 Oct 2024 21:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EC51D86CD;
+	Thu, 17 Oct 2024 21:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BfrFPtrw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rFGh7F72"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384C11D618C;
-	Thu, 17 Oct 2024 21:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BDA1D63D0;
+	Thu, 17 Oct 2024 21:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729199720; cv=none; b=EQZDsPH/FED6abrwmuKNVVN70+uiy9Ul8iwxAWsrO/6UQfAX6HVvwwDjneYqLCh5TL5pUG3ewbKzf44N6WjM7qbJpZV4nmastf1CabUqp6vb7yACCrwVmm20E9WChu+VWeRWKyjTzdMETMbjzdbtVUzKDoOZjW0QGxB4EzjUNo8=
+	t=1729199724; cv=none; b=a1y0CVFpv1QP/tODZJdUUXQlG1pr130aEMMYlvucHScaRa4EFCv286RhUc7tHVB/Y4/egtTiVZu0yDfPS2dieTQ2vnvUUUQ2XqxJEaIrikXv7D1GTmBq0XgoABcnrbFPm2SS0e465sagNZ7JwOh23NxFx+dOvp6fmupJF2EQFbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729199720; c=relaxed/simple;
-	bh=eLtox+yzLE6QZOpO7AlJ5PgIrp/A5vDTMVmvPx/i8A0=;
+	s=arc-20240116; t=1729199724; c=relaxed/simple;
+	bh=lIKjHZVxn2d3EPQndwbRFNmNRE+uHzdfnpkcxGf1Ux4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Eo7OMAWfok0sqGIRlLxiTRmsZzG2aRxbWCHXmeyI8MMa1Xu+uwOrQnUv8Q7hOpKjru0gCl1LxbguFWPRfdPKg9GVMjk2j1q/SaXqOtAI3ZcwAUF2DAxtWW6JY5BvmBc6s4CDNYxfnD6RMUOat/ffrSpuQhMLgV5jAjdreeMe/k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BfrFPtrw; arc=none smtp.client-ip=178.60.130.6
+	 In-Reply-To:To:Cc; b=ZyOtCQnf8QrYsZZAuaQE9pjqI3H8eqt/dyM8rLbZ6AvFrxWWACj33d48lMAc9JZu0kdXy+jBJXJvyN13PU3w86POqn8ywpdv8TQVGvbgf9JwXipEcL1VjO0FIishnOd8+SP2OgksCdGKlf3Uw4C8lcibAPUKfXP8Nr9AsRirNSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rFGh7F72; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,20 +37,19 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=M158mrqvZp15Xip+FLGziOKd3tlqyv88nTB1oO59vBU=; b=BfrFPtrwxjB770vB6zSbk1PvnG
-	CDFXS29qrDRxS9xlGnJvlhvrot8qlyg0iP/aue7DHub8FiNDvpgcimp4hLK5791W5ZZmRGspsaVzD
-	uyNH6MhLBgoIKsQiBmkYmZQe+mmAl9n/Mrum2C5eJ/FlGIi+NrNRKS7uBamTnBz+i5OHv1o9Fmdhj
-	JqOOSTHth4/Ct2U+y9lelQ1wQ8iTrtJTZ2zZk4xjSKwKiz71G5+pzvWJqc/bzWcnjw9lW9rqVrBlA
-	WNjxYIYAloE140Ctu62PmHHFy7m9JoS3JEsGYEO+QAaTN8E5xFpdZQPzvo1bTd34BDg3a3i5SwaVS
-	0pUwz23w==;
+	bh=3hvCbxaGpjuy/8mKuNk4raktjM7ym+WOJ0WuAMToJIY=; b=rFGh7F72T1e2LF40VcDyS01cCo
+	eV4JHySyjs8V6HuP9VsfgfvKDZh3qkUFZtoMb7CkheRjh7q6UNDjgaMG82BDMfsNIjW5mp8p7BkEh
+	0CCS2GT21AB9IQeU8qQfXuwCbR0gvwD2WFJbxDRYY7EMuaJBMb/TuIsYRRhXjNdVDtGa9K+g14j5+
+	xrzMm39McihVEhZ5FMOkh0iCo+cXaPKL830+q4wp8C7UOf3GM5iq8RQiWVXSfgSTAZ6Co/ZZNKqu9
+	gyHyH9ffFmul0YrTYklSBjL4CSzCkZYAHpKqpunTPyHDiVxxcmCprzkfYTm1zoo9ysubJzfMnx2ko
+	622Hqlsw==;
 Received: from [179.118.186.49] (helo=[192.168.15.100])
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t1Xpw-00Bnlc-Vh; Thu, 17 Oct 2024 23:15:13 +0200
+	id 1t1Xq1-00Bnlc-L9; Thu, 17 Oct 2024 23:15:17 +0200
 From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Thu, 17 Oct 2024 18:14:17 -0300
-Subject: [PATCH v7 7/9] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs
- dirs
+Date: Thu, 17 Oct 2024 18:14:18 -0300
+Subject: [PATCH v7 8/9] tmpfs: Expose filesystem features via sysfs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,7 +58,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241017-tonyk-tmpfs-v7-7-a9c056f8391f@igalia.com>
+Message-Id: <20241017-tonyk-tmpfs-v7-8-a9c056f8391f@igalia.com>
 References: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
 In-Reply-To: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
 To: Gabriel Krisman Bertazi <krisman@kernel.org>, 
@@ -75,156 +74,63 @@ Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org,
  Gabriel Krisman Bertazi <krisman@suse.de>
 X-Mailer: b4 0.14.2
 
-Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
-mounted with casefold support. A special check is need for this flag,
-since it can't be set for non-empty directories.
+Expose filesystem features through sysfs, so userspace can query if
+tmpfs support casefold.
+
+This follows the same setup as defined by ext4 and f2fs to expose
+casefold support to userspace.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
-Changes from v2:
-- Fixed bug when adding a non-casefold flag in a non-empty dir
----
- include/linux/shmem_fs.h |  6 ++---
- mm/shmem.c               | 70 +++++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 67 insertions(+), 9 deletions(-)
+ mm/shmem.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 515a9a6a3c6f82c55952d821887514217a6a00d1..018da28c01e7d71b8fb00bfb23c000248c8a83f4 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -42,10 +42,10 @@ struct shmem_inode_info {
- 	struct inode		vfs_inode;
- };
- 
--#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
-+#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_CASEFOLD_FL)
- #define SHMEM_FL_USER_MODIFIABLE \
--	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
--#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
-+	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
-+#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
- 
- struct shmem_quota_limits {
- 	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
 diff --git a/mm/shmem.c b/mm/shmem.c
-index ea4eff41eef35c9c253092f39402db142baa741b..8d206e492e7d51dad4bfe1b36426e0064b612dad 100644
+index 8d206e492e7d51dad4bfe1b36426e0064b612dad..7bd7ca5777af70c5a226daa20970781c638e34ef 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2760,13 +2760,62 @@ static int shmem_file_open(struct inode *inode, struct file *file)
- #ifdef CONFIG_TMPFS_XATTR
- static int shmem_initxattrs(struct inode *, const struct xattr *, void *);
- 
+@@ -5543,3 +5543,40 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+ 	return page;
+ }
+ EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
++
++#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
 +#if IS_ENABLED(CONFIG_UNICODE)
-+/*
-+ * shmem_inode_casefold_flags - Deal with casefold file attribute flag
-+ *
-+ * The casefold file attribute needs some special checks. I can just be added to
-+ * an empty dir, and can't be removed from a non-empty dir.
-+ */
-+static int shmem_inode_casefold_flags(struct inode *inode, unsigned int fsflags,
-+				      struct dentry *dentry, unsigned int *i_flags)
-+{
-+	unsigned int old = inode->i_flags;
-+	struct super_block *sb = inode->i_sb;
-+
-+	if (fsflags & FS_CASEFOLD_FL) {
-+		if (!(old & S_CASEFOLD)) {
-+			if (!sb->s_encoding)
-+				return -EOPNOTSUPP;
-+
-+			if (!S_ISDIR(inode->i_mode))
-+				return -ENOTDIR;
-+
-+			if (dentry && !simple_empty(dentry))
-+				return -ENOTEMPTY;
-+		}
-+
-+		*i_flags = *i_flags | S_CASEFOLD;
-+	} else if (old & S_CASEFOLD) {
-+		if (dentry && !simple_empty(dentry))
-+			return -ENOTEMPTY;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int shmem_inode_casefold_flags(struct inode *inode, unsigned int fsflags,
-+				      struct dentry *dentry, unsigned int *i_flags)
-+{
-+	if (fsflags & FS_CASEFOLD_FL)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
++static DEVICE_STRING_ATTR_RO(casefold, 0444, "supported");
 +#endif
 +
- /*
-  * chattr's fsflags are unrelated to extended attributes,
-  * but tmpfs has chosen to enable them under the same config option.
-  */
--static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
-+static int shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
- {
- 	unsigned int i_flags = 0;
++static struct attribute *tmpfs_attributes[] = {
++#if IS_ENABLED(CONFIG_UNICODE)
++	&dev_attr_casefold.attr.attr,
++#endif
++	NULL
++};
++
++static const struct attribute_group tmpfs_attribute_group = {
++	.attrs = tmpfs_attributes,
++	.name = "features"
++};
++
++static struct kobject *tmpfs_kobj;
++
++static int __init tmpfs_sysfs_init(void)
++{
 +	int ret;
 +
-+	ret = shmem_inode_casefold_flags(inode, fsflags, dentry, &i_flags);
++	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
++	if (!tmpfs_kobj)
++		return -ENOMEM;
++
++	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
 +	if (ret)
-+		return ret;
- 
- 	if (fsflags & FS_NOATIME_FL)
- 		i_flags |= S_NOATIME;
-@@ -2777,10 +2826,12 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
- 	/*
- 	 * But FS_NODUMP_FL does not require any action in i_flags.
- 	 */
--	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE);
-+	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_CASEFOLD);
++		kobject_put(tmpfs_kobj);
 +
-+	return 0;
- }
- #else
--static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
-+static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
- {
- }
- #define shmem_initxattrs NULL
-@@ -2827,7 +2878,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 	info->fsflags = (dir == NULL) ? 0 :
- 		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
- 	if (info->fsflags)
--		shmem_set_inode_flags(inode, info->fsflags);
-+		shmem_set_inode_flags(inode, info->fsflags, NULL);
- 	INIT_LIST_HEAD(&info->shrinklist);
- 	INIT_LIST_HEAD(&info->swaplist);
- 	simple_xattrs_init(&info->xattrs);
-@@ -3934,16 +3985,23 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct shmem_inode_info *info = SHMEM_I(inode);
-+	int ret, flags;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
- 		return -EOPNOTSUPP;
- 
--	info->fsflags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
-+	flags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
- 		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
- 
--	shmem_set_inode_flags(inode, info->fsflags);
-+	ret = shmem_set_inode_flags(inode, flags, dentry);
++	return ret;
++}
 +
-+	if (ret)
-+		return ret;
-+
-+	info->fsflags = flags;
-+
- 	inode_set_ctime_current(inode);
- 	inode_inc_iversion(inode);
- 	return 0;
++fs_initcall(tmpfs_sysfs_init);
++#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
 
 -- 
 2.47.0
