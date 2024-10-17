@@ -1,105 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-32261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B069A2E0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 21:47:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571F79A2E6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 22:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96675282BE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 19:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2DB1C2210D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2024 20:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0088E1C233C;
-	Thu, 17 Oct 2024 19:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BCC1D0DC4;
+	Thu, 17 Oct 2024 20:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Pg4BoAjA"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L/BUWMkn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBD313D24C;
-	Thu, 17 Oct 2024 19:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A7F144D21
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 20:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729194450; cv=none; b=WQdyLtiS2l4/ZXv0UwhO7y1yyUH7vC/Gu9OeyKkwb+J4w/1PA/bU8EU2TVofjNUYOiQBf246ybiuU26lEueMsZtoHcdDxXs/HWwo5kA+9sknQWIKgCmiPkNt5jAsnmv9O2g6cb2+dZL2ggDOlFJlWW2gjCRkwQIqPNHDp+Wm/Qg=
+	t=1729196512; cv=none; b=rVvnROJ5xMuqzmGRnqCll27TUEdINDWghuIY1qUOfbXno1Gmy2hulJm+byw7cB1RphGFvKX9T0OFLu/ApxewbIMAvpM0sPRTCsnU04VILDr/hX/q8QhiFea829O8DLQNJgSzqKY41C3ZVzSB9ia8pe5iwxzbshZ0ySFq1lt9qao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729194450; c=relaxed/simple;
-	bh=XW3f/Wbh98h0phcw1W9jFysotT6hms77v1pNz7sLkRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNOEETErILou0yisuYBkmXXoI/vc4gt332QhmdQHmwEeqXYIosLDtTivNC4keoG6Q2waLdp7uwsrT55sn5pV7AdQW+WmEEpePAfVXFscTzqN4r71Nt6ETwN3Nf/5/zP5747iRLoZcG+MtT4EXFGhKVXukrD2Wn40xNiRolCPlTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Pg4BoAjA; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=piSvJWFFEO4RubCC5E7jON/ciF7R8UnqtbDkLoxlou0=; b=Pg4BoAjAqcb5QrKo2Ppv2/OOU0
-	GG2hjdx4UwnUe1svJm5+4acF1MIT04UGi/4kXbufS4vLc7adUoDAEX1iLVufLAQS7fHQ/bfyI5VU3
-	yOxbpfVLG/WBXDZmn/LSfX7yV+dRI/yQMo/vdaptj8A9p3+65iyKjv8wc5nS1IGoq9cJJ5VcJ52uX
-	QhUMj4g/OIsVfwk0j9nAvxzFy8Af4w7xl5yOdlvuUA2NZ6QavpenP/pXztaJl2EzOi+3vCX11L2mG
-	xXV87XJxInaj2CTVuJ7Bx2DPqkdabRd7QspcYgxjeUG4E8e0wgcWnugKt7WHSqU2mfhEEch5TbB7J
-	Q3fox+hw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1WSz-00000004nui-1ynR;
-	Thu, 17 Oct 2024 19:47:25 +0000
-Date: Thu, 17 Oct 2024 20:47:25 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-	overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: introduce struct fderr, convert overlayfs uses to that
-Message-ID: <20241017194725.GM4017910@ZenIV>
-References: <20241003234534.GM4017910@ZenIV>
- <20241003234732.GB147780@ZenIV>
- <CAOQ4uxjS0CX+nA4xqmrrMYDPXRPWMT00+S8z8OMhMWc9omSvMw@mail.gmail.com>
+	s=arc-20240116; t=1729196512; c=relaxed/simple;
+	bh=2Z5WKoLPYT+lT5L20jzLpq8I6hZFsPuZELk5THlcVg4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=da4wlxiWnj/hufAUl5n9T3lk7D66MZecBq6RU3s9jrGbEnqziihT0MSI/hlFIWqZud9074CBBcV8nlY/ZPnn5melORnUDlhKvHiFTT3auskExRBuMk/9Mbs5qIX5R5yzci1jfXCxFgeWjUTqNqv9IVyDd4kTThoNyniN8cCP/sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L/BUWMkn; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e28833f1c31so2139925276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2024 13:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729196506; x=1729801306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZkT9XPOVz4nESR8taQmQTNvM14toSm1aIM8trf17CDA=;
+        b=L/BUWMknNZmilGvb7bqBhmlu4PQv2K5I4RqEgEw4syBgh037dj/0qGVVnI9Qix3FMc
+         U8rxqujESY4UpZa+GOM/LpnVxAhF7yD0WrPYDm85Auq1/hNbQjuuAElmB//hcnpb8y1f
+         h6mFwMFK30JTCeUV5IHpRBXf2dqukUBq+USdkl0HI0zb1mkoQzXX258TPGELRKbWYUSE
+         FZ5kqqVp74xzn7fLtN61tYN1/872cdm5O4mgIEue9yBn4HxHpsI3XId+agGRqpZiX1bJ
+         n0YVWlzUz4e6RxRIdzFppMALZOow3m2abWQIQsCG/hqH4TqBkimWwQLw5+qdpo8YtJMx
+         c2qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729196506; x=1729801306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZkT9XPOVz4nESR8taQmQTNvM14toSm1aIM8trf17CDA=;
+        b=EaCbFJ3haZeZWZAJ+pRJii6f+qvJQwbCtZwc9/bYcLZPGhlve0ZLANiZA5DpoB0/qY
+         yk1zvVxBMYcnEICQIrXmqSDRtBuh+8CKgqUYhxKDud/D+h6PDhaQY0ubXIAfrMXPEg/U
+         oz8RD1K6CsUlWIdom0EwPR/RFBAMpmrQm2XmOb8a0ANcTmsHDHrhpcm4iwqe/B0fiz4A
+         21zazf8vas448sSdRm/0p77SFl4ifilRd5meHO4i36j19D6rkxvKbrG17ByKgb6br/MR
+         hNvKTbeFmBir5y9cDEIVtj8R545CVM3nr04L1VXWE+HnfefJHNlGK5ZuWfWPdDcWh13k
+         LYWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOh5sO2fsRLierYapYwESMlI3I988ZgX+ru/+qeKg6A2oB7crWE75wdBCHlAhJii8KvefSqq6PBHOTArJz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWqfqntGCpd2bjYSfq2QOSkN85bgNwE40y1qOJ2g0DXkzU9UOe
+	M84a/CyHabWoGyaiQqQRUbc62a1s0qClHI6sDZxB5T+7Aq4wR0nCM5+fATJ+nTqof4JuCc5H+Av
+	GlVPksaWCUSMs582aryXXD2ORcktZKTXe4Gte
+X-Google-Smtp-Source: AGHT+IFQ19Riv0f6yE9SxFB8BFiwD1UmDvqOz9Z/MXc/PMUECV9xW4KWUKcr3czucY0z9CXixZ3ple6+ZcJ+8qufymY=
+X-Received: by 2002:a25:9b07:0:b0:e28:c6be:4ce6 with SMTP id
+ 3f1490d57ef6-e2bafe21356mr353527276.28.1729196506045; Thu, 17 Oct 2024
+ 13:21:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjS0CX+nA4xqmrrMYDPXRPWMT00+S8z8OMhMWc9omSvMw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20241010152649.849254-1-mic@digikod.net> <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+ <ZxEmDbIClGM1F7e6@infradead.org> <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+ <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
+In-Reply-To: <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 17 Oct 2024 16:21:34 -0400
+Message-ID: <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>, "mic@digikod.net" <mic@digikod.net>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "anna@kernel.org" <anna@kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 12:47:09PM +0200, Amir Goldstein wrote:
+On Thu, Oct 17, 2024 at 1:05=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> On Thu, 2024-10-17 at 11:15 -0400, Paul Moore wrote:
+> > On Thu, Oct 17, 2024 at 10:58=E2=80=AFAM Christoph Hellwig <hch@infrade=
+ad.org> wrote:
+> > > On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
+> > > > Okay, good to know, but I was hoping that there we could come up wi=
+th
+> > > > an explicit list of filesystems that maintain their own private ino=
+de
+> > > > numbers outside of inode-i_ino.
+> > >
+> > > Anything using iget5_locked is a good start.  Add to that file system=
+s
+> > > implementing their own inode cache (at least xfs and bcachefs).
+> >
+> > Also good to know, thanks.  However, at this point the lack of a clear
+> > answer is making me wonder a bit more about inode numbers in the view
+> > of VFS developers; do you folks care about inode numbers?  I'm not
+> > asking to start an argument, it's a genuine question so I can get a
+> > better understanding about the durability and sustainability of
+> > inode->i_no.  If all of you (the VFS folks) aren't concerned about
+> > inode numbers, I suspect we are going to have similar issues in the
+> > future and we (the LSM folks) likely need to move away from reporting
+> > inode numbers as they aren't reliably maintained by the VFS layer.
+> >
+>
+> Like Christoph said, the kernel doesn't care much about inode numbers.
+>
+> People care about them though, and sometimes we have things in the
+> kernel that report them in some fashion (tracepoints, procfiles, audit
+> events, etc.). Having those match what the userland stat() st_ino field
+> tells you is ideal, and for the most part that's the way it works.
+>
+> The main exception is when people use 32-bit interfaces (somewhat rare
+> these days), or they have a 32-bit kernel with a filesystem that has a
+> 64-bit inode number space (NFS being one of those). The NFS client has
+> basically hacked around this for years by tracking its own fileid field
+> in its inode.
 
-> I had already posted an alternative code for overlayfs, but in case this
-> is going to be used anyway in overlayfs or in another code, see some
-> comments below...
+When I asked if the VFS dev cared about inode numbers this is more of
+what I was wondering about.  Regardless of if the kernel itself uses
+inode numbers for anything, it does appear that users do care about
+inode numbers to some extent, and I wanted to know if the VFS devs
+viewed the inode numbers as a first order UAPI interface/thing, or if
+it was of lesser importance and not something the kernel was going to
+provide much of a guarantee around.  Once again, I'm not asking this
+to start a war, I'm just trying to get some perspective from the VFS
+dev side of things.
 
-As far as I can see, the current #overlayfs-next kills the case for
-struct fderr; we might eventually get a valid use for it, but for the
-time being I'm going to strip the overlayfs-related parts of that branch
-(obviously), fix the braino you've spotted in fdput() and archive the
-branch in case it's ever needed.
+> A lot of the changes can probably be automated via coccinelle. I'd
+> probably start by turning all of the direct i_ino accesses into static
+> inline wrapper function calls. The hard part will be parceling out that
+> work into digestable chunks. If you can avoid "flag day" changes, then
+> that's ideal.  You'd want a patch per subsystem so you can collect
+> ACKs.
+>
+> The hardest part will probably be the format string changes. I'm not
+> sure you can easily use coccinelle for that, so that may need to be
+> done by hand or scripted with python or something.
 
-> > +#define fd_empty(f)    _Generic((f), \
-> > +                               struct fd: unlikely(!(f).word), \
-> > +                               struct fderr: IS_ERR_VALUE((f).word))
-> 
-> 
-> I suggest adding a fd_is_err(f) helper to rhyme with IS_ERR().
+Out of curiosity, is this on anyone's roadmap?  I've already got
+enough work in security land to keep myself occupied until I'm hit by
+that mythical bus, so I can't volunteer in good conscience, but I (and
+many others in security land) would be grateful for a single,
+consistent way to fetch inode numbers :)
 
-Umm...  Dropping fd_empty() for that one, you mean?
-
-> > +#define fdput(f)       (void) (_Generic((f), \
-> > +                               struct fderr: IS_ERR_VALUE((f).word),   \
-> 
-> Should that be !IS_ERR_VALUE((f).word)?
-
-It should, thanks for spotting that braino.
- 
-> or better yet
-> 
-> #define fd_is_err(f) _Generic((f), \
->                                 struct fd: false, \
->                                 struct fderr: IS_ERR_VALUE((f).word))
-
-I think that's a bad idea; too likely to spill into struct fd users,
-with "it's never false here" being a nasty surprise.
+--=20
+paul-moore.com
 
