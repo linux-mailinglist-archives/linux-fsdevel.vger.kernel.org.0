@@ -1,152 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-32377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD229A4766
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 21:49:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A049A4772
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 21:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A55D1C20D88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 19:49:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1C90B221B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 19:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1419205AB7;
-	Fri, 18 Oct 2024 19:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16057206053;
+	Fri, 18 Oct 2024 19:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="LOwxsQnT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PSxZvMdx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE45620262E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 19:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84D9817;
+	Fri, 18 Oct 2024 19:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729280950; cv=none; b=cwUlI9uVdTFZh9B3Zt4EMK/l14mgCY7EKGflLxj6rbrdBdr98mt4qk8Our0kL6TcMIR72YH37QTXp3QixbQm6U+x4p4bu5xaPuu58r1n8ry1fLVEjCPLLwXpNozID3FrqBYYsBDFh3qDOke1F1vH0BzEWyKVtQxTmG1ss5RhbWM=
+	t=1729281251; cv=none; b=Kx93OPvRliLhFeJKnn2tLeBfHpaJ1SOetYtRa3IveizfAHBj6m5ZouQYmrVD1y5rj27kHK+PZjzPcjrjqO8vPKCWp6CHhsAJUqK48Zwl1LHPU5XGOVFao0Stjpn9Lpuxa+GwweN/Vf+rzdv3d1xeqXwIO+GGn69/79hBFS/8U3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729280950; c=relaxed/simple;
-	bh=M/KrgYouTo1vY8INYO1w4bOcWFw3XmjpdxHZ9ZEZs0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ikKcOvYNlmXbHfmWOVSAp8PQBPzc6Maw5YUEeY2O8anD9yCR+gBQlskDRSsVhQvescI6VijjWvwTDQDgpIqh0fMoWmTGctlvvYKuqFIrwHTBDE7n8JpfjNJrxblo/lmKZdIQ1cXm4n4R7vr5VFu2sxetOFpvfrD9j5uPBHnNbKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=LOwxsQnT; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbf340fccaso20594536d6.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 12:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1729280938; x=1729885738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVT9I3VGpwUTJtGbgqlTHdaKtzxRAG8ncP9LOCRjZt8=;
-        b=LOwxsQnThOX37Mqwgf3uUCn0I8auSoxFToj6o/0jFEUkavR1q0p/TRr+fb7bMmwCfF
-         OLPDz1SeEKd8uo/rMimVw8MeamSq5VHC1ND2bK392pBL5YO1/YlyNUmnlJ5b7g2DC773
-         ITS1V+GJXNsumLyoSMr/HiYHFE9sDEKY1UFCdaKuj6qyW3VkPahwdozFYkiAnKQnPvBF
-         /raM8/Cje8/l0qG8Tfwpvaf58+SJli27ZoEmbdjPAYnNyEfNYzNeYr5jDg702hiud1rZ
-         HrO7k4aqFxGgSTQdN8bdxmlSWGybMapbbZSA6wYtngyrIqBb8tJ2ttQWPCn20Ox1pMWJ
-         NPFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729280938; x=1729885738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVT9I3VGpwUTJtGbgqlTHdaKtzxRAG8ncP9LOCRjZt8=;
-        b=YUAiWqr4spccI71l9R8V0xLcfIbBWzS3D59+XmcTX3HveIckp4mV7l7JNCsv5+6N26
-         7oFf4o/cE01dlp1P488q6njKdcxskwO7w2nUTgB4LySI7nmiBrz3tDivnW+8XPgGzgdZ
-         yKN4CsYKao2PGcrJ5ARCwlCg9Fi8M8YTsZZg67AnBeLKN8p4sB8XqFGZBb3apdWJ9484
-         x/hGzt1HIhnpqguuiLQwWBD5NNqzVI69jlzbkUpIavEsmRKjFFnSFeIgNLqlGMoVoXph
-         HDlBWNYoNvlbGKjdITurlxz0TITCPv9E4mWMka/omSkW6RJe6PiArou0fc7gXyr58kok
-         uC8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXfXAsf7Ikpujn41lpJpfwJJ2l2UKrWjYrFBnfCcDQMhfYM3K6OLGXTtoPMSf/VJoIuIV7NaIto74WwJwaV@vger.kernel.org
-X-Gm-Message-State: AOJu0YydmTmf3AwJ3VYpdgsRCOZEyBD7YCcsiGvZt2VEjjmLt/MRRAe7
-	g2wEg2W3wowvx81xYhnRwfWK43XWoiMj0PjnP/LlyTOq9rj5I9NGl5k95MkJdXc=
-X-Google-Smtp-Source: AGHT+IHYahWBhLKdIA3N0amtbH1s6x+k0pr67+7UULCSsV1aDn5Mhj0jXCCYMUxbv917tINr1+whYA==
-X-Received: by 2002:a05:6214:5d08:b0:6cb:f904:4633 with SMTP id 6a1803df08f44-6cde18c94dcmr49254396d6.9.1729280938521;
-        Fri, 18 Oct 2024 12:48:58 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde136afffsm9978846d6.123.2024.10.18.12.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 12:48:57 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:48:56 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	bernd.schubert@fastmail.fm, willy@infradead.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 01/13] fuse: support folios in struct fuse_args_pages and
- fuse_copy_pages()
-Message-ID: <20241018194856.GA2473677@perftesting>
-References: <20241002165253.3872513-1-joannelkoong@gmail.com>
- <20241002165253.3872513-2-joannelkoong@gmail.com>
+	s=arc-20240116; t=1729281251; c=relaxed/simple;
+	bh=Zc1GMAPbqbBFMAhCjhHu4P/ht4QtHqZLxVD54TPhoQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lLmRLB/oYxylu2w6NTR5bn9jiarkZp4nh8hHIDbuHtf3TMt6Lcj7IWHtcisGGY2B/7CsRZ3vQNI95Nm1GHTbrTMpE8OK5wV+1ON/hPj5CYWeosCW00kPhBMydKZZUiLTM5ZXF0JePHqId3yGrRtxOTvm5Wyg3WUpOUg+nLck/jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PSxZvMdx; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nB5M+mC8Q2nMTyMamAEftSBXwqi0D929KudvpC8sj+E=; b=PSxZvMdx/o8rjtNY1V+tSdDUzK
+	2AC8kbnBcM3kDuaLMRNjlytzE5mcDviZdxENtSh7JcsVJQGqb/LWzVTEsEHVQOdKnxSsGjA2OrS2c
+	9tL6GfRWuKTQHhwyp3e6g5XHoskNGULwfRZIQIsTjIqxGtEYZ4r/57NzNzxldeeexdzfP61L8EQu1
+	YzLCjn23Q1HgMPRG2hWN+ZfDkdggrnT7S5Bb/Ji5+3Czg5CLTZO7EbLKo/7iBc2SyL2GSD5uW0Dyv
+	I3WpYUHZMxiR/z3ErrORcTBhfDTadMwGVeIU7FOP2zuQTl3fBq+Kg0xyKPDoprMF2lsowf70C/fkI
+	mG2FEJMQ==;
+Received: from [179.118.186.49] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t1t2O-00CD6c-PI; Fri, 18 Oct 2024 21:53:29 +0200
+Message-ID: <30d2230f-cbfa-42ba-a24a-8ad7a4ad236e@igalia.com>
+Date: Fri, 18 Oct 2024 16:53:21 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002165253.3872513-2-joannelkoong@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/9] tmpfs: Add case-insensitive support for tmpfs
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com, kernel-dev@igalia.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org
+References: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
+ <87frotyyyw.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <87frotyyyw.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 09:52:41AM -0700, Joanne Koong wrote:
-> This adds support in struct fuse_args_pages and fuse_copy_pages() for
-> using folios instead of pages for transferring data. Both folios and
-> pages must be supported right now in struct fuse_args_pages and
-> fuse_copy_pages() until all request types have been converted to use
-> folios. Once all have been converted, then
-> struct fuse_args_pages and fuse_copy_pages() will only support folios.
+Em 18/10/2024 16:48, Gabriel Krisman Bertazi escreveu:
+> André Almeida <andrealmeid@igalia.com> writes:
 > 
-> Right now in fuse, all folios are one page (large folios are not yet
-> supported). As such, copying folio->page is sufficient for copying
-> the entire folio in fuse_copy_pages().
+>> Hi,
+>>
+>> This patchset adds support for case-insensitive file names lookups in
+>> tmpfs. The main difference from other casefold filesystems is that tmpfs
+>> has no information on disk, just on RAM, so we can't use mkfs to create a
+>> case-insensitive tmpfs.  For this implementation, I opted to have a mount
+>> option for casefolding. The rest of the patchset follows a similar approach
+>> as ext4 and f2fs.
 > 
-> No functional changes.
+> Hi André,
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/fuse/dev.c    | 36 ++++++++++++++++++++++++++++--------
->  fs/fuse/fuse_i.h | 22 +++++++++++++++++++---
->  2 files changed, 47 insertions(+), 11 deletions(-)
+> The series looks good to me now. Thanks for the changes.  Let's see what
+> others think.
 > 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 7e4c5be45aec..cd9c5e0eefca 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1028,17 +1028,37 @@ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
->  	struct fuse_req *req = cs->req;
->  	struct fuse_args_pages *ap = container_of(req->args, typeof(*ap), args);
->  
-> +	if (ap->uses_folios) {
-> +		for (i = 0; i < ap->num_folios && (nbytes || zeroing); i++) {
-> +			int err;
-> +			unsigned int offset = ap->folio_descs[i].offset;
-> +			unsigned int count = min(nbytes, ap->folio_descs[i].length);
-> +			struct page *orig, *pagep;
->  
-> -	for (i = 0; i < ap->num_pages && (nbytes || zeroing); i++) {
-> -		int err;
-> -		unsigned int offset = ap->descs[i].offset;
-> -		unsigned int count = min(nbytes, ap->descs[i].length);
-> +			orig = pagep = &ap->folios[i]->page;
->  
-> -		err = fuse_copy_page(cs, &ap->pages[i], offset, count, zeroing);
-> -		if (err)
-> -			return err;
-> +			err = fuse_copy_page(cs, &pagep, offset, count, zeroing);
-> +			if (err)
-> +				return err;
-> +
-> +			nbytes -= count;
-> +
-> +			/* Check if the folio was replaced in the page cache */
 
-This comment confused me, I think it would be better to say something like
-
-/*
- * fuse_copy_page may have moved a page from a pipe instead of copying into our
- * given page, so update the folios if it was replaced.
- */
-
-Or something like that.  Thanks,
-
-Josef
+Cool, thank you very much for the help with the review :)
 
