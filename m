@@ -1,142 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-32335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8D99A3BF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 12:48:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727F89A3C0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 12:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F2E1F21CC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 10:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD9F28175E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 10:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39412010EC;
-	Fri, 18 Oct 2024 10:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D44A2038C8;
+	Fri, 18 Oct 2024 10:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AQ1EnjKU"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="i/xJbZrg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TS8cyIt8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ED420125A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1142F2036F9;
+	Fri, 18 Oct 2024 10:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248507; cv=none; b=nUb9liGIqN28DqXtEYElRpcMO7lRChTf75I+JDBdVEJQ7Dr6PxhvHKIrJYBoDSP2p6k/0g7aVJ/yUEkCeYiFWT01C18mVQtO06Jp0lnSgWmy9NeWwKdLnDwHHamWhGWiyEwZB3EM5nHTq1G7iRwaOA6Bps6b91DrMbIAHriLARA=
+	t=1729248564; cv=none; b=aK2g3NBoHVES/XwZh4cN05WjGPrLmQJblbVA9nlXtpS+jwZ74uXmVmbIaJ7OnIZGYq17UDY2a2aXpRDGpZL7oVok+HlgLxYgFfr9y7RHaxWFJsBzxq01o6uG87FNyL+R3YjHzMQEvIPFtm2Xfd600E8P88+Tch9jo4Om3Weoc0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248507; c=relaxed/simple;
-	bh=XWFaYzUR7M6h9Z99dH+0cLnfV+20GuKDv8AUwNBtNgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=j/OSFGONwzDhYyygJrJMxWHO5yBfo+/J/RzeyAIBhhtcPZbRp6EuvAoYWYNRj1T/r8DCSA6G5rLRSne8Ey1stmpn59LPxee10Bo24aqFzbJXXumt6aHvlbS/VdyfFCMu9WFCDGBgFqyMYgY+J8ITUMOxEQNCYao9kWntKwqgM2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AQ1EnjKU; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241018104822epoutp03bb8e17669b770809eddf2ddbc800cf8f~-hlncqnzZ1757317573epoutp03q
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 10:48:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241018104822epoutp03bb8e17669b770809eddf2ddbc800cf8f~-hlncqnzZ1757317573epoutp03q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729248502;
-	bh=a6GZtz02sRXMNYbtfu3vRBWPZjl0hOynSDjR+0HGGEs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AQ1EnjKU06KoznaLLsOWeGfkz3zY/6bVElMQ21acRQvqQDm4v6bxlfuB+xN6ScJqo
-	 CSpFbU6v2789yO1J+ONsA5wKAUP6aIyJ3B9Dv3WKcdaNGNf2CZdPfg7KtMWmBaIBdh
-	 UyDjlDmgF24IfC9yDaAvskJiLzj1/XMDgkyArs1k=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20241018104821epcas5p2ca965e217820ebd922ffc32a546d261d~-hlm-9e4A0569605696epcas5p2S;
-	Fri, 18 Oct 2024 10:48:21 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XVLys1yjzz4x9Pp; Fri, 18 Oct
-	2024 10:48:21 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	99.3F.08574.5FC32176; Fri, 18 Oct 2024 19:48:21 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241018104820epcas5p44da029e96f7fc71ac491ad4e3cffd0e1~-hlmCrmUO1092410924epcas5p4x;
-	Fri, 18 Oct 2024 10:48:20 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241018104820epsmtrp1387a5804edd25426b3b35c7f7b19370b~-hlmB9PnI0866408664epsmtrp1K;
-	Fri, 18 Oct 2024 10:48:20 +0000 (GMT)
-X-AuditID: b6c32a44-93ffa7000000217e-b7-67123cf50659
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BE.FC.18937.4FC32176; Fri, 18 Oct 2024 19:48:20 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241018104818epsmtip2c585eb3baf60bf763056efa92948d37a~-hlkMYvxl2276622766epsmtip2b;
-	Fri, 18 Oct 2024 10:48:18 +0000 (GMT)
-Message-ID: <77feb398-d6af-4f07-93bc-b12165604f04@samsung.com>
-Date: Fri, 18 Oct 2024 16:18:17 +0530
+	s=arc-20240116; t=1729248564; c=relaxed/simple;
+	bh=cERpOJNcFUtahnaQux82n4tPWU1j9Z1ogqBHffq0xVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1JOrWhacBn9arpLhI/Cri3cx5GET29dBkyGm+tCybv9qJyDPn9SETlTIvXi2DFxP/ECBNLt3IoetR3poi4n+KA3tSN4vDVhkRTJz36yIkYTIrp3lHrT0Vnz/Yx5j1lb8fWs1in983RWOU/fSVMDYr5A8JWWDFyp+INR9Escfws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=i/xJbZrg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TS8cyIt8; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1D8BB1380499;
+	Fri, 18 Oct 2024 06:49:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Fri, 18 Oct 2024 06:49:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729248561; x=
+	1729334961; bh=mvvVjoh3e6ihasKm0bBvrghicZuE833642Mybcjr34U=; b=i
+	/xJbZrgcdFQZSmjOWvK/cUQ+9Bhug/+Jr0N7UXHpOQSUZg191jpCnxxa+VgDRtOi
+	ippa4VUGV4jIYKRcMrhUnauix2a6TX4jBdEXgfFK7pNRjuKgIt5U9POgYGiAbwU1
+	b6z4V982jZZZIKzbmbOPz5SskZTZQfWl/3SCEIm7xiwiv8HhbThejeQiNOHXaRlc
+	S+xZtwFCPisqUf7YNqwO3ODL0WmnHeE24KsjPpqITI4kMEaUi5GAUd/SZkYJXwdu
+	/LgULR8RP5ECvGyubNfP7HitfaniaCgDg5wEkON8XweHw0nnJHKT7AyKYHVYCNZF
+	z94Bsed1AgXl7JomIflLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729248561; x=1729334961; bh=mvvVjoh3e6ihasKm0bBvrghicZuE
+	833642Mybcjr34U=; b=TS8cyIt8RghdTeQHg9i1O2IWahrzy7CN5Xyj6eVTFOn8
+	ZXWcdjQR3+YQQvwLxnakVlTXbxY951v8YAfGHnGFggZECp3m5oOS101Si1RUwsrU
+	J88O8MDBPz9Da7HIlzLb2OGNlhDc+kNHqtW/bbJ+GRA5ush94ZBu3ZKyTFetRPPW
+	/rEDWjFpFG13xaNf1NfFK64WauuqHo0o2XBJnNA6HQAS+PvaTlq100by+SnQciaA
+	ajrztvBkApxEVKqbGDVlEws4sWTzLxF/lqHr/a10xjU516RP2WLpO1c4zII1hzKx
+	gedYKa8x0jKYCDLHATkSIk++kQT7uMRR84Hy/v8UiA==
+X-ME-Sender: <xms:LT0SZx5AYByC2-Kwzd1igZjoPH6zU8bTJdNEGXzdHEq0XdevF0fqMg>
+    <xme:LT0SZ-5cNPb6udtg5tyByiLsZ0sN_IfGJYy1IKTczOJIaqODYWBCr9cDHkqXbk9mn
+    em50ui1BWPaMUsj4sk>
+X-ME-Received: <xmr:LT0SZ4e9keYCZoxZXmC4G4WuzHt3xwct9GXr7E4X_j4E0v3QALduIyc0zkCqN6s6d7Oqaw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehrohgsvghrthhordhsrghsshhusehhuhgrfigvihgtlhhouhgurdgtohhmpdhr
+    tghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegvsg
+    hpqhifvghrthihgeejvdduvdefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhirhhi
+    lhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhope
+    iiohhhrghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepughmihhtrhihrdhk
+    rghsrghtkhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegvrhhitgdrshhnohifsg
+    gvrhhgsehorhgrtghlvgdrtghomhdprhgtphhtthhopehjmhhorhhrihhssehnrghmvghi
+    rdhorhhgpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtohhm
+X-ME-Proxy: <xmx:LT0SZ6JorCvf9kFFrHrvBx1UJOtOMruMaNBR2Pbu7IE-_H4OVpqkEA>
+    <xmx:LT0SZ1LdBazL3EHmJx-AXaqv9AO2jRnX7pNQPWvt_eXemrfYHVb0gQ>
+    <xmx:LT0SZzyE1ScJT0Pj8Il-L0aagNuQOpr1bOPeGLTMkW_qkcpjTOc3Pw>
+    <xmx:LT0SZxLHpCxlCPbMN5FxvGWgWf8rsmuxJFg7K1f9L1TFJpj-WzTlWQ>
+    <xmx:MT0SZ98yDcnInQ9q8Z58C75Rk4vCMWaEfSHTbB1xfkXGauBTCt9qo-kO>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 06:49:11 -0400 (EDT)
+Date: Fri, 18 Oct 2024 13:49:06 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, 
+	kirill.shutemov@linux.intel.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, vbabka@suse.cz, 
+	lorenzo.stoakes@oracle.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+Message-ID: <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+ <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
+ <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
+ <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
+ <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
+ <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
+ <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv8 6/6] nvme: enable FDP support
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, axboe@kernel.dk, hch@lst.de,
-	io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, javier.gonz@samsung.com, Hui Qi
-	<hui81.qi@samsung.com>, Nitesh Shetty <nj.shetty@samsung.com>, Hannes
-	Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241017160937.2283225-7-kbusch@meta.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmhu5XG6F0g+43vBar7/azWexZNInJ
-	YuXqo0wWO5etZbd413qOxeLxnc/sFpMOXWO0OHN1IYvF3lvaFnv2nmSxmL/sKbvFtt/zmR14
-	PC6fLfXYtKqTzWPzknqP3Tcb2DzOXazw6NuyitFj8+lqj8+b5AI4orJtMlITU1KLFFLzkvNT
-	MvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4AuVVIoS8wpBQoFJBYXK+nb2RTl
-	l5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkCFSZkZxyeMIupYCZjxdwPL1gb
-	GCu7GDk5JARMJBb2zWbpYuTiEBLYzSix+OURJgjnE6PE6f/XWeGcbS/3scC0nNjwAiqxk1Hi
-	5a6vzBDOW0aJG68+sHUxcnDwCthJXNkqBmKyCKhKTG5gB+nlFRCUODnzCdgcUQF5ifu3ZrCD
-	lAgLGEtM6XEAmSIiMJNR4sS0CYwgDrPAUUaJC9v+M4E0MAuIS9x6Mp8JpIFNQFPiwuRSkDCn
-	gLnE6pWr2CBK5CW2v50Ddo6EwA4OibN377JCHO0i0bdvGyOELSzx6vgWdghbSuJlfxuUnS3x
-	4NEDqCdrJHZs7oPqtZdo+HODFWQvM9De9bv0IXbxSfT+fgJ2joQAr0RHmxBEtaLEvUlPoTrF
-	JR7OWAJle0gcnX0cGmzbGSU+NW9nnsCoMAspWGYh+XIWkndmIWxewMiyilEytaA4Nz012bTA
-	MC+1HB7dyfm5mxjByVjLZQfjjfn/9A4xMnEwHmKU4GBWEuFNqhdMF+JNSaysSi3Kjy8qzUkt
-	PsRoCoyeicxSosn5wHyQVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampBahFMHxMH
-	p1QDk5DEgzZhTs9AQ/eyPf/4n3Wu0FjeuD2ayVb+VynDZKlZvfqXJXkfxvGuCVm99Z2ugK5r
-	1PKFr0PE5vM97Vl8+3DjrxUTD9xS2LjjY3mn4/UDu31uVrNszpE+NkPmnu+xcBHLEJnZldXL
-	y36c/HG3Msx47/vdNrF17bceCaatsZu0nEXdVEdno574l6o4za2pja/Wrrt191dL7ZuTWffl
-	L7/O25LfeuyOf2jtq74PZU+fNp5YYbA1r2ExL0vupAOh814FnA52Lzd35CpqlGow+8Tv1dJy
-	RIH98sm0g88CCnRUJvAdszrbIG5f8unE133M0sUbsq+rMDMti/zP97TAt3zx6jcVjPPZLi53
-	6l7/TYmlOCPRUIu5qDgRAGLEF0FPBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO4XG6F0g8nLjC1W3+1ns9izaBKT
-	xcrVR5ksdi5by27xrvUci8XjO5/ZLSYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLbb/nMzvw
-	eFw+W+qxaVUnm8fmJfUeu282sHmcu1jh0bdlFaPH5tPVHp83yQVwRHHZpKTmZJalFunbJXBl
-	HJ4wi6lgJmPF3A8vWBsYK7sYOTkkBEwkTmx4wdrFyMUhJLCdUWLZucfsEAlxieZrP6BsYYmV
-	/56zQxS9ZpRYvOUPcxcjBwevgJ3Ela1iICaLgKrE5Aawcl4BQYmTM5+wgNiiAvIS92/NYAcp
-	ERYwlpjS4wASFhGYySjx7aYfyERmgaOMEisOnGeDu2HVon9sIFXMQDfcejKfCaSZTUBT4sLk
-	UpAwp4C5xOqVq6BKzCS6tnYxQtjyEtvfzmGewCg0C8kZs5BMmoWkZRaSlgWMLKsYRVMLinPT
-	c5MLDPWKE3OLS/PS9ZLzczcxguNNK2gH47L1f/UOMTJxMB5ilOBgVhLhTaoXTBfiTUmsrEot
-	yo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgSTZeLglGpgYs30WvDnpek0y9jVxgW2
-	++vPFF/6e3+29rumrU1HlD0zV7w8ahA9TfG8180EtkB+fvl8z9USyxbrm8wTPJee5PWy8epi
-	5lMNHcuuTV/ixXVSTn7Xo3Re33vX8rs32T//kmRYx7F2+tGzyxhjuCevtj+ut+ZW4rwNdtuM
-	ne4HdlZ/X8mwoUuavzSk4l3Lebc3jf5ul6YdWqdgmW2c+KiAWURres+bbXKFly/vlnJkqzz0
-	z4Sv0aDrndxcjrfXL9U2fLh8/qtZ1lxTr8we97Ibeulr2urTmDc8iHA9v7Cp66a33JJp4bNL
-	2D9aJV6WWnM6ZL5tV+CCl626c1aEZ95h6vigUHGwas60Bat4ikvfKrEUZyQaajEXFScCAGWq
-	BS4mAwAA
-X-CMS-MailID: 20241018104820epcas5p44da029e96f7fc71ac491ad4e3cffd0e1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241017161628epcas5p1006f392dc6c208634997f3a950ec8c67
-References: <20241017160937.2283225-1-kbusch@meta.com>
-	<CGME20241017161628epcas5p1006f392dc6c208634997f3a950ec8c67@epcas5p1.samsung.com>
-	<20241017160937.2283225-7-kbusch@meta.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
 
-On 10/17/2024 9:39 PM, Keith Busch wrote:
->   
-> +#define NVME_MAX_PLIDS   (NVME_CTRL_PAGE_SIZE / sizeof(16))
-> +
+On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
+> Probably it is hard, @Kirill would there be any way to safely move
+> security_mmap_file() out of the mmap_lock lock?
 
-Seems you intended sizeof(u16).
+What about something like this (untested):
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dd4b35a25aeb..03473e77d356 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+ 		return ret;
+ 
++	if (mmap_read_lock_killable(mm))
++		return -EINTR;
++
++	vma = vma_lookup(mm, start);
++
++	if (!vma || !(vma->vm_flags & VM_SHARED)) {
++		mmap_read_unlock(mm);
++		return -EINVAL;
++	}
++
++	file = get_file(vma->vm_file);
++
++	mmap_read_unlock(mm);
++
++	ret = security_mmap_file(vma->vm_file, prot, flags);
++	if (ret) {
++		fput(file);
++		return ret;
++	}
++
+ 	if (mmap_write_lock_killable(mm))
+ 		return -EINTR;
+ 
+@@ -1654,6 +1674,9 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (!vma || !(vma->vm_flags & VM_SHARED))
+ 		goto out;
+ 
++	if (vma->vm_file != file)
++		goto out;
++
+ 	if (start + size > vma->vm_end) {
+ 		VMA_ITERATOR(vmi, mm, vma->vm_end);
+ 		struct vm_area_struct *next, *prev = vma;
+@@ -1688,16 +1711,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		flags |= MAP_LOCKED;
+ 
+-	file = get_file(vma->vm_file);
+-	ret = security_mmap_file(vma->vm_file, prot, flags);
+-	if (ret)
+-		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+-out_fput:
+-	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
++	fput(file);
+ 	if (populate)
+ 		mm_populate(ret, populate);
+ 	if (!IS_ERR_VALUE(ret))
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
