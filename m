@@ -1,62 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-32325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64499A3850
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 10:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4239A39CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 11:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70246288DB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 08:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAC52833C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 09:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EC418D650;
-	Fri, 18 Oct 2024 08:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A561E284C;
+	Fri, 18 Oct 2024 09:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0hC39kpO"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDpCZGze";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LcQfiwi8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDpCZGze";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LcQfiwi8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ED5188719;
-	Fri, 18 Oct 2024 08:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7580160884;
+	Fri, 18 Oct 2024 09:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729239340; cv=none; b=cO1GhJVGF28jJH8fI4JiB+yMNKQgTrNLcoZOTIG+FzcJf/Nn+q5SAhz25Ln0otRRicAh08Q+3UekZz6uWh1bkPhXLyuyYbnfqjdFc2fYbFXVInvbRjUOFpCWUh6T0I60im2wjD2RXesEL2dJzHPsFI3pVINshwc6T0Jj0YYRPcc=
+	t=1729243088; cv=none; b=j8wFL74YGaZ7s1s4MXWv8XBRlpN9mhs7YBUrrZ/DdVmR+TSX91KED03MD8VINUNgdy7F2Ff8SI71ZLVXN0IBgd+U4N1RGV2y8KNwUSosfK5XqDAqxY6Q+pTltrTGy/e1kHsIfr8urN9t6UZzyhrtyQdZ7ciydvDXnUaAAZMvZbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729239340; c=relaxed/simple;
-	bh=tF4XC4Vtg31heQ7HwhhO4oeaDoSrowJ/+m6SZnxNljw=;
+	s=arc-20240116; t=1729243088; c=relaxed/simple;
+	bh=fofWsCC2k4mhX0b3LHITZBoTYt72qNySMZi8+xemwm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGfu0OrND2XoW/xlj/B9s49P03pSL0ZbkWDqRcsM32wA+z2vatRJWmePIpg6aY3w4kcCc3g/qkCu+MePxvsiitHTps6Djk3VGIqfpndmlYfJTi2iBWVNL2myXCp0heHYRGyOCKqsdbn+0jEcPkbN401n+AUxNQtl8aiB66RiEJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0hC39kpO; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiI0jx9PsVkFLOtRuj/ub7v9lcPC/bsy8WusCT3vH9F87hZWSIALGBem1wmpEwVVaEqtUJXFBgEV2/smSXfv022vc9rwdtH3wqX6kioPsaBz8dsRPeGCs/da3V4S5BBDWX7pC8/LYdUUO8wnYg5dezl8k0o3dVP676wSnXLLtBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDpCZGze; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LcQfiwi8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDpCZGze; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LcQfiwi8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XVHPV1Ld1z9tC4;
-	Fri, 18 Oct 2024 10:07:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1729238862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 049801FDA4;
+	Fri, 18 Oct 2024 09:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729243085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=swUvX0MKrlHyxLPYu4fA9G6XlsWEUzrS6p8kehZqQlM=;
-	b=0hC39kpOU0eHqXQDsGTqJs2Qc4425s5a/pLcxS6B/usxkVbkBKImtHYVvj4QNUSfBzxU49
-	F/Zwt36nVeYZjgusOiSyxYsg0d3d7CR02T9VH24Yc1PzKwmI3HENyGDZ3ZBOwLida7NZ3r
-	5goBtva9C4t0bVBWkyHmPNnPfsHzNhPmmuNrWQ2OX+fQ8vHADFTgPkCcH2YNeGWGTcxHNS
-	qUvs/Q//bN3P0J/VK7Ald7z6xay9/3LyHpblIrPp6YIe556gKn8/WlGVJI9oVKs1DQfdrD
-	FvLMiZmzd1EI5mAJxCSYbVlpJvGMAfniGB/lkbIXIB7kL8JmRCPfH6DMlxguOw==
-Date: Fri, 18 Oct 2024 13:37:30 +0530
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 05/10] ecryptfs: Convert ecryptfs_write() to use a folio
-Message-ID: <5gihme3d5baq4xqjwpiuazihxheraxnlufefqoesxvtofl6ho2@2p7pikrgauvo>
-References: <20241017151709.2713048-1-willy@infradead.org>
- <20241017151709.2713048-6-willy@infradead.org>
+	bh=ko1zCd019ED4ckFw3gNDsW/qMSk/25HrjYvYLrJffa0=;
+	b=LDpCZGzevTXxabnJiO/DbsFNCsshBcRGJ2taTvqcu30Slwt7nRMNTFlfctvEfokhHJV4a8
+	PL25ZbVQoaQkyAupjDp/krvpzbV3yDG1u44FVpcaV9CI80/cNqHQE25FC08KhgPdeHw6G3
+	7ONN+fHN2Us6RpVcXSXhvtnEuQapn0c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729243085;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ko1zCd019ED4ckFw3gNDsW/qMSk/25HrjYvYLrJffa0=;
+	b=LcQfiwi8FyRGlQeipyMMyluqsyvmqCMFj9+mYZHatqsraYQK1s+9IIt2DbqaW378ydjMMB
+	77y4GtQG8G0Kg6Aw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LDpCZGze;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LcQfiwi8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729243085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ko1zCd019ED4ckFw3gNDsW/qMSk/25HrjYvYLrJffa0=;
+	b=LDpCZGzevTXxabnJiO/DbsFNCsshBcRGJ2taTvqcu30Slwt7nRMNTFlfctvEfokhHJV4a8
+	PL25ZbVQoaQkyAupjDp/krvpzbV3yDG1u44FVpcaV9CI80/cNqHQE25FC08KhgPdeHw6G3
+	7ONN+fHN2Us6RpVcXSXhvtnEuQapn0c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729243085;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ko1zCd019ED4ckFw3gNDsW/qMSk/25HrjYvYLrJffa0=;
+	b=LcQfiwi8FyRGlQeipyMMyluqsyvmqCMFj9+mYZHatqsraYQK1s+9IIt2DbqaW378ydjMMB
+	77y4GtQG8G0Kg6Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEDFA13680;
+	Fri, 18 Oct 2024 09:18:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id O7NJOswnEmfLVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 18 Oct 2024 09:18:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B43FBA080A; Fri, 18 Oct 2024 11:18:00 +0200 (CEST)
+Date: Fri, 18 Oct 2024 11:18:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@ZenIV.linux.org.uk>, reiserfs-devel@vger.kernel.org
+Subject: Re: Dropping of reiserfs
+Message-ID: <20241018091800.5nwytgasfpfnucej@quack3>
+References: <20241017105927.qdyztpmo5zfoy7fd@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,130 +103,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017151709.2713048-6-willy@infradead.org>
+In-Reply-To: <20241017105927.qdyztpmo5zfoy7fd@quack3>
+X-Rspamd-Queue-Id: 049801FDA4
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Oct 17, 2024 at 04:17:00PM +0100, Matthew Wilcox (Oracle) wrote:
-> Remove ecryptfs_get_locked_page() and call read_mapping_folio()
-> directly.  Use the folio throught this function.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Forgot to CC reiserfs-devel so adding it now to keep people in the loop.
+Thanks for noticing Al!
 
-Looks good.
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  fs/ecryptfs/ecryptfs_kernel.h |  1 -
->  fs/ecryptfs/mmap.c            | 16 ----------------
->  fs/ecryptfs/read_write.c      | 25 +++++++++++++------------
->  3 files changed, 13 insertions(+), 29 deletions(-)
+								Honza
+
+On Thu 17-10-24 12:59:27, Jan Kara wrote:
+> Hello,
 > 
-> diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
-> index 43f1b5ff987d..f04aa24f6bcd 100644
-> --- a/fs/ecryptfs/ecryptfs_kernel.h
-> +++ b/fs/ecryptfs/ecryptfs_kernel.h
-> @@ -662,7 +662,6 @@ int ecryptfs_read_lower_page_segment(struct folio *folio_for_ecryptfs,
->  				     pgoff_t page_index,
->  				     size_t offset_in_page, size_t size,
->  				     struct inode *ecryptfs_inode);
-> -struct page *ecryptfs_get_locked_page(struct inode *inode, loff_t index);
->  int ecryptfs_parse_packet_length(unsigned char *data, size_t *size,
->  				 size_t *length_size);
->  int ecryptfs_write_packet_length(char *dest, size_t size,
-> diff --git a/fs/ecryptfs/mmap.c b/fs/ecryptfs/mmap.c
-> index b7ef0bf563bd..ad535bf9d2f9 100644
-> --- a/fs/ecryptfs/mmap.c
-> +++ b/fs/ecryptfs/mmap.c
-> @@ -22,22 +22,6 @@
->  #include <linux/unaligned.h>
->  #include "ecryptfs_kernel.h"
->  
-> -/*
-> - * ecryptfs_get_locked_page
-> - *
-> - * Get one page from cache or lower f/s, return error otherwise.
-> - *
-> - * Returns locked and up-to-date page (if ok), with increased
-> - * refcnt.
-> - */
-> -struct page *ecryptfs_get_locked_page(struct inode *inode, loff_t index)
-> -{
-> -	struct page *page = read_mapping_page(inode->i_mapping, index, NULL);
-> -	if (!IS_ERR(page))
-> -		lock_page(page);
-> -	return page;
-> -}
-> -
->  /*
->   * This is where we encrypt the data and pass the encrypted data to
->   * the lower filesystem.  In OpenPGP-compatible mode, we operate on
-> diff --git a/fs/ecryptfs/read_write.c b/fs/ecryptfs/read_write.c
-> index 251e9f6c6972..cddfdfced879 100644
-> --- a/fs/ecryptfs/read_write.c
-> +++ b/fs/ecryptfs/read_write.c
-> @@ -93,7 +93,6 @@ int ecryptfs_write_lower_page_segment(struct inode *ecryptfs_inode,
->  int ecryptfs_write(struct inode *ecryptfs_inode, char *data, loff_t offset,
->  		   size_t size)
->  {
-> -	struct page *ecryptfs_page;
->  	struct ecryptfs_crypt_stat *crypt_stat;
->  	char *ecryptfs_page_virt;
->  	loff_t ecryptfs_file_size = i_size_read(ecryptfs_inode);
-> @@ -111,6 +110,7 @@ int ecryptfs_write(struct inode *ecryptfs_inode, char *data, loff_t offset,
->  	else
->  		pos = offset;
->  	while (pos < (offset + size)) {
-> +		struct folio *ecryptfs_folio;
->  		pgoff_t ecryptfs_page_idx = (pos >> PAGE_SHIFT);
->  		size_t start_offset_in_page = (pos & ~PAGE_MASK);
->  		size_t num_bytes = (PAGE_SIZE - start_offset_in_page);
-> @@ -130,17 +130,18 @@ int ecryptfs_write(struct inode *ecryptfs_inode, char *data, loff_t offset,
->  			if (num_bytes > total_remaining_zeros)
->  				num_bytes = total_remaining_zeros;
->  		}
-> -		ecryptfs_page = ecryptfs_get_locked_page(ecryptfs_inode,
-> -							 ecryptfs_page_idx);
-> -		if (IS_ERR(ecryptfs_page)) {
-> -			rc = PTR_ERR(ecryptfs_page);
-> +		ecryptfs_folio = read_mapping_folio(ecryptfs_inode->i_mapping,
-> +				ecryptfs_page_idx, NULL);
-> +		if (IS_ERR(ecryptfs_folio)) {
-> +			rc = PTR_ERR(ecryptfs_folio);
->  			printk(KERN_ERR "%s: Error getting page at "
->  			       "index [%ld] from eCryptfs inode "
->  			       "mapping; rc = [%d]\n", __func__,
->  			       ecryptfs_page_idx, rc);
->  			goto out;
->  		}
-> -		ecryptfs_page_virt = kmap_local_page(ecryptfs_page);
-> +		folio_lock(ecryptfs_folio);
-> +		ecryptfs_page_virt = kmap_local_folio(ecryptfs_folio, 0);
->  
->  		/*
->  		 * pos: where we're now writing, offset: where the request was
-> @@ -164,17 +165,17 @@ int ecryptfs_write(struct inode *ecryptfs_inode, char *data, loff_t offset,
->  			data_offset += num_bytes;
->  		}
->  		kunmap_local(ecryptfs_page_virt);
-> -		flush_dcache_page(ecryptfs_page);
-> -		SetPageUptodate(ecryptfs_page);
-> -		unlock_page(ecryptfs_page);
-> +		flush_dcache_folio(ecryptfs_folio);
-> +		folio_mark_uptodate(ecryptfs_folio);
-> +		folio_unlock(ecryptfs_folio);
->  		if (crypt_stat->flags & ECRYPTFS_ENCRYPTED)
-> -			rc = ecryptfs_encrypt_page(ecryptfs_page);
-> +			rc = ecryptfs_encrypt_page(&ecryptfs_folio->page);
->  		else
->  			rc = ecryptfs_write_lower_page_segment(ecryptfs_inode,
-> -						ecryptfs_page,
-> +						&ecryptfs_folio->page,
->  						start_offset_in_page,
->  						data_offset);
-> -		put_page(ecryptfs_page);
-> +		folio_put(ecryptfs_folio);
->  		if (rc) {
->  			printk(KERN_ERR "%s: Error encrypting "
->  			       "page; rc = [%d]\n", __func__, rc);
+> Since reiserfs deprecation period is ending, it is time to prepare a patch
+> to remove it from the kernel. I guess there's no point in spamming this
+> list with huge removal patch but it's now sitting in my tree [1] if anybody
+> wants to have a look. Unless I hear some well founded complaints I'll send
+> it to Linus during the next merge window in mid-November.
+> 
+> 								Honza
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git/log/?h=reiserfs_drop
+> 
 > -- 
-> 2.43.0
-> 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
