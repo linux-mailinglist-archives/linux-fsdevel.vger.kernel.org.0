@@ -1,298 +1,364 @@
-Return-Path: <linux-fsdevel+bounces-32358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915D19A42E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 17:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DD89A4305
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 17:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC932820A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 15:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA19287605
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 15:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAACA20264A;
-	Fri, 18 Oct 2024 15:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C922F202640;
+	Fri, 18 Oct 2024 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q/46ysZs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OfGQEtiG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uv/AQojz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F7q2W6Kl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78943168488;
-	Fri, 18 Oct 2024 15:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E03F165EFC;
+	Fri, 18 Oct 2024 15:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266649; cv=none; b=SRNj4sVjm2TWyOZdhQPOAvYCn/PSTusR8bhKf00EH6XJH/HLbipK65br1DfWg9xf9ZyT4s/EUb2t/bapM7iShg4Cb4vi14xAELBpmabtP2F9IIhEGUcyPPdux70P17V8OrXkie2yCAtyvFo3qiHKtpAb+82U0DdIFssQdKm9TJI=
+	t=1729266962; cv=none; b=eksz4SsER2hxhPZ1K2Ll/JZRwgyQXgTJ1yPUwR64NYMGBjrd4Zw/Sv2/NUjJvlsIQ20P1wrHNlfatGQAKwqlFTkafSDvlqJ0qA47LFmwtnTp5wwKPExBoxqd3D6hLzNGGVwdyLm3P7zxZ6jWnkhFiyIID7F3anlTIciFxKC8WSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266649; c=relaxed/simple;
-	bh=q6a3s5rOmOXUmMUoQAySD+G51ycl3tgw3tbHO9jKGI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PYz69pbYQWRMdigGJUHwuvPi5SUse96P1jBvQ1k8KoUp1Vsr2WJnTya4l8iUR/a9EKGRkFoSTR1lVKtkJkvZAFV8t/PQ1trkydazXw/bgKV0/Z5+rO09hxzg7ini7MNUirpsrV46aHRGQU6kRTYhNgTM0tzUi9H1HJGpFStF484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XVTDN66Lqz9v7JC;
-	Fri, 18 Oct 2024 23:30:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 168A2140B08;
-	Fri, 18 Oct 2024 23:50:35 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCnCMm9gxJn0hohAw--.60739S2;
-	Fri, 18 Oct 2024 16:50:34 +0100 (CET)
-Message-ID: <e7c6f3538ad24620014d914785afc2a49294dabf.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Kirill A. Shutemov"
-	 <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
-	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Fri, 18 Oct 2024 17:50:19 +0200
-In-Reply-To: <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
-References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-	 <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
-	 <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729266962; c=relaxed/simple;
+	bh=mzdF4Z+AYm4onIUjlaq/BOs4aeUbImE1nxsfhZ4LMF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IvebDlt1FVtpy912VICP0PYqveA8qQYooPNbgoRfaBMEZR3X5XsorvxzCDp2tLOr4Za5F3Dtgio7xihy4/w+7j9T8MlUWGRU7Sk9lfIqewq1JOOqqVS18AHltW7xE74C/1il45cuS9oYlE3/PXtRL+B47vQjgj06ANeUHRxt4ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q/46ysZs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OfGQEtiG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uv/AQojz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F7q2W6Kl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6032721CC0;
+	Fri, 18 Oct 2024 15:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729266957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=OCBmksGnjAHAm7dBBbultPZCd4jnr3Q8BRqGtT7HV9Y=;
+	b=Q/46ysZsSCuItvouRHtQT3Tkrjes9AC+RAcrBED/Mfp5sE7jTXxYhibY/J+6XPH9F9R8J9
+	W5mzeHAWI2wDJaS6T+x+6dwVi8N9uTPDluc7IVELMqDM+/4kK9lfRjkDFKw7ESVSlYivi0
+	6k555zYkyTztUhSjslJX8uZ/PVmzMRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729266957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=OCBmksGnjAHAm7dBBbultPZCd4jnr3Q8BRqGtT7HV9Y=;
+	b=OfGQEtiG/ycz0FGXECa0+mASyRCC1b10mbXrVKMRmOmLNOu18Anvb4rUj75padTHMOrfrs
+	nA6DoVsim3isRyCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="uv/AQojz";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F7q2W6Kl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729266956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=OCBmksGnjAHAm7dBBbultPZCd4jnr3Q8BRqGtT7HV9Y=;
+	b=uv/AQojzO+QXyfHq1hpKtHxwWQtiuBrZwA5M0NqD9drbtxDTbom2nuvdCFjiFdwNPPGYR9
+	bOUqBUsL9Y54n2bIAOi8aQdpgz4ulheBfQlesYSkMx4f5LGwV0nC4id5gDZdrxdxECkfTM
+	c1M4IuxtcWGUOpLjqR0/nA2GrKFDm2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729266956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=OCBmksGnjAHAm7dBBbultPZCd4jnr3Q8BRqGtT7HV9Y=;
+	b=F7q2W6KlpiRYkF4qjPtL35fEymdvya5MSaV54sHyLflqNl8XVabQBDRHVU83Fkeg6pQwQ9
+	nVoqxtXAXCgNocBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1ADC713680;
+	Fri, 18 Oct 2024 15:55:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 92/LAAyFEmdMUAAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Fri, 18 Oct 2024 15:55:56 +0000
+Date: Fri, 18 Oct 2024 11:55:50 -0400
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-block@vger.kernel.org
+Subject: [PATCH] iomap: writeback_control pointer part of iomap_writepage_ctx
+Message-ID: <326b2b66114c97b892dbcf83f3d41b86c64e93d6.1729266269.git.rgoldwyn@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCnCMm9gxJn0hohAw--.60739S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw1rXFyxCw43tr48ZFyDAwb_yoWxGF48pF
-	95J3WqkF4UXFyxCrnFq3WqgFyFyry8KryUu3y3JFy8Ar9FvF1fKrWfGFy5uF4DArs7AFZ5
-	ZF4jyrZxGFZ8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	j7l19UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGcRw-kLwQABsC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Rspamd-Queue-Id: 6032721CC0
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Fri, 2024-10-18 at 17:45 +0200, Roberto Sassu wrote:
-> On Fri, 2024-10-18 at 16:42 +0100, Lorenzo Stoakes wrote:
-> > On Fri, Oct 18, 2024 at 04:47:10PM +0200, Roberto Sassu wrote:
-> > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > >=20
-> > > Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-> > > remap_file_pages()") fixed a security issue, it added an LSM check wh=
-en
-> > > trying to remap file pages, so that LSMs have the opportunity to eval=
-uate
-> > > such action like for other memory operations such as mmap() and mprot=
-ect().
-> > >=20
-> > > However, that commit called security_mmap_file() inside the mmap_lock=
- lock,
-> > > while the other calls do it before taking the lock, after commit
-> > > 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
-> > >=20
-> > > This caused lock inversion issue with IMA which was taking the mmap_l=
-ock
-> > > and i_mutex lock in the opposite way when the remap_file_pages() syst=
-em
-> > > call was called.
-> > >=20
-> > > Solve the issue by splitting the critical region in remap_file_pages(=
-) in
-> > > two regions: the first takes a read lock of mmap_lock and retrieves t=
-he VMA
-> > > and the file associated, and calculate the 'prot' and 'flags' variabl=
-e; the
-> > > second takes a write lock on mmap_lock, checks that the VMA flags and=
- the
-> > > VMA file descriptor are the same as the ones obtained in the first cr=
-itical
-> > > region (otherwise the system call fails), and calls do_mmap().
-> > >=20
-> > > In between, after releasing the read lock and taking the write lock, =
-call
-> > > security_mmap_file(), and solve the lock inversion issue.
-> >=20
-> > Great description!
-> >=20
-> > >=20
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in r=
-emap_file_pages()")
-> > > Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-> > > Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a02=
-20.46d20.0036.GAE@google.com/
-> > > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot=
- and flags earlier)
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> >=20
-> > Other than some nits below:
-> >=20
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >=20
-> > I think you're definitely good to un-RFC here.
->=20
-> Perfect, will do. Thank you!
+Reduces the number of arguments to functions iomap_writepages() and
+all functions in the writeback path which require both wpc and wbc.
+The filesystems need to initialize wpc with wbc before calling
+iomap_writepages().
 
-I'm just going to change a bit the commit title:
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+---
+ block/fops.c           |  6 ++++--
+ fs/gfs2/aops.c         |  6 ++++--
+ fs/iomap/buffered-io.c | 31 +++++++++++++++----------------
+ fs/xfs/xfs_aops.c      |  8 ++++++--
+ fs/zonefs/file.c       |  6 ++++--
+ include/linux/iomap.h  |  3 ++-
+ 6 files changed, 35 insertions(+), 25 deletions(-)
 
-mm: Split critical region in remap_file_pages() and invoke LSMs in
-between
+diff --git a/block/fops.c b/block/fops.c
+index e696ae53bf1e..3425bb72e887 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -513,9 +513,11 @@ static const struct iomap_writeback_ops blkdev_writeback_ops = {
+ static int blkdev_writepages(struct address_space *mapping,
+ 		struct writeback_control *wbc)
+ {
+-	struct iomap_writepage_ctx wpc = { };
++	struct iomap_writepage_ctx wpc = {
++		.wbc	=	wbc,
++	};
+ 
+-	return iomap_writepages(mapping, wbc, &wpc, &blkdev_writeback_ops);
++	return iomap_writepages(mapping, &wpc, &blkdev_writeback_ops);
+ }
+ 
+ const struct address_space_operations def_blk_aops = {
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 68fc8af14700..e741bd34453d 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -149,7 +149,9 @@ static int gfs2_writepages(struct address_space *mapping,
+ 			   struct writeback_control *wbc)
+ {
+ 	struct gfs2_sbd *sdp = gfs2_mapping2sbd(mapping);
+-	struct iomap_writepage_ctx wpc = { };
++	struct iomap_writepage_ctx wpc = {
++			.wbc	= wbc,
++	};
+ 	int ret;
+ 
+ 	/*
+@@ -158,7 +160,7 @@ static int gfs2_writepages(struct address_space *mapping,
+ 	 * want balance_dirty_pages() to loop indefinitely trying to write out
+ 	 * pages held in the ail that it can't find.
+ 	 */
+-	ret = iomap_writepages(mapping, wbc, &wpc, &gfs2_writeback_ops);
++	ret = iomap_writepages(mapping, &wpc, &gfs2_writeback_ops);
+ 	if (ret == 0 && wbc->nr_to_write > 0)
+ 		set_bit(SDF_FORCE_AIL_FLUSH, &sdp->sd_flags);
+ 	return ret;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 78ebd265f425..9c199a34b017 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1757,17 +1757,17 @@ static int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
+ }
+ 
+ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+-		struct writeback_control *wbc, struct inode *inode, loff_t pos)
++		struct inode *inode, loff_t pos)
+ {
+ 	struct iomap_ioend *ioend;
+ 	struct bio *bio;
+ 
+ 	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
+-			       REQ_OP_WRITE | wbc_to_write_flags(wbc),
++			       REQ_OP_WRITE | wbc_to_write_flags(wpc->wbc),
+ 			       GFP_NOFS, &iomap_ioend_bioset);
+ 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+ 	bio->bi_end_io = iomap_writepage_end_bio;
+-	wbc_init_bio(wbc, bio);
++	wbc_init_bio(wpc->wbc, bio);
+ 	bio->bi_write_hint = inode->i_write_hint;
+ 
+ 	ioend = iomap_ioend_from_bio(bio);
+@@ -1817,8 +1817,8 @@ static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
+  * writepage context that the caller will need to submit.
+  */
+ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+-		struct writeback_control *wbc, struct folio *folio,
+-		struct inode *inode, loff_t pos, unsigned len)
++		struct folio *folio, struct inode *inode,
++		loff_t pos, unsigned len)
+ {
+ 	struct iomap_folio_state *ifs = folio->private;
+ 	size_t poff = offset_in_folio(folio, pos);
+@@ -1829,7 +1829,7 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+ 		error = iomap_submit_ioend(wpc, 0);
+ 		if (error)
+ 			return error;
+-		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos);
++		wpc->ioend = iomap_alloc_ioend(wpc, inode, pos);
+ 	}
+ 
+ 	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
+@@ -1838,14 +1838,13 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+ 	if (ifs)
+ 		atomic_add(len, &ifs->write_bytes_pending);
+ 	wpc->ioend->io_size += len;
+-	wbc_account_cgroup_owner(wbc, &folio->page, len);
++	wbc_account_cgroup_owner(wpc->wbc, &folio->page, len);
+ 	return 0;
+ }
+ 
+ static int iomap_writepage_map_blocks(struct iomap_writepage_ctx *wpc,
+-		struct writeback_control *wbc, struct folio *folio,
+-		struct inode *inode, u64 pos, unsigned dirty_len,
+-		unsigned *count)
++		struct folio *folio, struct inode *inode, u64 pos,
++		unsigned dirty_len, unsigned *count)
+ {
+ 	int error;
+ 
+@@ -1869,7 +1868,7 @@ static int iomap_writepage_map_blocks(struct iomap_writepage_ctx *wpc,
+ 		case IOMAP_HOLE:
+ 			break;
+ 		default:
+-			error = iomap_add_to_ioend(wpc, wbc, folio, inode, pos,
++			error = iomap_add_to_ioend(wpc, folio, inode, pos,
+ 					map_len);
+ 			if (!error)
+ 				(*count)++;
+@@ -1952,7 +1951,7 @@ static bool iomap_writepage_handle_eof(struct folio *folio, struct inode *inode,
+ }
+ 
+ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+-		struct writeback_control *wbc, struct folio *folio)
++		struct folio *folio)
+ {
+ 	struct iomap_folio_state *ifs = folio->private;
+ 	struct inode *inode = folio->mapping->host;
+@@ -2000,7 +1999,7 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	 * Walk through the folio to find dirty areas to write back.
+ 	 */
+ 	while ((rlen = iomap_find_dirty_range(folio, &pos, end_pos))) {
+-		error = iomap_writepage_map_blocks(wpc, wbc, folio, inode,
++		error = iomap_writepage_map_blocks(wpc, folio, inode,
+ 				pos, rlen, &count);
+ 		if (error)
+ 			break;
+@@ -2037,7 +2036,7 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ }
+ 
+ int
+-iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
++iomap_writepages(struct address_space *mapping,
+ 		struct iomap_writepage_ctx *wpc,
+ 		const struct iomap_writeback_ops *ops)
+ {
+@@ -2053,8 +2052,8 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+ 		return -EIO;
+ 
+ 	wpc->ops = ops;
+-	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
+-		error = iomap_writepage_map(wpc, wbc, folio);
++	while ((folio = writeback_iter(mapping, wpc->wbc, folio, &error)))
++		error = iomap_writepage_map(wpc, folio);
+ 	return iomap_submit_ioend(wpc, error);
+ }
+ EXPORT_SYMBOL_GPL(iomap_writepages);
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 6dead20338e2..5d758910a843 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -471,10 +471,14 @@ xfs_vm_writepages(
+ 	struct address_space	*mapping,
+ 	struct writeback_control *wbc)
+ {
+-	struct xfs_writepage_ctx wpc = { };
++	struct xfs_writepage_ctx wpc = {
++		.ctx = {
++			.wbc	= wbc,
++		},
++	};
+ 
+ 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+-	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
++	return iomap_writepages(mapping, &wpc.ctx, &xfs_writeback_ops);
+ }
+ 
+ STATIC int
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index 35166c92420c..51b03689b976 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -152,9 +152,11 @@ static const struct iomap_writeback_ops zonefs_writeback_ops = {
+ static int zonefs_writepages(struct address_space *mapping,
+ 			     struct writeback_control *wbc)
+ {
+-	struct iomap_writepage_ctx wpc = { };
++	struct iomap_writepage_ctx wpc = {
++		.wbc	= wbc,
++	};
+ 
+-	return iomap_writepages(mapping, wbc, &wpc, &zonefs_writeback_ops);
++	return iomap_writepages(mapping, &wpc, &zonefs_writeback_ops);
+ }
+ 
+ static int zonefs_swap_activate(struct swap_info_struct *sis,
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 4ad12a3c8bae..2435ad63d1ad 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -341,6 +341,7 @@ struct iomap_writeback_ops {
+ struct iomap_writepage_ctx {
+ 	struct iomap		iomap;
+ 	struct iomap_ioend	*ioend;
++	struct writeback_control *wbc;
+ 	const struct iomap_writeback_ops *ops;
+ 	u32			nr_folios;	/* folios added to the ioend */
+ };
+@@ -350,7 +351,7 @@ void iomap_ioend_try_merge(struct iomap_ioend *ioend,
+ 		struct list_head *more_ioends);
+ void iomap_sort_ioends(struct list_head *ioend_list);
+ int iomap_writepages(struct address_space *mapping,
+-		struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
++		struct iomap_writepage_ctx *wpc,
+ 		const struct iomap_writeback_ops *ops);
+ 
+ /*
+-- 
+2.47.0
 
-Roberto
 
-> Roberto
->=20
-> > > ---
-> > >  mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++-------------=
---
-> > >  1 file changed, 45 insertions(+), 17 deletions(-)
-> > >=20
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 9c0fb43064b5..762944427e03 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
-, start, unsigned long, size,
-> > >  	unsigned long populate =3D 0;
-> > >  	unsigned long ret =3D -EINVAL;
-> > >  	struct file *file;
-> > > +	vm_flags_t vm_flags;
-> > >=20
-> > >  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. S=
-ee Documentation/mm/remap_file_pages.rst.\n",
-> > >  		     current->comm, current->pid);
-> > > @@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lo=
-ng, start, unsigned long, size,
-> > >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> > >  		return ret;
-> > >=20
-> > > -	if (mmap_write_lock_killable(mm))
-> > > +	if (mmap_read_lock_killable(mm))
-> > > +		return -EINTR;
-> >=20
-> > I'm kinda verbose generally, but I'd love a comment like:
-> >=20
-> > 	/*
-> > 	 * Look up VMA under read lock first so we can perform the security
-> > 	 * without holding locks (which can be problematic). We reacquire a
-> > 	 * write lock later and check nothing changed underneath us.
-> > 	 */
-> >=20
-> > > +
-> > > +	vma =3D vma_lookup(mm, start);
-> > > +
-> > > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > > +		mmap_read_unlock(mm);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > > +	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > > +	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > > +
-> > > +	flags &=3D MAP_NONBLOCK;
-> > > +	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > > +	if (vma->vm_flags & VM_LOCKED)
-> > > +		flags |=3D MAP_LOCKED;
-> > > +
-> > > +	/* Save vm_flags used to calculate prot and flags, and recheck late=
-r. */
-> > > +	vm_flags =3D vma->vm_flags;
-> > > +	file =3D get_file(vma->vm_file);
-> > > +
-> > > +	mmap_read_unlock(mm);
-> > > +
-> >=20
-> > Maybe worth adding a comment to explain why you're doing this without t=
-he
-> > lock so somebody looking at this later can understand the dance?
-> >=20
-> > > +	ret =3D security_mmap_file(file, prot, flags);
-> > > +	if (ret) {
-> > > +		fput(file);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret =3D -EINVAL;
-> > > +
-> >=20
-> > Again, being verbose, I'd put something here like:
-> >=20
-> > 	/* OK security check passed, take write lock + let it rip */
-> >=20
-> > > +	if (mmap_write_lock_killable(mm)) {
-> > > +		fput(file);
-> > >  		return -EINTR;
-> > > +	}
-> > >=20
-> > >  	vma =3D vma_lookup(mm, start);
-> > >=20
-> > > -	if (!vma || !(vma->vm_flags & VM_SHARED))
-> > > +	if (!vma)
-> > > +		goto out;
-> > > +
-> >=20
-> > I'd also add something like:
-> >=20
-> > 	/* Make sure things didn't change under us. */
-> >=20
-> > > +	if (vma->vm_flags !=3D vm_flags)
-> > > +		goto out;
-> > > +
-> >=20
-> > And drop this newline to group them together (super nitty I know, sorry=
-!)
-> >=20
-> > > +	if (vma->vm_file !=3D file)
-> > >  		goto out;
-> > >=20
-> > >  	if (start + size > vma->vm_end) {
-> > > @@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lo=
-ng, start, unsigned long, size,
-> > >  			goto out;
-> > >  	}
-> > >=20
-> > > -	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > > -	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > > -	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > > -
-> > > -	flags &=3D MAP_NONBLOCK;
-> > > -	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > > -	if (vma->vm_flags & VM_LOCKED)
-> > > -		flags |=3D MAP_LOCKED;
-> > > -
-> > > -	file =3D get_file(vma->vm_file);
-> > > -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> > > -	if (ret)
-> > > -		goto out_fput;
-> > >  	ret =3D do_mmap(vma->vm_file, start, size,
-> > >  			prot, flags, 0, pgoff, &populate, NULL);
-> > > -out_fput:
-> > > -	fput(file);
-> > >  out:
-> > >  	mmap_write_unlock(mm);
-> > > +	fput(file);
-> > >  	if (populate)
-> > >  		mm_populate(ret, populate);
-> > >  	if (!IS_ERR_VALUE(ret))
-> > > --
-> > > 2.34.1
-> > >=20
-> >=20
-> > These are just nits, this looks good to me!
->=20
-
+-- 
+Goldwyn
 
