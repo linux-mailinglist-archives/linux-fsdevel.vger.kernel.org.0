@@ -1,148 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-32348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EC49A3DF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 14:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA479A3E50
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 14:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEAB1C237C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 12:15:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA9D1C241B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 12:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C1A1DA4E;
-	Fri, 18 Oct 2024 12:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE8E42A97;
+	Fri, 18 Oct 2024 12:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RfO4TxRW"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kh4caILb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kOIhd72p";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kh4caILb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kOIhd72p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93B717578
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 12:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E9B8F6B;
+	Fri, 18 Oct 2024 12:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253732; cv=none; b=JCasNwAnIjeKlzgG+2xnbKUCYfd6iVyQ34GoQ+3DyFr8kkTI7uDChxWK612oKUrfTWRVE6aD1tjcYWkB4WJamTPzYb5g5p4GFGE4okpQjI38kbe0E2wbAl354XTzZJl5sI1L1mryppTxqgPU/diwtE+nkUt3h78Xbtr7ER0XANs=
+	t=1729254351; cv=none; b=KrqPrGPiR2pO37mmM6f2cAM/1mdNX6g98AK3v6cPic8vWvAK/slDvR2VTHR35o+5/l6j+7WjzGpiOYHIMfbf9jbT/kvP+nCaBNfeHADAPpEvnbpFeciWGotcK/lV6k8hCuDeNy363IYSCwo9n1Y3R7n+SEsPCf1s4CHWocrRxqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253732; c=relaxed/simple;
-	bh=ZS0URDKaxWK4LH2jmhZlGbkJf8uJqN2Riv04+tCTXB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G+654nbnKgR5MyOO5Ejeliwe96twYe/KJy9l/TqANNl7AThE2drYjlubyL/PYk2+Uae9ADBBdPWhTmSOdNypyurVWRqRKmLy+lAcELONEWEbVWueYfQvWIGokMr9hOUGfxMr4VPYkyHWN6gwvi2LwRgWTmVBmoY2eqMa2ykEjwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RfO4TxRW; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729253727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/I1t6dr9YxkUDtjU+LCeHcvfcO9HKB+cT/uD7iPasWs=;
-	b=RfO4TxRWnCCgRwEmMh7HRw0CCQGyRoYUzgbBa1mmGxG1YQ8kPU1i4wtlmeI16T14PNzhbU
-	4TG3OjcAQtNR/pJLNq386tgKmQHe99ruEI3ri3tDSeWw3rdyvZBk7UIv5JTw+QEYsYi1kV
-	ern8WXnnhwWuQ+/DQ6IHmDe6NWqC3Y4=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] acl: Annotate struct posix_acl with __counted_by()
-Date: Fri, 18 Oct 2024 14:14:21 +0200
-Message-ID: <20241018121426.155247-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729254351; c=relaxed/simple;
+	bh=vC1SX+wQnWxFmlQXkUP9yy/5qcQeEuByw8RrPHIZU4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJG7hSGUd048ZTeMUgPdO/hpMI/rAzdStd4fEqewn3bsXRo40jeVoXhexQTscBudfwKHoZ9Dt5Jf0RgCHcRq7srEHcE3ZiGC6bSDtTvtDCslJN9WIivlU99xlKd+YF3LcFJJZSHSRadcTPR5i/Wz4oyyEzXChrkh13lFlRS+okQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kh4caILb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kOIhd72p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kh4caILb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kOIhd72p; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A85771FDCC;
+	Fri, 18 Oct 2024 12:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729254347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9iA959EP4BEcv5e0iqenlfp8hBxwbKWSp7/y27GQG0=;
+	b=Kh4caILb21FroSrjSfslzo7L1cIJsZXI/iUVt5zKaWqTPHHslBvq3KBcBpiqxFuBYti31o
+	Tja/3GkrVl9czOmtnpNlDZq5x59MKOQO6dI4Nu/3w6DyXzYmZUi4+OHERpYSBbUlLfy1PP
+	xZCDC1vyxxqX4UurZ05DhFvn7ogwhZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729254347;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9iA959EP4BEcv5e0iqenlfp8hBxwbKWSp7/y27GQG0=;
+	b=kOIhd72poBPwiAFQalmin4nWTsOL9OmmWECpnFVb30gl9DIEWmFeWt8KxbfYmgvLbuKGJ/
+	gu4E/b49ygg+9sCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Kh4caILb;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kOIhd72p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729254347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9iA959EP4BEcv5e0iqenlfp8hBxwbKWSp7/y27GQG0=;
+	b=Kh4caILb21FroSrjSfslzo7L1cIJsZXI/iUVt5zKaWqTPHHslBvq3KBcBpiqxFuBYti31o
+	Tja/3GkrVl9czOmtnpNlDZq5x59MKOQO6dI4Nu/3w6DyXzYmZUi4+OHERpYSBbUlLfy1PP
+	xZCDC1vyxxqX4UurZ05DhFvn7ogwhZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729254347;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9iA959EP4BEcv5e0iqenlfp8hBxwbKWSp7/y27GQG0=;
+	b=kOIhd72poBPwiAFQalmin4nWTsOL9OmmWECpnFVb30gl9DIEWmFeWt8KxbfYmgvLbuKGJ/
+	gu4E/b49ygg+9sCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99C2513433;
+	Fri, 18 Oct 2024 12:25:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M12CJctTEmcAEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 18 Oct 2024 12:25:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 51C59A080A; Fri, 18 Oct 2024 14:25:43 +0200 (CEST)
+Date: Fri, 18 Oct 2024 14:25:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jack@suse.cz" <jack@suse.cz>, "mic@digikod.net" <mic@digikod.net>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"anna@kernel.org" <anna@kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	"audit@vger.kernel.org" <audit@vger.kernel.org>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <20241018122543.cxbbtsmeksegoeh3@quack3>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+ <ZxEmDbIClGM1F7e6@infradead.org>
+ <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+ <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
+ <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
+X-Rspamd-Queue-Id: A85771FDCC
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-Add the __counted_by compiler attribute to the flexible array member
-a_entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Thu 17-10-24 16:21:34, Paul Moore wrote:
+> On Thu, Oct 17, 2024 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > On Thu, 2024-10-17 at 11:15 -0400, Paul Moore wrote:
+> > > On Thu, Oct 17, 2024 at 10:58 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
+> > > > > Okay, good to know, but I was hoping that there we could come up with
+> > > > > an explicit list of filesystems that maintain their own private inode
+> > > > > numbers outside of inode-i_ino.
+> > > >
+> > > > Anything using iget5_locked is a good start.  Add to that file systems
+> > > > implementing their own inode cache (at least xfs and bcachefs).
+> > >
+> > > Also good to know, thanks.  However, at this point the lack of a clear
+> > > answer is making me wonder a bit more about inode numbers in the view
+> > > of VFS developers; do you folks care about inode numbers?  I'm not
+> > > asking to start an argument, it's a genuine question so I can get a
+> > > better understanding about the durability and sustainability of
+> > > inode->i_no.  If all of you (the VFS folks) aren't concerned about
+> > > inode numbers, I suspect we are going to have similar issues in the
+> > > future and we (the LSM folks) likely need to move away from reporting
+> > > inode numbers as they aren't reliably maintained by the VFS layer.
+> > >
+> >
+> > Like Christoph said, the kernel doesn't care much about inode numbers.
+> >
+> > People care about them though, and sometimes we have things in the
+> > kernel that report them in some fashion (tracepoints, procfiles, audit
+> > events, etc.). Having those match what the userland stat() st_ino field
+> > tells you is ideal, and for the most part that's the way it works.
+> >
+> > The main exception is when people use 32-bit interfaces (somewhat rare
+> > these days), or they have a 32-bit kernel with a filesystem that has a
+> > 64-bit inode number space (NFS being one of those). The NFS client has
+> > basically hacked around this for years by tracking its own fileid field
+> > in its inode.
+> 
+> When I asked if the VFS dev cared about inode numbers this is more of
+> what I was wondering about.  Regardless of if the kernel itself uses
+> inode numbers for anything, it does appear that users do care about
+> inode numbers to some extent, and I wanted to know if the VFS devs
+> viewed the inode numbers as a first order UAPI interface/thing, or if
+> it was of lesser importance and not something the kernel was going to
+> provide much of a guarantee around.  Once again, I'm not asking this
+> to start a war, I'm just trying to get some perspective from the VFS
+> dev side of things.
 
-Use struct_size() to calculate the number of bytes to allocate for new
-and cloned acls and remove the local size variables.
+Well, we do care to not break our users. So our opinion about "first order
+UAPI" doesn't matter that much. If userspace is using it, we have to
+avoid breaking it. And there definitely is userspace depending on st_ino +
+st_dev being unique identifier of a file / directory so we want to maintain
+that as much as possible (at least as long as there's userspace depending
+on it which I don't see changing in the near future).
 
-Change the posix_acl_alloc() function parameter count from int to
-unsigned int to match posix_acl's a_count data type. Add identifier
-names to the function definition to silence two checkpatch warnings.
+That being said historically people have learned NFS has its quirks,
+similarly as btrfs needing occasionally a special treatment and adapted to
+it, bcachefs is new enough that userspace didn't notice yet, that's going
+to be interesting.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Nathan Chancellor <nathan@kernel.org>
----
-Changes in v2:
-- Update patch to apply cleanly to linux-next. With 8f0a7a2d7bc3
-  ("acl: Realign struct posix_acl to save 8 bytes") in -next, this
-  patch should not trigger the false-positive buffer overflow anymore
-- Link to v1: https://lore.kernel.org/linux-kernel/20240923213809.235128-2-thorsten.blum@linux.dev/
----
- fs/posix_acl.c            | 13 ++++++-------
- include/linux/posix_acl.h |  4 ++--
- 2 files changed, 8 insertions(+), 9 deletions(-)
+There's another aspect that even 64-bits start to be expensive to pack
+things into for some filesystems (either due to external protocol
+constraints such as for AFS or due to the combination of features such as
+subvolumes, snapshotting, etc.). Going to 128-bits for everybody seems
+like a waste so at last LSF summit we've discussed about starting to push
+file handles (output of name_to_handle_at(2)) as a replacement of st_ino
+for file/dir identifier in a filesystem. For the kernel this would be
+convenient because each filesystem can pack there what it needs. But
+userspace guys were not thrilled by this (mainly due to the complexities of
+dynamically sized identifier and passing it around). So this transition
+isn't currently getting much traction and we'll see how things evolve.
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 6c66a37522d0..4050942ab52f 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -200,11 +200,11 @@ EXPORT_SYMBOL(posix_acl_init);
-  * Allocate a new ACL with the specified number of entries.
-  */
- struct posix_acl *
--posix_acl_alloc(int count, gfp_t flags)
-+posix_acl_alloc(unsigned int count, gfp_t flags)
- {
--	const size_t size = sizeof(struct posix_acl) +
--	                    count * sizeof(struct posix_acl_entry);
--	struct posix_acl *acl = kmalloc(size, flags);
-+	struct posix_acl *acl;
-+
-+	acl = kmalloc(struct_size(acl, a_entries, count), flags);
- 	if (acl)
- 		posix_acl_init(acl, count);
- 	return acl;
-@@ -220,9 +220,8 @@ posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
- 	struct posix_acl *clone = NULL;
- 
- 	if (acl) {
--		int size = sizeof(struct posix_acl) + acl->a_count *
--		           sizeof(struct posix_acl_entry);
--		clone = kmemdup(acl, size, flags);
-+		clone = kmemdup(acl, struct_size(acl, a_entries, acl->a_count),
-+				flags);
- 		if (clone)
- 			refcount_set(&clone->a_refcount, 1);
- 	}
-diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
-index 2d6a4badd306..e2d47eb1a7f3 100644
---- a/include/linux/posix_acl.h
-+++ b/include/linux/posix_acl.h
-@@ -30,7 +30,7 @@ struct posix_acl {
- 	refcount_t		a_refcount;
- 	unsigned int		a_count;
- 	struct rcu_head		a_rcu;
--	struct posix_acl_entry	a_entries[];
-+	struct posix_acl_entry	a_entries[] __counted_by(a_count);
- };
- 
- #define FOREACH_ACL_ENTRY(pa, acl, pe) \
-@@ -62,7 +62,7 @@ posix_acl_release(struct posix_acl *acl)
- /* posix_acl.c */
- 
- extern void posix_acl_init(struct posix_acl *, int);
--extern struct posix_acl *posix_acl_alloc(int, gfp_t);
-+extern struct posix_acl *posix_acl_alloc(unsigned int count, gfp_t flags);
- extern struct posix_acl *posix_acl_from_mode(umode_t, gfp_t);
- extern int posix_acl_equiv_mode(const struct posix_acl *, umode_t *);
- extern int __posix_acl_create(struct posix_acl **, gfp_t, umode_t *);
+								Honza
 -- 
-2.47.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
