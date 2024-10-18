@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-32313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565F09A35BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 08:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 205239A35C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 08:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769B11C2399D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 06:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8C01C219D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2024 06:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE3A18E34A;
-	Fri, 18 Oct 2024 06:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967A718E742;
+	Fri, 18 Oct 2024 06:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="liLzqMSO"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TG8HIowt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02788188917;
-	Fri, 18 Oct 2024 06:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CC518858C;
+	Fri, 18 Oct 2024 06:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729233667; cv=none; b=AqVt+3zCufOoYYU+lsUoP/YuEJH7Gu5ii3Zy+0q5H2NU1t9qVpCrNHcaZnWgz8XdDDt8Qidq6DcjaWOnjG79/m5lZ6kH5fEGW0Ims+VTOywLg+edBwK9cPhNFykXXG5nNDt/762Ia9ZP4zcNeE8KHI1ZU5QeE86m7Yr4rlWTk/4=
+	t=1729233668; cv=none; b=PxUBMMWFVZ93s6IpSTgiTyGshEcdah9xMuDwa/w966Vb8WzIeKnqYHXAkffmbm50hZXAxpJ3YHBXWWizwVYuOolYzwOvHlHHUUBfHsbUBDC8LRL8pUgnASqmiZotwXctHhmljzf0xSabAR262xyDsXHCiPFCk3PMHZc+0gwk8n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729233667; c=relaxed/simple;
-	bh=gtInCloZyEBkd8uVBGAQIApykz7xeQMHHy5TXu53KaI=;
+	s=arc-20240116; t=1729233668; c=relaxed/simple;
+	bh=Z1uLVHFrCxBVRppWSz2uPPFIJpDocNdlo79Vr4aRt6E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jvpuXJN1yyJS13mEVk+YOGnVKQa4PkKX2TRRmi0Ltp70EeXKuzuqF0+zww9bVTOtko5WhnIoPnVbFkwc4+RPfuFu2RVp99tecGMIGkoyKsiIysbHBE4f/2Phyud9ZbcvfI5KpLC4z1LaV6Uk8TniUcMSCcurzBF7w9NaWxWnHVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=liLzqMSO; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=D56mnSvgbL5P8piY8KRfXeWgkNE6dZNaxhC+ub06daRm9gpYrXEs67cev3wUNNCGMODeXyPhZl0XNfyQCgEVS46N2I8BxhIL3pMno60+q/RHy7fkyPeYLQcYp0GVmySkgr/dSwjF36Y5SnC1cSNwOrgb+MhnubD19zAwi7OtYnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TG8HIowt; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729233666; x=1760769666;
+  t=1729233667; x=1760769667;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gtInCloZyEBkd8uVBGAQIApykz7xeQMHHy5TXu53KaI=;
-  b=liLzqMSOCC1RMSD4oAIjy0k9BxOlvJSR9BvcdqJF8SlwZEekJYz6uJfl
-   anr6CyJEfLgmdaxbXtw8Iaxz3viJl/XsYuHuNUJEwfTdRhyjZvOGthM53
-   ZHull+yRnZiLhkAOOQ+mQPXx5pjKw+kKInNiS2VGnRNVEAVF8chUwGWMq
-   x9WtyJHXsxLOchS70C9h1A7vN5RMxbpspSz4IgQ7mlRzJKNukq5fSG9Tn
-   20H8IHOEhXQMG3YLCy+v8K/VBv+HMKl1RZFIJVF/IT7Iq46hWitDxScIT
-   MCdzdHIfwVuxVcNKE5uJdQDmTyhhrq3AAucQsNK4z6zKtWHCxJP13msau
+  bh=Z1uLVHFrCxBVRppWSz2uPPFIJpDocNdlo79Vr4aRt6E=;
+  b=TG8HIowtisZKcDx9fylSVbxdwPk1IBk30b+kUbv92cGfT6evCtMwBEji
+   +Ye6d+OJiP8cjPxAOQ9eUGp43egyYrLDAUkPkrEEDWGDKB1red0ew84i8
+   9iEUxsAPxJmlWMqbwISbPCS82Omvul+iAITHdHSVuhkLVWuYL4NjpkEho
+   FgR+3hqDuWTpyOwuRSzlB2Ep98Y2agRsYsv8aG46gtsYK+uve0Dw+eTRF
+   arcbx2Oquun3VtoHLH4nHq4mr57FPWLHC4Iq4VGsrE908Ze/InSv+8skl
+   cHw4XG0blix0bMmZVchZdq4JewlE09GL0zFCo0UWRnNgG/JaUJLl8/xt5
    Q==;
-X-CSE-ConnectionGUID: sgpdQsPeTdSd5AQQsr5BMQ==
-X-CSE-MsgGUID: vudRWV45S32K92de4AOPcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28884822"
+X-CSE-ConnectionGUID: nqPY467TSxyDfVNSteo+nA==
+X-CSE-MsgGUID: iBYUGjgjQ0uPwiJqU/z7EA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28884837"
 X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="28884822"
+   d="scan'208";a="28884837"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
   by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:41:02 -0700
-X-CSE-ConnectionGUID: S5P7Z3aMRMezS5ESvvkKGg==
-X-CSE-MsgGUID: 95MDyyYsR9OFLjtcK6GVSw==
+X-CSE-ConnectionGUID: BcOBrWNBQuGJzmoGtHi9jQ==
+X-CSE-MsgGUID: tf9TGtY1SRSPfpX2G7ugmw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="83607500"
+   d="scan'208";a="83607504"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
   by orviesa003.jf.intel.com with ESMTP; 17 Oct 2024 23:41:02 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
@@ -91,9 +91,9 @@ To: linux-kernel@vger.kernel.org,
 Cc: wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [RFC PATCH v1 04/13] mm: zswap: zswap_compress()/decompress() can submit, then poll an acomp_req.
-Date: Thu, 17 Oct 2024 23:40:52 -0700
-Message-Id: <20241018064101.336232-5-kanchana.p.sridhar@intel.com>
+Subject: [RFC PATCH v1 05/13] crypto: iaa - Make async mode the default.
+Date: Thu, 17 Oct 2024 23:40:53 -0700
+Message-Id: <20241018064101.336232-6-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
 References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
@@ -105,98 +105,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the crypto_acomp has a poll interface registered, zswap_compress()
-and zswap_decompress() will submit the acomp_req, and then poll() for a
-successful completion/error status in a busy-wait loop. This allows an
-asynchronous way to manage (potentially multiple) acomp_reqs without
-the use of interrupts, which is supported in the iaa_crypto driver.
+This patch makes it easier for IAA hardware acceleration in the iaa_crypto
+driver to be loaded by default in the most efficient/recommended "async"
+mode, namely, asynchronous submission of descriptors, followed by polling
+for job completions. Earlier, the "sync" mode used to be the default.
 
-This enables us to implement batch submission of multiple
-compression/decompression jobs to the Intel IAA hardware accelerator,
-which will process them in parallel; followed by polling the batch's
-acomp_reqs for completion status.
+This way, anyone that wants to use IAA can do so after building the kernel,
+and *without* having to go through these steps to use async poll:
+
+  1) disable all the IAA device/wq bindings that happen at boot time
+  2) rmmod iaa_crypto
+  3) modprobe iaa_crypto
+  4) echo async > /sys/bus/dsa/drivers/crypto/sync_mode
+  5) re-run initialization of the IAA devices and wqs
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- mm/zswap.c | 51 +++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 39 insertions(+), 12 deletions(-)
+ drivers/crypto/intel/iaa/iaa_crypto_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index f6316b66fb23..948c9745ee57 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -910,18 +910,34 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	acomp_request_set_params(acomp_ctx->req, &input, &output, PAGE_SIZE, dlen);
+diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+index 6a8577ac1330..6c262b1eb09d 100644
+--- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
++++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+@@ -153,7 +153,7 @@ static DRIVER_ATTR_RW(verify_compress);
+  */
  
- 	/*
--	 * it maybe looks a little bit silly that we send an asynchronous request,
--	 * then wait for its completion synchronously. This makes the process look
--	 * synchronous in fact.
--	 * Theoretically, acomp supports users send multiple acomp requests in one
--	 * acomp instance, then get those requests done simultaneously. but in this
--	 * case, zswap actually does store and load page by page, there is no
--	 * existing method to send the second page before the first page is done
--	 * in one thread doing zwap.
--	 * but in different threads running on different cpu, we have different
--	 * acomp instance, so multiple threads can do (de)compression in parallel.
-+	 * If the crypto_acomp provides an asynchronous poll() interface,
-+	 * submit the descriptor and poll for a completion status.
-+	 *
-+	 * It maybe looks a little bit silly that we send an asynchronous
-+	 * request, then wait for its completion in a busy-wait poll loop, or,
-+	 * synchronously. This makes the process look synchronous in fact.
-+	 * Theoretically, acomp supports users send multiple acomp requests in
-+	 * one acomp instance, then get those requests done simultaneously.
-+	 * But in this case, zswap actually does store and load page by page,
-+	 * there is no existing method to send the second page before the
-+	 * first page is done in one thread doing zswap.
-+	 * But in different threads running on different cpu, we have different
-+	 * acomp instance, so multiple threads can do (de)compression in
-+	 * parallel.
- 	 */
--	comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->req), &acomp_ctx->wait);
-+	if (acomp_ctx->acomp->poll) {
-+		comp_ret = crypto_acomp_compress(acomp_ctx->req);
-+		if (comp_ret == -EINPROGRESS) {
-+			do {
-+				comp_ret = crypto_acomp_poll(acomp_ctx->req);
-+				if (comp_ret && comp_ret != -EAGAIN)
-+					break;
-+			} while (comp_ret);
-+		}
-+	} else {
-+		comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->req), &acomp_ctx->wait);
-+	}
-+
- 	dlen = acomp_ctx->req->dlen;
- 	if (comp_ret)
- 		goto unlock;
-@@ -959,6 +975,7 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	struct scatterlist input, output;
- 	struct crypto_acomp_ctx *acomp_ctx;
- 	u8 *src;
-+	int ret;
- 
- 	acomp_ctx = raw_cpu_ptr(entry->pool->acomp_ctx);
- 	mutex_lock(&acomp_ctx->mutex);
-@@ -984,7 +1001,17 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	sg_init_table(&output, 1);
- 	sg_set_folio(&output, folio, PAGE_SIZE, 0);
- 	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
--	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
-+	if (acomp_ctx->acomp->poll) {
-+		ret = crypto_acomp_decompress(acomp_ctx->req);
-+		if (ret == -EINPROGRESS) {
-+			do {
-+				ret = crypto_acomp_poll(acomp_ctx->req);
-+				BUG_ON(ret && ret != -EAGAIN);
-+			} while (ret);
-+		}
-+	} else {
-+		BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
-+	}
- 	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
- 	mutex_unlock(&acomp_ctx->mutex);
+ /* Use async mode */
+-static bool async_mode;
++static bool async_mode = true;
+ /* Use interrupts */
+ static bool use_irq;
  
 -- 
 2.27.0
