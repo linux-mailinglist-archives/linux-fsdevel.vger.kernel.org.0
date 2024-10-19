@@ -1,122 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-32412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB23B9A4BCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 09:18:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C7E9A4CAB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 11:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD4E28496C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 07:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3803C1F2383E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 09:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235A21DEFD5;
-	Sat, 19 Oct 2024 07:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E401DF27C;
+	Sat, 19 Oct 2024 09:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="OxENbPtI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2181D63DC;
-	Sat, 19 Oct 2024 07:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE46E20E30B;
+	Sat, 19 Oct 2024 09:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729322263; cv=none; b=nmPKgkN/3YLIwgrQ0NxJpuBoNSKrlRzzD1+EISubRqBYOvbePiRe3zwvKxZZRm8im11cqi241kQGzBX0er6GU2nOepuNIASu+uBpDA0v7uGMChSHpKGC/Blf5fA9rOc4/gULYkMPeTBMjNT0tzMgbnr2nALhO2HOIx6qvtZX3Xk=
+	t=1729330623; cv=none; b=q9+txfomZxFhAdVYpTFqp5VczWNnTqEbSBDd5H9TutuwXqAf1XIEiPeKV2PsDC15I+GqaMPfOtELNteZU8/whibnoZ4E3t/7FDhXFzj+rblvSjduN48WhjpLEvUsafR7lo4j0g9UyiIw8/LDNGzdBy67rYM2nEFn0uMjM/LZE2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729322263; c=relaxed/simple;
-	bh=x77Leu//zcELEFm/jviPtto7y+OnBK4QnxtY2HQIYU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BfcLHnSeL4qcRDrylHSyEWZ0h+DjTmmM4sOalZ7VcjE5TdNzTeimjJq4QyTR7NCUn7h1ekI21ZoIkvy0RcooR13v5kJ4h8f2e1rNNRdAOybWBYSvGYKYt9JtnXp2O1WId5XF1lYntSSDVya9EVJA7SKiAcZdXW9/PL8Cz/m9irU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=none smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtpsz10t1729322183tmx9pd
-X-QQ-Originating-IP: 2wrtZZMSoIeiW4tN+ltGHjUUxkkLFPmvDWr8Q0tu8H4=
-Received: from sonvhi-TianYi510S-07IMB.. ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 19 Oct 2024 15:16:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15998112844559155357
-From: chenxiaosong@chenxiaosong.com
-To: corbet@lwn.net,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	brauner@kernel.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	chuck.lever@oracle.com,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH 3/3] tracing/Documentation: fix compile warning in debugging.rst
-Date: Sat, 19 Oct 2024 15:15:39 +0800
-Message-Id: <20241019071539.125934-4-chenxiaosong@chenxiaosong.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241019071539.125934-1-chenxiaosong@chenxiaosong.com>
-References: <20241019071539.125934-1-chenxiaosong@chenxiaosong.com>
+	s=arc-20240116; t=1729330623; c=relaxed/simple;
+	bh=4FyAyNs0RDZLPtAVg0ePE4f4kUHnkDi9sj0QxmXhD7w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Av8l2GeIBr753WwIa6jp6/Qn2yhqUXkwnL7xchwGHCJ7IjZk+iw80WAAMimrAys5h2nTyl9pVcfxxPIyXmhfxr8PR8VcNTaze2Ux2ggOI8amMjEXoWeBFmtN+dyDaVBKNKOvi0RmP/Y017UCDI8NyYk9bfaBu2zSlT0h/6ujHbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=OxENbPtI; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1729330289;
+	bh=4FyAyNs0RDZLPtAVg0ePE4f4kUHnkDi9sj0QxmXhD7w=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=OxENbPtIykSnrTaA+/ak/OkO/OMy9tJk16QVP4ToWXdwUUpsC6xxXbHYsdFwnkdc3
+	 wTPDF1VcSS5yJHEDvRm4ZS6ATTO343j7geZMaFFmKYAlkstpZyS61x/+qSHJHHntQh
+	 hKt9MmgH4CLdb8Skn4VqxhrVmFn6kU3lbVPkL/io=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 240921A3F67;
+	Sat, 19 Oct 2024 05:31:26 -0400 (EDT)
+Message-ID: <cab68955dccebbedbe5ddd84b3fccb542186bdde.camel@xry111.site>
+Subject: Re: [PATCH 2/2] vfs: Make sure {statx,fstatat}(..., AT_EMPTY_PATH |
+ ..., NULL, ...) behave as (..., AT_EMPTY_PATH | ..., "", ...)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miao Wang
+	 <shankerwangmiao@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Sat, 19 Oct 2024 17:31:25 +0800
+In-Reply-To: <20241008042751.GW4017910@ZenIV>
+References: <20241007130825.10326-1-xry111@xry111.site>
+	 <20241007130825.10326-3-xry111@xry111.site>
+	 <CAGudoHHdccL5Lh8zAO-0swqqRCW4GXMSXhq4jQGoVj=UdBK-Lg@mail.gmail.com>
+	 <20241008041621.GV4017910@ZenIV> <20241008042751.GW4017910@ZenIV>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: ML8hOghqQD+0/XlLMPZYyEW0x1ZBxbHmjrEen821kLJ3+EqgbZQLh6Cy
-	UkRLh36+wxHT7KAAgoyj7eJ8swsbAQYzMcdcqPAKg5uMJiOUPAxCS+Jdu9NW1N8Y7Cn2y5y
-	M/kHE3rY/sraBmR5uYHJ/GvL4mJEgOOHB3euVodIhelLhReAy9iYv94GVt0IOjpmgLWVcVx
-	w95IZuuX4muGZbdQOXhHr458oRZ6nbSjxHAOsqHLREkmoiSI6Sb5FqCn6RMIDV/gIRbvm02
-	CroCN8cJXutCHZIFvNLXpaV+y/zFRdk1jKFVkuRKXDnNqq1XXajNxExcVsgbPnLC52j7D/D
-	q8vh201husHxCpjjdY/nuFQrrGuF7jJLFhEt6G490NI2Mhe1SzeCrSDFz29ti7+V7H8keD9
-	86MTTsjjm16rY0ZnIHP+qj6QOxQhOHMgadsQ+ICh/AUOA3oiwocHWY1JZHGHe0kM7Xs0yMo
-	vZrAw+ERTmuwM4DwvZLNTBI1an50mQn+eRP3T0TCUQrJdIwsgRDF89jgJlObYHcRB3kW0FV
-	OVssBpf1nx/tbhNPx8gsi1ZddwNJe/r1QOazlNTZ5D+gfm1frvBlCQ1APhSW8Xiw4R2ep0y
-	RfiP0gtSUDtVwRf1T1o4QpLMKMnqyKQGgerzuK6bixjiyev9xucpWWZ5wMPLudypNJWm6q+
-	slQY8ciSVublXTprzNgUJ+qUSr6uUMeZNoTL7VCUVPtbBYOnYi+ttpWcU7DL6lxqoRQfXcd
-	GtW2bPrbDSNfCdODYNbWDgI+HZNrwUZaeUzeH5b0nH3RI3rXpg5cAhhU9FZwxIURRXFFrV+
-	ggV3+YpWJ+4SQxJKa5sso81BakSjpQzb84vjEKxZZCFInb1slSrfaCxDJ6Pwkv8pfHyTHZc
-	x5xLKYDdeOFyq6O3AJ2lrd0Yox+JtGOpjjmY7Ep7QIJtnF1YVszQM/jkWaj4V5oJBcqtpCR
-	V2y9gS7RQn6uUQDkezFSnnQN6R7x+qaU7Lp4=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
 
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-
-`make htmldocs` reports the following warning:
-
-  Documentation/trace/debugging.rst: WARNING: document isn't included \
-    in any toctree
-
-Fix it by adding debugging.rst to toctree.
-
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
----
- Documentation/trace/index.rst | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 0b300901fd75..2827292f8f34 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -36,3 +36,4 @@ Linux Tracing Technologies
-    user_events
-    rv/index
-    hisi-ptt
-+   debugging
--- 
-2.34.1
-
+T24gVHVlLCAyMDI0LTEwLTA4IGF0IDA1OjI3ICswMTAwLCBBbCBWaXJvIHdyb3RlOgo+IE9uIFR1
+ZSwgT2N0IDA4LCAyMDI0IGF0IDA1OjE2OjIxQU0gKzAxMDAsIEFsIFZpcm8gd3JvdGU6Cj4gCj4g
+PiBGb2xrcywgcGxlYXNlIGRvbid0IGdvIHRoZXJlLsKgIFJlYWxseS7CoCBJTU8gdmZzX2VtcHR5
+X3BhdGgoKSBpcyBhIHdyb25nIEFQSQo+ID4gaW4gdGhlIGZpcnN0IHBsYWNlLsKgIFRvbyBsb3ct
+bGV2ZWwgYW5kIHJhY3kgYXMgd2VsbC4KPiA+IAo+ID4gCVNlZSB0aGUgYXBwcm9hY2ggaW4gI3dv
+cmsueGF0dHI7IEknbSBnb2luZyB0byBsaWZ0IHRoYXQgaW50byBmcy9uYW1laS5jCj4gPiAod2Vs
+bCwgdGhlIHNsb3cgcGF0aCAtIGV2ZXJ5dGhpbmcgYWZ0ZXIgImlmIHBhdGggaXMgTlVMTCwgd2Ug
+YXJlIGRvbmUiKSBhbmQKPiA+IHllcywgZnMvc3RhdC5jIHVzZXJzIGdldCBoYW5kbGVkIGJldHRl
+ciB0aGF0IHdheS4KClNvIElJVUMgSSBqdXN0IG5lZWQgdG8gc2l0IGRvd24gaGVyZSBhbmQgd2Fp
+dCBmb3IgeW91ciBicmFuY2ggdG8gYmUKbWVyZ2VkPwoKPiBGV0lXLCB0aGUgaW50ZXJtZWRpYXRl
+IChqdXN0IGFmdGVyIHRoYXQgY29tbWl0KSBzdGF0ZSBvZiB0aG9zZSBmdW5jdGlvbnMgaXMKPiAK
+PiBpbnQgdmZzX2ZzdGF0YXQoaW50IGRmZCwgY29uc3QgY2hhciBfX3VzZXIgKmZpbGVuYW1lLAo+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgc3RydWN0IGtzdGF0ICpzdGF0LCBpbnQgZmxhZ3MpCj4gewo+IMKgwqDCoMKgwqDCoMKgIGlu
+dCByZXQ7Cj4gwqDCoMKgwqDCoMKgwqAgaW50IHN0YXR4X2ZsYWdzID0gZmxhZ3MgfCBBVF9OT19B
+VVRPTU9VTlQ7Cj4gwqDCoMKgwqDCoMKgwqAgc3RydWN0IGZpbGVuYW1lICpuYW1lID0gZ2V0bmFt
+ZV9tYXliZV9udWxsKGZpbGVuYW1lLCBmbGFncyk7Cj4gCj4gwqDCoMKgwqDCoMKgwqAgaWYgKCFu
+YW1lKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gdmZzX2ZzdGF0KGRm
+ZCwgc3RhdCk7Cj4gCj4gwqDCoMKgwqDCoMKgwqAgcmV0ID0gdmZzX3N0YXR4KGRmZCwgbmFtZSwg
+c3RhdHhfZmxhZ3MsIHN0YXQsIFNUQVRYX0JBU0lDX1NUQVRTKTsKPiDCoMKgwqDCoMKgwqDCoCBw
+dXRuYW1lKG5hbWUpOyAKPiAKPiDCoMKgwqDCoMKgwqDCoCByZXR1cm4gcmV0O8KgIAo+IH0KPiAK
+PiBhbmQKPiAKPiBTWVNDQUxMX0RFRklORTUoc3RhdHgsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIGludCwgZGZkLCBjb25zdCBjaGFyIF9fdXNlciAqLCBmaWxlbmFtZSwgdW5zaWdu
+ZWQsIGZsYWdzLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQs
+IG1hc2ssCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBzdGF0eCBfX3Vz
+ZXIgKiwgYnVmZmVyKQo+IHsKPiDCoMKgwqDCoMKgwqDCoCBpbnQgcmV0Owo+IMKgwqDCoMKgwqDC
+oMKgIHVuc2lnbmVkIGxmbGFnczsKPiDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgZmlsZW5hbWUgKm5h
+bWUgPSBnZXRuYW1lX21heWJlX251bGwoZmlsZW5hbWUsIGZsYWdzKTsKPiAKPiDCoMKgwqDCoMKg
+wqDCoCAvKgo+IMKgwqDCoMKgwqDCoMKgwqAgKiBTaG9ydC1jaXJjdWl0IGhhbmRsaW5nIG9mIE5V
+TEwgYW5kICIiIHBhdGhzLgo+IMKgwqDCoMKgwqDCoMKgwqAgKgo+IMKgwqDCoMKgwqDCoMKgwqAg
+KiBGb3IgYSBOVUxMIHBhdGggd2UgcmVxdWlyZSBhbmQgYWNjZXB0IG9ubHkgdGhlIEFUX0VNUFRZ
+X1BBVEggZmxhZwo+IMKgwqDCoMKgwqDCoMKgwqAgKiAocG9zc2libHkgfCdkIHdpdGggQVRfU1RB
+VFggZmxhZ3MpLgo+IMKgwqDCoMKgwqDCoMKgwqAgKgo+IMKgwqDCoMKgwqDCoMKgwqAgKiBIb3dl
+dmVyLCBnbGliYyBvbiAzMi1iaXQgYXJjaGl0ZWN0dXJlcyBpbXBsZW1lbnRzIGZzdGF0YXQgYXMg
+c3RhdHgKPiDCoMKgwqDCoMKgwqDCoMKgICogd2l0aCB0aGUgIiIgcGF0aG5hbWUgYW5kIEFUX05P
+X0FVVE9NT1VOVCB8IEFUX0VNUFRZX1BBVEggZmxhZ3MuCj4gwqDCoMKgwqDCoMKgwqDCoCAqIFN1
+cHBvcnRpbmcgdGhpcyByZXN1bHRzIGluIHRoZSB1Z2xpZmljYXRpb24gYmVsb3cuCj4gwqDCoMKg
+wqDCoMKgwqDCoCAqLwo+IMKgwqDCoMKgwqDCoMKgIGxmbGFncyA9IGZsYWdzICYgfihBVF9OT19B
+VVRPTU9VTlQgfCBBVF9TVEFUWF9TWU5DX1RZUEUpOwo+IMKgwqDCoMKgwqDCoMKgIGlmICghbmFt
+ZSkKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGRvX3N0YXR4X2ZkKGRm
+ZCwgZmxhZ3MgJiB+QVRfTk9fQVVUT01PVU5ULCBtYXNrLCBidWZmZXIpOwo+IAo+IMKgwqDCoMKg
+wqDCoMKgIHJldCA9IGRvX3N0YXR4KGRmZCwgbmFtZSwgZmxhZ3MsIG1hc2ssIGJ1ZmZlcik7Cj4g
+wqDCoMKgwqDCoMKgwqAgcHV0bmFtZShuYW1lKTsKPiAKPiDCoMKgwqDCoMKgwqDCoCByZXR1cm4g
+cmV0Owo+IH0KPiAKPiBzdGF0aWMgaW5saW5lIHN0cnVjdCBmaWxlbmFtZSAqZ2V0bmFtZV9tYXli
+ZV9udWxsKGNvbnN0IGNoYXIgX191c2VyICpuYW1lLCBpbnQgZmxhZ3MpCj4gewo+IMKgwqDCoMKg
+wqDCoMKgIGlmICghKGZsYWdzICYgQVRfRU1QVFlfUEFUSCkpCj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHJldHVybiBnZXRuYW1lKG5hbWUpOwo+IAo+IMKgwqDCoMKgwqDCoMKgIGlm
+ICghbmFtZSkKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIE5VTEw7Cj4g
+wqDCoMKgwqDCoMKgwqAgcmV0dXJuIF9fZ2V0bmFtZV9tYXliZV9udWxsKG5hbWUpOwo+IH0KPiAK
+PiBzdHJ1Y3QgZmlsZW5hbWUgKl9fZ2V0bmFtZV9tYXliZV9udWxsKGNvbnN0IGNoYXIgX191c2Vy
+ICpwYXRobmFtZSkKPiB7Cj4gwqDCoMKgwqDCoMKgwqAgc3RydWN0IGZpbGVuYW1lICpuYW1lOwo+
+IMKgwqDCoMKgwqDCoMKgIGNoYXIgYzsKPiAKPiDCoMKgwqDCoMKgwqDCoCAvKiB0cnkgdG8gc2F2
+ZSBvbiBhbGxvY2F0aW9uczsgbG9zcyBvbiB1bSwgdGhvdWdoICovCj4gwqDCoMKgwqDCoMKgwqAg
+aWYgKGdldF91c2VyKGMsIHBhdGhuYW1lKSkKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgcmV0dXJuIEVSUl9QVFIoLUVGQVVMVCk7Cj4gwqDCoMKgwqDCoMKgwqAgaWYgKCFjKQo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gTlVMTDsKPiAKPiDCoMKgwqDCoMKg
+wqDCoCBuYW1lID0gZ2V0bmFtZV9mbGFncyhwYXRobmFtZSwgTE9PS1VQX0VNUFRZKTsKPiDCoMKg
+wqDCoMKgwqDCoCBpZiAoIUlTX0VSUihuYW1lKSAmJiAhKG5hbWUtPm5hbWVbMF0pKSB7Cj4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHB1dG5hbWUobmFtZSk7Cj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIG5hbWUgPSBOVUxMOwo+IMKgwqDCoMKgwqDCoMKgIH0KPiDCoMKg
+wqDCoMKgwqDCoCByZXR1cm4gbmFtZTvCoMKgIAo+IH0KCi0tIApYaSBSdW95YW8gPHhyeTExMUB4
+cnkxMTEuc2l0ZT4KU2Nob29sIG9mIEFlcm9zcGFjZSBTY2llbmNlIGFuZCBUZWNobm9sb2d5LCBY
+aWRpYW4gVW5pdmVyc2l0eQo=
 
 
