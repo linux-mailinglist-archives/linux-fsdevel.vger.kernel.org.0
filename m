@@ -1,189 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-32408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ED09A4B3A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 07:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA659A4B47
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 07:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7C01C216EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 05:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CB041C21816
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 05:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D761D2785;
-	Sat, 19 Oct 2024 05:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XmoY6nWR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7D81D47BC;
+	Sat, 19 Oct 2024 05:20:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C773A3207
-	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 05:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BF529AF
+	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 05:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729314211; cv=none; b=tCeb5fw9UeXHOySaKmGz/ck4DfIEwtG2M0Ys8kZKVWnb0QNkmguCUQKbKva8Z9Vv93AFC+RBzzlV8h6e6Gj+e8h81t1h9PGIa0MnPKBFb3nvlTcHZLIe14JwoifCpfGKZfgI/BUu0sxxG8h0GgLOxfc6UxuCfAzLOPwQsUTI1Hg=
+	t=1729315205; cv=none; b=dd0pFCUvwUwUs91g6mDLyxab0+quelPcm4CMqwbDF5yH9GUT9x/UzDdL8M+Md0qkf6Cz7zjJ+FGz2zZqFkkxDjQOdfiYkIGXyu5Ea+f3flByn6ly9+m6pMD5e1Xs+RqWWxI6k4HU+YHcnFtrugbWHtOaErQsDe4xSCIJCGKT82U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729314211; c=relaxed/simple;
-	bh=0yPYtMd5/FcAHa6MKEsmZVgKvx4cMUFJNFOsQSqAkh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEhg+fc4WiXepY5ezFKv+rBe+pC2KXPr/xrfmR4pR+lETN8iL9+4flcDll0/umtP4tEICsfDTE2MzUbftOzGCaatYSR8TCp/mtwhPepXt17IGO6bqMBTW8p/jLj35LDq9Pjbc+uCVmAP1eOHZQnAO5y4/WI5xWss/Lg/jwUudk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XmoY6nWR; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aHZbXZCvc6OMZayj9x0ImY4H6Uow7eXPOhnoAWwHrC8=; b=XmoY6nWRqmX2NRI1/5vxtZeTmM
-	mmTMSsRzUuEbh2AjPaiX6yHhuSMaLNOx7aabq+9AukK41zS2aL85/wKbtNO5ur/c7dDDuBGqLmVf7
-	Ih1s/Hu/lXPrHduWFuvSqK1/1a8vef6jfg/xp1Xw8FRo87mZ/clP9elm5t2XtI9YHFWT5HnO+R0h/
-	sfs7T40RAB4aJRPzGYNoj6P62tAu+0QF5pV6EEcFDMNBnQRY0v5QCpetjTmLiqme6CMQxq2Xf8Iww
-	WfURA+MQf+0YEQPlS+hDkkZV3FWO5i8qIH4YMaFMtehRe1Y8CcE9/sC7hIDyj1g+4/1Gr3OpwCfD/
-	XrQeweSw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t21cY-00000005INY-1Yqz;
-	Sat, 19 Oct 2024 05:03:22 +0000
-Date: Sat, 19 Oct 2024 06:03:22 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC][PATCH] getname_maybe_null() - the third variant of
- pathname copy-in
-Message-ID: <20241019050322.GD1172273@ZenIV>
-References: <20241009040316.GY4017910@ZenIV>
- <20241015-falter-zuziehen-30594fd1e1c0@brauner>
- <20241016050908.GH4017910@ZenIV>
- <20241016-reingehen-glanz-809bd92bf4ab@brauner>
- <20241016140050.GI4017910@ZenIV>
- <20241016-rennen-zeugnis-4ffec497aae7@brauner>
- <20241017235459.GN4017910@ZenIV>
- <20241018-stadien-einweichen-32632029871a@brauner>
- <20241018165158.GA1172273@ZenIV>
- <20241018193822.GB1172273@ZenIV>
+	s=arc-20240116; t=1729315205; c=relaxed/simple;
+	bh=fyuvITcQCsYlvsn8rW8Eakh+VpT6R3gvHiTF9T8hfYo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CAJPfcLESPdCflyWfvGhhV/U1wp8mCoUlHZ5HK9tJu/fr5Fg+rb5tGDTEp4Qj2OevXclrXZ+8BRR9eBwLhuRqG7IYjsziNWFPA7FxRMnPbqiHQXlahQ+V6ruEvZ4kG+vEClNcMm0M+u1eK+My75Nz8nisbHYweUBGoRaM27jwwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3cd35858aso26053075ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2024 22:20:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729315202; x=1729920002;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlxeE9Vr5F5vKty6EBmDxdWCPl9yGNSG5XRCNC14GcM=;
+        b=b99s5XkVh47f7g0QCCrg5H+YyyJSU0VpS9VlUK8geLgDd01KrxUMyZh3p4Q/640x8Y
+         C+SgDpP/3neocUrn5kkwMn3VeEIV/RELZt+EMbOwi05ryu165kMf7w3MShXaM5RTK0NF
+         xGArQXZ2TolKghqgFS9jKo4WPSZ5qbo4b5C5h/IUd1lUl3dve8BzumEzv2uszCjsw6LN
+         5Gb1XWE+U4n5QLaB+KkuuIfbxboYTHJl250QoX/AXkE5VRPR8kwuvhG5LaQbH4f6v9ES
+         IUFgEbc5mr/gY1tfp2O9eumunEDOAMn/p/A0VxHBN5+ByHbAbWjXcZWXCTrCyQ2kZuRG
+         epSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMueA00UkkZrDEApTMjgTGlmq9pPWXT5IhI1tSpvKjsAiMye79F6uC5tt5gDjvlY2BZHR1KQasvFGHxjos@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxi0n3GeagsoLXZDKu6yMMi40/OuB1Ht6Cr6Yyj+yduI5WPe4a
+	4tGrjz9XmJPObte5aZ0hiLOBVPoTvGZ47fXEi7rghwXIpe1l3zSZ2tqXU0DdE8j7vyGF4tOulwF
+	HnXj5t7FAE0qs6VmgwNivpVO2pFBSjbqws5tagzvRkjIVMSyonEyabvk=
+X-Google-Smtp-Source: AGHT+IHDOX9xUrAoICrzmF/Qx6PZYlpzPgB1YaSRu2i/o/0q9TaHs9HEUIrz2vTjGWZwjvKqmpon7Rqp5xkZp+Daj33zTRKQXERK
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018193822.GB1172273@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a92:c54e:0:b0:3a0:a80a:997c with SMTP id
+ e9e14a558f8ab-3a3f40ab41dmr36985375ab.19.1729315202208; Fri, 18 Oct 2024
+ 22:20:02 -0700 (PDT)
+Date: Fri, 18 Oct 2024 22:20:02 -0700
+In-Reply-To: <CAKYAXd8Sai7+S1AnAhLtnYWKwZMoAUgUmq_9HRG=oKSg4p-CnQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67134182.050a0220.34b26a.0000.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 18, 2024 at 08:38:22PM +0100, Al Viro wrote:
-> On Fri, Oct 18, 2024 at 05:51:58PM +0100, Al Viro wrote:
-> 
-> > Extra cycles where?  If anything, I'd expect a too-small-to-measure
-> > speedup due to dereference shifted from path_init() to __set_nameidata().
-> > Below is literally all it takes to make filename_lookup() treat NULL
-> > as empty-string name.
-> > 
-> > NOTE: I'm not talking about forcing the pure by-descriptor case through
-> > the dfd+pathname codepath; not without serious profiling.  But treating
-> > AT_FDCWD + NULL by the delta below and passing NULL struct filename to
-> > filename_lookup()?  Where do you expect to have the lost cycles on that?
-> 
-> [snip]
-> 
-> BTW, could you give me a reference to the mail with those objections?
-> I don't see anything in my mailbox, but...
-> 
-> Or was that in one of those AT_EMPTY_PATH_NOCHECK (IIRC?) threads?
-> 
-> Anyway, what I'm suggesting is
-> 
-> 1) teach filename_lookup() to handle NULL struct filename * argument, treating
-> it as "".  Trivial and does not impose any overhead on the normal cases.
-> 
-> 2) have statx try to recognize AT_EMPTY_PATH, "" and AT_EMPTY_PATH, NULL.
-> If we have that and dfd is *NOT* AT_FDCWD, we have a nice descriptor-based
-> case and can deal with it.
-> If the name is not empty, we have to go for dfd+filename path.  Also obvious.
-> Where we get trouble is AT_FDCWD, NULL case.  But with (1) we can simply
-> route that to the same dfd+filename path, just passing it NULL for filename.
-> 
-> That handles the currently broken case, with very little disruption to
-> anything else.
+Hello,
 
-See #getname.fixup; on top of #base.getname and IMO worth folding into it.
-I don't believe that it's going to give any measurable slowdown compared to
-mainline.  Again, if the concerns about wasted cycles had been about routing
-the dfd,"" and dfd,NULL cases through the filename_lookup(), this does *NOT*
-happen with that patch.  Christian, Linus?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
 
-commit 9fb26eb324d9aa9e6889f181f1683e710946258f
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sat Oct 19 00:57:14 2024 -0400
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
+ __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
+ exfat_get_dentry_set+0x57/0xf60 fs/exfat/dir.c:865
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+ exfat_write_failed fs/exfat/inode.c:421 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-    fix statx(2) regression on AT_FDCWD,"" and AT_FDCWD,NULL
-    
-    teach filename_lookup() et.al. to handle NULL struct filename reference
-    as ""; make AT_FDCWD,"" (but _NOT_ the normal dfd,"") case in statx(2)
-    fall back to path-based variant.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3162
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 27eb0a81d9b8..2bfe476c3bd0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -280,7 +280,7 @@ EXPORT_SYMBOL(getname_kernel);
- 
- void putname(struct filename *name)
- {
--	if (IS_ERR(name))
-+	if (IS_ERR_OR_NULL(name))
- 		return;
- 
- 	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
-@@ -604,6 +604,7 @@ struct nameidata {
- 		unsigned seq;
- 	} *stack, internal[EMBEDDED_LEVELS];
- 	struct filename	*name;
-+	const char *pathname;
- 	struct nameidata *saved;
- 	unsigned	root_seq;
- 	int		dfd;
-@@ -622,6 +623,7 @@ static void __set_nameidata(struct nameidata *p, int dfd, struct filename *name)
- 	p->depth = 0;
- 	p->dfd = dfd;
- 	p->name = name;
-+	p->pathname = likely(name) ? name->name : "";
- 	p->path.mnt = NULL;
- 	p->path.dentry = NULL;
- 	p->total_link_count = old ? old->total_link_count : 0;
-@@ -2455,7 +2457,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- static const char *path_init(struct nameidata *nd, unsigned flags)
- {
- 	int error;
--	const char *s = nd->name->name;
-+	const char *s = nd->pathname;
- 
- 	/* LOOKUP_CACHED requires RCU, ask caller to retry */
- 	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
-diff --git a/fs/stat.c b/fs/stat.c
-index d0d82efd44d6..b74831dc7ae6 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -328,7 +328,7 @@ int vfs_fstatat(int dfd, const char __user *filename,
- 	int statx_flags = flags | AT_NO_AUTOMOUNT;
- 	struct filename *name = getname_maybe_null(filename, flags);
- 
--	if (!name)
-+	if (!name && dfd >= 0)
- 		return vfs_fstat(dfd, stat);
- 
- 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
-@@ -769,7 +769,7 @@ SYSCALL_DEFINE5(statx,
- 	int ret;
- 	struct filename *name = getname_maybe_null(filename, flags);
- 
--	if (!name)
-+	if (!name && dfd >= 0)
- 		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
- 
- 	ret = do_statx(dfd, name, flags, mask, buffer);
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3216
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+ exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6003 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g3d5ad2d4eca3-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+Tested on:
+
+commit:         3d5ad2d4 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16155240580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142fbc5f980000
+
 
