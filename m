@@ -1,122 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-32424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AFD9A4ED2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 16:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC3B9A4F21
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 17:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C911CB26B0A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 14:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F691F27040
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2024 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50DA188704;
-	Sat, 19 Oct 2024 14:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED183307B;
+	Sat, 19 Oct 2024 15:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C5AR/+ho"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RSxock2j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A3718D63A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 14:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891891EA87
+	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 15:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729349379; cv=none; b=YHd8ETgGnLxGdX/AiwAc7AW+PSHxgyV6zF/3cTgL65fLdnS8cqMOUChZ2lcTNUnFMke5LQQbUKHyuZfFM7csRWlzXr0nowJzZoD9fsEirSOcdDgWXtLYVH8cQaS7f70uAAnRh2At4M5Wg2PmnGw9GzThM4PLwYHmHG1Fw+JCMzk=
+	t=1729352064; cv=none; b=uAlhQ5mOGAR0VxBYOsPo4/EZtD3SZulnqbPOQPiyw1U/RPyTDwgMOaIj65MZun/MELUqX6pZIpLvF30mEVOU7yUA9aLlHAa1c01aEqAhKnd8YOfk7+VOTsK0kqqzbt3XsO6gzErKRq8plgXbL6eMYTsGC1rrH597ZugiE6oZO80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729349379; c=relaxed/simple;
-	bh=2VLaJyQE9+9yrltFSTQ7B/5OgPjybfChXfU1tWjd6oc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Uoff4vyUZlBRA8eA88cpZjR+kU4rCdV9nwKlM3UP5JuxE2/8X5dk4hiCcVW4ABtEiv1kvW2hxDfpvQ0o5HXr0XHKjs7hrKggHuCNN7dmgaOZlAGNM2Y/pG1HLNm+dGpQojh/iW6RaKGnxV2szq1S7K2IVpS0ZvqE3iDdzQkZUv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C5AR/+ho; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729349376;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=httkPw+Y8CTgT3cQgVJq99l4VNeLqcFxUV61Rhrg63s=;
-	b=C5AR/+hoQqinmLEbW2WIKCmKrkvoRvBJ8MhRDOPv7ZAmQZiQdSvMciHGHgsjybXfwhP6uY
-	eL54ak2ODF9jJkpXBQ5MtdbP/LEhYFkuteQ5uap57f2hm5Rqx4mho4jxvDGqE4KexAPG7Q
-	iwtjsljkQZ9L/WkjPqnXJg/nic0g6nI=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-7c8voKBVMymGWaM8KvpxCA-1; Sat, 19 Oct 2024 10:49:34 -0400
-X-MC-Unique: 7c8voKBVMymGWaM8KvpxCA-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbe5637d8fso48693966d6.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 07:49:34 -0700 (PDT)
+	s=arc-20240116; t=1729352064; c=relaxed/simple;
+	bh=2VEf0sZkKNyJqV8bPANqoeIKJLjrteDBJkPH+wW3P7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxDFXPCP9TUp2tEhi6pQWWuSMG9Sg+9YN0uZx8/NG3FVyHHsph1kll2nHICMGRwoVHdcpAIgP9AW02E0a7LUBtQSbasVPHA6GyOWggq9zqM3f+WTCF44jFax26Qq4D0svjH5GSs8OJu3cwCtreun6ZUA1VXuyEzMgWkyi+NEfqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RSxock2j; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e3a97a6010so37077707b3.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Oct 2024 08:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729352059; x=1729956859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=RSxock2j4eFSMhlPud2PzMLhYJac3rWyeEDfgpn6nEyOad4weShuW0oPInoz9hKbG8
+         Ww7E5MQV80gkmZirtXUcT3sGyi4ZKtp275tH4BsfKCP0Laepk+0gV2WD25h77PzZ8Ck9
+         Qb61d6X1prsbHCW6kW+Kuj5dxj5OA7Dl9h3HosI/w+TnOjM+mzsqsQapyJJZaF6mc4Ka
+         fd48+oheIE9sLzbV5e0BiUExUP7Z0PLusAZbv8b6lLFLWYxjO/1IQ04uuoPvgTKjTijU
+         Ld9RDoyrTGzzCyxH0fkWmrCIFrz1YWyuBfy66q1laX3QGf9P16At8QHYI36hm66E3Og4
+         8+iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729349373; x=1729954173;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=httkPw+Y8CTgT3cQgVJq99l4VNeLqcFxUV61Rhrg63s=;
-        b=FvUcJoMu0wY3gsW0ayGRHDR4QHbbojS5BxkKJAXIqXOtRAx4w28A1pI2EFukTekr9T
-         n/kfaQfdwypThoKdlTLjYZI6hJz6C+joE1JiTJUEnGbA6mkCIsnSFmR0qWrQbmF6BfsX
-         Y68Iqookh4QY+tWpe5k59pWgx2vA/dRfpu60d9AOjE78460NhGWeOUJYt1F+zJchJ0Yl
-         J1s7y6KM81IQNW4WmPmw2GG3I8lEHnHbHDx1HdU788NVj2qqeiKOHAK6EPwfDA6sYbZP
-         KK/sdxftlD+A853089+2lv4FXb4QusKkv+5hhLvqmhJjO80oLwWTCqCaUmWOj9FvtDw6
-         ZwFw==
-X-Gm-Message-State: AOJu0YxArTrxSTO0Joq3hec6exwXSIGpXy0YBnG1OHCq5rbsRCKH7GnG
-	Xc3BdbazxKEiQG5BN0S0cxQkQeRtdWe5aYc2br8Vm/Ci/2/+MUdP3m2/phfDFcImxM/dd6GYRXq
-	88yCIWdldf0Nw6iiRrYdSz+rrxWT60aXlllU29RhBgtrI+4YnCvZQ9MflozmVMUMyp+CpELI=
-X-Received: by 2002:a05:6214:5b03:b0:6c7:c7ff:958e with SMTP id 6a1803df08f44-6cde150789amr83780816d6.18.1729349373320;
-        Sat, 19 Oct 2024 07:49:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEs0/A4OGrhXpZifxynAeUNjGSdw+2vmetaVhUZWMc0Uw9E5uAtlVKwqkMZCmTmzv1y1iWKGw==
-X-Received: by 2002:a05:6214:5b03:b0:6c7:c7ff:958e with SMTP id 6a1803df08f44-6cde150789amr83780596d6.18.1729349372983;
-        Sat, 19 Oct 2024 07:49:32 -0700 (PDT)
-Received: from [172.31.1.12] ([70.105.244.32])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde122cab3sm19541066d6.103.2024.10.19.07.49.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Oct 2024 07:49:32 -0700 (PDT)
-Message-ID: <4a86eea3-973e-4535-8aa5-f3b8b5f7934d@redhat.com>
-Date: Sat, 19 Oct 2024 10:49:30 -0400
+        d=1e100.net; s=20230601; t=1729352059; x=1729956859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=cC8rVMFBnVtZalu5ZwAcwg32d9UjmVPLlIGHV/+KrvLbAzXikiqf9fAasF7Qo7FFg0
+         cA9Qp2koZtf/jp9BwT197fAm3X7JQEkYJzzxHgWpy0rruvCuG5VT5E0pjJs+i8phEFZk
+         fT5cB/9r/P6YrNY9BdahKpb61yVB9wbT4R7mDkRF9+zyT7iNrfdOByGIJIfTyoNxYpVc
+         fDqnDeY4IxuzE+zjDtJvz6jAsjsMuYF2tU8gzvPKA8wZE1/aKoMas4KO8bOv5XRW468d
+         Ca1BcbYnKxNuLzH+bpliICgvMv/HA6jfOtP9555H3ZnuJNJQkYasoURpW1qLEBeKmdB5
+         EgWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmF5k6r8D8IxmvC4L83PFlh24/fUCRk2nDDIfcgkTXYBZbipEYai6EcMn/cLz0FAPClzsCgwVkD+JB74Q1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9wy3SNOZ3KX8KMqQFFUNj1uWx2wzhQou+bEsdtVxNEZzrZ4do
+	SGuPc6Gw//ByUx5NVVYlw1AtcV8bxmBVtQxZa5JkEpJcrgslfUF2VHSZDjSXnRmV50TDfZ79Zpb
+	r99JFqfJU2RRIt4n1tcB/pFQ0uO4gsiq09oyT
+X-Google-Smtp-Source: AGHT+IGtdGqzYcDLxnIpfjuAVP5vxoGEl/nSImRtgtKWi9QsQ/qNJR8p9BgodGD1xEymrlwrAaFBjtak2CSZfpvFhTo=
+X-Received: by 2002:a05:690c:f91:b0:6de:c0e:20ef with SMTP id
+ 00721157ae682-6e5bfbdbe14mr53079707b3.7.1729352059439; Sat, 19 Oct 2024
+ 08:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Steve Dickson <steved@redhat.com>
-Subject: ANNOUNCE: nfs-utils-2.8.1 released.
-To: Linux NFS Mailing list <linux-nfs@vger.kernel.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 19 Oct 2024 11:34:08 -0400
+Message-ID: <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	ebpqwerty472123@gmail.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Oct 18, 2024 at 12:15=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect(=
+).
+>
+> However, that commit called security_mmap_file() inside the mmap_lock loc=
+k,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+>
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
+>
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock, retrieves the VMA
+> and the file descriptor associated, and calculates the 'prot' and 'flags'
+> variables; the second takes a write lock on mmap_lock, checks that the VM=
+A
+> flags and the VMA file descriptor are the same as the ones obtained in th=
+e
+> first critical region (otherwise the system call fails), and calls
+> do_mmap().
+>
+> In between, after releasing the read lock and before taking the write loc=
+k,
+> call security_mmap_file(), and solve the lock inversion issue.
+>
+> Cc: stable@vger.kernel.org # v6.12-rcx
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
+_file_pages()")
+> Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
+6d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 52 insertions(+), 17 deletions(-)
 
-This release doesn't have a large number of patches
-but a couple significant bug fixes and a new
-method of starting the server, via the new
-nfsdctl command, which is the reason I
-bummed the version from 2.7 to 2.8
+Thanks for working on this Roberto, Kirill, and everyone else who had
+a hand in reviewing and testing.
 
-Also with the new nfsdctl command the default
-number of nfsd threads is now 16 instead of 8.
-Another reason for the version bump.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
+Andrew, I see you're pulling this into the MM/hotfixes-unstable
+branch, do you also plan to send this up to Linus soon/next-week?  If
+so, great, if not let me know and I can send it up via the LSM tree.
 
-The tarballs can be found in
-   https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.1/
-or
-   http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.1
+We need to get clarity around Roberto's sign-off, but I think that is
+more of an administrative mistake rather than an intentional omission
+:)
 
-The change log is in
-    https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.1/2.8.1-Changelog
-or
-  
-http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.1/2.8.1-Changelog
-
-
-The git tree is at:
-    git://linux-nfs.org/~steved/nfs-utils
-
-Please send comments/bugs to linux-nfs@vger.kernel.org
-
-steved.
-
+--=20
+paul-moore.com
 
