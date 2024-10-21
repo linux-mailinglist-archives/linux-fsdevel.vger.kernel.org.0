@@ -1,126 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-32493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802C69A6D2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 16:53:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED7F9A6D83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AAF1F21EB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 14:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9D41C222BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75101FAEE4;
-	Mon, 21 Oct 2024 14:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D960FEEB3;
+	Mon, 21 Oct 2024 15:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TE2vDYBh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHx0tdqc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115971FA25D;
-	Mon, 21 Oct 2024 14:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231C5433BB;
+	Mon, 21 Oct 2024 15:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522360; cv=none; b=R4LkhKSAxP5/+MjjBFX7CpUUA0lJYCa5fxupoJWsbOvp2pwkNX9ogbU52AhYrMso1mGhwt9lQMDFwbSXUtiBKF9p2U14Wm6nsDUNxT06QTTotyPPjvhlN1lel4knn5EDn4K40hg1NsC3GYUlLPyQ90uZCBpJu3B/jPrzUh469qg=
+	t=1729522955; cv=none; b=oHKVer0I6Vch6cTiCOiBJGrnMTyPcYBhBzfVT7qspIUceVnVzvLtpKUv6qZVJkv7T4CFg1i98yus66BR5ibsZktpZIja6G9pnWoN4U4PNtNNTS36s6nksP81f8SMzzRcKi/PYwhNXToLbbdFEtXZiB/BDmSf0t9LB9OTH3V/V64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522360; c=relaxed/simple;
-	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDGerendu52NRLGSEPZ+rPAaXa67jj0zAQ9EEknhPoa7m5qdXH0CRDGz9mYkhh91/gecfh6nXcJnL9nbIIk5lfHLrPU9yahCu2INt3RsQ2RzIldft/pfN+IqubRiuM7yUcJGAEUfwjHVd6fw1zuqLjTB+0//h0e4cY1dTds2FCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TE2vDYBh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C0CC4CEE6;
-	Mon, 21 Oct 2024 14:52:34 +0000 (UTC)
+	s=arc-20240116; t=1729522955; c=relaxed/simple;
+	bh=ivc/NfFpIbuGRB4e7IdO3MFJVP/dJCSBQVsvP8nDRjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yf9x8rWxKjIB3mk/6X0vMQnKw0s2tFfn1KxqMyDWvmLUamDvq0PTPFGVw5+2fizeY1K7aAsU9nE9KHFpoJi+0i/fxOaw6gFqOxcXdQkL8Jg1A/K0O8BHn+Ws2990Wl+zEgSk7HDkg3aVa9sD+XYYDoh2FkIlUjUH0WMw0G9rhQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHx0tdqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4832EC4CEC3;
+	Mon, 21 Oct 2024 15:02:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729522359;
-	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TE2vDYBhb7mKSE49g1O1JrRTkH+haqmC6CjGkUMfx/NS5mL2aW3udk3wL9gUNgImP
-	 lw5uhWPxmWnn055BzlW8D3d4PJLrCI2Mc6TTBrY15owrVx4SFgKredCEEn/wqA+/De
-	 5phEeg9ijWs+UwuKH6Vw/FPgPgBVMA0Q3PGN87Cr8wBsoyzf7w1T97B41O6ZkPipoh
-	 g4X2y2ZyA2/unPvyF6YAj9Ll8sDI5HOmR/4GoSJOjp1LwmDTiSq63J91XJiphb9PLG
-	 GX/RPoLKgNFfPGGPtQ6RxHZU1UMZwLvNgKkkUk+YvNv9/e72gF7xqPWdRD5lQRjyhu
-	 k5ysD7Q/BvrNw==
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: (subset) [PATCH RFC v3 00/10] extensible syscalls: CHECK_FIELDS to allow for easier feature detection
-Date: Mon, 21 Oct 2024 16:51:51 +0200
-Message-ID: <20241021-kraut-fundgrube-cf1648e59df4@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+	s=k20201202; t=1729522954;
+	bh=ivc/NfFpIbuGRB4e7IdO3MFJVP/dJCSBQVsvP8nDRjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eHx0tdqcLsCN6ZYjBhiW2ta6o+5/39EOcU5LbPsZdTPJDcBWiIY023jVthh2WAV1L
+	 c+lE3wKMeTbMobExWq41ouI/1r5ArXwUeDzDTwrFmuTlVb2RuEoOC6oMHJv2ctoTKS
+	 7b0BpYbjaBZ8Ddg8whr8WxaXj5pgJqstJkXO+B9BjAkg2Zv7i7Fu6Ok1HD5tWVJ1ob
+	 PoAhcqKnZWM1AsuzHmS/84+vB3B8kypDbYsoXvRipatkmbfIB5UHdkXFPJWnf3A0Z+
+	 rHIyCkNVPY79YXzNAKdoYQ3f5TiVmRN14ECBeL9G5uLsU82JNfTAlt0fbpK7pGbDiw
+	 V9PZqczIRrdXw==
+Date: Mon, 21 Oct 2024 09:02:32 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, axboe@kernel.dk, hch@lst.de,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joshi.k@samsung.com, javier.gonz@samsung.com
+Subject: Re: [PATCHv8 3/6] block: introduce max_write_hints queue limit
+Message-ID: <ZxZtCFNvPlIE8xgV@kbusch-mbp>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-4-kbusch@meta.com>
+ <57798ab7-fc67-4606-900e-d221e028bd8f@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=brauner@kernel.org; h=from:subject:message-id; bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLZa29GrT7ZpV74rL3y8Ijstc/P7tdxYBRchtjj8Umw 0JXGZ8vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpj2f4X33A1Nfrxe052925 gvPv/S+69SaCQZXp45K3TXnHQj0mCzMyfPqyRJ9NYJ5kq/Clhd+W3ix5fGt6n9uW5+rR3003zXn Cxg8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57798ab7-fc67-4606-900e-d221e028bd8f@acm.org>
 
-On Thu, 10 Oct 2024 07:40:33 +1100, Aleksa Sarai wrote:
-> This is something that I've been thinking about for a while. We had a
-> discussion at LPC 2020 about this[1] but the proposals suggested there
-> never materialised.
+On Fri, Oct 18, 2024 at 09:18:34AM -0700, Bart Van Assche wrote:
+> On 10/17/24 9:09 AM, Keith Busch wrote:
+> > Drivers with hardware that support write hints need a way to export how
+> > many are available so applications can generically query this.
 > 
-> In short, it is quite difficult for userspace to detect the feature
-> capability of syscalls at runtime. This is something a lot of programs
-> want to do, but they are forced to create elaborate scenarios to try to
-> figure out if a feature is supported without causing damage to the
-> system. For the vast majority of cases, each individual feature also
-> needs to be tested individually (because syscall results are
-> all-or-nothing), so testing even a single syscall's feature set can
-> easily inflate the startup time of programs.
+> Something is missing from this patch, namely a change for the SCSI disk
+> (sd) driver that sets max_write_hints to sdkp->permanent_stream_count.
+
+Shouldn't someone who cares about scsi do that? I certainly don't care,
+nor have I been keeping up with what's happening there, so I'm also
+unqualified.
+ 
+> > +What:		/sys/block/<disk>/queue/max_write_hints
+> > +Date:		October 2024
+> > +Contact:	linux-block@vger.kernel.org
+> > +Description:
+> > +		[RO] Maximum number of write hints supported, 0 if not
+> > +		supported. If supported, valid values are 1 through
+> > +		max_write_hints, inclusive.
 > 
-> [...]
+> That's a bit short. I think it would help to add a reference to the
+> aspects of the standards related to this attribute: permanent streams
+> for SCSI and FDP for NVMe.
 
-I think the copy_struct_to_user() is useful especially now that we'll gain
-another user with pidfd_info.
+The specs regarding write hints have not historically been stable, so
+I'd rather not tie kernel docs to volatile external specifications.
 
----
+> > diff --git a/block/blk-settings.c b/block/blk-settings.c
+> > index a446654ddee5e..921fb4d334fa4 100644
+> > --- a/block/blk-settings.c
+> > +++ b/block/blk-settings.c
+> > @@ -43,6 +43,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+> >   	lim->seg_boundary_mask = BLK_SEG_BOUNDARY_MASK;
+> >   	/* Inherit limits from component devices */
+> > +	lim->max_write_hints = USHRT_MAX;
+> >   	lim->max_segments = USHRT_MAX;
+> >   	lim->max_discard_segments = USHRT_MAX;
+> >   	lim->max_hw_sectors = UINT_MAX;
+> > @@ -544,6 +545,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+> >   	t->max_segment_size = min_not_zero(t->max_segment_size,
+> >   					   b->max_segment_size);
+> > +	t->max_write_hints = min(t->max_write_hints, b->max_write_hints);
+> > +
+> >   	alignment = queue_limit_alignment_offset(b, start);
+> 
+> I prefer that lim->max_write_hints is initialized to zero in
+> blk_set_stacking_limits() and that blk_stack_limits() uses
+> min_not_zero().
 
-Applied to the vfs.usercopy branch of the vfs/vfs.git tree.
-Patches in the vfs.usercopy branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.usercopy
-
-[01/10] uaccess: add copy_struct_to_user helper
-        https://git.kernel.org/vfs/vfs/c/424a55a4a908
-[02/10] sched_getattr: port to copy_struct_to_user
-        https://git.kernel.org/vfs/vfs/c/112cca098a70
+How is a device supposed to report it doesn't support a write hint if 0
+gets overridden?
 
