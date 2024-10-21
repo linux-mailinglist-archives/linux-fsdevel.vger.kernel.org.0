@@ -1,104 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-32479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8809A68FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 14:48:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9237B9A69CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E0B1F22A52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 12:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0471F228B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684221F5854;
-	Mon, 21 Oct 2024 12:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62881F4731;
+	Mon, 21 Oct 2024 13:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCaVSN9d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2F01EBA0C;
-	Mon, 21 Oct 2024 12:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E326ACD;
+	Mon, 21 Oct 2024 13:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514873; cv=none; b=IzvBJSyK+yOdsJV5mIzygDqL318PgM8GmKKfkg8xtOneObvZBLCu+kyFOdw1GI0upSTWc54gDETuecOctuF9EepUsar84Amr9uKhgYmT0NIE5Ds+7CArgmTD5M81CGa/m7/YeIPaPIAYBWJJyL8LslpHu8hizPr2jaCvpGd+P9c=
+	t=1729516406; cv=none; b=O1dWEjxpSm+Q4Jzztm5AWe9XpWvxc5c74PzP9ZQ+5qsiyHmhWeyLtyW9jB28LbzniHsLHwCz5QbxfR+gzcpW404UTyzsou/Gpm5BlRdqFeUE87SnJdMJxdOM8PauN14Srqt60JtnhK5lD5+smAT7kMMXgTrLwYWHosZGh+gyuec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514873; c=relaxed/simple;
-	bh=1FAdfDt0b6kTld8gsii+fwwDIv8OQVKZ2kX2V/F2fSY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z58YKImZvUu7NnnH2wMqrXmVqF5QVh9VhCqTyBQehd/mFX3hudACgyl9pHMa/TaujJNg7iQEBPXR9oo/cWvJnqUF4nQDiTQHSyNocM/mSBXfM3AIE4RX8lmuik3Csbdr6OOmIQUHIHUbcUep7/R4PVfbr4Q4vejf9ZQYdjYOe+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XXFSv00Fhz4f3jMx;
-	Mon, 21 Oct 2024 20:47:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 561781A0359;
-	Mon, 21 Oct 2024 20:47:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMhuTRZn+TzdEg--.6426S4;
-	Mon, 21 Oct 2024 20:47:44 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-kernel@vger.kernel.org,
-	houtao1@huawei.com
-Subject: [PATCH] fuse: zero folio correctly in fuse_notify_store()
-Date: Mon, 21 Oct 2024 20:59:55 +0800
-Message-Id: <20241021125955.2443353-1-houtao@huaweicloud.com>
-X-Mailer: git-send-email 2.29.2
+	s=arc-20240116; t=1729516406; c=relaxed/simple;
+	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kcaarta7j3xjWi9K36Cpoidn+8R0cTV6+tHKGLrvtFOsHbTtIDirwH6+WhFbKXLkm5oFChWy4DXAkJkXJUrmXwFeE6/lMizbbNznVmfI4o9itKn9lxToGxvPU8cGQJBqbnTzjXDJKlFlywyaK0Yr4dJ7sR+X59IeqsyX9lsuieQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCaVSN9d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77FDC4CEC3;
+	Mon, 21 Oct 2024 13:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729516405;
+	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VCaVSN9dURA9zYAY3uImNi5qLazdbe6a2oNN9dDIdK9SKGXJypGFSKDbW1zZZgz5C
+	 Q2FjkH3Y5zkG4We999HkJnuJNHfoq6lu/xBOUxUM6pbinhzdZeTGOEktECYOt5v2Pw
+	 n8IuF3DdDQ1Uyixlm+r0gppHIbk0qru+/rzrnxPDXk6XCgq8mhdkfd1Bd/5Ga5JFqS
+	 8Yy5Zd//cWWK/y/+Aif1UXy4cfCcCQdjglW+2lLn/ZpnVqlC29ontCDM2L4vYghy5J
+	 NoXhjEkV0zXBHg6hReNac75yNRGWkCOQ0sU5sIVG7a/OdIJ7x/PiQDS+guTmEiMTW2
+	 lzw/z0bIjXE4Q==
+Date: Mon, 21 Oct 2024 15:13:20 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Paul Moore <paul@paul-moore.com>, Jeff Layton <jlayton@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"anna@kernel.org" <anna@kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <20241021-forsten-sitzreihen-45035569f83b@brauner>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+ <ZxEmDbIClGM1F7e6@infradead.org>
+ <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+ <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
+ <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
+ <20241018122543.cxbbtsmeksegoeh3@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMhuTRZn+TzdEg--.6426S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF18ur1xXr4DKr4ftw1DJrb_yoWDKFX_ur
-	48Z3Z5WF48Wrn29F15ZFn3Jryqq34rGF48uF48ZFWfAry5Zw4xuFyvvrn5uryrXrW3XFs8
-	Ar1kAFZIkw1jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+In-Reply-To: <20241018122543.cxbbtsmeksegoeh3@quack3>
 
-From: Hou Tao <houtao1@huawei.com>
+On Fri, Oct 18, 2024 at 02:25:43PM +0200, Jan Kara wrote:
+> On Thu 17-10-24 16:21:34, Paul Moore wrote:
+> > On Thu, Oct 17, 2024 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > On Thu, 2024-10-17 at 11:15 -0400, Paul Moore wrote:
+> > > > On Thu, Oct 17, 2024 at 10:58 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
+> > > > > > Okay, good to know, but I was hoping that there we could come up with
+> > > > > > an explicit list of filesystems that maintain their own private inode
+> > > > > > numbers outside of inode-i_ino.
+> > > > >
+> > > > > Anything using iget5_locked is a good start.  Add to that file systems
+> > > > > implementing their own inode cache (at least xfs and bcachefs).
+> > > >
+> > > > Also good to know, thanks.  However, at this point the lack of a clear
+> > > > answer is making me wonder a bit more about inode numbers in the view
+> > > > of VFS developers; do you folks care about inode numbers?  I'm not
+> > > > asking to start an argument, it's a genuine question so I can get a
+> > > > better understanding about the durability and sustainability of
+> > > > inode->i_no.  If all of you (the VFS folks) aren't concerned about
+> > > > inode numbers, I suspect we are going to have similar issues in the
+> > > > future and we (the LSM folks) likely need to move away from reporting
+> > > > inode numbers as they aren't reliably maintained by the VFS layer.
+> > > >
+> > >
+> > > Like Christoph said, the kernel doesn't care much about inode numbers.
+> > >
+> > > People care about them though, and sometimes we have things in the
+> > > kernel that report them in some fashion (tracepoints, procfiles, audit
+> > > events, etc.). Having those match what the userland stat() st_ino field
+> > > tells you is ideal, and for the most part that's the way it works.
+> > >
+> > > The main exception is when people use 32-bit interfaces (somewhat rare
+> > > these days), or they have a 32-bit kernel with a filesystem that has a
+> > > 64-bit inode number space (NFS being one of those). The NFS client has
+> > > basically hacked around this for years by tracking its own fileid field
+> > > in its inode.
+> > 
+> > When I asked if the VFS dev cared about inode numbers this is more of
+> > what I was wondering about.  Regardless of if the kernel itself uses
+> > inode numbers for anything, it does appear that users do care about
+> > inode numbers to some extent, and I wanted to know if the VFS devs
+> > viewed the inode numbers as a first order UAPI interface/thing, or if
+> > it was of lesser importance and not something the kernel was going to
+> > provide much of a guarantee around.  Once again, I'm not asking this
+> > to start a war, I'm just trying to get some perspective from the VFS
+> > dev side of things.
+> 
+> Well, we do care to not break our users. So our opinion about "first order
+> UAPI" doesn't matter that much. If userspace is using it, we have to
+> avoid breaking it. And there definitely is userspace depending on st_ino +
+> st_dev being unique identifier of a file / directory so we want to maintain
+> that as much as possible (at least as long as there's userspace depending
+> on it which I don't see changing in the near future).
+> 
+> That being said historically people have learned NFS has its quirks,
+> similarly as btrfs needing occasionally a special treatment and adapted to
+> it, bcachefs is new enough that userspace didn't notice yet, that's going
+> to be interesting.
+> 
+> There's another aspect that even 64-bits start to be expensive to pack
+> things into for some filesystems (either due to external protocol
+> constraints such as for AFS or due to the combination of features such as
+> subvolumes, snapshotting, etc.). Going to 128-bits for everybody seems
+> like a waste so at last LSF summit we've discussed about starting to push
+> file handles (output of name_to_handle_at(2)) as a replacement of st_ino
+> for file/dir identifier in a filesystem. For the kernel this would be
+> convenient because each filesystem can pack there what it needs. But
+> userspace guys were not thrilled by this (mainly due to the complexities of
+> dynamically sized identifier and passing it around). So this transition
+> isn't currently getting much traction and we'll see how things evolve.
 
-The third argument of folio_zero_range() should be the length to be
-zeroed, not the total length. Fix it by using folio_zero_segment()
-instead in fuse_notify_store().
-
-Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
-Fixes: 5d9e1455630d ("fuse: convert fuse_notify_store to use folios")
-Signed-off-by: Hou Tao <houtao1@huawei.com>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 824e329b8fd7..eb89a301c406 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1668,7 +1668,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
- 		err = fuse_copy_page(cs, &page, offset, this_num, 0);
- 		if (!folio_test_uptodate(folio) && !err && offset == 0 &&
- 		    (this_num == folio_size(folio) || file_size == end)) {
--			folio_zero_range(folio, this_num, folio_size(folio));
-+			folio_zero_segment(folio, this_num, folio_size(folio));
- 			folio_mark_uptodate(folio);
- 		}
- 		folio_unlock(folio);
--- 
-2.29.2
-
+It's also not an answer for every filesystem. For example, you don't
+want to use file handles for pidfds when you are guaranteed that the
+inode numbers will be unique. So file handles will not be used for that
+where a simple statx() and comparing inode numbers can do.
 
