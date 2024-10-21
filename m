@@ -1,151 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-32459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F7C9A5EB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 10:34:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291E59A6024
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 11:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D22A1C21454
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 08:34:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44AFB291BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 09:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50091E1C07;
-	Mon, 21 Oct 2024 08:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B25E1E47B6;
+	Mon, 21 Oct 2024 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="X+hu8zhH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823871D278D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 08:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407D51E3DEC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 09:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729499671; cv=none; b=rKY9QJYLd/0GTtx2mNhN1f0qWRZKe6tw27rn2Evmpb+YOmA7NTicjk1W7Ax6flhH5KReO6s4JrqZGXrMI99LUQsqlRFRPEhMRUQe4kyIqMo9LWpxCd6za341HCVfrMcEJYbZa2uOolwKG8TktxGqKnirQBtpF2wDLp0baTNziJI=
+	t=1729503178; cv=none; b=RCFKCgtxjWJlwd6Ylkk6XFtYfnYd5gWtXOPHzlk78aI9Tu7VxVIITTPUd6UMGTRTS7XAvKdHnRhtvCilWISa0uL/ZTyqBFsFWCfEC8l+fkNZ1JRXqj+7uDlD9NoM4C2ShuutNNS7Xr0fhQlv+B9ozR0cpqonWvEsFa64Yrq9cFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729499671; c=relaxed/simple;
-	bh=XU8o2WZZZAB7gSPAv2O20qXXZQ9Z1te3GzZRn0W0oTc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dvQRk9GWedCIDcodv3WKpeYJElQHLEexhxGCs4aX3rvahkKzdOJf1snuv6Wt55iXNjUafJ7kRhrj726Gt87gvSlq7JfQ7xdsnSqKlYwFj01XGvA16pPOJLGF6UZtqKGhywkBLADWlKr/Yvy6jmhzLhUVOrD83h3sEMKDcNvRnik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so36063055ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 01:34:29 -0700 (PDT)
+	s=arc-20240116; t=1729503178; c=relaxed/simple;
+	bh=9clzla/O2c8xun3BEoruFaiGBhR8mETSSi3NTpPjI4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GKJ3jwMC/MPlSNPQ2Kex23tZE1XT1zGysiowFkJjV2DrfmXWaufInWSWD6xjnTLum6KS26C+NiQzGSZj0Ig6dEyxWNRQNw2B1dmhJ4fqrJxnY22EBDaantAr8jKkSo2CxJ3pTcGQKMg5IiLpjZMpJnbeXg13wi16Bfzed8ZTVDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=X+hu8zhH; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso3914501276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 02:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1729503174; x=1730107974; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzQoWkoxZnBoGUKhVz/WGG4vDvYXQJw7pxUehUocXpQ=;
+        b=X+hu8zhHcPRptgIeGeCqt2Kt6ToncG05T9E72tNVfB84FBiO3n7MNpwWKksTFYgXfE
+         w1Gf7j9aZByawVR6eEkk+CKGU4uiXO6bU1kHfx9Zk0UC0I24NRPoekf118o2peX2fzXc
+         kcRvQ7SCguhMk/WPqNUr5F9nmY2qEmi4yAitg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729499668; x=1730104468;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EMjfFkhxpj6Tyr8/Ow2y3KJJJ/7bNVau0WrSqtwkCAs=;
-        b=JPxCedJwi4KG5c4/OkNCNuAWrCmuUUZojWlDRf1hjUwMAcM76sKNeM08rlVT3c8HD7
-         otezEAOwo3IxfdqvF0IPfDBDZzhUvYki9xgpyKkuwB1qXb9fmZ6xHoYq8ZJQeuz0a8dp
-         Is5CLT0r+jciKapDy7N2RW0OF73B2Kot2IRK6JzN+4Gg6XAeW1n02kJ9IS15+w0e6Grf
-         WKhL8oxwvlB/vyBnvladt+4Ie0NaFPsK9UJFUSrLo3mBsJ8czpy9CchyQ7Q18i91HtY8
-         RPCo3L+JCSYS7VNx9/J7sHlfoyPmr7NUTirkAGGADWmiWJJKj+RJxFreqp9MvWaqkEti
-         1sCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV65k1Y4TtRv2mMOzCuD0PC9URyzYjNNLvuJC2awQ+DrgYulfIWGuMzqhGGQIbSAYe0uS8C74M/tzGYGsCX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhc4r4QyfbRx+BLai1XmzMsOhY/j1CXQV4KcqCqNGpUEDp+qxQ
-	nLBn7mbqc46TnDdsfvl1LAeh3MtKyqjYajtURi5qOCH5IA8WgjY7IDr4QOHSWeGZWzUdQJX+0Vp
-	YzDDePhNkLdtK3g0hlZP+veRcNf7rC+mMxLMbXosmEe7YO8OPg5l3X1k=
-X-Google-Smtp-Source: AGHT+IH6pKUvJqlfItRP5S/8YUn7NiAOX/hauIj9Fm5rYracYxmLjFpilAeCZkIN0Rc3usLGK9IJUFvoijf17MWeWA+F99Rbq4mJ
+        d=1e100.net; s=20230601; t=1729503174; x=1730107974;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wzQoWkoxZnBoGUKhVz/WGG4vDvYXQJw7pxUehUocXpQ=;
+        b=nz89MpQsFnUaroi2P6lXZmyhd867aDv+5QkmDczUf/NabmtW41i2WEuaVj4ecylVPb
+         ulwBP5UXYVytjiG6eCcqKzUFlXhoPqvNH10vhhfkNTf51KC3Jdeuf+T1GKbd4R4HC7qt
+         1TIkkhUDAiFqDXZBaHJl2NvvIakuO5zeDLmND5cXNUSp7g06WtcH1iQy3rRaLzvwdMQm
+         732R6kUg5APSikhIpmdRd8Y1Fa+wRu/oALjlZSUI9/j2ZYbRf5cUcNAbmMgx+vFaf0QP
+         xn0D1c4dibH690dukzTMYuDqXA7lJIT+J+GQKk27gFwHZPlx7l7Mggeub3eTroO4N4ro
+         mEpw==
+X-Gm-Message-State: AOJu0YxHhQ7eZV6eZel4nAuVxAvzBuNb1gPlCz1EBOlzQ7Gb92bb+YmI
+	+Av2EyrrOJuoTX7OzPC0ONLHXe8NeAiuTc5aXuy7ZHQy1ijcOMT/Y39GWUbBVJNelyS4s0HlOBS
+	3jBzqokoRK7IE67FM8W3AhfGOXo3W6YauE5PmeqYsqPDz7iX44uQ=
+X-Google-Smtp-Source: AGHT+IF33aCb4BiI0InxUmsARrMvP0g3rwGjh9O0/sliUSZghwSdT6XQrnZ72Y/apOWBultHW7rn7j/QBsg5x8PofFc=
+X-Received: by 2002:a25:cec5:0:b0:e2b:d097:377c with SMTP id
+ 3f1490d57ef6-e2bd0974fa2mr3644302276.10.1729503173952; Mon, 21 Oct 2024
+ 02:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d99:b0:3a0:9cd5:92f7 with SMTP id
- e9e14a558f8ab-3a3f409feb5mr76220495ab.17.1729499668417; Mon, 21 Oct 2024
- 01:34:28 -0700 (PDT)
-Date: Mon, 21 Oct 2024 01:34:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67161214.050a0220.1e4b4d.0051.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in vfs_set_acl
-From: syzbot <syzbot+0ec57cf5875fb74b1749@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+References: <20241014182228.1941246-1-joannelkoong@gmail.com>
+ <20241014182228.1941246-3-joannelkoong@gmail.com> <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
+ <CAJnrk1bByc+qJTAvfJZxp5=o=N8EdgKWxQN-jWOW8Rv-PZMZRA@mail.gmail.com>
+In-Reply-To: <CAJnrk1bByc+qJTAvfJZxp5=o=N8EdgKWxQN-jWOW8Rv-PZMZRA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 21 Oct 2024 11:32:42 +0200
+Message-ID: <CAJfpegum=FKSKGeE6RqOza-uR_4xXcR4Yibk9HCXYWuuVoBhLw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, hannes@cmpxchg.org, 
+	shakeel.butt@linux.dev, linux-mm@kvack.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Fri, 18 Oct 2024 at 03:30, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-syzbot found the following issue on:
+> I need to analyze the page fault path more to get a clearer picture of
+> what is happening, but so far this looks like a valid case for a
+> correctly written fuse server to run into.
 
-HEAD commit:    1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=142b1fd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ec57cf5875fb74b1749
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Yes.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> For the syscalls however, is it valid/safe in general (disregarding
+> the writeback deadlock scenario for a minute) for fuse servers to be
+> invoking these syscalls in their handlers anyways?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d3858ef614f2/disk-1d227fcc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c3bc0a9537f9/vmlinux-1d227fcc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/50778a472926/bzImage-1d227fcc.xz
+Generally no.  Any kind of recursion in fuse is a landmine.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ec57cf5875fb74b1749@syzkaller.appspotmail.com
+E.g. CVE-2019-20794 was created to track an issue with a fuse server
+going unkillable on namespace shutdown.  It didn't occur to the
+reporter that this is just a special case of a plain old recursive
+deadlock, because it happens to be triggered by kill.  But recursion
+is clearly there: there's a file descriptor referring to the same fuse
+mount that is being served.  When this fd is closed at process exit
+the recursion is triggered and the thing deadlocks.  The fix: move the
+recursive part of the code to a different process.  But people seem to
+believe that recursion is okay and the kernel should deal with that
+:-/
 
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff88805ac19b98, owner = 0x0, curr 0xffff888028243c00, list empty
-WARNING: CPU: 1 PID: 6279 at kernel/locking/rwsem.c:1368 __up_write kernel/locking/rwsem.c:1367 [inline]
-WARNING: CPU: 1 PID: 6279 at kernel/locking/rwsem.c:1368 up_write+0x502/0x590 kernel/locking/rwsem.c:1630
-Modules linked in:
-CPU: 1 UID: 0 PID: 6279 Comm: syz.5.261 Not tainted 6.12.0-rc2-syzkaller-00205-g1d227fcc7222 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__up_write kernel/locking/rwsem.c:1367 [inline]
-RIP: 0010:up_write+0x502/0x590 kernel/locking/rwsem.c:1630
-Code: c7 c7 00 be 0a 8c 48 c7 c6 80 c0 0a 8c 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 53 e8 d3 42 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6a fd ff ff 48 c7 c1 00 25 1d 90 80 e1 07 80 c1 03
-RSP: 0018:ffffc900032efb20 EFLAGS: 00010292
-RAX: 220090bc865dbe00 RBX: ffffffff8c0abee0 RCX: 0000000000040000
-RDX: ffffc9000b6b1000 RSI: 000000000000a04b RDI: 000000000000a04c
-RBP: ffffc900032efc00 R08: ffffffff8155e402 R09: fffffbfff1cf9fd8
-R10: dffffc0000000000 R11: fffffbfff1cf9fd8 R12: 0000000000000000
-R13: ffff88805ac19b98 R14: 1ffff9200065df6c R15: dffffc0000000000
-FS:  00007fbdc01a26c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f94b6826920 CR3: 0000000063cca000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:820 [inline]
- vfs_set_acl+0x9c8/0xa60 fs/posix_acl.c:1143
- do_setxattr fs/xattr.c:626 [inline]
- path_setxattr+0x3bd/0x4d0 fs/xattr.c:658
- __do_sys_setxattr fs/xattr.c:676 [inline]
- __se_sys_setxattr fs/xattr.c:672 [inline]
- __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:672
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbdbf37dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbdc01a2038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-RAX: ffffffffffffffda RBX: 00007fbdbf536058 RCX: 00007fbdbf37dff9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000020000100
-RBP: 00007fbdbf3f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbdbf536058 R15: 00007ffc82e49b58
- </TASK>
+> The other places where I see a generic wait on writeback seem safe:
+> * splice, page_cache_pipe_buf_try_steal() (fs/splice.c):
+>    We hit this in fuse when we try to move a page from the pipe buffer
+> into the page cache (fuse_try_move_page()) for the SPLICE_F_MOVE case.
+> This wait seems fine, since the folio that's being waited on is the
+> folio in the pipe buffer which is not a fuse folio.
+> * memory failure (mm/memory_failure.c):
+>    Soft offlining a page and handling page memory failure - these can
+> be triggered asynchronously (memory_failure_work_func()), but this
+> should be fine for the fuse use case since the server isn't blocked on
+> servicing any writeback requests while memory failure handling is
+> waiting on writeback
+> * page truncation (mm/truncate.c):
+>    Same here. These cases seem fine since the server isn't blocked on
+> servicing writeback requests while truncation waits on writeback
 
+Right.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Miklos
 
