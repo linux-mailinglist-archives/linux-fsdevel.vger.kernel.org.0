@@ -1,118 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-32456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7BF9A5DB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 09:54:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1BA59A5DD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 10:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93196281A3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 07:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C41B21251
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 08:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBE81E0E15;
-	Mon, 21 Oct 2024 07:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jMqWE15B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7741E1331;
+	Mon, 21 Oct 2024 07:59:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4857D1DFE22;
-	Mon, 21 Oct 2024 07:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFA71E1302;
+	Mon, 21 Oct 2024 07:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729497265; cv=none; b=Ya+dDFbKwjISRb+fg64k5WnbeGPP0DfZ/vDRQrGkiRMXGYCLdADombNkXVmw/0WdnMijeq70O/VZ32+SgTpmLyj6Ax5JxPbRgfR/5VkHzum83I8yCDvbZndrsSYvfEaazR0LpvSY7OG+jTknNa+6U2hVryWk1y7RFflwJz0GZDA=
+	t=1729497592; cv=none; b=EmyeXLVd2oZZvQ4eibJgNg/aUSbmRowERCL1Ltpfyh7yMEAQQlOyGIMhwfJyxQEXi3Jyw+PUoBe/ic7AioI7Z+hOxvOzAqURWh53icTEDZlgGtVqR7ZIM/JP3h4uGkwdf+04+rwZXoNlGhIssczXIGggdUqy8eZaIMbCAI/xVwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729497265; c=relaxed/simple;
-	bh=gDYHLfdoCtStAMCGUx3Ay1RPR+kNQscBH8of2jY0cfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=svYLUZtIH3V+BThKv/5VA+hHGDarLaps/9AC1tVs70qaImdUkNHoQjbNJ5o/S88djlPGjr4LsTZMfZqLqyBXeJOHaI+asqMOWN0zjb6rcpSsaV/hNaJv4SMx9bsIGBiYI0s7G7i9frC54UIdTuG7UCllqKa70IpfUAV67Fi7x5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jMqWE15B; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729497255; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=JJokq+lp+EynznNIydiE+AjMIqmPGCXE2TWW4BFGqdU=;
-	b=jMqWE15BaEv0HaFZXCqqOqwg/R5UgEsILlvhkgYmo+IYnWCjX5/FcCkJpdcPmoULzdAYpSJJb9Y2LTIDT+YVw3nnzUufwJTRm9xqUYvZzYcImDdYeDZdLDattJXBmYqTgHulE3ps7uyg9A3XUVCqNCkGmySLieKVNALAy+VvJuw=
-Received: from 30.221.130.170(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHYCPSr_1729497253 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 21 Oct 2024 15:54:14 +0800
-Message-ID: <ab1a99aa-4732-4df6-97c0-e06cca2527e3@linux.alibaba.com>
-Date: Mon, 21 Oct 2024 15:54:12 +0800
+	s=arc-20240116; t=1729497592; c=relaxed/simple;
+	bh=lyQWXd8tZ+cJL5EJxSB+u2xZemaLQGSuAwwZhKQD8JQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=so0tKROT/2JP+sPNpLFBclwbPPOe47bIqvogi4OExYosWlpeADYaKWu1LTqcxfgjrq7IfO5TScYUOdAL4bTil5x9QofUJMJLA6UrBVKsYsNGfdkO7cOKHpeeKyiD/s7J9um7w6jsW7UcJN+uem3ljhpmyEOuR8eskd8VI2UZyx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XX6dS3JbXz9v7NX;
+	Mon, 21 Oct 2024 15:39:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 3DEE8140134;
+	Mon, 21 Oct 2024 15:59:40 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCXsYDdCRZnfdwkAA--.41168S2;
+	Mon, 21 Oct 2024 08:59:39 +0100 (CET)
+Message-ID: <c0e85aaa89283d5e4b742d23299f286a2e3eeaad.camel@huaweicloud.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>, "Kirill A. Shutemov"
+	 <kirill.shutemov@linux.intel.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+ jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ ebpqwerty472123@gmail.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+  syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Mon, 21 Oct 2024 09:59:22 +0200
+In-Reply-To: <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
-To: Christian Brauner <brauner@kernel.org>, Gao Xiang <xiang@kernel.org>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
- Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@infradead.org>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
- <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241010-bauordnung-keramik-eb5d35f6eb28@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwCXsYDdCRZnfdwkAA--.41168S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1rZr18XFyrCw1xCryrXrb_yoW5Cw1DpF
+	ZxK3Z0kr1vqryxur1aqFy7WFWrC3yfGrW7WrZ7Xr1ruasrXF1fKr1fGF45Wa4DWrZ7CFWF
+	vF1jkr93Ka1DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGcVvDAFpgADsY
 
-Hi Christian,
+On Sat, 2024-10-19 at 11:34 -0400, Paul Moore wrote:
+> On Fri, Oct 18, 2024 at 12:15=E2=80=AFPM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> >=20
+> > Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> > remap_file_pages()") fixed a security issue, it added an LSM check when
+> > trying to remap file pages, so that LSMs have the opportunity to evalua=
+te
+> > such action like for other memory operations such as mmap() and mprotec=
+t().
+> >=20
+> > However, that commit called security_mmap_file() inside the mmap_lock l=
+ock,
+> > while the other calls do it before taking the lock, after commit
+> > 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+> >=20
+> > This caused lock inversion issue with IMA which was taking the mmap_loc=
+k
+> > and i_mutex lock in the opposite way when the remap_file_pages() system
+> > call was called.
+> >=20
+> > Solve the issue by splitting the critical region in remap_file_pages() =
+in
+> > two regions: the first takes a read lock of mmap_lock, retrieves the VM=
+A
+> > and the file descriptor associated, and calculates the 'prot' and 'flag=
+s'
+> > variables; the second takes a write lock on mmap_lock, checks that the =
+VMA
+> > flags and the VMA file descriptor are the same as the ones obtained in =
+the
+> > first critical region (otherwise the system call fails), and calls
+> > do_mmap().
+> >=20
+> > In between, after releasing the read lock and before taking the write l=
+ock,
+> > call security_mmap_file(), and solve the lock inversion issue.
+> >=20
+> > Cc: stable@vger.kernel.org # v6.12-rcx
+> > Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in rem=
+ap_file_pages()")
+> > Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220=
+.46d20.0036.GAE@google.com/
+> > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+> >  1 file changed, 52 insertions(+), 17 deletions(-)
+>=20
+> Thanks for working on this Roberto, Kirill, and everyone else who had
+> a hand in reviewing and testing.
 
-On 2024/10/10 17:48, Christian Brauner wrote:
-> On Wed, 09 Oct 2024 11:31:50 +0800, Gao Xiang wrote:
->> As Allison reported [1], currently get_tree_bdev() will store
->> "Can't lookup blockdev" error message.  Although it makes sense for
->> pure bdev-based fses, this message may mislead users who try to use
->> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
->> then.
->>
->> Add get_tree_bdev_flags() to specify extensible flags [2] and
->> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
->> since it's misleading to EROFS file-backed mounts now.
->>
->> [...]
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
-> 
-> [1/2] fs/super.c: introduce get_tree_bdev_flags()
->        https://git.kernel.org/vfs/vfs/c/f54acb32dff2
-> [2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
->        https://git.kernel.org/vfs/vfs/c/83e6e973d9c9
+Welcome!
 
-Anyway, I'm not sure what's your thoughts about this, so I try to
-write an email again.
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
+>=20
+> Andrew, I see you're pulling this into the MM/hotfixes-unstable
+> branch, do you also plan to send this up to Linus soon/next-week?  If
+> so, great, if not let me know and I can send it up via the LSM tree.
+>=20
+> We need to get clarity around Roberto's sign-off, but I think that is
+> more of an administrative mistake rather than an intentional omission
+> :)
 
-As Allison suggested in the email [1], "..so probably it should get
-fixed before the final release.".  Although I'm pretty fine to leave
-it in "vfs.misc" for the next merge window (6.13) instead, it could
-cause an unnecessary backport to the stable kernel.
+Ops, I just thought that I would not need to add it, since I'm not the
+author of the patch. Please add my:
 
-Or if there is some other potential concern about these two patches?
-Also I hope my previous reply about a redundant blank line removal
-in the first patch might be useful too [2].
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-[1] https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-[2] https://lore.kernel.org/r/8ec1896f-93da-4eca-ab69-8ae9d1645181@linux.alibaba.com
+Roberto
 
-Thanks,
-Gao Xiang
 
