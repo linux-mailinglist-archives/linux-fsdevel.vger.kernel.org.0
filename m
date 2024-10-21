@@ -1,79 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-32515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2AA9A7245
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 20:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9064E9A8FEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 21:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38EA1C22806
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 18:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4527328468C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 19:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AB41FA258;
-	Mon, 21 Oct 2024 18:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864F71FCC59;
+	Mon, 21 Oct 2024 19:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltBY0z3Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i87kZedR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFB61F9428;
-	Mon, 21 Oct 2024 18:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F331991AE;
+	Mon, 21 Oct 2024 19:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729535243; cv=none; b=T2W04Rm6extXzpGQerV1wtj/WS9oslz29NMbdxtruLCEcKoCZs0PC9JNJOfti9Rk2369wtzN5Z3QDfsj4VhQA/4DC8OmBQcpec7WtZ4wqweVUvUwYSOMFGluxVquH/3a23Hdlu07vQ4zDQUVWD3quR6dBtYFATzAiZN0ma2Qg1Y=
+	t=1729539320; cv=none; b=kiuVnFdOqApKWR2dyMFGClYMkSk3cNGSJQkJnA0+73whuXIcpP1edI4GT3CEAHC+5ZVxHaR5ZNH2tfil6AvLIZ0i4u9jxhaX2bbrYv0ge6zuQaLfQx7VwIJuZfi7Bw1gJIwXABCPn8yxhm3mGXtiA3++eoKsgURRPd0ipiFOJGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729535243; c=relaxed/simple;
-	bh=pLgA05KguI6zXJF/H2j4K/6vQs1izx35Nc+2W7HBzpA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GNMKsxyZX0++B+0a2bLJYxPzziQL1FudnX/trjlpKbh2K1uhKuvEV/7EJYl/LzvniRS/z7SFaAtuSGNDchhZNsUc9sOOM1i+NJk/s4cEaFd8rmH0hIDgaicJpjeNUbG5gGgoW24Hcrcmx3/x6+ii44WPMoBltaXPbn/wniZHzO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltBY0z3Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA73C4CEC3;
-	Mon, 21 Oct 2024 18:27:22 +0000 (UTC)
+	s=arc-20240116; t=1729539320; c=relaxed/simple;
+	bh=S+eoZ9PsMFOj075TBAMfbklJrhMw50VOHQse4okNSPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/QQyZ0bsS09JeQNNA1DScQXLc0QXaksXWbWqQL+kMpU1uiVjE2RHOThxhcZ+ob1mq1vaYDNolNXg3f5iP/Y55Yii6pOCh1Z3hhoQed/fl/cdD12FSxZ404H3K+05fluVPF523ftQWN6U2l0rhD7QVM5u7n1JOby3bcuO399Qr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i87kZedR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F80C4CEE9;
+	Mon, 21 Oct 2024 19:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729535242;
-	bh=pLgA05KguI6zXJF/H2j4K/6vQs1izx35Nc+2W7HBzpA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ltBY0z3QYCPQsbPJNdNc2KPXBjKib1ivjFp85IZYnIdSGp39n/wme6V8fnVLxnQfC
-	 4EAIngZYPUpV7cgalV5RqFZRhTUsTHH3RRESmeeTEwR3sn3ALoRGklYLF5yJjzp279
-	 SMuNIDrX5fq6fBMGi1xCfZ+AybFhotEhl/eZz5c1WK2MssCiTsJSY2wgEwsGQn720u
-	 G4xCXY8fJJJQka7MXBOaLHmAw+6DAFNMOl9Ozy+9/7CTEb6IosrDfGIeQslfCuVCke
-	 M5eb4mnPDHwabPf/XXK2Mc6Q4Z8K56CDSMqrGzY+NniRSrXD576qd/eOaZ0Qb+BKqc
-	 TOHLOpuSHpipA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2053809A8A;
-	Mon, 21 Oct 2024 18:27:29 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241021-vfs-fixes-cf708029ec67@brauner>
-References: <20241021-vfs-fixes-cf708029ec67@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241021-vfs-fixes-cf708029ec67@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc5.fixes
-X-PR-Tracked-Commit-Id: 197231da7f6a2e9884f84a4a463f53f9f491d920
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7166c32651fa2a5712215980d1b54d4b9ccca6b5
-Message-Id: <172953524848.401524.10743114212363286636.pr-tracker-bot@kernel.org>
-Date: Mon, 21 Oct 2024 18:27:28 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1729539318;
+	bh=S+eoZ9PsMFOj075TBAMfbklJrhMw50VOHQse4okNSPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i87kZedRPyejz9h+qiOBKWrrI2Whc6Xb01cPDQ/kj7/qwvJaLkvkgxhv5GL+bJH1c
+	 xy1+Vo8vn2FdmizpfWFhUWLNOml0K/7bR57ZR/PlAp/M4AwQJ+kkbbBj1p2qNWk0GN
+	 Y36wzVsmOYlnJaseXmmzx9OgUrHmZ5gKo4W16l12ejzYbXou2W/lctU6x7DpQqK0QI
+	 o0JNDtEXYXDl9ZCl9hfjp6TnUZK+SPvNFltBBsA29zFE5aU7FcWj8bcefhntVRw6ni
+	 IQrRelotOl5lnpQMNxj7B1WOGQrNJqMXq6MvTg+Jr6a1PNgabD2CCIx1Vok/YpIwoo
+	 4X+JmF/7fYgug==
+Date: Mon, 21 Oct 2024 13:35:15 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	axboe@kernel.dk, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
+	javier.gonz@samsung.com, Nitesh Shetty <nj.shetty@samsung.com>,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv8 1/6] block, fs: restore kiocb based write hint
+ processing
+Message-ID: <Zxas8xGoydNLGwsc@kbusch-mbp>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-2-kbusch@meta.com>
+ <20241018055032.GB20262@lst.de>
+ <ZxZ3o_HzN8HN6QPK@kbusch-mbp>
+ <a87c67aa-b1fe-48dc-9b5a-bc6732931298@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a87c67aa-b1fe-48dc-9b5a-bc6732931298@acm.org>
 
-The pull request you sent on Mon, 21 Oct 2024 13:46:37 +0200:
+On Mon, Oct 21, 2024 at 10:09:57AM -0700, Bart Van Assche wrote:
+> On 10/21/24 8:47 AM, Keith Busch wrote:
+> > On Fri, Oct 18, 2024 at 07:50:32AM +0200, Christoph Hellwig wrote:
+> > > On Thu, Oct 17, 2024 at 09:09:32AM -0700, Keith Busch wrote:
+> > > >   {
+> > > >   	*kiocb = (struct kiocb) {
+> > > >   		.ki_filp = filp,
+> > > >   		.ki_flags = filp->f_iocb_flags,
+> > > >   		.ki_ioprio = get_current_ioprio(),
+> > > > +		.ki_write_hint = file_write_hint(filp),
+> > > 
+> > > And we'll need to distinguish between the per-inode and per file
+> > > hint.  I.e. don't blindly initialize ki_write_hint to the per-inode
+> > > one here, but make that conditional in the file operation.
+> > 
+> > Maybe someone wants to do direct-io with partions where each partition
+> > has a different default "hint" when not provided a per-io hint? I don't
+> > know of such a case, but it doesn't sound terrible. In any case, I feel
+> > if you're directing writes through these interfaces, you get to keep all
+> > the pieces: user space controls policy, kernel just provides the
+> > mechanisms to do it.
+> 
+> Is it important to support partitions on top of FDP namespaces? 
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc5.fixes
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7166c32651fa2a5712215980d1b54d4b9ccca6b5
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+It's already used with partitions, so yes, it's important. Breaking that
+as a condition to make it work with the block stack is a non-starter.
 
