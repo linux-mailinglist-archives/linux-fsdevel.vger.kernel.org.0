@@ -1,173 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-32469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F18A9A66F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592759A66EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8E0282082
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 11:47:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFBE81F22935
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 11:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6775E1E8841;
-	Mon, 21 Oct 2024 11:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D500D1E765D;
+	Mon, 21 Oct 2024 11:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHe7aUFA"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="gzK14w1Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HrTqniu+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC46C1E5736;
-	Mon, 21 Oct 2024 11:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589BE78C76;
+	Mon, 21 Oct 2024 11:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511250; cv=none; b=g7UH0q3zeNYItqRxFeL56CZwD2V8HGg86XFd1tLbat3a2h8PbVRUUo8v3cGWGnjqI4JmZB/LtK9cWW/BpD8VQaUBq5mfWam3NiTO+LTItJKtSaX1QmXP9tTe5uYynlCCPNaN55+MSHRKK7BqXET+Yt/KmwN7pNCTWxpPB2roCOg=
+	t=1729511227; cv=none; b=NmE7uQVcw+yQOFkDSyFDVzjqAbWOOSZd3TSrCAsp4DUHxPqbT4T3WvWif5IG8/eL8SO6h/7r5hg9mmQbBh38HkokTvnV3w90v7KgZHIy/GMfO2ISDQiAzzzPM5Lr37x3OHqnDeeRQ3T1JKwp7Dx1Ug4jszpVTounCJRYA/c5GuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511250; c=relaxed/simple;
-	bh=nMG14ljairMQ6TFWydbsEggIuMYy4yOyd86W9fI7e0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cjS7BgOA8P5Z/tpfRr07cVmv2k5IzDIFUsLV7kBN3Oh8c/gV5d/4chBQ7z0ue80/o0ysLOYRozPFC0biUgla55aqEu0pg1ToQOkn4wqcCo1kH8UP4nbrMnoQLS8zKjpVXalKdX/cNI2Oykola3ASSIyDdfhe43953my3fTlfJag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHe7aUFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E069C4CEC7;
-	Mon, 21 Oct 2024 11:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729511250;
-	bh=nMG14ljairMQ6TFWydbsEggIuMYy4yOyd86W9fI7e0U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VHe7aUFASKC9aCwAtEcbmXwKSdjjN/D5B7OqW10rod0OCD+dI2N/X1V90o7qPAX/o
-	 fPkfFeGXM69iCVhI4GC2ekYxyGmXXX9zRe8YGJWEz6oC2nVLVOrRCgdQMiUhVLcRW3
-	 oDeyWsqQ+d4L2USsMPFlRvcHHzM8ldSHTcZiaVd+tm2otsP7SF8JLiMqXMpL+hpyjh
-	 SvrBgnVafO3Xrw/dL1jN81rm9os7BH++27b2J4Bix/lwa+fNRyzJ7eDwObgQnLCGOd
-	 s1UOHnNuig5UDl+JtdlLLjcx1g4DxCNtQhvxA/3BYcupzFenpCBV6Fp2IadOYNxbse
-	 lQ9xabN7ptZxA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon, 21 Oct 2024 13:46:37 +0200
-Message-ID: <20241021-vfs-fixes-cf708029ec67@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729511227; c=relaxed/simple;
+	bh=icDWyVYuGoilzsVGsRx+OQFBkWifsF/RQ0kUHHKaSJg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ax719o0fP/07Memr7mEeKuJNNZ7kgsXUt1TSCRZI5X0KIvOm1q45N9QR8gzOjVvKG5+Za5p6y9XsTHenLLrIbq835egJhBmIEdQB7RYiP3NO6iMl4YNLTd2Fk/EsbiXhOJHF1+jjJwIjpFWiO8jC2N4RpcqSu2vAd2iuLO7ps0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=gzK14w1Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HrTqniu+; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 250E225400BD;
+	Mon, 21 Oct 2024 07:47:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 21 Oct 2024 07:47:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729511223;
+	 x=1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=
+	gzK14w1Q5xEOl2PE2aO1vwoatEZbK9kcXwqXAGrU/VzOnsVu1QSid2LuKTityoMR
+	OYGx1dGrpfCGtzssbiF9/ko7d1OTfiHydxoaRHATQaixBRqIx8ObFh+2WtKFzB0k
+	s5Iv7f0BsGarjuwEdZO4jpdckhqrtCsRFVjrpJeWp2FJ7N1OPgM/z1Fq9vUvZcu9
+	0RCakSfWrZq4f7mDsakpXfVAQo0EOYwcOP0Tx1HJ6eLa6MCGvu3glt4AwQejdM3X
+	kKl/PYjHHdCKkx+mDx1Ly267atBjSPzJUq0i/j4/lcWSAfWB2K1TNaw/54m17mKZ
+	NDNEbW8uHwh3VQgCyrMeIw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729511223; x=
+	1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=H
+	rTqniu+y6SgNFYWSCexJwmpOZnadEy9ctR5oalaWmx3katMjRjXnogc6novsTL2L
+	Hbrc/iRIfLqwqkR7t47lFcfPA8u9Q42hquFsm8GYlvAHjoSEeTI8Jn1SrA4IhucQ
+	N6DB8W7lbDWObditlq8R7JCcW5BZ83wfeHFsMP3YtnSKsSBK8CN7ZA0IjZtoZd38
+	5MFVandXKvh0wg+Mu/Tv27k+5/hOhqFl9++Zh6lUISjaN56LqSFZ1uVy3+FmYLYm
+	Y1ZWL0JzCiqhJKHD///CzApKbPT+KBeZVQWTSrxBoMA2TMJCp62RhQ9tfOdxSCmH
+	CFFP+G1vod7PhQX+CL0aQ==
+X-ME-Sender: <xms:Nz8WZ4Ei-2NqbzTqVMl2Wtul4Ew-YfgzsCFEVIQX2aDoD4Fm0oc1XQ>
+    <xme:Nz8WZxWzzye_IKK67wpSoSZ-YIQx0FLASso1NQXO2qfJydfPo5GWuaKr3t0KS4Rq5
+    HTSEyzDpA57b6tg>
+X-ME-Received: <xmr:Nz8WZyJ2ENM_OPkvFSRbZYkZqHesHgWKeSpdv9s13KiCCWQpF4DXBkGzSGOiqlaZ0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffduhfegvdetfedt
+    teeihfdvfeehlefhgfehkefgveeugedvfedtheekledthedtnecuffhomhgrihhnpegrkh
+    grrdhmshdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepugifsegurghvihgufigvihdruhhkpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
+    oheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehi
+    ohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnh
+    hnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopegrmhhirhejfehilhes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehtohhmrdhlvghimhhinhhgsehgmhgrihhlrd
+    gtohhm
+X-ME-Proxy: <xmx:Nz8WZ6FEYFDDckzqhZOvVpiyHHFnQnGa8RTbAYki9kqT79PU9J03tw>
+    <xmx:Nz8WZ-WiVdXxekYyIE3RYCz7kc8Wyyja6TDiMs53WrZpSliweumb_w>
+    <xmx:Nz8WZ9O10gcHQJoNY-TkPSjpOnne7CQliRxYEt9WOu0_W_zUnVir1w>
+    <xmx:Nz8WZ12ONK-5FY41UPYeMTSGRx5n2SDDLoR0tgo7qntmKNmv81w3ng>
+    <xmx:Nz8WZ3O4LhZkknl5B0LW9zkZPFFZ6_1usyFjK8qmsX7xxNIMgGc2lT0_>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 07:47:02 -0400 (EDT)
+Message-ID: <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
+Date: Mon, 21 Oct 2024 13:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3343; i=brauner@kernel.org; h=from:subject:message-id; bh=nMG14ljairMQ6TFWydbsEggIuMYy4yOyd86W9fI7e0U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSL2Xs53jzrtmqu/26JYqtQNR8ZdR0phlOnPN0KOhMbv ltWHZ3XUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHCHQy/mHfPyTGa46pvcHvK lNt7Wo0nGdnuUK9nf23Z56ctKfP0GcNfuQ5DK/mMAzYH7OUOZOxbwKEYdEJ8wtTNknNPcQlf1Pd jBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+Content-Language: en-US
+In-Reply-To: <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hey Linus,
+Hi David,
 
-/* Summary */
-This contains a few fixes:
+On 10/21/24 06:06, David Wei wrote:
+> [You don't often get email from dw@davidwei.uk. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On 2024-10-15 17:05, Bernd Schubert wrote:
+> [...]
+>>
 
-afs:
+...
 
-- Fix a lock recursion in afs_wake_up_async_call() on ->notify_lock.
+> Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
+> minor conflicts. I'm running the following command:
+> 
+> $ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+> /home/vmuser/scratch/source /home/vmuser/scratch/dest
+> FUSE library version: 3.17.0
+> Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
+> dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
+> INIT: 7.40
+> flags=0x73fffffb
+> max_readahead=0x00020000
+>     INIT: 7.40
+>     flags=0x4041f429
+>     max_readahead=0x00020000
+>     max_write=0x00100000
+>     max_background=0
+>     congestion_threshold=0
+>     time_gran=1
+>     unique: 2, success, outsize: 80
+> 
+> I created the source and dest folders which are both empty.
+> 
+> I see the following in dmesg:
+> 
+> [ 2453.197510] uring is disabled
+> [ 2453.198525] uring is disabled
+> [ 2453.198749] uring is disabled
+> ...
+> 
+> If I then try to list the directory /home/vmuser/scratch:
+> 
+> $ ls -l /home/vmuser/scratch
+> ls: cannot access 'dest': Software caused connection abort
+> 
+> And passthrough_hp terminates.
+> 
+> My kconfig:
+> 
+> CONFIG_FUSE_FS=m
+> CONFIG_FUSE_PASSTHROUGH=y
+> CONFIG_FUSE_IO_URING=y
+> 
+> I'll look into it next week but, do you see anything obviously wrong?
 
-netfs:
 
-- Drop the references to a folio immediately after the folio has been
-  extracted to prevent races with future I/O collection.
+thanks for testing it! I just pushed a fix to my libfuse branches to
+avoid the abort for -EOPNOTSUPP. It will gracefully fall back to
+/dev/fuse IO now.
 
-- Fix a documenation build error.
+Could you please use the rfcv4 branch, as the plain uring
+branch will soon get incompatible updates for rfc5?
 
-- Downgrade the i_rwsem for buffered writes to fix a cifs reported
-  performance regression when switching to netfslib.
+https://github.com/bsbernd/libfuse/tree/uring-for-rfcv4
 
-vfs:
 
-- Explicitly return -E2BIG from openat2() if the specified size is
-  unexpectedly large. This aligns openat2() with other extensible struct
-  based system calls.
+The short answer to let you enable fuse-io-uring:
 
-- When copying a mount namespace ensure that we only try to remove the
-  new copy from the mount namespace rbtree if it has already been added
-  to it.
+echo 1 >/sys/module/fuse/parameters/enable_uring
 
-nilfs:
 
-- Clear the buffer delay flag when clearing the buffer state clags when
-  a buffer head is discarded to prevent a kernel OOPs.
+(With that the "uring is disabled" should be fixed.)
 
-ocfs2:
 
-- Fix an unitialized value warning in ocfs2_setattr().
+The long answer for Miklos and others
 
-proc:
 
-- Fix a kernel doc warning.
+IOCTL removal introduced a design issue, as now fuse-client
+(kernel) does not know if fuse-server/libfuse wants to set
+up io-uring communication.
+It is not even possible to forbid FUSE_URING_REQ_FETCH after
+FUSE_INIT reply, as io-uring is async. What happens is that
+fuse-client (kernel) receives all FUSE_URING_REQ_FETCH commands
+only after FUSE_INIT reply. And that although FUSE_URING_REQ_FETCH
+is send out from libuse *before* replying to FUSE_INIT.
+I had also added a comment for that into the code.
 
-/* Testing */
+And the other issue is that libfuse now does not know if kernel supports
+fuse-io-uring. That has some implications
+- libfuse cannot write at start up time a clear error message like
+"Kernel does not support fuse-over-io-uring, falling back to /dev/fuse IO"
+- In the fallback code path one might want to adjust number of libfuse
+/dev/fuse threads if io-uring is not supported - with io-uring typically
+one thread might be sufficient - to handle FUSE_INTERRUPT.
 
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
 
-All patches are based on v6.11-rc2 and have been sitting in linux-next.
-No build failures or warnings were observed.
+My suggestion is that we introduce the new FUSE_URING_REQ_REGISTER (or
+replace FUSE_URING_REQ_FETCH with that) and then wait in fuse-server
+for completion of that command before sending out FUSE_URING_REQ_FETCH.
 
-/* Conflicts */
 
-No known conflicts.
+Thanks,
+Bernd
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
-
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc5.fixes
-
-for you to fetch changes up to 197231da7f6a2e9884f84a4a463f53f9f491d920:
-
-  proc: Fix W=1 build kernel-doc warning (2024-10-18 13:02:47 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12-rc5.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12-rc5.fixes
-
-----------------------------------------------------------------
-Aleksa Sarai (1):
-      openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-
-Alessandro Zanni (1):
-      fs: Fix uninitialized value issue in from_kuid and from_kgid
-
-Christian Brauner (1):
-      fs: don't try and remove empty rbtree node
-
-David Howells (3):
-      netfs: In readahead, put the folio refs as soon extracted
-      netfs: Downgrade i_rwsem for a buffered write
-      afs: Fix lock recursion
-
-Jonathan Corbet (1):
-      netfs: fix documentation build error
-
-Ryusuke Konishi (1):
-      nilfs2: fix kernel bug due to missing clearing of buffer delay flag
-
-Thorsten Blum (1):
-      proc: Fix W=1 build kernel-doc warning
-
- Documentation/filesystems/netfs_library.rst |  1 -
- fs/afs/internal.h                           |  2 +
- fs/afs/rxrpc.c                              | 83 ++++++++++++++++++++---------
- fs/namespace.c                              |  4 +-
- fs/netfs/buffered_read.c                    | 47 +++++-----------
- fs/netfs/locking.c                          |  3 +-
- fs/netfs/read_collect.c                     |  2 +
- fs/nilfs2/page.c                            |  6 ++-
- fs/ocfs2/file.c                             |  9 ++--
- fs/open.c                                   |  2 +
- fs/proc/fd.c                                |  2 +-
- include/trace/events/netfs.h                |  1 -
- 12 files changed, 95 insertions(+), 67 deletions(-)
 
