@@ -1,133 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-32509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9ED9A6FE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 18:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BE39A7068
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 19:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24F18B227DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 16:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2876B21AE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DD01FAC3B;
-	Mon, 21 Oct 2024 16:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20BE1EBA1A;
+	Mon, 21 Oct 2024 17:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="V2FlZGvv"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HzbdOBNP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E380F1EABDA;
-	Mon, 21 Oct 2024 16:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8EF5FEE4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 17:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528704; cv=none; b=M2GwGBiXCXj+isSEOxRmogFiENIaezbVo12t1ZGp+35U6PeoEZZnJt/A1d86pDpKvjiQ9uIfSVYD6OILKnzGm7FrF+k5i0HMN09AV7Xqx0mmjulkTalH047cl7rd+6Y3u38Q50h/zQDBaMM9Q30awfxmg/kERBMQAzARlHwJ0WI=
+	t=1729530111; cv=none; b=iSozfC3PrX+JzhK6yTv43nCVufWR/tM1CKuUmt/kQ8gg1an9X9/+ktZdEjC01xbWoQPi9i6GBKb7bSTzXCoje+B6Ta6U6mPkEltGUxdJxSnrUQmhKxQn/QqIcdnNweo6uY5SbvUElSakcEkaQdiEde5Mpc5s8y1sNyOqML77EIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528704; c=relaxed/simple;
-	bh=d+DWM6oMJSU8ul54RI6qsVi4beI/rFF9uAWkAJ2qkuo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uDXTK2CVfXD2VexxK6RR3NqFz5VV+uQwXvts7f2c96bI2FJoRnbVtu9Yxjk2Zd4+VaaZX+0lJ9ZzbLezy4KFWYwPLlXAvDbLKAO0lVPAmSY/iNUGze+5U7zl8NlWfyspLNQNyK7iXMlE+4rzQQuQDvjjymyQz0X8irIQweBi3dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=V2FlZGvv; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IRWzJ2ihFV+Or6Yh2tTDHkDcDI2/Jt0crAI74pE29VE=; b=V2FlZGvv0GJNi7LqNPWoCYWe6T
-	IkwHBJYGJ+UMuht6t72Uh3VCoWz68gVRWqEbZFagUWe9x7/A0ezMs/UiC/c4DJmOYrRcFZ3Lyxjot
-	47BDGhrMfAYzpMpD2UVR9+/fldHg+jpxD2KQ5PHkjAcWueBNoH9mq+ZUjG8DvwdhDW6/U3mTkxnVG
-	XNUawWorxooLY1LtJwijslHO5Q3PEh4xE6Ijzu9Hz6byJ4CiNigt+12Fn0h1nxM0EBM0Or8V4CKac
-	pFzUu5ary992udtZ0y2pP0Qp0lvbOhTcP8801kQmPgA6te+sRvFoFyKoDgkhpOTq/rvslEYjRjawC
-	CF8EthZw==;
-Received: from [191.204.195.205] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t2vQC-00DECf-1s; Mon, 21 Oct 2024 18:38:20 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Mon, 21 Oct 2024 13:37:25 -0300
-Subject: [PATCH v8 9/9] docs: tmpfs: Add casefold options
+	s=arc-20240116; t=1729530111; c=relaxed/simple;
+	bh=9ozNo+33nRBhfBxHORCkYdaQAR7lx7bVJs9HZkF16IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sea+a3f5RCDv5Y5AmoDXLsf51+3gNNq8nLTDHFO93S7vIdRu3D9ToYfyMOpRbiLk95qFGwGj+UpCewm7USnmyFkY64RLB0mdEmKyrAyeu1sQIoR3886oHsEyPpymIz7tGBK6Z/AK4m+xo/pUtw9r0foj4RoCbCexGS6WNnh+D0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HzbdOBNP; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Oct 2024 10:01:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729530106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qkyKip8HVy4uBOgJOwasMtM+gaqkeqOoz7QkU43yFDM=;
+	b=HzbdOBNPkNqkKcMnxLjXRHP/eQCjnPme3CcqVlevQn1RY7kLGv3MEvJ3Gyy82YUPx0tUbh
+	2v9TRbmVvw8K209ILvW8ZwVTr1554Cs+Y6/BRpHvTv5zWlq40Fxby73TwaKUyHPdMtx7Ly
+	JdLdR0mJJ/48AE/FJYMgShPmowDZFj0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	josef@toxicpanda.com, bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, 
+	hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
+ internal rb tree
+Message-ID: <egn6ds56teqq6i2dgn37oa6rmy7u5xtvvv3y277ul6ldhgdnsl@fdhkkxvznwkb>
+References: <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
+ <CAJnrk1a5UaVP0qSKcuww2dhLkeUqdkri_FEyVMAuTtvv3NMu9Q@mail.gmail.com>
+ <ntkzydgiju5b5y4w6hzd6of2o6jh7u2bj6ptt24erri3ujkrso@7gbjrat65mfn>
+ <CAJfpeguS-xSjmH2ATTp-BmtTgT0iTk2_4EMtnoxPPcepP=BCpQ@mail.gmail.com>
+ <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
+ <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com>
+ <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
+ <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
+ <t7vafpbp4onjdmcqb5xu6ypdz72gsbggpupbwgaxhrvzrxb3j5@npmymwp2t5a7>
+ <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241021-tonyk-tmpfs-v8-9-f443d5814194@igalia.com>
-References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
-In-Reply-To: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
-To: Gabriel Krisman Bertazi <krisman@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
- Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com
-Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-mm@kvack.org, linux-doc@vger.kernel.org, 
- Gabriel Krisman Bertazi <krisman@suse.de>, 
- Randy Dunlap <rdunlap@infradead.org>, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Document mounting options for casefold support in tmpfs.
+On Mon, Oct 21, 2024 at 12:15:36PM GMT, Miklos Szeredi wrote:
+> On Fri, 18 Oct 2024 at 07:31, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> 
+> > I feel like this is too much restrictive and I am still not sure why
+> > blocking on fuse folios served by non-privileges fuse server is worse
+> > than blocking on folios served from the network.
+> 
+> Might be.  But historically fuse had this behavior and I'd be very
+> reluctant to change that unconditionally.
+> 
+> With a systemwide maximal timeout for fuse requests it might make
+> sense to allow sync(2), etc. to wait for fuse writeback.
+> 
+> Without a timeout allowing fuse servers to block sync(2) indefinitely
+> seems rather risky.
+> 
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v3:
-- Rewrote note about "this doesn't enable casefold by default" (Krisman)
----
- Documentation/filesystems/tmpfs.rst | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Thanks Miklos for the response. Just to be clear on where we disagree, let
+me point out what I think is right and please tell me where you
+disagree:
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe964086503dda9b4e8066a1242d72..d677e0428c3f68148a3761bb232bbed5b9a41f76 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,28 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insensitive lookup support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only UTF-8
-+                  encodings are supported. If no argument is used, it will load
-+                  the latest UTF-8 encoding available.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). In this mode, the filesystem refuses to create file
-+                  and directory with names containing invalid UTF-8 characters.
-+================= ==============================================================
-+
-+This option doesn't render the entire filesystem case-insensitive. One needs to
-+still set the casefold flag per directory, by flipping the +F attribute in an
-+empty directory. Nevertheless, new directories will inherit the attribute. The
-+mountpoint itself cannot be made case-insensitive.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name /mytmpfs
-+    $ mount -t tmpfs -o casefold fs_name /mytmpfs
-+
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +272,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
+1. Fuse server should never access fuse folios (and files, directories,
+   mounts, etc) directly it is providing.
 
--- 
-2.47.0
+2. Fuse server should not get blocked indirectly on the fuse folios (and
+   related objects). This series is removing one such scenario caused
+   due to reclaim.
 
+3. Non fuse server processes can be blocked on fuse folios (and related
+   objects) directly and indirectly.
+
+Am I understanding correctly that we disagree on (3)?
+
+thanks,
+Shakeel
 
