@@ -1,87 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-32512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22E09A70A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 19:09:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43B69A70AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 19:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A151F22CC6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:09:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963CC2846B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBD35FEE4;
-	Mon, 21 Oct 2024 17:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6727E1EBFEF;
+	Mon, 21 Oct 2024 17:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DLYdjG4+"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="RhAveDcG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9A4198E71
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 17:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DCB47A73;
+	Mon, 21 Oct 2024 17:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530554; cv=none; b=BM7f4gebcB92z2mMqO0Tr5fPFBWqw9YnatbPPBesBRhVl3XEVZw0tTl0arVZjn0LvclUXUACDhhVunR3iAOJSme+0ks+S/MMasuqvbMQUxWFQFqMLOZyvT5ZcWs4i2k6cn8TGWzjQO6xPJWC4wsi+gHhjX8Unh/0qJJjsZB2ZyE=
+	t=1729530621; cv=none; b=aFuiSgimUqcJCyuL+cez+9zBqNNFwCpfwliXRvhNXtb4Zlx41b73xmmBin4yA7kbjceEt7XyDnsnpYPp28LqaiE60xYBSkg1Yw0bcNlJTpTG9WuePdr5aKSfl0TPudH6D57Xkd4VO2sL5KBfuEo5uuWAb8jZvKQuEzn53xDWN7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530554; c=relaxed/simple;
-	bh=FRWL5JXpV4zfwG1gF7bfiCjBTHuTfrz71RHd5XquAj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOLUos+pcZ3skX0Tc/YlpZhyYhqC6hLmEJsnVZqG9Yxc90DlqZ3iOtzQaTxXOVze7FGd/LuuWFKiVUSqdCiZXgYrFetrV3AQn22HyovxefnEiUFCvC8s1GoV+ljdYUayoQfllusHwwyCV3nqCTSZf7KMJRR2FjkMfbBgNRk+oTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DLYdjG4+; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gxPYPFhGgg5MMnLIKHKGds1rrRa1DizMYClMdtZfFqE=; b=DLYdjG4+vf/iDO40vurzgIWnTN
-	+kigiQXzPINVZuXYEr+RT1ir6XgzS8aI3SgNCEGLv8J9jCVE2rwgScHKdv/lW21P44MhIhZuClwo+
-	/MCHbwkpcOY8JYpSwoBGfnNJpzjgc+Ix7Cx0dDkVMqlXP/GPM875JNq0cB+rSeBYxIf84WfNXVqJd
-	QFNtwwMo3vlD1YBaoi1QUOMpoLz6pP1Uv1xD9Z29LkndHB505VmJcQVJghIEQdfdnGMVwGj8y9AcF
-	VI7ZOrbZToZA3171jzxHLxabTB0id5n/326V+el5iT9ObtF14HFEMpynqkjhBTbmjpHXUK6J/tszT
-	8xQn48Bw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t2vu2-00000005yVr-3c4x;
-	Mon, 21 Oct 2024 17:09:10 +0000
-Date: Mon, 21 Oct 2024 18:09:10 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC][PATCH] getname_maybe_null() - the third variant of
- pathname copy-in
-Message-ID: <20241021170910.GB1350452@ZenIV>
-References: <20241016050908.GH4017910@ZenIV>
- <20241016-reingehen-glanz-809bd92bf4ab@brauner>
- <20241016140050.GI4017910@ZenIV>
- <20241016-rennen-zeugnis-4ffec497aae7@brauner>
- <20241017235459.GN4017910@ZenIV>
- <20241018-stadien-einweichen-32632029871a@brauner>
- <20241018165158.GA1172273@ZenIV>
- <20241018193822.GB1172273@ZenIV>
- <20241019050322.GD1172273@ZenIV>
- <20241021-stornieren-knarren-df4ad3f4d7f5@brauner>
+	s=arc-20240116; t=1729530621; c=relaxed/simple;
+	bh=3Bawaj97+16LZJ5/kXZHuyxWrZquUh1w7tNj5hTTnAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SPtwilQO5VA+rFoan7WIMIrRme8rJxN/MGdBvWAE9oVDuwHKRIqhs7dGh6YNUy1E6c5mN+n9RaNPAFcDJ0Jhuy3ZTJIJlEv7zK8ckK+q+HQ3kfI6cWgxMK/kDic2yS2L6pHWZUP9+ZOZ5O13cmPoIBZUUB+eYzQo/8IWdeWc4+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=RhAveDcG; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XXMJ41wrsz6ClY9J;
+	Mon, 21 Oct 2024 17:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729530603; x=1732122604; bh=11C38koXyZw+O5RI9Un69eSq
+	783zFusoRbV176crTNM=; b=RhAveDcGf9i/kd6r+Qf6jBAL2nhRkd1q38TQRAZL
+	sLyROvHW+CHEEorq3Owj3v3QQ2Ljj/5a0mY7sVHh4UWQ7/105yv9CmUJrVxenPwg
+	zcsFe/W28Hdalgkdns3wXK4Bk2mc25WlPB/1UtGIzg8v/0EZaTezWmdUtpKeMMHS
+	wlk6Vmk9SsFbVCeYTXY+CpUEr4sSoVMaRmTD0xgMivlu+TribTi8jAlGAnZGeYvF
+	doM2jJeh8clM8zY6ZpGy7C4QyR+AXIKue1g0kYa355LsmFu9LsbMMraSw8TSVejg
+	AK47DVWvnEndp861BXF8oRpOQ4SGGfs04R+oi2Gmb7POzw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id R0H-YYTLMGMS; Mon, 21 Oct 2024 17:10:03 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XXMHr68rSz6ClY9G;
+	Mon, 21 Oct 2024 17:10:00 +0000 (UTC)
+Message-ID: <a87c67aa-b1fe-48dc-9b5a-bc6732931298@acm.org>
+Date: Mon, 21 Oct 2024 10:09:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-stornieren-knarren-df4ad3f4d7f5@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv8 1/6] block, fs: restore kiocb based write hint
+ processing
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, axboe@kernel.dk, io-uring@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, joshi.k@samsung.com, javier.gonz@samsung.com,
+ Nitesh Shetty <nj.shetty@samsung.com>, Hannes Reinecke <hare@suse.de>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-2-kbusch@meta.com> <20241018055032.GB20262@lst.de>
+ <ZxZ3o_HzN8HN6QPK@kbusch-mbp>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ZxZ3o_HzN8HN6QPK@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 02:39:58PM +0200, Christian Brauner wrote:
-
-> > See #getname.fixup; on top of #base.getname and IMO worth folding into it.
+On 10/21/24 8:47 AM, Keith Busch wrote:
+> On Fri, Oct 18, 2024 at 07:50:32AM +0200, Christoph Hellwig wrote:
+>> On Thu, Oct 17, 2024 at 09:09:32AM -0700, Keith Busch wrote:
+>>>   {
+>>>   	*kiocb = (struct kiocb) {
+>>>   		.ki_filp = filp,
+>>>   		.ki_flags = filp->f_iocb_flags,
+>>>   		.ki_ioprio = get_current_ioprio(),
+>>> +		.ki_write_hint = file_write_hint(filp),
+>>
+>> And we'll need to distinguish between the per-inode and per file
+>> hint.  I.e. don't blindly initialize ki_write_hint to the per-inode
+>> one here, but make that conditional in the file operation.
 > 
-> Yes, please fold so I can rebase my series on top of it.
+> Maybe someone wants to do direct-io with partions where each partition
+> has a different default "hint" when not provided a per-io hint? I don't
+> know of such a case, but it doesn't sound terrible. In any case, I feel
+> if you're directing writes through these interfaces, you get to keep all
+> the pieces: user space controls policy, kernel just provides the
+> mechanisms to do it.
 
-OK...  What I have is #base.getname-fixed, with two commits - trivial
-"teach filename_lookup() to accept NULL" and introducing getname_maybe_null(),
-with fix folded in.
+Is it important to support partitions on top of FDP namespaces? We could
+follow the example of zoned block devices and not support partitions on
+top of FDP devices. From block/core.c, function add_partition():
 
-#work.xattr2 and #work.statx2 are on top of that.
+	/*
+	 * Partitions are not supported on zoned block devices that are used as
+	 * such.
+	 */
+	if (bdev_is_zoned(disk->part0)) {
+		pr_warn("%s: partitions not supported on host managed zoned block 
+device\n",
+			disk->disk_name);
+		return ERR_PTR(-ENXIO);
+	}
+
+Thanks,
+
+Bart.
 
