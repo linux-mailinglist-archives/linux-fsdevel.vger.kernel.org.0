@@ -1,83 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-32539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7449A935A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 00:31:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800719A937F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 00:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AFF284014
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 22:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE81B220B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 22:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC5F1FEFBE;
-	Mon, 21 Oct 2024 22:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0E61FDFAF;
+	Mon, 21 Oct 2024 22:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mgaibbP0"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OarAQFyL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F841C9ECE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 22:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD18C1E0DE9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 22:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549862; cv=none; b=iHpCXqPqQEaj0khokin9mbgryTgzdbq/3N+5d6ibtlJdTVMZGbrERGgOhGw8PdfjI5DnWf3klHPzUSdMiMM3Lo8dLNac9J1iTk6PKNymfJNQ5phgLtXxvM4g8vp1PsDnzIKC9+poAhdlvgBKCOcEcv5ElkPbCT1ClafCpWgipow=
+	t=1729550598; cv=none; b=E34ZQytY2+jUTD1UsbXj36G5SXC+iyBYnTF7otGmhvv+S7ak7t/i+JBC/0W8DYnmt/NoCthXev63P4ohT2aYtOhSthV1cPTbEfv88JZoCuCFTfyCCC5V6F8+WEk0FW4+YoLhv5BNrQxTLUJlYcnzfuvEif2WkQ4F7IidV44TpcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549862; c=relaxed/simple;
-	bh=02WBLYn5hm46RGjKT09iky3RgWRBw1dRwnKC0MwXA8E=;
+	s=arc-20240116; t=1729550598; c=relaxed/simple;
+	bh=xUquGqeeCI6keZ0P5afO0oD7T7EAVeLsVrpc+skbuRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izWxOtq04r27ef7pWb4QUop0Emx8yqaBgHzQlwPGRDisgd/bNXuIWpKTY02hKrdByZv49ZHcIPtktdkR2y+NCQ+4fx04xZJHfqGFwE1QUZ1ZDVlW9BjbAz+YtmCG2C4om8ZU/JVDoszybmX4NoGqlAtU6LbctVeGFUIRWUqwj5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mgaibbP0; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b5affde14so34343355ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 15:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729549860; x=1730154660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gpov8qknWLMdPqHJDFq36iRXP4pxjN7UjssnKFRCVMo=;
-        b=mgaibbP0ao5eSiG3E8f/qHnKdePZqWKL0c8oPigvqb6qatxlTlO0UWJUQD5OQ2bmh8
-         37IDy2A09CIDOZfogr47ftMGJQ51w5k0d59J6e6rl53+gjITrMYRvIIqiQxCRbnq+6UH
-         HjDUt0K6Uw15ge/DV3mI5pEMlseghjxTO1Mlc2SCJyZplClsWdTWixIGvDI/Cm//Rck3
-         FzN+wDuIbwEfiF6S3c+xZuN+WFJU0sWY7g6un/pR+M/Jc5IzDTdNwEoWE4DAhl+wjJs/
-         j7pAc+DcAyTzmSNmCT50SCvDoe2vHaodunVkBSvyyxjAKt+1aS3nBpyc/8nvT9X4Lvj9
-         GKNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729549860; x=1730154660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gpov8qknWLMdPqHJDFq36iRXP4pxjN7UjssnKFRCVMo=;
-        b=Xua1JRhNmGm6jCqi/O4OlgA1mZtPecLUfPaHtovLI+oDVgJ+6gHuVeV5691VybS8Ls
-         w1xnfnzDHNrs2g9m5yTTsD4Ifm3ytZlo4+e/SWvTcrmeiWJn/cpjTzDtr+IkGzVHAZqp
-         RKbq5b62/mwRjP9y4csDp8JEsIO9m/eBWFTqGI5G5EcuFE9xTZsrDyEE5Ie2HdCo/5sM
-         DLhSMDFbuJNcL5NYM6RyBpe8HdVKI+tTrl3ipQ1cLgZY0R+QBsKgoMUy5cC2XYflQ7tA
-         0HnMFlZYNeMpd/6LKtQzy03XD/JgmVsHepjs6KtiKuSta9RBVoQSVA6zjeyptfOTqScm
-         XgiA==
-X-Gm-Message-State: AOJu0YzLbg5qnCLgJkc9ILBF0a+UAY5+nU0Px4iR+umHxBWtzyApl7Be
-	cYR85UYahmLanClTyLY8r3zrQcNqSxF0GnbjV6tgt5TnyGJ6PksO/YcW0AQ8aVg=
-X-Google-Smtp-Source: AGHT+IGnZvSN/JgkvgxC51U5ZIowUxltQuOXg6wu1T2t8vfivVOuEl4426pU73OYYuA8tQqUXZlpGA==
-X-Received: by 2002:a17:902:ce85:b0:20c:c1bc:2253 with SMTP id d9443c01a7336-20e5a8a101dmr167189345ad.32.1729549860470;
-        Mon, 21 Oct 2024 15:31:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f3ca3sm31011095ad.274.2024.10.21.15.30.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 15:30:59 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t30vQ-003zWR-2L;
-	Tue, 22 Oct 2024 09:30:56 +1100
-Date: Tue, 22 Oct 2024 09:30:56 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-block@vger.kernel.org
-Subject: Re: [PATCH] iomap: writeback_control pointer part of
- iomap_writepage_ctx
-Message-ID: <ZxbWINZwAEJEdX7S@dread.disaster.area>
-References: <326b2b66114c97b892dbcf83f3d41b86c64e93d6.1729266269.git.rgoldwyn@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMX3T/8OMQJtdistUhAKhKymSHxIBiLxvT4lh+WsHsL7Lv57dsRBnEywkcWIVps2PYcBa2h+Zb2MY39U4vwoWsc8rIo9l9f1wTAjhO8zOz+8ZzoyGh16HB7BVy2P1Hji/bZw7NbghSItX8fFcgMrOFDKXSDX9wQvR/jU9fzgaus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OarAQFyL; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Si/mtlbKR1W17i43fi0Brb28YOzgyUf/0vcjcHKFS+I=; b=OarAQFyLsixS1QRQ2NGftayl+G
+	qLNjii2VFQEZn3qWpyheLVqMzvBbVn0HDmj91xTuTy8xSOY5VSwgvKV5GPMjAsokn4kGC4HYRpDKu
+	N6Vr7w2MQwXqHHzYkCuspx4wsnaybGAbQA0mDMdCO2ZjhgtfY+qKw3cCqp3aeCLeLrNh3ijx0Ps8b
+	sAI6QnH/KtRko4RLEgrrscrIR/ZipYdI2+FtwmnddQw5vhMqBeWt+YnsvDf6YKpduVu5ZKld5OVfw
+	eqVDFgKTfTWIBQCxdvtky1fE+K1aIv7ZLhIV6sYsH+gwuhddSFI3Bz0iOHXpBT+agzz6x2r2+1XSN
+	lgmgmmZg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t317J-000000063Mi-30bm;
+	Mon, 21 Oct 2024 22:43:13 +0000
+Date: Mon, 21 Oct 2024 23:43:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC][PATCH] getname_maybe_null() - the third variant of
+ pathname copy-in
+Message-ID: <20241021224313.GC1350452@ZenIV>
+References: <20241016-reingehen-glanz-809bd92bf4ab@brauner>
+ <20241016140050.GI4017910@ZenIV>
+ <20241016-rennen-zeugnis-4ffec497aae7@brauner>
+ <20241017235459.GN4017910@ZenIV>
+ <20241018-stadien-einweichen-32632029871a@brauner>
+ <20241018165158.GA1172273@ZenIV>
+ <20241018193822.GB1172273@ZenIV>
+ <20241019050322.GD1172273@ZenIV>
+ <20241021-stornieren-knarren-df4ad3f4d7f5@brauner>
+ <20241021170910.GB1350452@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,22 +70,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <326b2b66114c97b892dbcf83f3d41b86c64e93d6.1729266269.git.rgoldwyn@suse.com>
+In-Reply-To: <20241021170910.GB1350452@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Oct 18, 2024 at 11:55:50AM -0400, Goldwyn Rodrigues wrote:
-> Reduces the number of arguments to functions iomap_writepages() and
-> all functions in the writeback path which require both wpc and wbc.
-> The filesystems need to initialize wpc with wbc before calling
-> iomap_writepages().
+On Mon, Oct 21, 2024 at 06:09:10PM +0100, Al Viro wrote:
+> On Mon, Oct 21, 2024 at 02:39:58PM +0200, Christian Brauner wrote:
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > See #getname.fixup; on top of #base.getname and IMO worth folding into it.
+> > 
+> > Yes, please fold so I can rebase my series on top of it.
+> 
+> OK...  What I have is #base.getname-fixed, with two commits - trivial
+> "teach filename_lookup() to accept NULL" and introducing getname_maybe_null(),
+> with fix folded in.
+> 
+> #work.xattr2 and #work.statx2 are on top of that.
 
-Looks reasonable to me - there's only one path this comes in since
-we got rid of iomap_writepage()...
+BTW, speaking of statx() - I would rather lift the call of cp_statx() out
+of do_statx() and do_statx_fd() into the callers.  Yes, that needs making
+it non-static, due to io_uring; not a problem, IMO - it fits into the
+"how do we copy internal objects to userland ones" family of helpers.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Another fun issue: for by-pathname case vfs_fstatat() ends up hitting
+the same vfs_statx_path() as statx(2); however, for by-descriptor case
+they do vfs_getattr() and vfs_statx_path() resp.
 
--- 
-Dave Chinner
-david@fromorbit.com
+The difference is, vfs_statx_path() has
+        if (request_mask & STATX_MNT_ID_UNIQUE) {
+                stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
+                stat->result_mask |= STATX_MNT_ID_UNIQUE;
+        } else {
+                stat->mnt_id = real_mount(path->mnt)->mnt_id;
+                stat->result_mask |= STATX_MNT_ID;
+        }
+
+        if (path_mounted(path))
+                stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+        stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+
+        /*
+         * If this is a block device inode, override the filesystem
+         * attributes with the block device specific parameters that need to be
+         * obtained from the bdev backing inode.
+         */
+        if (S_ISBLK(stat->mode))
+                bdev_statx(path, stat, request_mask);
+done after vfs_getattr().  Questions:
+
+1) why is STATX_MNT_ID set without checking if it's in the mask passed to
+the damn thing?
+
+2) why, in the name of everything unholy, does statx() on /dev/weird_shite
+trigger modprobe on that thing?  Without even a permission check on it...
 
