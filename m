@@ -1,73 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-32497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB389A6E39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB639A6EAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 17:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B625B20D04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:34:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3211C21BC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938741C461D;
-	Mon, 21 Oct 2024 15:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85E71C6F6B;
+	Mon, 21 Oct 2024 15:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kpnmail.nl header.i=@kpnmail.nl header.b="OsFM8QjH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ6O3/Eg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D868C1C3F38
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2024 15:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C2B1C3F0B;
+	Mon, 21 Oct 2024 15:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524832; cv=none; b=KOyU6nxnkhXsdtDWBwKX4k/Hwy8vYmvCB1qGKrkhNUr6xlasFUAVoLlmbRawfG5ogXSfk37M6VU/vdh3OS23DH6UwXt/0Vm8hP8Ag8qcHhCQdkpyJTpI2qJfAF4sE9j37GkzR1RaocFFPtBUaaZi4xN4i1mbf1LXIePLUPN0ceI=
+	t=1729525671; cv=none; b=cZupPjluSRBRm7JZhvqY9d68BwDdjDOe+++UXwgqp9vebuhO6O+NII8TZnd4i0K8h+BaF4xovv50H0UCgPhd/V37ZfE6Jkpteux8ufePbYHuurFyR/SpYrW++gnHdnO74lOKjVPNQhOEr1BvowNmvNUXPQ5coQYmIfAiccE+AIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524832; c=relaxed/simple;
-	bh=VWNA2UPZManT4e8IzPJGTVogJGHNxZC6DgA458N3a1E=;
+	s=arc-20240116; t=1729525671; c=relaxed/simple;
+	bh=eoIDTD70jGHK8rQg1tI8OpdE3wiIkzDwBZrBOvTpqTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1Xw9cd3Wej+Lta1En0vZKZmBkPtyv3ToebgOSDowsg4VvsSRWNf+lEBoTUYlNfhFpcUQMsxuYOCE93sC4cvMZzRiisKtZULp3Pa868X4kXy4LqUX2ZApIMWXcspI9D+Ma27vtizN1Bq1bjyHTbqlkNSbAf8F8Vim6QASKhMMXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phenome.org; spf=none smtp.mailfrom=phenome.org; dkim=pass (1024-bit key) header.d=kpnmail.nl header.i=@kpnmail.nl header.b=OsFM8QjH; arc=none smtp.client-ip=195.121.94.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phenome.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=phenome.org
-X-KPN-MessageId: d83529dd-8fc1-11ef-a834-005056ab378f
-Received: from smtp.kpnmail.nl (unknown [10.31.155.38])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id d83529dd-8fc1-11ef-a834-005056ab378f;
-	Mon, 21 Oct 2024 17:33:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=kpnmail.nl; s=kpnmail01;
-	h=content-type:mime-version:message-id:subject:to:from:date;
-	bh=4/64ineT8w75TdFchzfMizy0mxnyBI1Pdn2/3uXzmMY=;
-	b=OsFM8QjHjIzEq/XgnnTVf9ssPnOYjXfO0g/ec20xV6dxl1x/OBLXAxOWR1j6/SxUP7qDH0koGVos2
-	 cK9GWyB0ASyGLHmV4bO0X0XRzscoWg5DxfWfMNBMZpdCuV1p6/28qJc5wxdGuBbDHh8Tdddwbo9i1b
-	 6KQE6XIHpLb7ZqKo=
-X-KPN-MID: 33|5DphU59EpAMuFP6KbPgQlj9lTqYwSZkAHS2tfNFnM+YlGdsWosM1b5U/2S98KFi
- a2rBSTs6oaGnlGBp+4wcbgdV5mou4cBBO5CqDYYM3ijQ=
-X-KPN-VerifiedSender: No
-X-CMASSUN: 33|2qaZN8mjL/1Wpi48lWOqlMIKNjeUzXHdsjR26I9XcafS2q/YTJjq45dN0DHOfvp
- fdBrudRg/S/GcCcY7C2fFiA==
-Received: from Antony2201.local (213-10-186-43.fixed.kpn.net [213.10.186.43])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id d89c4870-8fc1-11ef-a2c7-005056abf0db;
-	Mon, 21 Oct 2024 17:33:40 +0200 (CEST)
-Date: Mon, 21 Oct 2024 17:33:39 +0200
-From: Antony Antony <antony@phenome.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Antony Antony <antony@phenome.org>, Sedat Dilek <sedat.dilek@gmail.com>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <ZxZ0UxOsa4WvaBku@Antony2201.local>
-References: <ZxFQw4OI9rrc7UYc@Antony2201.local>
- <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
- <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
- <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
- <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
- <2156441.1729519958@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpcJ9wc/F13Cd+anVu8nkbpTPrkgzkOkUTLtg3P8UKFJx6dEtwioZRoJ2U0aLjcfqIAbb8u3LOUaBSRmwaMuZy0voxxL3SIx3IdDMjLuaUSmb3sEwKUTAm61KAR3WDomTVmz+De3jLmSKwjEZoy6gWK4dLgiHhYm6qjyBVz/Gqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ6O3/Eg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF50BC4CEC3;
+	Mon, 21 Oct 2024 15:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729525670;
+	bh=eoIDTD70jGHK8rQg1tI8OpdE3wiIkzDwBZrBOvTpqTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJ6O3/Eg6LuZBVbvEhmJGmq5UhlraJjHuFScrTmXpEbKNqxl3qPWCqW9og//FdOw7
+	 hfp0NqrPLYmgYPdeXpezpTfJ04KOnUCv9G2+czs7PPHV9dRShcsBk0Q0WxJs0GNuN8
+	 UkrpQv50sacx/D8D/8C+f0jcf6P3LDBdaNzUpIRwJSpQvs865Cy65GK9ctVP75vriQ
+	 pDZLbes5RePbk2QSNN9Iy3AUxFmd/e7JxGwLvMQkGwvigIA7axQxf1FoApGbxeavpO
+	 Sb9UIt0xyMQQgHX4r+mr52vXegSrJlMS1/CVz9gmB5OVwVuaP9K70NWGxZICWFwf+g
+	 7RwmJfZ2RfFfQ==
+Date: Mon, 21 Oct 2024 09:47:47 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, axboe@kernel.dk,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joshi.k@samsung.com, javier.gonz@samsung.com,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv8 1/6] block, fs: restore kiocb based write hint
+ processing
+Message-ID: <ZxZ3o_HzN8HN6QPK@kbusch-mbp>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-2-kbusch@meta.com>
+ <20241018055032.GB20262@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,41 +64,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2156441.1729519958@warthog.procyon.org.uk>
+In-Reply-To: <20241018055032.GB20262@lst.de>
 
-On Mon, Oct 21, 2024 at 03:12:38PM +0100, David Howells wrote:
-> Antony Antony <antony@phenome.org> wrote:
+On Fri, Oct 18, 2024 at 07:50:32AM +0200, Christoph Hellwig wrote:
+> On Thu, Oct 17, 2024 at 09:09:32AM -0700, Keith Busch wrote:
+> >  {
+> >  	*kiocb = (struct kiocb) {
+> >  		.ki_filp = filp,
+> >  		.ki_flags = filp->f_iocb_flags,
+> >  		.ki_ioprio = get_current_ioprio(),
+> > +		.ki_write_hint = file_write_hint(filp),
 > 
-> > When using the nix testing, I have to force the test to re-run.
-> > 
-> > result=$(readlink -f ./result); rm ./result && nix-store --delete $result
-> > 
-> > nix-build -v nixos/tests/kernel-generic.nix -A linux_testing
-> 
-> Is there a way to run this on Fedora?
+> And we'll need to distinguish between the per-inode and per file
+> hint.  I.e. don't blindly initialize ki_write_hint to the per-inode
+> one here, but make that conditional in the file operation.
 
-Yes. You can run it on Fedora.
-
-try these steps?
-
-1. Install nix.
-  a: preferd way:
-  curl --proto '=https' --tlsv1.2 -sSf -L \
-  https://install.determinate.systems/nix | sh -s -- install
-  b: may be use dnf? I am advised dnf is a bad idea!
-
-2. clone latest nixpkgs 
-git clone https://github.com/NixOS/nixpkgs
-
-3. cd nixpkgs
-nix-build -v nixos/tests/kernel-generic.nix -A linux_testing
-currently this will run 6.12-rc3.
-
-when the test does not finish running,  "Ctrl + C" to sop
-
-when it succeds to re-run:
-result=$(readlink -f ./result); rm ./result && nix-store --delete $result
-nix-build -v nixos/tests/kernel-generic.nix -A linux_testing
-
--antony
+Maybe someone wants to do direct-io with partions where each partition
+has a different default "hint" when not provided a per-io hint? I don't
+know of such a case, but it doesn't sound terrible. In any case, I feel
+if you're directing writes through these interfaces, you get to keep all
+the pieces: user space controls policy, kernel just provides the
+mechanisms to do it.
 
