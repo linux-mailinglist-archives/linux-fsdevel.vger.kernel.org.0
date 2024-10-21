@@ -1,95 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-32484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DDD9A69E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:18:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D94E9A69EC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB031F21A0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2F11F23816
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448491F427F;
-	Mon, 21 Oct 2024 13:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430991F4292;
+	Mon, 21 Oct 2024 13:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU5jc++Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfU7CQv4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819E42746A;
-	Mon, 21 Oct 2024 13:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C241E0DD7;
+	Mon, 21 Oct 2024 13:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516678; cv=none; b=PxVlHycmRPlJEooEkYSRf4alhQoMQvj8lG0z+3k8vU2mK/ts9ybAwonlqns98M9GywCk/u23FIVvbExIa92a2Un7/ueIRMRB0YrAIyksXr3jCCjm74Z26B9BK2vjhRXdCjhxtLw9QorbrETT9A3+a3RN51ObB8KQWjmxmqVl8zQ=
+	t=1729516811; cv=none; b=RpWUt4+zJ5A0u+614SuUGKjfcL0FxA87DbXBlu2XDNLEkd3e6MiLFjRt5xWXOpdb7ZRLsgI/kWcjkT4DzmLALvAu8cG5CzUbbumxJlZrM3Q6AN/+zNEAdaUKXLLVjaDjLTh/n2VWN91jTYp/1mxKTXOQRoFNVZBjjuNgA60L5Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516678; c=relaxed/simple;
-	bh=V/7/mzBXU3+EclLs2EGamNhd8+dOPyXvv7Tjz9IRZHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPH+6swAYp9X9C1FaESF6bHl3chsUOXjNzamuNKCjjbBP2YHVYbAQRJ3Ddbf1Js2TK66JcK1eSDyA++mtmrM0kwEHYBGJONTRaIATCuL+GxF0qnR1E6cCvy2oG5x5rbKAJroO3aWbTWdsprMuwEYztSgi9F/Ia/VQOI1G/lMrMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU5jc++Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA4BC4CEC3;
-	Mon, 21 Oct 2024 13:17:55 +0000 (UTC)
+	s=arc-20240116; t=1729516811; c=relaxed/simple;
+	bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sqdNbuLa9Xyt3a85a2lYXshwxgLND0WUVf/Kwx92uqKguHf23sNs5hCNhRloAy0siallgRQ2c9GGv5fu9O6F2Mt2Abg3pBNb02E66+tVX90zu8LcN80PbDLACKuypYMVjcJ4jbc6BTYu5swjWhjj0G5T9AYXhLoJZXoyJRo4SqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfU7CQv4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D866DC4CEC3;
+	Mon, 21 Oct 2024 13:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729516678;
-	bh=V/7/mzBXU3+EclLs2EGamNhd8+dOPyXvv7Tjz9IRZHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tU5jc++ZTdTw1qQjp9XuKpnLZOYpFazqFs+6twrkMIAI2Tf4uq1OYcQq5xze3tYim
-	 r0Kr44wKLAXrQaF9pAc3SLvN0uBnxt9ELqKgKZHPP4yhopn0evExoru5RKKr1Zdyob
-	 Zb3MafemslAuMgThDJA0zqMytY41GRz3DhIo2V0RB3yuDiFxeYWUlVeQPFU+dkhITo
-	 jYD4nKrWnlIHpCMXT07jas8SJn+EtJdpmjvTL4M5KR+3A6Rv5w8A1+kstW3TMfrqmb
-	 iTKqJJYlerjzauVE/SF4HbnXBCFeieswy3BFXmKzYCEOLpykQwZ0fS0Df4Ba7vo9VT
-	 jvs0yrzMd2pVg==
-Date: Mon, 21 Oct 2024 15:17:53 +0200
+	s=k20201202; t=1729516811;
+	bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rfU7CQv4/Ex0Hm4HCwQgGues8xgjV4uUlbKKs6KE4dQK3Yfnkex+Cf6GceY1QGIqX
+	 couOKavPDfCgJI5IKQuFYwKAEPrVO6cAPjEMZI2O6W8KuQOYiD6snLXoRJ2kN1uGdw
+	 JSd0P6qs0Ce9AmIeo2YR0kWUb7lYYT/dmpfdZ+4wi6nQa/u10JfT9e7FaJTErq8f0Z
+	 Z/iHJtJ+3ro+ocX8JRMJekUcvc4wPEXe1e5oWxE3Zgqlk4lzS23xeEiob3SqtX6CNd
+	 BFdHC6Q/NEjxW1II4/+R9HEiEUPB/ssJvxOxWXHO0YQoB/ypyFdLIPtue4IquYgSzn
+	 IEq9DUPYwDK2w==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, 
-	Paul Moore <paul@paul-moore.com>, Trond Myklebust <trondmy@hammerspace.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"anna@kernel.org" <anna@kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "audit@vger.kernel.org" <audit@vger.kernel.org>, 
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <20241021-examen-deshalb-48b371dc7efa@brauner>
-References: <20241010152649.849254-1-mic@digikod.net>
- <20241016-mitdenken-bankdaten-afb403982468@brauner>
- <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
- <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
- <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
- <ZxEmDbIClGM1F7e6@infradead.org>
- <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
- <ZxEsX9aAtqN2CbAj@infradead.org>
- <20241017164338.kzl7uotdyvhu5wv5@quack3>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: Re: [PATCH v2] acl: Annotate struct posix_acl with __counted_by()
+Date: Mon, 21 Oct 2024 15:20:03 +0200
+Message-ID: <20241021-skalpell-kulant-6622b37fc93a@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241018121426.155247-2-thorsten.blum@linux.dev>
+References: <20241018121426.155247-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017164338.kzl7uotdyvhu5wv5@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1140; i=brauner@kernel.org; h=from:subject:message-id; bh=4R/WKRARQw/4IlPbaQI7M3DPYBrwc9XcRDPFEX/AV7Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLhbLs27gs1nVGgsHTtwyXmKQ+vWhh1Z9b6Prk4W8OH SV3u+CJHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPhYWP47667nlc2e93rIzHb 1r0/WdDd8UurwK+yecexRLN7vLXWzowMx7+dqVqjLabsGbLud3tYPN/RS2szn/DNu78w+d++/VX L+QA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 06:43:38PM +0200, Jan Kara wrote:
-> On Thu 17-10-24 08:25:19, Christoph Hellwig wrote:
-> > On Thu, Oct 17, 2024 at 11:15:49AM -0400, Paul Moore wrote:
-> > > Also good to know, thanks.  However, at this point the lack of a clear
-> > > answer is making me wonder a bit more about inode numbers in the view
-> > > of VFS developers; do you folks care about inode numbers?
-> > 
-> > The VFS itself does not care much about inode numbers.  The Posix API
-> > does, although btrfs ignores that and seems to get away with that
-> > (mostly because applications put in btrfs-specific hacks).
+On Fri, 18 Oct 2024 14:14:21 +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> a_entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
-> Well, btrfs plays tricks with *device* numbers, right? Exactly so that
-> st_ino + st_dev actually stay unique for each file. Whether it matters for
+> Use struct_size() to calculate the number of bytes to allocate for new
+> and cloned acls and remove the local size variables.
+> 
+> [...]
 
-Yes.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-> audit I don't dare to say :). Bcachefs does not care and returns non-unique
-> inode numbers.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Userspace can now easily disambiguate them via STATX_SUBVOL.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] acl: Annotate struct posix_acl with __counted_by()
+      https://git.kernel.org/vfs/vfs/c/ac0812ef00c8
 
