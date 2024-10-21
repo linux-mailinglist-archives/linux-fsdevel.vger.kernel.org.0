@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-32483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9237B9A69CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DDD9A69E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 15:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0471F228B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB031F21A0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2024 13:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62881F4731;
-	Mon, 21 Oct 2024 13:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448491F427F;
+	Mon, 21 Oct 2024 13:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCaVSN9d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU5jc++Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E326ACD;
-	Mon, 21 Oct 2024 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819E42746A;
+	Mon, 21 Oct 2024 13:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516406; cv=none; b=O1dWEjxpSm+Q4Jzztm5AWe9XpWvxc5c74PzP9ZQ+5qsiyHmhWeyLtyW9jB28LbzniHsLHwCz5QbxfR+gzcpW404UTyzsou/Gpm5BlRdqFeUE87SnJdMJxdOM8PauN14Srqt60JtnhK5lD5+smAT7kMMXgTrLwYWHosZGh+gyuec=
+	t=1729516678; cv=none; b=PxVlHycmRPlJEooEkYSRf4alhQoMQvj8lG0z+3k8vU2mK/ts9ybAwonlqns98M9GywCk/u23FIVvbExIa92a2Un7/ueIRMRB0YrAIyksXr3jCCjm74Z26B9BK2vjhRXdCjhxtLw9QorbrETT9A3+a3RN51ObB8KQWjmxmqVl8zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516406; c=relaxed/simple;
-	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
+	s=arc-20240116; t=1729516678; c=relaxed/simple;
+	bh=V/7/mzBXU3+EclLs2EGamNhd8+dOPyXvv7Tjz9IRZHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kcaarta7j3xjWi9K36Cpoidn+8R0cTV6+tHKGLrvtFOsHbTtIDirwH6+WhFbKXLkm5oFChWy4DXAkJkXJUrmXwFeE6/lMizbbNznVmfI4o9itKn9lxToGxvPU8cGQJBqbnTzjXDJKlFlywyaK0Yr4dJ7sR+X59IeqsyX9lsuieQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCaVSN9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77FDC4CEC3;
-	Mon, 21 Oct 2024 13:13:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPH+6swAYp9X9C1FaESF6bHl3chsUOXjNzamuNKCjjbBP2YHVYbAQRJ3Ddbf1Js2TK66JcK1eSDyA++mtmrM0kwEHYBGJONTRaIATCuL+GxF0qnR1E6cCvy2oG5x5rbKAJroO3aWbTWdsprMuwEYztSgi9F/Ia/VQOI1G/lMrMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU5jc++Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA4BC4CEC3;
+	Mon, 21 Oct 2024 13:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729516405;
-	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
+	s=k20201202; t=1729516678;
+	bh=V/7/mzBXU3+EclLs2EGamNhd8+dOPyXvv7Tjz9IRZHU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VCaVSN9dURA9zYAY3uImNi5qLazdbe6a2oNN9dDIdK9SKGXJypGFSKDbW1zZZgz5C
-	 Q2FjkH3Y5zkG4We999HkJnuJNHfoq6lu/xBOUxUM6pbinhzdZeTGOEktECYOt5v2Pw
-	 n8IuF3DdDQ1Uyixlm+r0gppHIbk0qru+/rzrnxPDXk6XCgq8mhdkfd1Bd/5Ga5JFqS
-	 8Yy5Zd//cWWK/y/+Aif1UXy4cfCcCQdjglW+2lLn/ZpnVqlC29ontCDM2L4vYghy5J
-	 NoXhjEkV0zXBHg6hReNac75yNRGWkCOQ0sU5sIVG7a/OdIJ7x/PiQDS+guTmEiMTW2
-	 lzw/z0bIjXE4Q==
-Date: Mon, 21 Oct 2024 15:13:20 +0200
+	b=tU5jc++ZTdTw1qQjp9XuKpnLZOYpFazqFs+6twrkMIAI2Tf4uq1OYcQq5xze3tYim
+	 r0Kr44wKLAXrQaF9pAc3SLvN0uBnxt9ELqKgKZHPP4yhopn0evExoru5RKKr1Zdyob
+	 Zb3MafemslAuMgThDJA0zqMytY41GRz3DhIo2V0RB3yuDiFxeYWUlVeQPFU+dkhITo
+	 jYD4nKrWnlIHpCMXT07jas8SJn+EtJdpmjvTL4M5KR+3A6Rv5w8A1+kstW3TMfrqmb
+	 iTKqJJYlerjzauVE/SF4HbnXBCFeieswy3BFXmKzYCEOLpykQwZ0fS0Df4Ba7vo9VT
+	 jvs0yrzMd2pVg==
+Date: Mon, 21 Oct 2024 15:17:53 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Jan Kara <jack@suse.cz>
-Cc: Paul Moore <paul@paul-moore.com>, Jeff Layton <jlayton@kernel.org>, 
-	Christoph Hellwig <hch@infradead.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+Cc: Christoph Hellwig <hch@infradead.org>, 
+	Paul Moore <paul@paul-moore.com>, Trond Myklebust <trondmy@hammerspace.com>, 
 	"mic@digikod.net" <mic@digikod.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
 	"anna@kernel.org" <anna@kernel.org>, 
 	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "audit@vger.kernel.org" <audit@vger.kernel.org>, 
 	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
 Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
  get_ino() for NFS
-Message-ID: <20241021-forsten-sitzreihen-45035569f83b@brauner>
+Message-ID: <20241021-examen-deshalb-48b371dc7efa@brauner>
 References: <20241010152649.849254-1-mic@digikod.net>
  <20241016-mitdenken-bankdaten-afb403982468@brauner>
  <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
@@ -60,9 +60,8 @@ References: <20241010152649.849254-1-mic@digikod.net>
  <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
  <ZxEmDbIClGM1F7e6@infradead.org>
  <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
- <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
- <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
- <20241018122543.cxbbtsmeksegoeh3@quack3>
+ <ZxEsX9aAtqN2CbAj@infradead.org>
+ <20241017164338.kzl7uotdyvhu5wv5@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,82 +70,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241018122543.cxbbtsmeksegoeh3@quack3>
+In-Reply-To: <20241017164338.kzl7uotdyvhu5wv5@quack3>
 
-On Fri, Oct 18, 2024 at 02:25:43PM +0200, Jan Kara wrote:
-> On Thu 17-10-24 16:21:34, Paul Moore wrote:
-> > On Thu, Oct 17, 2024 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > On Thu, 2024-10-17 at 11:15 -0400, Paul Moore wrote:
-> > > > On Thu, Oct 17, 2024 at 10:58 AM Christoph Hellwig <hch@infradead.org> wrote:
-> > > > > On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
-> > > > > > Okay, good to know, but I was hoping that there we could come up with
-> > > > > > an explicit list of filesystems that maintain their own private inode
-> > > > > > numbers outside of inode-i_ino.
-> > > > >
-> > > > > Anything using iget5_locked is a good start.  Add to that file systems
-> > > > > implementing their own inode cache (at least xfs and bcachefs).
-> > > >
-> > > > Also good to know, thanks.  However, at this point the lack of a clear
-> > > > answer is making me wonder a bit more about inode numbers in the view
-> > > > of VFS developers; do you folks care about inode numbers?  I'm not
-> > > > asking to start an argument, it's a genuine question so I can get a
-> > > > better understanding about the durability and sustainability of
-> > > > inode->i_no.  If all of you (the VFS folks) aren't concerned about
-> > > > inode numbers, I suspect we are going to have similar issues in the
-> > > > future and we (the LSM folks) likely need to move away from reporting
-> > > > inode numbers as they aren't reliably maintained by the VFS layer.
-> > > >
-> > >
-> > > Like Christoph said, the kernel doesn't care much about inode numbers.
-> > >
-> > > People care about them though, and sometimes we have things in the
-> > > kernel that report them in some fashion (tracepoints, procfiles, audit
-> > > events, etc.). Having those match what the userland stat() st_ino field
-> > > tells you is ideal, and for the most part that's the way it works.
-> > >
-> > > The main exception is when people use 32-bit interfaces (somewhat rare
-> > > these days), or they have a 32-bit kernel with a filesystem that has a
-> > > 64-bit inode number space (NFS being one of those). The NFS client has
-> > > basically hacked around this for years by tracking its own fileid field
-> > > in its inode.
+On Thu, Oct 17, 2024 at 06:43:38PM +0200, Jan Kara wrote:
+> On Thu 17-10-24 08:25:19, Christoph Hellwig wrote:
+> > On Thu, Oct 17, 2024 at 11:15:49AM -0400, Paul Moore wrote:
+> > > Also good to know, thanks.  However, at this point the lack of a clear
+> > > answer is making me wonder a bit more about inode numbers in the view
+> > > of VFS developers; do you folks care about inode numbers?
 > > 
-> > When I asked if the VFS dev cared about inode numbers this is more of
-> > what I was wondering about.  Regardless of if the kernel itself uses
-> > inode numbers for anything, it does appear that users do care about
-> > inode numbers to some extent, and I wanted to know if the VFS devs
-> > viewed the inode numbers as a first order UAPI interface/thing, or if
-> > it was of lesser importance and not something the kernel was going to
-> > provide much of a guarantee around.  Once again, I'm not asking this
-> > to start a war, I'm just trying to get some perspective from the VFS
-> > dev side of things.
+> > The VFS itself does not care much about inode numbers.  The Posix API
+> > does, although btrfs ignores that and seems to get away with that
+> > (mostly because applications put in btrfs-specific hacks).
 > 
-> Well, we do care to not break our users. So our opinion about "first order
-> UAPI" doesn't matter that much. If userspace is using it, we have to
-> avoid breaking it. And there definitely is userspace depending on st_ino +
-> st_dev being unique identifier of a file / directory so we want to maintain
-> that as much as possible (at least as long as there's userspace depending
-> on it which I don't see changing in the near future).
-> 
-> That being said historically people have learned NFS has its quirks,
-> similarly as btrfs needing occasionally a special treatment and adapted to
-> it, bcachefs is new enough that userspace didn't notice yet, that's going
-> to be interesting.
-> 
-> There's another aspect that even 64-bits start to be expensive to pack
-> things into for some filesystems (either due to external protocol
-> constraints such as for AFS or due to the combination of features such as
-> subvolumes, snapshotting, etc.). Going to 128-bits for everybody seems
-> like a waste so at last LSF summit we've discussed about starting to push
-> file handles (output of name_to_handle_at(2)) as a replacement of st_ino
-> for file/dir identifier in a filesystem. For the kernel this would be
-> convenient because each filesystem can pack there what it needs. But
-> userspace guys were not thrilled by this (mainly due to the complexities of
-> dynamically sized identifier and passing it around). So this transition
-> isn't currently getting much traction and we'll see how things evolve.
+> Well, btrfs plays tricks with *device* numbers, right? Exactly so that
+> st_ino + st_dev actually stay unique for each file. Whether it matters for
 
-It's also not an answer for every filesystem. For example, you don't
-want to use file handles for pidfds when you are guaranteed that the
-inode numbers will be unique. So file handles will not be used for that
-where a simple statx() and comparing inode numbers can do.
+Yes.
+
+> audit I don't dare to say :). Bcachefs does not care and returns non-unique
+> inode numbers.
+
+Userspace can now easily disambiguate them via STATX_SUBVOL.
 
