@@ -1,104 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-32620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036989AB863
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 23:21:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3783F9AB958
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 00:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46E7284AAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 21:21:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 149F3B23AC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 22:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6610F1CCEE9;
-	Tue, 22 Oct 2024 21:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563451CCEE9;
+	Tue, 22 Oct 2024 22:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfgoC1Qx"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="PW1rkLr2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC201130AF6;
-	Tue, 22 Oct 2024 21:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C3713B58A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 22:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729632061; cv=none; b=TLGfoxj5LssVL+YRiTnHpZsDH2AsK2VN3RBkgj7eTseyWLdw5H7Rse9mLgJ1TQDmW3L8cOENLkIkIvBamuDdHg+/DITjorZFYPq+gODYx6zyebfIwLfXF76GsBu3vwBuw45Z7RalxIoRt4zwXwZEx1AjhLu9/VDvHM/kUM4BwPo=
+	t=1729635014; cv=none; b=RjpvHnSZObyHt2hYO8k9Z2e7kdcDN5rvdOHYrm2QW7pPCrgTUwPl9KgmR6hhG+teSt7hfuypAaO6gjg/mef/5DGMuO30we0qs1NskTlTXO0XEtqueaTp0EswCXIjSzOwTPitn8jh356m0nhBiBGZCr0NrC1zQCPxO9YgYrUfAyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729632061; c=relaxed/simple;
-	bh=sDikwQmGWUyknPMu+lvLDRBfL1SGRChaQOsYt5oIGIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMqpzNxpmnUZFMGzUL8QbF7DyKgqg0oNNUuls6Y/5CXDRsKPDvXDT23R9ZarUTof/aWx2mT3ZC4MYaw2eHE4RwcXKi5gf5dMyJBwtnRaNXDxG3QEKFVvxJjcRPu2by0DI79YGyfMN2rNoJukns70xC9N8x4vbwbilWvZtdBfVYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfgoC1Qx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F39C4CEC3;
-	Tue, 22 Oct 2024 21:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729632061;
-	bh=sDikwQmGWUyknPMu+lvLDRBfL1SGRChaQOsYt5oIGIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sfgoC1QxZjUODPaeHBpz4Liy2tZU54LYmEt+HNIZprye0HXqWHLQZzq4oJ7QK8WY9
-	 SGA4v2PYYXgAFa6tNeYpnWRkuPvAHAp+XRnkWfxQwnmWkws4qwdkX1f34GSz+gwzhb
-	 CSQRLQ/6GEl4GI6dA3L/fz8qSyw0hqq9F1LiOXNTk7V+FiGGPlTx93+IW6fkLgzbEs
-	 y1ADO3QrZnZJ3F+bE4B3ZaGZEMr3TAyDcy3tclxTupKIdk7kVv8mw4b04LDzhN/3ZJ
-	 wZ7hjsAu5vAKFOoQNU3FYmX2EoHtajpxJOu/P8oqzdtzKO6NZ6S1WUN7tODG4zklX3
-	 BgIdRa7XEN81g==
-Date: Tue, 22 Oct 2024 17:20:59 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
-	broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <ZxgXO_uhxhZYtuRZ@sashalap>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap>
- <20241022204931.GL21836@frogsfrogsfrogs>
+	s=arc-20240116; t=1729635014; c=relaxed/simple;
+	bh=i5Dux+tu36s4j3bjtGaxVlsWNTwVxG8Li7ytEIfbz3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kuzt4f33XzJH//vecscNwPOHvP++QDp+OFjx3HAzR0Ydsw9Jz89jr6brpDvE9lNiDuptEQ1JpJXRXX7ze4UQotAM5HnxO2sD2glI/zC0paJlAZl2eQj2VyIPvbBp1zLRkzj0lC7119ztU9rr5/JsoLn7Y5YXnMM6IU8wIV6PCAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=PW1rkLr2; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20e6981ca77so45889865ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 15:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1729635012; x=1730239812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TBS9NGU/A5YlWZkorpJxAKD2D/OcgCE8QaEbQhOrhzQ=;
+        b=PW1rkLr2EoiyWTplnh1D5R8C0RY1wt8U2b//1ZpwqX6sHaOVUkiGmHZxoUuqjltMhR
+         4+KeJEydSLY2nYwKb4+hya4k5Up7g7oMoW9ELRPHFKoHrqa4YgQdsjD6nSqglUJICbxW
+         Khgrgf6K8h1yHj8Er29/++ud/mfvFH2xojJPccEm6Q1MkXE8sac13ZrB+Jvog0dIDXku
+         /RS8Tyj8kQp9v8/3V/ZEVXgEExYgGVoe9OMYRuqRHZzSofWnN9zx1/D2a+Xga3GkD59y
+         9tTWqW5d+bBF3S8SUtGxb34F7AwDNFzm7k/JsRc6k4iQ7wMbQg+UpmYA/7JkfP2cwYmB
+         XRUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729635012; x=1730239812;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBS9NGU/A5YlWZkorpJxAKD2D/OcgCE8QaEbQhOrhzQ=;
+        b=no6sT7+HmrdBt6HWMjILodloOEK5J0SjK4YJz82o8bGVK7L92fXPYgJqID+yEHbDN7
+         XeGvS5KuBaDlj1d4+OfnOWB6RRqvkhXxk3Cku2akCRAZrrEDQIA9QKzS9tETa6wV8nLk
+         FeUgmYWtg9WRH8MZ0122942pMYcwfP7W7ZjLkNemSiwnmlwWfAg+pZVVxIxbYnTYUYc3
+         PT/4Qa0jYTogsmyVQcVb9LV6H/WXiPtmsqUwnoyKA/V8P34A2hKUr2stN0bOsI59IW+i
+         FPC6Gw3kWXPVmNQGks6zP6jb73XwYzsXIH02G2d7JoSyTzpkT9apGvuB3wsCP2x94/kQ
+         zcbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr31D7S+Vljy3c3iEoe8LL7Lrzq8GLatokXPP8+80AbB1S5OvDC7U1jJEITiTmT+Afr6Io6KdDYn4QtG01@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV9ONal/COFX1H6lpT579G7mYqioPeQ6AWWOe/FRwasOgm6jTk
+	/eQjKeQ8JW3YCmVzJWdmEoitpTExlvsZW5yhBy2yo599iYLX7eOQ4D3C+IQBLMw=
+X-Google-Smtp-Source: AGHT+IHYps5wy4yAP8JFwwnJ26Kg47RekaD9ISPH6q5Ssg2xxBuIMWOnmkAyFQ7ndX6rNgjJEMaZPA==
+X-Received: by 2002:a17:902:ccc9:b0:205:68a4:b2d8 with SMTP id d9443c01a7336-20fa9deb634mr7955565ad.11.1729635012431;
+        Tue, 22 Oct 2024 15:10:12 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::4:56f4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e9b0b33adsm16091475ad.237.2024.10.22.15.10.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 15:10:11 -0700 (PDT)
+Message-ID: <070c7377-24df-4ce1-8e80-6a948b59e388@davidwei.uk>
+Date: Tue, 22 Oct 2024 15:10:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241022204931.GL21836@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+Content-Language: en-GB
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
->On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
->> other information that would be useful?
->
->As a maintainer I probably would've found this to be annoying, but with
->all my other outside observer / participant hats on, I think it's very
->good to have a bot to expose maintainers not following the process.
+On 2024-10-15 17:05, Bernd Schubert wrote:
+> RFCv1 and RFCv2 have been tested with multiple xfstest runs in a VM
+> (32 cores) with a kernel that has several debug options
+> enabled (like KASAN and MSAN). RFCv3 is not that well tested yet.
+> O_DIRECT is currently not working well with /dev/fuse and
+> also these patches, a patch has been submitted to fix that (although
+> the approach is refused)
+> https://www.spinics.net/lists/linux-fsdevel/msg280028.html
 
-This was my thinking too. Maybe it makes sense for the bot to shut up if
-things look good (i.e. >N days in stable, everything on the mailing
-list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
+Hi Bernd, I applied this patch and the associated libfuse patch at:
 
->> Commits that weren't found on lore.kernel.org/all:
->> --------------------
->> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
->> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
->> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
->> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
->> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
->> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
->> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
->> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
->> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
->
->Especially since there were already two whole roarings about this!
->This was a very good demonstration!
->
->PS: Would you be willing to share the part that searches lore?  There's
->a few other git.kernel.org repos that might be interesting.
+https://github.com/bsbernd/libfuse/tree/aligned-writes
 
-It's all at https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/
+I have a simple Python FUSE client that is still returning EINVAL for
+write():
 
-In particular, the query-lore.sh script.
+with open(sys.argv[1], 'r+b') as f:
+    mmapped_file = mmap.mmap(f.fileno(), 0)
+    shm = shared_memory.SharedMemory(create=True, size=mmapped_file.size())
+    shm.buf[:mmapped_file.size()] = mmapped_file[:]
+    fd = os.open("/home/vmuser/scratch/dest/out", O_RDWR|O_CREAT|O_DIRECT)
+    with open(fd, 'w+b') as f2:
+        f2.write(bytes(shm.buf))
+    mmapped_file.close()
+    shm.unlink()
+    shm.close()
 
--- 
-Thanks,
-Sasha
+I'll keep looking at this but letting you know in case it's something
+obvious again.
 
