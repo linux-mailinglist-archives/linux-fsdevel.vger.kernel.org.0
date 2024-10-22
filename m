@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-32609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7786A9AB652
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 20:56:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E09AB654
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 20:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340E2284BEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 18:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26243284D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 18:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768991CDA35;
-	Tue, 22 Oct 2024 18:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547471CB332;
+	Tue, 22 Oct 2024 18:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiK3LNKr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZkIY7Tk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485781CB328
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073931CCEE2
 	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 18:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729623299; cv=none; b=PlLfB0Z+KyJRx1ZnYi/Enmy9uzGPPNIVBXFfsick4h4ZjTyhR/BW1LrDce5w5npIQ7G7Ztb1phsaSukorELW7Vm5paAZ5QMSYp3yJ8M+YhFaykYupX+dWqnkETawm3rkvJ672lknVYZXE3MQOq6N7iMrjBn4aeQqccPje8um1Ac=
+	t=1729623300; cv=none; b=rOj3V5JhVSHvAGikh0EYmfRKv22xd7S9eJKWRrJlKDkNhRtj5f9V4Un8CKTsUvtLmonptgrmiWtMZLpj+PqDb6fmP4M2wCZizqGg6In2BUDa32nOfcs/a3oqss2qPRDoCGB1zgXeNr8IIJgwf92BfxP/XkIXNbqcmnSPCWcU5vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729623299; c=relaxed/simple;
-	bh=Gu2YSvK2+EbyNYnxZcb7N27GGbib1KlhygWAxajgM9c=;
+	s=arc-20240116; t=1729623300; c=relaxed/simple;
+	bh=1fx4xorTc0SaJnZqDSSJwFVUP5boIwS3BOMlFmZESII=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RqnlP6W/Moxo/J3HgkZWClRlNX4TaPHshIfsesXiuVPIufCZZWUZ9VNolP4iU7JCOf13/nJEN/DU31JnscCrAp4McbqPYxv83Dw8oXUwZgeRd1NEbMYeIBa5HmB7J8m0mjGuas0govQ7/x0NHFW2r8CxoIJD3CeG0XeC3ogMH1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiK3LNKr; arc=none smtp.client-ip=209.85.128.179
+	 MIME-Version; b=NEZQOJHGOG5k5ynnk8tz7RzM7ooB54YGF0ZaybqewZofZUY7y8/oFZIf1+J4OmRa9vydFjg93iGazrzW9N2948K6EA0NCWA63ZsEap2yhnH2Wk3/fNKDwc7cUcJx5TkvJxjdmji5IvPzNT1YmpkWnsbmi30X2Lh370Iimg4vH3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZkIY7Tk; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e3e4f65dso66077767b3.3
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e59a9496f9so67653567b3.0
         for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 11:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729623297; x=1730228097; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729623298; x=1730228098; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r0lb+FlCJ27wc1DnrIwBxhXfE5e/7ONhHuRmNbuyD0I=;
-        b=AiK3LNKr5B4ZcS/loQhWUxTa2KiSqyaOGQIO8U0g8iMPiFJRFf/qK+gMczOaSXYgP+
-         Nv9RNsLKKSD5l0403zFOwQOUQJKHTqM5TdscOtYi7HdJpb4UCOt8ZaOEP1Ymsq9SgL0e
-         12oMnXI8u9BarPNXnm67L64W6jO4iQBKDenNZ0rmCVxYTJRCICp5YaHGJfhyWlqkoxwL
-         BdBZLUm+W8uTHy6HERkliMmjgNS0gab1h2MXH29fPSJGWk93YoI685+rkhowChWJ6tJF
-         zvIPXvgSo8yabnEq5pS1qVUi5Pn3BDJyYdymhecIiY38KD5Opxoikb+Wq09YBnXBIWY7
-         lQlQ==
+        bh=S7DCoZ4SSyBWorpQRh2bKORgPIpYfwI01uLP4jAa5/k=;
+        b=BZkIY7Tk+G9EocG14Hp2Y7bEocMIgZaxsUWDPBm6q6cxovYz9p0xfgfS8OJAZUAshE
+         xa5judG8Xbk6XQwWdOw3nsd+0U6xIQW9EJdB4SuQrs/cBJp1LxwOZkmMq/66k/uw9mLk
+         s1CjSSiWh/Ezh7gULBJZvpWuaY5CAuuqhi+LAjpbucUsRPded/r2phhQYS3yGRdSpq0D
+         hWi9PwD3dh2WYACMQTUqFZVq9bsL6sRhPNS3cbp5som09p1v8prNGYb5qiw23y2hgtT2
+         cL7nE3KPowMXC1GGgfE20YaHnX6BuhzBXa99VKlc0EmD79h7IaI/27kqSbwSBY2rZ6XJ
+         fuMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729623297; x=1730228097;
+        d=1e100.net; s=20230601; t=1729623298; x=1730228098;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r0lb+FlCJ27wc1DnrIwBxhXfE5e/7ONhHuRmNbuyD0I=;
-        b=J4NTpfb3phgk0glVRC4KXvVwGmn8bDySDZaf8hGWNde0i44EVMYbNVm/1LLaKttq7m
-         dMWBnSC6akpLq15wcqt6l2Gq7ikAWcZ9q9xnBalZPJPAUXV5bo5d0uzprK+iXDAkH71E
-         yEMofZBaWnnnoSWl7TZZtjUNbv5609pHv/XFR1WAFayPKSd/hs9LGA8cPGXP//bBti1U
-         LA+E6BxUDuI3NpRp36Ne1Sxxq3J7mOvVpCX+ITTuUA/8hUEfd/YRzaYz+uMX5MTgETiT
-         U1vCuoqSmWWH9WYY4ct+p743MqgNhzmRXFJvK0Whn5E3TCccBLEUxoUGjqdV5HG/G6M6
-         phaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmulYQRteSP9Scy4oI78HP+V/H+tkzYBxBx13ZPqKTsnV070jgg8ii0bdn7u3+ZZsPk66NjViZOMO1B0AS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGu4YSgydCIWVpuoyeCh18lKedj5d5wZToTOPzv+7I6rP2hNkH
-	i84K7QDaICvdSObU4Rny9JiMrRfqKeGrcB8hYPae46EMarb/WTs3
-X-Google-Smtp-Source: AGHT+IEHMn2QAHwEJNj0Pjj/vTCwiZUq5sdR3j2aKasb2Q+ETG8v+k9pVCrfFsA8EUKTsTZDVb+UoQ==
-X-Received: by 2002:a05:690c:dc8:b0:6e2:f61e:8c9 with SMTP id 00721157ae682-6e5bfd4ca84mr165062897b3.30.1729623297205;
+        bh=S7DCoZ4SSyBWorpQRh2bKORgPIpYfwI01uLP4jAa5/k=;
+        b=iXGszCovh4bhfwUHcBOjJjRxX5UPpEep45r3JbafpRmhe4nc+43PJD7FskflSjJWwt
+         grzroREjrI8fq3hOyCx/a1shbPg4nIqz3YejwTVNmztlRcEOq4PixPNrtxMqImEPXdWI
+         KphyOgR7XWl90xw71SGHOjM4LRxyxw3Y9XX6KHA7k88tu4EE+y/DzSftZJnK2FIY2Lsx
+         rr3sKizHWLsIjUkceoXcNA3nQ++2pnt3YPOAm42W3IUslqe0hXy/T3fVZ9Oz9HwC9SAf
+         IPyNdyPy/y5Me8LxTD1XpxUBR/8hMsubfotp1JK1uBVUggW5a981VOhisbYaeyL1c3gz
+         W0Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvlVsYNcka/g0d7p0ON6BQJ3ABsQmDoCh1FYvwYhFXff074z42FrJ1KXs4EVDf9JEoJdG9wnnjFX7grBs3@vger.kernel.org
+X-Gm-Message-State: AOJu0YypxDLsXnpl62VtrKPuaFhHcih2TBR1vuEeN4lHyPzr7Ykcvui5
+	+hDs8nFlAxWOKM11s4LygeQXAeaDPYAxjwB3FINX3gyITUwXhDqF3N0T/g==
+X-Google-Smtp-Source: AGHT+IGB/RDx7Rr40rI2Vwzimnue8WKiqoCTvQFophqSeHOWQ3grugkvALSdTpmjretp5sqLCUZBQA==
+X-Received: by 2002:a05:690c:2892:b0:6d6:aa50:9267 with SMTP id 00721157ae682-6e7d82d7110mr31966837b3.39.1729623297896;
         Tue, 22 Oct 2024 11:54:57 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-002.fbsv.net. [2a03:2880:25ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ccbae5sm11957477b3.81.2024.10.22.11.54.56
+Received: from localhost (fwdproxy-nha-004.fbsv.net. [2a03:2880:25ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5d2d311sm11913007b3.132.2024.10.22.11.54.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 11:54:56 -0700 (PDT)
+        Tue, 22 Oct 2024 11:54:57 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -74,9 +74,9 @@ Cc: josef@toxicpanda.com,
 	bernd.schubert@fastmail.fm,
 	willy@infradead.org,
 	kernel-team@meta.com
-Subject: [PATCH v2 11/13] mm/writeback: add folio_mark_dirty_lock()
-Date: Tue, 22 Oct 2024 11:54:41 -0700
-Message-ID: <20241022185443.1891563-12-joannelkoong@gmail.com>
+Subject: [PATCH v2 12/13] fuse: convert direct io to use folios
+Date: Tue, 22 Oct 2024 11:54:42 -0700
+Message-ID: <20241022185443.1891563-13-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241022185443.1891563-1-joannelkoong@gmail.com>
 References: <20241022185443.1891563-1-joannelkoong@gmail.com>
@@ -88,88 +88,238 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new convenience helper folio_mark_dirty_lock() that grabs the
-folio lock before calling folio_mark_dirty().
+Convert direct io requests to use folios instead of pages.
 
-Refactor set_page_dirty_lock() to directly use folio_mark_dirty_lock().
+No functional changes.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- include/linux/mm.h  |  1 +
- mm/folio-compat.c   |  6 ++++++
- mm/page-writeback.c | 22 +++++++++++-----------
- 3 files changed, 18 insertions(+), 11 deletions(-)
+ fs/fuse/file.c   | 80 +++++++++++++++++++++---------------------------
+ fs/fuse/fuse_i.h | 22 -------------
+ 2 files changed, 35 insertions(+), 67 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ecf63d2b0582..446d7096c48f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2539,6 +2539,7 @@ struct kvec;
- struct page *get_dump_page(unsigned long addr);
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 99af3c39e529..14af8c41fc83 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -665,11 +665,11 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap, ssize_t nres,
+ {
+ 	unsigned int i;
  
- bool folio_mark_dirty(struct folio *folio);
-+bool folio_mark_dirty_lock(struct folio *folio);
- bool set_page_dirty(struct page *page);
- int set_page_dirty_lock(struct page *page);
+-	for (i = 0; i < ap->num_pages; i++) {
++	for (i = 0; i < ap->num_folios; i++) {
+ 		if (should_dirty)
+-			set_page_dirty_lock(ap->pages[i]);
++			folio_mark_dirty_lock(ap->folios[i]);
+ 		if (ap->args.is_pinned)
+-			unpin_user_page(ap->pages[i]);
++			unpin_folio(ap->folios[i]);
+ 	}
  
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 80746182e9e8..1d1832e2a599 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -52,6 +52,12 @@ bool set_page_dirty(struct page *page)
+ 	if (nres > 0 && ap->args.invalidate_vmap)
+@@ -742,24 +742,6 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+ 	kref_put(&io->refcnt, fuse_io_release);
  }
- EXPORT_SYMBOL(set_page_dirty);
  
-+int set_page_dirty_lock(struct page *page)
-+{
-+	return folio_mark_dirty_lock(page_folio(page));
-+}
-+EXPORT_SYMBOL(set_page_dirty_lock);
+-static struct fuse_io_args *fuse_io_alloc(struct fuse_io_priv *io,
+-					  unsigned int npages)
+-{
+-	struct fuse_io_args *ia;
+-
+-	ia = kzalloc(sizeof(*ia), GFP_KERNEL);
+-	if (ia) {
+-		ia->io = io;
+-		ia->ap.pages = fuse_pages_alloc(npages, GFP_KERNEL,
+-						&ia->ap.descs);
+-		if (!ia->ap.pages) {
+-			kfree(ia);
+-			ia = NULL;
+-		}
+-	}
+-	return ia;
+-}
+-
+ static struct fuse_io_args *fuse_io_folios_alloc(struct fuse_io_priv *io,
+ 						 unsigned int nfolios)
+ {
+@@ -779,12 +761,6 @@ static struct fuse_io_args *fuse_io_folios_alloc(struct fuse_io_priv *io,
+ 	return ia;
+ }
+ 
+-static void fuse_io_free(struct fuse_io_args *ia)
+-{
+-	kfree(ia->ap.pages);
+-	kfree(ia);
+-}
+-
+ static void fuse_io_folios_free(struct fuse_io_args *ia)
+ {
+ 	kfree(ia->ap.folios);
+@@ -821,7 +797,7 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
+ 	fuse_release_user_pages(&ia->ap, err ?: nres, io->should_dirty);
+ 
+ 	fuse_aio_complete(io, err, pos);
+-	fuse_io_free(ia);
++	fuse_io_folios_free(ia);
+ }
+ 
+ static ssize_t fuse_async_req_send(struct fuse_mount *fm,
+@@ -1531,6 +1507,7 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 			       bool use_pages_for_kvec_io)
+ {
+ 	bool flush_or_invalidate = false;
++	unsigned int nr_pages = 0;
+ 	size_t nbytes = 0;  /* # bytes already packed in req */
+ 	ssize_t ret = 0;
+ 
+@@ -1560,15 +1537,23 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 		}
+ 	}
+ 
+-	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
+-		unsigned npages;
++	/*
++	 * Until there is support for iov_iter_extract_folios(), we have to
++	 * manually extract pages using iov_iter_extract_pages() and then
++	 * copy that to a folios array.
++	 */
++	struct page **pages = kzalloc(max_pages * sizeof(struct page *),
++				      GFP_KERNEL);
++	if (!pages)
++		return -ENOMEM;
 +
- bool clear_page_dirty_for_io(struct page *page)
- {
- 	return folio_clear_dirty_for_io(page_folio(page));
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index fcd4c1439cb9..db00a66d8b84 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2914,25 +2914,25 @@ bool folio_mark_dirty(struct folio *folio)
- EXPORT_SYMBOL(folio_mark_dirty);
++	while (nbytes < *nbytesp && nr_pages < max_pages) {
++		unsigned nfolios, i;
+ 		size_t start;
+-		struct page **pt_pages;
  
- /*
-- * set_page_dirty() is racy if the caller has no reference against
-- * page->mapping->host, and if the page is unlocked.  This is because another
-- * CPU could truncate the page off the mapping and then free the mapping.
-+ * folio_mark_dirty() is racy if the caller has no reference against
-+ * folio->mapping->host, and if the folio is unlocked.  This is because another
-+ * CPU could truncate the folio off the mapping and then free the mapping.
-  *
-- * Usually, the page _is_ locked, or the caller is a user-space process which
-+ * Usually, the folio _is_ locked, or the caller is a user-space process which
-  * holds a reference on the inode by having an open file.
-  *
-- * In other cases, the page should be locked before running set_page_dirty().
-+ * In other cases, the folio should be locked before running folio_mark_dirty().
-  */
--int set_page_dirty_lock(struct page *page)
-+bool folio_mark_dirty_lock(struct folio *folio)
- {
--	int ret;
-+	bool ret;
+-		pt_pages = &ap->pages[ap->num_pages];
+-		ret = iov_iter_extract_pages(ii, &pt_pages,
++		ret = iov_iter_extract_pages(ii, &pages,
+ 					     *nbytesp - nbytes,
+-					     max_pages - ap->num_pages,
++					     max_pages - nr_pages,
+ 					     0, &start);
+ 		if (ret < 0)
+ 			break;
+@@ -1576,15 +1561,20 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 		nbytes += ret;
  
--	lock_page(page);
--	ret = set_page_dirty(page);
--	unlock_page(page);
-+	folio_lock(folio);
-+	ret = folio_mark_dirty(folio);
-+	folio_unlock(folio);
- 	return ret;
+ 		ret += start;
+-		npages = DIV_ROUND_UP(ret, PAGE_SIZE);
++		/* Currently, all folios in FUSE are one page */
++		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
+ 
+-		ap->descs[ap->num_pages].offset = start;
+-		fuse_page_descs_length_init(ap->descs, ap->num_pages, npages);
++		ap->folio_descs[ap->num_folios].offset = start;
++		fuse_folio_descs_length_init(ap->folio_descs, ap->num_folios, nfolios);
++		for (i = 0; i < nfolios; i++)
++			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
+ 
+-		ap->num_pages += npages;
+-		ap->descs[ap->num_pages - 1].length -=
++		ap->num_folios += nfolios;
++		ap->folio_descs[ap->num_folios - 1].length -=
+ 			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
++		nr_pages += nfolios;
+ 	}
++	kfree(pages);
+ 
+ 	if (write && flush_or_invalidate)
+ 		flush_kernel_vmap_range(ap->args.vmap_base, nbytes);
+@@ -1624,14 +1614,14 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 	bool fopen_direct_io = ff->open_flags & FOPEN_DIRECT_IO;
+ 
+ 	max_pages = iov_iter_npages(iter, fc->max_pages);
+-	ia = fuse_io_alloc(io, max_pages);
++	ia = fuse_io_folios_alloc(io, max_pages);
+ 	if (!ia)
+ 		return -ENOMEM;
+ 
+ 	if (fopen_direct_io && fc->direct_io_allow_mmap) {
+ 		res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
+ 		if (res) {
+-			fuse_io_free(ia);
++			fuse_io_folios_free(ia);
+ 			return res;
+ 		}
+ 	}
+@@ -1646,7 +1636,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 	if (fopen_direct_io && write) {
+ 		res = invalidate_inode_pages2_range(mapping, idx_from, idx_to);
+ 		if (res) {
+-			fuse_io_free(ia);
++			fuse_io_folios_free(ia);
+ 			return res;
+ 		}
+ 	}
+@@ -1673,7 +1663,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 
+ 		if (!io->async || nres < 0) {
+ 			fuse_release_user_pages(&ia->ap, nres, io->should_dirty);
+-			fuse_io_free(ia);
++			fuse_io_folios_free(ia);
+ 		}
+ 		ia = NULL;
+ 		if (nres < 0) {
+@@ -1692,13 +1682,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 		}
+ 		if (count) {
+ 			max_pages = iov_iter_npages(iter, fc->max_pages);
+-			ia = fuse_io_alloc(io, max_pages);
++			ia = fuse_io_folios_alloc(io, max_pages);
+ 			if (!ia)
+ 				break;
+ 		}
+ 	}
+ 	if (ia)
+-		fuse_io_free(ia);
++		fuse_io_folios_free(ia);
+ 	if (res > 0)
+ 		*ppos = pos;
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c1c7def8ee4b..d26d278da886 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1017,18 +1017,6 @@ static inline bool fuse_is_bad(struct inode *inode)
+ 	return unlikely(test_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state));
  }
--EXPORT_SYMBOL(set_page_dirty_lock);
-+EXPORT_SYMBOL(folio_mark_dirty_lock);
  
- /*
-  * This cancels just the dirty bit on the kernel page itself, it does NOT
+-static inline struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
+-					     struct fuse_page_desc **desc)
+-{
+-	struct page **pages;
+-
+-	pages = kzalloc(npages * (sizeof(struct page *) +
+-				  sizeof(struct fuse_page_desc)), flags);
+-	*desc = (void *) (pages + npages);
+-
+-	return pages;
+-}
+-
+ static inline struct folio **fuse_folios_alloc(unsigned int nfolios, gfp_t flags,
+ 					       struct fuse_folio_desc **desc)
+ {
+@@ -1041,16 +1029,6 @@ static inline struct folio **fuse_folios_alloc(unsigned int nfolios, gfp_t flags
+ 	return folios;
+ }
+ 
+-static inline void fuse_page_descs_length_init(struct fuse_page_desc *descs,
+-					       unsigned int index,
+-					       unsigned int nr_pages)
+-{
+-	int i;
+-
+-	for (i = index; i < index + nr_pages; i++)
+-		descs[i].length = PAGE_SIZE - descs[i].offset;
+-}
+-
+ static inline void fuse_folio_descs_length_init(struct fuse_folio_desc *descs,
+ 						unsigned int index,
+ 						unsigned int nr_folios)
 -- 
 2.43.5
 
