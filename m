@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56569A96E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 05:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344669A96E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 05:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418881F26822
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 03:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597411C24FC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 03:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D187A1A262A;
-	Tue, 22 Oct 2024 03:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5DF20409E;
+	Tue, 22 Oct 2024 03:13:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AF31FF610;
-	Tue, 22 Oct 2024 03:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5570E200109;
+	Tue, 22 Oct 2024 03:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729566793; cv=none; b=LEY58rP5XRWV2NK18nV57dMPewcES4ZLFDaKSywcRejE2Zuu5R+qpZ/NS9CsRD95E+rY+Z6l/PYcUYNAkjOAmiN8E3f0Mqc14dm9qLLBjUvOJFGJs6laBH5NYXY87DFEdqDomlPc8ZOVHrvWH4TkmZRaRmB6qjL/dwW7MyVMX04=
+	t=1729566791; cv=none; b=RcRw68I1MAid/0YhzUg9G12DApj7fBrxGxqxAUT9ZbXZFq4B4FmoyJLQTzwgqF3wUD2zrkxmJ+rOnY9hyCHqdHVdru+9kvsnDKpfsZDDOAfB9w0mC/mgRoOrPBq6sIdqwO21NUD5Vq3RJvZb9vN+yZmG3CBrELCd0J5CQ0l9PUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729566793; c=relaxed/simple;
-	bh=uaagAkzcaigmaepALuH8W84E4x3TWY8c1iyfP0Yfel4=;
+	s=arc-20240116; t=1729566791; c=relaxed/simple;
+	bh=OAzCCl3m2q23m1U+qcLkhExvUHjt8Ff1nVP57Z12V6I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cYlOyQ+u6NTrw10cm1rNGGoaHqPGEHVok8Y31AlRYH5ZV5dfhEmd0jGZMJm021tUMXeEK5itVEct6uiDMD4xI3HhsTaA0H9ujSXRcm0DYQkwpN3wHmQ3gQrLpyCoPO0zEB7dSM4vg8KPSv+zs0oqeiSVSnefcDFK3ajB/p3PLdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=ISr+Zrdmrj/8Fcl4/paJCjDmHkYROINytjIcGVczotiiYIuVgDxxxFMMu9w+7sTG0yLRUUnK/F/81M2z+StNahAdRYW/WVwYDnow8hW4CrJLqCgGhdpkWfGAbymqfqlyc97KJliDmQWe2Zdk+gB41hLQ1MglNKbIKOHvhGNPqv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXcgM4RVxz4f3lVv;
-	Tue, 22 Oct 2024 11:12:47 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXcgN1lZBz4f3lVx;
+	Tue, 22 Oct 2024 11:12:48 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C054D1A018C;
-	Tue, 22 Oct 2024 11:13:05 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 67C5D1A058E;
+	Tue, 22 Oct 2024 11:13:06 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCXysYlGBdnPSwWEw--.716S30;
-	Tue, 22 Oct 2024 11:13:05 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCXysYlGBdnPSwWEw--.716S31;
+	Tue, 22 Oct 2024 11:13:06 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 26/27] ext4: change mount options code style
-Date: Tue, 22 Oct 2024 19:10:57 +0800
-Message-ID: <20241022111059.2566137-27-yi.zhang@huaweicloud.com>
+Subject: [PATCH 27/27] ext4: introduce a mount option for iomap buffered I/O path
+Date: Tue, 22 Oct 2024 19:10:58 +0800
+Message-ID: <20241022111059.2566137-28-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
 References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
@@ -68,10 +68,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXysYlGBdnPSwWEw--.716S30
-X-Coremail-Antispam: 1UD129KBjvJXoWfJw17urW3Wr1fAF1UXw13urg_yoWDAr1kpr
-	18JFW3u3Z8JrWku3W0kF48tw4FvrnY9r4vyrn8CF17Kw1qyry8XFyIgFyxA3W3t34rZ34r
-	KFn0va45Ca17GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCXysYlGBdnPSwWEw--.716S31
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrW3WFyrtryxWF4xKw1rWFg_yoW5Cr18p3
+	sYkFy8Gr1kZr1F93y8CF48Wr1FkF4Yka1UuFWYgw17WFZrAryxXFyfKF1rCF42qrW8XryI
+	gF1rWw17WF43CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2048vs2IY02
 	0E87I2jVAFwI0_JF0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0
@@ -90,206 +90,75 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Just remove the space between the macro name and open parenthesis to
-satisfy the checkpatch.pl script and prevent it from complaining when we
-add new mount options in the subsequent patch. This will not result in
-any logical changes.
+Introduce the buffered_iomap and the nobuffered_iomap mount options to
+enable the iomap buffered I/O path for regular files. This option is
+currently disabled by default until we can support more comprehensive
+features along this path.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/super.c | 175 +++++++++++++++++++++++-------------------------
- 1 file changed, 84 insertions(+), 91 deletions(-)
+ fs/ext4/ext4.h  | 1 +
+ fs/ext4/inode.c | 2 ++
+ fs/ext4/super.c | 7 +++++++
+ 3 files changed, 10 insertions(+)
 
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 0096191b454c..c2a44530e026 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1257,6 +1257,7 @@ struct ext4_inode_info {
+ 						    * scanning in mballoc
+ 						    */
+ #define EXT4_MOUNT2_ABORT		0x00000100 /* Abort filesystem */
++#define EXT4_MOUNT2_BUFFERED_IOMAP	0x00000200 /* Use iomap for buffered IO */
+ 
+ #define clear_opt(sb, opt)		EXT4_SB(sb)->s_mount_opt &= \
+ 						~EXT4_MOUNT_##opt
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 97abc88e6658..b6e041a423f9 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5153,6 +5153,8 @@ bool ext4_should_use_buffered_iomap(struct inode *inode)
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 
++	if (!test_opt2(sb, BUFFERED_IOMAP))
++		return false;
+ 	if (ext4_has_feature_inline_data(sb))
+ 		return false;
+ 	if (ext4_has_feature_verity(sb))
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 56baadec27e0..89955081c4fe 100644
+index 89955081c4fe..435a866359d9 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -1723,101 +1723,94 @@ static const struct constant_table ext4_param_dax[] = {
-  * separate for now.
-  */
- static const struct fs_parameter_spec ext4_param_specs[] = {
--	fsparam_flag	("bsddf",		Opt_bsd_df),
--	fsparam_flag	("minixdf",		Opt_minix_df),
--	fsparam_flag	("grpid",		Opt_grpid),
--	fsparam_flag	("bsdgroups",		Opt_grpid),
--	fsparam_flag	("nogrpid",		Opt_nogrpid),
--	fsparam_flag	("sysvgroups",		Opt_nogrpid),
--	fsparam_gid	("resgid",		Opt_resgid),
--	fsparam_uid	("resuid",		Opt_resuid),
--	fsparam_u32	("sb",			Opt_sb),
--	fsparam_enum	("errors",		Opt_errors, ext4_param_errors),
--	fsparam_flag	("nouid32",		Opt_nouid32),
--	fsparam_flag	("debug",		Opt_debug),
--	fsparam_flag	("oldalloc",		Opt_removed),
--	fsparam_flag	("orlov",		Opt_removed),
--	fsparam_flag	("user_xattr",		Opt_user_xattr),
--	fsparam_flag	("acl",			Opt_acl),
--	fsparam_flag	("norecovery",		Opt_noload),
--	fsparam_flag	("noload",		Opt_noload),
--	fsparam_flag	("bh",			Opt_removed),
--	fsparam_flag	("nobh",		Opt_removed),
--	fsparam_u32	("commit",		Opt_commit),
--	fsparam_u32	("min_batch_time",	Opt_min_batch_time),
--	fsparam_u32	("max_batch_time",	Opt_max_batch_time),
--	fsparam_u32	("journal_dev",		Opt_journal_dev),
--	fsparam_bdev	("journal_path",	Opt_journal_path),
--	fsparam_flag	("journal_checksum",	Opt_journal_checksum),
--	fsparam_flag	("nojournal_checksum",	Opt_nojournal_checksum),
--	fsparam_flag	("journal_async_commit",Opt_journal_async_commit),
--	fsparam_flag	("abort",		Opt_abort),
--	fsparam_enum	("data",		Opt_data, ext4_param_data),
--	fsparam_enum	("data_err",		Opt_data_err,
-+	fsparam_flag("bsddf",			Opt_bsd_df),
-+	fsparam_flag("minixdf",			Opt_minix_df),
-+	fsparam_flag("grpid",			Opt_grpid),
-+	fsparam_flag("bsdgroups",		Opt_grpid),
-+	fsparam_flag("nogrpid",			Opt_nogrpid),
-+	fsparam_flag("sysvgroups",		Opt_nogrpid),
-+	fsparam_gid("resgid",			Opt_resgid),
-+	fsparam_uid("resuid",			Opt_resuid),
-+	fsparam_u32("sb",			Opt_sb),
-+	fsparam_enum("errors",			Opt_errors, ext4_param_errors),
-+	fsparam_flag("nouid32",			Opt_nouid32),
-+	fsparam_flag("debug",			Opt_debug),
-+	fsparam_flag("oldalloc",		Opt_removed),
-+	fsparam_flag("orlov",			Opt_removed),
-+	fsparam_flag("user_xattr",		Opt_user_xattr),
-+	fsparam_flag("acl",			Opt_acl),
-+	fsparam_flag("norecovery",		Opt_noload),
-+	fsparam_flag("noload",			Opt_noload),
-+	fsparam_flag("bh",			Opt_removed),
-+	fsparam_flag("nobh",			Opt_removed),
-+	fsparam_u32("commit",			Opt_commit),
-+	fsparam_u32("min_batch_time",		Opt_min_batch_time),
-+	fsparam_u32("max_batch_time",		Opt_max_batch_time),
-+	fsparam_u32("journal_dev",		Opt_journal_dev),
-+	fsparam_bdev("journal_path",		Opt_journal_path),
-+	fsparam_flag("journal_checksum",	Opt_journal_checksum),
-+	fsparam_flag("nojournal_checksum",	Opt_nojournal_checksum),
-+	fsparam_flag("journal_async_commit",	Opt_journal_async_commit),
-+	fsparam_flag("abort",			Opt_abort),
-+	fsparam_enum("data",			Opt_data, ext4_param_data),
-+	fsparam_enum("data_err",		Opt_data_err,
- 						ext4_param_data_err),
--	fsparam_string_empty
--			("usrjquota",		Opt_usrjquota),
--	fsparam_string_empty
--			("grpjquota",		Opt_grpjquota),
--	fsparam_enum	("jqfmt",		Opt_jqfmt, ext4_param_jqfmt),
--	fsparam_flag	("grpquota",		Opt_grpquota),
--	fsparam_flag	("quota",		Opt_quota),
--	fsparam_flag	("noquota",		Opt_noquota),
--	fsparam_flag	("usrquota",		Opt_usrquota),
--	fsparam_flag	("prjquota",		Opt_prjquota),
--	fsparam_flag	("barrier",		Opt_barrier),
--	fsparam_u32	("barrier",		Opt_barrier),
--	fsparam_flag	("nobarrier",		Opt_nobarrier),
--	fsparam_flag	("i_version",		Opt_removed),
--	fsparam_flag	("dax",			Opt_dax),
--	fsparam_enum	("dax",			Opt_dax_type, ext4_param_dax),
--	fsparam_u32	("stripe",		Opt_stripe),
--	fsparam_flag	("delalloc",		Opt_delalloc),
--	fsparam_flag	("nodelalloc",		Opt_nodelalloc),
--	fsparam_flag	("warn_on_error",	Opt_warn_on_error),
--	fsparam_flag	("nowarn_on_error",	Opt_nowarn_on_error),
--	fsparam_u32	("debug_want_extra_isize",
--						Opt_debug_want_extra_isize),
--	fsparam_flag	("mblk_io_submit",	Opt_removed),
--	fsparam_flag	("nomblk_io_submit",	Opt_removed),
--	fsparam_flag	("block_validity",	Opt_block_validity),
--	fsparam_flag	("noblock_validity",	Opt_noblock_validity),
--	fsparam_u32	("inode_readahead_blks",
--						Opt_inode_readahead_blks),
--	fsparam_u32	("journal_ioprio",	Opt_journal_ioprio),
--	fsparam_u32	("auto_da_alloc",	Opt_auto_da_alloc),
--	fsparam_flag	("auto_da_alloc",	Opt_auto_da_alloc),
--	fsparam_flag	("noauto_da_alloc",	Opt_noauto_da_alloc),
--	fsparam_flag	("dioread_nolock",	Opt_dioread_nolock),
--	fsparam_flag	("nodioread_nolock",	Opt_dioread_lock),
--	fsparam_flag	("dioread_lock",	Opt_dioread_lock),
--	fsparam_flag	("discard",		Opt_discard),
--	fsparam_flag	("nodiscard",		Opt_nodiscard),
--	fsparam_u32	("init_itable",		Opt_init_itable),
--	fsparam_flag	("init_itable",		Opt_init_itable),
--	fsparam_flag	("noinit_itable",	Opt_noinit_itable),
-+	fsparam_string_empty("usrjquota",	Opt_usrjquota),
-+	fsparam_string_empty("grpjquota",	Opt_grpjquota),
-+	fsparam_enum("jqfmt",			Opt_jqfmt, ext4_param_jqfmt),
-+	fsparam_flag("grpquota",		Opt_grpquota),
-+	fsparam_flag("quota",			Opt_quota),
-+	fsparam_flag("noquota",			Opt_noquota),
-+	fsparam_flag("usrquota",		Opt_usrquota),
-+	fsparam_flag("prjquota",		Opt_prjquota),
-+	fsparam_flag("barrier",			Opt_barrier),
-+	fsparam_u32("barrier",			Opt_barrier),
-+	fsparam_flag("nobarrier",		Opt_nobarrier),
-+	fsparam_flag("i_version",		Opt_removed),
-+	fsparam_flag("dax",			Opt_dax),
-+	fsparam_enum("dax",			Opt_dax_type, ext4_param_dax),
-+	fsparam_u32("stripe",			Opt_stripe),
-+	fsparam_flag("delalloc",		Opt_delalloc),
-+	fsparam_flag("nodelalloc",		Opt_nodelalloc),
-+	fsparam_flag("warn_on_error",		Opt_warn_on_error),
-+	fsparam_flag("nowarn_on_error",		Opt_nowarn_on_error),
-+	fsparam_u32("debug_want_extra_isize",	Opt_debug_want_extra_isize),
-+	fsparam_flag("mblk_io_submit",		Opt_removed),
-+	fsparam_flag("nomblk_io_submit",	Opt_removed),
-+	fsparam_flag("block_validity",		Opt_block_validity),
-+	fsparam_flag("noblock_validity",	Opt_noblock_validity),
-+	fsparam_u32("inode_readahead_blks",	Opt_inode_readahead_blks),
-+	fsparam_u32("journal_ioprio",		Opt_journal_ioprio),
-+	fsparam_u32("auto_da_alloc",		Opt_auto_da_alloc),
-+	fsparam_flag("auto_da_alloc",		Opt_auto_da_alloc),
-+	fsparam_flag("noauto_da_alloc",		Opt_noauto_da_alloc),
-+	fsparam_flag("dioread_nolock",		Opt_dioread_nolock),
-+	fsparam_flag("nodioread_nolock",	Opt_dioread_lock),
-+	fsparam_flag("dioread_lock",		Opt_dioread_lock),
-+	fsparam_flag("discard",			Opt_discard),
-+	fsparam_flag("nodiscard",		Opt_nodiscard),
-+	fsparam_u32("init_itable",		Opt_init_itable),
-+	fsparam_flag("init_itable",		Opt_init_itable),
-+	fsparam_flag("noinit_itable",		Opt_noinit_itable),
+@@ -1675,6 +1675,7 @@ enum {
+ 	Opt_discard, Opt_nodiscard, Opt_init_itable, Opt_noinit_itable,
+ 	Opt_max_dir_size_kb, Opt_nojournal_checksum, Opt_nombcache,
+ 	Opt_no_prefetch_block_bitmaps, Opt_mb_optimize_scan,
++	Opt_buffered_iomap, Opt_nobuffered_iomap,
+ 	Opt_errors, Opt_data, Opt_data_err, Opt_jqfmt, Opt_dax_type,
  #ifdef CONFIG_EXT4_DEBUG
--	fsparam_flag	("fc_debug_force",	Opt_fc_debug_force),
--	fsparam_u32	("fc_debug_max_replay",	Opt_fc_debug_max_replay),
-+	fsparam_flag("fc_debug_force",		Opt_fc_debug_force),
-+	fsparam_u32("fc_debug_max_replay",	Opt_fc_debug_max_replay),
- #endif
--	fsparam_u32	("max_dir_size_kb",	Opt_max_dir_size_kb),
--	fsparam_flag	("test_dummy_encryption",
--						Opt_test_dummy_encryption),
--	fsparam_string	("test_dummy_encryption",
--						Opt_test_dummy_encryption),
--	fsparam_flag	("inlinecrypt",		Opt_inlinecrypt),
--	fsparam_flag	("nombcache",		Opt_nombcache),
--	fsparam_flag	("no_mbcache",		Opt_nombcache),	/* for backward compatibility */
--	fsparam_flag	("prefetch_block_bitmaps",
--						Opt_removed),
--	fsparam_flag	("no_prefetch_block_bitmaps",
-+	fsparam_u32("max_dir_size_kb",		Opt_max_dir_size_kb),
-+	fsparam_flag("test_dummy_encryption",	Opt_test_dummy_encryption),
-+	fsparam_string("test_dummy_encryption",	Opt_test_dummy_encryption),
-+	fsparam_flag("inlinecrypt",		Opt_inlinecrypt),
-+	fsparam_flag("nombcache",		Opt_nombcache),
-+	fsparam_flag("no_mbcache",		Opt_nombcache),	/* for backward compatibility */
-+	fsparam_flag("prefetch_block_bitmaps",	Opt_removed),
-+	fsparam_flag("no_prefetch_block_bitmaps",
+ 	Opt_fc_debug_max_replay, Opt_fc_debug_force
+@@ -1806,6 +1807,8 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+ 	fsparam_flag("no_prefetch_block_bitmaps",
  						Opt_no_prefetch_block_bitmaps),
--	fsparam_s32	("mb_optimize_scan",	Opt_mb_optimize_scan),
--	fsparam_string	("check",		Opt_removed),	/* mount option from ext2/3 */
--	fsparam_flag	("nocheck",		Opt_removed),	/* mount option from ext2/3 */
--	fsparam_flag	("reservation",		Opt_removed),	/* mount option from ext2/3 */
--	fsparam_flag	("noreservation",	Opt_removed),	/* mount option from ext2/3 */
--	fsparam_u32	("journal",		Opt_removed),	/* mount option from ext2/3 */
-+	fsparam_s32("mb_optimize_scan",		Opt_mb_optimize_scan),
-+	fsparam_string("check",			Opt_removed),	/* mount option from ext2/3 */
-+	fsparam_flag("nocheck",			Opt_removed),	/* mount option from ext2/3 */
-+	fsparam_flag("reservation",		Opt_removed),	/* mount option from ext2/3 */
-+	fsparam_flag("noreservation",		Opt_removed),	/* mount option from ext2/3 */
-+	fsparam_u32("journal",			Opt_removed),	/* mount option from ext2/3 */
- 	{}
- };
- 
+ 	fsparam_s32("mb_optimize_scan",		Opt_mb_optimize_scan),
++	fsparam_flag("buffered_iomap",		Opt_buffered_iomap),
++	fsparam_flag("nobuffered_iomap",	Opt_nobuffered_iomap),
+ 	fsparam_string("check",			Opt_removed),	/* mount option from ext2/3 */
+ 	fsparam_flag("nocheck",			Opt_removed),	/* mount option from ext2/3 */
+ 	fsparam_flag("reservation",		Opt_removed),	/* mount option from ext2/3 */
+@@ -1900,6 +1903,10 @@ static const struct mount_opts {
+ 	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
+ 	{Opt_no_prefetch_block_bitmaps, EXT4_MOUNT_NO_PREFETCH_BLOCK_BITMAPS,
+ 	 MOPT_SET},
++	{Opt_buffered_iomap, EXT4_MOUNT2_BUFFERED_IOMAP,
++	 MOPT_SET | MOPT_2 | MOPT_EXT4_ONLY},
++	{Opt_nobuffered_iomap, EXT4_MOUNT2_BUFFERED_IOMAP,
++	 MOPT_CLEAR | MOPT_2 | MOPT_EXT4_ONLY},
+ #ifdef CONFIG_EXT4_DEBUG
+ 	{Opt_fc_debug_force, EXT4_MOUNT2_JOURNAL_FAST_COMMIT,
+ 	 MOPT_SET | MOPT_2 | MOPT_EXT4_ONLY},
 -- 
 2.46.1
 
