@@ -1,121 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-32621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3783F9AB958
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 00:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514EC9AB9C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 00:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 149F3B23AC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 22:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD741F23AE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 22:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563451CCEE9;
-	Tue, 22 Oct 2024 22:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723811CEAA8;
+	Tue, 22 Oct 2024 22:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="PW1rkLr2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEh5yFK7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C3713B58A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 22:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3836E1CDFD7;
+	Tue, 22 Oct 2024 22:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729635014; cv=none; b=RjpvHnSZObyHt2hYO8k9Z2e7kdcDN5rvdOHYrm2QW7pPCrgTUwPl9KgmR6hhG+teSt7hfuypAaO6gjg/mef/5DGMuO30we0qs1NskTlTXO0XEtqueaTp0EswCXIjSzOwTPitn8jh356m0nhBiBGZCr0NrC1zQCPxO9YgYrUfAyQ=
+	t=1729637916; cv=none; b=UAVy2p3xQjephoKrLXvO0Lw7qX+S8fSPC4d6FOIE3zdGvztH6dKeoAmvwJIfMfNTHsCNzGDg2+nwQ79HTdf3MxA3pMzGpvjkc/QA8g/wWwpskhyM96RfBffnb6vTWULpTiprdPkIXQ1UFVf/ZAulU7gxbv+eoc04XpZJZZEnb8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729635014; c=relaxed/simple;
-	bh=i5Dux+tu36s4j3bjtGaxVlsWNTwVxG8Li7ytEIfbz3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kuzt4f33XzJH//vecscNwPOHvP++QDp+OFjx3HAzR0Ydsw9Jz89jr6brpDvE9lNiDuptEQ1JpJXRXX7ze4UQotAM5HnxO2sD2glI/zC0paJlAZl2eQj2VyIPvbBp1zLRkzj0lC7119ztU9rr5/JsoLn7Y5YXnMM6IU8wIV6PCAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=PW1rkLr2; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20e6981ca77so45889865ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 15:10:12 -0700 (PDT)
+	s=arc-20240116; t=1729637916; c=relaxed/simple;
+	bh=x1+PEJH5Y7WfOvOGCPQDP//zahT4DuWweSV0+QGubUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ozNLev8KzD+OXZvQBluZmauYRcd1sF+06i8OjnTalqMX/emq9R0IRj+6ceLtiJSV1Wc8kN0OtSwo96vsJUNOXSAdTar+Wh9abyfagug9UQKKEPZa8/fQJpfnr/5dGwnBgcjBRZtYBdrp5IOCZ6bJQnH6RyxANUfi5l5xsU8sdJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEh5yFK7; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so60967875e9.1;
+        Tue, 22 Oct 2024 15:58:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1729635012; x=1730239812; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TBS9NGU/A5YlWZkorpJxAKD2D/OcgCE8QaEbQhOrhzQ=;
-        b=PW1rkLr2EoiyWTplnh1D5R8C0RY1wt8U2b//1ZpwqX6sHaOVUkiGmHZxoUuqjltMhR
-         4+KeJEydSLY2nYwKb4+hya4k5Up7g7oMoW9ELRPHFKoHrqa4YgQdsjD6nSqglUJICbxW
-         Khgrgf6K8h1yHj8Er29/++ud/mfvFH2xojJPccEm6Q1MkXE8sac13ZrB+Jvog0dIDXku
-         /RS8Tyj8kQp9v8/3V/ZEVXgEExYgGVoe9OMYRuqRHZzSofWnN9zx1/D2a+Xga3GkD59y
-         9tTWqW5d+bBF3S8SUtGxb34F7AwDNFzm7k/JsRc6k4iQ7wMbQg+UpmYA/7JkfP2cwYmB
-         XRUw==
+        d=gmail.com; s=20230601; t=1729637913; x=1730242713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rTefSpBbgeOovSE9ayrYVWfLGl/T+HG9tnY15rc7RUA=;
+        b=EEh5yFK7j1SkXP07A4PA1nBbzT7RRAdfgZHr38qA/OsZCqASobhqlojwR0LZlFIaJ4
+         5O4U0+9gW7ffIvIaORt9hjB+rB+2Ny8dfcqy7rTKfRDgvTqOE9MVe7nZ4T7qGe2Ywcyx
+         Fr/ooqDC/XJANzs0F8eMDzn+l6iDcL+3gCMHPXmY0Q+w+ar07zr+c41vtukZ6XPN0zbI
+         pbh1XjzqIfDXNTw2Bs4G0P01uq5TYHcRP+67iUzDzqpcASX8NjFt1wEXur4VNpIz/V0Z
+         XfZLkeeE95iUGAek//Q1vnBz/gpSK3OGX3teEs7GlaRaoLdBQ3Yn9GuOc0hnmrRLi2hk
+         9roA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729635012; x=1730239812;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBS9NGU/A5YlWZkorpJxAKD2D/OcgCE8QaEbQhOrhzQ=;
-        b=no6sT7+HmrdBt6HWMjILodloOEK5J0SjK4YJz82o8bGVK7L92fXPYgJqID+yEHbDN7
-         XeGvS5KuBaDlj1d4+OfnOWB6RRqvkhXxk3Cku2akCRAZrrEDQIA9QKzS9tETa6wV8nLk
-         FeUgmYWtg9WRH8MZ0122942pMYcwfP7W7ZjLkNemSiwnmlwWfAg+pZVVxIxbYnTYUYc3
-         PT/4Qa0jYTogsmyVQcVb9LV6H/WXiPtmsqUwnoyKA/V8P34A2hKUr2stN0bOsI59IW+i
-         FPC6Gw3kWXPVmNQGks6zP6jb73XwYzsXIH02G2d7JoSyTzpkT9apGvuB3wsCP2x94/kQ
-         zcbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXr31D7S+Vljy3c3iEoe8LL7Lrzq8GLatokXPP8+80AbB1S5OvDC7U1jJEITiTmT+Afr6Io6KdDYn4QtG01@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV9ONal/COFX1H6lpT579G7mYqioPeQ6AWWOe/FRwasOgm6jTk
-	/eQjKeQ8JW3YCmVzJWdmEoitpTExlvsZW5yhBy2yo599iYLX7eOQ4D3C+IQBLMw=
-X-Google-Smtp-Source: AGHT+IHYps5wy4yAP8JFwwnJ26Kg47RekaD9ISPH6q5Ssg2xxBuIMWOnmkAyFQ7ndX6rNgjJEMaZPA==
-X-Received: by 2002:a17:902:ccc9:b0:205:68a4:b2d8 with SMTP id d9443c01a7336-20fa9deb634mr7955565ad.11.1729635012431;
-        Tue, 22 Oct 2024 15:10:12 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::4:56f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e9b0b33adsm16091475ad.237.2024.10.22.15.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 15:10:11 -0700 (PDT)
-Message-ID: <070c7377-24df-4ce1-8e80-6a948b59e388@davidwei.uk>
-Date: Tue, 22 Oct 2024 15:10:09 -0700
+        d=1e100.net; s=20230601; t=1729637913; x=1730242713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rTefSpBbgeOovSE9ayrYVWfLGl/T+HG9tnY15rc7RUA=;
+        b=Zi024HsEdJzLWFfITs/lK2A0O5Me3wP4+OXmrCweF5bmd85TjHWrutbe+KBNzfKTYf
+         t0McVn+uF9WVFpDUbCqQgPzRjBuzhr1qs7V7W2hNJ030saHiaKHGt3IWsRZE6f6K3/KH
+         MzgTwPuxCFCWKE6hdb2SF/YaCFwQx8kYtF2ejsyK0o/dOGjR/rdPm3IEq9f9IPr17XNp
+         IWW0f0QNrrAtc9O89PwLA/1/vrMo0i4g1t5sIL/bnPBPZRXLtCC3HY7wUdxmng63dBD0
+         2FK8m/O4RNGqIAek8Ev02lqCaxkcqphmRR3IVVgBiS9Wns9AA9pKdiRNo1Ee2CMVqio7
+         MzCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNN6IStnQQfhT22tJ73QZ7qp60HRiogfMME5jvMDwIejDn6O1DrZYlIoAFFUmA7KTBF0CmdjQNUE1EIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Jo5o5G9OjNcj2UuiL0+RZL3ShDBzVgAUMtF3dNqfOaLZLxa9
+	OehYVGtUdUoQmjEhp4Ru9d5Ppe7rVk4KDm3OwzrChiwOGYgwZPt1
+X-Google-Smtp-Source: AGHT+IFQ6O4iV768k4x9j/Zn2bH7Tum/ibsAMk0yayBcL4Qoc1RzJvTmfNiErPdLOnQ8T50ht7YN9A==
+X-Received: by 2002:a5d:47ac:0:b0:37d:4d21:350c with SMTP id ffacd0b85a97d-37efcf0f6b0mr350842f8f.13.1729637913321;
+        Tue, 22 Oct 2024 15:58:33 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:5516:dcfb:6202:e47b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bcfdsm7563655f8f.103.2024.10.22.15.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 15:58:32 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: brauner@kernel.org,
+	josef@toxicpanda.com,
+	akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Gianfranco Trad <gianf.trad@gmail.com>,
+	syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
+Subject: [PATCH] hfs: use kzalloc in hfs_find_init() to fix KMSAN bug
+Date: Wed, 23 Oct 2024 00:57:33 +0200
+Message-ID: <20241022225732.1614156-2-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
-Content-Language: en-GB
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-15 17:05, Bernd Schubert wrote:
-> RFCv1 and RFCv2 have been tested with multiple xfstest runs in a VM
-> (32 cores) with a kernel that has several debug options
-> enabled (like KASAN and MSAN). RFCv3 is not that well tested yet.
-> O_DIRECT is currently not working well with /dev/fuse and
-> also these patches, a patch has been submitted to fix that (although
-> the approach is refused)
-> https://www.spinics.net/lists/linux-fsdevel/msg280028.html
+Syzbot reports KMSAN uninit-value use in hfs_free_fork [1].
+Use kzalloc() instead of kmalloc() to zero-init fd->search_key
+in hfs_find_init() in order to mitigate such KMSAN bug.
 
-Hi Bernd, I applied this patch and the associated libfuse patch at:
+[1] https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
 
-https://github.com/bsbernd/libfuse/tree/aligned-writes
+Reported-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
+Tested-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
 
-I have a simple Python FUSE client that is still returning EINVAL for
-write():
+Notes: since there's no maintainer for hfs I included Andrew as stated
+in the Documentation. I also considered to include the top 2 commiters
+to hfs subsytem given by scripts/get_maintainers.pl. Hope it's not a
+problem, if so apologies.
 
-with open(sys.argv[1], 'r+b') as f:
-    mmapped_file = mmap.mmap(f.fileno(), 0)
-    shm = shared_memory.SharedMemory(create=True, size=mmapped_file.size())
-    shm.buf[:mmapped_file.size()] = mmapped_file[:]
-    fd = os.open("/home/vmuser/scratch/dest/out", O_RDWR|O_CREAT|O_DIRECT)
-    with open(fd, 'w+b') as f2:
-        f2.write(bytes(shm.buf))
-    mmapped_file.close()
-    shm.unlink()
-    shm.close()
+ fs/hfs/bfind.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll keep looking at this but letting you know in case it's something
-obvious again.
+diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+index ef9498a6e88a..c74d864bc29e 100644
+--- a/fs/hfs/bfind.c
++++ b/fs/hfs/bfind.c
+@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+ 
+ 	fd->tree = tree;
+ 	fd->bnode = NULL;
+-	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
++	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 	fd->search_key = ptr;
+-- 
+2.43.0
+
 
