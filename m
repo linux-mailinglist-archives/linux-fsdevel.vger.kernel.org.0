@@ -1,45 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-32581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F6B9A9E5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 11:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10709A9FE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 12:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3976FB25E36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 09:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D491F23AFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 10:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168DE19882B;
-	Tue, 22 Oct 2024 09:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065CC19AA43;
+	Tue, 22 Oct 2024 10:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="c90OqJmu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f/y1xkgT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBCF12D75C;
-	Tue, 22 Oct 2024 09:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB97918E02D;
+	Tue, 22 Oct 2024 10:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588958; cv=none; b=Fz33uVZfAU+/zqnHprF2Z6JroQphebferGt7fD+hqbRye6l5ZeQzdoDE3faETanyI42wvxP3204opCV2op9Jh9pDEsCQOFqWZGsIb5vVN8OysLi8AGLZqH8o+1UB4pmowLjHV512f/Ns6ob2GxaXCTqUeb6WJWCPzqkSKzQtiDo=
+	t=1729592651; cv=none; b=KuTpUeSGk3JdrqYw3JR51y8IbsbTwzoGlLEr6DaM0TxYQ7S2K1QWvc1dVWMk/hiclkn2JAyDHZOaqbCx+MwN1jTN9LZ1rbZdE2NGO6IrBmPqYJYyENZCrtro9FOhfSOEO8y0Gds8nOiGYalJA28bM37AQQegRRhPkfzjh6erH7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588958; c=relaxed/simple;
-	bh=0myv4HB4Y+3g7vnkrojaWO5wF8Tm4b1Pvy2GFbBktK4=;
+	s=arc-20240116; t=1729592651; c=relaxed/simple;
+	bh=TqoIL7qkvE1efBDn2sg+AG4rMacutCBnuMUZJ11NbIA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCQKjy+HyZpSU7N1HP4gOwvyEzmSFHBxIc2xk+UDXNY2vfV+QFZcwtOpCU12J1EfzyEEDq87YkhkFBdDTtjB9yCykWC5X9TS0inFR9MwdaFpxfkl1qBB/bXfU21WC1ym5q+SnMR3/yyzps+UE8lw9tNepAR5m+V/PYdSkPwi/UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXmsk6NTdz4f3k6B;
-	Tue, 22 Oct 2024 17:22:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2A37C1A0359;
-	Tue, 22 Oct 2024 17:22:31 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCXysbTbhdnonwuEw--.8147S3;
-	Tue, 22 Oct 2024 17:22:29 +0800 (CST)
-Message-ID: <bf6dcc97-a204-473c-9e25-54db430e9a58@huaweicloud.com>
-Date: Tue, 22 Oct 2024 17:22:27 +0800
+	 In-Reply-To:Content-Type; b=tyvYh3buXibX75XhiZo/6Zh2NpLDTb27gEmf1hVgSr058DZUjqYdXaIAUs4iwdze0iyPY4G1Ko/wYC5roSu31L9fO7CMD4s/tRMg6m9giKmpqJ8Xsq/kc2+YIwNPXwoEs6ZK2qpn/iZICIh/aq4MJjdEvciFMXzXRSOyWgN3vxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=c90OqJmu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f/y1xkgT; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id F0F5711401F7;
+	Tue, 22 Oct 2024 06:24:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 22 Oct 2024 06:24:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729592647;
+	 x=1729679047; bh=1u/BH5JUQH8GdhawWY5lWyZYs9/szdOia1VxtUwRudE=; b=
+	c90OqJmu+7OrqTi1I7+Akfn4M9CJThhzYCJoErglKxUBuzY/BmX2L399SWPkbzsU
+	qH/+QlHaumtVt4rdv/hPIlY6ayQ4YTwQ6qRHladoB+TYBmv/coGogxxy74y0tMQ1
+	VspZAQCmcJ7jMwe45MeQEyYRqKlO2AZ6Yy2ngLQUcgokI+KASwNu4Kt2QJNh5DwJ
+	ZB9ToD/uiPrgKg6DwYQ4sVHBq/OkeTaTsPv7zlmgZ0k6g0bXczTTpDOV5EvbW+tL
+	svGjOCc0aa1Z6FhWje24OrdsOQGBPx8cnhUOIOP92ZO/jZcwBAyoCCKF+HeWMPuz
+	+QBz5MQDlSK78Wz8HEOeQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729592647; x=
+	1729679047; bh=1u/BH5JUQH8GdhawWY5lWyZYs9/szdOia1VxtUwRudE=; b=f
+	/y1xkgTtLxpBRm5ySUBJCByDWL8dysfFpApO5UAi8cMaGNUKQix0gz7NArKHfGFA
+	jpdmBmxsRFIFW+x0EVewINE3la9IeBO7v5lahJM8QqlOkiFCsceWj2VyF8+K+Cmd
+	XT+LydjeYylpGFZDg416NtC+BU0iCCmtzc0W79KLj/IupcYyIv3V1OlBp62w71pE
+	BKdQ31ACdeJ5p3Wjs3sJBWM+u3McBhaYxp8TkUtbJXQI2Lwm5aiJCJbeZA+a0rT8
+	2E5fddIHA7B9oeHnuAJqLuWDo12PYrSTR/LBCHdA2uAB9ASfP3RxpuuNAdPvKQlY
+	lHw70XvOhfJwZeihmWDKg==
+X-ME-Sender: <xms:Rn0XZ9lgF9X4t284XRdkZl09NQmkC3r3I7-S0y0bm6rP6oIcDpmZ6Q>
+    <xme:Rn0XZ41O-XkdkIplDD_eKxLDeD1xVBhnuT3D0D9wFx2j_DZfm4rJx6tt1KjDvJ8sS
+    jXlqK4pgIq8PCA1>
+X-ME-Received: <xmr:Rn0XZzp4FZMiLQ4UVU6vX-WhoH_FYJbIkksgsvbVEcYf4GU_3KrsxOFe686rArF0tw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepfefhgeefueelffei
+    hfdvgfetuedufeffgeeuieejteeukeffiefhheeiheeivdevnecuffhomhgrihhnpegrkh
+    grrdhmshdpghhithhhuhgsrdgtohhmpdhqvghmuhdrohhrghenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrth
+    esfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopegufiesuggrvhhiugifvghirdhukhdprhgtphhtthhopehmih
+    hklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghl
+    rdgukhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    rghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhomhdrlhgvihhmih
+    hnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:R30XZ9m4g1BTzdmkhkqa0MiTpYQHENVKoYShMPuaxJCyVlGsQLzHWA>
+    <xmx:R30XZ71ueHIgbOknOZbs6nQZpm1F70DyH16udp4H9x8H8I-E0PcgOA>
+    <xmx:R30XZ8uQ523aQbeED9OSTryweh94WH1Vdgg719cLrzxmQPfQP2y6EQ>
+    <xmx:R30XZ_WZcM9hfDpOszN_sDFBdqRbYXKJ5AVZSokq72B3mgxwRFxJMw>
+    <xmx:R30XZ0sqfJ9bqdXYYRXsIJPQOWlggZ-R-zSoUpq4X2q5wyFEjD-YmTQd>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Oct 2024 06:24:05 -0400 (EDT)
+Message-ID: <baf09fb5-60a6-4aa9-9a6f-0d94ccce6ba4@fastmail.fm>
+Date: Tue, 22 Oct 2024 12:24:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,274 +100,192 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/27] ext4: use iomap for regular file's buffered I/O
- path and enable large folio
-To: sedat.dilek@gmail.com
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <CA+icZUWKGBKOxEaSUJv4up46b0i8=R-RgbnpHEV20HC_210syw@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+ <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
+ <11032431-e58b-4f75-a8b5-cf978ffbfa50@davidwei.uk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <CA+icZUWKGBKOxEaSUJv4up46b0i8=R-RgbnpHEV20HC_210syw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXysbTbhdnonwuEw--.8147S3
-X-Coremail-Antispam: 1UD129KBjvJXoWfJr4rKw4fWw43ArW5ur47XFb_yoWDWrW3pF
-	WayF4akrnxWw17u397Cw1ftr1Fva1rJF45Wr4fW348uFy5Cr1SqF1Ig3WF9FZ8ArWxGr1I
-	qr4Iy348ur15A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
-	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	aFAJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+In-Reply-To: <11032431-e58b-4f75-a8b5-cf978ffbfa50@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/10/22 14:59, Sedat Dilek wrote:
-> On Tue, Oct 22, 2024 at 5:13 AM Zhang Yi <yi.zhang@huaweicloud.com> wrote:
+
+
+On 10/21/24 22:57, David Wei wrote:
+> On 2024-10-21 04:47, Bernd Schubert wrote:
+>> Hi David,
 >>
->> From: Zhang Yi <yi.zhang@huawei.com>
+>> On 10/21/24 06:06, David Wei wrote:
+>>> [You don't often get email from dw@davidwei.uk. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>>
+>>> On 2024-10-15 17:05, Bernd Schubert wrote:
+>>> [...]
+>>>>
 >>
->> Hello！
+>> ...
 >>
->> This patch series is the latest version based on my previous RFC
->> series[1], which converts the buffered I/O path of ext4 regular files to
->> iomap and enables large folios. After several months of work, almost all
->> preparatory changes have been upstreamed, thanks a lot for the review
->> and comments from Jan, Dave, Christoph, Darrick and Ritesh. Now it is
->> time for the main implementation of this conversion.
->>
->> This series is the main part of iomap buffered iomap conversion, it's
->> based on 6.12-rc4, and the code context is also depend on my anohter
->> cleanup series[1] (I've put that in this seris so we can merge it
->> directly), fixed all minor bugs found in my previous RFC v4 series.
->> Additionally, I've update change logs in each patch and also includes
->> some code modifications as Dave's suggestions. This series implements
->> the core iomap APIs on ext4 and introduces a mount option called
->> "buffered_iomap" to enable the iomap buffered I/O path. We have already
->> supported the default features, default mount options and bigalloc
->> feature. However, we do not yet support online defragmentation, inline
->> data, fs_verify, fs_crypt, ext3, and data=journal mode, ext4 will fall
->> to buffered_head I/O path automatically if you use those features and
->> options. Some of these features should be supported gradually in the
->> near future.
->>
->> Most of the implementations resemble the original buffered_head path;
->> however, there are four key differences.
->>
->> 1. The first aspect is the block allocation in the writeback path. The
->>    iomap frame will invoke ->map_blocks() at least once for each dirty
->>    folio. To ensure optimal writeback performance, we aim to allocate a
->>    range of delalloc blocks that is as long as possible within the
->>    writeback length for each invocation. In certain situations, we may
->>    allocate a range of blocks that exceeds the amount we will actually
->>    write back. Therefore,
->> 1) we cannot allocate a written extent for those blocks because it may
->>    expose stale data in such short write cases. Instead, we should
->>    allocate an unwritten extent, which means we must always enable the
->>    dioread_nolock option. This change could also bring many other
->>    benefits.
->> 2) We should postpone updating the 'i_disksize' until the end of the I/O
->>    process, based on the actual written length. This approach can also
->>    prevent the exposure of zero data, which may occur if there is a
->>    power failure during an append write.
->> 3) We do not need to pre-split extents during write-back, we can
->>    postpone this task until the end I/O process while converting
->>    unwritten extents.
->>
->> 2. The second reason is that since we always allocate unwritten space
->>    for new blocks, there is no risk of exposing stale data. As a result,
->>    we do not need to order the data, which allows us to disable the
->>    data=ordered mode. Consequently, we also do not require the reserved
->>    handle when converting the unwritten extent in the final I/O worker,
->>    we can directly start with the normal handle.
->>
->> Series details:
->>
->> Patch 1-10 is just another series of mine that refactors the fallocate
->> functions[1]. This series relies on the code context of that but has no
->> logical dependencies. I put this here just for easy access and merge.
->>
->> Patch 11-21 implement the iomap buffered read/write path, dirty folio
->> write back path and mmap path for ext4 regular file.
->>
->> Patch 22-23 disable the unsupported online-defragmentation function and
->> disable the changing of the inode journal flag to data=journal mode.
->> Please look at the following patch for details.
->>
->> Patch 24-27 introduce "buffered_iomap" mount option (is not enabled by
->> default now) to partially enable the iomap buffered I/O path and also
->> enable large folio.
+>>> Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
+>>> minor conflicts. I'm running the following command:
+>>>
+>>> $ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+>>> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+>>> /home/vmuser/scratch/source /home/vmuser/scratch/dest
+>>> FUSE library version: 3.17.0
+>>> Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
+>>> dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
+>>> INIT: 7.40
+>>> flags=0x73fffffb
+>>> max_readahead=0x00020000
+>>>      INIT: 7.40
+>>>      flags=0x4041f429
+>>>      max_readahead=0x00020000
+>>>      max_write=0x00100000
+>>>      max_background=0
+>>>      congestion_threshold=0
+>>>      time_gran=1
+>>>      unique: 2, success, outsize: 80
+>>>
+>>> I created the source and dest folders which are both empty.
+>>>
+>>> I see the following in dmesg:
+>>>
+>>> [ 2453.197510] uring is disabled
+>>> [ 2453.198525] uring is disabled
+>>> [ 2453.198749] uring is disabled
+>>> ...
+>>>
+>>> If I then try to list the directory /home/vmuser/scratch:
+>>>
+>>> $ ls -l /home/vmuser/scratch
+>>> ls: cannot access 'dest': Software caused connection abort
+>>>
+>>> And passthrough_hp terminates.
+>>>
+>>> My kconfig:
+>>>
+>>> CONFIG_FUSE_FS=m
+>>> CONFIG_FUSE_PASSTHROUGH=y
+>>> CONFIG_FUSE_IO_URING=y
+>>>
+>>> I'll look into it next week but, do you see anything obviously wrong?
 >>
 >>
->> About performance:
+>> thanks for testing it! I just pushed a fix to my libfuse branches to
+>> avoid the abort for -EOPNOTSUPP. It will gracefully fall back to
+>> /dev/fuse IO now.
 >>
->> Fio tests with psync on my machine with Intel Xeon Gold 6240 CPU with
->> 400GB system ram, 200GB ramdisk and 4TB nvme ssd disk.
+>> Could you please use the rfcv4 branch, as the plain uring
+>> branch will soon get incompatible updates for rfc5?
 >>
->>  fio -directory=/mnt -direct=0 -iodepth=$iodepth -fsync=$sync -rw=$rw \
->>      -numjobs=${numjobs} -bs=${bs} -ioengine=psync -size=$size \
->>      -runtime=60 -norandommap=0 -fallocate=none -overwrite=$overwrite \
->>      -group_reportin -name=$name --output=/tmp/test_log
+>> https://github.com/bsbernd/libfuse/tree/uring-for-rfcv4
 >>
+>>
+>> The short answer to let you enable fuse-io-uring:
+>>
+>> echo 1 >/sys/module/fuse/parameters/enable_uring
+>>
+>>
+>> (With that the "uring is disabled" should be fixed.)
 > 
-> Hi Zhang Yi,
+> Thanks, using this branch fixed the issue and now I can see the dest
+> folder mirroring that of the source folder. There are two issues I
+> noticed:
 > 
-> can you clarify about the FIO values for the diverse parameters?
+> [63490.068211] ---[ end trace 0000000000000000 ]---
+> [64010.242963] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:330
+> [64010.243531] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 11057, name: fuse-ring-1
+> [64010.244092] preempt_count: 1, expected: 0
+> [64010.244346] RCU nest depth: 0, expected: 0
+> [64010.244599] 2 locks held by fuse-ring-1/11057:
+> [64010.244886]  #0: ffff888105db20a8 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x900/0xd80
+> [64010.245476]  #1: ffff88810f941818 (&fc->lock){+.+.}-{2:2}, at: fuse_uring_cmd+0x83e/0x1890 [fuse]
+> [64010.246031] CPU: 1 UID: 0 PID: 11057 Comm: fuse-ring-1 Tainted: G        W          6.11.0-10089-g0d2090ccdbbe #2
+> [64010.246655] Tainted: [W]=WARN
+> [64010.246853] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+> [64010.247542] Call Trace:
+> [64010.247705]  <TASK>
+> [64010.247860]  dump_stack_lvl+0xb0/0xd0
+> [64010.248090]  __might_resched+0x2f8/0x510
+> [64010.248338]  __kmalloc_cache_noprof+0x2aa/0x390
+> [64010.248614]  ? lockdep_init_map_type+0x2cb/0x7b0
+> [64010.248923]  ? fuse_uring_cmd+0xcc2/0x1890 [fuse]
+> [64010.249215]  fuse_uring_cmd+0xcc2/0x1890 [fuse]
+> [64010.249506]  io_uring_cmd+0x214/0x500
+> [64010.249745]  io_issue_sqe+0x588/0x1810
+> [64010.249999]  ? __pfx_io_issue_sqe+0x10/0x10
+> [64010.250254]  ? io_alloc_async_data+0x88/0x120
+> [64010.250516]  ? io_alloc_async_data+0x88/0x120
+> [64010.250811]  ? io_uring_cmd_prep+0x2eb/0x9f0
+> [64010.251103]  io_submit_sqes+0x796/0x1f80
+> [64010.251387]  __do_sys_io_uring_enter+0x90a/0xd80
+> [64010.251696]  ? do_user_addr_fault+0x26f/0xb60
+> [64010.251991]  ? __pfx___do_sys_io_uring_enter+0x10/0x10
+> [64010.252333]  ? __up_read+0x3ba/0x750
+> [64010.252565]  ? __pfx___up_read+0x10/0x10
+> [64010.252868]  do_syscall_64+0x68/0x140
+> [64010.253121]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [64010.253444] RIP: 0033:0x7f03a03fb7af
+> [64010.253679] Code: 45 0f b6 90 d0 00 00 00 41 8b b8 cc 00 00 00 45 31 c0 41 b9 08 00 00 00 41 83 e2 01 41 c1 e2 04 41 09 c2 b8 aa 01 00 00 0f 05 <c3> a8 02 74 cc f0 48 83 0c 24 00 49 8b 40 20 8b 00 a8 01 74 bc b8
+> [64010.254801] RSP: 002b:00007f039f3ffd08 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> [64010.255261] RAX: ffffffffffffffda RBX: 0000561ab7c1ced0 RCX: 00007f03a03fb7af
+> [64010.255695] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000009
+> [64010.256127] RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000008
+> [64010.256556] R10: 0000000000000000 R11: 0000000000000246 R12: 0000561ab7c1d7a8
+> [64010.256990] R13: 0000561ab7c1da00 R14: 0000561ab7c1d520 R15: 0000000000000001
+> [64010.257442]  </TASK>
+
+Regarding issue one, does this patch solve it?
+
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index e518d4379aa1..304919bc12fb 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -168,6 +168,12 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+         queue = kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+         if (!queue)
+                 return ERR_PTR(-ENOMEM);
++       pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
++       if (!pq) {
++               kfree(queue);
++               return ERR_PTR(-ENOMEM);
++       }
++
+         spin_lock(&fc->lock);
+         if (ring->queues[qid]) {
+                 spin_unlock(&fc->lock);
+@@ -186,11 +192,6 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+         INIT_LIST_HEAD(&queue->ent_in_userspace);
+         INIT_LIST_HEAD(&queue->fuse_req_queue);
+
+-       pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+-       if (!pq) {
+-               kfree(queue);
+-               return ERR_PTR(-ENOMEM);
+-       }
+         queue->fpq.processing = pq;
+         fuse_pqueue_init(&queue->fpq);
+
+
+I think we don't need GFP_ATOMIC, but can do allocations before taking
+the lock. This pq allocation is new in v4 and I forgot to put it into
+the right place and it slipped through my very basic testing (I'm
+concentrating on the design changes for now - testing will come back
+with v6).
+
 > 
+> If I am already in dest when I do the mount using passthrough_hp and
+> then e.g. ls, it hangs indefinitely even if I kill passthrough_hp.
 
-Hi Sedat,
+I'm going to check in a bit. I hope it is not a recursion issue.
 
-Sure, the test I present here is a simple single-thread and single-I/O
-depth case with psync ioengine. Most of the FIO parameters are shown
-in the tables below.
-
-For the rest, the 'iodepth' and 'numjobs' are always set to 1 and the
-'size' is 40GB. During the write cache test, I also disable the write
-back process through:
-
- echo 0 > /proc/sys/vm/dirty_writeback_centisecs
- echo 100 > /proc/sys/vm/dirty_background_ratio
- echo 100 > /proc/sys/vm/dirty_ratio
 
 Thanks,
-Yi.
-
-> 
->>  == buffer read ==
->>
->>                 buffer_head        iomap + large folio
->>  type     bs    IOPS    BW(MiB/s)  IOPS    BW(MiB/s)
->>  -------------------------------------------------------
->>  hole     4K    576k    2253       762k    2975     +32%
->>  hole     64K   48.7k   3043       77.8k   4860     +60%
->>  hole     1M    2960    2960       4942    4942     +67%
->>  ramdisk  4K    443k    1732       530k    2069     +19%
->>  ramdisk  64K   34.5k   2156       45.6k   2850     +32%
->>  ramdisk  1M    2093    2093       2841    2841     +36%
->>  nvme     4K    339k    1323       364k    1425     +8%
->>  nvme     64K   23.6k   1471       25.2k   1574     +7%
->>  nvme     1M    2012    2012       2153    2153     +7%
->>
->>
->>  == buffer write ==
->>
->>                                        buffer_head  iomap + large folio
->>  type   Overwrite Sync Writeback  bs   IOPS   BW    IOPS   BW(MiB/s)
->>  ----------------------------------------------------------------------
->>  cache      N    N    N    4K     417k    1631    440k    1719   +5%
->>  cache      N    N    N    64K    33.4k   2088    81.5k   5092   +144%
->>  cache      N    N    N    1M     2143    2143    5716    5716   +167%
->>  cache      Y    N    N    4K     449k    1755    469k    1834   +5%
->>  cache      Y    N    N    64K    36.6k   2290    82.3k   5142   +125%
->>  cache      Y    N    N    1M     2352    2352    5577    5577   +137%
->>  ramdisk    N    N    Y    4K     365k    1424    354k    1384   -3%
->>  ramdisk    N    N    Y    64K    31.2k   1950    74.2k   4640   +138%
->>  ramdisk    N    N    Y    1M     1968    1968    5201    5201   +164%
->>  ramdisk    N    Y    N    4K     9984    39      12.9k   51     +29%
->>  ramdisk    N    Y    N    64K    5936    371     8960    560    +51%
->>  ramdisk    N    Y    N    1M     1050    1050    1835    1835   +75%
->>  ramdisk    Y    N    Y    4K     411k    1609    443k    1731   +8%
->>  ramdisk    Y    N    Y    64K    34.1k   2134    77.5k   4844   +127%
->>  ramdisk    Y    N    Y    1M     2248    2248    5372    5372   +139%
->>  ramdisk    Y    Y    N    4K     182k    711     186k    730    +3%
->>  ramdisk    Y    Y    N    64K    18.7k   1170    34.7k   2171   +86%
->>  ramdisk    Y    Y    N    1M     1229    1229    2269    2269   +85%
->>  nvme       N    N    Y    4K     373k    1458    387k    1512   +4%
->>  nvme       N    N    Y    64K    29.2k   1827    70.9k   4431   +143%
->>  nvme       N    N    Y    1M     1835    1835    4919    4919   +168%
->>  nvme       N    Y    N    4K     11.7k   46      11.7k   46      0%
->>  nvme       N    Y    N    64K    6453    403     8661    541    +34%
->>  nvme       N    Y    N    1M     649     649     1351    1351   +108%
->>  nvme       Y    N    Y    4K     372k    1456    433k    1693   +16%
->>  nvme       Y    N    Y    64K    33.0k   2064    74.7k   4669   +126%
->>  nvme       Y    N    Y    1M     2131    2131    5273    5273   +147%
->>  nvme       Y    Y    N    4K     56.7k   222     56.4k   220    -1%
->>  nvme       Y    Y    N    64K    13.4k   840     19.4k   1214   +45%
->>  nvme       Y    Y    N    1M     714     714     1504    1504   +111%
->>
->> Thanks,
->> Yi.
->>
->> Major changes since RFC v4:
->>  - Disable unsupported online defragmentation, do not fall back to
->>    buffer_head path.
->>  - Wite and wait data back while doing partial block truncate down to
->>    fix a stale data problem.
->>  - Disable the online changing of the inode journal flag to data=journal
->>    mode.
->>  - Since iomap can zero out dirty pages with unwritten extent, do not
->>    write data before zeroing out in ext4_zero_range(), and also do not
->>    zero partial blocks under a started journal handle.
->>
->> [1] https://lore.kernel.org/linux-ext4/20241010133333.146793-1-yi.zhang@huawei.com/
->>
->> ---
->> RFC v4: https://lore.kernel.org/linux-ext4/20240410142948.2817554-1-yi.zhang@huaweicloud.com/
->> RFC v3: https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
->> RFC v2: https://lore.kernel.org/linux-ext4/20240102123918.799062-1-yi.zhang@huaweicloud.com/
->> RFC v1: https://lore.kernel.org/linux-ext4/20231123125121.4064694-1-yi.zhang@huaweicloud.com/
->>
->>
->> Zhang Yi (27):
->>   ext4: remove writable userspace mappings before truncating page cache
->>   ext4: don't explicit update times in ext4_fallocate()
->>   ext4: don't write back data before punch hole in nojournal mode
->>   ext4: refactor ext4_punch_hole()
->>   ext4: refactor ext4_zero_range()
->>   ext4: refactor ext4_collapse_range()
->>   ext4: refactor ext4_insert_range()
->>   ext4: factor out ext4_do_fallocate()
->>   ext4: move out inode_lock into ext4_fallocate()
->>   ext4: move out common parts into ext4_fallocate()
->>   ext4: use reserved metadata blocks when splitting extent on endio
->>   ext4: introduce seq counter for the extent status entry
->>   ext4: add a new iomap aops for regular file's buffered IO path
->>   ext4: implement buffered read iomap path
->>   ext4: implement buffered write iomap path
->>   ext4: don't order data for inode with EXT4_STATE_BUFFERED_IOMAP
->>   ext4: implement writeback iomap path
->>   ext4: implement mmap iomap path
->>   ext4: do not always order data when partial zeroing out a block
->>   ext4: do not start handle if unnecessary while partial zeroing out a
->>     block
->>   ext4: implement zero_range iomap path
->>   ext4: disable online defrag when inode using iomap buffered I/O path
->>   ext4: disable inode journal mode when using iomap buffered I/O path
->>   ext4: partially enable iomap for the buffered I/O path of regular
->>     files
->>   ext4: enable large folio for regular file with iomap buffered I/O path
->>   ext4: change mount options code style
->>   ext4: introduce a mount option for iomap buffered I/O path
->>
->>  fs/ext4/ext4.h              |  17 +-
->>  fs/ext4/ext4_jbd2.c         |   3 +-
->>  fs/ext4/ext4_jbd2.h         |   8 +
->>  fs/ext4/extents.c           | 568 +++++++++++----------------
->>  fs/ext4/extents_status.c    |  13 +-
->>  fs/ext4/file.c              |  19 +-
->>  fs/ext4/ialloc.c            |   5 +
->>  fs/ext4/inode.c             | 755 ++++++++++++++++++++++++++++++------
->>  fs/ext4/move_extent.c       |   7 +
->>  fs/ext4/page-io.c           | 105 +++++
->>  fs/ext4/super.c             | 185 ++++-----
->>  include/trace/events/ext4.h |  57 +--
->>  12 files changed, 1153 insertions(+), 589 deletions(-)
->>
->> --
->> 2.46.1
->>
->>
-
+Bernd
 
