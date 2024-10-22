@@ -1,145 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-32597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EC39AB5B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 20:06:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DAD9AB63C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 20:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3E03B22E46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 18:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668921C231A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 18:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FCA1C9EB3;
-	Tue, 22 Oct 2024 18:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5961CC17C;
+	Tue, 22 Oct 2024 18:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQv1PbrZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZgJWZko"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB9B1C9EA1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 18:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7621CC14A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 18:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729620372; cv=none; b=XXDgHilNvku6W8uRV52tUoccWtTqZ6yvv3xxY4t9TFgjEWzfWVnZMdahbejZcvwgP3CzV38XTTAJ6rypkf4UkSFDqeOlKh/s9qZlT7MKA5L+agnxGBOv0LJiz8Rs+ED0eFx0dx+d2N9/jeoZBi4XDcDImRXKAmag/R5IXqawUpE=
+	t=1729623291; cv=none; b=LGX8pNiJG/7cYCA/FKo6rAtyAbBQSuNHTUsTH1O2AJmCxM122OazeXRgRwIYEBeCBH5df6RXjMy705IZLiD9X1M9nIKaB+5UAVs8PP8q3FqbHYpAHWaFwES6grBGdTmXvGrqRKFBfKY4DJ+zQLOR34j9T7CMUbglylk5uAxGUoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729620372; c=relaxed/simple;
-	bh=Pz965/nWK0KQ9TnNiCt/dSLHpt8V7R+oR8sjDzw57g4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OPdakcQKt7OadJNqnd9QbDiEqQjBgBfKOAr7ZbVz3DpUU9+nAvEEU1Rm5YUt2psWRwIxqgBmX1SmAJROeY9Ghxm14HGnxpS0LXsL/6B3sSdqo0lVwkqKpyILDBl9pFrKc/2zkIT0wvVa+o/awBrmAfPPVDDDR/rQn+/hn23EcxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQv1PbrZ; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1729623291; c=relaxed/simple;
+	bh=ZN14uDZJiDedeF7/kL/vX0ytYRct6wRo4XCQvaAdamo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FR4g+LjlPfy8ErgGqNbLeHQvvaKhC12ltyuHZhvKLrOrzUIm5il8KMYT5tNI9aON6VUeKItd8RICOODEIFZQ+LCzk9lp0rkPJWT8aru8tjvrWy9QWNvJRDxLNDH/NgjFXBFMClE07ZxphpJ7qcPJ7t3+LR1q2Y55txIIiuT5Vks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZgJWZko; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460b2e4c50fso28579371cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 11:06:10 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e34339d41bso53020877b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 11:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729620370; x=1730225170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U7fKdYgefTKSP2CYEqjhvK5TWuWdIjJ5IyBe33wK+JU=;
-        b=HQv1PbrZ9rEKHlZz/re397Iw3QGLoYR4l9lPo/TUUcdVAEuEdrx/O7x6k6JshFvCiP
-         1JvcbStTEMRlzjZGxqeYtadSx4bZjjlcmLj5OoUJZ11UHiMoTLg7zFPBk01LlH1dcqpq
-         NmYnPnsm4JaalWZZpEjotwqzi5xOPQfaH0qv74SSD6cBHRIuVgkobd7QP08rpeCRv4oS
-         UN14fWTrYKiIiNUKcw7qmOTjJBS8X5iuMSw1CPLbe+2Kijt+0NaPmEJcAgCzhzirTLKU
-         JM8Ol8g5lBYIwdkDiM5pO4YDSPi3VPUcCvfqDPwcMkwJZ6rOA+YNujiZHanEn5HCodAO
-         7ecw==
+        d=gmail.com; s=20230601; t=1729623289; x=1730228089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rVRzUdQLkOXN6vY24zrdl38IpLdO/ra1R+eqpgzr714=;
+        b=FZgJWZkoP0kXJUAKIg0n84KqZQImumkVUbnE0lqM7rP7FjvprR3zfgKfMPDCswLiRa
+         OfJDbNVagskAkQ5Vtk2dbn7BZzXhJ7RZrsvED+jN6OqgVQj7I2uliWgGIHT7B0BNlGFk
+         elwoJYfKwPh2kqhSWXqgPgS0OKuRCqKCmeG08TuXDk2sFmtNPustBrF0VHU+Ugpugv7F
+         9yG+AE/XNuaPU1DyoHbdKTQ5pTdwtG1fcTVmpWogAZsocyOdKrXtnvwViBaXDK/QEHrb
+         BF/oF3YEhjlU+lmlVyb+O3XZWf0/pFNbnmMOzdUQqGg5ldD00LEu1x8YtEje097wF5ix
+         FkhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729620370; x=1730225170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U7fKdYgefTKSP2CYEqjhvK5TWuWdIjJ5IyBe33wK+JU=;
-        b=h5OZS7gS30DpeRELWd6Q387EZHMOdyT8fq2q63bXNF/iKRUr5RTTNOoVpGmeZc+YuV
-         fPQJOkORKF/XU627ON7QtB5rLQUwGKsfoNRiKH/JK04o5vjXDau/tznLpopaa2CX9qHI
-         JuHsSjHm2c+9t4v1frZpBDtEARfw1YO/19h+33iXiUhwjERnYT4pl+eFJYn67TyUK1Ot
-         FsDy7Sd5y7jE5wtoTq7Gy+QEb/sUBAMAbnO7G7sDufbGM9urHvmJoJL3PFf7sURRHOjZ
-         HY3YBvA+x4M/SsUvF1NbZs6JX0z7jgExiX6MGIIu01YkbF+jaxvG3bs3sipsqpW1B8g2
-         Zl8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqJaIZZfDk5hHvs/NxP7oQiT1h5/kHXJ+igv2ctBxKJerBfdD8sLj48OI6zAu8Hf35aUDzbeNfUVfC0LYe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsfRcgbkN1GjpD5vShsw5hAf5TgX5MEmMGbwkwp5kYaYOttGMW
-	ytMVwj90GErTq6n+p6A+Ky/xM27Ay5XsxLGl0+635dclChhLnY2wWK+RwhO9R0isZ6Fx30dRN+I
-	ckGQQ9Ck875c1fPnrh6QQ8/rZkTA=
-X-Google-Smtp-Source: AGHT+IH1ja05EFu0iFqjA4BFSMtULFpkFvV7mX2znjT8hoyP/sqe+g9k+39Eh1YCz8ZV0M5iGVLFgiOu/GWb1rK7yVg=
-X-Received: by 2002:a05:622a:449:b0:460:8f81:8c9a with SMTP id
- d75a77b69052e-460aee847a0mr240056671cf.60.1729620369752; Tue, 22 Oct 2024
- 11:06:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729623289; x=1730228089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rVRzUdQLkOXN6vY24zrdl38IpLdO/ra1R+eqpgzr714=;
+        b=LIEl82YL011/4iV/to1uH4t4QB1TwH8GypU/pSP1H2M2EsTvEV0in5aKMJ0M2sM30a
+         j43ke3FDXG6pl7l2J1OCsoBXB6xWQbJf/UWePWBTQtJJE4vjq4muWO85sUSAg7q3Pevc
+         Ux8eLBwPmJRV/lrWoX+MzGINXGFv2qrHvbWlJOCAS+sxKcJRug6bEjvSTeEYY1O3mllE
+         6FcY/6zSuM7g665GAvWsjMFlJLSz6ZzY3YrDJ+Ye2sK7tS76fpvQgrrcf2lugzQkd55Q
+         UQK5iWo7OhSTee7tTZOyHpABd+rYdwEJ9tFHNf4HYiUZt6pBp/RweOF86g736ou9hORg
+         Yg5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV55fpJXNHCNvgvJbByRasnepSO0FblVJS4L/oPXbQxa2PUrSP63rSDxXuYOCVBfrsMhS1uPvfihUnJHyVp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJW90a2kvbmA7CbbPavXf2wnRbPgQtjOyawmHgyOKfiQYbrK1X
+	V5Fr+vGeHeClILv47pnh4iwUGGuQcqhxuFjJrwVgDjZyFWm9LsgQ
+X-Google-Smtp-Source: AGHT+IFyiraoJC7yDNQMkt5eRIB1tMDJK3v1sPKLljBtFFDwj3dvmORLKkcuUO8w0FYkXH3pfJb3Wg==
+X-Received: by 2002:a05:690c:7487:b0:6e7:e68b:f883 with SMTP id 00721157ae682-6e7e68bfe48mr26556047b3.39.1729623288776;
+        Tue, 22 Oct 2024 11:54:48 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-115.fbsv.net. [2a03:2880:25ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5d13172sm11728267b3.125.2024.10.22.11.54.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 11:54:48 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm,
+	willy@infradead.org,
+	kernel-team@meta.com
+Subject: [PATCH v2 00/13] fuse: use folios instead of pages for requests
+Date: Tue, 22 Oct 2024 11:54:30 -0700
+Message-ID: <20241022185443.1891563-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002165253.3872513-1-joannelkoong@gmail.com>
- <20241002165253.3872513-12-joannelkoong@gmail.com> <20241018200139.GB2473677@perftesting>
-In-Reply-To: <20241018200139.GB2473677@perftesting>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 22 Oct 2024 11:05:58 -0700
-Message-ID: <CAJnrk1ZR4O++NBRhwzEw6GdpuxNDxGVW=dMYOvuZ-CyQP83iwA@mail.gmail.com>
-Subject: Re: [PATCH 11/13] mm/writeback: add folio_mark_dirty_lock()
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, willy@infradead.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 1:01=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
-wrote:
->
-> On Wed, Oct 02, 2024 at 09:52:51AM -0700, Joanne Koong wrote:
-> > Add a new convenience helper folio_mark_dirty_lock() that grabs the
-> > folio lock before calling folio_mark_dirty().
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  include/linux/mm.h  |  1 +
-> >  mm/page-writeback.c | 12 ++++++++++++
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index ecf63d2b0582..446d7096c48f 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -2539,6 +2539,7 @@ struct kvec;
-> >  struct page *get_dump_page(unsigned long addr);
-> >
-> >  bool folio_mark_dirty(struct folio *folio);
-> > +bool folio_mark_dirty_lock(struct folio *folio);
-> >  bool set_page_dirty(struct page *page);
-> >  int set_page_dirty_lock(struct page *page);
-> >
-> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > index fcd4c1439cb9..9b1c95dd219c 100644
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -2913,6 +2913,18 @@ bool folio_mark_dirty(struct folio *folio)
-> >  }
-> >  EXPORT_SYMBOL(folio_mark_dirty);
-> >
->
-> I think you should include the comment description from set_page_dirty_lo=
-ck() as
-> well here, generally good to keep documentation consistent.  Thanks,
+This patchset converts fuse requests to use folios instead of pages. Right
+now, all folios in fuse are one page, but a subsequent patchset will be
+enabling larger-size folios on fuse. This patchset has no functional
+changes. Any multi-page allocations for requests (eg ioctl request) will
+also be optimized in a subsequent patchset as well.
 
-Looking at this some more, for v2 I am going to replace
-set_page_dirty_lock() to be a wrapper around folio_mark_dirty_lock(),
-eg something like
+v1: https://lore.kernel.org/linux-fsdevel/20241002165253.3872513-1-joannelkoong@gmail.com/
 
-+int set_page_dirty_lock(struct page *page)
-+{
-+       return folio_mark_dirty_lock(page_folio(page));
-+}
-+EXPORT_SYMBOL(set_page_dirty_lock);
+Changes from v1 -> v2:
+* Address Josef's comments on v1
+  - Clarify comment about folio replacement in page cache 
+  - Remove unused fuse_page_descs_length_init() and fuse_pages_alloc()
+  - Copy comment to folio_mark_dirty_lock()
+* Add Josef's Reviewed-bys
+* Refactor page_set_dirty_lock() to use folio_mark_dirty_lock()
+* Keep using variable naming "nr_pages" in some places (eg fuse_direct_io)
+  instead of "nr_folios" to make accounting more clear for max_pages, which
+  reduce variable naming churn in subsequent patchset that supports large folio.
 
-so that we have one source of truth for the logic. I'll remove your
-Reviewed-by for this patch in v2 in case you have disagreements on the
-newer v2 implementation.
+Joanne Koong (13):
+  fuse: support folios in struct fuse_args_pages and fuse_copy_pages()
+  fuse: add support in virtio for requests using folios
+  fuse: convert cuse to use folios
+  fuse: convert readlink to use folios
+  fuse: convert readdir to use folios
+  fuse: convert reads to use folios
+  fuse: convert writes (non-writeback) to use folios
+  fuse: convert ioctls to use folios
+  fuse: convert retrieves to use folios
+  fuse: convert writebacks to use folios
+  mm/writeback: add folio_mark_dirty_lock()
+  fuse: convert direct io to use folios
+  fuse: remove pages for requests and exclusively use folios
 
+ fs/fuse/cuse.c      |  31 ++---
+ fs/fuse/dev.c       |  42 ++++---
+ fs/fuse/dir.c       |  28 ++---
+ fs/fuse/file.c      | 268 +++++++++++++++++++++++---------------------
+ fs/fuse/fuse_i.h    |  36 +++---
+ fs/fuse/ioctl.c     |  31 +++--
+ fs/fuse/readdir.c   |  20 ++--
+ fs/fuse/virtio_fs.c |  58 +++++-----
+ include/linux/mm.h  |   1 +
+ mm/folio-compat.c   |   6 +
+ mm/page-writeback.c |  22 ++--
+ 11 files changed, 292 insertions(+), 251 deletions(-)
 
-Thanks,
-Joanne
+-- 
+2.43.5
 
->
-> Josef
 
