@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-32571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19709A96E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 05:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A96129A96E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 05:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9238128607D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 03:19:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DC62873CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 03:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F72E200CB1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B44E20110D;
 	Tue, 22 Oct 2024 03:13:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BA61EABBF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B071FEFC0;
 	Tue, 22 Oct 2024 03:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729566790; cv=none; b=ZZVlk1jGAWmoMc9Occ9s9XGUJKYxAekEuEsLOHpr3yS1p+brZ5IylKHr4hH2vNKdPzWEbBA8dX1Ew3+Oh4r3t457CX4y3WI7O0aCHz/aZnRJK5yOuhmoUV9XgvRtfYckqjsU4Qbb9HsByCjzcRb8PojW0ebO/3WFpfvI82F3WEM=
+	t=1729566790; cv=none; b=nj+u32SIKCsD1RPAvIMIttvEMKkftKqmksjd2JVzV2OV46qlTQI84NV9aCE+FZ0IJllTsgTtnu2C0CtHw+Zpbj7yCkFxkDKZWGlkFvfL/kOlw7IEiI3UYAZMjZuI3+p+eWjFkA6bsJi02Hngy9lOyBPsLISK6N12h4ZC+fBF+jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729566790; c=relaxed/simple;
-	bh=UB+Gs3civCuEYlS4cLJVQslxb6/ZGgNvoifXv/YHRsA=;
+	bh=T7Ax1zmPeYMqNlopQKLb8lsCwVcBJZ9ZJijwkkRpwBM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b0Q5RspfAisFoKguoHd3lfBFAUcipQV7H3H2uImEZM+puS12NRyq53wrZZPQ2Z4PmhL0raJXRheaTiczuPwyrW9M+uFL9Zcj8ncEb09evSU7jpa9Xe1Yg6v5bAleOD7uCKhPeEw+DXE1uziflAGbk72HGUmmqKQ6TKMIdRs9bDI=
+	 MIME-Version; b=F0bPXJsbR0uh3ljwh0Dx/B6IYAE5Eo+fXaFD8QaL1xylCD6bvuqIf3Mwtz+A/0LD7oT9QmXxfFVkqLcRqh/1MLCeNkmFFJTO0iMG6vy8MAMApcuTORkUe3zwGOIJ8MaACR+yhjU/9D60EiwwMhfVS+V8ee/O5Qscj+fMUdwq1vU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXcgL2Rv3z4f3lVv;
-	Tue, 22 Oct 2024 11:12:46 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XXcgS68Hhz4f3jks;
+	Tue, 22 Oct 2024 11:12:52 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 80E2A1A018D;
-	Tue, 22 Oct 2024 11:13:04 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 235601A018C;
+	Tue, 22 Oct 2024 11:13:05 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCXysYlGBdnPSwWEw--.716S28;
+	by APP4 (Coremail) with SMTP id gCh0CgCXysYlGBdnPSwWEw--.716S29;
 	Tue, 22 Oct 2024 11:13:04 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -55,9 +55,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 24/27] ext4: partially enable iomap for the buffered I/O path of regular files
-Date: Tue, 22 Oct 2024 19:10:55 +0800
-Message-ID: <20241022111059.2566137-25-yi.zhang@huaweicloud.com>
+Subject: [PATCH 25/27] ext4: enable large folio for regular file with iomap buffered I/O path
+Date: Tue, 22 Oct 2024 19:10:56 +0800
+Message-ID: <20241022111059.2566137-26-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
 References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
@@ -68,10 +68,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXysYlGBdnPSwWEw--.716S28
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFy3uF1xur47Wr1UGrW8tFb_yoWrGF15pF
-	ZxKF1rGr4v93s29r4ftF48Zr1av3WxKa1UWrWSgr95XFWUJw1SqF10yF15A3W5JrZ5u34a
-	qF4jkr15uw43urDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCXysYlGBdnPSwWEw--.716S29
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFyrCw1fZw1xWr1xWF17Jrb_yoW8XrW7pr
+	sxK3W8GrWkX34q9ws3KryxZr1Uta1xGw4UuFWF9wn8WrWDJ34SqF4jkF1xAF48JrWrA3y2
+	qFyIkr13Z3WfC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2048vs2IY02
 	0E87I2jVAFwI0_JF0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0
@@ -90,111 +90,48 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Partially enable iomap for the buffered I/O path of regular files with
-the default mount option. This supports default filesystem features and
-the bigalloc feature. However, it does not yet support inline data,
-fs_verity, fs_crypt, online defrag and data=journal mode. Some of these
-features should be supported gradually in the future. The filesystem
-will fallback to the buffered_head path automatically if these mount
-options or features are enabled.
+Since we have converted the buffered I/O path to iomap for regular
+files, we can enable large folio support as well. This should result in
+significant performance gains for large I/O operations.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4.h   |  1 +
- fs/ext4/ialloc.c |  3 +++
- fs/ext4/inode.c  | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 36 insertions(+)
+ fs/ext4/ialloc.c | 4 +++-
+ fs/ext4/inode.c  | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index e1b7f7024f07..0096191b454c 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2987,6 +2987,7 @@ int ext4_walk_page_buffers(handle_t *handle,
- 				     struct buffer_head *bh));
- int do_journal_get_write_access(handle_t *handle, struct inode *inode,
- 				struct buffer_head *bh);
-+bool ext4_should_use_buffered_iomap(struct inode *inode);
- int ext4_nonda_switch(struct super_block *sb);
- #define FALL_BACK_TO_NONDELALLOC 1
- #define CONVERT_INLINE_DATA	 2
 diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 7f1a5f90dbbd..2e3e257b9808 100644
+index 2e3e257b9808..6ff03fb74867 100644
 --- a/fs/ext4/ialloc.c
 +++ b/fs/ext4/ialloc.c
-@@ -1333,6 +1333,9 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+@@ -1333,8 +1333,10 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
  		}
  	}
  
-+	if (ext4_should_use_buffered_iomap(inode))
-+		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
-+
+-	if (ext4_should_use_buffered_iomap(inode))
++	if (ext4_should_use_buffered_iomap(inode)) {
+ 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
++		mapping_set_large_folios(inode->i_mapping);
++	}
+ 
  	ext4_update_inode_fsync_trans(handle, inode, 1);
  
- 	err = ext4_mark_inode_dirty(handle, inode);
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 50e4afd17e93..512094dc4117 100644
+index 512094dc4117..97abc88e6658 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -776,6 +776,8 @@ static int _ext4_get_block(struct inode *inode, sector_t iblock,
- 
- 	if (ext4_has_inline_data(inode))
- 		return -ERANGE;
-+	if (WARN_ON(ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)))
-+		return -EINVAL;
- 
- 	map.m_lblk = iblock;
- 	map.m_len = bh->b_size >> inode->i_blkbits;
-@@ -2572,6 +2574,9 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
- 
- 	trace_ext4_writepages(inode, wbc);
- 
-+	if (WARN_ON(ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)))
-+		return -EINVAL;
-+
- 	/*
- 	 * No pages to write? This is mainly a kludge to avoid starting
- 	 * a transaction for special inodes like journal inode on last iput()
-@@ -5144,6 +5149,30 @@ static const char *check_igot_inode(struct inode *inode, ext4_iget_flags flags)
- 	return NULL;
- }
- 
-+bool ext4_should_use_buffered_iomap(struct inode *inode)
-+{
-+	struct super_block *sb = inode->i_sb;
-+
-+	if (ext4_has_feature_inline_data(sb))
-+		return false;
-+	if (ext4_has_feature_verity(sb))
-+		return false;
-+	if (test_opt(sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA)
-+		return false;
-+	if (!S_ISREG(inode->i_mode))
-+		return false;
-+	if (IS_DAX(inode))
-+		return false;
-+	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
-+		return false;
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_EA_INODE))
-+		return false;
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT))
-+		return false;
-+
-+	return true;
-+}
-+
- struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			  ext4_iget_flags flags, const char *function,
- 			  unsigned int line)
-@@ -5408,6 +5437,9 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+@@ -5437,8 +5437,10 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
  	if (ret)
  		goto bad_inode;
  
-+	if (ext4_should_use_buffered_iomap(inode))
-+		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
-+
+-	if (ext4_should_use_buffered_iomap(inode))
++	if (ext4_should_use_buffered_iomap(inode)) {
+ 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
++		mapping_set_large_folios(inode->i_mapping);
++	}
+ 
  	if (S_ISREG(inode->i_mode)) {
  		inode->i_op = &ext4_file_inode_operations;
- 		inode->i_fop = &ext4_file_operations;
 -- 
 2.46.1
 
