@@ -1,180 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-32595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD349AB543
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 19:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C00D9AB5AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 20:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1C2285FD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 17:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3743428246D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 18:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B801BE858;
-	Tue, 22 Oct 2024 17:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32821C2441;
+	Tue, 22 Oct 2024 18:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VlLe/KFg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJV104Kz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C581BDA9F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2024 17:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8572513B58A;
+	Tue, 22 Oct 2024 18:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729618761; cv=none; b=pKUrD1Teoxx3IF/bCAsmWbToxS0nH3Vf8iIbQdFc2F2UEAwfin4drZUA06YXCK+QxJ9y+JT6FOUKUIthrHVSa3K77MdAeQrGP++po/fcpFgLRSNIFipHyB4f0O24HO+wOSdJYExbUw1gzodFQtwKcJN0UNIBnkjiuFNtls2urDY=
+	t=1729620102; cv=none; b=WNjqxdk1/Ga7MEfxJBYr3v65ExP42rVJe/YJsA4r/qhJ1smjhl8svIOfnu4Iw5NhJx6oI49FYTHLSya2d5Or8gyle2nUS3z87k6+ICys/wBoNFcmdjoOUSTB8sFr1+vUBw5L9QTzR32Rrq1zESRsM7s/N6Qwv4KOCwsHUP8sF8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729618761; c=relaxed/simple;
-	bh=5nYBuq8flg0IclcEtqjui0Y8ymtQtA0o/gQ3AaI5Ayk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l3GnHR+K6OrRGX8V5xHCG0KM2pzWTb+3oeQYHisAVyoXHrR+PHeym7xtzmW1yHwx3ttV88qUN7Y6owlI3K2gVwdaQDdYJ2YqaWTr2GSsD71+RujuEE4NAVc0PNTXD8LK0jbM1jk4pxxoNyTAFvsR2w2ItaltYpUhtSobu5wpcaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VlLe/KFg; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 13:39:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729618756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=nFfwM9REuPvTQaQq5UTnE7bd6ms89tAFZaS8hK6Mt6w=;
-	b=VlLe/KFggxObBc8y8RewF50LrIxdfpQZsKaHN1dbMAz2mBQub0lPVBcVUWpJcNLEn0T9D3
-	ykp/d7VQtIXsXVyrXA1m0JFY7HomLjB7Rx9b0vzY3XXb2mMS/604lEuxSG2uGFfJ8YW483
-	lX3RW0nuDC0dXZTpN4oiG+Lw8D27Sx0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+	s=arc-20240116; t=1729620102; c=relaxed/simple;
+	bh=tyHsvaiiX1gOmmyq9/0nzpwSlEYIaTQXrkD8mzX0mLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=US1DNM6ZJJiRQ/LzyA51wPDBjjtCPwVVAcdlg0RRzUqsqoRl6vp4I3dYIUHupS6QsCCr3EmlBQpGWHLNOyoaHzQ493plV6atcw0k8pyMLV4w2iv7G95Qw71Q+gCKpXnHweAil7PneCrQfdiEkFvlvQu87jwg+4+wsX+jvhcNmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJV104Kz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fe76e802so6830992e87.1;
+        Tue, 22 Oct 2024 11:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729620099; x=1730224899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xuf72DWWMpZGasVdhPaddkSBAdQr8zMJ93ItMRBFORs=;
+        b=fJV104KzjSHy9+W2BSxGsnCNr65m0DrgH7ti6KR+D2bdkKUVk5LobHBGZOKoPDMRNL
+         cS67as7Pp4cGUvVmp/A22u6zr5vgD4kRu9ZcqQY+gSrwPGwdjpK1NhzNzEto4pMtwvFW
+         3f4HclQ7/YxTuhr/yIYUtVrnU2ys+4YUfflSz4aw5h5KSumV/3FpRVLqrfS2c/h4bqwa
+         pUMFRuapiZdcF8sux7xg8pDzMm3Wi/87od7vYFNDPX8MSafXDM7YX9pVJ+Oas0NrCIS+
+         D6qR0QMr0ZDs8nHdowfWG8+CGLRft37w58Tt93YC3ZBn94X64+vwGt4UsJO9TxBRMdRq
+         AuAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729620099; x=1730224899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xuf72DWWMpZGasVdhPaddkSBAdQr8zMJ93ItMRBFORs=;
+        b=mIwpAcS6+cpokTrQustADrkJF/fxBOh31dz5Y2yRXckzgilh3iBgS6s1aQvibkQYSw
+         EYKB0yDniiki5oCDfWYQASNE+u8t1DjDUapKvKWRmjK7KzuFNz03Xahi0mpa+1iANsXO
+         t/zk30kN3Sqc5/Ai7PAE7LeWNog3RQANs+CnRRDimDu8v/ArSpQ1vb+i+PqlFMPVi2P3
+         O6pKVdWnRw10D6MFAWAMjw7wKnJxfdnyXFATyqtII06DvhatTvyHvLoOO/2Toz2giDGY
+         +z1Gil8QriYScNJnY7ZoTXqMJeZktrl27nFQdA5lb2xxil9W9FQBeFYmdlq+Ipdyt9x0
+         lV4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQww73tHJPywjmjulJT/fRW3weUWUcDgtTkXVDl//1ZW7o1bdYFBY6vkXtGxHELRTerKlvVdEvD7xj2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgKZ5VyQ/J4CP72R3ahnYexyElivTYYZZ0Aka3a0aSv7N1wwnx
+	QMcSuRVSK+AiI0S7Rs+XXzDNBD1/3B6DGCKsOu+u9FAMG5UfuQpJ9ItEEcl99rw=
+X-Google-Smtp-Source: AGHT+IFIZ858NH+vPbozF3bg2tGl8fwekzp1tdWuXvZ9cQ/T6Tn27daJ12ikD3u5oB8Xk2zP3HLIgw==
+X-Received: by 2002:a05:6512:23a8:b0:52e:9b2f:c313 with SMTP id 2adb3069b0e04-53b19206811mr242987e87.22.1729620098280;
+        Tue, 22 Oct 2024 11:01:38 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:850c:5867:abe5:b8c9])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b18csm3355638a12.62.2024.10.22.11.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 11:01:37 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: brauner@kernel.org,
+	josef@toxicpanda.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Gianfranco Trad <gianf.trad@gmail.com>,
+	syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
+Subject: [PATCH] hfs: zero-allocate ptr and handle null root tree to mitigate KMSAN bug
+Date: Tue, 22 Oct 2024 19:56:25 +0200
+Message-ID: <20241022175624.1561349-2-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Syzbot reports a KMSAN uninit-value bug in __hfs_cache_extent [1].
 
-The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
+Crash report is as such:
 
-  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
+ __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+ __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
+ hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+ hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
+ __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
 
-are available in the Git repository at:
+Which comes from ptr not being zero-initialized before assigning it
+to fd->search_key. Hence, use kzalloc in hfs_find_init().
 
-  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
+However, this is not enough as by re-running reproducer the following
+crash report is produced:
 
-for you to fetch changes up to a069f014797fdef8757f3adebc1c16416271a599:
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+ __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
+ __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
+[...]
+Local variable fd.i created at:
+hfs_ext_read_extent fs/hfs/extent.c:193 [inline]
+hfs_get_block+0x295/0xf50 fs/hfs/extent.c:366
+__block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
 
-  bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path (2024-10-20 18:09:09 -0400)
+This condition is triggered by a non-handled escape path in
+bdinf.c:__hfs_brec_find() which do not initialize the remaining fields in fd:
 
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc5
+hfs_ext_read_extent -> __hfs_ext_read_extent() -> hfs_brec_find().
 
-Lots of hotfixes:
-- transaction restart injection has been shaking out a few things
+In hfs_brec_find():  !ndix branch -> -ENOENT returned 
+without initializing the remaining fd fields in the 
+subsequent __hfs_brec_find() helper call.
 
-- fix a data corruption in the buffered write path on -ENOSPC, found by
-  xfstests generic/299
+Once returning to __hfs_ext_read_extent() ensure that this escape path is
+handled to mitigate use of uninit fd fields causing the KMSAN bug.
 
-- Some small show_options fixes
+Reproducer does not trigger KMSAN bug anymore [2], but rather a 
+kernel BUG at fs/hfs/inode.c:444:
 
-- Repair mismatches in inode hash type, seed: different snapshot
-  versions of an inode must have the same hash/type seed, used for
-  directory entries and xattrs. We were checking the hash seed, but not
-  the type, and a user contributed a filesystem where the hash type on
-  one inode had somehow been flipped; these fixes allow his filesystem
-  to repair.
+default:
+			BUG();
+			return -EIO;
 
-  Additionally, the hash type flip made some directory entries
-  invisible, which were then recreated by userspace; so the hash check
-  code now checks for duplicate non dangling dirents, and renames one of
-  them if necessary.
+which seems unrelated to the initial KMSAN bug reported, rather to
+subsequent write operations tried by the reproducer with other faulty options,
+immediately raising macro BUG() instead of just returning -EIO.
 
-- Don't use wait_event_interruptible() in recovery: this fixes some
-  filesystems failing to mount with -ERESTARTSYS
+[1] https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
+[2] https://syzkaller.appspot.com/x/report.txt?x=12922640580000
 
-- Workaround for kvmalloc not supporting > INT_MAX allocations, causing
-  an -ENOMEM when allocating the sorted array of journal keys: this
-  allows a 75 TB filesystem to mount
+Reported-by: syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
 
-- Make sure bch_inode_unpacked.bi_snapshot is set in the old inode
-  compat path: this alllows Marcin's filesystem (in use since before
-  6.7) to repair and mount.
+ fs/hfs/bfind.c  | 2 +-
+ fs/hfs/extent.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-----------------------------------------------------------------
-Hongbo Li (2):
-      bcachefs: fix incorrect show_options results
-      bcachefs: skip mount option handle for empty string.
+diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+index ef9498a6e88a..69f93200366d 100644
+--- a/fs/hfs/bfind.c
++++ b/fs/hfs/bfind.c
+@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+ 
+ 	fd->tree = tree;
+ 	fd->bnode = NULL;
+-	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
++	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 	fd->search_key = ptr;
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 4a0ce131e233..14fd0a7bca14 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -160,6 +160,8 @@ static inline int __hfs_ext_read_extent(struct hfs_find_data *fd, struct hfs_ext
+ 	if (fd->key->ext.FNum != fd->search_key->ext.FNum ||
+ 	    fd->key->ext.FkType != fd->search_key->ext.FkType)
+ 		return -ENOENT;
++	if (!fd->tree->root && res == -ENOENT)
++		return -ENOENT;
+ 	if (fd->entrylength != sizeof(hfs_extent_rec))
+ 		return -EIO;
+ 	hfs_bnode_read(fd->bnode, extent, fd->entryoffset, sizeof(hfs_extent_rec));
+-- 
+2.43.0
 
-Kent Overstreet (24):
-      bcachefs: fix restart handling in bch2_rename2()
-      bcachefs: fix bch2_hash_delete() error path
-      bcachefs: fix restart handling in bch2_fiemap()
-      bcachefs: fix missing restart handling in bch2_read_retry_nodecode()
-      bcachefs: fix restart handling in bch2_do_invalidates_work()
-      bcachefs: fix restart handling in bch2_alloc_write_key()
-      bcachefs: fix restart handling in __bch2_resume_logged_op_finsert()
-      bcachefs: handle restarts in bch2_bucket_io_time_reset()
-      bcachefs: Don't use commit_do() unnecessarily
-      bcachefS: ec: fix data type on stripe deletion
-      bcachefs: fix disk reservation accounting in bch2_folio_reservation_get()
-      bcachefs: bch2_folio_reservation_get_partial() is now better behaved
-      bcachefs: Fix data corruption on -ENOSPC in buffered write path
-      bcachefs: Run in-kernel offline fsck without ratelimit errors
-      bcachefs: INODE_STR_HASH() for bch_inode_unpacked
-      bcachefs: Add hash seed, type to inode_to_text()
-      bcachefs: Repair mismatches in inode hash seed, type
-      bcachefs: bch2_hash_set_or_get_in_snapshot()
-      bcachefs: fsck: Improve hash_check_key()
-      bcachefs: Fix __bch2_fsck_err() warning
-      bcachefs: Don't use wait_event_interruptible() in recovery
-      bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
-      bcachefs: Mark more errors as AUTOFIX
-      bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
-
- fs/bcachefs/alloc_background.c      |  37 +++--
- fs/bcachefs/alloc_foreground.c      |   2 +-
- fs/bcachefs/btree_gc.c              |  12 +-
- fs/bcachefs/btree_io.c              |   2 +-
- fs/bcachefs/btree_iter.h            |   2 +
- fs/bcachefs/btree_update.c          |   4 +-
- fs/bcachefs/btree_update.h          |   2 +-
- fs/bcachefs/btree_update_interior.c |   4 +-
- fs/bcachefs/buckets.c               |   7 +-
- fs/bcachefs/buckets.h               |  12 +-
- fs/bcachefs/chardev.c               |   1 +
- fs/bcachefs/darray.c                |  15 +-
- fs/bcachefs/dirent.c                |   7 -
- fs/bcachefs/dirent.h                |   7 +
- fs/bcachefs/disk_accounting.c       |   6 +-
- fs/bcachefs/ec.c                    |  22 +--
- fs/bcachefs/error.c                 |   5 +-
- fs/bcachefs/fs-io-buffered.c        |   6 +
- fs/bcachefs/fs-io-pagecache.c       |  70 +++++----
- fs/bcachefs/fs-io.c                 |   2 +-
- fs/bcachefs/fs.c                    |  18 +--
- fs/bcachefs/fsck.c                  | 281 +++++++++++++++++++++++++++++-------
- fs/bcachefs/inode.c                 |  27 ++--
- fs/bcachefs/inode.h                 |   1 +
- fs/bcachefs/inode_format.h          |   6 +-
- fs/bcachefs/io_misc.c               |   2 +-
- fs/bcachefs/io_read.c               |   8 +-
- fs/bcachefs/io_write.c              |   4 +-
- fs/bcachefs/journal.c               |  10 +-
- fs/bcachefs/journal.h               |   2 +-
- fs/bcachefs/opts.c                  |   6 +-
- fs/bcachefs/opts.h                  |   3 +-
- fs/bcachefs/quota.c                 |   2 +-
- fs/bcachefs/rebalance.c             |   4 +-
- fs/bcachefs/recovery.c              |   2 +-
- fs/bcachefs/sb-errors_format.h      |   4 +-
- fs/bcachefs/str_hash.h              |  60 +++++---
- fs/bcachefs/subvolume.c             |   7 +-
- fs/bcachefs/super.c                 |   2 +-
- fs/bcachefs/tests.c                 |   4 +-
- fs/bcachefs/xattr.c                 |   2 +-
- 41 files changed, 475 insertions(+), 205 deletions(-)
 
