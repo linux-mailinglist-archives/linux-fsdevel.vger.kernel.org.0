@@ -1,98 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-32616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A729AB6DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 21:33:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1169AB6EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 21:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251051C233D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 19:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1C19B237FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2024 19:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4BB1CEAB7;
-	Tue, 22 Oct 2024 19:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D501CB33A;
+	Tue, 22 Oct 2024 19:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsGAjcGE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAWANvJ3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6121CB503;
-	Tue, 22 Oct 2024 19:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4765B1465A5;
+	Tue, 22 Oct 2024 19:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729625494; cv=none; b=elNPqoqkChSktBICuA4tHB53ChFoBZbzTZ3Ab0Xq5wrUAMV1PDEmAbfGFfqt21mDuvRIt6JBsbEvzdyybM3hVrDrywk7H3P21xkUKnKyoxpGNDE7wZOzTlASNC+GeOWlxu/FnkeKJTWC2WGtiYe0820zNeS3AFOJsdSu3bdMHHA=
+	t=1729625704; cv=none; b=gyKl71xXDWrQpu83VBGyr6SOjNHHPiIZZq/k4dC+3NVdiYSD9+SxmpIir8pBcBUsF3ZpA9yFrF9fZkXFgcOm4ycRKcItKbV73twSStp154KpJgvDoR42Tf5dbF+3ATJVQVim7ETwdPT1FHXlK8Zu//SB+baHl6qcOspKn8c5NrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729625494; c=relaxed/simple;
-	bh=GGNhwfUzomB5c7pGZnSajU+DPtArbMMXDbU2WQFJAPE=;
+	s=arc-20240116; t=1729625704; c=relaxed/simple;
+	bh=gtbLZJzDgq8gJbvY5QFBkT1+qCeD5zFfv44nG1wRVpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/WSr4xfpieAsZdGzil6SSY737onxaNnkkIK1mIsn6bopIE9eTxIbqotJ+8O6AhBgbDUU8xS4oci2fev90FQWqQXlkzwjqBpIxP3SJAhhOlFU1AjKoA1PIb4NwdX2lJZbxrMg3dBEh0I4Vc2QKJx0rjHIHANTq9/GxthzRuEfNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsGAjcGE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802D1C4CECD;
-	Tue, 22 Oct 2024 19:31:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rq3+udVRCXytzPYBJMBYPPHcqDRdEJFI2GazisRwAiEaX9ATqnjpiZUm6JOPultgIKtQGcP52jHE5urkaxc0dLJFWKY5IqH1S332PVcWymllxcDX/UwGk6/4qpTogU8u4wTHzLSD5vNRfcJYIIIBjz8kclCfb8C9rJYsvDrr81g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAWANvJ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213EEC4CEC7;
+	Tue, 22 Oct 2024 19:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729625493;
-	bh=GGNhwfUzomB5c7pGZnSajU+DPtArbMMXDbU2WQFJAPE=;
+	s=k20201202; t=1729625703;
+	bh=gtbLZJzDgq8gJbvY5QFBkT1+qCeD5zFfv44nG1wRVpo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RsGAjcGEWjVmbDuPRLTGWixM/V+AZwp2sRPkU6TqCPHVSD3TlpNU0UCY2JrLnKwQc
-	 Y8Zd8KXmpd/J+B1iB00ohZSWU3O0iFIaXAsd8nceOd0B8umiAoA/1ihl39uG4qYTYr
-	 q484G3EGV55gso3g4Q7ooU4UD2XfUHGI3Kj7kK3LXS3TpjiorOf46Vbkd4hPB9v0mF
-	 qaT6lFd0UKbTQRh7+s4MFE6EAmI8WS438bz3EpC1CddM6AgYPThqrDTo/iEYTDim4d
-	 B2/ImIUiKrIlj6PH5t4WIhMMRZbpvV/cIqGfLxQFjX+ewrPBUQ6EKvkob35bUwDwz/
-	 qFEiVTnLF8vyQ==
-Date: Tue, 22 Oct 2024 21:31:11 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, kernel-janitors@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/35] sysctl: Reorganize kerneldoc parameter names
-Message-ID: <nnbmui2ix23wjmfvxo2t3zd3tgymk77h765kyoc3pxu6wkhqxx@6qis4yyszkec>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-10-Julia.Lawall@inria.fr>
+	b=RAWANvJ30xNkibAKRRZAKwV2B0e4DD1qMWDwlFJzvr/5u5jiu0H5UxvvUglAQkPoA
+	 wyluVpiytN1Y/kS7IXJ1QzZuAEoXZgneVod1GBxTb6OF4+bzuEaBOKvx6GrjzLIgh0
+	 u6H0EzzOaWJARBYLvVrpLD1R2an6AyaaIsaMHuHIm/3fYlsplpBsVHdlFr5QfhiXH9
+	 vm31/0qYUZl2bxjJl65BbnM7By3OB3ZsX1pe9R4RnuUwow+AXSz+Is5U5HMj1ijhST
+	 N5C+RXPEz5fTn7jI2ghNCGyD1vF/t6+1ZZij8VHVnUahtv4s/ME1qDBmOp1nBTdoto
+	 9NTjhL2j3N/ug==
+Date: Tue, 22 Oct 2024 20:34:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <28cd4d7e-c6fb-468e-81f8-35e0591f8360@sirena.org.uk>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+ <Zxf3vp82MfPTWNLx@sashalap>
+ <202410221225.32958DF786@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3dorXeFmBZUmzGVK"
+Content-Disposition: inline
+In-Reply-To: <202410221225.32958DF786@keescook>
+X-Cookie: Surprise due today.  Also the rent.
+
+
+--3dorXeFmBZUmzGVK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930112121.95324-10-Julia.Lawall@inria.fr>
 
-On Mon, Sep 30, 2024 at 01:20:55PM +0200, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
-> 
-> Problems identified using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  kernel/sysctl.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 79e6cb1d5c48..5c9202cb8f59 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1305,7 +1305,6 @@ int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int write,
->   * @write: %TRUE if this is a write to the sysctl file
->   * @buffer: the user buffer
->   * @lenp: the size of the user buffer
-> - * @ppos: file position
->   * @ppos: the current position in the file
->   *
->   * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-> 
-This looks good to me. Is it going to go into main line together with
-the other 35 or should I take this one through sysctl subsystem?
+On Tue, Oct 22, 2024 at 12:30:38PM -0700, Kees Cook wrote:
+> On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
 
-Best
+> > --------------------
+> > a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
+> > e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+> > f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+> > 3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
+> > eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
 
-Signed-off-by: Joel Granados <joel.granados@kernel.com>
+> And then maybe limit this to 5 or 10 (imagine a huge PR like netdev or
+> drm).
 
--- 
+OTOH since this is supposed to be only for commits that didn't spend
+time in -next perhaps exploding badly is getting the message over
+clearly?  Or at least putting something in that makes it stand out that
+truncation happened.  It's a constant tradeoff with this sort of thing.
 
-Joel Granados
+> Nice work!
+
+Indeed.
+
+--3dorXeFmBZUmzGVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcX/mEACgkQJNaLcl1U
+h9AIXwf9EuJH9LluQG3fN6NDJeNKyulsgw0ncXtrWaF9uTOo+nFERm3wFAG45iYr
+wN51ACMgtJJMBvvLtbIdTfSfNg5C2owWAz6Mb/FzhYZ47zyu7f8WiK8z1/iDbTEg
+EtDf+qitqod8lVC1zaLD6n3HcfEvbOsCf8EmwvMgbbibsD2jxHXZ7cb39R5L9nNS
+2t0TDuANRCKiOWbjO1AjEqkwQOBaUO6MKqTem0f7WlL62CxUqOn0F7aCX8VOpEma
+oCp5hZjNF32ytqrF1vb53ITHJBzh5Xy7/OzzJ2k3klluSq2KDdBPJdDFn6IHuewF
+OTfkE2At5l7OxuVkqUPd+lFqsnAi3w==
+=7BDL
+-----END PGP SIGNATURE-----
+
+--3dorXeFmBZUmzGVK--
 
