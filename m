@@ -1,144 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-32641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B1A9ABE36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 07:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAAC29ABF1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 08:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD3A1C22A7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 05:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE4C283F96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 06:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCBD14659D;
-	Wed, 23 Oct 2024 05:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F36214AD3F;
+	Wed, 23 Oct 2024 06:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D8F828hs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7020B7482;
-	Wed, 23 Oct 2024 05:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A556EB7C;
+	Wed, 23 Oct 2024 06:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663154; cv=none; b=a1+JoNsgclmaYv9E/+aQdeucVEYI9B2jR6wAv74CvyHoFJw5polnjNs47+aJIikh51L3VETl/ypWvTXf5Quq39/P9MxTGClrJ/0XTdXQHyxO3volJXuOn9wHQsTKGeJg6hZ6Uo+CQtTYwyQ1x3D8DC5q0z6V6xlHYNBIzfIf3ec=
+	t=1729665914; cv=none; b=Y6MeTvrOlbdlh/n9R6r/L8E0vtQzp2Zu0hm8GjSxW60qfkQJF6B+mFqbzGgjWvNZLLus2on9XjTonX2PZSs6eFM/Uobjiq/yq3+4gQR7buNjHd4Fi3YsK/EbcxYZDKiiDhIadCww9Ism8zk3GPulm6gP6KyT2ROj6jA2ju71Byg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663154; c=relaxed/simple;
-	bh=Xi5BGcHQLbGAp6H9NkT1WNHevJNkx+l8YFWJdHWZLzc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=YMRCAg9NGIshblOdQtKoDEZxs3DwOZFd/0Qb7rzCP+wFicbiL6xqG+G6LPELCZm4ZM8jfo6ZlyMDYL6r0e7pBq7f35hi1YgrdPQzKitdFvHCVPrSx1gvCz0Ozdlc1+UTLerSx+pPLwnyGj2PeE0qI+LbWc79fUZrXHkZBovi5+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4XYJJl1K4Kz5B1Jw;
-	Wed, 23 Oct 2024 13:59:03 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4XYJJX3snzz501bb;
-	Wed, 23 Oct 2024 13:58:52 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 49N5wm1k079965;
-	Wed, 23 Oct 2024 13:58:48 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 23 Oct 2024 13:58:50 +0800 (CST)
-Date: Wed, 23 Oct 2024 13:58:50 +0800 (CST)
-X-Zmail-TransId: 2afa6718909affffffff87c-afe8a
-X-Mailer: Zmail v1.0
-Message-ID: <20241023135850067m3w2R0UXESiVCYz_wdAoT@zte.com.cn>
+	s=arc-20240116; t=1729665914; c=relaxed/simple;
+	bh=5QHNOKzSaP6+V6m2H0p2UwehChnWSxNkBlBVyejMPVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifpalqJQ3aqSySIAjeyvLq5a/mXa9nYKhizmfOgfarhySwuvCGyiVGk/2k/pryqK01HNswWn5Nmx8DomA4Tz20C/ZX42a2ardpHjOOsHUR9DsIBJ2E0Ia4NzbdOUev2yorEhGueAvJ0vP5+SCofckmp27MsPNzoif6kKudPwxAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D8F828hs; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RSQPrKwOEquJSUdRa82UBzxuqVq2bj42C8it3gsI3CQ=; b=D8F828hsvgs7JIEkxW2YE8E8K8
+	ZRIbGWqlTPyT4Kr4Y41UubrQrHSUGUlWClC1kVCgaegmr0RpziLXGd55B3fLxdGijOWy6qyXuzhEJ
+	M2cWbNmO5wAKXXeCDezszGBSPL6EvZiCQ3JDPsIo09uPqp8uFlAyQ7IBG7RU6PEEaIZoenr/aw0Ht
+	FiJ/BOqU3y/2n/jE0vT63+1mavSvBeN7YK9J6D7sk0Qmc1HmPu9b4wJeWcbYm92MqL1/LEDEbHZOm
+	JG+y+ioL/nBk4bYzRx2JLk0H0anIXiO5i9xz27LRDK6Al4s4wkGdj8ARfuoNYp0JG7/OceZ7awt0o
+	qgXl8pKw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3V7H-0000000DFF7-1TUN;
+	Wed, 23 Oct 2024 06:45:11 +0000
+Date: Tue, 22 Oct 2024 23:45:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>,
+	bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
+ cover security.bpf xattr names
+Message-ID: <ZxibdxIjfaHOpGJn@infradead.org>
+References: <20241002214637.3625277-1-song@kernel.org>
+ <20241002214637.3625277-3-song@kernel.org>
+ <Zw34dAaqA5tR6mHN@infradead.org>
+ <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
+ <Zw384bed3yVgZpoc@infradead.org>
+ <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
+ <20241016135155.otibqwcyqczxt26f@quack3>
+ <20241016-luxus-winkt-4676cfdf25ff@brauner>
+ <ZxEnV353YshfkmXe@infradead.org>
+ <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <yang.yang29@zte.com.cn>, <yang.tao172@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <lu.zhongjun@zte.com.cn>, <chen.lin5@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBmczogZml4IGJ1ZyB0aGF0IGZwdXQoKSBtYXkgbm90IGhhdmUgZG9uZSB0byBjb21wbGV0ZSBpbgoKIGZsdXNoX2RlbGF5ZWRfZnB1dA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 49N5wm1k079965
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 671890A7.000/4XYJJl1K4Kz5B1Jw
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: shao mingyin <shao.mingyin@zte.com.cn>
+On Mon, Oct 21, 2024 at 03:24:30PM +0200, Christian Brauner wrote:
+> On Thu, Oct 17, 2024 at 08:03:51AM -0700, Christoph Hellwig wrote:
+> > On Wed, Oct 16, 2024 at 04:51:37PM +0200, Christian Brauner wrote:
+> > > > 
+> > > > I think that getting user.* xattrs from bpf hooks can still be useful for
+> > > > introspection and other tasks so I'm not convinced we should revert that
+> > > > functionality but maybe it is too easy to misuse? I'm not really decided.
+> > > 
+> > > Reading user.* xattr is fine. If an LSM decides to built a security
+> > > model around it then imho that's their business and since that happens
+> > > in out-of-tree LSM programs: shrug.
+> > 
+> > By that argument user.kfuncs is even more useless as just being able
+> > to read all xattrs should be just as fine.
+> 
+> bpf shouldn't read security.* of another LSM or a host of other examples...
 
-We find a bug that the rcS file may not be executed, resulting in module 
-and business not being loaded. When trying to execute rcS, the fput() 
-related to rcS has not done to complete, so deny_write_access() returns 
-ETXTBSY.
-
-rcS is opened in do_populate_rootfs before executed.
-After flush_delayed_fput() has done to complete, do_populate_rootfs 
-assumes that all fput() related to do_populate_rootfs has done to complete.
-However, flush_delayed_fput can only ensure that the fput() on current 
-delayed_fput_list has done to complete, the fput() that has already been 
-removed from delayed_fput_list in advance may not be completed. Attempting
-to execute the file associated with this fput() now will result in ETXTBSY.
-Most of the time, the fput() related to rcS has done to complete in 
-do_populate_rootfs before executing rcS, but sometimes it's not.
-
-do_populate_rootfs	delayed_fput_list	delayed_fput	execve
-fput()			a
-fput()			a->b
-fput()			a->b->rcS
-						__fput(a)
-fput()			c
-fput()			c->d
-						__fput(b)
-flush_delayed_fput
-__fput(c)
-__fput(d)
-						__fput(b)
-						__fput(b)	execve(rcS)
-
-in execve(rcS), deny_write_access(rcS) returns ETXTBSY because __fput(rcS) 
-has not done to complete.
-
-This patch can guarantee all fput() related to do_populate_rootfs has done 
-to complete, and ensure that rcS can be executed successfully.
-
-Signed-off-by: Chen Lin <chen.lin5@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Yang Tao <yang.tao172@zte.com.cn>
-Cc: Xu Xin <xu.xin16@zte.com.cn>
----
- fs/file_table.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index eed5ffad9997..345e68caa4d7 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -462,6 +462,8 @@ static void ____fput(struct callback_head *work)
- 	__fput(container_of(work, struct file, f_task_work));
- }
-
-+static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
-+
- /*
-  * If kernel thread really needs to have the final fput() it has done
-  * to complete, call this.  The only user right now is the boot - we
-@@ -475,11 +477,10 @@ static void ____fput(struct callback_head *work)
- void flush_delayed_fput(void)
- {
- 	delayed_fput(NULL);
-+	flush_delayed_work(&delayed_fput_work);
- }
- EXPORT_SYMBOL_GPL(flush_delayed_fput);
-
--static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
--
- void fput(struct file *file)
- {
- 	if (file_ref_put(&file->f_ref)) {
--- 
-2.25.1
+Sorry if I was unclear, but this was all about user.*.
 
