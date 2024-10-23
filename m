@@ -1,265 +1,413 @@
-Return-Path: <linux-fsdevel+bounces-32643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487389AC005
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 09:19:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C95A9AC326
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 11:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70B91F26186
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 07:19:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A611F213F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D55B153BD7;
-	Wed, 23 Oct 2024 07:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5EC1547E4;
+	Wed, 23 Oct 2024 09:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F76NOYsD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="EDvLfzdt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gdu57lT+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6F3152E0C;
-	Wed, 23 Oct 2024 07:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667940; cv=fail; b=tq/Olueit62cLEv6meu/VqB+HtDtOb2mauMy3alr9eU/y/D/nrBDBOsUXF9PtHR/H6NNifWWQAgBEogfUMScP2IY6Q+HY7xedLCsBt6WxqL1UVkrbKFLZttOKL7emq4p+mn6n7y6lIcanE3p6Sg+EKcK5Ey8FtDQJcdt97RvkWY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667940; c=relaxed/simple;
-	bh=HR//hzbzvfCzKOGQ/X1tRWf4CDyEkCcYEwrs82tYvAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c5gmk1gCE71ooLklxE11JnAlspkvXNobKivtAtGa7Hk3YnCGkOqfIYKyW7/R2UPjjV6GHhc5q5U+ulYnK8AYifHVFc1NfnZ54L/uv60KuzXdLit8aIgzZMbUrKEhQ2B6gXixRVi6WR4NC0Ybjdbk18kKD3UZaduO4Zd75mvQCEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=F76NOYsD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=EDvLfzdt; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLQcAx016592;
-	Wed, 23 Oct 2024 07:18:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=bBLR6oEx8Scv8e1Kcq
-	07hPD+gzDgUju6r5RMv/p65O8=; b=F76NOYsDXKTWODXCJubWXyHabe9xVGBcdk
-	sMUBowKkYu2C4CUARyTetmnrPYzb9VYOYg1lm1p6pNPJHeLy6ZJ2HRoVkT/F7G6b
-	jFofx2N1g/KuesxrUuF3uLTR6WRsn69TNz3DgV8j/eLDbZPIxgJZr6d9JLPQ4Rga
-	QgpxKCzEMK13n8umsg/e8WIuG1nQHMacvK0fKpxlFO7X6P+MqUC1Y+rQF/NuPnoP
-	WnNVhprQ21cF52Sp4NiK1pdJueAv6VW6zzdbKROxxgDMXrpbO6HWMzIjL2tXrULn
-	QVH+I1MBfqlvduLfKiR0Hd02pwTsy7tlNvD8JoBKEJejXWpz97Kw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42cqv3ehmu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 07:18:43 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49N6RGwg025385;
-	Wed, 23 Oct 2024 07:18:42 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42emh95b6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 07:18:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UbxoYFVOsKF0Y/btlE+4rY5WjnpHtCATisI26CsILRyk/XX3CtagbpIl4dGQxl6TDaTtz4/Rh6nrKrkAalDdi9vhNrQXrpihMiO/YDhhZje7kVH6gEf9rjfrkDp+BURmD8PAlWJ9Vtsht9oD1n+xPCOHWXr9kQ++0WREn8DWS/BUXCdC4zrx8HoSTcT+YCFXsCAcbPoDXD2AZCTAueW0oUsoR6KhXM44JSSHLIm8U3E15SNiZjwbgdZ8VJN312P7qN9OrBPgOK5g0cRP+3D6fAcEyPB0pkzscL8JXHlaeZKczwjwgswTP7hNh5bjGzuDAX2YifcyH+rQBe3xSVrtgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bBLR6oEx8Scv8e1Kcq07hPD+gzDgUju6r5RMv/p65O8=;
- b=h/0sRZNCNIAG975So0ZUhX0Kkj/rU9dlvT/CFHZi6BPgrYHI6ufMRkXfJ12CSo7Q0xcurbcYV0iWYy6s1aD18vDmUet5NJFco3b675S41fwYnGpKsqBp9XiGy10JaibokdOBcWhgsZouZTAKqrCac0TDiOBzIlb09It5lseVXUP0ehD7/+Bk2W8hkjd0xqQ9ZCePg4dc0ME0Yd5d12HFlHB1+z/7A53fZi+yndKSOrVz7jXvfOJx1qpNj48M+ry+Q5m3CWa/Q/4onxifkpj/W0fTClmB3L1hsQRwyDFdGXur2UrOQi4b1sOuo+FjVWz3x4SPSXEcdk5kf4anT6IJCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bBLR6oEx8Scv8e1Kcq07hPD+gzDgUju6r5RMv/p65O8=;
- b=EDvLfzdtwnKFOY7kq6Xo6PdTY4entFmU8FI0kaXH8/Ywv4Ui7sCceSZCk+vvBGWB45t1VfVMcPneRtVinwOEQObPzh5vf1l30WEEyzR0qe1m5CvfLp9bvWMmeBYrELByoe0PC1GpoRXRa1P0QUMKFbmxpqVylQOxZ0lwpnRgFNE=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by DS7PR10MB7298.namprd10.prod.outlook.com (2603:10b6:8:ec::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Wed, 23 Oct
- 2024 07:18:39 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%6]) with mapi id 15.20.8069.024; Wed, 23 Oct 2024
- 07:18:39 +0000
-Date: Wed, 23 Oct 2024 08:18:35 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v4 2/4] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <f6114921-d3c7-4092-b503-09f99d98ad83@lucifer.local>
-References: <cover.1729198898.git.lorenzo.stoakes@oracle.com>
- <3bf7f2d8efc768007b5de8122275405afc9942d4.1729198898.git.lorenzo.stoakes@oracle.com>
- <fhy36lhgeedrdwoubuuxarownhji2k4avcherjnedtid35yael@jokjnyb6i66b>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fhy36lhgeedrdwoubuuxarownhji2k4avcherjnedtid35yael@jokjnyb6i66b>
-X-ClientProxiedBy: LO2P265CA0316.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::16) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73B15C158
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729674648; cv=none; b=ei/UKs4oaiCGQZTx6ea6UTbLChuuntB3Ov86l19EmywVB9wrOK/2TcSRUc+KHzw6go4Cuu76at7OnXDMSleOWGoS1rdabG8nNg0xHN056wYqenl+ln6Nsll+8jDsnQY551ZL8il3Em9uDXzbbELbthw+gaYHVxvn3YSceBxfOYw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729674648; c=relaxed/simple;
+	bh=E84kqeu0n0OuefaGKwxArs2WVk+D2wgCE5LexsFw0CI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zes71g26joABYZQ9axLCBdpk/RYCq0cl5hiuDxU/Xl3ZP4Nyolk6L4FdUGjb8mvAcYo/sqtLEgWqxQ+i1r7CGretLwKdhfGbQfo8sJSXHlSRG1FWN4hTyIjG8tCdxcoMNbyviqdSCZwlCThNRTqZMy0NwFwynqhp5OzU1Rb21jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gdu57lT+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729674645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4qR7s5/YcYr4WSYxIRlMa8VmM6jDfPPOY2YEUoQUJHw=;
+	b=Gdu57lT+QGosfmpVJKIbYu3DFegWAw2Msc+Vk+W0uPrbpPrU17w9BNqmN7yumA2pqAaQ7/
+	FIoobEbUlQxWouhDq0idUaCSpE3F3mJCDc2t7UEhNjuk+e+Tua0iQDQx13z0QFNZYSPq87
+	QMArJ2HxjkfBNJuEkZ4tlH9Wge8orf4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-mmDTLKKqOCaja--L7qEXHQ-1; Wed, 23 Oct 2024 05:10:43 -0400
+X-MC-Unique: mmDTLKKqOCaja--L7qEXHQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d3e8dccc9so3691712f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 02:10:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729674642; x=1730279442;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4qR7s5/YcYr4WSYxIRlMa8VmM6jDfPPOY2YEUoQUJHw=;
+        b=nsWmFuQYjM5qxK1p/OrCsy7AhGNoHVyqyIt1nTwTqbqatS+eTUEbcI0suT939lChv9
+         3JoL/HA3Y53miGcfeoJlN7ApjeOk7huTK//ZI5lXodIXCLwPj1K8FfAPudd81wrCdoRY
+         1K2+sgr95h8+R6whAPd4jb2SjuOSB5XJ11uZPMDo7coA+oUOfDHQnYtl0N9a+IvMnGSa
+         29oktkzVwdWgpdqEacSh5SRnJ0k2Uol54lMwTrjpD5/jdYhpSpgNOjdcpiBOX95bhUfD
+         BP+SUymZpmcxZtIt19QitUkBl8Z94zQezJHsIVhovUNLd2IOot4QgMWgJ9Nol1JOdO7L
+         3rlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnwu/IkdVCABMWCjzWrz5ASpy4rHXo1O+1G+qx4NXuy0hhdLJXYmprRjdeFzzy67yPsgbwdGVN0pXyCDeQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YweHrJ8c+fQcK43UhodMUPTI+PuDokxTc4QRXxtjuMrLgN6EM54
+	7svpxaBiRfhKQiL4HPHLkO9PhrAe4eL5a+G3+eKR2Qvxx0uJ0ZKIW/vVhNPcvKEg9l7+1ZV0/LS
+	b2nwInkyxFCdnBidAiPCx/9/pVTNdVzn3dzikzsZ2aomIhODBC98kvdAItXS6cwM=
+X-Received: by 2002:a05:6000:1e42:b0:37d:3777:2ac6 with SMTP id ffacd0b85a97d-37efcf4aa55mr1076209f8f.35.1729674642235;
+        Wed, 23 Oct 2024 02:10:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzDCWQnUvtH6U4gxYTqlsphdpRkMUrgcX5wGafJCiuvfgJrDXvVXX/MmnjVlR1b6y2Ia3oTw==
+X-Received: by 2002:a05:6000:1e42:b0:37d:3777:2ac6 with SMTP id ffacd0b85a97d-37efcf4aa55mr1076187f8f.35.1729674641762;
+        Wed, 23 Oct 2024 02:10:41 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70c:cd00:c139:924e:3595:3b5? (p200300cbc70ccd00c139924e359503b5.dip0.t-ipconnect.de. [2003:cb:c70c:cd00:c139:924e:3595:3b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a614d0sm8466719f8f.63.2024.10.23.02.10.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 02:10:41 -0700 (PDT)
+Message-ID: <f5d70d2c-b7e6-483a-bc07-48947203e832@redhat.com>
+Date: Wed, 23 Oct 2024 11:10:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|DS7PR10MB7298:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fb974b8-e8a3-4d0c-de84-08dcf332eaa0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MyXgXYzcRbT6vfOfBTGhGsJyRALSDriWaGB75cAXqLiGGFGnggG8HLJAteHe?=
- =?us-ascii?Q?cNFK1JtDzAXAdxhTN1mAlCq6RuhZPl8mJ3dhpG86Jy2k7VNd3I83VVVtUr4I?=
- =?us-ascii?Q?3sPAEr+cnuTFrwz53azW9AlgQiY2bQYgVF1BFPZWiz9h0LCtjr8JiKtjLsYM?=
- =?us-ascii?Q?ZEQIHdc3c9vftgm+tUiXZFK4j45g+kwN0mEF3Wcx4tIqSG/mfIiMmuI1+/PW?=
- =?us-ascii?Q?LHjgSudYi/imse8se4PY8n7oMq2ZN0CNcrpzBXTfx3MNtQgCITLHt7sclREO?=
- =?us-ascii?Q?we6wOXWVqsQjriKNyPmBVCNrocFLpOt/mMiYN1jnIEgrca9P22iyszBu/d0Z?=
- =?us-ascii?Q?dXTEwYu2zIYZ8zSlMIctZUGMgg+gnugbYufQSPpOHq30NZ5HkKTNOuULY19U?=
- =?us-ascii?Q?h3AT+/nSiO52tveveZsb6lLvZqlI/ZKrbWuL6CBGGvReQBokxfXetva52Rk6?=
- =?us-ascii?Q?VCYAoViFfLC96/q8m973Iw0ziqf6Zz8Gp2+hxPGHmdqOPhU6v9qzjBfGALE6?=
- =?us-ascii?Q?7fJlz/VfFDm8OcMyzrPCnsL2PFKUoR3B/e7InrSZAEEJhA8ivoleZOW6g7h3?=
- =?us-ascii?Q?3VqOiJrWOfAqVwtY7c+bxP+vWWQjy14uRuUvdf6x1Fj0vd0muMtbNqNVte1d?=
- =?us-ascii?Q?RCdFYhFNrihwWGhXQ3l540bLgYticGreI+bJAhzQmtJcHEyBv3Yb3GibGa51?=
- =?us-ascii?Q?fqkqz4HQZAIc0ImMfGIdWqteBEe7plIAUcSBlhqZh1598XprO66I8tPO3itF?=
- =?us-ascii?Q?uAqEuuPsmGRPGd9JRjI5AGPftXl5h6He8VgVepRb68iJNLuBEPJwWmSpAyFK?=
- =?us-ascii?Q?rl/WZS+AkWhCYSas95a61EvEpYsM7DoVcAU9bg/qxrGPWtQuRuexE3d04+9x?=
- =?us-ascii?Q?tCwP2ycNuHzX2fkbQqtxYJVmtbRzeqa/dLXWOPPMDxtRbzmpXN8RQAbOIVys?=
- =?us-ascii?Q?5Tp6nwj89Q91NUQM4/c8+C7rS6OPgYBvJsCCsrNKhh9hGUFWLa8163uEHFs6?=
- =?us-ascii?Q?DhK6tg6lPrNx/UdtoovIXrnde1Cc8gtJeS9xyr+6+sP5SakCb3+84bgoySba?=
- =?us-ascii?Q?7hrwbLqSndgqZIltXkjU19ZlNq0svbeKWo3N/j5h8ATCFVFQzg63XkRV9LHJ?=
- =?us-ascii?Q?4DysE+aOJPvmaBmm+ZcUa+e5+rs0CVpkXiXm/drWwYmTSKbPGhj47XRA77MU?=
- =?us-ascii?Q?Qy8LjgW3RM3wA+oYmovvTOutOlOm1VvEqgTZcHLeFWaEy+95EXsjwYLtgYkg?=
- =?us-ascii?Q?Sjtd5swxd+TE15vbB0DdPuU0gHlg0+DQ1mzjC1uLOC5YWz/mfYktxkqCVmwf?=
- =?us-ascii?Q?67U=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wWga/6oYFJKvFXPREO/1GY9vS8Z1PCNjDRcbUTQHVY66ishrWVLuQaUA3MMz?=
- =?us-ascii?Q?/HTr+Dm3HXDX0gTq0mUxrLCsc5FmqWDZA/mzoxZue7AbkgBCTSyNIBE1TFLR?=
- =?us-ascii?Q?rzmnARytReYOFwbBMbdKR9IAiTHirGwLOovWgTMJosTTJFpomjh7+JkYkgS1?=
- =?us-ascii?Q?s+7f15UqriHlzORtIMVcBqfcNtlPSPqTYFuMn1F8jv7IP0QuWs1+vhZeLZgP?=
- =?us-ascii?Q?+hZRswmXSHquYdWLHIkH3Nhib3QmRwYEKIz+E+AMKig0YdWUl3+7fJgDxDrI?=
- =?us-ascii?Q?X7kgwXrLmmw0WOKaJuUzJxxY2ZdhmHDrN/Y0Em+FRuSLNyWs/epiZI8KJ6gk?=
- =?us-ascii?Q?5CtbzLGT3LevFlsRYyuewi2Slwlt3Aw2U7Z+xhWth+6+/ISm4rl/WhgZ7YcL?=
- =?us-ascii?Q?ODqk/yzGSyPEDa0ZNv07xSA162Aze6jiXEtKyPU3TfITahjdoWoX112LgBMz?=
- =?us-ascii?Q?jSyZWgTC+IQl4L8Fpt0Bp0Pf+x0ZzlneyJNNXgs7+5lj3TOTTqCu1zzcEKfn?=
- =?us-ascii?Q?pWr4A+IZaEzG+Nz5oK0ofyOwUZsCvRCtGGbIQNZoa9LQm4QqnH0m/4WJjRhq?=
- =?us-ascii?Q?o88C2rVaxoNEwOaY+jkEKoqmUxDH6HwPcVMYqsJ6RaDsOeT4yec+D9WEqE7k?=
- =?us-ascii?Q?7jnCDyoYmOB/za6dEgsNCBzRygjdrcM2BnL51BDVhgSvN+ymYmRp/MLY2IzU?=
- =?us-ascii?Q?m5JdI3G3KMJXA0RRjcsE0lRUKHZQceG7IG77uvHMxhZYDAOhBBFxxaQyqh6d?=
- =?us-ascii?Q?gBlpAM4cJd/tZ3R/B9V8IzDGH7nCguuV6DAXKTjSZEciKbssRvgW7zqnWK1m?=
- =?us-ascii?Q?a2iOf8yQNEMKnFy1biZx9dwwdfCkwj7xhIXZvv+CjzIwFqUFmE1O8shPmbSV?=
- =?us-ascii?Q?wSSOZT6qDbAB83ElpnH8IS+MxvpJtzxw8mo5pTERV/VRZusrXFouGOCi/0JV?=
- =?us-ascii?Q?a/FS9smfYr4synCmmb+OCbMRK/KVLptfHWV6BVlPVti03PR36m8FIN0TYonS?=
- =?us-ascii?Q?FY+UvhQRBv6Ys8UMCISDJbV5yXX14uTxJQ81lFy6BuUjcLDgsXQXF9o0lXAI?=
- =?us-ascii?Q?E00AkQKL0jloyAhSuabkmV9p/hU1aAO0HY3hMnFnVnIuSyEahRfrd6XvDJMf?=
- =?us-ascii?Q?YMVcWAK4feiph/bNy9+qCti7/7uP3mnBI+CiH6pjxbkACM/jVmoEhKiRzpum?=
- =?us-ascii?Q?O7oet4P3gIxdh11q3X9fDNrvXsupFQyuXOEDuoAwWLYrtHmsl6OXvCOmUU15?=
- =?us-ascii?Q?bDrH3xfhQ+piQBJOxwuEhaTersgKgIXSqPojhsHwHM00Q9VlzBt5i2JtFkzC?=
- =?us-ascii?Q?pZD0rNwmGgqHvWh69bFF/jU9yXyvOdMYmw5cUiCPh000997/2L/xl2I2QuiX?=
- =?us-ascii?Q?k41F+l2J25QRQJq0HtD8n8kXLvd7b6N4jvlApiQRJy9+jRcgOLdenQenE9xn?=
- =?us-ascii?Q?TNiG2k8xudCyQcINKYt/qkDCgxWqeRsu1TusaGazA3+9vt8XwVn1DAsdRe7W?=
- =?us-ascii?Q?V2PpzX3U9bcBvxA961CrPrV5cq1KW0ku5mn8H5rBW/+bL+2qpHDWSeW7Jdqt?=
- =?us-ascii?Q?KCal5InSoVjfn0DqhLIbTIpw3qasspYtDngSKA3dx5uFv25fU0sT4MmHLZ89?=
- =?us-ascii?Q?YG1hud/c5dzKLnFSBwQkdPY9yzLZc/QtcnqMrI3T5WPz+mOTzfwSSdpA5ASp?=
- =?us-ascii?Q?dNy44w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	JUp7S3Y7ybiHgAWrio29wMoQMjDjRTlUt4f3TTQM5gtj2khtfGAbZ4Xuy7G/zZ615Q6b5M9xQd7fEuGIzOiVfGy+HQK60B+4TS18UkWethWSM7BUp8rUqBwN1CIy4+sBe6iZjjadxgZ3BgzRUM7WoQmD/aj+fOrCb6Hemr2G2o1shyKHxbIRgtmR7EPN4kXGjRmZlh9nnPAnA0czBJ+ZBTRtQsxhAQdnUIzqCX0B7h4H/KmOkT89Gd02AB6W9ONi8i54IUDW9P5LhVGjOyG8Jpok651aF1Xw4j0dtFlS7uhLKDqmunw4jaiDpYAaCaHAVCPhnVCgPwVFukcIe/yTEKMIPBmxmw3XZyLkHJmjPZ/AjrdDQnAbMpQ1jPrC/HM0/ykKfJCYEoOENWEyKA5kB3OWyhmGX+vlAlKnEwUwkSu9Fi2be5v1A5RGzw9h5e3f/FopFfSrcBN+kmtICg3MDf/oUUD2C6aggazF/4NpBxrYQH6UVl/Wybm78A8NKDR6y4jh+SPQMOqkD6NhHU2Nc21xBbjLb7sLnKuJe9lnD3ZxsFHYZOuouj1szTwfBAMVJyCtwSkAh+m0JdYIJSvnPhoFCNLGTU3OjqJ71VIFZn0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fb974b8-e8a3-4d0c-de84-08dcf332eaa0
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 07:18:39.2836
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gP3ZVXQmldq67UNGFLe5oY6/nAMQVBkPkeQPN/TcWst05zf+u1/bg4w9bmXahSC9B0beKS08FzGhlGxtwEouaG6b2xREPPqjG9ofSMViduo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7298
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-23_06,2024-10-22_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 adultscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410230044
-X-Proofpoint-ORIG-GUID: 1jOczw_FEADcYdKZF94LXkzlg_liQG1q
-X-Proofpoint-GUID: 1jOczw_FEADcYdKZF94LXkzlg_liQG1q
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/17] mm: MM owner tracking for large folios
+ (!hugetlb) + CONFIG_NO_PAGE_MAPCOUNT
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, x86@kernel.org,
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+References: <20240829165627.2256514-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240829165627.2256514-1-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 05:53:00PM -0700, Shakeel Butt wrote:
-> On Thu, Oct 17, 2024 at 10:05:50PM GMT, Lorenzo Stoakes wrote:
-> > It is useful to be able to utilise the pidfd mechanism to reference the
-> > current thread or process (from a userland point of view - thread group
-> > leader from the kernel's point of view).
-> >
-> > Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
-> > PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
-> >
-> > For convenience and to avoid confusion from userland's perspective we alias
-> > these:
-> >
-> > * PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
-> >   the user will want to use, as they would find it surprising if for
-> >   instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
-> >   and that failed.
-> >
-> > * PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
-> >   have no concept of thread groups or what a thread group leader is, and
-> >   from userland's perspective and nomenclature this is what userland
-> >   considers to be a process.
->
-> Should users use PIDFD_SELF_PROCESS in process_madvise() for self
-> madvise() (once the support is added)?
+On 29.08.24 18:56, David Hildenbrand wrote:
+> RMAP overhaul and optimizations, PTE batching, large mapcount,
+> folio_likely_mapped_shared() introduction and optimizations, page_mapcount
+> cleanups and preparations ... it's been quite some work to get to this
+> point.
+> 
+> Next up is being able to identify -- without false positives, without
+> page-mapcounts and without page table/rmap scanning -- whether a
+> large folio is "mapped exclusively" into a single MM, and using that
+> information to implement Copy-on-Write reuse and to improve
+> folio_likely_mapped_shared() for large folios.
+> 
+> ... and based on that, finally introducing a kernel config option that
+> let's us not use+maintain per-page mapcounts in large folios, improving
+> performance of (un)map operations today, taking one step towards
+> supporting large folios  > PMD_SIZE, and preparing for the bright future
+> where we might no longer have a mapcount per page at all.
+> 
+> The bigger picture was presented at LSF/MM [1].
+> 
+> This series is effectively a follow-up on my early work from last
+> year [2], which proposed a precise way to identify whether a large folio is
+> "mapped shared" into multiple MMs or "mapped exclusively" into a single MM.
+> 
+> While that advanced approach has been simplified and optimized in the
+> meantime, let's start with something simpler first -- "certainly mapped
+> exclusive" vs. ""maybe mapped shared" -- so we can start learning about
+> the effects and TODOs that some of the implied changes of losing
+> per-page mapcounts has.
+> 
+> I have plans to exchange the simple approach used in this series at some
+> point by the advanced approach, but one important thing to learn if the
+> imprecision in the simple approach is relevant in practice.
+> 
+> 64BIT only, and unless enabled in kconfig, this series should for now
+> not have any impact.
+> 
+> 
+> 1) Patch Organization
+> =====================
+> 
+> Patch #1 -> #4: make more room on 64BIT in order-1 folios
+> 
+> Patch #5 -> #7: prepare for MM owner tracking of large folios
+> 
+> Patch #8: implement a simple MM owner tracking approach for large folios
+> 
+> patch #9: simple optimization
+> 
+> Patch #10: COW reuse for PTE-mapped anon THP
+> 
+> Patch #11 -> #17: introduce and implement CONFIG_NO_PAGE_MAPCOUNT
+> 
+> 
+> 2) MM owner tracking
+> ====================
+> 
+> Similar to my advanced approach [2], we assign each MM a unique 20-bit ID
+> ("MM ID"), to be able to squeeze more information in our folios.
+> 
+> Each large folios can store two MM-ID+mapcount combination:
+> * mm0_id + mm0_mapcount
+> * mm1_id + mm1_mapcount
+> 
+> Combined with the large mapcount, we can reliably identify whether one
+> of these MMs is the current owner (-> owns all mappings) or even holds
+> all folio references (-> owns all mappings, and all references are from
+> mappings).
+> 
+> Stored MM IDs can only change if the corresponding mapcount is logically
+> 0, and if the folio is currently "mapped exclusively".
+> 
+> As long as only two MMs map folio pages at a time, we can reliably identify
+> whether a large folio is "mapped shared" or "mapped exclusively". The
+> approach is precise.
+> 
+> Any MM mapping the folio while two other MMs are already mapping the folio,
+> will lead to a "mapped shared" detection even after all other MMs stopped
+> mapping the folio and it is actually "mapped exclusively": we can have
+> false positives but never false negatives when detecting "mapped shared".
+> 
+> So that's where the approach gets imprecise.
+> 
+> For now, we use a bit-spinlock to sync the large mapcount + MM IDs + MM
+> mapcounts, and make sure we do keep the machinery fast, to not degrade
+> (un)map performance too much: for example, we make sure to only use a
+> single atomic (when grabbing the bit-spinlock), like we would already
+> perform when updating the large mapcount.
+> 
+> In the future, we might be able to use an arch_spin_lock(), but that's
+> future work.
+> 
+> 
+> 3) CONFIG_NO_PAGE_MAPCOUNT
+> ==========================
+> 
+> patch #11 -> #17 spell out and document what exactly is affected when
+> not maintaining the per-page mapcounts in large folios anymore.
+> 
+> For example, as we cannot maintain folio->_nr_pages_mapped anymore when
+> (un)mapping pages, we'll account a complete folio as mapped if a
+> single page is mapped.
+> 
+> As another example, we might now under-estimate the USS (Unique Set Size)
+> of a process, but never over-estimate it.
+> 
+> With a more elaborate approach for MM-owner tracking like #1, some things
+> could be improved (e.g., USS to some degree), but somethings just cannot be
+> handled like we used to without these per-page mapcounts (e.g.,
+> folio->_nr_pages_mapped).
+> 
+> 
+> 4) Performance
+> ==============
+> 
+> The following kernel config combinations are possible:
+> 
+> * Base: CONFIG_PAGE_MAPCOUNT
+>    -> (existing) page-mapcount tracking
+> * MM-ID: CONFIG_MM_ID && CONFIG_PAGE_MAPCOUNT
+>    -> page-mapcount + MM-ID tracking
+> * No-Mapcount: CONFIG_MM_ID && CONFIG_NO_PAGE_MAPCOUNT
+>    -> MM-ID tracking
+> 
+> 
+> I run my PTE-mapped-THP microbenchmarks [3] and vm-scalability on a machine
+> with two NUMA nodes, with a 10-core Intel(R) Xeon(R) Silver 4210R CPU @
+> 2.40GHz and 16 GiB of memory each.
+> 
+> 4.1) PTE-mapped-THP microbenchmarks
+> -----------------------------------
+> 
+> All benchmarks allocate 1 GiB of THPs of a given size, to then fork()/
+> munmap/... PMD-sized THPs are mapped by PTEs first.
+> 
+> Numbers are increase (+) / reduction (-) in runtime. Reduction (-) is
+> good. "Base" is the baseline.
+> 
+> munmap: munmap() the allocated memory.
+> 
+> Folio Size |  MM-ID | No-Mapcount
+> --------------------------------
+>      16 KiB |   2 % |        -8 %
+>      32 KiB |   3 % |        -9 %
+>      64 KiB |   4 % |       -16 %
+>     128 KiB |   3 % |       -17 %
+>     256 KiB |   1 % |       -23 %
+>     512 KiB |   1 % |       -26 %
+>    1024 KiB |   0 % |       -29 %
+>    2048 KiB |   0 % |       -31 %
+> 
+> -> 32-128 with MM-ID are a bit unexpected: we would expect to see the worst
+>     case with the smallest size (16 KiB). But for these sizes also the STDEV
+>     is between 1% and 2%, in contrast to the others (< 1 %). Maybe some
+>     weird interaction with PCP/buddy.
+> 
+> fork: fork()
+> 
+> Folio Size |  MM-ID | No-Mapcount
+> --------------------------------
+>      16 KiB |    4 % |       -9 %
+>      32 KiB |    1 % |      -12 %
+>      64 KiB |    0 % |      -15 %
+>     128 KiB |    0 % |      -15 %
+>     256 KiB |    0 % |      -16 %
+>     512 KiB |    0 % |      -16 %
+>    1024 KiB |    0 % |      -17 %
+>    2048 KiB |   -1 % |      -21 %
+> 
+> -> Slight slowdown with MM-ID for the smallest folio size (more what we
+> expect in contrast to munmap()).
+> 
+> cow-byte: fork() and keep the child running. write one byte to each
+>    individual page, measuring the duration of all writes.
+> 
+> Folio Size |  MM-ID | No-Mapcount
+> --------------------------------
+>      16 KiB |    0 % |        0 %
+>      32 KiB |    0 % |        0 %
+>      64 KiB |    0 % |        0 %
+>     128 KiB |    0 % |        0 %
+>     256 KiB |    0 % |        0 %
+>     512 KiB |    0 % |        0 %
+>    1024 KiB |    0 % |        0 %
+>    2048 KiB |    0 % |        0 %
+> 
+> -> All other overhead dominates even when effectively unmapping
+>     single pages of large folios when replacing them by a copy during write
+>     faults. No change, which is great!
+> 
+> reuse-byte: fork() and wait until the child quit. write one byte to each
+>    individual page, measuring the duration of all writes.
+> 
+> Folio Size |  MM-ID | No-Mapcount
+> --------------------------------
+>      16 KiB |  -66 % |      -66 %
+>      32 KiB |  -65 % |      -65 %
+>      64 KiB |  -64 % |      -64 %
+>     128 KiB |  -64 % |      -64 %
+>     256 KiB |  -64 % |      -64 %
+>     512 KiB |  -64 % |      -64 %
+>    1024 KiB |  -64 % |      -64 %
+>    2048 KiB |  -64 % |      -64 %
+> 
+> -> No surprise, we reuse all pages instead of copying them.
+> 
+> child-reuse-bye: fork() and unmap the memory in the parent. write one byte
+>    to each individual page in the child, measuring the duration of all writes.
+> 
+> Folio Size |  MM-ID | No-Mapcount
+> --------------------------------
+>      16 KiB |  -66 % |      -66 %
+>      32 KiB |  -65 % |      -65 %
+>      64 KiB |  -64 % |      -64 %
+>     128 KiB |  -64 % |      -64 %
+>     256 KiB |  -64 % |      -64 %
+>     512 KiB |  -64 % |      -64 %
+>    1024 KiB |  -64 % |      -64 %
+>    2048 KiB |  -64 % |      -64 %
+> 
+> -> Same thing, we reuse all pages instead of copying them.
+> 
+> 
+> For 4 KiB, there is no change in any benchmark, as expected.
+> 
+> 
+> 4.2) vm-scalability
+> -------------------
+> 
+> For now I only ran anon COW tests. I use 1 GiB per child process and use
+> one child per core (-> 20).
+> 
+> case-anon-cow-rand: random writes
+> 
+> There is effectively no change (<0.6% throughput difference).
+> 
+> case-anon-cow-seq: sequential writes
+> 
+> MM-ID has up to 2% *lower* throughout than Base, not really correlating to
+> folio size. The difference is almost as large as the STDEV (1% - 2%),
+> though. It looks like there is a very slight effective slowdown.
+> 
+> No-Mapcount has up to 3% *higher* throughput than Base, not really
+> correlating to the folio size. However, also here the difference is almost
+> as large as the STDEV (up to 2%). It looks like there is a very slight
+> effective speedup.
+> 
+> In summary, no earth-shattering slowdown with MM-ID (and we just recently
+> optimized folio->_nr_pages_mapped to give us some speedup :) ), and
+> another nice improvement with No-Mapcount.
+> 
+> 
+> I did a bunch of cross-compiles and the build bots turned out very helpful
+> over the last months. I did quite some testing with LTP and selftests,
+> but x86-64 only.
 
-You can use either it will make no difference as both will get you to
-current->mm which has to be shared. So I'd go with PIDFD_SELF for brevity
-:)
+Gentle ping. I might soon have capacity to continue working on this. If 
+there is no further feedback I'll rebase and resend.
 
-This series and the prerequisites I already added to process_madvise()
-already provide support so with this in you can just use this for that.
+-- 
+Cheers,
 
->
-> >
-> [...]
-> >
-> > +static struct pid *pidfd_get_pid_self(unsigned int pidfd, unsigned int *flags)
-> > +{
-> > +	bool is_thread = pidfd == PIDFD_SELF_THREAD;
-> > +	enum pid_type type = is_thread ? PIDTYPE_PID : PIDTYPE_TGID;
-> > +	struct pid *pid = *task_pid_ptr(current, type);
-> > +
-> > +	/* The caller expects an elevated reference count. */
-> > +	get_pid(pid);
->
-> Do you want this helper to work for scenarios where pid is used across
-> context? Otherwise can't we get rid of this get and later put for self?
+David / dhildenb
 
-Yeah I hate doing this but it's to keep things as generic as possible and
-to ensure that no user of this logic accidentally drops the reference count
-unintentionally + to reduce churn.
-
-I think doing it this way is better than trying to special case the put,
-and in any case if you did the 'old' way of referencing yourself you'd have
-ended up doing this anyway so it's at least no delta!
-
->
-> > +	return pid;
-> > +}
-> > +
->
-> Overall looks good to me.
->
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-
-Thanks!
 
