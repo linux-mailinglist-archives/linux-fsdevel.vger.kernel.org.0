@@ -1,157 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-32671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8B89ACEC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 17:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEB09ACFB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 18:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF99288752
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 15:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C37BB25EE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 16:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C3D1C75FA;
-	Wed, 23 Oct 2024 15:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB84E1CB53D;
+	Wed, 23 Oct 2024 16:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RorhM/lW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSfv2Heq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97C91C1746;
-	Wed, 23 Oct 2024 15:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B501CB325;
+	Wed, 23 Oct 2024 16:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729697312; cv=none; b=Z86HI82KiT1F6AbveMZ/QsHSMfyu2+NqvUX5/05OTvcxxGKOie40Uy7ZcKfz+n3MYJfDyFLGlVxfioiRMEdKf2EfmfxQb4N2/Q+NYF+O/p3rTQ6vCt9lRNOnqDPdjumpslH8BfEsD2Q+rNZE4usjinNeK05Pq2ZI/WKESJMGS/g=
+	t=1729699278; cv=none; b=tQgMI4vUqtuhVBCQm4cEOrcwcWQEJL4Id65EdLXw2eqyCRs5t//5anbRF+Rka059+mBE4to6LAbo+I2gqSAxGCebwhctKa3a7z0UsdSIo6D1kJFWZq8q9mNDMr1zHRcsE2+1rYmIuNI8lIw7rsErxP2B1C4moln2c2xsmfdpFmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729697312; c=relaxed/simple;
-	bh=egzzzpluxju+Brk1kUFIgghBxAeHeEx6E4RAuoSQXek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQJ3JgwqvxZWNuM+nJaDv/cUug1OeAJ8dMuqpMsd5iCYOcOzW2Hpiw6sM8dUF1cQ/BWsf7ekwat75oEG7RGgdZ9K0+yZ9SQTKT0+fHsoSp6dI/izRtSsOGXzk0SY6eBdp9GAPExc4+zp7hPRviuNTUn1tiTajluz+WWxvFyL3OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RorhM/lW; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729697291; x=1730302091; i=markus.elfring@web.de;
-	bh=EAENFtjl9sz4HwwtPOdI6rZgMghwnGzijGkxKkOHbLA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RorhM/lWMk7pMNYl/E56jF5zJnCPDxNZYm8GttKhQcpvr7Nysg+b59VaMiin7hs4
-	 ToRMfpcavb5zcIAtM4fxCVftGaqwHAz9Y5Qsh7KPll3M6qWZWBQEh+jtzSpKtUrRw
-	 F1apT6Hr3F8IX6E4hX3CvL+rSlLStrxt29yLoUME6eRzUk8Ioo0JUjCpzf4DOOgSD
-	 s3iVx+Dw11fBoE7299sDPxkNPCZcl/x6H7+qNYYAHUC2rD9Lsn9x3/N8fdj7T0y3K
-	 pBqPTY6Z+2FIZ64D8QcUAQn7Ul6F7F4Ky2jN35NUxQerio0FEpLbpn8NEsSgHJjwl
-	 WFn0V0When8XR0+whA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1u26IY2ORJ-00vV2M; Wed, 23
- Oct 2024 17:28:11 +0200
-Message-ID: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
-Date: Wed, 23 Oct 2024 17:27:11 +0200
+	s=arc-20240116; t=1729699278; c=relaxed/simple;
+	bh=W5xFKetcwQ/QLsjWJsUT13T/vKZJ/kfXRLME8PuLU+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHw3JOhIKUs9pr2oWSFohAqJdB3NB+VatwCONTiuWH4qFlv403SRG3M3gY0/MwuLRoxbLJkYBzLQxtMIWuMvKPqfw7eHiBt/dx8yZ/UMDSIbRTiWB6isNG+16cAtEH/WegHxUrwkWcsDihcdUehRR+74asUgYaefTGCGfhoCi4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSfv2Heq; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4609b968452so49535451cf.3;
+        Wed, 23 Oct 2024 09:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729699275; x=1730304075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/1XJzYLbLLAyJGuYG7+ES3prZrlUcxYGKyNEplqU2E=;
+        b=FSfv2HeqwnNShXj0lEOGrb+B+S4s9px/n8uNW5cHjONcdEhJK83LuqIDaYcEtynULe
+         RGFX8hCf0ul+/1bWyvUKln5RDb5ectmppuYuE49Cj4JY+ymzzBGT0kLGZq90a9uwcF/g
+         gF61maFMfdIC3Xx9S3Cvd4Bdpvf0yhMUYrz6QcAh4p2ZJpHyvR9nmSj5OJ2f8DY0zY/M
+         C8cu/8vx7Ywb/woulhKMMxfgx89rSzjRsjiXpPbcHLPnVYQt8H90Asij54HfNz+x4qA0
+         +mOVDPiKq1UVWH8SCQl1zqIi24Z3xhbscQ6WnFTdJ8dAKuM4dDBXdkWtIuDa+8ur8t0r
+         cuKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729699275; x=1730304075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/1XJzYLbLLAyJGuYG7+ES3prZrlUcxYGKyNEplqU2E=;
+        b=dfZaOw0d3HmUzsojg67ZaG0Ek05phYfz9G3BdMJXsxlEzafF+ffT9DJgNitJJVkdWf
+         hS8AomqNssib29sxmRPldngFzlU814qrw0NaSEQsjyCSlr/6P3bhiZ2QXGgzgn/ayo3A
+         f2Vtwl/7IJ36lmwV4qHU/ASITPboSR1m2A4lj1L+2dM09dKzgclEOkgkSLo0KKGjhspW
+         Tw0Lb52CMO3VXg7mbB5c4FUVV0MrF+HWbM0hnkZlJPWuvN5tkgLRQ5SwZfytz3OvBoVC
+         yp/YOzPFxlcDDonEoEqzmmt6soJo9d51M5V49Kw5UVtQSANyiYLU1AQ5I/8MH2+zFTc5
+         TrdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+QY60t438xQhoHilxvbrI68PK+L8ITgDOqXVvIagN6aiOL0cooZYT6jhn4FK0+wxObZIDj/qxp2REeV1Y@vger.kernel.org, AJvYcCXv6z16Y3XHtM1zX0IuMgU66erVQ5JVBIaYketiBDDNCXp425J1qCzDQ0N98AmJwyuU11NH+WlKMELL0/BYPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA5aRqAgoDlxMdRU7vlJPDrxkzYLJ/bURCp5U5wWVeHtx5Kkok
+	xV+iPK8MVFyxOoFnG7RY2EfTlOlxuKWjTmDiz+/sUooGIFT/4fcWuUQ1sRu/3iNQ7IXuFd9XGIz
+	NtiDKoCS+hP1ua/tXXzRpVIJUvWKeFk30
+X-Google-Smtp-Source: AGHT+IEeUs0dNaqTeC+A52s+LqOitE1p7o2Pp7vrkDaTkylmfnvAgE1F69JGVrjhbggUQUF95JMgL+komefXR6klygg=
+X-Received: by 2002:ac8:5f88:0:b0:461:1cf4:f2c1 with SMTP id
+ d75a77b69052e-4611cf4f502mr19258331cf.46.1729699274789; Wed, 23 Oct 2024
+ 09:01:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
-To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Joel Granados <j.granados@samsung.com>
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
- <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
- <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
- <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
-Content-Type: text/plain; charset=UTF-8
+References: <20241022155513.303860-1-mszeredi@redhat.com> <CAJfpegtfa5LbGPH9CLatQAKud2tU8-uSDu4qRPiFwpLzE1Ggpw@mail.gmail.com>
+In-Reply-To: <CAJfpegtfa5LbGPH9CLatQAKud2tU8-uSDu4qRPiFwpLzE1Ggpw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 23 Oct 2024 18:01:03 +0200
+Message-ID: <CAOQ4uxhEU1K=_wdF5ri+WOMVJ3_t_B1JGyyxvnyeSw3nSUc=gg@mail.gmail.com>
+Subject: Re: [PATCH] ovl: clarify dget/dput in ovl_cleanup()
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UL0i4NV2r5DTLgpQYTFUVA8BVfy7ERUfYRECBvNrEYUZxV1vf82
- ljLxLuIfeQwb8Wn63oq21SJ0Qz07P6Lya7SlCHLSp5sUALM+6dzWKn9ROtcUsvITkOZDndh
- JXbGdgqMXjfnCXIVjXqdG434ElGeAbvrjtugLlx5TrANvIa5Lui1T1SWbLBiyKB4sNu9BFF
- qk2Z2+6lUmcx+RocxI76w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nMrifFBllBk=;+x1mrZqyfMrCBW3w2jah6QYdGai
- Ah816exJrIbb/2kU5S/UvpIQ0ttC0pgMZ0SZwACqM0/Wd5BG4D7H4H+aL3b3QR7cmwtWAgQR1
- a3r3SV9O4/a+RsPinWna6+TgFpCVXMRRsMOr8XIowuFcFU6zhe5c0E/lIWFWMdNO0HGhpsU9E
- mFxyYJG9OOYUU4YRbcQcWEVcLE9ha8OYQZ/eHigSon4oZuEUCJCb4FmG+0JqtrEpoAcmh5+wN
- NKZ/qqaKIuBB+vqfF/31mrynxkpxoB6lldaA2wFJW27tRLqSlO+mTfreurXqvmuv0Ilivfxz2
- AcdCHjEXKQtbQpTPsYiR8+PvUCkPCMBk5Wd0NA9OOqO2B3YlVwjCUAMXtT9bOdJ625C3UDLkr
- p/dZ2ORqJs6f5SfWc4UTTLe2ENbBo8mtssycg/D2QrWQxo7GUi6s4XCfD+4eJ/WLe/qXOlvbl
- /VUOWg3kXiZ8XzHAa8skBF2ORT2K+4dd4lQq+X6wNqsQ7+PElhjGvWhIk5XEVvbbqXkD4ddoB
- z+D8xZGahvKE991VoZR+iYK44atAX1VJSoQebAMH9HRxCXl8sG2/zvEO7WLR6bDduscZCGmCK
- gb+JIH/J3uaIUFbGJQCVbiaSOOxXlIVAvqkmk4wcGocbEvDwy04EQK/FNIhnMD7he5DHERr/R
- QzFxDZ1HyuN3dFb3E6sJlwTzsp5gsl8NZBJDRTjSAbPnsYKHTa4FnhH2nq2krClRCUt0UITLR
- ueqQmBOf2MXdeTczDlsa+VbFIB5sjB0nBW295qrpHPZ7axQ2EhpniQohqdEcHB09wq1mfmx4S
- qpGFbKxAoRd21RBbEGvGxOIw==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Oct 2024 16:54:59 +0200
+On Tue, Oct 22, 2024 at 6:04=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Tue, 22 Oct 2024 at 17:56, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> >
+> > Add a comment explaining the reason for the seemingly pointless extra
+> > reference.
+> >
+> > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/overlayfs/dir.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> > index ab65e98a1def..9e97f7dffd90 100644
+> > --- a/fs/overlayfs/dir.c
+> > +++ b/fs/overlayfs/dir.c
+> > @@ -28,6 +28,10 @@ int ovl_cleanup(struct ovl_fs *ofs, struct inode *wd=
+ir, struct dentry *wdentry)
+> >  {
+> >         int err;
+> >
+> > +       /*
+> > +        * Cached negative upper dentries are generally not useful, so =
+grab a
+> > +        * ref to the victim to keep it from turning negative.
+> > +        */
+>
+> In fact an explicit d_drop() after the fact would have exactly the
+> same effect, so maybe that would be cleaner...
+>
 
-Replace two dput(child) calls with one that occurs immediately before
-the IS_ERR evaluation. This transformation can be performed because
-dput() gets called regardless of the value returned by IS_ERR(res).
+Agree.
 
-This issue was transformed by using a script for the
-semantic patch language like the following.
-<SmPL>
-@extended_adjustment@
-expression e, f !=3D { mutex_unlock }, x, y;
-@@
-+f(e);
- if (...)
- {
- <+... when !=3D \( e =3D x \| y(..., &e, ...) \)
--   f(e);
- ...+>
- }
--f(e);
-</SmPL>
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-V2:
-* This update suggestion was rebased on source files of the software
-  =E2=80=9CLinux next-20241023=E2=80=9D.
-
-* The change description was adjusted according to the wording preferences
-  by Joel Granados.
-
-* An SmPL script example was appended.
-
-
- fs/proc/proc_sysctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 9b9dfc450cb3..b277a1ca392e 100644
-=2D-- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
- 			res =3D d_splice_alias(inode, child);
- 			d_lookup_done(child);
- 			if (unlikely(res)) {
--				if (IS_ERR(res)) {
--					dput(child);
--					return false;
--				}
- 				dput(child);
-+
-+				if (IS_ERR(res))
-+					return false;
-+
- 				child =3D res;
- 			}
- 		}
-=2D-
-2.47.0
-
+Thanks,
+Amir.
 
