@@ -1,192 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-32670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A1E9ACC47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 16:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8B89ACEC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 17:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7417B210AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 14:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF99288752
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 15:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603E1BDA8F;
-	Wed, 23 Oct 2024 14:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C3D1C75FA;
+	Wed, 23 Oct 2024 15:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X9czwW9x"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RorhM/lW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421EF1AAE00
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 14:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97C91C1746;
+	Wed, 23 Oct 2024 15:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693747; cv=none; b=Vd+CZsmkaYxujWOgdQkxoqUA52Q1IDZdDO3bMAwo+8aRTNyPaiW/Z/+sMSrWo1Svkpn/Hzg2bY/Gr0Fbcfuye/f2PtqATJUmyndhT3eF7JJdM5T+GD0eTJ2ZFykXSEqtzkgDi33neC6Dk3GahhLOtzCt9QB3OX4/jnQQ0kLAk8Y=
+	t=1729697312; cv=none; b=Z86HI82KiT1F6AbveMZ/QsHSMfyu2+NqvUX5/05OTvcxxGKOie40Uy7ZcKfz+n3MYJfDyFLGlVxfioiRMEdKf2EfmfxQb4N2/Q+NYF+O/p3rTQ6vCt9lRNOnqDPdjumpslH8BfEsD2Q+rNZE4usjinNeK05Pq2ZI/WKESJMGS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693747; c=relaxed/simple;
-	bh=Tu8ecogdCdvt2J0mJBiKRPfQ+w1yLZPbr87RxntHYwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c/Cw15stnOZNPAIIJho5XAiDScaMIqx2MtEpS2wtTu2vasEF4pNlI8pHRAwmfKJhW3AeiI+ugdM378dPr4DZc2KzTjd+/OseVq9nmyH1UH6q4zaMrWAZKenuJqHhUMl+t2A0IhEpbZKihqTZ1NvQwaz8qHc/StBNsuK49QnLxhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X9czwW9x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729693744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=e7NVJ2YYlWVkHDgXUttFCV5Utvw2Dli9IBctxz9RysU=;
-	b=X9czwW9xnvxwQg0vLkyNbKZ2hLslnGw8IeaybhiBTkr2FWaZvPOZSZ8P2PMbQhp2ljFY70
-	uLq8NtSShMTa3dl8ynklYqOtBAXeXJvvsFSzP9Dz0RZcO5Ur+VAFYQLAFBebRkRqc1FLSW
-	18kyhourMxy1aVfuMKvuyNnieIv4uMI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-SzzrWgHYPEKYrBQDQHWclA-1; Wed,
- 23 Oct 2024 10:29:02 -0400
-X-MC-Unique: SzzrWgHYPEKYrBQDQHWclA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B36BB1955EA5;
-	Wed, 23 Oct 2024 14:29:01 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.80.135])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 182F519560AE;
-	Wed, 23 Oct 2024 14:29:00 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Subject: [PATCH] iomap: elide zero range flush from partial eof zeroing
-Date: Wed, 23 Oct 2024 10:30:29 -0400
-Message-ID: <20241023143029.11275-1-bfoster@redhat.com>
+	s=arc-20240116; t=1729697312; c=relaxed/simple;
+	bh=egzzzpluxju+Brk1kUFIgghBxAeHeEx6E4RAuoSQXek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQJ3JgwqvxZWNuM+nJaDv/cUug1OeAJ8dMuqpMsd5iCYOcOzW2Hpiw6sM8dUF1cQ/BWsf7ekwat75oEG7RGgdZ9K0+yZ9SQTKT0+fHsoSp6dI/izRtSsOGXzk0SY6eBdp9GAPExc4+zp7hPRviuNTUn1tiTajluz+WWxvFyL3OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RorhM/lW; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729697291; x=1730302091; i=markus.elfring@web.de;
+	bh=EAENFtjl9sz4HwwtPOdI6rZgMghwnGzijGkxKkOHbLA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RorhM/lWMk7pMNYl/E56jF5zJnCPDxNZYm8GttKhQcpvr7Nysg+b59VaMiin7hs4
+	 ToRMfpcavb5zcIAtM4fxCVftGaqwHAz9Y5Qsh7KPll3M6qWZWBQEh+jtzSpKtUrRw
+	 F1apT6Hr3F8IX6E4hX3CvL+rSlLStrxt29yLoUME6eRzUk8Ioo0JUjCpzf4DOOgSD
+	 s3iVx+Dw11fBoE7299sDPxkNPCZcl/x6H7+qNYYAHUC2rD9Lsn9x3/N8fdj7T0y3K
+	 pBqPTY6Z+2FIZ64D8QcUAQn7Ul6F7F4Ky2jN35NUxQerio0FEpLbpn8NEsSgHJjwl
+	 WFn0V0When8XR0+whA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1u26IY2ORJ-00vV2M; Wed, 23
+ Oct 2024 17:28:11 +0200
+Message-ID: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+Date: Wed, 23 Oct 2024 17:27:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Joel Granados <j.granados@samsung.com>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+ <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
+ <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UL0i4NV2r5DTLgpQYTFUVA8BVfy7ERUfYRECBvNrEYUZxV1vf82
+ ljLxLuIfeQwb8Wn63oq21SJ0Qz07P6Lya7SlCHLSp5sUALM+6dzWKn9ROtcUsvITkOZDndh
+ JXbGdgqMXjfnCXIVjXqdG434ElGeAbvrjtugLlx5TrANvIa5Lui1T1SWbLBiyKB4sNu9BFF
+ qk2Z2+6lUmcx+RocxI76w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nMrifFBllBk=;+x1mrZqyfMrCBW3w2jah6QYdGai
+ Ah816exJrIbb/2kU5S/UvpIQ0ttC0pgMZ0SZwACqM0/Wd5BG4D7H4H+aL3b3QR7cmwtWAgQR1
+ a3r3SV9O4/a+RsPinWna6+TgFpCVXMRRsMOr8XIowuFcFU6zhe5c0E/lIWFWMdNO0HGhpsU9E
+ mFxyYJG9OOYUU4YRbcQcWEVcLE9ha8OYQZ/eHigSon4oZuEUCJCb4FmG+0JqtrEpoAcmh5+wN
+ NKZ/qqaKIuBB+vqfF/31mrynxkpxoB6lldaA2wFJW27tRLqSlO+mTfreurXqvmuv0Ilivfxz2
+ AcdCHjEXKQtbQpTPsYiR8+PvUCkPCMBk5Wd0NA9OOqO2B3YlVwjCUAMXtT9bOdJ625C3UDLkr
+ p/dZ2ORqJs6f5SfWc4UTTLe2ENbBo8mtssycg/D2QrWQxo7GUi6s4XCfD+4eJ/WLe/qXOlvbl
+ /VUOWg3kXiZ8XzHAa8skBF2ORT2K+4dd4lQq+X6wNqsQ7+PElhjGvWhIk5XEVvbbqXkD4ddoB
+ z+D8xZGahvKE991VoZR+iYK44atAX1VJSoQebAMH9HRxCXl8sG2/zvEO7WLR6bDduscZCGmCK
+ gb+JIH/J3uaIUFbGJQCVbiaSOOxXlIVAvqkmk4wcGocbEvDwy04EQK/FNIhnMD7he5DHERr/R
+ QzFxDZ1HyuN3dFb3E6sJlwTzsp5gsl8NZBJDRTjSAbPnsYKHTa4FnhH2nq2krClRCUt0UITLR
+ ueqQmBOf2MXdeTczDlsa+VbFIB5sjB0nBW295qrpHPZ7axQ2EhpniQohqdEcHB09wq1mfmx4S
+ qpGFbKxAoRd21RBbEGvGxOIw==
 
-iomap zero range performs a pagecache flush upon seeing unwritten
-extents with dirty pagecache in order to determine accurate
-subranges that require direct zeroing. This is to support an
-optimization where clean, unwritten ranges are skipped as they are
-already zero on-disk.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Oct 2024 16:54:59 +0200
 
-Certain use cases for zero range are more sensitive to flush latency
-than others. The kernel test robot recently reported a regression in
-the following stress-ng workload on XFS:
+Replace two dput(child) calls with one that occurs immediately before
+the IS_ERR evaluation. This transformation can be performed because
+dput() gets called regardless of the value returned by IS_ERR(res).
 
-  stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
+This issue was transformed by using a script for the
+semantic patch language like the following.
+<SmPL>
+@extended_adjustment@
+expression e, f !=3D { mutex_unlock }, x, y;
+@@
++f(e);
+ if (...)
+ {
+ <+... when !=3D \( e =3D x \| y(..., &e, ...) \)
+-   f(e);
+ ...+>
+ }
+-f(e);
+</SmPL>
 
-This workload involves a series of small, strided, write extending
-writes. On XFS, this produces a pattern of allocating post-eof
-speculative preallocation, converting preallocation to unwritten on
-zero range calls, dirtying pagecache over the converted mapping, and
-then repeating the sequence again from the updated EOF. This
-basically produces a sequence of pagecache flushes on the partial
-EOF block zeroing use case of zero range.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
-To mitigate this problem, special case the EOF block zeroing use
-case to prefer zeroing over a pagecache flush when the EOF folio is
-already dirty. This brings most of the performance back by avoiding
-flushes on write and truncate extension operations, while preserving
-the ability for iomap to flush and properly process larger ranges.
+V2:
+* This update suggestion was rebased on source files of the software
+  =E2=80=9CLinux next-20241023=E2=80=9D.
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
+* The change description was adjusted according to the wording preferences
+  by Joel Granados.
 
-Hi iomap maintainers,
+* An SmPL script example was appended.
 
-This is an incremental optimization for the regression reported by the
-test robot here[1]. I'm not totally convinced this is necessary as an
-immediate fix, but the discussion on that thread was enough to suggest
-it could be. I don't really love the factoring, but I had to play a bit
-of whack-a-mole between fstests and stress-ng to restore performance and
-still maintain behavior expectations for some of the tests.
 
-On a positive note, exploring this gave me what I think is a better idea
-for dealing with zero range overall, so I'm working on a followup to
-this that reworks it by splitting zero range across block alignment
-boundaries (similar to how something like truncate page range works, for
-example). This simplifies things by isolating the dirty range check to a
-single folio on an unaligned start offset, which lets the _iter() call
-do a skip or zero (i.e. no more flush_and_stale()), and then
-unconditionally flush the aligned portion to end-of-range. The latter
-flush should be a no-op for every use case I've seen so far, so this
-might entirely avoid the need for anything more complex for zero range.
+ fs/proc/proc_sysctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-In summary, I'm posting this as an optional and more "stable-worthy"
-patch for reference and for the maintainers to consider as they like. I
-think it's reasonable to include if we are concerned about this
-particular stress-ng test and are Ok with it as a transient solution.
-But if it were up to me, I'd probably sit on it for a bit to determine
-if a more practical user/workload is affected by this, particularly
-knowing that I'm trying to rework it. This could always be applied as a
-stable fix if really needed, but I just don't think the slightly more
-invasive rework is appropriate for -rc..
-
-Thoughts, reviews, flames appreciated.
-
-Brian
-
-[1] https://lore.kernel.org/linux-xfs/202410141536.1167190b-oliver.sang@intel.com/
-
- fs/iomap/buffered-io.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index aa587b2142e2..8fd25b14d120 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1372,6 +1372,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
- 	loff_t written = 0;
-+	bool eof_zero = false;
- 
- 	/*
- 	 * We must zero subranges of unwritten mappings that might be dirty in
-@@ -1391,12 +1392,23 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
- 	 * triggers writeback time post-eof zeroing.
- 	 */
- 	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN) {
--		if (*range_dirty) {
-+		/* range is clean and already zeroed, nothing to do */
-+		if (!*range_dirty)
-+			return length;
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 9b9dfc450cb3..b277a1ca392e 100644
+=2D-- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+ 			res =3D d_splice_alias(inode, child);
+ 			d_lookup_done(child);
+ 			if (unlikely(res)) {
+-				if (IS_ERR(res)) {
+-					dput(child);
+-					return false;
+-				}
+ 				dput(child);
 +
-+		/* flush for anything other than partial eof zeroing */
-+		if (pos != i_size_read(iter->inode) ||
-+		   (pos % i_blocksize(iter->inode)) == 0) {
- 			*range_dirty = false;
- 			return iomap_zero_iter_flush_and_stale(iter);
++				if (IS_ERR(res))
++					return false;
++
+ 				child =3D res;
+ 			}
  		}
--		/* range is clean and already zeroed, nothing to do */
--		return length;
-+		/*
-+		 * Special case partial EOF zeroing. Since we know the EOF
-+		 * folio is dirty, prefer in-memory zeroing for it. This avoids
-+		 * excessive flush latency on frequent file size extending
-+		 * operations.
-+		 */
-+		eof_zero = true;
- 	}
- 
- 	do {
-@@ -1415,6 +1427,8 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
- 		offset = offset_in_folio(folio, pos);
- 		if (bytes > folio_size(folio) - offset)
- 			bytes = folio_size(folio) - offset;
-+		if (eof_zero && length > bytes)
-+			length = bytes;
- 
- 		folio_zero_range(folio, offset, bytes);
- 		folio_mark_accessed(folio);
--- 
-2.46.2
+=2D-
+2.47.0
 
 
