@@ -1,56 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-32650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB8F9AC8A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 13:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A47F9AC8A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 13:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452541F2254F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 11:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE6D1F223FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 11:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA11A7ADE;
-	Wed, 23 Oct 2024 11:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB6B1A7AF6;
+	Wed, 23 Oct 2024 11:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTjHx+SG"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="esWd5upk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MU/aKn+a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04FF136331;
-	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D103154439;
+	Wed, 23 Oct 2024 11:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729681895; cv=none; b=tss/J0ylhhvWTmMXxHhnChCPA2C1Pszq6nvNuoRyOR4IanjVqM1k2p0YmpzbI+o0gCIJ2uxHyMxj3a60s5Tq1/VSjFxM/a/ROna2oNsonVIfaiFdRyiRXaTqjzzJe/h3l9Z9cAeNsOtC7gel1Tgou6QXtnmkoDIY5R7QsHR+dqA=
+	t=1729681933; cv=none; b=iq1snXMdU+ifuCER/z+IKgMenAwbsBY40EGtIZuXFMCy3ycpfmrGfWn5hJbsbj4VxqS+btSs7H+LWu7ZyEZPjIp4EdibsH1VfQaCuY0zAkinwSmITswUEgw7qmYY5xJNZnNIfTL36oofGOUlEciZLjK4Ypc9db6JG8yK3xom50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729681895; c=relaxed/simple;
-	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
+	s=arc-20240116; t=1729681933; c=relaxed/simple;
+	bh=LQIscU26o5fPBuWQ0tCvE58DeZDwedgynA0FlcZ/EFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRqmQbVcKfg8QgQvdjcdUlHtxUW4krH7BLHWYifX/chLMl3MagW4E9DPWFJTKWZSlY9Cypkl7OmcYoZqUwync/AFec93LYYYH2GJ9sgIEs+MObyvirz7jdxu8IkKKASPx/VJyX+PyQz73f0NwOisco2uxEtHMALitrOW4Wzc5KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTjHx+SG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 475E9C4CEC6;
-	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729681894;
-	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QTjHx+SGniyfno5hzpUEOCE/uEIe3TFzXFsKZNLdKXLsv7qqwrJDTfFL+Pc1AQ4Op
-	 6Wo8Y0YfPu9pt5rKFfHBrx+CcAo45fK1+JKCQ2NkYs10ClHKYGUl3t0esQtzXualdg
-	 2R9UizqKV6jLKZ5CPIxUVIDNeECNX9nloOOVyMcq5/MZCycIEqpVmIrfaG2FunBEIo
-	 YDMzQ2N3h1vbURHo0Vw3Q4+2gJb5n4TTuaxIT20SIoJrtNKTXz+OAC/L0rXr8v74C8
-	 Q2H8rD4pnL1zeuuiLfh1oukp9yH9oRVkJRmbWRqqgxoLDjsAIXDkP8O33fV7BH18jC
-	 Jrn+BXs7Gqr6Q==
-Date: Wed, 23 Oct 2024 13:11:29 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
-Message-ID: <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhia8UwOnTxsNm2o9ZqZ21N1cXESdGjgsRAwWcGtyzNthtxTb9tBW+Mt8891ADxVQj2z4XtPQC0VDcNu76g1iKs8qE4wWC3Q9qnjqX/I/Di4NpQ0CGR7Bh80LTyEl/H2DEMwOckzFPdrfN28qg0EjbkRXTRvxSXdT8ksc5Y69Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=esWd5upk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MU/aKn+a; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 61B4B13800BE;
+	Wed, 23 Oct 2024 07:12:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Wed, 23 Oct 2024 07:12:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729681930; x=
+	1729768330; bh=DrExPGH5qC6gMqdPJrUNvKM3C7Up1PpwnopQx1G1ds0=; b=e
+	sWd5upkk5VWriLH2QNH+VUxbVs1W2K+XG5Nbi4STHWuwUe63UTg66bjtE/GNFY2H
+	L2zGw7g4TghT3NtVJPG0olbCAlp6+XdRQYo9IMUE/VuiPqvEDnc0LMVThyf4pP0Q
+	UJz2wVWq4lUWlZ7NO6AdyTDYIl769avdIXgqQvoiRr/aGsbGHAdl3UOUhnSNKDV3
+	W+kYL3/1sWT1rRLuGmu9Yt2Re4sFY3lXhZP1A2dx6Lm7ykfcREyDLBv2hJAGfqoa
+	TKb78Ckvx7V1BBlIRGvebbLMG7aaYYYoUb+Wm88WplU45EzW5T22vlvuaKXgLJTi
+	HObzg8tWQxLxtFts60NZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729681930; x=1729768330; bh=DrExPGH5qC6gMqdPJrUNvKM3C7Up
+	1PpwnopQx1G1ds0=; b=MU/aKn+aaqxOIB0AgI94pqAB6GzADXpm7dGkuPdQZJGx
+	2x5/uIFfng0pRuxXLyph8nfZD+L8ujVow3oXn5mpyZZHP+eP3uPHONGi9/kFhGB/
+	4YfA+s6zOHYrtJ5kuJzXJafnkYesJLB7/cb2j2E1NeQSNwNB7oOg5dZF+45cRYUw
+	kKbCebu7E5Pq2UYWrkjtwvIcmEo/wwIJePOVKxnCZrwz7EeYm9BSVap/sgLdU1fl
+	l6KVwFRUolo7mBlZZFPKUYocMKY6SFSJe/2L4kdrglyTq5ts63zXjjw4SDpwt5Pc
+	D1fU/9uQbSDaLEyfAsZo7qgKkJ150lPSd46+lDgkWw==
+X-ME-Sender: <xms:CdoYZ88ZnDc1EHGhfQMep7rbkA1wauqwQcpj1q0ud_Vz5UvqChEEbg>
+    <xme:CdoYZ0sTcYF5FkLRSAGsjsDoyy9K2Hvw1MB2omfy-Aa-M4x2BHAElwB3c5qiIIt1i
+    NY_KBrG8LJcMxVeTUw>
+X-ME-Received: <xmr:CdoYZyDx_n5vsKnIYo6m2dUq7SDpnBZc1bOA6XEAglDkeE1yQjdYi2tXZEGPjkBXQQDURQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedgfeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hmmheskhhvrggtkhdrohhrghdprhgtphhtthhopegtghhrohhuphhssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
+    htohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtjheskhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:CdoYZ8fWkm0t4xkuko9xuUt1RqHXw6pBIU6x5oQKNwlRRI5Fznvliw>
+    <xmx:CdoYZxMBNGIiftCHTwF4TbHJKkDVOyAZPUFkdnvNhhIExqphj2FyZQ>
+    <xmx:CdoYZ2kjhoGdJH7kRWe0FWaIUmHF-qc85Dn9X8z_F6JfChCe5D2O9Q>
+    <xmx:CdoYZzv7Vs82tyJ386wkDy3ySwiRPK3AqH0HkHwX18CvFAWfXFMfvg>
+    <xmx:CtoYZ8EyuQudTx12meAXlSSrarNcohXxf0yctiV8rmOw831JqTBG3DFY>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 23 Oct 2024 07:12:03 -0400 (EDT)
+Date: Wed, 23 Oct 2024 14:11:58 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v1 01/17] mm: factor out large folio handling from
+ folio_order() into folio_large_order()
+Message-ID: <m4ans5nv2brrxm6i54ydwq7qd64kuta3dwltlfnyl73iojunjc@spqvup2hmp5w>
+References: <20240829165627.2256514-1-david@redhat.com>
+ <20240829165627.2256514-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,61 +113,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+In-Reply-To: <20240829165627.2256514-2-david@redhat.com>
 
-On Thu, Sep 26, 2024 at 10:20:34AM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Sep 2024 10:10:33 +0200
+On Thu, Aug 29, 2024 at 06:56:04PM +0200, David Hildenbrand wrote:
+> Let's factor it out into a simple helper function. This helper will
+> also come in handy when working with code where we know that our
+> folio is large.
 > 
-> A dput(child) call was immediately used after an error pointer check
-> for a d_splice_alias() call in this function implementation.
-> Thus call such a function instead directly before the check.
-This message reads funny, please re-write for your v2. Here is how I would write
-it.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-"
-Replace two dput(child) calls with one that occurs immediately before the IS_ERR
-evaluation. This is ok because dput gets called regardless of the value returned
-by IS_ERR(res).
-"
-
-> 
-> This issue was transformed by using the Coccinelle software.
-How long is the coccinelle script? If it is a reasonable size, can you please
-append it to the commit message. If in doubt of what "reasonable" means, just
-share it to the list before doing your V2.
-
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/proc/proc_sysctl.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index d11ebc055ce0..97547de58218 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
->  			res = d_splice_alias(inode, child);
->  			d_lookup_done(child);
->  			if (unlikely(res)) {
-> -				if (IS_ERR(res)) {
-> -					dput(child);
-> -					return false;
-> -				}
->  				dput(child);
-> +
-> +				if (IS_ERR(res))
-> +					return false;
-> +
->  				child = res;
->  			}
->  		}
-> --
-> 2.46.1
-> 
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
-
-Joel Granados
+  Kiryl Shutsemau / Kirill A. Shutemov
 
