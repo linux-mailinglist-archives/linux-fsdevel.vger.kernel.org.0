@@ -1,107 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-32673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2B9AD260
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 19:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545859AD2CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 19:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A761C21916
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 17:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F41285107
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 17:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0CD1CEE80;
-	Wed, 23 Oct 2024 17:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676E91D0F73;
+	Wed, 23 Oct 2024 17:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ejRfu9sN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MELeo5ys"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BE91ABEB7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 17:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB51BCA07
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 17:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729703920; cv=none; b=WNHJ+jiroAuemtzXyiTN7luG5XVbJ7ZbC5dqPNF6+EYRkmn9wCyvZ5DsWOhG3i5mTaAhM39MjjoNYjF0+ZF/0+t4OyiSZIGqIQaNfs8b2aja+7zQO+qmXWMU74WTmCzBfPz0j9DVS9Q6jDioOg7Per+DN/vd30I5NjMIosqnNPM=
+	t=1729704247; cv=none; b=OkDo46qAagj9sgSdpkgQ8S7dAGNIEeXidvwr/TpF3lyHJNOn/U6yqQdtGVQETkVjT1V8X6gRGv10l8iNFebQLTrxoDB4jcibsBcuIoX7/emAsi67XrOLh6aSxnBH7NukSLIjKa1c/BtoabSMKMXslkA8IUqfwtMfPGvsI6r85OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729703920; c=relaxed/simple;
-	bh=3nAER65IxMAepLiq7RPSV+9zMwzFoC3EmZJNENmGC1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=urVEE1RvQar66mm3dE4fnJUo4iMNcMrvIrzhvzfGbhirOZyB2n0HBizxtqTcQKeWr36RD2dMIL4lW7UT+Ew/ZWYQABGDpLMRxeox0k0n3UeHNPJ2fNWXhFEp2vKCpgoMJjCZZCQe5/L4VBqVoa9XeKPR99/B/HCkWEA83O4JTLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ejRfu9sN; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 23 Oct 2024 10:18:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729703916;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xnlqPphUlvB/1649QsAjYZZfPNSeq62kbrW+yz2Z4Os=;
-	b=ejRfu9sN5leVVaRjsUR+02NiUcIiRhmvWNveczbcBA2SgGYzlxZPxcrQtRF9QURa9gTe5s
-	lmHqN/bMSQ/XQxvNdqi/n5xFj4uzp90+nokWUytlht7dc5ZiE8LDccbpNyubfyGRIn55Md
-	ZajitSJz4USnabBE9/WlmotgFPr0Zec=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, 
-	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Sang <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v4 2/4] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <35ipnq7dik6skpgrsywtje734iam65h2zjsv7fv5ayzfwnjlph@odu2szclos5y>
-References: <cover.1729198898.git.lorenzo.stoakes@oracle.com>
- <3bf7f2d8efc768007b5de8122275405afc9942d4.1729198898.git.lorenzo.stoakes@oracle.com>
- <fhy36lhgeedrdwoubuuxarownhji2k4avcherjnedtid35yael@jokjnyb6i66b>
- <f6114921-d3c7-4092-b503-09f99d98ad83@lucifer.local>
+	s=arc-20240116; t=1729704247; c=relaxed/simple;
+	bh=HxI6xxm0vIXgqxepiHkaaiiy2i1UTQ+otEG9x5bFUv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T37UEl86jyt747YxD037Hj0gA9+01olGBOIH+98C3ptE1eglzEHtHlQ4jkzyNqywqihApwJ6cfuz3wVQD/bup0la26CpSHbANshLpfeGey6nkRNKia65qmfPQK9yGuyr5P/u9JMTECpN1JM25OVr0jeMG0SadODvklM4qBdh/ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MELeo5ys; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460d1145cd8so183851cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 10:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729704245; x=1730309045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HedQptZx5lde5cUaVz0NvtHQUI/jB/SeSFJbjhRNq4A=;
+        b=MELeo5yso3f6T/B0KQPGRI3cw8z8ih19UMM+G1GUTGXnAwFbBIGVyoEImYjGGSqYMO
+         nlEIucCizHn5PGb7XIKnQ1Q6qlYv4towMrExNFQ2/mAEWDnC+xy7uYy+E0RpOjFihRdX
+         Ra5K2PbhW7MXJQPL1r5pf55BGR2FzTRQp8ABGFh9POIz3iXnrLY30eLOWswNtzkwbmVQ
+         SxBAFF4OX1VHuMUZbmsTezmo7XicPaKYrpin5f2Dgi50E2wjaQwQAipLckjWm35zUMnx
+         JvEAbsMj/ndeQZ5fw03OIr9dBrFJKPD1zL9QY4ZCENaiplgALVAIcyCPJCTR1IlJUPxD
+         xCEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729704245; x=1730309045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HedQptZx5lde5cUaVz0NvtHQUI/jB/SeSFJbjhRNq4A=;
+        b=H+nYZ3mLG95PtmoLFCCT1UCGdLvurUNj3vU8j/+f0PYEXZkQkCsNE3vYI3W23DnZoB
+         UDsNndKzHxd/0wYSanNIw4sfiunRRQGd3Nxf5O0AefYDPR6TK+n0S8YrCLEdNza5IV9Y
+         cFYMzadV7xphqccEKS5XUyLFwP8AYswQzX8votxkvVS7cJxqsWf2QKQg8xg8FB+EIbE6
+         oMSXSsdmaHJQpXMQZpMYTu1glg+jQt7GG1L9ryTYsFKwoMlgv4tSsJ60qTtmrG5vpak8
+         Fej5ExfJ2A0W94cPnfRQbBFNQ6uQQu+Ddlb/asmyEbp3BqpdZvr2fOOYN6VdUNGGdavc
+         PQjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqatffULzQrKmDMpHUYv+BQU+lKdrSEMMw3JVh/kXzkZ5G8m+kkMYjJtfTaZkiAhAJnTvO8jJYFBL2HurU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KOWs8o9JS6ukvb4/Oru/DQUtoV1cb+sMoBW2vgRxDfuSbhhV
+	4VtYBm9iViNC6MKnV++xSw/9t2q+xsqNLn/LIbZsnY7HWy8jsMKx+t4RAA3Sic7B1Nn8qiZfnU0
+	KfzRErHdPtxAkw9pKRy2iLN6xuj8qQT2K
+X-Google-Smtp-Source: AGHT+IG4rWp5+D8dyd1zZOqMO+NCLnnwRUkmkhBqbJsFFdm7mjM1hn8keZjGjCDTMTmzjv/RPqMAxOWHYd2V+VLmGFc=
+X-Received: by 2002:a05:622a:15cf:b0:460:8d74:3cb4 with SMTP id
+ d75a77b69052e-461145b9384mr51566111cf.17.1729704245227; Wed, 23 Oct 2024
+ 10:24:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6114921-d3c7-4092-b503-09f99d98ad83@lucifer.local>
-X-Migadu-Flow: FLOW_OUT
+References: <20241022185443.1891563-1-joannelkoong@gmail.com> <20241022185443.1891563-10-joannelkoong@gmail.com>
+In-Reply-To: <20241022185443.1891563-10-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 23 Oct 2024 10:23:54 -0700
+Message-ID: <CAJnrk1bwK7rTiQbBL=Q7sco-2yScsYf9y_kGwO-4THyQgZ48wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/13] fuse: convert retrieves to use folios
+To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, willy@infradead.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 08:18:35AM GMT, Lorenzo Stoakes wrote:
-> On Tue, Oct 22, 2024 at 05:53:00PM -0700, Shakeel Butt wrote:
-> > On Thu, Oct 17, 2024 at 10:05:50PM GMT, Lorenzo Stoakes wrote:
-> > > It is useful to be able to utilise the pidfd mechanism to reference the
-> > > current thread or process (from a userland point of view - thread group
-> > > leader from the kernel's point of view).
-> > >
-> > > Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
-> > > PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
-> > >
-> > > For convenience and to avoid confusion from userland's perspective we alias
-> > > these:
-> > >
-> > > * PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
-> > >   the user will want to use, as they would find it surprising if for
-> > >   instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
-> > >   and that failed.
-> > >
-> > > * PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
-> > >   have no concept of thread groups or what a thread group leader is, and
-> > >   from userland's perspective and nomenclature this is what userland
-> > >   considers to be a process.
-> >
-> > Should users use PIDFD_SELF_PROCESS in process_madvise() for self
-> > madvise() (once the support is added)?
-> 
-> You can use either it will make no difference as both will get you to
-> current->mm which has to be shared. So I'd go with PIDFD_SELF for brevity
-> :)
-> 
-> This series and the prerequisites I already added to process_madvise()
-> already provide support so with this in you can just use this for that.
+On Tue, Oct 22, 2024 at 11:54=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+>
+> Convert retrieve requests to use folios instead of pages.
+>
+> No functional changes.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/fuse/dev.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 9f860bd655a4..220b1bddb74e 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1728,7 +1728,7 @@ static void fuse_retrieve_end(struct fuse_mount *fm=
+, struct fuse_args *args,
+>         struct fuse_retrieve_args *ra =3D
+>                 container_of(args, typeof(*ra), ap.args);
+>
+> -       release_pages(ra->ap.pages, ra->ap.num_pages);
+> +       release_pages(ra->ap.folios, ra->ap.num_folios);
+>         kfree(ra);
+>  }
+>
+> @@ -1742,7 +1742,8 @@ static int fuse_retrieve(struct fuse_mount *fm, str=
+uct inode *inode,
+>         unsigned int num;
+>         unsigned int offset;
+>         size_t total_len =3D 0;
+> -       unsigned int num_pages;
+> +       unsigned int num_folios;
+> +       unsigned int num_pages, cur_pages =3D 0;
+>         struct fuse_conn *fc =3D fm->fc;
+>         struct fuse_retrieve_args *ra;
+>         size_t args_size =3D sizeof(*ra);
+> @@ -1761,15 +1762,16 @@ static int fuse_retrieve(struct fuse_mount *fm, s=
+truct inode *inode,
+>         num_pages =3D (num + offset + PAGE_SIZE - 1) >> PAGE_SHIFT;
+>         num_pages =3D min(num_pages, fc->max_pages);
+>
+> -       args_size +=3D num_pages * (sizeof(ap->pages[0]) + sizeof(ap->des=
+cs[0]));
+> +       args_size +=3D num_pages * (sizeof(ap->folios[0]) + sizeof(ap->fo=
+lio_descs[0]));
+>
+>         ra =3D kzalloc(args_size, GFP_KERNEL);
+>         if (!ra)
+>                 return -ENOMEM;
+>
+>         ap =3D &ra->ap;
+> -       ap->pages =3D (void *) (ra + 1);
+> -       ap->descs =3D (void *) (ap->pages + num_pages);
+> +       ap->folios =3D (void *) (ra + 1);
+> +       ap->folio_descs =3D (void *) (ap->folios + num_folios);
 
-Thanks a lot, this is awesome. Is the plan for this series to go through
-mm-tree or through Christian?
+Agh, I messed this up in the refactoring I did between v1 -> v2. This
+should be ap->folios + num_pages. Will fix this in v3.
 
+> +       ap->uses_folios =3D true;
+>
+>         args =3D &ap->args;
+>         args->nodeid =3D outarg->nodeid;
+> @@ -1780,7 +1782,7 @@ static int fuse_retrieve(struct fuse_mount *fm, str=
+uct inode *inode,
+>
+>         index =3D outarg->offset >> PAGE_SHIFT;
+>
+> -       while (num && ap->num_pages < num_pages) {
+> +       while (num && cur_pages < num_pages) {
+>                 struct folio *folio;
+>                 unsigned int this_num;
+>
+> @@ -1789,10 +1791,11 @@ static int fuse_retrieve(struct fuse_mount *fm, s=
+truct inode *inode,
+>                         break;
+>
+>                 this_num =3D min_t(unsigned, num, PAGE_SIZE - offset);
+> -               ap->pages[ap->num_pages] =3D &folio->page;
+> -               ap->descs[ap->num_pages].offset =3D offset;
+> -               ap->descs[ap->num_pages].length =3D this_num;
+> -               ap->num_pages++;
+> +               ap->folios[ap->num_folios] =3D folio;
+> +               ap->folio_descs[ap->num_folios].offset =3D offset;
+> +               ap->folio_descs[ap->num_folios].length =3D this_num;
+> +               ap->num_folios++;
+> +               cur_pages++;
+>
+>                 offset =3D 0;
+>                 num -=3D this_num;
+> --
+> 2.43.5
+>
 
