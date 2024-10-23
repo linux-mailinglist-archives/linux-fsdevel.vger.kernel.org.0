@@ -1,286 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-32669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085229ACC04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 16:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A1E9ACC47
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 16:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C80A286186
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 14:14:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7417B210AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 14:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFA81BD004;
-	Wed, 23 Oct 2024 14:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603E1BDA8F;
+	Wed, 23 Oct 2024 14:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DsQ4BbDF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X9czwW9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CA41BB6BA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 14:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421EF1AAE00
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2024 14:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729692845; cv=none; b=ckokT7BQ5i80bgjzXdKNSZHrMzNcb9Ro6Ui/dggYynlGRBm+MeYYfZQ6ciuGxwDGWy4SpD7mANRJ8CqnUMDY8aFl3eCw+kPQV1GY8gHql81H0f3c3f/nWEda1R0D0/2+ro27FKf0vZbJEswmOOPCsKlHm8WQEE5/NyD7M/urKU4=
+	t=1729693747; cv=none; b=Vd+CZsmkaYxujWOgdQkxoqUA52Q1IDZdDO3bMAwo+8aRTNyPaiW/Z/+sMSrWo1Svkpn/Hzg2bY/Gr0Fbcfuye/f2PtqATJUmyndhT3eF7JJdM5T+GD0eTJ2ZFykXSEqtzkgDi33neC6Dk3GahhLOtzCt9QB3OX4/jnQQ0kLAk8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729692845; c=relaxed/simple;
-	bh=e5lfgz9uob4k1uyFDQD3okYiID40ELTcQ6BULB07Cwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQTRvAn8zbOjqTMd55+eHqKDJBWNeEcRfUcf9I4+0G71d8UVhRhc/0SuPDs1hWKr7LNtAf4M4QwvCalOHo1hpyKZpH26E5izef5Jr72PMsOK2ThkKeZUzBUaxwwdBqHO+s4H06dJjsUKc9gPQfmMQls9P9bcatCGVInU47vl/Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DsQ4BbDF; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1729693747; c=relaxed/simple;
+	bh=Tu8ecogdCdvt2J0mJBiKRPfQ+w1yLZPbr87RxntHYwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c/Cw15stnOZNPAIIJho5XAiDScaMIqx2MtEpS2wtTu2vasEF4pNlI8pHRAwmfKJhW3AeiI+ugdM378dPr4DZc2KzTjd+/OseVq9nmyH1UH6q4zaMrWAZKenuJqHhUMl+t2A0IhEpbZKihqTZ1NvQwaz8qHc/StBNsuK49QnLxhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X9czwW9x; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729692841;
+	s=mimecast20190719; t=1729693744;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nI/0JofbsRUc5jiX0lc5WWWG5OVrjpTvPysCApLQIp4=;
-	b=DsQ4BbDFu9ftIQ9WAiYeJtwvdGAk/ejNj9FlSfHNQ9l+2dtlJiRFzcqqEppZcSUMkUfx0O
-	Xy7yMdSWyHKRhbfEenM5Pu7judnAenxxHGqWepuKUN+ncscDNxkI2WxHq4388FMtM5cID4
-	2WYew+CYXG18m47h84f61Pq3PdF4g/0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=e7NVJ2YYlWVkHDgXUttFCV5Utvw2Dli9IBctxz9RysU=;
+	b=X9czwW9xnvxwQg0vLkyNbKZ2hLslnGw8IeaybhiBTkr2FWaZvPOZSZ8P2PMbQhp2ljFY70
+	uLq8NtSShMTa3dl8ynklYqOtBAXeXJvvsFSzP9Dz0RZcO5Ur+VAFYQLAFBebRkRqc1FLSW
+	18kyhourMxy1aVfuMKvuyNnieIv4uMI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-377-rVLAevbrP12kSKshpNraxw-1; Wed,
- 23 Oct 2024 10:13:57 -0400
-X-MC-Unique: rVLAevbrP12kSKshpNraxw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-SzzrWgHYPEKYrBQDQHWclA-1; Wed,
+ 23 Oct 2024 10:29:02 -0400
+X-MC-Unique: SzzrWgHYPEKYrBQDQHWclA-1
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D920019059B4;
-	Wed, 23 Oct 2024 14:13:54 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.135])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 51E661956054;
-	Wed, 23 Oct 2024 14:13:52 +0000 (UTC)
-Date: Wed, 23 Oct 2024 10:15:19 -0400
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B36BB1955EA5;
+	Wed, 23 Oct 2024 14:29:01 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.80.135])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 182F519560AE;
+	Wed, 23 Oct 2024 14:29:00 +0000 (UTC)
 From: Brian Foster <bfoster@redhat.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
-	feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linus:master] [iomap]  c5c810b94c:
- stress-ng.metamix.ops_per_sec -98.4% regression
-Message-ID: <ZxkE93Vz3ZQaAFO1@bfoster>
-References: <202410141536.1167190b-oliver.sang@intel.com>
- <Zw1IHVLclhiBjDkP@bfoster>
- <Zw7jwnvBaMwloHXG@dread.disaster.area>
- <Zw_gDDlIEgZbApU_@bfoster>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Subject: [PATCH] iomap: elide zero range flush from partial eof zeroing
+Date: Wed, 23 Oct 2024 10:30:29 -0400
+Message-ID: <20241023143029.11275-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw_gDDlIEgZbApU_@bfoster>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Oct 16, 2024 at 11:47:24AM -0400, Brian Foster wrote:
-> On Wed, Oct 16, 2024 at 08:50:58AM +1100, Dave Chinner wrote:
-> > On Mon, Oct 14, 2024 at 12:34:37PM -0400, Brian Foster wrote:
-> > > On Mon, Oct 14, 2024 at 03:55:24PM +0800, kernel test robot wrote:
-> > > > 
-> > > > 
-> > > > Hello,
-> > > > 
-> > > > kernel test robot noticed a -98.4% regression of stress-ng.metamix.ops_per_sec on:
-> > > > 
-> > > > 
-> > > > commit: c5c810b94cfd818fc2f58c96feee58a9e5ead96d ("iomap: fix handling of dirty folios over unwritten extents")
-> > > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > > 
-> > > > testcase: stress-ng
-> > > > config: x86_64-rhel-8.3
-> > > > compiler: gcc-12
-> > > > test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
-> > > > parameters:
-> > > > 
-> > > > 	nr_threads: 100%
-> > > > 	disk: 1HDD
-> > > > 	testtime: 60s
-> > > > 	fs: xfs
-> > > > 	test: metamix
-> > > > 	cpufreq_governor: performance
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > | Closes: https://lore.kernel.org/oe-lkp/202410141536.1167190b-oliver.sang@intel.com
-> > > > 
-> > > > 
-> > > > Details are as below:
-> > > > -------------------------------------------------------------------------------------------------->
-> > > > 
-> > > > 
-> > > > The kernel config and materials to reproduce are available at:
-> > > > https://download.01.org/0day-ci/archive/20241014/202410141536.1167190b-oliver.sang@intel.com
-> > > > 
-> > > 
-> > > So I basically just run this on a >64xcpu guest and reproduce the delta:
-> > > 
-> > >   stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
-> > > 
-> > > The short of it is that with tracing enabled, I see a very large number
-> > > of extending writes across unwritten mappings, which basically means XFS
-> > > eof zeroing is calling zero range and hitting the newly introduced
-> > > flush. This is all pretty much expected given the patch.
-> > 
-> > Ouch.
-> > 
-> > The conditions required to cause this regression are that we either
-> > first use fallocate() to preallocate beyond EOF, or buffered writes
-> > trigger specualtive delalloc beyond EOF and they get converted to
-> > unwritten beyond EOF through background writeback or fsync
-> > operations. Both of these lead to unwritten extents beyond EOF that
-> > extending writes will fall into.
-> > 
-> > All we need now is the extending writes to be slightly
-> > non-sequential and those non-sequential extending writes will not
-> > land at EOF but at some distance beyond it. At this point, we
-> > trigger the new flush code. Unfortunately, this is actually a fairly
-> > common workload pattern.
-> > 
-> > For example, experience tells me that NFS server processing of async
-> > sequential write requests from a client will -always- end up with
-> > slightly out of order extending writes because the incoming async
-> > write requests are processed concurrently. Hence they always race to
-> > extend the file and slightly out of order file extension happens
-> > quite frequently.
-> > 
-> > Further, the NFS client will also periodically be sending a write
-> > commit request (i.e. server side fsync), the
-> > NFS server writeback will convert the speculative delalloc that
-> > extends beyond EOF into unwritten extents beyond EOF whilst the
-> > incoming extending write requests are still incoming from the
-> > client.
-> > 
-> > Hence I think that there are common workloads (e.g. large sequential
-> > writes on a NFS client) that set up the exact conditions and IO
-> > patterns necessary to trigger this performance regression in
-> > production systems...
-> > 
-> 
-> It's not clear to me that purely out of order writeback via NFS would
-> produce the same sort of hit here because we'd only flush on write
-> extensions. I think the pathological case would have to be something
-> like reordering such that every other write lands sequentially to
-> maximize the number of post-eof write extensions, and then going back
-> and filling in the gaps. That seems rather suboptimal to start, and
-> short of that the cost of the flushes will start to amortize to some
-> degree (including with commit requests, etc.).
-> 
-> That said, I don't have much experience with NFS and I think this is a
-> reasonable enough argument to try and optimize here. If you or anybody
-> has an NFS test/workload that might exacerbate this condition, let me
-> know and I'll try to play around with it.
-> 
-> > > I ran a quick experiment to skip the flush on sub-4k ranges in favor of
-> > > doing explicit folio zeroing. The idea with that is that the range is
-> > > likely restricted to single folio and since it's dirty, we can assume
-> > > unwritten conversion is imminent and just explicitly zero the range. I
-> > > still see a decent number of flushes from larger ranges in that
-> > > experiment, but that still seems to get things pretty close to my
-> > > baseline test (on a 6.10 distro kernel).
-> > 
-> > What filesystems other than XFS actually need this iomap bandaid
-> > right now?  If there are none (which I think is the case), then we
-> > should just revert this change it until a more performant fix is
-> > available for XFS.
-> > 
-> 
-> I think that's a bit hasty. I had one or two ideas/prototypes to work
-> around this sort of problem before the flush patches even landed, it
-> just wasn't clear to me they were worth the extra logic. I'd prefer to
-> try and iterate on performance from a baseline of functional correctness
-> rather than the other way around, if possible.
-> 
-> A quick hack to test out some of that on latest master brings the result
-> of this test right back to baseline in my local env. Let me play around
-> with trying to work that into something more production worthy before we
-> break out the pitchforks.. ;)
-> 
+iomap zero range performs a pagecache flush upon seeing unwritten
+extents with dirty pagecache in order to determine accurate
+subranges that require direct zeroing. This is to support an
+optimization where clean, unwritten ranges are skipped as they are
+already zero on-disk.
 
-So it turns out there is a little bit more going on here. The regression
-is not so much the flush on its own, but the combination of the flush
-and changes in commit 5ce5674187c34 ("xfs: convert delayed extents to
-unwritten when zeroing post eof blocks"). This changes post-eof zero
-range calls on XFS to convert delalloc extents to unwritten instead of
-the prior behavior of leaving them as delalloc, zeroing in memory, and
-continuing on. IOW, the regression also goes away by bypassing this
-particular commit, even with flushing in place.
+Certain use cases for zero range are more sensitive to flush latency
+than others. The kernel test robot recently reported a regression in
+the following stress-ng workload on XFS:
 
-The prealloc change seems fairly reasonable at face value, but the
-commit log description documents it as purely an i_size change bug fix
-associated with an internal zero range, which AFAICT isn't relevant any
-more because iomap_zero_range() doesn't update i_size AFAICS. However,
-it looks like it did so in the past and this behavior also swizzled back
-and forth a time or two in the same timeframe as this particular commit,
-so perhaps it was a problem when this was introduced and then iomap
-changed again after (or maybe I'm just missing something?).
+  stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
 
-On thinking more about this, I'd be a little concerned on whether this
-will reduce effectiveness of speculative preallocation on similar sorts
-of write extending workloads as this test (i.e. strided extending
-writes). This changes behavior from doing in-memory zeroing between
-physical allocations via the writeback path to doing physical allocation
-on every write that starts beyond EOF, which feels a little like going
-from one extreme to the other. Instead, I'd expect to see something
-where this converts larger mappings to avoid excessive zeroing and
-zeroes on smallish ranges to avoid overly frequent and unnecessarily
-small physical allocations, allowing multiple speculative preallocations
-to compound.
+This workload involves a series of small, strided, write extending
+writes. On XFS, this produces a pattern of allocating post-eof
+speculative preallocation, converting preallocation to unwritten on
+zero range calls, dirtying pagecache over the converted mapping, and
+then repeating the sequence again from the updated EOF. This
+basically produces a sequence of pagecache flushes on the partial
+EOF block zeroing use case of zero range.
 
-Anyways, I've not dug into this enough to know whether it's a problem,
-but since this is documented purely as a bug fix I don't see any
-evidence that potential impact on allocation patterns was tested either.
-This might be something to evaluate more closely in XFS.
+To mitigate this problem, special case the EOF block zeroing use
+case to prefer zeroing over a pagecache flush when the EOF folio is
+already dirty. This brings most of the performance back by avoiding
+flushes on write and truncate extension operations, while preserving
+the ability for iomap to flush and properly process larger ranges.
 
-On the iomap side, it also seems like the current handling of i_size on
-zero range is confused. If iomap_zero_range() doesn't update i_size,
-then it basically doesn't fully support post-eof ranges. It zeroes
-through buffered writes, which writeback will just drop on the floor if
-beyond EOF. However, XFS explicitly calls zero range on post-eof ranges
-to trigger the aforementioned conversion in its begin callback (but
-never expecting to see ranges that need buffered writes).
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+---
 
-I think this is a landmine waiting to happen. If iomap decides to be
-deliberate and skip post-eof ranges, then this could break current XFS
-behavior if it skips the begin callback. OTOH if XFS were to change back
-to at least doing some speculative prealloc delalloc zeroing, IIUC this
-now introduces a race between writeback potentially throwing away the
-zeroed folios over delalloc preallocation and the subsequent write
-operation extending i_size so that doesn't happen. :/ None of this is
-particularly obvious. And FWIW, I'm also skeptical that i_size updates
-were ever consistent across mapping types. I.e., if the size was only
-ever updated via iomap_write_end() for example, then behavior is kind of
-unpredictable.
+Hi iomap maintainers,
 
-Maybe this is something that should be configurable via a keepsize flag
-or some such. That would at least allow for correct behavior and/or a
-failure/warning if we ever fell into doing zeroing for post-eof ranges
-without updating i_size. Thoughts on any of this?
+This is an incremental optimization for the regression reported by the
+test robot here[1]. I'm not totally convinced this is necessary as an
+immediate fix, but the discussion on that thread was enough to suggest
+it could be. I don't really love the factoring, but I had to play a bit
+of whack-a-mole between fstests and stress-ng to restore performance and
+still maintain behavior expectations for some of the tests.
+
+On a positive note, exploring this gave me what I think is a better idea
+for dealing with zero range overall, so I'm working on a followup to
+this that reworks it by splitting zero range across block alignment
+boundaries (similar to how something like truncate page range works, for
+example). This simplifies things by isolating the dirty range check to a
+single folio on an unaligned start offset, which lets the _iter() call
+do a skip or zero (i.e. no more flush_and_stale()), and then
+unconditionally flush the aligned portion to end-of-range. The latter
+flush should be a no-op for every use case I've seen so far, so this
+might entirely avoid the need for anything more complex for zero range.
+
+In summary, I'm posting this as an optional and more "stable-worthy"
+patch for reference and for the maintainers to consider as they like. I
+think it's reasonable to include if we are concerned about this
+particular stress-ng test and are Ok with it as a transient solution.
+But if it were up to me, I'd probably sit on it for a bit to determine
+if a more practical user/workload is affected by this, particularly
+knowing that I'm trying to rework it. This could always be applied as a
+stable fix if really needed, but I just don't think the slightly more
+invasive rework is appropriate for -rc..
+
+Thoughts, reviews, flames appreciated.
 
 Brian
 
-> Brian
-> 
-> > -Dave.
-> > -- 
-> > Dave Chinner
-> > david@fromorbit.com
-> > 
-> 
-> 
+[1] https://lore.kernel.org/linux-xfs/202410141536.1167190b-oliver.sang@intel.com/
+
+ fs/iomap/buffered-io.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index aa587b2142e2..8fd25b14d120 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1372,6 +1372,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 	loff_t pos = iter->pos;
+ 	loff_t length = iomap_length(iter);
+ 	loff_t written = 0;
++	bool eof_zero = false;
+ 
+ 	/*
+ 	 * We must zero subranges of unwritten mappings that might be dirty in
+@@ -1391,12 +1392,23 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 	 * triggers writeback time post-eof zeroing.
+ 	 */
+ 	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN) {
+-		if (*range_dirty) {
++		/* range is clean and already zeroed, nothing to do */
++		if (!*range_dirty)
++			return length;
++
++		/* flush for anything other than partial eof zeroing */
++		if (pos != i_size_read(iter->inode) ||
++		   (pos % i_blocksize(iter->inode)) == 0) {
+ 			*range_dirty = false;
+ 			return iomap_zero_iter_flush_and_stale(iter);
+ 		}
+-		/* range is clean and already zeroed, nothing to do */
+-		return length;
++		/*
++		 * Special case partial EOF zeroing. Since we know the EOF
++		 * folio is dirty, prefer in-memory zeroing for it. This avoids
++		 * excessive flush latency on frequent file size extending
++		 * operations.
++		 */
++		eof_zero = true;
+ 	}
+ 
+ 	do {
+@@ -1415,6 +1427,8 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 		offset = offset_in_folio(folio, pos);
+ 		if (bytes > folio_size(folio) - offset)
+ 			bytes = folio_size(folio) - offset;
++		if (eof_zero && length > bytes)
++			length = bytes;
+ 
+ 		folio_zero_range(folio, offset, bytes);
+ 		folio_mark_accessed(folio);
+-- 
+2.46.2
 
 
