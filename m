@@ -1,119 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-32649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B9E9AC818
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 12:43:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB8F9AC8A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 13:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56D3284AFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 10:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452541F2254F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2024 11:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55881A0BF1;
-	Wed, 23 Oct 2024 10:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA11A7ADE;
+	Wed, 23 Oct 2024 11:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="X1QTC3h4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTjHx+SG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38483136331;
-	Wed, 23 Oct 2024 10:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04FF136331;
+	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729680187; cv=none; b=avCyFtdMBzfhjT+GD9fqRWbkHOt4lS73xPGrXw92wqA9s+I7UtkdqP1Gm1NiQT/hfmF3ql/Tat/OqtkAxWlr5PFcEIbRleG8EyJ3U5N+onNWRsVZcagbPmm3byy/dYBd4fiMQMIr+wp+aT7rCQKc8bVNAQetQaZYuje7aqryaTA=
+	t=1729681895; cv=none; b=tss/J0ylhhvWTmMXxHhnChCPA2C1Pszq6nvNuoRyOR4IanjVqM1k2p0YmpzbI+o0gCIJ2uxHyMxj3a60s5Tq1/VSjFxM/a/ROna2oNsonVIfaiFdRyiRXaTqjzzJe/h3l9Z9cAeNsOtC7gel1Tgou6QXtnmkoDIY5R7QsHR+dqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729680187; c=relaxed/simple;
-	bh=d6NEfppfDlfC61zIqpllXBJMb1Ukgbu81UT9i6+T9Hg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cSJFy96GpDbq9l+32m0rspOVvgo9cP0AdNfaRMaYRNQJj3EBGL8A0dX6u4x07zoho8hEn80judeKXyTCw+Z7CEZQzmXNJwVMlhQLmFni4T1kKEpy1FJ2JsgUrzTtuexU/bgBZWSqMZAJXKyS2oV7JhNLDn1vvdjdaeyPt9KHynQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=X1QTC3h4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1729680180;
-	bh=d6NEfppfDlfC61zIqpllXBJMb1Ukgbu81UT9i6+T9Hg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=X1QTC3h4hqMN6S8z2D7EYOljvNpYiovXWFf82Yi9sAAl7sBRU60Hle/zrmYVOxz8w
-	 3eXCjinuYr7NkCcukIDJ3sEHVKueDku3Nm+lNbbt5YMDoZ6aL5o5/fs818moDrA5xB
-	 qPK3q0t5evDeCN3lqGUQJMV5PvgQ4A2U4RTz4Axm+ebRsflC8ajkCfrh3jSm3ltvP4
-	 Ud3vIEFoFvQCmRUyYRjLvCMxx7ytjofAIZRaUfUhpk/0ocp/7O46XXfgPenI0MlPUG
-	 BKXtd3gzH5L1WmqpWFRxs05cFl0XyF+/tdEMCZD7T8no1J8un6kXmMe60oHW0rFfyp
-	 MP5b14Watz/0w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYQcN0vFlz4w2K;
-	Wed, 23 Oct 2024 21:43:00 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Sasha Levin <sashal@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- kees@kernel.org, hch@infradead.org, broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-In-Reply-To: <ZxgXO_uhxhZYtuRZ@sashalap>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap> <20241022204931.GL21836@frogsfrogsfrogs>
- <ZxgXO_uhxhZYtuRZ@sashalap>
-Date: Wed, 23 Oct 2024 21:42:59 +1100
-Message-ID: <87iktj2j7w.fsf@mail.lhotse>
+	s=arc-20240116; t=1729681895; c=relaxed/simple;
+	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRqmQbVcKfg8QgQvdjcdUlHtxUW4krH7BLHWYifX/chLMl3MagW4E9DPWFJTKWZSlY9Cypkl7OmcYoZqUwync/AFec93LYYYH2GJ9sgIEs+MObyvirz7jdxu8IkKKASPx/VJyX+PyQz73f0NwOisco2uxEtHMALitrOW4Wzc5KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTjHx+SG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 475E9C4CEC6;
+	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729681894;
+	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QTjHx+SGniyfno5hzpUEOCE/uEIe3TFzXFsKZNLdKXLsv7qqwrJDTfFL+Pc1AQ4Op
+	 6Wo8Y0YfPu9pt5rKFfHBrx+CcAo45fK1+JKCQ2NkYs10ClHKYGUl3t0esQtzXualdg
+	 2R9UizqKV6jLKZ5CPIxUVIDNeECNX9nloOOVyMcq5/MZCycIEqpVmIrfaG2FunBEIo
+	 YDMzQ2N3h1vbURHo0Vw3Q4+2gJb5n4TTuaxIT20SIoJrtNKTXz+OAC/L0rXr8v74C8
+	 Q2H8rD4pnL1zeuuiLfh1oukp9yH9oRVkJRmbWRqqgxoLDjsAIXDkP8O33fV7BH18jC
+	 Jrn+BXs7Gqr6Q==
+Date: Wed, 23 Oct 2024 13:11:29 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+Message-ID: <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
 
-Hi Sasha,
+On Thu, Sep 26, 2024 at 10:20:34AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Sep 2024 10:10:33 +0200
+> 
+> A dput(child) call was immediately used after an error pointer check
+> for a d_splice_alias() call in this function implementation.
+> Thus call such a function instead directly before the check.
+This message reads funny, please re-write for your v2. Here is how I would write
+it.
 
-This is awesome.
+"
+Replace two dput(child) calls with one that occurs immediately before the IS_ERR
+evaluation. This is ok because dput gets called regardless of the value returned
+by IS_ERR(res).
+"
 
-Sasha Levin <sashal@kernel.org> writes:
-> On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
->>On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
->>> other information that would be useful?
->>
->>As a maintainer I probably would've found this to be annoying, but with
->>all my other outside observer / participant hats on, I think it's very
->>good to have a bot to expose maintainers not following the process.
->
-> This was my thinking too. Maybe it makes sense for the bot to shut up if
-> things look good (i.e. >N days in stable, everything on the mailing
-> list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
+> 
+> This issue was transformed by using the Coccinelle software.
+How long is the coccinelle script? If it is a reasonable size, can you please
+append it to the commit message. If in doubt of what "reasonable" means, just
+share it to the list before doing your V2.
 
-I think it has to reply with something, otherwise folks will wonder if
-the bot has broken or missed their pull request.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/proc/proc_sysctl.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index d11ebc055ce0..97547de58218 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+>  			res = d_splice_alias(inode, child);
+>  			d_lookup_done(child);
+>  			if (unlikely(res)) {
+> -				if (IS_ERR(res)) {
+> -					dput(child);
+> -					return false;
+> -				}
+>  				dput(child);
+> +
+> +				if (IS_ERR(res))
+> +					return false;
+> +
+>  				child = res;
+>  			}
+>  		}
+> --
+> 2.46.1
+> 
 
-But if all commits were in in linux-next and posted to a list, then the
-only content is the "Days in linux-next" histogram, which is not that long
-and is useful information IMHO.
+-- 
 
-It would be nice if you could trim the tail of the histogram below the
-last populated row, that would make it more concise.
-
-For fixes pulls it is sometimes legitimate for commits not to have been
-in linux-next. But I think it's still good for the bot to highlight
-those, ideally fixes that miss linux-next are either very urgent or
-minor.
-
->>> Commits that weren't found on lore.kernel.org/all:
->>> --------------------
->>> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
->>> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
->>> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
->>> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
->>> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
->>> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
->>> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
->>> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
->>> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
-
-Are you searching by message id, or subject? I sometimes edit subjects
-when applying patches, so a subject search could miss some.
-
-cheers
+Joel Granados
 
