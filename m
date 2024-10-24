@@ -1,111 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-32720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DB09AE172
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 11:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF709AE17B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 11:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66BE71C22224
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC0228221C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469EF1BFE10;
-	Thu, 24 Oct 2024 09:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676B61B85EB;
+	Thu, 24 Oct 2024 09:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YFIJTi2K"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="beJQpw2R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83111166F06;
-	Thu, 24 Oct 2024 09:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B308C1B6CF1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 09:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763457; cv=none; b=AYBHwfHYOZoB9hOQQQPGiDEsShvQ0oTxgJRlRzT5wOStsDC6kps+9mp8Cl0F8vxeIZR8bLXN2QpCIrRlmE2l7g+wRwcgPbyzUwnrcREc+u5+lWtsjuWC9bahwiNgVSx12npKIhITenhYwPdCv+qfMJdHROpfCWRX1PI1LOxaAUo=
+	t=1729763584; cv=none; b=mp3t3sY246tNBimlifsOE3pFQB6aRZlDkgcxqbVpEgh7kButLE06unOkQ+EIItDs1ayoLh6yV7jOnEaVEGR4mJwpKQqDiVNZ02nfbtMHxuAqtSMh7jHYgYcTXR6a18U+1SpS7Dt952/pk/mG9H0I4hmSnqf7KOVpLsYTZtiACwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763457; c=relaxed/simple;
-	bh=VFDE1tHi17lScaNlZuPKqEJsg42bx6ZgcU0VKpO8BkQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V8AxLT6IcJwL/K0ZVXvAW43Yw/pcMYjIaw4/EipLIlgx6uepmAmGNlcrHEywLswz3izQ+mBJWroZim1nlWA4Gracdn4XZUyemOTvzseSOqLZfG7DpvPbb2+dD+6d9Kx1lMaY1euegkvD4aIBJGKJJI2I6FdwFhHr2A215w3ZCvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YFIJTi2K; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=uktMf
-	MyMgHHjf+RcAZFlbgUfr7tyC8vBRpGrG/gVjDo=; b=YFIJTi2KQPQhTn3q+CpZQ
-	wEVdb94Gb8iSxspJ6ku/snLGGtvSzUIlRymC0pmGRaagRk/vfrwuwo7RFkKDrkhl
-	uKw4d664+YpnRHaPW0nQaboF041ayiGuPK9Qh39SEUqWWGfH+54dnxbFYpXodaXx
-	YNpxO3yOjWJeS7ohw9dgcg=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3n+JmGBpn1XkfBA--.21511S2;
-	Thu, 24 Oct 2024 17:50:31 +0800 (CST)
-From: zhouyuhang <zhouyuhang1010@163.com>
-To: brauner@kernel.org,
-	sforshee@kernel.org,
-	shuah@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid failed to run
-Date: Thu, 24 Oct 2024 17:50:13 +0800
-Message-Id: <20241024095013.1213852-1-zhouyuhang1010@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1729763584; c=relaxed/simple;
+	bh=aN8MrCnwlE8K2TmnO3260QbfP25Pc+jBcq2HtLctFss=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=TLEJhclHCH6hYdaiJDtHKh0uQBMz4AY7PDv8JUqMTxx+cANrruqGdTuQ3JGfDEbZK67mypFKxOUIBn0T/VmxCQjuwi0rwj57JXrpQd0j176rC7zd+HEKsBWoIZmq+dI0gEdwNqyEYWZLyZR4JE41mckgiR05jkGxovRcGS0rzJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=beJQpw2R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729763581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aN8MrCnwlE8K2TmnO3260QbfP25Pc+jBcq2HtLctFss=;
+	b=beJQpw2RxLJ+yrc2eowGRNbRZVzGrDnJaF+6Mk+v8vn1Pox0fbFLbPpmhMDu2MU1BWHwCw
+	tj5ClI4E4ZKPCMh+Q+fXFFtawGlKBCYhm81+iv/p8cnsQFW88dkGJCtZDllQxz+a3I4rmb
+	D2dB4rktFV/QL70yzYt+2A9tarTD7Vw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-5E1Ye8RMN_a1yUPNjHmeBg-1; Thu,
+ 24 Oct 2024 05:52:56 -0400
+X-MC-Unique: 5E1Ye8RMN_a1yUPNjHmeBg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1498C1956048;
+	Thu, 24 Oct 2024 09:52:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 309D81956056;
+	Thu, 24 Oct 2024 09:52:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <3340431.1729680010@warthog.procyon.org.uk>
+References: <3340431.1729680010@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] afs: Fix missing subdir edit when renamed between parent dirs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n+JmGBpn1XkfBA--.21511S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww1xJw17Kry3Aw4UJFW8JFb_yoW8Zw1DpF
-	WrXFnFkrWSgF12gF17A3Z5Z3WIqrZxZa17Gr93Wry5AFsrGrn2qa4SkFyjqry2kFyjqrWr
-	Zrn3Xw15XFsIyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j_DGOUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiRRiCJmcaEJ6T6AAAsx
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3570557.1729763571.1@warthog.procyon.org.uk>
+Date: Thu, 24 Oct 2024 10:52:51 +0100
+Message-ID: <3570558.1729763571@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: zhouyuhang <zhouyuhang@kylinos.cn>
+David Howells <dhowells@redhat.com> wrote:
 
-Test case idmap_mount_tree_invalid failed to run on the newer kernel
-with the following output:
+> cc: David Howells <dhowells@redhat.com>
 
- #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
- # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
- # idmap_mount_tree_invalid: Test terminated by assertion
+That should, of course, be:
 
-This is because tmpfs is mounted at "/mnt/A", and tmpfs already
-contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
-support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
-returns 0 instead of -EINVAL as expected.
-
-Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
-So we can use "/mnt/B" instead of "/mnt/A" to make the test run
-successfully with the following output:
-
- # Starting 1 tests from 1 test cases.
- #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
- #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
- ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
- # PASSED: 1 / 1 tests passed.
-
-Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
----
- tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index c6a8c732b802..54552c19bc24 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
- 	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
- 	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
- 
--	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
-+	open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
- 				     AT_RECURSIVE |
- 				     AT_EMPTY_PATH |
- 				     AT_NO_AUTOMOUNT |
--- 
-2.27.0
+Signed-off-by: David Howells <dhowells@redhat.com>
 
 
