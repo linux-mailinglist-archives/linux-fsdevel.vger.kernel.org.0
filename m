@@ -1,42 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1569AE5FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:23:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B47A9AE606
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6277B1C213B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8B41C21B2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218461E0487;
-	Thu, 24 Oct 2024 13:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0061E2821;
+	Thu, 24 Oct 2024 13:23:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF91AF0D0;
-	Thu, 24 Oct 2024 13:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068AB1DDA16;
+	Thu, 24 Oct 2024 13:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776179; cv=none; b=TkVfMZc52UfGQBlMfhGfO/Y/MRSEXYM29AWDkQfCvBQJ6etu4PrT2WsgYMrCY+esjJ8rzcjqvPakY1kgkYmnsaEwchVP8eNas+G1QPlWd7zrKvKmYtQBnf4uI20Ddfn3g7ZsMBJBV6jOCX0tPdRcdDqpq8qzhnmrLeaydrpdqYs=
+	t=1729776181; cv=none; b=HaKWOg+yR9U5ijuY5CAKJGbvR176TLdU1eQWIH2XQNxtpanFu1XbGuRX+qj4CLH7bHad+pMSVGqZmXVBUeJr4S5pIou/BEZ2zvD9muFyLKrO4Pxaz4qLUf7v9Cyy909LzeLTa2Eh5JoZaNlc7BtqF7SC6kl4cEiGha2PFz6toOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776179; c=relaxed/simple;
-	bh=pP3oqeT1+PnPwZ7YbJT5ltQzpUx7GpUfy7i+1vcSMpM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R7lxUiVqb+ZVyIgweX77Kr5v2bB+asqrpToGZc4TK3P7A2sUCnlTl2BhcDozd+IRTtMS9Xd/7gjpaXyXV87PpjMX1E6Xpo6sDBC+6NnSeUf61GzOJh/8HMdI4SKJDrmF2q9aSU3tafIlRrZzHn3eOe3JMfKmZB7ZbzImzM8nULE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	s=arc-20240116; t=1729776181; c=relaxed/simple;
+	bh=FYAgGxlCNRBg5BU42xNlfivGLI1K5EO1sJc/Ph2Md4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=K5JT4TiC/vjuUpsAN41++O+i5s9hXm3w0RvqgD8QxoJnC8oV5QknSYZFK5601VRpqqcSEtxd2ffVTmwpOUVxEwgMLVB8FfJWA4lb1BlUCIGxGF5LJlEnlEkTmvrV6W82s9j3/9FpEQ9w8r0fi6vynV49mbyeTFQmcYUTde4YEwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ6634FNJz4f3nTw;
-	Thu, 24 Oct 2024 21:22:35 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ66C386mz4f3kpc;
+	Thu, 24 Oct 2024 21:22:43 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D47481A058E;
-	Thu, 24 Oct 2024 21:22:53 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id C5E561A0194;
+	Thu, 24 Oct 2024 21:22:55 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S4;
-	Thu, 24 Oct 2024 21:22:51 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S5;
+	Thu, 24 Oct 2024 21:22:54 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -72,10 +73,12 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 00/28] fix CVE-2024-46701
-Date: Thu, 24 Oct 2024 21:19:41 +0800
-Message-Id: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 01/28] maple_tree: add mt_free_one() and mt_attr() helpers
+Date: Thu, 24 Oct 2024 21:19:42 +0800
+Message-Id: <20241024132009.2267260-2-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,100 +86,133 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFy3Zr48Wr4UKF4kGw4Durg_yoW5CF13p3
-	WDGr15trsrZry8Grs3Aw47Xry7W395W348Jw1DGw15Ar4UKr97XrWruFyfAay3CayxGF47
-	Kr1Yqw18Ca4UA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r
-	4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
-	IYCTnIWIevJa73UjIFyTuYvjTRCXdbUUUUU
+X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S5
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryUtF17GFWUCw4xuw48WFg_yoWrur4kpr
+	ZrK345tFsavr18G3yxKa1UJ34rXFs3X3yjqa4qkw1DA3Z8Ar1SqFyIv3yrZFWfu3ykG3W3
+	Ar4qgw18CF4qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnI
+	WIevJa73UjIFyTuYvjTRCpBTUUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+From: Peng Zhang <zhangpeng.00@bytedance.com>
 
-Fix patch is patch 27, relied patches are from:
+commit 4f2267b58a22d972be98edef8e6b3c7a67c9fb91 upstream.
 
- - patches from set [1] to add helpers to maple_tree, the last patch to
-improve fork() performance is not backported;
- - patches from set [2] to change maple_tree, and follow up fixes;
- - patches from set [3] to convert offset_ctx from xarray to maple_tree;
+Patch series "Introduce __mt_dup() to improve the performance of fork()", v7.
 
-Please notice that I'm not an expert in this area, and I'm afraid to
-make manual changes. That's why patch 16 revert the commit that is
-different from mainline and will cause conflict backporting new patches.
-patch 28 pick the original mainline patch again.
+This series introduces __mt_dup() to improve the performance of fork().
+During the duplication process of mmap, all VMAs are traversed and
+inserted one by one into the new maple tree, causing the maple tree to be
+rebalanced multiple times.  Balancing the maple tree is a costly
+operation.  To duplicate VMAs more efficiently, mtree_dup() and __mt_dup()
+are introduced for the maple tree.  They can efficiently duplicate a maple
+tree.
 
-(And this is what we did to fix the CVE in downstream kernels).
+Here are some algorithmic details about {mtree,__mt}_dup().  We perform a
+DFS pre-order traversal of all nodes in the source maple tree.  During
+this process, we fully copy the nodes from the source tree to the new
+tree.  This involves memory allocation, and when encountering a new node,
+if it is a non-leaf node, all its child nodes are allocated at once.
 
-[1] https://lore.kernel.org/all/20231027033845.90608-1-zhangpeng.00@bytedance.com/
-[2] https://lore.kernel.org/all/20231101171629.3612299-2-Liam.Howlett@oracle.com/T/
-[3] https://lore.kernel.org/all/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net/
+This idea was originally from Liam R.  Howlett's Maple Tree Work email,
+and I added some of my own ideas to implement it.  Some previous
+discussions can be found in [1].  For a more detailed analysis of the
+algorithm, please refer to the logs for patch [3/10] and patch [10/10].
 
-Andrew Morton (1):
-  lib/maple_tree.c: fix build error due to hotfix alteration
+There is a "spawn" in byte-unixbench[2], which can be used to test the
+performance of fork().  I modified it slightly to make it work with
+different number of VMAs.
 
-Chuck Lever (5):
-  libfs: Re-arrange locking in offset_iterate_dir()
-  libfs: Define a minimum directory offset
-  libfs: Add simple_offset_empty()
-  maple_tree: Add mtree_alloc_cyclic()
-  libfs: Convert simple directory offsets to use a Maple Tree
+Below are the test results.  The first row shows the number of VMAs.  The
+second and third rows show the number of fork() calls per ten seconds,
+corresponding to next-20231006 and the this patchset, respectively.  The
+test results were obtained with CPU binding to avoid scheduler load
+balancing that could cause unstable results.  There are still some
+fluctuations in the test results, but at least they are better than the
+original performance.
 
-Liam R. Howlett (12):
-  maple_tree: remove unnecessary default labels from switch statements
-  maple_tree: make mas_erase() more robust
-  maple_tree: move debug check to __mas_set_range()
-  maple_tree: add end of node tracking to the maple state
-  maple_tree: use cached node end in mas_next()
-  maple_tree: use cached node end in mas_destroy()
-  maple_tree: clean up inlines for some functions
-  maple_tree: separate ma_state node from status
-  maple_tree: remove mas_searchable()
-  maple_tree: use maple state end for write operations
-  maple_tree: don't find node end in mtree_lookup_walk()
-  maple_tree: mtree_range_walk() clean up
+21     121   221    421    821    1621   3221   6421   12821  25621  51221
+112100 76261 54227  34035  20195  11112  6017   3161   1606   802    393
+114558 83067 65008  45824  28751  16072  8922   4747   2436   1233   599
+2.19%  8.92% 19.88% 34.64% 42.37% 44.64% 48.28% 50.17% 51.68% 53.74% 52.42%
 
-Lorenzo Stoakes (1):
-  maple_tree: correct tree corruption on spanning store
+Thanks to Liam and Matthew for the review.
 
-Peng Zhang (7):
-  maple_tree: add mt_free_one() and mt_attr() helpers
-  maple_tree: introduce {mtree,mas}_lock_nested()
-  maple_tree: introduce interfaces __mt_dup() and mtree_dup()
-  maple_tree: skip other tests when BENCH is enabled
-  maple_tree: preserve the tree attributes when destroying maple tree
-  maple_tree: add test for mtree_dup()
-  maple_tree: avoid checking other gaps after getting the largest gap
+This patch (of 10):
 
-Yu Kuai (1):
-  Revert "maple_tree: correct tree corruption on spanning store"
+Add two helpers:
+1. mt_free_one(), used to free a maple node.
+2. mt_attr(), used to obtain the attributes of maple tree.
 
-yangerkun (1):
-  libfs: fix infinite directory reads for offset dir
+Link: https://lkml.kernel.org/r/20231027033845.90608-1-zhangpeng.00@bytedance.com
+Link: https://lkml.kernel.org/r/20231027033845.90608-2-zhangpeng.00@bytedance.com
+Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Mike Christie <michael.christie@oracle.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ lib/maple_tree.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
- fs/libfs.c                                  |  129 ++-
- include/linux/fs.h                          |    6 +-
- include/linux/maple_tree.h                  |  356 +++---
- include/linux/mm_types.h                    |    3 +-
- lib/maple_tree.c                            | 1096 +++++++++++++------
- lib/test_maple_tree.c                       |  218 ++--
- mm/internal.h                               |   10 +-
- mm/shmem.c                                  |    4 +-
- tools/include/linux/spinlock.h              |    1 +
- tools/testing/radix-tree/linux/maple_tree.h |    2 +-
- tools/testing/radix-tree/maple.c            |  390 ++++++-
- 11 files changed, 1564 insertions(+), 651 deletions(-)
-
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 4e05511c8d1e..e7228bb86ef6 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -165,6 +165,11 @@ static inline int mt_alloc_bulk(gfp_t gfp, size_t size, void **nodes)
+ 	return kmem_cache_alloc_bulk(maple_node_cache, gfp, size, nodes);
+ }
+ 
++static inline void mt_free_one(struct maple_node *node)
++{
++	kmem_cache_free(maple_node_cache, node);
++}
++
+ static inline void mt_free_bulk(size_t size, void __rcu **nodes)
+ {
+ 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
+@@ -205,6 +210,11 @@ static unsigned int mas_mt_height(struct ma_state *mas)
+ 	return mt_height(mas->tree);
+ }
+ 
++static inline unsigned int mt_attr(struct maple_tree *mt)
++{
++	return mt->ma_flags & ~MT_FLAGS_HEIGHT_MASK;
++}
++
+ static inline enum maple_type mte_node_type(const struct maple_enode *entry)
+ {
+ 	return ((unsigned long)entry >> MAPLE_NODE_TYPE_SHIFT) &
+@@ -5584,7 +5594,7 @@ void mas_destroy(struct ma_state *mas)
+ 			mt_free_bulk(count, (void __rcu **)&node->slot[1]);
+ 			total -= count;
+ 		}
+-		kmem_cache_free(maple_node_cache, node);
++		mt_free_one(ma_mnode_ptr(node));
+ 		total--;
+ 	}
+ 
 -- 
 2.39.2
 
