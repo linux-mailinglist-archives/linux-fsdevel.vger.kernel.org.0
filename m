@@ -1,113 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-32784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AE49AE90A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D39099AEBBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 18:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230611C2151A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4E51C21BEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375951E2009;
-	Thu, 24 Oct 2024 14:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CAC1F80A1;
+	Thu, 24 Oct 2024 16:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I72LaHE5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKVTYMJw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D07CF16;
-	Thu, 24 Oct 2024 14:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7CF1EF08D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 16:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780741; cv=none; b=LUlsVUKG3TeaIjN2UfqwRoAC6Rj4w4yG+YGasX3CL8bKDoSSvyCZ7gCagxRbx8EYZPKFMVy4ZWsIrEoDvYvsRknfmJDWQNUnyFV31UW+gL4VQQQMr1tgKlP+apWYQDZoth2C/uld1QBvt2GhLQPbzQl727l3k+OFUiPlIwNfbeQ=
+	t=1729786777; cv=none; b=HyG3AemmBYbBsVtq1Nq12a623D0gs+qifgo9IlMd9rRt2N9rN7nTEdEwY66y+OMa1dD9XEXK+4NexrlhtOTzEgDuff8ZEEcDomNT/J5IDJ/hviH+tXucHuUfd4liwBovn3g8qP7NFuXWcuSy08QyjOdS3he37b1nMQWMVkhFyE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780741; c=relaxed/simple;
-	bh=UOhI2z8bUD1H8XPNqw8r8CcHu55ylmwLfgFW8p34T0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KymByZYlv7LBSaZFY2jSneRSPJgrpyTaOsmhDBPV3LUHatkfXNMfXrCSku1wld4EUamejGQkDD2D3dYTAYS5QamSOjNnWA4hpP0IMPvVonTggY/KkdxGfrodzn8QnFbaZPFrN1z09sC/oRaJGbPBLLIn5RqaYAT67g9TEm8JjKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I72LaHE5; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729780739; x=1761316739;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UOhI2z8bUD1H8XPNqw8r8CcHu55ylmwLfgFW8p34T0Y=;
-  b=I72LaHE5Hck4YlUahIAsnHep8nSKb2ndQuq/1qu8ZqBuBVAnVEQ08iuY
-   dTQe0xgQXZhr4ScONEzf89ZoI0JzslpPAjqt9i9Li69e5rSaMeBvjKt+z
-   xiQECOMdgYuyd/mzJXq53/QSJl4uv9BB49lMSxCwE5R3c2gM1pG4MrTNF
-   lIO7UwmfDDvjdXNEQy5tcbb7KsCkTovMNstn5Ngl7ehaaiUozy56rpPEy
-   6pOF9CgltheGbBcxxVXB9T7CAKrSSo++AbFljbNvsXjIUIxxyooCtRRmg
-   Tc7/9Ldxdi6RieFWHOCk0rc2P/RQGXbyBdTrwaA+/GGotvDh4z2LCZHWH
-   Q==;
-X-CSE-ConnectionGUID: T2y0wQZoQNywe15RuUKS7g==
-X-CSE-MsgGUID: F+nA6+WYTKGClZqfl4+liw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="17042073"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="17042073"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 07:38:59 -0700
-X-CSE-ConnectionGUID: /pt0RsxpSbiesuSAeUBIqw==
-X-CSE-MsgGUID: GDg+ccIcQkytvgpjaSNG8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="80191661"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 24 Oct 2024 07:38:57 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3yzH-000WX4-23;
-	Thu, 24 Oct 2024 14:38:55 +0000
-Date: Thu, 24 Oct 2024 22:38:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] iomap: elide zero range flush from partial eof zeroing
-Message-ID: <202410242220.ZfBg7XEr-lkp@intel.com>
-References: <20241023143029.11275-1-bfoster@redhat.com>
+	s=arc-20240116; t=1729786777; c=relaxed/simple;
+	bh=QNKlbg+9FnjGVGUdZaBsIKqMVhWzw/1WxYi1qOo6XSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GsorJgt0t6qdYxiho0y9G+aRuyY6z0bZhpTo2zSIJuOiTAF35r+jBgKn9tSyDJ4xRleQj4Hh1viDnF4PK6C42zFuMRR3iiiGK4Z/A0FWMNfaaOcjKkUzVYXvWpwi7qfz8YP1jh8Eh7fHMvi82aPsyYuEOsqLYYnZVQwNXiB3R3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKVTYMJw; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46090640f0cso7422701cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 09:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729786774; x=1730391574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYeUbOKa306q6I12krc0EQx0Papi5FUOsJbXPHIzdgg=;
+        b=FKVTYMJw9s6VqGIR7SnnNGhxwoKnEFrGbRbHHBfGHFYkkCpbdbGRvRx1GeUCgftwA6
+         Leh4Occkw7gs0sxFbSx+Dta9TgMeb+R4gIANUUwMqKVXGSBeePo5vOi56lDKFapF/8XW
+         6YXUvIwqyFGTznZiw1uCQbpuqLiiD5eSCP8MwVrKANLYoazvPCXNguPzklOVDC47IFdr
+         ipu8laMpX1u7rt81HZAsNu3ttMvB4p//LxYFpBw8YFIaPCgL9iBIlOMxrnCquGaHf2cS
+         XyBPSpz3wIuXfd9lHXkmbCIGHmSGCc4X9zwk/PzJqAvCf8+TmHWolwrilSKjkEN2+646
+         nQwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729786774; x=1730391574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TYeUbOKa306q6I12krc0EQx0Papi5FUOsJbXPHIzdgg=;
+        b=cGquLA/uTxPQbI6HZ477PSnYBzoDr4yBRvlYwN1Pb1c1Fc83MNbwtZD+DBdmhOMty3
+         uw1Aw+DJs8y0i5EVX04WjMMt2NepO5jAupRbWGiUdi+KXbRPRNHzJKov79BzxGB/l1wk
+         wh4uv0K0OtftbFZAtYn2jBUM0Fb+ow6He5koMvYqvBxYaRRPT9WYpxuuT/Kz6/aN8YQC
+         UyEgvHZgmvfQEBXn8sWTKKNZnu6++32l8TcesIkic4nc5VdIwCvzmf7yekaKJ9RDqVLR
+         P2Bg/N8VpLVbItGKfVMelqlpYvxz/dxFIvSBMa1hyyS8zQJU+bbjO6f9bvnebPAuDvF7
+         NJlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSA+TSI/ZT3Buck1yspabSvWUd/BOgdLOzevCS3sS/ai67qK3Wkf9+7iAsaqNCbUZBaDeoPOWeJZ4tvsGM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqld28zTakvYLxsCd9mPhuult3G6PDR3Cd8isXh5j4q8rs1yZO
+	ZzWGzZNXHJZjvosAG/Z4EkPI8zvawNj2cnw8cZdpDT6Xz8kJTAt/dMOIBHuejMf85lwzS2b2vke
+	B48u7w5uw7Kmbnt+DjpWn/dv1liw=
+X-Google-Smtp-Source: AGHT+IHqRN9l0IUefAm1IKWd69uN0YVoo7MUs1wFbBZaxoUZOSrpM1bCIjgUWfQKgUZxPGvcWafmYRmzqZB8bCkQKRg=
+X-Received: by 2002:ac8:7d54:0:b0:460:a9ec:b506 with SMTP id
+ d75a77b69052e-46114754d21mr94344431cf.49.1729786773795; Thu, 24 Oct 2024
+ 09:19:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023143029.11275-1-bfoster@redhat.com>
+References: <20241011191320.91592-1-joannelkoong@gmail.com>
+In-Reply-To: <20241011191320.91592-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 24 Oct 2024 09:19:22 -0700
+Message-ID: <CAJnrk1YH4J2rCbxLbZu+qGKSGbR66ppaEbEPQZfiE9KVXeaoUg@mail.gmail.com>
+Subject: Re: [PATCH v8 0/3] fuse: add kernel-enforced request timeout option
+To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
+	jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+On Fri, Oct 11, 2024 at 12:14=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+>
+> There are situations where fuse servers can become unresponsive or
+> stuck, for example if the server is in a deadlock. Currently, there's
+> no good way to detect if a server is stuck and needs to be killed
+> manually.
+>
+> This patchset adds a timeout option where if the server does not reply to=
+ a
+> request by the time the timeout elapses, the connection will be aborted.
+> This patchset also adds two dynamically configurable fuse sysctls
+> "default_request_timeout" and "max_request_timeout" for controlling/enfor=
+cing
+> timeout behavior system-wide.
+>
+> Existing systems running fuse servers will not be affected unless they
+> explicitly opt into the timeout.
+>
+> v7:
+> https://lore.kernel.org/linux-fsdevel/20241007184258.2837492-1-joannelkoo=
+ng@gmail.com/
+> Changes from v7 -> v8:
+> * Use existing lists for checking expirations (Miklos)
+>
+> v6:
+> https://lore.kernel.org/linux-fsdevel/20240830162649.3849586-1-joannelkoo=
+ng@gmail.com/
+> Changes from v6 -> v7:
+> - Make timer per-connection instead of per-request (Miklos)
+> - Make default granularity of time minutes instead of seconds
+> - Removed the reviewed-bys since the interface of this has changed (now
+>   minutes, instead of seconds)
+>
+> v5:
+> https://lore.kernel.org/linux-fsdevel/20240826203234.4079338-1-joannelkoo=
+ng@gmail.com/
+> Changes from v5 -> v6:
+> - Gate sysctl.o behind CONFIG_SYSCTL in makefile (kernel test robot)
+> - Reword/clarify last sentence in cover letter (Miklos)
+>
+> v4:
+> https://lore.kernel.org/linux-fsdevel/20240813232241.2369855-1-joannelkoo=
+ng@gmail.com/
+> Changes from v4 -> v5:
+> - Change timeout behavior from aborting request to aborting connection
+>   (Miklos)
+> - Clarify wording for sysctl documentation (Jingbo)
+>
+> v3:
+> https://lore.kernel.org/linux-fsdevel/20240808190110.3188039-1-joannelkoo=
+ng@gmail.com/
+> Changes from v3 -> v4:
+> - Fix wording on some comments to make it more clear
+> - Use simpler logic for timer (eg remove extra if checks, use mod timer A=
+PI)
+>   (Josef)
+> - Sanity-check should be on FR_FINISHING not FR_FINISHED (Jingbo)
+> - Fix comment for "processing queue", add req->fpq =3D NULL safeguard  (B=
+ernd)
+>
+> v2:
+> https://lore.kernel.org/linux-fsdevel/20240730002348.3431931-1-joannelkoo=
+ng@gmail.com/
+> Changes from v2 -> v3:
+> - Disarm / rearm timer in dev_do_read to handle race conditions (Bernrd)
+> - Disarm timer in error handling for fatal interrupt (Yafang)
+> - Clean up do_fuse_request_end (Jingbo)
+> - Add timer for notify retrieve requests
+> - Fix kernel test robot errors for #define no-op functions
+>
+> v1:
+> https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoo=
+ng@gmail.com/
+> Changes from v1 -> v2:
+> - Add timeout for background requests
+> - Handle resend race condition
+> - Add sysctls
+>
+> Joanne Koong (3):
+>   fs_parser: add fsparam_u16 helper
+>   fuse: add optional kernel-enforced timeout for requests
+>   fuse: add default_request_timeout and max_request_timeout sysctls
+>
+>  Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++
+>  fs/fs_parser.c                          | 14 +++++
+>  fs/fuse/dev.c                           | 80 +++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h                        | 31 ++++++++++
+>  fs/fuse/inode.c                         | 33 ++++++++++
+>  fs/fuse/sysctl.c                        | 20 +++++++
+>  include/linux/fs_parser.h               |  9 ++-
+>  7 files changed, 211 insertions(+), 3 deletions(-)
+>
 
-kernel test robot noticed the following build errors:
+Just checking in on this patchset - any comments or thoughts?
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.12-rc4 next-20241024]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Foster/iomap-elide-zero-range-flush-from-partial-eof-zeroing/20241023-223311
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20241023143029.11275-1-bfoster%40redhat.com
-patch subject: [PATCH] iomap: elide zero range flush from partial eof zeroing
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20241024/202410242220.ZfBg7XEr-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410242220.ZfBg7XEr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410242220.ZfBg7XEr-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   powerpc-linux-ld: fs/iomap/buffered-io.o: in function `iomap_zero_iter':
->> buffered-io.c:(.text+0x3f5c): undefined reference to `__moddi3'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Joanne
+> --
+> 2.43.5
+>
 
