@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582309AE64F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665649AE656
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0D21C21908
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258BD28A021
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDB41E7C33;
-	Thu, 24 Oct 2024 13:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF5E1EBFE4;
+	Thu, 24 Oct 2024 13:25:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E1B1E570C;
-	Thu, 24 Oct 2024 13:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11AF1E572D;
+	Thu, 24 Oct 2024 13:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776316; cv=none; b=cIQNizprYlSBSoPuXRcBhvhsFwTPCM7iI+eF4z3rwEUD/peeggXYL0gBllrZO5zA9yyLswqDXURwvgHVV7ARJ2k3WsG86QfqxIOUZSKo1KZlmnHH/2x6HYzJz9+md0U+T2Ss5eenKJrsMSO9ePZbN/WqPdhfytahfWx0Y2HpC8c=
+	t=1729776318; cv=none; b=Am0U10A8Ndg9DbUs5etzQipup1q6M4kkWlr7fZr9wG6896YvpK4fXCbqpKBnd7d9HmEU2RejGTTXYX1wr8EHztbPGBzrmvmTQaIKjLIoMviQ2qu9BM+TsqGxbdvS2Olwf3qeLxqXTxFOcXTP70NMHsRIE0DCxagERtdFXOxrBlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776316; c=relaxed/simple;
-	bh=x5/c8tuANtCq4EaRwlgqWxvTl7oE/NVLokn8SZvc8Hk=;
+	s=arc-20240116; t=1729776318; c=relaxed/simple;
+	bh=E1EeRncxF6CGiT3PdfU6NrJBngXDnoGq90gIGroIIXQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hQSSwXi5yEiqFxZ9urxstQYYqS1pS2v642sSjD1EKF7lJuS1PZ15X3EXEoQUbRgJtD1TmKmHa0+oubxOrAtUQ9KqHD5uP5kpp8nojUJdpYROOwuloYP1Pn+nHeX1K1vY6fmYTiaNm/MPDfenh8G544sWONuFJ/fvmtzCHFSNmo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=mA6sdz05OxznTRIU513ywYLfqQnNr/UxZGl0U4pWY+Il6fwlog6gB9EtRyt2TzdHlItd7cvITq25gYcNtwSfZg4zzSr6boRcweVD+IF5Ll0RO36wSVHLGdbe7SEaEf7/3yd5t9JLb5dpHGkWzzGuJ1GDRH+0r1XYkdB8yUUFXWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68p3smgz4f3lX2;
-	Thu, 24 Oct 2024 21:24:58 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68j5bqgz4f3nbP;
+	Thu, 24 Oct 2024 21:24:53 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E0B221A0196;
-	Thu, 24 Oct 2024 21:25:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 117991A0194;
+	Thu, 24 Oct 2024 21:25:12 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S6;
-	Thu, 24 Oct 2024 21:25:10 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S7;
+	Thu, 24 Oct 2024 21:25:11 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 18/28] maple_tree: don't find node end in mtree_lookup_walk()
-Date: Thu, 24 Oct 2024 21:22:15 +0800
-Message-Id: <20241024132225.2271667-3-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 19/28] maple_tree: mtree_range_walk() clean up
+Date: Thu, 24 Oct 2024 21:22:16 +0800
+Message-Id: <20241024132225.2271667-4-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -87,12 +87,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxAry3tryUGF4kCw43Gw1DGFg_yoW5Cw4fp3
-	ZrGFy5tFyfAF4xWrWfKa18X34fXFs3Gr17t3yDGryrZFyUGw1Igr1rCryfurWagayxu3Wf
-	Aa1Yqw18W3Z7JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFW5Kr47Zr1fKFyDCw1rZwb_yoW8KFWfpF
+	nxW345KF9xJF17Crs3Ka1kJrySg3ZxGrWUAa4UGryrZryaywnYg3ZYvryfua98K345A34Y
+	gF43Zw1xW3WIyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
 	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6rxdM2
 	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
@@ -104,109 +104,86 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxAry3tryUGF4kCw43Gw1DGFg_yoW5Cw4fp3
 	AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY
 	6xIIjxv20xvEc7CjxVAFwI0_Cr1j6rxdMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
 	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIev
-	Ja73UjIFyTuYvjTRGApnUUUUU
+	Ja73UjIFyTuYvjTRXID7UUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 
-commit 24662decdd44645e8f027d7912be962dd461d1aa upstream.
+commit a3c63c8c5df6406e79490456a1fc41a287676070 upstream.
 
-Since the pivot being set is now reliable, the optimized loop no longer
-needs to find the node end.  The redundant check for a dead node can also
-be avoided as there is no danger of using the wrong pivot since the
-results will be thrown out in the case of a dead node by the later check.
+mtree_range_walk() needed to be updated to avoid checking if there was a
+pivot value.  On closer examination, the code could avoid setting min or
+max in certain scenarios.  The commit removes the extra check for
+pivot[offset] before setting max and only sets max when necessary.  It
+also only sets min if it is necessary by checking offset 0 prior to the
+loop (as it has always done).
 
-This patch also adds a benchmark test for the function to the maple tree
-test framework.  The benchmark shows an average increase performance of
-5.98% over 3 runs with this commit.
+The commit also drops a dead node check since the end of the node will
+return the array size when the last slot is occupied (by a potential reuse
+in a dead node).  The data will be discarded later if the node is marked
+dead.
 
-Link: https://lkml.kernel.org/r/20231101171629.3612299-12-Liam.Howlett@oracle.com
+Benchmarking these changes results in an increase in performance of 5.45%
+using the BENCH_WALK in the maple tree test code.
+
+Link: https://lkml.kernel.org/r/20231101171629.3612299-13-Liam.Howlett@oracle.com
 Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Cc: Peng Zhang <zhangpeng.00@bytedance.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/maple_tree.c      | 12 +++---------
- lib/test_maple_tree.c | 21 +++++++++++++++++++++
- 2 files changed, 24 insertions(+), 9 deletions(-)
+ lib/maple_tree.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 472aef7a3d5c..ad8bf3413889 100644
+index ad8bf3413889..d90f4b7e7511 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -3742,23 +3742,17 @@ static inline void *mtree_lookup_walk(struct ma_state *mas)
- 	enum maple_type type;
- 	void __rcu **slots;
- 	unsigned char end;
--	unsigned long max;
- 
- 	next = mas->node;
--	max = ULONG_MAX;
+@@ -2806,32 +2806,29 @@ static inline void *mtree_range_walk(struct ma_state *mas)
+ 	min = mas->min;
+ 	max = mas->max;
  	do {
 -		offset = 0;
+ 		last = next;
  		node = mte_to_node(next);
  		type = mte_node_type(next);
  		pivots = ma_pivots(node, type);
--		end = ma_data_end(node, type, pivots, max);
+ 		end = ma_data_end(node, type, pivots, max);
 -		if (unlikely(ma_dead_node(node)))
 -			goto dead_node;
-+		end = mt_pivots[type];
-+		offset = 0;
- 		do {
--			if (pivots[offset] >= mas->index) {
--				max = pivots[offset];
-+			if (pivots[offset] >= mas->index)
- 				break;
--			}
- 		} while (++offset < end);
+-
+-		if (pivots[offset] >= mas->index) {
+-			prev_max = max;
+-			prev_min = min;
+-			max = pivots[offset];
++		prev_min = min;
++		prev_max = max;
++		if (pivots[0] >= mas->index) {
++			offset = 0;
++			max = pivots[0];
+ 			goto next;
+ 		}
  
+-		do {
++		offset = 1;
++		while (offset < end) {
++			if (pivots[offset] >= mas->index) {
++				max = pivots[offset];
++				break;
++			}
+ 			offset++;
+-		} while ((offset < end) && (pivots[offset] < mas->index));
++		}
+ 
+-		prev_min = min;
+ 		min = pivots[offset - 1] + 1;
+-		prev_max = max;
+-		if (likely(offset < end && pivots[offset]))
+-			max = pivots[offset];
+-
+ next:
  		slots = ma_slots(node, type);
-diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
-index f9acc6ef0728..26991888da14 100644
---- a/lib/test_maple_tree.c
-+++ b/lib/test_maple_tree.c
-@@ -43,6 +43,7 @@ atomic_t maple_tree_tests_passed;
- /* #define BENCH_NODE_STORE */
- /* #define BENCH_AWALK */
- /* #define BENCH_WALK */
-+/* #define BENCH_LOAD */
- /* #define BENCH_MT_FOR_EACH */
- /* #define BENCH_FORK */
- /* #define BENCH_MAS_FOR_EACH */
-@@ -1754,6 +1755,19 @@ static noinline void __init bench_walk(struct maple_tree *mt)
- }
- #endif
- 
-+#if defined(BENCH_LOAD)
-+static noinline void __init bench_load(struct maple_tree *mt)
-+{
-+	int i, max = 2500, count = 550000000;
-+
-+	for (i = 0; i < max; i += 10)
-+		mtree_store_range(mt, i, i + 5, xa_mk_value(i), GFP_KERNEL);
-+
-+	for (i = 0; i < count; i++)
-+		mtree_load(mt, 1470);
-+}
-+#endif
-+
- #if defined(BENCH_MT_FOR_EACH)
- static noinline void __init bench_mt_for_each(struct maple_tree *mt)
- {
-@@ -3620,6 +3634,13 @@ static int __init maple_tree_seed(void)
- 	mtree_destroy(&tree);
- 	goto skip;
- #endif
-+#if defined(BENCH_LOAD)
-+#define BENCH
-+	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
-+	bench_load(&tree);
-+	mtree_destroy(&tree);
-+	goto skip;
-+#endif
- #if defined(BENCH_FORK)
- #define BENCH
- 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+ 		next = mt_slot(mas->tree, slots, offset);
 -- 
 2.39.2
 
