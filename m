@@ -1,50 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-32701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA15E9ADE76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 10:07:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B699ADFCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 11:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151A41C2170E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 08:07:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98BB61F22934
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7381AF0DA;
-	Thu, 24 Oct 2024 08:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E0A1C4A1B;
+	Thu, 24 Oct 2024 09:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PKWcctag"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560D819F104;
-	Thu, 24 Oct 2024 08:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A311C2301;
+	Thu, 24 Oct 2024 09:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757242; cv=none; b=lXBx968ig4F+2uTpSjEKET9iVZ0Yfc1FZ2htkZNNNMzTF+yOFD4OavpGFkBemlmbvHXsypc8ZDtFvtPQH8go6A/Hrut5bCA545nrWtwD7tNdPsz5Skv3Pqce65CwfEcC3IkPdKvebRruX5kMBru9RrccwzVaqGw6ko8phiCByEQ=
+	t=1729760409; cv=none; b=LbXOmGK/XaDzaP5Wp1LjKetDNCtw/trsTIs4/pICLYXt9LuPMJ+D3Eioga1eUeT50n/2ity35S3VSosDauv7AdvGquyUqRGXi3mKUEXro8n7g5L0xQ4kiA7Z4j1ar3bOS/kBk3urXOf6GFbbuRhXJzmnhh5wj81ybnmYFSUmW5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757242; c=relaxed/simple;
-	bh=KBY3Xq32mH8OhQWVjBV/Bq8SdNGCd36z6O+Nh0qKmDQ=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ehn7treRhPiyNJlmiSIwgNY/U9Ipmih4TKg45PfBUMHDQOQVHU+OpEoz9TBIVht/X8JJ8Zynu0aJd/03LXAE+z3ScDJNd06v3LUrwhsnl/ZCqWyzBzapn6m30dMSojcIqvqEVZ/9UxujjbXVhzFT6Xpd69BL31AK1iN3q88wIwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XYz193blfz1HLRk;
-	Thu, 24 Oct 2024 16:02:53 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 603111A016C;
-	Thu, 24 Oct 2024 16:07:15 +0800 (CST)
-Received: from [10.174.179.93] (10.174.179.93) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Oct 2024 16:07:11 +0800
-Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-To: Joel Granados <j.granados@samsung.com>
-References: <CGME20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd@eucas1p1.samsung.com>
- <20241010152215.3025842-1-yukaixiong@huawei.com>
- <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
+	s=arc-20240116; t=1729760409; c=relaxed/simple;
+	bh=5ohQDOoW3mIzHXRtqUK6vuWfWTSWfm/8yu4VqsKy41w=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=HMrzvhzYQRXB8n06+feDYBrI8MNMS+xGcHyl9Z8O3ip896gkkabPD6f7p/EjrTI2IiM+ekjF0n6d34+WlBaxxkkpD7uUasHYkaRWB3vnJA2hUqIN8KV8V4NRgiDp847cXivlW55lXC7OHReukpaBBdMEsFcq8MH5fAnNZOjkBuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PKWcctag; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241024090002euoutp018a0108ce9bcef735dfc2001bcd9eb563~BV_v9kCks2844428444euoutp01c;
+	Thu, 24 Oct 2024 09:00:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241024090002euoutp018a0108ce9bcef735dfc2001bcd9eb563~BV_v9kCks2844428444euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729760403;
+	bh=h4aMns0vuxoj2DGKLLnGNiIIfjWEYlc98f5DfBMf9BA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=PKWcctagUKqph0utZfFpZKN3KY/qjUavkEMXcM5jAgjkTBCJp4r2ARpnEC7BANlm7
+	 JkrukntINZ7KkZXYQxfxUDlegETw9QtlYjv92KU4Phx0kwXFVK8Cb6ddt5KslCN2Ql
+	 qnONcceyEgshb3vORqGH8/vgxFhRkUXBlqYCjLiE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241024090002eucas1p29b6425c21e9270f2caf6bc3f05b4341f~BV_vl5fpu2350923509eucas1p2R;
+	Thu, 24 Oct 2024 09:00:02 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id BA.A8.20397.29C0A176; Thu, 24
+	Oct 2024 10:00:02 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241024090001eucas1p143fc38cbcaa9538710040c2d957e9f6f~BV_u8PgHB0678306783eucas1p1j;
+	Thu, 24 Oct 2024 09:00:01 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241024090001eusmtrp2dcdd7d123acd3c24d819eddc1fef8d71~BV_u1ZF280636006360eusmtrp2P;
+	Thu, 24 Oct 2024 09:00:01 +0000 (GMT)
+X-AuditID: cbfec7f5-ed1d670000004fad-a5-671a0c92f203
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.E9.19654.19C0A176; Thu, 24
+	Oct 2024 10:00:01 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241024090001eusmtip1faaa6f50c4bd058871f85094590722b6~BV_ujLojm1676816768eusmtip1x;
+	Thu, 24 Oct 2024 09:00:01 +0000 (GMT)
+Received: from localhost (106.110.32.107) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 24 Oct 2024 10:00:00 +0100
+Date: Thu, 24 Oct 2024 10:59:58 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: yukaixiong <yukaixiong@huawei.com>
 CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
 	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
 	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
@@ -66,112 +92,124 @@ CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
 	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
 	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
 	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <79b33640-fc81-b4c1-4967-30189d9a4b23@huawei.com>
-Date: Thu, 24 Oct 2024 16:07:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>,
+	<joel.granados@kernel.org>
+Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+Message-ID: <wk7dqsx42rxjt76dowrydumhinwwdltw7e5ptp7fh4rc4c4sji@jrtopui4fpwb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500026.china.huawei.com (7.185.36.106) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <79b33640-fc81-b4c1-4967-30189d9a4b23@huawei.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHd+69vfcCVsoj9ghL3GC6SRBksvlLnG4ak91tmmxZ9lC3jEZu
+	ihnUppWhBGfrA6bII1WE0SpVnDyKAoWhiAQFBgNGyxScgqBjdBusvFpBAYG1XN387/N7fM/5
+	fk9yWNLXygSwuxR7eJVCFhtEe1JVTVOWVbpFAfLVpW1SMJSW0HCkep6C+domBCPORHCWzdHw
+	T4MDwXzvXwTknaug4ezUtAj+LktBYLAepmCidJqE9qHTDIwcnKHA1tTPgH40GOyVRSSYzFvh
+	VLkU9NmHCJi6UMzApdJ8An7Jv0fBpWGrCDqq0kVwWfOAgWu1LRTcumqgoa9k3jW43iaCseP9
+	NBienCShJbeIAuvViyK4k2lDcPO6kYDaPA0FTcYloPvTwcBkmx1B61QS9OiyKUg+X07A8Zos
+	BNYOCwOj6dcI0JakknDXOkBDhTmLhNbpVgIcp+dEoNemI2g/WCIC62yzCLTO+whmHrucpJ1v
+	YVxXn3C9SN0jGkzzlSR02jqod9Zzj46kU1zJmRLEGXs+4BrsoyRXWXSX4IzmeO52zTbucOOw
+	iHtYnYG4isIQLv/aIMGZi4/SnNmhYziLfoziRiwWhvs5Z4b68OXtnm9F87G7vuFV4RuiPGNO
+	3rhAK9u995ZnnkMalOJ1DHmwWBKJG09YKDf7SgoRnjTsPIY8XfwQ4e4/xhmhcCLcXt9OP1Ok
+	duUTwqAAYXv5FeK/rdmseiQUlQg35Y8jt4SSLMfmjAzGzbQkFFvt90g3+0tW4CHbNO0WkJK7
+	Xtg2bFpw4ifZgW/dNiywWLIVz5T/RArsg1u+H1jok66DjDUOl5h1cSAumGPdbQ/JBmxq7BYJ
+	VoNwV2YvJfB+3FrZTQisW4R/PPqFwJtxW8ZZRmA/PNRc+ZRfxPPVeQvJsOQEwnVzY4xQmBC+
+	oJ14etI6fLhz4KliI249lIbchrBkMb4z7CP4XIx1Vdmk0Bbj75J9he0V2NRnpzJRcO5zyXKf
+	S5b7fzIjIouRlI9Xx8l59RoFnxCmlsWp4xXysJ2748zI9efa5ponrqDCofGwekSwqB5hlgzy
+	F/8as1TuK46W7UvkVbu/UsXH8up6FMhSQVLx8uhlvK9ELtvDf83zSl71bEqwHgEaQnVAHil7
+	7zPzFvXuvtWppM2RNbxW42jI0a9P6vG2+EzYGqiIqi/ftPxeRT0OaY7LexKQ2L93i3ZdgXpa
+	4ancuKwtMzrqwJJVCfTaG5P3V+aYZuv2J+nlQ46bBZeH76i9Ix1J4Yn2QK3nvqhc6Rsfn2Rb
+	lL2NsqVdFYnv1z3enBC1aQP/Svds/wy70kOsOSW/qA+u9gpXp/Rs32i1TTlDz5z71L/20J4H
+	fm+nvdTyw0dKHRu/bVzTgGp+G8x5obcsJHlz56D086vfdnzCOiLyGl8T3/RJGkhLKPNI1Y4o
+	X9+R/apJYVCo3l2+yeosapTK5aGp3JBVOeg847Fm4qh3O86UBlHqGFlECKlSy/4FvpOZEOIE
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1CUZRTGe7/bLgixAcUXgmPbCMLYcl04MIiOTuNHDTOVAw1a4YorkNzc
+	BUzUCUwyEQEJpLjEJsR1A3dBChdEYcUWgkVuBogJgdxBLqawwrawNfnf877Pc37nzJn3ZeOm
+	M5QlOzQiWiiKEIRxKUOide3u4DuXjSyDHSVqW8itlFKQWKslQFvfjGB2MQ4Wr61RMNW0gEA7
+	OIZB/tUqCn5cXiFh/Np5BLnqcwQ8rVzBoW0yjwWzZzUEjDYPsyBn7m2Yri7FoVzuC1dkFpCT
+	9RUGy0VlLKioLMDg94IHBFTMqEnoqEkh4Zf4Ryyoq1cR0HUjl4KHUq3OuNVKwpPkYQpyX2Tg
+	oMouJUB942cS/kgbRdB5S4JBfX48Ac2SNyD98QIL/m6dRtCyfBoG0rMI+LpQhkGyIhOBuqOd
+	BXMpdRgkSC/i0KceoaBKnolDy0oLBgt5ayTkJKQgaDsrJUG9epeEhMU/EWie6ya5VKhi6Vp/
+	q9tIwzMKyrXVOHSPdhC7dzLPElMIRvqDFDGSgfeZpuk5nKku7cMYiTyG6VUEMOeUMySzVJuK
+	mKoSe6agbgJj5GUXKEa+kM5i2nOeEMxsezuL+e07DfHBWwd4XqLImGjh1pBIcfRO7kEncOY5
+	eQDP2dWD5+Ti/qmnM5/r4O11RBgWGisUOXgf4oVk3C6iotpMvpClXUXx6PymJGTApjmu9MWe
+	AiwJGbJNOT8hurNmFNMbVrRsqYfUazP6RW8SpQ/NI1rTOETqD9WInijo30gRnG20PDWVta4p
+	zg5aPf0AX9fmHBt6cnRloxrn9G2iR2fKiXXDjHOQ7urN3dDGHF9aI7uD66nfYPRqUSWpN16j
+	Vd+PbIRwHVWiWNCR2Dq9mS5eY69fG3C86XJl/7+jcumetEFCr8/Qi6uPURoyy36JlP0SKft/
+	kgThZchcGCMODw4XO/PEgnBxTEQwLygyXI50776mebn6V1Q6Oc9rRBgbNSKajXPNje+FvBls
+	anxEcDJOKIoMFMWECcWNiK/bxWXc8vWgSN3HiYgOdHJz5Du5unk48j3cXLgWxlS3+qgpJ1gQ
+	LTwmFEYJRf/VYWwDy3jsw6a8iTxVY6Jdgq1Xi1duRWixjbtH0Hv2DSc+bvsrrhKL5Z+yGrqv
+	8LSS3tTu1UbJS1TMnJ2ryGqLC1dCLfJLAiKatjGG96/vKyCLB6NsZqwbmrp2qwWmJYeVg75j
+	pwzbfDL80QC5fUdC31rjkML2uMjv0P7rn3ymqUX3LJ8aLWmclzXbfeqPdRbZBlaY+NitjvQa
+	+B8/yW+dV/jJRB8VB5i479ozPPjo3TMWNbEPP9dmKlUXshRT+fF7OrdeqT8c/rwvJJm5bTR+
+	YK9G+cppyYmKffVThRVfWu23HtD2bPHJ7LZWOrzabHFns/Jmh7+LzC87ubWtv2fXoudRF5OB
+	sYZxLiEOETjZ4yKx4B/VplmkgAQAAA==
+X-CMS-MailID: 20241024090001eucas1p143fc38cbcaa9538710040c2d957e9f6f
+X-Msg-Generator: CA
+X-RootMTR: 20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd
+References: <CGME20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd@eucas1p1.samsung.com>
+	<20241010152215.3025842-1-yukaixiong@huawei.com>
+	<ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
+	<79b33640-fc81-b4c1-4967-30189d9a4b23@huawei.com>
 
+On Thu, Oct 24, 2024 at 04:07:10PM +0800, yukaixiong wrote:
+...
+> 
+> 
+> >>   mm/swap.c                          |  16 ++-
+> >>   mm/swap.h                          |   1 +
+> >>   mm/util.c                          |  67 +++++++--
+> >>   mm/vmscan.c                        |  23 +++
+> >>   mm/vmstat.c                        |  44 +++++-
+> >>   net/sunrpc/auth.c                  |   2 +-
+> >>   security/min_addr.c                |  11 ++
+> >>   23 files changed, 330 insertions(+), 312 deletions(-)
+> >>
+> >> -- 
+> >> 2.34.1
+> >>
+> > General comment for the patchset in general. I would consider making the
+> > new sysctl tables const. There is an effort for doing this and it has
+> > already lanted in linux-next. So if you base your patch from a recent
+> > next release, then it should just work. If you *do* decide to add a
+> > const qualifier, then note that you will create a dependency with the
+> > sysctl patchset currently in next and that will have to go in before.
+> >
+> > Best
+> >
+> 
+> Sorry,  I don't understand what is the meaning of "create a dependency 
+> with the sysctl patchset".
+The patches in the sysctl subsys that allow you to qualify the ctl_table
+as const are not in mainline yet. They are in linux-next. This means
+that if these patches go into the next kernel release before the
+sysctl-next branch, it will have compilation errors. Therefore the
+sysctl-next branch needs to be pulled in to the new kernel release
+before this patchest. This also means that for this to build properly it
+has to be based on a linux-next release.
 
+> 
+> Do you just want me to change all "static struct ctl_table" type table 
+> into "static const struct ctl_table" type in my patchset?
+You should const qualify them if the maintainer that is pulling in these
+patches is ok with it. You should *not* const qualify them if the
+maintainer prefers otherwise.
 
-On 2024/10/21 15:22, Joel Granados wrote:
-> On Thu, Oct 10, 2024 at 11:22:00PM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
->>
->> All the modifications of this patch series base on
->> linux-next(tags/next-20241010). To test this patch series, the code was
->> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
->> x86_64 architectures. After this patch series is applied, all files
->> under /proc/sys/vm can be read or written normally.
->>
->> Changes in v3:
->>   - change patch1~10, patch14 title suggested by Joel Granados
->>   - change sysctl_stat_interval to static type in patch1
->>   - add acked-by from Paul Moore in patch7
->>   - change dirtytime_expire_interval to static type in patch9
->>   - add acked-by from Anna Schumaker in patch11
->>
->> Changes in v2:
->>   - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
->>   - update changelog for patch7/12, suggested by Kees/Paul
->>   - fix patch8, sorry for wrong changes and forget to built with NOMMU
->>   - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
->>   - add reviewed-by from Jan Kara, Christian Brauner in patch12
->>
->> Kaixiong Yu (15):
->>    mm: vmstat: move sysctls to mm/vmstat.c
->>    mm: filemap: move sysctl to mm/filemap.c
->>    mm: swap: move sysctl to mm/swap.c
->>    mm: vmscan: move vmscan sysctls to mm/vmscan.c
->>    mm: util: move sysctls to mm/util.c
->>    mm: mmap: move sysctl to mm/mmap.c
->>    security: min_addr: move sysctl to security/min_addr.c
->>    mm: nommu: move sysctl to mm/nommu.c
->>    fs: fs-writeback: move sysctl to fs/fs-writeback.c
->>    fs: drop_caches: move sysctl to fs/drop_caches.c
->>    sunrpc: use vfs_pressure_ratio() helper
->>    fs: dcache: move the sysctl to fs/dcache.c
->>    x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
->>    sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
->>    sysctl: remove unneeded include
->>
->>   arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
->>   arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
->>   fs/dcache.c                        |  21 ++-
->>   fs/drop_caches.c                   |  23 ++-
->>   fs/fs-writeback.c                  |  30 ++--
->>   include/linux/dcache.h             |   7 +-
->>   include/linux/mm.h                 |  23 ---
->>   include/linux/mman.h               |   2 -
->>   include/linux/swap.h               |   9 --
->>   include/linux/vmstat.h             |  11 --
->>   include/linux/writeback.h          |   4 -
->>   kernel/sysctl.c                    | 221 -----------------------------
->>   mm/filemap.c                       |  18 ++-
->>   mm/internal.h                      |  10 ++
->>   mm/mmap.c                          |  54 +++++++
->>   mm/nommu.c                         |  15 +-
->>   mm/swap.c                          |  16 ++-
->>   mm/swap.h                          |   1 +
->>   mm/util.c                          |  67 +++++++--
->>   mm/vmscan.c                        |  23 +++
->>   mm/vmstat.c                        |  44 +++++-
->>   net/sunrpc/auth.c                  |   2 +-
->>   security/min_addr.c                |  11 ++
->>   23 files changed, 330 insertions(+), 312 deletions(-)
->>
->> -- 
->> 2.34.1
->>
-> General comment for the patchset in general. I would consider making the
-> new sysctl tables const. There is an effort for doing this and it has
-> already lanted in linux-next. So if you base your patch from a recent
-> next release, then it should just work. If you *do* decide to add a
-> const qualifier, then note that you will create a dependency with the
-> sysctl patchset currently in next and that will have to go in before.
->
-> Best
->
+Please get back to me if I did not address your questions.
 
-Sorry,  I don't understand what is the meaning of "create a dependency 
-with the sysctl patchset".
+Best
 
-Do you just want me to change all "static struct ctl_table" type table 
-into "static const struct ctl_table" type in my patchset?
+-- 
 
+Joel Granados
 
