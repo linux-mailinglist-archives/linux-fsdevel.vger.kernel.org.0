@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7519AE665
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F419AE668
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6E34B281C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4925B1F264B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1551EF0A4;
-	Thu, 24 Oct 2024 13:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE9A1FBF7A;
+	Thu, 24 Oct 2024 13:25:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01F1F9EB4;
-	Thu, 24 Oct 2024 13:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CA81FAF06;
+	Thu, 24 Oct 2024 13:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776323; cv=none; b=HRLvqJoEK4aPK7om++4PyE7WKj1+zO7jZH/E3MstbGpIrHi62aCNEI0L1PpRJgwWMxlP4o01MqghiPIUsnN/IwJhxkjBH8kPSotTc8s08MhKfszDxMC0r+hxzrj/mdYnFpq0ZCZHgopAzAUSI5GdYProeOX03YC7d2guFxoShhw=
+	t=1729776325; cv=none; b=PaO6Oyd6KNIxvjITAVYTyF0FhlOZhTlFnsTSwUIZl5RzJW+gSQe50mDnPLg9aB8ts5wNVw8aWPHZY9qSM4HfAkACcelAZXA7HulcZMwS1W9N/gSRn+6OYktfuXQSrbbVzte3Uw5Ds6HEPfxbjcCjv7u9FUwMQa1HyceC3Q9nYqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776323; c=relaxed/simple;
-	bh=lDKJ1WfTT+dXMPSV8fqI4495yyrp9c1J5s6mGhkNgxo=;
+	s=arc-20240116; t=1729776325; c=relaxed/simple;
+	bh=qJpcOsMLDVQKKkrCG5wwxVuzpFMAoxIagkpp1nJIVp0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CTTY2ZK2htx7Crbj7yKjvUDPCKX8HG95x7hIXcr6RwWauzZMUh3zOb/lUu5tav9ma1HqpMewUKivMMNch/CRESmsn0/X6jQOIxr8jTaGKy4Q3yBPP+P4F2QK+I+ASNhGWrg0gG6aDd3wKSi44MKVRvsYypYEFJ+lmVs467veCfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=dwiAS9UTjIFqa5eqlqeEBANmUhhvvnZvFByfOVPcQxhGQCrAfG3EbeVHQwHR8eyeXroeL+FNHG9usr3VmQ2yOUkeFf4k3BTsByHlKRBrbHUd1ibQzfgZlsDcXPpMpYe21834u7fYAPvPqpaeBzcveQFBn4J9PHDFUONGKRmLAY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68x3y5Qz4f3m8P;
-	Thu, 24 Oct 2024 21:25:05 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68y5BpWz4f3m8F;
+	Thu, 24 Oct 2024 21:25:06 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E02CE1A06D7;
-	Thu, 24 Oct 2024 21:25:17 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 188D01A0196;
+	Thu, 24 Oct 2024 21:25:19 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S12;
-	Thu, 24 Oct 2024 21:25:17 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S13;
+	Thu, 24 Oct 2024 21:25:18 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 24/28] libfs: Add simple_offset_empty()
-Date: Thu, 24 Oct 2024 21:22:21 +0800
-Message-Id: <20241024132225.2271667-9-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 25/28] maple_tree: Add mtree_alloc_cyclic()
+Date: Thu, 24 Oct 2024 21:22:22 +0800
+Message-Id: <20241024132225.2271667-10-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -87,10 +87,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFWrKw4kCr1xKFykAF48Crg_yoW5tr15pF
-	9xGFs5Kr4fX34xWrZ2vFsrZw1F9w1kWryUXFWfuw45Ary3twnFqFs2kr4Y9as5Arn3Cr43
-	XF45Kr1F9w4UJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S13
+X-Coremail-Antispam: 1UD129KBjvJXoW3GFyDZF1UKr13ur47CFWUXFb_yoW7ZrWkpF
+	WkG345trsIq3yxGr93ZF4UJr13ur48Xw4xtFZFq348ZF9xGF1Sgr1DC3WYvrWUCFWDXFya
+	yayYvw4kCrsrJa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -109,106 +109,163 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-commit ecba88a3b32d733d41e27973e25b2bc580f64281 upstream.
+commit 9b6713cc75229f25552c643083cbdbfb771e5bca upstream.
 
-For simple filesystems that use directory offset mapping, rely
-strictly on the directory offset map to tell when a directory has
-no children.
+I need a cyclic allocator for the simple_offset implementation in
+fs/libfs.c.
 
-After this patch is applied, the emptiness test holds only the RCU
-read lock when the directory being tested has no children.
-
-In addition, this adds another layer of confirmation that
-simple_offset_add/remove() are working as expected.
-
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Link: https://lore.kernel.org/r/170820143463.6328.7872919188371286951.stgit@91.116.238.104.host.secureserver.net
+Link: https://lore.kernel.org/r/170820144179.6328.12838600511394432325.stgit@91.116.238.104.host.secureserver.net
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/libfs.c         | 32 ++++++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- mm/shmem.c         |  4 ++--
- 3 files changed, 35 insertions(+), 2 deletions(-)
+ include/linux/maple_tree.h |  7 +++
+ lib/maple_tree.c           | 93 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 100 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c3dc58e776f9..d7b901cb9af4 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -312,6 +312,38 @@ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
- 	offset_set(dentry, 0);
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index b3d63123b945..a53ad4dabd7e 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -171,6 +171,7 @@ enum maple_type {
+ #define MT_FLAGS_LOCK_IRQ	0x100
+ #define MT_FLAGS_LOCK_BH	0x200
+ #define MT_FLAGS_LOCK_EXTERN	0x300
++#define MT_FLAGS_ALLOC_WRAPPED	0x0800
+ 
+ #define MAPLE_HEIGHT_MAX	31
+ 
+@@ -319,6 +320,9 @@ int mtree_insert_range(struct maple_tree *mt, unsigned long first,
+ int mtree_alloc_range(struct maple_tree *mt, unsigned long *startp,
+ 		void *entry, unsigned long size, unsigned long min,
+ 		unsigned long max, gfp_t gfp);
++int mtree_alloc_cyclic(struct maple_tree *mt, unsigned long *startp,
++		void *entry, unsigned long range_lo, unsigned long range_hi,
++		unsigned long *next, gfp_t gfp);
+ int mtree_alloc_rrange(struct maple_tree *mt, unsigned long *startp,
+ 		void *entry, unsigned long size, unsigned long min,
+ 		unsigned long max, gfp_t gfp);
+@@ -499,6 +503,9 @@ void *mas_find_range(struct ma_state *mas, unsigned long max);
+ void *mas_find_rev(struct ma_state *mas, unsigned long min);
+ void *mas_find_range_rev(struct ma_state *mas, unsigned long max);
+ int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp);
++int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
++		void *entry, unsigned long range_lo, unsigned long range_hi,
++		unsigned long *next, gfp_t gfp);
+ 
+ bool mas_nomem(struct ma_state *mas, gfp_t gfp);
+ void mas_pause(struct ma_state *mas);
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 1af83414877a..5328e08723d7 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -4337,6 +4337,56 @@ static inline void *mas_insert(struct ma_state *mas, void *entry)
+ 
  }
  
 +/**
-+ * simple_offset_empty - Check if a dentry can be unlinked
-+ * @dentry: dentry to be tested
++ * mas_alloc_cyclic() - Internal call to find somewhere to store an entry
++ * @mas: The maple state.
++ * @startp: Pointer to ID.
++ * @range_lo: Lower bound of range to search.
++ * @range_hi: Upper bound of range to search.
++ * @entry: The entry to store.
++ * @next: Pointer to next ID to allocate.
++ * @gfp: The GFP_FLAGS to use for allocations.
 + *
-+ * Returns 0 if @dentry is a non-empty directory; otherwise returns 1.
++ * Return: 0 if the allocation succeeded without wrapping, 1 if the
++ * allocation succeeded after wrapping, or -EBUSY if there are no
++ * free entries.
 + */
-+int simple_offset_empty(struct dentry *dentry)
++int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
++		void *entry, unsigned long range_lo, unsigned long range_hi,
++		unsigned long *next, gfp_t gfp)
 +{
-+	struct inode *inode = d_inode(dentry);
-+	struct offset_ctx *octx;
-+	struct dentry *child;
-+	unsigned long index;
-+	int ret = 1;
++	unsigned long min = range_lo;
++	int ret = 0;
 +
-+	if (!inode || !S_ISDIR(inode->i_mode))
++	range_lo = max(min, *next);
++	ret = mas_empty_area(mas, range_lo, range_hi, 1);
++	if ((mas->tree->ma_flags & MT_FLAGS_ALLOC_WRAPPED) && ret == 0) {
++		mas->tree->ma_flags &= ~MT_FLAGS_ALLOC_WRAPPED;
++		ret = 1;
++	}
++	if (ret < 0 && range_lo > min) {
++		ret = mas_empty_area(mas, min, range_hi, 1);
++		if (ret == 0)
++			ret = 1;
++	}
++	if (ret < 0)
 +		return ret;
 +
-+	index = DIR_OFFSET_MIN;
-+	octx = inode->i_op->get_offset_ctx(inode);
-+	xa_for_each(&octx->xa, index, child) {
-+		spin_lock(&child->d_lock);
-+		if (simple_positive(child)) {
-+			spin_unlock(&child->d_lock);
-+			ret = 0;
-+			break;
-+		}
-+		spin_unlock(&child->d_lock);
-+	}
++	do {
++		mas_insert(mas, entry);
++	} while (mas_nomem(mas, gfp));
++	if (mas_is_err(mas))
++		return xa_err(mas->node);
++
++	*startp = mas->index;
++	*next = *startp + 1;
++	if (*next == 0)
++		mas->tree->ma_flags |= MT_FLAGS_ALLOC_WRAPPED;
 +
 +	return ret;
 +}
++EXPORT_SYMBOL(mas_alloc_cyclic);
 +
- /**
-  * simple_offset_rename_exchange - exchange rename with directory offsets
-  * @old_dir: parent of dentry being moved
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6c3d86532e3f..5104405ce3e6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3197,6 +3197,7 @@ struct offset_ctx {
- void simple_offset_init(struct offset_ctx *octx);
- int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
- void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
-+int simple_offset_empty(struct dentry *dentry);
- int simple_offset_rename_exchange(struct inode *old_dir,
- 				  struct dentry *old_dentry,
- 				  struct inode *new_dir,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 3d721d5591dd..4cae2807806e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3371,7 +3371,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 
- static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
+ static __always_inline void mas_rewalk(struct ma_state *mas, unsigned long index)
  {
--	if (!simple_empty(dentry))
-+	if (!simple_offset_empty(dentry))
- 		return -ENOTEMPTY;
+ retry:
+@@ -6490,6 +6540,49 @@ int mtree_alloc_range(struct maple_tree *mt, unsigned long *startp,
+ }
+ EXPORT_SYMBOL(mtree_alloc_range);
  
- 	drop_nlink(d_inode(dentry));
-@@ -3428,7 +3428,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 		return simple_offset_rename_exchange(old_dir, old_dentry,
- 						     new_dir, new_dentry);
- 
--	if (!simple_empty(new_dentry))
-+	if (!simple_offset_empty(new_dentry))
- 		return -ENOTEMPTY;
- 
- 	if (flags & RENAME_WHITEOUT) {
++/**
++ * mtree_alloc_cyclic() - Find somewhere to store this entry in the tree.
++ * @mt: The maple tree.
++ * @startp: Pointer to ID.
++ * @range_lo: Lower bound of range to search.
++ * @range_hi: Upper bound of range to search.
++ * @entry: The entry to store.
++ * @next: Pointer to next ID to allocate.
++ * @gfp: The GFP_FLAGS to use for allocations.
++ *
++ * Finds an empty entry in @mt after @next, stores the new index into
++ * the @id pointer, stores the entry at that index, then updates @next.
++ *
++ * @mt must be initialized with the MT_FLAGS_ALLOC_RANGE flag.
++ *
++ * Context: Any context.  Takes and releases the mt.lock.  May sleep if
++ * the @gfp flags permit.
++ *
++ * Return: 0 if the allocation succeeded without wrapping, 1 if the
++ * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * allocated, -EINVAL if @mt cannot be used, or -EBUSY if there are no
++ * free entries.
++ */
++int mtree_alloc_cyclic(struct maple_tree *mt, unsigned long *startp,
++		void *entry, unsigned long range_lo, unsigned long range_hi,
++		unsigned long *next, gfp_t gfp)
++{
++	int ret;
++
++	MA_STATE(mas, mt, 0, 0);
++
++	if (!mt_is_alloc(mt))
++		return -EINVAL;
++	if (WARN_ON_ONCE(mt_is_reserved(entry)))
++		return -EINVAL;
++	mtree_lock(mt);
++	ret = mas_alloc_cyclic(&mas, startp, entry, range_lo, range_hi,
++			       next, gfp);
++	mtree_unlock(mt);
++	return ret;
++}
++EXPORT_SYMBOL(mtree_alloc_cyclic);
++
+ int mtree_alloc_rrange(struct maple_tree *mt, unsigned long *startp,
+ 		void *entry, unsigned long size, unsigned long min,
+ 		unsigned long max, gfp_t gfp)
 -- 
 2.39.2
 
