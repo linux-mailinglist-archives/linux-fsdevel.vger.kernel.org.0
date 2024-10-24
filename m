@@ -1,493 +1,451 @@
-Return-Path: <linux-fsdevel+bounces-32699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BCC9ADE0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652DD9ADE47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7635B238DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 07:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D99283244
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 07:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6E61ABEC2;
-	Thu, 24 Oct 2024 07:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D391B3936;
+	Thu, 24 Oct 2024 07:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qa1LKxnO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE501AA7B6;
-	Thu, 24 Oct 2024 07:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755865; cv=none; b=Gv+vG2FagBTt2LsKXEAG5zoABDbr4p9ks2U0K2hEWpi5iyUL1+mKaVJbqNKWbyaAxEjk5pEBOlATerjZ7cdommvmgenY41uLaMQrHV05LVH+k8V+UiC9cZn5kycgMMs2sA52458quFHoyEHhDpHrFOZFQZvwdFJscQ5eKGe1+FI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755865; c=relaxed/simple;
-	bh=JJrJEhMuUX5gDukuHS2/1Q0ILLh5H/xfJr+KhmlxVYk=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=aIIHRQhb1nFu0Q8FwCahaUUdfZSKSYyfqEOZSKxuu8fHnTxn1OgA8gk8oZ/+2OlkUDCiseNS/IoOoldc52vQNKyaqcIHBl5GtWG9szOE29f3IlDhc+gYVHLs/tmxr41ehFrDb2+7g46r4iUO+CULte1FUMivfwKAdHdiLVAu3jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XYybD1sPqz4f3jXy;
-	Thu, 24 Oct 2024 15:43:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id AB3DD1A0194;
-	Thu, 24 Oct 2024 15:44:09 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCn28fE+hlnInrkEw--.34099S3;
-	Thu, 24 Oct 2024 15:44:05 +0800 (CST)
-Content-Type: multipart/mixed; boundary="------------x68ltKirQTg7GPL6eROhODRd"
-Message-ID: <3c01efe6-007a-4422-ad79-0bad3af281b1@huaweicloud.com>
-Date: Thu, 24 Oct 2024 15:44:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881EF1B21AF;
+	Thu, 24 Oct 2024 07:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729756377; cv=fail; b=EfweaSpeGqvGexuQpMxOgrhcpsQtEhgzWXbb6i95d0cftzmCsPYNSjH8Q6Tf4tJo2r3bPL7i8ShjGJr8TVZQ4Pth+vP3JMYXVzI+MosCNAcPcYwc+eyBVE+iosnPXmAXJWAfH/T6Dx6OIKZAyFlRzv9sBTFl2Yg/kMBFDeNQark=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729756377; c=relaxed/simple;
+	bh=8I/dbkx6r4A3QaX8+hsPzJZacq4QuOJB0/EttvddgtA=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=vFv8Ixg0mv9rTsVbzb84UDz/rYGtxYWQEvGTXGzUx4taZP2FtzlY8JJewEKslokXWINgA+4ij0lg5l4YeiVF6CHLUG2awwuKIPQWrGOonS4pRMZkjmmFwux9y2QTL3F8jqugNYspB1dhy21VTuzn7UpCC1k98TzsF24usKMXrlk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qa1LKxnO; arc=fail smtp.client-ip=40.107.244.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oM6Agh0DGGbkbw0DOVBTrYeRCeLwVm8jmwNSdtx3zVR12QNKTUvg8n/J9TCZToa8Mz/d3peXVxofxhXaNG3A9y5719p6vasemHnBLNXBvkmOJTCWSujGY1wVlUKiv6xIILXx/KU11+6Fjq7S7tZlE1tE0Y+zDyQTOH4ClOyBHCKcZEilwO1MQJl7Yp+pRWP7TAF/i4XFTZMBCE2SdHc6MWyl9nGAofMN8Dkyzl2RTdllHHLJdOwThbCCPY4JLYLvcYnuKSosNCzlvU7mzaADACj/vMrbZGePZ9d2w3B5BqHLSFC2UGGW11alnYWqzQoEdBTb8vULWemgnnsPiSx19g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0s1qBagrf6SdFe4M1Fl25yO+qDQiiBIPtuBRBTp9Sis=;
+ b=NVZVtkNt56143fNmspFsHo5w6QA2IoQWLqBV5mObbMnXnPb1f5gBltc7mL1OBpzO8KOPVRgdbGya+6meN45jwsMA5hhOIkhY6wywPyU8mGmlFgTphPjXFjkoVHjpPqu3M0yw0V1vme+eFfd3Ou8ksP4Q55tE6iK3fqbqpIF1NgVip1Ee1NO+HVKB2GwjfTKFGuwSUnUWGwwmY7HavrN7ulodVAK9YMXjdYl3N4BUH68rDLjN8VASy/hB3ozdaY5M5aFi29r1W+duvOKTWkFrj+QzBk4Bas2e8Rb0gihRr+MD2wbcU+q1kLwivYsJCQRzTwJyOysTmVoROHD8UnNtvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0s1qBagrf6SdFe4M1Fl25yO+qDQiiBIPtuBRBTp9Sis=;
+ b=qa1LKxnO9JsPBIbLEOaTym7w9IDIzel8nJnMi5FvcFdfNB8DqbhEJmVqjthT29Vw+NUXXsyT9o2M95XAJOB9kE8u89v8CHkBVdjg+5JYPibv6kXwbF0UVRvkd/ErRw2VqeLkfUBmHhr56ZW9tzvaLIRkjuykwcYOp3EKxvjTOmfaOffuF84TKjuaP8FXCzfxo9ypjU+2ocBppTWxKQ6InnAqSVnjff+bAuKfiFNmbC+uhVw5iLUV7bZTOg8ubH0NYtHLfhCsAYlxMDfr3hoXrSV69DN6smn27zOzLZVgHcoXL/0qqJqWB011I8O/0djz33pNPZsJCHFK9Qy9aJt1EQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH3PR12MB9431.namprd12.prod.outlook.com (2603:10b6:610:1c1::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.16; Thu, 24 Oct 2024 07:52:49 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8069.027; Thu, 24 Oct 2024
+ 07:52:49 +0000
+References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
+ <9f4ef8eaba4c80230904da893018ce615b5c24b2.1725941415.git-series.apopple@nvidia.com>
+ <66f665d084aab_964f22948c@dwillia2-xfh.jf.intel.com.notmuch>
+User-agent: mu4e 1.10.8; emacs 29.4
+From: Alistair Popple <apopple@nvidia.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ logang@deltatee.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
+ willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+ linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com
+Subject: Re: [PATCH 10/12] fs/dax: Properly refcount fs dax pages
+Date: Thu, 24 Oct 2024 18:52:23 +1100
+In-reply-to: <66f665d084aab_964f22948c@dwillia2-xfh.jf.intel.com.notmuch>
+Message-ID: <871q06c4z7.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5PR01CA0109.ausprd01.prod.outlook.com
+ (2603:10c6:10:246::17) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/27] ext4: use iomap for regular file's buffered I/O
- path and enable large folio
-To: sedat.dilek@gmail.com
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <CA+icZUWKGBKOxEaSUJv4up46b0i8=R-RgbnpHEV20HC_210syw@mail.gmail.com>
- <bf6dcc97-a204-473c-9e25-54db430e9a58@huaweicloud.com>
- <CA+icZUWjruYjiBVgV_-a6dMgovRRdRpWpfU=9Ly1bFcD8i=XLw@mail.gmail.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <CA+icZUWjruYjiBVgV_-a6dMgovRRdRpWpfU=9Ly1bFcD8i=XLw@mail.gmail.com>
-X-CM-TRANSID:gCh0CgCn28fE+hlnInrkEw--.34099S3
-X-Coremail-Antispam: 1UD129KBjvAXoWfJr47Jr1rCw1fCw4kJF4xWFg_yoW8Jr17Co
-	WfZa17Z3W0qryUJF4vka4DX34UW3WkWr18WrW8urZ8Ga4aqay5ury7Cw47WayftF1rCr4U
-	C34rCas8CrWUX3Z8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYG7kC6x804xWl14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
-	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wASzI0EjI02j7AqF2xKxwAq
-	x4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14
-	v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACY4xI67k04243AVC2
-	0s07M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1go7tUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB9431:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79288846-09d7-4f76-bb08-08dcf400dae3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?s41AXCno/zWEc8P4VEDDImdFImGKpTlZthretlMmI8AYfg9E7Mnf8tPdrsvp?=
+ =?us-ascii?Q?2Ap2TArqSt5bKrud1aikydCZc+fnKM9CPJUG6HNGGA1U86POO7ZC0WzqWqkl?=
+ =?us-ascii?Q?rLQaRXGUeCyo4jMmi0Fj4RqVFcfGkctEav0Bjd4TlA+g1Y4E1HcopKMR1GMm?=
+ =?us-ascii?Q?9tyW2leQK2AxzvAQ/G+2lIUFXE/FNaqaap3W3y/CpR7Z82RJwbEnwL2DYSoe?=
+ =?us-ascii?Q?JEV+4ikE+Tgxijl5FNss2ba3+oxtYUAhBE0fVixH+syWRqtXzjiMPZNQeP/W?=
+ =?us-ascii?Q?LGy5ctd3oZBkzoFWLFFgdDlbBz+CqaYkFefJIhqGg0C5kCvx0kRdjHuYVbpW?=
+ =?us-ascii?Q?HUCIAY6DR/PSpM1z4EiSBKbmTo1tD13FSyi0WaZB7OQERnOFSo/8DKfYTkUk?=
+ =?us-ascii?Q?A9zv+Nq0avuU7meaEy/nsfQ9NnNKz2yyXRPWEtHtjgtAUlntbQU07m+NeC2V?=
+ =?us-ascii?Q?qpi7L9p0+BDj0xlKVRgH44hpOPyUGdCBdMQ4XKBJc9seUq5YJwBDUiyG8JEj?=
+ =?us-ascii?Q?8owvj6wfGpxyJHej6ZARmBELD5dzPv/uwoL/+i1QCXapnN3yM3ptjSw/ZThy?=
+ =?us-ascii?Q?ceNjmN+etrZjR/AahNBQpihSp9jsq6gQYMlJHUxK2axC3j45Ps+SlaQ8IeEB?=
+ =?us-ascii?Q?RreHQz0bYq3L6BQEx3KsZe6zJN0cc8ustXRo7/fQpgES1NnRA+e5KjxnvAOO?=
+ =?us-ascii?Q?guJxrcIC7+7MKjiB57Llpk4jgQORS3qoAB+1VuqBM4uSECZSqyAZiWz+MkUc?=
+ =?us-ascii?Q?2S+y6mXekPYpkOREAP4T4BVtWrcnpvy4MXLlIri/v3hdw7au4gJd3mszJXrb?=
+ =?us-ascii?Q?6yUt13Gck6QDFWwXyHUvYL3eu3oD9maFID5fk87S0g2KIey8kvnYRPJzkwqw?=
+ =?us-ascii?Q?zY0ltgMi6qV0z+QMSFEJW8uDGQBn0xmeS95Ok2M2gHBH+pSW+j5rzXqPTzcH?=
+ =?us-ascii?Q?6ekuIF7dxQ2eUmLo0BlvhF1/zFPVCs+mtpsEyMZDsgr3LmcW1xEIEEupuD4i?=
+ =?us-ascii?Q?LTW2v7ImmSWjkvz/XxzIhFYOFkTaB/8gt2/NFFrJHQh/WSxVUSfb8U7FXQjq?=
+ =?us-ascii?Q?WNrdXOUCyh6oxvVyQxc5QCQKbNUvpjJ+oVIZt/4DrAJxeST+RZ+se4shVQFm?=
+ =?us-ascii?Q?xlw9iOtt9xAkiCAWqj3nUNjfnYzg7ZEjpsn/gVKgUJ5UalpwERkHib8PXQSI?=
+ =?us-ascii?Q?QbfHRlX3iPvvt1wu8H71aPvsC4kaibXXdo8ZWK5TUdV5BC67Nq5XSkp+3q1w?=
+ =?us-ascii?Q?mUqI8x9ULPq2HJmCRk4SDzC7UbQOCfFQ3Iaz0y0taMMMaPVvduiZw8tzFpBh?=
+ =?us-ascii?Q?jEqvS/W2u1Fnhp3LsLZW23fU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bI4z6hSK+kmLTFYbqBVE/3XTChMcYLBxFbCkDiVaD8bRwsDLRoH1CDro84Z/?=
+ =?us-ascii?Q?VqTzkHEhs3znQHOyvz8M1cszMT/rva8A144x9EKpHf6BquvupIBoFqk8ifx/?=
+ =?us-ascii?Q?XRDMeO2c03XJHi436FDdwwFxe8mOZZbV/LY2fwnfLv9pi+e1S8+tCUGIduup?=
+ =?us-ascii?Q?YUpzbpby9KQQkmV4oE/AwrcVOLYD1wSme/6urfB6xSaOAPsk742/lJGXXNrB?=
+ =?us-ascii?Q?1sNO7LTWyYriYwzdpQlRWdtmy5YPQYb7NBRudOqR73z1cZ30KA0bhqpA7X8b?=
+ =?us-ascii?Q?CCPlNsLd1qxrvDNBDBktbJaY+Jx2alfm2whfUOgG7KRe877oszOb9q+ymm4T?=
+ =?us-ascii?Q?kYMhyGk1EzF/67v4ytP4FY4u9+Y6/5qmAwi/K+ax1JH4WM3pVFXb2ec6/1mB?=
+ =?us-ascii?Q?oXakCZGitL4tx9rRyK+3Gm+gartfI9KtdbBTeC07JIuB4tEUTzagvvFP9BRY?=
+ =?us-ascii?Q?6YSZ3ACl3iUnSyBOzmBBxrzCkSC7MDVuyvRfwunvNNWR1l1OdUBBY+qoYxH8?=
+ =?us-ascii?Q?ycLUs+gqMoAReZj04vITkIvSoP2q9LwM5HMdT06XRO2GorvAOQhpy4Cv4HI7?=
+ =?us-ascii?Q?khvctqZXfJvRQS1YvJmTjNXHMkKxebuZDK5PpvOLzlUW79o+uJOtLNsMwDXU?=
+ =?us-ascii?Q?ryO6RMLupxRbboqlkpw5q+g30ZO622hYeR0a89OlhpKhkmqI5mUOe0VKGn5p?=
+ =?us-ascii?Q?/zIvksHXe8IJm+gIyWMIGrFKbgC/dl8xSZdkRuCWJJK+00YMzB3HPjhQPHTy?=
+ =?us-ascii?Q?QLxqjN5/eIjF6BkU4gpCXO9LbiJCXiIaKkPodBHLYQ0e/+Uk2DDO3W+4jPgJ?=
+ =?us-ascii?Q?46JyluJke1krQa5DA6+thBRWyetP1ImkmqXye7RQ/6mSBWHIm1w6g5+rxeJD?=
+ =?us-ascii?Q?cuh7z/a8XGXW/fn+5eFv6cOgWru8ElAGg06votbVxwlfJwHEK7i2CilRK1bL?=
+ =?us-ascii?Q?LEaSNw8iuAoJc0V3YpsK73aCTbeSL+nYGzqFMJPRdf5f9NHIVaMVVdIREuK1?=
+ =?us-ascii?Q?bZyaMgbfOojAPUDlpVN3dTGPf97vMwjQDWH2AGKRT/2Cfrrx5CKO4Y/RNkre?=
+ =?us-ascii?Q?WlsxOIhH9XHaSgSVQkLRI0wUoBnvBkU7N2E4uE9d/TpALqxbPMAOC0cRXIIJ?=
+ =?us-ascii?Q?xsSJ6E0j4Bx+yA0i5XBKhVTbGvxLbruL7S22M2sSm8HMSOT6dWc6Up0kG3x1?=
+ =?us-ascii?Q?gUD+MrAT9Ru1lMr3Ov4ZFk5kpDwJbOy3xesNXYUDtudiQvbS/bhrXib2UjW+?=
+ =?us-ascii?Q?hFKpJUwCTWNE2bh+h+yah8FXwdMzU1D1AR7ksDOzF0Z0xRTmEV7x4nnulghJ?=
+ =?us-ascii?Q?Vy6vSHlovmtGI0B3Juf+2BbUIRASdjwvFJZZVnGIhcSNlZLRAKWFn5iQqr2M?=
+ =?us-ascii?Q?1GIU4aG0xygNsWzIJQgMXRPedOLJHN+ORz1R6HX0+FdfKL2aJx7QMm75qZwc?=
+ =?us-ascii?Q?lGJ802gCeDedABFBEiiZI79xyF+KvgVjGtfVChEWUxxUEBmYruonwKTV6XWw?=
+ =?us-ascii?Q?VKq4PXaAINx4OAeVguaSO/ZwU5k7zTdT2MVgWyJVB6xLx71IMETDK3823QxZ?=
+ =?us-ascii?Q?u5Rm2G44dVy4qkZUe1HWWCC0mvxg5b80pyJNumth?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79288846-09d7-4f76-bb08-08dcf400dae3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 07:52:49.2827
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 96GJJa4QqIFQ4AjrmDWlWqvdaS9iRDvuU2sOoDmqCGz7lvUc4tZORi2Oi82LsjpOb4sFR3T6F2qtoiDdlE6JNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9431
 
-This is a multi-part message in MIME format.
---------------x68ltKirQTg7GPL6eROhODRd
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 2024/10/23 20:13, Sedat Dilek wrote:
-> On Tue, Oct 22, 2024 at 11:22 AM Zhang Yi <yi.zhang@huaweicloud.com> wrote:
->>
->> On 2024/10/22 14:59, Sedat Dilek wrote:
->>> On Tue, Oct 22, 2024 at 5:13 AM Zhang Yi <yi.zhang@huaweicloud.com> wrote:
->>>>
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> Hello！
->>>>
->>>> This patch series is the latest version based on my previous RFC
->>>> series[1], which converts the buffered I/O path of ext4 regular files to
->>>> iomap and enables large folios. After several months of work, almost all
->>>> preparatory changes have been upstreamed, thanks a lot for the review
->>>> and comments from Jan, Dave, Christoph, Darrick and Ritesh. Now it is
->>>> time for the main implementation of this conversion.
->>>>
->>>> This series is the main part of iomap buffered iomap conversion, it's
->>>> based on 6.12-rc4, and the code context is also depend on my anohter
->>>> cleanup series[1] (I've put that in this seris so we can merge it
->>>> directly), fixed all minor bugs found in my previous RFC v4 series.
->>>> Additionally, I've update change logs in each patch and also includes
->>>> some code modifications as Dave's suggestions. This series implements
->>>> the core iomap APIs on ext4 and introduces a mount option called
->>>> "buffered_iomap" to enable the iomap buffered I/O path. We have already
->>>> supported the default features, default mount options and bigalloc
->>>> feature. However, we do not yet support online defragmentation, inline
->>>> data, fs_verify, fs_crypt, ext3, and data=journal mode, ext4 will fall
->>>> to buffered_head I/O path automatically if you use those features and
->>>> options. Some of these features should be supported gradually in the
->>>> near future.
->>>>
->>>> Most of the implementations resemble the original buffered_head path;
->>>> however, there are four key differences.
->>>>
->>>> 1. The first aspect is the block allocation in the writeback path. The
->>>>    iomap frame will invoke ->map_blocks() at least once for each dirty
->>>>    folio. To ensure optimal writeback performance, we aim to allocate a
->>>>    range of delalloc blocks that is as long as possible within the
->>>>    writeback length for each invocation. In certain situations, we may
->>>>    allocate a range of blocks that exceeds the amount we will actually
->>>>    write back. Therefore,
->>>> 1) we cannot allocate a written extent for those blocks because it may
->>>>    expose stale data in such short write cases. Instead, we should
->>>>    allocate an unwritten extent, which means we must always enable the
->>>>    dioread_nolock option. This change could also bring many other
->>>>    benefits.
->>>> 2) We should postpone updating the 'i_disksize' until the end of the I/O
->>>>    process, based on the actual written length. This approach can also
->>>>    prevent the exposure of zero data, which may occur if there is a
->>>>    power failure during an append write.
->>>> 3) We do not need to pre-split extents during write-back, we can
->>>>    postpone this task until the end I/O process while converting
->>>>    unwritten extents.
->>>>
->>>> 2. The second reason is that since we always allocate unwritten space
->>>>    for new blocks, there is no risk of exposing stale data. As a result,
->>>>    we do not need to order the data, which allows us to disable the
->>>>    data=ordered mode. Consequently, we also do not require the reserved
->>>>    handle when converting the unwritten extent in the final I/O worker,
->>>>    we can directly start with the normal handle.
->>>>
->>>> Series details:
->>>>
->>>> Patch 1-10 is just another series of mine that refactors the fallocate
->>>> functions[1]. This series relies on the code context of that but has no
->>>> logical dependencies. I put this here just for easy access and merge.
->>>>
->>>> Patch 11-21 implement the iomap buffered read/write path, dirty folio
->>>> write back path and mmap path for ext4 regular file.
->>>>
->>>> Patch 22-23 disable the unsupported online-defragmentation function and
->>>> disable the changing of the inode journal flag to data=journal mode.
->>>> Please look at the following patch for details.
->>>>
->>>> Patch 24-27 introduce "buffered_iomap" mount option (is not enabled by
->>>> default now) to partially enable the iomap buffered I/O path and also
->>>> enable large folio.
->>>>
->>>>
->>>> About performance:
->>>>
->>>> Fio tests with psync on my machine with Intel Xeon Gold 6240 CPU with
->>>> 400GB system ram, 200GB ramdisk and 4TB nvme ssd disk.
->>>>
->>>>  fio -directory=/mnt -direct=0 -iodepth=$iodepth -fsync=$sync -rw=$rw \
->>>>      -numjobs=${numjobs} -bs=${bs} -ioengine=psync -size=$size \
->>>>      -runtime=60 -norandommap=0 -fallocate=none -overwrite=$overwrite \
->>>>      -group_reportin -name=$name --output=/tmp/test_log
->>>>
->>>
->>> Hi Zhang Yi,
->>>
->>> can you clarify about the FIO values for the diverse parameters?
->>>
->>
->> Hi Sedat,
->>
->> Sure, the test I present here is a simple single-thread and single-I/O
->> depth case with psync ioengine. Most of the FIO parameters are shown
->> in the tables below.
->>
-> 
-> Hi Zhang Yi,
-> 
-> Thanks for your reply.
-> 
-> Can you share a FIO config file with all (relevant) settings?
-> Maybe it is in the below link?
-> 
-> Link: https://packages.debian.org/sid/all/fio-examples/filelist
+Dan Williams <dan.j.williams@intel.com> writes:
 
-No, I didn't have this configuration file. I simply wrote two straightforward
-scripts to do this test. This serves as a reference, primarily used for
-performance analysis in basic read/write operations with different backends.
-More complex cases should be adjusted based on the actual circumstances.
+> Alistair Popple wrote:
 
-I have attached the scripts, feel free to use them. I suggest adjusting the
-parameters according to your machine configuration and service I/O model.
+[...]
 
-> 
->> For the rest, the 'iodepth' and 'numjobs' are always set to 1 and the
->> 'size' is 40GB. During the write cache test, I also disable the write
->> back process through:
->>
->>  echo 0 > /proc/sys/vm/dirty_writeback_centisecs
->>  echo 100 > /proc/sys/vm/dirty_background_ratio
->>  echo 100 > /proc/sys/vm/dirty_ratio
->>
-> 
-> ^^ Ist this info in one of the patches? If not - can you add this info
-> to the next version's cover-letter?
-> 
-> The patchset and improvements are valid only for powerful servers or
-> has a notebook user any benefits of this?
+>> @@ -318,85 +323,58 @@ static unsigned long dax_end_pfn(void *entry)
+>>   */
+>>  #define for_each_mapped_pfn(entry, pfn) \
+>>  	for (pfn = dax_to_pfn(entry); \
+>> -			pfn < dax_end_pfn(entry); pfn++)
+>> +		pfn < dax_end_pfn(entry); pfn++)
+>>  
+>> -static inline bool dax_page_is_shared(struct page *page)
+>> +static void dax_device_folio_init(struct folio *folio, int order)
+>>  {
+>> -	return page->mapping == PAGE_MAPPING_DAX_SHARED;
+>> -}
+>> +	int orig_order = folio_order(folio);
+>> +	int i;
+>>  
+>> -/*
+>> - * Set the page->mapping with PAGE_MAPPING_DAX_SHARED flag, increase the
+>> - * refcount.
+>> - */
+>> -static inline void dax_page_share_get(struct page *page)
+>> -{
+>> -	if (page->mapping != PAGE_MAPPING_DAX_SHARED) {
+>> -		/*
+>> -		 * Reset the index if the page was already mapped
+>> -		 * regularly before.
+>> -		 */
+>> -		if (page->mapping)
+>> -			page->share = 1;
+>> -		page->mapping = PAGE_MAPPING_DAX_SHARED;
+>> -	}
+>> -	page->share++;
+>> -}
+>> +	if (orig_order != order) {
+>> +		struct dev_pagemap *pgmap = page_dev_pagemap(&folio->page);
+>
+> Was there a discussion I missed about why the conversion to typical
+> folios allows the page->share accounting to be dropped.
 
-The performance improvement is primarily attributed to the cost savings of
-the kernel software stack with large I/O. Therefore, when the CPU becomes a
-bottleneck, performance should improves, i.e. the faster the disk, the more
-pronounced the benefits, regardless of whether the system is a server or a
-notebook.
+The problem with keeping it is we now treat DAX pages as "normal"
+pages according to vm_normal_page(). As such we use the normal paths
+for unmapping pages.
 
-Thanks,
-Yi.
+Specifically page->share accounting relies on PAGE_MAPPING_DAX_SHARED
+aka PAGE_MAPPING_ANON which causes folio_test_anon(), PageAnon(),
+etc. to return true leading to all sorts of issues in at least the
+unmap paths.
 
-> If you have benchmark data, please share this.
-> 
-> I can NOT promise if I will give that patchset a try.
-> 
-> Best thanks.
-> 
-> Best regards,
-> -Sedat-
-> 
->> Thanks,
->> Yi.
->>
->>>
->>>>  == buffer read ==
->>>>
->>>>                 buffer_head        iomap + large folio
->>>>  type     bs    IOPS    BW(MiB/s)  IOPS    BW(MiB/s)
->>>>  -------------------------------------------------------
->>>>  hole     4K    576k    2253       762k    2975     +32%
->>>>  hole     64K   48.7k   3043       77.8k   4860     +60%
->>>>  hole     1M    2960    2960       4942    4942     +67%
->>>>  ramdisk  4K    443k    1732       530k    2069     +19%
->>>>  ramdisk  64K   34.5k   2156       45.6k   2850     +32%
->>>>  ramdisk  1M    2093    2093       2841    2841     +36%
->>>>  nvme     4K    339k    1323       364k    1425     +8%
->>>>  nvme     64K   23.6k   1471       25.2k   1574     +7%
->>>>  nvme     1M    2012    2012       2153    2153     +7%
->>>>
->>>>
->>>>  == buffer write ==
->>>>
->>>>                                        buffer_head  iomap + large folio
->>>>  type   Overwrite Sync Writeback  bs   IOPS   BW    IOPS   BW(MiB/s)
->>>>  ----------------------------------------------------------------------
->>>>  cache      N    N    N    4K     417k    1631    440k    1719   +5%
->>>>  cache      N    N    N    64K    33.4k   2088    81.5k   5092   +144%
->>>>  cache      N    N    N    1M     2143    2143    5716    5716   +167%
->>>>  cache      Y    N    N    4K     449k    1755    469k    1834   +5%
->>>>  cache      Y    N    N    64K    36.6k   2290    82.3k   5142   +125%
->>>>  cache      Y    N    N    1M     2352    2352    5577    5577   +137%
->>>>  ramdisk    N    N    Y    4K     365k    1424    354k    1384   -3%
->>>>  ramdisk    N    N    Y    64K    31.2k   1950    74.2k   4640   +138%
->>>>  ramdisk    N    N    Y    1M     1968    1968    5201    5201   +164%
->>>>  ramdisk    N    Y    N    4K     9984    39      12.9k   51     +29%
->>>>  ramdisk    N    Y    N    64K    5936    371     8960    560    +51%
->>>>  ramdisk    N    Y    N    1M     1050    1050    1835    1835   +75%
->>>>  ramdisk    Y    N    Y    4K     411k    1609    443k    1731   +8%
->>>>  ramdisk    Y    N    Y    64K    34.1k   2134    77.5k   4844   +127%
->>>>  ramdisk    Y    N    Y    1M     2248    2248    5372    5372   +139%
->>>>  ramdisk    Y    Y    N    4K     182k    711     186k    730    +3%
->>>>  ramdisk    Y    Y    N    64K    18.7k   1170    34.7k   2171   +86%
->>>>  ramdisk    Y    Y    N    1M     1229    1229    2269    2269   +85%
->>>>  nvme       N    N    Y    4K     373k    1458    387k    1512   +4%
->>>>  nvme       N    N    Y    64K    29.2k   1827    70.9k   4431   +143%
->>>>  nvme       N    N    Y    1M     1835    1835    4919    4919   +168%
->>>>  nvme       N    Y    N    4K     11.7k   46      11.7k   46      0%
->>>>  nvme       N    Y    N    64K    6453    403     8661    541    +34%
->>>>  nvme       N    Y    N    1M     649     649     1351    1351   +108%
->>>>  nvme       Y    N    Y    4K     372k    1456    433k    1693   +16%
->>>>  nvme       Y    N    Y    64K    33.0k   2064    74.7k   4669   +126%
->>>>  nvme       Y    N    Y    1M     2131    2131    5273    5273   +147%
->>>>  nvme       Y    Y    N    4K     56.7k   222     56.4k   220    -1%
->>>>  nvme       Y    Y    N    64K    13.4k   840     19.4k   1214   +45%
->>>>  nvme       Y    Y    N    1M     714     714     1504    1504   +111%
->>>>
->>>> Thanks,
->>>> Yi.
->>>>
->>>> Major changes since RFC v4:
->>>>  - Disable unsupported online defragmentation, do not fall back to
->>>>    buffer_head path.
->>>>  - Wite and wait data back while doing partial block truncate down to
->>>>    fix a stale data problem.
->>>>  - Disable the online changing of the inode journal flag to data=journal
->>>>    mode.
->>>>  - Since iomap can zero out dirty pages with unwritten extent, do not
->>>>    write data before zeroing out in ext4_zero_range(), and also do not
->>>>    zero partial blocks under a started journal handle.
->>>>
->>>> [1] https://lore.kernel.org/linux-ext4/20241010133333.146793-1-yi.zhang@huawei.com/
->>>>
->>>> ---
->>>> RFC v4: https://lore.kernel.org/linux-ext4/20240410142948.2817554-1-yi.zhang@huaweicloud.com/
->>>> RFC v3: https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
->>>> RFC v2: https://lore.kernel.org/linux-ext4/20240102123918.799062-1-yi.zhang@huaweicloud.com/
->>>> RFC v1: https://lore.kernel.org/linux-ext4/20231123125121.4064694-1-yi.zhang@huaweicloud.com/
->>>>
->>>>
->>>> Zhang Yi (27):
->>>>   ext4: remove writable userspace mappings before truncating page cache
->>>>   ext4: don't explicit update times in ext4_fallocate()
->>>>   ext4: don't write back data before punch hole in nojournal mode
->>>>   ext4: refactor ext4_punch_hole()
->>>>   ext4: refactor ext4_zero_range()
->>>>   ext4: refactor ext4_collapse_range()
->>>>   ext4: refactor ext4_insert_range()
->>>>   ext4: factor out ext4_do_fallocate()
->>>>   ext4: move out inode_lock into ext4_fallocate()
->>>>   ext4: move out common parts into ext4_fallocate()
->>>>   ext4: use reserved metadata blocks when splitting extent on endio
->>>>   ext4: introduce seq counter for the extent status entry
->>>>   ext4: add a new iomap aops for regular file's buffered IO path
->>>>   ext4: implement buffered read iomap path
->>>>   ext4: implement buffered write iomap path
->>>>   ext4: don't order data for inode with EXT4_STATE_BUFFERED_IOMAP
->>>>   ext4: implement writeback iomap path
->>>>   ext4: implement mmap iomap path
->>>>   ext4: do not always order data when partial zeroing out a block
->>>>   ext4: do not start handle if unnecessary while partial zeroing out a
->>>>     block
->>>>   ext4: implement zero_range iomap path
->>>>   ext4: disable online defrag when inode using iomap buffered I/O path
->>>>   ext4: disable inode journal mode when using iomap buffered I/O path
->>>>   ext4: partially enable iomap for the buffered I/O path of regular
->>>>     files
->>>>   ext4: enable large folio for regular file with iomap buffered I/O path
->>>>   ext4: change mount options code style
->>>>   ext4: introduce a mount option for iomap buffered I/O path
->>>>
->>>>  fs/ext4/ext4.h              |  17 +-
->>>>  fs/ext4/ext4_jbd2.c         |   3 +-
->>>>  fs/ext4/ext4_jbd2.h         |   8 +
->>>>  fs/ext4/extents.c           | 568 +++++++++++----------------
->>>>  fs/ext4/extents_status.c    |  13 +-
->>>>  fs/ext4/file.c              |  19 +-
->>>>  fs/ext4/ialloc.c            |   5 +
->>>>  fs/ext4/inode.c             | 755 ++++++++++++++++++++++++++++++------
->>>>  fs/ext4/move_extent.c       |   7 +
->>>>  fs/ext4/page-io.c           | 105 +++++
->>>>  fs/ext4/super.c             | 185 ++++-----
->>>>  include/trace/events/ext4.h |  57 +--
->>>>  12 files changed, 1153 insertions(+), 589 deletions(-)
->>>>
->>>> --
->>>> 2.46.1
->>>>
->>>>
->>
+There hasn't been a previous discussion on this, but given this is
+only used to print warnings it seemed easier to get rid of it. I
+probably should have called that out more clearly in the commit
+message though.
 
---------------x68ltKirQTg7GPL6eROhODRd
-Content-Type: text/plain; charset=UTF-8; name="ext4_iomap_test_read.sh"
-Content-Disposition: attachment; filename="ext4_iomap_test_read.sh"
-Content-Transfer-Encoding: base64
+> I assume this is because the page->mapping validation was dropped, which
+> I think might be useful to keep at least for one development cycle to
+> make sure this conversion is not triggering any of the old warnings.
+>
+> Otherwise, the ->share field of 'struct page' can also be cleaned up.
 
-IyEvYmluL2Jhc2gKCnJhbWRldj0kMQpudm1lZGV2PSQyCgpNT1VOVF9PUFQ9IiIKdGVzdF9z
-aXplPTQwRwoKZnVuY3Rpb24gcnVuX2ZpbygpCnsKCWxvY2FsIHJ3PXJlYWQKCWxvY2FsIHN5
-bmM9JDEKCWxvY2FsIGJzPSQyCglsb2NhbCBpb2RlcHRoPSQzCglsb2NhbCBudW1qb2JzPSQ0
-Cglsb2NhbCBvdmVyd3JpdGU9JDUKCWxvY2FsIG5hbWU9MQoJbG9jYWwgc2l6ZT0kNgoKCWZp
-byAtZGlyZWN0b3J5PS9tbnQgLWRpcmVjdD0wIC1pb2RlcHRoPSRpb2RlcHRoIC1mc3luYz0k
-c3luYyAtcnc9JHJ3IFwKCSAgICAtbnVtam9icz0ke251bWpvYnN9IC1icz0ke2JzfSAtaW9l
-bmdpbmU9cHN5bmMgLXNpemU9JHNpemUgXAoJICAgIC1ydW50aW1lPTYwIC1ub3JhbmRvbW1h
-cD0wIC1mYWxsb2NhdGU9bm9uZSAtb3ZlcndyaXRlPSRvdmVyd3JpdGUgXAoJICAgIC1ncm91
-cF9yZXBvcnRpbiAtbmFtZT0kbmFtZSAtLW91dHB1dD0vdG1wL2xvZwoKCWNhdCAvdG1wL2xv
-ZyA+PiAvdG1wL2Zpb19yZXN1bHQKfQoKZnVuY3Rpb24gaW5pdF9lbnYoKQp7Cglsb2NhbCBo
-b2xlPSQxCglsb2NhbCBzaXplPSQyCglsb2NhbCBkZXY9JDMKCglybSAtcmYgL21udC8qCgoJ
-aWYgW1sgIiRob2xlIiA9PSAiMSIgXV07IHRoZW4KCQl0cnVuY2F0ZSAtcyAkc2l6ZSAvbW50
-LzEuMC4wCgllbHNlCgkJeGZzX2lvIC1mIC1jICJwd3JpdGUgMCAkc2l6ZSIgL21udC8xLjAu
-MAoJZmkKCgl1bW91bnQgL21udAoJbW91bnQgLW8gJE1PVU5UX09QVCAkZGV2IC9tbnQKfQoK
-ZnVuY3Rpb24gcmVzZXRfZW52KCkKewoJbG9jYWwgZGV2PSQxCgoJdW1vdW50IC9tbnQKCW1v
-dW50IC1vICRNT1VOVF9PUFQgJGRldiAvbW50Cn0KCmZ1bmN0aW9uIGRvX29uZV90ZXN0KCkK
-ewoJbG9jYWwgc3luYz0wCglsb2NhbCBob2xlPSQxCglsb2NhbCBzaXplPSQyCglsb2NhbCBk
-ZXY9JDMKCgllY2hvICItLS0tLS0tLS0tLS0tLS0tLS0tIiB8IHRlZSAtYSAvdG1wL2Zpb19y
-ZXN1bHQKCgllY2hvICI9PT0gNEs6IiB8IHRlZSAtYSAvdG1wL2Zpb19yZXN1bHQKCXJlc2V0
-X2VudiAkZGV2CglydW5fZmlvICRzeW5jIDRrIDEgMSAwICRzaXplCgoJZWNobyAiPT09IDY0
-SzoiIHwgdGVlIC1hIC90bXAvZmlvX3Jlc3VsdAoJcmVzZXRfZW52ICRkZXYKCXJ1bl9maW8g
-JHN5bmMgNjRrIDEgMSAwICRzaXplCgoJZWNobyAiPT09IDFNOiIgfCB0ZWUgLWEgL3RtcC9m
-aW9fcmVzdWx0CglyZXNldF9lbnYgJGRldgoJcnVuX2ZpbyAkc3luYyAxTSAxIDEgMCAkc2l6
-ZQoKCWVjaG8gIi0tLS0tLS0tLS0tLS0tLS0tLS0iIHwgdGVlIC1hIC90bXAvZmlvX3Jlc3Vs
-dAp9CgpmdW5jdGlvbiBydW5fb25lX3JvdW5kKCkKewoJbG9jYWwgaG9sZT0kMQoJbG9jYWwg
-c2l6ZT0kMgoJbG9jYWwgZGV2PSQzCgoJaW5pdF9lbnYgJGhvbGUgJHNpemUgJGRldgoJZG9f
-b25lX3Rlc3QgJGhvbGUgJHNpemUgJGRldgp9CgpmdW5jdGlvbiBydW5fdGVzdCgpCnsKCWVj
-aG8gIi0tLS0gVEVTVCBSQU1ERVYgLS0tLSIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0Cglt
-b3VudCAtbyAkTU9VTlRfT1BUICRyYW1kZXYgL21udAoKCWVjaG8gIi0tLS0tIDEuIFJFQUQg
-SE9MRSIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0CglydW5fb25lX3JvdW5kIDEgJHRlc3Rf
-c2l6ZSAkcmFtZGV2CgoJZWNobyAiLS0tLS0gMi4gUkVBRCBSQU0gREFUQSIgfCB0ZWUgLWEg
-L3RtcC9maW9fcmVzdWx0CglydW5fb25lX3JvdW5kIDAgJHRlc3Rfc2l6ZSAkcmFtZGV2Cgl1
-bW91bnQgL21udAoKCWVjaG8gIi0tLS0gVEVTVCBOVk1FREVWIC0tLS0iIHwgdGVlIC1hIC90
-bXAvZmlvX3Jlc3VsdAoJZWNobyAiLS0tLS0gMy4gUkVBRCBOVk1FIERBVEEiIHwgdGVlIC1h
-IC90bXAvZmlvX3Jlc3VsdAoJbW91bnQgLW8gJE1PVU5UX09QVCAkbnZtZWRldiAvbW50Cgly
-dW5fb25lX3JvdW5kIDAgJHRlc3Rfc2l6ZSAkbnZtZWRldgoJdW1vdW50IC9tbnQKfQoKaWYg
-WyAteiAiJHJhbWRldiIgXSB8fCBbIC16ICIkbnZtZWRldiIgXTsgdGhlbgoJZWNobyAiJDAg
-PHJhbWRldj4gPG52bWVkZXY+IgoJZXhpdApmaQoKdW1vdW50IC9tbnQKbWtmcy5leHQ0IC1F
-IGxhenlfaXRhYmxlX2luaXQ9MCxsYXp5X2pvdXJuYWxfaW5pdD0wIC1GICRyYW1kZXYKbWtm
-cy5leHQ0IC1FIGxhenlfaXRhYmxlX2luaXQ9MCxsYXp5X2pvdXJuYWxfaW5pdD0wIC1GICRu
-dm1lZGV2CgpjcCAvdG1wL2Zpb19yZXN1bHQgL3RtcC9maW9fcmVzdWx0Lm9sZApybSAtZiAv
-dG1wL2Zpb19yZXN1bHQKCiMjIFRFU1QgYmFzZSByYW1kZXYKZWNobyAiPT09PSBURVNUIEJB
-U0UgPT09PSIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0Ck1PVU5UX09QVD0ibm9idWZmZXJl
-ZF9pb21hcCIKcnVuX3Rlc3QKCiMjIFRFU1QgaW9tYXAgcmFtZGV2CmVjaG8gIj09PT0gVEVT
-VCBJT01BUCA9PT09IiB8IHRlZSAtYSAvdG1wL2Zpb19yZXN1bHQKTU9VTlRfT1BUPSJidWZm
-ZXJlZF9pb21hcCIKcnVuX3Rlc3QK
---------------x68ltKirQTg7GPL6eROhODRd
-Content-Type: text/plain; charset=UTF-8; name="ext4_iomap_test_write.sh"
-Content-Disposition: attachment; filename="ext4_iomap_test_write.sh"
-Content-Transfer-Encoding: base64
+Yes, we should also clean up the ->share field, unless you have an
+alternate suggestion to solve the above issue.
 
-IyEvYmluL2Jhc2gKCnJhbWRldj0kMQpudm1lZGV2PSQyCgpNT1VOVF9PUFQ9IiIKdGVzdF9z
-aXplPTQwRwoKZnVuY3Rpb24gcnVuX2ZpbygpCnsKCWxvY2FsIHJ3PXdyaXRlCglsb2NhbCBz
-eW5jPSQxCglsb2NhbCBicz0kMgoJbG9jYWwgaW9kZXB0aD0kMwoJbG9jYWwgbnVtam9icz0k
-NAoJbG9jYWwgb3ZlcndyaXRlPSQ1Cglsb2NhbCBuYW1lPTEKCWxvY2FsIHNpemU9JDYKCglm
-aW8gLWRpcmVjdG9yeT0vbW50IC1kaXJlY3Q9MCAtaW9kZXB0aD0kaW9kZXB0aCAtZnN5bmM9
-JHN5bmMgLXJ3PSRydyBcCgkgICAgLW51bWpvYnM9JHtudW1qb2JzfSAtYnM9JHtic30gLWlv
-ZW5naW5lPXBzeW5jIC1zaXplPSRzaXplIFwKCSAgICAtcnVudGltZT02MCAtbm9yYW5kb21t
-YXA9MCAtZmFsbG9jYXRlPW5vbmUgLW92ZXJ3cml0ZT0kb3ZlcndyaXRlIFwKCSAgICAtZ3Jv
-dXBfcmVwb3J0aW4gLW5hbWU9JG5hbWUgLS1vdXRwdXQ9L3RtcC9sb2cKCgljYXQgL3RtcC9s
-b2cgPj4gL3RtcC9maW9fcmVzdWx0Cn0KCmZ1bmN0aW9uIGluaXRfZW52KCkKewoJbG9jYWwg
-ZGV2PSQxCgoJcm0gLXJmIC9tbnQvKgoJdW1vdW50IC9tbnQKCW1vdW50IC1vICRNT1VOVF9P
-UFQgJGRldiAvbW50Cn0KCmZ1bmN0aW9uIHJlc2V0X2VudigpCnsKCWxvY2FsIG92ZXJ3cml0
-ZT0kMQoJbG9jYWwgZGV2PSQyCgoJaWYgW1sgIiRvdmVyd3JpdGUiID09ICIwIiBdXTsgdGhl
-bgoJCXJtIC1yZiAvbW50LyoKCWZpCgl1bW91bnQgL21udAoJbW91bnQgLW8gJE1PVU5UX09Q
-VCAkZGV2IC9tbnQKfQoKZnVuY3Rpb24gZG9fb25lX3Rlc3QoKQp7Cglsb2NhbCBzeW5jPSQx
-Cglsb2NhbCBvdmVyd3JpdGU9JDIKCWxvY2FsIHNpemU9JDMKCWxvY2FsIGRldj0kNAoKCWVj
-aG8gIi0tLS0tLS0tLS0tLS0tLS0tLS0iIHwgdGVlIC1hIC90bXAvZmlvX3Jlc3VsdAoKCWVj
-aG8gIj09PSA0SzoiIHwgdGVlIC1hIC90bXAvZmlvX3Jlc3VsdAoJcmVzZXRfZW52ICRvdmVy
-d3JpdGUgJGRldgoJcnVuX2ZpbyAkc3luYyA0ayAxIDEgJG92ZXJ3cml0ZSAkc2l6ZQoKCWVj
-aG8gIj09PSA2NEs6IiB8IHRlZSAtYSAvdG1wL2Zpb19yZXN1bHQKCXJlc2V0X2VudiAkb3Zl
-cndyaXRlICRkZXYKCXJ1bl9maW8gJHN5bmMgNjRrIDEgMSAkb3ZlcndyaXRlICRzaXplCgoJ
-ZWNobyAiPT09IDFNOiIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0CglyZXNldF9lbnYgJG92
-ZXJ3cml0ZSAkZGV2CglydW5fZmlvICRzeW5jIDFNIDEgMSAkb3ZlcndyaXRlICRzaXplCgoJ
-ZWNobyAiLS0tLS0tLS0tLS0tLS0tLS0tLSIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0Cn0K
-CmZ1bmN0aW9uIHJ1bl9vbmVfcm91bmQoKQp7Cglsb2NhbCBzeW5jPSQxCglsb2NhbCBvdmVy
-d3JpdGU9JDIKCWxvY2FsIHNpemU9JDMKCWxvY2FsIGRldj0kNAoKCWVjaG8gIlN5bmM6JHN5
-bmMsIE92ZXJ3cml0ZTokb3ZlcndyaXRlIiB8IHRlZSAtYSAvdG1wL2Zpb19yZXN1bHQKCWlu
-aXRfZW52ICRkZXYKCWRvX29uZV90ZXN0ICRzeW5jICRvdmVyd3JpdGUgJHNpemUgJGRldgp9
-CgpmdW5jdGlvbiBydW5fdGVzdCgpCnsKCWVjaG8gIi0tLS0gVEVTVCBSQU1ERVYgLS0tLSIg
-fCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0Cgltb3VudCAtbyAkTU9VTlRfT1BUICRyYW1kZXYg
-L21udAoKCWVjaG8gIi0tLS0tIDEuIFdSSVRFIENBQ0hFIiB8IHRlZSAtYSAvdG1wL2Zpb19y
-ZXN1bHQKCSMgU3RvcCB3cml0ZWJhY2sKCWVjaG8gMCA+IC9wcm9jL3N5cy92bS9kaXJ0eV93
-cml0ZWJhY2tfY2VudGlzZWNzCgllY2hvIDMwMDAwID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X2V4
-cGlyZV9jZW50aXNlY3MKCWVjaG8gMTAwID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X2JhY2tncm91
-bmRfcmF0aW8KCWVjaG8gMTAwID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X3JhdGlvCglydW5fb25l
-X3JvdW5kIDAgMCAkdGVzdF9zaXplICRyYW1kZXYKCXJ1bl9vbmVfcm91bmQgMCAxICR0ZXN0
-X3NpemUgJHJhbWRldgoKCWVjaG8gIi0tLS0tIDIuIFdSSVRFIFJBTSBESVNLIiB8IHRlZSAt
-YSAvdG1wL2Zpb19yZXN1bHQKCSMgUmVzdG9yZSB3cml0ZWJhY2sKCWVjaG8gNTAwID4gL3By
-b2Mvc3lzL3ZtL2RpcnR5X3dyaXRlYmFja19jZW50aXNlY3MKCWVjaG8gMzAwMCA+IC9wcm9j
-L3N5cy92bS9kaXJ0eV9leHBpcmVfY2VudGlzZWNzCgllY2hvIDEwID4gL3Byb2Mvc3lzL3Zt
-L2RpcnR5X2JhY2tncm91bmRfcmF0aW8KCWVjaG8gMjAgPiAvcHJvYy9zeXMvdm0vZGlydHlf
-cmF0aW8KCXJ1bl9vbmVfcm91bmQgMCAwICR0ZXN0X3NpemUgJHJhbWRldgoJcnVuX29uZV9y
-b3VuZCAwIDEgJHRlc3Rfc2l6ZSAkcmFtZGV2CglydW5fb25lX3JvdW5kIDEgMCAkdGVzdF9z
-aXplICRyYW1kZXYKCXJ1bl9vbmVfcm91bmQgMSAxICR0ZXN0X3NpemUgJHJhbWRldgoJdW1v
-dW50IC9tbnQKCgllY2hvICItLS0tIFRFU1QgTlZNRURFViAtLS0tIiB8IHRlZSAtYSAvdG1w
-L2Zpb19yZXN1bHQKCWVjaG8gIi0tLS0tIDMuIFdSSVRFIE5WTUUgRElTSyIgfCB0ZWUgLWEg
-L3RtcC9maW9fcmVzdWx0Cgltb3VudCAtbyAkTU9VTlRfT1BUICRudm1lZGV2IC9tbnQKCXJ1
-bl9vbmVfcm91bmQgMCAwICR0ZXN0X3NpemUgJG52bWVkZXYKCXJ1bl9vbmVfcm91bmQgMCAx
-ICR0ZXN0X3NpemUgJG52bWVkZXYKCXJ1bl9vbmVfcm91bmQgMSAwICR0ZXN0X3NpemUgJG52
-bWVkZXYKCXJ1bl9vbmVfcm91bmQgMSAxICR0ZXN0X3NpemUgJG52bWVkZXYKCXVtb3VudCAv
-bW50Cn0KCmlmIFsgLXogIiRyYW1kZXYiIF0gfHwgWyAteiAiJG52bWVkZXYiIF07IHRoZW4K
-CWVjaG8gIiQwIDxyYW1kZXY+IDxudm1lZGV2PiIKCWV4aXQKZmkKCnVtb3VudCAvbW50Cm1r
-ZnMuZXh0NCAtRSBsYXp5X2l0YWJsZV9pbml0PTAsbGF6eV9qb3VybmFsX2luaXQ9MCAtRiAk
-cmFtZGV2Cm1rZnMuZXh0NCAtRSBsYXp5X2l0YWJsZV9pbml0PTAsbGF6eV9qb3VybmFsX2lu
-aXQ9MCAtRiAkbnZtZWRldgoKY3AgL3RtcC9maW9fcmVzdWx0IC90bXAvZmlvX3Jlc3VsdC5v
-bGQKcm0gLWYgL3RtcC9maW9fcmVzdWx0CgojIyBURVNUIGJhc2UKZWNobyAiPT09PSBURVNU
-IEJBU0UgPT09PSIgfCB0ZWUgLWEgL3RtcC9maW9fcmVzdWx0Ck1PVU5UX09QVD0ibm9idWZm
-ZXJlZF9pb21hcCIKcnVuX3Rlc3QKCiMjIFRFU1QgaW9tYXAKZWNobyAiPT09PSBURVNUIElP
-TUFQID09PT0iIHwgdGVlIC1hIC90bXAvZmlvX3Jlc3VsdApNT1VOVF9PUFQ9ImJ1ZmZlcmVk
-X2lvbWFwIgpydW5fdGVzdAo=
+>> -static inline unsigned long dax_page_share_put(struct page *page)
+>> -{
+>> -	return --page->share;
+>> -}
+>> +		for (i = 0; i < (1UL << orig_order); i++) {
+>> +			struct page *page = folio_page(folio, i);
+>>  
+>> -/*
+>> - * When it is called in dax_insert_entry(), the shared flag will indicate that
+>> - * whether this entry is shared by multiple files.  If so, set the page->mapping
+>> - * PAGE_MAPPING_DAX_SHARED, and use page->share as refcount.
+>> - */
+>> -static void dax_associate_entry(void *entry, struct address_space *mapping,
+>> -		struct vm_area_struct *vma, unsigned long address, bool shared)
+>> -{
+>> -	unsigned long size = dax_entry_size(entry), pfn, index;
+>> -	int i = 0;
+>> +			ClearPageHead(page);
+>> +			clear_compound_head(page);
+>>  
+>> -	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+>> -		return;
+>> -
+>> -	index = linear_page_index(vma, address & ~(size - 1));
+>> -	for_each_mapped_pfn(entry, pfn) {
+>> -		struct page *page = pfn_to_page(pfn);
+>> +			/*
+>> +			 * Reset pgmap which was over-written by
+>> +			 * prep_compound_page().
+>> +			 */
+>> +			page_folio(page)->pgmap = pgmap;
+>>  
+>> -		if (shared) {
+>> -			dax_page_share_get(page);
+>> -		} else {
+>> -			WARN_ON_ONCE(page->mapping);
+>> -			page->mapping = mapping;
+>> -			page->index = index + i++;
+>> +			/* Make sure this isn't set to TAIL_MAPPING */
+>> +			page->mapping = NULL;
+>>  		}
+>>  	}
+>> +
+>> +	if (order > 0) {
+>> +		prep_compound_page(&folio->page, order);
+>> +		if (order > 1)
+>> +			INIT_LIST_HEAD(&folio->_deferred_list);
+>> +	}
+>>  }
+>>  
+>> -static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+>> -		bool trunc)
+>> +static void dax_associate_new_entry(void *entry, struct address_space *mapping,
+>> +				pgoff_t index)
+>
+> Lets call this dax_create_folio(), to mirror filemap_create_folio() and
+> have it transition the folio refcount from 0 to 1 to indicate that it is
+> allocated.
+>
+> While I am not sure anything requires that, it seems odd that page cache
+> pages have an elevated refcount at map time and dax pages do not.
 
---------------x68ltKirQTg7GPL6eROhODRd--
+The refcount gets elevated further up the call stack, but I agree it
+would be clearer to move it here.
 
+> It does have implications for the dax dma-idle tracking thought, see
+> below.
+>
+>>  {
+>> -	unsigned long pfn;
+>> +	unsigned long order = dax_entry_order(entry);
+>> +	struct folio *folio = dax_to_folio(entry);
+>>  
+>> -	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+>> +	if (!dax_entry_size(entry))
+>>  		return;
+>>  
+>> -	for_each_mapped_pfn(entry, pfn) {
+>> -		struct page *page = pfn_to_page(pfn);
+>> -
+>> -		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+>> -		if (dax_page_is_shared(page)) {
+>> -			/* keep the shared flag if this page is still shared */
+>> -			if (dax_page_share_put(page) > 0)
+>> -				continue;
+>> -		} else
+>> -			WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+>> -		page->mapping = NULL;
+>> -		page->index = 0;
+>> -	}
+>> +	/*
+>> +	 * We don't hold a reference for the DAX pagecache entry for the
+>> +	 * page. But we need to initialise the folio so we can hand it
+>> +	 * out. Nothing else should have a reference either.
+>> +	 */
+>> +	WARN_ON_ONCE(folio_ref_count(folio));
+>
+> Per above I would feel more comfortable if we kept the paranoia around
+> to ensure that all the pages in this folio have dropped all references
+> and cleared ->mapping and ->index.
+>
+> That paranoia can be placed behind a CONFIG_DEBUB_VM check, and we can
+> delete in a follow-on development cycle, but in the meantime it helps to
+> prove the correctness of the conversion.
+
+I'm ok with paranoia, but as noted above the issue is that at a minimum
+page->mapping (and probably index) now needs to be valid for any code
+that might walk the page tables.
+
+> [..]
+>> @@ -1189,11 +1165,14 @@ static vm_fault_t dax_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+>>  	struct inode *inode = iter->inode;
+>>  	unsigned long vaddr = vmf->address;
+>>  	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
+>> +	struct page *page = pfn_t_to_page(pfn);
+>>  	vm_fault_t ret;
+>>  
+>>  	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, DAX_ZERO_PAGE);
+>>  
+>> -	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
+>> +	page_ref_inc(page);
+>> +	ret = dax_insert_pfn(vmf, pfn, false);
+>> +	put_page(page);
+>
+> Per above I think it is problematic to have pages live in the system
+> without a refcount.
+
+I'm a bit confused by this - the pages have a reference taken on them
+when they are mapped. They only live in the system without a refcount
+when the mm considers them free (except for the bit between getting
+created in dax_associate_entry() and actually getting mapped but as
+noted I will fix that).
+
+> One scenario where this might be needed is invalidate_inode_pages() vs
+> DMA. The invaldation should pause and wait for DMA pins to be dropped
+> before the mapping xarray is cleaned up and the dax folio is marked
+> free.
+
+I'm not really following this scenario, or at least how it relates to
+the comment above. If the page is pinned for DMA it will have taken a
+refcount on it and so the page won't be considered free/idle per
+dax_wait_page_idle() or any of the other mm code.
+
+> I think this may be a gap in the current code. I'll attempt to write a
+> test for this to check.
+
+Ok, let me know if you come up with anything there as it might help
+explain the problem more clearly.
+
+> [..]
+>> @@ -1649,9 +1627,10 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>>  	loff_t pos = (loff_t)xas->xa_index << PAGE_SHIFT;
+>>  	bool write = iter->flags & IOMAP_WRITE;
+>>  	unsigned long entry_flags = pmd ? DAX_PMD : 0;
+>> -	int err = 0;
+>> +	int ret, err = 0;
+>>  	pfn_t pfn;
+>>  	void *kaddr;
+>> +	struct page *page;
+>>  
+>>  	if (!pmd && vmf->cow_page)
+>>  		return dax_fault_cow_page(vmf, iter);
+>> @@ -1684,14 +1663,21 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>>  	if (dax_fault_is_synchronous(iter, vmf->vma))
+>>  		return dax_fault_synchronous_pfnp(pfnp, pfn);
+>>  
+>> -	/* insert PMD pfn */
+>> +	page = pfn_t_to_page(pfn);
+>
+> I think this is clearer if dax_insert_entry() returns folios with an
+> elevated refrence count that is dropped when the folio is invalidated
+> out of the mapping.
+
+I presume this comment is for the next line:
+
++	page_ref_inc(page);
+ 
+I can move that into dax_insert_entry(), but we would still need to
+drop it after calling vmf_insert_*() to ensure we get the 1 -> 0
+transition when the page is unmapped and therefore
+freed. Alternatively we can make it so vmf_insert_*() don't take
+references on the page, and instead ownership of the reference is
+transfered to the mapping. Personally I prefered having those
+functions take their own reference but let me know what you think.
+
+> [..]
+>> @@ -519,21 +529,3 @@ void zone_device_page_init(struct page *page)
+>>  	lock_page(page);
+>>  }
+>>  EXPORT_SYMBOL_GPL(zone_device_page_init);
+>> -
+>> -#ifdef CONFIG_FS_DAX
+>> -bool __put_devmap_managed_folio_refs(struct folio *folio, int refs)
+>> -{
+>> -	if (folio->pgmap->type != MEMORY_DEVICE_FS_DAX)
+>> -		return false;
+>> -
+>> -	/*
+>> -	 * fsdax page refcounts are 1-based, rather than 0-based: if
+>> -	 * refcount is 1, then the page is free and the refcount is
+>> -	 * stable because nobody holds a reference on the page.
+>> -	 */
+>> -	if (folio_ref_sub_return(folio, refs) == 1)
+>> -		wake_up_var(&folio->_refcount);
+>> -	return true;
+>
+> It follow from the refcount disvussion above that I think there is an
+> argument to still keep this wakeup based on the 2->1 transitition.
+> pagecache pages are refcount==1 when they are dma-idle but still
+> allocated. To keep the same semantics for dax a dax_folio would have an
+> elevated refcount whenever it is referenced by mapping entry.
+
+I'm not sold on keeping it as it doesn't seem to offer any benefit
+IMHO. I know both Jason and Christoph were keen to see it go so it be
+good to get their feedback too. Also one of the primary goals of this
+series was to refcount the page normally so we could remove the whole
+"page is free with a refcount of 1" semantics.
+
+  - Alistair
 
