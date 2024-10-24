@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991299AE66E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372109AE671
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB62868F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4051F2682D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A361EF928;
-	Thu, 24 Oct 2024 13:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4661FE100;
+	Thu, 24 Oct 2024 13:25:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8191FBF65;
-	Thu, 24 Oct 2024 13:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7811FC7CC;
+	Thu, 24 Oct 2024 13:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776328; cv=none; b=Gto/EAe8Mz/XQTJVh2YKxYkNbqBXT41kRaNkE+cFR6CCsHj9GKNYZ7zJabhK4DMpvKvQrMphpWk10KH1JZa2kde4IjtRC09tpaTrVaIB8vf0hxcAhKk68JWCfII+lywTpwUcsElMFHA5/dbVqgsbnnotMieCZRVFHvcHA0WWfNE=
+	t=1729776330; cv=none; b=HqgYmqrFBzDDmGZBsyRojptbBAGsWbdmSzdr5FF6PfPXLJd1hiDJp8haCBWYM5xjSwb8m3eJ9Vi7n68GJ3PTKPnTtvAiO/ql9a87OBtwvpd+PO5UTvJWBETSLMfpCgSs5RneRdmlLZm+c2BKA6LRAXXyYHG1IVIQD2xVI6ZXsqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776328; c=relaxed/simple;
-	bh=L+5WXtZxBV8aVRPEepS/zadXDDL+1k5ePjI582nYTyk=;
+	s=arc-20240116; t=1729776330; c=relaxed/simple;
+	bh=TcVoi/3kXLFyCOWu5OTevK77hXAL+N5wzFnLDQ+BdZk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cKiUDYuOGuU6Zuo2w7n0b7jO/EP6Db8y4d9quw79avKRDf2izjDIK916qanF3wpRYv1em9x1vwWI06Qy28aCd6rKu0ZZelmAzAYr3Wd/jrhWrF/ISpgvaqsNy9/Tmp68ycj8mexnWuo7G9tmoQ9J10TWK/r0qyHt6ugkNYg1Npg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=lwzhbMZMzx1qwrCEWx8ehRW+Nr77/C8oQGEwmVkusry090wMUS2n6c61zItrXqVjOLcwt88yZKTGbUln5bmjCJxAPUGcekYTq6Htw/w6On6EUPCxEGzcxDRecoz9TO7QpPyvyudTw/pHTnpxu/THQHLggL/VliynWfJcN8NzKmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68w1Bfvz4f3nbY;
-	Thu, 24 Oct 2024 21:25:04 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ68y1gjpz4f3jdk;
+	Thu, 24 Oct 2024 21:25:06 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6E78A1A0197;
-	Thu, 24 Oct 2024 21:25:22 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id AA6E41A0568;
+	Thu, 24 Oct 2024 21:25:23 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S15;
-	Thu, 24 Oct 2024 21:25:21 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S16;
+	Thu, 24 Oct 2024 21:25:23 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 27/28] libfs: fix infinite directory reads for offset dir
-Date: Thu, 24 Oct 2024 21:22:24 +0800
-Message-Id: <20241024132225.2271667-12-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 28/28] maple_tree: correct tree corruption on spanning store
+Date: Thu, 24 Oct 2024 21:22:25 +0800
+Message-Id: <20241024132225.2271667-13-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -87,11 +87,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S15
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4DCw48XFykAF4fGryrtFb_yoWrKF1fpF
-	ZxG3Z3tr1fW34jgr4vvF1DZryF93Z3Kw4rX3s5Ww15try2qws8Kas2yr1Y9a48tr95Cr13
-	ZF45Ka43Xr4UCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S16
+X-Coremail-Antispam: 1UD129KBjvJXoWxKrWrXFWfXFWrKw1xuw4kZwb_yoWDGFW7pF
+	W3Kry3Kr4Dta48CF4vka10vr90vrs3JrW7tas8Kw1FyrZ0gFyIqrnav3WFvFyDu3ykGr12
+	vF4jvw1UCa98AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
 	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE3s
@@ -102,145 +102,252 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxGF4DCw48XFykAF4fGryrtFb_yoWrKF1fpF
 	kIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
 	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
 	AY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_GcCE3sUvcSsGvfC2
-	KfnxnUUI43ZEXa7sR_3ku7UUUUU==
+	0xvE2Ix0cI8IcVCY1x0267AKxVW0oVCq3wCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW0oVCq3bIYCTnIWIev
+	Ja73UjIFyTuYvjTRGg4SUUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: yangerkun <yangerkun@huawei.com>
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a upstream.
+commit bea07fd63192b61209d48cbb81ef474cc3ee4c62 upstream.
 
-After we switch tmpfs dir operations from simple_dir_operations to
-simple_offset_dir_operations, every rename happened will fill new dentry
-to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
-key starting with octx->newx_offset, and then set newx_offset equals to
-free key + 1. This will lead to infinite readdir combine with rename
-happened at the same time, which fail generic/736 in xfstests(detail show
-as below).
+Patch series "maple_tree: correct tree corruption on spanning store", v3.
 
-1. create 5000 files(1 2 3...) under one dir
-2. call readdir(man 3 readdir) once, and get one entry
-3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
-4. loop 2~3, until readdir return nothing or we loop too many
-   times(tmpfs break test with the second condition)
+There has been a nasty yet subtle maple tree corruption bug that appears
+to have been in existence since the inception of the algorithm.
 
-We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
-directory reads") to fix it, record the last_index when we open dir, and
-do not emit the entry which index >= last_index. The file->private_data
-now used in offset dir can use directly to do this, and we also update
-the last_index when we llseek the dir file.
+This bug seems far more likely to happen since commit f8d112a4e657
+("mm/mmap: avoid zeroing vma tree in mmap_region()"), which is the point
+at which reports started to be submitted concerning this bug.
 
-Fixes: a2e459555c5f ("shmem: stable directory offsets")
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-[brauner: only update last_index after seek when offset is zero like Jan suggested]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+We were made definitely aware of the bug thanks to the kind efforts of
+Bert Karwatzki who helped enormously in my being able to track this down
+and identify the cause of it.
+
+The bug arises when an attempt is made to perform a spanning store across
+two leaf nodes, where the right leaf node is the rightmost child of the
+shared parent, AND the store completely consumes the right-mode node.
+
+This results in mas_wr_spanning_store() mitakenly duplicating the new and
+existing entries at the maximum pivot within the range, and thus maple
+tree corruption.
+
+The fix patch corrects this by detecting this scenario and disallowing the
+mistaken duplicate copy.
+
+The fix patch commit message goes into great detail as to how this occurs.
+
+This series also includes a test which reliably reproduces the issue, and
+asserts that the fix works correctly.
+
+Bert has kindly tested the fix and confirmed it resolved his issues.  Also
+Mikhail Gavrilov kindly reported what appears to be precisely the same
+bug, which this fix should also resolve.
+
+This patch (of 2):
+
+There has been a subtle bug present in the maple tree implementation from
+its inception.
+
+This arises from how stores are performed - when a store occurs, it will
+overwrite overlapping ranges and adjust the tree as necessary to
+accommodate this.
+
+A range may always ultimately span two leaf nodes.  In this instance we
+walk the two leaf nodes, determine which elements are not overwritten to
+the left and to the right of the start and end of the ranges respectively
+and then rebalance the tree to contain these entries and the newly
+inserted one.
+
+This kind of store is dubbed a 'spanning store' and is implemented by
+mas_wr_spanning_store().
+
+In order to reach this stage, mas_store_gfp() invokes
+mas_wr_preallocate(), mas_wr_store_type() and mas_wr_walk() in turn to
+walk the tree and update the object (mas) to traverse to the location
+where the write should be performed, determining its store type.
+
+When a spanning store is required, this function returns false stopping at
+the parent node which contains the target range, and mas_wr_store_type()
+marks the mas->store_type as wr_spanning_store to denote this fact.
+
+When we go to perform the store in mas_wr_spanning_store(), we first
+determine the elements AFTER the END of the range we wish to store (that
+is, to the right of the entry to be inserted) - we do this by walking to
+the NEXT pivot in the tree (i.e.  r_mas.last + 1), starting at the node we
+have just determined contains the range over which we intend to write.
+
+We then turn our attention to the entries to the left of the entry we are
+inserting, whose state is represented by l_mas, and copy these into a 'big
+node', which is a special node which contains enough slots to contain two
+leaf node's worth of data.
+
+We then copy the entry we wish to store immediately after this - the copy
+and the insertion of the new entry is performed by mas_store_b_node().
+
+After this we copy the elements to the right of the end of the range which
+we are inserting, if we have not exceeded the length of the node (i.e.
+r_mas.offset <= r_mas.end).
+
+Herein lies the bug - under very specific circumstances, this logic can
+break and corrupt the maple tree.
+
+Consider the following tree:
+
+Height
+  0                             Root Node
+                                 /      \
+                 pivot = 0xffff /        \ pivot = ULONG_MAX
+                               /          \
+  1                       A [-----]       ...
+                             /   \
+             pivot = 0x4fff /     \ pivot = 0xffff
+                           /       \
+  2 (LEAVES)          B [-----]  [-----] C
+                                      ^--- Last pivot 0xffff.
+
+Now imagine we wish to store an entry in the range [0x4000, 0xffff] (note
+that all ranges expressed in maple tree code are inclusive):
+
+1. mas_store_gfp() descends the tree, finds node A at <=0xffff, then
+   determines that this is a spanning store across nodes B and C. The mas
+   state is set such that the current node from which we traverse further
+   is node A.
+
+2. In mas_wr_spanning_store() we try to find elements to the right of pivot
+   0xffff by searching for an index of 0x10000:
+
+    - mas_wr_walk_index() invokes mas_wr_walk_descend() and
+      mas_wr_node_walk() in turn.
+
+        - mas_wr_node_walk() loops over entries in node A until EITHER it
+          finds an entry whose pivot equals or exceeds 0x10000 OR it
+          reaches the final entry.
+
+        - Since no entry has a pivot equal to or exceeding 0x10000, pivot
+          0xffff is selected, leading to node C.
+
+    - mas_wr_walk_traverse() resets the mas state to traverse node C. We
+      loop around and invoke mas_wr_walk_descend() and mas_wr_node_walk()
+      in turn once again.
+
+         - Again, we reach the last entry in node C, which has a pivot of
+           0xffff.
+
+3. We then copy the elements to the left of 0x4000 in node B to the big
+   node via mas_store_b_node(), and insert the new [0x4000, 0xffff] entry
+   too.
+
+4. We determine whether we have any entries to copy from the right of the
+   end of the range via - and with r_mas set up at the entry at pivot
+   0xffff, r_mas.offset <= r_mas.end, and then we DUPLICATE the entry at
+   pivot 0xffff.
+
+5. BUG! The maple tree is corrupted with a duplicate entry.
+
+This requires a very specific set of circumstances - we must be spanning
+the last element in a leaf node, which is the last element in the parent
+node.
+
+spanning store across two leaf nodes with a range that ends at that shared
+pivot.
+
+A potential solution to this problem would simply be to reset the walk
+each time we traverse r_mas, however given the rarity of this situation it
+seems that would be rather inefficient.
+
+Instead, this patch detects if the right hand node is populated, i.e.  has
+anything we need to copy.
+
+We do so by only copying elements from the right of the entry being
+inserted when the maximum value present exceeds the last, rather than
+basing this on offset position.
+
+The patch also updates some comments and eliminates the unused bool return
+value in mas_wr_walk_index().
+
+The work performed in commit f8d112a4e657 ("mm/mmap: avoid zeroing vma
+tree in mmap_region()") seems to have made the probability of this event
+much more likely, which is the point at which reports started to be
+submitted concerning this bug.
+
+The motivation for this change arose from Bert Karwatzki's report of
+encountering mm instability after the release of kernel v6.12-rc1 which,
+after the use of CONFIG_DEBUG_VM_MAPLE_TREE and similar configuration
+options, was identified as maple tree corruption.
+
+After Bert very generously provided his time and ability to reproduce this
+event consistently, I was able to finally identify that the issue
+discussed in this commit message was occurring for him.
+
+Link: https://lkml.kernel.org/r/cover.1728314402.git.lorenzo.stoakes@oracle.com
+Link: https://lkml.kernel.org/r/48b349a2a0f7c76e18772712d0997a5e12ab0a3b.1728314403.git.lorenzo.stoakes@oracle.com
+Fixes: 54a611b60590 ("Maple Tree: add new data structure")
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reported-by: Bert Karwatzki <spasswolf@web.de>
+Closes: https://lore.kernel.org/all/20241001023402.3374-1-spasswolf@web.de/
+Tested-by: Bert Karwatzki <spasswolf@web.de>
+Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Closes: https://lore.kernel.org/all/CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7iF+XFRu1h7-+Dg@mail.gmail.com/
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/libfs.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ lib/maple_tree.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 98731178a3c1..fd5d30c798de 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -405,6 +405,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
- 	mtree_destroy(&octx->mt);
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 5328e08723d7..c57b6fc4db2e 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -2239,6 +2239,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
+ 
+ /*
+  * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
++ *                      If @mas->index cannot be found within the containing
++ *                      node, we traverse to the last entry in the node.
+  * @wr_mas: The maple write state
+  *
+  * Uses mas_slot_locked() and does not need to worry about dead nodes.
+@@ -3655,7 +3657,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+ 	return true;
  }
  
-+static int offset_dir_open(struct inode *inode, struct file *file)
-+{
-+	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-+
-+	file->private_data = (void *)ctx->next_offset;
-+	return 0;
-+}
-+
- /**
-  * offset_dir_llseek - Advance the read position of a directory descriptor
-  * @file: an open directory whose position is to be updated
-@@ -418,6 +426,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
-  */
- static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+-static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
++static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
  {
-+	struct inode *inode = file->f_inode;
-+	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-+
- 	switch (whence) {
- 	case SEEK_CUR:
- 		offset += file->f_pos;
-@@ -431,7 +442,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+ 	struct ma_state *mas = wr_mas->mas;
+ 
+@@ -3664,11 +3666,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+ 		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+ 						  mas->offset);
+ 		if (ma_is_leaf(wr_mas->type))
+-			return true;
++			return;
+ 		mas_wr_walk_traverse(wr_mas);
+-
  	}
- 
- 	/* In this case, ->private_data is protected by f_pos_lock */
--	file->private_data = NULL;
-+	if (!offset)
-+		file->private_data = (void *)ctx->next_offset;
- 	return vfs_setpos(file, offset, LONG_MAX);
+-	return true;
  }
- 
-@@ -462,7 +474,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
- {
- 	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
- 	struct dentry *dentry;
-@@ -470,17 +482,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 	while (true) {
- 		dentry = offset_find_next(octx, ctx->pos);
- 		if (!dentry)
--			return ERR_PTR(-ENOENT);
-+			return;
-+
-+		if (dentry2offset(dentry) >= last_index) {
-+			dput(dentry);
-+			return;
-+		}
- 
- 		if (!offset_dir_emit(ctx, dentry)) {
- 			dput(dentry);
--			break;
-+			return;
- 		}
- 
- 		ctx->pos = dentry2offset(dentry) + 1;
- 		dput(dentry);
- 	}
--	return NULL;
- }
- 
- /**
-@@ -507,22 +523,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- static int offset_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct dentry *dir = file->f_path.dentry;
-+	long last_index = (long)file->private_data;
- 
- 	lockdep_assert_held(&d_inode(dir)->i_rwsem);
- 
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 
--	/* In this case, ->private_data is protected by f_pos_lock */
--	if (ctx->pos == DIR_OFFSET_MIN)
--		file->private_data = NULL;
--	else if (file->private_data == ERR_PTR(-ENOENT))
--		return 0;
--	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
-+	offset_iterate_dir(d_inode(dir), ctx, last_index);
- 	return 0;
- }
- 
- const struct file_operations simple_offset_dir_operations = {
-+	.open		= offset_dir_open,
- 	.llseek		= offset_dir_llseek,
- 	.iterate_shared	= offset_readdir,
- 	.read		= generic_read_dir,
+ /*
+  * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
+@@ -3899,8 +3899,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+ 	memset(&b_node, 0, sizeof(struct maple_big_node));
+ 	/* Copy l_mas and store the value in b_node. */
+ 	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+-	/* Copy r_mas into b_node. */
+-	if (r_mas.offset <= r_mas.end)
++	/* Copy r_mas into b_node if there is anything to copy. */
++	if (r_mas.max > r_mas.last)
+ 		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+ 			   &b_node, b_node.b_end + 1);
+ 	else
 -- 
 2.39.2
 
