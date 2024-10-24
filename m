@@ -1,222 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-32782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEA49AE837
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CCD9AE8CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFDB61C22311
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313051C21AEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9612520FABD;
-	Thu, 24 Oct 2024 14:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDE71E571A;
+	Thu, 24 Oct 2024 14:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqc75rOs"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZCl7BX4x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2670D1E32AF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 14:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31451EABB9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778965; cv=none; b=pwOE6pkiq22izLVVyyxfGhb2+Z/ImRYBHK5Csx9R00xS9FQ9moTzbLMcUZzkgHEiK7ji6BsJhH3EGbUj7J2L/PyybJceWY2Pse7cdtrP+gxlfvWa4lrKHMtdyTImFAKVs2vw7L0ZumafB0cAif+UrMRzyKb32yj8l4anH4KFoEM=
+	t=1729780024; cv=none; b=nV6Fq0M+skL4vmyEaFucClDTg0rUyq/uzn7DUBrRMCHxjHEzhdlCqENY8YCjZ5P2+eaU/LJMyLBs9MdvlNjvPKbKHqBCRQLJom+tZDOWfe2OzK/LNJ4F6Ac7DG952KlVi+TNtvU5IzCmPRIA0h6Dw62zpJ2mN7hcvNTb4zrrbUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778965; c=relaxed/simple;
-	bh=N+5YMzhjte34sJ2ZxHb5KMVqJR+Nt220OsohG9E7/eU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QaIxCRmErTgOiPvSzLBtLfXTkVOC9vCu/7EV6XvGwGFgjER4KLY3Dx6h8y7Qz9TPVur8uM6cUs3iEF+JDuVlV1WzX5Z8tArHWsmgoxFup6ShzwDOXfR0pg5ednRhywqWcJDQlDgxnR4TdZUxVMJC+ENcCLtJnejZ81X/AT0JEKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqc75rOs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729778962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iqdCYyLxV3eZI7xKPYjIcc90QP7ii8Dvz5lSTfzAmmU=;
-	b=dqc75rOsc+JKzH5nqsEQS5mRrN2tWeAeyo5dvalZz9Z1wWZ3oMp65qzSDzawrgtTr94vJD
-	HSe+rXJsfMNTzm5M7kQBKxR47O2Y2vtxCrLYWUAzu8OBU+Rm/w+39HO2NkLiYN4OfvlNZx
-	VqLuyVvCf9UBSprHAlPJk/RzEvHME2E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-RR6a9pwMNua986kgppA9xQ-1; Thu,
- 24 Oct 2024 10:09:19 -0400
-X-MC-Unique: RR6a9pwMNua986kgppA9xQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 032451955F3F;
-	Thu, 24 Oct 2024 14:09:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6260D195607C;
-	Thu, 24 Oct 2024 14:09:10 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 27/27] afs: Make afs_mkdir() locally initialise a new directory's content
-Date: Thu, 24 Oct 2024 15:05:25 +0100
-Message-ID: <20241024140539.3828093-28-dhowells@redhat.com>
-In-Reply-To: <20241024140539.3828093-1-dhowells@redhat.com>
-References: <20241024140539.3828093-1-dhowells@redhat.com>
+	s=arc-20240116; t=1729780024; c=relaxed/simple;
+	bh=Br4rUo7jXSyDoQxwb4vji74KoTCk3I/0TKPiOd4IYHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1Zdm8TLZxipjug2hVfr5lhLvbN2Z7ePNl0uQ6sn/HU/B2A3yRTf2JhHmIB5jrdYX47VVO+bgGnmWgJshs70XmQTGntZQSJduAjb/sTUjAb3bAixy94qxCkdJX2MMXA1YMbK+UvqADB87FCkkxsewt/3+N5xYw7z7QANn5kM4+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZCl7BX4x; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so42650639f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 07:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729780021; x=1730384821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
+        b=ZCl7BX4xkrIFvVvZGHtyM/oy3pt/aKmBnCo6ikFH1ajyb9egT9T5XTsiV0hAaOO9k/
+         ps2A45qQcP8lCS/knovTMouiU4uGQWesQhIVdGo5v3UbWntib8/VTW3mro96iMJEsVyv
+         WmTXi3cvo38TqgLX8YQ7TDpG4gusvH7pOSb8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729780021; x=1730384821;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
+        b=bawxvhQvH9qQIG9mjiUXTTSAJMiZU07A2CnRgCWmQmlEsF4yTrupTLkHV9hVQ4D8Po
+         +SPvlJiuBS4oE+E+yB4AXiUqc8TEfyjsN7ZXRd++t9lsVDQYpgxF9vWpjDhyRFIY1enL
+         dOgPYTEezqJ/oQTaiOu0fmK6xhWmQ6xSoIWYPMZlRqf5QeSZ1w6fIzXsuVHCVXqN7eq6
+         MSHCaQ0LPrS/SqgFfiAmctdaI4n3ftCJfLRMYC3aT+66X/RtwW+bzRrouaHAUWpiJ9Ga
+         cBLw1xFqmbvPseT3qV39d+quKEzCqr+akXidzX1XDVnCTXaXjBwBSBCn9NHKr8Kn9PJC
+         g8rw==
+X-Gm-Message-State: AOJu0YwrpdzInKwyodQ8UOo3Kx2Pd/4ov3Hlu0DgIPgyDOf6JzgClbCs
+	HHrSy/i0SXVdZ6sU2I/d67CY6L1eVlLDcqjzkUe/23qtkT9jJxNDi4A2tQYra6E=
+X-Google-Smtp-Source: AGHT+IEjoNotzF3cjr6+gorjptn9Dul3pcmua2S6p0cxQk5f5nfOd26Q5xIzWEQ2ssLjTpxV/ceAyg==
+X-Received: by 2002:a05:6602:140a:b0:83a:c5dd:3000 with SMTP id ca18e2360f4ac-83b04041acfmr315071039f.6.1729780020797;
+        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a630571sm2729448173.147.2024.10.24.07.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
+Message-ID: <1c8674a0-d220-4349-88ea-780f0fed8545@linuxfoundation.org>
+Date: Thu, 24 Oct 2024 08:26:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid
+ failed to run
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org,
+ sforshee@kernel.org, shuah@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241024095013.1213852-1-zhouyuhang1010@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241024095013.1213852-1-zhouyuhang1010@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Initialise a new directory's content when it is created by mkdir locally
-rather than downloading the content from the server as we can predict what
-it's going to look like.
+On 10/24/24 03:50, zhouyuhang wrote:
+> From: zhouyuhang <zhouyuhang@kylinos.cn>
+> 
+> Test case idmap_mount_tree_invalid failed to run on the newer kernel
+> with the following output:
+> 
+>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
+>   # idmap_mount_tree_invalid: Test terminated by assertion
+> 
+> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
+> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
+> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
+> returns 0 instead of -EINVAL as expected.
+> 
+> Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
+> So we can use "/mnt/B" instead of "/mnt/A" to make the test run
+> successfully with the following output:
+> 
+>   # Starting 1 tests from 1 test cases.
+>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
+>   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
+>   # PASSED: 1 / 1 tests passed.
+> 
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/dir.c               |  3 +++
- fs/afs/dir_edit.c          | 48 ++++++++++++++++++++++++++++++++++++++
- fs/afs/internal.h          |  1 +
- include/trace/events/afs.h |  2 ++
- 4 files changed, 54 insertions(+)
+Sounds like this code is testing this very condition passing
+in invalid mount to see what happens. If that is the intent
+this patch is incorrect.
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 87c5fb982e5b..c5b1008b302b 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1270,6 +1270,7 @@ void afs_check_for_remote_deletion(struct afs_operation *op)
-  */
- static void afs_vnode_new_inode(struct afs_operation *op)
- {
-+	struct afs_vnode_param *dvp = &op->file[0];
- 	struct afs_vnode_param *vp = &op->file[1];
- 	struct afs_vnode *vnode;
- 	struct inode *inode;
-@@ -1289,6 +1290,8 @@ static void afs_vnode_new_inode(struct afs_operation *op)
- 
- 	vnode = AFS_FS_I(inode);
- 	set_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags);
-+	if (S_ISDIR(inode->i_mode))
-+		afs_mkdir_init_dir(vnode, dvp->vnode);
- 	if (!afs_op_error(op))
- 		afs_cache_permit(vnode, op->key, vnode->cb_break, &vp->scb);
- 	d_instantiate(op->dentry, inode);
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index 28a966d2612d..c823497b9e25 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -556,3 +556,51 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode *new_d
- 			   0, 0, 0, 0, "..");
- 	goto out;
- }
-+
-+/*
-+ * Initialise a new directory.  We need to fill in the "." and ".." entries.
-+ */
-+void afs_mkdir_init_dir(struct afs_vnode *dvnode, struct afs_vnode *parent_dvnode)
-+{
-+	union afs_xdr_dir_block *meta;
-+	struct afs_dir_iter iter = { .dvnode = dvnode };
-+	union afs_xdr_dirent *de;
-+	unsigned int slot = AFS_DIR_RESV_BLOCKS0;
-+	loff_t i_size;
-+
-+	i_size = i_size_read(&dvnode->netfs.inode);
-+	if (i_size != AFS_DIR_BLOCK_SIZE) {
-+		afs_invalidate_dir(dvnode, afs_dir_invalid_edit_add_bad_size);
-+		return;
-+	}
-+
-+	meta = afs_dir_get_block(&iter, 0);
-+	if (!meta)
-+		return;
-+
-+	afs_edit_init_block(meta, meta, 0);
-+
-+	de = &meta->dirents[slot];
-+	de->u.valid  = 1;
-+	de->u.vnode  = htonl(dvnode->fid.vnode);
-+	de->u.unique = htonl(dvnode->fid.unique);
-+	memcpy(de->u.name, ".", 2);
-+	trace_afs_edit_dir(dvnode, afs_edit_dir_for_mkdir, afs_edit_dir_mkdir, 0, slot,
-+			   dvnode->fid.vnode, dvnode->fid.unique, ".");
-+	slot++;
-+
-+	de = &meta->dirents[slot];
-+	de->u.valid  = 1;
-+	de->u.vnode  = htonl(parent_dvnode->fid.vnode);
-+	de->u.unique = htonl(parent_dvnode->fid.unique);
-+	memcpy(de->u.name, "..", 3);
-+	trace_afs_edit_dir(dvnode, afs_edit_dir_for_mkdir, afs_edit_dir_mkdir, 0, slot,
-+			   parent_dvnode->fid.vnode, parent_dvnode->fid.unique, "..");
-+
-+	afs_set_contig_bits(meta, AFS_DIR_RESV_BLOCKS0, 2);
-+	meta->meta.alloc_ctrs[0] -= 2;
-+	kunmap_local(meta);
-+
-+	netfs_single_mark_inode_dirty(&dvnode->netfs.inode);
-+	set_bit(AFS_VNODE_DIR_VALID, &dvnode->flags);
-+}
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index c7f0d75eab7f..3acf1445e444 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1074,6 +1074,7 @@ extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct afs_fid *
- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum afs_edit_dir_reason);
- void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode *new_dvnode,
- 				enum afs_edit_dir_reason why);
-+void afs_mkdir_init_dir(struct afs_vnode *dvnode, struct afs_vnode *parent_vnode);
- 
- /*
-  * dir_silly.c
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 49a749672e38..020ab7302a6b 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -348,6 +348,7 @@ enum yfs_cm_operation {
- 	EM(afs_dir_invalid_edit_add_no_slots,	"edit-add-no-slots") \
- 	EM(afs_dir_invalid_edit_add_too_many_blocks, "edit-add-too-many-blocks") \
- 	EM(afs_dir_invalid_edit_get_block,	"edit-get-block") \
-+	EM(afs_dir_invalid_edit_mkdir,		"edit-mkdir") \
- 	EM(afs_dir_invalid_edit_rem_bad_size,	"edit-rem-bad-size") \
- 	EM(afs_dir_invalid_edit_rem_wrong_name,	"edit-rem-wrong_name") \
- 	EM(afs_dir_invalid_edit_upd_bad_size,	"edit-upd-bad-size") \
-@@ -369,6 +370,7 @@ enum yfs_cm_operation {
- 	EM(afs_edit_dir_delete_error,		"d_err ") \
- 	EM(afs_edit_dir_delete_inval,		"d_invl") \
- 	EM(afs_edit_dir_delete_noent,		"d_nent") \
-+	EM(afs_edit_dir_mkdir,			"mk_ent") \
- 	EM(afs_edit_dir_update_dd,		"u_ddot") \
- 	EM(afs_edit_dir_update_error,		"u_fail") \
- 	EM(afs_edit_dir_update_inval,		"u_invl") \
+> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+> ---
+>   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index c6a8c732b802..54552c19bc24 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
+>   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
+>   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
+>   
+> -	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
+> +	open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
+>   				     AT_RECURSIVE |
+>   				     AT_EMPTY_PATH |
+>   				     AT_NO_AUTOMOUNT |
 
+thanks,
+-- Shuah
 
