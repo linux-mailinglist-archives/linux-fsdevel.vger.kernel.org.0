@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60359AE62F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:27:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7BE9AE64B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2BDA1C21193
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:27:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9227B27D30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C172E1F8186;
-	Thu, 24 Oct 2024 13:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6BB1E764B;
+	Thu, 24 Oct 2024 13:25:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4AA1F76D4;
-	Thu, 24 Oct 2024 13:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940A61D8A08;
+	Thu, 24 Oct 2024 13:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776198; cv=none; b=HGlLEH69EWbGSqG/XXHeieVPtDpLccxlXzPJxUgMDpMgQoicg6ZJLW1f00BgaD2H0GUxAvAP3csEh1h1poVFu0d772Hw6mMvVSJylKBfwztfWaUv5JolXqFrda2TcnCXRhoBtrAD0ZJFSYCLlfcWfDe8LtGRcSgLpFt98q9LFVE=
+	t=1729776315; cv=none; b=Shrt2qN8tlXXXbLCeyBXYUAyMQuG4OBtmYivPUj1H6uM3ph2WJk9F6cIUkSCuyR62okkZgzgaf5S2NNju97cJjkhgMSGUmiaP/bmpnY3xXeBA+frORGhEeoH2p41CxJWP+M0ghLjocJeR2DVdsv00bY4S+5F/PlFhRehS8lUhB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776198; c=relaxed/simple;
-	bh=69hr5CAo5SoWt//nL1BnDR8JYSVg8jMStr4TllXohbQ=;
+	s=arc-20240116; t=1729776315; c=relaxed/simple;
+	bh=uc1LQeotcsNDpPS9/9fVNAcor0v2+3tE0pf/V0nNm/c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u8dJpmFCcvoPY+l/zW0PXj8fEzuetR+0zJT2yR2jhdFBAB4rbgDeThcZQFieYBkrwW6+BxHkQHE0CaJniILdTgCYAIpFCm75rX/v2vlrMxNbuk4H/fkSTbXaRgfoQINVJEUjOk+xrM/c8zJaab0QFIFo7uiHA7WRBSI7H0PwN/g=
+	 MIME-Version; b=QzFS1WJ4CyhC3vG+aI0EUd30Q1qGtOrQ/sJnNRPD7g+Y5z9ewUAkhTpqaV9qiGGptKKBFhvUasE+mnd/i1eTbHJ1COQgvSwaennHgWkYE05OkIZTXO/1+eiDz2tzHAGysDGdpYYXfb+8muI7B9Y/+jag7YszSa2Xi/n9K39IV8w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ66Q1rPXz4f3jsD;
-	Thu, 24 Oct 2024 21:22:54 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ68f45Szz4f3jsB;
+	Thu, 24 Oct 2024 21:24:50 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B4F081A018D;
-	Thu, 24 Oct 2024 21:23:11 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 0BE5F1A0194;
+	Thu, 24 Oct 2024 21:25:08 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S19;
-	Thu, 24 Oct 2024 21:23:11 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S4;
+	Thu, 24 Oct 2024 21:25:07 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 15/28] maple_tree: remove mas_searchable()
-Date: Thu, 24 Oct 2024 21:19:56 +0800
-Message-Id: <20241024132009.2267260-16-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 16/28] Revert "maple_tree: correct tree corruption on spanning store"
+Date: Thu, 24 Oct 2024 21:22:13 +0800
+Message-Id: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -86,175 +86,84 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S19
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr48Jw1UAw1xGFyruw1Dtrb_yoWrAr13pa
-	4fCF95tan2qr1UGr4vgw10yr909r97Xw4I9an8Gwn5AFy3tw1Sqr1Yva4FvFZaq34IvF13
-	GF1Yqw15Ca17XrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
-	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr1j6rxdMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnI
-	WIevJa73UjIFyTuYvjTRAR6zUUUUU
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF1fZF4UAw4fCFyfCFyfWFg_yoW8ury5pa
+	yDCFW2yr1jyF18GFWvk3y0vas8J3WDtF4YvFW5KanYvFyDKr9IganYvw1IvFW5Z3yxCr1S
+	yFWjvr4DG3ZayFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar
+	1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcS
+	sGvfC2KfnxnUUI43ZEXa7sR_v38UUUUUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+From: Yu Kuai <yukuai3@huawei.com>
 
-commit 9a40d45c1f2c49273c04938ec3d7849f685eb3c1 upstream.
+This reverts commit 677f1df179cb68c12ddf7707ec325eb50e99c7d9.
 
-Now that the status of the maple state is outside of the node, the
-mas_searchable() function can be dropped for easier open-coding of what is
-going on.
+Above commit contain manual changes and will cause conflicts for
+following patches. The commit be backported from mainline later, without
+conflicts.
 
-Link: https://lkml.kernel.org/r/20231101171629.3612299-10-Liam.Howlett@oracle.com
-Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Cc: Peng Zhang <zhangpeng.00@bytedance.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/maple_tree.c                 | 66 ++++++++------------------------
- tools/testing/radix-tree/maple.c |  4 +-
- 2 files changed, 19 insertions(+), 51 deletions(-)
+ lib/maple_tree.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index f7a1c1cc18eb..f73e3772c883 100644
+index f73e3772c883..291412b91047 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -285,17 +285,6 @@ static inline bool mas_is_underflow(struct ma_state *mas)
- 	return mas->status == ma_underflow;
+@@ -2236,8 +2236,6 @@ static inline void mas_node_or_none(struct ma_state *mas,
+ 
+ /*
+  * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
+- *                      If @mas->index cannot be found within the containing
+- *                      node, we traverse to the last entry in the node.
+  * @wr_mas: The maple write state
+  *
+  * Uses mas_slot_locked() and does not need to worry about dead nodes.
+@@ -3657,7 +3655,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+ 	return true;
  }
  
--static inline bool mas_searchable(struct ma_state *mas)
--{
--	if (mas_is_none(mas))
--		return false;
--
--	if (mas_is_ptr(mas))
--		return false;
--
--	return true;
--}
--
- static __always_inline struct maple_node *mte_to_node(
- 		const struct maple_enode *entry)
+-static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
++static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
  {
-@@ -6041,12 +6030,11 @@ static __always_inline bool mas_find_setup(struct ma_state *mas, unsigned long m
+ 	struct ma_state *mas = wr_mas->mas;
  
+@@ -3666,9 +3664,11 @@ static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
+ 		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+ 						  mas->offset);
+ 		if (ma_is_leaf(wr_mas->type))
+-			return;
++			return true;
+ 		mas_wr_walk_traverse(wr_mas);
++
  	}
- 
--	if (unlikely(!mas_searchable(mas))) {
--		if (unlikely(mas_is_ptr(mas)))
--			goto ptr_out_of_range;
-+	if (unlikely(mas_is_ptr(mas)))
-+		goto ptr_out_of_range;
- 
-+	if (unlikely(mas_is_none(mas)))
- 		return true;
--	}
- 
- 	if (mas->index == max)
- 		return true;
-@@ -6173,20 +6161,18 @@ static bool mas_find_rev_setup(struct ma_state *mas, unsigned long min,
- 			return true;
- 	}
- 
--	if (unlikely(!mas_searchable(mas))) {
--		if (mas_is_ptr(mas))
--			goto none;
-+	if (unlikely(mas_is_ptr(mas)))
-+		goto none;
- 
--		if (mas_is_none(mas)) {
--			/*
--			 * Walked to the location, and there was nothing so the
--			 * previous location is 0.
--			 */
--			mas->last = mas->index = 0;
--			mas->status = ma_root;
--			*entry = mas_root(mas);
--			return true;
--		}
-+	if (unlikely(mas_is_none(mas))) {
-+		/*
-+		 * Walked to the location, and there was nothing so the previous
-+		 * location is 0.
-+		 */
-+		mas->last = mas->index = 0;
-+		mas->status = ma_root;
-+		*entry = mas_root(mas);
-+		return true;
- 	}
- 
- active:
-@@ -6916,7 +6902,7 @@ void *mt_find(struct maple_tree *mt, unsigned long *index, unsigned long max)
- 	if (entry)
- 		goto unlock;
- 
--	while (mas_searchable(&mas) && (mas.last < max)) {
-+	while (mas_is_active(&mas) && (mas.last < max)) {
- 		entry = mas_next_entry(&mas, max);
- 		if (likely(entry && !xa_is_zero(entry)))
- 			break;
-@@ -6998,26 +6984,6 @@ unsigned int mt_nr_allocated(void)
- 	return kmem_cache_nr_allocated(maple_node_cache);
++	return true;
  }
- 
--/*
-- * mas_dead_node() - Check if the maple state is pointing to a dead node.
-- * @mas: The maple state
-- * @index: The index to restore in @mas.
-- *
-- * Used in test code.
-- * Return: 1 if @mas has been reset to MAS_START, 0 otherwise.
-- */
--static inline int mas_dead_node(struct ma_state *mas, unsigned long index)
--{
--	if (unlikely(!mas_searchable(mas) || mas_is_start(mas)))
--		return 0;
--
--	if (likely(!mte_dead_node(mas->node)))
--		return 0;
--
--	mas_rewalk(mas, index);
--	return 1;
--}
--
- void mt_cache_shrink(void)
- {
- }
-@@ -7569,7 +7535,7 @@ void mt_validate(struct maple_tree *mt)
- 	MA_STATE(mas, mt, 0, 0);
- 	rcu_read_lock();
- 	mas_start(&mas);
--	if (!mas_searchable(&mas))
-+	if (!mas_is_active(&mas))
- 		goto done;
- 
- 	while (!mte_is_leaf(mas.node))
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index d630e86052f9..35cc8c2a10f4 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -974,8 +974,10 @@ static inline void *mas_range_load(struct ma_state *mas,
- 	if (likely(mas->offset != MAPLE_NODE_SLOTS))
- 		entry = mas_get_slot(mas, mas->offset);
- 
--	if (mas_dead_node(mas, index))
-+	if (mas_is_active(mas) && mte_dead_node(mas->node)) {
-+		mas_set(mas, index);
- 		goto retry;
-+	}
- 
- 	return entry;
- }
+ /*
+  * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
+@@ -3905,8 +3905,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+ 	memset(&b_node, 0, sizeof(struct maple_big_node));
+ 	/* Copy l_mas and store the value in b_node. */
+ 	mas_store_b_node(&l_wr_mas, &b_node, l_wr_mas.node_end);
+-	/* Copy r_mas into b_node if there is anything to copy. */
+-	if (r_mas.max > r_mas.last)
++	/* Copy r_mas into b_node. */
++	if (r_mas.offset <= r_wr_mas.node_end)
+ 		mas_mab_cp(&r_mas, r_mas.offset, r_wr_mas.node_end,
+ 			   &b_node, b_node.b_end + 1);
+ 	else
 -- 
 2.39.2
 
