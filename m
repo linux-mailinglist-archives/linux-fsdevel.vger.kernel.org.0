@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3167A9AE610
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F559AE611
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4272832E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2601F25E38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303D81E8855;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EED01E9063;
 	Thu, 24 Oct 2024 13:23:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4831B1E5021;
-	Thu, 24 Oct 2024 13:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4081E7642;
+	Thu, 24 Oct 2024 13:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776186; cv=none; b=IiW+sUFaT91dgedBEpBXhsHdaq/0RdKz8hB/By0upKQqHiT+KQmWMZF0FjCx5GKpXu24Js0DaYEglhkLr/y7VqO4M7z9crZ0AmTA+TPVEhCJfypdAr3B6ekzg9qSxzfnVOHjEWtG6YFDMq/CW4/ovUbXxepn4j7hepLNfm3s24Q=
+	t=1729776186; cv=none; b=ssL73TQGxZas3cw9CSnVrvVPi5dbDtuIUHY6bIzv9130qfQ9G+ipt6JqOzTNsaHlfo7qDaAw9RJMvgqfgPpjw7NEjxStroV1CwrZeMyeiWCMFaFtKGX1QZctxZn+PQ+9opVcnWBxk5IbaDaIyGFl9c+xX2xJldsGCNdxS2TbXpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729776186; c=relaxed/simple;
-	bh=ZZQHynXSHHbGVMFTszfMr3Sf97jTmMAKXaukYRw2n2s=;
+	bh=wiRBpvH3YiE1zO3SQo5lm8zIGbTHlGLtpGjSdtJwXr8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W6Mp3CCcUzvUvoY/06jUtfvmO+yLXM/8iBT/t+VG9dof3erZEjRR+/H+FQ9GhQdZc75QdIhK7k7oSyzsQSxckLqZV5w2qgFvT0PtJXmwqPA0LvHeb1adwhgC7Za5NgTdQsnmu0gpaB/k4gMhhqMino7+/w0zRSGFnJsjllhNAFk=
+	 MIME-Version; b=OQKJzFr6uYQoqXAkLuG0JFmp/oZCdh/2pkg9/LCw2r2qn2RqMljVynMcSkZb2DGCxddwCMbF7LC9P+lv5ZhmeoecjciwiysHBnZFDZau2oIwreDpprKMuhBMdDafandful18nEyZ3+fpDfKRiwDnWJHXFsouyJDWkq/07cHTZJE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ6695JF4z4f3jdS;
-	Thu, 24 Oct 2024 21:22:41 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ66B68q9z4f3jdS;
+	Thu, 24 Oct 2024 21:22:42 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 367391A058E;
-	Thu, 24 Oct 2024 21:22:59 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 514F71A07BA;
+	Thu, 24 Oct 2024 21:23:00 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S8;
-	Thu, 24 Oct 2024 21:22:58 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S9;
+	Thu, 24 Oct 2024 21:22:59 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 04/28] maple_tree: skip other tests when BENCH is enabled
-Date: Thu, 24 Oct 2024 21:19:45 +0800
-Message-Id: <20241024132009.2267260-5-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 05/28] maple_tree: preserve the tree attributes when destroying maple tree
+Date: Thu, 24 Oct 2024 21:19:46 +0800
+Message-Id: <20241024132009.2267260-6-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -86,10 +86,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S8
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4DCFykCF18uF13Cr43Awb_yoW8KF1Upw
-	4xCF1UtF1Iyr4xW3y8tay0gFySgFs5G3WUt3ZrCry7ur93Aw4Iq3ySyF1xZrsxWa4xua4f
-	Cr1Yg3W7J3WDGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S9
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFyfXFW3Ar4kAr4xXry7Wrg_yoW8XF43pr
+	nrGw10qFyIqw18Cay0qay8Ca4UWFs5Wr1Iqa4DCr1UZr98Jws2g3yayrWxZa13Za4DuF15
+	AF4Y934xta4kArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmq14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -100,7 +100,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7WF4DCFykCF18uF13Cr43Awb_yoW8KF1Upw
 	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
 	kIc2xKxwCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1l
+	AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1l
 	IxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
 	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIY
 	CTnIWIevJa73UjIFyTuYvjTRAR6zUUUUU
@@ -108,12 +108,13 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Peng Zhang <zhangpeng.00@bytedance.com>
 
-commit f670fa1caadb4ea532a89012c5451e4c6789bfcc upstream.
+commit 8e50d32c7a89bde896945e4e572ef28ccd87bbf8 upstream.
 
-Skip other tests when BENCH is enabled so that performance can be measured
-in user space.
+When destroying maple tree, preserve its attributes and then turn it into
+an empty tree.  This allows it to be reused without needing to be
+reinitialized.
 
-Link: https://lkml.kernel.org/r/20231027033845.90608-8-zhangpeng.00@bytedance.com
+Link: https://lkml.kernel.org/r/20231027033845.90608-10-zhangpeng.00@bytedance.com
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Cc: Christian Brauner <brauner@kernel.org>
@@ -129,50 +130,22 @@ Cc: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/test_maple_tree.c            | 8 ++++----
- tools/testing/radix-tree/maple.c | 2 ++
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ lib/maple_tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
-index 464eeb90d5ad..de470950714f 100644
---- a/lib/test_maple_tree.c
-+++ b/lib/test_maple_tree.c
-@@ -3585,10 +3585,6 @@ static int __init maple_tree_seed(void)
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 6f1addbbc820..97a610307d38 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -6774,7 +6774,7 @@ void __mt_destroy(struct maple_tree *mt)
+ 	if (xa_is_node(root))
+ 		mte_destroy_walk(root, mt);
  
- 	pr_info("\nTEST STARTING\n\n");
- 
--	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
--	check_root_expand(&tree);
--	mtree_destroy(&tree);
--
- #if defined(BENCH_SLOT_STORE)
- #define BENCH
- 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
-@@ -3646,6 +3642,10 @@ static int __init maple_tree_seed(void)
- 	goto skip;
- #endif
- 
-+	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
-+	check_root_expand(&tree);
-+	mtree_destroy(&tree);
-+
- 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
- 	check_iteration(&tree);
- 	mtree_destroy(&tree);
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index 76a8990bb14e..576b825d6bb1 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -35938,7 +35938,9 @@ void farmer_tests(void)
- 
- void maple_tree_tests(void)
- {
-+#if !defined(BENCH)
- 	farmer_tests();
-+#endif
- 	maple_tree_seed();
- 	maple_tree_harvest();
+-	mt->ma_flags = 0;
++	mt->ma_flags = mt_attr(mt);
  }
+ EXPORT_SYMBOL_GPL(__mt_destroy);
+ 
 -- 
 2.39.2
 
