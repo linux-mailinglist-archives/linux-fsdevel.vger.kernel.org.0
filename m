@@ -1,65 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-32697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AC19ADCEC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 08:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399A99ADD9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 09:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866CF1F22AED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 06:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0261C20342
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 07:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297C71A7AFD;
-	Thu, 24 Oct 2024 06:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F426198827;
+	Thu, 24 Oct 2024 07:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fk7R4GrF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXiaW/Bs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10D3189F5F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 06:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BCF18B46D;
+	Thu, 24 Oct 2024 07:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729753059; cv=none; b=BJRU6XG196acw1DpEKax1FP+3yHdmQZBKV8tNcNMpDO7lzt9HPGeCqOMVU3Pdl3ddkuEdbyKm65Hi5GC1lhrIJKWd6ZCAPGvNrZc373O2UchyxaHLy+PrhKiOe0cUuywxkpQ1o5i8BjT7j5lCCgQqa919wjKz8xhUgki5b4FwP4=
+	t=1729754965; cv=none; b=DjPrdyvayla/iQj/PSfAHlrKegAcgHZ+1qw6Z9jlaQn/aC+Gcsc/8dcqKLXxIS+SOHN9/FI0g1sGkAENS00r9A5Mg4HV0emJA86BiJW2eapDpdqMvmKkhofLhNfUXNq93lebKdC0339Gg/2yo4nhX3hXJVPvmEr7XPG15DJmP7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729753059; c=relaxed/simple;
-	bh=JxFRtVDkVwNX/nKJf6rxYe1v7biKRdps+Stcu5DCQeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=juvTpM576sNMnBk/7Sq0gvedF21PNOKYBikORPB54kqpsmXJEa1jndxvJwZhBIbWfnt98BYyc8pA2rGnIvYjkWe7kPmgVCNilG2beqLpCdiIo9VtmsmXSWE3nLJ0lR5DOui/vHyp+WVdlKL4tlgIy2j5tvQUoCKvaWmaZhARpAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fk7R4GrF; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729753054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jjur1v507XZcfB3R788/dravrRJmQ/huQN6yJVE4iP0=;
-	b=fk7R4GrFjC4AEwUgyhAI4/ezHAGxfXFZ+MU7L3jao8pJ4Xf0Og82QbElOyqjOPrwGb/ltR
-	eKBUJSbYRCd1woigqV+GtSCQkASBvINFSwREEpvEcn/gQLDvqA/6LpcDn4S6yQ7O40XAe4
-	CNwvb5Pz9Zcv+8dThKfAXFFb/17J/Uw=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1729754965; c=relaxed/simple;
+	bh=62OiTPdLC73E4bSWiNopGU0nw3unHoyjiWfg3+9xkoI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hWAGxC44esIcuALcUJ6P1a+1OUdKdWk8gGhxmImr3DQm6S7CS6bMdGIu7aAT2bxZKHRUjgkkHGBr2bUoBUD0S+pjjXPaBe+OzoLDBRh6/PXqWIcrVJG7zCFqiyGb7+vbMD9pZpPyyM6RpX6a+WdNq+v3SZGF1ncsiGtvsXjl2F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXiaW/Bs; arc=none smtp.client-ip=209.85.210.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-71815313303so399450a34.1;
+        Thu, 24 Oct 2024 00:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729754963; x=1730359763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pYzWy6kio/5TGHmC4KnU0HU3SKktd6/yeFNR0szREPo=;
+        b=iXiaW/BslxSuHbsN3sqKCLBX7F5Lkb3G6VtRuCcPKBI1yt3OiFbnDK2YlpQMNi6tOY
+         TwKR9fy5fw4CKrAque0eKZn0TQwSvKascVj4WXMo1LI5MvdCozfg/fUaR5EsXNvuvgUH
+         PZEpZQVRV2V/bVQXktCOLs2MUOMoXUC+AFhAL1uLfaVKs1Osw0ExRRQNGPUpSzYFefa/
+         zx0pLKljqIqu9r17GU6swnftyy9fMgSxRywD15o8qpW+NvnytvLDe4WqVhGQomurhyNf
+         lHi7t+e7kbDk4oyVSBhInyASCt4GnfbMXzUKQddBrYo4+yzd5/O7X0XvCAEq0wImq5/K
+         UNjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729754963; x=1730359763;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pYzWy6kio/5TGHmC4KnU0HU3SKktd6/yeFNR0szREPo=;
+        b=DDqcocmuFSJaV8Ma54stPZOHq43qGI/Se5Y5NfBuz+Iz4xMl4cLlz0ARcVYA4/lhe6
+         QH4Nu7kEDq+mvDr7Dwg6o5g3K2kgBPZVhvHEuPPwgfdQu2Nn8NcWQGIk5J7KeYnB9xSe
+         gDKXcV+oksgqw6Ejkra3F+SrhPr/xLJWqIUMI5WGVXz+XHtTw0mcC/fh14e53P0pWyOA
+         kDV61bhz6qxDn1qTAPamPYErbCR/zDm1UVhuM/4FqVVhwHWkvMA4I+yMneR7x1XBBj0m
+         hKVSbM8h6lkM9RKqRAlCe26ca5vlId+VDj2ImNI5C80Oz3v5uZsDvtB9q6KaeRYYm/Lp
+         IwWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHZ3lVcg/uT7+024M1fapZ8wAZCx/m+G+qIj8XmWiPvuQGEzJkSLXeDpPaZfGiHy8Dr8ALNTKtl9c/XwWg@vger.kernel.org, AJvYcCUy4ARauPNth7VLEX3NRG/lQHsdLaYAYM1A6gX0ymItteYKdHRzpA5/mIOZaxXIUmslGyZdIxWFwLnh85vn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHq47A0lYvSvuFnddrQLQlurYrfAYkUdPWAPr2H1xSupSZoxlj
+	FC7d/1cWWXVpyWooQkgEQzTXJUNDJB7lz7O6LE7uDlZdeRkcFxC+
+X-Google-Smtp-Source: AGHT+IFj/sLrVs1zpDnBVyrOd3V+tOWXLkNCExzIVHuijrdfZtdlUlBm11jYo8zP2Sw/Y2vR2Mnm+w==
+X-Received: by 2002:a05:6870:169b:b0:288:865e:1864 with SMTP id 586e51a60fabf-28cecdcfe8bmr1079911fac.0.1729754962806;
+        Thu, 24 Oct 2024 00:29:22 -0700 (PDT)
+Received: from localhost.localdomain ([43.154.34.99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13ea1c4sm7393825b3a.152.2024.10.24.00.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 00:29:22 -0700 (PDT)
+From: Jim Zhao <jimzhao.ai@gmail.com>
+To: akpm@linux-foundation.org
+Cc: jimzhao.ai@gmail.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [RFC PATCH 3/3] memcg-v1: remove memcg move locking code
-Date: Wed, 23 Oct 2024 23:57:12 -0700
-Message-ID: <20241024065712.1274481-4-shakeel.butt@linux.dev>
-In-Reply-To: <20241024065712.1274481-1-shakeel.butt@linux.dev>
-References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
+Date: Thu, 24 Oct 2024 15:29:19 +0800
+Message-Id: <20241024072919.468589-1-jimzhao.ai@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241023232042.f9373f9f826ceae2a4f4da35@linux-foundation.org>
+References: <20241023232042.f9373f9f826ceae2a4f4da35@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,460 +87,52 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The memcg v1's charge move feature has been deprecated. There is no need
-to have any locking or protection against the moving charge. Let's
-proceed to remove all the locking code related to charge moving.
+> On Thu, 24 Oct 2024 14:09:54 +0800 Jim Zhao <jimzhao.ai@gmail.com> wrote:
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- fs/buffer.c                |  5 ---
- include/linux/memcontrol.h | 54 -------------------------
- mm/filemap.c               |  1 -
- mm/memcontrol-v1.c         | 82 --------------------------------------
- mm/memcontrol.c            |  5 ---
- mm/page-writeback.c        | 21 ++--------
- mm/rmap.c                  |  1 -
- mm/vmscan.c                | 11 -----
- 8 files changed, 3 insertions(+), 177 deletions(-)
+> > > On Wed, 23 Oct 2024 18:00:32 +0800 Jim Zhao <jimzhao.ai@gmail.com> wrote:
+> > 
+> > > > With the strictlimit flag, wb_thresh acts as a hard limit in
+> > > > balance_dirty_pages() and wb_position_ratio(). When device write
+> > > > operations are inactive, wb_thresh can drop to 0, causing writes to
+> > > > be blocked. The issue occasionally occurs in fuse fs, particularly
+> > > > with network backends, the write thread is blocked frequently during
+> > > > a period. To address it, this patch raises the minimum wb_thresh to a
+> > > > controllable level, similar to the non-strictlimit case.
+> > 
+> > > Please tell us more about the userspace-visible effects of this.  It
+> > > *sounds* like a serious (but occasional) problem, but that is unclear.
+> > 
+> > > And, very much relatedly, do you feel this fix is needed in earlier
+> > > (-stable) kernels?
+> > 
+> > The problem exists in two scenarios:
+> > 1. FUSE Write Transition from Inactive to Active
+> > 
+> > sometimes, active writes require several pauses to ramp up to the appropriate wb_thresh.
+> > As shown in the trace below, both bdi_setpoint and task_ratelimit are 0, means wb_thresh is 0. 
+> > The dd process pauses multiple times before reaching a normal state.
+> > 
+> > dd-1206590 [003] .... 62988.324049: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259360 dirty=454 bdi_setpoint=0 bdi_dirty=32 dirty_ratelimit=18716 task_ratelimit=0 dirtied=32 dirtied_pause=32 paused=0 pause=4 period=4 think=0 cgroup_ino=1
+> > dd-1206590 [003] .... 62988.332063: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259453 dirty=454 bdi_setpoint=0 bdi_dirty=33 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+> > dd-1206590 [003] .... 62988.340064: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259526 dirty=454 bdi_setpoint=0 bdi_dirty=34 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+> > dd-1206590 [003] .... 62988.348061: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259531 dirty=489 bdi_setpoint=0 bdi_dirty=35 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+> > dd-1206590 [003] .... 62988.356063: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259531 dirty=490 bdi_setpoint=0 bdi_dirty=36 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+> > ...
+> > 
+> > 2. FUSE with Unstable Network Backends and Occasional Writes
+> > Not easy to reproduce, but when it occurs in this scenario, 
+> > it causes the write thread to experience more pauses and longer durations.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1fc9a50def0b..88e765b0699f 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -736,15 +736,12 @@ bool block_dirty_folio(struct address_space *mapping, struct folio *folio)
- 	 * Lock out page's memcg migration to keep PageDirty
- 	 * synchronized with per-memcg dirty page counters.
- 	 */
--	folio_memcg_lock(folio);
- 	newly_dirty = !folio_test_set_dirty(folio);
- 	spin_unlock(&mapping->i_private_lock);
- 
- 	if (newly_dirty)
- 		__folio_mark_dirty(folio, mapping, 1);
- 
--	folio_memcg_unlock(folio);
--
- 	if (newly_dirty)
- 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
- 
-@@ -1194,13 +1191,11 @@ void mark_buffer_dirty(struct buffer_head *bh)
- 		struct folio *folio = bh->b_folio;
- 		struct address_space *mapping = NULL;
- 
--		folio_memcg_lock(folio);
- 		if (!folio_test_set_dirty(folio)) {
- 			mapping = folio->mapping;
- 			if (mapping)
- 				__folio_mark_dirty(folio, mapping, 0);
- 		}
--		folio_memcg_unlock(folio);
- 		if (mapping)
- 			__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
- 	}
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 798db70b0a30..932534291ca2 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -299,20 +299,10 @@ struct mem_cgroup {
- 	/* For oom notifier event fd */
- 	struct list_head oom_notify;
- 
--	/* taken only while moving_account > 0 */
--	spinlock_t move_lock;
--	unsigned long move_lock_flags;
--
- 	/* Legacy tcp memory accounting */
- 	bool tcpmem_active;
- 	int tcpmem_pressure;
- 
--	/*
--	 * set > 0 if pages under this cgroup are moving to other cgroup.
--	 */
--	atomic_t moving_account;
--	struct task_struct *move_lock_task;
--
- 	/* List of events which userspace want to receive */
- 	struct list_head event_list;
- 	spinlock_t event_list_lock;
-@@ -428,9 +418,7 @@ static inline struct obj_cgroup *__folio_objcg(struct folio *folio)
-  *
-  * - the folio lock
-  * - LRU isolation
-- * - folio_memcg_lock()
-  * - exclusive reference
-- * - mem_cgroup_trylock_pages()
-  *
-  * For a kmem folio a caller should hold an rcu read lock to protect memcg
-  * associated with a kmem folio from being released.
-@@ -499,9 +487,7 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
-  *
-  * - the folio lock
-  * - LRU isolation
-- * - lock_folio_memcg()
-  * - exclusive reference
-- * - mem_cgroup_trylock_pages()
-  *
-  * For a kmem folio a caller should hold an rcu read lock to protect memcg
-  * associated with a kmem folio from being released.
-@@ -1873,26 +1859,6 @@ static inline bool task_in_memcg_oom(struct task_struct *p)
- 	return p->memcg_in_oom;
- }
- 
--void folio_memcg_lock(struct folio *folio);
--void folio_memcg_unlock(struct folio *folio);
--
--/* try to stablize folio_memcg() for all the pages in a memcg */
--static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
--{
--	rcu_read_lock();
--
--	if (mem_cgroup_disabled() || !atomic_read(&memcg->moving_account))
--		return true;
--
--	rcu_read_unlock();
--	return false;
--}
--
--static inline void mem_cgroup_unlock_pages(void)
--{
--	rcu_read_unlock();
--}
--
- static inline void mem_cgroup_enter_user_fault(void)
- {
- 	WARN_ON(current->in_user_fault);
-@@ -1914,26 +1880,6 @@ unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 	return 0;
- }
- 
--static inline void folio_memcg_lock(struct folio *folio)
--{
--}
--
--static inline void folio_memcg_unlock(struct folio *folio)
--{
--}
--
--static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
--{
--	/* to match folio_memcg_rcu() */
--	rcu_read_lock();
--	return true;
--}
--
--static inline void mem_cgroup_unlock_pages(void)
--{
--	rcu_read_unlock();
--}
--
- static inline bool task_in_memcg_oom(struct task_struct *p)
- {
- 	return false;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 630a1c431ea1..e582a1545d2a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -119,7 +119,6 @@
-  *    ->i_pages lock		(folio_remove_rmap_pte->set_page_dirty)
-  *    bdi.wb->list_lock		(folio_remove_rmap_pte->set_page_dirty)
-  *    ->inode->i_lock		(folio_remove_rmap_pte->set_page_dirty)
-- *    ->memcg->move_lock	(folio_remove_rmap_pte->folio_memcg_lock)
-  *    bdi.wb->list_lock		(zap_pte_range->set_page_dirty)
-  *    ->inode->i_lock		(zap_pte_range->set_page_dirty)
-  *    ->private_lock		(zap_pte_range->block_dirty_folio)
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 79339cb65b9d..b14f01a93d0c 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -401,87 +401,6 @@ unsigned long memcg1_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 	return nr_reclaimed;
- }
- 
--/**
-- * folio_memcg_lock - Bind a folio to its memcg.
-- * @folio: The folio.
-- *
-- * This function prevents unlocked LRU folios from being moved to
-- * another cgroup.
-- *
-- * It ensures lifetime of the bound memcg.  The caller is responsible
-- * for the lifetime of the folio.
-- */
--void folio_memcg_lock(struct folio *folio)
--{
--	struct mem_cgroup *memcg;
--	unsigned long flags;
--
--	/*
--	 * The RCU lock is held throughout the transaction.  The fast
--	 * path can get away without acquiring the memcg->move_lock
--	 * because page moving starts with an RCU grace period.
--         */
--	rcu_read_lock();
--
--	if (mem_cgroup_disabled())
--		return;
--again:
--	memcg = folio_memcg(folio);
--	if (unlikely(!memcg))
--		return;
--
--#ifdef CONFIG_PROVE_LOCKING
--	local_irq_save(flags);
--	might_lock(&memcg->move_lock);
--	local_irq_restore(flags);
--#endif
--
--	if (atomic_read(&memcg->moving_account) <= 0)
--		return;
--
--	spin_lock_irqsave(&memcg->move_lock, flags);
--	if (memcg != folio_memcg(folio)) {
--		spin_unlock_irqrestore(&memcg->move_lock, flags);
--		goto again;
--	}
--
--	/*
--	 * When charge migration first begins, we can have multiple
--	 * critical sections holding the fast-path RCU lock and one
--	 * holding the slowpath move_lock. Track the task who has the
--	 * move_lock for folio_memcg_unlock().
--	 */
--	memcg->move_lock_task = current;
--	memcg->move_lock_flags = flags;
--}
--
--static void __folio_memcg_unlock(struct mem_cgroup *memcg)
--{
--	if (memcg && memcg->move_lock_task == current) {
--		unsigned long flags = memcg->move_lock_flags;
--
--		memcg->move_lock_task = NULL;
--		memcg->move_lock_flags = 0;
--
--		spin_unlock_irqrestore(&memcg->move_lock, flags);
--	}
--
--	rcu_read_unlock();
--}
--
--/**
-- * folio_memcg_unlock - Release the binding between a folio and its memcg.
-- * @folio: The folio.
-- *
-- * This releases the binding created by folio_memcg_lock().  This does
-- * not change the accounting of this folio to its memcg, but it does
-- * permit others to change it.
-- */
--void folio_memcg_unlock(struct folio *folio)
--{
--	__folio_memcg_unlock(folio_memcg(folio));
--}
--
- static u64 mem_cgroup_move_charge_read(struct cgroup_subsys_state *css,
- 				struct cftype *cft)
- {
-@@ -1187,7 +1106,6 @@ void memcg1_memcg_init(struct mem_cgroup *memcg)
- {
- 	INIT_LIST_HEAD(&memcg->oom_notify);
- 	mutex_init(&memcg->thresholds_lock);
--	spin_lock_init(&memcg->move_lock);
- 	INIT_LIST_HEAD(&memcg->event_list);
- 	spin_lock_init(&memcg->event_list_lock);
- }
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 94279b9c766a..3c223aaeb6af 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1189,7 +1189,6 @@ void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
-  * These functions are safe to use under any of the following conditions:
-  * - folio locked
-  * - folio_test_lru false
-- * - folio_memcg_lock()
-  * - folio frozen (refcount of 0)
-  *
-  * Return: The lruvec this folio is on with its lock held.
-@@ -1211,7 +1210,6 @@ struct lruvec *folio_lruvec_lock(struct folio *folio)
-  * These functions are safe to use under any of the following conditions:
-  * - folio locked
-  * - folio_test_lru false
-- * - folio_memcg_lock()
-  * - folio frozen (refcount of 0)
-  *
-  * Return: The lruvec this folio is on with its lock held and interrupts
-@@ -1235,7 +1233,6 @@ struct lruvec *folio_lruvec_lock_irq(struct folio *folio)
-  * These functions are safe to use under any of the following conditions:
-  * - folio locked
-  * - folio_test_lru false
-- * - folio_memcg_lock()
-  * - folio frozen (refcount of 0)
-  *
-  * Return: The lruvec this folio is on with its lock held and interrupts
-@@ -2375,9 +2372,7 @@ static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
- 	 *
- 	 * - the page lock
- 	 * - LRU isolation
--	 * - folio_memcg_lock()
- 	 * - exclusive reference
--	 * - mem_cgroup_trylock_pages()
- 	 */
- 	folio->memcg_data = (unsigned long)memcg;
- }
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 1d7179aba8e3..e33727dd6b47 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2743,8 +2743,6 @@ EXPORT_SYMBOL(noop_dirty_folio);
- /*
-  * Helper function for set_page_dirty family.
-  *
-- * Caller must hold folio_memcg_lock().
-- *
-  * NOTE: This relies on being atomic wrt interrupts.
-  */
- static void folio_account_dirtied(struct folio *folio,
-@@ -2776,8 +2774,6 @@ static void folio_account_dirtied(struct folio *folio,
- 
- /*
-  * Helper function for deaccounting dirty page without writeback.
-- *
-- * Caller must hold folio_memcg_lock().
-  */
- void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
- {
-@@ -2795,9 +2791,8 @@ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
-  * If warn is true, then emit a warning if the folio is not uptodate and has
-  * not been truncated.
-  *
-- * The caller must hold folio_memcg_lock().  It is the caller's
-- * responsibility to prevent the folio from being truncated while
-- * this function is in progress, although it may have been truncated
-+ * It is the caller's responsibility to prevent the folio from being truncated
-+ * while this function is in progress, although it may have been truncated
-  * before this function is called.  Most callers have the folio locked.
-  * A few have the folio blocked from truncation through other means (e.g.
-  * zap_vma_pages() has it mapped and is holding the page table lock).
-@@ -2841,14 +2836,10 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
-  */
- bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
- {
--	folio_memcg_lock(folio);
--	if (folio_test_set_dirty(folio)) {
--		folio_memcg_unlock(folio);
-+	if (folio_test_set_dirty(folio))
- 		return false;
--	}
- 
- 	__folio_mark_dirty(folio, mapping, !folio_test_private(folio));
--	folio_memcg_unlock(folio);
- 
- 	if (mapping->host) {
- 		/* !PageAnon && !swapper_space */
-@@ -2975,14 +2966,12 @@ void __folio_cancel_dirty(struct folio *folio)
- 		struct bdi_writeback *wb;
- 		struct wb_lock_cookie cookie = {};
- 
--		folio_memcg_lock(folio);
- 		wb = unlocked_inode_to_wb_begin(inode, &cookie);
- 
- 		if (folio_test_clear_dirty(folio))
- 			folio_account_cleaned(folio, wb);
- 
- 		unlocked_inode_to_wb_end(inode, &cookie);
--		folio_memcg_unlock(folio);
- 	} else {
- 		folio_clear_dirty(folio);
- 	}
-@@ -3093,7 +3082,6 @@ bool __folio_end_writeback(struct folio *folio)
- 	struct address_space *mapping = folio_mapping(folio);
- 	bool ret;
- 
--	folio_memcg_lock(folio);
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
-@@ -3124,7 +3112,6 @@ bool __folio_end_writeback(struct folio *folio)
- 	lruvec_stat_mod_folio(folio, NR_WRITEBACK, -nr);
- 	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, -nr);
- 	node_stat_mod_folio(folio, NR_WRITTEN, nr);
--	folio_memcg_unlock(folio);
- 
- 	return ret;
- }
-@@ -3137,7 +3124,6 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
- 
- 	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
- 
--	folio_memcg_lock(folio);
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 		struct inode *inode = mapping->host;
-@@ -3178,7 +3164,6 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
- 
- 	lruvec_stat_mod_folio(folio, NR_WRITEBACK, nr);
- 	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
--	folio_memcg_unlock(folio);
- 
- 	access_ret = arch_make_folio_accessible(folio);
- 	/*
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 4785a693857a..c6c4d4ea29a7 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -32,7 +32,6 @@
-  *                   swap_lock (in swap_duplicate, swap_info_get)
-  *                     mmlist_lock (in mmput, drain_mmlist and others)
-  *                     mapping->private_lock (in block_dirty_folio)
-- *                       folio_lock_memcg move_lock (in block_dirty_folio)
-  *                         i_pages lock (widely used)
-  *                           lruvec->lru_lock (in folio_lruvec_lock_irq)
-  *                     inode->i_lock (in set_page_dirty's __mark_inode_dirty)
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 29c098790b01..fd7171658b63 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3662,10 +3662,6 @@ static void walk_mm(struct mm_struct *mm, struct lru_gen_mm_walk *walk)
- 		if (walk->seq != max_seq)
- 			break;
- 
--		/* folio_update_gen() requires stable folio_memcg() */
--		if (!mem_cgroup_trylock_pages(memcg))
--			break;
--
- 		/* the caller might be holding the lock for write */
- 		if (mmap_read_trylock(mm)) {
- 			err = walk_page_range(mm, walk->next_addr, ULONG_MAX, &mm_walk_ops, walk);
-@@ -3673,8 +3669,6 @@ static void walk_mm(struct mm_struct *mm, struct lru_gen_mm_walk *walk)
- 			mmap_read_unlock(mm);
- 		}
- 
--		mem_cgroup_unlock_pages();
--
- 		if (walk->batched) {
- 			spin_lock_irq(&lruvec->lru_lock);
- 			reset_batch_size(walk);
-@@ -4096,10 +4090,6 @@ bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 		}
- 	}
- 
--	/* folio_update_gen() requires stable folio_memcg() */
--	if (!mem_cgroup_trylock_pages(memcg))
--		return true;
--
- 	arch_enter_lazy_mmu_mode();
- 
- 	pte -= (addr - start) / PAGE_SIZE;
-@@ -4144,7 +4134,6 @@ bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 	}
- 
- 	arch_leave_lazy_mmu_mode();
--	mem_cgroup_unlock_pages();
- 
- 	/* feedback from rmap walkers to page table walkers */
- 	if (mm_state && suitable_to_scan(i, young))
--- 
-2.43.5
+> Thanks, but it's still unclear how this impacts our users.  How lenghty
+> are these pauses?
 
+The length is related to device writeback bandwidth.
+Under normal bandwidth, each pause may last around 4ms in several times as shown in the trace above(5 times).
+In extreme cases, fuse with unstable network backends,
+if pauses occur frequently and bandwidth is low, each pause can exceed 10ms, the total duration of pauses can accumulate to second.
+
+
+Thnaks,
+Jim Zhao
 
