@@ -1,102 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-32819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863879AF2F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 21:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159599AF3B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 22:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138AF1F23149
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 19:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DFC1F21A28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 20:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07911A7AC7;
-	Thu, 24 Oct 2024 19:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A94A217327;
+	Thu, 24 Oct 2024 20:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnPiJ6Z9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hWQguhp+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E5C147C91;
-	Thu, 24 Oct 2024 19:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD46519E975
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 20:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799614; cv=none; b=Fia/wgjopVVDHxhY310UFBvwt8fKisRviiTb9s64eoovjTjtFHNOBqVayK7/rCQNeniuhwaYy3v5nFkro0oMlk+uECA1sYt56e3/Xz58tNumE9+lwArDkBzz3KRGjPVJ7tVPPfbAdOl4c/8LO9wgbZaIduKST1PI21As15Jf7pQ=
+	t=1729802013; cv=none; b=TdSVIafUxkjAS4vfisLulVEGIQzadi/t3Sq2gLUtzK07rrUYnNyfmNZ/OrfQvE63Tn+j5dngiov948d4eSqeikfzq9ZtJcmzRYG9BYQfLJvZHoSGI7VlaDgt6tXC2HdUykvsJRmSJteyFGikE6RPVH462n56pPS+4W3JmZPd9cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799614; c=relaxed/simple;
-	bh=fdMUNfcSZ7BdARmONDQxeYG2UP8bXDM0r1GmXUMxhz0=;
+	s=arc-20240116; t=1729802013; c=relaxed/simple;
+	bh=fg6TiyFvbDY3F7rgtjpzzrWknbfNctLjVqZiyU7qibI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Po+bDQS3FVUSj+n6aZUXqG7J3FvAXMC98LqP5SRxX4cmOTmC4qelJp36vDq9iiQEYbkvQ0xorNiIVGp2Y9YJpnGkFssBUzKpX5EcLMOhR59E33ygBglyGZ1AvjZRQnbTd0njUGRAfQ7/iNe8JMCCVPqgRHccGmJAwohYDxgQQy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnPiJ6Z9; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb51f39394so14486921fa.2;
-        Thu, 24 Oct 2024 12:53:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=UTyPSDD7fA6owO6gS2gUZzBIFxCf5rlHIsQ9OadKYJEJIKXKlNVnnoz0XKMZOmFLjcky7zPvCEdj7PQ+S8+zgNYic1slu2odV/0WfAARih7XzkhtYynTmfhQdxWC7UeYj1SxajXRU8kw1rWEFTz7bY10ZZfmLWgzeHljMvle9G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hWQguhp+; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso176522166b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 13:33:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729799610; x=1730404410; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729802010; x=1730406810; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fdMUNfcSZ7BdARmONDQxeYG2UP8bXDM0r1GmXUMxhz0=;
-        b=RnPiJ6Z9cln8XJ1wZRbYV4VJbV3BeHI5BYc+T2rq7lwyl86VH/QXAkR73WbrCB58Xv
-         P0vxOkA4dJHwB1ipw1EV/hS7JrZvOXDXhtDWMt2Q+rHZZjnRCxxd4QJI06BOCD7ZQJBW
-         UCrbJ27jWJqJtit2N4juejTTeIu5BsC78MBgWlIIEYn1AhASZrX/k62Hq2VjxsBYBoMq
-         +lxnve3lxB6FIeqJrlA1zxSGQrWm9J4aNobnEPLGEp8A2XmLm0DRMwqmzd9LpY6/w+ko
-         MLgeVeDGvvKnIEldplDpQVyDDvVir/d9ljE9aj5nXLVpLslzb00WEtbCLIiGEhVshSnN
-         0B2Q==
+        bh=fg6TiyFvbDY3F7rgtjpzzrWknbfNctLjVqZiyU7qibI=;
+        b=hWQguhp+CnbddhzmUsGG7rMNi+4y30dOGw59I4DeY4Uo6INaw/VbXaIb6kB63L8wzs
+         b1LUD0ODxmE5RhIjPqjBNKnuDUlM/ELWpyX+t5l5fuQIHA4DA+vExwVUohyUKpWdGHhv
+         19XvLkFRtWWgPtkSzEQ54Pedp1xTZaydzU8YcEm2yTzekk3K6egKyRdol78NS2wIbZvE
+         qY+BuuMGMimOgBgZRVqZ5uxx2uXh+DKGvUNf8wAUSK3d9VRVQ5J3IrsgYC2C27IXqw3v
+         By1376iItMEgftZH9EX7RruyuLe6XnU2HAQUOm4P3B23fyTtArX8WsDV6bKUukBEULuH
+         mOow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799610; x=1730404410;
+        d=1e100.net; s=20230601; t=1729802010; x=1730406810;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fdMUNfcSZ7BdARmONDQxeYG2UP8bXDM0r1GmXUMxhz0=;
-        b=CnKKTd+0Xxh4Um+74ytde4Vr/3/8JSup1eKKiV8Y7aKzlecX7JulOW26nZTzWi7PlV
-         FyK3dU1SqS9AuKTB7Gwf/w8Rb79pV9ZzOsL7rWQESth3B4Hw9FhOs6V32IrvBdfBdvGJ
-         T3K9LI7lYxbEs6yFHw6pUtyBAgYnze7gyrmVANsPNDR6lC8qxP1jjgmU9TTv5+yl2kBv
-         l6vONYC1oWLROOOt21rIBTi5vVIuzxkPBDv679iLn397nDaEV7yKWFp6MOzQeLeZz3XI
-         2Ndat3hJmr4MBZdZRhSVKGRNqIuIk6Nq722usLvlqkH8L8Ta/irPWCVEClcNZNUqUs5r
-         +6ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUKHyjxB/Ahnxlcxzikm53DbpOfexLq9mDdPThzc0bwYfeeGxd0r1QTlI6w+afyWMYQ6BS1vWLOTGA=@vger.kernel.org, AJvYcCWI8QZUg/ovfc2jp33LJFcyIYozSm6VAENoyh3cylmdWi/vFUXEmg594IDvKG8/JPHUwB+sIWArMMoK1p5QfQ==@vger.kernel.org, AJvYcCXB1JxlceABaNtblrET9aJm/gv7Qg1FSaZujGQ0lyp/WkWSiWqB0xCLoci0qRFqGwqj0+i9uLClmW0P4Grc@vger.kernel.org
-X-Gm-Message-State: AOJu0YynbSl3Xv/YnNp5rFSnfWRXVLi34/WFZeRPR5Q555M6SsxpV4or
-	ZTNPu19+ZKxggCdzhvSTE/dZtfW3vKm4zN8zNmgO3sjLZiMhPp21G9ogWZnoQ+aU4E4kjGOaN3+
-	8Yi2Qxp/urYihO9XM8TG4NN4nJp7tOg==
-X-Google-Smtp-Source: AGHT+IEfJR4TsyFU+v14aVkd26FFpNVhnDKNLXkmteAoazAgwE2S/biPF3eHN6VbFyWZwY+HqYXRS92CnpI2nl3pwOs=
-X-Received: by 2002:a2e:be24:0:b0:2ef:17f7:6e1d with SMTP id
- 38308e7fff4ca-2fca81c2448mr23740601fa.4.1729799610107; Thu, 24 Oct 2024
- 12:53:30 -0700 (PDT)
+        bh=fg6TiyFvbDY3F7rgtjpzzrWknbfNctLjVqZiyU7qibI=;
+        b=CgN5ssLNUgg9NnZA7Mx5wIKU11LODSR+AC11h6Z/UjrFcfbNIGTLxr/Mb7mHTDcQ94
+         PJnp8FVKW1YU1wgpidT7SwvvN8rZ0wGPuChYWawnu/SRSb7Hy/VZTYb5AsWA6v9n5+3m
+         GEdQijZS8XabqzyOR/wjcvJeNE4Ta3KXDRcAx6JDX8P4V0LLgCaKCZq1K8EVM+O62o9f
+         kFCs0JWs5cYzLu9stOcgUgtByMxMVoQTR9OWfvzhWeYbDZaXkdtuOqnz2WBoX9IJ0GtQ
+         6+shhptE5Sc0dwKF7Ds/wvt9DPbCfO6WjE/uk8ewwoy7TnkPdTncNZI1PjQFAa2cVrZ6
+         ukFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaJhwf4DbGkzKFIgvkfMKzSdEHc8x+xo1h4qT9tucmiGqjMu0ZmX59CG/B8UyTxsibEAdRPFXXiTjNg9NX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7eEfC0Y2e10eUFbqhnWxgkaviqFYxJMaBQW6pSI7HyxQqUZOu
+	qYZo8ZkgULG5WkJGnOflCbeqgwCqliDtRv5S7mhU6F/V7fqdJM12yIme2y8y+eokWloTDuFSHMS
+	g2XVy/shtn07CiW7slxAIFg24XrCShWTcnKw8
+X-Google-Smtp-Source: AGHT+IFUTfSFqD0LJ8fBf/qBjK9gkH3Z9YIIz4iHZrS73DoGiaBlQz65rZWWLT2VwceQlhDcqTGP7QpWRdHLEYK/iBw=
+X-Received: by 2002:a17:907:6d29:b0:a8a:58c5:78f1 with SMTP id
+ a640c23a62f3a-a9ad2711791mr278966966b.11.1729802009584; Thu, 24 Oct 2024
+ 13:33:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ-ks9mz5deGSA_GNXyqVfW5BtK0+C5d+LT9y33U2OLj7+XSOw@mail.gmail.com>
- <20241010214150.52895-2-tamird@gmail.com> <1f10bfa9-5a49-4f9b-bbbd-05c7c791684b@infradead.org>
- <ZwhYDsBczHnS7_4r@casper.infradead.org> <CAJ-ks9mpZc703=Y1_H6FeaUrAmhKC9bKP886M5KNjw85Mwi14w@mail.gmail.com>
-In-Reply-To: <CAJ-ks9mpZc703=Y1_H6FeaUrAmhKC9bKP886M5KNjw85Mwi14w@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 24 Oct 2024 15:52:53 -0400
-Message-ID: <CAJ-ks9mn_aOjaxwiwddKPKMUshiSa1EHjC_2X5DDas7JLtcnSg@mail.gmail.com>
-Subject: Re: [PATCH v4] XArray: minor documentation improvements
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-4-shakeel.butt@linux.dev> <Zxp63b9WlI4sTwWk@google.com>
+ <7w4xusjyyobyvacm6ogc3q2l26r2vema5rxlb5oqlhs4hpqiu3@dfbde5arh3rg> <Zxqj7hw6Q6ak8aJf@tiehlicka>
+In-Reply-To: <Zxqj7hw6Q6ak8aJf@tiehlicka>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 24 Oct 2024 13:32:53 -0700
+Message-ID: <CAJD7tkYsCev299G=h2r_e6i34+ccdXJYphv-bQbROqOd7Lr1Uw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] memcg-v1: remove memcg move locking code
+To: Michal Hocko <mhocko@suse.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 8:51=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
- wrote:
+On Thu, Oct 24, 2024 at 12:45=E2=80=AFPM Michal Hocko <mhocko@suse.com> wro=
+te:
 >
-> On Thu, Oct 10, 2024 at 6:41=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
+> On Thu 24-10-24 10:26:15, Shakeel Butt wrote:
+> > On Thu, Oct 24, 2024 at 04:50:37PM GMT, Roman Gushchin wrote:
+> > > On Wed, Oct 23, 2024 at 11:57:12PM -0700, Shakeel Butt wrote:
+> > > > The memcg v1's charge move feature has been deprecated. There is no=
+ need
+> > > > to have any locking or protection against the moving charge. Let's
+> > > > proceed to remove all the locking code related to charge moving.
+> > > >
+> > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > >
+> > > Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 > >
-> > On Thu, Oct 10, 2024 at 02:50:24PM -0700, Randy Dunlap wrote:
-> > > I'm satisfied with this change although obviously it's up to Matthew.
-> >
-> > Matthew's on holiday and will be back on Tuesday, thanks.
+> > Thanks Roman for the review. Based on Michal's question, I am planning
+> > to keep the RCU locking in the next version of this patch and folowup
+> > with clear understanding where we really need RCU and where we don't.
 >
-> Hi Matthew, could you give this a look please? Thank you.
+> I think it would be safer and easier to review if we drop each RCU
+> separately or in smaller batches.
 
-Hi Matthew, could you please have a look at this?
+FWIW if we go with this route, I agree with Roman's idea about
+replacing folio_memcg_lock()/unlock()
+with an explicit rcu_read_lock()/rcu_read_unlock(), and then having
+separate patches/series that remove the RCU annotations. If done in a
+separate series, we should comment the explicit RCU calls
+appropriately to reflect the fact that they should mostly be removed
+(or at least re-evaluated).
 
