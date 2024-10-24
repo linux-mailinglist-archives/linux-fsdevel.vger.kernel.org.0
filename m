@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-32789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4059AEC8D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 18:49:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A7B9AEC93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 18:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8251F2470B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 952C5B22D9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84661F81A7;
-	Thu, 24 Oct 2024 16:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41D41F891D;
+	Thu, 24 Oct 2024 16:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I5fMDVoh"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G9yUDjJA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8721F81AC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 16:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7A31F76BF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 16:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788563; cv=none; b=ifYNhcXOOr/FzlKh5+jJtXmpxG0JVjhP8oQOqvE9mjkjnv7Aew3iQUfvGbNQJvDvhcHQg93cocL5LHRhkAuG6gA7YSjLqAbK+odP1ZIqS6DI38lRnMAxNrYOHxW05CGX0FBt/u2VsNfn6wl6QB6IMpFzgv8wlri9kV3BE4JKBFk=
+	t=1729788629; cv=none; b=jWOBZwEyxdeEm1rUtsW6QQA3SyZkWV/z5n+T70gwBtB4zVG1jVaYBKnwWLRUN05Stgg3hrIP3C8K95IpduFVMjxOX1cyJTyUC6wu7qHEuAOAyz/YHH2Z8xJZX9gvRtIQAmqfx5hsJ99Qb8mCQLN+3TPL+Q2loBnXef5lmiIPeaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788563; c=relaxed/simple;
-	bh=9GcHUz52wuFp5Sb0ctRxkBPtEugGIsVdi2cS9zDZce8=;
+	s=arc-20240116; t=1729788629; c=relaxed/simple;
+	bh=lH2c5MTCgmWU7Jab8kbmWSKpcuAt3EU2GOozVCLvH4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rN60/ce2Gs+AxQXUt7vNJAC7n15FZAhuqDsotWxIGYhHflbLqwOsVS4ijX4RJ7YjmL7g/8P6Vs1P6J5E/FvMir4jYo+Ri4n9zHfhWMC9elxpkKIQaVex4mk4dONiYVZVShbJceYg+kRMulWoOdgmcJ1TJcRBLgbZ14AWJWXKubo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I5fMDVoh; arc=none smtp.client-ip=91.218.175.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOjPgupAW312sjw0lkZLmX0v51vcesZcxl4OeoMx1IHJkFqzmSY+IhiUX9XCjeKBDYwFflOSMm+O/hfmJRiLQpuV0tEJ8yOUOncWhxPTzUt3frMHgdvmmbPN6G1Z1ECpx6tg12SJwk9WZsh1Q1R68200EqSvrdzv6nQEfpvk6OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G9yUDjJA; arc=none smtp.client-ip=91.218.175.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 24 Oct 2024 16:49:11 +0000
+Date: Thu, 24 Oct 2024 16:50:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729788558;
+	t=1729788624;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e7C5GlsDwNElfgpiyTybH/73F9q9fjWvPlTSJahZM+g=;
-	b=I5fMDVohF0KK1ZqIQWa0arCYw2jN5B7e4tRJfo6t4WmRsTtS5w/EmuJEGEPdShll/KdiPm
-	wAacEcwB5Lba0CFPJr1BuH0vWkpflBsRg3QDpNIHCAAEA0kLAILHTfZc9+Iq11L/mZlDtS
-	lYquzVA/BP9KAPUrh4EO9uRxr5+i9sQ=
+	bh=OeZM9yMBCK67FT6NRmlAdBpBCb9n0TPy/A/c+hpymoM=;
+	b=G9yUDjJAJ8HdV/aWA9F/WhsvdPGxPrCuR8aWHa2T0p3qyBGYm6ltG1MnfOxaxhumE+y2wW
+	s3Lha+FFSxPVsRn0FAj5COupNrHSq6ba4sFMvYHGEqtJ2cVEE5z/QhQ5f0ayrShcOiXmIk
+	c6105932qGB2kYgeErcgtb0cTclNoAs=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Roman Gushchin <roman.gushchin@linux.dev>
 To: Shakeel Butt <shakeel.butt@linux.dev>
@@ -52,11 +52,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
 	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 1/3] memcg-v1: fully deprecate
- move_charge_at_immigrate
-Message-ID: <Zxp6h_YS8YR6Anwm@google.com>
+Subject: Re: [RFC PATCH 2/3] memcg-v1: remove charge move code
+Message-ID: <Zxp6yv8ayAk30avF@google.com>
 References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
- <20241024065712.1274481-2-shakeel.butt@linux.dev>
+ <20241024065712.1274481-3-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,18 +64,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024065712.1274481-2-shakeel.butt@linux.dev>
+In-Reply-To: <20241024065712.1274481-3-shakeel.butt@linux.dev>
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 23, 2024 at 11:57:10PM -0700, Shakeel Butt wrote:
-> Proceed with the complete deprecation of memcg v1's charge moving
-> feature. The deprecation warning has been in the kernel for almost two
-> years and has been ported to all stable kernel since. Now is the time to
-> fully deprecate this feature.
+On Wed, Oct 23, 2024 at 11:57:11PM -0700, Shakeel Butt wrote:
+> The memcg-v1 charge move feature has been deprecated completely and
+> let's remove the relevant code as well.
 > 
 > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
 Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-
-Nice! Thank you!
 
