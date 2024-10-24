@@ -1,86 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-32823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0CF9AF48A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 23:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33579AF53E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 00:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2841C21CD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 21:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5957A1F21CE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 22:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99592178EA;
-	Thu, 24 Oct 2024 21:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54444218D6D;
+	Thu, 24 Oct 2024 22:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0p+Ehihi"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NTQQuRnp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F3819E975
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 21:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039D82178F4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 22:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729804406; cv=none; b=BudmgggyaUQZyvzdH5FpnD1m1kdxdvRbsgrYObkxVXam6NY02L0b+0c4YUPUYy9nROfc9orCVKK2vAk/WHQLh91lzCVFuWKYC4TOpaueydr+YESq+R2V/0FSC5zr0bj7UvGHTVk9gwJQI/mteVPhWLgzLgHlCxe8hmudtCRf2ww=
+	t=1729808360; cv=none; b=s+TzdHAp/V0OravtnA8Jxy6ge8PDXrdlx2bk2NCnUVm+PVwClIw5k4PAqXl4DBBFOnJj8JpSKI5e+E8TYcVKg7iG9hu3VZRNI76AwfM/L2Em+o2RIhdAbT/UyPiLeZ3ALH9hKDEwkFU+6It0Sv4z3rW+w4R0HTfW90umigz9MCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729804406; c=relaxed/simple;
-	bh=+4voujdCR3hr+aHqsPplZcNQHMESshBlhtCDJ+kukfs=;
+	s=arc-20240116; t=1729808360; c=relaxed/simple;
+	bh=xiA+f1cnlU406zXgM71RLQpj8FPKXw9TNOVXfqwWjZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IsPRW3HwtLrLc97aSa3UZ8n9HWEEQkfYV4KfkW3lIDoaa3ioUQ1K3W3lFUQzHrlqkdslGDKbDt1gooszSDsSISENKNQdEoKJplbkPe5o26qrPkouEfC1XNLhopIu3ondH5N9CW4qEC7XbqW1L42yu44XhhwAj7sojb7nDUQ/Lk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0p+Ehihi; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20e6981ca77so13989805ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 14:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729804404; x=1730409204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XK26aUi6oOdLrlZvhuXktuYwEbsoIROsGkYCLCMengk=;
-        b=0p+EhihiDUF8zpQ+Pt9zGQpDYKfNUNv7ZQanx304Ax5X2w5DkaH4AB6pb0G0N1qxWQ
-         NSg4PKfbUdhKn0SXo5/JiCwK3bIW6sSouqhXqI2Z8hXTJF7kvEbTy8LJyU1v95e6Jq+c
-         tMTFCcIK42RLSKEuimldWtAUOPFxH7R8d+nXGu/783lDc+CQr7uBfDGHcLOKqvMQuTvi
-         1qdneUBwZ1NxpUfcPBZ5BEiX7CYHaQ6MF2aMn0Ydo4p5nXYpJARyxLC+cTVT8HiBWJFh
-         aGsFDd5jslV94c/dJ5MToNNmnTMNyGvyXRDg6ILPeuHejMSwe+RgUUeOjz3myeN+8Li3
-         sQbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729804404; x=1730409204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XK26aUi6oOdLrlZvhuXktuYwEbsoIROsGkYCLCMengk=;
-        b=nyDmE0+s9c/+RI1Qm7fHu8D1OYHG+tz0VnM3I43xwsgFoH+NXvoDEk2BFzUou80vHO
-         tVcOhScQkpLpH3Ikc2cfdHcnAm/2vlG8jxZ8jnEFnHdELWgrD6bMd0KetcMHA3TDmkyg
-         ak4Ks79vBz5FQzMuV4Yag1lm/3S/oKDmzaSH/no+4n4DuummTTvOZcVq0AB/tIjETucy
-         CV6ov8wrFgkQVIUA216pgd/HebpijbOFi7+YvdVJIdXndgMuRhiQt0nx3aq1Vdb0pAJa
-         t687nrzbB+2gIxkHz2WMoxgfkWKAY2ZtQaOLd7Bg5+HD1svjKc6gIV28CGJQNpj0cf/Y
-         91PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+91zx0nmXZQTg6p/m4DtsYReQJTCo56BLFxvGmNAhr7vcJT9+J5jJnnW7d48OP9pjZFGttjZVEkMKLIuc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuev1nbcw6YAQv6cxsUHaTyPDRD7BhUdu44hEFrfk/hUGi/qAZ
-	Bfp9mFOQHPF6pRuF3B6OWZSKE2mzvghKdTDKYV/NevhI/uw++6pecXYgpSX0B3o=
-X-Google-Smtp-Source: AGHT+IF34KaG6GXfaaaywzM5bq3qP6x5Bi6ZvJDtJlgnWUmss4RpecpUJtyGc1S55aYfogVCTDFtqg==
-X-Received: by 2002:a17:902:db12:b0:20b:5645:d860 with SMTP id d9443c01a7336-20fa9e7f26bmr87877135ad.36.1729804403697;
-        Thu, 24 Oct 2024 14:13:23 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab581e4sm9112686a12.50.2024.10.24.14.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 14:13:23 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t458y-005IfU-0T;
-	Fri, 25 Oct 2024 08:13:20 +1100
-Date: Fri, 25 Oct 2024 08:13:20 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: v6.12-rc workqueue lockups
-Message-ID: <Zxq4cEVjcHmluc9O@dread.disaster.area>
-References: <63d6ceeb-a22f-4dee-bc9d-8687ce4c7355@oracle.com>
- <20241023203951.unvxg2claww4s2x5@quack3>
- <df9db1ce-17d9-49f1-ab6d-7ed9a4f1f9c0@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jig1RYuNSHhCmGVNG9dxxl2h14628qkmgtVZ4lguVuUJo8Gc7RhWD/EK9YGsVa+rXfQNU0Cs6khtdDsoau6fwXmktXiVoL22OegUbmOCNtConk7PNOwEOEV0dMBONYJPZ5XhDVmEEIqUsLl+OE9T2mcExt3ZDBRkd2Ymaut0jwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NTQQuRnp; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 18:19:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729808354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lRN2XvuPczg6eIRqeI5o08GA1KQ3w/NT/PiW4sNw5Eg=;
+	b=NTQQuRnpuKJqvwOOrhBQGIoqcO3lxe03hXBSkRWRk+cnHbRTHEotCqQ5yWlYonnZtd86ii
+	LQtQF/p9gQrXdkoU1XdwMDim+gpSUGB455qtgMFRPd+rD0kWIObGDa6djlOnSKBqfPqKX0
+	BLIjPfiWPbTLXdAnEiDc37YwTJU+iOU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kees@kernel.org, hch@infradead.org, broonie@kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <n4lt6eghfunnzz4zx4hhy5asyw55mv4q6ew3fusd2lawufgsnl@2c2cai6esxl3>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+ <Zxf3vp82MfPTWNLx@sashalap>
+ <20241022204931.GL21836@frogsfrogsfrogs>
+ <ZxgXO_uhxhZYtuRZ@sashalap>
+ <87iktj2j7w.fsf@mail.lhotse>
+ <Zxjg7Cvw0qIzl0v6@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,40 +64,107 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df9db1ce-17d9-49f1-ab6d-7ed9a4f1f9c0@oracle.com>
+In-Reply-To: <Zxjg7Cvw0qIzl0v6@sashalap>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 24, 2024 at 10:35:29AM +0100, John Garry wrote:
-> On 23/10/2024 21:39, Jan Kara wrote:
-> > On Wed 23-10-24 11:19:24, John Garry wrote:
-> > > Hi All,
-> > > 
-> > > I have been seeing lockups reliably occur on v6.12-rc1, 3, 4 and linus'
-> > > master branch:
-> > > 
-> > > Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
-> > > Oct 22 09:07:15 ...
-> > >   kernel:watchdog: BUG: soft lockup - CPU#12 stuck for 26s! [khugepaged:154]
+On Wed, Oct 23, 2024 at 07:41:32AM -0400, Sasha Levin wrote:
+> On Wed, Oct 23, 2024 at 09:42:59PM +1100, Michael Ellerman wrote:
+> > Hi Sasha,
 > > 
-> > BTW, can you please share logs which would contain full stacktraces that
-> > this softlockup reports produce? The attached dmesg is just from fresh
-> > boot...  Thanks!
+> > This is awesome.
 > > 
+> > Sasha Levin <sashal@kernel.org> writes:
+> > > On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
+> > > > On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
+> > > > > other information that would be useful?
+> > > > 
+> > > > As a maintainer I probably would've found this to be annoying, but with
+> > > > all my other outside observer / participant hats on, I think it's very
+> > > > good to have a bot to expose maintainers not following the process.
+> > > 
+> > > This was my thinking too. Maybe it makes sense for the bot to shut up if
+> > > things look good (i.e. >N days in stable, everything on the mailing
+> > > list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
+> > 
+> > I think it has to reply with something, otherwise folks will wonder if
+> > the bot has broken or missed their pull request.
+> > 
+> > But if all commits were in in linux-next and posted to a list, then the
+> > only content is the "Days in linux-next" histogram, which is not that long
+> > and is useful information IMHO.
+> > 
+> > It would be nice if you could trim the tail of the histogram below the
+> > last populated row, that would make it more concise.
 > 
-> thanks for getting back to me.
+> Makes sense, I'll do that.
 > 
-> So I think that enabling /proc/sys/kernel/softlockup_all_cpu_backtrace is
-> required there. Unfortunately my VM often just locks up without any sign of
-> life.
+> > For fixes pulls it is sometimes legitimate for commits not to have been
+> > in linux-next. But I think it's still good for the bot to highlight
+> > those, ideally fixes that miss linux-next are either very urgent or
+> > minor.
+> 
+> Right, and Linus said he's okay with those. This is not a "shame" list
+> but rather "look a little closer" list.
 
-Attach a "serial" console to the vm - add "console=ttyS0,115600" to
-the kernel command line and add "-serial pty" to the qemu command
-line. You can then attach something like minicom to the /dev/pts/X
-device that qemu creates for the console output and capture
-everything from initial boot right through to the softlockup traces
-that are emitted...
+Ok, that makes me feel better about this. I've got stuff that I hold
+back for weeks (or months), and others that I'm fine with sending the
+next day, once it's passed my CI.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I'm going to try to be better about talking about which patches have
+risks (and why that risk is justified, else I wouldn't be sending it),
+or which patches look more involved but I've got reason to be confident
+about - that can get quite subtle. That's good for everyone down the
+line in terms of knowing what to expect.
+
+I wonder if also some of this is motivated by people concerned about
+things in bcachefs moving too fast, and running the risk of regressions?
+That's a justifiable concern, and priorities might be worth talking
+about a bit.
+
+I'm not currently seeing anything that makes me too concerned about
+regressions: users in general aren't complaining about regressions
+(previous pull request a user chimed in that he had been seeing less
+stability past few kernel releases, and he tried switching back to btrfs
+and the issues were still there) and my test dashboard is steadily
+improving.
+
+I do still have fairly critical (i.e. downtime causing) user reported
+issues coming in that are taking most of my time, although they're
+getting off into the weeds - one I've been working on the past few days
+was reported by a user with a ~20 drive filesystem where we're
+overflowing the maximum number of pointers in an extent, due to keeping
+too many cached copies around, and his filesystem goes emergency
+read-only. And there still seems to be something not-quite-right with
+snapshots and unlinked inodes, possibly a repair issue.
+
+Test dashboard still has a long ways to go before it's anywhere near as
+clean as I want (and it needs to be, so that I can easily spot
+regressions), but number of test failures have been steadily dropping
+and the results are getting more consistent, and none of the test
+failures there are scary ones that need to be jumped on.
+
+https://evilpiepirate.org/~testdashboard/ci?user=kmo&branch=bcachefs-testing
+
+(We were at 150-160 failures per full run a few weeks ago, now 100-110.
+The full runs also run fstests in 8 different configurations, so lots of
+duplicates).
+
+There have been a lot of new syzbot reports recently, and some of those
+do look more concerning. I don't think this indicates regressions - this
+looks to be like syzbot getting better with its code-coverage-guided
+testing at finding interesting codepaths, and for the concerning ones I
+don't think the code changed in the right timeframe for it to be a
+regressions. I think several of the recent syzbot reports are all due to
+the same bug, where it looks like we're not going read-only correctly
+and interior btree updates are still happening - I suspect that's been
+there for ages and an assert I recently added is making it more visible.
+
+I am still heavily in triage mode, and filesystem repair/recovery bugs
+take top priority. In general, my priorities are
+- critical user reported bugs first
+- failures from my automated test suite second (unless they're
+  regressions)
+- syzbot last, because there's been basically zero overlap with syzbot
+  bugs and user-affecting bugs so far, and because that's been an easy
+  place for new people to jump in and help.
 
