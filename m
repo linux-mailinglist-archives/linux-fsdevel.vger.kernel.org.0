@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C3A9AE66B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991299AE66E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D06C1C24169
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB62868F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48D1EF926;
-	Thu, 24 Oct 2024 13:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A361EF928;
+	Thu, 24 Oct 2024 13:25:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87DD1FBF5E;
-	Thu, 24 Oct 2024 13:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8191FBF65;
+	Thu, 24 Oct 2024 13:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776327; cv=none; b=nQmcFq1CSB/q1MWbWopGwn2VB+L2FUX+EpLvDb3jSpOi+d0mD3rpokmiUycixd6VcqPLYS8/Ah8BMbnWlIRTcECkWqdCyCjAfz7w4QDwq9jzeren3CKujvrPhPnMETH/blPDKCMas1J/Kc8dj0JCgrh8jKrUs2SXBOKSy8gy6Gk=
+	t=1729776328; cv=none; b=Gto/EAe8Mz/XQTJVh2YKxYkNbqBXT41kRaNkE+cFR6CCsHj9GKNYZ7zJabhK4DMpvKvQrMphpWk10KH1JZa2kde4IjtRC09tpaTrVaIB8vf0hxcAhKk68JWCfII+lywTpwUcsElMFHA5/dbVqgsbnnotMieCZRVFHvcHA0WWfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776327; c=relaxed/simple;
-	bh=GW0wQcK/aeFjMIay+QgmAkmrzrnkkJUIUBk9Hz2PDQc=;
+	s=arc-20240116; t=1729776328; c=relaxed/simple;
+	bh=L+5WXtZxBV8aVRPEepS/zadXDDL+1k5ePjI582nYTyk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d8poQQuZtvBwicfyC5ifHC1o6uYmdsJIdCBQOt4JVr0QepI8j18Rmvisa23H5tYGroPNJG/Qczhj50dt65QlVQUt0hffgo/CHdjDOrLso4Lfzqkv+E/O+HZa62Q/nTddt/Cjb6dK/rNXyOg36X5cQbrjiNAcEpHtwf6VmM42I6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=cKiUDYuOGuU6Zuo2w7n0b7jO/EP6Db8y4d9quw79avKRDf2izjDIK916qanF3wpRYv1em9x1vwWI06Qy28aCd6rKu0ZZelmAzAYr3Wd/jrhWrF/ISpgvaqsNy9/Tmp68ycj8mexnWuo7G9tmoQ9J10TWK/r0qyHt6ugkNYg1Npg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ68v5tbDz4f3jdk;
-	Thu, 24 Oct 2024 21:25:03 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68w1Bfvz4f3nbY;
+	Thu, 24 Oct 2024 21:25:04 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 488CF1A018D;
-	Thu, 24 Oct 2024 21:25:21 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 6E78A1A0197;
+	Thu, 24 Oct 2024 21:25:22 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S14;
-	Thu, 24 Oct 2024 21:25:19 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S15;
+	Thu, 24 Oct 2024 21:25:21 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 26/28] libfs: Convert simple directory offsets to use a Maple Tree
-Date: Thu, 24 Oct 2024 21:22:23 +0800
-Message-Id: <20241024132225.2271667-11-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 27/28] libfs: fix infinite directory reads for offset dir
+Date: Thu, 24 Oct 2024 21:22:24 +0800
+Message-Id: <20241024132225.2271667-12-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -87,11 +87,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S14
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gr4UXF1xtry7Zr1UXw18Zrb_yoW3GF47pF
-	9xJay5tr4fXw1UWF48XF4DZw1F9wn5Wr1UGFZYgw1fA3sFvr4kJanF9r45ua4UJrWkCrsx
-	JFs8Kr1avF4UXrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S15
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF4DCw48XFykAF4fGryrtFb_yoWrKF1fpF
+	ZxG3Z3tr1fW34jgr4vvF1DZryF93Z3Kw4rX3s5Ww15try2qws8Kas2yr1Y9a48tr95Cr13
+	ZF45Ka43Xr4UCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
 	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE3s
@@ -103,221 +103,144 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3Gr4UXF1xtry7Zr1UXw18Zrb_yoW3GF47pF
 	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
 	AY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
 	0xvE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVF
-	xhVjvjDU0xZFpf9x0pRnYFAUUUUU=
+	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_GcCE3sUvcSsGvfC2
+	KfnxnUUI43ZEXa7sR_3ku7UUUUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: yangerkun <yangerkun@huawei.com>
 
-commit 0e4a862174f2a8d1653a8a9cf0815020e1d3af24 upstream.
+commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a upstream.
 
-Test robot reports:
-> kernel test robot noticed a -19.0% regression of aim9.disk_src.ops_per_sec on:
->
-> commit: a2e459555c5f9da3e619b7e47a63f98574dc75f1 ("shmem: stable directory offsets")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+After we switch tmpfs dir operations from simple_dir_operations to
+simple_offset_dir_operations, every rename happened will fill new dentry
+to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+key starting with octx->newx_offset, and then set newx_offset equals to
+free key + 1. This will lead to infinite readdir combine with rename
+happened at the same time, which fail generic/736 in xfstests(detail show
+as below).
 
-Feng Tang further clarifies that:
-> ... the new simple_offset_add()
-> called by shmem_mknod() brings extra cost related with slab,
-> specifically the 'radix_tree_node', which cause the regression.
+1. create 5000 files(1 2 3...) under one dir
+2. call readdir(man 3 readdir) once, and get one entry
+3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+4. loop 2~3, until readdir return nothing or we loop too many
+   times(tmpfs break test with the second condition)
 
-Willy's analysis is that, over time, the test workload causes
-xa_alloc_cyclic() to fragment the underlying SLAB cache.
+We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+directory reads") to fix it, record the last_index when we open dir, and
+do not emit the entry which index >= last_index. The file->private_data
+now used in offset dir can use directly to do this, and we also update
+the last_index when we llseek the dir file.
 
-This patch replaces the offset_ctx's xarray with a Maple Tree in the
-hope that Maple Tree's dense node mode will handle this scenario
-more scalably.
-
-In addition, we can widen the simple directory offset maximum to
-signed long (as loff_t is also signed).
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202309081306.3ecb3734-oliver.sang@intel.com
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Link: https://lore.kernel.org/r/170820145616.6328.12620992971699079156.stgit@91.116.238.104.host.secureserver.net
-Reviewed-by: Jan Kara <jack@suse.cz>
+Fixes: a2e459555c5f ("shmem: stable directory offsets")
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+[brauner: only update last_index after seek when offset is zero like Jan suggested]
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/libfs.c         | 47 +++++++++++++++++++++++-----------------------
- include/linux/fs.h |  5 +++--
- 2 files changed, 26 insertions(+), 26 deletions(-)
+ fs/libfs.c | 35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index d7b901cb9af4..98731178a3c1 100644
+index 98731178a3c1..fd5d30c798de 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -244,17 +244,17 @@ enum {
- 	DIR_OFFSET_MIN	= 2,
- };
- 
--static void offset_set(struct dentry *dentry, u32 offset)
-+static void offset_set(struct dentry *dentry, long offset)
- {
--	dentry->d_fsdata = (void *)((uintptr_t)(offset));
-+	dentry->d_fsdata = (void *)offset;
+@@ -405,6 +405,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+ 	mtree_destroy(&octx->mt);
  }
  
--static u32 dentry2offset(struct dentry *dentry)
-+static long dentry2offset(struct dentry *dentry)
- {
--	return (u32)((uintptr_t)(dentry->d_fsdata));
-+	return (long)dentry->d_fsdata;
- }
- 
--static struct lock_class_key simple_offset_xa_lock;
-+static struct lock_class_key simple_offset_lock_class;
- 
++static int offset_dir_open(struct inode *inode, struct file *file)
++{
++	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
++
++	file->private_data = (void *)ctx->next_offset;
++	return 0;
++}
++
  /**
-  * simple_offset_init - initialize an offset_ctx
-@@ -263,8 +263,8 @@ static struct lock_class_key simple_offset_xa_lock;
+  * offset_dir_llseek - Advance the read position of a directory descriptor
+  * @file: an open directory whose position is to be updated
+@@ -418,6 +426,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
   */
- void simple_offset_init(struct offset_ctx *octx)
+ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
  {
--	xa_init_flags(&octx->xa, XA_FLAGS_ALLOC1);
--	lockdep_set_class(&octx->xa.xa_lock, &simple_offset_xa_lock);
-+	mt_init_flags(&octx->mt, MT_FLAGS_ALLOC_RANGE);
-+	lockdep_set_class(&octx->mt.ma_lock, &simple_offset_lock_class);
- 	octx->next_offset = DIR_OFFSET_MIN;
- }
- 
-@@ -273,20 +273,19 @@ void simple_offset_init(struct offset_ctx *octx)
-  * @octx: directory offset ctx to be updated
-  * @dentry: new dentry being added
-  *
-- * Returns zero on success. @so_ctx and the dentry offset are updated.
-+ * Returns zero on success. @octx and the dentry's offset are updated.
-  * Otherwise, a negative errno value is returned.
-  */
- int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
- {
--	static const struct xa_limit limit = XA_LIMIT(DIR_OFFSET_MIN, U32_MAX);
--	u32 offset;
-+	unsigned long offset;
- 	int ret;
- 
- 	if (dentry2offset(dentry) != 0)
- 		return -EBUSY;
- 
--	ret = xa_alloc_cyclic(&octx->xa, &offset, dentry, limit,
--			      &octx->next_offset, GFP_KERNEL);
-+	ret = mtree_alloc_cyclic(&octx->mt, &offset, dentry, DIR_OFFSET_MIN,
-+				 LONG_MAX, &octx->next_offset, GFP_KERNEL);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -302,13 +301,13 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
-  */
- void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
- {
--	u32 offset;
-+	long offset;
- 
- 	offset = dentry2offset(dentry);
- 	if (offset == 0)
- 		return;
- 
--	xa_erase(&octx->xa, offset);
-+	mtree_erase(&octx->mt, offset);
- 	offset_set(dentry, 0);
- }
- 
-@@ -331,7 +330,7 @@ int simple_offset_empty(struct dentry *dentry)
- 
- 	index = DIR_OFFSET_MIN;
- 	octx = inode->i_op->get_offset_ctx(inode);
--	xa_for_each(&octx->xa, index, child) {
-+	mt_for_each(&octx->mt, child, index, LONG_MAX) {
- 		spin_lock(&child->d_lock);
- 		if (simple_positive(child)) {
- 			spin_unlock(&child->d_lock);
-@@ -361,8 +360,8 @@ int simple_offset_rename_exchange(struct inode *old_dir,
- {
- 	struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
- 	struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
--	u32 old_index = dentry2offset(old_dentry);
--	u32 new_index = dentry2offset(new_dentry);
-+	long old_index = dentry2offset(old_dentry);
-+	long new_index = dentry2offset(new_dentry);
- 	int ret;
- 
- 	simple_offset_remove(old_ctx, old_dentry);
-@@ -388,9 +387,9 @@ int simple_offset_rename_exchange(struct inode *old_dir,
- 
- out_restore:
- 	offset_set(old_dentry, old_index);
--	xa_store(&old_ctx->xa, old_index, old_dentry, GFP_KERNEL);
-+	mtree_store(&old_ctx->mt, old_index, old_dentry, GFP_KERNEL);
- 	offset_set(new_dentry, new_index);
--	xa_store(&new_ctx->xa, new_index, new_dentry, GFP_KERNEL);
-+	mtree_store(&new_ctx->mt, new_index, new_dentry, GFP_KERNEL);
- 	return ret;
- }
- 
-@@ -403,7 +402,7 @@ int simple_offset_rename_exchange(struct inode *old_dir,
-  */
- void simple_offset_destroy(struct offset_ctx *octx)
- {
--	xa_destroy(&octx->xa);
-+	mtree_destroy(&octx->mt);
- }
- 
- /**
-@@ -433,16 +432,16 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
++	struct inode *inode = file->f_inode;
++	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
++
+ 	switch (whence) {
+ 	case SEEK_CUR:
+ 		offset += file->f_pos;
+@@ -431,7 +442,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+ 	}
  
  	/* In this case, ->private_data is protected by f_pos_lock */
- 	file->private_data = NULL;
--	return vfs_setpos(file, offset, U32_MAX);
-+	return vfs_setpos(file, offset, LONG_MAX);
+-	file->private_data = NULL;
++	if (!offset)
++		file->private_data = (void *)ctx->next_offset;
+ 	return vfs_setpos(file, offset, LONG_MAX);
  }
  
- static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
- {
-+	MA_STATE(mas, &octx->mt, offset, offset);
- 	struct dentry *child, *found = NULL;
--	XA_STATE(xas, &octx->xa, offset);
- 
- 	rcu_read_lock();
--	child = xas_next_entry(&xas, U32_MAX);
-+	child = mas_find(&mas, LONG_MAX);
- 	if (!child)
- 		goto out;
- 	spin_lock(&child->d_lock);
-@@ -456,8 +455,8 @@ static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
- 
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
--	u32 offset = dentry2offset(dentry);
- 	struct inode *inode = d_inode(dentry);
-+	long offset = dentry2offset(dentry);
- 
- 	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
+@@ -462,7 +474,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
  			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5104405ce3e6..b9edab0ba46c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -43,6 +43,7 @@
- #include <linux/cred.h>
- #include <linux/mnt_idmapping.h>
- #include <linux/slab.h>
-+#include <linux/maple_tree.h>
+ }
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -3190,8 +3191,8 @@ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
+-static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
++static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+ {
+ 	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+ 	struct dentry *dentry;
+@@ -470,17 +482,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ 	while (true) {
+ 		dentry = offset_find_next(octx, ctx->pos);
+ 		if (!dentry)
+-			return ERR_PTR(-ENOENT);
++			return;
++
++		if (dentry2offset(dentry) >= last_index) {
++			dput(dentry);
++			return;
++		}
  
- struct offset_ctx {
--	struct xarray		xa;
--	u32			next_offset;
-+	struct maple_tree	mt;
-+	unsigned long		next_offset;
- };
+ 		if (!offset_dir_emit(ctx, dentry)) {
+ 			dput(dentry);
+-			break;
++			return;
+ 		}
  
- void simple_offset_init(struct offset_ctx *octx);
+ 		ctx->pos = dentry2offset(dentry) + 1;
+ 		dput(dentry);
+ 	}
+-	return NULL;
+ }
+ 
+ /**
+@@ -507,22 +523,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ static int offset_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct dentry *dir = file->f_path.dentry;
++	long last_index = (long)file->private_data;
+ 
+ 	lockdep_assert_held(&d_inode(dir)->i_rwsem);
+ 
+ 	if (!dir_emit_dots(file, ctx))
+ 		return 0;
+ 
+-	/* In this case, ->private_data is protected by f_pos_lock */
+-	if (ctx->pos == DIR_OFFSET_MIN)
+-		file->private_data = NULL;
+-	else if (file->private_data == ERR_PTR(-ENOENT))
+-		return 0;
+-	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
++	offset_iterate_dir(d_inode(dir), ctx, last_index);
+ 	return 0;
+ }
+ 
+ const struct file_operations simple_offset_dir_operations = {
++	.open		= offset_dir_open,
+ 	.llseek		= offset_dir_llseek,
+ 	.iterate_shared	= offset_readdir,
+ 	.read		= generic_read_dir,
 -- 
 2.39.2
 
