@@ -1,183 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-32725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D189AE5AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:08:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1569AE5FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E38B2521E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6277B1C213B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6872C1DD0C1;
-	Thu, 24 Oct 2024 13:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUwy91ey"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218461E0487;
+	Thu, 24 Oct 2024 13:23:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AF91DAC81;
-	Thu, 24 Oct 2024 13:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF91AF0D0;
+	Thu, 24 Oct 2024 13:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775181; cv=none; b=hyUSP4FLmRYKBq1Atu52SVO6LUS/ywZaEWhOm+24W127mffqmA4QpjAe6VKV3z4AevAAoLA8bQ7YptrpXZ+uz0pHxUqAeek6RjEfIB8FgabfRjgcn2GRmoaYVvXxfP4vv4zp771yjOAbnXM+IOO14DMZGLK8/Yi4PI2/NhmA0kc=
+	t=1729776179; cv=none; b=TkVfMZc52UfGQBlMfhGfO/Y/MRSEXYM29AWDkQfCvBQJ6etu4PrT2WsgYMrCY+esjJ8rzcjqvPakY1kgkYmnsaEwchVP8eNas+G1QPlWd7zrKvKmYtQBnf4uI20Ddfn3g7ZsMBJBV6jOCX0tPdRcdDqpq8qzhnmrLeaydrpdqYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775181; c=relaxed/simple;
-	bh=aIlKmQ9ihfSARIg+FYKEOZAZucVXvsiEVelFMuAtHng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I452ma5fAzfdodjnmb7MogtLSxYsMOUsGUZn6tZBjp6qnpbxlt+aXyoGFU7t7haMDhu7F0PL8jkqytXI/EnJCxEUREQJSTYZiS7jiVS1MotmOCixj/iztZo7jIR4MiWnOlndCNEfrkGny1WZZtmDSVcgTbEhtLJku/jZ1DE6h58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUwy91ey; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4609e784352so5615371cf.0;
-        Thu, 24 Oct 2024 06:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729775179; x=1730379979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EV440ACCLF9AlGZ+8I23qHeuAgKIxh1fOgjLQ6Jdp94=;
-        b=IUwy91eyZGO0Tj3CZCx3bmDNUYyrq0ij/X3t6JKvTz/Zxr+IO5XcOnWp/bZwXR9ghQ
-         U31TW+pTGiTUyZ5dHRBdNB1oLanpIE/sKZBn6exLRH8CtV6zv6Xm+h2gY1qb3BSP79qf
-         0N2N46S+pdb/s3hKYiftYLRoSoQNo+Of7LBi2dU1aEoJFWyk6kcbJdwbHOPiZyaIr73D
-         lgJgnMG66ms6trgkU+gRk5p6FEl1CuwlJsFizTMDtUo/vFULXouaiPdICXt+uQclnVAk
-         jTb2YVk455NKpS4ySAnr1RnHDwj5/MCHE1kYoLpVKjKM3xbFB5vfbe+6++Tqa3NvwLAl
-         TVSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729775179; x=1730379979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EV440ACCLF9AlGZ+8I23qHeuAgKIxh1fOgjLQ6Jdp94=;
-        b=p1uhEjK6Qyv/Gf26bPrUC95khU15hLY6KcDfreUCpkid7Ib5+ip2d0CO7vpyax9qWn
-         OPmdSNQh5WxJSmqzK4XG4FIw+7qFdW16zcl3EWB1+I5M9YBsjUcKIh1UnErfAeaYT5L7
-         6YkkDkjsnhNf9jbmC0FU0xLI/LHH49lz6wDwJozBUDK0NTFJY3YN0o6snnHIUmw7m2bV
-         6VDKdeQkdAfy9K/P3aIBTfjZDlII6N62csjRh83iYt5KVHPLge99MViM8gmLYbhodCl1
-         G7H6qCIKzBafgP0LU5LZ9xZezjUcSGui7m4yb+NkTnMyFfyTloI6swKLFs9Phkkp5HWQ
-         N+aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUawHG+xYB3s/m2spNLqv8q1bQObnn24V5uP5ieAEmPYiilYfVg7daFEbh5pIJnm+3t+IxCm6o8XCobmDI=@vger.kernel.org, AJvYcCVvUyJReoCIMrQ/xObR40vFDPNUZD9hU6ng6rRkmHb89IMnk+Og718q8qOp+yRzBG377A6oTCxqaleL@vger.kernel.org, AJvYcCWcptVhwct6vKbLJWHdd3bbT8BeNRP/5z7SBWXdknaY5UUVVV/4VKXiqlvpoOv1X70h4cTtpO8zeHX+WFxJQQ==@vger.kernel.org, AJvYcCXevy/KyyYGPVEOdYUIyrXzSzCosYMPaSNgjlKKB5YyFDQEHMm/uSEDiDdeOwzE9DoINRfj2vYR+LfheZBupw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNv2yLwNzuEW+G/p4lukqsVElr5AgM6wDzOjPgD/9voM1cSkCF
-	RUFtPCT8Vk6HuV1SiQoAShj88zNt1QaelPczXQ5jqcKXtviLQZHjgfOU8IlODKFfiZg3EFBuC9c
-	B2gLk3ws+9YQxUA90lwt0pnXqrFQ=
-X-Google-Smtp-Source: AGHT+IEIz8fnfbns+VURqZ8Fl6RXgEBHOkqEMI4OdzbZoLgol68YL2Busr8J0hKYCSW/XqtN8XJgmuR8iMUv5K38FlE=
-X-Received: by 2002:ac8:5b8d:0:b0:460:39be:10a8 with SMTP id
- d75a77b69052e-461146d6ef7mr65129111cf.32.1729775178536; Thu, 24 Oct 2024
- 06:06:18 -0700 (PDT)
+	s=arc-20240116; t=1729776179; c=relaxed/simple;
+	bh=pP3oqeT1+PnPwZ7YbJT5ltQzpUx7GpUfy7i+1vcSMpM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R7lxUiVqb+ZVyIgweX77Kr5v2bB+asqrpToGZc4TK3P7A2sUCnlTl2BhcDozd+IRTtMS9Xd/7gjpaXyXV87PpjMX1E6Xpo6sDBC+6NnSeUf61GzOJh/8HMdI4SKJDrmF2q9aSU3tafIlRrZzHn3eOe3JMfKmZB7ZbzImzM8nULE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ6634FNJz4f3nTw;
+	Thu, 24 Oct 2024 21:22:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D47481A058E;
+	Thu, 24 Oct 2024 21:22:53 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S4;
+	Thu, 24 Oct 2024 21:22:51 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	hughd@google.com,
+	willy@infradead.org,
+	sashal@kernel.org,
+	srinivasan.shanmugam@amd.com,
+	chiahsuan.chung@amd.com,
+	mingo@kernel.org,
+	mgorman@techsingularity.net,
+	yukuai3@huawei.com,
+	chengming.zhou@linux.dev,
+	zhangpeng.00@bytedance.com,
+	chuck.lever@oracle.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 6.6 00/28] fix CVE-2024-46701
+Date: Thu, 24 Oct 2024 21:19:41 +0800
+Message-Id: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1725481503.git.josef@toxicpanda.com> <4b235bf62c99f1f1196edc9da4258167314dc3c3.1725481503.git.josef@toxicpanda.com>
-In-Reply-To: <4b235bf62c99f1f1196edc9da4258167314dc3c3.1725481503.git.josef@toxicpanda.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 24 Oct 2024 15:06:07 +0200
-Message-ID: <CAOQ4uxgxCHmKLhFHMiD39SWw7evZmfkG9dkyk2X=qQc+zXjn-w@mail.gmail.com>
-Subject: Re: [PATCH v5 03/18] fsnotify: generate pre-content permission event
- on open
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFy3Zr48Wr4UKF4kGw4Durg_yoW5CF13p3
+	WDGr15trsrZry8Grs3Aw47Xry7W395W348Jw1DGw15Ar4UKr97XrWruFyfAay3CayxGF47
+	Kr1Yqw18Ca4UA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r
+	4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
+	IYCTnIWIevJa73UjIFyTuYvjTRCXdbUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
-wrote:
->
-> From: Amir Goldstein <amir73il@gmail.com>
->
-> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on open depending on
-> file open mode.  The pre-content event will be generated in addition to
-> FS_OPEN_PERM, but without sb_writers held and after file was truncated
-> in case file was opened with O_CREAT and/or O_TRUNC.
->
-> The event will have a range info of (0..0) to provide an opportunity
-> to fill entire file content on open.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/namei.c               |  9 +++++++++
->  include/linux/fsnotify.h | 10 +++++++++-
->  2 files changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3a4c40e12f78..c16487e3742d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3735,6 +3735,15 @@ static int do_open(struct nameidata *nd,
->         }
->         if (do_truncate)
->                 mnt_drop_write(nd->path.mnt);
-> +
-> +       /*
-> +        * This permission hook is different than fsnotify_open_perm() ho=
-ok.
-> +        * This is a pre-content hook that is called without sb_writers h=
-eld
-> +        * and after the file was truncated.
-> +        */
-> +       if (!error)
-> +               error =3D fsnotify_file_perm(file, MAY_OPEN);
-> +
+From: Yu Kuai <yukuai3@huawei.com>
 
-Josef,
+Fix patch is patch 27, relied patches are from:
 
-Please change that for v6 to:
+ - patches from set [1] to add helpers to maple_tree, the last patch to
+improve fork() performance is not backported;
+ - patches from set [2] to change maple_tree, and follow up fixes;
+ - patches from set [3] to convert offset_ctx from xarray to maple_tree;
 
-                   error =3D fsnotify_file_area_perm(file, MAY_OPEN,
-&file->f_pos, 0);
+Please notice that I'm not an expert in this area, and I'm afraid to
+make manual changes. That's why patch 16 revert the commit that is
+different from mainline and will cause conflict backporting new patches.
+patch 28 pick the original mainline patch again.
 
-...
+(And this is what we did to fix the CVE in downstream kernels).
 
->         return error;
->  }
->
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index 7600a0c045ba..fb3837b8de4c 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -168,6 +168,10 @@ static inline int fsnotify_file_area_perm(struct fil=
-e *file, int perm_mask,
->                 fsnotify_mask =3D FS_PRE_MODIFY;
->         else if (perm_mask & (MAY_READ | MAY_ACCESS))
->                 fsnotify_mask =3D FS_PRE_ACCESS;
-> +       else if (perm_mask & MAY_OPEN && file->f_mode & FMODE_WRITER)
-> +               fsnotify_mask =3D FS_PRE_MODIFY;
-> +       else if (perm_mask & MAY_OPEN)
-> +               fsnotify_mask =3D FS_PRE_ACCESS;
->         else
->                 return 0;
->
-> @@ -176,10 +180,14 @@ static inline int fsnotify_file_area_perm(struct fi=
-le *file, int perm_mask,
->
->  /*
->   * fsnotify_file_perm - permission hook before file access
-> + *
-> + * Called from read()/write() with perm_mask MAY_READ/MAY_WRITE.
-> + * Called from open() with MAY_OPEN without sb_writers held and after th=
-e file
-> + * was truncated. Note that this is a different event from fsnotify_open=
-_perm().
->   */
->  static inline int fsnotify_file_perm(struct file *file, int perm_mask)
->  {
-> -       return fsnotify_file_area_perm(file, perm_mask, NULL, 0);
-> +       return fsnotify_file_area_perm(file, perm_mask, &file->f_pos, 0);
->  }
+[1] https://lore.kernel.org/all/20231027033845.90608-1-zhangpeng.00@bytedance.com/
+[2] https://lore.kernel.org/all/20231101171629.3612299-2-Liam.Howlett@oracle.com/T/
+[3] https://lore.kernel.org/all/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net/
 
-... and drop this change, because this change will make readdir()
-start reporting odd file ranges and HSM won't be able to tell the
-difference between an opendir() and a readdir().
+Andrew Morton (1):
+  lib/maple_tree.c: fix build error due to hotfix alteration
 
-And I will send an extra patch for reporting an event with
-range [size..size] for truncate(size).
+Chuck Lever (5):
+  libfs: Re-arrange locking in offset_iterate_dir()
+  libfs: Define a minimum directory offset
+  libfs: Add simple_offset_empty()
+  maple_tree: Add mtree_alloc_cyclic()
+  libfs: Convert simple directory offsets to use a Maple Tree
 
-Thanks,
-Amir.
+Liam R. Howlett (12):
+  maple_tree: remove unnecessary default labels from switch statements
+  maple_tree: make mas_erase() more robust
+  maple_tree: move debug check to __mas_set_range()
+  maple_tree: add end of node tracking to the maple state
+  maple_tree: use cached node end in mas_next()
+  maple_tree: use cached node end in mas_destroy()
+  maple_tree: clean up inlines for some functions
+  maple_tree: separate ma_state node from status
+  maple_tree: remove mas_searchable()
+  maple_tree: use maple state end for write operations
+  maple_tree: don't find node end in mtree_lookup_walk()
+  maple_tree: mtree_range_walk() clean up
+
+Lorenzo Stoakes (1):
+  maple_tree: correct tree corruption on spanning store
+
+Peng Zhang (7):
+  maple_tree: add mt_free_one() and mt_attr() helpers
+  maple_tree: introduce {mtree,mas}_lock_nested()
+  maple_tree: introduce interfaces __mt_dup() and mtree_dup()
+  maple_tree: skip other tests when BENCH is enabled
+  maple_tree: preserve the tree attributes when destroying maple tree
+  maple_tree: add test for mtree_dup()
+  maple_tree: avoid checking other gaps after getting the largest gap
+
+Yu Kuai (1):
+  Revert "maple_tree: correct tree corruption on spanning store"
+
+yangerkun (1):
+  libfs: fix infinite directory reads for offset dir
+
+ fs/libfs.c                                  |  129 ++-
+ include/linux/fs.h                          |    6 +-
+ include/linux/maple_tree.h                  |  356 +++---
+ include/linux/mm_types.h                    |    3 +-
+ lib/maple_tree.c                            | 1096 +++++++++++++------
+ lib/test_maple_tree.c                       |  218 ++--
+ mm/internal.h                               |   10 +-
+ mm/shmem.c                                  |    4 +-
+ tools/include/linux/spinlock.h              |    1 +
+ tools/testing/radix-tree/linux/maple_tree.h |    2 +-
+ tools/testing/radix-tree/maple.c            |  390 ++++++-
+ 11 files changed, 1564 insertions(+), 651 deletions(-)
+
+-- 
+2.39.2
+
 
