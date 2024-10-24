@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B47A9AE606
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67F59AE609
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8B41C21B2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049CC1C21AB1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0061E2821;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97521E3DE8;
 	Thu, 24 Oct 2024 13:23:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068AB1DDA16;
-	Thu, 24 Oct 2024 13:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E18B1E00BE;
+	Thu, 24 Oct 2024 13:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776181; cv=none; b=HaKWOg+yR9U5ijuY5CAKJGbvR176TLdU1eQWIH2XQNxtpanFu1XbGuRX+qj4CLH7bHad+pMSVGqZmXVBUeJr4S5pIou/BEZ2zvD9muFyLKrO4Pxaz4qLUf7v9Cyy909LzeLTa2Eh5JoZaNlc7BtqF7SC6kl4cEiGha2PFz6toOg=
+	t=1729776182; cv=none; b=QB7PQro2UhsGVcFRyvxyIPWH//x38ctLxHCJSify9hs65EGyunuZjhstGp5HE1VupazST6HnrpUuGM04lEdnYQ7+LE+N1m4dGg1lmnTplIyUw35rxo989klWtFUHvI+0m4p6mqI8kVABXdR0oQj6DIWnYG4aXGvkpxvkuAIHZgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776181; c=relaxed/simple;
-	bh=FYAgGxlCNRBg5BU42xNlfivGLI1K5EO1sJc/Ph2Md4o=;
+	s=arc-20240116; t=1729776182; c=relaxed/simple;
+	bh=K15QmUllidiKHjx67YroLVQovfDjxuq272evyjwHcnI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=K5JT4TiC/vjuUpsAN41++O+i5s9hXm3w0RvqgD8QxoJnC8oV5QknSYZFK5601VRpqqcSEtxd2ffVTmwpOUVxEwgMLVB8FfJWA4lb1BlUCIGxGF5LJlEnlEkTmvrV6W82s9j3/9FpEQ9w8r0fi6vynV49mbyeTFQmcYUTde4YEwo=
+	 MIME-Version; b=SOIZYHRj4F0LSkT/Xd6GVs7mwP5BPKCWJcR0HKYoDyElBo08KIl14kLd1B4uTd5VDY/jvLn/OkwqcwmMqswYmUH0J73iAPjb2ZUYvg/X+UCehlWnvnnPgV31RWJ+Jnj42qnIjqxN+WUJ4Ts6ps58VSP1EMkrNMDAZ7+JXXtOMo8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ66C386mz4f3kpc;
-	Thu, 24 Oct 2024 21:22:43 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ66D47R5z4f3kp7;
+	Thu, 24 Oct 2024 21:22:44 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C5E561A0194;
-	Thu, 24 Oct 2024 21:22:55 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id E7FA51A0194;
+	Thu, 24 Oct 2024 21:22:56 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S5;
-	Thu, 24 Oct 2024 21:22:54 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S6;
+	Thu, 24 Oct 2024 21:22:56 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 01/28] maple_tree: add mt_free_one() and mt_attr() helpers
-Date: Thu, 24 Oct 2024 21:19:42 +0800
-Message-Id: <20241024132009.2267260-2-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 02/28] maple_tree: introduce {mtree,mas}_lock_nested()
+Date: Thu, 24 Oct 2024 21:19:43 +0800
+Message-Id: <20241024132009.2267260-3-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -86,12 +86,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxZryUtF17GFWUCw4xuw48WFg_yoWrur4kpr
-	ZrK345tFsavr18G3yxKa1UJ34rXFs3X3yjqa4qkw1DA3Z8Ar1SqFyIv3yrZFWfu3ykG3W3
-	Ar4qgw18CF4qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW8GryrKF1xCF4UXw1fWFg_yoW5XrWxpF
+	yDWrZxJF1xXr1xu3yvk3Wj9FW7Xw4UWF1Ut3sFqr18ZFWUKwsagws29FW3Zr1vvFsrKFs8
+	GF1jg39ak398Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
 	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
 	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
@@ -102,62 +102,22 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxZryUtF17GFWUCw4xuw48WFg_yoWrur4kpr
 	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
 	kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
 	cVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnI
-	WIevJa73UjIFyTuYvjTRCpBTUUUUU
+	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnI
+	WIevJa73UjIFyTuYvjTRC2NtUUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Peng Zhang <zhangpeng.00@bytedance.com>
 
-commit 4f2267b58a22d972be98edef8e6b3c7a67c9fb91 upstream.
+commit b2472efe4316b2687c153919c1513a098bd82c17 upstream.
 
-Patch series "Introduce __mt_dup() to improve the performance of fork()", v7.
+In some cases, nested locks may be needed, so {mtree,mas}_lock_nested is
+introduced.  For example, when duplicating maple tree, we need to hold the
+locks of two trees, in which case nested locks are needed.
 
-This series introduces __mt_dup() to improve the performance of fork().
-During the duplication process of mmap, all VMAs are traversed and
-inserted one by one into the new maple tree, causing the maple tree to be
-rebalanced multiple times.  Balancing the maple tree is a costly
-operation.  To duplicate VMAs more efficiently, mtree_dup() and __mt_dup()
-are introduced for the maple tree.  They can efficiently duplicate a maple
-tree.
+At the same time, add the definition of spin_lock_nested() in tools for
+testing.
 
-Here are some algorithmic details about {mtree,__mt}_dup().  We perform a
-DFS pre-order traversal of all nodes in the source maple tree.  During
-this process, we fully copy the nodes from the source tree to the new
-tree.  This involves memory allocation, and when encountering a new node,
-if it is a non-leaf node, all its child nodes are allocated at once.
-
-This idea was originally from Liam R.  Howlett's Maple Tree Work email,
-and I added some of my own ideas to implement it.  Some previous
-discussions can be found in [1].  For a more detailed analysis of the
-algorithm, please refer to the logs for patch [3/10] and patch [10/10].
-
-There is a "spawn" in byte-unixbench[2], which can be used to test the
-performance of fork().  I modified it slightly to make it work with
-different number of VMAs.
-
-Below are the test results.  The first row shows the number of VMAs.  The
-second and third rows show the number of fork() calls per ten seconds,
-corresponding to next-20231006 and the this patchset, respectively.  The
-test results were obtained with CPU binding to avoid scheduler load
-balancing that could cause unstable results.  There are still some
-fluctuations in the test results, but at least they are better than the
-original performance.
-
-21     121   221    421    821    1621   3221   6421   12821  25621  51221
-112100 76261 54227  34035  20195  11112  6017   3161   1606   802    393
-114558 83067 65008  45824  28751  16072  8922   4747   2436   1233   599
-2.19%  8.92% 19.88% 34.64% 42.37% 44.64% 48.28% 50.17% 51.68% 53.74% 52.42%
-
-Thanks to Liam and Matthew for the review.
-
-This patch (of 10):
-
-Add two helpers:
-1. mt_free_one(), used to free a maple node.
-2. mt_attr(), used to obtain the attributes of maple tree.
-
-Link: https://lkml.kernel.org/r/20231027033845.90608-1-zhangpeng.00@bytedance.com
-Link: https://lkml.kernel.org/r/20231027033845.90608-2-zhangpeng.00@bytedance.com
+Link: https://lkml.kernel.org/r/20231027033845.90608-3-zhangpeng.00@bytedance.com
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Cc: Christian Brauner <brauner@kernel.org>
@@ -173,46 +133,44 @@ Cc: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/maple_tree.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ include/linux/maple_tree.h     | 4 ++++
+ tools/include/linux/spinlock.h | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 4e05511c8d1e..e7228bb86ef6 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -165,6 +165,11 @@ static inline int mt_alloc_bulk(gfp_t gfp, size_t size, void **nodes)
- 	return kmem_cache_alloc_bulk(maple_node_cache, gfp, size, nodes);
- }
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index d01e850b570f..f91dbc7fe091 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -256,6 +256,8 @@ struct maple_tree {
+ 	struct maple_tree name = MTREE_INIT(name, 0)
  
-+static inline void mt_free_one(struct maple_node *node)
-+{
-+	kmem_cache_free(maple_node_cache, node);
-+}
-+
- static inline void mt_free_bulk(size_t size, void __rcu **nodes)
- {
- 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
-@@ -205,6 +210,11 @@ static unsigned int mas_mt_height(struct ma_state *mas)
- 	return mt_height(mas->tree);
- }
+ #define mtree_lock(mt)		spin_lock((&(mt)->ma_lock))
++#define mtree_lock_nested(mas, subclass) \
++		spin_lock_nested((&(mt)->ma_lock), subclass)
+ #define mtree_unlock(mt)	spin_unlock((&(mt)->ma_lock))
  
-+static inline unsigned int mt_attr(struct maple_tree *mt)
-+{
-+	return mt->ma_flags & ~MT_FLAGS_HEIGHT_MASK;
-+}
-+
- static inline enum maple_type mte_node_type(const struct maple_enode *entry)
- {
- 	return ((unsigned long)entry >> MAPLE_NODE_TYPE_SHIFT) &
-@@ -5584,7 +5594,7 @@ void mas_destroy(struct ma_state *mas)
- 			mt_free_bulk(count, (void __rcu **)&node->slot[1]);
- 			total -= count;
- 		}
--		kmem_cache_free(maple_node_cache, node);
-+		mt_free_one(ma_mnode_ptr(node));
- 		total--;
- 	}
+ /*
+@@ -406,6 +408,8 @@ struct ma_wr_state {
+ };
  
+ #define mas_lock(mas)           spin_lock(&((mas)->tree->ma_lock))
++#define mas_lock_nested(mas, subclass) \
++		spin_lock_nested(&((mas)->tree->ma_lock), subclass)
+ #define mas_unlock(mas)         spin_unlock(&((mas)->tree->ma_lock))
+ 
+ 
+diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
+index 622266b197d0..a6cdf25b6b9d 100644
+--- a/tools/include/linux/spinlock.h
++++ b/tools/include/linux/spinlock.h
+@@ -11,6 +11,7 @@
+ #define spin_lock_init(x)	pthread_mutex_init(x, NULL)
+ 
+ #define spin_lock(x)			pthread_mutex_lock(x)
++#define spin_lock_nested(x, subclass)	pthread_mutex_lock(x)
+ #define spin_unlock(x)			pthread_mutex_unlock(x)
+ #define spin_lock_bh(x)			pthread_mutex_lock(x)
+ #define spin_unlock_bh(x)		pthread_mutex_unlock(x)
 -- 
 2.39.2
 
