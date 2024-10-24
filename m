@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A88F9AE622
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0969AE625
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DF11C2334A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:26:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196ED1C2359F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4430C1F666F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33951F6692;
 	Thu, 24 Oct 2024 13:23:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CA21EF0A0;
-	Thu, 24 Oct 2024 13:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADCC1F4724;
+	Thu, 24 Oct 2024 13:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776191; cv=none; b=jrHkFoOtRAJ6byEbq+TskrZSiNCqs1NNTM7EUyJ6jMf6+GPulSYhbS9qj8UWp3E31Cj/f6fG0uT2VU5s6hB5Y+oZYPYtgi/FP+MApvScYUrzEoGZakJARi6DvtBoJ+ATx4RLoNuutRhHAnRuaAKlATo60SfHEv95PZS1hAwkjxU=
+	t=1729776192; cv=none; b=NfYv903q96yIWP7Fcc5PINZCmu79WDUaSXEGwHS0C2zbnUxA9HeKDXEqk/uEC88R90TKeEf3AejGQDL7TS5xNhqsLth09L0IpRNXWG5nE/PWIdiJRxpvoMN7jxEYsAUE+WjXODChtT4O2jE1lRx9y12caeVMV24Yd9KKC4AonZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776191; c=relaxed/simple;
-	bh=pOQ2k6NjMYL017UCgapeNP8FlbOOpZ9dBLuCfkvzVZQ=;
+	s=arc-20240116; t=1729776192; c=relaxed/simple;
+	bh=urCRLBS6UlfqN+GX2sjLY30SGbE4XYG3D+58La9NGR0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g1ebwda0eWx3AWyIvV2dbhpcx7oEXbZonWcK+EqLJTi0hfIlNYQX7rg1jTbCWq3pjxxJu07ja9j3tt6mu5DriivqeC9e6dwVnAA+fpXjNFK4WfKTP5AP0IgRP61hS+FmqyJaHKtO0eYTyNt4LIv3UzgCs1lLuNoFActY+/G7Dg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Z4H06LqEkg0UOnAhvUrTubLneRvC5qG2uapLQ0RMmd55IZ/VhsKTNmlzM6mo7ISRIsk9A6ERJmFs73n6tGn8djfVNUr7/EWeqie6csqhDqVeBVjilC773fnmxnWdkKTOcfkdYqPDb2Ddw4OvB/t9EEthn+30kbJiRe1eyLxQ7gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ66H4zBjz4f3nV0;
-	Thu, 24 Oct 2024 21:22:47 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ66Q5PF4z4f3kpc;
+	Thu, 24 Oct 2024 21:22:54 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F0A0B1A0196;
-	Thu, 24 Oct 2024 21:23:05 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1EAD01A0196;
+	Thu, 24 Oct 2024 21:23:07 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S14;
-	Thu, 24 Oct 2024 21:23:05 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHusYpShpn7tb6Ew--.444S15;
+	Thu, 24 Oct 2024 21:23:06 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 10/28] maple_tree: use cached node end in mas_next()
-Date: Thu, 24 Oct 2024 21:19:51 +0800
-Message-Id: <20241024132009.2267260-11-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 11/28] maple_tree: use cached node end in mas_destroy()
+Date: Thu, 24 Oct 2024 21:19:52 +0800
+Message-Id: <20241024132009.2267260-12-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -86,108 +86,54 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S14
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrWUuw4rXF43Cr4rCFy7GFg_yoW5WF4Upa
-	4DWa45K39FyF18Krnavr45Zr9Fgr1ak3yUta47Gw15XFyDtr1fXF1DAa48uFs093s2vF13
-	Aw45C3WUCws7GaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
-	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pR4E__UUUUU=
+X-CM-TRANSID:gCh0CgCHusYpShpn7tb6Ew--.444S15
+X-Coremail-Antispam: 1UD129KBjvdXoWrur1UJF1rZry3tw1Dtw4DCFg_yoWDWrb_C3
+	W8Kr48uF4fJF4Iqa4FkFZ0qF1Yk34rJFsavw1xJFy5XF1jqrZ5t3s7WF4SkasIqayIya45
+	CF9Iqrsay3WjqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbvAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
+	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
+	F7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_Gc
+	Wl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1l
+	e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
+	8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
+	jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0x
+	kIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
+	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsG
+	vfC2KfnxnUUI43ZEXa7sREzuWJUUUUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 
-commit e9c52d8940cbfd94b36035bbebce7f55954e7728 upstream.
+commit 1f41ef12abf8538b3d82cdae14c06aa171cb71ce upstream.
 
-When looking for the next entry, don't recalculate the node end as it is
-now tracked in the maple state.
+The node end is set during the walk, so use the resulting end instead of
+re-fetching it.
 
-Link: https://lkml.kernel.org/r/20231101171629.3612299-6-Liam.Howlett@oracle.com
+Link: https://lkml.kernel.org/r/20231101171629.3612299-7-Liam.Howlett@oracle.com
 Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Cc: Peng Zhang <zhangpeng.00@bytedance.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/maple_tree.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ lib/maple_tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index d19fb14a9635..e0dcc8412da0 100644
+index e0dcc8412da0..3df7e3456205 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -4539,6 +4539,7 @@ static inline int mas_next_node(struct ma_state *mas, struct maple_node *node,
- 	unsigned long min;
- 	unsigned long *pivots;
- 	struct maple_enode *enode;
-+	struct maple_node *tmp;
- 	int level = 0;
- 	unsigned char node_end;
- 	enum maple_type mt;
-@@ -4591,6 +4592,10 @@ static inline int mas_next_node(struct ma_state *mas, struct maple_node *node,
- 		pivots = ma_pivots(node, mt);
+@@ -5587,7 +5587,7 @@ void mas_destroy(struct ma_state *mas)
  
- 	mas->max = mas_safe_pivot(mas, pivots, mas->offset, mt);
-+	tmp = mte_to_node(enode);
-+	mt = mte_node_type(enode);
-+	pivots = ma_pivots(tmp, mt);
-+	mas->end = ma_data_end(tmp, mt, pivots, mas->max);
- 	if (unlikely(ma_dead_node(node)))
- 		return 1;
- 
-@@ -4625,7 +4630,6 @@ static void *mas_next_slot(struct ma_state *mas, unsigned long max, bool empty,
- 	unsigned long pivot;
- 	enum maple_type type;
- 	struct maple_node *node;
--	unsigned char data_end;
- 	unsigned long save_point = mas->last;
- 	void *entry;
- 
-@@ -4633,12 +4637,11 @@ static void *mas_next_slot(struct ma_state *mas, unsigned long max, bool empty,
- 	node = mas_mn(mas);
- 	type = mte_node_type(mas->node);
- 	pivots = ma_pivots(node, type);
--	data_end = ma_data_end(node, type, pivots, mas->max);
- 	if (unlikely(mas_rewalk_if_dead(mas, node, save_point)))
- 		goto retry;
- 
- 	if (mas->max >= max) {
--		if (likely(mas->offset < data_end))
-+		if (likely(mas->offset < mas->end))
- 			pivot = pivots[mas->offset];
- 		else
- 			goto overflow;
-@@ -4650,11 +4653,11 @@ static void *mas_next_slot(struct ma_state *mas, unsigned long max, bool empty,
- 			goto overflow;
- 	}
- 
--	if (likely(mas->offset < data_end)) {
-+	if (likely(mas->offset < mas->end)) {
- 		mas->index = pivots[mas->offset] + 1;
- again:
- 		mas->offset++;
--		if (likely(mas->offset < data_end))
-+		if (likely(mas->offset < mas->end))
- 			mas->last = pivots[mas->offset];
- 		else
- 			mas->last = mas->max;
-@@ -4691,7 +4694,6 @@ static void *mas_next_slot(struct ma_state *mas, unsigned long max, bool empty,
- 			goto overflow;
- 
- 		mas->index = mas->last + 1;
--		/* Node cannot end on NULL, so it's safe to short-cut here */
- 		goto again;
- 	}
+ 		mas_start(mas);
+ 		mtree_range_walk(mas);
+-		end = mas_data_end(mas) + 1;
++		end = mas->end + 1;
+ 		if (end < mt_min_slot_count(mas->node) - 1)
+ 			mas_destroy_rebalance(mas, end);
  
 -- 
 2.39.2
