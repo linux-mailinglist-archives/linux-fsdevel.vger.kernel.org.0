@@ -1,140 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-32783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CCD9AE8CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AE49AE90A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 16:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313051C21AEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:30:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230611C2151A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDE71E571A;
-	Thu, 24 Oct 2024 14:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375951E2009;
+	Thu, 24 Oct 2024 14:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZCl7BX4x"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I72LaHE5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31451EABB9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D07CF16;
+	Thu, 24 Oct 2024 14:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780024; cv=none; b=nV6Fq0M+skL4vmyEaFucClDTg0rUyq/uzn7DUBrRMCHxjHEzhdlCqENY8YCjZ5P2+eaU/LJMyLBs9MdvlNjvPKbKHqBCRQLJom+tZDOWfe2OzK/LNJ4F6Ac7DG952KlVi+TNtvU5IzCmPRIA0h6Dw62zpJ2mN7hcvNTb4zrrbUo=
+	t=1729780741; cv=none; b=LUlsVUKG3TeaIjN2UfqwRoAC6Rj4w4yG+YGasX3CL8bKDoSSvyCZ7gCagxRbx8EYZPKFMVy4ZWsIrEoDvYvsRknfmJDWQNUnyFV31UW+gL4VQQQMr1tgKlP+apWYQDZoth2C/uld1QBvt2GhLQPbzQl727l3k+OFUiPlIwNfbeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780024; c=relaxed/simple;
-	bh=Br4rUo7jXSyDoQxwb4vji74KoTCk3I/0TKPiOd4IYHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1Zdm8TLZxipjug2hVfr5lhLvbN2Z7ePNl0uQ6sn/HU/B2A3yRTf2JhHmIB5jrdYX47VVO+bgGnmWgJshs70XmQTGntZQSJduAjb/sTUjAb3bAixy94qxCkdJX2MMXA1YMbK+UvqADB87FCkkxsewt/3+N5xYw7z7QANn5kM4+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZCl7BX4x; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so42650639f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 07:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729780021; x=1730384821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
-        b=ZCl7BX4xkrIFvVvZGHtyM/oy3pt/aKmBnCo6ikFH1ajyb9egT9T5XTsiV0hAaOO9k/
-         ps2A45qQcP8lCS/knovTMouiU4uGQWesQhIVdGo5v3UbWntib8/VTW3mro96iMJEsVyv
-         WmTXi3cvo38TqgLX8YQ7TDpG4gusvH7pOSb8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729780021; x=1730384821;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
-        b=bawxvhQvH9qQIG9mjiUXTTSAJMiZU07A2CnRgCWmQmlEsF4yTrupTLkHV9hVQ4D8Po
-         +SPvlJiuBS4oE+E+yB4AXiUqc8TEfyjsN7ZXRd++t9lsVDQYpgxF9vWpjDhyRFIY1enL
-         dOgPYTEezqJ/oQTaiOu0fmK6xhWmQ6xSoIWYPMZlRqf5QeSZ1w6fIzXsuVHCVXqN7eq6
-         MSHCaQ0LPrS/SqgFfiAmctdaI4n3ftCJfLRMYC3aT+66X/RtwW+bzRrouaHAUWpiJ9Ga
-         cBLw1xFqmbvPseT3qV39d+quKEzCqr+akXidzX1XDVnCTXaXjBwBSBCn9NHKr8Kn9PJC
-         g8rw==
-X-Gm-Message-State: AOJu0YwrpdzInKwyodQ8UOo3Kx2Pd/4ov3Hlu0DgIPgyDOf6JzgClbCs
-	HHrSy/i0SXVdZ6sU2I/d67CY6L1eVlLDcqjzkUe/23qtkT9jJxNDi4A2tQYra6E=
-X-Google-Smtp-Source: AGHT+IEjoNotzF3cjr6+gorjptn9Dul3pcmua2S6p0cxQk5f5nfOd26Q5xIzWEQ2ssLjTpxV/ceAyg==
-X-Received: by 2002:a05:6602:140a:b0:83a:c5dd:3000 with SMTP id ca18e2360f4ac-83b04041acfmr315071039f.6.1729780020797;
-        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a630571sm2729448173.147.2024.10.24.07.26.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
-Message-ID: <1c8674a0-d220-4349-88ea-780f0fed8545@linuxfoundation.org>
-Date: Thu, 24 Oct 2024 08:26:59 -0600
+	s=arc-20240116; t=1729780741; c=relaxed/simple;
+	bh=UOhI2z8bUD1H8XPNqw8r8CcHu55ylmwLfgFW8p34T0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KymByZYlv7LBSaZFY2jSneRSPJgrpyTaOsmhDBPV3LUHatkfXNMfXrCSku1wld4EUamejGQkDD2D3dYTAYS5QamSOjNnWA4hpP0IMPvVonTggY/KkdxGfrodzn8QnFbaZPFrN1z09sC/oRaJGbPBLLIn5RqaYAT67g9TEm8JjKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I72LaHE5; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729780739; x=1761316739;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UOhI2z8bUD1H8XPNqw8r8CcHu55ylmwLfgFW8p34T0Y=;
+  b=I72LaHE5Hck4YlUahIAsnHep8nSKb2ndQuq/1qu8ZqBuBVAnVEQ08iuY
+   dTQe0xgQXZhr4ScONEzf89ZoI0JzslpPAjqt9i9Li69e5rSaMeBvjKt+z
+   xiQECOMdgYuyd/mzJXq53/QSJl4uv9BB49lMSxCwE5R3c2gM1pG4MrTNF
+   lIO7UwmfDDvjdXNEQy5tcbb7KsCkTovMNstn5Ngl7ehaaiUozy56rpPEy
+   6pOF9CgltheGbBcxxVXB9T7CAKrSSo++AbFljbNvsXjIUIxxyooCtRRmg
+   Tc7/9Ldxdi6RieFWHOCk0rc2P/RQGXbyBdTrwaA+/GGotvDh4z2LCZHWH
+   Q==;
+X-CSE-ConnectionGUID: T2y0wQZoQNywe15RuUKS7g==
+X-CSE-MsgGUID: F+nA6+WYTKGClZqfl4+liw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="17042073"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="17042073"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 07:38:59 -0700
+X-CSE-ConnectionGUID: /pt0RsxpSbiesuSAeUBIqw==
+X-CSE-MsgGUID: GDg+ccIcQkytvgpjaSNG8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="80191661"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Oct 2024 07:38:57 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3yzH-000WX4-23;
+	Thu, 24 Oct 2024 14:38:55 +0000
+Date: Thu, 24 Oct 2024 22:38:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: elide zero range flush from partial eof zeroing
+Message-ID: <202410242220.ZfBg7XEr-lkp@intel.com>
+References: <20241023143029.11275-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org,
- sforshee@kernel.org, shuah@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241024095013.1213852-1-zhouyuhang1010@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241024095013.1213852-1-zhouyuhang1010@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023143029.11275-1-bfoster@redhat.com>
 
-On 10/24/24 03:50, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
-> 
-> Test case idmap_mount_tree_invalid failed to run on the newer kernel
-> with the following output:
-> 
->   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->   # idmap_mount_tree_invalid: Test terminated by assertion
-> 
-> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
-> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
-> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
-> returns 0 instead of -EINVAL as expected.
-> 
-> Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
-> So we can use "/mnt/B" instead of "/mnt/A" to make the test run
-> successfully with the following output:
-> 
->   # Starting 1 tests from 1 test cases.
->   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->   # PASSED: 1 / 1 tests passed.
-> 
+Hi Brian,
 
-Sounds like this code is testing this very condition passing
-in invalid mount to see what happens. If that is the intent
-this patch is incorrect.
+kernel test robot noticed the following build errors:
 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
-> ---
->   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> index c6a8c732b802..54552c19bc24 100644
-> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> @@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
->   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
->   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
->   
-> -	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
-> +	open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
->   				     AT_RECURSIVE |
->   				     AT_EMPTY_PATH |
->   				     AT_NO_AUTOMOUNT |
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.12-rc4 next-20241024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-thanks,
--- Shuah
+url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Foster/iomap-elide-zero-range-flush-from-partial-eof-zeroing/20241023-223311
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20241023143029.11275-1-bfoster%40redhat.com
+patch subject: [PATCH] iomap: elide zero range flush from partial eof zeroing
+config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20241024/202410242220.ZfBg7XEr-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410242220.ZfBg7XEr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410242220.ZfBg7XEr-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   powerpc-linux-ld: fs/iomap/buffered-io.o: in function `iomap_zero_iter':
+>> buffered-io.c:(.text+0x3f5c): undefined reference to `__moddi3'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
