@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-32746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB399AE658
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AB49AE65B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE429287254
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C891F2625E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CA61EBFF5;
-	Thu, 24 Oct 2024 13:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0EC1F8F0E;
+	Thu, 24 Oct 2024 13:25:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D731E7645;
-	Thu, 24 Oct 2024 13:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FA71E906F;
+	Thu, 24 Oct 2024 13:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776318; cv=none; b=Yvwp+LnoHB0luPHmBnoJW4jxBtPpVv4zHKgVNX1sNFEkA8eZecrjppxPKyDVA3Cht9JtpLuiL9qy6SJphyvVHbbZF5PZRDImvGHHIjoadLZAXaloR/Od7b+mcbRFT1tJ2CjaEQYjvutUdavkEM8qFycyuvASWFOJbd7ZqIDS4Yk=
+	t=1729776320; cv=none; b=CjqKaUdrwGn43/7jR088OTtZCZUsuFWycD3Y7PdgRZkEArbd5fJDMbcBPMlY/csiIh5P2Lvfo2YlcBVnXdgLspbYpYuk0O8nEUcTvJmyBjqev8nuaE4qrlufPRyXPISAy/FwcB7D1r0XS1f3WB2UZelgtY3j9Oz+xGTf6NBP4iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776318; c=relaxed/simple;
-	bh=j52ouEhBVSfVGFNJ1jw1qxVPuTAHKF6u7li8pHy9Uy8=;
+	s=arc-20240116; t=1729776320; c=relaxed/simple;
+	bh=BB87/4t9xHT7Dkdnn/QbaWmr5kbwoOL7sAOpfVfg/n0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lWvEgS/vtNGBtQjNDeSgHe7FZrU/yonn8vHgSeNVqE89AXSoEow8eHcxiOgTTJIK9rs85FanSdIGwhpLVL3j9BTAq+ldDwwHmF3y823Ef4Wsonv0P45y8MEVwQ1MViRJ6FVrEgzVM+uqCS7uicHL/SonexUmSJRkmQN7l+oRtSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=JlxYu4RcWIwHMblHBxxTZ7zfY57JHi8O8ZOyvWWPCYSAYXHChOF5GbQqeuMIimDEk7DS5ANkqSG1T2YfdYQz2E7hgpAXiOOohvcqySxqjN0otBRRhLOTMzdUPzkMX95jD9VvD0tmkGq6juHGZfEhoNoqYTq6GcmlMP1itndjTeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ68l5TKCz4f3jdh;
-	Thu, 24 Oct 2024 21:24:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZ68m16fYz4f3nbY;
+	Thu, 24 Oct 2024 21:24:56 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3CEDC1A0194;
-	Thu, 24 Oct 2024 21:25:13 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 6B1271A0568;
+	Thu, 24 Oct 2024 21:25:14 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S8;
-	Thu, 24 Oct 2024 21:25:12 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S9;
+	Thu, 24 Oct 2024 21:25:13 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -73,9 +73,9 @@ Cc: amd-gfx@lists.freedesktop.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 6.6 20/28] lib/maple_tree.c: fix build error due to hotfix alteration
-Date: Thu, 24 Oct 2024 21:22:17 +0800
-Message-Id: <20241024132225.2271667-5-yukuai1@huaweicloud.com>
+Subject: [PATCH 6.6 21/28] maple_tree: avoid checking other gaps after getting the largest gap
+Date: Thu, 24 Oct 2024 21:22:18 +0800
+Message-Id: <20241024132225.2271667-6-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
 References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
@@ -87,10 +87,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S8
-X-Coremail-Antispam: 1UD129KBjvJXoWrtr13CryUAF17Xw4rWw13XFb_yoW8Jr43pa
-	9rGr48K3yxuFyxC39Yqw40v3srXFn8Ww40qa4UGr18trn8Jr92q34ruFyI9ayfu34xA3Wa
-	gF4Ygw48WFnrZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S9
+X-Coremail-Antispam: 1UD129KBjvJXoW7GrW8Cw1xJw1UGFWrCw48JFb_yoW8Jr15pF
+	WDCw1Fg34Ivr1xCryDWa1Fqa4DA3Zaqw1xtayqkrnYqr4UK3Zag34Skw1F9a13W34kCw13
+	Ja1av348ta4Dt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -107,39 +107,40 @@ X-Coremail-Antispam: 1UD129KBjvJXoWrtr13CryUAF17Xw4rWw13XFb_yoW8Jr43pa
 	WIevJa73UjIFyTuYvjTRGg4SUUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Peng Zhang <zhangpeng.00@bytedance.com>
 
-commit 5143eecd2af2b5424f7b96d53f17bb4718e46bd3 upstream.
+commit 7e552dcd803f4ff60165271c573ab2e38d15769f upstream.
 
-Commit 0de56e38b307 ("maple_tree: use maple state end for write
-operations") was broken by a later patch "maple_tree: do not preallocate
-nodes for slot stores".  But the later patch was scheduled ahead of
-0de56e38b307, for 6.7-rc.
+The last range stored in maple tree is typically quite large.  By checking
+if it exceeds the sum of the remaining ranges in that node, it is possible
+to avoid checking all other gaps.
 
-This fixlet undoes the damage.
+Running the maple tree test suite in user mode almost always results in a
+near 100% hit rate for this optimization.
 
-Fixes: 0de56e38b307 ("maple_tree: use maple state end for write operations")
-Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Link: https://lkml.kernel.org/r/20231215074632.82045-1-zhangpeng.00@bytedance.com
+Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- lib/maple_tree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/maple_tree.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index d90f4b7e7511..905fa1143f8d 100644
+index 905fa1143f8d..1af83414877a 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -5524,7 +5524,7 @@ int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp)
- 	node_size = mas_wr_new_end(&wr_mas);
+@@ -1547,6 +1547,9 @@ static unsigned long mas_leaf_max_gap(struct ma_state *mas)
+ 		gap = ULONG_MAX - pivots[max_piv];
+ 		if (gap > max_gap)
+ 			max_gap = gap;
++
++		if (max_gap > pivots[max_piv] - mas->min)
++			return max_gap;
+ 	}
  
- 	/* Slot store, does not require additional nodes */
--	if (node_size == wr_mas.node_end) {
-+	if (node_size == mas->end) {
- 		/* reuse node */
- 		if (!mt_in_rcu(mas->tree))
- 			return 0;
+ 	for (; i <= max_piv; i++) {
 -- 
 2.39.2
 
