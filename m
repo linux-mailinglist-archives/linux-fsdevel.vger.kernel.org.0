@@ -1,246 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-32724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441709AE46B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 14:10:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D189AE5AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 15:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623D21C21E29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 12:10:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E38B2521E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2024 13:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477991D1739;
-	Thu, 24 Oct 2024 12:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6872C1DD0C1;
+	Thu, 24 Oct 2024 13:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II7RILky"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUwy91ey"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B569B1D1E72
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 12:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AF91DAC81;
+	Thu, 24 Oct 2024 13:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771800; cv=none; b=NE/QxsmP1Ay5MfrOKONW/dYSI73+MKUVkyhqIeUXp++ov2wTtLxB0nItM44J93a6k1pivAD4bFKs1k3wJxgmX29yNAG58FuIcOJfEHux2W3i/4ylYBnBVr+9lQfM9eeC9TFlbncaEh1/endpybwLyjGKEp6yvMoQF23ChT86Pbs=
+	t=1729775181; cv=none; b=hyUSP4FLmRYKBq1Atu52SVO6LUS/ywZaEWhOm+24W127mffqmA4QpjAe6VKV3z4AevAAoLA8bQ7YptrpXZ+uz0pHxUqAeek6RjEfIB8FgabfRjgcn2GRmoaYVvXxfP4vv4zp771yjOAbnXM+IOO14DMZGLK8/Yi4PI2/NhmA0kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771800; c=relaxed/simple;
-	bh=1x4d11aIFG1EZdWmBSrSH52hZelRmwZOy9d/XQFCGPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HiKjXFcdWL7XckfRGDy7+dTp21EWYweTBJXPscU1DvhG74wqiXj4jNZbiSPsCkqZCkdron80ZBKv+szuSCg5Q3vSPL9dmVjJBdmR0Cg1AVpzoMwd0JglqnCYQjre5Nb1Fkxhxz0mK6gj1Db+02ep8x8F8wWSkGAIyatTXyvcxeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II7RILky; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1729775181; c=relaxed/simple;
+	bh=aIlKmQ9ihfSARIg+FYKEOZAZucVXvsiEVelFMuAtHng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I452ma5fAzfdodjnmb7MogtLSxYsMOUsGUZn6tZBjp6qnpbxlt+aXyoGFU7t7haMDhu7F0PL8jkqytXI/EnJCxEUREQJSTYZiS7jiVS1MotmOCixj/iztZo7jIR4MiWnOlndCNEfrkGny1WZZtmDSVcgTbEhtLJku/jZ1DE6h58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUwy91ey; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e74900866so589840b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 05:09:58 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4609e784352so5615371cf.0;
+        Thu, 24 Oct 2024 06:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729771798; x=1730376598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729775179; x=1730379979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PIytQe80ylla7Sl/fe5LxDRRHtWVNhv8vhvelm/o17c=;
-        b=II7RILky/BD+W2OHkzJsK/T5pc3hrrbg2Hz1HWVGM7uvKJoYbYCg0kQWXp2sNnVbZh
-         qISRb1Z3oKaUrsuzy4VwZ5XQsf9VbJAuOyrvT9toVuNL+I+YwAkfxQ8W/HpluZ6h7poG
-         QX1TLXY5gVQw3vg4jtxylTmYRdRUt3eJuDMip50agvX5ng3ZY7igL38Wl2BJGEkz0arL
-         s3O9jKaIWEJGXvuaaPa6x/CLckla/8VLS4JkQV+GCAYJQ8sbPJpgY1QPOFJc6rrbfCp0
-         mKP5Nz5MzGnXtxNYREnzFsdNvwiCQu8yhBw/lrtxgVyqO8Oohip+B0ctyjl+y6YgH35v
-         ymXw==
+        bh=EV440ACCLF9AlGZ+8I23qHeuAgKIxh1fOgjLQ6Jdp94=;
+        b=IUwy91eyZGO0Tj3CZCx3bmDNUYyrq0ij/X3t6JKvTz/Zxr+IO5XcOnWp/bZwXR9ghQ
+         U31TW+pTGiTUyZ5dHRBdNB1oLanpIE/sKZBn6exLRH8CtV6zv6Xm+h2gY1qb3BSP79qf
+         0N2N46S+pdb/s3hKYiftYLRoSoQNo+Of7LBi2dU1aEoJFWyk6kcbJdwbHOPiZyaIr73D
+         lgJgnMG66ms6trgkU+gRk5p6FEl1CuwlJsFizTMDtUo/vFULXouaiPdICXt+uQclnVAk
+         jTb2YVk455NKpS4ySAnr1RnHDwj5/MCHE1kYoLpVKjKM3xbFB5vfbe+6++Tqa3NvwLAl
+         TVSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729771798; x=1730376598;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729775179; x=1730379979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PIytQe80ylla7Sl/fe5LxDRRHtWVNhv8vhvelm/o17c=;
-        b=PmILX+xXzfrTN4w+chC/exef3q0qem30zutP13PR4mn/BDqmU4KbqCoIpjI8lrVIBR
-         CxCCb08enFKaaL/CHUgq4lJ0edClXzKJey+CWCXiLO0C9VgH3oaor/K0kJqma1gKu786
-         kkcWTNHf4p/RMZ1RJl5LYz7fkD73XReRxEwvq1HdwL1inqfJXiS3kH5X7Sf6wmDDF5RO
-         YqJVfwsqyGvfOcVqzKEatC30kJ2QVFxsLOSFLVkecGm+WoAbIuBzglTP82ZXbG64L5as
-         wMbpslzVRA4glc/RlEQgk8FOFIswyG76NHvFUOHeZsGgXpRgEKbNw/ckBx6FbqMYUbq6
-         B5UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxYX6Xdg4e6YdUL3p9Vqe1N4aY0FC2agGnToo4U3n4OdDpnYogLOEu5Tysf6AB02PIvK8opbsRGqVsW/u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3uxweTSyQUqMiJwh9NbhsLJsMm+iBbGPiZ1FsEGtomSu4W0pY
-	RiG+rDBVLc1ufEq2poogQBWXOxot+buOG4js9GGTuEDmXT7I9670
-X-Google-Smtp-Source: AGHT+IEWx31qom/T9NynWTwcS94S2CIs7HjdghwcESDW4t/deHJ+ZjzUUv7QSQwXyIjcl4756ZTDog==
-X-Received: by 2002:a05:6a20:43a7:b0:1d8:d3b4:7a73 with SMTP id adf61e73a8af0-1d9898fda0cmr2115741637.4.1729771797871;
-        Thu, 24 Oct 2024 05:09:57 -0700 (PDT)
-Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabda22fsm8492096a12.88.2024.10.24.05.09.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 05:09:57 -0700 (PDT)
-Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 4C46BD5124B; Thu, 24 Oct 2024 21:09:55 +0900 (JST)
-From: Hajime Tazaki <thehajime@gmail.com>
-To: linux-um@lists.infradead.org,
-	jdike@addtoit.com,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc: thehajime@gmail.com,
-	ricarkol@google.com,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 02/13] x86/um: nommu: elf loader for fdpic
-Date: Thu, 24 Oct 2024 21:09:10 +0900
-Message-ID: <db0cc5bc7e55431f1ac6580aa1d983f8cfc661fb.1729770373.git.thehajime@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1729770373.git.thehajime@gmail.com>
-References: <cover.1729770373.git.thehajime@gmail.com>
+        bh=EV440ACCLF9AlGZ+8I23qHeuAgKIxh1fOgjLQ6Jdp94=;
+        b=p1uhEjK6Qyv/Gf26bPrUC95khU15hLY6KcDfreUCpkid7Ib5+ip2d0CO7vpyax9qWn
+         OPmdSNQh5WxJSmqzK4XG4FIw+7qFdW16zcl3EWB1+I5M9YBsjUcKIh1UnErfAeaYT5L7
+         6YkkDkjsnhNf9jbmC0FU0xLI/LHH49lz6wDwJozBUDK0NTFJY3YN0o6snnHIUmw7m2bV
+         6VDKdeQkdAfy9K/P3aIBTfjZDlII6N62csjRh83iYt5KVHPLge99MViM8gmLYbhodCl1
+         G7H6qCIKzBafgP0LU5LZ9xZezjUcSGui7m4yb+NkTnMyFfyTloI6swKLFs9Phkkp5HWQ
+         N+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUawHG+xYB3s/m2spNLqv8q1bQObnn24V5uP5ieAEmPYiilYfVg7daFEbh5pIJnm+3t+IxCm6o8XCobmDI=@vger.kernel.org, AJvYcCVvUyJReoCIMrQ/xObR40vFDPNUZD9hU6ng6rRkmHb89IMnk+Og718q8qOp+yRzBG377A6oTCxqaleL@vger.kernel.org, AJvYcCWcptVhwct6vKbLJWHdd3bbT8BeNRP/5z7SBWXdknaY5UUVVV/4VKXiqlvpoOv1X70h4cTtpO8zeHX+WFxJQQ==@vger.kernel.org, AJvYcCXevy/KyyYGPVEOdYUIyrXzSzCosYMPaSNgjlKKB5YyFDQEHMm/uSEDiDdeOwzE9DoINRfj2vYR+LfheZBupw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNv2yLwNzuEW+G/p4lukqsVElr5AgM6wDzOjPgD/9voM1cSkCF
+	RUFtPCT8Vk6HuV1SiQoAShj88zNt1QaelPczXQ5jqcKXtviLQZHjgfOU8IlODKFfiZg3EFBuC9c
+	B2gLk3ws+9YQxUA90lwt0pnXqrFQ=
+X-Google-Smtp-Source: AGHT+IEIz8fnfbns+VURqZ8Fl6RXgEBHOkqEMI4OdzbZoLgol68YL2Busr8J0hKYCSW/XqtN8XJgmuR8iMUv5K38FlE=
+X-Received: by 2002:ac8:5b8d:0:b0:460:39be:10a8 with SMTP id
+ d75a77b69052e-461146d6ef7mr65129111cf.32.1729775178536; Thu, 24 Oct 2024
+ 06:06:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1725481503.git.josef@toxicpanda.com> <4b235bf62c99f1f1196edc9da4258167314dc3c3.1725481503.git.josef@toxicpanda.com>
+In-Reply-To: <4b235bf62c99f1f1196edc9da4258167314dc3c3.1725481503.git.josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 24 Oct 2024 15:06:07 +0200
+Message-ID: <CAOQ4uxgxCHmKLhFHMiD39SWw7evZmfkG9dkyk2X=qQc+zXjn-w@mail.gmail.com>
+Subject: Re: [PATCH v5 03/18] fsnotify: generate pre-content permission event
+ on open
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
-loader, FDPIC ELF loader.  In this commit, we added necessary
-definitions in the arch, as UML has not been used so far.  It also
-updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
+On Wed, Sep 4, 2024 at 10:29=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> From: Amir Goldstein <amir73il@gmail.com>
+>
+> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on open depending on
+> file open mode.  The pre-content event will be generated in addition to
+> FS_OPEN_PERM, but without sb_writers held and after file was truncated
+> in case file was opened with O_CREAT and/or O_TRUNC.
+>
+> The event will have a range info of (0..0) to provide an opportunity
+> to fill entire file content on open.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/namei.c               |  9 +++++++++
+>  include/linux/fsnotify.h | 10 +++++++++-
+>  2 files changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 3a4c40e12f78..c16487e3742d 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3735,6 +3735,15 @@ static int do_open(struct nameidata *nd,
+>         }
+>         if (do_truncate)
+>                 mnt_drop_write(nd->path.mnt);
+> +
+> +       /*
+> +        * This permission hook is different than fsnotify_open_perm() ho=
+ok.
+> +        * This is a pre-content hook that is called without sb_writers h=
+eld
+> +        * and after the file was truncated.
+> +        */
+> +       if (!error)
+> +               error =3D fsnotify_file_perm(file, MAY_OPEN);
+> +
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
----
- arch/um/include/asm/mmu.h            |  5 +++++
- arch/um/include/asm/ptrace-generic.h | 17 +++++++++++++++++
- arch/x86/um/asm/elf.h                |  9 +++++++--
- arch/x86/um/asm/module.h             | 19 +------------------
- fs/Kconfig.binfmt                    |  2 +-
- 5 files changed, 31 insertions(+), 21 deletions(-)
+Josef,
 
-diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
-index a3eaca41ff61..01422b761aa0 100644
---- a/arch/um/include/asm/mmu.h
-+++ b/arch/um/include/asm/mmu.h
-@@ -14,6 +14,11 @@ typedef struct mm_context {
- 	/* Address range in need of a TLB sync */
- 	unsigned long sync_tlb_range_from;
- 	unsigned long sync_tlb_range_to;
-+
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+	unsigned long   exec_fdpic_loadmap;
-+	unsigned long   interp_fdpic_loadmap;
-+#endif
- } mm_context_t;
- 
- #endif
-diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
-index 4696f24d1492..fefa7631394e 100644
---- a/arch/um/include/asm/ptrace-generic.h
-+++ b/arch/um/include/asm/ptrace-generic.h
-@@ -29,6 +29,12 @@ struct pt_regs {
- 
- #define PTRACE_OLDSETOPTIONS 21
- 
-+#ifdef CONFIG_BINFMT_ELF_FDPIC
-+#define PTRACE_GETFDPIC		31
-+#define PTRACE_GETFDPIC_EXEC	0
-+#define PTRACE_GETFDPIC_INTERP	1
-+#endif
-+
- struct task_struct;
- 
- extern long subarch_ptrace(struct task_struct *child, long request,
-@@ -44,6 +50,17 @@ extern void clear_flushed_tls(struct task_struct *task);
- extern int syscall_trace_enter(struct pt_regs *regs);
- extern void syscall_trace_leave(struct pt_regs *regs);
- 
-+#ifndef CONFIG_MMU
-+#include <asm-generic/bug.h>
-+
-+static inline const struct user_regset_view *task_user_regset_view(
-+	struct task_struct *task)
-+{
-+	WARN_ON_ONCE(true);
-+	return 0;
-+}
-+#endif
-+
- #endif
- 
- #endif
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index 6052200fe925..4f87980bc9e9 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -8,6 +8,8 @@
- #include <asm/user.h>
- #include <skas.h>
- 
-+#define ELF_FDPIC_CORE_EFLAGS  0
-+
- #ifdef CONFIG_X86_32
- 
- #define R_386_NONE	0
-@@ -188,8 +190,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
- 
- extern unsigned long um_vdso_addr;
- #define AT_SYSINFO_EHDR 33
--#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
--
-+#define ARCH_DLINFO						\
-+do {								\
-+	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
-+	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
-+} while (0)
- #endif
- 
- typedef unsigned long elf_greg_t;
-diff --git a/arch/x86/um/asm/module.h b/arch/x86/um/asm/module.h
-index a3b061d66082..4f7be1481979 100644
---- a/arch/x86/um/asm/module.h
-+++ b/arch/x86/um/asm/module.h
-@@ -2,23 +2,6 @@
- #ifndef __UM_MODULE_H
- #define __UM_MODULE_H
- 
--/* UML is simple */
--struct mod_arch_specific
--{
--};
--
--#ifdef CONFIG_X86_32
--
--#define Elf_Shdr Elf32_Shdr
--#define Elf_Sym Elf32_Sym
--#define Elf_Ehdr Elf32_Ehdr
--
--#else
--
--#define Elf_Shdr Elf64_Shdr
--#define Elf_Sym Elf64_Sym
--#define Elf_Ehdr Elf64_Ehdr
--
--#endif
-+#include <asm-generic/module.h>
- 
- #endif
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..419ba0282806 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
- config BINFMT_ELF_FDPIC
- 	bool "Kernel support for FDPIC ELF binaries"
- 	default y if !BINFMT_ELF
--	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
-+	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
- 	select ELFCORE
- 	help
- 	  ELF FDPIC binaries are based on ELF, but allow the individual load
--- 
-2.43.0
+Please change that for v6 to:
 
+                   error =3D fsnotify_file_area_perm(file, MAY_OPEN,
+&file->f_pos, 0);
+
+...
+
+>         return error;
+>  }
+>
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index 7600a0c045ba..fb3837b8de4c 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -168,6 +168,10 @@ static inline int fsnotify_file_area_perm(struct fil=
+e *file, int perm_mask,
+>                 fsnotify_mask =3D FS_PRE_MODIFY;
+>         else if (perm_mask & (MAY_READ | MAY_ACCESS))
+>                 fsnotify_mask =3D FS_PRE_ACCESS;
+> +       else if (perm_mask & MAY_OPEN && file->f_mode & FMODE_WRITER)
+> +               fsnotify_mask =3D FS_PRE_MODIFY;
+> +       else if (perm_mask & MAY_OPEN)
+> +               fsnotify_mask =3D FS_PRE_ACCESS;
+>         else
+>                 return 0;
+>
+> @@ -176,10 +180,14 @@ static inline int fsnotify_file_area_perm(struct fi=
+le *file, int perm_mask,
+>
+>  /*
+>   * fsnotify_file_perm - permission hook before file access
+> + *
+> + * Called from read()/write() with perm_mask MAY_READ/MAY_WRITE.
+> + * Called from open() with MAY_OPEN without sb_writers held and after th=
+e file
+> + * was truncated. Note that this is a different event from fsnotify_open=
+_perm().
+>   */
+>  static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+>  {
+> -       return fsnotify_file_area_perm(file, perm_mask, NULL, 0);
+> +       return fsnotify_file_area_perm(file, perm_mask, &file->f_pos, 0);
+>  }
+
+... and drop this change, because this change will make readdir()
+start reporting odd file ranges and HSM won't be able to tell the
+difference between an opendir() and a readdir().
+
+And I will send an extra patch for reporting an event with
+range [size..size] for truncate(size).
+
+Thanks,
+Amir.
 
