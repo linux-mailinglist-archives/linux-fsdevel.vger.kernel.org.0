@@ -1,98 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-32831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D089AF68B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 03:14:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D039AF6AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 03:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD2328172B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 01:14:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC7EB22213
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 01:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEC51F5E6;
-	Fri, 25 Oct 2024 01:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEECF38389;
+	Fri, 25 Oct 2024 01:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q3drv2SM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C291173F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 01:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A99374EA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 01:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818848; cv=none; b=VE13k9fXFRaMYpyJ7u68Bb+JYuXNQ0o3CvT76fW3mYRujr9as7cCy3NA5bmbiIZuLqSrzOtRpdEymbVIHIkrPsGuVa9OYq2NJobNRc5uIp9ulL5BhCjZbrY8vv8fupD4eXA65GDV1ePLTGqWdzsaNaM8PNx9w5Y5xZ2NqzlidNY=
+	t=1729819410; cv=none; b=fDiWr3T9vEV/iAsF2qpYUInzjSpc6EezaPxiCEJnYuZXic0Qh1qv2ems2A6moEsog376qJvQWBkH1XgiOgNRt5ANymgi9uxYVmk/TyLfHHKvuCpHvCVIAhNREGpYpv66VkvgNnVArOBBW29yovqmaiNSd2HzDY45yXWXHE/t6eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818848; c=relaxed/simple;
-	bh=pDpDrDPgqn1rWuPf4vWJjM/QhwM5DXeysn5Qug/olq4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dSsY5IytLgZUbc/MC87L+ykQrgoQzmEjQxSjvc0xRj1pTQgwtZXXopIdXI9R8fV8d/k2xBnHtt4duOETZ4f8jR/Ha6qE2L1rqfLTZMV0Lay0tQnUgke8YqVzwwVk31nQS5x0QtVim7P7Hw7tyVdZtpdaK3QmQcp5IHc2G8n90ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso11376995ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2024 18:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729818846; x=1730423646;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cOZsZyIJmZeHEQPVNHkWmGsoWMx76fs5Fvyz/nsiQgY=;
-        b=lIb6JXScpGn88Z4+eOlfbcsYeI1vtIbKGefGVmPRgkkJavdxIjskCtr/nj5qIFZsT0
-         hKfpKIvhi2zefj2B0+9DC45at74CWAf+nX3oP8MyBBAzNQeiHedqzx0Kx3NLDwYKU2BJ
-         Q9fUMGjPhF4Wuqk1v2FLmjikGz1ySnO8+JpyUqVhAmE9nHEhbb/iLHm3zDGGULBgLxvI
-         4HTLtGVSrEJyPrkJLvV33DiFN9qXFWrUTgtO13yuwen5PHbdNdoZwYEx1Uug7uQPpyvG
-         sgcf7XdhdIY4kbN8a/bdSCCkv5JEIQ3VdtAK6UqRfN3/igv6vQzhSN+a/q8kkZSTvAZh
-         KbCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWFoG9EvZSbUJFdf0s0GkcaBvlp9KfkC+NkqYrLP+76iXeYlYzF66sitqA1AJkW8Xc2+MeIure0X95Akoj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQfGcxuGfmovV/DSCnKS8SKON7VO3Nzb4f/o7jCDptSXzGYsua
-	Mp+RTi7ezlXI9zWROvCZ1/FSJGZhldeDd+bY68hFCD9s4hZ8zlNJjMGeVz1+mf2116qrNaKoz3l
-	IekSQf145rNjS9dl6eFhQ3UzGSj7LQf/1g8If55ic2Q/HxYbkgOp6ZbM=
-X-Google-Smtp-Source: AGHT+IGOjltPBrz6CEsrXS0y1SoDlaDKKPoKA5PSdGZVz6ycSLBxXb8Nnn0qnpjr6zRJ+fl8sGud8IaiQJe6+LFu8+phyUzjp/zo
+	s=arc-20240116; t=1729819410; c=relaxed/simple;
+	bh=IUPcFU72Wqp5Dg1E9kEYGARjEIt5X7BWuw24f9jFEeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pjCAaeXYlROLS41cpvr4exigPyYZcD+cbV2Xtrzv4NqxZhvTIJ1lHhoRtNKeApdcIWG2h1wGbqSTao87jozS2CHyqirl6KKt+372/Bt8Jn/34OXAZBiixc7S5I+X1NCrhFsesXw9ON7+6q8+rKdjEKqV4Vjm/Mjo8p+ZuBIaxhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q3drv2SM; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729819405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C0UraTOk35e4AElBVGDH4f7gupo0690G0MiExShjFXI=;
+	b=q3drv2SMSDDq+5iNa1kyRlCdabxBwgswqn/pkL3XoD+0ZmVo4QkCRnAtGljj8xiqdXVZ1k
+	SCaryAAwPXlknWjndB6ps+rIOUc2X/xUmbhvRzvV6mAeOMqlqQzR2cejsaP7dgrdbSeYQA
+	zGDaXbzCY7Ld+3S2qOGVHP1WR7ma/OY=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v1 0/6] memcg-v1: fully deprecate charge moving
+Date: Thu, 24 Oct 2024 18:22:57 -0700
+Message-ID: <20241025012304.2473312-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:3a0:915d:a4a7 with SMTP id
- e9e14a558f8ab-3a4d592fb67mr91969855ab.2.1729818845820; Thu, 24 Oct 2024
- 18:14:05 -0700 (PDT)
-Date: Thu, 24 Oct 2024 18:14:05 -0700
-In-Reply-To: <000000000000a519120616f973cb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671af0dd.050a0220.2eb763.00ce.GAE@google.com>
-Subject: Re: [syzbot] [fs] INFO: rcu detected stall in sys_mount (7)
-From: syzbot <syzbot+de026b20f56e1598e760@syzkaller.appspotmail.com>
-To: andrii@kernel.org, asmadeus@codewreck.org, ast@kernel.org, 
-	bpf@vger.kernel.org, bristot@kernel.org, daniel@iogearbox.net, 
-	eddyz87@gmail.com, ericvh@kernel.org, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, juri.lelli@redhat.com, 
-	kpsingh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lucho@ionkov.net, martin.lau@linux.dev, 
-	peterz@infradead.org, sdf@google.com, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
-	vineeth@bitbyteword.org, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+The memcg v1's charge moving feature has been deprecated for almost 2
+years and the kernel warns if someone try to use it. This warning has
+been backported to all stable kernel and there have not been any report
+of the warning or the request to support this feature anymore. Let's
+proceed to fully deprecate this feature.
 
-commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Mon May 27 12:06:55 2024 +0000
+Changes since RFC:
+- Writing 0 to memory.move_charge_at_immigrate is allowed.
+- Remove the memcg move locking in separate patches.
 
-    sched/rt: Remove default bandwidth control
+Shakeel Butt (6):
+  memcg-v1: fully deprecate move_charge_at_immigrate
+  memcg-v1: remove charge move code
+  memcg-v1: no need for memcg locking for dirty tracking
+  memcg-v1: no need for memcg locking for writeback tracking
+  memcg-v1: no need for memcg locking for MGLRU
+  memcg-v1: remove memcg move locking code
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126a5e40580000
-start commit:   3b68086599f8 Merge tag 'sched_urgent_for_v6.9_rc5' of git:..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f47e5e015c177e57
-dashboard link: https://syzkaller.appspot.com/bug?extid=de026b20f56e1598e760
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1775971b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1290b320980000
+ .../admin-guide/cgroup-v1/memory.rst          |  82 +-
+ fs/buffer.c                                   |   5 -
+ include/linux/memcontrol.h                    |  59 --
+ mm/filemap.c                                  |   1 -
+ mm/memcontrol-v1.c                            | 958 +-----------------
+ mm/memcontrol-v1.h                            |   6 -
+ mm/memcontrol.c                               |  14 -
+ mm/page-writeback.c                           |  20 +-
+ mm/rmap.c                                     |   1 -
+ mm/vmscan.c                                   |  11 -
+ 10 files changed, 8 insertions(+), 1149 deletions(-)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+-- 
+2.43.5
 
-#syz fix: sched/rt: Remove default bandwidth control
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
