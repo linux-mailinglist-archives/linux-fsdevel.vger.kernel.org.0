@@ -1,123 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-32906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01BE9B085A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:33:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1D59B0940
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 18:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E9E1F24537
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 15:33:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 484B4B23F8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 16:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9191494CC;
-	Fri, 25 Oct 2024 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A2D185E50;
+	Fri, 25 Oct 2024 16:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XOCiIT0N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVLfDdbv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7B470837
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 15:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C2E17333D;
+	Fri, 25 Oct 2024 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870383; cv=none; b=rqdM7j4XMf/IbRjVtyEBPfDe+Uo5bGR1pi0UJWX3FLzu8DA7ho2e4DHP5jGY6IVYlCRmyT/MUyZglIFvxc/nTOLmf+m8elR6JGvV/RkQWijEiyhXMSgbaHXEUh/uwgDh8VqtLKqRlcF5/E4v4BYyNA8JVGE9yXV1Ev2j3ysToLA=
+	t=1729872583; cv=none; b=MnEO2XHggvol/XytjMOzBlA77Mmg5lhamnb5qDGCVCnIj7kpDWGHg2so9zcXahaGjPIFynpE/kVkVKNG+lbGPW1XE6YqMozfd/HPlHuYF5o33FN300SUiQjIP4KdcCFcr5Ld6vgTrxbslx4UXZvJbkKMEzwp/he8joP7u05iSO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870383; c=relaxed/simple;
-	bh=dr+y7iTGtWeeXfUuodUQl5tLluhiPCudNwaGMNX74z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bUatgQftS9f9CB4sBmozbdcaVXengCEGSabaaPUySCsowzNdkKnVzeakKnRcmCMDWauYTqfOxE4l5yahb3H/VpPjqo+ZkO0KzxL3KTt/XQMXB+Cxb+m3VPwgk56AQA4DE5p0xCX5AHw2kYsAlpAHiA4acQ5QbmNSHF5IQXEMqEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=XOCiIT0N; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4609b968452so13953621cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 08:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1729870380; x=1730475180; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OZfk6Xd+iHgwqL80w/veikPrz/acZmk1d1UazX7V4Iw=;
-        b=XOCiIT0N2L7TQhVc8ePUXFN8mUrdok1Am8XvAoSUSMj5kkXTROYOcTqzrLmYRRH4Wq
-         mF/2wcXaB3mUhFHaKaOhbumJ/uErk4TZxf5mzsyjkfJVzYXoQ84H7ahHoqpUmcdPEHrO
-         AfIy57A/AiPt+cgM33eUBdMttq3+WgILgf82c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729870380; x=1730475180;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OZfk6Xd+iHgwqL80w/veikPrz/acZmk1d1UazX7V4Iw=;
-        b=ADbQY2HPxcMku2MkROFBCB22FSqB13vswU5mUy4tVVozasFM7rsskLUOEzYimk8WmO
-         xMtBMoUyJJxVQ/jxpPJRk7qeiD6+2DepdqVU8YFWZe1WBQ4LjG6kQ2qb/g9Bsbw44pPA
-         z3F9PVHquaep4HPfP8PME/JxCWHp8wWxzigf949oRQljv2baGuOsjIdJMdElFse/9l2D
-         iKsVtGcCToqFFFBlMQCatGeu01P3w0pO+Hy5tOkxcGo9f9e7qGsQS5mqrBZSI8Bc7n+O
-         q75LTveZw5VnvqiykIciFv/sbOjc/ZnVkI/1db+QOQfU8IMAMOXAtxDTzNCE71r7Jzkn
-         z/XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLhr6DsKfdiPASPy8Op44cXUgsvTLyCXq3wszNictFTVjF0Th2+eM/y7sJihaMoaofPv8zXkCLNlUbjgzR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX+1kniU8ZUG3X5rdlbZd65J5tzkdTfahdVjp3a9CMy2RqVkST
-	0IR/qfzNWoAmydanqSssuYTa98CEf7qzHIo8a2/7aN7E3VzP0hkTjtcGCnGpqbHJg+z6gUn6YSH
-	GGc+5JQ6tGDEgRW6p2jZPgPeEO8pKi+TSbPPMdjEqOOltcPXO
-X-Google-Smtp-Source: AGHT+IEgN6oTYbsl5OF1VE38es0Me99VfID3QP83mB4HzoUefsOcErEmenp25jkyu8vXC94P4Hi/pZOg0sRSJLRN+cU=
-X-Received: by 2002:a05:622a:60b:b0:456:801c:a20d with SMTP id
- d75a77b69052e-461145b7453mr128997211cf.2.1729870380224; Fri, 25 Oct 2024
- 08:33:00 -0700 (PDT)
+	s=arc-20240116; t=1729872583; c=relaxed/simple;
+	bh=MSN2XEY66f4jBsAT7ndKMBQc3NEOSQBib4x+RE82ioQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8s960DfQchuO3LBa0PPJMrjbWsvbyyounyGadjZsLEI+AWPrJD2ZohC20O86KVzYLpHhCpwUrAqUoKPM+BSzWjlX6Rn2ts9Pj1NEzYewFOPwdfI6r/RMe+Set/jUEfE2ksb0P7YfnN0+yzGhpmdvMuJUl4yPGEilaQyxIWH/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVLfDdbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E91C4CEC3;
+	Fri, 25 Oct 2024 16:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729872583;
+	bh=MSN2XEY66f4jBsAT7ndKMBQc3NEOSQBib4x+RE82ioQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lVLfDdbvz//coRMXuJCKQp8z8K1FnHrgqCKHX6mR+O+7rGBOivv91o3dBNILvhnaz
+	 /SZIHv7q6UaY5p3cmLusqEDCQhloTXJZpjs2e1DsoTEnp/AiRlpve64b2HWIf86wZv
+	 pnQAmMyzUfoxRP91Djv7YCgPIIu3zAwS2X5lgjKbRyj1hI6JDk/4mWg5bMzwLTqMj2
+	 E3osqnTBnehMbuXpIKGgCSjM2MXsFQKRIbNQscBlcHnPHv+u701L4juuSPFjpcPhhE
+	 iX8NCktPET+9QxqPHmEKB13blpUszm3qC3qUuNpvN7T/Jz2tFNVXTeEJ2o8id3l358
+	 WlE9ZcgUUa8mw==
+Date: Fri, 25 Oct 2024 09:09:42 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/6] ext4: Add statx support for atomic writes
+Message-ID: <20241025160942.GJ2386201@frogsfrogsfrogs>
+References: <cover.1729825985.git.ritesh.list@gmail.com>
+ <e6af669b237690491ecff0717039e28e949208c8.1729825985.git.ritesh.list@gmail.com>
+ <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com>
+ <87y12cmr5o.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <20241014182228.1941246-3-joannelkoong@gmail.com> <CAJfpegs+txwBQsJf8GhiKoG3VxLH+y9jh8+1YHQds11m=0U7Xw@mail.gmail.com>
- <CAJnrk1a5UaVP0qSKcuww2dhLkeUqdkri_FEyVMAuTtvv3NMu9Q@mail.gmail.com>
- <ntkzydgiju5b5y4w6hzd6of2o6jh7u2bj6ptt24erri3ujkrso@7gbjrat65mfn>
- <CAJfpeguS-xSjmH2ATTp-BmtTgT0iTk2_4EMtnoxPPcepP=BCpQ@mail.gmail.com>
- <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
- <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com>
- <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
- <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
- <t7vafpbp4onjdmcqb5xu6ypdz72gsbggpupbwgaxhrvzrxb3j5@npmymwp2t5a7>
- <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
- <CAJnrk1aB3MehpTx6OM=J_5jgs_Xo+euAZBRGLGB+1HYX66URHQ@mail.gmail.com>
- <CAJnrk1YFPZ8=7s4m-CP02_416syO+zDLjNSBrYteUqm8ovoHSQ@mail.gmail.com> <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
-In-Reply-To: <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 25 Oct 2024 17:32:49 +0200
-Message-ID: <CAJfpegvL0fVcaap3JOhuJcvmH-9Ws45oKjW1UvHqtArhnkUXKQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, hannes@cmpxchg.org, linux-mm@kvack.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y12cmr5o.fsf@gmail.com>
 
-On Fri, 25 Oct 2024 at 03:38, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+On Fri, Oct 25, 2024 at 03:38:03PM +0530, Ritesh Harjani wrote:
+> John Garry <john.g.garry@oracle.com> writes:
+> 
+> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
+> >> This patch adds base support for atomic writes via statx getattr.
+> >> On bs < ps systems, we can create FS with say bs of 16k. That means
+> >> both atomic write min and max unit can be set to 16k for supporting
+> >> atomic writes.
+> >> 
+> >> Later patches adds support for bigalloc as well so that ext4 can also
+> >> support doing atomic writes for bs = ps systems.
+> >> 
+> >> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> >> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> >> ---
+> >>   fs/ext4/ext4.h  |  7 ++++++-
+> >>   fs/ext4/inode.c | 14 ++++++++++++++
+> >>   fs/ext4/super.c | 32 ++++++++++++++++++++++++++++++++
+> >>   3 files changed, 52 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> >> index 44b0d418143c..a41e56c2c628 100644
+> >> --- a/fs/ext4/ext4.h
+> >> +++ b/fs/ext4/ext4.h
+> >> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+> >>   	 */
+> >>   	struct work_struct s_sb_upd_work;
+> >>   
+> >> +	/* Atomic write unit values */
+> >> +	unsigned int fs_awu_min;
+> >> +	unsigned int fs_awu_max;
+> >> +
+> >>   	/* Ext4 fast commit sub transaction ID */
+> >>   	atomic_t s_fc_subtid;
+> >>   
+> >> @@ -1820,7 +1824,8 @@ static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
+> >>    */
+> >>   enum {
+> >>   	EXT4_MF_MNTDIR_SAMPLED,
+> >> -	EXT4_MF_FC_INELIGIBLE	/* Fast commit ineligible */
+> >> +	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
+> >> +	EXT4_MF_ATOMIC_WRITE	/* Supports atomic write */
+> >
+> > Does this flag really buy us much?
+> >
+> 
+> I felt it is cleaner this way than comparing non-zero values of
+> fs_awu_min and fs_awu_max.
 
-> Actually as for FUSE, IIUC the writeback is not guaranteed to be
-> completed when sync(2) returns since the temp page mechanism.  When
-> sync(2) returns, PG_writeback is indeed cleared for all original pages
-> (in the address_space), while the real writeback work (initiated from
-> temp page) may be still in progress.
+What does it mean when MF_ATOMIC_WRITE is set and fs_awu_* are zero?
+The awu values don't change at runtime, so I think you can save yourself
+an atomic test by checking (non-atomically) for awu_min>0.
 
-Correct, this is the current behavior of fuse.
+(I don't know anything about the flags, those came after my time iirc.)
 
-I'm not against changing this for the privileged server case.  I.e. a
-server running with certain privileges (e.g. CAP_SYS_ADMIN in the
-global namespace) then it should be able to opt in to waiting sync(2)
-behavior.
+--D
 
-> I think this is also what Miklos means in:
-> https://lore.kernel.org/all/CAJfpegsJKD4YT5R5qfXXE=hyqKvhpTRbD4m1wsYNbGB6k4rC2A@mail.gmail.com/
->
-> Though we need special handling for AS_NO_WRITEBACK_RECLAIM marked pages
-> in sync(2) codepath similar to what we have done for the direct reclaim
-> in patch 1.
-
-I'd love to get rid of the tmp page thing completely if the same
-guarantees can be implemented in the mm.
-
-Thanks,
-Miklos
+> Now that you pointed at it - Maybe a question for others who might have
+> the history of which one to use when - or do we think there is a scope
+> of merging the two into just one as a later cleanup?
+> 
+> I know that s_mount_flags was added for fastcommit and it needed the
+> state manipulations to be done in atomic way. Similarly s_ext4_flags
+> also was renamed from s_resize_flags for more general purpose use. Both
+> of these looks like could be merged isn't it?
+> 
+> 
+> 
+> >>   };
+> >>   
+> >>   static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
+> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> >> index 54bdd4884fe6..897c028d5bc9 100644
+> >> --- a/fs/ext4/inode.c
+> >> +++ b/fs/ext4/inode.c
+> >> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+> >>   		}
+> >>   	}
+> >>   
+> >> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
+> >> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> >> +		unsigned int awu_min, awu_max;
+> >> +
+> >> +		if (ext4_test_mount_flag(inode->i_sb, EXT4_MF_ATOMIC_WRITE)) {
+> >
+> > I'd use ext4_inode_can_atomicwrite() here, similar to what is done for xfs
+> >
+> 
+> Sure since it is inode operation, we can check against ext4_inode_can_atomicwrite().
+> 
+> 
+> >> +			awu_min = sbi->fs_awu_min;
+> >> +			awu_max = sbi->fs_awu_max;
+> >> +		} else {
+> >> +			awu_min = awu_max = 0;
+> >> +		}
+> >> +
+> >> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+> >> +	}
+> >> +
+> >>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+> >>   	if (flags & EXT4_APPEND_FL)
+> >>   		stat->attributes |= STATX_ATTR_APPEND;
+> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> >> index 16a4ce704460..f5c075aff060 100644
+> >> --- a/fs/ext4/super.c
+> >> +++ b/fs/ext4/super.c
+> >> @@ -4425,6 +4425,37 @@ static int ext4_handle_clustersize(struct super_block *sb)
+> >>   	return 0;
+> >>   }
+> >>   
+> >> +/*
+> 
 
