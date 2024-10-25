@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-32921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18219B0C26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 19:51:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544449B0C3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 19:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7941C20AB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42761B22E72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7DE1FB89E;
-	Fri, 25 Oct 2024 17:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7EA200B9E;
+	Fri, 25 Oct 2024 17:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaWo9SHs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkMqeKnO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D7B18C02E;
-	Fri, 25 Oct 2024 17:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA2718CC19;
+	Fri, 25 Oct 2024 17:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878643; cv=none; b=ZJi8gMc4zAlDRToTJcvAvgGw0/NyHijf3+I3rT/WpUhJgNBXO8tuPdFlSudm4cPcXuLKCwbL/GobcF8JRiic7RNVjNUP1zdKDZb0DGXJTKsIkwcnHj03245IXqEmL4dGaV3IyQCoeSI/OZfC/AY4bu1jmiNh5TroD5UtGrqGDbE=
+	t=1729878882; cv=none; b=gSVUR1i45jtTykXbc05EOwpKUBPK+NZrS8/3bKtqdlJvzztoke3G5ovB9zV+JX5Lpv01j6wBKjtoNxeQtdpJcIM4XR7cAZxQFDwOWqYsf1gikJ1ihJ+oo/34n2PnH+9KD0R63xm5yOMVurNQNvoVlYowKMzTUU9oF+9/o4PCIrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878643; c=relaxed/simple;
-	bh=Dgf0Y4s6QVh/AJGYZhjcKZ5u8LJTOFqyvfuz7txKybU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=d45hQQyRlzTF7+Qcb4zmXc9YBwrFPIFetaiqdpJaOBZ09auEBcWzFMWBpkt6S+9F+NZ83vDwrHuyjzKtmMOmc2i2gpdcLJUHBf6zVhErrMeaSRXmCkaSnZ1kr0pzzE27hC30CMoaHgn8bNGmJKsascAnj8XE87itA08o0P1mUjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaWo9SHs; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1729878882; c=relaxed/simple;
+	bh=aATAafsKTLVSgQN8HhKPZWX/2XBJPznbOwmRE0uSSZs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=CLTpG0EbI/4Rpga/+dac1YmEAvwpXFPZL0jv/o+NnMC2UkNcZkiOBKnDzVfa86byXxBTQB0jQYOSR4uoDePliUggQeTCzSRMuh/+w+DwPwmWmL57bbOZnnT2J46aASroib2/jvzeGu9mRwe7cqUbpu4uyFe9PVuHDxqTQyREjvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkMqeKnO; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cceb8d8b4so12932855ad.1;
-        Fri, 25 Oct 2024 10:50:41 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20ceb8bd22fso18545165ad.3;
+        Fri, 25 Oct 2024 10:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729878640; x=1730483440; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729878879; x=1730483679; darn=vger.kernel.org;
         h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hXO015SY00U52dE4urHGMPnobIGL1/gKdqDsZCitIQA=;
-        b=ZaWo9SHsp38r2T2U/pKkiDjzXtlYdpySjl0vvIWQrNzYYmnky6Uv0L5IlZ+7laKo+j
-         PG03qodtUaquaVVCe+2AX+uAOi+jCezvVvntjdXnf+i9IBJNBb2+Kpb2C828CNJIqxDz
-         4AGwnZqWNL+5uYBGIeJ6TcUVLVWuAZ3qPD52o/fdOIrZhXRK4oUy5G7onbAmqGKAVCXl
-         qrNEiW5TlQwqEv/tLH1h2QF7INIOK7Jj7f1dYEAppStgFKgpN/ErA0BYEG0JKGvclavU
-         aV43Jw8Spm4nna8M5NPrcL3rIpyJNUOJmQpIVDTvkpDn/L1C1eDl0ZVtMQjoZ6BfR9XD
-         hHdg==
+        bh=DQaE4l6YD8LIHuY6N/RnTrXda4hlyzV45z0O+q1pIik=;
+        b=TkMqeKnOBwzQqMfm9/zKPWBv0siuxHgbxthdW+0LHESFIEZJ+xhIftYGp/QFGBWvSF
+         2/jJACHHMZiQf70i9QjfgF9LMlRLS7qHZTBMCMw7ao2NOUbfVfoe2s56yCa/MJ9oQt+m
+         wquMRndKpEuo2piSfv8fuYHeQkgWSAQRtN2vdNm0PPMmmLvxQFzu1f8A4sI7tGKwlySj
+         ecsD85shqAEjt+WzsDlnzP1zQoLEHA/yp5L9XZbkJ7oogi0VmizNawuJbB2bR+WVHAEP
+         DsYvLKBSlzVSFTF7Sfp34KjL8qQFR5ZADsl1g19El3dZ4eWOqqA0YAyXjodTrK0acx7r
+         JVdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729878640; x=1730483440;
+        d=1e100.net; s=20230601; t=1729878879; x=1730483679;
         h=references:message-id:date:in-reply-to:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXO015SY00U52dE4urHGMPnobIGL1/gKdqDsZCitIQA=;
-        b=BpW4aokXjTBkAY6xhfhhxu6C/jys52o01VKNt3RrFWaOS9/eXbq4B5TaVeHFceJFOB
-         3M+jxOPBxBtbZkCZ+SzmO+QRm27ffdAvoIHW3mIYqEAey1pTgMtRXDo/VnMGh5ORKgXx
-         46CZ9kRuOHITa/qDOI7X0VbX0GhMgHdvOGzutUkKdm5b4XHwLv9RLg5wTwRR/kY76Z2i
-         0F4ta05B0sK+eP5DW5GA+TcvyuD0AQ4Ut6FHe7Z0vp/ETWK9PCfSOESL02jgDdEWEBZN
-         icu7bPmzjztF76B+0EfrDtKTKpfAjAzPayGy6w7ttS5FktlXsx2tRx/F8WU6R/HKrBGu
-         xrqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNYyZEGWH+nJCZjHYn9bJJycRSIcRehRpOYiuSnuNiqY1ySLYnBQ5k9U51hkeibwWKmXECeNgzw2EyOXndng==@vger.kernel.org, AJvYcCUuiHFT2yz1PQXXTsJdrw9IBRmLkiDE8i65lvj8fTIAa8qxmjbJSlTXABNgQU5NisvlrFmylNgF7uaC@vger.kernel.org, AJvYcCWd7Z64TSJLtHCPHtrKK1oNLd8xckW8cLZ/eQpt3UfkxKWQ1tCYjE1FLC95is85Rltj0Urht8n7JF4K@vger.kernel.org, AJvYcCXHGmWn0c0q6rz9gYXA3jZR5Z0+QaAZv0ga0u1rd/qF0W0p7E+06SwUzUwGOyrgj+Bazc16VuUBpw2dQ4Pb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw73EhON4lqcp971NFMuEerSHl0IHa/wVDfR2axbfGVXQZlCKqg
-	zwzujsLplPmW5jekTB8gIcYM9RBqRkzfYoFwHnwsalefLCZVb3NIe03rVQ==
-X-Google-Smtp-Source: AGHT+IFfkH0cnfWPkAORX05I+avgZ9f2e5kGrP39f/spd+jEqOTI9dQ+/HXY3i3aDkLGnT3ND3MjoQ==
-X-Received: by 2002:a17:902:ea0c:b0:20c:9026:93a with SMTP id d9443c01a7336-20fb89daaf3mr101315385ad.19.1729878640407;
-        Fri, 25 Oct 2024 10:50:40 -0700 (PDT)
+        bh=DQaE4l6YD8LIHuY6N/RnTrXda4hlyzV45z0O+q1pIik=;
+        b=wj4AvvFABkfChUgwCjz9Gza4raZthnsmuwku8EJnlBu/HPrI45dwG2uGEOcyWmw+yX
+         BneIEYc9UQDGLUVDp+pZjK/V/ARcoBrHv+mTiZaWtUEzqb5ROurDB3y6ujaS4cTdLAQ0
+         rEzleiHSsvsYZwPYMDnmQ2vwNKXyKeNbfdN8TGI7Ns2LSalQrtd1pYKmy2mib8KgrzYw
+         4pzr2YGV+Sxqp3wYGI84HnY0QAr8a1lWYM5ZUw8G4jnJkfdT2+Gjirr8yNe3kh2e2KeN
+         gv5/OYPyPAjs6xBJgHb9ancFi1fECFmMD0Dk4mKHKhvl/WfTK2ipwMiO77vneon4DwpB
+         +PjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB9yFSnDgMGB8b80eTpmBysfGbQ1qvj4gnjAXkz6YXCAuLqB+wzAUxS84RpKjpxnSabKZDrcyzc5qoHWh5@vger.kernel.org, AJvYcCXdXMSa62aBFfdmKwH2WOadEcPZpQu4fiWuhrxUWSvmHn8BFAMcDl6hYgSUkqXdPbA+S0C7EGTs6zAU@vger.kernel.org, AJvYcCXwkb96dmgHWb4j80I2VI1motRfHkzUadMn6Ws3Wc2N5Egx2iGLnI2dKA5PcgsckLnSoWym6vun/fJMP5o+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaMd3fiCyb0ArR/56oE2aRH/I6jsD11LAEO9yg2QJr7UHQ6Aue
+	zsh8e3iTGcnsGf8TkEhbqKPG58S7H66qiIMZPrYXYrv3NFAUa8c6SH6JLg==
+X-Google-Smtp-Source: AGHT+IHgpZD74pGmUZu5PDGZa3rs7b/XgzIh/UswNGAEmsb5V0PR763xsGIDpgYdz38U5Z0W8fip+A==
+X-Received: by 2002:a17:902:ecc5:b0:20c:c086:4998 with SMTP id d9443c01a7336-20fab31ce28mr153954485ad.55.1729878879195;
+        Fri, 25 Oct 2024 10:54:39 -0700 (PDT)
 Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dc66sm11822085ad.101.2024.10.25.10.50.36
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc013392sm11960055ad.142.2024.10.25.10.54.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:50:39 -0700 (PDT)
+        Fri, 25 Oct 2024 10:54:38 -0700 (PDT)
 From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/6] ext4: Check for atomic writes support in write iter
-In-Reply-To: <20241025161131.GK2386201@frogsfrogsfrogs>
-Date: Fri, 25 Oct 2024 23:20:11 +0530
-Message-ID: <87msism5rg.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <319766d2fd03bd47f773d320577f263f68ba67a1.1729825985.git.ritesh.list@gmail.com> <b6f456bb-9998-4789-830d-45767dbbfdea@oracle.com> <87wmhwmq01.fsf@gmail.com> <20241025161131.GK2386201@frogsfrogsfrogs>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, John Garry <john.g.garry@oracle.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for DIO atomic writes
+In-Reply-To: <20241025161632.GL2386201@frogsfrogsfrogs>
+Date: Fri, 25 Oct 2024 23:21:22 +0530
+Message-ID: <87ldycm5ph.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com> <20241025161632.GL2386201@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,69 +80,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
 "Darrick J. Wong" <djwong@kernel.org> writes:
 
-> On Fri, Oct 25, 2024 at 04:03:02PM +0530, Ritesh Harjani wrote:
->> John Garry <john.g.garry@oracle.com> writes:
+> On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
+>> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
+>> also add a WARN_ON_ONCE and return -EIO as a safety net.
 >> 
->> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
->> >> Let's validate using generic_atomic_write_valid() in
->> >> ext4_file_write_iter() if the write request has IOCB_ATOMIC set.
->> >> 
->> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> >> ---
->> >>   fs/ext4/file.c | 14 ++++++++++++++
->> >>   1 file changed, 14 insertions(+)
->> >> 
->> >> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
->> >> index f14aed14b9cf..b06c5d34bbd2 100644
->> >> --- a/fs/ext4/file.c
->> >> +++ b/fs/ext4/file.c
->> >> @@ -692,6 +692,20 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->> >>   	if (IS_DAX(inode))
->> >>   		return ext4_dax_write_iter(iocb, from);
->> >>   #endif
->> >> +
->> >> +	if (iocb->ki_flags & IOCB_ATOMIC) {
->> >> +		size_t len = iov_iter_count(from);
->> >> +		int ret;
->> >> +
->> >> +		if (!IS_ALIGNED(len, EXT4_SB(inode->i_sb)->fs_awu_min) ||
->> >> +			len > EXT4_SB(inode->i_sb)->fs_awu_max)
->> >> +			return -EINVAL;
->> >
->> > this looks ok, but the IS_ALIGNED() check looks odd. I am not sure why 
->> > you don't just check that fs_awu_max >= len >= fs_awu_min
->> >
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> ---
+>>  fs/ext4/file.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
 >> 
->> I guess this was just a stricter check. But we anyways have power_of_2
->> and other checks in generic_atomic_write_valid(). So it does not matter. 
->> 
->> I can change this in v2. 
+>> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+>> index f9516121a036..af6ebd0ac0d6 100644
+>> --- a/fs/ext4/file.c
+>> +++ b/fs/ext4/file.c
+>> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>>  			   dio_flags, NULL, 0);
+>> -	if (ret == -ENOTBLK)
+>> +	if (ret == -ENOTBLK) {
+>>  		ret = 0;
+>> +		/*
+>> +		 * iomap will never return -ENOTBLK if write fails for atomic
+>> +		 * write. But let's just add a safety net.
 >
-> Also please fix the weird indenting in the if test:
+> I think it can if the pagecache invalidation fails, so you really do
+> need the safety net.
+
+Ah, right! So in that case I should remove WARN_ON_ONCE and correct
+the comment too.
+
+> I suspect that the xfs version of this series
+> needs it too, though it may have fallen out?
 >
-> 		if (len < EXT4_SB(inode->i_sb)->fs_awu_min) ||
-> 		    len > EXT4_SB(inode->i_sb)->fs_awu_max)
-> 			return -EINVAL;
+
+I think so yes. Looks like it got missed.
+
+
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 >
 > --D
+>
 
-Got it!
+Thanks for pointing that out.
 
 -ritesh
 
->
->> Thanks!
+>> +		 */
+>> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
+>> +			ret = -EIO;
+>> +	}
+>> +
+>>  	if (extend) {
+>>  		/*
+>>  		 * We always perform extending DIO write synchronously so by
+>> -- 
+>> 2.46.0
 >> 
->> >> +
->> >> +		ret = generic_atomic_write_valid(iocb, from);
->> >> +		if (ret)
->> >> +			return ret;
->> >> +	}
->> >> +
->> >>   	if (iocb->ki_flags & IOCB_DIRECT)
->> >>   		return ext4_dio_write_iter(iocb, from);
->> >>   	else
->> 
->> -ritesh
 >> 
 
