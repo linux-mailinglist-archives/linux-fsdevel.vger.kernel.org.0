@@ -1,190 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-32978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6619B10F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 22:56:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080F99B10F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 22:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFC428263A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 20:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A731C1F21650
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 20:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E5A21F220;
-	Fri, 25 Oct 2024 20:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F37188583;
+	Fri, 25 Oct 2024 20:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U4ne3AtH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3hXKSq3F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6F3215C7A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 20:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D89217F5A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 20:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729889032; cv=none; b=c0/FprwJw8LILZKxAF2wVVMkjNSBYDpR0tZvCkgH4WYEI34HPfVtG+sREIQCSYLYV0Z1CbSiDuhf4eNtQjc9bA6k5hh/GD/NVXGp5IWRjHpQnsJNX4Dlc1jWwc1ovA3Lm8lVg/Hcm5Z6cKU1d1RL//2tMtL7jhYpHfu8OYoSYk0=
+	t=1729889177; cv=none; b=YxKbfeLnSXmgi36BIJ4P6EQnRAYQTnTIkuiLKcW0CRIeJqr1ohtZoN1fAg0sdYLkPTPkmXRqJvw2DHndjeouQDuJB0hnGYeKzb3ymeWdCXN5ypl9eFbaN0kDOA97jkCDqG502+07rGX+8qlF88gqFqOHs5GdDTZiEU7n1qnQ51g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729889032; c=relaxed/simple;
-	bh=YfHQHHklQqGthguUT+hofehz3Evx2ahQywNsAF+2OGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VgG878vwUHpWg8Vi1G/t0gtoaXDytITXziusWXzPXXT7CxWklFjNuaSHKkcRIPHwj17mwe1AzNBO7eW16ZXPuWnsIwCCDPBbAIJAB2Cs6+XFt93BmILIrcy3yy+HT9QO48pssuTuPTyFNEPkxluHb4SEil3GI4iZGwHOUDozdpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U4ne3AtH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729889028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jlfv2ApsSBgn//KdBsSlx8BkotK5+tCpg2808yZLllw=;
-	b=U4ne3AtHIEV/4H8+XCiF+5OSpc2dXCK1eRVzxH6QfzpWmDXV0fLTJJXh97I7VTUu1P6EPn
-	Y4+kg/C+6lf29tt0k/6Pq4+OlRE0Lkb0H3wAIIVHbTm2c5mstSoJKx9ARYNKonrjavjzHz
-	zxdl4XOSQYQh6SMW1RFeQQT3Av/nHgk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-228-u5Lv1EpXN9KW8rs1n0j3Wg-1; Fri,
- 25 Oct 2024 16:43:45 -0400
-X-MC-Unique: u5Lv1EpXN9KW8rs1n0j3Wg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6E6719560A7;
-	Fri, 25 Oct 2024 20:43:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9ADD73000198;
-	Fri, 25 Oct 2024 20:43:36 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com,
-	Chang Yu <marcus.yu.56@gmail.com>
-Subject: [PATCH v2 31/31] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
-Date: Fri, 25 Oct 2024 21:39:58 +0100
-Message-ID: <20241025204008.4076565-32-dhowells@redhat.com>
-In-Reply-To: <20241025204008.4076565-1-dhowells@redhat.com>
-References: <20241025204008.4076565-1-dhowells@redhat.com>
+	s=arc-20240116; t=1729889177; c=relaxed/simple;
+	bh=7OjgxgcFpHb7JvddmlgxKTeqVqiDsG6PlfVaXdPijic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xh2/Q5loSIYu8MqZcFxTGgpFBceDAOO/XUu5AZNKVH/8Ms9Ipq9uA5SUlP7/ebaDSO980sBgZSLv0rhTsPHk4oFoIteXoMbl5Dp5DGhT+cw1E+fE9Jms5qut8xqUhLz8no1e1ysEskdl9G8V7Mn8mr3GPsanEP+b/1+RRM5xed0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3hXKSq3F; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so39a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 13:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729889174; x=1730493974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OgArj2sfdFB4qVbxBgOgR+jv4VFDljw4jij8q8rRVTc=;
+        b=3hXKSq3F0h32Ck7E7IUfKnmRbyL8O5TV6YLvdHyo3ul+Ele1YQjd74bYszMPh3eWdx
+         TOtW4VlLPN7mlDQWBdgoT5fnqtBWhqSaNt2p/QfFRzIWEENAscHxCYwBCqxLS1NP7+H7
+         C2w5bgVt7qNjThLIGXzrLWA97UgOkx1PR+GWjG3ZxAk4OpRvWKedr5B9QsBck6drns/B
+         WhWDlIEY86OAd5V1AU8rGO1Un0OXF7A54VTHA1c1ahrXcl6qDx321chsb6VavYPN9Itu
+         2Vaooe8xjxMl//jE918qPX28T1wueM5I6Q52Ob0yXzk9A/sgVN2ys+1EEm4iwpWaBkll
+         TUXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729889174; x=1730493974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OgArj2sfdFB4qVbxBgOgR+jv4VFDljw4jij8q8rRVTc=;
+        b=tTYhgHNomFBDr2wZAyf4fQ9ycbtAJf6vIWMEe6n1AVyqH3/hO9WtOYFmzkB+/MrYMu
+         acsZ5x0cCAFfVqtWuGwaWBKVrRj0AZVvtuj2sDYOjawwSV8KklR2vw32U4mtdlc1kENH
+         cj222eo2jiyFjXvu0VfKKcazoZ7TvsqBgmvlTUOz9t/xXq39PQ0o3fS9mf4rk91rRzIS
+         v6a9/vLfTNm2bBUXik2eXdnxm96+Rt5vwp6lzT7hlP35Oi4OXk7UzwJoUnQekbl0pwKA
+         +NZTnVT08kBwvr4JqqlgQri6r00pLHvPaWG4ezj/0BVvu5wo966jSw+2Q6Y6Or4mKkdJ
+         Y7Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIoL1x4dsDV3gFac494Of/h4qx++bxcipGaO4A0bW566Ch/RvLbvdp7nSjcWklMOaCnvvT1lwcaXR/n6lG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZjXB5Y0X9wPjv/lxggj6OrQ7ZVf6H3dhDUFosxmvmmMN7bC/r
+	g1TrUG3yTkH/WEIGe9TtfZJjEYySVMrSVNqO5HIT31Caa+WUD9AnVjA07/9UT3EpRtyLyMUZYKQ
+	bdLbkJjkxsmstVm3QCVC1xliuTBmlNIgmYMiZ
+X-Google-Smtp-Source: AGHT+IGULzuuzOcRLsI6w7DPzBotsDb1OXf7TITCdCtdmDCP6Nnq1oMu2FocMJ2KwCC/1u8FSn21QOssEDmORUPM72k=
+X-Received: by 2002:a05:6402:35c9:b0:5c8:a0fd:64f0 with SMTP id
+ 4fb4d7f45d1cf-5cbbfc222b5mr1118a12.2.1729889173133; Fri, 25 Oct 2024 13:46:13
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org> <20241007-brauner-file-rcuref-v2-3-387e24dc9163@kernel.org>
+In-Reply-To: <20241007-brauner-file-rcuref-v2-3-387e24dc9163@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 25 Oct 2024 22:45:35 +0200
+Message-ID: <CAG48ez045n46OdL5hNn0232moYz4kUNDmScB-1duKMFwKafM3g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] fs: port files to file_ref
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It seems that it's possible to get to netfs_writeback_unlock_folios() with
-an empty rolling buffer during buffered writes.  This should not be
-possible as the rolling buffer is initialised as the write request is set
-up and thereafter maintains at least one folio_queue struct therein until
-it gets destroyed.  This allows lockless addition and removal of
-folio_queue structs in the buffer because, unlike with a ring buffer, the
-producer and consumer each only need to look at and alter one pointer into
-the buffer.
+On Mon, Oct 7, 2024 at 4:23=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> Port files to rely on file_ref reference to improve scaling and gain
+> overflow protection.
+[...]
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 4b23eb7b79dd9d4ec779f4c01ba2e902988895dc..3f5dc4176b21ff82cc9440ed9=
+2a0ad962fdb2046 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -178,7 +178,7 @@ static int init_file(struct file *f, int flags, const=
+ struct cred *cred)
+>          * fget-rcu pattern users need to be able to handle spurious
+>          * refcount bumps we should reinitialize the reused file first.
+>          */
+> -       atomic_long_set(&f->f_count, 1);
+> +       file_ref_init(&f->f_ref, 1);
 
-Now, the rolling buffer is only used for buffered I/O operations as
-netfs_collect_write_results() should only call
-netfs_writeback_unlock_folios() if the request is of origin type
-NETFS_WRITEBACK, NETFS_WRITETHROUGH or NETFS_PGPRIV2_COPY_TO_CACHE.
+It is good that you use file_ref_init() here to atomically initialize
+the file_ref; however, I think it is problematic that before this,
+alloc_empty_file() uses kmem_cache_zalloc(filp_cachep, GFP_KERNEL) to
+allocate the file, because that sets __GFP_ZERO, which means that
+slab_post_alloc_hook() will use memset() to zero the file object. That
+causes trouble in two different ways:
 
-So it would seem that one of the following occurred: (1) I/O started before
-the request was fully initialised, (2) the origin got switched mid-flow or
-(3) the request has already been freed and this is a UAF error.  I think the
-last is the most likely.
 
-Make netfs_writeback_unlock_folios() report information about the request
-and subrequests if folioq is seen to be NULL to try and help debug this,
-throw a warning and return.
+1. After the memset() has changed the file ref to zero, I think
+file_ref_get() can return true? Which means __get_file_rcu() could
+believe that it acquired a reference, and we could race like this:
 
-Note that this does not try to fix the problem.
+task A                          task B
+                                __get_file_rcu()
+                                  rcu_dereference_raw()
+close()
+  [frees file]
+alloc_empty_file()
+  kmem_cache_zalloc()
+    [reallocates same file]
+    memset(..., 0, ...)
+                                  file_ref_get()
+                                    [increments 0->1, returns true]
+  init_file()
+    file_ref_init(..., 1)
+      [sets to 0]
+                                  rcu_dereference_raw()
+                                  fput()
+                                    file_ref_put()
+                                      [decrements 0->FILE_REF_NOREF, frees =
+file]
+  [UAF]
 
-Reported-by: syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Chang Yu <marcus.yu.56@gmail.com>
-Link: https://lore.kernel.org/r/ZxshMEW4U7MTgQYa@gmail.com/
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/write_collect.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
 
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 3d8b87c8e6a6..4a1499167770 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -21,6 +21,34 @@
- #define NEED_RETRY		0x10	/* A front op requests retrying */
- #define SAW_FAILURE		0x20	/* One stream or hit a permanent failure */
- 
-+static void netfs_dump_request(const struct netfs_io_request *rreq)
-+{
-+	pr_err("Request R=%08x r=%d fl=%lx or=%x e=%ld\n",
-+	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
-+	       rreq->origin, rreq->error);
-+	pr_err("  st=%llx tsl=%zx/%llx/%llx\n",
-+	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
-+	pr_err("  cci=%llx/%llx/%llx\n",
-+	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued_to));
-+	pr_err("  iw=%pSR\n", rreq->netfs_ops->issue_write);
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		const struct netfs_io_subrequest *sreq;
-+		const struct netfs_io_stream *s = &rreq->io_streams[i];
-+
-+		pr_err("  str[%x] s=%x e=%d acnf=%u,%u,%u,%u\n",
-+		       s->stream_nr, s->source, s->error,
-+		       s->avail, s->active, s->need_retry, s->failed);
-+		pr_err("  str[%x] ct=%llx t=%zx\n",
-+		       s->stream_nr, s->collected_to, s->transferred);
-+		list_for_each_entry(sreq, &s->subrequests, rreq_link) {
-+			pr_err("  sreq[%x:%x] sc=%u s=%llx t=%zx/%zx r=%d f=%lx\n",
-+			       sreq->stream_nr, sreq->debug_index, sreq->source,
-+			       sreq->start, sreq->transferred, sreq->len,
-+			       refcount_read(&sreq->ref), sreq->flags);
-+		}
-+	}
-+}
-+
- /*
-  * Successful completion of write of a folio to the server and/or cache.  Note
-  * that we are not allowed to lock the folio here on pain of deadlocking with
-@@ -87,6 +115,12 @@ static void netfs_writeback_unlock_folios(struct netfs_io_request *wreq,
- 	unsigned long long collected_to = wreq->collected_to;
- 	unsigned int slot = wreq->buffer.first_tail_slot;
- 
-+	if (WARN_ON_ONCE(!folioq)) {
-+		pr_err("[!] Writeback unlock found empty rolling buffer!\n");
-+		netfs_dump_request(wreq);
-+		return;
-+	}
-+
- 	if (wreq->origin == NETFS_PGPRIV2_COPY_TO_CACHE) {
- 		if (netfs_pgpriv2_unlock_copied_folios(wreq))
- 			*notes |= MADE_PROGRESS;
+2. AFAIK the memset() is not guaranteed to atomically update an
+"unsigned long", so you could see an entirely bogus torn counter
+value.
 
+The only reason this worked in the old code is that the refcount value
+stored in freed files is 0.
+
+So I think you need to stop using kmem_cache_zalloc() to allocate
+files, and instead use a constructor function that zeroes the refcount
+field, and manually memset() the rest of the "struct file" to 0 after
+calling kmem_cache_alloc().
+
+>         return 0;
+>  }
+>
 
