@@ -1,92 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-32904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B109B07FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F4C9B084A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA209283280
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 15:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8071F212EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 15:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2493E1F76A9;
-	Fri, 25 Oct 2024 15:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4FA1422D4;
+	Fri, 25 Oct 2024 15:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFhg8LRD"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BV/VLkhq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815A221A4BB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 15:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E26C6F099
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 15:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869523; cv=none; b=KYX1u8vy6vnB96P/cbdQlg5kwUVGYLnrHGjMYF6zSWnb3O1p2c0hWBoWy7Q24TEovTSNKNgIFDhmLt8z8VPYkNUfNmWmtZe/ntO6uKtWt2v2wC5hr47jL8w8+YjjosUCb4G7XGX+yY/J1PFmZaasZaaPyRanVrOpcgKVFEnOi9Q=
+	t=1729870223; cv=none; b=Ju8k62zqIOQjCdGFP783+z4uFVvc09ZUUjlHqzKGqrYz9dDhDgubGMQ7zAO09kI8k84IcxHw5OBScUO1grxuPYrMv2PhIN+T0o2hfNP/qFwv1z9hEErFwoVwjmfe7vlkTTzknAI+4ZGMQgrjoBlboScmBqG2JWQ8htiwwsN3VRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869523; c=relaxed/simple;
-	bh=BeEXV28irBZzHBjDKgKUNZwmW90+xp5SZ1oSfEXepIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odiKPF3laDWrNWnuvhFWDoysKTPeerAIQ/yknpXsb/e4kwinzf6lHpRw4HDgOSHoA7ZTEt4SXvDV+nH2dxWZbfqK1hbt8iuVWfFntKyXc0dFpm//LzmwXEuafQeL7Dd0vxGXQUxUjkZWtW+FsoU6vQqvdMQzaZckp3eYygvQvNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFhg8LRD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344DCC4CEC3;
-	Fri, 25 Oct 2024 15:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729869522;
-	bh=BeEXV28irBZzHBjDKgKUNZwmW90+xp5SZ1oSfEXepIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aFhg8LRDWF62tuSZ0C5GETLILU8t3gpQfa8HueEzgX6xjh8T2zMrkjZVtmObyIbvd
-	 coZBw1GXzvITvMrnOwWwJXDFbnHGTyr177CKwCtx50Dgr8y/3rKq4x+aV2Ipbn/8Id
-	 WQ7tjlgiAh5UoeFSvkVmf52/mXjcB6Wm3SinNZDYRXcZhG60kS/sSZAPx+Aq5A8Qxd
-	 ZRJhCy7uxG5IKnVMzKwKCkdwdpDQTRZe9HD6WHjBc4uRDPjvRV+k46n/P2tXDhKJFA
-	 IgWIIiS2t5O2YD0TR0T5NAs8JWIfzMGeHbeE/xfnpimPgWpToHXN+ac84XmB33gUS1
-	 aOe9fxIc7ZmFA==
-Date: Fri, 25 Oct 2024 17:18:38 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>
-Cc: Theodore Ts'o <tytso@mit.edu>, "Darrick J. Wong" <djwong@kernel.org>, 
-	sunjunchao2870@gmail.com, 
-	Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>, Christian Brauner <christian@brauner.io>
-Subject: Re: [REGRESSION] generic/564 is failing in fs-next
-Message-ID: <20241025-siegen-botanik-46606fef0098@brauner>
-References: <20241018162837.GA3307207@mit.edu>
- <20241019161601.GJ21836@frogsfrogsfrogs>
- <20241021-anstecken-fortfahren-4dd7b79a5f45@brauner>
- <20241023194253.GH3204734@mit.edu>
- <20241024090611.0cff2423@canb.auug.org.au>
+	s=arc-20240116; t=1729870223; c=relaxed/simple;
+	bh=NdKEYU7SSmomiQox6PG8vZzeDfCa97hRQnFFhOzpm54=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=K0NGg3ac0sBTxcuFtry9mjTUWOPvdsHsuQBkozZV4YVBo4NJNqRJMg4NqoJbpz9d1nK0AaXsxG/ge6mAOdf89dCx7XpZPgIWUDKMREp6FSA52ocleM4s36Sl0qcWRuCv4pRvFFoo39KkMYBdnHhqoWdyKIG1L1OZQjmSfghF2ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BV/VLkhq; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460dce6fff9so14678501cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 08:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1729870219; x=1730475019; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0/0gSt9Zn5voS0xYF+67Tc7RHamS0uLc55qNVJevcTg=;
+        b=BV/VLkhqaFKjdf6lWrfAjTUpewRJYfdpbz9SBGiBE08cCyXoYYrDnSRK7FW5l8Pd2I
+         sdD1wbOxtuo4Wt/uK4RV3+tlDzeG/dRI/RmxKY478pZ0w47vBvO5+Ql+w6Bl5A1kIuTa
+         x4Q9stcoMWsvq8ZFABu+tWxNAgqeFVpftrjP4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729870219; x=1730475019;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0/0gSt9Zn5voS0xYF+67Tc7RHamS0uLc55qNVJevcTg=;
+        b=NajPeJhLEaUw7+DKurex2eV7C40qc/GQTwvZ6Y3ZVHrmC2cO+mz5mmwUIKXM2mT2Qd
+         QECvZE1OhJexUkVtfGEiAi91avCesmnjGkfnhURvkMOgweFCU2rwssvd2M8Sf1GUpW1H
+         YPP1/cCdKRpdS/K9XEHoqZNCAPsi7K5EJEt8NQiOvah4p7+Oc3aX+gGim4y8xcPyesiV
+         ViaCkLCDYUm87WhCGQ+L1Sb6J9vdnXtCOU2avkua/YvCz5GMdBTnweiwgdESklvarNyP
+         klS6avYazdL/yWb3fQoTUz2X8RKdEdfeX+LotFx0GW0/GQdGzGHZcOxlW7TbAPSbVoO+
+         luvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMYlLpi/CZ6pycV4q2idEZDV/Yy0GTC/0JUoUxWEHLVdee9ps0yl1W4k7B6vULdxzQwcD9TAr0LxE/p5rR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8BU72HW3D8wNLLv6E9cxJDHMcY9SjaN991O9nDN9Fnxa0AdoU
+	EGUDOKmX0SovHHOv9tDN00UHo5J/R5So+Y8LSDSVB77MnwWS3vfeLCqkTtyXn0UPQASwAdXTeUz
+	jJVrzm8HTqixzSCoqs5cfVHXNbJ44JwLXOVnGPw==
+X-Google-Smtp-Source: AGHT+IENPXL5kBY76KVgzzN5iP+92toLqFuO5GmVpaPEr/KAjSQrgUt7sY9WE1S/LY2aq+ByXCkrXVad7005xbl9STI=
+X-Received: by 2002:ac8:598f:0:b0:460:e633:556e with SMTP id
+ d75a77b69052e-461146c5a31mr130256971cf.30.1729870219255; Fri, 25 Oct 2024
+ 08:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241024090611.0cff2423@canb.auug.org.au>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 25 Oct 2024 17:30:08 +0200
+Message-ID: <CAJfpegsjHymOXg++KGrwMUWAP4e18aqWCMC2e83hLBy2AvYZyQ@mail.gmail.com>
+Subject: [GIT PULL] fuse fixes for 6.12-rc5
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 09:06:11AM +1100, Stephen Rothwell wrote:
-> Hi Ted,
-> 
-> On Wed, 23 Oct 2024 15:42:53 -0400 "Theodore Ts'o" <tytso@mit.edu> wrote:
-> >
-> > On Mon, Oct 21, 2024 at 02:49:54PM +0200, Christian Brauner wrote:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/fs/read_write.c?h=fs-next&id=0f0f217df68fd72d91d2de6e85a6dd80fa1f5c95
-> > > > 
-> > > > To Mr. Sun: did you see these regressions when you tested this patch?  
-> > > 
-> > > So we should drop this patch for now.  
-> > 
-> > My most recent fs-next testing is still showing this failure, and
-> > looking at the most recent fs-next branch, 
-> > 
-> >     vfs: Fix implicit conversion problem when testing overflow case
-> > 
-> > still appears to be in the tree.  Can we please get this dropped?
-> > Thanks!!
-> 
-> I have reverted that commit from the fs-next and linux-next trees for
-> today.
+Hi Linus,
 
-I'm still recovering from the flu so I'm a bit behind. We actually need
-to drop two commits. I had done that already yesterday though.
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+tags/fuse-fixes-6.12-rc5
+
+- Fix cached size after passthrough writes
+
+- Revert a commit meant as a cleanup but which triggered a WARNING
+
+- Remove a stray debug line left in a commit
+
+The passthrough fix needed a trivial change in the backing-file API,
+which resulted in some non-fuse files being touched.
+
+Thanks,
+Miklos
+---
+
+Amir Goldstein (2):
+      fs: pass offset and result to backing_file end_write() callback
+      fuse: update inode size after extending passthrough write
+
+Miklos Szeredi (2):
+      Revert "fuse: move initialization of fuse_file to
+fuse_writepages() instead of in callback"
+      fuse: remove stray debug line
+
+---
+ fs/backing-file.c            |  8 ++++----
+ fs/fuse/file.c               | 18 ++++++++++++------
+ fs/fuse/passthrough.c        |  9 ++++-----
+ fs/overlayfs/file.c          |  9 +++++++--
+ include/linux/backing-file.h |  2 +-
+ 5 files changed, 28 insertions(+), 18 deletions(-)
 
