@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-32835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B9A9AF6B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 03:24:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B139F9AF6BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 03:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D261C20DC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 01:24:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB971F22B3B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 01:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A410139D1B;
-	Fri, 25 Oct 2024 01:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243451487C8;
+	Fri, 25 Oct 2024 01:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qnj7/ylT"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FyQBMk5A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEB386AE3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 01:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A4613635B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 01:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729819420; cv=none; b=PW81cpy23xO+K71n5jle8kPnpq9vAEFu14El1921VTqh5xRxy64enhqCh9TlsN8+9KNw7vejxoT0tTdlVFpybc1uf7xNlNCMI3zDYIQSZdMLwnPBQS4l5sbx41zpaKduQJI1iJHuGrleJvWVdAG6Zp4VJbMRDcEEU/2PIKAsDFU=
+	t=1729819423; cv=none; b=gUaCJGId9iWwShvGxQVU08fj0nzuF9FZStu91HbnbkZdiJHbRTpiL2TRau+xGJMdyywXaQd/FcmBdMehez+HgriQiDMwT7PAMENuhw9x/ugO/x/TAH7sM0vPEpwCIcoD1325CROcjZJNxYWRoL7HRMKNxO0P+H7TOT/wiztAsFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729819420; c=relaxed/simple;
-	bh=IqWXEzb3620Vwxa10Snp0uinoB5WLkZnT6RRj0E2ZOo=;
+	s=arc-20240116; t=1729819423; c=relaxed/simple;
+	bh=Hlu/iJwKH/7x+qGas7oxnqiwG5bj+lfrJ+SxT4lsYgo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LWvmluyRMm99rSQ+QNjt8pBrlhucUmj3EZLI/VRwQ5ShmKtmqLJEjliaLlsVqaiNJW5NhES/5VDihJIqbTxDCuZJG9lCIp2Mf8xUfVxlYYTmqxcgQY2VAwJ5Tb9EindoDRWxhkJN7UnW4d/tq5vwd63g3Owb1g9kXYMNnsAl+rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qnj7/ylT; arc=none smtp.client-ip=95.215.58.172
+	 MIME-Version; b=J5U2XhMmNiUZAdpDC/E+lcVZHSoCiMj605aS69ObEdzTo+oJBMCoACI43OmHJxPfgL/3GweNW4MskfcabR5972lqAn09stgjz9dl58RkScrAtq0X2QjxDuKxLSw6S7VMPiki/4aoTl+DyG4BP3PkA8fqflrW5ShBUFHHZ8quMGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FyQBMk5A; arc=none smtp.client-ip=95.215.58.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729819416;
+	t=1729819419;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ea/MjMCn/PUwsZr9oC0H1/BbJ/TXP7i5xCISmkGKoYY=;
-	b=Qnj7/ylTgj6qu/raQvuKWAyO7g8JdotVpJCyFMYSo3WFE7xF7Z+WM55uL9HFpK1rmXhc2+
-	0IN2sQ/XwvawwCMrgzk03NlVPJPW0VfZskrXjGkZycB05364Ktq7ebY8tvS9oZteVpPoB/
-	kixS1n6ATSFM4zxELJsS/AoqmrK8yDI=
+	bh=7wiuyjy0zmQLWgqvTUEEYQB7YbC8EAAKeOqIvPyT1kA=;
+	b=FyQBMk5AhTU+B75oVA+oWUlAvWNvk+tsSDX0Snyy95VoOAUeapV7M6ETpL7FGJzvOFBblq
+	h1ob8GVon/ncRKjwN1/gbkrdP2Q6N/PGtjFTKB5tsUnTA8uQOkhNwestaeF4grzP4JmMTn
+	PxF+k0emd7XdYjJE4En9YYVB5PEuewc=
 From: Shakeel Butt <shakeel.butt@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>,
@@ -56,9 +56,9 @@ Cc: Johannes Weiner <hannes@cmpxchg.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH v1 3/6] memcg-v1: no need for memcg locking for dirty tracking
-Date: Thu, 24 Oct 2024 18:23:00 -0700
-Message-ID: <20241025012304.2473312-4-shakeel.butt@linux.dev>
+Subject: [PATCH v1 4/6] memcg-v1: no need for memcg locking for writeback tracking
+Date: Thu, 24 Oct 2024 18:23:01 -0700
+Message-ID: <20241025012304.2473312-5-shakeel.butt@linux.dev>
 In-Reply-To: <20241025012304.2473312-1-shakeel.butt@linux.dev>
 References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
 Precedence: bulk
@@ -71,115 +71,52 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
 During the era of memcg charge migration, the kernel has to be make sure
-that the dirty stat updates do not race with the charge migration.
-Otherwise it might update the dirty stats of the wrong memcg. Now with
-the memcg charge migration deprecated, there is no more race for dirty
-stat updates and the previous locking can be removed.
+that the writeback stat updates do not race with the charge migration.
+Otherwise it might update the writeback stats of the wrong memcg. Now
+with the memcg charge migration deprecated, there is no more race for
+writeback stat updates and the previous locking can be removed.
 
 Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- fs/buffer.c         |  5 -----
- mm/page-writeback.c | 16 +++-------------
- 2 files changed, 3 insertions(+), 18 deletions(-)
+ mm/page-writeback.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1fc9a50def0b..88e765b0699f 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -736,15 +736,12 @@ bool block_dirty_folio(struct address_space *mapping, struct folio *folio)
- 	 * Lock out page's memcg migration to keep PageDirty
- 	 * synchronized with per-memcg dirty page counters.
- 	 */
--	folio_memcg_lock(folio);
- 	newly_dirty = !folio_test_set_dirty(folio);
- 	spin_unlock(&mapping->i_private_lock);
- 
- 	if (newly_dirty)
- 		__folio_mark_dirty(folio, mapping, 1);
- 
--	folio_memcg_unlock(folio);
--
- 	if (newly_dirty)
- 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
- 
-@@ -1194,13 +1191,11 @@ void mark_buffer_dirty(struct buffer_head *bh)
- 		struct folio *folio = bh->b_folio;
- 		struct address_space *mapping = NULL;
- 
--		folio_memcg_lock(folio);
- 		if (!folio_test_set_dirty(folio)) {
- 			mapping = folio->mapping;
- 			if (mapping)
- 				__folio_mark_dirty(folio, mapping, 0);
- 		}
--		folio_memcg_unlock(folio);
- 		if (mapping)
- 			__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
- 	}
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 1d7179aba8e3..a76a73529fd9 100644
+index a76a73529fd9..9c3317c3a615 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2743,8 +2743,6 @@ EXPORT_SYMBOL(noop_dirty_folio);
- /*
-  * Helper function for set_page_dirty family.
-  *
-- * Caller must hold folio_memcg_lock().
-- *
-  * NOTE: This relies on being atomic wrt interrupts.
-  */
- static void folio_account_dirtied(struct folio *folio,
-@@ -2777,7 +2775,6 @@ static void folio_account_dirtied(struct folio *folio,
- /*
-  * Helper function for deaccounting dirty page without writeback.
-  *
-- * Caller must hold folio_memcg_lock().
-  */
- void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
- {
-@@ -2795,9 +2792,8 @@ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
-  * If warn is true, then emit a warning if the folio is not uptodate and has
-  * not been truncated.
-  *
-- * The caller must hold folio_memcg_lock().  It is the caller's
-- * responsibility to prevent the folio from being truncated while
-- * this function is in progress, although it may have been truncated
-+ * It is the caller's responsibility to prevent the folio from being truncated
-+ * while this function is in progress, although it may have been truncated
-  * before this function is called.  Most callers have the folio locked.
-  * A few have the folio blocked from truncation through other means (e.g.
-  * zap_vma_pages() has it mapped and is holding the page table lock).
-@@ -2841,14 +2837,10 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
-  */
- bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
- {
--	folio_memcg_lock(folio);
--	if (folio_test_set_dirty(folio)) {
--		folio_memcg_unlock(folio);
-+	if (folio_test_set_dirty(folio))
- 		return false;
--	}
+@@ -3083,7 +3083,6 @@ bool __folio_end_writeback(struct folio *folio)
+ 	struct address_space *mapping = folio_mapping(folio);
+ 	bool ret;
  
- 	__folio_mark_dirty(folio, mapping, !folio_test_private(folio));
+-	folio_memcg_lock(folio);
+ 	if (mapping && mapping_use_writeback_tags(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct backing_dev_info *bdi = inode_to_bdi(inode);
+@@ -3114,7 +3113,6 @@ bool __folio_end_writeback(struct folio *folio)
+ 	lruvec_stat_mod_folio(folio, NR_WRITEBACK, -nr);
+ 	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, -nr);
+ 	node_stat_mod_folio(folio, NR_WRITTEN, nr);
 -	folio_memcg_unlock(folio);
  
- 	if (mapping->host) {
- 		/* !PageAnon && !swapper_space */
-@@ -2975,14 +2967,12 @@ void __folio_cancel_dirty(struct folio *folio)
- 		struct bdi_writeback *wb;
- 		struct wb_lock_cookie cookie = {};
+ 	return ret;
+ }
+@@ -3127,7 +3125,6 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
  
--		folio_memcg_lock(folio);
- 		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
  
- 		if (folio_test_clear_dirty(folio))
- 			folio_account_cleaned(folio, wb);
+-	folio_memcg_lock(folio);
+ 	if (mapping && mapping_use_writeback_tags(mapping)) {
+ 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
+ 		struct inode *inode = mapping->host;
+@@ -3168,7 +3165,6 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
  
- 		unlocked_inode_to_wb_end(inode, &cookie);
--		folio_memcg_unlock(folio);
- 	} else {
- 		folio_clear_dirty(folio);
- 	}
+ 	lruvec_stat_mod_folio(folio, NR_WRITEBACK, nr);
+ 	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
+-	folio_memcg_unlock(folio);
+ 
+ 	access_ret = arch_make_folio_accessible(folio);
+ 	/*
 -- 
 2.43.5
 
