@@ -1,130 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-32989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3C79B1204
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:54:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF139B1216
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2823F1F227DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:54:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950F6B2193A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578E0213130;
-	Fri, 25 Oct 2024 21:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B69620EA27;
+	Fri, 25 Oct 2024 21:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="DIv2Z/In"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1jKf998"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B387213127;
-	Fri, 25 Oct 2024 21:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC200217F57;
+	Fri, 25 Oct 2024 21:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729893199; cv=none; b=aN4xQGKtZj63Txtl8d33m3vvw0wKtZxtABqJILDCxaBKowEDoqhDQgl2+treTJQQIDupLFH4Xg8P3B05BY0OlyqfyU8WkyRAbIvdREFqG50j85ZFhuzvPYl8c3RPjz/CtYeWdq9fWm2CjtjPtuTnwOOmcNadAMhJqQFXgDyEGOE=
+	t=1729893491; cv=none; b=N71GOIavKAFJmSrcFIMFHzAK5rNijoKSZxTbM5pP/iFPofpiWA8h/Nlxzyp+/TFbdkX/VYiaNHVCNtfuUcTMZ34vP0sBRyEDg4Ovt3AnsuTbfPIKPSFHu4wkSK2dYCM1ySB+mdRVkNZ8MjZHalK0F6mRZiEljg/Fzy4+0iYpFf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729893199; c=relaxed/simple;
-	bh=B2eKg6piefvOLUgc+8fdQZjha3kgkzP8l6w3dYBUF+U=;
+	s=arc-20240116; t=1729893491; c=relaxed/simple;
+	bh=WaXT3N54W0je/Mf9JECHTQKvU4XqvFR6omMZdeIU/jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2+VW56Hf/a3dKK5HTwYjzT9YhBhCWrKm1dS2pr0waOHL/0c3UiEqbSHpiexnYu7ni8fPJVC6oN8T0WgZZ96ZCE2KC6Du7wHUaFFiGv9eg/UG2DaI1wuaS8oy3qBodjom14ntj1ybggepgT7aC5kNhem5PGYuPZUfYiCL9RIRKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=DIv2Z/In; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 592AA14C1E1;
-	Fri, 25 Oct 2024 23:53:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729893195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7KP7DYMAuwzCylxcT416P2aabyuPSXwgPLZEtgS+OhA=;
-	b=DIv2Z/In+d9HJvJTHWir6U0Y+lqU1ichbOC8y9mr0UdB1HAOaOKsSgIN0O6ep++IOvts3/
-	hkfBBITf1Qr9OYMomhf7qfcARVCy5PDiXnqrTck+3nJQf7uj38PAIWrOxiBrI/WCFA+kl/
-	goLe64NMgsfEI2xoqsWuBhbxbOM67Ym2amui2urmJECog2sTpTx3vFkcZyQvB83MmyVMCz
-	RASkXJtoYtCBY56KusIemJ/nqXC/QdIubDR7u61PLXrl8Mq5vIGDyoh7WuxZGV4T+ZbY0r
-	yTKK8Vkx7zCSJKAUdEVcg0xsdAHd7GhRv1phCHEjSVvImrExa+eIf9V+vaN9UQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e2930f9b;
-	Fri, 25 Oct 2024 21:53:11 +0000 (UTC)
-Date: Sat, 26 Oct 2024 06:52:56 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Guan Xin <guanx.bac@gmail.com>
-Cc: v9fs@lists.linux.dev,
-	Linux Kernel Network Developers <netdev@vger.kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJyPP39CgeLPU/LpMH8iSIvBlQUesOnEm5/0VLn/EeP5I1VxqNH3QUsRWBhopkYTZbqP7rmWiptuJ81/z/ejDtCyE6pMg0SLma0QJatp2j+lwjyFYXnYEhnS+0ixsAUbyH8jQtlk0cx++CPbX/6yHGgxq1WMhkHYF1YwEypQWhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1jKf998; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F67CC4CEC3;
+	Fri, 25 Oct 2024 21:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729893491;
+	bh=WaXT3N54W0je/Mf9JECHTQKvU4XqvFR6omMZdeIU/jo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H1jKf998y+TKcDBxoZWO7Srjy5BxeZPsExybQKizrFgk+PpkacomWzjgPfi2gZX0k
+	 GcV3gQnWT1lPzWgsffOADNQ1fYIQqY51/TGmJnqELBkll4fPmWTI5e8Y0irEkljl8i
+	 3ufBer3vuNsxiQZ3DWkt1yCS+hMNJjqOy5hix5omzsjZAPm2qtwTme6k4zLUXmlZlK
+	 tnEN7HjR0+nGbi7IG5otQ1P8q9KQsFiBwNi6CLKgl3q/Gt0ALdaYMOK3MwWLwGbGux
+	 UHsSQXY2PXI2ef+EUxp/i2+s5Wa2PGwfakGdpyOee8kEE8274hT53ajG44fJdG2gOq
+	 L7RL4siXZj7ZA==
+Date: Fri, 25 Oct 2024 16:58:10 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, rick.p.edgecombe@intel.com,
+	richard.henderson@linaro.org, cleger@rivosinc.com,
+	alexghiti@rivosinc.com, Eric Biederman <ebiederm@xmission.com>,
+	Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	samitolvanen@google.com, linux-doc@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>, atishp@rivosinc.com,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	linux-arch@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, evan@rivosinc.com,
+	x86@kernel.org, Shuah Khan <shuah@kernel.org>,
+	devicetree@vger.kernel.org, alistair.francis@wdc.com,
+	broonie@kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-kselftest@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+	linux-riscv@lists.infradead.org, charlie@rivosinc.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Albert Ou <aou@eecs.berkeley.edu>,
+	Kees Cook <kees@kernel.org>, andybnac@gmail.com,
 	linux-fsdevel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>
-Subject: Re: Calculate VIRTQUEUE_NUM in "net/9p/trans_virtio.c" from stack
- size
-Message-ID: <ZxwTOB5ENi66C_kq@codewreck.org>
-References: <CANeMGR6CBxC8HtqbGamgpLGM+M1Ndng_WJ-RxFXXJnc9O3cVwQ@mail.gmail.com>
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Christian Brauner <brauner@kernel.org>, kito.cheng@sifive.com,
+	Borislav Petkov <bp@alien8.de>, jim.shu@sifive.com
+Subject: Re: [PATCH v6 07/33] dt-bindings: riscv: zicfilp and zicfiss in
+ dt-bindings (extensions.yaml)
+Message-ID: <172989348946.964081.3884883100574600652.robh@kernel.org>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-7-60d9fe073f37@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANeMGR6CBxC8HtqbGamgpLGM+M1Ndng_WJ-RxFXXJnc9O3cVwQ@mail.gmail.com>
+In-Reply-To: <20241008-v5_user_cfi_series-v6-7-60d9fe073f37@rivosinc.com>
 
-Christian,
 
-this is more up your alley, letting you comment as well as you weren't
-even sent a copy in Ccs
-
-Guan,
-
-overall, please check Documentation/process/submitting-patches.rst -
-this is missing [PATCH] in the mail header, missing some recipients that
-you'd have gotten from get_maintiner.pl, and the commit title is a mess.
-
-Have a look at other recent patches on https://lore.kernel.org/v9fs/
-
-Guan Xin wrote on Sat, Oct 26, 2024 at 12:18:42AM +0800:
-> For HPC applications the hard-coded VIRTQUEUE_NUM of 128 seems to
-> limit the throughput of guest systems accessing cluster filesystems
-> mounted on the host.
+On Tue, 08 Oct 2024 15:36:49 -0700, Deepak Gupta wrote:
+> Make an entry for cfi extensions in extensions.yaml.
 > 
-> Just increase VIRTQUEUE_NUM for kernels with a
-> larger stack.
-
-You're replacing an hardcoded value with another, this could be made
-dynamic e.g. as a module_param so someone could tune this based on their
-actual needs (and test more easily); I'd more readily accept such a
-patch.
-
-> Author: GUAN Xin <guanx.bac@gmail.com>
-
-Author: tag doesn't exist and would be useless here as it's the mail you
-sent the patch from.
-
-> Signed-off-by: GUAN Xin <guanx.bac@gmail.com>
-> cc: Eric Van Hensbergen <ericvh@kernel.org>
-> cc: v9fs@lists.linux.dev
-> cc: netdev@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> 
-> --- net/9p/trans_virtio.c.orig  2024-10-25 10:25:09.390922517 +0800
-> +++ net/9p/trans_virtio.c       2024-10-25 16:48:40.451680192 +0800
-> @@ -31,11 +31,12 @@
-> #include <net/9p/transport.h>
-> #include <linux/scatterlist.h>
-> #include <linux/swap.h>
-> +#include <linux/thread_info.h>
-> #include <linux/virtio.h>
-> #include <linux/virtio_9p.h>
-> #include "trans_common.h"
-> 
-> -#define VIRTQUEUE_NUM  128
-> +#define VIRTQUEUE_NUM  (1 << (THREAD_SIZE_ORDER + PAGE_SHIFT - 6))
-
-(FWIW that turned out to be 256 on my system)
-
-> /* a single mutex to manage channel initialization and attachment */
-> static DEFINE_MUTEX(virtio_9p_lock);
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
 
--- 
-Dominique Martinet | Asmadeus
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
