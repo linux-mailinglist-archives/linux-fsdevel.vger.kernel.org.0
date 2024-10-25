@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-32901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC39A9B07C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39F19B07C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 17:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1902E1C22E34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 15:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E13281038
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 15:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F093121E617;
-	Fri, 25 Oct 2024 15:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B85189BBE;
+	Fri, 25 Oct 2024 15:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NdNFlVCY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jShXYWPt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73E721B85D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 15:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FD621E62A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 15:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869190; cv=none; b=X+Qjbmy9a+VBydduKMfKWqyAw2a25uVEFWWt9Ah7MZagDOQoxTTyFGBpc2/0DJZU5mlYsYWA6r8MbKXGDTplQx7Ps178G+2jL+8pj+PehhkF9hRGRt+expXG8PUxWOzI4Q/jjYgTC0WqtjuNmebgK1IbvubGbBrjKI60RU8aZzY=
+	t=1729869198; cv=none; b=WAwHVxdazfOR5pzxSYzaASvDZo0xdhAcv2RdSBgNfga+4I2Ik482+H4R09e6vhZUHac9vn+0nOlHKQToQfdKx+DAMrogEkEbZjSXulWt0nvYaRV3jWz/3KobS7EVnLE4W+Z+7XJrQRGTnfirxbesOdYHr0aILYe3MNFpQpzvrVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869190; c=relaxed/simple;
-	bh=fQJBnTtQ1k3tZbAezsg2RYRu1rYxlaYdIOHefLMEcds=;
+	s=arc-20240116; t=1729869198; c=relaxed/simple;
+	bh=dRgtVgI4Sd1wwZ3rW+JZU7d5KVuXtHp4HRtbhjg+8kw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nQaLlutIHH+9OIiDIkv7x4IWKyx0uv0ApImvTSB3X1+Omd4uxsRFUpL/w2PEhfZjgSwx0evyOJgPx/ZBDZ/YU2Rfbo1mkGCm/+S1TACKVEUz7Qqk1oDBPGnxJAcF8eXGz+ib5idAKGjEeKIFmyLMCV+EITsB5bkJhKy8HCfWUuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NdNFlVCY; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=qWCPBxUnIewaPRl06mmJUaym9v9etsbXd15Bj2ZqjY/sxCZ+MVFJ23Kg+1+/9snksiAFAxPPiS5kP4HlcTt/wVqFn42tn7+mxuVHL2hTmFQMtKKCigS7OvzRHEKcITGPX9RTj/Y8dH4Ma5fy2jW2l8lvMuNwxJW+jKpOP0j7ggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jShXYWPt; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729869186;
+	s=mimecast20190719; t=1729869194;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PdMqUIxpls1gNH4eQdrzo/q29zzRB98r4tpBih1lnzQ=;
-	b=NdNFlVCYVTBUe4Hw1bI7QDxS9w4gJ2sWwT+9BsgWwhkwRAGEXqTKcbPFLNVpVMtjFIaBWG
-	37vW/GjlmqRJnhhjkkmNQGzCkk63GyF/+HIL5h3/T05z1pFrOdJzVTgXlWe4SUFPwcsfVx
-	ffZjA9FcP8GNirvC7tRW9tk3mWlJdEA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=mE6UZtvB4UrwqxDxBvXj02Eqawd4qPQUjTyB3c978sA=;
+	b=jShXYWPtNueJxnQRao9sOto0TZM9uybO9ME4q04+FsmPBh0o70ILCrDJZLOWdeFoGlDM7A
+	1ROz+woSCMRNprdLg8xEgBopWOA3/W+3PKlU868FPQaZ6SHr1BcMemCOt21vPkJJ9OgZAY
+	wt9YkQreZQ2jqAlBZl4mc3bV+/56ohg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-o3a0P1v0Nd-PreOhqdKZvg-1; Fri,
- 25 Oct 2024 11:13:03 -0400
-X-MC-Unique: o3a0P1v0Nd-PreOhqdKZvg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-373-3cSc-QklMMuKHb2DIsw0Pg-1; Fri,
+ 25 Oct 2024 11:13:10 -0400
+X-MC-Unique: 3cSc-QklMMuKHb2DIsw0Pg-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2135819560A2;
-	Fri, 25 Oct 2024 15:13:01 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A10BC1955D4A;
+	Fri, 25 Oct 2024 15:13:08 +0000 (UTC)
 Received: from t14s.redhat.com (unknown [10.22.65.27])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5282C300018D;
-	Fri, 25 Oct 2024 15:12:54 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 86CEF300018D;
+	Fri, 25 Oct 2024 15:13:01 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -83,9 +83,9 @@ Cc: linux-mm@kvack.org,
 	Claudio Imbrenda <imbrenda@linux.ibm.com>,
 	Eric Farman <farman@linux.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v1 09/11] virtio-mem: remember usable region size
-Date: Fri, 25 Oct 2024 17:11:31 +0200
-Message-ID: <20241025151134.1275575-10-david@redhat.com>
+Subject: [PATCH v1 10/11] virtio-mem: support CONFIG_PROC_VMCORE_DEVICE_RAM
+Date: Fri, 25 Oct 2024 17:11:32 +0200
+Message-ID: <20241025151134.1275575-11-david@redhat.com>
 In-Reply-To: <20241025151134.1275575-1-david@redhat.com>
 References: <20241025151134.1275575-1-david@redhat.com>
 Precedence: bulk
@@ -97,56 +97,137 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Let's remember the usable region size, which will be helpful in kdump
-mode next.
+Let's implement the get_device_ram() vmcore callback, so
+architectures that select NEED_PROC_VMCORE_NEED_DEVICE_RAM, like s390
+soon, can include that memory in a crash dump.
+
+Merge ranges, and process ranges that might contain a mixture of plugged
+and unplugged, to reduce the total number of ranges.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/virtio/virtio_mem.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/virtio/Kconfig      |  1 +
+ drivers/virtio/virtio_mem.c | 88 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 89 insertions(+)
 
+diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+index 2eb747311bfd..60fdaf2c2c49 100644
+--- a/drivers/virtio/Kconfig
++++ b/drivers/virtio/Kconfig
+@@ -128,6 +128,7 @@ config VIRTIO_MEM
+ 	depends on MEMORY_HOTREMOVE
+ 	depends on CONTIG_ALLOC
+ 	depends on EXCLUSIVE_SYSTEM_RAM
++	select PROVIDE_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
+ 	help
+ 	 This driver provides access to virtio-mem paravirtualized memory
+ 	 devices, allowing to hotplug and hotunplug memory.
 diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index 126f1d669bb0..73477d5b79cf 100644
+index 73477d5b79cf..1ae1199a7617 100644
 --- a/drivers/virtio/virtio_mem.c
 +++ b/drivers/virtio/virtio_mem.c
-@@ -133,6 +133,8 @@ struct virtio_mem {
- 	uint64_t addr;
- 	/* Maximum region size in bytes. */
- 	uint64_t region_size;
-+	/* Usable region size in bytes. */
-+	uint64_t usable_region_size;
+@@ -2728,6 +2728,91 @@ static bool virtio_mem_vmcore_pfn_is_ram(struct vmcore_cb *cb,
+ 	mutex_unlock(&vm->hotplug_mutex);
+ 	return is_ram;
+ }
++
++#ifdef CONFIG_PROC_VMCORE_DEVICE_RAM
++static int virtio_mem_vmcore_add_device_ram(struct virtio_mem *vm,
++		struct list_head *list, uint64_t start, uint64_t end)
++{
++	int rc;
++
++	rc = vmcore_alloc_add_mem_node(list, start, end - start);
++	if (rc)
++		dev_err(&vm->vdev->dev,
++			 "Error adding device RAM range: %d\n", rc);
++	return rc;
++}
++
++static int virtio_mem_vmcore_get_device_ram(struct vmcore_cb *cb,
++		struct list_head *list)
++{
++	struct virtio_mem *vm = container_of(cb, struct virtio_mem,
++					     vmcore_cb);
++	const uint64_t device_start = vm->addr;
++	const uint64_t device_end = vm->addr + vm->usable_region_size;
++	uint64_t chunk_size, cur_start, cur_end, plugged_range_start = 0;
++	LIST_HEAD(tmp_list);
++	int rc;
++
++	if (!vm->plugged_size)
++		return 0;
++
++	/* Process memory sections, unless the device block size is bigger. */
++	chunk_size = max_t(uint64_t, PFN_PHYS(PAGES_PER_SECTION),
++			   vm->device_block_size);
++
++	mutex_lock(&vm->hotplug_mutex);
++
++	/*
++	 * We process larger chunks and indicate the complete chunk if any
++	 * block in there is plugged. This reduces the number of pfn_is_ram()
++	 * callbacks and mimic what is effectively being done when the old
++	 * kernel would add complete memory sections/blocks to the elfcore hdr.
++	 */
++	cur_start = device_start;
++	for (cur_start = device_start; cur_start < device_end; cur_start = cur_end) {
++		cur_end = ALIGN_DOWN(cur_start + chunk_size, chunk_size);
++		cur_end = min_t(uint64_t, cur_end, device_end);
++
++		rc = virtio_mem_send_state_request(vm, cur_start,
++						   cur_end - cur_start);
++
++		if (rc < 0) {
++			dev_err(&vm->vdev->dev,
++				"Error querying block states: %d\n", rc);
++			goto out;
++		} else if (rc != VIRTIO_MEM_STATE_UNPLUGGED) {
++			/* Merge ranges with plugged memory. */
++			if (!plugged_range_start)
++				plugged_range_start = cur_start;
++			continue;
++		}
++
++		/* Flush any plugged range. */
++		if (plugged_range_start) {
++			rc = virtio_mem_vmcore_add_device_ram(vm, &tmp_list,
++							      plugged_range_start,
++							      cur_start);
++			if (rc)
++				goto out;
++			plugged_range_start = 0;
++		}
++	}
++
++	/* Flush any plugged range. */
++	if (plugged_range_start)
++		rc = virtio_mem_vmcore_add_device_ram(vm, &tmp_list,
++						      plugged_range_start,
++						      cur_start);
++out:
++	mutex_unlock(&vm->hotplug_mutex);
++	if (rc < 0) {
++		vmcore_free_mem_nodes(&tmp_list);
++		return rc;
++	}
++	list_splice_tail(&tmp_list, list);
++	return 0;
++}
++#endif /* CONFIG_PROC_VMCORE_DEVICE_RAM */
+ #endif /* CONFIG_PROC_VMCORE */
  
- 	/* The parent resource for all memory added via this device. */
- 	struct resource *parent_resource;
-@@ -2368,7 +2370,7 @@ static int virtio_mem_cleanup_pending_mb(struct virtio_mem *vm)
- static void virtio_mem_refresh_config(struct virtio_mem *vm)
- {
- 	const struct range pluggable_range = mhp_get_pluggable_range(true);
--	uint64_t new_plugged_size, usable_region_size, end_addr;
-+	uint64_t new_plugged_size, end_addr;
- 
- 	/* the plugged_size is just a reflection of what _we_ did previously */
- 	virtio_cread_le(vm->vdev, struct virtio_mem_config, plugged_size,
-@@ -2378,8 +2380,8 @@ static void virtio_mem_refresh_config(struct virtio_mem *vm)
- 
- 	/* calculate the last usable memory block id */
- 	virtio_cread_le(vm->vdev, struct virtio_mem_config,
--			usable_region_size, &usable_region_size);
--	end_addr = min(vm->addr + usable_region_size - 1,
-+			usable_region_size, &vm->usable_region_size);
-+	end_addr = min(vm->addr + vm->usable_region_size - 1,
- 		       pluggable_range.end);
- 
- 	if (vm->in_sbm) {
-@@ -2763,6 +2765,8 @@ static int virtio_mem_init(struct virtio_mem *vm)
- 	virtio_cread_le(vm->vdev, struct virtio_mem_config, addr, &vm->addr);
- 	virtio_cread_le(vm->vdev, struct virtio_mem_config, region_size,
- 			&vm->region_size);
-+	virtio_cread_le(vm->vdev, struct virtio_mem_config, usable_region_size,
-+			&vm->usable_region_size);
- 
- 	/* Determine the nid for the device based on the lowest address. */
- 	if (vm->nid == NUMA_NO_NODE)
+ static int virtio_mem_init_kdump(struct virtio_mem *vm)
+@@ -2737,6 +2822,9 @@ static int virtio_mem_init_kdump(struct virtio_mem *vm)
+ #ifdef CONFIG_PROC_VMCORE
+ 	dev_info(&vm->vdev->dev, "memory hot(un)plug disabled in kdump kernel\n");
+ 	vm->vmcore_cb.pfn_is_ram = virtio_mem_vmcore_pfn_is_ram;
++#ifdef CONFIG_PROC_VMCORE_DEVICE_RAM
++	vm->vmcore_cb.get_device_ram = virtio_mem_vmcore_get_device_ram;
++#endif /* CONFIG_PROC_VMCORE_DEVICE_RAM */
+ 	register_vmcore_cb(&vm->vmcore_cb);
+ 	return 0;
+ #else /* CONFIG_PROC_VMCORE */
 -- 
 2.46.1
 
