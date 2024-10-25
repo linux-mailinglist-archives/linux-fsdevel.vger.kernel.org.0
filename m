@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-32984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2609B11B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79969B11CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A400B22793
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93D91C21AE3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D6920F3D3;
-	Fri, 25 Oct 2024 21:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45321DACB6;
+	Fri, 25 Oct 2024 21:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Awdmkbhk"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="mQ1IgskG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7951D14FA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 21:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8457F20D50C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 21:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729892246; cv=none; b=Urb16JEhlXttCirsvpkC5jQe/aHf8VaPo4SU/ZzhtGCGHYJcE9ObM/UbiviA57dmiYxp86lPfb7giy8/a8xuVhQiRR5xyv4htMbfmBAL0+CYOK1bWYQZdBdOd6Wa2ihIZY6OgvvnkaRDA+wmbhmhecYvJWuwrNOiGuR5KYatQAA=
+	t=1729892390; cv=none; b=R9pzfA74BqQ4PgBslbAw10hlfdS52/U1tHWvuRpDBgYK8TIL6+7wfzj5G25QbL3DFZizpn9ZHq/eNilzDITtRqRiuw0L6C6apErJQhf2lsbwPq9eZwo3ZEsv3DnKIbi7vQBcMQ1TY3YnvspdbtiiLO53LvNFts4tLhzFHWDBe2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729892246; c=relaxed/simple;
-	bh=nIbhCT8FS+QVdTnVTSEph5yt3h8bhMz1gJgLk/NyFU0=;
+	s=arc-20240116; t=1729892390; c=relaxed/simple;
+	bh=QNBnH7bi6WbGlj2rf3vDcTyaJMrmau3H7p98DlJvp0U=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iL1ue1eaufv6iLjDafbBELM/VklO9hJfDnWBAGSIfpnurY498htkDYY7O4uN7Eofr3bZj6MyNKVbeJ3sCoe+4OYWZsSq320zhgmhCWYJ/NWac8Ij8ra8ZHi5fZmEAVLtB7FJ89JR31fFBTOkW9o0MjcQes4Yx3o4ou+WQoVORj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Awdmkbhk; arc=none smtp.client-ip=67.231.145.42
+	 MIME-Version:Content-Type; b=G/3W2ysbXccWcmz5MMXMY3NULL/0fizvrzP5MGYRTSh64eGzByqkcqSNrLzAZcoI9xE6z5rH/f+n+dZzqtfbiHH415Pg2skmGxgYd07MNeKWomzqxq507vojoX2c3xonzGHTh7bgc44fpKhRevRCvQyLwIhWnF3e21GJYXd953g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=mQ1IgskG; arc=none smtp.client-ip=67.231.145.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PKXVF5031488
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:37:23 -0700
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PKXQUO014215
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:39:48 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=41I37dn6RfBbsfu3h2xMpU2bbYlrLzaeudide/nA534=; b=Awdmkbhk6Pa2
-	1ZkCunt2pVUQZcC6FyLpA3ZhbSYyJgLfeZ52gM8hhYOxd+EloqgS5+z4B/vxZUaj
-	EaNtGpUevNQGxWLeDZTcKJfMWlWLES/zd1adakS6mltUaLmmhtgx3vdhaftQ7+RI
-	QVaKNefPWrHEu1f2Dq3s8/MhgjEbm6sxKKS2jmVaBpPDEpOeTGQXLb/BkAHT+bu7
-	FLxWpdTuvx1iKGGWrHXh/Hq+2glxvcLkqO1dMbn3ZctGZ2/G2n3EqvfYCtJpkzSX
-	uHyTFoJdHjqF17EJrU57HX4qH/P7nCuuLx3tIy3bSMXPaa0kDZUi+bR+8AMxFBpn
-	EleN/NYIKA==
+	 bh=QDSowptOyZLvK9oAHCxfP0iFBCixlqbp/+dl8U+g3G0=; b=mQ1IgskGRUZF
+	aHWIeAvxdctEjZ1ozlJxEG/DMeww3ySl+lsIJ/kdShKTO5W63NGWopSwifiIeuLr
+	NjMrYPvALK8GNbcTbZnWtwsAxHqOQ8nYuub97UWRdkCxKAjOEkAfLrt1yCY4m10J
+	kotD3iBXuL5/I5kA71zbLcMmVicPJ7cCfBg6tJsvvNFJpBQzpbX4ipirCOjJdCoc
+	r7PbUdHzE14HEc2/mmhOBWFzIa0YRTnLRDKX+CR/L13/CtXR6FvbYlq3leSgdFxI
+	7SRXa09EVoqgafM6OLC6aIf+2evSaRsXITQHTFDxJ+G2Uyh2VlRpQp4TZnfQehY1
+	4xHhFHwbkQ==
 Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42gg1rsfyt-7
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42g657wbjc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:37:23 -0700 (PDT)
-Received: from twshared23455.15.frc2.facebook.com (2620:10d:c0a8:1b::8e35) by
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:39:47 -0700 (PDT)
+Received: from twshared10900.35.frc1.facebook.com (2620:10d:c0a8:1b::8e35) by
  mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Fri, 25 Oct 2024 21:37:18 +0000
+ 15.2.1544.11; Fri, 25 Oct 2024 21:39:46 +0000
 Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 8B2DA1476D73D; Fri, 25 Oct 2024 14:37:06 -0700 (PDT)
+	id B3E041476D744; Fri, 25 Oct 2024 14:37:06 -0700 (PDT)
 From: Keith Busch <kbusch@meta.com>
 To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
         <linux-scsi@vger.kernel.org>, <io-uring@vger.kernel.org>
@@ -61,9 +61,9 @@ CC: <linux-fsdevel@vger.kernel.org>, <hch@lst.de>, <joshi.k@samsung.com>,
         <javier.gonz@samsung.com>, <bvanassche@acm.org>,
         Keith Busch
 	<kbusch@kernel.org>
-Subject: [PATCHv9 4/7] block, fs: add write hint to kiocb
-Date: Fri, 25 Oct 2024 14:36:42 -0700
-Message-ID: <20241025213645.3464331-5-kbusch@meta.com>
+Subject: [PATCHv9 7/7] scsi: set permanent stream count in block limits
+Date: Fri, 25 Oct 2024 14:36:45 -0700
+Message-ID: <20241025213645.3464331-8-kbusch@meta.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241025213645.3464331-1-kbusch@meta.com>
 References: <20241025213645.3464331-1-kbusch@meta.com>
@@ -76,108 +76,38 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: tscndgR3P_hPILXODOlS0DRRyPle9yO2
-X-Proofpoint-ORIG-GUID: tscndgR3P_hPILXODOlS0DRRyPle9yO2
+X-Proofpoint-GUID: LbXkSCc61t_nE09fOJC1nQqZOq51TFDJ
+X-Proofpoint-ORIG-GUID: LbXkSCc61t_nE09fOJC1nQqZOq51TFDJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
 
 From: Keith Busch <kbusch@kernel.org>
 
-This prepares for sources other than the inode to provide a write hint.
-The block layer will use it for direct IO if the requested hint is
-within the block device's capabilities.
+The block limits exports the number of write hints, so set this limit if
+the device reports support for the lifetime hints. Not only does this
+inform the user of which hints are possible, it also allows scsi devices
+supporting the feature to utilize the full range through raw block
+device direct-io.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- block/fops.c       | 26 +++++++++++++++++++++++---
- include/linux/fs.h |  1 +
- 2 files changed, 24 insertions(+), 3 deletions(-)
+ drivers/scsi/sd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/block/fops.c b/block/fops.c
-index 2d01c90076813..e3f3f1957d86d 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -71,7 +71,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *=
-iocb,
- 		bio_init(&bio, bdev, vecs, nr_pages, dio_bio_write_op(iocb));
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index ca4bc0ac76adc..235dd6e5b6688 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3768,6 +3768,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		sd_config_protection(sdkp, &lim);
  	}
- 	bio.bi_iter.bi_sector =3D pos >> SECTOR_SHIFT;
--	bio.bi_write_hint =3D file_inode(iocb->ki_filp)->i_write_hint;
-+	bio.bi_write_hint =3D iocb->ki_write_hint;
- 	bio.bi_ioprio =3D iocb->ki_ioprio;
- 	if (iocb->ki_flags & IOCB_ATOMIC)
- 		bio.bi_opf |=3D REQ_ATOMIC;
-@@ -200,7 +200,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb,=
- struct iov_iter *iter,
 =20
- 	for (;;) {
- 		bio->bi_iter.bi_sector =3D pos >> SECTOR_SHIFT;
--		bio->bi_write_hint =3D file_inode(iocb->ki_filp)->i_write_hint;
-+		bio->bi_write_hint =3D iocb->ki_write_hint;
- 		bio->bi_private =3D dio;
- 		bio->bi_end_io =3D blkdev_bio_end_io;
- 		bio->bi_ioprio =3D iocb->ki_ioprio;
-@@ -316,7 +316,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb =
-*iocb,
- 	dio->flags =3D 0;
- 	dio->iocb =3D iocb;
- 	bio->bi_iter.bi_sector =3D pos >> SECTOR_SHIFT;
--	bio->bi_write_hint =3D file_inode(iocb->ki_filp)->i_write_hint;
-+	bio->bi_write_hint =3D iocb->ki_write_hint;
- 	bio->bi_end_io =3D blkdev_bio_end_io_async;
- 	bio->bi_ioprio =3D iocb->ki_ioprio;
-=20
-@@ -362,6 +362,23 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb=
- *iocb,
- 	return -EIOCBQUEUED;
- }
-=20
-+static u16 blkdev_write_hint(struct kiocb *iocb, struct block_device *bd=
-ev)
-+{
-+	u16 hint =3D iocb->ki_write_hint;
++	lim.max_write_hints =3D sdkp->permanent_stream_count;
 +
-+	if (!hint)
-+		return file_inode(iocb->ki_filp)->i_write_hint;
-+
-+	if (hint > bdev_max_write_hints(bdev))
-+		return file_inode(iocb->ki_filp)->i_write_hint;
-+
-+	if (bdev_is_partition(bdev) &&
-+	    !test_bit(hint - 1, bdev->write_hint_mask))
-+		return file_inode(iocb->ki_filp)->i_write_hint;
-+
-+	return hint;
-+}
-+
- static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *ite=
-r)
- {
- 	struct block_device *bdev =3D I_BDEV(iocb->ki_filp->f_mapping->host);
-@@ -373,6 +390,9 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, s=
-truct iov_iter *iter)
- 	if (blkdev_dio_invalid(bdev, iocb, iter))
- 		return -EINVAL;
-=20
-+	if (iov_iter_rw(iter) =3D=3D WRITE)
-+		iocb->ki_write_hint =3D blkdev_write_hint(iocb, bdev);
-+
- 	nr_pages =3D bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
- 	if (likely(nr_pages <=3D BIO_MAX_VECS)) {
- 		if (is_sync_kiocb(iocb))
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4b5cad44a1268..1a00accf412e5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -370,6 +370,7 @@ struct kiocb {
- 	void			*private;
- 	int			ki_flags;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
-+	u16			ki_write_hint;
- 	union {
- 		/*
- 		 * Only used for async buffered reads, where it denotes the
+ 	/*
+ 	 * We now have all cache related info, determine how we deal
+ 	 * with flush requests.
 --=20
 2.43.5
 
