@@ -1,498 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-32981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-32983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FC49B1193
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:23:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8D89B11B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 23:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134F01C21F36
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:23:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE958B21A45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2024 21:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488A01CEE98;
-	Fri, 25 Oct 2024 21:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411EA20EA25;
+	Fri, 25 Oct 2024 21:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhcEQjoG"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="b4Ljz4jb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A158B217F26;
-	Fri, 25 Oct 2024 21:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EA720C31C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 21:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729891406; cv=none; b=uSiHD6kRRoc8xTUwaYd6QnluyPKVufW/zP1Js5/IQtZOr4vv9HDU0qk4BmI8WrKeL5pFxh0tvNXxr0ckOWg168bMb4vA7eXD/or/8ubq3F2d2mq2dTlmlXKozUqOCK42cI0fBQGxLMeLuMgZSdTmMIQ3BXe/dZYVjk9bWehWlKI=
+	t=1729892245; cv=none; b=q2z1ueEy3bf/0QnxM3vp38ccZ3cjC7lm6Ced1dqcBlMbYNaCioHVGFAS0PWb9UvzePrnE/7QaKOysN5c01qKkSdqbjXaP2oZzn7gC2oqV/QP2X8WBeMJXMAmuFD0z982Kr5ONJ0/dz13gRqtiX0ZUzgeHzXBp/dstwOYM/q6a8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729891406; c=relaxed/simple;
-	bh=mrvuFapWgzfrpeyCx9G7w/e8BAD5iCfoYA2KNNcmGRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIMFIrP1l84J/fWhx3ctK9vpHGyDpS2so0vkKWAltYM3W2F+AuzHs/qAhkWtZomJNMCyapgYXNbvXJPS1IOdivUOnEYtVMl1bR5xcA2zrUi7DopzDEvRSTIBh6F9ouM8OVhnR++YSpu7RXKfwazYuHhzec0+rkGBNnSc1qLCF4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhcEQjoG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2789AC4CEC3;
-	Fri, 25 Oct 2024 21:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729891406;
-	bh=mrvuFapWgzfrpeyCx9G7w/e8BAD5iCfoYA2KNNcmGRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rhcEQjoG3kL0r1SxE+KkaaHc3kfQNIK8dtVNyxwK3Eei48VKjhQMNgUn0mpzA1AXJ
-	 /lRUqrQF/gpWBu1LxT2dDdwNtogCSQfXVBwwry8HkDkVuLgRG7i0HeOOPMFk1NcPNL
-	 61T0hgaonNT1gows/QIrP8VM1LBhcvBECywJrBtFJkcrJijrKOx1mIr1yFiUFfGgGr
-	 PaGfuelQdXpc3TWQEhjLCrIgr2BzVuNzMqS6bySUuVBjTESc0duCHXgJEf3S4gZrWi
-	 dX87XiD/x2aKOXmOQe2kHVJlQEAYiltebuhUCwJv+cHwz+MK7rxe6YgXMRDZJX2wqF
-	 7Wgpgu5vVUETg==
-Date: Fri, 25 Oct 2024 14:23:25 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: chandanbabu@kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/1] xfs: introduce new file range commit ioctls
-Message-ID: <20241025212325.GO2386201@frogsfrogsfrogs>
-References: <172530104958.3324894.994059142950589764.stgit@frogsfrogsfrogs>
- <172530104976.3324894.7457187634523547516.stgit@frogsfrogsfrogs>
- <20240903-kapelle-anregen-6b346d4dbead@brauner>
+	s=arc-20240116; t=1729892245; c=relaxed/simple;
+	bh=YOZ58UBNTMsnhcYtd0gZ1ZqymIVjFUr/1L3J9cjAsaQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hap1i7Dn1AP00HvWgrKUimhot/EObsjIO1nx1OTnaNjqP+f/DimlWL/TFAjlFeSfQjyr8sXQ7z1e9tTbKpD9qcjVPmk0NCNjayGTB91C+XIbnFw9LkIeCnbgSn9ZoRRrEOrmfZDEDKQBcVq0iaJFItpmnawGGLWyrgJAcuPs1TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=b4Ljz4jb; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PKXeaI001280
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:37:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=/GQfP/1bQVo+MIHxlX
+	/7bWekCbFNLz0QJfbEivfPyp8=; b=b4Ljz4jbiYYgNE6E7pJJS61xYVIOwWwnIZ
+	8bWHNKURSQBglgrN/fF3PasxbhGqOVFlXIsJfllFNojf/KldUjUn0wuC+D4+0UIT
+	a4o8JMppCG2/qzxtExf4OVSc/LThDiDDZ0rmxndnrSKSCR6tj1fxi+t59JmGgij8
+	sSfIQUQSa5K3BACjIatE7kw5hsU2voOHUwSuHcQnsRJL7FSU3jkN8+eGWfMH5L1h
+	86ud3IUzEsKDFlfkdAu0/4TXulZpJ3WiYvMltx6DKAtEfXEiQGJx3eXKwprjPs6n
+	8cMg4ICj0P3BGD3yfveg8MCUR86wCsUyEhmbtuDULGTKvvLMOP/A==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42ga1xv7hu-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2024 14:37:22 -0700 (PDT)
+Received: from twshared13976.17.frc2.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Fri, 25 Oct 2024 21:37:20 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 6023F1476D735; Fri, 25 Oct 2024 14:37:06 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <io-uring@vger.kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <hch@lst.de>, <joshi.k@samsung.com>,
+        <javier.gonz@samsung.com>, <bvanassche@acm.org>,
+        Keith Busch
+	<kbusch@kernel.org>
+Subject: [PATCHv9 0/7] write hints with nvme fdp, scsi streams
+Date: Fri, 25 Oct 2024 14:36:38 -0700
+Message-ID: <20241025213645.3464331-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903-kapelle-anregen-6b346d4dbead@brauner>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: mkNK9QfJQSPlV6Atft88XYeDrzVsgBZ0
+X-Proofpoint-GUID: mkNK9QfJQSPlV6Atft88XYeDrzVsgBZ0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On Tue, Sep 03, 2024 at 09:52:43AM +0200, Christian Brauner wrote:
-> On Mon, Sep 02, 2024 at 11:23:07AM GMT, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > This patch introduces two more new ioctls to manage atomic updates to
-> > file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
-> > commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
-> > does, but with the additional requirement that file2 cannot have changed
-> > since some sampling point.  The start-commit ioctl performs the sampling
-> > of file attributes.
-> > 
-> > Note: This patch currently samples i_ctime during START_COMMIT and
-> > checks that it hasn't changed during COMMIT_RANGE.  This isn't entirely
-> > safe in kernels prior to 6.12 because ctime only had coarse grained
-> > granularity and very fast updates could collide with a COMMIT_RANGE.
-> > With the multi-granularity ctime introduced by Jeff Layton, it's now
-> > possible to update ctime such that this does not happen.
-> > 
-> > It is critical, then, that this patch must not be backported to any
-> > kernel that does not support fine-grained file change timestamps.
-> > 
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > Acked-by: Jeff Layton <jlayton@kernel.org>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/xfs/libxfs/xfs_fs.h |   26 +++++++++
-> >  fs/xfs/xfs_exchrange.c |  143 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  fs/xfs/xfs_exchrange.h |   16 +++++
-> >  fs/xfs/xfs_ioctl.c     |    4 +
-> >  fs/xfs/xfs_trace.h     |   57 +++++++++++++++++++
-> >  5 files changed, 243 insertions(+), 3 deletions(-)
-> > 
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-> > index 454b63ef7201..c85c8077fac3 100644
-> > --- a/fs/xfs/libxfs/xfs_fs.h
-> > +++ b/fs/xfs/libxfs/xfs_fs.h
-> > @@ -825,6 +825,30 @@ struct xfs_exchange_range {
-> >  	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
-> >  };
-> >  
-> > +/*
-> > + * Using the same definition of file2 as struct xfs_exchange_range, commit the
-> > + * contents of file1 into file2 if file2 has the same inode number, mtime, and
-> > + * ctime as the arguments provided to the call.  The old contents of file2 will
-> > + * be moved to file1.
-> > + *
-> > + * Returns -EBUSY if there isn't an exact match for the file2 fields.
-> > + *
-> > + * Filesystems must be able to restart and complete the operation even after
-> > + * the system goes down.
-> > + */
-> > +struct xfs_commit_range {
-> > +	__s32		file1_fd;
-> > +	__u32		pad;		/* must be zeroes */
-> > +	__u64		file1_offset;	/* file1 offset, bytes */
-> > +	__u64		file2_offset;	/* file2 offset, bytes */
-> > +	__u64		length;		/* bytes to exchange */
-> > +
-> > +	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
-> > +
-> > +	/* opaque file2 metadata for freshness checks */
-> > +	__u64		file2_freshness[6];
-> > +};
-> > +
-> >  /*
-> >   * Exchange file data all the way to the ends of both files, and then exchange
-> >   * the file sizes.  This flag can be used to replace a file's contents with a
-> > @@ -997,6 +1021,8 @@ struct xfs_getparents_by_handle {
-> >  #define XFS_IOC_BULKSTAT	     _IOR ('X', 127, struct xfs_bulkstat_req)
-> >  #define XFS_IOC_INUMBERS	     _IOR ('X', 128, struct xfs_inumbers_req)
-> >  #define XFS_IOC_EXCHANGE_RANGE	     _IOW ('X', 129, struct xfs_exchange_range)
-> > +#define XFS_IOC_START_COMMIT	     _IOR ('X', 130, struct xfs_commit_range)
-> > +#define XFS_IOC_COMMIT_RANGE	     _IOW ('X', 131, struct xfs_commit_range)
-> >  /*	XFS_IOC_GETFSUUID ---------- deprecated 140	 */
-> >  
-> >  
-> > diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-> > index c8a655c92c92..d0889190ab7f 100644
-> > --- a/fs/xfs/xfs_exchrange.c
-> > +++ b/fs/xfs/xfs_exchrange.c
-> > @@ -72,6 +72,34 @@ xfs_exchrange_estimate(
-> >  	return error;
-> >  }
-> >  
-> > +/*
-> > + * Check that file2's metadata agree with the snapshot that we took for the
-> > + * range commit request.
-> > + *
-> > + * This should be called after the filesystem has locked /all/ inode metadata
-> > + * against modification.
-> > + */
-> > +STATIC int
-> > +xfs_exchrange_check_freshness(
-> > +	const struct xfs_exchrange	*fxr,
-> > +	struct xfs_inode		*ip2)
-> > +{
-> > +	struct inode			*inode2 = VFS_I(ip2);
-> > +	struct timespec64		ctime = inode_get_ctime(inode2);
-> > +	struct timespec64		mtime = inode_get_mtime(inode2);
-> > +
-> > +	trace_xfs_exchrange_freshness(fxr, ip2);
-> > +
-> > +	/* Check that file2 hasn't otherwise been modified. */
-> > +	if (fxr->file2_ino != ip2->i_ino ||
-> > +	    fxr->file2_gen != inode2->i_generation ||
-> > +	    !timespec64_equal(&fxr->file2_ctime, &ctime) ||
-> > +	    !timespec64_equal(&fxr->file2_mtime, &mtime))
-> > +		return -EBUSY;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  #define QRETRY_IP1	(0x1)
-> >  #define QRETRY_IP2	(0x2)
-> >  
-> > @@ -607,6 +635,12 @@ xfs_exchrange_prep(
-> >  	if (error || fxr->length == 0)
-> >  		return error;
-> >  
-> > +	if (fxr->flags & __XFS_EXCHANGE_RANGE_CHECK_FRESH2) {
-> > +		error = xfs_exchrange_check_freshness(fxr, ip2);
-> > +		if (error)
-> > +			return error;
-> > +	}
-> > +
-> >  	/* Attach dquots to both inodes before changing block maps. */
-> >  	error = xfs_qm_dqattach(ip2);
-> >  	if (error)
-> > @@ -719,7 +753,8 @@ xfs_exchange_range(
-> >  	if (fxr->file1->f_path.mnt != fxr->file2->f_path.mnt)
-> >  		return -EXDEV;
-> >  
-> > -	if (fxr->flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
-> > +	if (fxr->flags & ~(XFS_EXCHANGE_RANGE_ALL_FLAGS |
-> > +			 __XFS_EXCHANGE_RANGE_CHECK_FRESH2))
-> >  		return -EINVAL;
-> >  
-> >  	/* Userspace requests only honored for regular files. */
-> > @@ -802,3 +837,109 @@ xfs_ioc_exchange_range(
-> >  	fdput(file1);
-> >  	return error;
-> >  }
-> > +
-> > +/* Opaque freshness blob for XFS_IOC_COMMIT_RANGE */
-> > +struct xfs_commit_range_fresh {
-> > +	xfs_fsid_t	fsid;		/* m_fixedfsid */
-> > +	__u64		file2_ino;	/* inode number */
-> > +	__s64		file2_mtime;	/* modification time */
-> > +	__s64		file2_ctime;	/* change time */
-> > +	__s32		file2_mtime_nsec; /* mod time, nsec */
-> > +	__s32		file2_ctime_nsec; /* change time, nsec */
-> > +	__u32		file2_gen;	/* inode generation */
-> > +	__u32		magic;		/* zero */
-> > +};
-> > +#define XCR_FRESH_MAGIC	0x444F524B	/* DORK */
-> > +
-> > +/* Set up a commitrange operation by sampling file2's write-related attrs */
-> > +long
-> > +xfs_ioc_start_commit(
-> > +	struct file			*file,
-> > +	struct xfs_commit_range __user	*argp)
-> > +{
-> > +	struct xfs_commit_range		args = { };
-> > +	struct timespec64		ts;
-> > +	struct xfs_commit_range_fresh	*kern_f;
-> > +	struct xfs_commit_range_fresh	__user *user_f;
-> > +	struct inode			*inode2 = file_inode(file);
-> > +	struct xfs_inode		*ip2 = XFS_I(inode2);
-> > +	const unsigned int		lockflags = XFS_IOLOCK_SHARED |
-> > +						    XFS_MMAPLOCK_SHARED |
-> > +						    XFS_ILOCK_SHARED;
-> > +
-> > +	BUILD_BUG_ON(sizeof(struct xfs_commit_range_fresh) !=
-> > +		     sizeof(args.file2_freshness));
-> > +
-> > +	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
-> > +
-> > +	memcpy(&kern_f->fsid, ip2->i_mount->m_fixedfsid, sizeof(xfs_fsid_t));
-> > +
-> > +	xfs_ilock(ip2, lockflags);
-> > +	ts = inode_get_ctime(inode2);
-> > +	kern_f->file2_ctime		= ts.tv_sec;
-> > +	kern_f->file2_ctime_nsec	= ts.tv_nsec;
-> > +	ts = inode_get_mtime(inode2);
-> > +	kern_f->file2_mtime		= ts.tv_sec;
-> > +	kern_f->file2_mtime_nsec	= ts.tv_nsec;
-> > +	kern_f->file2_ino		= ip2->i_ino;
-> > +	kern_f->file2_gen		= inode2->i_generation;
-> > +	kern_f->magic			= XCR_FRESH_MAGIC;
-> > +	xfs_iunlock(ip2, lockflags);
-> > +
-> > +	user_f = (struct xfs_commit_range_fresh __user *)&argp->file2_freshness;
-> > +	if (copy_to_user(user_f, kern_f, sizeof(*kern_f)))
-> > +		return -EFAULT;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * Exchange file1 and file2 contents if file2 has not been written since the
-> > + * start commit operation.
-> > + */
-> > +long
-> > +xfs_ioc_commit_range(
-> > +	struct file			*file,
-> > +	struct xfs_commit_range __user	*argp)
-> > +{
-> > +	struct xfs_exchrange		fxr = {
-> > +		.file2			= file,
-> > +	};
-> > +	struct xfs_commit_range		args;
-> > +	struct xfs_commit_range_fresh	*kern_f;
-> > +	struct xfs_inode		*ip2 = XFS_I(file_inode(file));
-> > +	struct xfs_mount		*mp = ip2->i_mount;
-> > +	struct fd			file1;
-> > +	int				error;
-> > +
-> > +	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
-> > +
-> > +	if (copy_from_user(&args, argp, sizeof(args)))
-> > +		return -EFAULT;
-> > +	if (args.flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
-> > +		return -EINVAL;
-> > +	if (kern_f->magic != XCR_FRESH_MAGIC)
-> > +		return -EBUSY;
-> > +	if (memcmp(&kern_f->fsid, mp->m_fixedfsid, sizeof(xfs_fsid_t)))
-> > +		return -EBUSY;
-> 
-> So, I mentioned this before in another mail a few months ago and I think
-> you liked the idea so just as a reminder in case you forgot:
-> 
-> Ioctls are extensible if done correctly:
-> 
-> switch (__IOC_NR(ioctl)) {
-> 	case _IOC_NR(XFS_IOC_START_COMMIT): {
-> 	        size_t usize = _IOC_SIZE(ioctl);
-> 		struct xfs_commit_range	args;
-> 
-> 		if (usize < XFS_IOC_START_COMMIT_SIZE_VER0)
->                         return -EINVAL;
-> 
-> 		if (copy_struct_from_user(&args, sizeof(args), argp, usize))
-> 			return -EFAULT;
-> 	}
-> 
-> If you code it this way, relying on copy_struct_from_user() right from
-> the start you can easily extend your struct in a backward and forward
-> compatible manner.
+From: Keith Busch <kbusch@kernel.org>
 
-I don't know that we'd really need it for commitrange since there's
-plenty of space (~40 bytes) in the "opaque" freshness blob.  I suspect
-that if we ever add subvolumes to XFS then we might want to take over
-the 12 bytes used by mtime* for the subvolume id.
+A little something for everyone here.
 
-That said, I also think we could convert to this format pretty easily.
-Also, copy_struct_from_user can return -E2BIG so I think that needs to
-be:
+Upfront, I really didn't get the feedback about setting different flags
+for stream vs. temperature support. Who wants to use it, and where and
+how is that information used?
 
-	ret = copy_struct_from_user(&args, sizeof(args), argp, usize);
-	if (ret)
-		return ret;
+Changes from v8:
 
-Though the overriding reason for not writing the __IOC_NR dispatch code
-this way is that every time I've tried extend an xfs ioctl in this
-manner, Dave says no because (I think) he doesn't trust how the struct
-size is opaquely encoded in the ioctl number /and/ doesn't trust the
-BUILD_BUG_ONs I put in the code to guarantee uniqueness so I pick a new
-number so I can complete the review instead of starting over with a
-different reviewer who doesn't have that particular preference.
+  Added reviews.
 
-> }
-> 
-> > +
-> > +	fxr.file1_offset	= args.file1_offset;
-> > +	fxr.file2_offset	= args.file2_offset;
-> > +	fxr.length		= args.length;
-> > +	fxr.flags		= args.flags | __XFS_EXCHANGE_RANGE_CHECK_FRESH2;
-> > +	fxr.file2_ino		= kern_f->file2_ino;
-> > +	fxr.file2_gen		= kern_f->file2_gen;
-> > +	fxr.file2_mtime.tv_sec	= kern_f->file2_mtime;
-> > +	fxr.file2_mtime.tv_nsec	= kern_f->file2_mtime_nsec;
-> > +	fxr.file2_ctime.tv_sec	= kern_f->file2_ctime;
-> > +	fxr.file2_ctime.tv_nsec	= kern_f->file2_ctime_nsec;
-> > +
-> > +	file1 = fdget(args.file1_fd);
-> > +	if (!file1.file)
-> > +		return -EBADF;
-> 
-> Please use CLASS(fd, f)(args.file1_fd) :)
+  Removed an unused header.
 
-Yeah, I saw that the fd cleanups collided with xfs in for-next, thanks
-for the heads up.
+  Changed "hint" to "streams" in the commit logs.
 
---D
+  Ability to split available hints that a partition can use.
 
-> > +	fxr.file1 = file1.file;
-> > +
-> > +	error = xfs_exchange_range(&fxr);
-> > +	fdput(file1);
-> > +	return error;
-> > +}
-> > diff --git a/fs/xfs/xfs_exchrange.h b/fs/xfs/xfs_exchrange.h
-> > index 039abcca546e..bc1298aba806 100644
-> > --- a/fs/xfs/xfs_exchrange.h
-> > +++ b/fs/xfs/xfs_exchrange.h
-> > @@ -10,8 +10,12 @@
-> >  #define __XFS_EXCHANGE_RANGE_UPD_CMTIME1	(1ULL << 63)
-> >  #define __XFS_EXCHANGE_RANGE_UPD_CMTIME2	(1ULL << 62)
-> >  
-> > +/* Freshness check required */
-> > +#define __XFS_EXCHANGE_RANGE_CHECK_FRESH2	(1ULL << 61)
-> > +
-> >  #define XFS_EXCHANGE_RANGE_PRIV_FLAGS	(__XFS_EXCHANGE_RANGE_UPD_CMTIME1 | \
-> > -					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2)
-> > +					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2 | \
-> > +					 __XFS_EXCHANGE_RANGE_CHECK_FRESH2)
-> >  
-> >  struct xfs_exchrange {
-> >  	struct file		*file1;
-> > @@ -22,10 +26,20 @@ struct xfs_exchrange {
-> >  	u64			length;
-> >  
-> >  	u64			flags;	/* XFS_EXCHANGE_RANGE flags */
-> > +
-> > +	/* file2 metadata for freshness checks */
-> > +	u64			file2_ino;
-> > +	struct timespec64	file2_mtime;
-> > +	struct timespec64	file2_ctime;
-> > +	u32			file2_gen;
-> >  };
-> >  
-> >  long xfs_ioc_exchange_range(struct file *file,
-> >  		struct xfs_exchange_range __user *argp);
-> > +long xfs_ioc_start_commit(struct file *file,
-> > +		struct xfs_commit_range __user *argp);
-> > +long xfs_ioc_commit_range(struct file *file,
-> > +		struct xfs_commit_range __user	*argp);
-> >  
-> >  struct xfs_exchmaps_req;
-> >  
-> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > index 6b13666d4e96..90b3ee21e7fe 100644
-> > --- a/fs/xfs/xfs_ioctl.c
-> > +++ b/fs/xfs/xfs_ioctl.c
-> > @@ -1518,6 +1518,10 @@ xfs_file_ioctl(
-> >  
-> >  	case XFS_IOC_EXCHANGE_RANGE:
-> >  		return xfs_ioc_exchange_range(filp, arg);
-> > +	case XFS_IOC_START_COMMIT:
-> > +		return xfs_ioc_start_commit(filp, arg);
-> > +	case XFS_IOC_COMMIT_RANGE:
-> > +		return xfs_ioc_commit_range(filp, arg);
-> >  
-> >  	default:
-> >  		return -ENOTTY;
-> > diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> > index 180ce697305a..4cf0fa71ba9c 100644
-> > --- a/fs/xfs/xfs_trace.h
-> > +++ b/fs/xfs/xfs_trace.h
-> > @@ -4926,7 +4926,8 @@ DEFINE_INODE_ERROR_EVENT(xfs_exchrange_error);
-> >  	{ XFS_EXCHANGE_RANGE_DRY_RUN,		"DRY_RUN" }, \
-> >  	{ XFS_EXCHANGE_RANGE_FILE1_WRITTEN,	"F1_WRITTEN" }, \
-> >  	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME1,	"CMTIME1" }, \
-> > -	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }
-> > +	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }, \
-> > +	{ __XFS_EXCHANGE_RANGE_CHECK_FRESH2,	"FRESH2" }
-> >  
-> >  /* file exchange-range tracepoint class */
-> >  DECLARE_EVENT_CLASS(xfs_exchrange_class,
-> > @@ -4986,6 +4987,60 @@ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_prep);
-> >  DEFINE_EXCHRANGE_EVENT(xfs_exchrange_flush);
-> >  DEFINE_EXCHRANGE_EVENT(xfs_exchrange_mappings);
-> >  
-> > +TRACE_EVENT(xfs_exchrange_freshness,
-> > +	TP_PROTO(const struct xfs_exchrange *fxr, struct xfs_inode *ip2),
-> > +	TP_ARGS(fxr, ip2),
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t, dev)
-> > +		__field(xfs_ino_t, ip2_ino)
-> > +		__field(long long, ip2_mtime)
-> > +		__field(long long, ip2_ctime)
-> > +		__field(int, ip2_mtime_nsec)
-> > +		__field(int, ip2_ctime_nsec)
-> > +
-> > +		__field(xfs_ino_t, file2_ino)
-> > +		__field(long long, file2_mtime)
-> > +		__field(long long, file2_ctime)
-> > +		__field(int, file2_mtime_nsec)
-> > +		__field(int, file2_ctime_nsec)
-> > +	),
-> > +	TP_fast_assign(
-> > +		struct timespec64	ts64;
-> > +		struct inode		*inode2 = VFS_I(ip2);
-> > +
-> > +		__entry->dev = inode2->i_sb->s_dev;
-> > +		__entry->ip2_ino = ip2->i_ino;
-> > +
-> > +		ts64 = inode_get_ctime(inode2);
-> > +		__entry->ip2_ctime = ts64.tv_sec;
-> > +		__entry->ip2_ctime_nsec = ts64.tv_nsec;
-> > +
-> > +		ts64 = inode_get_mtime(inode2);
-> > +		__entry->ip2_mtime = ts64.tv_sec;
-> > +		__entry->ip2_mtime_nsec = ts64.tv_nsec;
-> > +
-> > +		__entry->file2_ino = fxr->file2_ino;
-> > +		__entry->file2_mtime = fxr->file2_mtime.tv_sec;
-> > +		__entry->file2_ctime = fxr->file2_ctime.tv_sec;
-> > +		__entry->file2_mtime_nsec = fxr->file2_mtime.tv_nsec;
-> > +		__entry->file2_ctime_nsec = fxr->file2_ctime.tv_nsec;
-> > +	),
-> > +	TP_printk("dev %d:%d "
-> > +		  "ino 0x%llx mtime %lld:%d ctime %lld:%d -> "
-> > +		  "file 0x%llx mtime %lld:%d ctime %lld:%d",
-> > +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> > +		  __entry->ip2_ino,
-> > +		  __entry->ip2_mtime,
-> > +		  __entry->ip2_mtime_nsec,
-> > +		  __entry->ip2_ctime,
-> > +		  __entry->ip2_ctime_nsec,
-> > +		  __entry->file2_ino,
-> > +		  __entry->file2_mtime,
-> > +		  __entry->file2_mtime_nsec,
-> > +		  __entry->file2_ctime,
-> > +		  __entry->file2_ctime_nsec)
-> > +);
-> > +
-> >  TRACE_EVENT(xfs_exchmaps_overhead,
-> >  	TP_PROTO(struct xfs_mount *mp, unsigned long long bmbt_blocks,
-> >  		 unsigned long long rmapbt_blocks),
-> > 
-> 
+  Dropped all the generic filesystem changes that were defaulting to the
+  kiocb write_hint. They are unchanged, which having no functional
+  change was really the intention anyway, so let's just not change them.
+
+  The above means we don't need a special fop flag to indicate support
+  for the kiocb write_hint. Those filesystems that don't support it
+  simply don't read it.
+
+  Added the SCSI support since I had to read the spec anyway, and it is
+  just a one-line change.
+
+Kanchan Joshi (2):
+  io_uring: enable per-io hinting capability
+  nvme: enable FDP support
+
+Keith Busch (5):
+  block: use generic u16 for write hints
+  block: introduce max_write_hints queue limit
+  block: allow ability to limit partition write hints
+  block, fs: add write hint to kiocb
+  scsi: set permanent stream count in block limits
+
+ Documentation/ABI/stable/sysfs-block |  7 +++
+ block/bdev.c                         | 15 +++++
+ block/blk-settings.c                 |  3 +
+ block/blk-sysfs.c                    |  3 +
+ block/fops.c                         | 26 ++++++++-
+ block/partitions/core.c              | 46 +++++++++++++++-
+ drivers/nvme/host/core.c             | 82 ++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h             |  5 ++
+ drivers/scsi/sd.c                    |  2 +
+ include/linux/blk-mq.h               |  3 +-
+ include/linux/blk_types.h            |  4 +-
+ include/linux/blkdev.h               | 12 ++++
+ include/linux/fs.h                   |  1 +
+ include/linux/nvme.h                 | 19 +++++++
+ include/uapi/linux/io_uring.h        |  4 ++
+ io_uring/rw.c                        |  3 +-
+ 16 files changed, 225 insertions(+), 10 deletions(-)
+
+--=20
+2.43.5
+
 
