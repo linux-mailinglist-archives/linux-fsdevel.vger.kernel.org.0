@@ -1,122 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-33017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926829B1915
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2024 17:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99ACA9B19F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2024 18:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A4F28290C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2024 15:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE2C1F21C35
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2024 16:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55A39FE5;
-	Sat, 26 Oct 2024 15:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126191D2F67;
+	Sat, 26 Oct 2024 16:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QcNiFeI0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoLks4qh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2BE1C32
-	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Oct 2024 15:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117C13B2A8;
+	Sat, 26 Oct 2024 16:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729956405; cv=none; b=nbaTLyaOyggLcMIh1knKVvt00uj3zpcTxNaIe69aYN9fQNBdfLL0a50PRBE/+ioN0A9VbS9jeQJyAP6ga0fJo2J4vOlpG6g84S1PCT24qFqqOYpFBAikqFI3+AfFDixDe9WrIgYtufguNW36kjZXNW3lUyRf6Lb/HFoNQUZ2JQc=
+	t=1729961897; cv=none; b=UVJVFNfhEWYfqw9aJeTErAcJNpcBShcqQY8BkaULKtdio6kbDrgT0VtWXEXsZMEyUczNEag8rrrJKlLq8RULnLrLOQkwLJqURbW32t18aEfd3I0fN7IlYfClGd2yEgAg8a/wMMSE8Blj03mlZG+8DHcZSD7nCEVG/XSMHaRDKAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729956405; c=relaxed/simple;
-	bh=j+TOt+oBoXAXIref9ySAzCU2ABgXyfapBlEIF4iWO1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BB2qas+LmzMTdUFr5BFatZr93X1rd0Y7NMixWjVtnJwOIrkC+dFU2d6pV8u6yUIXOX9U017j7kZM0R3kmJ1v+dUmA3lenKma0zvl3BVfZzB1St5Yzywq0f6GY3xXYrsXqJ1OkcUWOTYRihcmxKBSpoPV2beUyHqlQNc7z43XYJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QcNiFeI0; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4a5ad828a0fso931705137.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Oct 2024 08:26:42 -0700 (PDT)
+	s=arc-20240116; t=1729961897; c=relaxed/simple;
+	bh=Uoa1yBXZoSBbrjrl4LS4sVenPiHdm/MZ5en50telem8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n0qASipxfIQTUsFyBoWfvnUXeaZJwPSFp3La7Ys1XqwsZ1HCXI74y1ocX1lHnGEqBz63ugtKeFMfV2HJe4B110gPHjBYgliPJCu4N55IxE9UVi6sP0GFzhH/J42Lr5Vfrb4DhA24r0RllP8V+yh7j4xqLDrfJAWSv9SBZL8yeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoLks4qh; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbd092f7f0so21421706d6.0;
+        Sat, 26 Oct 2024 09:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729956401; x=1730561201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/xurp/dzSZiTxc3Q4P+xg6SJq6yioLcLs/RNUwkLIb8=;
-        b=QcNiFeI0D+4/GuAlhGXHe9GX8KU08JRwuhTU2KTl9W5MsI5PXZE0hf5chrDmwO4UMr
-         5NwN9HrHhG+XIdOOiGWJ15D/+Slyu2ROHE+SryvQgnk5qFU5L7Ljx6Vwkpft1b6NYWGs
-         BX/qVMoX1t6hxO5F6HS7tC4/faBNjEpp73nEzZSlL89EbID9AIJDKUF9QtyTTDrKaS7y
-         +nIe0QER7LmRaqnjHOGT/dV+taSPp45QW4eOVYtGQ3avFKFWU00pzBkpKmL3cYKltsAG
-         BfQkFysK/Jpdcs+l2cSS9fXP52yz4Hgm8+AfPrmB6j+8BacHbVDrJfsY/znkKZPiBYEp
-         yM5g==
+        d=gmail.com; s=20230601; t=1729961893; x=1730566693; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMZfwdkUBwCJp9Vo4PM2HvHKSsl3blcRgdTaXW2AdMY=;
+        b=MoLks4qhGf+NBD/fkWvK8DjE3hTZfdv8lar4hy5fhkD6pJSx5xoHhAicd/dCVHwk1E
+         VvYeiBAQffXjFzdFRQ9shYoXLdg8waXk7gnPScXSJN0C4cQPsvwxd2l6CfgDWLa4rgK1
+         ERiyb9ginLcJOQ5khV/iwrANxdKP/WmS8xZevr+essU42ikS3LHMA4TYx+LPTCBtrp46
+         L/LXPq/7qJxpbFAL78jC5IJidPdcTI0f/rkh1iuBYUqfFxh24qROuQ0i8TbHNQK5rgpv
+         RX58HFi/4psMbIM2lLLu+5f7GfbE7E/vUGhGvpFSB9ATOgdngSxzM6OIJ5aKXgHBwYUy
+         KYzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729956401; x=1730561201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/xurp/dzSZiTxc3Q4P+xg6SJq6yioLcLs/RNUwkLIb8=;
-        b=Yra8ZB67aIfnpyh0qxYR3rikCWa8sHROjZUVTp67vxAhvQlLiTShiWXEa430CpmZEj
-         iJQQL8wNe/nt3gfXigK61D0KTTP9JsfjRhF15QnFsSs7RlwB4KdnJZNzjuMWuFrfnWuE
-         AojSNP9v7nsNZsCD/lyFSf41zLmigoh1ITSp5/jCOxC1uJaQTT+0tG5xYrCVt4LxZ8iA
-         lf2FHVpYaWC6xfizIw5O6OhuzLIEX5r1IkOyV6xjUZrZYtAGhDAoBeRzkRN8PhvVZOqO
-         Ag4in7NleCKu0WUOif1mccbGysuhc+oKE2S+QXNfKPB7NYOVkED6vTSOicVeQ9EsBOQ+
-         E7tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi00gG+wDVwmTEr5rPUjQIofDrayE6amY6vs+2zNeGyNv1eZswfgQFbEG2yShRTmbQe8OT2O7UMDSRX84l@vger.kernel.org
-X-Gm-Message-State: AOJu0YxExVJO1LRiHkBUiXHgcxBkSMbyEdtG+yXPhhUjl/UlwFRT59Gu
-	3zH6iPJOxotnbKY4DW/+9yH4tE+YyNfdZhLNfrDlAtckA6Z/cNYcV0Dwf7BbKvV90ZhECPU9D7l
-	7un/+pc9dFtFFcLtt2ZZOZDX1NiGz5oNQmhpZ
-X-Google-Smtp-Source: AGHT+IErUT0EIQ3izExbmaeiykyMEE+HsZfO112pFWJqZp8vISP3bZ5byVVQr2RWeeWRFFt6XPR1QkksNOhNbda7Msk=
-X-Received: by 2002:a05:6102:5112:b0:4a5:b0d3:cbbe with SMTP id
- ada2fe7eead31-4a8cfb27a5fmr2090677137.1.1729956401467; Sat, 26 Oct 2024
- 08:26:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729961893; x=1730566693;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TMZfwdkUBwCJp9Vo4PM2HvHKSsl3blcRgdTaXW2AdMY=;
+        b=YsqsFKFFuRTI5e5bktUeAQ57n8B1gB1nDqFSdb2HfC1HIBFEqqFUTe8EBmOt4fughm
+         wiefNG/33LYyGkntTHkSgd085Mw/neqXDFfykuhicJIMfMFIxw3j08FdcMn2AsL4Kx1F
+         NXNqgyGBgqQr10+LEStQ8IYmQe40amfUuIvux75AxnIYEMlv9hrKik04MuarYhfsxgd9
+         t7gVWpGKGQL2B+h+0LvtNUYVmyMTR4dWLHpKePAmGNq3J5LQsYYQJQopU35O3RQQ5PB9
+         Yg0j3+jMWG/a7vi2ukIDsItbUYn0HSE4p5+GIOqynIPZVDFaElwQusrW5x09/G0qUzi7
+         AtVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlh1dKezfB4urdALsXmetakyAyElDZFAmIdPmOnG3L5L+eB4KzsETfJIcP9U8sDsW7XAMIRUsBRZQ=@vger.kernel.org, AJvYcCXnd5HIRUIX2VU0/AQ3KvGJsaAo8rRO+VjgZFOTKboUMf1MjGhBjdxsMEZxtrtJL2xp0+o6qVWELBXZ34AD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNSnmoRXKv2KGX8FVHuG8+bzunkFkk9DyiBQ1QctnPNoIs9rKQ
+	ertkLsqhwofpFTuYRwsXGEd0vDs1dJaFKmJFWNbbcdjG5v729gdtPtIiXZCy
+X-Google-Smtp-Source: AGHT+IHOH/bFeW7nkVd2FEp2N/8fGFbMjeSSle63Y9gXrm4MeG5/hsNrHgBg/he+YH3KD/TYpXrRmQ==
+X-Received: by 2002:a05:6214:3186:b0:6cc:8705:b5cf with SMTP id 6a1803df08f44-6d1858194f9mr52933426d6.22.1729961892607;
+        Sat, 26 Oct 2024 09:58:12 -0700 (PDT)
+Received: from 156.1.168.192.in-addr.arpa (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a02608sm17002436d6.78.2024.10.26.09.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 09:58:11 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 26 Oct 2024 12:58:08 -0400
+Subject: [PATCH v5] XArray: minor documentation improvements
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-6-shakeel.butt@linux.dev> <iwmabnye3nl4merealrawt3bdvfii2pwavwrddrqpraoveet7h@ezrsdhjwwej7>
-In-Reply-To: <iwmabnye3nl4merealrawt3bdvfii2pwavwrddrqpraoveet7h@ezrsdhjwwej7>
-From: Yu Zhao <yuzhao@google.com>
-Date: Sat, 26 Oct 2024 09:26:04 -0600
-Message-ID: <CAOUHufZexpg-m5rqJXUvkCh5nS6RqJYcaS9b=xra--pVnHctPA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/6] memcg-v1: no need for memcg locking for MGLRU
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241026-xarray-documentation-v5-1-0fd4c4e3ce35@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJ8fHWcC/03MQQ6CMBBA0auQWTukbSiiK+9hXIx0gEksNUM1G
+ MLdbVy5fIv/N1hYhRc4Vxsov2WRNBf4QwX9RPPIKKEYnHGNNa7FlVTpgyH1r8hzplwC7Fq2gwu
+ mOYY7lPSpPMj6215vxYOmiHlSpr9Z2dnGelN71508OswURcNljCSPuk8R9v0LWDCeNaAAAAA=
+X-Change-ID: 20241026-xarray-documentation-86e1f2d047db
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
+ Bagas Sanjaya <bagasdotme@gmail.com>, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-On Sat, Oct 26, 2024 at 12:34=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Thu, Oct 24, 2024 at 06:23:02PM GMT, Shakeel Butt wrote:
-> > While updating the generation of the folios, MGLRU requires that the
-> > folio's memcg association remains stable. With the charge migration
-> > deprecated, there is no need for MGLRU to acquire locks to keep the
-> > folio and memcg association stable.
-> >
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->
-> Andrew, can you please apply the following fix to this patch after your
-> unused fixup?
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Mention `xa_erase` in discussion of multi-index entries.  Split this
+  into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
+- Add caveat that `xa_store` and `xa_erase` are not equivalent in the
+  presence of `XA_FLAGS_ALLOC`.
 
-Thanks!
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v5:
+- Add trailers; otherwise resend of v4. Sent as v5 due to tooling issue.
+- Link to v4: https://lore.kernel.org/r/20241010214150.52895-2-tamird@gmail.com/
 
-> index fd7171658b63..b8b0e8fa1332 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3353,7 +3353,7 @@ static struct folio *get_pfn_folio(unsigned long pf=
-n, struct mem_cgroup *memcg,
->         if (folio_nid(folio) !=3D pgdat->node_id)
->                 return NULL;
->
-> -       if (folio_memcg_rcu(folio) !=3D memcg)
-> +       if (folio_memcg(folio) !=3D memcg)
->                 return NULL;
->
->         /* file VMAs can contain anon pages from COW */
->
->
+Changes in v4:
+- Remove latent sentence fragment.
+
+Changes in v3:
+- metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
+- mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the presence
+  of `XA_FLAGS_ALLOC`.
+
+Changes in v2:
+- s/use/you/ (Darrick J. Wong)
+---
+ Documentation/core-api/xarray.rst | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6f8e632e7d28d17fd1c60fcf0b5c4..f6a3eef4fe7f0a84068048175cb857d566f63516 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether you want to store value entries or tagged pointers in any
++particular XArray.
+ 
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,9 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Unsetting (using
++xa_erase() or xa_store() with ``NULL``) any entry will cause the XArray
++to forget about the range.
+ 
+ Normal API
+ ==========
+@@ -63,13 +64,14 @@ for statically allocated XArrays or xa_init() for dynamically
+ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
+ 
+-You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
+-new entry and return the previous entry stored at that index.  You can
+-use xa_erase() instead of calling xa_store() with a
+-``NULL`` entry.  There is no difference between an entry that has never
+-been stored to, one that has been erased and one that has most recently
+-had ``NULL`` stored to it.
++You can then set entries using xa_store() and get entries using
++xa_load().  xa_store() will overwrite any entry with the new entry and
++return the previous entry stored at that index.  You can unset entries
++using xa_erase() or by setting the entry to ``NULL`` using xa_store().
++There is no difference between an entry that has never been stored to
++and one that has been erased with xa_erase(); an entry that has most
++recently had ``NULL`` stored to it is also equivalent except if the
++XArray was initialized with ``XA_FLAGS_ALLOC``.
+ 
+ You can conditionally replace an entry at an index by using
+ xa_cmpxchg().  Like cmpxchg(), it will only succeed if
+
+---
+base-commit: 850925a8133c73c4a2453c360b2c3beb3bab67c9
+change-id: 20241026-xarray-documentation-86e1f2d047db
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
