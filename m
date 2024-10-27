@@ -1,93 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-33022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0759B1D7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 12:43:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8B79B1DCA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 14:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83242B21099
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 11:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43D9281C6D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 13:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3A15442D;
-	Sun, 27 Oct 2024 11:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5F5156F45;
+	Sun, 27 Oct 2024 13:11:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869CF14A09A;
-	Sun, 27 Oct 2024 11:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB551E493;
+	Sun, 27 Oct 2024 13:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730029429; cv=none; b=ef12hk734wyDNmTLyLZxqK4AvXlrSascw9qFc546X6ZLy6UywFvuT3+K3k5qaag6y0ucsySZrABJC9bELgd7T4BvQvgaqHNyg/ns113AnVs5E4RpIofOl0+BcfvNL1MZew4bGxnU5hWFcthC5+xXmTbGWurpNoZlzXvtaqyzaP0=
+	t=1730034706; cv=none; b=AcDLmMsKNj08y2jGRjdHJCZ61jo9X+qPsQY1YMzVrNgBlUujzviVLqWnZNQGTerr6gyiPNT0W9nhO8RurtOs5RvJtMDAT4w5rwlB7LL0e28FE40M+B8lIJ4fwa+cmoq0gmvkcFhirERpwvPww4oVsqLLLuUCU7rNlb6jEMtbBPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730029429; c=relaxed/simple;
-	bh=VhaA53Zp+2mrXZXUnUwu3gnRPns6El5q4T/OURux8kQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SMElyFJDnOwoRY8dnIQfHUD2ag4nhua9YBkM3APAB57ExFbTliPi7TbPtR+lAMISrdLHIO7w/i/es/SELICpxCV2ne/+xVL2ZX0o1VobH0/ywLygGpPrN8Jh5a+d674kWlNlaalwz/oDbK57buDuue7DsS0tKP7bt7d8sBGgWfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id EF5A4435C4;
-	Sun, 27 Oct 2024 12:43:37 +0100 (CET)
-From: Christian Ebner <c.ebner@proxmox.com>
-To: dhowells@redhat.com,
-	jlayton@kernel.org,
-	stable@vger.kernel.org
-Cc: netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Ebner <c.ebner@proxmox.com>
-Subject: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before netfs_clear_unread() tail clean
-Date: Sun, 27 Oct 2024 12:43:15 +0100
-Message-Id: <20241027114315.730407-1-c.ebner@proxmox.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730034706; c=relaxed/simple;
+	bh=FyHoYGFbWTamC7/YRq7XJbj+xniyhRWqgqDOZwyc8k0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Atzx85seXn+/0cB+Jz7J2/8vhjRcQ4bqXlVCVOvlt88+va0jMotExw/Pt4hlk9WogObkC3/zNUcDYYzq+CRrBL7DC/BXFjniVRMlHViJ/HrT726hHZv53RwxmKgg429Gg6jkshPAfoYr8+gWh2Ept+uUddhuv2yJyfgz2c2Hmro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Guan Xin <guanx.bac@gmail.com>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Cc: v9fs@lists.linux.dev,
+ Linux Kernel Network Developers <netdev@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, Eric Van Hensbergen <ericvh@kernel.org>
+Subject:
+ Re: Calculate VIRTQUEUE_NUM in "net/9p/trans_virtio.c" from stack size
+Date: Sun, 27 Oct 2024 14:11:33 +0100
+Message-ID: <2894536.PhyXTn6laM@silver>
+In-Reply-To: <1921500.ue69UQ14vC@silver>
+References:
+ <CANeMGR6CBxC8HtqbGamgpLGM+M1Ndng_WJ-RxFXXJnc9O3cVwQ@mail.gmail.com>
+ <ZxwTOB5ENi66C_kq@codewreck.org> <1921500.ue69UQ14vC@silver>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Fixes file corruption issues when reading contents via ceph client.
+On Saturday, October 26, 2024 11:36:13 AM CET Christian Schoenebeck wrote:
+[...]
+> I have also been working on increasing performance by allowing larger 9p
+> message size and made it user-configurable at runtime. Here is the latest
+> version of my patch set:
+> 
+> https://lore.kernel.org/all/cover.1657636554.git.linux_oss@crudebyte.com/
+> 
+> Patches 8..11 have already been merged. Patches 1..7 are still to be merged.
 
-Call netfs_reset_subreq_iter() to align subreq->io_iter before
-calling netfs_clear_unread() to clear tail, as subreq->io_iter count
-and subreq->transferred might not be aligned after incomplete I/O,
-having the subreq's NETFS_SREQ_CLEAR_TAIL set.
+Sorry, it's been a while, I linked the wrong version of this patch set (v5).
+Latest version is actually v6 here:
 
-Based on ee4cdf7b ("netfs: Speed up buffered reading"), which
-introduces a fix for the issue in mainline.
+https://lore.kernel.org/all/cover.1657920926.git.linux_oss@crudebyte.com/
 
-Fixes: 92b6cc5d ("netfs: Add iov_iters to (sub)requests to describe various buffers")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219237
-Signed-off-by: Christian Ebner <c.ebner@proxmox.com>
----
-Sending this patch in an attempt to backport the fix introduced by
-commit ee4cdf7b ("netfs: Speed up buffered reading"), which however
-can not be cherry picked for older kernels, as the patch is not
-independent from other commits and touches a lot of unrelated (to
-the fix) code.
+Accordingly patches 7..11 (of v6) have already been merged, whereas patches
+1..6 are not merged yet.
 
- fs/netfs/io.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index d6ada4eba744..500119285346 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -528,6 +528,7 @@ void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
- 
- incomplete:
- 	if (test_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags)) {
-+		netfs_reset_subreq_iter(rreq, subreq);
- 		netfs_clear_unread(subreq);
- 		subreq->transferred = subreq->len;
- 		goto complete;
--- 
-2.39.5
+/Christian
 
 
 
