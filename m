@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-33027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0786C9B1FA7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 19:18:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F7E9B1FAC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 19:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EEE2815DC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 18:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A61F0B21845
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2024 18:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26759183CBB;
-	Sun, 27 Oct 2024 18:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB995186284;
+	Sun, 27 Oct 2024 18:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVrV57y3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2TJoZjF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE2A17BB32;
-	Sun, 27 Oct 2024 18:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEC6185923;
+	Sun, 27 Oct 2024 18:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730053075; cv=none; b=DQNWT3MA0s0lRi4XM+/gYDXt7IH3wMsENdYZ/CKaCkTsLk6LSugv0VQWACZ+912PPlpLqah+zoDdc4G2/iPj2aP/s+mMZwyBH0VxAAjdSH98hv2wo4VkRTSHDH8iinL6fAgz4ulM+gGayuN/WlPOt8JTm4AYFhV3MNoEl8PsRrs=
+	t=1730053079; cv=none; b=SQAa5d4pE1wdH5nQ5ZuyPhnazObVq+UTM/B5xoQmBROvndF22XQA/Ec+i/ATs/IKmsHSJdNnPv1sRRpJG1cNnSKICShT/9Ex4jv4oulItlRMVIGtWBQuPsI5LKgBRhC+UULqjQygjtmJMlQLm+MAtqUdGyQnny7ng8MxJ4MEvW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730053075; c=relaxed/simple;
-	bh=lFlE2lzdud9Wm5BYL/80r7Eoxs5vlCkkI0BDXowyjxI=;
+	s=arc-20240116; t=1730053079; c=relaxed/simple;
+	bh=+Kq9Z5tndx7d8My1EDcLmC5OkXd+eYGSXICBqfZJQm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KLq77IwaoWaXqy/5K+fhbUJ/Nf7t5B7n8YFUB6x1MlNyWcop5yK4i5KHQejp8UMGL7OCAlN1oJv60FYrmtYd8IS//67ox/ofmI/XU65WUoUxV/lLXV0uo9hovf58KQR8U8nTUMI+uc2hqbK1gMNSd6tW42MccQEtrwiT8zcq2GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVrV57y3; arc=none smtp.client-ip=209.85.215.174
+	 MIME-Version; b=r0uZxkaGQXXMX3ru4vnq9Dy+5Aw0JdDUQru2iZipqc7s549mIxg463Q8xEnau0H1+/6+jhWvjF751YYra4DptBEI0efPNvIQw9Qwn7PSeP3YYVEY68R2r01mlYBUcR9CEslHvKrpjD81jc5KttE0KQgsciUxOwZkWv9QUgjHXag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2TJoZjF; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-656d8b346d2so2312371a12.2;
-        Sun, 27 Oct 2024 11:17:53 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cf3e36a76so34742365ad.0;
+        Sun, 27 Oct 2024 11:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730053072; x=1730657872; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730053076; x=1730657876; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bIG/VePA94ngMhv++GpkFcjTMUbZokWtpy9DDHaG6pI=;
-        b=EVrV57y3xP3kAno7p7o7JXpNDBlP0CUTm0+2GsWFWRNW/tNhaqKhH0EIuagKWzFcv0
-         DLwrnCXrwYxZrRSh/ve8INgeixlgXbgSmDBPAZSNaMUMnTFL9e5sGSyX3rdbsyeqToMo
-         y+RhtWJb9XaWrb0Hfm1UcE21fvIKdsMrCGqdFjatcL3I+HqeRjIktzYOeu9yBDqbbbUu
-         kGWJq2zG2MG4NN+4o9aSfba216NKxJWiTc472/X4JyuLm4QhELMYOcB2IqUf7RP2b+Co
-         0xvkU3HTB3gwqSNSBTMOwOIsIsvx/BROo8gLNZ78RSokOF0HnlhbZU04tlS1gOPQVq+L
-         s30A==
+        bh=i+h3NnvEkUh4JyGQi7rGno9Md2mADF6L0JRgif7uwPg=;
+        b=b2TJoZjF+IoKU86tTS0dZnpEn8yjVB0PliAiw094netDiLzNx9pimt1rG7IpVfm/WV
+         tzdGkrBZCfs3SrfcGoXO0K8RsfjQEGl24wR1bH8UDSIubnMnqeYK2N51droPW5tM+ykx
+         rnK23RTibDRbc9J3ojZXFz7C+UgbcmNt/Xb44i4WgW2unna703olggI/rx3qaRRC3C3g
+         3xRNmVe57DYYT++fM+4m0ggOHTp76ZjDjn1GTfWHRXSxFmgfoGAYsfxZtewUHhthBJHf
+         bHi7ar4tt4urvRyfA2n2pzu+Lz0wK+AxI1Q6OquGPFl37QpnCKOOoKnz68ipkGlTQTrY
+         moXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730053072; x=1730657872;
+        d=1e100.net; s=20230601; t=1730053076; x=1730657876;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bIG/VePA94ngMhv++GpkFcjTMUbZokWtpy9DDHaG6pI=;
-        b=EmaNz9YYy7E5JVIcP1xw1yGpBdxjc3Y1wqlZT7nv6/9bdUizgwhrMk62cOsF59Qr0P
-         P/jLY5oA3OJ5zjVgCjeIZOS8alR1cieYHauAYWVgma09AR8NxLecgbVa4uPQTiVwC4bl
-         TENd6Cs6vvG9LzAXKf3m4s0/V2EWBt8Fm9A5ShNzmZyKgwYzYOTpjq4SqjHHV32L8052
-         reZDgewtlGMSvwadPV0GRAAJLHl/7jdQ3SpucNgxeKqKXSfy9kIoyCRhxSwu6oVtmJbv
-         LDr6v5ZexSRaeEX6WeUuOYiVcidzip62PTaVNF38unKG4FDZE0+XUKfsFewfv+4vpj+/
-         kxDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjaRNBk84ZJEygLSZ/BJ6GKSyQrRplPmn429hdy+/P+2DZIgEp1duZ80YXspCpA1UOi9d/rW7Vd0z8J7GP@vger.kernel.org, AJvYcCWI5uxkc5x8tk0i1bL5F/3rdoIkv4kdcV1S31oMkk/fUtOiB7tWi+fnEK0X1RUQRUt9EsXc5GHEoe/k@vger.kernel.org, AJvYcCWR/EuxQNyKnmOGJp06B4PGCKQT8hg8MCIm3LmUALUw6WE5WDgMH7gz4yzMPofYkAui7WF74V9VoCWexB5z@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ5ZU2sNPXPgQTD3nWsOYdfciR2bDcxwTQ6YiVclIahypP+Zq3
-	cc2id+x8yHZOnssGEzgHFHMrs81WW7EPuBsndpXqP5c7mdOw0svHaDAEzQ==
-X-Google-Smtp-Source: AGHT+IG/BR3q47H84KcJI2JvB5THMdtv3sxmNpwtaQz8MQ9YIWXUarEAK1UqcT36wBQMt0varbGCEg==
-X-Received: by 2002:a05:6a20:d98:b0:1d9:1858:2f75 with SMTP id adf61e73a8af0-1d9a84b8ca8mr7765626637.38.1730053072101;
-        Sun, 27 Oct 2024 11:17:52 -0700 (PDT)
+        bh=i+h3NnvEkUh4JyGQi7rGno9Md2mADF6L0JRgif7uwPg=;
+        b=i/M4Ww0sYoadtZjLPXb9YFbOw0u3gkJuyjcG4Iu5AuK2nx/SdRetpBwr85gCIZKAox
+         t1RBI3K9dPKR6tiC4Ls2NaJbLkUynqjDmqp334K3SV5Q6T+e7NvBjDqqsyyd7xqaVjmR
+         MqNOJbXp9QBgcDxNSwUt6VromYD0ENbIYfZixygR1EZVM3o+Oy1AgFFXO52SFCIa9iT/
+         J54FWxed1bzkdhiqhUGp7Pl1XXqQEj2/+OK9onhh+bTA1q2KapQfoITme1/hX5QBJ25j
+         bzsiYUv8yEaLk/+N73QwAA69pBOElIn8OVirQ02M3Or+lbpmiPCzLUjssn2rklH2BtKm
+         3rog==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Q73KgFh6DCmrdv/iR7YMai/3F+wfeHRtUBHo83OBrMH4gK8uxjpWKgkduC6k98qixXTLlvcw565TKtbD@vger.kernel.org, AJvYcCUrpvZlCatyQz3hxqz7aKMVGHFwzESWa+YlFj+Veqrft6PbR0BQXrT3raJpQd+my3EONeohqYKmsqZ67+Np@vger.kernel.org, AJvYcCXUfCuhCbGXFSTbqfpEwtrVU6vu9t56yk/yiBYHKsvyuH2HKQNrVK0nLFi+Xl1qfw1xBuH0IP4Pw8fc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxyW99MCgs4jdvT3vkh2fDekhoZwY15bC6zytS5kb/n5r+pxLc
+	mlfG0N/msjLkM8wpa65rb1PdFbQzM85VPQJYsjQpPrPRIWMZS9qt755D9w==
+X-Google-Smtp-Source: AGHT+IE6qvy6/jDGpnieNnqa5gpNIZJ/VGzknEc5hpU86jWBQ91TiI3g8sAzXPXYI8QZZG0akBE44Q==
+X-Received: by 2002:a05:6a21:6282:b0:1cc:9f25:54d4 with SMTP id adf61e73a8af0-1d9a84d9ddfmr8080021637.38.1730053076059;
+        Sun, 27 Oct 2024 11:17:56 -0700 (PDT)
 Received: from dw-tp.ibmuc.com ([171.76.83.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867d0c1sm4306492a12.33.2024.10.27.11.17.48
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867d0c1sm4306492a12.33.2024.10.27.11.17.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 11:17:51 -0700 (PDT)
+        Sun, 27 Oct 2024 11:17:55 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-ext4@vger.kernel.org
 Cc: Theodore Ts'o <tytso@mit.edu>,
@@ -80,9 +80,9 @@ Cc: Theodore Ts'o <tytso@mit.edu>,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v2 2/4] ext4: Check for atomic writes support in write iter
-Date: Sun, 27 Oct 2024 23:47:26 +0530
-Message-ID: <78ce051e4a7e9a453a46720da76771c21691b162.1729944406.git.ritesh.list@gmail.com>
+Subject: [PATCH v2 3/4] ext4: Support setting FMODE_CAN_ATOMIC_WRITE
+Date: Sun, 27 Oct 2024 23:47:27 +0530
+Message-ID: <ff8a6b81109e4a81ef304eb5b523ed777d62e2a2.1729944406.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1729944406.git.ritesh.list@gmail.com>
 References: <cover.1729944406.git.ritesh.list@gmail.com>
@@ -94,40 +94,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let's validate the given constraints for atomic write request.
-Otherwise it will fail with -EINVAL. Currently atomic write is only
-supported on DIO, so for buffered-io it will return -EOPNOTSUPP.
+FS needs to add the fmode capability in order to support atomic writes
+during file open (refer kiocb_set_rw_flags()). Set this capability on
+a regular file if ext4 can do atomic write.
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/ext4/file.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/ext4/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index f14aed14b9cf..a7b9b9751a3f 100644
+index a7b9b9751a3f..8116bd78910b 100644
 --- a/fs/ext4/file.c
 +++ b/fs/ext4/file.c
-@@ -692,6 +692,20 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (IS_DAX(inode))
- 		return ext4_dax_write_iter(iocb, from);
- #endif
+@@ -898,6 +898,9 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
+ 			return ret;
+ 	}
+ 
++	if (S_ISREG(inode->i_mode) && ext4_can_atomic_write(inode->i_sb))
++		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
 +
-+	if (iocb->ki_flags & IOCB_ATOMIC) {
-+		size_t len = iov_iter_count(from);
-+		int ret;
-+
-+		if (len < EXT4_SB(inode->i_sb)->s_awu_min ||
-+		    len > EXT4_SB(inode->i_sb)->s_awu_max)
-+			return -EINVAL;
-+
-+		ret = generic_atomic_write_valid(iocb, from);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (iocb->ki_flags & IOCB_DIRECT)
- 		return ext4_dio_write_iter(iocb, from);
- 	else
+ 	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+ 	return dquot_file_open(inode, filp);
+ }
 -- 
 2.46.0
 
