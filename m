@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-33051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D709B2EA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 12:21:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98639B2EBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 12:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D716E1F211A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 11:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070701C21A2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 11:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CA01DD54D;
-	Mon, 28 Oct 2024 11:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AA21DE3D3;
+	Mon, 28 Oct 2024 11:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pR/xvaX/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qenSMJHo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068781D969C;
-	Mon, 28 Oct 2024 11:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC61DAC9F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2024 11:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730114054; cv=none; b=XnNGecO05eEDmwoDZRKFNEVTvpW4o3Xuh19kN3/+d8ZcXt50cjzAeijhnzgWA7FGBXKMgqS7FMmTs7d+fPq7xfF/Qqp4pqWYHxHKBB8hlsfwgGjtRM7+ZgOO8Nay34ukIYOkkibyxlyfVug/kYyh/qTNM2YQPUUhoDRB5cG/4aU=
+	t=1730114253; cv=none; b=IYVkUDKuLM0jeMGCeb+vguul0rbXajXKbc8Hz8k2LOf29ulpqxU+yIVrK1BTK3NeT0SumMH6ujqOULJ+2d2S4J1EnzhTr0j71NQLq9VwnJTRu18ixxvavJG0dJsDhzNqx+hACw6z90wEDb3ms5Ka8YOG8c2jnyqteJerTio/dEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730114054; c=relaxed/simple;
-	bh=erLeB07KltMNhtVUTSNmqhcya7ulzw3FQO5guEpxiQQ=;
+	s=arc-20240116; t=1730114253; c=relaxed/simple;
+	bh=AhE0XU7YR1nPO3cOTAjS3DaJqlWoNSfy7ovg/oMuF8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lAoPKEgzuVwv4PTGqYgzZH2pm0eC1WB+Yuh8atfwKIHW/bLvwLZ5OlT8JEv2oOvmahYNZjKS2iaPLRqm569flVX0CvIqmh1+QpVWOo7oPQteFwLiaQ0yGjC9qu9c9F9UpwFy2TFYI6vSaf8Natn+7VHG5U0gHZEhFAmISSzxWtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pR/xvaX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACE4C4CEC3;
-	Mon, 28 Oct 2024 11:14:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rC+p4CjdJAe8VtDjPXA9ZqArGzcMq7E8djMnF/NlcsEQxRfPGb2miyCfYF31ASKV4dGA9uktl3Ey/zF/0yY3zAfXUG4ErNxtjD1qhvQZS0NlFVK/34lGSXe74PjMlui+OV3b92FeRxp/W4WoQPZl9ojYd/7iWeDk5fcIb32rTWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qenSMJHo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E3AC4CEC3;
+	Mon, 28 Oct 2024 11:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730114053;
-	bh=erLeB07KltMNhtVUTSNmqhcya7ulzw3FQO5guEpxiQQ=;
+	s=k20201202; t=1730114252;
+	bh=AhE0XU7YR1nPO3cOTAjS3DaJqlWoNSfy7ovg/oMuF8c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pR/xvaX/JFa2S9ocNjlhgJVkttAR2vDb3yHHgqsOFa8+wx+RtjpQapMQPd3+6Xfb6
-	 aAiMZQpWTV8a9NFU97S+Yr6PL0wVOz8FoRzyUlc6r4oj1j17CRuzzg2ulfhx2RZ4V4
-	 IB2/WSHCDiJTVtRGgieJN/riP8innt04vO3W7Q3WKhvHs5V28zFZ5lHL9sBMUFjr0v
-	 yNNpdAoXKYSIzem6cNT8VSTc+r2n+lXdgxuMx9s5vHUISUo1/JYZmzT97LaQVXHMw9
-	 69PJyV4FUvgRvHBCLpgzQ1q4oyrqcmbDiB5ct+G2q6I06U7qV3e+m7CV35KP7wehLx
-	 fJJrUskPO/dvQ==
-Date: Mon, 28 Oct 2024 12:14:09 +0100
+	b=qenSMJHog+QqMvSpN5t+K+zmZLD4Ez/ecOe7YmP6L9K3J3iPqnRhP8Bsc+/l0xj9u
+	 o22C1y4PFmwi5IpS9t0g8Q7/yktUceMWW0PzjTq08XnJyZjtC89QJBpObWS3h8zl0r
+	 zfBbZR6hlIfLy/92CtMDARC+Aj0PBPNC7IFtrojht13NJFKDuzC/bW79lMAA2lEWss
+	 4LtYvoziyaJnDt6uL5l3whCDarPew+DSt45modfAAbxp7S0AMOiGYo6kSJikeljPDc
+	 WrK0QuWMfhqMTTgB9/UstO+Ini2WgUQ8UVv08UCkezfiGkZYk9kWmI8ZYOkDcyHgxy
+	 xukX+LLtWYiMw==
+Date: Mon, 28 Oct 2024 12:17:27 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: ruansy.fnst@fujitsu.com, linux-fsdevel@vger.kernel.org, hch@lst.de, 
-	linux-xfs@vger.kernel.org, willy@infradead.org, cem@kernel.org
-Subject: Re: [PATCHSET] fsdax/xfs: unshare range fixes for 6.12
-Message-ID: <20241028-zugpferd-esszimmer-6781201ff512@brauner>
-References: <172796813251.1131942.12184885574609980777.stgit@frogsfrogsfrogs>
- <20241007-ortstarif-zeugnis-bfffcb7177aa@brauner>
- <20241025222444.GM21836@frogsfrogsfrogs>
+To: Jann Horn <jannh@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v2 3/3] fs: port files to file_ref
+Message-ID: <20241028-umschalten-anzweifeln-e6444dee7ce2@brauner>
+References: <20241007-brauner-file-rcuref-v2-0-387e24dc9163@kernel.org>
+ <20241007-brauner-file-rcuref-v2-3-387e24dc9163@kernel.org>
+ <CAG48ez045n46OdL5hNn0232moYz4kUNDmScB-1duKMFwKafM3g@mail.gmail.com>
+ <CAG48ez3nZfS4F=9dAAJzVabxWQZDqW=y3yLtc56psvA+auanxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,26 +61,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025222444.GM21836@frogsfrogsfrogs>
+In-Reply-To: <CAG48ez3nZfS4F=9dAAJzVabxWQZDqW=y3yLtc56psvA+auanxQ@mail.gmail.com>
 
-On Fri, Oct 25, 2024 at 03:24:44PM -0700, Darrick J. Wong wrote:
-> On Mon, Oct 07, 2024 at 01:52:18PM +0200, Christian Brauner wrote:
-> > On Thu, 03 Oct 2024 08:08:55 -0700, Darrick J. Wong wrote:
-> > > This patchset fixes multiple data corruption bugs in the fallocate unshare
-> > > range implementation for fsdax.
-> > > 
-> > > With a bit of luck, this should all go splendidly.
-> > > Comments and questions are, as always, welcome.
-> > > 
-> > > --D
-> > > 
-> > > [...]
-> > 
-> > Applied to the vfs.iomap branch of the vfs/vfs.git tree.
-> > Patches in the vfs.iomap branch should appear in linux-next soon.
-> 
-> Er, this has been soaking for 18 days, is it going in soon?
-> (Apologies, I just saw that you've been under the weather.)
+> Actually, thinking about this again, I guess there's actually no
+> reason why you'd need a constructor function; if you just avoid
+> memset()ing the refcount field on allocation, that'd be good enough.
 
-Sorry about this. I'll get it out this week.
+Thanks for catching this. So what I did is:
+
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 5b8b18259eca..c81a47aea47f 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -148,10 +148,14 @@ static int __init init_fs_stat_sysctls(void)
+ fs_initcall(init_fs_stat_sysctls);
+ #endif
+
++static_assert(offsetof(struct file, f_ref) == 0);
++
+ static int init_file(struct file *f, int flags, const struct cred *cred)
+ {
+        int error;
+
++       memset(f + sizeof(file_ref_t), 0, sizeof(*f) - sizeof(file_ref_t));
++
+        f->f_cred = get_cred(cred);
+        error = security_file_alloc(f);
+        if (unlikely(error)) {
+@@ -209,7 +213,7 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
+                        goto over;
+        }
+
+-       f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
++       f = kmem_cache_alloc(filp_cachep, GFP_KERNEL);
+        if (unlikely(!f))
+                return ERR_PTR(-ENOMEM);
+
+@@ -243,7 +247,7 @@ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred)
+        struct file *f;
+        int error;
+
+-       f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
++       f = kmem_cache_alloc(filp_cachep, GFP_KERNEL);
+        if (unlikely(!f))
+                return ERR_PTR(-ENOMEM);
+
+@@ -270,7 +274,7 @@ struct file *alloc_empty_backing_file(int flags, const struct cred *cred)
+        struct backing_file *ff;
+        int error;
+
+-       ff = kmem_cache_zalloc(bfilp_cachep, GFP_KERNEL);
++       ff = kmem_cache_alloc(bfilp_cachep, GFP_KERNEL);
+        if (unlikely(!ff))
+                return ERR_PTR(-ENOMEM);
+
 
