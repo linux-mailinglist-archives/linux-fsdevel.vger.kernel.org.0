@@ -1,91 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-33058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634D49B2FDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 13:12:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292B59B2FF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 13:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E4328173F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 12:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E071F22AC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2024 12:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854761D86ED;
-	Mon, 28 Oct 2024 12:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541251D8E16;
+	Mon, 28 Oct 2024 12:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s56hn1P0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKpH/xlX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF34189B8D;
-	Mon, 28 Oct 2024 12:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CE217C61;
+	Mon, 28 Oct 2024 12:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117491; cv=none; b=lk9gkAK/zGvK4cgkG7m+PKNlnFKzqI5Aaw/7/4zlditpZ9MFaJG41/gh/nBB8tVqjWtH47ozCkuwEZet5jwlZZE6r7QjN8HEpiUiE52Ube+D3B8B6G5P8yBxt7vyF65klMqkukRGDbNrC0LlNzWq4PHL7Vxz3BMnwUIAZSPltFs=
+	t=1730117925; cv=none; b=oZhmryqwBKLs/O8Pv8eWY56GmoP5E95Hj4Btla+cVgwFg+BS0ClCyNjGpnhZWJSEcIegqc/DcQ4TNYxbK1Y2piEG9dx78JNsGLiOZzJZcHORcquTTVJvETMYPmqMCTbrvBwuT6bhkbZPFZI5CiYA5No/4imL3bOwAECosbDkrZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117491; c=relaxed/simple;
-	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CdrBpU7n/hncD2NYHMckYoEzdUptLI60E+WubywBihQQQe7MSKHLRRw4yKGbSQBvOE/YhTKY3VV3FwzCJLBq1jT1scwtqu3EZxvG/AHpH/zo0gg6bXjTv5D7bDV/ROjNl6M5mN/y7Xib+ZpwU+bYl1uYitPjeqgyt9iI44YDYjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s56hn1P0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AC3C4CEC3;
-	Mon, 28 Oct 2024 12:11:29 +0000 (UTC)
+	s=arc-20240116; t=1730117925; c=relaxed/simple;
+	bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=knqLdU4Ceav3Qz2oDYU4YBVuI+59A0DmD8SZcE3c9UIUvTOlXOtO+fkX5VqCwJkw7kxAGJoH0InQtJm7d97DKlgmZ06mxr2n7cMIE7Lofequ5fq3lL9nxBTRUFxlLf2UXErOlvs6ng1H2Os6I/ehy2k7mbh74sEtgYsWhiU6Vis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKpH/xlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67E1C4CEC3;
+	Mon, 28 Oct 2024 12:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730117491;
-	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s56hn1P0WYwxElh6FCKpnpSdxRyQaBzWC13T9yiz1VUQ9l8aYngJEp0QLxEHyfm/z
-	 +/0xA+LUyD1twvPJhCdvgueubcP1CvRLaQgy219IW38iLmi/ee8Yrd2ZiaZiUN1kft
-	 EGURvmnwxjx46cEj5TTKr5k+9hAIXTNmVKytyuueq7dxig19EdZ3QvjUXUd39zlDG3
-	 WMndXSkoDBneDiUqJ4/fKtKbTjQt4WAqgmeKrfPeh35qN+DXI8I1K/soTjZA/vmw6E
-	 yzd8F8vlybffYcVVwA34pPv0losWcviNasCETKIYwHn6tnOd93x7KwAvLkTp3b4r79
-	 RpA/ytWrLNJTw==
-Date: Mon, 28 Oct 2024 13:11:26 +0100
+	s=k20201202; t=1730117925;
+	bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QKpH/xlXRxMKcdNtTRHI7tjVhS3KsWBpLiVeqHxpekiGCWHsZp3lsaK2JD74E20CS
+	 6vNs4prZ7MwLJwuqhw+hGthiYZ4Ndy1DNAhkOeCWVrfrfgiJvgjsWXCcgFdUph8AFe
+	 b4B0YyUkDD+4drWqBj6Sdv17dTsMULxP8ESE/MjIHRg+jXvyxfm3msbUoDtmWCVb5h
+	 IylKJWjNMeHqH+FWB+kA1OD6EVuNhZFa7razs7Ul4OAmispAjXn1X61EmkQNuM9ktb
+	 e7pHevDdQK8NEY5zHZiP2mJCq1arj+Kq9AqhUgFgwkij8jjBx9XmCedesmppXZsAnL
+	 23ed9Q/sQNWBg==
 From: Christian Brauner <brauner@kernel.org>
-To: zhouyuhang <zhouyuhang1010@163.com>
-Cc: sforshee@kernel.org, shuah@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: Re: [PATCH v2] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-Message-ID: <20241028-rodung-kotzen-577438c3b82c@brauner>
-References: <20241028084132.3212598-1-zhouyuhang1010@163.com>
+To: Ian Kent <raven@themaw.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@ZenIV.linux.org.uk>,
+	autofs mailing list <autofs@vger.kernel.org>,
+	Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] autofs: fix thinko in validate_dev_ioctl()
+Date: Mon, 28 Oct 2024 13:18:39 +0100
+Message-ID: <20241028-filmt-lesebrille-20feb7581897@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241027224732.5507-1-raven@themaw.net>
+References: <20241027224732.5507-1-raven@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028084132.3212598-1-zhouyuhang1010@163.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=brauner@kernel.org; h=from:subject:message-id; bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLN8rr/SrTW8ukyDXD4lva61nluXsruCp+b1rgdWFp4 7xAaZcjHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxmMvwP/L2r2WGwZf7jKN0 bC5J6QR/cdl5Z+K0LF+uiSU3GNYGejMyvF5nv/tYfNivgI5CMy8OH86Pl/1PlX0RMdv8KjTlRPs fNgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 04:41:32PM +0800, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
+On Mon, 28 Oct 2024 06:47:17 +0800, Ian Kent wrote:
+> I was so sure the per-dentry expire timeout patch worked ok but my
+> testing was flawed.
 > 
-> Test case idmap_mount_tree_invalid failed to run on the newer kernel
-> with the following output:
+> In validate_dev_ioctl() the check for ioctl AUTOFS_DEV_IOCTL_TIMEOUT_CMD
+> should use the ioctl number not the passed in ioctl command.
 > 
->  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->  # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->  # idmap_mount_tree_invalid: Test terminated by assertion
 > 
-> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
-> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
-> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
-> returns 0 instead of -EINVAL as expected.
-> 
-> Ramfs does not support idmap mounts, so we can use it here to test invalid mounts,
-> which allows the test case to pass with the following output:
-> 
->  # Starting 1 tests from 1 test cases.
->  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->  #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->  ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->  # PASSED: 1 / 1 tests passed.
-> 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
-> ---
+> [...]
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] autofs: fix thinko in validate_dev_ioctl()
+      https://git.kernel.org/vfs/vfs/c/f19910006eff
 
