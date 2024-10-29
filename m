@@ -1,125 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-33097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A219B4093
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 03:42:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1C79B418D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 05:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3F6B21B7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 02:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41C91F23025
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 04:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE0C1EE02E;
-	Tue, 29 Oct 2024 02:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4C11FF5F6;
+	Tue, 29 Oct 2024 04:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z2edLyAb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3rHtxEe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215401DF26E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 02:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12B01DC05D;
+	Tue, 29 Oct 2024 04:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730169744; cv=none; b=tx3wxASNJhBFu+XiO6ystVEpbat0cZuT3tyr1WJVFOXZLhOKm/re4DkONpWK2Er2w9kyFXZewDaqVa+OED066yiYoSBqbtB0XBnzUstu8Vh1SFHGRG1LXHnusdgqzpVYFJvIFLB6uTceFICFYTVeSYYZ1kPJP1k9o3u6BoQdW+Y=
+	t=1730175434; cv=none; b=mdS0/DUtih4E8YfFWFbBXgCqXNlqj+96J3K64b5qZbT+ZGmtcL/0Gijr9H54g4Oxil2tDR50QsRS/qBR9/Ty9zhMkO9GXUpFSl2dd1nB8fOoCdcxil6OcJp9krnm64q2d6sOyHH5rv+BwKiXNmWQG41tQ0X1xtpwJsHj9cznY/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730169744; c=relaxed/simple;
-	bh=PAjJ9Ou71Uqgdpy0Kz/QpxRFDbhbU7vB9xt2porGJQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jj6xdm6zpVKz1nw1UV4vAX2iDXJ3JCazPgXwGV+4zwuPagNIjECfODIeWJAqT4hi8LDKW0VhLBRuBf9ASeCp+8syHVjf2nBvZZIoc3sxsEjkZQc5emJ8xi5pT1vrboAltbVq/qXEJ/nOclr308qjdTnL1kAYsvuTI4fIS/g66NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z2edLyAb; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so481120a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730169741; x=1730774541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NhwueTBuyyDS6MSGHD4L/PRA/gmfkEl47Swjzb9s/GI=;
-        b=Z2edLyAbHhGFMd1vFhIcGOfI/bI+/x5zqS9VoPUi2+jG3tmA6NwW1FyDAsCpxGdkba
-         rRQmkxScsqGx3E8JfBinZPLPG28Y4KPHMkb5a8wF33ZjkkjNdwb1uB1gvEcoXNEntIt2
-         98U2lIyWS5219bOs+yPL5bsxC2bhNQyx4sns4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730169741; x=1730774541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhwueTBuyyDS6MSGHD4L/PRA/gmfkEl47Swjzb9s/GI=;
-        b=Pl4wmRPjoZQLd7mdYS0XREm5gN0dgCOoIB8Zd1bnvQ8o+RmrbS6i19JF39wTrHEb3P
-         ggnFx1aeERZ2URlDB1wR1DgTBWEAxH/YEKuZxKhlX8rijOPdkFZjEixi4fCkcmHlITt7
-         WeIo81NMn2dJQd0+mEwjSP9FKuQ1i9WWtsLymgjmpwQHrOrqm5imWCAa5mndTmeXXiYE
-         ayoO0CKnu/tdSkTdxkn24CavIJ6FHpVgLQsD5Fj7RxjW6jUluAbHwjq1euWsb6QjuxZY
-         U5CPgYwSd5XYL1hQCM3gMh+Otyf+U3YvHuRsg46u4jXLU8rSbU/heEMwLBlk/nspVtay
-         V+kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBnYlBHZS5t1XovxFE2oKjq3DSUD6V/T/qmeovXd3bMl4ExTzIHmeRUlbeSvKhIU1Zc6+0GcKHuZKg55I8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMiD5uWpLDjAJ59q6kKszPfvj6HvS7UyoaqW8wJsXOz1MQCaQC
-	APaQl0urCEGibq/b/S5q7KuPH7WAv0sICLDypFqojewj+6XCJivn+ucu51oFWwQ=
-X-Google-Smtp-Source: AGHT+IEEBAFSTLUWRggpy/zSgYYAMfS9zMnB4WTf3rwU/wiDXRiRmmXCC9HC+DDgqHm/wOcSVYkVbg==
-X-Received: by 2002:a05:6a20:d8b:b0:1d9:1071:9175 with SMTP id adf61e73a8af0-1d9a84d70dfmr13069474637.32.1730169741393;
-        Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-Received: from [10.200.3.216] (p99249-ipoefx.ipoe.ocn.ne.jp. [153.246.134.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205780e3f5sm6504801b3a.0.2024.10.28.19.42.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-Message-ID: <c620491d-7bb9-47f5-bd2f-52d8fc814486@linuxfoundation.org>
-Date: Mon, 28 Oct 2024 20:42:18 -0600
+	s=arc-20240116; t=1730175434; c=relaxed/simple;
+	bh=RKHYedL3g+YcC1whE+lrjzQFGsTH7O/wS2r9LScdask=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=po1rKZ8LXjWAUlUqcavxzzq8Xb9aRZmzoC35JmOE/s/VeG4Ff5ENdk/2K823Ii2J64IktPUPj35RzCEMDrF5qz3RbE+FPzYvK3a9M5AoGmbxTOG71Q/s5EiSJDSCGZV6SSMxDgceSIE+ekY5LGGfP1jehqsrwJhQ5RQjJLnJD1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3rHtxEe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E28FC4CEE6;
+	Tue, 29 Oct 2024 04:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730175434;
+	bh=RKHYedL3g+YcC1whE+lrjzQFGsTH7O/wS2r9LScdask=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F3rHtxEenmfxI79Pdpq3K+wIl06yqw6LjLsWY2+ZAhjnso72pbThHEaq8m//ZWpnh
+	 2iKmKQQPi7iarMaPuhNL6VCveyVXHRMU8rvSZq/1KX33hiwJtUz1onVWAkFQ5aTkai
+	 QloB0aKldgqqb4oRtxoOHEyzacAL/LPeOOGLLVYL+1DuisB58SQOv8e0IcFajjVqwW
+	 K5QBG975yw4FZNSlwi5bEumhvdjiySxuYeQ5uxyxWclZdu9hjnaa9Fm1VVTXc9ggeM
+	 LgLkptRoWFAzgTAQlhTbENrx2dcVBAnqDqf2M+6TDSdDJ3PNOit/Lv/XSyXPVy72eh
+	 KDz87v+WxNrog==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-28c654c9e79so3420121fac.0;
+        Mon, 28 Oct 2024 21:17:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXJIg2XfqlLv5f04oAqqbETDm/HodQEU9wmdQ50XGvoXvAhNovtSOv7LrC6MxtRiy9dk2HlUHe90vAD6hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jovGWg3g0jvSX5lNeFgQhTu7vg/ujM0SWOrw457ZL+6ibmqj
+	Gn/Id+JvgkeGswSNNltWL0xcnlnMXmQttdOhchpWyZzflF48TqBa6bLY4nhRofXMfFO7/MdDXHf
+	IG0/oC+D/lP2XNfwFuJmT+vfFLFM=
+X-Google-Smtp-Source: AGHT+IFkdsLQqCsNUI/rwxJgrn2piEZpQY1D7MgYbWYhArEk968SnKnTwkyq8izXP90qKiEqYhpoV9VxuJ3/tOFEu20=
+X-Received: by 2002:a05:6870:8899:b0:277:d790:6e99 with SMTP id
+ 586e51a60fabf-29103df1f58mr497237fac.18.1730175433543; Mon, 28 Oct 2024
+ 21:17:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-To: Christian Brauner <brauner@kernel.org>,
- zhouyuhang <zhouyuhang1010@163.com>
-Cc: sforshee@kernel.org, shuah@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241028084132.3212598-1-zhouyuhang1010@163.com>
- <20241028-rodung-kotzen-577438c3b82c@brauner>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241028-rodung-kotzen-577438c3b82c@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <67014df7.050a0220.49194.04c0.GAE@google.com>
+In-Reply-To: <67014df7.050a0220.49194.04c0.GAE@google.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 29 Oct 2024 13:17:01 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-v5nQVkE58bvuk0V-kGTN+Q7vbsf678A7v3zb-Z2d8Kg@mail.gmail.com>
+Message-ID: <CAKYAXd-v5nQVkE58bvuk0V-kGTN+Q7vbsf678A7v3zb-Z2d8Kg@mail.gmail.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+To: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: multipart/mixed; boundary="0000000000001db9f2062595dc41"
 
-On 10/28/24 06:11, Christian Brauner wrote:
-> On Mon, Oct 28, 2024 at 04:41:32PM +0800, zhouyuhang wrote:
->> From: zhouyuhang <zhouyuhang@kylinos.cn>
->>
->> Test case idmap_mount_tree_invalid failed to run on the newer kernel
->> with the following output:
->>
->>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->>   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->>   # idmap_mount_tree_invalid: Test terminated by assertion
->>
->> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
->> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
->> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
->> returns 0 instead of -EINVAL as expected.
->>
->> Ramfs does not support idmap mounts, so we can use it here to test invalid mounts,
->> which allows the test case to pass with the following output:
->>
->>   # Starting 1 tests from 1 test cases.
->>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->>   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->>   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->>   # PASSED: 1 / 1 tests passed.
->>
->> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
->> ---
-> 
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+--0000000000001db9f2062595dc41
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you. Applied to kselftest fixes branch for next rc.
+#syz test
 
-thanks,
--- Shuah
+On Sat, Oct 5, 2024 at 11:32=E2=80=AFPM syzbot
+<syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' o=
+f..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D16cf7dd058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db1fd45f2013d8=
+12f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D01218003be74b5e=
+1213a
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11cf7dd0580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11d0658058000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/16d4da549bf4/dis=
+k-e32cde8d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a01bc9a0e174/vmlinu=
+x-e32cde8d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/93f4dfad6909/b=
+zImage-e32cde8d.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/433ba07001=
+54/mount_0.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
+>
+> exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum :=
+ 0x726052d3, utbl_chksum : 0xe619d30d)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat=
+/dir.c:804
+>  __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
+>  exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
+>  __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+>  __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+>  exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+>  exfat_write_failed fs/exfat/inode.c:421 [inline]
+>  exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+>  generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+>  __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+>  exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+>  do_iter_readv_writev+0x88a/0xa30
+>  vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+>  do_pwritev fs/read_write.c:1165 [inline]
+>  __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+>  __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+>  __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+>  x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+329
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was stored to memory at:
+>  memcpy_to_iter lib/iov_iter.c:65 [inline]
+>  iterate_bvec include/linux/iov_iter.h:123 [inline]
+>  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+>  iterate_and_advance include/linux/iov_iter.h:328 [inline]
+>  _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+>  copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+>  shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
+>  do_iter_readv_writev+0x88a/0xa30
+>  vfs_iter_read+0x278/0x760 fs/read_write.c:923
+>  lo_read_simple drivers/block/loop.c:283 [inline]
+>  do_req_filebacked drivers/block/loop.c:516 [inline]
+>  loop_handle_cmd drivers/block/loop.c:1910 [inline]
+>  loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+>  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
+>  process_one_work kernel/workqueue.c:3229 [inline]
+>  process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+>  worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+>  kthread+0x3e2/0x540 kernel/kthread.c:389
+>  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Uninit was stored to memory at:
+>  memcpy_from_iter lib/iov_iter.c:73 [inline]
+>  iterate_bvec include/linux/iov_iter.h:123 [inline]
+>  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+>  iterate_and_advance include/linux/iov_iter.h:328 [inline]
+>  __copy_from_iter lib/iov_iter.c:249 [inline]
+>  copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+>  copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+>  generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+>  shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
+>  do_iter_readv_writev+0x88a/0xa30
+>  vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+>  lo_write_bvec drivers/block/loop.c:243 [inline]
+>  lo_write_simple drivers/block/loop.c:264 [inline]
+>  do_req_filebacked drivers/block/loop.c:511 [inline]
+>  loop_handle_cmd drivers/block/loop.c:1910 [inline]
+>  loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+>  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
+>  process_one_work kernel/workqueue.c:3229 [inline]
+>  process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+>  worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+>  kthread+0x3e2/0x540 kernel/kthread.c:389
+>  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Uninit was created at:
+>  __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4756
+>  alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+>  alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+>  folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+>  filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+>  __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+>  block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+>  exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+>  exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+>  exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+>  do_iter_readv_writev+0x88a/0xa30
+>  vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+>  do_pwritev fs/read_write.c:1165 [inline]
+>  __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+>  __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+>  __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+>  x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+329
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> CPU: 0 UID: 0 PID: 5188 Comm: syz-executor221 Not tainted 6.12.0-rc1-syzk=
+aller-00031-ge32cde8d2bd7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+
+--0000000000001db9f2062595dc41
+Content-Type: application/x-patch; 
+	name="0001-exfat-fix-uninit-value-in-__exfat_get_dentry_set.patch"
+Content-Disposition: attachment; 
+	filename="0001-exfat-fix-uninit-value-in-__exfat_get_dentry_set.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m2txpzik0>
+X-Attachment-Id: f_m2txpzik0
+
+RnJvbSBiYzM4NWVlOGZjZWYwOGQ4M2Q3MDk0MTVkNTAwZWYyZTJhYzg3NDU3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
+YXRlOiBUdWUsIDI5IE9jdCAyMDI0IDEwOjIyOjMxICswOTAwClN1YmplY3Q6IFtQQVRDSF0gZXhm
+YXQ6IGZpeCB1bmluaXQtdmFsdWUgaW4gX19leGZhdF9nZXRfZGVudHJ5X3NldAoKVGhlcmUgaXMg
+bm8gY2hlY2sgaWYgc3RyZWFtIHNpemUgYW5kIHN0YXJ0X2NsdSBhcmUgaW52YWxpZC4KSWYgc3Rh
+cnRfY2x1IGlzIEVPRiBjbHVzdGVyIGFuZCBzdHJlYW0gc2l6ZSBpcyA0MDk2LCBJdCB3aWxsIGNh
+dXNlCnVuaW5pdCB2YWx1ZSBhY2Nlc3MuIGJlY2F1c2UgZWktPmhpbnRfZmVtcC5laWR4IGNvdWxk
+IGJlIDEyOChpZiBjbHVzdGVyCnNpemUgaXMgNEspIGFuZCB3cm9uZyBoaW50IHdpbGwgYWxsb2Nh
+dGUgbmV4dCBjbHVzdGVyLiBhbmQgdGhpcyBjbHVzdGVyCndpbGwgYmUgc2FtZSB3aXRoIHRoZSBj
+bHVzdGVyIHRoYXQgaXMgYWxsb2NhdGVkIGJ5CmV4ZmF0X2V4dGVuZF92YWxpZF9zaXplKCkuIFRo
+ZSBwcmV2aW91cyBwYXRjaCB3aWxsIGNoZWNrIGludmFsaWQgc3RhcnRfY2x1LApidXQgZm9yIGNs
+YXJpdHksIEluaXRpYWxpemUgaGludF9mZW1wLmVpZHggdG8gemVyby4KClNpZ25lZC1vZmYtYnk6
+IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+Ci0tLQogZnMvZXhmYXQvbmFtZWku
+YyB8IDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZmIC0tZ2l0IGEvZnMv
+ZXhmYXQvbmFtZWkuYyBiL2ZzL2V4ZmF0L25hbWVpLmMKaW5kZXggMmM0YzQ0MjI5MzUyLi5jNTMw
+MmI5MTQwNjYgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L25hbWVpLmMKKysrIGIvZnMvZXhmYXQvbmFt
+ZWkuYwpAQCAtMzQ1LDYgKzM0NSw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfZmluZF9lbXB0eV9lbnRy
+eShzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCQlpZiAoZWktPnN0YXJ0X2NsdSA9PSBFWEZBVF9FT0Zf
+Q0xVU1RFUikgewogCQkJZWktPnN0YXJ0X2NsdSA9IGNsdS5kaXI7CiAJCQlwX2Rpci0+ZGlyID0g
+Y2x1LmRpcjsKKwkJCWhpbnRfZmVtcC5laWR4ID0gMDsKIAkJfQogCiAJCS8qIGFwcGVuZCB0byB0
+aGUgRkFUIGNoYWluICovCi0tIAoyLjM0LjEKCg==
+--0000000000001db9f2062595dc41--
 
