@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-33164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EDD9B5538
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 22:41:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D0B9B5556
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 22:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71FFBB22218
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 21:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B411F23F71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 21:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEC320A5CB;
-	Tue, 29 Oct 2024 21:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E5E20A5D8;
+	Tue, 29 Oct 2024 21:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Djatruc7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jd9mHMte"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544AF1E1A2D;
-	Tue, 29 Oct 2024 21:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341A1422AB;
+	Tue, 29 Oct 2024 21:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730238050; cv=none; b=Zyl0vXrwROM3kMn1meAzxsVEmDfnyj0wQfbaolKnd1MswsasEZ6cdGwimmL8dH+jj+l2kvEFruWaw1HyYPg/GRkfELvoPt3J2+gUdfboGb9Izleowd1RmTIDnTOFmJJh+4ME5Oz2mNS/ZpXW9aRAaghiNZU3G1dmdapzSe4o3u8=
+	t=1730238766; cv=none; b=hL+lenHuTghEf05ZH/Yv6EFdWqqAIkXqgVtDipwLWvn5zc1hT1GiJ/jGuDQJ2gWAppjRFEw7v7JchLHRhB/Dd5Yl63gc/jBlUIlDUWtZLZWjZgG2VRbpnWUGmgVLfxMgMcH1Szr+ajMzfnIFvklwgrBdEeCjqOE+FtyZvoX/4Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730238050; c=relaxed/simple;
-	bh=hHya4CFWWb9IorKtvtVVxz2dO0bXEsa0J6T54piHyvw=;
+	s=arc-20240116; t=1730238766; c=relaxed/simple;
+	bh=aQ4snfpqU8/cP5h4360AM/aNhQUoNlVkuZ5R6R5m2QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLQQ5CPkwSC5WHCxzdq6GBquuVrZtNFnupLKT4GCAphWn8cgfMY+Q0ZL3zvGvIOWOzIrWZlnnqyskKl0xrg27nVM68qkGaMy3776JTFqtdDh+DqhaDVIATC2vnXSHmuSfiHXhVSOpNEapWmoJclwsixMgDxTGgZZ4FBZkkZPon4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Djatruc7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AB3C4CECD;
-	Tue, 29 Oct 2024 21:40:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad/A83hAuYSkG7rmaDBudphtdAZkJI5d5nvAo7+K3UaX4JfBER1SMCRJ78fXwuEhoBJpW4/tBUYIQIBUXM0Ic/fv5uI30aIEpwFAanBZHu0uHp6toj6+WnNR6/hmHWjOORTa3QhcNznURUmoQc+fZ5Im8iA0zXGVxqPlCBDtdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jd9mHMte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FE7C4CECD;
+	Tue, 29 Oct 2024 21:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730238049;
-	bh=hHya4CFWWb9IorKtvtVVxz2dO0bXEsa0J6T54piHyvw=;
+	s=k20201202; t=1730238766;
+	bh=aQ4snfpqU8/cP5h4360AM/aNhQUoNlVkuZ5R6R5m2QU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Djatruc70fMox7Zoi6qtwtgU4iCwwXMXuw9Bf62dCNMei5GIcjJD9t2Y/ahwZpZbF
-	 b+ClRYRx5PnFK7468VU4FlgzDob3tEca2+cGL06VurZHzZTuSWuqsUty7qtt0Qye4R
-	 J2mLZ2GL9nUF5S00tlDONog/BGvM4BZfq+IxJ/3vJqk7UG0gpxfPXtOUgmYJtQ9kcs
-	 DEanJCXZS6x2DWxNjbqMa6/5S0YlnTvs+4pQchAT/8QVwoAT5B9gZnB1Q7o3DF3RH8
-	 jaErNIzyq5SzHSEicPlImnwvvKwuSwQ4epnLsKcnFLwG1aQf7RkiLvhtN+V6sfbTLN
-	 rZKOxayvBqYXg==
-Date: Tue, 29 Oct 2024 15:40:46 -0600
+	b=Jd9mHMteIVmcMbTaE3uwEugAGddfJddGcYP16SY3RjAJbJTHVVyuEpJoA8haaDdeV
+	 MbpBDStbLtcbFjfL+MfXyB4/Wyb8YVufy6WdIfNab2QLmbU1tL3LJSOs2qc6rNkqVt
+	 3NnEe9/aLQ9mOc0zUcM6jmP3Yw+nLMsDtFELguWmSjqBZZhbCicBnV6i7tbgdZ3bMW
+	 uGbGq64Z02SpC76xDyfd8h36MIz7LoAinxHMf06p91m/K5FdUvuT9S27GwXg5rsHke
+	 L73fnEIM2MuntOef2uFX5WwjmlpJFgbIo8kfAtEf61LFPxGux4oAaCTkyGa9ty1zm0
+	 uYl6HV1LYpUiw==
+Date: Tue, 29 Oct 2024 15:52:42 -0600
 From: Keith Busch <kbusch@kernel.org>
 To: Anuj Gupta <anuj20.g@samsung.com>
 Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
@@ -51,12 +51,11 @@ Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
 	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
 	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
 	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v5 08/10] nvme: add support for passing on the
- application tag
-Message-ID: <ZyFWXqinEAjuJtfe@kbusch-mbp.dhcp.thefacebook.com>
+Subject: Re: [PATCH v5 10/10] block: add support to pass user meta buffer
+Message-ID: <ZyFZKmM5ALFaFGRd@kbusch-mbp.dhcp.thefacebook.com>
 References: <20241029162402.21400-1-anuj20.g@samsung.com>
- <CGME20241029163230epcas5p18172a7e54687e454e4ecb65840810c4e@epcas5p1.samsung.com>
- <20241029162402.21400-9-anuj20.g@samsung.com>
+ <CGME20241029163235epcas5p340ce6d131cc7bf220db978a2d4dc24c2@epcas5p3.samsung.com>
+ <20241029162402.21400-11-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,13 +64,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029162402.21400-9-anuj20.g@samsung.com>
+In-Reply-To: <20241029162402.21400-11-anuj20.g@samsung.com>
 
-On Tue, Oct 29, 2024 at 09:54:00PM +0530, Anuj Gupta wrote:
+On Tue, Oct 29, 2024 at 09:54:02PM +0530, Anuj Gupta wrote:
 > From: Kanchan Joshi <joshi.k@samsung.com>
 > 
-> With user integrity buffer, there is a way to specify the app_tag.
-> Set the corresponding protocol specific flags and send the app_tag down.
+> If an iocb contains metadata, extract that and prepare the bip.
+> Based on flags specified by the user, set corresponding guard/app/ref
+> tags to be checked in bip.
 
 Looks good.
 
