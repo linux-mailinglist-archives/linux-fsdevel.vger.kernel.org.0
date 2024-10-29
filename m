@@ -1,242 +1,574 @@
-Return-Path: <linux-fsdevel+bounces-33110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5357E9B4642
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 10:58:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADC69B46C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 11:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A1A0B224FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 09:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6471F23A40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 10:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA66A206944;
-	Tue, 29 Oct 2024 09:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B187204F70;
+	Tue, 29 Oct 2024 10:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVZyy4lp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RP6rgbnj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1956F206060;
-	Tue, 29 Oct 2024 09:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6CF204034
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 10:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195768; cv=none; b=dilsaDtvBTJjujqlYvZ6npH1YDU//sAKe5B4unqfGuPKBJJumuh96NJSi0CIBaB6sB/+1/4mqpCbWMiWdJWxxDmVnzsxi7tiilmjxoVjxKk7Joe3VCc25iPuteMjRtqnsIIMY2RpRaOO6cxYepWz0Mz5rUG07BbSB2+1ASxBS94=
+	t=1730197531; cv=none; b=SEbwcsIu7UcFaZxsLPcA4C/dS2TJRY5UMWysmQIY85JimGaGDC9RG9tc3DLj5/A1NO3AmcXDHKy7aluf+71f4znS/n7hGWSeFo85KiyCbX4/jgy7xcIB2svn2p7JwJctUxjz7B1yaWFv37/TtPeHnZvuJRMiQXViV8wp8//DXqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195768; c=relaxed/simple;
-	bh=0qDi2xdK9Bl+aoU7bwhI+pp2VgVckudI2/bhOQR1Sac=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Ds3nL4B+6AD8cwVCzLxQjuTzDW/0LxC3v8ZaVmGu7gkBiAPDZWK9P87dHyr+oA5EyhceDYbwC44ig2TqLiGsgrZnDYnPNbFHOSeX277GtwXnDTMIZRxmf4bRvuCAAiJhWXjrMfmE5jy/oi3rFY/QIQUSVzaz26BCbBmt1gHe1P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVZyy4lp; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso3690573a12.3;
-        Tue, 29 Oct 2024 02:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730195764; x=1730800564; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DiWvjOpVYfndALHTKNu3Vi9x1DoeaRp1k+8XzRgyG6s=;
-        b=IVZyy4lpVpUX7bCSiaVHuwm/n19xRvPjUeAyzkOvjbGRHS6LetNQq8dd80KNMN7BS3
-         Qj4aCVDdgi+mdGZkxhv5UhTSbMjDtmm+VgJcNIjNWw2C8cEMSiE/ndgeN8U2taMMr6Mv
-         p+B11w0hdFNmsKWnH0tiQ1rHWOl4ns7qHR0roQdHcs24+ipxGPEABnjocU/qKLBSx5Lt
-         3c46sIjQG/Bd9QVPCy2BxHE7696GOy7cf1M9ZM7aa4XzXv3PG/U3SyZ3eHgda/72MzMh
-         bVRCnS6JRvcwJq+hMcn9RiQvJDhTA58j8Tar0HjMBOBAAnwijvV0iMN0EAywa0t+WWEz
-         kqQA==
+	s=arc-20240116; t=1730197531; c=relaxed/simple;
+	bh=XeEYRozkkgOo7R06uOqhByI9StXHChE1r71nK46tYvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkw1PcQjN9+PtT+eiPPVWJP+1mWwtUpUqfX5nbdlJuuZkL+Vvp3cE+GRwXN8z6inmL9YDHYsQeeBoQLzd07294ODKi2jJ35FmsRsoQk1ypdmv8OZJuWtnEJ5SrHBQT1rQvgcHxQOANCUM5OuVw1CHtFf+LGY1tR7N7DmR5a6C3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RP6rgbnj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730197525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CHGLE7kof2wpSxgzYb7oiBXyE1YrNOv615btqstDFY8=;
+	b=RP6rgbnj9+mH6Kj5FCHHdamA5tHbIoBPfqJ86AN5y8hXejjxJdG00JXEIOhHMcPrah2qgw
+	wzZMdVezoirx6hsiFN0EMfmuGVSSunszj2Vc+2gzJUW1XRXOOZXI/7YrUXDoQOz/qTZzCR
+	djKcAtsSKiDrgO2AFQUlkFoSs6d0At0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-370-j0xoScHjM0Ka7m6JbxTEBQ-1; Tue, 29 Oct 2024 06:25:24 -0400
+X-MC-Unique: j0xoScHjM0Ka7m6JbxTEBQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d67fe93c6so2719680f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 03:25:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730195764; x=1730800564;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1730197523; x=1730802323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DiWvjOpVYfndALHTKNu3Vi9x1DoeaRp1k+8XzRgyG6s=;
-        b=YcnSLGSaj74vQolUCbkB80GLw9wz2p+ERpFIwQp1j6cfuHr51vUWh69xPyt2YliJul
-         173IsVbVXshRoMDPkubKTg6anOhmqGb0P9zy8uq+OXIzrNizzDU6O4zNoDlYuGCr0Os8
-         GdPTMKtsGbSt8p359XX3PY1p3IbxuaLKTFfziH/VseXHJzmWgNQP4B3gCLUGYD2b7Spu
-         dZpHiI1m05lT1/W0nwZ5526p1l0b9/e40wuoM05z7rgtP4zNrOWfU9gBzktEIBihRzi5
-         gKvlqrYknWp8nie21uR0XsVTvCRn7RaxDfHmNiXBQgVFGjqUTnI7YDCl2t08wqf9jPeE
-         NxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT3Ndkdz1Wb6jCzfs2xzbfljG0o3ciMchLYFnCh/6/nUWT6okyEBaslNCSBPUArduqbnOYmWYy4kwk@vger.kernel.org, AJvYcCUZRz6rTGgPSHEu7vImpdC/NPkLDjhxsV9eqLg6vCnC6t0Ztq/SiXQi/JibMYTCchewpxe3qCA3dn/QmRrF@vger.kernel.org, AJvYcCVsZSsT5vNxB+W6zAqnRGeUdEEJmF/ap/vwbuVH43Bc8oBFHaD15GzdHsJ9IiUJ4kGArU6KdUBEwyTuNP1ikw==@vger.kernel.org, AJvYcCXqdBE/xVWLEwFz99NYjxCCDW6P/6bIxIUGfHotp/P7XfGlpFIQLDVRA/zeY4c0TSPCnG9YF0+EaFkH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZgIGthbgxZFrbxtfJUzit1pO8OOXwNu27KUCgEpO8eVuLrjvp
-	J3p6Kve2Hr6IixQEIAKuoQyGACiX3RvnPSX8WlV5LSM+ReKcX4LNulHrvA==
-X-Google-Smtp-Source: AGHT+IF8wKjEF16g/Z6wnKqiitoXbAGxywqBQXr4GKxI/5sWH6101yQQQlpr1QM+yR5VjSo4hSAKDw==
-X-Received: by 2002:a17:90b:378c:b0:2e3:b168:70f5 with SMTP id 98e67ed59e1d1-2e8f1080170mr11955324a91.21.1730195764237;
-        Tue, 29 Oct 2024 02:56:04 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48e4a2sm11155474a91.2.2024.10.29.02.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 02:56:03 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] ext4: Add statx support for atomic writes
-In-Reply-To: <39b6d2b2-77fd-4087-a495-c36d33b8c9d0@oracle.com>
-Date: Tue, 29 Oct 2024 14:59:58 +0530
-Message-ID: <874j4vmf3d.fsf@gmail.com>
-References: <cover.1729944406.git.ritesh.list@gmail.com> <b61c4a50b4e3b97c4261eb45ea3a24057f54d61a.1729944406.git.ritesh.list@gmail.com> <39b6d2b2-77fd-4087-a495-c36d33b8c9d0@oracle.com>
+        bh=CHGLE7kof2wpSxgzYb7oiBXyE1YrNOv615btqstDFY8=;
+        b=MNrAedLpjn8wjG8Xj9Ere8vzBjnQCRN2mcrsM6r296I1iPXFGErtC/ETuvy7D+TkXd
+         IqvKGpFggXbb3goDj04jriViVdJvzNQPT1p8QbQAi5WxPFe4qfs7BN19j5RSDbQmk/0/
+         lr2KMLqA8YAvr+BIbj0lKkSc1iQvi0zt7p111NNCx5GQ20rPLfFz+f/8Quxg+f8HJi69
+         LQJVSRB1AKodQm43clFePtEY9mVUOgNtLk2A3B0pUWusEouC6VNqQ6kLgNjqkGWoAnAF
+         SgA3lvzvEWctSgQAmKrUqiAHlLwIHRv31ApPqCyxn7Vkb5i/V+8imOkJztpNQEDS8xGK
+         jOyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkewUEE/lErZ9QbsSFoI3DbU2G/ymcGyJREwxsoTlIc835auyFlt0GmkmMVJH47NAXlyhI3N6IEHKd3ZKI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylu1EpbVrHJQqUW6xSQ3bJKIUJ9xJPx552dBH+Y1d/YB+OZ0P0
+	gZ0QZjNcS4olRH9BAW4P/tTOrharYLdH9FqX5aEBBobyaxTKaQrhFDUF6SJdjPQHerZkDYXQLbg
+	uS8WMh3r9RVdPuSbPqD5usX3CQbNLQGXFilg0TabhXEKw1CKQwIbdR0QUhrkdAZs=
+X-Received: by 2002:a5d:4a8e:0:b0:37d:5231:f539 with SMTP id ffacd0b85a97d-3806120d262mr7169499f8f.54.1730197522597;
+        Tue, 29 Oct 2024 03:25:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3Aw4ZvcgbUl5z4eBhEDu9hmAWPilAN2cD7D8OCCdR23v77Xoer9FtvzDNRfnVtdVvmqwjOw==
+X-Received: by 2002:a5d:4a8e:0:b0:37d:5231:f539 with SMTP id ffacd0b85a97d-3806120d262mr7169474f8f.54.1730197521928;
+        Tue, 29 Oct 2024 03:25:21 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3bddbsm12062304f8f.27.2024.10.29.03.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 03:25:21 -0700 (PDT)
+Message-ID: <57a0e1e7-1079-4055-8072-d9105b70103f@redhat.com>
+Date: Tue, 29 Oct 2024 11:25:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 0/6] Suspend IRQs during application busy
+ periods
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: namangulati@google.com, edumazet@google.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+ m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+ willy@infradead.org, willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+ kuba@kernel.org, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ "open list:BPF [MISC] :Keyword:(?:b|_)bpf(?:b|_)" <bpf@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Donald Hunter <donald.hunter@gmail.com>,
+ Jan Kara <jack@suse.cz>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Jiri Pirko <jiri@resnulli.us>, Johannes Berg <johannes.berg@intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:FILESYSTEMS (VFS and infrastructure)"
+ <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Martin Karsten
+ <mkarsten@uwaterloo.ca>, Mina Almasry <almasrymina@google.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+References: <20241021015311.95468-1-jdamato@fastly.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241021015311.95468-1-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/21/24 03:52, Joe Damato wrote:
+> Greetings:
+> 
+> Welcome to v2, see changelog below.
+> 
+> This series introduces a new mechanism, IRQ suspension, which allows
+> network applications using epoll to mask IRQs during periods of high
+> traffic while also reducing tail latency (compared to existing
+> mechanisms, see below) during periods of low traffic. In doing so, this
+> balances CPU consumption with network processing efficiency.
+> 
+> Martin Karsten (CC'd) and I have been collaborating on this series for
+> several months and have appreciated the feedback from the community on
+> our RFC [1]. We've updated the cover letter and kernel documentation in
+> an attempt to more clearly explain how this mechanism works, how
+> applications can use it, and how it compares to existing mechanisms in
+> the kernel. We've added an additional test case, 'fullbusy', achieved by
+> modifying libevent for comparison. See below for a detailed description,
+> link to the patch, and test results.
+> 
+> I briefly mentioned this idea at netdev conf 2024 (for those who were
+> there) and Martin described this idea in an earlier paper presented at
+> Sigmetrics 2024 [2].
+> 
+> ~ The short explanation (TL;DR)
+> 
+> We propose adding a new napi config parameter: irq_suspend_timeout to
+> help balance CPU usage and network processing efficiency when using IRQ
+> deferral and napi busy poll.
+> 
+> If this parameter is set to a non-zero value *and* a user application
+> has enabled preferred busy poll on a busy poll context (via the
+> EPIOCSPARAMS ioctl introduced in commit 18e2bf0edf4d ("eventpoll: Add
+> epoll ioctl for epoll_params")), then application calls to epoll_wait
+> for that context will cause device IRQs and softirq processing to be
+> suspended as long as epoll_wait successfully retrieves data from the
+> NAPI. Each time data is retrieved, the irq_suspend_timeout is deferred.
+> 
+> If/when network traffic subsides and epoll_wait returns no data, IRQ
+> suspension is immediately reverted back to the existing
+> napi_defer_hard_irqs and gro_flush_timeout mechanism which was
+> introduced in commit 6f8b12d661d0 ("net: napi: add hard irqs deferral
+> feature")).
+> 
+> The irq_suspend_timeout serves as a safety mechanism. If userland takes
+> a long time processing data, irq_suspend_timeout will fire and restart
+> normal NAPI processing.
+> 
+> For a more in depth explanation, please continue reading.
+> 
+> ~ Comparison with existing mechanisms
+> 
+> Interrupt mitigation can be accomplished in napi software, by setting
+> napi_defer_hard_irqs and gro_flush_timeout, or via interrupt coalescing
+> in the NIC. This can be quite efficient, but in both cases, a fixed
+> timeout (or packet count) needs to be configured. However, a fixed
+> timeout cannot effectively support both low- and high-load situations:
+> 
+> At low load, an application typically processes a few requests and then
+> waits to receive more input data. In this scenario, a large timeout will
+> cause unnecessary latency.
+> 
+> At high load, an application typically processes many requests before
+> being ready to receive more input data. In this case, a small timeout
+> will likely fire prematurely and trigger irq/softirq processing, which
+> interferes with the application's execution. This causes overhead, most
+> likely due to cache contention.
+> 
+> While NICs attempt to provide adaptive interrupt coalescing schemes,
+> these cannot properly take into account application-level processing.
+> 
+> An alternative packet delivery mechanism is busy-polling, which results
+> in perfect alignment of application processing and network polling. It
+> delivers optimal performance (throughput and latency), but results in
+> 100% cpu utilization and is thus inefficient for below-capacity
+> workloads.
+> 
+> We propose to add a new packet delivery mode that properly alternates
+> between busy polling and interrupt-based delivery depending on busy and
+> idle periods of the application. During a busy period, the system
+> operates in busy-polling mode, which avoids interference. During an idle
+> period, the system falls back to interrupt deferral, but with a small
+> timeout to avoid excessive latencies. This delivery mode can also be
+> viewed as an extension of basic interrupt deferral, but alternating
+> between a small and a very large timeout.
+> 
+> This delivery mode is efficient, because it avoids softirq execution
+> interfering with application processing during busy periods. It can be
+> used with blocking epoll_wait to conserve cpu cycles during idle
+> periods. The effect of alternating between busy and idle periods is that
+> performance (throughput and latency) is very close to full busy polling,
+> while cpu utilization is lower and very close to interrupt mitigation.
+> 
+> ~ Usage details
+> 
+> IRQ suspension is introduced via a per-NAPI configuration parameter that
+> controls the maximum time that IRQs can be suspended.
+> 
+> Here's how it is intended to work:
+>   - The user application (or system administrator) uses the netdev-genl
+>     netlink interface to set the pre-existing napi_defer_hard_irqs and
+>     gro_flush_timeout NAPI config parameters to enable IRQ deferral.
+> 
+>   - The user application (or system administrator) sets the proposed
+>     irq_suspend_timeout parameter via the netdev-genl netlink interface
+>     to a larger value than gro_flush_timeout to enable IRQ suspension.
+> 
+>   - The user application issues the existing epoll ioctl to set the
+>     prefer_busy_poll flag on the epoll context.
+> 
+>   - The user application then calls epoll_wait to busy poll for network
+>     events, as it normally would.
+> 
+>   - If epoll_wait returns events to userland, IRQs are suspended for the
+>     duration of irq_suspend_timeout.
+> 
+>   - If epoll_wait finds no events and the thread is about to go to
+>     sleep, IRQ handling using napi_defer_hard_irqs and gro_flush_timeout
+>     is resumed.
+> 
+> As long as epoll_wait is retrieving events, IRQs (and softirq
+> processing) for the NAPI being polled remain disabled. When network
+> traffic reduces, eventually a busy poll loop in the kernel will retrieve
+> no data. When this occurs, regular IRQ deferral using gro_flush_timeout
+> for the polled NAPI is re-enabled.
+> 
+> Unless IRQ suspension is continued by subsequent calls to epoll_wait, it
+> automatically times out after the irq_suspend_timeout timer expires.
+> Regular deferral is also immediately re-enabled when the epoll context
+> is destroyed.
+> 
+> ~ Usage scenario
+> 
+> The target scenario for IRQ suspension as packet delivery mode is a
+> system that runs a dominant application with substantial network I/O.
+> The target application can be configured to receive input data up to a
+> certain batch size (via epoll_wait maxevents parameter) and this batch
+> size determines the worst-case latency that application requests might
+> experience. Because packet delivery is suspended during the target
+> application's processing, the batch size also determines the worst-case
+> latency of concurrent applications using the same RX queue(s).
+> 
+> gro_flush_timeout should be set as small as possible, but large enough to
+> make sure that a single request is likely not being interfered with.
+> 
+> irq_suspend_timeout is largely a safety mechanism against misbehaving
+> applications. It should be set large enough to cover the processing of an
+> entire application batch, i.e., the factor between gro_flush_timeout and
+> irq_suspend_timeout should roughly correspond to the maximum batch size
+> that the target application would process in one go.
+> 
+> ~ Design rationale
+> 
+> The implementation of the IRQ suspension mechanism very nicely dovetails
+> with the existing mechanism for IRQ deferral when preferred busy poll is
+> enabled (introduced in commit 7fd3253a7de6 ("net: Introduce preferred
+> busy-polling"), see that commit message for more details).
+> 
+> While it would be possible to inject the suspend timeout via
+> the existing epoll ioctl, it is more natural to avoid this path for one
+> main reason:
+> 
+>   An epoll context is linked to NAPI IDs as file descriptors are added;
+>   this means any epoll context might suddenly be associated with a
+>   different net_device if the application were to replace all existing
+>   fds with fds from a different device. In this case, the scope of the
+>   suspend timeout becomes unclear and many edge cases for both the user
+>   application and the kernel are introduced
+> 
+> Only a single iteration through napi busy polling is needed for this
+> mechanism to work effectively. Since an important objective for this
+> mechanism is preserving cpu cycles, exactly one iteration of the napi
+> busy loop is invoked when busy_poll_usecs is set to 0.
+> 
+> ~ Important call outs in the implementation
+> 
+>   - Enabling per epoll-context preferred busy poll will now effectively
+>     lead to a nonblocking iteration through napi_busy_loop, even when
+>     busy_poll_usecs is 0. See patch 4.
+> 
+>   - Patches apply cleanly on commit 160a810b2a85 ("net: vxlan: update
+>     the document for vxlan_snoop()").
+> 
+> ~ Benchmark configs & descriptions
+> 
+> The changes were benchmarked with memcached [3] using the benchmarking
+> tool mutilate [4].
+> 
+> To facilitate benchmarking, a small patch [5] was applied to memcached
+> 1.6.29 to allow setting per-epoll context preferred busy poll and other
+> settings via environment variables. Another small patch [6] was applied
+> to libevent to enable full busy-polling.
+> 
+> Multiple scenarios were benchmarked as described below and the scripts
+> used for producing these results can be found on github [7] (note: all
+> scenarios use NAPI-based traffic splitting via SO_INCOMING_ID by passing
+> -N to memcached):
+> 
+>   - base:
+>     - no other options enabled
+>   - deferX:
+>     - set defer_hard_irqs to 100
+>     - set gro_flush_timeout to X,000
+>   - napibusy:
+>     - set defer_hard_irqs to 100
+>     - set gro_flush_timeout to 200,000
+>     - enable busy poll via the existing ioctl (busy_poll_usecs = 64,
+>       busy_poll_budget = 64, prefer_busy_poll = true)
+>   - fullbusy:
+>     - set defer_hard_irqs to 100
+>     - set gro_flush_timeout to 5,000,000
+>     - enable busy poll via the existing ioctl (busy_poll_usecs = 1000,
+>       busy_poll_budget = 64, prefer_busy_poll = true)
+>     - change memcached's nonblocking epoll_wait invocation (via
+>       libevent) to using a 1 ms timeout
+>   - suspendX:
+>     - set defer_hard_irqs to 100
+>     - set gro_flush_timeout to X,000
+>     - set irq_suspend_timeout to 20,000,000
+>     - enable busy poll via the existing ioctl (busy_poll_usecs = 0,
+>       busy_poll_budget = 64, prefer_busy_poll = true)
+> 
+> ~ Benchmark results
+> 
+> Tested on:
+> 
+> Single socket AMD EPYC 7662 64-Core Processor
+> Hyperthreading disabled
+> 4 NUMA Zones (NPS=4)
+> 16 CPUs per NUMA zone (64 cores total)
+> 2 x Dual port 100gbps Mellanox Technologies ConnectX-5 Ex EN NIC
+> 
+> The test machine is configured such that a single interface has 8 RX
+> queues. The queues' IRQs and memcached are pinned to CPUs that are
+> NUMA-local to the interface which is under test. The NIC's interrupt
+> coalescing configuration is left at boot-time defaults.
+> 
+> Results:
+> 
+> Results are shown below. The mechanism added by this series is
+> represented by the 'suspend' cases. Data presented shows a summary over
+> at least 10 runs of each test case [8] using the scripts on github [7].
+> For latency, the median is shown. For throughput and CPU utilization,
+> the average is shown.
+> 
+> The results also include cycles-per-query (cpq) and
+> instruction-per-query (ipq) metrics, following the methodology proposed
+> in [2], to augment the CPU utilization numbers, which could be skewed
+> due to frequency scaling. We find that this does not appear to be the
+> case as CPU utilization and low-level metrics show similar trends.
+> 
+> These results were captured using the scripts on github [7] to
+> illustrate how this approach compares with other pre-existing
+> mechanisms. This data is not to be interpreted as scientific data
+> captured in a fully isolated lab setting, but instead as best effort,
+> illustrative information comparing and contrasting tradeoffs.
+> 
+> The absolute QPS results are higher than our previous submission, but
+> the relative differences between variants are equivalent. Because the
+> patches have been rebased on 6.12, several factors have likely
+> influenced the overall performance. Most importantly, we had to switch
+> to a new set of basic kernel options, which has likely altered the
+> baseline performance. Because the overall comparison of variants still
+> holds, we have not attempted to recreate the exact set of kernel options
+> from the previous submission.
+> 
+> Compare:
+> - Throughput (MAX) and latencies of base vs suspend.
+> - CPU usage of napibusy and fullbusy during lower load (200K, 400K for
+>   example) vs suspend.
+> - Latency of the defer variants vs suspend as timeout and load
+>   increases.
+> 
+> The overall takeaway is that the suspend variants provide a superior
+> combination of high throughput, low latency, and low cpu utilization
+> compared to all other variants. Each of the suspend variants works very
+> well, but some fine-tuning between latency and cpu utilization is still
+> possible by tuning the small timeout (gro_flush_timeout).
+> 
+> Note: we've reorganized the results to make comparison among testcases
+> with the same load easier.
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base  200K  200024     127     254     458      25   12748   11289
+>    defer10  200K  199991      64     128     166      27   18763   16574
+>    defer20  200K  199986      72     135     178      25   15405   14173
+>    defer50  200K  200025      91     149     198      23   12275   12203
+>   defer200  200K  199996     182     266     326      18    8595    9183
+>   fullbusy  200K  200040      58     123     167     100   43641   23145
+>   napibusy  200K  200009     115     244     299      56   24797   24693
+>  suspend10  200K  200005      63     128     167      32   19559   17240
+>  suspend20  200K  199952      69     132     170      29   16324   14838
+>  suspend50  200K  200019      84     144     189      26   13106   12516
+> suspend200  200K  199978     168     264     326      20    9331    9643
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base  400K  400017     157     292     762      39    9287    9325
+>    defer10  400K  400033      71     141     204      53   13950   12943
+>    defer20  400K  399935      79     150     212      47   12027   11673
+>    defer50  400K  399888     101     171     231      39    9556    9921
+>   defer200  400K  399993     200     287     358      32    7428    8576
+>   fullbusy  400K  400018      63     132     203     100   21827   16062
+>   napibusy  400K  399970      89     230     292      83   18156   16508
+>  suspend10  400K  400061      69     139     202      54   13576   13057
+>  suspend20  400K  399988      73     144     206      49   11930   11773
+>  suspend50  400K  399975      88     161     218      42    9996   10270
+> suspend200  400K  399954     172     276     353      34    7847    8713
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base  600K  600031     166     289     631      61    9188    8787
+>    defer10  600K  599967      85     167     262      75   11833   10947
+>    defer20  600K  599888      89     165     243      66   10513   10362
+>    defer50  600K  600072     109     185     253      55    8664    9190
+>   defer200  600K  599951     222     315     393      45    6892    8213
+>   fullbusy  600K  600041      69     145     227     100   14549   13936
+>   napibusy  600K  599980      79     188     280      96   13927   14155
+>  suspend10  600K  600028      78     159     267      69   10877   11032
+>  suspend20  600K  600026      81     159     254      64    9922   10320
+>  suspend50  600K  600007      96     178     258      57    8681    9331
+> suspend200  600K  599964     177     295     369      47    7115    8366
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base  800K  800034     198     329     698      84    9366    8338
+>    defer10  800K  799718     243     642    1457      95   10532    9007
+>    defer20  800K  800009     132     245     399      89    9956    8979
+>    defer50  800K  800024     136     228     378      80    9002    8598
+>   defer200  800K  799965     255     362     473      66    7481    8147
+>   fullbusy  800K  799927      78     157     253     100   10915   12533
+>   napibusy  800K  799870      81     173     273      99   10826   12532
+>  suspend10  800K  799991      84     167     269      83    9380    9802
+>  suspend20  800K  799979      90     172     290      78    8765    9404
+>  suspend50  800K  800031     106     191     307      71    7945    8805
+> suspend200  800K  799905     182     307     411      62    6985    8242
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base 1000K  919543    3805    6390   14229      98    9324    7978
+>    defer10 1000K  850751    4574    7382   15370      99   10218    8470
+>    defer20 1000K  890296    4736    6862   14858      99    9708    8277
+>    defer50 1000K  932694    3463    6180   13251      97    9148    8053
+>   defer200 1000K  951311    3524    6052   13599      96    8875    7845
+>   fullbusy 1000K 1000011      90     181     278     100    8731   10686
+>   napibusy 1000K 1000050      93     184     280     100    8721   10547
+>  suspend10 1000K  999962     101     193     306      92    8138    8980
+>  suspend20 1000K 1000030     103     191     324      88    7844    8763
+>  suspend50 1000K 1000001     114     202     320      83    7396    8431
+> suspend200 1000K  999965     185     314     428      76    6733    8072
+> 
+>   testcase  load     qps  avglat  95%lat  99%lat     cpu     cpq     ipq
+>       base   MAX 1005592    4651    6594   14979     100    8679    7918
+>    defer10   MAX  928204    5106    7286   15199     100    9398    8380
+>    defer20   MAX  984663    4774    6518   14920     100    8861    8063
+>    defer50   MAX 1044099    4431    6368   14652     100    8350    7948
+>   defer200   MAX 1040451    4423    6610   14674     100    8380    7931
+>   fullbusy   MAX 1236608    3715    3987   12805     100    7051    7936
+>   napibusy   MAX 1077516    4345   10155   15957     100    8080    7842
+>  suspend10   MAX 1218344    3760    3990   12585     100    7150    7935
+>  suspend20   MAX 1220056    3752    4053   12602     100    7150    7961
+>  suspend50   MAX 1213666    3791    4103   12919     100    7183    7959
+> suspend200   MAX 1217411    3768    3988   12863     100    7161    7954
+> 
+> ~ FAQ
+> 
+>   - Can the new timeout value be threaded through the new epoll ioctl ?
+> 
+>     Only with difficulty. The epoll ioctl sets options on an epoll
+>     context and the NAPI ID associated with an epoll context can change
+>     based on what file descriptors a user app adds to the epoll context.
+>     This would introduce complexity in the API from the user perspective
+>     and also complexity in the kernel.
+> 
+>   - Can irq suspend be built by combining NIC coalescing and
+>     gro_flush_timeout ?
+> 
+>     No. The problem is that the long timeout must engage if and only if
+>     prefer-busy is active.
+> 
+>     When using NIC coalescing for the short timeout (without
+>     napi_defer_hard_irqs/gro_flush_timeout), an interrupt after an idle
+>     period will trigger softirq, which will run napi polling. At this
+>     point, prefer-busy is not active, so NIC interrupts would be
+>     re-enabled. Then it is not possible for the longer timeout to
+>     interject to switch control back to polling. In other words, only by
+>     using the software timer for the short timeout, it is possible to
+>     extend the timeout without having to reprogram the NIC timer or
+>     reach down directly and disable interrupts.
+> 
+>     Using gro_flush_timeout for the long timeout also has problems, for
+>     the same underlying reason. In the current napi implementation,
+>     gro_flush_timeout is not tied to prefer-busy. We'd either have to
+>     change that and in the process modify the existing deferral
+>     mechanism, or introduce a state variable to determine whether
+>     gro_flush_timeout is used as long timeout for irq suspend or whether
+>     it is used for its default purpose. In an earlier version, we did
+>     try something similar to the latter and made it work, but it ends up
+>     being a lot more convoluted than our current proposal.
+> 
+>   - Isn't it already possible to combine busy looping with irq deferral?
+> 
+>     Yes, in fact enabling irq deferral via napi_defer_hard_irqs and
+>     gro_flush_timeout is a precondition for prefer_busy_poll to have an
+>     effect. If the application also uses a tight busy loop with
+>     essentially nonblocking epoll_wait (accomplished with a very short
+>     timeout parameter), this is the fullbusy case shown in the results.
+>     An application using blocking epoll_wait is shown as the napibusy
+>     case in the result. It's a hybrid approach that provides limited
+>     latency benefits compared to the base case and plain irq deferral,
+>     but not as good as fullbusy or suspend.
+> 
+> ~ Special thanks
+> 
+> Several people were involved in earlier stages of the development of this
+> mechanism whom we'd like to thank:
+> 
+>   - Peter Cai (CC'd), for the initial kernel patch and his contributions
+>     to the paper.
+>     
+>   - Mohammadamin Shafie (CC'd), for testing various versions of the kernel
+>     patch and providing helpful feedback.
+> 
+> Thanks,
+> Martin and Joe
+> 
+> [1]: https://lore.kernel.org/netdev/20240812125717.413108-1-jdamato@fastly.com/
+> [2]: https://doi.org/10.1145/3626780
+> [3]: https://github.com/memcached/memcached/blob/master/doc/napi_ids.txt
+> [4]: https://github.com/leverich/mutilate
+> [5]: https://raw.githubusercontent.com/martinkarsten/irqsuspend/main/patches/memcached.patch
+> [6]: https://raw.githubusercontent.com/martinkarsten/irqsuspend/main/patches/libevent.patch
+> [7]: https://github.com/martinkarsten/irqsuspend
+> [8]: https://github.com/martinkarsten/irqsuspend/tree/main/results
+> 
+> v2:
+>   - Cover letter updated, including a re-run of test data.
+>   - Patch 1 rewritten to use netdev-genl instead of sysfs.
+>   - Patch 3 updated with a comment added to napi_resume_irqs.
+>   - Patch 4 rebased to apply now that commit b9ca079dd6b0 ("eventpoll:
+>     Annotate data-race of busy_poll_usecs") has been picked up from VFS.
+>   - Patch 6 updated the kernel documentation.
+> 
+> rfc -> v1: https://lore.kernel.org/netdev/20240823173103.94978-1-jdamato@fastly.com/
+>   - Cover letter updated to include more details.
+>   - Patch 1 updated to remove the documentation added. This was moved to
+>     patch 6 with the rest of the docs (see below).
+>   - Patch 5 updated to fix an error uncovered by the kernel build robot.
+>     See patch 5's changelog for more details.
+>   - Patch 6 added which updates kernel documentation.
 
-Hi John,
+The changes makes sense to me, and I could not find any obvious issue in
+the patches.
 
-John Garry <john.g.garry@oracle.com> writes:
+I think this deserve some - even basic - self-tests coverage. Note that
+you can enable GRO on veth devices to make NAPI instances avail there.
 
-> On 27/10/2024 18:17, Ritesh Harjani (IBM) wrote:
->> This patch adds base support for atomic writes via statx getattr.
->> On bs < ps systems, we can create FS with say bs of 16k. That means
->> both atomic write min and max unit can be set to 16k for supporting
->> atomic writes.
->> 
->> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>   fs/ext4/ext4.h  |  9 +++++++++
->>   fs/ext4/inode.c | 14 ++++++++++++++
->>   fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
->>   3 files changed, 54 insertions(+)
->> 
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index 44b0d418143c..6ee49aaacd2b 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
->>   	 */
->>   	struct work_struct s_sb_upd_work;
->>   
->> +	/* Atomic write unit values in bytes */
->> +	unsigned int s_awu_min;
->> +	unsigned int s_awu_max;
->> +
->>   	/* Ext4 fast commit sub transaction ID */
->>   	atomic_t s_fc_subtid;
->>   
->> @@ -3855,6 +3859,11 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->>   	return buffer_uptodate(bh);
->>   }
->>   
->> +static inline bool ext4_can_atomic_write(struct super_block *sb)
->> +{
->> +	return EXT4_SB(sb)->s_awu_min > 0;
->> +}
->> +
->>   extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->>   				  loff_t pos, unsigned len,
->>   				  get_block_t *get_block);
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 54bdd4884fe6..fcdee27b9aa2 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
->>   		}
->>   	}
->>   
->> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
->> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->> +		unsigned int awu_min, awu_max;
->> +
->> +		if (ext4_can_atomic_write(inode->i_sb)) {
->> +			awu_min = sbi->s_awu_min;
->> +			awu_max = sbi->s_awu_max;
->> +		} else {
->> +			awu_min = awu_max = 0;
->> +		}
->> +
->> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
->> +	}
->> +
->>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
->>   	if (flags & EXT4_APPEND_FL)
->>   		stat->attributes |= STATX_ATTR_APPEND;
->> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> index 16a4ce704460..d6e3201a48be 100644
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
->>   	return 0;
->>   }
->>   
->> +/*
->> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
->> + * @sb: super block
->> + * TODO: Later add support for bigalloc
->> + */
->> +static void ext4_atomic_write_init(struct super_block *sb)
->> +{
->> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> +	struct block_device *bdev = sb->s_bdev;
->> +
->> +	if (!bdev_can_atomic_write(bdev))
->
-> this check is duplicated, since bdev_atomic_write_unit_{min, 
-> max}_bytes() has this check
->
+Possibly you could opt for a drivers/net defaulting to veth usage and
+allowing the user to select real H/W via env variables.
 
-Right, yes. I can mention a comment and remove this check perhaps. 
-Looks like XFS also got it duplicated then.
+Thanks,
 
+Paolo
 
->> +		return;
->> +
->> +	if (!ext4_has_feature_extents(sb))
->> +		return;
->> +
->> +	sbi->s_awu_min = max(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_min_bytes(bdev));
->> +	sbi->s_awu_max = min(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_max_bytes(bdev));
->> +	if (sbi->s_awu_min && sbi->s_awu_max &&
->> +	    sbi->s_awu_min <= sbi->s_awu_max) {
->
-> This looks a bit complicated. I would just follow the XFS example and 
-> ensure bdev_atomic_write_unit_min_bytes() <=  sb->s_blocksize <= 
-> bdev_atomic_write_unit_max_bytes() [which you are doing, but in a 
-> complicated way]
->
-
-In here we are checking for min and max supported units against fs
-blocksize at one place during mount time itself and then caching the
-supported atomic write unit. The supported atomic write unit can change
-when bigalloc gets introduced. 
-
-XFS caches the blockdevice min, max units and then defers these checks
-against fs blocksize during file open time using xfs_inode_can_atomicwrite(). 
-
-I just preferrd the 1st aproach in case of EXT4 here because it will be simpler
-this way for when bigalloc also gets introduced.
-
-BTW none of these are ondisk changes, so whenever extsize gets
-introduced, we might still have to add something like
-ext4_inode_can_atomic_write() (similar to XFS) based on inode extsize
-value. But for now it was not needed in EXT4. 
-
-I hope the reasoning is clear and make sense.
-
-
->> +		ext4_msg(sb, KERN_NOTICE, "Supports atomic writes awu_min: %u, awu_max: %u",
->> +			 sbi->s_awu_min, sbi->s_awu_max);
-
-BTW - I was wondering if we should add "experimental" in above msg.
-
--ritesh
-
->> +	} else {
->> +		sbi->s_awu_min = 0;
->> +		sbi->s_awu_max = 0;
->> +	}
->> +}
->> +
->>   static void ext4_fast_commit_init(struct super_block *sb)
->>   {
->>   	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->>   
->>   	spin_lock_init(&sbi->s_bdev_wb_lock);
->>   
->> +	ext4_atomic_write_init(sb);
->>   	ext4_fast_commit_init(sb);
->>   
->>   	sb->s_root = NULL;
 
