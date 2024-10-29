@@ -1,53 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-33101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E7E9B4233
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 07:13:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916519B42D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 08:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2A51C21852
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 06:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A691F23191
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 07:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD8A20103A;
-	Tue, 29 Oct 2024 06:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70742022DD;
+	Tue, 29 Oct 2024 07:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F4F1DE894;
-	Tue, 29 Oct 2024 06:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9395A8821;
+	Tue, 29 Oct 2024 07:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730182399; cv=none; b=CU5vXx+xluLm0BDNli6UL8+hIJz5kpWWglhcH1L87n/WqNHCZ8Jm2icZrfrJfU+vbyIxTadMUzdI92bQvmMaen+m63v/Ji9Tky1frZikPv3USSRGOas/ufmjKuf+9CGafvvfv5aWr6eUIID72VLVbCOrCajwe74C6OyrLlpXvY0=
+	t=1730185820; cv=none; b=lekqG8DQZGJ4QHY+LML1NTxjhdJODYUDGdC9YjeyRq7HRFpu7srPQhSGXJhlpJYx23dfcoqjtgDA5GmfkiIpkJ6Y7GUPRn+HylNghQPBfQPWfGmZuriVj6r1x5UTpGQgUQnST6dmlhROw+Mw9P7bRT9skUOSCXbV30vntvSCrv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730182399; c=relaxed/simple;
-	bh=yQ5HjjXHrNyn/bMD+uUVC5LKeV3i4x9cUL1/8432m0c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MeBh2/GLvU8QOTkFZG5QcblzjVprbpT7s36+JxZ0U8kYGMKleFvJRL3RFj6UdsGtm46aQAG2/qG7ckmTILiwM6Tdpds0+pqOewm2sHKUjyJ4kEDfy4M8fH9LYJSNg7hS88CN7wHuUFA5FiigLe3iwDkFYISe07xLhY+KLTvbNIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id DBFAA1006BA;
-	Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id c7q_Y9HhpeJF; Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id CAECC100402; Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
-X-Spam-Level: 
-Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1730185820; c=relaxed/simple;
+	bh=GM8SwVn5bwtNv0nbmAxwmZTORJT73kBrM80HseA6IX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lOSVUChWi0wc2AAGU5LjDhUl/EyQgl0gnJRQhImZSx6VwlpdtOOOStnZnTMOp4TmQ4yo2HkT+NoJ4e/uSGI7AbB4+hDcYAurGkDVUjkFtD8Rq6EoFeojDbpvUJRGVgp3Bf2USwOjaOYZPyaOojQlGYpVAco+2tMcb9QijFqaWJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id D992A100402;
-	Tue, 29 Oct 2024 17:13:12 +1100 (AEDT)
-Message-ID: <6ea31595-7d95-4ad5-a46e-c90872813dcf@themaw.net>
-Date: Tue, 29 Oct 2024 14:13:11 +0800
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A2BC01FE41;
+	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
+	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
+	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
+	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730185815;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
+	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
+	as2x7vXvF865+bCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
+	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
+	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
+	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730185815;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
+	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
+	as2x7vXvF865+bCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3405B136A5;
+	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eAZTCleKIGe2cgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 29 Oct 2024 07:10:15 +0000
+Message-ID: <c7a36219-bfe2-4be4-83ba-5af7f33b4a98@suse.de>
+Date: Tue, 29 Oct 2024 08:10:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,148 +97,77 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2 (new
- mount APIs)
-From: Ian Kent <raven@themaw.net>
-To: Dave Chinner <david@fromorbit.com>, Zorro Lang <zlang@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, sandeen@redhat.com
-References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
- <20241028192804.axbj2onyoscgzvwi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <ZyAasz2RBpMpGV8T@dread.disaster.area>
- <27b60bdf-435d-442a-842d-410bb9cc68c3@themaw.net>
+Subject: Re: [PATCHv9 7/7] scsi: set permanent stream count in block limits
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
+ javier.gonz@samsung.com, bvanassche@acm.org, Keith Busch <kbusch@kernel.org>
+References: <20241025213645.3464331-1-kbusch@meta.com>
+ <20241025213645.3464331-8-kbusch@meta.com>
 Content-Language: en-US
-Autocrypt: addr=raven@themaw.net; keydata=
- xsFNBE6c/ycBEADdYbAI5BKjE+yw+dOE+xucCEYiGyRhOI9JiZLUBh+PDz8cDnNxcCspH44o
- E7oTH0XPn9f7Zh0TkXWA8G6BZVCNifG7mM9K8Ecp3NheQYCk488ucSV/dz6DJ8BqX4psd4TI
- gpcs2iDQlg5CmuXDhc5z1ztNubv8hElSlFX/4l/U18OfrdTbbcjF/fivBkzkVobtltiL+msN
- bDq5S0K2KOxRxuXGaDShvfbz6DnajoVLEkNgEnGpSLxQNlJXdQBTE509MA30Q2aGk6oqHBQv
- zxjVyOu+WLGPSj7hF8SdYOjizVKIARGJzDy8qT4v/TLdVqPa2d0rx7DFvBRzOqYQL13/Zvie
- kuGbj3XvFibVt2ecS87WCJ/nlQxCa0KjGy0eb3i4XObtcU23fnd0ieZsQs4uDhZgzYB8LNud
- WXx9/Q0qsWfvZw7hEdPdPRBmwRmt2O1fbfk5CQN1EtNgS372PbOjQHaIV6n+QQP2ELIa3X5Z
- RnyaXyzwaCt6ETUHTslEaR9nOG6N3sIohIwlIywGK6WQmRBPyz5X1oF2Ld9E0crlaZYFPMRH
- hQtFxdycIBpTlc59g7uIXzwRx65HJcyBflj72YoTzwchN6Wf2rKq9xmtkV2Eihwo8WH3XkL9
- cjVKjg8rKRmqIMSRCpqFBWJpT1FzecQ8EMV0fk18Q5MLj441yQARAQABzRtJYW4gS2VudCA8
- cmF2ZW5AdGhlbWF3Lm5ldD7CwXsEEwECACUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheA
- BQJOnjOcAhkBAAoJEOdnc4D1T9iphrYQALHK3J5rjzy4qPiLJ0EE9eJkyV1rqtzct5Ah9pu6
- LSkqxgQCfN3NmKOoj+TpbXGagg28qTGjkFvJSlpNY7zAj+fA11UVCxERgQBOJcPrbgaeYZua
- E4ST+w/inOdatNZRnNWGugqvez80QGuxFRQl1ttMaky7VxgwNTXcFNjClW3ifdD75gHlrU0V
- ZUULa1a0UVip0rNc7mFUKxhEUk+8NhowRZUk0nt1JUwezlyIYPysaN7ToVeYE4W0VgpWczmA
- tHtkRGIAgwL7DCNNJ6a+H50FEsyixmyr/pMuNswWbr3+d2MiJ1IYreZLhkGfNq9nG/+YK/0L
- Q2/OkIsz8bOrkYLTw8WwzfTz2RXV1N2NtsMKB/APMcuuodkSI5bzzgyu1cDrGLz43faFFmB9
- xAmKjibRLk6ChbmrZhuCYL0nn+RkL036jMLw5F1xiu2ltEgK2/gNJhm29iBhvScUKOqUnbPw
- DSMZ2NipMqj7Xy3hjw1CStEy3pCXp8/muaB8KRnf92VvjO79VEls29KuX6rz32bcBM4qxsVn
- cOqyghSE69H3q4SY7EbhdIfacUSEUV+m/pZK5gnJIl6n1Rh6u0MFXWttvu0j9JEl92Ayj8u8
- J/tYvFMpag3nTeC3I+arPSKpeWDX08oisrEp0Yw15r+6jbPjZNz7LvrYZ2fa3Am6KRn0zsFN
- BE6c/ycBEADZzcb88XlSiooYoEt3vuGkYoSkz7potX864MSNGekek1cwUrXeUdHUlw5zwPoC
- 4H5JF7D8q7lYoelBYJ+Mf0vdLzJLbbEtN5+v+s2UEbkDlnUQS1yRo1LxyNhJiXsQVr7WVA/c
- 8qcDWUYX7q/4Ckg77UO4l/eHCWNnHu7GkvKLVEgRjKPKroIEnjI0HMK3f6ABDReoc741RF5X
- X3qwmCgKZx0AkLjObXE3W769dtbNbWmW0lgFKe6dxlYrlZbq25Aubhcu2qTdQ/okx6uQ41+v
- QDxgYtocsT/CG1u0PpbtMeIm3mVQRXmjDFKjKAx9WOX/BHpk7VEtsNQUEp1lZo6hH7jeo5me
- CYFzgIbXdsMA9TjpzPpiWK9GetbD5KhnDId4ANMrWPNuGC/uPHDjtEJyf0cwknsRFLhL4/NJ
- KvqAuiXQ57x6qxrkuuinBQ3S9RR3JY7R7c3rqpWyaTuNNGPkIrRNyePky/ZTgTMA5of8Wioy
- z06XNhr6mG5xT+MHztKAQddV3xFy9f3Jrvtd6UvFbQPwG7Lv+/UztY5vPAzp7aJGz2pDbb0Q
- BC9u1mrHICB4awPlja/ljn+uuIb8Ow3jSy+Sx58VFEK7ctIOULdmnHXMFEihnOZO3NlNa6q+
- XZOK7J00Ne6y0IBAaNTM+xMF+JRc7Gx6bChES9vxMyMbXwARAQABwsFfBBgBAgAJBQJOnP8n
- AhsMAAoJEOdnc4D1T9iphf4QAJuR1jVyLLSkBDOPCa3ejvEqp4H5QUogl1ASkEboMiWcQJQd
- LaH6zHNySMnsN6g/UVhuviANBxtW2DFfANPiydox85CdH71gLkcOE1J7J6Fnxgjpc1Dq5kxh
- imBSqa2hlsKUt3MLXbjEYL5OTSV2RtNP04KwlGS/xMfNwQf2O2aJoC4mSs4OeZwsHJFVF8rK
- XDvL/NzMCnysWCwjVIDhHBBIOC3mecYtXrasv9nl77LgffyyaAAQZz7yZcvn8puj9jH9h+mr
- L02W+gd+Sh6Grvo5Kk4ngzfT/FtscVGv9zFWxfyoQHRyuhk0SOsoTNYN8XIWhosp9GViyDtE
- FXmrhiazz7XHc32u+o9+WugpTBZktYpORxLVwf9h1PY7CPDNX4EaIO64oyy9O3/huhOTOGha
- nVvqlYHyEYCFY7pIfaSNhgZs2aV0oP13XV6PGb5xir5ah+NW9gQk/obnvY5TAVtgTjAte5tZ
- +coCSBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U
- 8k5V5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWg
- Dx24eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <27b60bdf-435d-442a-842d-410bb9cc68c3@themaw.net>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241025213645.3464331-8-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.976];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+On 10/25/24 23:36, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> The block limits exports the number of write hints, so set this limit if
+> the device reports support for the lifetime hints. Not only does this
+> inform the user of which hints are possible, it also allows scsi devices
+> supporting the feature to utilize the full range through raw block
+> device direct-io.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   drivers/scsi/sd.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index ca4bc0ac76adc..235dd6e5b6688 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3768,6 +3768,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>   		sd_config_protection(sdkp, &lim);
+>   	}
+>   
+> +	lim.max_write_hints = sdkp->permanent_stream_count;
+> +
+>   	/*
+>   	 * We now have all cache related info, determine how we deal
+>   	 * with flush requests.
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-On 29/10/24 13:44, Ian Kent wrote:
-> On 29/10/24 07:13, Dave Chinner wrote:
->> On Tue, Oct 29, 2024 at 03:28:04AM +0800, Zorro Lang wrote:
->>> On Mon, Oct 28, 2024 at 01:22:52PM +0100, Christian Brauner wrote:
->>>> On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
->>>>> Hi,
->>>>>
->>>>> Recently, I hit lots of fstests cases fail on overlayfs (xfs 
->>>>> underlying, no
->>>>> specific mount options), e.g.
->>>>>
->>>>> FSTYP         -- overlay
->>>>> PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 
->>>>> 25 14:29:18 EDT 2024
->>>>> MKFS_OPTIONS  -- -m 
->>>>> crc=1,finobt=1,rmapbt=0,reflink=1,inobtcount=1,bigtime=1 
->>>>> /mnt/fstests/SCRATCH_DIR
->>>>> MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 
->>>>> /mnt/fstests/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
->>>>>
->>>>> generic/294       [failed, exit status 1]- output mismatch (see 
->>>>> /var/lib/xfstests/results//generic/294.out.bad)
->>>>>      --- tests/generic/294.out    2024-10-25 14:38:32.098692473 -0400
->>>>>      +++ /var/lib/xfstests/results//generic/294.out.bad 2024-10-25 
->>>>> 15:02:34.698605062 -0400
->>>>>      @@ -1,5 +1,5 @@
->>>>>       QA output created by 294
->>>>>      -mknod: SCRATCH_MNT/294.test/testnode: File exists
->>>>>      -mkdir: cannot create directory 
->>>>> 'SCRATCH_MNT/294.test/testdir': File exists
->>>>>      -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': 
->>>>> Read-only file system
->>>>>      -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': 
->>>>> File exists
->>>>>      +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system 
->>>>> call failed: overlay: No changes allowed in reconfigure.
->>>>>      +       dmesg(1) may have more information after failed mount 
->>>>> system call.
->>>> In the new mount api overlayfs has been changed to reject invalid 
->>>> mount
->>>> option on remount whereas in the old mount api we just igorned them.
->>> Not only g/294 fails on new mount utils, not sure if all of them are 
->>> from same issue.
->>> If you need, I can paste all test failures (only from my side) at here.
->>>
->>>> If this a big problem then we need to change overlayfs to continue
->>>> ignoring garbage mount options passed to it during remount.
->>> Do you mean this behavior change is only for overlayfs, doesn't 
->>> affect other fs?
->> We tried this with XFS years ago, and reverted back to the old
->> behaviour of silently ignoring mount options we don't support in
->> remount. The filesystem code has no idea what mount API
->> userspace is using for remount - it can't assume that it is ok to
->> error out on unknown/unsupported options because it uses
->> the fsreconfigure API internally....
->
-> I expect that remounting to change options for overlayfs has very 
-> limited use
->
-> cases. Perhaps remounting (the upper layer) read-only is useful ...
+Cheers,
 
-Actually, my mistake, it looks like remount read-only might be the only 
-case that should
-
-be handled (provided the sb is not already read-only). In this case it 
-does a file system
-
-sync and returns the result of that but now fails unconditionally in 
-fsconfig().
-
-
->
->
-> The problem here is that xfstests wants to remount the mount read-only 
-> in this
->
-> test which has never actually been done so xfstests reporting a 
-> failure has no
->
-> value!
->
->
-> Ian
->
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
