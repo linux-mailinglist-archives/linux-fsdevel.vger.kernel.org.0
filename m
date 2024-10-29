@@ -1,124 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-33116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40039B499A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 13:27:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7AF9B4A14
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 13:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4001F2377B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 12:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB6528300D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 12:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D99E206051;
-	Tue, 29 Oct 2024 12:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043F9205E1C;
+	Tue, 29 Oct 2024 12:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vt7t35wH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2fJjsQ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864220515A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 12:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD961E2301;
+	Tue, 29 Oct 2024 12:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204812; cv=none; b=njzuk4t4EknNL6f9H2m/F9qPqYm0fEEMFMftMUMW29UqRLWuc735dTSWD8CwwGYyljGNiqn8V6n+kqNn4IR84kn9VkrGpmX4RLCwJmdr8daROmLoDWpQ5BQAgLyWUXppuHel8Qcc6A/gnkwNPxgdu4K+hm81rmrqVIUVcuCIpTs=
+	t=1730206032; cv=none; b=Htw3mRRiISuXSwg7V7NCduCp+1HC9riiJU4jO7Ao7nUs9AVPF/rVgtsU16+0yGqx2rQLJriz8SfCeH6cQoX7iDlJaAAUudCtZx1N5EhreyOQXDqaPmuaSjHga8YyDQjlpv4cndb9jajmhU3uO7EU4Sg9qR+lPgzc6A29Dg9kbW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204812; c=relaxed/simple;
-	bh=OIiNsApqwgm71NjUFM1ADgAthsV5yL2jS8pl3Uc8ZmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uuPq6+HdwTbKvnEYL+jP/VyRrCvGR24XEIX8EizuP04xi+YNs+BihFfE9hmo0xmniRtF5yn7yrOUJqn+OHz6Up8Tk/w2f096FHaCPb2zLM2CSAseKKG5M9rOXX0m78XaA7MjObh6Ei1wO3jklx6CKtcE9amC+OYAajRAbZ+i7v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vt7t35wH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730204810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GOZTaD4SZpZxUnHx9eqNQXCMnDT5MQfWDHUrJEYUGAI=;
-	b=Vt7t35wHnLgvy7vBnA8aqxcVgERbWrFMxWnwQgrGj4imxl/s9ozfpv9tsw9y0+NxYUx7Lq
-	fIJtCFZK7jZeclL4HvRjU2aS02r+f4PCTY82b7zuaK3aI51tt0kZYy/QDpZBcbXA4dy8M+
-	KDwyM7GSgcpB7a+g6Z6wKekYfBbDTMo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-o6tlHVXjOX-Yv6vbCLWXLA-1; Tue, 29 Oct 2024 08:26:48 -0400
-X-MC-Unique: o6tlHVXjOX-Yv6vbCLWXLA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d67fe93c6so2773135f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 05:26:48 -0700 (PDT)
+	s=arc-20240116; t=1730206032; c=relaxed/simple;
+	bh=PKIGvIkqahKGpUaSw28+IKqMSUuUV0Hhi1F1HBqO43A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ViWHb2sVD8TAsOvIovL1SwzGc39okDvQ8ZtjOD2OOia+lQthWNq5rqn/E+DuUxSeJo+QsVbAblwE+M+qlUGXr5Y+USaTqAAE5VjzPSqTizbQvvlhyAVGyFZc4l1HaXArjqqI3zOoKgztw/lv9yDGuN/6RT7HDXjr0uj7tBpxFbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2fJjsQ9; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99fa009adcso366944966b.0;
+        Tue, 29 Oct 2024 05:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730206028; x=1730810828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
+        b=k2fJjsQ9L4LWoM4PL7yZwKPUFTf4+W2wupzWIb/ZoMnu5UZ6K74DWIitK8BZtN2aP8
+         DDNTJXha54bcGgTf340F5t8zZubgVRbn9YoT7w8QP9S2wLJ2Im4uzFvlFbKMzUe1xWar
+         Od+glT5qcwGsZT/tiOHoFiADygKJuHeKrGUgSgtC4DJBocXoUy3U+depaBXSJzny7DG7
+         zmZEv/gGlnemfZ/MsuP+6rOMWGdAkOXEHnbeFzJDk3XMT68oEwa4j7qr7JepNdgFyeNH
+         pHm/8j8W+pvMUY7y4Kmop6F43R72fSEzQTnxZJxpKxWd/RXtdao/Hup6PLEjolxQMTmL
+         lBag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730204807; x=1730809607;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOZTaD4SZpZxUnHx9eqNQXCMnDT5MQfWDHUrJEYUGAI=;
-        b=A7uJ4HrhyutTbdqnPZj0Lco99mSe0SjQN9izGHxikDNEduLurtuZ+LlmNXwGNdQci0
-         ldHXwkwy1500oUtwYaFwpSyeDKeV62CLd0dcw2YSO4BldMEh4IP8fbxwD2dwIK3Ykf4d
-         nn11PJmMBCWfdcujH6O0cvtg9nxyKWfth+RGLEtpVTC9jh2OzjmbuEulpXeyg0oMsW/h
-         e3DGZ8alvLeoIbiKDDBsjdHVJ5YV+Y5JOQKYuYGRhJFMV9IcyrIYemkCboWOCgmAIaEL
-         tZSgQJoScG/Ct0Sau3+gM4NHxRD+63/g+S902B+DKih0uxk7cr5fJGlrFrUIS3aWlrGZ
-         Zdkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXj1+1zQUxNFYybnnl2ZOsALV8kwUwMArxJMR5YIKHaVBd5F1bm6iwBQjeWZEs5eGWPZPRm7fycQ1GkLJil@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBbE5VbM7vri5PZtGkTyjaceW98PyGbpttD2jhH9ixcSqx4VF9
-	7V9C7yY9AdyTAGTTnfDJY49xMImAgkD8OIgnoSEoEIoPZIR/g64XPL7PPsa06Aa53NXVJcChmnK
-	SijDKgsuMz4/iZ2yjs7onRUPz7ukXrZH0W4WAVtqbkR2MJ3WZZiyqUomg1CblgL4=
-X-Received: by 2002:a5d:4849:0:b0:37d:4e03:635c with SMTP id ffacd0b85a97d-380611441bbmr8953987f8f.21.1730204807538;
-        Tue, 29 Oct 2024 05:26:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7KLM8OM21izjqXfNP/B0QCUjjPNIlLTzWnqUD6a68rC1KUBMbMRh54JsB8kR9ClHY4mPX5A==
-X-Received: by 2002:a5d:4849:0:b0:37d:4e03:635c with SMTP id ffacd0b85a97d-380611441bbmr8953961f8f.21.1730204807135;
-        Tue, 29 Oct 2024 05:26:47 -0700 (PDT)
-Received: from [192.168.88.248] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b46bffsm12311553f8f.46.2024.10.29.05.26.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 05:26:46 -0700 (PDT)
-Message-ID: <dee9769f-d86b-471f-bbe2-f0165489618c@redhat.com>
-Date: Tue, 29 Oct 2024 13:26:44 +0100
+        d=1e100.net; s=20230601; t=1730206028; x=1730810828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
+        b=rviQQKppHH/q6D3rsJ3vD8Np+vgz2bCrdLwnEQl/LlIR9/bPdWRCbtA9ZDGL2IK0t2
+         tiSZYGJdhOSYXY5vQUw9rIYdxMZLkxn+XN/PZyyTsqkY9sF1rL33Oiq1LTuPqkTdX3BY
+         Hqe/blm+SZOwZXLH0+fg4Vz2HJZo5sGw4VJZlABXaLuKqEZU1ZA23X6cdclIsGPVWmsk
+         ORZ4tdccfDENZ+zKdw4yRxOKyKv6SpoKF5C8JTBhQt3DyIPY+x2HM3gxYpfR2thEE7dc
+         BVVyYlZxx6rea6kFiX4Av5Q0l7+QKXYYPN5mz/ZVykw1culcXXu7hdxYeOPM+4Dj1VcQ
+         OttQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4T+teNhJA7m3FeIWpz+R+WpzLRD8r34EjoVvYaLT38vjjGLnkYCJrGrHB+v5ePOoRxVW5P96WBQ==@vger.kernel.org, AJvYcCWGvH0a9OXs+3uIB+qHp3gHBZVvMoN8AAUwblU8SP5uyZT/S1n5ExT9rKMGbR/MT4BvHbmVKKpsi0kOxQ==@vger.kernel.org, AJvYcCWm/VatUyQD8aFm4dJhDhJa/M8GQFyebKNBVJiK0NUqGhN6jp9r21AwNSfDQ63zDvyb7p6hSWEP605agAhPfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlId72CxpIhoabaIILcShUBBsqAxjoS56fAdZ+7761LjCDgq9v
+	ZQjnscx/nC8fQ5Ex40lgY/iEISaSVeCcgfhnMCFdM6E9629d1t8RSqP+vr7kORiMw0eyjFqueDx
+	5nOdcHWiUTJ76rJOEXoZ77Y41tQ==
+X-Google-Smtp-Source: AGHT+IH24jDXrN1/rLUODZ7dXWnQNAXgArrAqn9CD/XkQZPaaSbgd3HS6kL07anh4QVcaAdjYqc8XepfsP8tIRg++xU=
+X-Received: by 2002:a05:6402:348f:b0:5c9:34b4:69a8 with SMTP id
+ 4fb4d7f45d1cf-5cbbf889850mr13754716a12.6.1730206028117; Tue, 29 Oct 2024
+ 05:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 net-next 14/14] net: sysctl: introduce sysctl
- SYSCTL_FIVE
-To: chia-yu.chang@nokia-bell-labs.com, netdev@vger.kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- dsahern@kernel.org, netfilter-devel@vger.kernel.org, kadlec@netfilter.org,
- coreteam@netfilter.org, pablo@netfilter.org, bpf@vger.kernel.org,
- joel.granados@kernel.org, linux-fsdevel@vger.kernel.org, kees@kernel.org,
- mcgrof@kernel.org, ij@kernel.org, ncardwell@google.com,
- koen.de_schepper@nokia-bell-labs.com, g.white@CableLabs.com,
- ingemar.s.johansson@ericsson.com, mirja.kuehlewind@ericsson.com,
- cheshire@apple.com, rs.ietf@gmx.at, Jason_Livingood@comcast.com,
- vidhi_goel@apple.com
-References: <20241021215910.59767-1-chia-yu.chang@nokia-bell-labs.com>
- <20241021215910.59767-15-chia-yu.chang@nokia-bell-labs.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241021215910.59767-15-chia-yu.chang@nokia-bell-labs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241025213645.3464331-1-kbusch@meta.com> <20241025213645.3464331-6-kbusch@meta.com>
+In-Reply-To: <20241025213645.3464331-6-kbusch@meta.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Tue, 29 Oct 2024 18:16:29 +0530
+Message-ID: <CACzX3AvZ=+cBaoZ9oKW3osA1WiWm5H5b7+wWAouLryK4-ymYfA@mail.gmail.com>
+Subject: Re: [PATCHv9 5/7] io_uring: enable per-io hinting capability
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com, 
+	javier.gonz@samsung.com, bvanassche@acm.org, Hannes Reinecke <hare@suse.de>, 
+	Nitesh Shetty <nj.shetty@samsung.com>, Keith Busch <kbusch@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/21/24 23:59, chia-yu.chang@nokia-bell-labs.com wrote:
-> From: Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>
-> 
-> Add SYSCTL_FIVE for new AccECN feedback modes of net.ipv4.tcp_ecn.
+On Sat, Oct 26, 2024 at 3:13=E2=80=AFAM Keith Busch <kbusch@meta.com> wrote=
+:
+>
+> From: Kanchan Joshi <joshi.k@samsung.com>
+>
+> With F_SET_RW_HINT fcntl, user can set a hint on the file inode, and
+> all the subsequent writes on the file pass that hint value down. This
+> can be limiting for block device as all the writes will be tagged with
+> only one lifetime hint value. Concurrent writes (with different hint
+> values) are hard to manage. Per-IO hinting solves that problem.
+>
+> Allow userspace to pass additional metadata in the SQE.
+>
+>         __u16 write_hint;
+>
+> If the hint is provided, filesystems may optionally use it. A filesytem
+> may ignore this field if it does not support per-io hints, or if the
+> value is invalid for its backing storage. Just like the inode hints,
+> requesting values that are not supported by the hardware are not an
+> error.
+>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>  include/uapi/linux/io_uring.h | 4 ++++
+>  io_uring/rw.c                 | 3 ++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h
+> index 60b9c98595faf..8cdcc461d464c 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -92,6 +92,10 @@ struct io_uring_sqe {
+>                         __u16   addr_len;
+>                         __u16   __pad3[1];
+>                 };
+> +               struct {
+> +                       __u16   write_hint;
+> +                       __u16   __pad4[1];
+> +               };
+>         };
+>         union {
+>                 struct {
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 8080ffd6d5712..5a1231bfecc3a 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -279,7 +279,8 @@ static int io_prep_rw(struct io_kiocb *req, const str=
+uct io_uring_sqe *sqe,
+>                 rw->kiocb.ki_ioprio =3D get_current_ioprio();
+>         }
+>         rw->kiocb.dio_complete =3D NULL;
+> -
+> +       if (ddir =3D=3D ITER_SOURCE)
+> +               rw->kiocb.ki_write_hint =3D READ_ONCE(sqe->write_hint);
+>         rw->addr =3D READ_ONCE(sqe->addr);
+>         rw->len =3D READ_ONCE(sqe->len);
+>         rw->flags =3D READ_ONCE(sqe->rw_flags);
+> --
+> 2.43.5
+>
 
-How many sysctl entries will use such value? If just one you are better
-off not introducing the new sysctl value and instead using a static
-constant in the tcp code.
-
-Also this patch makes the commit message in the previous one incorrect.
-Please adjust that.
-
-Side note: on new version, you should include the changelog in the
-affected patches, after a '---' separator, to help the reviewers.
-
-Thanks,
-
-Paolo
-
+Since this patch adds a couple of new fields, it makes sense to add
+BUILD_BUG_ON() checks in io_uring_init for these fields to assert the
+layout of struct io_uring_sqe. And probably a zero check for pad4 in
+io_prep_rw.
+--
+Anuj Gupta
 
