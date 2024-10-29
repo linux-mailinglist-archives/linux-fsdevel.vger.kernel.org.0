@@ -1,160 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-33117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7AF9B4A14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 13:47:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA969B4A1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 13:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB6528300D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 12:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8188F1F236C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 12:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043F9205E1C;
-	Tue, 29 Oct 2024 12:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6161EB9E6;
+	Tue, 29 Oct 2024 12:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2fJjsQ9"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eA3qqQ29";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5aM1LpuW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eA3qqQ29";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5aM1LpuW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD961E2301;
-	Tue, 29 Oct 2024 12:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26360BA50
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 12:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206032; cv=none; b=Htw3mRRiISuXSwg7V7NCduCp+1HC9riiJU4jO7Ao7nUs9AVPF/rVgtsU16+0yGqx2rQLJriz8SfCeH6cQoX7iDlJaAAUudCtZx1N5EhreyOQXDqaPmuaSjHga8YyDQjlpv4cndb9jajmhU3uO7EU4Sg9qR+lPgzc6A29Dg9kbW4=
+	t=1730206158; cv=none; b=mAGqq6vlGljZDe1QUhR6ttTr2vo+0cTyihG7wSp+kPbDs3uUZ7SkavUCHLua2lVgbol+97mJOTah/W3DNM0fv2cQPvSC2+/I7emUlc1M3Ok+1q8Wx9jzpsx1d7vty/6YEMnO/lkQRXu7LeUR+dfaE7QbHCvSAXCtd8spEkylaxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206032; c=relaxed/simple;
-	bh=PKIGvIkqahKGpUaSw28+IKqMSUuUV0Hhi1F1HBqO43A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ViWHb2sVD8TAsOvIovL1SwzGc39okDvQ8ZtjOD2OOia+lQthWNq5rqn/E+DuUxSeJo+QsVbAblwE+M+qlUGXr5Y+USaTqAAE5VjzPSqTizbQvvlhyAVGyFZc4l1HaXArjqqI3zOoKgztw/lv9yDGuN/6RT7HDXjr0uj7tBpxFbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2fJjsQ9; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99fa009adcso366944966b.0;
-        Tue, 29 Oct 2024 05:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730206028; x=1730810828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
-        b=k2fJjsQ9L4LWoM4PL7yZwKPUFTf4+W2wupzWIb/ZoMnu5UZ6K74DWIitK8BZtN2aP8
-         DDNTJXha54bcGgTf340F5t8zZubgVRbn9YoT7w8QP9S2wLJ2Im4uzFvlFbKMzUe1xWar
-         Od+glT5qcwGsZT/tiOHoFiADygKJuHeKrGUgSgtC4DJBocXoUy3U+depaBXSJzny7DG7
-         zmZEv/gGlnemfZ/MsuP+6rOMWGdAkOXEHnbeFzJDk3XMT68oEwa4j7qr7JepNdgFyeNH
-         pHm/8j8W+pvMUY7y4Kmop6F43R72fSEzQTnxZJxpKxWd/RXtdao/Hup6PLEjolxQMTmL
-         lBag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730206028; x=1730810828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
-        b=rviQQKppHH/q6D3rsJ3vD8Np+vgz2bCrdLwnEQl/LlIR9/bPdWRCbtA9ZDGL2IK0t2
-         tiSZYGJdhOSYXY5vQUw9rIYdxMZLkxn+XN/PZyyTsqkY9sF1rL33Oiq1LTuPqkTdX3BY
-         Hqe/blm+SZOwZXLH0+fg4Vz2HJZo5sGw4VJZlABXaLuKqEZU1ZA23X6cdclIsGPVWmsk
-         ORZ4tdccfDENZ+zKdw4yRxOKyKv6SpoKF5C8JTBhQt3DyIPY+x2HM3gxYpfR2thEE7dc
-         BVVyYlZxx6rea6kFiX4Av5Q0l7+QKXYYPN5mz/ZVykw1culcXXu7hdxYeOPM+4Dj1VcQ
-         OttQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4T+teNhJA7m3FeIWpz+R+WpzLRD8r34EjoVvYaLT38vjjGLnkYCJrGrHB+v5ePOoRxVW5P96WBQ==@vger.kernel.org, AJvYcCWGvH0a9OXs+3uIB+qHp3gHBZVvMoN8AAUwblU8SP5uyZT/S1n5ExT9rKMGbR/MT4BvHbmVKKpsi0kOxQ==@vger.kernel.org, AJvYcCWm/VatUyQD8aFm4dJhDhJa/M8GQFyebKNBVJiK0NUqGhN6jp9r21AwNSfDQ63zDvyb7p6hSWEP605agAhPfw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlId72CxpIhoabaIILcShUBBsqAxjoS56fAdZ+7761LjCDgq9v
-	ZQjnscx/nC8fQ5Ex40lgY/iEISaSVeCcgfhnMCFdM6E9629d1t8RSqP+vr7kORiMw0eyjFqueDx
-	5nOdcHWiUTJ76rJOEXoZ77Y41tQ==
-X-Google-Smtp-Source: AGHT+IH24jDXrN1/rLUODZ7dXWnQNAXgArrAqn9CD/XkQZPaaSbgd3HS6kL07anh4QVcaAdjYqc8XepfsP8tIRg++xU=
-X-Received: by 2002:a05:6402:348f:b0:5c9:34b4:69a8 with SMTP id
- 4fb4d7f45d1cf-5cbbf889850mr13754716a12.6.1730206028117; Tue, 29 Oct 2024
- 05:47:08 -0700 (PDT)
+	s=arc-20240116; t=1730206158; c=relaxed/simple;
+	bh=sFG9RXQRMpfZngRYM2LXnrNQl4gVBjgy+d2bhqfOz04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fpq5GTQDTrTJEBm5PEP7unu72qdhgsdzEP0ygQX9Y7UhZmB6MMiS1GJZrdToRPpx2j7oyf3O7PMzL3F49PseZFtRm+TsKGks5qn9JtN5QvulbZCmMlcC1wTBk+vdjWqrAGLYz9Y5hX2V69ydouEal7qlRXB4SYRu5QlUmO0KgeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eA3qqQ29; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5aM1LpuW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eA3qqQ29; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5aM1LpuW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5698E1F445;
+	Tue, 29 Oct 2024 12:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730206154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2hBgJ5pz2LVY2K9gTZXQbC7Sjn0M7hCv/cU4kC+BUaQ=;
+	b=eA3qqQ29ylmr+NDhO/TZhgEokAaBLpcpT0ExdT77I2hWHEjOSB1dx+qhxEwoie8Yxz2qvQ
+	rtrEfxJ709vKgN4nxY8V2h1grt613dNuhE3y11oaLpxuG/FzDZRZEmpUhY3lDpKSMX6v8U
+	EiPVagZS6pYy2Yoqz7hylu3Yt7A/JpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730206154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2hBgJ5pz2LVY2K9gTZXQbC7Sjn0M7hCv/cU4kC+BUaQ=;
+	b=5aM1LpuWu+z5XbHif7hrv8ZpK8eRUhOsuelPOsfPCLILdbzCP4PBVH3u9qhgBb2Vsjp7lZ
+	6RpQHsRRVI+NtDAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730206154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2hBgJ5pz2LVY2K9gTZXQbC7Sjn0M7hCv/cU4kC+BUaQ=;
+	b=eA3qqQ29ylmr+NDhO/TZhgEokAaBLpcpT0ExdT77I2hWHEjOSB1dx+qhxEwoie8Yxz2qvQ
+	rtrEfxJ709vKgN4nxY8V2h1grt613dNuhE3y11oaLpxuG/FzDZRZEmpUhY3lDpKSMX6v8U
+	EiPVagZS6pYy2Yoqz7hylu3Yt7A/JpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730206154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2hBgJ5pz2LVY2K9gTZXQbC7Sjn0M7hCv/cU4kC+BUaQ=;
+	b=5aM1LpuWu+z5XbHif7hrv8ZpK8eRUhOsuelPOsfPCLILdbzCP4PBVH3u9qhgBb2Vsjp7lZ
+	6RpQHsRRVI+NtDAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D6B2136A5;
+	Tue, 29 Oct 2024 12:49:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bTmQEcjZIGdoXgAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Tue, 29 Oct 2024 12:49:12 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	David Disseldorp <ddiss@suse.de>
+Subject: [PATCH] initramfs: avoid filename buffer overrun
+Date: Tue, 29 Oct 2024 12:48:37 +0000
+Message-ID: <20241029124837.30673-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025213645.3464331-1-kbusch@meta.com> <20241025213645.3464331-6-kbusch@meta.com>
-In-Reply-To: <20241025213645.3464331-6-kbusch@meta.com>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Tue, 29 Oct 2024 18:16:29 +0530
-Message-ID: <CACzX3AvZ=+cBaoZ9oKW3osA1WiWm5H5b7+wWAouLryK4-ymYfA@mail.gmail.com>
-Subject: Re: [PATCHv9 5/7] io_uring: enable per-io hinting capability
-To: Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com, 
-	javier.gonz@samsung.com, bvanassche@acm.org, Hannes Reinecke <hare@suse.de>, 
-	Nitesh Shetty <nj.shetty@samsung.com>, Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Sat, Oct 26, 2024 at 3:13=E2=80=AFAM Keith Busch <kbusch@meta.com> wrote=
-:
->
-> From: Kanchan Joshi <joshi.k@samsung.com>
->
-> With F_SET_RW_HINT fcntl, user can set a hint on the file inode, and
-> all the subsequent writes on the file pass that hint value down. This
-> can be limiting for block device as all the writes will be tagged with
-> only one lifetime hint value. Concurrent writes (with different hint
-> values) are hard to manage. Per-IO hinting solves that problem.
->
-> Allow userspace to pass additional metadata in the SQE.
->
->         __u16 write_hint;
->
-> If the hint is provided, filesystems may optionally use it. A filesytem
-> may ignore this field if it does not support per-io hints, or if the
-> value is invalid for its backing storage. Just like the inode hints,
-> requesting values that are not supported by the hardware are not an
-> error.
->
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  include/uapi/linux/io_uring.h | 4 ++++
->  io_uring/rw.c                 | 3 ++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-> index 60b9c98595faf..8cdcc461d464c 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -92,6 +92,10 @@ struct io_uring_sqe {
->                         __u16   addr_len;
->                         __u16   __pad3[1];
->                 };
-> +               struct {
-> +                       __u16   write_hint;
-> +                       __u16   __pad4[1];
-> +               };
->         };
->         union {
->                 struct {
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index 8080ffd6d5712..5a1231bfecc3a 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -279,7 +279,8 @@ static int io_prep_rw(struct io_kiocb *req, const str=
-uct io_uring_sqe *sqe,
->                 rw->kiocb.ki_ioprio =3D get_current_ioprio();
->         }
->         rw->kiocb.dio_complete =3D NULL;
-> -
-> +       if (ddir =3D=3D ITER_SOURCE)
-> +               rw->kiocb.ki_write_hint =3D READ_ONCE(sqe->write_hint);
->         rw->addr =3D READ_ONCE(sqe->addr);
->         rw->len =3D READ_ONCE(sqe->len);
->         rw->flags =3D READ_ONCE(sqe->rw_flags);
-> --
-> 2.43.5
->
+The initramfs filename field is defined in
+Documentation/driver-api/early-userspace/buffer-format.rst as:
 
-Since this patch adds a couple of new fields, it makes sense to add
-BUILD_BUG_ON() checks in io_uring_init for these fields to assert the
-layout of struct io_uring_sqe. And probably a zero check for pad4 in
-io_prep_rw.
---
-Anuj Gupta
+ 37 cpio_file := ALGN(4) + cpio_header + filename + "\0" + ALGN(4) + data
+...
+ 55 ============= ================== =========================
+ 56 Field name    Field size         Meaning
+ 57 ============= ================== =========================
+...
+ 70 c_namesize    8 bytes            Length of filename, including final \0
+
+When extracting an initramfs cpio archive, the kernel's do_name() path
+handler assumes a zero-terminated path at @collected, passing it
+directly to filp_open() / init_mkdir() / init_mknod().
+
+If a specially crafted cpio entry carries a non-zero-terminated filename
+and is followed by uninitialized memory, then a file may be created with
+trailing characters that represent the uninitialized memory. Symlink
+filename fields handled in do_symlink() won't overrun past the data
+segment, due to the explicit zero-termination of the symlink target.
+
+Append the output of the following bash script to an existing initramfs
+and observe any created /initramfs_test_fname_overrunAA* path. E.g.
+  ./reproducer.sh | gzip >> /myinitramfs
+
+It's easiest to observe non-zero uninitialized memory when the output is
+gzipped, as it'll overflow the heap allocated @out_buf in __gunzip(),
+rather than the initrd_start+initrd_size block.
+
+---- reproducer.sh ----
+nilchar="A"	# change to "\0" to properly zero terminate / pad
+magic="070701"
+ino=1
+mode=$(( 0100777 ))
+uid=0
+gid=0
+nlink=1
+mtime=1
+filesize=0
+devmajor=0
+devminor=1
+rdevmajor=0
+rdevminor=0
+csum=0
+fname="initramfs_test_fname_overrun"
+namelen=$(( ${#fname} + 1 ))	# plus one to account for terminator
+
+printf "%s%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%08x%s" \
+	$magic $ino $mode $uid $gid $nlink $mtime $filesize \
+	$devmajor $devminor $rdevmajor $rdevminor $namelen $csum $fname
+
+termpadlen=$(( 1 + ((4 - ((110 + $namelen) & 3)) % 4) ))
+printf "%.s${nilchar}" $(seq 1 $termpadlen)
+---- reproducer.sh ----
+
+Fix filename buffer overrun by skipping over any cpio entries where the
+field doesn't carry a zero-terminator at the expected (name_len - 1)
+offset.
+
+Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+---
+ init/initramfs.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/init/initramfs.c b/init/initramfs.c
+index bc911e466d5bb..a44386bcbb566 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -360,6 +360,14 @@ static int __init do_name(void)
+ {
+ 	state = SkipIt;
+ 	next_state = Reset;
++
++	/* name_len > 0 && name_len <= PATH_MAX checked in do_header */
++	if (collected[name_len - 1] != '\0') {
++		pr_err("Skipping name without nulterm: %.*s\n",
++		       (int)name_len, collected);
++		return 0;
++	}
++
+ 	if (strcmp(collected, "TRAILER!!!") == 0) {
+ 		free_hash();
+ 		return 0;
+@@ -424,13 +432,19 @@ static int __init do_copy(void)
+ 
+ static int __init do_symlink(void)
+ {
++	state = SkipIt;
++	next_state = Reset;
++
++	if (collected[name_len - 1] != '\0') {
++		pr_err("Skipping symlink without nulterm: %.*s\n",
++		       (int)name_len, collected);
++		return 0;
++	}
+ 	collected[N_ALIGN(name_len) + body_len] = '\0';
+ 	clean_path(collected, 0);
+ 	init_symlink(collected + N_ALIGN(name_len), collected);
+ 	init_chown(collected, uid, gid, AT_SYMLINK_NOFOLLOW);
+ 	do_utime(collected, mtime);
+-	state = SkipIt;
+-	next_state = Reset;
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
+
 
