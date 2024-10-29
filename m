@@ -1,173 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-33102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916519B42D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 08:10:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9917A9B43EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 09:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A691F23191
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 07:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078B0B21531
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 08:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70742022DD;
-	Tue, 29 Oct 2024 07:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F76C1DF75D;
+	Tue, 29 Oct 2024 08:15:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9395A8821;
-	Tue, 29 Oct 2024 07:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C22036EF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 08:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730185820; cv=none; b=lekqG8DQZGJ4QHY+LML1NTxjhdJODYUDGdC9YjeyRq7HRFpu7srPQhSGXJhlpJYx23dfcoqjtgDA5GmfkiIpkJ6Y7GUPRn+HylNghQPBfQPWfGmZuriVj6r1x5UTpGQgUQnST6dmlhROw+Mw9P7bRT9skUOSCXbV30vntvSCrv0=
+	t=1730189706; cv=none; b=s+ZrzM6rq+TbUGr5XAeydKcrE6rlN9/ORZDTzgUxkvDIu6egDomDsm9bHoqelTx09Cw9CBCp/KyKn7nV0ZTwQyQ3GApp/J60F2/czZh9Cv5gIizPxBmf94GZK9kVf3dsIsIWrPgpe9vyBKjyjrn1nNpy+xLafMO8kTIlT98PZ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730185820; c=relaxed/simple;
-	bh=GM8SwVn5bwtNv0nbmAxwmZTORJT73kBrM80HseA6IX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOSVUChWi0wc2AAGU5LjDhUl/EyQgl0gnJRQhImZSx6VwlpdtOOOStnZnTMOp4TmQ4yo2HkT+NoJ4e/uSGI7AbB4+hDcYAurGkDVUjkFtD8Rq6EoFeojDbpvUJRGVgp3Bf2USwOjaOYZPyaOojQlGYpVAco+2tMcb9QijFqaWJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A2BC01FE41;
-	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
-	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
-	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730185815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
-	as2x7vXvF865+bCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
-	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
-	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730185815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
-	as2x7vXvF865+bCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3405B136A5;
-	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eAZTCleKIGe2cgAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 29 Oct 2024 07:10:15 +0000
-Message-ID: <c7a36219-bfe2-4be4-83ba-5af7f33b4a98@suse.de>
-Date: Tue, 29 Oct 2024 08:10:15 +0100
+	s=arc-20240116; t=1730189706; c=relaxed/simple;
+	bh=jVZI0IwpcekhbnfOrIbgBgWJzqVFKuVUtoIm9N+jkVc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=O6TtV6pRMpRAy8GVkHVYtzX1DOu4PAvrcwMvgcItFHbTcEu39Eab3442sZH8hEEaerf4IJMHYTadDLEGrOvpC4bjPP4iE7f/s2bpvD1T0DTP+Cg/BMi80ASrkPcLNivk5CKBNuY5zjvTY1yKrR0rbPbKX9DOV39F4n6VVAlVYQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so524035239f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 01:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730189703; x=1730794503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BTRHXytTFWgdZnYL2thO68nzA3wtruqd8M7jFd6tO8=;
+        b=uSCBBNZjS0Ko+CPcfz+4dxkraHJaI5Nupu3oOLxsVqLZi8QwaQoeehjT57XU2rNxpJ
+         Vps6A8axPEeg+Mxah9ioMkQqsD3diTRGQizj6SewFeRF6PClH7VdDBBxZAhu/C0eZySm
+         wGKbZDGEczfxEHy4fBVfgjfoviP7Njrrla6ckY7XjXykkLx3PxQNkBMzZE4SuFiafqb0
+         Z4U8v7kKaPZGbjUYR3s6fXIAko2MDnysll/YDvtRoJZGIC7HnnTk/d/pOedhlqFAayhj
+         wDIQQHFP7FPOrC22Ho8i8doHIV9mWUcyT2TSlBc5C0+7/6xfUM5nrkZv3Op2wfGrp4BO
+         ZJ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXIVgjssdCT978XDYJwCEwDNAEDgfo5NYfrgxQCe0SPSYCFf8UitaSZtZIzlvyhtdtiEvIUPzNT6zRQGeDj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDgAE1gc7YI/OhzLdCp5ANI3eiFBfzHy4Ky5QUvaa06RuDjaOz
+	W86iuNc61YVTRsI/CNpjkmIPOHuuIkRbfk7LN9Fyw4QxoH/fjdafa7X52/FdDynsxmQi71ffxgG
+	jpewsu0farJeJ/LYSA8GdXEWUqLvWwb6b/qE5AZyqMWN/h5QpE+uSBVc=
+X-Google-Smtp-Source: AGHT+IG8VvCIkrmNvSQH+kmC4iRLaOd+tCtOspcugELt4BK972V9xSrn5cpBxJ3eE49Xr5ZBxahDDGO4yGtK5fLRSCzt9o8VN2t+
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv9 7/7] scsi: set permanent stream count in block limits
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
- javier.gonz@samsung.com, bvanassche@acm.org, Keith Busch <kbusch@kernel.org>
-References: <20241025213645.3464331-1-kbusch@meta.com>
- <20241025213645.3464331-8-kbusch@meta.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241025213645.3464331-8-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.976];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6e02:b49:b0:3a0:b631:76d4 with SMTP id
+ e9e14a558f8ab-3a4ed2663ecmr114857565ab.1.1730189703613; Tue, 29 Oct 2024
+ 01:15:03 -0700 (PDT)
+Date: Tue, 29 Oct 2024 01:15:03 -0700
+In-Reply-To: <66ed861a.050a0220.2abe4d.0015.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67209987.050a0220.4735a.0258.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
+From: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, brauner@kernel.org, dhowells@redhat.com, 
+	hdanton@sina.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, netfs@lists.linux.dev, 
+	oliver.sang@intel.com, rostedt@goodmis.org, stfrench@microsoft.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/25/24 23:36, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> The block limits exports the number of write hints, so set this limit if
-> the device reports support for the lifetime hints. Not only does this
-> inform the user of which hints are possible, it also allows scsi devices
-> supporting the feature to utilize the full range through raw block
-> device direct-io.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->   drivers/scsi/sd.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index ca4bc0ac76adc..235dd6e5b6688 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3768,6 +3768,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   		sd_config_protection(sdkp, &lim);
->   	}
->   
-> +	lim.max_write_hints = sdkp->permanent_stream_count;
-> +
->   	/*
->   	 * We now have all cache related info, determine how we deal
->   	 * with flush requests.
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+syzbot suspects this issue was fixed by commit:
 
-Cheers,
+commit df9b455633aee0bad3e5c3dc9fc1c860b13c96d2
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Sep 26 13:58:30 2024 +0000
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+    netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c2eca7980000
+start commit:   a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d85e1e571a820894
+dashboard link: https://syzkaller.appspot.com/bug?extid=7c48153a9d788824044b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1511a607980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c7d69f980000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
