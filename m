@@ -1,279 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-33098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1C79B418D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 05:17:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B739B41E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 06:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41C91F23025
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 04:17:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2398EB21E3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 05:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4C11FF5F6;
-	Tue, 29 Oct 2024 04:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3rHtxEe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC71201000;
+	Tue, 29 Oct 2024 05:50:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12B01DC05D;
-	Tue, 29 Oct 2024 04:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC36F9D6;
+	Tue, 29 Oct 2024 05:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730175434; cv=none; b=mdS0/DUtih4E8YfFWFbBXgCqXNlqj+96J3K64b5qZbT+ZGmtcL/0Gijr9H54g4Oxil2tDR50QsRS/qBR9/Ty9zhMkO9GXUpFSl2dd1nB8fOoCdcxil6OcJp9krnm64q2d6sOyHH5rv+BwKiXNmWQG41tQ0X1xtpwJsHj9cznY/o=
+	t=1730181008; cv=none; b=OtY376ZVeNSbgDG0L++a67QuwxWd5vOHrTKj5pO8HQ/2UtiJUnQXVBXkz3y1IFbWqXBz+heeiZZ7wmiM6RaJLQT/aUleKZGcMz+m2EFtYPKMBqi2NB33xDmkTUzX4vsfoObEIwBICUHxSx98aeptpMPBlolBzIUfMrIWjkfA9R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730175434; c=relaxed/simple;
-	bh=RKHYedL3g+YcC1whE+lrjzQFGsTH7O/wS2r9LScdask=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=po1rKZ8LXjWAUlUqcavxzzq8Xb9aRZmzoC35JmOE/s/VeG4Ff5ENdk/2K823Ii2J64IktPUPj35RzCEMDrF5qz3RbE+FPzYvK3a9M5AoGmbxTOG71Q/s5EiSJDSCGZV6SSMxDgceSIE+ekY5LGGfP1jehqsrwJhQ5RQjJLnJD1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3rHtxEe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E28FC4CEE6;
-	Tue, 29 Oct 2024 04:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730175434;
-	bh=RKHYedL3g+YcC1whE+lrjzQFGsTH7O/wS2r9LScdask=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F3rHtxEenmfxI79Pdpq3K+wIl06yqw6LjLsWY2+ZAhjnso72pbThHEaq8m//ZWpnh
-	 2iKmKQQPi7iarMaPuhNL6VCveyVXHRMU8rvSZq/1KX33hiwJtUz1onVWAkFQ5aTkai
-	 QloB0aKldgqqb4oRtxoOHEyzacAL/LPeOOGLLVYL+1DuisB58SQOv8e0IcFajjVqwW
-	 K5QBG975yw4FZNSlwi5bEumhvdjiySxuYeQ5uxyxWclZdu9hjnaa9Fm1VVTXc9ggeM
-	 LgLkptRoWFAzgTAQlhTbENrx2dcVBAnqDqf2M+6TDSdDJ3PNOit/Lv/XSyXPVy72eh
-	 KDz87v+WxNrog==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-28c654c9e79so3420121fac.0;
-        Mon, 28 Oct 2024 21:17:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJIg2XfqlLv5f04oAqqbETDm/HodQEU9wmdQ50XGvoXvAhNovtSOv7LrC6MxtRiy9dk2HlUHe90vAD6hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8jovGWg3g0jvSX5lNeFgQhTu7vg/ujM0SWOrw457ZL+6ibmqj
-	Gn/Id+JvgkeGswSNNltWL0xcnlnMXmQttdOhchpWyZzflF48TqBa6bLY4nhRofXMfFO7/MdDXHf
-	IG0/oC+D/lP2XNfwFuJmT+vfFLFM=
-X-Google-Smtp-Source: AGHT+IFkdsLQqCsNUI/rwxJgrn2piEZpQY1D7MgYbWYhArEk968SnKnTwkyq8izXP90qKiEqYhpoV9VxuJ3/tOFEu20=
-X-Received: by 2002:a05:6870:8899:b0:277:d790:6e99 with SMTP id
- 586e51a60fabf-29103df1f58mr497237fac.18.1730175433543; Mon, 28 Oct 2024
- 21:17:13 -0700 (PDT)
+	s=arc-20240116; t=1730181008; c=relaxed/simple;
+	bh=iax/ny1MXcWJkGX7c9HATJrDBU260SS4Eo7rFNf+th4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aOJREP3yB0q5ZCaVJce640h7dZ3M+cZAGHBRJplBF0eJWtwej9s29HWQbJlETP9L09/p2SRgbV8OdofhSshfZX4AJHVMjFMZzYWEMiv3KsxURrwUUoOg1mFBVwCad6HyqdjBmqSk/+szfT108uaAqp8NgWtdhI+To/857LDaKjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 1C137100433;
+	Tue, 29 Oct 2024 16:44:21 +1100 (AEDT)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 1YrPAb_nx2_6; Tue, 29 Oct 2024 16:44:21 +1100 (AEDT)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 0A7181006B8; Tue, 29 Oct 2024 16:44:21 +1100 (AEDT)
+X-Spam-Level: 
+Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 5B2C3100433;
+	Tue, 29 Oct 2024 16:44:19 +1100 (AEDT)
+Message-ID: <27b60bdf-435d-442a-842d-410bb9cc68c3@themaw.net>
+Date: Tue, 29 Oct 2024 13:44:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67014df7.050a0220.49194.04c0.GAE@google.com>
-In-Reply-To: <67014df7.050a0220.49194.04c0.GAE@google.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 29 Oct 2024 13:17:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-v5nQVkE58bvuk0V-kGTN+Q7vbsf678A7v3zb-Z2d8Kg@mail.gmail.com>
-Message-ID: <CAKYAXd-v5nQVkE58bvuk0V-kGTN+Q7vbsf678A7v3zb-Z2d8Kg@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-To: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: multipart/mixed; boundary="0000000000001db9f2062595dc41"
+User-Agent: Mozilla Thunderbird
+Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2 (new
+ mount APIs)
+To: Dave Chinner <david@fromorbit.com>, Zorro Lang <zlang@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, sandeen@redhat.com
+References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
+ <20241028192804.axbj2onyoscgzvwi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <ZyAasz2RBpMpGV8T@dread.disaster.area>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <ZyAasz2RBpMpGV8T@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---0000000000001db9f2062595dc41
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 29/10/24 07:13, Dave Chinner wrote:
+> On Tue, Oct 29, 2024 at 03:28:04AM +0800, Zorro Lang wrote:
+>> On Mon, Oct 28, 2024 at 01:22:52PM +0100, Christian Brauner wrote:
+>>> On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
+>>>> Hi,
+>>>>
+>>>> Recently, I hit lots of fstests cases fail on overlayfs (xfs underlying, no
+>>>> specific mount options), e.g.
+>>>>
+>>>> FSTYP         -- overlay
+>>>> PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 25 14:29:18 EDT 2024
+>>>> MKFS_OPTIONS  -- -m crc=1,finobt=1,rmapbt=0,reflink=1,inobtcount=1,bigtime=1 /mnt/fstests/SCRATCH_DIR
+>>>> MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /mnt/fstests/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
+>>>>
+>>>> generic/294       [failed, exit status 1]- output mismatch (see /var/lib/xfstests/results//generic/294.out.bad)
+>>>>      --- tests/generic/294.out	2024-10-25 14:38:32.098692473 -0400
+>>>>      +++ /var/lib/xfstests/results//generic/294.out.bad	2024-10-25 15:02:34.698605062 -0400
+>>>>      @@ -1,5 +1,5 @@
+>>>>       QA output created by 294
+>>>>      -mknod: SCRATCH_MNT/294.test/testnode: File exists
+>>>>      -mkdir: cannot create directory 'SCRATCH_MNT/294.test/testdir': File exists
+>>>>      -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': Read-only file system
+>>>>      -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': File exists
+>>>>      +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system call failed: overlay: No changes allowed in reconfigure.
+>>>>      +       dmesg(1) may have more information after failed mount system call.
+>>> In the new mount api overlayfs has been changed to reject invalid mount
+>>> option on remount whereas in the old mount api we just igorned them.
+>> Not only g/294 fails on new mount utils, not sure if all of them are from same issue.
+>> If you need, I can paste all test failures (only from my side) at here.
+>>
+>>> If this a big problem then we need to change overlayfs to continue
+>>> ignoring garbage mount options passed to it during remount.
+>> Do you mean this behavior change is only for overlayfs, doesn't affect other fs?
+> We tried this with XFS years ago, and reverted back to the old
+> behaviour of silently ignoring mount options we don't support in
+> remount. The filesystem code has no idea what mount API
+> userspace is using for remount - it can't assume that it is ok to
+> error out on unknown/unsupported options because it uses
+> the fsreconfigure API internally....
 
-#syz test
+I expect that remounting to change options for overlayfs has very 
+limited use
 
-On Sat, Oct 5, 2024 at 11:32=E2=80=AFPM syzbot
-<syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' o=
-f..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D16cf7dd058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db1fd45f2013d8=
-12f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D01218003be74b5e=
-1213a
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11cf7dd0580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11d0658058000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/16d4da549bf4/dis=
-k-e32cde8d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a01bc9a0e174/vmlinu=
-x-e32cde8d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/93f4dfad6909/b=
-zImage-e32cde8d.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/433ba07001=
-54/mount_0.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
->
-> exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum :=
- 0x726052d3, utbl_chksum : 0xe619d30d)
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat=
-/dir.c:804
->  __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
->  exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
->  __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
->  __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
->  exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
->  exfat_write_failed fs/exfat/inode.c:421 [inline]
->  exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
->  generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
->  __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
->  exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
->  do_iter_readv_writev+0x88a/0xa30
->  vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
->  do_pwritev fs/read_write.c:1165 [inline]
->  __do_sys_pwritev2 fs/read_write.c:1224 [inline]
->  __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
->  __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
->  x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-329
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was stored to memory at:
->  memcpy_to_iter lib/iov_iter.c:65 [inline]
->  iterate_bvec include/linux/iov_iter.h:123 [inline]
->  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
->  iterate_and_advance include/linux/iov_iter.h:328 [inline]
->  _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
->  copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
->  shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
->  do_iter_readv_writev+0x88a/0xa30
->  vfs_iter_read+0x278/0x760 fs/read_write.c:923
->  lo_read_simple drivers/block/loop.c:283 [inline]
->  do_req_filebacked drivers/block/loop.c:516 [inline]
->  loop_handle_cmd drivers/block/loop.c:1910 [inline]
->  loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
->  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
->  process_one_work kernel/workqueue.c:3229 [inline]
->  process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
->  worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
->  kthread+0x3e2/0x540 kernel/kthread.c:389
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Uninit was stored to memory at:
->  memcpy_from_iter lib/iov_iter.c:73 [inline]
->  iterate_bvec include/linux/iov_iter.h:123 [inline]
->  iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
->  iterate_and_advance include/linux/iov_iter.h:328 [inline]
->  __copy_from_iter lib/iov_iter.c:249 [inline]
->  copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
->  copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
->  generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
->  shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
->  do_iter_readv_writev+0x88a/0xa30
->  vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
->  lo_write_bvec drivers/block/loop.c:243 [inline]
->  lo_write_simple drivers/block/loop.c:264 [inline]
->  do_req_filebacked drivers/block/loop.c:511 [inline]
->  loop_handle_cmd drivers/block/loop.c:1910 [inline]
->  loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
->  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
->  process_one_work kernel/workqueue.c:3229 [inline]
->  process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
->  worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
->  kthread+0x3e2/0x540 kernel/kthread.c:389
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Uninit was created at:
->  __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4756
->  alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
->  alloc_pages_noprof mm/mempolicy.c:2345 [inline]
->  folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
->  filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
->  __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
->  block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
->  exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
->  exfat_extend_valid_size fs/exfat/file.c:553 [inline]
->  exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
->  do_iter_readv_writev+0x88a/0xa30
->  vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
->  do_pwritev fs/read_write.c:1165 [inline]
->  __do_sys_pwritev2 fs/read_write.c:1224 [inline]
->  __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
->  __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
->  x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-329
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> CPU: 0 UID: 0 PID: 5188 Comm: syz-executor221 Not tainted 6.12.0-rc1-syzk=
-aller-00031-ge32cde8d2bd7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+cases. Perhaps remounting (the upper layer) read-only is useful ...
 
---0000000000001db9f2062595dc41
-Content-Type: application/x-patch; 
-	name="0001-exfat-fix-uninit-value-in-__exfat_get_dentry_set.patch"
-Content-Disposition: attachment; 
-	filename="0001-exfat-fix-uninit-value-in-__exfat_get_dentry_set.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m2txpzik0>
-X-Attachment-Id: f_m2txpzik0
 
-RnJvbSBiYzM4NWVlOGZjZWYwOGQ4M2Q3MDk0MTVkNTAwZWYyZTJhYzg3NDU3IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
-YXRlOiBUdWUsIDI5IE9jdCAyMDI0IDEwOjIyOjMxICswOTAwClN1YmplY3Q6IFtQQVRDSF0gZXhm
-YXQ6IGZpeCB1bmluaXQtdmFsdWUgaW4gX19leGZhdF9nZXRfZGVudHJ5X3NldAoKVGhlcmUgaXMg
-bm8gY2hlY2sgaWYgc3RyZWFtIHNpemUgYW5kIHN0YXJ0X2NsdSBhcmUgaW52YWxpZC4KSWYgc3Rh
-cnRfY2x1IGlzIEVPRiBjbHVzdGVyIGFuZCBzdHJlYW0gc2l6ZSBpcyA0MDk2LCBJdCB3aWxsIGNh
-dXNlCnVuaW5pdCB2YWx1ZSBhY2Nlc3MuIGJlY2F1c2UgZWktPmhpbnRfZmVtcC5laWR4IGNvdWxk
-IGJlIDEyOChpZiBjbHVzdGVyCnNpemUgaXMgNEspIGFuZCB3cm9uZyBoaW50IHdpbGwgYWxsb2Nh
-dGUgbmV4dCBjbHVzdGVyLiBhbmQgdGhpcyBjbHVzdGVyCndpbGwgYmUgc2FtZSB3aXRoIHRoZSBj
-bHVzdGVyIHRoYXQgaXMgYWxsb2NhdGVkIGJ5CmV4ZmF0X2V4dGVuZF92YWxpZF9zaXplKCkuIFRo
-ZSBwcmV2aW91cyBwYXRjaCB3aWxsIGNoZWNrIGludmFsaWQgc3RhcnRfY2x1LApidXQgZm9yIGNs
-YXJpdHksIEluaXRpYWxpemUgaGludF9mZW1wLmVpZHggdG8gemVyby4KClNpZ25lZC1vZmYtYnk6
-IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+Ci0tLQogZnMvZXhmYXQvbmFtZWku
-YyB8IDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZmIC0tZ2l0IGEvZnMv
-ZXhmYXQvbmFtZWkuYyBiL2ZzL2V4ZmF0L25hbWVpLmMKaW5kZXggMmM0YzQ0MjI5MzUyLi5jNTMw
-MmI5MTQwNjYgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L25hbWVpLmMKKysrIGIvZnMvZXhmYXQvbmFt
-ZWkuYwpAQCAtMzQ1LDYgKzM0NSw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfZmluZF9lbXB0eV9lbnRy
-eShzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCQlpZiAoZWktPnN0YXJ0X2NsdSA9PSBFWEZBVF9FT0Zf
-Q0xVU1RFUikgewogCQkJZWktPnN0YXJ0X2NsdSA9IGNsdS5kaXI7CiAJCQlwX2Rpci0+ZGlyID0g
-Y2x1LmRpcjsKKwkJCWhpbnRfZmVtcC5laWR4ID0gMDsKIAkJfQogCiAJCS8qIGFwcGVuZCB0byB0
-aGUgRkFUIGNoYWluICovCi0tIAoyLjM0LjEKCg==
---0000000000001db9f2062595dc41--
+The problem here is that xfstests wants to remount the mount read-only 
+in this
+
+test which has never actually been done so xfstests reporting a failure 
+has no
+
+value!
+
+
+Ian
+
 
