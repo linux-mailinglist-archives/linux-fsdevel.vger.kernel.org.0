@@ -1,116 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-33129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7479B4DA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 16:22:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2349B4DC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 16:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF38F1C2233D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 15:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B261F23718
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 15:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EFD193416;
-	Tue, 29 Oct 2024 15:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="NI3Pdccr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE8A194A51;
+	Tue, 29 Oct 2024 15:23:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EBC18C936
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 15:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF7C21348;
+	Tue, 29 Oct 2024 15:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215333; cv=none; b=VALEbd2HbFugLGQc/OuMEnHKeKpD5LqVMjWp5RrEmA7XMpT5ObmWwChFK/Zrl9Lwba2DA4W9ZcEItWLlXkBKN+vr+Uj1dTJ9oNv05yXU+GdqSvODRTP91OTt9QoDOXw98J+rUUCMcNyHO5WU3liG91ca45S3yevByp5Nz4IpPLE=
+	t=1730215432; cv=none; b=VS2w1A+1MKOaSaWqMLf7O50jvyxAd92rjbbfyUaE9l7ErL6M0Z1TAVnwNpkQpUerLgyYMHRBOpOmXoEgZT9UU7LYYcL+qfmVF/iIGV38Ka6pwdw8rgubmVW3ana4CpkUVJKJ06N0BPgCDRteYuYe/IOJypKvxy5myZUrGSSy//Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215333; c=relaxed/simple;
-	bh=lTngeVgYMu8iRvvavbDcw/84hBpD6tPbdXy11QgC3/g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GzzI5nAzslxfrOT3TgcKLpFIF26jAYWfMIRm6TuMpz6p/rO+ZgYLPKiV0/G2OjgnImLXKDfJNQZtpF3UO08Kfd51OWpU/0271ZlqX5Zi0KHF07DenVKyrLYRLcOAVeuRxXa/5+Do4jhXZAfMSdYtzAsnGUZfjfvzJ99bOvn9MSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=NI3Pdccr; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T72saQ018940
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 08:22:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=lpkw70ScsQg5oJhrDT3X/i9ncqvY2EB0/2EmfsOYbl0=; b=NI3Pdccrpn9s
-	1KZ0FlPkPtyF6fvqqHi9EgyUKaFA/nqfW5x968ow82SiwbIF9969BnCCVrau2nK6
-	XZYtgqbOPrTN90pI9k75IN5Yei8alA2JoKnOAXpjKPQDU2xuuvg+iJ6jHdE9rvv8
-	e/PiHhXTtYFu1mamJfWKLQkWaaaDc4Trepge9GFgs8XlOzGGo+iPZLU1F5ujndHB
-	BAFKif/TIPJgI+HGekz0415+pDngH6ux9B/esMXWJxWNkKtuyRWK3lg0AmyF1cId
-	XYJ/M9LbFVRNUk7Q/MBPK9FmfSrUJXEDTrX7W0QYOAJT9wVdCtVFTD9nYpdhI3kO
-	bNve1sBzPw==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42jtygtuba-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2024 08:22:11 -0700 (PDT)
-Received: from twshared12347.06.ash8.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Tue, 29 Oct 2024 15:22:07 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 4346D14920EAF; Tue, 29 Oct 2024 08:19:44 -0700 (PDT)
-From: Keith Busch <kbusch@meta.com>
-To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
-        <linux-scsi@vger.kernel.org>, <io-uring@vger.kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <hch@lst.de>, <joshi.k@samsung.com>,
-        <javier.gonz@samsung.com>, <bvanassche@acm.org>,
-        Keith Busch
-	<kbusch@kernel.org>, Hannes Reinecke <hare@suse.de>
-Subject: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Date: Tue, 29 Oct 2024 08:19:22 -0700
-Message-ID: <20241029151922.459139-10-kbusch@meta.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241029151922.459139-1-kbusch@meta.com>
-References: <20241029151922.459139-1-kbusch@meta.com>
+	s=arc-20240116; t=1730215432; c=relaxed/simple;
+	bh=KiX9ftutymjXrPfyQK47Opfcb8TonDqjsiKhTwvfVdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZlzxR0QbU0l/UONz2yHSEwzi8BG6Ns4Z5TBBz4asOiDrI6k+aX0ezkwusv6CfgdYhP7rungwgY3FhWVj8ZPtwTRV26mMSQQFkNXvsJlKzcXpir5Pvyv0MoLDNY1lpHzowt2h/r055OplfduMEZpaMMWMT674dH4vkUJIax9Pr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5E913227A88; Tue, 29 Oct 2024 16:23:45 +0100 (CET)
+Date: Tue, 29 Oct 2024 16:23:45 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
+	javier.gonz@samsung.com, bvanassche@acm.org,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv10 4/9] block: allow ability to limit partition write
+ hints
+Message-ID: <20241029152345.GA26431@lst.de>
+References: <20241029151922.459139-1-kbusch@meta.com> <20241029151922.459139-5-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: CgfoIh-kUdhslcZ6h7nbABPW3Em3mS2Q
-X-Proofpoint-ORIG-GUID: CgfoIh-kUdhslcZ6h7nbABPW3Em3mS2Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029151922.459139-5-kbusch@meta.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-From: Keith Busch <kbusch@kernel.org>
+On Tue, Oct 29, 2024 at 08:19:17AM -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> When multiple partitions are used, you may want to enforce different
+> subsets of the available write hints for each partition. Provide a
+> bitmap attribute of the available write hints, and allow an admin to
+> write a different mask to set the partition's allowed write hints.
 
-The block limits exports the number of write hints, so set this limit if
-the device reports support for the lifetime hints. Not only does this
-inform the user of which hints are possible, it also allows scsi devices
-supporting the feature to utilize the full range through raw block
-device direct-io.
+This still offers all hints to all partitions by default, which still
+breaks all use cases where you have actual users of the stream separation
+on multiple paritions.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- drivers/scsi/sd.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please assign either all resources to the first partition and none to
+the others (probably the easiest and useful for the most common use
+case) or split it evenly.
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index ca4bc0ac76adc..235dd6e5b6688 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3768,6 +3768,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 		sd_config_protection(sdkp, &lim);
- 	}
-=20
-+	lim.max_write_hints =3D sdkp->permanent_stream_count;
-+
- 	/*
- 	 * We now have all cache related info, determine how we deal
- 	 * with flush requests.
---=20
-2.43.5
+Note that the bdev_max_streams value also needs to be adjusted to only
+return the number of streams actually available to a partition.
 
 
