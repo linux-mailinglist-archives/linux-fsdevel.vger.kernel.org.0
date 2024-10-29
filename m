@@ -1,168 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-33099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2B79B41DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 06:48:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E7E9B4233
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 07:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273211C2184D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 05:48:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2A51C21852
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2024 06:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFD0201005;
-	Tue, 29 Oct 2024 05:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doIuz1vZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD8A20103A;
+	Tue, 29 Oct 2024 06:13:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE37F9D6;
-	Tue, 29 Oct 2024 05:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F4F1DE894;
+	Tue, 29 Oct 2024 06:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730180906; cv=none; b=ISiv6wxNg5jcXw4OcZ6c70le1jhFgrhMrVGUJ54R+aDkGtrC7obNrDqF4Pr3y645xTJQUS+vgWAim9awkJfze4lws98LUpbJW9UdOzJUaBHi3BpbZ/fKm5KQuqoeSkm2b+8n4klT/l/F4bKsl/tsROYNirq6jdsSPb9M5LcNzFM=
+	t=1730182399; cv=none; b=CU5vXx+xluLm0BDNli6UL8+hIJz5kpWWglhcH1L87n/WqNHCZ8Jm2icZrfrJfU+vbyIxTadMUzdI92bQvmMaen+m63v/Ji9Tky1frZikPv3USSRGOas/ufmjKuf+9CGafvvfv5aWr6eUIID72VLVbCOrCajwe74C6OyrLlpXvY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730180906; c=relaxed/simple;
-	bh=U/2upvTYP6HiOsz6xzi/fzYA8tHZeZDspIBT8uDlfJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sWqHlh/dp4Y2F84hzC6AgPUUysbPXxcKszlI3ervf8Jril32PWWUcT0zKk/31yzFAUvoIRtOBUfx9hkhS+0kX/3f+ZyuqiO+x5r5xU9dILak/Ew53mPyJD8K6lmPL6s96njtt5WQpEroFS7vTys9LAx8Joux8zW1PxmZIzVHgrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=doIuz1vZ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so6745942a12.0;
-        Mon, 28 Oct 2024 22:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730180902; x=1730785702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=57xthECTmh4BEVXc1Pcmo8D6nxDE2AQUy3jBnLDXMsQ=;
-        b=doIuz1vZvRfnleuf4QmcnEp+twy6kaK4rn9FB0XNqPZYeaVbmTmzBIpWIDrxcE9gYa
-         tVLPp7HNfVZtaSZYthGJPW3/Cfm+dGA3BO27Kr1Dz4hzCu5z0XaTzZQrdOzdjS7J5ni7
-         xcsB/YFvZuJqUGB3tnfob+bWOicUPaim2Mzve1a30BZvE5igyhWgDptfzcXLNzgUcdD0
-         60Mk+QwVzWCtlxCAfXt70RcgPY3luBdxzv+CoJ2i/aZ0frwRvqRWKp4JmysoWndUQ00F
-         8T8kC7THw2k3MKsGG5ZoG5cd/fx1PlbqyVmPSqO3zWDgtLDMJNOvgs0but8GctYcYzE2
-         vmfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730180902; x=1730785702;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=57xthECTmh4BEVXc1Pcmo8D6nxDE2AQUy3jBnLDXMsQ=;
-        b=r77G4IsT1yURpgJr5k+GrSH+EcniiyKaSn98XRNPYWM2hm9KRO4Jfzn6KLC+52yGQJ
-         I84RdAKw7DruudWQJkRhgYkAPRiihpn54NvfGv4+i/YUH8AT8gpWT/lIayYHHpv/ddHO
-         lvVukdxIwVZHqloewdUUYzDJT9Ax0ltB1cMH8F+qUZ5w03x/SPgG7K8tLlzzKuSaw/7M
-         Xm64yjH6bogsePs9R8GtKR4MQ3VhVv974pLrHHzFmo1O8RHndkbwZZ2/JusadThJ0dwT
-         HvW+9qmnaJLimT148vHilNoj7SciFSCXqyyAw+iparqakBmKr+udG07TXGa0bSFCCDhQ
-         2j6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7t0SXG7IpCQ1kHPtTa268ZVhkPExlXrz+ucyGYGaKm45qIfMTfqrQLeauUa456V7535mCrsGZmKNOxm4Z@vger.kernel.org, AJvYcCVKr8h2hNmKIvNnlTCLKs8GundbyTpqW1v+31FmeIqIuG7U3pa6R6+qbfsJ5Y1cI0p+ud9QBp2qpW2utl0b@vger.kernel.org
-X-Gm-Message-State: AOJu0YybnjMoY/ORunqarnklPWTuSBoySaTNqmRVC6X8qXDGKSdV8KvB
-	oUGsO8N7FzCc90T4knvAVB0YRR4Ij1KOsKek8C3jR2/xvsK/hPWYDHX0hA==
-X-Google-Smtp-Source: AGHT+IFvdgjVcJYmAdfYJvwMjn3xzv0yIBo0H9H/vj2Jc2yx84aGfMNulUd0kGnbkj7iucEeLn/Kqw==
-X-Received: by 2002:a17:907:9408:b0:a9a:6855:1820 with SMTP id a640c23a62f3a-a9de5ce1590mr1071926266b.15.1730180901920;
-        Mon, 28 Oct 2024 22:48:21 -0700 (PDT)
-Received: from localhost (dh207-41-108.xnet.hr. [88.207.41.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a08478bsm438239366b.199.2024.10.28.22.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 22:48:21 -0700 (PDT)
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>,
-	Jakob Koschel <jakobkoschel@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	"Brian Johannesmeyer" <bjohannesmeyer@gmail.com>,
-	Cristiano Giuffrida <c.giuffrida@vu.nl>,
-	"Bos, H.J." <h.j.bos@vu.nl>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Baoquan He <bhe@redhat.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v1 1/1] fs/proc/kcore.c: fix coccinelle reported ERROR instances
-Date: Tue, 29 Oct 2024 06:46:52 +0100
-Message-ID: <20241029054651.86356-2-mtodorovac69@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730182399; c=relaxed/simple;
+	bh=yQ5HjjXHrNyn/bMD+uUVC5LKeV3i4x9cUL1/8432m0c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MeBh2/GLvU8QOTkFZG5QcblzjVprbpT7s36+JxZ0U8kYGMKleFvJRL3RFj6UdsGtm46aQAG2/qG7ckmTILiwM6Tdpds0+pqOewm2sHKUjyJ4kEDfy4M8fH9LYJSNg7hS88CN7wHuUFA5FiigLe3iwDkFYISe07xLhY+KLTvbNIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id DBFAA1006BA;
+	Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id c7q_Y9HhpeJF; Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id CAECC100402; Tue, 29 Oct 2024 17:13:14 +1100 (AEDT)
+X-Spam-Level: 
+Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id D992A100402;
+	Tue, 29 Oct 2024 17:13:12 +1100 (AEDT)
+Message-ID: <6ea31595-7d95-4ad5-a46e-c90872813dcf@themaw.net>
+Date: Tue, 29 Oct 2024 14:13:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2 (new
+ mount APIs)
+From: Ian Kent <raven@themaw.net>
+To: Dave Chinner <david@fromorbit.com>, Zorro Lang <zlang@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, sandeen@redhat.com
+References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
+ <20241028192804.axbj2onyoscgzvwi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <ZyAasz2RBpMpGV8T@dread.disaster.area>
+ <27b60bdf-435d-442a-842d-410bb9cc68c3@themaw.net>
+Content-Language: en-US
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <27b60bdf-435d-442a-842d-410bb9cc68c3@themaw.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Coccinelle complains about the nested reuse of the pointer `iter' with different
-pointer type:
 
-./fs/proc/kcore.c:515:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:534:23-27: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:550:40-44: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:568:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:581:28-32: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:599:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:607:38-42: ERROR: invalid reference to the index variable of the iterator on line 499
-./fs/proc/kcore.c:614:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+On 29/10/24 13:44, Ian Kent wrote:
+> On 29/10/24 07:13, Dave Chinner wrote:
+>> On Tue, Oct 29, 2024 at 03:28:04AM +0800, Zorro Lang wrote:
+>>> On Mon, Oct 28, 2024 at 01:22:52PM +0100, Christian Brauner wrote:
+>>>> On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Recently, I hit lots of fstests cases fail on overlayfs (xfs 
+>>>>> underlying, no
+>>>>> specific mount options), e.g.
+>>>>>
+>>>>> FSTYP         -- overlay
+>>>>> PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 
+>>>>> 25 14:29:18 EDT 2024
+>>>>> MKFS_OPTIONS  -- -m 
+>>>>> crc=1,finobt=1,rmapbt=0,reflink=1,inobtcount=1,bigtime=1 
+>>>>> /mnt/fstests/SCRATCH_DIR
+>>>>> MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 
+>>>>> /mnt/fstests/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
+>>>>>
+>>>>> generic/294       [failed, exit status 1]- output mismatch (see 
+>>>>> /var/lib/xfstests/results//generic/294.out.bad)
+>>>>>      --- tests/generic/294.out    2024-10-25 14:38:32.098692473 -0400
+>>>>>      +++ /var/lib/xfstests/results//generic/294.out.bad 2024-10-25 
+>>>>> 15:02:34.698605062 -0400
+>>>>>      @@ -1,5 +1,5 @@
+>>>>>       QA output created by 294
+>>>>>      -mknod: SCRATCH_MNT/294.test/testnode: File exists
+>>>>>      -mkdir: cannot create directory 
+>>>>> 'SCRATCH_MNT/294.test/testdir': File exists
+>>>>>      -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': 
+>>>>> Read-only file system
+>>>>>      -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': 
+>>>>> File exists
+>>>>>      +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system 
+>>>>> call failed: overlay: No changes allowed in reconfigure.
+>>>>>      +       dmesg(1) may have more information after failed mount 
+>>>>> system call.
+>>>> In the new mount api overlayfs has been changed to reject invalid 
+>>>> mount
+>>>> option on remount whereas in the old mount api we just igorned them.
+>>> Not only g/294 fails on new mount utils, not sure if all of them are 
+>>> from same issue.
+>>> If you need, I can paste all test failures (only from my side) at here.
+>>>
+>>>> If this a big problem then we need to change overlayfs to continue
+>>>> ignoring garbage mount options passed to it during remount.
+>>> Do you mean this behavior change is only for overlayfs, doesn't 
+>>> affect other fs?
+>> We tried this with XFS years ago, and reverted back to the old
+>> behaviour of silently ignoring mount options we don't support in
+>> remount. The filesystem code has no idea what mount API
+>> userspace is using for remount - it can't assume that it is ok to
+>> error out on unknown/unsupported options because it uses
+>> the fsreconfigure API internally....
+>
+> I expect that remounting to change options for overlayfs has very 
+> limited use
+>
+> cases. Perhaps remounting (the upper layer) read-only is useful ...
 
-Replacing `struct kcore_list *iter' with `struct kcore_list *tmp' doesn't change the
-scope and the functionality is the same and coccinelle seems happy.
+Actually, my mistake, it looks like remount read-only might be the only 
+case that should
 
-NOTE: There was an issue with using `struct kcore_list *pos' as the nested iterator.
-      The build did not work!
+be handled (provided the sb is not already read-only). In this case it 
+does a file system
 
-Fixes: 04d168c6d42d1 ("fs/proc/kcore.c: remove check of list iterator against head past the loop body")
-Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/ [1]
-Link: https://lkml.kernel.org/r/20220331223700.902556-1-jakobkoschel@gmail.com
-Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>
-Cc: Cristiano Giuffrida <c.giuffrida@vu.nl>
-Cc: "Bos, H.J." <h.j.bos@vu.nl>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yang Li <yang.lee@linux.alibaba.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Hari Bathini <hbathini@linux.ibm.com>
-Cc: Yan Zhen <yanzhen@vivo.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
----
- v1: initial version
+sync and returns the result of that but now fails unconditionally in 
+fsconfig().
 
- fs/proc/kcore.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index 51446c59388f..25586ec4096a 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		 * the previous entry, search for a matching entry.
- 		 */
- 		if (!m || start < m->addr || start >= m->addr + m->size) {
--			struct kcore_list *iter;
-+			struct kcore_list *tmp;
- 
- 			m = NULL;
--			list_for_each_entry(iter, &kclist_head, list) {
--				if (start >= iter->addr &&
--				    start < iter->addr + iter->size) {
--					m = iter;
-+			list_for_each_entry(tmp, &kclist_head, list) {
-+				if (start >= tmp->addr &&
-+				    start < tmp->addr + tmp->size) {
-+					m = tmp;
- 					break;
- 				}
- 			}
--- 
-2.43.0
-
+>
+>
+> The problem here is that xfstests wants to remount the mount read-only 
+> in this
+>
+> test which has never actually been done so xfstests reporting a 
+> failure has no
+>
+> value!
+>
+>
+> Ian
+>
 
