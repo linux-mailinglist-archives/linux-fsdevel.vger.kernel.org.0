@@ -1,287 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-33259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3BD9B690E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 17:21:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726B19B692D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 17:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CACD1C21DCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 16:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0773B22B49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 16:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F0521443B;
-	Wed, 30 Oct 2024 16:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F309214420;
+	Wed, 30 Oct 2024 16:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="nuJmOD1y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IZqKaKmk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yl2LV8xT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C183E214420
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 16:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89025213120
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 16:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730305279; cv=none; b=WTJMDsw15oqI2rQrIsfzDtYfdJGSWmcqAbFmr46QXRGeSH7CVdXlfOTR2i5FNAXVlGmUGmvanmLn/2wEmOqS7ag4MYSf1FcGuSsgXu40nHc1ofHPc2CNbCp07Xn8LnWqBs8I9KMevOcu4Hx99Np2/CM4s/VZKlCvB+21AHwELKU=
+	t=1730305750; cv=none; b=PhF7Xcs3Edh+5HmU4JMbTSSl0N+WbN/b0NrQTdtoYIO2RrcbBYR6p8ekoWH2FMAKolVh3N/MPWe6OVb1mupEYtc7j2nMpyR41WyS6bFWNsXHq6xHZkPiy/E7zTfAQJUT0TmVt89T3/m5RmEm2dQ3uyOQQZaze1vrELIOFNORqX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730305279; c=relaxed/simple;
-	bh=us0rhoMWN1X+q4cMAgXEWlm8y37l3JAfdiccwYtlko8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mmSNmB24zpXHIzNtjo9pp7tB5C1VkeR9pVpzP5tczXY3ID73XeU2UprisDlKnINL/2e4eYxGR9VKhB9JTY5PnzYM48Ppsg87C/iOq0fIaA8xt3Li3t/r7fDF9awVjaBO+JZaj73ZXmQU+uTp5pe0azDIxEye9sX+fYZPUR/9f9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=nuJmOD1y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IZqKaKmk; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67379254008B;
-	Wed, 30 Oct 2024 12:21:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 30 Oct 2024 12:21:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1730305275;
-	 x=1730391675; bh=FAXRooxK7+YfyaclUhlqNapuimFMYjPHr3wsSd0GJiA=; b=
-	nuJmOD1yjBzUygKkNGKabp6gFbJk2OHLn0dXmAmO1RCbxC3iBTMGl2cGu0qprV0K
-	FW+Lw2MZraV7hbQfiJhF8Hc4fOq81po6yVysTASJCzTgaeYkRtXouOgGVyDnJprE
-	A65N17tdeHC+tCQqs34shQgFW4PMGp19p3Q5/ZyleRkSghAcXhKlXDrlwrfCymMb
-	ecSLWbh4L+46z7fB+ZMtgd8T2R4rpFjuC0ov1rNmv4Jzuo2tdLBFTT3HGxwi3Y6p
-	ASMrbCLvDeJk5B8YVfvm/2Q2FSTEyueAOt1OiorAkqK8rXUhQdR1JEZSeRbMRu2h
-	C+JfKg1YDXZGxHOCvbZkNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730305275; x=
-	1730391675; bh=FAXRooxK7+YfyaclUhlqNapuimFMYjPHr3wsSd0GJiA=; b=I
-	ZqKaKmk1rsq2bvUBDdlHhqGJNgubeGdujzK3mCQaFhdBpwFVLUgyldVTy7WyiluM
-	je8buVLDqdwEq63/b6o/6FiB/jYyrBfDyWKRJ2FHiJFHtL2O9t9Pyr4XhWEKOyN9
-	nN5TE0beQy6cmhsEcRmgOsTljT4z6S0+6Jbn3LDm0lgfZYJba6CNJo8DzQw8lGBA
-	lDkIuVGxlPFHQcPbT2fmZgwjj9o7ZH/NIQyJ8eaaw92wH6VpVQV6jg+C2fU5VVck
-	vf9dO1Otx2pY88tvXzVeINexp5anpaElonZW4g2uUT3amSyJHTPX872GcJvKDz9h
-	FOFVVS+lE4pXRcP1agCag==
-X-ME-Sender: <xms:-VwiZ--yC1qeKfJVMUZG3OQNgwsTItKIZloLq8ze0Mb6VpQJQilPQA>
-    <xme:-VwiZ-sFCFgMaizNHPpa2IsulEacnpllQPtpYL9X_8cDQ-lUjYSV6i_vwATczI_5n
-    twGbzS5WhjFIixo>
-X-ME-Received: <xmr:-VwiZ0D_v-bCCibBBgffuWRNIq5pM79I7I4Hg6BsXIRcIG1dDYlKh8FAkyDAkL_fEYMYJTsAGqiGPZ1r3p_2rDYUskooqYcCAy6BXkegaiNPrt5JBIj5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgkeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
-    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtph
-    htthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepshhhrghkvggv
-    lhdrsghuthhtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfsehtohig
-    ihgtphgrnhgurgdrtghomhdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthho
-    pehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:-VwiZ2ea9tJNx1y534xpCx5f9zF_GszhNqfpKuDduXx8fp9fPJBXEw>
-    <xmx:-lwiZzMM8EZIe02glmmHl8ak-POYvNWCcjf7Dep11BXYWU2S2yShaA>
-    <xmx:-lwiZwmgFdnrDUnGfoV7q4VwPA3pHvObrqBC6kTE19wOJdoNEpRl4w>
-    <xmx:-lwiZ1vL5qSfpTEYm_UTCZiUnfMGY5cVONnYB_2V7hLR2NOcELfSeA>
-    <xmx:-1wiZ-oikzFdhbPRz9h6l3bVEVVG4aoRARraXHQyUtufKFc02YWONXed>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 12:21:12 -0400 (EDT)
-Message-ID: <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm>
-Date: Wed, 30 Oct 2024 17:21:11 +0100
+	s=arc-20240116; t=1730305750; c=relaxed/simple;
+	bh=aw+PaUhb2P+V5LoUP0c7Xm1ui2h/VxbHR+P/qskA9Ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E4HTcMWck6FNSsuWCmzMOzwC8rBomVrKuL2KtOsVW+F4P2PXJclLCfSt7DNy2ZkZGEHN9OSaChQpcx9XzAy+Y6O6tMSp8FbP6E7EqKJTsJ9lCWtts1xAhX3UqwBuvaNrBtE2QQXAaDSLfkMelTR4+BxBVy5VyqduV/DvgIIr0Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yl2LV8xT; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc1af8f10so37250eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 09:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730305747; x=1730910547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7xaYmoWQF6LlSespu713bKkqGPFuMGeu7IuRT9OwfEw=;
+        b=Yl2LV8xTShzL0MSbLcGxJf1K6kmsiGyehHFaiQu+6+qJuo5bq1qbD201CTrg+OUvL+
+         g+oAxrbQsB3QlVG+ZY3j24ipiov/ICUo3QTCnfOcPm3Ly4NkzK0VjimDeYV5EZ3mYM5v
+         m2y9MCaLdo3JEAYPa+BBhC1YTrFDN1YsRdmDAcGpZLpRunz/i3ZV/GRjCOmq7qyPYsce
+         tpZ+6D+KyeKvXMW3ialMBeXcANryXHgnVxK0XLs4HPK+qdalPlbboC/XjsH3lTBdCdrr
+         lWNP8rUuKWcDbZ9cz4DCglxftkkJaU8JWqKv7EMkKJQf2wEpvRAVQGLFJAiQBokKhdF5
+         iYIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730305747; x=1730910547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7xaYmoWQF6LlSespu713bKkqGPFuMGeu7IuRT9OwfEw=;
+        b=Gyn2WXm4eSn6x7/+leHhNMEBLdTkOuAN+Z/UUVQNCoFdywR77jj70Vb4xaEDKEC1bj
+         0yFajHnEeifOq1LLRHJLxubBGRhL1KneTKBYeGqN4tnz4uywQ32pyFicabxoMeMOaTnf
+         FewSIzwMN8bS7cbyu+44C/dQG6ld6kjeAQB6NCrGMeXRLuPu6R0tyHk/E3YdB3d9dLzp
+         kJwYQHKEQGk/PmBOBYgUMhXWSYg5i7abcPg+1brIEXuHBm6guPw8VQ72Q14975IC8jfl
+         rWB6l/W8SwLr5yqlpk/TfSeI7b0PNL5rMajY1DXaCgz4qLLoSMSEzhnGt6ituc2tqfUC
+         i4tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2V9XEqlII72bpZ6HlLECJc+lX7Hn6rv1vNp+9Fi7lTpT0msVbMfszIy3k1rjaidZ7kFRBXmCpiIoF8W+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/qrcEyiKwNgBrCd/baDPJxOZKBytVC2izy6vh3NurYQ0Nh3Y8
+	wz5Jm5a/1Q6CCAzPrjZG21yv74n0uTAUEDJ7zDjlZE4iJKDYQikGYMuVf7JAu1luccY+0zfOzho
+	gmHhIbhXiVAGao7Z1pQjAc6VLkks=
+X-Google-Smtp-Source: AGHT+IEOLIm93xa9jsbI6lma3PmoQYeJCWNc7z0yQ1/u0I8TwyQqgs4Scvhx5vjkyPAMGUq1q9v9+7aUWlR77XIMwDA=
+X-Received: by 2002:a05:6358:9108:b0:1c3:9cf5:2866 with SMTP id
+ e5c5f4694b2df-1c3f9d4b9c5mr838208855d.6.1730305747433; Wed, 30 Oct 2024
+ 09:29:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
- <miklos@szeredi.hu>, Shakeel Butt <shakeel.butt@linux.dev>,
- linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, hannes@cmpxchg.org,
- linux-mm@kvack.org, kernel-team@meta.com
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
- <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com>
- <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
- <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
- <t7vafpbp4onjdmcqb5xu6ypdz72gsbggpupbwgaxhrvzrxb3j5@npmymwp2t5a7>
- <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
- <CAJnrk1aB3MehpTx6OM=J_5jgs_Xo+euAZBRGLGB+1HYX66URHQ@mail.gmail.com>
- <CAJnrk1YFPZ8=7s4m-CP02_416syO+zDLjNSBrYteUqm8ovoHSQ@mail.gmail.com>
- <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
- <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
- <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
- <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
- <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
- <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241011191320.91592-1-joannelkoong@gmail.com>
+ <20241011191320.91592-2-joannelkoong@gmail.com> <676b106a-d60f-46fc-848c-dd67a6e2d36e@fastmail.fm>
+In-Reply-To: <676b106a-d60f-46fc-848c-dd67a6e2d36e@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 30 Oct 2024 09:28:56 -0700
+Message-ID: <CAJnrk1Y26w=k0YLnjtXEfhMy1K0QhqFd=v-wenST4=LfX3zp3Q@mail.gmail.com>
+Subject: Re: [PATCH v8 1/3] fs_parser: add fsparam_u16 helper
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 29, 2024 at 1:58=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 10/11/24 21:13, Joanne Koong wrote:
+> > Add a fsparam helper for unsigned 16 bit values.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fs_parser.c            | 14 ++++++++++++++
+> >  include/linux/fs_parser.h |  9 ++++++---
+> >  2 files changed, 20 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> > index 24727ec34e5a..0e06f9618c89 100644
+> > --- a/fs/fs_parser.c
+> > +++ b/fs/fs_parser.c
+> > @@ -210,6 +210,20 @@ int fs_param_is_bool(struct p_log *log, const stru=
+ct fs_parameter_spec *p,
+> >  }
+> >  EXPORT_SYMBOL(fs_param_is_bool);
+> >
+> > +int fs_param_is_u16(struct p_log *log, const struct fs_parameter_spec =
+*p,
+> > +                 struct fs_parameter *param, struct fs_parse_result *r=
+esult)
+> > +{
+> > +     int base =3D (unsigned long)p->data;
+> > +     if (param->type !=3D fs_value_is_string)
+> > +             return fs_param_bad_value(log, param);
+> > +     if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +             return 0;
+> > +     if (kstrtou16(param->string, base, &result->uint_16) < 0)
+> > +             return fs_param_bad_value(log, param);
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL(fs_param_is_u16);
+> > +
+> >  int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec =
+*p,
+> >                   struct fs_parameter *param, struct fs_parse_result *r=
+esult)
+> >  {
+> > diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+> > index 6cf713a7e6c6..1c940756300c 100644
+> > --- a/include/linux/fs_parser.h
+> > +++ b/include/linux/fs_parser.h
+> > @@ -26,9 +26,10 @@ typedef int fs_param_type(struct p_log *,
+> >  /*
+> >   * The type of parameter expected.
+> >   */
+> > -fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_p=
+aram_is_u64,
+> > -     fs_param_is_enum, fs_param_is_string, fs_param_is_blob, fs_param_=
+is_blockdev,
+> > -     fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gi=
+d;
+> > +fs_param_type fs_param_is_bool, fs_param_is_u16, fs_param_is_u32, fs_p=
+aram_is_s32,
+> > +     fs_param_is_u64, fs_param_is_enum, fs_param_is_string, fs_param_i=
+s_blob,
+> > +     fs_param_is_blockdev, fs_param_is_path, fs_param_is_fd, fs_param_=
+is_uid,
+> > +     fs_param_is_gid;
+> >
+> >  /*
+> >   * Specification of the type of value a parameter wants.
+> > @@ -55,6 +56,7 @@ struct fs_parse_result {
+> >       union {
+> >               bool            boolean;        /* For spec_bool */
+> >               int             int_32;         /* For spec_s32/spec_enum=
+ */
+> > +             u16             uint_16;        /* For spec_u16 *
+> >               unsigned int    uint_32;        /* For spec_u32{,_octal,_=
+hex}/spec_enum */
+>
+> Given fs_param_is_u16() has "int base =3D (unsigned long)p->data;",
+> shouldn't the comment also mention ",_octal,_hex}/spec_enum"?
+> Or should the function get slightly modified to always use a base of 10?
+> Or 0 with auto detection as for fs_param_is_u64()?
 
+Thanks for taking a look at this patchset, Bernd!
 
-On 10/30/24 17:04, Joanne Koong wrote:
-> On Wed, Oct 30, 2024 at 2:32 AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->> On 10/28/24 22:58, Joanne Koong wrote:
->>> On Fri, Oct 25, 2024 at 3:40 PM Joanne Koong <joannelkoong@gmail.com> wrote:
->>>>
->>>>> Same here, I need to look some more into the compaction / page
->>>>> migration paths. I'm planning to do this early next week and will
->>>>> report back with what I find.
->>>>>
->>>>
->>>> These are my notes so far:
->>>>
->>>> * We hit the folio_wait_writeback() path when callers call
->>>> migrate_pages() with mode MIGRATE_SYNC
->>>>    ... -> migrate_pages() -> migrate_pages_sync() ->
->>>> migrate_pages_batch() -> migrate_folio_unmap() ->
->>>> folio_wait_writeback()
->>>>
->>>> * These are the places where we call migrate_pages():
->>>> 1) demote_folio_list()
->>>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>>>
->>>> 2) __damon_pa_migrate_folio_list()
->>>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>>>
->>>> 3) migrate_misplaced_folio()
->>>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>>>
->>>> 4) do_move_pages_to_node()
->>>> Can ignore this. This calls migrate_pages() in MIGRATE_SYNC mode but
->>>> this path is only invoked by the move_pages() syscall. It's fine to
->>>> wait on writeback for the move_pages() syscall since the user would
->>>> have to deliberately invoke this on the fuse server for this to apply
->>>> to the server's fuse folios
->>>>
->>>> 5)  migrate_to_node()
->>>> Can ignore this for the same reason as in 4. This path is only invoked
->>>> by the migrate_pages() syscall.
->>>>
->>>> 6) do_mbind()
->>>> Can ignore this for the same reason as 4 and 5. This path is only
->>>> invoked by the mbind() syscall.
->>>>
->>>> 7) soft_offline_in_use_page()
->>>> Can skip soft offlining fuse folios (eg folios with the
->>>> AS_NO_WRITEBACK_WAIT mapping flag set).
->>>> The path for this is soft_offline_page() -> soft_offline_in_use_page()
->>>> -> migrate_pages(). soft_offline_page() only invokes this for in-use
->>>> pages in a well-defined state (see ret value of get_hwpoison_page()).
->>>> My understanding of soft offlining pages is that it's a mitigation
->>>> strategy for handling pages that are experiencing errors but are not
->>>> yet completely unusable, and its main purpose is to prevent future
->>>> issues. It seems fine to skip this for fuse folios.
->>>>
->>>> 8) do_migrate_range()
->>>> 9) compact_zone()
->>>> 10) migrate_longterm_unpinnable_folios()
->>>> 11) __alloc_contig_migrate_range()
->>>>
->>>> 8 to 11 needs more investigation / thinking about. I don't see a good
->>>> way around these tbh. I think we have to operate under the assumption
->>>> that the fuse server running is malicious or benevolently but
->>>> incorrectly written and could possibly never complete writeback. So we
->>>> definitely can't wait on these but it also doesn't seem like we can
->>>> skip waiting on these, especially for the case where the server uses
->>>> spliced pages, nor does it seem like we can just fail these with
->>>> -EBUSY or something.
->>
->> I see some code paths with -EAGAIN in migration. Could you explain why
->> we can't just fail migration for fuse write-back pages?
->>
+I'm not sure what the correct answer here is either with whether this
+should follow fs_param_is_u32() or fs_param_is_u64(). I leaned towards
+fs_param_is_u32() because that seemed more permissive in supporting
+octal/hex.
 
-Hi Joanne,
-
-thanks a lot for your quick reply (especially as my reviews come in very 
-late).
-
-> 
-> My understanding (and please correct me here Shakeel if I'm wrong) is
-> that this could block system optimizations, especially since if an
-> unprivileged malicious fuse server never replies to the writeback
-> request, then this completely stalls progress. In the best case
-> scenario, -EAGAIN could be used because the server might just be slow
-> in serving the writeback, but I think we need to also account for
-> servers that never complete the writeback. For
-> __alloc_contig_migrate_range() for example, my understanding is that
-> this is used to migrate pages so that there are more physically
-> contiguous ranges of memory freed up. If fuse writeback blocks that,
-> then that hurts system health overall.
-
-Hmm, I wonder what is worse - tmp page copies or missing compaction.
-Especially if we expect a low range of in-writeback pages/folios. 
-One could argue that an evil user might spawn many fuse server
-processes to work around the default low fuse write-back limits, but
-does that make any difference with tmp pages? And these cannot be
-compacted either?
-
-And with timeouts that would be so far totally uncritical, I
-think.
-
-
-You also mentioned 
-
-> especially for the case where the server uses spliced pages
-
-could you provide more details for that? 
-
-
-
-> 
->>>>
->>>
->>> I'm still not seeing a good way around this.
->>>
->>> What about this then? We add a new fuse sysctl called something like
->>> "/proc/sys/fs/fuse/writeback_optimization_timeout" where if the sys
->>> admin sets this, then it opts into optimizing writeback to be as fast
->>> as possible (eg skipping the page copies) and if the server doesn't
->>> fulfill the writeback by the set timeout value, then the connection is
->>> aborted.
->>>
->>> Alternatively, we could also repurpose
->>> /proc/sys/fs/fuse/max_request_timeout from the request timeout
->>> patchset [1] but I like the additional flexibility and explicitness
->>> having the "writeback_optimization_timeout" sysctl gives.
->>>
->>> Any thoughts on this?
->>
->>
->> I'm a bit worried that we might lock up the system until time out is
->> reached - not ideal. Especially as timeouts are in minutes now. But
->> even a slightly stuttering video system not be great. I think we
->> should give users/admin the choice then, if they prefer slow page
->> copies or fast, but possibly shortly unresponsive system.
->>
-> I was thinking the /proc/sys/fs/fuse/writeback_optimization_timeout
-> would be in seconds, where the sys admin would probably set something
-> more reasonable like 5 seconds or so.
-> If this syctl value is set, then servers who want writebacks to be
-> fast can opt into it at mount time (and by doing so agree that they
-> will service writeback requests by the timeout or their connection
-> will be aborted).
-
-
-I think your current patch set has it in minutes? (Should be easy
-enough to change that.) Though I'm more worried about the impact
-of _frequent_ timeout scanning through the different fuse lists 
-on performance, than about missing compaction for folios that are
-currently in write-back.
+I see in the commit history (commit 328de5287b10a) that Al Viro added
+both of these. After the fuse parts of this patchset gets feedback
+from Miklos, I'll cc Al on the next iteration and hopefully that
+should give us some more clarity.
 
 
 Thanks,
-Bernd
+Joanne
+
+>
+> >               u64             uint_64;        /* For spec_u64 */
+> >               kuid_t          uid;
+> > @@ -119,6 +121,7 @@ static inline bool fs_validate_description(const ch=
+ar *name,
+> >  #define fsparam_flag_no(NAME, OPT) \
+> >                       __fsparam(NULL, NAME, OPT, fs_param_neg_with_no, =
+NULL)
+> >  #define fsparam_bool(NAME, OPT)      __fsparam(fs_param_is_bool, NAME,=
+ OPT, 0, NULL)
+> > +#define fsparam_u16(NAME, OPT)       __fsparam(fs_param_is_u16, NAME, =
+OPT, 0, NULL)
+> >  #define fsparam_u32(NAME, OPT)       __fsparam(fs_param_is_u32, NAME, =
+OPT, 0, NULL)
+> >  #define fsparam_u32oct(NAME, OPT) \
+> >                       __fsparam(fs_param_is_u32, NAME, OPT, 0, (void *)=
+8)
+>
+>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
