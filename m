@@ -1,129 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-33214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DFC9B5922
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 02:29:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB8D9B5965
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 02:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA2A285BCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 01:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4982C1F23FE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 01:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3D41547FB;
-	Wed, 30 Oct 2024 01:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FBA19342E;
+	Wed, 30 Oct 2024 01:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bopgHmqz"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zfJYJhwj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7b5ZvQJc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G5fqI82z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="etALiVlF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33AF171CD;
-	Wed, 30 Oct 2024 01:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24881C3F00
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 01:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730251756; cv=none; b=t49h4jGYXQjcWy7kHvuTBI0TSY/bMledG4plhyWomEyoPvk5O6U6GWZ3wTALWaN9xn70dDJ3NSIw1Lxkd35r9BuIfe5tJJ2pgg4ZDEFxGPu3ovobagqHX5uvYBQ+ht0fnKmsSsID79L8/cTG/Ld+arb4hY9gcwEZ/7uYx5vQRVQ=
+	t=1730252607; cv=none; b=swSdtpIIcxVOS3kO7i2wAv9OgRtOl1AokQOYEAMCrHCywU4XizeLy2cPVvIBVI8mf9Q2NqCsofaWfaKnkJHt5Q+QM/taUD2UZYI6rLP6dfF26w0WwQTl/TFMN2rNTtSZgD+/oVXW+CgvyCC6aNNP8aNYhz0EnfSJB708qSGs9mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730251756; c=relaxed/simple;
-	bh=/mbcRi/mDsk7KQzprNAsgLYx1eJqyekh4W+UXNMCY6U=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jBk7HyBSi360sekgfKvbuSkeupE9Ceiqkvirq3rE7JFG4k4bE7EB8W3jNv99/I2MfMNxX+3hrQPiE5L5SgJ73MaBLni1kyVkQY3ul996KK12P0X2/DzBjaCEk3Bv3aQuIY11IaXXxT5nz4dYM4bWKGjUpEPPt+1nJzAWF2nTrG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bopgHmqz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9297C4CECD;
-	Wed, 30 Oct 2024 01:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730251755;
-	bh=/mbcRi/mDsk7KQzprNAsgLYx1eJqyekh4W+UXNMCY6U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bopgHmqzM+C4j0EAo9ReKH2Oh2sdeLwPy+6RW9G04/QfDBuujceqDGQmkvjE7gt1c
-	 efga9nGuNDMqo+/AenelSy8VQ3LVFtUQn02otvZMfbKyBbrbxa/W52YXq3LNioFHB+
-	 PgmWu+cFEiMUBi+zb4/VIJoIwhykHTNtC4LR3GzM=
-Date: Tue, 29 Oct 2024 18:29:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jakob Koschel
- <jakobkoschel@gmail.com>, Mike Rapoport <rppt@kernel.org>, David
- Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>,
- "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>, Cristiano Giuffrida
- <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>, Alexey Dobriyan
- <adobriyan@gmail.com>, Yang Li <yang.lee@linux.alibaba.com>, Baoquan He
- <bhe@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>, Yan Zhen
- <yanzhen@vivo.com>
-Subject: Re: [PATCH v1 1/1] fs/proc/kcore.c: fix coccinelle reported ERROR
- instances
-Message-Id: <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
-In-Reply-To: <20241029054651.86356-2-mtodorovac69@gmail.com>
-References: <20241029054651.86356-2-mtodorovac69@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730252607; c=relaxed/simple;
+	bh=b5Cd8yUoL+j81e/xXLi7v9YTAIbRnMFJZIIsRi2XPNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fljssZslFJrzN13D/8gJq187x77Eyvb37kUi/QzXGeENmBIo4cqU49NMDNAONgm8AFvl5r7loxD0BOpflRxdCjVPCmHZ3RHWKBO0XmiuFS7/Y/YEkJwDsynRmhU5XHXTAM3t1TlY2BXnW0N1r0mBLsMqUPCh3YASbxMjtAAck3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zfJYJhwj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7b5ZvQJc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G5fqI82z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=etALiVlF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EEF2121D54;
+	Wed, 30 Oct 2024 01:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730252603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yH18nX6WZvWY/8AdvK38I8b1i3xh8QwZ8Kt2xmLr5EM=;
+	b=zfJYJhwjq+YJ0payG9tL1EahUNynLbk54WAgDI3fPktigvNRYH/JIm2Bx6BtNTtOqvbQms
+	8U9WCf9pFT4RmRv0ZW1OhtqpOs+wxcNU5WgljBcseElWUE+QpiZEYBPu9kCw+tNiNeEM/2
+	kwp4MT3VIFHDHMVI99D102yUEVq0tmk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730252603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yH18nX6WZvWY/8AdvK38I8b1i3xh8QwZ8Kt2xmLr5EM=;
+	b=7b5ZvQJc7K0RJiD52yQq47StlQ2sLTq0UfhtacxOrP94h12rGBxq+C/v8qd4SGvEa8jQyI
+	fn3oNRLmt3yIu8DA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=G5fqI82z;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=etALiVlF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730252602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yH18nX6WZvWY/8AdvK38I8b1i3xh8QwZ8Kt2xmLr5EM=;
+	b=G5fqI82zTDy8kgL4XaURRi8HaXgQQbe0pHnmwZHgy7OLVp/3nMy+2uDxgULlV4OufsUUR/
+	hnoXWuNy3fKaGyBtdJrK1YZRMgutP+WNOxkvT1dSunE7o29OK9Fkm7sGZLsq1AAmwvU06w
+	y4/uIscrIN2D24OFoFCYgNIBAQqfMFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730252602;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yH18nX6WZvWY/8AdvK38I8b1i3xh8QwZ8Kt2xmLr5EM=;
+	b=etALiVlFmZN2OLo8fXs/nDu4Q6YHGAYpZeFTRj0g696HvxcuxWHdIhAXyU00K3/DNbHnjX
+	QeAuE0xXEFBnjuAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 869C613721;
+	Wed, 30 Oct 2024 01:43:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3SAZEDmPIWfhLgAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Wed, 30 Oct 2024 01:43:21 +0000
+Date: Wed, 30 Oct 2024 01:42:39 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] initramfs: avoid filename buffer overrun
+Message-ID: <20241030014239.2fb3d4ab.ddiss@suse.de>
+In-Reply-To: <20241029183520.GE1350452@ZenIV>
+References: <20241029124837.30673-1-ddiss@suse.de>
+	<20241029183520.GE1350452@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: EEF2121D54
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-On Tue, 29 Oct 2024 06:46:52 +0100 Mirsad Todorovac <mtodorovac69@gmail.com> wrote:
+On Tue, 29 Oct 2024 18:35:20 +0000, Al Viro wrote:
 
-> Coccinelle complains about the nested reuse of the pointer `iter' with different
-> pointer type:
+> On Tue, Oct 29, 2024 at 12:48:37PM +0000, David Disseldorp wrote:
+...
+> > +	if (collected[name_len - 1] != '\0') {
+> > +		pr_err("Skipping symlink without nulterm: %.*s\n",
+> > +		       (int)name_len, collected);  
 > 
-> ./fs/proc/kcore.c:515:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:534:23-27: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:550:40-44: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:568:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:581:28-32: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:599:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:607:38-42: ERROR: invalid reference to the index variable of the iterator on line 499
-> ./fs/proc/kcore.c:614:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+> I'm not sure pr_err() and continue is a good approach here -
+> you'd been given a corrupted image, so there's no point trying
+> to do anything further with it.  Have it return 1, at least,
+> and preferably use error("buggered symlink") in addition or
+> instead of your pr_err().
+
+I was following the name_len > PATH_MAX handling, but failing
+immediately makes more sense here. Will change in v2.
+
+> FWIW, it's _not_ about trying to stop an attack - if you get there with
+> image contents controlled by attacker, you have already hopelessly lost;
+> no buffer overruns are needed.
 > 
-> Replacing `struct kcore_list *iter' with `struct kcore_list *tmp' doesn't change the
-> scope and the functionality is the same and coccinelle seems happy.
+> It does catch corrupted images, which is the right thing to do, but it's
+> not a security issue.
 
-Well that's dumb of it.  Still, the code is presently a bit weird and
-we don't mind working around such third-party issues.
-
-> NOTE: There was an issue with using `struct kcore_list *pos' as the nested iterator.
->       The build did not work!
-
-It worked for me.  What's wrong with that?
-
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
->  		 * the previous entry, search for a matching entry.
->  		 */
->  		if (!m || start < m->addr || start >= m->addr + m->size) {
-> -			struct kcore_list *iter;
-> +			struct kcore_list *tmp;
-
-`tmp' is a really poor identifier :(
-
-Let's try `pos':
-
---- a/fs/proc/kcore.c~fs-proc-kcorec-fix-coccinelle-reported-error-instances-fix
-+++ a/fs/proc/kcore.c
-@@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct ki
- 		 * the previous entry, search for a matching entry.
- 		 */
- 		if (!m || start < m->addr || start >= m->addr + m->size) {
--			struct kcore_list *tmp;
-+			struct kcore_list *pos;
- 
- 			m = NULL;
--			list_for_each_entry(tmp, &kclist_head, list) {
--				if (start >= tmp->addr &&
--				    start < tmp->addr + tmp->size) {
--					m = tmp;
-+			list_for_each_entry(pos, &kclist_head, list) {
-+				if (start >= pos->addr &&
-+				    start < pos->addr + pos->size) {
-+					m = pos;
- 					break;
- 				}
- 			}
-_
-
+Agreed. I'll rework the commit message to more clearly state that
+initramfs image write access is required, at which point all bets are
+off.
 
