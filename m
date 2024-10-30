@@ -1,419 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-33270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36E79B6AEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 18:23:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE0B9B6AEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 18:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210DD1C23429
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 17:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9261F22A3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 17:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F64217902;
-	Wed, 30 Oct 2024 17:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2CA21892B;
+	Wed, 30 Oct 2024 17:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9RAKVva"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hBqI5Vhs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5467216E18
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 17:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730308893; cv=none; b=LsA7bCkIbfNZy5ABBetmHAT8HNBgPhoWfh7VZ6OpvZARu4sIIJNuwkg/SrJp4z7aZBudTxhnfk+lKM4VLRG++Y4kNm2TBfLvxcql80IeV2XmBkuR8sQa3L3bB5pC6tHPr1Z5ft6YPm1EpSaK1sT9W/cq0+KxmcU+/S9kfD7pWi0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730308893; c=relaxed/simple;
-	bh=h9ZoV6PU9Vwga3npxCLp9st+OWybouy1Yu7vioenGIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhDlMdm2QaAqB08WpUAA0BfGU16Vf1gSYLxF50IFOTzPt1IwkfbW0l1I4gdp999mT/ovrGSmnq19V7khq2kQBvVuPozNnyYBKeoOpRIkc9WQsFfx8KQxP+VVWURP6ltlTM76zBmuYSNMF40fiRG+6AhlSP6ipuTuY3HxIl3kDe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9RAKVva; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460ad0440ddso781521cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 10:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730308889; x=1730913689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OMRUO/DsLQtA92CbNruySHsqUzJiOyGvqy9EOksh9eg=;
-        b=E9RAKVvaiAkd8/irH3UgNvD8dPNHO4gI+UgVv8hCZnwlbXfLoLirClvLzXmkxznrS9
-         l3a0xghtTAmpSz4hAQOR/OOMUlu1dcjYVhcenrduXVMgiRCmxclrhrv42nksdM/DxOJg
-         NfxcxaYLJtC29lywg8LE7Z70Kwz6wNJ/AK2x4tTRe8BxqjwI0k4yhfD+TFFsRck5HVST
-         Ckfe4heITnfKL2WiA4OiAOfuRnhEkhF53iHvb8jhoEemvnm0J2tx45v4k90HxI1xM2Xh
-         k0Ic+qH9pLmeSh5kBdngviP/gOgMV6Au707lq5p9mT76HWjN+Wy1XAlQdNkQfYlByUlj
-         l+eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730308889; x=1730913689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OMRUO/DsLQtA92CbNruySHsqUzJiOyGvqy9EOksh9eg=;
-        b=NEdr2u79QWKVldp5p61Ch6VBZD8HXcAh7MeQaCFsJmxmgS0qYKY9sleXDwYn4aCtEc
-         hAChHm0Cu+G5rwHWPQkPVRrB6fLkAkL7p4nFQCnHKyiE2l2BOv8vFl3+Nrmpq2egoa8d
-         Z5IGe5gbe9SQvzJfe36wU/BcAdEIKmR4Boo7tlfb5LrpWCNw9xUTwihAgqTlN6njfjjW
-         r3e/+M6ldrdMFMWMYbsW5V+dEKCbfQ6dmt6qjTVgd3RYvX+wZtoXZfSDTdiL7KnJ4RSU
-         L+Fe80Tg3dwyuoyQX6ZWP3Q4pmIGzA/TvDQRpVo6umcvj8pHPu7W95VLbs4Qi0yRfqdE
-         GhVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb+6pkb/sf8fQtM6cE+IdQgCmqsfehfRJMZxEsj9Y3kJ8Z9XGuWoAlKCoFQNMRTQou+X38fyJnlvRTXyG3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9gey2PkpWLm7MNfH8HaHkwtZx6GGsddLDGoX9r4VrItDldZv6
-	yB+ULbQDNFpdnHA//UwEC7gPM6NZluje0woncdzMdLcu5+8KuCwRnmyMkawW0YnEjRSYMUqOGMY
-	/eKMkaK67zEITxv5uXY3TyGnIYs4=
-X-Google-Smtp-Source: AGHT+IHRLub3W9xftE0vwMRE0k3VD9Pe4dJdnE21+5czHcW4+gwXus6D3uSq50AcDcZ4HEfzAhLNKqdnL9iLD0FCkaA=
-X-Received: by 2002:a05:622a:2c2:b0:460:e2d8:9d3c with SMTP id
- d75a77b69052e-4613c19840fmr239221001cf.56.1730308889475; Wed, 30 Oct 2024
- 10:21:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3DE218927
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 17:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730308919; cv=fail; b=HAeEqQT0zHQC0Tfi/vmsuexzA3a5/TtzbD4mFUsDKI7CUYvBej80+GMVu/CCY8aw5ccxvo1tglVsIPSmroinb2lFThL5QLeaSNxp37FEA3pQLG7809BQyGEM5G3fsSod5KXBRhprkF4aIwWZYPvwwJThcbNXCMZR02EbnjUULx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730308919; c=relaxed/simple;
+	bh=VekeDEx9Zu5ldhJjOAaxZXhdgE3MadwV26iDaH4KGEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SKqa829wVLTKxRBMvw6Ty/h8qQqVzqNJvVCTkg+gWgq8EG5RE4nKqcqKWCUfvnPtACb6oTO954Boeng7KvUWae7LYiGAkC21xZPKFLr3zKbeA46qcM/cq1oStBxCGcGc/eP74FdIlpvHlZle/7Fm/L1nYnkhKRp9hdpfzFvHSEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hBqI5Vhs; arc=fail smtp.client-ip=40.107.93.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dyqOcAtsI3lpNXhc3UqbBdL/Kr4Um8dZVP5s3hyZpdArmE01ATux6H8xtc2c7tTD1+tQBadyXHbXMxeW6EsN69ZmsBiL62JxWRc9+8efUym0QQYh2aG+VaatjNtI8oNCKMtw0QObyhIlYgKBul8587nn0qG0wLxhDzICPXL5pCTMK4V/SJFJSuets/e6RwhVnVNEHIe5vief/3k5FHn+r1iK68rwkf3URK8g76La54Tf0s+He13wjRsGxssexO9TnQUfd9Dou+wr7zepH0z72yUWa/rNsNWA9o8Lz0Qy8N3Izlb18ZWmle6UcOXhv6OzL9LrdcXNSyCfb/qVIrnTog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kt9zF9rgwJyibVasIaU75jAOJchavSj4UGoIHNQgV+s=;
+ b=bog01PjOgMO5o0NTYAfTeK0W33F0eVu/NQC+l0iO+BgcfWT0LNOM2ZOxlr6MKnSut37ylGNCQar6gJqGWNrXkfIAmRjM2fSc3hemhYO0AEe52VsI/CkNyaXHkSts5wWhpmoUJK6PPvw/rsWVYFWvo38Hx1DsfHeIfTAxUwUcnvt8MrDoqT/ilBV5R9wtn0lFdHQmTqrvlk3qfpttqgRIyw5GZY2wsT9IjITe5etuQr9mtPQAfFN6g+VPPyUalbXhcS+u1ubloXTH4dGRqefDXdtd9BdByNTQ/y4IawQjP1DNSZp5GIpDJrtrqwevwMsb1/8qoMp9IK5X87S/C5YUJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kt9zF9rgwJyibVasIaU75jAOJchavSj4UGoIHNQgV+s=;
+ b=hBqI5VhsrtQYeuE6IZjjYEK0TWd5sLW602qrN7yboCrvbtZtlkCOpORa8AsrNqO43ltzfHrnA3awD6dwE6UVySuv8vnKa0lHv19Q0VHRYlsU54XU9JxW9GszeFMn1d3lgF3Ec1kB+I8pLVRSQZ51UyN0etSBa12GnwkFs6IZJFA/JZbEkXwsmRJSJld9Ui5T7Wy3E+Drjf9CrQYlWDLM+HPEtIsYaINXDp016xUpXIhLZdQ8QLCaFhvloT98f6IRb0y6T2j2RRZcApApPnDAjMxITY8g3YsXNbWN4TdeUrDJz5u9DZU0GTFJfdVCs4Gij9J0tYHNH71bCToHcLFUJA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH7PR12MB8016.namprd12.prod.outlook.com (2603:10b6:510:26b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
+ 2024 17:21:50 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Wed, 30 Oct 2024
+ 17:21:50 +0000
+Date: Wed, 30 Oct 2024 14:21:48 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Nicolin Chen <nicolinc@nvidia.com>
+Subject: Re: xa_cmpxchg and XA_ZERO_ENTRY?
+Message-ID: <20241030172148.GH6956@nvidia.com>
+References: <20241030131513.GF6956@nvidia.com>
+ <ZyJkHHUSyVgO419i@casper.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyJkHHUSyVgO419i@casper.infradead.org>
+X-ClientProxiedBy: LV3P220CA0024.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:234::20) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011191320.91592-1-joannelkoong@gmail.com>
- <20241011191320.91592-3-joannelkoong@gmail.com> <9ba4eaf4-b9f0-483f-90e5-9512aded419e@fastmail.fm>
-In-Reply-To: <9ba4eaf4-b9f0-483f-90e5-9512aded419e@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 30 Oct 2024 10:21:18 -0700
-Message-ID: <CAJnrk1b7N3uPueBbZJ1E8qVj1pQh-Bu4V-rYJAGmR0JtzbEPKg@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] fuse: add optional kernel-enforced timeout for requests
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB8016:EE_
+X-MS-Office365-Filtering-Correlation-Id: 663d0042-595c-4eed-a42e-08dcf907570b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5eSSMWm2sNzuG9eQ2+HdF6l4l4LtHZwk/Jk2tdwjCWa/c+DOj1UZSFsQ7J75?=
+ =?us-ascii?Q?QMHpNfo/SqWKr/jgGfVQ9xozOkenhrN2tc+xwohWiJh6f9yfrcEh/ElrE3zL?=
+ =?us-ascii?Q?8OI+rrNDlrH19tCtx0TrpCFdGDXWm3umNJV/XIAaj3SmwYZf3++u4xsgwB8V?=
+ =?us-ascii?Q?g4vqZZjQrqcVAYmFNBkA8HJqg88U/EYZMUPamP/jl+97U4egTs6f7W+DD+0m?=
+ =?us-ascii?Q?qZyzPHxbDo5OExINJPOORehi1fRTnDTRkfOeOUKlR8LgGI+egx5aPwVqXZbC?=
+ =?us-ascii?Q?iRoZzT5x3uJnwWFWQ6ji/flQdIO/IcM5asEbaPF5+3H9rbZzVUMuHvXMqm7y?=
+ =?us-ascii?Q?CD0VCzgGlt5X2cWqdVL9fNoZOBw7SOfbcT9zgwGcqXJcAVLun8VaVFgLQC90?=
+ =?us-ascii?Q?G+Wer1S1UOLsGhifBktQp3x7UHcriTDby+Idrn+q6cruHfC2Fivdj1dujMmE?=
+ =?us-ascii?Q?jh5W+sAM3VgmYq1XmtglCUuLp3hIBqwmLWrXVyrhFpHZszGQsHpFxbC0AJ6c?=
+ =?us-ascii?Q?wzS7MB3zsTNdksV2rW0KTTWTqywWpm+BmgodI++Gg8iNMgEpR0yrlRfkLNl4?=
+ =?us-ascii?Q?oqjbuwbo4Z79Ugx9crmeJ5s1Kwkhsv39Q4oEo/JUvgb65fg8wahk9uz8Sy1b?=
+ =?us-ascii?Q?C6rYqYmNIAVbGdY5Ht9mhekaccXtnfwXN+78Rj1l/46JrX6JaXvQ+Iy7ENcR?=
+ =?us-ascii?Q?lEZLefBMpes6vKoiW66XGK8jfzR8TJVcuI2BrdsCFtrVjpcwxiowyHVbw/Ek?=
+ =?us-ascii?Q?VD0+UhQC8r86NJ/A/rtImQ318hlibdnnWBj6M+D9WyZ/0hVrUlbkL6GH5KdO?=
+ =?us-ascii?Q?9Doti6Vz+5kHkJDn9ATXijvKc7Nyya4rfNYDNQXHccbar+Yw7YJ57uQ3X++r?=
+ =?us-ascii?Q?w3iqcz2wQJRFEjxrOeAeULXr6xrUNCRd9gWJnqeODTvHnh5WlSm7soRHMnmw?=
+ =?us-ascii?Q?zLEiMvvVBUR3/moRZAlXOlaL4eAtlW/ongbsPQT6FVa7wc281uru/bDWVL6B?=
+ =?us-ascii?Q?jd1nCPKjRlUgY/RJST7zfZvQp6rn2RxlzFijCW667MHjmfjfm/R7t1hzBg4O?=
+ =?us-ascii?Q?j0SrHgjaVDiTnFg8q3eQSoo7LGglhsfmXNtJvMMBvvIMf1fo7WGVh+30WOup?=
+ =?us-ascii?Q?I45NZ8hCAYTNggPYVuT+0NxizoM7sTgl7ti/nvcVSiwEd5D7k64XeCM+S/Qi?=
+ =?us-ascii?Q?OqKMEJlKfzk66AN0L/5iJIfnphO7rUH7gK0dXUoIfyx6LxBNtUoYuJhgFK8p?=
+ =?us-ascii?Q?4Nr4ejoFsGZGxEFcdC/kInsei/lpQgkwLx4ZFW10HGk91bvx42gOL1ru2vba?=
+ =?us-ascii?Q?1jrVwnHpyZEbBOL4P1SpUcOi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?deTSdpmYUwlmXLB5GUTzUGCpTpTY7sLa24+Qezx8MGQRiH7MA+VvWkhI4xqj?=
+ =?us-ascii?Q?Pa5wl59HypM1HWFmIXn+GjYCexeaaPvVRFW1J8+9wHso0uW/8ifc+c3A9Oxw?=
+ =?us-ascii?Q?C29VtCWkGpnvg2611e1d8TiaxH0mqDvzRRAcjGI5ZRiiKwOxbiEHkP04bZ+G?=
+ =?us-ascii?Q?ncHhCNb02pwVvEgCX8HMDJpUe5rw7pWIjyI5pTjW6ObebRuXL7udMCW1iqCP?=
+ =?us-ascii?Q?uD5FagQt5Uqdte35sb/QUH4w827qDODGK/+9vkNH6i9q/O9Zonm9JW2pOfPf?=
+ =?us-ascii?Q?G/fMOepkRuIeiWQMiwPPQ8mFlfD4vBuOfVe1PWe3EauZULZWbChvWtvXygST?=
+ =?us-ascii?Q?OPjvN3e3DTnhD5hDpGX4k9DN1QOT5wsXyXm80lXKWqkorpNyegRpQqqy38g6?=
+ =?us-ascii?Q?8pzXWTP6OMX5gccczU9X1Fpy1kpUzIJMGmb2HWcC4B0Ez3Q+gro/+Lkd9R/s?=
+ =?us-ascii?Q?XxYoqUms2ZSC3JsHL4YwZMQu7BGc1O4X7vZCd2vU/PJ8n0xnBmKWiWvodBhY?=
+ =?us-ascii?Q?nZTpRDvdoyp665eCCXXdXHmlIT2SZDUhlt1FCtf0BEk31RJLBbdgp5lIIMQ3?=
+ =?us-ascii?Q?QBzX1P6X2sxkQZRAGSCEJZ9luXK/4ARMU0Op4rOCIH/vB5fPP39+YwcYQKeT?=
+ =?us-ascii?Q?BEQ1J5lwGaV9ou7gzAaoiKWUJojy/Tc6gpLN0q9DhIINXVNwG2Q56xdbML//?=
+ =?us-ascii?Q?y6BURj+QGLA2HRBqdMDCJry/1E+7hhx2UcNy8E8i1VFiA0G2z7W8hTpQWu8u?=
+ =?us-ascii?Q?uKVGrB6uTOVN5phl5AkuZVuVGbi1CcsVx9ScF54Hdhr8Ig15b3u8/H5XxaFc?=
+ =?us-ascii?Q?34tPFrOB1KjHjtBbws/Nfht6KeePl/6XYnbDBXCZSgVNuHCW6zP4ESTCTZGL?=
+ =?us-ascii?Q?sbOnefHggTLr4L7dkUogj3D89mv18GF0DWWQYLNU57vSvJ88uC3prGMqah0H?=
+ =?us-ascii?Q?Kol0NskIbMhm/NzcAS3QOYU4lClcxnSzXmiyLqY4i7vNMeBeW201Ou4Izlu4?=
+ =?us-ascii?Q?i2GKcan3xzSgeAm8nbnXhjSrU1MQM3LS00hUj1LCDXQbT9N918TjqLJs0FTx?=
+ =?us-ascii?Q?lHRYWolTtDrjEH0TSZRjkIggiLP3509l/9qrbjTp6rLps7ez6vrqQceJJIv8?=
+ =?us-ascii?Q?bv/PNM7qQRMgLEUQP9mOzHid5h1H9sZLR6mnFgtVMTPmSwA6pE9rMwr8i0tt?=
+ =?us-ascii?Q?jzvbuM/OLlqxQFMFZrjdX8zM/yL7xK90yWDoLQPHRqe4DX4L3HMNn/6NrCGB?=
+ =?us-ascii?Q?8AiOQ7pWVEke3muI55EY2Wu+jVXda4A9VvMIWLMWrixIWUdb/h0l22GwZ/tS?=
+ =?us-ascii?Q?Ox6KIsoEqGGZHHRq38El8geb4jI9VZQGkzL9aooELzl8appvwDIBkd1SRdLO?=
+ =?us-ascii?Q?o67FFs58ze5qSqB01zeq+I3Vha52w9anvv6kKnXJjY8ogxb9wLFVyk2Z+CPt?=
+ =?us-ascii?Q?tAP4mJWbYUdErCYpXIHc/HWCHiQnXOd2Ry7oQ1NBmeJlmtz2Ur/5B3U2uJWw?=
+ =?us-ascii?Q?F/NKyGWqBfyKEwUNNXHJbis+aLlQii1x9PHOLBEEldpmk+ToEC5Obpn+x31M?=
+ =?us-ascii?Q?5B+1T0vvCNsKjRZe9aM=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 663d0042-595c-4eed-a42e-08dcf907570b
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 17:21:50.2057
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D0ckEijpO6kcAtdKJsNyRkXEo+iPwOGn7Z3xofbcxNwf6alVjSb/Bkz6jRJh6CsZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8016
 
-On Tue, Oct 29, 2024 at 12:17=E2=80=AFPM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 10/11/24 21:13, Joanne Koong wrote:
-> > There are situations where fuse servers can become unresponsive or
-> > stuck, for example if the server is deadlocked. Currently, there's no
-> > good way to detect if a server is stuck and needs to be killed manually=
-.
-> >
-> > This commit adds an option for enforcing a timeout (in minutes) for
-> > requests where if the timeout elapses without the server responding to
-> > the request, the connection will be automatically aborted.
-> >
-> > Please note that these timeouts are not 100% precise. The request may
-> > take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested max
-> > timeout due to how it's internally implemented.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  fs/fuse/dev.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  fs/fuse/fuse_i.h | 21 +++++++++++++
-> >  fs/fuse/inode.c  | 21 +++++++++++++
-> >  3 files changed, 122 insertions(+)
-> >
-> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > index 1f64ae6d7a69..054bfa2a26ed 100644
-> > --- a/fs/fuse/dev.c
-> > +++ b/fs/fuse/dev.c
-> > @@ -45,6 +45,82 @@ static struct fuse_dev *fuse_get_dev(struct file *fi=
-le)
-> >       return READ_ONCE(file->private_data);
-> >  }
-> >
-> > +static bool request_expired(struct fuse_conn *fc, struct fuse_req *req=
-)
-> > +{
-> > +     return jiffies > req->create_time + fc->timeout.req_timeout;
-> > +}
-> > +
-> > +/*
-> > + * Check if any requests aren't being completed by the specified reque=
-st
-> > + * timeout. To do so, we:
-> > + * - check the fiq pending list
-> > + * - check the bg queue
-> > + * - check the fpq io and processing lists
-> > + *
-> > + * To make this fast, we only check against the head request on each l=
-ist since
-> > + * these are generally queued in order of creation time (eg newer requ=
-ests get
-> > + * queued to the tail). We might miss a few edge cases (eg requests tr=
-ansitioning
-> > + * between lists, re-sent requests at the head of the pending list hav=
-ing a
-> > + * later creation time than other requests on that list, etc.) but tha=
-t is fine
-> > + * since if the request never gets fulfilled, it will eventually be ca=
-ught.
-> > + */
-> > +void fuse_check_timeout(struct timer_list *timer)
-> > +{
-> > +     struct fuse_conn *fc =3D container_of(timer, struct fuse_conn, ti=
-meout.timer);
-> > +     struct fuse_iqueue *fiq =3D &fc->iq;
-> > +     struct fuse_req *req;
-> > +     struct fuse_dev *fud;
-> > +     struct fuse_pqueue *fpq;
-> > +     bool expired =3D false;
-> > +     int i;
-> > +
-> > +     spin_lock(&fiq->lock);
-> > +     req =3D list_first_entry_or_null(&fiq->pending, struct fuse_req, =
-list);
-> > +     if (req)
-> > +             expired =3D request_expired(fc, req);
-> > +     spin_unlock(&fiq->lock);
-> > +     if (expired)
-> > +             goto abort_conn;
-> > +
-> > +     spin_lock(&fc->bg_lock);
-> > +     req =3D list_first_entry_or_null(&fc->bg_queue, struct fuse_req, =
-list);
-> > +     if (req)
-> > +             expired =3D request_expired(fc, req);
-> > +     spin_unlock(&fc->bg_lock);
-> > +     if (expired)
-> > +             goto abort_conn;
-> > +
-> > +     spin_lock(&fc->lock);
-> > +     if (!fc->connected) {
-> > +             spin_unlock(&fc->lock);
-> > +             return;
-> > +     }
-> > +     list_for_each_entry(fud, &fc->devices, entry) {
-> > +             fpq =3D &fud->pq;
-> > +             spin_lock(&fpq->lock);
-> > +             req =3D list_first_entry_or_null(&fpq->io, struct fuse_re=
-q, list);
-> > +             if (req && request_expired(fc, req))
-> > +                     goto fpq_abort;
-> > +
-> > +             for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
-> > +                     req =3D list_first_entry_or_null(&fpq->processing=
-[i], struct fuse_req, list);
-> > +                     if (req && request_expired(fc, req))
-> > +                             goto fpq_abort;
-> > +             }
-> > +             spin_unlock(&fpq->lock);
-> > +     }
-> > +     spin_unlock(&fc->lock);
->
-> I really don't have a strong opinion on that - I wonder if it wouldn't
-> be better for this part to have an extra timeout list per fud or pq as
-> previously. That would slightly increases memory usage and overhead per
-> request as a second list is needed, but would reduce these 1/min cpu
-> spikes as only one list per fud would need to be checked. But then, it
-> would be easy to change that later, if timeout checks turn out to be a
-> problem.
->
+On Wed, Oct 30, 2024 at 04:51:40PM +0000, Matthew Wilcox wrote:
+> On Wed, Oct 30, 2024 at 10:15:13AM -0300, Jason Gunthorpe wrote:
+> > Hi Matthew,
+> > 
+> > Nicolin pointed this out and I was wondering what is the right thing.
+> > 
+> > For instance this:
+> > 
+> > 	xa_init(&xa);
+> > 	ret = xa_reserve(&xa, 1, GFP_KERNEL);
+> > 	printk("xa_reserve() = %d\n", ret);
+> > 	old = xa_cmpxchg(&xa, 1, NULL, &xa, GFP_KERNEL);
+> 
+> You're really not supposed to be doing xa_cmpxchg() here.  Just use
+> xa_store().  That's the intended way to use these APIs.
 
-Thanks for the review.
+xa_store() also looses the XA_ZERO_ENTRY, it doesn't help to write an
+assertion that the index was reserved.
 
-On v7 [1] which used an extra timeout list, the feedback was
+> > The general purpose of code like the above is to just validate that
+> > the xa has not been corrupted, that the index we are storing to has
+> > been reserved. Maybe we can't sleep or something.
+> 
+> Thr intent is to provide you with an array abstraction.  You don't
+> cmpxchg() pointers into an array, do you?  Almost everybody just does
+> array[i] = p.
 
-"One thing I worry about is adding more roadblocks on the way to making
-request queuing more scalable.
+Sort of, what is desired here is test and store, not cmpxchg. You
+would do that in normal arrays:
 
-Currently there's fc->num_waiting that's touched on all requests and
-bg_queue/bg_lock that are touched on background requests.  We should
-be trying to fix these bottlenecks instead of adding more.
+ if (WARN_ON(array[i] == NULL)
+     return;
+ array[i] = foo;
 
-Can't we use the existing lists to scan requests?
+In xarray it would be nice to do both those under a single walk and
+lock.
 
-It's more complex, obviously, but at least it doesn't introduce yet
-another per-fc list to worry about."
-
-
-[1] https://lore.kernel.org/linux-fsdevel/CAJfpegs9A7iBbZpPMF-WuR48Ho_=3Dz_=
-ZWfjrLQG2ob0k6NbcaUg@mail.gmail.com/
-
->
-> > +
-> > +     mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
-> > +     return;
-> > +
-> > +fpq_abort:
-> > +     spin_unlock(&fpq->lock);
-> > +     spin_unlock(&fc->lock);
-> > +abort_conn:
-> > +     fuse_abort_conn(fc);
-> > +}
-> > +
-> >  static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *=
-req)
-> >  {
-> >       INIT_LIST_HEAD(&req->list);
-> > @@ -53,6 +129,7 @@ static void fuse_request_init(struct fuse_mount *fm,=
- struct fuse_req *req)
-> >       refcount_set(&req->count, 1);
-> >       __set_bit(FR_PENDING, &req->flags);
-> >       req->fm =3D fm;
-> > +     req->create_time =3D jiffies;
-> >  }
-> >
-> >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_=
-t flags)
-> > @@ -2296,6 +2373,9 @@ void fuse_abort_conn(struct fuse_conn *fc)
-> >               spin_unlock(&fc->lock);
-> >
-> >               end_requests(&to_end);
-> > +
-> > +             if (fc->timeout.req_timeout)
-> > +                     timer_delete(&fc->timeout.timer);
-> >       } else {
-> >               spin_unlock(&fc->lock);
-> >       }
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 7ff00bae4a84..ef4558c2c44e 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -435,6 +435,9 @@ struct fuse_req {
-> >
-> >       /** fuse_mount this request belongs to */
-> >       struct fuse_mount *fm;
-> > +
-> > +     /** When (in jiffies) the request was created */
-> > +     unsigned long create_time;
-> >  };
-> >
-> >  struct fuse_iqueue;
-> > @@ -525,6 +528,16 @@ struct fuse_pqueue {
-> >       struct list_head io;
-> >  };
-> >
-> > +/* Frequency (in seconds) of request timeout checks, if opted into */
-> > +#define FUSE_TIMEOUT_TIMER_FREQ 60 * HZ
-> > +
-> > +struct fuse_timeout {
-> > +     struct timer_list timer;
-> > +
-> > +     /* Request timeout (in jiffies). 0 =3D no timeout */
-> > +     unsigned long req_timeout;
-> > +};
-> > +
-> >  /**
-> >   * Fuse device instance
-> >   */
-> > @@ -571,6 +584,8 @@ struct fuse_fs_context {
-> >       enum fuse_dax_mode dax_mode;
-> >       unsigned int max_read;
-> >       unsigned int blksize;
-> > +     /*  Request timeout (in minutes). 0 =3D no timeout (infinite wait=
-) */
-> > +     unsigned int req_timeout;
-> >       const char *subtype;
-> >
-> >       /* DAX device, may be NULL */
-> > @@ -914,6 +929,9 @@ struct fuse_conn {
-> >       /** IDR for backing files ids */
-> >       struct idr backing_files_map;
-> >  #endif
-> > +
-> > +     /** Only used if the connection enforces request timeouts */
-> > +     struct fuse_timeout timeout;
-> >  };
-> >
-> >  /*
-> > @@ -1175,6 +1193,9 @@ void fuse_request_end(struct fuse_req *req);
-> >  void fuse_abort_conn(struct fuse_conn *fc);
-> >  void fuse_wait_aborted(struct fuse_conn *fc);
-> >
-> > +/* Check if any requests timed out */
-> > +void fuse_check_timeout(struct timer_list *timer);
-> > +
-> >  /**
-> >   * Invalidate inode attributes
-> >   */
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index f1779ff3f8d1..a78aac76b942 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -735,6 +735,7 @@ enum {
-> >       OPT_ALLOW_OTHER,
-> >       OPT_MAX_READ,
-> >       OPT_BLKSIZE,
-> > +     OPT_REQUEST_TIMEOUT,
-> >       OPT_ERR
-> >  };
-> >
-> > @@ -749,6 +750,7 @@ static const struct fs_parameter_spec fuse_fs_param=
-eters[] =3D {
-> >       fsparam_u32     ("max_read",            OPT_MAX_READ),
-> >       fsparam_u32     ("blksize",             OPT_BLKSIZE),
-> >       fsparam_string  ("subtype",             OPT_SUBTYPE),
-> > +     fsparam_u16     ("request_timeout",     OPT_REQUEST_TIMEOUT),
-> >       {}
-> >  };
-> >
-> > @@ -844,6 +846,10 @@ static int fuse_parse_param(struct fs_context *fsc=
-, struct fs_parameter *param)
-> >               ctx->blksize =3D result.uint_32;
-> >               break;
-> >
-> > +     case OPT_REQUEST_TIMEOUT:
-> > +             ctx->req_timeout =3D result.uint_16;
-> > +             break;
-> > +
-> >       default:
-> >               return -EINVAL;
-> >       }
-> > @@ -973,6 +979,8 @@ void fuse_conn_put(struct fuse_conn *fc)
-> >
-> >               if (IS_ENABLED(CONFIG_FUSE_DAX))
-> >                       fuse_dax_conn_free(fc);
-> > +             if (fc->timeout.req_timeout)
-> > +                     timer_shutdown_sync(&fc->timeout.timer);
-> >               if (fiq->ops->release)
-> >                       fiq->ops->release(fiq);
-> >               put_pid_ns(fc->pid_ns);
-> > @@ -1691,6 +1699,18 @@ int fuse_init_fs_context_submount(struct fs_cont=
-ext *fsc)
-> >  }
-> >  EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
-> >
-> > +static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_=
-context *ctx)
-> > +{
-> > +     if (ctx->req_timeout) {
-> > +             if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->ti=
-meout.req_timeout))
-> > +                     fc->timeout.req_timeout =3D U32_MAX;
->
->
-> ULONG_MAX?
-
-Nice, I'll change this to ULONG_MAX. We only run into this overflow on
-32-bit systems (and only if the kernel has configured HZ to greater
-than 1092) so U32_MAX is the same as ULONG_MAX,  but ULONG_MAX looks
-nicer since "fc->timeout.req_timeout" is an unsigned long.
-
-
-Thanks,
-Joanne
-
->
-> > +             timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
-> > +             mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIME=
-R_FREQ);
-> > +     } else {
-> > +             fc->timeout.req_timeout =3D 0;
-> > +     }
-> > +}
-> > +
-> >  int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_cont=
-ext *ctx)
-> >  {
-> >       struct fuse_dev *fud =3D NULL;
-> > @@ -1753,6 +1773,7 @@ int fuse_fill_super_common(struct super_block *sb=
-, struct fuse_fs_context *ctx)
-> >       fc->destroy =3D ctx->destroy;
-> >       fc->no_control =3D ctx->no_control;
-> >       fc->no_force_umount =3D ctx->no_force_umount;
-> > +     fuse_init_fc_timeout(fc, ctx);
-> >
-> >       err =3D -ENOMEM;
-> >       root =3D fuse_get_root_inode(sb, ctx->rootmode);
->
->
-> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+Jason
 
