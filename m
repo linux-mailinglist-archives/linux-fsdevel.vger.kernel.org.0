@@ -1,211 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-33243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF1C9B5D2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 08:47:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DF89B5EE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 10:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD032B22115
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 07:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA191F2236A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 09:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB251E0B6D;
-	Wed, 30 Oct 2024 07:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928FD1E1C19;
+	Wed, 30 Oct 2024 09:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="PoTfosFI"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="HixTjREt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V0Rns9Bg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144971B86E9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 07:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.183.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730274456; cv=fail; b=M0SS9KGKUt/6NolNA3t551d/z8B6dj04dh6W7qoIaAqjH7Dbchc04lYRKlKrrKHl2AoxLtP5BitCktQIpS0XbqZIVg7O9bb3I4l5jgTGKpSngjy0pn/XqSCssjAVlAQQfHtoQ49aumcjoxpTURavmcjamVm+C/+Op5AOQ3Hb/iY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730274456; c=relaxed/simple;
-	bh=acvWYGI63PLxWNbHF7lmyOyCCWdpZBeGisGN6YsLQ6g=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Tr0CkmO4Eg8kzC0gPirxTMpZblSk4MtcseQXdcE8h94bK2CXR1IkO3HRss7h7gILA3IinVQH7uWrAq92vnFznI3BU8dkafqpur0QG5yM7bYdrKLpIN8KQLK5WRmaGRkH6TVmc50nP8N3cD5nHUAHf43uzMPAQGU2on+Nb4SGa80=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=PoTfosFI; arc=fail smtp.client-ip=185.132.183.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209325.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U6eLmq031030;
-	Wed, 30 Oct 2024 07:47:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=S1; bh=acvWYGI63PLxWNbHF7lmyOyCCWdpZ
-	BeGisGN6YsLQ6g=; b=PoTfosFIHOyyntlmy1iOQjN05Ah2gSVJOYk+ye0XHAEI/
-	LkW8q8PoMAVAUnPO9przjoVB9yHJSkdJgrXU29Xx3JzqlRUZGGzqg41jUQthKY4m
-	CUhYx8yXT62PGhIxaowlavU2GOmnGaqK13mmKy186jMR15ug4IBzkF1673BDSQGr
-	+Kvwg72f2nAHfCQMl6sC2swT8hryz7Z2BkUptcGng57lspFQ0B1J6N1IkVRerWMV
-	hmgwxvC5HwQLVxpyg43uFDXMB5gERkdO3db8+czEt9fuq6udQSKX0UAfoGi4IATc
-	pQgX9+H+gKUHPcNMnd6zrKV+UZsiKAZ8fxxNVxypw==
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2049.outbound.protection.outlook.com [104.47.110.49])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 42k2ypgnpy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Oct 2024 07:47:24 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hROgxftDFDkyvtXNzXk29l5gBF3kgi5U9SBZXQuNkWZwfIs5kE0uKcCm4obif59aHgZYx8ceXCMxzRYfSHj/QvLnotPgp+Iv1Vt6lMVhnpXaWAchy08vuXkeBm5Bp3Qj6jC1C7dSAIRg0Ib2Bx5t7De5nKCIng/EfKukbIeRQiDxbnfAYxLy6PXhBWq0LQr7IyrFHRIwVJpAcaGFC94c2WsHgS76Osin+54LwCi4dmXFnE+viEKkVHRcUSTu0hJvofslqxyY+AtPGnb2wRiDxbuEf2HcfFdGrXEHqFpw4DPGjQOrGa/HD3A2yHZqVMJZkvSoAQYMXsL5AA/fHPRTIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=acvWYGI63PLxWNbHF7lmyOyCCWdpZBeGisGN6YsLQ6g=;
- b=YYl1brYhifsGF4aJ1rqi+vsRn78Os9SwODzgVXozgQQ8BeslxIZ3Ila40oS5EDymjJuAKCYff1xfHcU0rmLW+v2aJhCpVlWmc3SUEnjmlLO63F0rF/2JBO3h2z2mMULzZFU7U1b2DUslrogpxD85D6sGwhtgypUmSeVYy2uyAqKvqXl8ZGQZ9LvPp6AZkUAgLvt0KbcOdSeu61QJfOH/SN5Ehf0T+z4DqcAO9X/+lEJKmrsyjZgL2+eUIrudjN+bF3T9ukiNO3eORGAFcv6t1AB5PmpucS3PjiZPG+ffOVV/shMjwBJUboUkLZgdtfHc0qIKx0U1Cc5z3yu+nKW+eQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by KL1PR04MB7707.apcprd04.prod.outlook.com (2603:1096:820:118::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Wed, 30 Oct
- 2024 07:47:18 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%4]) with mapi id 15.20.8093.024; Wed, 30 Oct 2024
- 07:47:18 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com"
-	<sj1557.seo@samsung.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v1] exfat: fix file being changed by unaligned direct write
-Thread-Topic: [PATCH v1] exfat: fix file being changed by unaligned direct
- write
-Thread-Index: AdsgM2W/x1aURdJJQVemxv1csSA60QKbCK6Q
-Date: Wed, 30 Oct 2024 07:47:18 +0000
-Message-ID:
- <PUZPR04MB631696A2513D72126D4165B881542@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR04MB7707:EE_
-x-ms-office365-filtering-correlation-id: 9c4112ca-3575-48bb-1e4b-08dcf8b71463
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TW5FMjdQenRiaVFNb3gxU2Fib0tNNS9CV2pyMW5vVXpRM0REZitwMFJPekNn?=
- =?utf-8?B?NjNOWkRkYlRhazIvNWZneHRBUjk4L2ZyQkhZUUZSRWRZZjdFamZKbjJXeFEv?=
- =?utf-8?B?RmxXamcyRlQ5RmFYMmRXRTlvTHBaNUtIS1NnTjQwZWt6amVWc2llcTBIU3M0?=
- =?utf-8?B?UnRFa1d2ZTZoMlExTkJnQ1ZrazJhNjduTXZzSUVMSU9DYTFNY3BPbTZxWW5O?=
- =?utf-8?B?V0ZLWW9LYUQ0bElabUp5R3U4SWJsb2haWmtybzVuTGtEQ0d3V1UxeERKT25m?=
- =?utf-8?B?RTRiSTZ4NjNtSkNFbTBvRzRzVTdub3cyOURsRU02YUlPQ1JYK1FuTmhuK3VJ?=
- =?utf-8?B?TDJ1U3VmTUk5cnNrRDZZVDBpb0dOblE1bGRzOGhUeDJ6bmU2ZW85U0duMGZJ?=
- =?utf-8?B?TFlGeVVlekx3Z3grUWpQWnRRRjdpYWpHOVJ4a3JmdytBSVRSVlc0ZXhDSVZn?=
- =?utf-8?B?cDc0QlBpL1BzRmI0emhlNnN0bHcwRUgyVzFhbzVicElXUVdNTnc4VkxuazA4?=
- =?utf-8?B?V2VYSHBIR3VsT2hwM09QWktXSzYzVE9NczVlVzczQmFkQk40MXZpeUtSanhp?=
- =?utf-8?B?WkVxLzhNVEJuVnluTGxQbzA3cVErQ1lFSnNOUzdVWkZ3NGZjYmVMT0xSM04z?=
- =?utf-8?B?a3hKZ2Jvd0UrTU0wM3BacnNBOTN6ZTBxSThtVTUrSENkQThZc0lJeWp6Mnhq?=
- =?utf-8?B?cmN2VXl2N0J2UmhramYzaWdLbzR0ZXo1QjZzWHRDZzhlQXlzWjAwZjFVblpW?=
- =?utf-8?B?Y2JiODM1dDNqVVJHZmJ5UGZRN3QzWTR1NC9XQ2RrV2RrK0MwV2JVc24xSHZL?=
- =?utf-8?B?aEJ1cCsza2JqUW42bE9LbW0zaFY5NlR0aldHZmd0c2FTaFhWZEZTdVJleVFV?=
- =?utf-8?B?d2tJSW8vMGEra0tPTjBGSTl4UU1tb2Q1enZYRDVveW8xYUFMajhnTkVvbHZv?=
- =?utf-8?B?dFVEbStueno0S2FqeWVZY3ZmQ0lvamFaU1d1bC9pL0doWlFPVzVzK0xJc1ZV?=
- =?utf-8?B?Nk5RNGRPeDloeEpPOXMrMmNZT1p0OHRYMis4dWFwdmRpUzNReTRhQUZ1WWlV?=
- =?utf-8?B?NDFCUVFiZllHZ1VEZzkvcnFhT3BHSHY3T3ZBdWN1YlVCY2xyaTEzRVZZTFkx?=
- =?utf-8?B?a081aFFtdk4yOFVuTEZJaVB0ekRWRjBUbFJhTzVHY05aYnQwWWlTK1UxVmc5?=
- =?utf-8?B?am9kYnIvSjYxOGU4Q0J1T2p0M0FpYjdTejBpZmUySjJrQ1MreXVJRS9qQmJ2?=
- =?utf-8?B?RnNvam0yRGRFQjJvbGhVeHlmSnlDVmNRRjQ4ZXJPMUxXT3d4aFloNTUrclJq?=
- =?utf-8?B?TG5jbjREL2llQ29VQkthblFyTFVjR1FKZkdjUWZWeUhkeFpLVEZLOWgzRU9r?=
- =?utf-8?B?QWhqK3ZzYkFqenpRbFpoUkc5SUxraEdmUnFoRHBkYUU2c1JkaENjQlZUbUdU?=
- =?utf-8?B?bGRmT3MzRk1OZDkvMGg5L3IxUGtCMGtDL2RKZlFGYWdGV29YWGFtbHlha0I1?=
- =?utf-8?B?K08rRWxFL3dxQ0NBWnlxVEYvd3daTjNrN2x3NkJPVlZHWHAvNFJTWG4xci9o?=
- =?utf-8?B?SG93enRlaVlhQzlWUWVXN0N0VHJxVEl5cjE0VFBkaFZxKzBvZmx4RTY4ZVJx?=
- =?utf-8?B?ZC9LazEwckZSWEFUcTVUeVRsTG1tc1k4NldmTHptZC9FQmJMNWQzUDlXYjBZ?=
- =?utf-8?B?OU1JbUIrUDZWeDF2aXBYem9yRFNFb3RPK014QUpTbmN5eUFVdDJDQ2FRUjlC?=
- =?utf-8?B?dkZUaStIbzZjQVhQVmJ0WldkKzBjSFBLUXgvK3hrb1NwLzRObnZxWlByejhC?=
- =?utf-8?Q?Ln6pj0Xjh0abZC9XF6schm3H+t6NrPa7jEraw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OFhrczVzNEUxRU1DYnFXTGZueXIzN3RRMFBmVFVuRkRqd2R4dmxqa2c1bG11?=
- =?utf-8?B?TlM1MWxvUCtSaUJJRXlDT0dKNSthOTlyWDVSaUljNnZnSXpmcHFLOEZDN0d0?=
- =?utf-8?B?ZEYyVVlISWlXN3h6eUVGYmRIMG9PMnl0WHVsUFF1WlhYMWViei9VYlNoU0FO?=
- =?utf-8?B?SEVDVWVqT2pwNFF0MFd6WDNhR09IVEM2QjVvcW91Zi8wZmx2eE1jYThyQytn?=
- =?utf-8?B?OHlZdDRmbUlxdm1uUjRHb3E5UnJvK0F5WHZvM1QxSnFCTXNnNTBDeWFpY1R3?=
- =?utf-8?B?ZWN0M3hpNWtuSjAyWnQxaDhzdXZQbGpQUWU4U2E2em0wcVpDT3pCZTN1SmdK?=
- =?utf-8?B?OGsvYWI4eFZtZWZKYi9sOVVEeHhGSEJBNU5CYzM0YkhkV2tjb2tacGRGRUJC?=
- =?utf-8?B?Q1cweXZTT2QzUmQwNTFQcm9kK0NWUFR1eHBhWHJrczdqYlJmNG9rd0trUmZJ?=
- =?utf-8?B?TTdrbDBHckhSazh6bVBtYlJpdHV5OGN3dlcvN0pwSzJzVVdTRHlabE5JQkVC?=
- =?utf-8?B?Y2VkdkU5MVZtS2cwTnVWZU5Hd2pSNVZkV3RleHBqOVl2b21UcHhzMFRYU2dR?=
- =?utf-8?B?U0dLeFJYOEpZNU9BeE1pRmpiTTViSEpGQjh6c2o0ZWdoU01aVnQ1cXV1Tmcx?=
- =?utf-8?B?Vm5JVUZkajQ0YlJ5d3Q3YnhSR2lqNzdFYnJQTEZRTVdsVGlRWkNyV0o1ZVpa?=
- =?utf-8?B?bDJpdlAzalBXOXZycjY4ZTFCVmF6T1QwUWlGOU5WeHZWbGl4WmRhZGIrN3Ay?=
- =?utf-8?B?SEtJaGVjQ25vTE9YeWJxNFdJRDBGMW9vNU9QTWk5K2k4R3lGZVZOV0xuYkVr?=
- =?utf-8?B?RlhWOTE1MGxZdVYxOUJabFJvYUZETnVpWU5LUVVQYmJGSVRPa1NDQnBEZ212?=
- =?utf-8?B?ZGduL05OWWs3Qk1NNmNuM3NxK04zYUJXSld4VDRJUGo3UVlMeFY3MkxQK1pG?=
- =?utf-8?B?enJHaTFzbGV4amY1N3F4alVJblRYRTV4MXhoeHh4VFlNV1pUK29Ld2tERGdm?=
- =?utf-8?B?MklXMnJ4M3k4TGJhM0VJVFprNk10T2lOblF2bmFFZ2ZZMzhlQjBtVHdHRUp0?=
- =?utf-8?B?U0VJOWNlMDdyT0d4TjNaQTZjb1c1NjNpeGJweXhXNVgrM1NOQUZ4UGNBUHZI?=
- =?utf-8?B?a3FVZkNFUS9uZGxaY3NNc3BNWDBYeGpwTFg0c011dGp0Q1RYRzgyemVYdWQz?=
- =?utf-8?B?cGJScEdhdm5uM242R0dUTWNMSUJ2b0hIbjFIWW9NZTIzUnJOZFZJSUxRYzA5?=
- =?utf-8?B?VklyU2E0bklQWU1OQUxlVWlNSEpRNFozUVVVZHRJRHV1eXZSTlgwSzMzUW1U?=
- =?utf-8?B?b0xZR3FsY05WOE1GaGo4a3RhSEhnTXlISXpMR0w5QTJvOXNoaE5YL3FjTFZC?=
- =?utf-8?B?Zk41dzBVeUJWVFFjeGp3emlMTFJLQlNRcTdCR1dscUVZbzNDS2d2MzgzN1dC?=
- =?utf-8?B?OTA0SmpXaURHcTVVT2V1ck9WRkZVL0kyRStuejNwTGdNVm8zb2dmSTlsak1n?=
- =?utf-8?B?QnFpcTM3aU9mZ1VhKy9kWGJjaHVsMjNibVlvVXZxNE1JckFFeTRhZnFkcUpB?=
- =?utf-8?B?QTBPYXFqQTFqOGw5RUdQQ3p4REpjdzlWaGc0NFFoeE1uRXYyM2ZvQmRaUk1G?=
- =?utf-8?B?K21JZmRNYkVMNlVwL3A1bGFlYjhzWlI5M1I1K3pXMHpGV1pQamtRSlNOOHo0?=
- =?utf-8?B?WGRBZ1lCaXozeFBPOFFHTmc4WTZRZ0ZPMlpFUmdzekZQM3huQ3pyWmhuSzRR?=
- =?utf-8?B?WWNLbHlkTHNrMWZBUXNvbjhBZHlNQk5EQ1NFbi9NU0VacmpKNHRGaHdLOFo4?=
- =?utf-8?B?WlZoMnBxVDRBalMrVmRLMkhwTFlFb09DTU5NQ3FxZVQ0TkowZ1dsbFg1NTFt?=
- =?utf-8?B?ZWhFdEpDTmI5R0JJd05rV1o4L3BaTHozWW1KR1VNN1ZSR20yVGRZNjJIeElO?=
- =?utf-8?B?TGN4NzdVanpaZU5yVmpQK1M1ZHpuU1dPOXdOK2I4Z2hpaDBFZ2ltZkJvV1dM?=
- =?utf-8?B?b1l5eVQrMGdMbmtpbitkTUhZOTBPSlkxdmdnS1Frc1V6K2dmaWtLQzNUNjFj?=
- =?utf-8?B?L0dBMUQ1Y0tzN05meEtPVlZMM09qYXdodzJ1bHF6cVg5eUI3c3YwTTdKTzFT?=
- =?utf-8?Q?JolV16mB/Shw/Yfm7QTk02s/F?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8A21E1A2B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 09:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730280767; cv=none; b=CsJMz1V7eej31WVRMa2hKw59oxFaaFwR4Hslspo/wUeCm1fGBUeln0Uswi/LMetDGcdP/cVlc+lVw9VMAvZS3HrjVGPYPH9RyCbRx4SQ+1/UNrRduFZX/oRz6prBjWvz2ZtrEeecSHQLMknLfXXfdzzsOEFMdnp44sFf7ulv8Kg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730280767; c=relaxed/simple;
+	bh=0XW8/n8mpIcw22IVfFg6EFK75cqIw4TmCNA+rf1Yj8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OLk+pN0mhu7CcioLnAlGzxWY2+iyQJTdt9Qoa0Ns5wKS7yQlH+SxEXQiDEEmVpsbFVpOBtQ2hiCzel3WXrsVdJ2wq0y2hp8o31LkUjIrjqt47oiK3QzvtbgHBvxzUXO0EFU/ic8fg0+XwPQLTD/Iv2aQGI6HLd8N83cA1FI4PQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=HixTjREt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V0Rns9Bg; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B005711400F0;
+	Wed, 30 Oct 2024 05:32:42 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Wed, 30 Oct 2024 05:32:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1730280762;
+	 x=1730367162; bh=vP47Fi19GSqOURIFyHr3BgCH6OFkEfDLoamJ4JOvUm4=; b=
+	HixTjREtC+k1ucSRHUmEFo4cmyhIT9/dw0JpbD1qG7gZHdvirOTWTRNGN9kDJX0A
+	ZT+g/n6g/pBJf49p1XrvOHgAOjBDHxKW3k8P/S31Ibq4JJVGN0KR5AIfEXhLyCDG
+	cPstjK8NNtSKXU6QzkWxmIRobHEYs98NucVSFhxr3qE+dSHyethdJ6tnj1J/oNrz
+	cohSPO9cGfSxj+0rPyLEX4iL9QQqxP5owagKXeW4uqbS77NKfxU7aol3Qmr500Le
+	rkCdvRebPvd6g3pE5scPKGWNnSKra8jkxt83n85O9gLwiuibdm+lUPZzyg8mgj/0
+	IhQnqCtcCpttJq0BDnfg9A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730280762; x=
+	1730367162; bh=vP47Fi19GSqOURIFyHr3BgCH6OFkEfDLoamJ4JOvUm4=; b=V
+	0Rns9BgI1Q4hrq70oytQoOK8A1SGb2tSLjDeGZd5OTcr26AOrmPuJM4uEMAx1lWj
+	Ni9+tBv9KANYCCzwyTIt4ikeLGwl0qW4Db7JKQGw6B3fah36lIKTxMqYbWun7bJm
+	2JEw5WpWF4HIlgyPnDjaH5YsecklDz8W/0x77Y0aevzM7G6RmXcUFAwNMWTuhgtw
+	3D9Q10UjVCbUKigp87BkrhgzTnZIbcBKBAVHvEXPjvgDVXrbyeGYq4625hFwY0Pi
+	y0reeSshZhsrQGBksM5s5ddsIKzS+2RYRmac2Oy5q4+k/ezjJR81vUEn9cqrbGFu
+	ZHc1CJDUHXsbkOB9TpZnQ==
+X-ME-Sender: <xms:OP0hZ6i4wr2pU_H0LdeABsspaO4xGG0xU5_5paObq_W--A7C-XSGqg>
+    <xme:OP0hZ7CrpfBuS5FJbpBiB__LdRpb0F3b8ypg3iIwDTYv0GOQcoVSrzZwCTVqjLuFF
+    RuuP_dZRriQpSjH>
+X-ME-Received: <xmr:OP0hZyGSaiwfF5By7zy3slCRN1McIcKH3ajgPsDP21394BK6zNDtp5bKiv2k0Z9ToJsr1fPmAFSJoCE1ZUQxb3AFJyID_uuFtLf7FrdtUpYC9XwRn9wk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtph
+    htthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepshhhrghkvggv
+    lhdrsghuthhtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfsehtohig
+    ihgtphgrnhgurgdrtghomhdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthho
+    pehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
+X-ME-Proxy: <xmx:OP0hZzRK-UFLWotR_AnqbI_z05lZV2vHcyL8FAJV8YJF2F7aB-bA2A>
+    <xmx:OP0hZ3wUA8xlrimZ43sL_migq40i3LVSR_VUjDvFUd5thpdIYr4H3Q>
+    <xmx:OP0hZx697YzqrbLObBWk5mkQeg73zTP5x8rAqpmX4w9YIHcxQ1CpYQ>
+    <xmx:OP0hZ0wLaGckwYeCnwzJqr6pjRHQ9l5EZHOID-nTZvU-ciucdcWu1g>
+    <xmx:Ov0hZ_dfhe-XlDjv4t7ubqIDO0KvvvYnR_EBCE0iGQ3Bu_bq-uEnp1U0>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 30 Oct 2024 05:32:39 -0400 (EDT)
+Message-ID: <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
+Date: Wed, 30 Oct 2024 10:32:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1YcY2prUiOaQc/DzX1hSmAMC44paT8tlFT1vWf8RqP1Za1aRz82oi+g3TmbM8cAHExrcOHWJ27IPXgGamBORV8XuA7dxC3DCsnoH88CBxAPTGZkxOo69pwtAk5No7fhW5HTpNooN6wiyi9ZG0w9O7bWlQdJix+cmILic9ArDm9Y/0Vv7h0NmFJmJpHkmzdYrejRE5ccpMb8rxHeMkaYOLpPaBq2A+S9scHUZuxIL+JX9ik9n3Ny58doxkvSNsbY6GINBziXlzYhsx28MVTDM2H7EqH7QWX1zibxzCo9SUi/oCmllPvydEBQ4Zpe+aUfD74o3XjBPSupE3dJo4BNV6NLEo/cvX8watFoBcr0TLPRzJtPdKyYCkOYhRI19ZM7J+6JffdVuhhnZfRHz+arjgygd6zIaVpRAqs9jnP+QssRgnbq5MebmgWmKH3+dfM0lzEajdFLWfKS44onWLsM7Jw5VKUVl8VgTHEbuJB8F6k/XKLPgtybqwARs6pokrEKKTFEjZcdoj2kUOFtol+N1zeMUvF77oEAI+DTAKX9f7FKZGCXDnqSpuIV9/WEcl66jivLuKdV4gMthfmb5XhOh+OjvDa1Eq+8TtI0FEGZHdIPN8n30wA7d6FvldaKDii2W
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c4112ca-3575-48bb-1e4b-08dcf8b71463
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 07:47:18.4291
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oO8fFaWUUG00nqKP3MJk7W/8RefkGZr2MctCozxYxIqgPWQIBFae6CJf1b5rLB7bPQ+nWv4PFBqWJ0zHHwOO3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB7707
-X-Proofpoint-GUID: 2950k_v_V8LQDoXKPkDm3QzTNV1eYvF2
-X-Proofpoint-ORIG-GUID: 2950k_v_V8LQDoXKPkDm3QzTNV1eYvF2
-X-Sony-Outbound-GUID: 2950k_v_V8LQDoXKPkDm3QzTNV1eYvF2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-30_06,2024-10-30_01,2024-09-30_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Shakeel Butt
+ <shakeel.butt@linux.dev>, linux-fsdevel@vger.kernel.org,
+ josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org,
+ kernel-team@meta.com
+References: <20241014182228.1941246-1-joannelkoong@gmail.com>
+ <CAJfpeguS-xSjmH2ATTp-BmtTgT0iTk2_4EMtnoxPPcepP=BCpQ@mail.gmail.com>
+ <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
+ <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com>
+ <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
+ <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
+ <t7vafpbp4onjdmcqb5xu6ypdz72gsbggpupbwgaxhrvzrxb3j5@npmymwp2t5a7>
+ <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
+ <CAJnrk1aB3MehpTx6OM=J_5jgs_Xo+euAZBRGLGB+1HYX66URHQ@mail.gmail.com>
+ <CAJnrk1YFPZ8=7s4m-CP02_416syO+zDLjNSBrYteUqm8ovoHSQ@mail.gmail.com>
+ <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
+ <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
+ <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
+ <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-VW5hbGlnbmVkIGRpcmVjdCB3cml0ZXMgYXJlIGludmFsaWQgYW5kIHNob3VsZCByZXR1cm4gYW4g
-ZXJyb3INCndpdGhvdXQgbWFraW5nIGFueSBjaGFuZ2VzLCByYXRoZXIgdGhhbiBleHRlbmRpbmcg
-LT52YWxpZF9zaXplDQphbmQgdGhlbiByZXR1cm5pbmcgYW4gZXJyb3IuIFRoZXJlZm9yZSwgYWxp
-Z25tZW50IGNoZWNraW5nIGlzDQpyZXF1aXJlZCBiZWZvcmUgZXh0ZW5kaW5nIC0+dmFsaWRfc2l6
-ZS4NCg0KRml4ZXM6IDExYTM0N2ZiNmNlZiAoImV4ZmF0OiBjaGFuZ2UgdG8gZ2V0IGZpbGUgc2l6
-ZSBmcm9tIERhdGFMZW5ndGgiKQ0KU2lnbmVkLW9mZi1ieTogWXVlemhhbmcgTW8gPFl1ZXpoYW5n
-Lk1vQHNvbnkuY29tPg0KQ28tZGV2ZWxvcGVkLWJ5OiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBr
-ZXJuZWwub3JnPg0KU2lnbmVkLW9mZi1ieTogTmFtamFlIEplb24gPGxpbmtpbmplb25Aa2VybmVs
-Lm9yZz4NCi0tLQ0KIGZzL2V4ZmF0L2ZpbGUuYyB8IDYgKysrKysrDQogMSBmaWxlIGNoYW5nZWQs
-IDYgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZmlsZS5jIGIvZnMvZXhm
-YXQvZmlsZS5jDQppbmRleCBhMjVkN2ViNzg5ZjQuLmEwMGYzZjFiMmNiYiAxMDA2NDQNCi0tLSBh
-L2ZzL2V4ZmF0L2ZpbGUuYw0KKysrIGIvZnMvZXhmYXQvZmlsZS5jDQpAQCAtNTg0LDYgKzU4NCwx
-MiBAQCBzdGF0aWMgc3NpemVfdCBleGZhdF9maWxlX3dyaXRlX2l0ZXIoc3RydWN0IGtpb2NiICpp
-b2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKml0ZXIpDQogCWlmIChyZXQgPCAwKQ0KIAkJZ290byB1bmxv
-Y2s7DQogDQorCWlmICgoaW9jYi0+a2lfZmxhZ3MgJiBJT0NCX0RJUkVDVCkgJiYNCisJICAgIEVY
-RkFUX0JMS19PRkZTRVQocG9zIHwgcmV0LCBpbm9kZS0+aV9zYikpIHsNCisJCXJldCA9IC1FSU5W
-QUw7DQorCQlnb3RvIHVubG9jazsNCisJfQ0KKw0KIAlpZiAocG9zID4gdmFsaWRfc2l6ZSkgew0K
-IAkJcmV0ID0gZXhmYXRfZXh0ZW5kX3ZhbGlkX3NpemUoZmlsZSwgcG9zKTsNCiAJCWlmIChyZXQg
-PCAwICYmIHJldCAhPSAtRU5PU1BDKSB7DQotLSANCjIuNDMuMA0KDQo=
+
+
+On 10/28/24 22:58, Joanne Koong wrote:
+> On Fri, Oct 25, 2024 at 3:40 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>>> Same here, I need to look some more into the compaction / page
+>>> migration paths. I'm planning to do this early next week and will
+>>> report back with what I find.
+>>>
+>>
+>> These are my notes so far:
+>>
+>> * We hit the folio_wait_writeback() path when callers call
+>> migrate_pages() with mode MIGRATE_SYNC
+>>    ... -> migrate_pages() -> migrate_pages_sync() ->
+>> migrate_pages_batch() -> migrate_folio_unmap() ->
+>> folio_wait_writeback()
+>>
+>> * These are the places where we call migrate_pages():
+>> 1) demote_folio_list()
+>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
+>>
+>> 2) __damon_pa_migrate_folio_list()
+>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
+>>
+>> 3) migrate_misplaced_folio()
+>> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
+>>
+>> 4) do_move_pages_to_node()
+>> Can ignore this. This calls migrate_pages() in MIGRATE_SYNC mode but
+>> this path is only invoked by the move_pages() syscall. It's fine to
+>> wait on writeback for the move_pages() syscall since the user would
+>> have to deliberately invoke this on the fuse server for this to apply
+>> to the server's fuse folios
+>>
+>> 5)  migrate_to_node()
+>> Can ignore this for the same reason as in 4. This path is only invoked
+>> by the migrate_pages() syscall.
+>>
+>> 6) do_mbind()
+>> Can ignore this for the same reason as 4 and 5. This path is only
+>> invoked by the mbind() syscall.
+>>
+>> 7) soft_offline_in_use_page()
+>> Can skip soft offlining fuse folios (eg folios with the
+>> AS_NO_WRITEBACK_WAIT mapping flag set).
+>> The path for this is soft_offline_page() -> soft_offline_in_use_page()
+>> -> migrate_pages(). soft_offline_page() only invokes this for in-use
+>> pages in a well-defined state (see ret value of get_hwpoison_page()).
+>> My understanding of soft offlining pages is that it's a mitigation
+>> strategy for handling pages that are experiencing errors but are not
+>> yet completely unusable, and its main purpose is to prevent future
+>> issues. It seems fine to skip this for fuse folios.
+>>
+>> 8) do_migrate_range()
+>> 9) compact_zone()
+>> 10) migrate_longterm_unpinnable_folios()
+>> 11) __alloc_contig_migrate_range()
+>>
+>> 8 to 11 needs more investigation / thinking about. I don't see a good
+>> way around these tbh. I think we have to operate under the assumption
+>> that the fuse server running is malicious or benevolently but
+>> incorrectly written and could possibly never complete writeback. So we
+>> definitely can't wait on these but it also doesn't seem like we can
+>> skip waiting on these, especially for the case where the server uses
+>> spliced pages, nor does it seem like we can just fail these with
+>> -EBUSY or something.
+
+I see some code paths with -EAGAIN in migration. Could you explain why
+we can't just fail migration for fuse write-back pages?
+
+>>
+> 
+> I'm still not seeing a good way around this.
+> 
+> What about this then? We add a new fuse sysctl called something like
+> "/proc/sys/fs/fuse/writeback_optimization_timeout" where if the sys
+> admin sets this, then it opts into optimizing writeback to be as fast
+> as possible (eg skipping the page copies) and if the server doesn't
+> fulfill the writeback by the set timeout value, then the connection is
+> aborted.
+> 
+> Alternatively, we could also repurpose
+> /proc/sys/fs/fuse/max_request_timeout from the request timeout
+> patchset [1] but I like the additional flexibility and explicitness
+> having the "writeback_optimization_timeout" sysctl gives.
+> 
+> Any thoughts on this?
+
+
+I'm a bit worried that we might lock up the system until time out is
+reached - not ideal. Especially as timeouts are in minutes now. But
+even a slightly stuttering video system not be great. I think we
+should give users/admin the choice then, if they prefer slow page
+copies or fast, but possibly shortly unresponsive system.
+
+
+Thank,
+Bernd
 
