@@ -1,104 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-33301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DB49B6E9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:16:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028D69B6F9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB1128306E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 21:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABFED1F22006
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 21:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9505215C59;
-	Wed, 30 Oct 2024 21:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452541D0E0D;
+	Wed, 30 Oct 2024 21:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zox8MNWg"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k5YZxKoV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF931BD9D3;
-	Wed, 30 Oct 2024 21:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601131BD9E8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 21:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322955; cv=none; b=mtG+0V0MUZnByMkm5r5VV8c5Z1njwrJkpUxGrjaysym7VookjXNpeWk6lh2NPparik32zx35nrkXqnStxA68RlLX3Grc68wGzX9ljXo+43RwWhdBB0dHTTYSyVhoSHoWa3qxgk8Kktye/nVMGRuxGKfJJVWQRJzCpgHqttOZL38=
+	t=1730325396; cv=none; b=SwRXITQdbD+HfaBzfN6A7njQxNVN1bO4vG0lGrLYOUgBD0rf0mP7ZCoJyj6BY3xTk96T7mUNWtEgDjsaxRgL0W9f//QIq1lV5Ol0D0uVsCk3MInSkI/uShxqswEk15O3kQ/umynPQes3zZaGNTaYTiMj2wfOoATZ+7HIc27b7js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322955; c=relaxed/simple;
-	bh=b4DMBOXHUsK1o4aXcsj1mIAeGTxICrtIEl/X4S9aMmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHDrbOg1zgxwklBlhjKOOpWYXUdW53D94rbLrqLLqYzNc4crSgTdDrYc5JdGqNB4qZyq3CKpzvSkJzZYfEJd1byRhRrEhWo/e51Utvql2lAkMb9HmivOaeWKTJS/evZG590idyT+e1xV15JPuLAEHa+J27XphONGUppgeUu2xbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zox8MNWg; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xf0KN5GvpzlgMW3;
-	Wed, 30 Oct 2024 21:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1730322949; x=1732914950; bh=b4DMBOXHUsK1o4aXcsj1mIAe
-	GTxICrtIEl/X4S9aMmM=; b=zox8MNWgMID5qKcjZdijr0DcLrVbE5phS46vpu24
-	wrFxrcFoUCjZa2CDHmNRcfuOEvopYpTxUde44SD4j7i5fjKckz2WLPCYhxf96jYt
-	uEs30sP8COFtc0ARm32FHRAGZeHmslxs5iW3+2aJs8fTPL+mwdS5ROGgpDsgkYyd
-	flVIYEV1A1/kLmVGL2GYC/9Ur4dqBcVHn3gxyPdUjiuWDdGFwRC48zT8oShGWppD
-	F7f2l73E52JY4WcXgOKj5lpGAOglQ4k/2+r8uABoqeE8J4/GNyUQvcDI1a2UXZOh
-	iQnyofz45pN9aPpmgSsxjLqATqaSJ0eCNuHT6JgMPgawEQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Khb2TIHA1NgX; Wed, 30 Oct 2024 21:15:49 +0000 (UTC)
-Received: from [IPV6:2a00:79e0:2e14:8:dff5:f005:4483:ce42] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xf0KH031BzlgMVx;
-	Wed, 30 Oct 2024 21:15:46 +0000 (UTC)
-Message-ID: <4ee729b7-a3c5-493c-bcda-feb3e9aab5ff@acm.org>
-Date: Wed, 30 Oct 2024 14:15:45 -0700
+	s=arc-20240116; t=1730325396; c=relaxed/simple;
+	bh=tR4/EotUivc/7jiagpx680zYfAgzMwXc0OjSM7VvPQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i52sdq75ouYdPfIO0SjnLVLTBzGzufM2N4sklKexU7GgTo93G3emE6F6bdR8l3xx/K4bJO0MTlVEl+HLyw+HIDuoZx6A7n5RapXR5FnQLfB5MYudPhScClFVTig1oEaNTJhT6rthHD5OKYrXing3WvmELGJksZvYDre5KwY4lTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k5YZxKoV; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 30 Oct 2024 14:56:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730325390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8VUlfA7tM1TVV6uo3if3+lGHhFVUrXdrLThYsxW6fYg=;
+	b=k5YZxKoVHwq3/JXsudymmK6M5Z46e94WXOQ+cqfAhNFbUl7vl97TSqgjoHzApfq29wHm5c
+	yT3kz4bNAaL2Z9OO/Ea2AjLw0ZtQD9OoKefL2vZApowcK/nvwUKs4IKnI8rVvytIYnUAAR
+	D2k9MIOpAsExKAvG8mKGj2v2+XUkjgQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org, 
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
+ internal rb tree
+Message-ID: <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
+References: <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
+ <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
+ <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
+ <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
+ <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
+ <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
+ <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm>
+ <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
+ <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm>
+ <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 4/9] block: allow ability to limit partition write
- hints
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, joshi.k@samsung.com, javier.gonz@samsung.com
-References: <20241029151922.459139-1-kbusch@meta.com>
- <20241029151922.459139-5-kbusch@meta.com>
- <a1ff3560-4072-4ecf-8501-e353b1c98bf0@acm.org>
- <20241030044658.GA32344@lst.de>
- <ZyKTACiLUsCEcJ-R@kbusch-mbp.dhcp.thefacebook.com>
- <7f63ba9b-856b-4ca5-b864-de1b8f87d658@acm.org>
- <ZyKY_xdxcM2aSMow@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ZyKY_xdxcM2aSMow@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/30/24 1:37 PM, Keith Busch wrote:
-> But if by "not atomic", if you're just saying we need a barrier on the
-> bitmap_copy, like smp_mb__after_atomic(), then yeah, I see that's
-> probably appropriate here.
+On Wed, Oct 30, 2024 at 10:35:47AM GMT, Joanne Koong wrote:
+> On Wed, Oct 30, 2024 at 10:27 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+> >
+> >
+> > Hmm, if tmp pages can be compacted, isn't that a problem for splice?
+> > I.e. I don't understand what the difference between tmp page and
+> > write-back page for migration.
+> >
+> 
+> That's a great question! I have no idea how compaction works for pages
+> being used in splice. Shakeel, do you know the answer to this?
+> 
 
-smp_mb__after_atomic() follows atomic operations. bitmap_copy() does not
-use any kind of atomic operation.
+Sorry for the late response. I still have to go through other unanswered
+questions but let me answer this one quickly. From the way the tmp pages
+are allocated, it does not seem like they are movable and thus are not
+target for migration/compaction.
 
-I'm wondering whether introducing a variant of bitmap_copy() that uses
-WRITE_ONCE() or smp_store_release() would be appropriate.
+The page with the writeback bit set is actually just a user memory page
+cache which is moveable but due to, at the moment, under writeback it
+temporarily becomes unmovable to not cause corruption.
 
-Thanks,
-
-Bart.
-
-
+Shakeel
 
