@@ -1,512 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-33247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3F79B639E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 14:03:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5682F9B63D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 14:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E631C20D94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 13:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EA52826C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 13:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E12B1E907A;
-	Wed, 30 Oct 2024 13:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A104315F;
+	Wed, 30 Oct 2024 13:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsKHhAEj"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F60hM910"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB9879D2;
-	Wed, 30 Oct 2024 13:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730293410; cv=none; b=B/wY20X2cjZ70T/79dQEEHjtHmWbKyk0Wg5KEvCFagqfudo5LoMSLm7txxEZHb43YC4/m/nCr1QhCH2pMlqwmFvHFr7I+Q6SgVYf3QXMtReT9xreWSa9f/HZ3/vLilvKPJho5D/8vxRTB0NBtYCFg1LonskrdxWRWI3vljCmJ9k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730293410; c=relaxed/simple;
-	bh=4JJuFUF260AEDPKZcNLDY2ITdnV9Hn1qJCgacNVcXI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KuoQSSt7x+HN16s/GTZNaDbqwnP9Fp3ioGCcBWZcuildXasySM95/S+gq8HBNrZKWEYSk/Ff+0r5R6Nx0KBk3N2KQK7UCqQIUSlO7oU01hlTGBJXIdI1QwE8/b8fVOrxOUnavqj/sgK08uJR6H8nrLFwbkuY84xqjVBzIH/ANdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsKHhAEj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D94FC4CEE3;
-	Wed, 30 Oct 2024 13:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730293410;
-	bh=4JJuFUF260AEDPKZcNLDY2ITdnV9Hn1qJCgacNVcXI0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jsKHhAEj174ZBAEjCPNWFn6LRcIizGpvb0Letj4m3aOyZxCrxX8rqSggxiZKKNURn
-	 TgJVSwQf51t3X3ncQ4qbUM6IMnFVdrjxtIoeAQPK1QiIhVkzyNdtWg58tsnbS9OUJI
-	 jzObHEA0sDoRfivOYy1lSOyDt4TkMhtdEXaoAQtPIQxJSflER9aur+P4m+KDKVeILv
-	 fALxkd+BqeV9xlU7A4HbWB1cb0T1QjkybbIvZ2asZ65i/wAt6GhmdWkl7UFSXIY+bE
-	 3dEdRbk5znzwbA1xjUBdAoNnUYGMAnutUxbXYZrv814igekFWKRCQEgU0850+XMmr4
-	 SQMk/ee5ZTuUQ==
-Message-ID: <5b8318018dd316f618eea059f610579a205c05db.camel@kernel.org>
-Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
- fanotify fastpath handler
-From: Jeff Layton <jlayton@kernel.org>
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
- ast@kernel.org,  daniel@iogearbox.net, martin.lau@linux.dev,
- viro@zeniv.linux.org.uk,  brauner@kernel.org, jack@suse.cz,
- kpsingh@kernel.org, mattbobrowski@google.com,  amir73il@gmail.com,
- repnop@google.com, josef@toxicpanda.com
-Date: Wed, 30 Oct 2024 09:03:27 -0400
-In-Reply-To: <20241029231244.2834368-3-song@kernel.org>
-References: <20241029231244.2834368-1-song@kernel.org>
-	 <20241029231244.2834368-3-song@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AD33FBA7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 13:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730294119; cv=fail; b=EbM5vWzQ70fOWQ7Z20+C+5xtzvdWhtMJ+RIeO5OYA0TeWJuojqpjjDNWmMEVBTSFDSHXrhCC2FiLunaIjQZoLLGa3IEFkxyCUTA6yGbDOUMVNYVLpgptodO8/iwn4hnpZMTyGESzYJn43cwyswLhFFuYPiFukwfqHhYjgtD2V4M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730294119; c=relaxed/simple;
+	bh=1kRqoXvNbbHNJ8MNvWV8e7wQ6fPp7oHheHgTxIXqZ5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Ley5xIEJOAJrMc04guhN+HbhBpR6pHQa8miFbqwSX1ubREqHTvNkD5Nuq46kgZ8b8ObzYr0PIHDRcRbR4ggeZ1g+RcOluVcptfittxnCoOynPeSEC+m3QC7ESVcu+GmqjiLwH2z//a/pNR66ePQs2FJzDVlZRv5XNgwMsQ0hjiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F60hM910; arc=fail smtp.client-ip=40.107.93.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OnQTwBi5FIFta9srISgukNjmoT6WdPGjypfNNiKoIGjJSw4oPA1MoA2NKlulafZ0U20h6JHCVvrqX+EdOGhSdNV+ZlStvN2NMxjcXNAoK0zpUyQqUlNb9sfk5wI8XwTjZ+b08ZU5s12+/SEemFdfSJrg4cG4FGH8NiqIBipJRFaJIJ91R56OCFrOb8igh13wa1byYqRtG36zzVAMfDxHUSDN4LOww5PpQaEEmuV+HowtKyjxLrSfBWAJwJeX9Ibi8DHUi0XZ6hyHvinasOLdWkd7P/k3ocZXDkUoS2ixpRULiQeEK2THh1/5sYpN963XDlBy9Pj2Rg02DRpQZJC8Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=POrGTYKQRm65vfWj+wdxs85fC8o8a64BzC5jvIKu99s=;
+ b=P2ZrbdcNBUhXoMaH/5WvaNOvxy4mH1D2Dsm2VQB9K17UPlF2IMj7uTHBwPo7CM2s5uwCYGbGW8P7bg4ui+DalcM2SeAF12LW8Iw6ACZAFbzsFZXYBYM9S9AF1s9QR5OLLWNmOWOGySN9UEBdT6gAxk8UUJ3gI13DMYAsGt3sB+PnVZTG6WtZiUYzmA0Yufkn5u+NrbFn1nSA5zLqHGGB4yPtr1MaXdlD+hG/C8UZy8jo+TIFuPEEghHU837MZusf0ORv+gbjdC56KeWhQ0N3AYzQzC2YfOQexztTlOXC67ZTcKZ1EGj/g2tp0iS38YROoHFf+rGnl8+axmQ8DiXhUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=POrGTYKQRm65vfWj+wdxs85fC8o8a64BzC5jvIKu99s=;
+ b=F60hM9101v6FnN/FLiWTrvJVMMWqmSUcGZo1WcQwaXycwCO+mp8HJJMBhFWPSluV5qri3ysNiWVy4gNe+HYGew7EIGMaoZ9UW8Mbb4qRePknGYVGZ0pnazKxwEPFR4GX1X0OV+d14WG+0vMH/pId8MXQCRiVl/0TAV1XCwKe7fHcflFhCiz7OwRapH2m1mDYZHtaL7hpslxYUFFAeXKWl09baSK9Rxl6XYjVK75g4GEROFyg4AG727WJ6HBDk3Hz6rn1MB+PkP3Sx7n/fP1JZ5iBI9FEAr0NwrXHFifTUmgWTgIU840LNHtozE6SWh62khACr5BQLG467xT93WvFRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA3PR12MB9105.namprd12.prod.outlook.com (2603:10b6:806:382::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Wed, 30 Oct
+ 2024 13:15:14 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Wed, 30 Oct 2024
+ 13:15:14 +0000
+Date: Wed, 30 Oct 2024 10:15:13 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
+Cc: Nicolin Chen <nicolinc@nvidia.com>
+Subject: xa_cmpxchg and XA_ZERO_ENTRY?
+Message-ID: <20241030131513.GF6956@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-ClientProxiedBy: BN9P223CA0029.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:408:10b::34) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB9105:EE_
+X-MS-Office365-Filtering-Correlation-Id: eecb6edf-f497-4ae7-1a3d-08dcf8e4e3ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?X3QCdhRCrf6t687cvdgBvhPJ/IBRxb6JVZKzPI8SiI+Jq3RL3yIg31LNiCln?=
+ =?us-ascii?Q?7Q9y+SXG492/Q+Rt+ZDPQcPz0JbTGrutkIRBue5xKkK6kHqkBAlAg7Osk6Wv?=
+ =?us-ascii?Q?DKGR4/TyQcxNL+fKhP/x1fW1VoQDlsYp4VBK+A47Y13XB+HAuTv01ZZWpGbo?=
+ =?us-ascii?Q?BRrI0mgCU77lCTdaShFu8AhdTQTaFe8InNrsawLvCk/8aqhdIIAhfJ3dG4px?=
+ =?us-ascii?Q?b1VkLf4qRuCVkyPcVjJZfc2j+2k/DkfGZdpQshaVZUqOhvYEtPLbT/q7WDl0?=
+ =?us-ascii?Q?oYFNUo2Mc46fNq0ndg8JAOKivV2bLd15K2Ek8OxQ4ocMwDJ513AIinnvthMh?=
+ =?us-ascii?Q?hJ/AqtiaojINHogjmsFZKAoNwMLfgGuStNB886Fdo6I1ERBf9d7xLNK+Myeq?=
+ =?us-ascii?Q?xxTI6U1fDJwl4PxeEhsTwk+oNfeOevPrHFthj3zuW99Kf6iTGnZGMhJKLLB1?=
+ =?us-ascii?Q?kBWiX8eclQ8f0EEXz0DVDi4nVFNt1FTFx5PYF36Ok3wyIirnzumeoHSz5P8U?=
+ =?us-ascii?Q?KDnKZdUgGGf0KeYFqv53DjO4UNHiUVb0zsZO3B/p3p8SdQYenmSAnPWX2Ux1?=
+ =?us-ascii?Q?PuLGRCAMqHXugFmFmpEL2iUnU4SWqhcjvx8ZXC7Tobs/LeMgi/IwZeESzYKx?=
+ =?us-ascii?Q?dSb9CS9bJfygZTSr5wiI3TTTksTJxo47fn3xRi3ndrUeWhmJAn282MRYznBR?=
+ =?us-ascii?Q?ZxA8XzDgJdoo7Mx7ESbB+Hw5SoG1hzTpuIccSTnjMqSw/J2lcaN0oXEufdb1?=
+ =?us-ascii?Q?jQadAYh/SNCrVNDChJ6RnKtyVp7j1llFV9waAD0I1WSVL+lCWtcM5901EmIU?=
+ =?us-ascii?Q?7Bke0SOc8Y2rkpcZboIWZosAEQPH3gBL0f+rkoZwGmnnSP1hJIsNcJs1AOYw?=
+ =?us-ascii?Q?bEzcvEA/E2Wt6eL7snzM7dnaDxn7/CLG8PEnVEIklKG+iUqy4XdUhLoJTbcx?=
+ =?us-ascii?Q?M4OVDPFmoAFruZOfA+d2J9YAZOBvIF1D5m+R6X8GeeX1JthA24xrcARxbqzp?=
+ =?us-ascii?Q?4X4ljIS6cL4bVLNjhMhPYQ/L5KlCg8jMR2kE/uytK7FRsuA5rd0pKhttU7rP?=
+ =?us-ascii?Q?1vd4RnbDUkaVqFIyFVmIcsRulLdeLHbbRxBHYHwkKWnJJEshVGdHSkmUZI36?=
+ =?us-ascii?Q?75/sO/TJaiMy23pfJucSc803rJOSZK6Vg3a/zeYE8BQ+dW7TjeMffVTvB8kO?=
+ =?us-ascii?Q?eDafZZPkbgjQFX3NgqbOXVyeoUKsZkqqg03N6MBuWw1SKHCr1uQ8iCJSJLx/?=
+ =?us-ascii?Q?4raKasSvpG+a8EgTRrdCGhoRs73m3n3ttUNzfP5lh3mMFL7v5flS7M/oPGcO?=
+ =?us-ascii?Q?uL8tHJKW0POd6/APC4Wn6s8h?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?a9yPyHJqonHebhCfYEbPy9Gz7RTLmei1W5OANu+o2Jm+EtJ8TyM42bJIqxCz?=
+ =?us-ascii?Q?IQRAkM29SHqEtsuUv4dEk2Fn9+jD728fcuIGHQxDRcLxf52GC4/PVP/ar7kZ?=
+ =?us-ascii?Q?d+wQqhKO7hPeW1HqF9QTBdXAZoqQ3ff6zZ+eaqTVq+PsJLeHaxbx8bn4NrVb?=
+ =?us-ascii?Q?ljlSD2S3oHFxKGZqZntOUdqhTYh2rBkJsMUi7F2aKcKU+HaqEtH6NsDPcFUn?=
+ =?us-ascii?Q?RLRHMwSGfYSQkaNxveOEvnZd1dKr7MuIkQcsdYN800GCTYk12YIk9MsEquqd?=
+ =?us-ascii?Q?B1a53euub3uyigAfXFsW8NQCI8AHHAUWCT0ZXAhy8nFz57e3lKQQtQDyhi7u?=
+ =?us-ascii?Q?WxMx4mQpBNhU67DG8YDvJc5u+3TqICdOX+btC7Qw0caIdPTPTSOXIxQdwW7Z?=
+ =?us-ascii?Q?hVL4WkZ8dDTaJdpJEheWbpge2AEJ2sPWHRotYr3WUOfM8DbtzLOtFSbQejV5?=
+ =?us-ascii?Q?VMs/bZ1tkdRFUSsL4JlQtMD4SgkZTiCMscQD6+rdUJBeBhmBodMg7+9ISpVu?=
+ =?us-ascii?Q?e9/4+T5YxW6SQO2vcDpDaNBXXERDeIvHUKuQ40OJcfKc8S6iMzUY2n+NL5TK?=
+ =?us-ascii?Q?iQQXBhO0zeFb+AaTW1DWwh8Qe5kUgttAt1Kkx7FRtbBlD/CFh1sAOya0raN2?=
+ =?us-ascii?Q?1HxZWU4cTUPAcOKQUhmstvU5C2JYP4USlcSDGofPK1IaIln/WxYZri+lWr9N?=
+ =?us-ascii?Q?D/JWlE48X0mRMiuu/DCybZoAIKkrQJEYGIzwV6IQX9KK9wdBIrmr/KjdV3Fa?=
+ =?us-ascii?Q?kwDDOsFpPckdQbe1775NvQMxQTj7K4LbWWuCTgFH1wXba2v1+adYdrxK2kem?=
+ =?us-ascii?Q?Ee0FanlQUoIDt+n6MPi82nL2Ve9vHFkh112DgYrI1vR0gGL6ZJJsDxZUZbg6?=
+ =?us-ascii?Q?Yk5bQxYwt1UB5B+UDxa3J0VBjfl2lZQSXSB5gYZBHUd6C162cRdgX1v+2gjR?=
+ =?us-ascii?Q?9whU8Cb5yqip+EUSI/HGSbbZssUTUow/tDv9v9jl8uZ3HqGG2ZbMGcFoceXM?=
+ =?us-ascii?Q?vxoamji8KCJW/VJrMxReFFS6c+7L6oprpoKmCnrSDN5e6HqPLt3bhoft8oST?=
+ =?us-ascii?Q?BvfJrFW0bjhflvQ4M2ubR2WvoOTi5wlZYRYYpAbcWk7Ogo81fQfnnsB5gDsQ?=
+ =?us-ascii?Q?txAF6pn3rewWHEO1QRSe5RYmQPsnuBaMrXVLObyb1FQgusUwgXcXql0ar2aU?=
+ =?us-ascii?Q?KHBqqFxUNO6JuQtqaP1yL2Yby12wQY75mIhNsXiFk5gvKuu/VkXbey6t05MO?=
+ =?us-ascii?Q?qVchZGCh+/CRUlfLwcLkxtX+bfMs9VInwqgH3MTnWS4/NHHocjLQ7esWAGfh?=
+ =?us-ascii?Q?lbEJLOz1jiB+fBBs/h5sauxAjDP9vgcswYiVH3fCHiBMfbKAvs7MEm4l9HYY?=
+ =?us-ascii?Q?b6kbbZypdXOmdJxG/UL51RNLoCMKRaneFvCQGLORbMtu83q+F3fScLIYA8wt?=
+ =?us-ascii?Q?zcG8A+M1Zf8C0/aSxNWZiNhofUNCCIhRCIiXyS0B70hgakBk9KzP4utOoxDh?=
+ =?us-ascii?Q?j15bBCgg4EaCHOKx5+qrpGTxhd+uvMr7vRX0boxOJlPLjsaILKlHpQTNbJEh?=
+ =?us-ascii?Q?s+fB5KO1Q6biKFgBLiqpO5eyjLxB7OnOteoDurll?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eecb6edf-f497-4ae7-1a3d-08dcf8e4e3ee
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 13:15:14.1589
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H54SLGItdTIMweke6I2+R+4Lfq/t/GnvL3uu+DgFaJx5MKs2rJwY2DSsXGwX9uYW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9105
 
-On Tue, 2024-10-29 at 16:12 -0700, Song Liu wrote:
-> This fastpath handler filters out events for files with certain prefixes.
-> To use it:
->=20
->   [root] insmod fastpath-mod.ko    # This requires root.
->=20
->   [user] ./fastpath-user /tmp a,b,c &    # Root is not needed
->   [user] touch /tmp/aa   # a is in the prefix list (a,b,c), no events
->   [user] touch /tmp/xx   # x is not in the prefix list, generates events
->=20
->   Accessing file xx   # this is the output from fastpath_user
->=20
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  MAINTAINERS                      |   1 +
->  samples/Kconfig                  |  20 ++++-
->  samples/Makefile                 |   2 +-
->  samples/fanotify/.gitignore      |   1 +
->  samples/fanotify/Makefile        |   5 +-
->  samples/fanotify/fastpath-mod.c  | 138 +++++++++++++++++++++++++++++++
->  samples/fanotify/fastpath-user.c |  90 ++++++++++++++++++++
->  7 files changed, 254 insertions(+), 3 deletions(-)
->  create mode 100644 samples/fanotify/fastpath-mod.c
->  create mode 100644 samples/fanotify/fastpath-user.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7ad507f49324..8939a48b2d99 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8658,6 +8658,7 @@ S:	Maintained
->  F:	fs/notify/fanotify/
->  F:	include/linux/fanotify.h
->  F:	include/uapi/linux/fanotify.h
-> +F:	samples/fanotify/
-> =20
->  FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
->  M:	Linus Walleij <linus.walleij@linaro.org>
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index b288d9991d27..b0d3dff48bb0 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
->  	  with it.
->  	  See also Documentation/driver-api/connector.rst
-> =20
-> +config SAMPLE_FANOTIFY
-> +	bool "Build fanotify monitoring sample"
-> +	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-> +	help
-> +	  When enabled, this builds samples for fanotify.
-> +	  There multiple samples for fanotify. Please see the
-> +	  following configs for more details of these
-> +	  samples.
-> +
->  config SAMPLE_FANOTIFY_ERROR
->  	bool "Build fanotify error monitoring sample"
-> -	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-> +	depends on SAMPLE_FANOTIFY
->  	help
->  	  When enabled, this builds an example code that uses the
->  	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
->  	  errors.
->  	  See also Documentation/admin-guide/filesystem-monitoring.rst.
-> =20
-> +config SAMPLE_FANOTIFY_FASTPATH
-> +	tristate "Build fanotify fastpath sample"
-> +	depends on SAMPLE_FANOTIFY && m
-> +	help
-> +	  When enabled, this builds kernel module that contains a
-> +	  fanotify fastpath handler.
-> +	  The fastpath handler filters out certain filename
-> +	  prefixes for the fanotify user.
-> +
->  config SAMPLE_HIDRAW
->  	bool "hidraw sample"
->  	depends on CC_CAN_LINK && HEADERS_INSTALL
-> diff --git a/samples/Makefile b/samples/Makefile
-> index b85fa64390c5..108360972626 100644
-> --- a/samples/Makefile
-> +++ b/samples/Makefile
-> @@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) +=3D binderfs
->  subdir-$(CONFIG_SAMPLE_CGROUP) +=3D cgroup
->  obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
->  obj-$(CONFIG_SAMPLE_CONNECTOR)		+=3D connector/
-> -obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+=3D fanotify/
-> +obj-$(CONFIG_SAMPLE_FANOTIFY)		+=3D fanotify/
->  subdir-$(CONFIG_SAMPLE_HIDRAW)		+=3D hidraw
->  obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+=3D hw_breakpoint/
->  obj-$(CONFIG_SAMPLE_KDB)		+=3D kdb/
-> diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
-> index d74593e8b2de..306e1ddec4e0 100644
-> --- a/samples/fanotify/.gitignore
-> +++ b/samples/fanotify/.gitignore
-> @@ -1 +1,2 @@
->  fs-monitor
-> +fastpath-user
-> diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
-> index e20db1bdde3b..f5bbd7380104 100644
-> --- a/samples/fanotify/Makefile
-> +++ b/samples/fanotify/Makefile
-> @@ -1,5 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -userprogs-always-y +=3D fs-monitor
-> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) +=3D fs-monitor
-> =20
->  userccflags +=3D -I usr/include -Wall
-> =20
-> +obj-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) +=3D fastpath-mod.o
-> +
-> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) +=3D fastpath-user
-> diff --git a/samples/fanotify/fastpath-mod.c b/samples/fanotify/fastpath-=
-mod.c
-> new file mode 100644
-> index 000000000000..06c4b42ff114
-> --- /dev/null
-> +++ b/samples/fanotify/fastpath-mod.c
-> @@ -0,0 +1,138 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <linux/fsnotify.h>
-> +#include <linux/fanotify.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/string.h>
-> +
-> +struct prefix_item {
-> +	const char *prefix;
-> +	struct list_head list;
-> +};
-> +
-> +struct sample_fp_data {
-> +	/*
-> +	 * str_table contains all the prefixes to ignore. For example,
-> +	 * "prefix1\0prefix2\0prefix3"
-> +	 */
-> +	char *str_table;
-> +
-> +	/* item->prefix points to different prefixes in the str_table. */
-> +	struct list_head item_list;
-> +};
-> +
-> +static int sample_fp_handler(struct fsnotify_group *group,
-> +			     struct fanotify_fastpath_hook *fp_hook,
-> +			     struct fanotify_fastpath_event *fp_event)
-> +{
-> +	const struct qstr *file_name =3D fp_event->file_name;
-> +	struct sample_fp_data *fp_data;
-> +	struct prefix_item *item;
-> +
-> +	if (!file_name)
-> +		return FAN_FP_RET_SEND_TO_USERSPACE;
-> +	fp_data =3D fp_hook->data;
-> +
-> +	list_for_each_entry(item, &fp_data->item_list, list) {
-> +		if (strstr(file_name->name, item->prefix) =3D=3D (char *)file_name->na=
-me)
-> +			return FAN_FP_RET_SKIP_EVENT;
-> +	}
-> +
-> +	return FAN_FP_RET_SEND_TO_USERSPACE;
-> +}
+Hi Matthew,
 
-The sample is a little underwhelming and everyone hates string parsing
-in the kernel ;). It'd be nice to see a more real-world use-case for
-this.
+Nicolin pointed this out and I was wondering what is the right thing.
 
-Could this be used to implement subtree filtering? I guess you'd have
-to walk back up the directory tree and see whether it had a given
-ancestor?
+For instance this:
 
-> +
-> +static int add_item(struct sample_fp_data *fp_data, const char *prev)
-> +{
-> +	struct prefix_item *item;
-> +
-> +	item =3D kzalloc(sizeof(*item), GFP_KERNEL);
-> +	if (!item)
-> +		return -ENOMEM;
-> +	item->prefix =3D prev;
-> +	list_add_tail(&item->list, &fp_data->item_list);
-> +	return 0;
-> +}
-> +
-> +static void free_sample_fp_data(struct sample_fp_data *fp_data)
-> +{
-> +	struct prefix_item *item, *tmp;
-> +
-> +	list_for_each_entry_safe(item, tmp, &fp_data->item_list, list) {
-> +		list_del_init(&item->list);
-> +		kfree(item);
-> +	}
-> +	kfree(fp_data->str_table);
-> +	kfree(fp_data);
-> +}
-> +
-> +static int sample_fp_init(struct fanotify_fastpath_hook *fp_hook, const =
-char *args)
-> +{
-> +	struct sample_fp_data *fp_data =3D kzalloc(sizeof(struct sample_fp_data=
-), GFP_KERNEL);
-> +	char *p, *prev;
-> +	int ret;
-> +
-> +	if (!fp_data)
-> +		return -ENOMEM;
-> +
-> +	/* Make a copy of the list of prefix to ignore */
-> +	fp_data->str_table =3D kstrndup(args, FAN_FP_ARGS_MAX, GFP_KERNEL);
-> +	if (!fp_data->str_table) {
-> +		ret =3D -ENOMEM;
-> +		goto err_out;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&fp_data->item_list);
-> +	prev =3D fp_data->str_table;
-> +	p =3D fp_data->str_table;
-> +
-> +	/* Update the list replace ',' with '\n'*/
-> +	while ((p =3D strchr(p, ',')) !=3D NULL) {
-> +		*p =3D '\0';
-> +		ret =3D add_item(fp_data, prev);
-> +		if (ret)
-> +			goto err_out;
-> +		p =3D p + 1;
-> +		prev =3D p;
-> +	}
-> +
-> +	ret =3D add_item(fp_data, prev);
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	fp_hook->data =3D fp_data;
-> +
-> +	return 0;
-> +
-> +err_out:
-> +	free_sample_fp_data(fp_data);
-> +	return ret;
-> +}
-> +
-> +static void sample_fp_free(struct fanotify_fastpath_hook *fp_hook)
-> +{
-> +	free_sample_fp_data(fp_hook->data);
-> +}
-> +
-> +static struct fanotify_fastpath_ops fan_fp_ignore_a_ops =3D {
-> +	.fp_handler =3D sample_fp_handler,
-> +	.fp_init =3D sample_fp_init,
-> +	.fp_free =3D sample_fp_free,
-> +	.name =3D "ignore-prefix",
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static int __init fanotify_fastpath_sample_init(void)
-> +{
-> +	return fanotify_fastpath_register(&fan_fp_ignore_a_ops);
-> +}
-> +static void __exit fanotify_fastpath_sample_exit(void)
-> +{
-> +	fanotify_fastpath_unregister(&fan_fp_ignore_a_ops);
-> +}
-> +
-> +module_init(fanotify_fastpath_sample_init);
-> +module_exit(fanotify_fastpath_sample_exit);
-> +
-> +MODULE_AUTHOR("Song Liu");
-> +MODULE_DESCRIPTION("Example fanotify fastpath handler");
-> +MODULE_LICENSE("GPL");
-> diff --git a/samples/fanotify/fastpath-user.c b/samples/fanotify/fastpath=
--user.c
-> new file mode 100644
-> index 000000000000..f301c4e0d21a
-> --- /dev/null
-> +++ b/samples/fanotify/fastpath-user.c
-> @@ -0,0 +1,90 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define _GNU_SOURCE
-> +#include <err.h>
-> +#include <fcntl.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/fanotify.h>
-> +#include <unistd.h>
-> +#include <sys/ioctl.h>
-> +
-> +static int total_event_cnt;
-> +
-> +static void handle_notifications(char *buffer, int len)
-> +{
-> +	struct fanotify_event_metadata *event =3D
-> +		(struct fanotify_event_metadata *) buffer;
-> +	struct fanotify_event_info_header *info;
-> +	struct fanotify_event_info_fid *fid;
-> +	struct file_handle *handle;
-> +	char *name;
-> +	int off;
-> +
-> +	for (; FAN_EVENT_OK(event, len); event =3D FAN_EVENT_NEXT(event, len)) =
+	xa_init(&xa);
+	ret = xa_reserve(&xa, 1, GFP_KERNEL);
+	printk("xa_reserve() = %d\n", ret);
+	old = xa_cmpxchg(&xa, 1, NULL, &xa, GFP_KERNEL);
+	printk("xa_cmpxchg(NULL) = %llx\n", (u64)old);
+	old = xa_load(&xa, 1);
+	printk("xa_load() = %llx\n", (u64)old);
+
+Prints out:
+
+xa_reserve() = 0
+xa_cmpxchg(NULL) = 0
+xa_load() = 0
+
+Meaning the cmpxchg failed because NULL is not stored in the entry due
+to the xa_reserve(). So far so good.. So lets correct the code to:
+
+	old = xa_cmpxchg(&xa, 1, XA_ZERO_ENTRY, &xa, GFP_KERNEL);
+
+Then:
+
+xa_reserve() = 0
+xa_cmpxchg(XA_ZERO_ENTRY) = 0
+xa_load() = ffffa969400d3e68
+
+Ok now it succeed but returned NULL.. (noting NULL != old)
+
+However, if we make an error and omit the xa_reserve step():
+
+xa_cmpxchg(XA_ZERO_ENTRY) = 0
+xa_load() = 0
+
+Now it failed and still returned NULL..
+
+So, you can't detect a failure from cmpxchg if old is NULL/ZERO? This
+doesn't seem right.
+
+At least I've already fallen in this trap:
+
+static int ucma_destroy_private_ctx(struct ucma_context *ctx)
 {
-> +		for (off =3D sizeof(*event) ; off < event->event_len;
-> +		     off +=3D info->len) {
-> +			info =3D (struct fanotify_event_info_header *)
-> +				((char *) event + off);
-> +			switch (info->info_type) {
-> +			case FAN_EVENT_INFO_TYPE_DFID_NAME:
-> +				fid =3D (struct fanotify_event_info_fid *) info;
-> +				handle =3D (struct file_handle *)&fid->handle;
-> +				name =3D (char *)handle + sizeof(*handle) + handle->handle_bytes;
-> +
-> +				printf("Accessing file %s\n", name);
-> +				total_event_cnt++;
-> +				break;
-> +			default:
-> +				break;
-> +			}
-> +		}
-> +	}
-> +}
-> +
-> +int main(int argc, char **argv)
-> +{
-> +	struct fanotify_fastpath_args args =3D {
-> +		.name =3D "ignore-prefix",
-> +		.version =3D 1,
-> +		.flags =3D 0,
-> +	};
-> +	char buffer[BUFSIZ];
-> +	int fd;
-> +
-> +	if (argc < 3) {
-> +		printf("Usage\n"
-> +		       "\t %s <path to monitor> <prefix to ignore>\n",
-> +			argv[0]);
-> +		return 1;
-> +	}
-> +
-> +	args.init_args =3D (__u64)argv[2];
-> +	args.init_args_len =3D strlen(argv[2]) + 1;
-> +
-> +	fd =3D fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR=
-_FID, O_RDONLY);
-> +	if (fd < 0)
-> +		errx(1, "fanotify_init");
-> +
-> +	if (fanotify_mark(fd, FAN_MARK_ADD,
-> +			  FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD,
-> +			  AT_FDCWD, argv[1])) {
-> +		errx(1, "fanotify_mark");
-> +	}
-> +
-> +	if (ioctl(fd, FAN_IOC_ADD_FP, &args))
-> +		errx(1, "ioctl");
-> +
-> +	while (total_event_cnt < 10) {
-> +		int n =3D read(fd, buffer, BUFSIZ);
-> +
-> +		if (n < 0)
-> +			errx(1, "read");
-> +
-> +		handle_notifications(buffer, n);
-> +	}
-> +
-> +	ioctl(fd, FAN_IOC_DEL_FP);
-> +	close(fd);
-> +
-> +	return 0;
-> +}
+        WARN_ON(xa_cmpxchg(&ctx_table, ctx->id, XA_ZERO_ENTRY, NULL,
+                           GFP_KERNEL) != NULL);
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Which actually doesn't detect cmpxchg failure..
+
+So what is the right thing here?
+
+The general purpose of code like the above is to just validate that
+the xa has not been corrupted, that the index we are storing to has
+been reserved. Maybe we can't sleep or something.
+
+Thanks,
+Jason
 
