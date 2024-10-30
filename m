@@ -1,97 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-33244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DF89B5EE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 10:32:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6EF9B6138
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 12:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA191F2236A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 09:32:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 414DD1F228C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 11:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928FD1E1C19;
-	Wed, 30 Oct 2024 09:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F141E47D0;
+	Wed, 30 Oct 2024 11:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="HixTjREt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V0Rns9Bg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZlYbgbWI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8A21E1A2B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 09:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47661E3DD8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 11:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730280767; cv=none; b=CsJMz1V7eej31WVRMa2hKw59oxFaaFwR4Hslspo/wUeCm1fGBUeln0Uswi/LMetDGcdP/cVlc+lVw9VMAvZS3HrjVGPYPH9RyCbRx4SQ+1/UNrRduFZX/oRz6prBjWvz2ZtrEeecSHQLMknLfXXfdzzsOEFMdnp44sFf7ulv8Kg=
+	t=1730287047; cv=none; b=YNc5EWAjIA01vjYzCdOKBJpHDLZtb24xD3dzpYFHfHAWTxOUFnUzI2loab0wvc7sn2rCIA+C8/by2VqZTasngfmGLhLKH+dsWX9Z212cieMVB0waLc/2a7LgWVakwbrc9sAe2zSz7oX9P2vW3bLbymi3ynwx8zXUtvx2CPI+xeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730280767; c=relaxed/simple;
-	bh=0XW8/n8mpIcw22IVfFg6EFK75cqIw4TmCNA+rf1Yj8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OLk+pN0mhu7CcioLnAlGzxWY2+iyQJTdt9Qoa0Ns5wKS7yQlH+SxEXQiDEEmVpsbFVpOBtQ2hiCzel3WXrsVdJ2wq0y2hp8o31LkUjIrjqt47oiK3QzvtbgHBvxzUXO0EFU/ic8fg0+XwPQLTD/Iv2aQGI6HLd8N83cA1FI4PQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=HixTjREt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V0Rns9Bg; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B005711400F0;
-	Wed, 30 Oct 2024 05:32:42 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Wed, 30 Oct 2024 05:32:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1730280762;
-	 x=1730367162; bh=vP47Fi19GSqOURIFyHr3BgCH6OFkEfDLoamJ4JOvUm4=; b=
-	HixTjREtC+k1ucSRHUmEFo4cmyhIT9/dw0JpbD1qG7gZHdvirOTWTRNGN9kDJX0A
-	ZT+g/n6g/pBJf49p1XrvOHgAOjBDHxKW3k8P/S31Ibq4JJVGN0KR5AIfEXhLyCDG
-	cPstjK8NNtSKXU6QzkWxmIRobHEYs98NucVSFhxr3qE+dSHyethdJ6tnj1J/oNrz
-	cohSPO9cGfSxj+0rPyLEX4iL9QQqxP5owagKXeW4uqbS77NKfxU7aol3Qmr500Le
-	rkCdvRebPvd6g3pE5scPKGWNnSKra8jkxt83n85O9gLwiuibdm+lUPZzyg8mgj/0
-	IhQnqCtcCpttJq0BDnfg9A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730280762; x=
-	1730367162; bh=vP47Fi19GSqOURIFyHr3BgCH6OFkEfDLoamJ4JOvUm4=; b=V
-	0Rns9BgI1Q4hrq70oytQoOK8A1SGb2tSLjDeGZd5OTcr26AOrmPuJM4uEMAx1lWj
-	Ni9+tBv9KANYCCzwyTIt4ikeLGwl0qW4Db7JKQGw6B3fah36lIKTxMqYbWun7bJm
-	2JEw5WpWF4HIlgyPnDjaH5YsecklDz8W/0x77Y0aevzM7G6RmXcUFAwNMWTuhgtw
-	3D9Q10UjVCbUKigp87BkrhgzTnZIbcBKBAVHvEXPjvgDVXrbyeGYq4625hFwY0Pi
-	y0reeSshZhsrQGBksM5s5ddsIKzS+2RYRmac2Oy5q4+k/ezjJR81vUEn9cqrbGFu
-	ZHc1CJDUHXsbkOB9TpZnQ==
-X-ME-Sender: <xms:OP0hZ6i4wr2pU_H0LdeABsspaO4xGG0xU5_5paObq_W--A7C-XSGqg>
-    <xme:OP0hZ7CrpfBuS5FJbpBiB__LdRpb0F3b8ypg3iIwDTYv0GOQcoVSrzZwCTVqjLuFF
-    RuuP_dZRriQpSjH>
-X-ME-Received: <xmr:OP0hZyGSaiwfF5By7zy3slCRN1McIcKH3ajgPsDP21394BK6zNDtp5bKiv2k0Z9ToJsr1fPmAFSJoCE1ZUQxb3AFJyID_uuFtLf7FrdtUpYC9XwRn9wk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
-    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtph
-    htthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepshhhrghkvggv
-    lhdrsghuthhtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfsehtohig
-    ihgtphgrnhgurgdrtghomhdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthho
-    pehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:OP0hZzRK-UFLWotR_AnqbI_z05lZV2vHcyL8FAJV8YJF2F7aB-bA2A>
-    <xmx:OP0hZ3wUA8xlrimZ43sL_migq40i3LVSR_VUjDvFUd5thpdIYr4H3Q>
-    <xmx:OP0hZx697YzqrbLObBWk5mkQeg73zTP5x8rAqpmX4w9YIHcxQ1CpYQ>
-    <xmx:OP0hZ0wLaGckwYeCnwzJqr6pjRHQ9l5EZHOID-nTZvU-ciucdcWu1g>
-    <xmx:Ov0hZ_dfhe-XlDjv4t7ubqIDO0KvvvYnR_EBCE0iGQ3Bu_bq-uEnp1U0>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 05:32:39 -0400 (EDT)
-Message-ID: <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
-Date: Wed, 30 Oct 2024 10:32:38 +0100
+	s=arc-20240116; t=1730287047; c=relaxed/simple;
+	bh=LEiuK3PXV7/9ll9DLAh0obqeJBco8ngklVptQpr21ZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=lz46VpEbYgJiJ7u13wrqQyj8B+/hOMl99nmDI9UIgOfukUaZr/DWJcOMhnQJNEt6O+UXj3Ewdm3XkS1CT6l4nlxZ32+hE9A9uCqXlu0bxU6Px0DFmz8flUR7Aqt4iwVONQFwE1GZfQx1gPJkn6epPKcpGpSKereYanVXO0ZLdrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZlYbgbWI; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241030111717epoutp03b824a4f8febb4209ba0c701afc066062~DNuSwQXjT1975719757epoutp03g
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 11:17:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241030111717epoutp03b824a4f8febb4209ba0c701afc066062~DNuSwQXjT1975719757epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730287037;
+	bh=OzObsVJKazVgcN/sx4nDHJ63Yo33iupzEMEKYB9KAo8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZlYbgbWIFcDAS1lhBQZkC3kI49kLlv8+s8ulBNrNrt3Kg4GXRvATsZreTbyLOZbez
+	 ww2gLN7jum2vjjKy+PC35HKlrYfDnRCmRolVnB6eWAPxevjpeDjGXCINoF1rfuhLfE
+	 UhpLuJ731723XJDZZa6dpmw6cUnxP6VW7wVnu22c=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241030111716epcas5p3a994daa648427069bbd00eb1f4650c90~DNuR0GVe80206702067epcas5p3k;
+	Wed, 30 Oct 2024 11:17:16 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Xdl2g3ykXz4x9Pw; Wed, 30 Oct
+	2024 11:17:15 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A5.E1.18935.BB512276; Wed, 30 Oct 2024 20:17:15 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241030111714epcas5p43427b28045729bf2a3e8b5f8eb89721a~DNuPyYXi50427004270epcas5p4u;
+	Wed, 30 Oct 2024 11:17:14 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241030111714epsmtrp2bd805bfc1033e94261a0f82b9b75f1a6~DNuPxiVnR2729027290epsmtrp2v;
+	Wed, 30 Oct 2024 11:17:14 +0000 (GMT)
+X-AuditID: b6c32a50-a99ff700000049f7-45-672215bb2293
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	27.46.18937.AB512276; Wed, 30 Oct 2024 20:17:14 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241030111712epsmtip2062d4a5833ae6808d34c5cd6b34aedde~DNuNfow6l1561015610epsmtip2I;
+	Wed, 30 Oct 2024 11:17:11 +0000 (GMT)
+Message-ID: <457b635b-a3b5-48bb-b2ac-b129c5d3d30d@samsung.com>
+Date: Wed, 30 Oct 2024 16:47:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,131 +77,72 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>,
- Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Shakeel Butt
- <shakeel.butt@linux.dev>, linux-fsdevel@vger.kernel.org,
- josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org,
- kernel-team@meta.com
-References: <20241014182228.1941246-1-joannelkoong@gmail.com>
- <CAJfpeguS-xSjmH2ATTp-BmtTgT0iTk2_4EMtnoxPPcepP=BCpQ@mail.gmail.com>
- <tgjnsph6wck3otk2zss326rj6ko2vftlc3r3phznswygbn3dtg@lxn7u3ojszzk>
- <CAJfpegvd-5h5Fx4=s-UwmbusA9_iLmGkk7+s9buhYQFsN76QNw@mail.gmail.com>
- <g5qhetudluazn6phri4kxxa3dgg6diuffh53dbhkxmjixzpk24@slojbhmjb55d>
- <CAJfpegvUJazUFEa_z_ev7BQGDoam+bFYOmKFPRkuFwaWjUnRJQ@mail.gmail.com>
- <t7vafpbp4onjdmcqb5xu6ypdz72gsbggpupbwgaxhrvzrxb3j5@npmymwp2t5a7>
- <CAJfpegsqNzk5nft5_4dgJkQ3=z_EG_-D+At+NqkxTpiaS5ML+A@mail.gmail.com>
- <CAJnrk1aB3MehpTx6OM=J_5jgs_Xo+euAZBRGLGB+1HYX66URHQ@mail.gmail.com>
- <CAJnrk1YFPZ8=7s4m-CP02_416syO+zDLjNSBrYteUqm8ovoHSQ@mail.gmail.com>
- <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
- <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
- <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
- <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 04/10] fs, iov_iter: define meta io descriptor
+To: Christoph Hellwig <hch@lst.de>, Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
+	asml.silence@gmail.com, anuj1072538@gmail.com, brauner@kernel.org,
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20241030050355.GA32598@lst.de>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCJsWRmVeSWpSXmKPExsWy7bCmhu5uUaV0g7t3pS0+fv3NYtE04S+z
+	xZxV2xgtVt/tZ7N4ffgTo8XNAzuZLFauPspk8a71HIvF7OnNTBaTDl1jtNh7S9tiz96TLBbz
+	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
+	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAV1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGh
+	rqGlhbmSQl5ibqqtkotPgK5bZg7QO0oKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpSc
+	ApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IzeaY3sBR+YKh7PfsDYwLiKqYuRk0NCwETixftd
+	jF2MXBxCAnsYJaZvvsMC4XxilFh66yMrnDP/wAMWmJbV706wQyR2MkrcPjmdCcJ5yygx+fp3
+	sCpeATuJ7f9/gS1hEVCVePzrKDtEXFDi5MwnYDWiAvIS92/NAIsLC7hKtHw8zwhiiwDZpx5c
+	ZAYZyizwhUni8N1WsCJmAXGJW0/mAw3l4GAT0JS4MLkUJMwpoCPxfstqRogSeYntb+eA9UoI
+	vOGQuPvwJSvE2S4Sh5omMULYwhKvjm9hh7ClJD6/28sGYWdLPHgE82aNxI7NfVC99hINf26w
+	guxlBtq7fpc+xC4+id7fT8DOkRDglehoE4KoVpS4N+kpVKe4xMMZS6BsD4mH+++CbRISuM8o
+	0fXQegKjwiykUJmF5MlZSL6ZhbB4ASPLKkap1ILi3PTUZNMCQ9281HJ4jCfn525iBCd3rYAd
+	jKs3/NU7xMjEwXiIUYKDWUmE1zJIMV2INyWxsiq1KD++qDQntfgQoykwfiYyS4km5wPzS15J
+	vKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxSDUwRt9qXHYoPOcigFOlg
+	/DLkW8KiuYtMbM7lhrDfym1ynF7bXvaH/9HTjUWCExvKXa5eEueeycPJ6alSxPCL5WScYe+G
+	Jwu8E+rEKh5cZntW4l/XpXrjkt71ssVR0f//SmXoPmToPrX6NUtStPee01nb3ttH3nipKO5R
+	zv5Thcfz4ZwutrOz+X/mKTmu+uVqxs4+4dKnFVwZrGlFYba5rrvTLlzYubO8cv0N048/dFyL
+	fswK6ZLbVH5xxaepfl2rJt/dEPdwO/PG3tmbAg+6Ha8ValPyeuPyoMtmRqn2x+WHru95/+6g
+	7O2HVXqK804z35viuZJj3w6hteUC67ZPVfKVFN+47ddGtUWhB7ZeZGJSYinOSDTUYi4qTgQA
+	erqqjncEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7bCSvO4uUaV0g+f3JSw+fv3NYtE04S+z
+	xZxV2xgtVt/tZ7N4ffgTo8XNAzuZLFauPspk8a71HIvF7OnNTBaTDl1jtNh7S9tiz96TLBbz
+	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
+	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAVxSXTUpqTmZZapG+XQJXRu+0RvaCD0wVj2c/YGxg
+	XMXUxcjJISFgIrH63Qn2LkYuDiGB7YwSq9c0skEkxCWar/1gh7CFJVb+ew5V9JpRYvfrHSwg
+	CV4BO4nt/3+BTWIRUJV4/OsoO0RcUOLkzCdgNaIC8hL3b80AiwsLuEq0fDzPCGKLANmnHlxk
+	BhnKLPCFSWLlw1nMEBvuMkqcOPIZ7AxmoDNuPZkPtIGDg01AU+LC5FKQMKeAjsT7LasZIUrM
+	JLq2dkHZ8hLb385hnsAoNAvJHbOQTJqFpGUWkpYFjCyrGEVTC4pz03OTCwz1ihNzi0vz0vWS
+	83M3MYIjWCtoB+Oy9X/1DjEycTAeYpTgYFYS4bUMUkwX4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+	zquc05kiJJCeWJKanZpakFoEk2Xi4JRqYHJW2FSz7yzz7ba52RtkT/SvFc+OWyv6+6rVm6c3
+	D72PP3Iy0ELoyrUdS7OsuTSWu/Yt0dh50oU3ZVlrrvweeXd/7UmhZ+/4hfMn7v6s4Drv79eJ
+	TA4v5m39OqXBeWejg9q9V7MvfRGX9+AIs2vmexD5UfG5pNsCrqw8G7tlb5cvYAgp63N/mXqi
+	2Tj4brS/CIdhn5Ypg6jk4cd6MiV7mblY3PQiLiWdfvRlx4opVa7vM6Ot5jFkds6SfPJP2vzf
+	3diok8lVXGH2bgzKs6ITVVv2Nxt/YL99yEdWPKexeO1FMxmLdepWn8JzyzUqncr+PQ9cxFUo
+	LKSw2NFQ8UKAyNU/DwO/vPv7uWy75o7FSizFGYmGWsxFxYkASVkO2U8DAAA=
+X-CMS-MailID: 20241030111714epcas5p43427b28045729bf2a3e8b5f8eb89721a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241029163220epcas5p2207d4c54b8c4811e973fca601fd7e3f5
+References: <20241029162402.21400-1-anuj20.g@samsung.com>
+	<CGME20241029163220epcas5p2207d4c54b8c4811e973fca601fd7e3f5@epcas5p2.samsung.com>
+	<20241029162402.21400-5-anuj20.g@samsung.com>
+	<20241030050355.GA32598@lst.de>
 
-
-
-On 10/28/24 22:58, Joanne Koong wrote:
-> On Fri, Oct 25, 2024 at 3:40 PM Joanne Koong <joannelkoong@gmail.com> wrote:
->>
->>> Same here, I need to look some more into the compaction / page
->>> migration paths. I'm planning to do this early next week and will
->>> report back with what I find.
->>>
->>
->> These are my notes so far:
->>
->> * We hit the folio_wait_writeback() path when callers call
->> migrate_pages() with mode MIGRATE_SYNC
->>    ... -> migrate_pages() -> migrate_pages_sync() ->
->> migrate_pages_batch() -> migrate_folio_unmap() ->
->> folio_wait_writeback()
->>
->> * These are the places where we call migrate_pages():
->> 1) demote_folio_list()
->> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>
->> 2) __damon_pa_migrate_folio_list()
->> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>
->> 3) migrate_misplaced_folio()
->> Can ignore this. It calls migrate_pages() in MIGRATE_ASYNC mode
->>
->> 4) do_move_pages_to_node()
->> Can ignore this. This calls migrate_pages() in MIGRATE_SYNC mode but
->> this path is only invoked by the move_pages() syscall. It's fine to
->> wait on writeback for the move_pages() syscall since the user would
->> have to deliberately invoke this on the fuse server for this to apply
->> to the server's fuse folios
->>
->> 5)  migrate_to_node()
->> Can ignore this for the same reason as in 4. This path is only invoked
->> by the migrate_pages() syscall.
->>
->> 6) do_mbind()
->> Can ignore this for the same reason as 4 and 5. This path is only
->> invoked by the mbind() syscall.
->>
->> 7) soft_offline_in_use_page()
->> Can skip soft offlining fuse folios (eg folios with the
->> AS_NO_WRITEBACK_WAIT mapping flag set).
->> The path for this is soft_offline_page() -> soft_offline_in_use_page()
->> -> migrate_pages(). soft_offline_page() only invokes this for in-use
->> pages in a well-defined state (see ret value of get_hwpoison_page()).
->> My understanding of soft offlining pages is that it's a mitigation
->> strategy for handling pages that are experiencing errors but are not
->> yet completely unusable, and its main purpose is to prevent future
->> issues. It seems fine to skip this for fuse folios.
->>
->> 8) do_migrate_range()
->> 9) compact_zone()
->> 10) migrate_longterm_unpinnable_folios()
->> 11) __alloc_contig_migrate_range()
->>
->> 8 to 11 needs more investigation / thinking about. I don't see a good
->> way around these tbh. I think we have to operate under the assumption
->> that the fuse server running is malicious or benevolently but
->> incorrectly written and could possibly never complete writeback. So we
->> definitely can't wait on these but it also doesn't seem like we can
->> skip waiting on these, especially for the case where the server uses
->> spliced pages, nor does it seem like we can just fail these with
->> -EBUSY or something.
-
-I see some code paths with -EAGAIN in migration. Could you explain why
-we can't just fail migration for fuse write-back pages?
-
->>
+On 10/30/2024 10:33 AM, Christoph Hellwig wrote:
+> .. but these aren't.  Leading to warnings like:
 > 
-> I'm still not seeing a good way around this.
-> 
-> What about this then? We add a new fuse sysctl called something like
-> "/proc/sys/fs/fuse/writeback_optimization_timeout" where if the sys
-> admin sets this, then it opts into optimizing writeback to be as fast
-> as possible (eg skipping the page copies) and if the server doesn't
-> fulfill the writeback by the set timeout value, then the connection is
-> aborted.
-> 
-> Alternatively, we could also repurpose
-> /proc/sys/fs/fuse/max_request_timeout from the request timeout
-> patchset [1] but I like the additional flexibility and explicitness
-> having the "writeback_optimization_timeout" sysctl gives.
-> 
-> Any thoughts on this?
+>   CHECK   block/bio-integrity.c
+> block/bio-integrity.c:371:17: warning: restricted uio_meta_flags_t degrades to integer
 
-
-I'm a bit worried that we might lock up the system until time out is
-reached - not ideal. Especially as timeouts are in minutes now. But
-even a slightly stuttering video system not be great. I think we
-should give users/admin the choice then, if they prefer slow page
-copies or fast, but possibly shortly unresponsive system.
-
-
-Thank,
-Bernd
+For some reasons this does not show up in my setup.
+But that only means setup needs to be fixed. Apart from dropping the 
+__bitwise.
 
