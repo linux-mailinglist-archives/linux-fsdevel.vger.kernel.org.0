@@ -1,163 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-33307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DE59B6FCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:18:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96439B6FCD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B06B284B96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:18:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACE81F2235E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB871C3F06;
-	Wed, 30 Oct 2024 22:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6EC1E9065;
+	Wed, 30 Oct 2024 22:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="tMlpxp0y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HkpgAaJG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Em372dfz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395A21765B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6AA1BD9E7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326665; cv=none; b=G2XxSJVv81fEybBOFbZRT0C5orAWDZ8bibS28qe1YX3k89mMoq4ZWZUpP6Qj7qL6nJbe4VdbcqkMGuF2550+42UwQ+nQCQxPLs3H4wgNQhjBM57BvB2v1QyGY9lbJz0FIEpOBKPJ+zTlm66py1FQQoH57Hvfnkoa1hvndMKomZs=
+	t=1730326720; cv=none; b=Zns8oFLEoB7RrreApD6Y+E5nT3XNUp0qcQbi9wlg+fQqrc91vKXnJJPIe61pDk8ktxBf2aCHiPtfVVxgS8tGTYWSgwU1uV2nwYzXTl11TmXLPzdpVFPi7U6We67vwwPYEl8JSo6Bg1jkD6gk0l1zSIR6kWdfhi8qeyUTqwGjNTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326665; c=relaxed/simple;
-	bh=ayxDNTgxmoDKWQg0/YQ+Fz8efYHxeHFZOeplpSao7cY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTyxqPnb2qD6/zSebpLi116CD/oqqCOAY2AFHfGHoAZi2HyBGBam/CHGSIM1XcMQUs6gmhc/d7SDWlTyq7Duu+ltJ0E3epID11o1828m/qaZbapjt0588Yfe8UB5GQSS4iPoN0sfOiGJOVeBYs4aW6c9UCjlPq/++pyGapq8C2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=tMlpxp0y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HkpgAaJG; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 2AF34114018D;
-	Wed, 30 Oct 2024 18:17:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 30 Oct 2024 18:17:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1730326661;
-	 x=1730413061; bh=f2eeGGIhfQ+o3+Vs5R+YZ3pcGBYA0Jz/O5mq++nI8uY=; b=
-	tMlpxp0yw0rFA8YwKsWbtd3T3yNnxh8oKrdzj6aPP3FccZMfEGTOVVXchvzRBT7h
-	pGnEIRwEwANQkiZnwecHmSSDpgEflvYk1anoZRzpeOO4x88zUuHua2qFf3CDayFw
-	6yPFOY5xkit0AkYf2JEeLkZ2vlskgUvq6CAPOiKtpPCvoHGGp+udlQzrL3xIIKxV
-	LgIGO+XyLN6ZTVMh1ZE8vTPPpzblrNkzP5Z1lpT+CrOV65Pht0gv4PYnoPYfkP9g
-	XbQdX+1ACvkgMKvstOfvzYqFxIa7+QkTorkJYhO1OrIiyNZgmPgyohvqfqjhKR6i
-	GbQ46ktw+iTAaWMTmJ6BgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730326661; x=
-	1730413061; bh=f2eeGGIhfQ+o3+Vs5R+YZ3pcGBYA0Jz/O5mq++nI8uY=; b=H
-	kpgAaJGdGfbnDN0mItiSQOjvgwyohp7TQvuxsxvsMKBSv+XFzu9WWuK+PzYV96e5
-	W8reEBvmnQP54iLWJcshiJKnwZQ65PQCRGgX9JpWxLqiWyCWCcH7m0QW3DH/SZ7e
-	egVPzxlK3neW/qICIUjxxXem9vTTCYhwbscTQjuVLLWlatlI2+Zw/Cq4BLM1TSNM
-	KRwQ0ZyjQvU/2iHChAgylfOcddxmmzQ2dIOrfu3OeZpOxL6od+CXO5M37ijP6zpn
-	ZWRuycrxJ5Qg8h8tjpIGwwTHlWrc7FlNyhSDUEGExHGQFLxbu4DzEX/ScQrZ30MJ
-	EkhYAUFrBc55fIc/U453g==
-X-ME-Sender: <xms:g7AiZw9jvJ_eOx3nMdsYaP7UeytVscflSRmxlANxecEhY9e-tKvzxg>
-    <xme:g7AiZ4vD_9_3M5385hfltBpxzoAXAYes-5tQ6LqvGt-MBJe9V33fXf5a-TzjM1npj
-    1zppgyeUYKb_2OT>
-X-ME-Received: <xmr:g7AiZ2B8Ge_igI3hT2TbC-G1QapwJWvnuiZcPOBAkky6Yvu7FkMMbI3X6i8w9eD03T4aFezlrzxvB60zmtxe6RTeGVQmB88XrSoYL6wHbo_mfkBYOQd8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgudehkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
-    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduvedu
-    veelgeelffffkedukeegveelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
-    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepshhhrghkvggvlhdrsghuthhtsehlihhnuhigrdguvghvpdhr
-    tghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohep
-    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvg
-    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhoshgvfhesthho
-    gihitghprghnuggrrdgtohhmpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthht
-    ohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
-X-ME-Proxy: <xmx:g7AiZweh--BEpjMnVBpHeqMDqY7pQDe2sTCktv8_iKzHDbKw112HdA>
-    <xmx:g7AiZ1Oeh54kSEZnX59afh0pHwKLcSBPkeSQIdPRgqYk6_JGfol_BA>
-    <xmx:g7AiZ6mXZ8diII9ijFF0LzUBu81bqlGXMMTDC1isH1Op19T02fhMrA>
-    <xmx:g7AiZ3v6xslCmGew8iLWP4VxPhTjmTfz3gzpGgMf5-VnW3l39OzkGA>
-    <xmx:hbAiZ4oRZ8s9lWcZzMY7aaQaRnf8nJTo3vN8ii0JOku09MKy7nYGRVjF>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 18:17:37 -0400 (EDT)
-Message-ID: <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
-Date: Wed, 30 Oct 2024 23:17:36 +0100
+	s=arc-20240116; t=1730326720; c=relaxed/simple;
+	bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IR799GXUEQW1+OHuJrQojtaRwVD/JB1B52/+gCVNBIzf+tkZIYgXh3H54y8BjD/Rzmwnjdn0eIYLmHC4tuiwPE6CuWdqcXRnzQN6SOjhDcwbLms404eqcppsf03lC6eB049KwHwj548w5AyWi/4BMMtPVq0SuDqG+rXYppWreII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Em372dfz; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so49435e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 15:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730326717; x=1730931517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
+        b=Em372dfz+qC7D98LFYu1bsMVZoA5WwTEi9653N+xQpkFPV9vsLbGyzYrexb1OmcXg3
+         TIaev95dbT70bqBvMPiADH2RfA1rv8PatmBsT1w1v48+gdO7vYcjdaToSRf04ehd6zX9
+         RDgcNlES2otPZBCw6jmQrpMKmxYgYWhz8fc2KuCYZC7wwM9fYYi9XUF4R3hxj3z6Fd5v
+         OOu/+mFyNiSoSqgRBpKhjzkrJRtxslw8F4K8VPbTN83FVoyyDH3zDlZn0vGmZ3f8dFqW
+         N5KpvzIpguV6QvzlUeCD/0UGuyRFJfIYwM8hkvnAIOVM6Z538NVx8jenIs3SmxLYK7/h
+         ubaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730326717; x=1730931517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ATUKPegUcqo8YgRnCQbayM11NO//DrT2d618hoaV2QI=;
+        b=QVrwaFLfJe8iI0I9i/AiaI9svn1ZhfAlwxSkO5XHuxA7QKbTARbgLsw33HF4Je7eSx
+         JElf5Sq2xYXUDznVjRu1/0WRk4LH+aFByeC0oppfKHpTOEi0W3vShTPcbjKz1bZWiaqd
+         +fRUEVITcZs/kD9iVosA/FbjIle7Oe3mj29dRhI1l0AbTye5VAvpwMmjzAzg+Iv0mKnF
+         mSClvdy5bgHSjav8PtuKoa2y0t9jR8uQ1ztmxTCfGRxHIM7KJ8b7JzRKmKj132Cu7qqW
+         1Pa3p+c64lMxoDe0cu/+BJFIy0ZK9dNIYBeoSdU6047ElzSKpF1YPwlCe/+OXY5BmWZK
+         Kqqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX5Ee4yivuxtV9nzt0sCMJrIqv4l91mv0WQaFKl1X37N97K0hvZ+IRsTkvfRVnsHg0JN/NZIzBihAk5Gsb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk9dncp9bf4GdvgbA/nPr55lmQ+6Z+nOyIbLYM4Ukw2Uo4FDtN
+	mtF5W+Un24DXISzN+S+cCsgQCynHQio/6ZmVMaTtLrBu2yizorgsZwIt/q+uIK4VogLFVIxXNRB
+	VbbqME8Q9BWXylFY3HnA4a+pX2ICarQIhdabs
+X-Gm-Gg: ASbGncs/la/292LYUtDO+pxVIcvlGFPTB1pUmb6k1/SInenIIRGTBEJTyvUGG2RHUmH
+	5Q32JBhM+kUQravUgOil/jgNEEtC2
+X-Google-Smtp-Source: AGHT+IGgBxG9itQN01XAI+q7Fq91bG06PVTigFgOg09wvSOuCtpqcUewGTf7vCbKMXJrOM8i9YvEy2dObrXwLiwtf/4=
+X-Received: by 2002:a05:600c:3acc:b0:426:66a0:6df6 with SMTP id
+ 5b1f17b1804b1-4327bd7e197mr1792485e9.0.1730326716591; Wed, 30 Oct 2024
+ 15:18:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Joanne Koong <joannelkoong@gmail.com>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
- <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
- hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
-References: <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
- <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
- <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
- <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
- <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
- <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
- <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm>
- <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
- <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm>
- <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
- <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240805093245.889357-1-jgowans@amazon.com> <20240805093245.889357-6-jgowans@amazon.com>
+ <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+In-Reply-To: <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Wed, 30 Oct 2024 15:18:25 -0700
+Message-ID: <CAPTztWYZtO6Bfphdrfr6Pbc-v4WAgCG+iCJJK26aS1f1AdNbVw@mail.gmail.com>
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: James Gowans <jgowans@amazon.com>, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Steve Sistare <steven.sistare@oracle.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
+	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
+	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 29, 2024 at 4:06=E2=80=AFPM Elliot Berman <quic_eberman@quicinc=
+.com> wrote:
+>
+> On Mon, Aug 05, 2024 at 11:32:40AM +0200, James Gowans wrote:
+> > Make the file data usable to userspace by adding mmap. That's all that
+> > QEMU needs for guest RAM, so that's all be bother implementing for now.
+> >
+> > When mmaping the file the VMA is marked as PFNMAP to indicate that ther=
+e
+> > are no struct pages for the memory in this VMA. Remap_pfn_range() is
+> > used to actually populate the page tables. All PTEs are pre-faulted int=
+o
+> > the pgtables at mmap time so that the pgtables are usable when this
+> > virtual address range is given to VFIO's MAP_DMA.
+>
+> Thanks for sending this out! I'm going through the series with the
+> intention to see how it might fit within the existing guest_memfd work
+> for pKVM/CoCo/Gunyah.
+>
+> It might've been mentioned in the MM alignment session -- you might be
+> interested to join the guest_memfd bi-weekly call to see how we are
+> overlapping [1].
+>
+> [1]: https://lore.kernel.org/kvm/ae794891-fe69-411a-b82e-6963b594a62a@red=
+hat.com/T/
+>
+> ---
+>
+> Was the decision to pre-fault everything because it was convenient to do
+> or otherwise intentionally different from hugetlb?
+>
 
+It's memory that is placed outside of of page allocator control, or
+even outside of System RAM - VM_PFNMAP only. So you don't have much of
+a choice..
 
-On 10/30/24 22:56, Shakeel Butt wrote:
-> On Wed, Oct 30, 2024 at 10:35:47AM GMT, Joanne Koong wrote:
->> On Wed, Oct 30, 2024 at 10:27 AM Bernd Schubert
->> <bernd.schubert@fastmail.fm> wrote:
->>>
->>>
->>> Hmm, if tmp pages can be compacted, isn't that a problem for splice?
->>> I.e. I don't understand what the difference between tmp page and
->>> write-back page for migration.
->>>
->>
->> That's a great question! I have no idea how compaction works for pages
->> being used in splice. Shakeel, do you know the answer to this?
->>
-> 
-> Sorry for the late response. I still have to go through other unanswered
-> questions but let me answer this one quickly. From the way the tmp pages
-> are allocated, it does not seem like they are movable and thus are not
-> target for migration/compaction.
-> 
-> The page with the writeback bit set is actually just a user memory page
-> cache which is moveable but due to, at the moment, under writeback it
-> temporarily becomes unmovable to not cause corruption.
+In general, for things like guest memory or persistent memory, even if
+struct pages were available, it doesn't seem all that useful to adhere
+to the !MAP_POPULATE standard, why go through any faults to begin
+with?
 
-Thanks a lot for your quick reply Shakeel! (Actually very fast!).
+For guest_memfd: as I understand it, it's folio-based. And this is
+VM_PFNMAP memory without struct pages / folios. So the main task there
+is probably to teach guest_memfd about VM_PFNMAP memory. That would be
+great, since it then ties in guest_memfd with external guest memory.
 
-With that, it confirms what I wrote earlier - removing tmp and ignoring
-fuse writeback pages in migration should not make any difference 
-regarding overall system performance. Unless I miss something,
-more on the contrary as additional memory pressure expensive page
-copying is being removed.
-
-
-Thanks,
-Bernd
+- Frank
 
