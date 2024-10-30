@@ -1,104 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-33309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920EC9B6FDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B949B7006
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571102830A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00775282FE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66460215C5E;
-	Wed, 30 Oct 2024 22:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320B021765D;
+	Wed, 30 Oct 2024 22:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOLGBIAc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHZvzzKb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B089B1BD9EA;
-	Wed, 30 Oct 2024 22:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C6C217640
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730327580; cv=none; b=QbioGjStXfMw2Le+7LPa5YtHCfhU8rNdvj6PhWHQCpbxWXRc/MLkd5H+lat5EZmluwglJZ1dLOOINvPnDHhYyIEgu/gRymMvdAZ6jJjE3r9r530pXVOLftv2YpZtu0zBp0FD3/K9xLtzxxtBqzNczl6s6qDht/LnOWiJJ1Vja1U=
+	t=1730328682; cv=none; b=qGpf9TBFRmmCIZgsvs5l6eq99EHMYQ0YO27YU+FdG2F7QdsTQZpLpDc4nHyUbqWmNfeQQhyy9l2/4Kv/QlSpwklH5ycONs8znZi31n6j1ENQnJFArtnoF9VQtqEYVvCfsOTWYc2dj7rQO3rcpZtNtP0LWAfZFsorqzNZiMoZ88M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730327580; c=relaxed/simple;
-	bh=pG2dV6wbFJ9/N3Eo79eG7sTCZARua6TPwKbzaZm5T8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djjvXDPZUa9jc1MQ/hCfjx9mn5mfoacgiGgMZEYoU+pVwOztOimZwBEMJLZPJPYza5OEnRHm1NUDEFjveiEeR6Mfh+LZnDk18YtOE4i57ySfomEPCalP6rrUuaGsyrwZ/+VeUmI68bKvMCDOdZY9tnAp8bCDnHBeqxNb/2tgWv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOLGBIAc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E300C4CECE;
-	Wed, 30 Oct 2024 22:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730327580;
-	bh=pG2dV6wbFJ9/N3Eo79eG7sTCZARua6TPwKbzaZm5T8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TOLGBIAcEYrCYSFurialDE1/dDbk0s5VsobxcNkWosTwMWsHUtEwV2Dp6K1Bt2xB/
-	 Fr9YO4uhhAZ+bYoWwuhY2pbaLrRSeZCZGIRh48gST8/NSWTSOpVy4vmedCkJGiHmok
-	 evunMKCuBVIHpmHm+FOgsiNNdCqGZnbXnl58AgDLjkC3DkO9NldpetChGi52nPYqxm
-	 O6ZwqatzbxIPcJW8GOiZeuM9otwid4W0Il7PCsaI1J094cFyXVVLrj2x3Yi1K/uHqf
-	 pK8aowBq29IKzesQio0R+lZ1Rty5SsD0ych9kGkC73wmjtsa6CtFfbObGwNhCGncFE
-	 CMtEjbWx7DpbA==
-Date: Wed, 30 Oct 2024 16:32:57 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	joshi.k@samsung.com, javier.gonz@samsung.com, bvanassche@acm.org,
-	Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Message-ID: <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
-References: <ZyEBhOoDHKJs4EEY@kbusch-mbp>
- <20241029155330.GA27856@lst.de>
- <ZyEL4FOBMr4H8DGM@kbusch-mbp>
- <20241030045526.GA32385@lst.de>
- <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
- <20241030154556.GA4449@lst.de>
- <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
- <20241030155052.GA4984@lst.de>
- <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
- <20241030165708.GA11009@lst.de>
+	s=arc-20240116; t=1730328682; c=relaxed/simple;
+	bh=a9+mkQS/Xq2VnALxHggjQcZlPNoXcl/QA/fNr8RdeY4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V5Re4uyMgSVT+z4JEvvTrWkZVLxfZ5pjhnqx/Eq9Gwb1ylhu0y7L4ZF27oqnCfjmVKHSBOVCncRETzUpPeB683Yca2gVgXqVUHZiObsLGLH3jIuQbf5K22W1lzE0tdKn2tVNg2VD8TB3qsAzzhmHzHQMBr8NjKLeFNDSCqg3zBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHZvzzKb; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460d1145cd8so2314671cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 15:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730328679; x=1730933479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a9+mkQS/Xq2VnALxHggjQcZlPNoXcl/QA/fNr8RdeY4=;
+        b=FHZvzzKbZp5cYmlKOYWPBfCwLhIp9cH6bI6PBBRToH9c8epnQ74Eo/GhBYn5+hokJ4
+         QDPUBnXyo5jeFjgaw3jSPQRpXjCWeNTwRd/qMc7LDVgLcC861aNUTqKJd7iZiyIsry2U
+         ia15iAgdWOnEWibgOeMDVj2mCjKoK0b8jkH5kykVG2Dz4l8sH2HvtA6z+4D3n0XuEATO
+         Cd5mnLha91ApH3ERqPVUitOa7EN5Igopb9cio5ozsJ+1r9JKd3UXo22DMF+ENPP/Up+k
+         4/8R8dbV/wFRQMHkVG8Uxpj+i+V/h8n9RKR1HfPmc96pFbpqLLZLqHwuS8rw62dfttRp
+         1VhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730328679; x=1730933479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a9+mkQS/Xq2VnALxHggjQcZlPNoXcl/QA/fNr8RdeY4=;
+        b=gsLWsqn0gnhrFErJzrg6HAy7BvudonkpiazRnHLD9UF+8NSXy2WIAFW6lSI6d6zl8i
+         wJirNQJCNLTend4CJCKh9Xt68GyDL50Jn9LAvZQyotQGrZnvfHDJqg8NEQkqyRBAUuua
+         Y3tXCTQaLSHt3dw5DVCa26BwUt3jbBYX96WDtBlBepjAwMpBq9HXJgfpzfhjd84Laj0T
+         9NHGD39/NrFmG0ZRdPj+F6tPhGTyj1pbfEYVZ1Unzj8OSldSAZnT0DJ1H1KPAE2e5JLb
+         P0XCBKF276MTrfNOY4XUdMshM5vySyNWHPo3ySuwItbLkEhFfKHMWOgkdaxpcTy92nv4
+         sbhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLJt62xrJNxuDP3vjFDOvnrzdE1fQ97Ev80OqG+ld91zhO8cbNEUiRWJHiZ3bnIPa+WGxyschJ9jMxgTUE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHaT+oJIEAnW92tjz6o5it8EZzGUttnZBc0gbqDXziAL75o12F
+	puXtsLFvlHKH6FKlQpoi9o91PnUqgkJuOTXwycuzKCnsoCMI0YqvcZZIee3q4jaW5EHoFpeGfQO
+	f27iVeVZsXup5c2yFbWTvm6VAsEA=
+X-Google-Smtp-Source: AGHT+IGoNHmBEo6OiZmC9ikMO2u2OFawnsHhSspSXpWPT1EwaoDW/0LgfL3fQcSklPOjI+oSKjceQpkCFVOkA2Z9OkQ=
+X-Received: by 2002:a05:622a:486:b0:45e:ff67:e058 with SMTP id
+ d75a77b69052e-4613c19dd98mr273279091cf.44.1730328679584; Wed, 30 Oct 2024
+ 15:51:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030165708.GA11009@lst.de>
+References: <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
+ <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
+ <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
+ <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
+ <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm> <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
+ <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm> <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
+ <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm> <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
+ <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r> <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
+In-Reply-To: <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 30 Oct 2024 15:51:08 -0700
+Message-ID: <CAJnrk1b9ttYVM2tupaNy+hqONRjRbxsGwdFvbCep75v01RtK+g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 05:57:08PM +0100, Christoph Hellwig wrote:
-> On Wed, Oct 30, 2024 at 10:42:59AM -0600, Keith Busch wrote:
-> > With FDP (with some minor rocksdb changes):
-> > 
-> > WAF:        1.67
-> > IOPS:       1547
-> > READ LAT:   1978us
-> > UPDATE LAT: 2267us
-> 
-> Compared to the Numbers Hans presented at Plumbers for the Zoned XFS code,
-> which should work just fine with FDP IFF we exposed real write streams,
-> which roughly double read nad wirte IOPS and reduce the WAF to almost
-> 1 this doesn't look too spectacular to be honest, but it sure it something.
+On Wed, Oct 30, 2024 at 3:17=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 10/30/24 22:56, Shakeel Butt wrote:
+> > On Wed, Oct 30, 2024 at 10:35:47AM GMT, Joanne Koong wrote:
+> >> On Wed, Oct 30, 2024 at 10:27=E2=80=AFAM Bernd Schubert
+> >> <bernd.schubert@fastmail.fm> wrote:
+> >>>
+> >>>
+> >>> Hmm, if tmp pages can be compacted, isn't that a problem for splice?
+> >>> I.e. I don't understand what the difference between tmp page and
+> >>> write-back page for migration.
+> >>>
+> >>
+> >> That's a great question! I have no idea how compaction works for pages
+> >> being used in splice. Shakeel, do you know the answer to this?
+> >>
+> >
+> > Sorry for the late response. I still have to go through other unanswere=
+d
+> > questions but let me answer this one quickly. From the way the tmp page=
+s
+> > are allocated, it does not seem like they are movable and thus are not
+> > target for migration/compaction.
+> >
+> > The page with the writeback bit set is actually just a user memory page
+> > cache which is moveable but due to, at the moment, under writeback it
+> > temporarily becomes unmovable to not cause corruption.
+>
+> Thanks a lot for your quick reply Shakeel! (Actually very fast!).
+>
+> With that, it confirms what I wrote earlier - removing tmp and ignoring
+> fuse writeback pages in migration should not make any difference
+> regarding overall system performance. Unless I miss something,
+> more on the contrary as additional memory pressure expensive page
+> copying is being removed.
+>
 
-Hold up... I absolutely appreciate the work Hans is and has done. But
-are you talking about this talk?
+Thanks for the information Shakeel, and thanks Bernd for bringing up
+this point of discussion.
 
-https://lpc.events/event/18/contributions/1822/attachments/1464/3105/Zoned%20XFS%20LPC%20Zoned%20MC%202024%20V1.pdf
+Before I celebrate too prematurely, a few additional questions:
 
-That is very much apples-to-oranges. The B+ isn't on the same device
-being evaluated for WAF, where this has all that mixed in. I think the
-results are pretty good, all things considered.
- 
-> I just wish we could get the real infraѕtructure instead of some band
-> aid, which makes it really hard to expose the real thing because now
-> it's been taken up and directly wired to a UAPI.
-> one
+Are tmp pages (eg from folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0)) and
+page cache pages allocated from the same memory pool? Or are tmp pages
+allocated from a special memory pool that isn't meant to be
+compacted/optimized?
 
-I don't know what make of this. I think we're talking past each other.
+If they are allocated from the same memory pool, then it seems like
+there's no difference between tmp pages blocking a memory range from
+being compacted vs. a page cache page blocking a memory range from
+being compacted (by not clearing writeback). But if they are not
+allocated from the same pool, then it seems like the page cache page
+blocking migration could adversely affect general system performance
+in a way that the tmp page doesn't?
+
+
+Thanks,
+Joanne
+>
+> Thanks,
+> Bernd
 
