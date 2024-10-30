@@ -1,275 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-33306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E029B6FB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:09:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DE59B6FCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A461C20BAA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B06B284B96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80F1217446;
-	Wed, 30 Oct 2024 22:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB871C3F06;
+	Wed, 30 Oct 2024 22:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM/NBgpr"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="tMlpxp0y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HkpgAaJG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DA01BD9DC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395A21765B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326156; cv=none; b=SWjBgNq9eGWbNCXEpoTHz5GvWEjA85H3vI+exxeOpuartYioVq/iToNI5i2IYDL4yvqMXr+4qkyp1McPN2fttZ/BIQw3J/yz3FPnIbRvB0wb0Blbe/D21/ZxehdBX/Xz8G5LELbgSAhSfP6dqR9knugj5dlbLSeLRunbLvxui5w=
+	t=1730326665; cv=none; b=G2XxSJVv81fEybBOFbZRT0C5orAWDZ8bibS28qe1YX3k89mMoq4ZWZUpP6Qj7qL6nJbe4VdbcqkMGuF2550+42UwQ+nQCQxPLs3H4wgNQhjBM57BvB2v1QyGY9lbJz0FIEpOBKPJ+zTlm66py1FQQoH57Hvfnkoa1hvndMKomZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326156; c=relaxed/simple;
-	bh=heZMQzvWwq9UHNJELo1RwzIM8nSo2y9ZDqyJgBUw/o8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pyMeExL9M/ZcA8/0h2WaSO+oPGIFJtQZrK4ToQmpWTySh11/9oWm/cZXHzlnPGBNkfDrkV0HwP422mtirQp9JcXPqmzjTFUgc7DQaXMydbL+Hnk9QynFrZOKSTnlEkCbZx4pUzgtYR01lYf0I+pc/AWl1Wv2ZejILkrG5IeX3AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PM/NBgpr; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so2687887b3.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 15:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730326153; x=1730930953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DxRxNTSg1mVjeKLM9GO4Js/OLsOKZlTs5RqsGff1Hr0=;
-        b=PM/NBgpr4Qs4b4rNwWUmW3re+zp5IEmcKHuk4KM3QWuM3H9Vw2RChaLnCSkVY3R58g
-         mMAQB9d0G1tY+PwmilBuF2chWgeK/RyBtsq9ojDr/ztPyvetZPPm8vW32pveOvM82/nk
-         ufl9XjUVTdy640vwDVP/OCEVf9O8D4Q7FOopblWWjQBq6aJrxR84owtc1sCxnJoISNMY
-         ZwWAEDsVyRzmlSvvWrW22j0X2317Jwd/IuRNOFfWeVITFUC1o1b1e14MfZeH0DActnpA
-         LfPu0TVQKzhnhairRLQ4PylrecOAUtHMnf/vNUhVigpxDgFpKkcuvmDVdsKofP/3vcYn
-         JZ9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730326153; x=1730930953;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DxRxNTSg1mVjeKLM9GO4Js/OLsOKZlTs5RqsGff1Hr0=;
-        b=meH1CynFtP5sIYuBClxCnzbi+dDKLZWvmHofupqeWIVTHFa3yQOTehzkMHsOImYROs
-         E4E9q3qeknsLQrfFwxTDzwVgMWCHvCyYpOhVEx5pVFbEQAxXkKsCuxGoU1wqSl7KhMCJ
-         z39/yVRrKJaSpDy5/ONEbu1Kd9uyNJqQf1neZt82ysnKkY3H0k3bgEA/izChrAEkkZPf
-         aaNIdzbxbTDCoXtAj3n3/+4ecfkxmYau236kYggQSmJmI6/BgXWnWV+BmDkqhmOGtrR9
-         s2dLpw1yS4zZZNDf/b9X2SLfyTihogNIlmwUv48zvESsyGP7t3Dq9yP0DlyTDi2hWmLL
-         qsiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoa2yMkvUWxKNHRP0beUrt/eIbD22jzqa2UyM38CnMermLDW2FXTzPUu5eUAEygm7MqkPW7wPrp8hBpkPG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqs8IANyNltH97eHKOPaz9nXusyvLGSmQnNmDD308kuwdu/FH/
-	DhyQWFCPYI+frEuOIS15Ekv8ti0+/HfHIYTUCD4avLXEEGQBJyEc
-X-Google-Smtp-Source: AGHT+IEVtoZW36+XB3GelnqU4kwnFupK+mwclVJOy90Pi1pSzJqNZj8YfK2CXxOOYr6ZRGcdj0q+fw==
-X-Received: by 2002:a05:690c:660a:b0:6e5:e6e8:d535 with SMTP id 00721157ae682-6e9d88d03bdmr158244647b3.3.1730326152674;
-        Wed, 30 Oct 2024 15:09:12 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-008.fbsv.net. [2a03:2880:25ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55c88453sm262367b3.116.2024.10.30.15.09.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 15:09:12 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com,
-	kernel-team@meta.com,
-	Bernd Schubert <bschubert@ddn.com>
-Subject: [PATCH v9 3/3] fuse: add default_request_timeout and max_request_timeout sysctls
-Date: Wed, 30 Oct 2024 15:08:52 -0700
-Message-ID: <20241030220852.656013-2-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241030220852.656013-1-joannelkoong@gmail.com>
-References: <20241030220852.656013-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1730326665; c=relaxed/simple;
+	bh=ayxDNTgxmoDKWQg0/YQ+Fz8efYHxeHFZOeplpSao7cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LTyxqPnb2qD6/zSebpLi116CD/oqqCOAY2AFHfGHoAZi2HyBGBam/CHGSIM1XcMQUs6gmhc/d7SDWlTyq7Duu+ltJ0E3epID11o1828m/qaZbapjt0588Yfe8UB5GQSS4iPoN0sfOiGJOVeBYs4aW6c9UCjlPq/++pyGapq8C2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=tMlpxp0y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HkpgAaJG; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2AF34114018D;
+	Wed, 30 Oct 2024 18:17:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 30 Oct 2024 18:17:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1730326661;
+	 x=1730413061; bh=f2eeGGIhfQ+o3+Vs5R+YZ3pcGBYA0Jz/O5mq++nI8uY=; b=
+	tMlpxp0yw0rFA8YwKsWbtd3T3yNnxh8oKrdzj6aPP3FccZMfEGTOVVXchvzRBT7h
+	pGnEIRwEwANQkiZnwecHmSSDpgEflvYk1anoZRzpeOO4x88zUuHua2qFf3CDayFw
+	6yPFOY5xkit0AkYf2JEeLkZ2vlskgUvq6CAPOiKtpPCvoHGGp+udlQzrL3xIIKxV
+	LgIGO+XyLN6ZTVMh1ZE8vTPPpzblrNkzP5Z1lpT+CrOV65Pht0gv4PYnoPYfkP9g
+	XbQdX+1ACvkgMKvstOfvzYqFxIa7+QkTorkJYhO1OrIiyNZgmPgyohvqfqjhKR6i
+	GbQ46ktw+iTAaWMTmJ6BgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730326661; x=
+	1730413061; bh=f2eeGGIhfQ+o3+Vs5R+YZ3pcGBYA0Jz/O5mq++nI8uY=; b=H
+	kpgAaJGdGfbnDN0mItiSQOjvgwyohp7TQvuxsxvsMKBSv+XFzu9WWuK+PzYV96e5
+	W8reEBvmnQP54iLWJcshiJKnwZQ65PQCRGgX9JpWxLqiWyCWCcH7m0QW3DH/SZ7e
+	egVPzxlK3neW/qICIUjxxXem9vTTCYhwbscTQjuVLLWlatlI2+Zw/Cq4BLM1TSNM
+	KRwQ0ZyjQvU/2iHChAgylfOcddxmmzQ2dIOrfu3OeZpOxL6od+CXO5M37ijP6zpn
+	ZWRuycrxJ5Qg8h8tjpIGwwTHlWrc7FlNyhSDUEGExHGQFLxbu4DzEX/ScQrZ30MJ
+	EkhYAUFrBc55fIc/U453g==
+X-ME-Sender: <xms:g7AiZw9jvJ_eOx3nMdsYaP7UeytVscflSRmxlANxecEhY9e-tKvzxg>
+    <xme:g7AiZ4vD_9_3M5385hfltBpxzoAXAYes-5tQ6LqvGt-MBJe9V33fXf5a-TzjM1npj
+    1zppgyeUYKb_2OT>
+X-ME-Received: <xmr:g7AiZ2B8Ge_igI3hT2TbC-G1QapwJWvnuiZcPOBAkky6Yvu7FkMMbI3X6i8w9eD03T4aFezlrzxvB60zmtxe6RTeGVQmB88XrSoYL6wHbo_mfkBYOQd8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgudehkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduvedu
+    veelgeelffffkedukeegveelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
+    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepshhhrghkvggvlhdrsghuthhtsehlihhnuhigrdguvghvpdhr
+    tghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epjhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohep
+    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvg
+    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhoshgvfhesthho
+    gihitghprghnuggrrdgtohhmpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthht
+    ohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
+X-ME-Proxy: <xmx:g7AiZweh--BEpjMnVBpHeqMDqY7pQDe2sTCktv8_iKzHDbKw112HdA>
+    <xmx:g7AiZ1Oeh54kSEZnX59afh0pHwKLcSBPkeSQIdPRgqYk6_JGfol_BA>
+    <xmx:g7AiZ6mXZ8diII9ijFF0LzUBu81bqlGXMMTDC1isH1Op19T02fhMrA>
+    <xmx:g7AiZ3v6xslCmGew8iLWP4VxPhTjmTfz3gzpGgMf5-VnW3l39OzkGA>
+    <xmx:hbAiZ4oRZ8s9lWcZzMY7aaQaRnf8nJTo3vN8ii0JOku09MKy7nYGRVjF>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 30 Oct 2024 18:17:37 -0400 (EDT)
+Message-ID: <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
+Date: Wed, 30 Oct 2024 23:17:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi
+ <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com
+References: <3e4ff496-f2ed-42ef-9f1a-405f32aa1c8c@linux.alibaba.com>
+ <CAJnrk1aDRQPZCWaR9C1-aMg=2b3uHk-Nv6kVqXx6__dp5Kqxxw@mail.gmail.com>
+ <CAJnrk1ZNqLXAM=QZO+rCqarY1ZP=9_naU7WNyrmPAY=Q2Htu_Q@mail.gmail.com>
+ <CAJnrk1bzuJjsfevYasbpHZXvpS=62Ofo21aQSg8wWFns82H-UA@mail.gmail.com>
+ <0c3e6a4c-b04e-4af7-ae85-a69180d25744@fastmail.fm>
+ <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
+ <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm>
+ <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
+ <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm>
+ <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
+ <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Introduce two new sysctls, "default_request_timeout" and
-"max_request_timeout". These control how long (in minutes) a server can
-take to reply to a request. If the server does not reply by the timeout,
-then the connection will be aborted.
 
-"default_request_timeout" sets the default timeout if no timeout is
-specified by the fuse server on mount. 0 (default) indicates no default
-timeout should be enforced. If the server did specify a timeout, then
-default_request_timeout will be ignored.
 
-"max_request_timeout" sets the max amount of time the server may take to
-reply to a request. 0 (default) indicates no maximum timeout. If
-max_request_timeout is set and the fuse server attempts to set a
-timeout greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. Similarly, if default_request_timeout
-is greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. If the server does not request a
-timeout and default_request_timeout is set to 0 but max_request_timeout
-is set, then the timeout will be max_request_timeout.
+On 10/30/24 22:56, Shakeel Butt wrote:
+> On Wed, Oct 30, 2024 at 10:35:47AM GMT, Joanne Koong wrote:
+>> On Wed, Oct 30, 2024 at 10:27 AM Bernd Schubert
+>> <bernd.schubert@fastmail.fm> wrote:
+>>>
+>>>
+>>> Hmm, if tmp pages can be compacted, isn't that a problem for splice?
+>>> I.e. I don't understand what the difference between tmp page and
+>>> write-back page for migration.
+>>>
+>>
+>> That's a great question! I have no idea how compaction works for pages
+>> being used in splice. Shakeel, do you know the answer to this?
+>>
+> 
+> Sorry for the late response. I still have to go through other unanswered
+> questions but let me answer this one quickly. From the way the tmp pages
+> are allocated, it does not seem like they are movable and thus are not
+> target for migration/compaction.
+> 
+> The page with the writeback bit set is actually just a user memory page
+> cache which is moveable but due to, at the moment, under writeback it
+> temporarily becomes unmovable to not cause corruption.
 
-Please note that these timeouts are not 100% precise. The request may
-take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max timeout
-due to how it's internally implemented.
+Thanks a lot for your quick reply Shakeel! (Actually very fast!).
 
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
+With that, it confirms what I wrote earlier - removing tmp and ignoring
+fuse writeback pages in migration should not make any difference 
+regarding overall system performance. Unless I miss something,
+more on the contrary as additional memory pressure expensive page
+copying is being removed.
 
-$ echo 65536 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
 
-$ echo 65535 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-65535
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 65535
-
-$ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-0
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
----
- Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++++++++++++++++++
- fs/fuse/fuse_i.h                        | 10 +++++++++
- fs/fuse/inode.c                         | 16 +++++++++++++--
- fs/fuse/sysctl.c                        | 20 ++++++++++++++++++
- 4 files changed, 71 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index fa25d7e718b3..790a34291467 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -342,3 +342,30 @@ filesystems:
- ``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
- setting/getting the maximum number of pages that can be used for servicing
- requests in FUSE.
-+
-+``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-+setting/getting the default timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request in the event where the server did not
-+specify a timeout at mount. If the server set a timeout,
-+then default_request_timeout will be ignored.  The default
-+"default_request_timeout" is set to 0. 0 indicates a no-op (eg
-+requests will not have a default request timeout set if no timeout was
-+specified by the server).
-+
-+``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-+setting/getting the maximum timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request. A value greater than 0 automatically opts
-+the server into a timeout that will be at most "max_request_timeout", even if
-+the server did not specify a timeout and default_request_timeout is set to 0.
-+If max_request_timeout is greater than 0 and the server set a timeout greater
-+than max_request_timeout or default_request_timeout is set to a value greater
-+than max_request_timeout, the system will use max_request_timeout as the
-+timeout. 0 indicates a no-op (eg requests will not have an upper bound on the
-+timeout and if the server did not request a timeout and default_request_timeout
-+was not set, there will be no timeout).
-+
-+Please note that for the timeout options, if the server does not respond to
-+the request by the time the timeout elapses, then the connection to the fuse
-+server will be aborted. Please also note that the timeouts are not 100%
-+precise (eg you may set 10 minutes but the timeout may kick in after 11
-+minutes).
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 86a23970794c..a75acc9f46b2 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -46,6 +46,16 @@
- 
- /** Maximum of max_pages received in init_out */
- extern unsigned int fuse_max_pages_limit;
-+/*
-+ * Default timeout (in minutes) for the server to reply to a request
-+ * before the connection is aborted, if no timeout was specified on mount.
-+ */
-+extern unsigned int fuse_default_req_timeout;
-+/*
-+ * Max timeout (in minutes) for the server to reply to a request before
-+ * the connection is aborted.
-+ */
-+extern unsigned int fuse_max_req_timeout;
- 
- /** List of active connections */
- extern struct list_head fuse_conn_list;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index ee006f09cd04..1e7cc6509e42 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -36,6 +36,9 @@ DEFINE_MUTEX(fuse_mutex);
- static int set_global_limit(const char *val, const struct kernel_param *kp);
- 
- unsigned int fuse_max_pages_limit = 256;
-+/* default is no timeout */
-+unsigned int fuse_default_req_timeout = 0;
-+unsigned int fuse_max_req_timeout = 0;
- 
- unsigned max_user_bgreq;
- module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
-@@ -1701,8 +1704,17 @@ EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
- 
- static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_context *ctx)
- {
--	if (ctx->req_timeout) {
--		if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->timeout.req_timeout))
-+	unsigned int timeout = ctx->req_timeout ?: fuse_default_req_timeout;
-+
-+	if (fuse_max_req_timeout) {
-+		if (!timeout)
-+			timeout = fuse_max_req_timeout;
-+		else
-+			timeout = min(timeout, fuse_max_req_timeout);
-+	}
-+
-+	if (timeout) {
-+		if (check_mul_overflow(timeout * 60, HZ, &fc->timeout.req_timeout))
- 			fc->timeout.req_timeout = ULONG_MAX;
- 		timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
- 		mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
-diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-index b272bb333005..6a9094e17950 100644
---- a/fs/fuse/sysctl.c
-+++ b/fs/fuse/sysctl.c
-@@ -13,6 +13,8 @@ static struct ctl_table_header *fuse_table_header;
- /* Bound by fuse_init_out max_pages, which is a u16 */
- static unsigned int sysctl_fuse_max_pages_limit = 65535;
- 
-+static unsigned int sysctl_fuse_max_req_timeout_limit = U16_MAX;
-+
- static struct ctl_table fuse_sysctl_table[] = {
- 	{
- 		.procname	= "max_pages_limit",
-@@ -23,6 +25,24 @@ static struct ctl_table fuse_sysctl_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= &sysctl_fuse_max_pages_limit,
- 	},
-+	{
-+		.procname	= "default_request_timeout",
-+		.data		= &fuse_default_req_timeout,
-+		.maxlen		= sizeof(fuse_default_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
-+	{
-+		.procname	= "max_request_timeout",
-+		.data		= &fuse_max_req_timeout,
-+		.maxlen		= sizeof(fuse_max_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
- };
- 
- int fuse_sysctl_register(void)
--- 
-2.43.5
-
+Thanks,
+Bernd
 
