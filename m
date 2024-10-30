@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-33303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6259B6FA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:07:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646069B6FAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 23:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31DF7B22132
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B2A2852B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 22:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2A21DF739;
-	Wed, 30 Oct 2024 22:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8485216423;
+	Wed, 30 Oct 2024 22:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1qbTiMP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbuKPUCi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972731991DF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1021BD9DC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 22:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326048; cv=none; b=Cwn8z+c/7yB1h88NMJtikJ/HnI/Uy7WBukQQJzXZCPL1Egt9GPQqseRfyuKCwTktjYpA8Krqw5EA6PqDQfJhuQ3FHv3gLl4ebd46QJiBb7Gkl1RPOZix1X0NLqeoo1XrduexgYS3U7A8JV4Cu1qO51YDX9AkIKufu64OKMjeslI=
+	t=1730326115; cv=none; b=E8dw7ASqqaOZM/Br3JGtnNk3/hW3w6NsEJM5LyAs2xcTx08uzrDthDqDrhZ6J42dcERrcqE5qloWTL/R8Ux0c8gQheqjhk5wOcpOoVtYoh9pvv5m/6JH+zt5o3YgzpxUcEKu4l0YwpCY2l9QHS/y9damDI9a1O+x2b02Qpmq83k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326048; c=relaxed/simple;
-	bh=x7S0HFCi1iuOisBV6LIOasXWVmBn3hpsnW8+RI4qWuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fDl5iAtEyfapC47ybV/L3eCz0ZyXPs+cGvcCG4C0WB/YLaWvvyIxY5KJXau5g1g6GjJ9wyb/i1z4AmuYQNDr4hqc4AreITuUAornkjOy4D4dgHl1roPaFNPn5b81qTxDQOUgF8AeEts2JvBa8mLMofkbuSu09nGvsL3vX5dk2aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1qbTiMP; arc=none smtp.client-ip=209.85.219.170
+	s=arc-20240116; t=1730326115; c=relaxed/simple;
+	bh=XTqdpnqCQUq/lyFP7zkZinayJQkDWOixs7lnvYm0jvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i7EIE4bD26fHKuhgNXiBzQqNT+cwovbCq25X/K/DmRtbfzGKjnDd51BV9QDShoRHiqyeFdB+ZcojxfIhhRkal6m3uLR42ZqOSXJ7SZWiKzA9hyHzRshZMbw40Q4T90WwrAFI+OMtJ9WF80RVgKLIkrAfmwg8ZMD+zvkepk9n40M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FbuKPUCi; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso403868276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 15:07:26 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so289858276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 15:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730326045; x=1730930845; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730326112; x=1730930912; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ni7DEz0FU2l21f+b9yRi6GWWwaOmzg2F74dnsHL8nFk=;
-        b=g1qbTiMPVIOqGM9g9XbXc7U24KyxsxXjiON6LHl+TI1Y5q93nG7fsV4iTfy00PY/6M
-         P7aJdgBIQX8Hf8To4pVI5WNbafN2H9D8JPYil8XIpyNMPgvEJihgzMpbXvreC/gG+d8A
-         6VjLe0PxOr9NXKMyP/MGdwLL2RKLIgxPrFr4LDl05ysVF3ZdMeEFQMgMAcr+IF6wi0Fn
-         2ilQu+tOqjQ/vwTdZKtgLvTa6oHT2YgUOoGpPO6eT5WeZiwQD8GrS6fXOYDILvPWMA70
-         DZt1sef165gf3k6329uKVdBWA0MPUwpZgMgd6J6/vHPQZYMVI5YIHyVXTUnA/p0vgBi8
-         i95Q==
+        bh=aw6yEAfKVb/rJW5k4q7A4sTnqwnlBXS09YR6aNAi5U8=;
+        b=FbuKPUCi8Eh086NbBacgPdqgmnwLmq9mBjy5b2/tCOfIC9SuUKjuQByrzAHOtsrCbG
+         BNN9hPJo7OtEUeRydGC+QzlUSRVDryGKEfTfH15W+6V1kviXyv/yKH1HdfAEfpegCQbP
+         JrcN7aEOya562JP/LJ4CCC+6vTaLaAV9O4DbSld248W5Au5SX/HW1wZJ+s2l1e7xLg3D
+         cnsMAJ7fm3wqx1FZYbEsn1sMEt4tNzIr75RsIwa+5127rSltUBf6AZUSIGZbW9O6wY1K
+         D6Z9swZyS1hPQRDnzzcnKIhRefszhGJx0rm9cjy9V1TzWkH8GNGWHy2/F2EpzHQM/wR2
+         LEQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730326045; x=1730930845;
+        d=1e100.net; s=20230601; t=1730326112; x=1730930912;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ni7DEz0FU2l21f+b9yRi6GWWwaOmzg2F74dnsHL8nFk=;
-        b=J1N+r7RDzoPWofc7avXUXXmsF/5q45ezmv5we3YzgZqZhbZg/6afE+RAc05C3U5WJW
-         jqh4c/ekHh41zQmYnPhnPa7qMXrwX9NoK8sPNWAH1rmgibA72fiZDamwtzl1uiZFPAa1
-         xn3sA5Qa33ONCHrtoWjqZPYpZOXzzNQ+OqxOdhH2q+clR3E3y4EMBSAWQM2yOHw6LXT5
-         +sJKhmL0if2cx+pSEbNWwL9mCLOe+kmXhb0Yuhdkjpkfkeov8HpBPY79qj5mWwWpBo9q
-         GRtLOUy8JTT+mrc8whn6UHnlMfijuywHeeIIXeGRjb7/2z3iorQT+mhWRXAn7dACwz32
-         YFHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWtvZxI7stBWWwWnsUTb/b012I7YXte6mdyv+f6So4zoeAzJBVi4uErOF40Shi0UUyTQb9W4XtURYUaWhy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+fBs9OgzebIhWxmtSFoNhXl45yybVfxj1AG7f0YByhpJsEHF
-	hvbgCcqnlpiSBqlAP4/GfBhYw1sNbcYigBnbPGF289EJX4X9hebAaNXY+Q==
-X-Google-Smtp-Source: AGHT+IHf4IAMxe628LNosr1x/7NX1m8r7qNOmLVcyffoRdnDeDb/6pll1jHpXF04O6cRJSfza+OR7g==
-X-Received: by 2002:a05:690c:3506:b0:6dd:b7e0:65b2 with SMTP id 00721157ae682-6e9d8a6f784mr189071867b3.24.1730326045454;
-        Wed, 30 Oct 2024 15:07:25 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-116.fbsv.net. [2a03:2880:25ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55b5c458sm274727b3.68.2024.10.30.15.07.25
+        bh=aw6yEAfKVb/rJW5k4q7A4sTnqwnlBXS09YR6aNAi5U8=;
+        b=QOWNT8kT5VdSuzuA96dYRYRQXxyLqBuxiivOSEyzLR0awB4xgSx47cyhnnTRThRIBd
+         YcnlQCCxftYnwzthbjeE/VNOxdmACZyzMmO/YmmC6UoHMuKfBLuIRD+e90qgZG0YNFAJ
+         91KiO+jfCzOFBEf6oV+LSTTrvNpYYgWO3Nc28Io3rWmLJa4hpmRq8WUQS+KMiE9yisfi
+         utJc9hHHrW+xUgWisXc4QY73cr3022xLkQvxyKMbZDMhw95hfWztkXX6P3ogQlNKMNBt
+         Y6oz3+uq8P7qaNk6nCe8rMISPLA07S8fGcTlb/Jpx5z1/yoVCPSLou3SdGR/seKhIjqN
+         2tQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwp/oeuhlsjUW2eXOWcJDFKpfoU/wV5KqvwwxCh7zqidYS1C702AW95Kru/JcYX/0Bfiy+uGjNOVfJZwzM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp9T/iI8dNpTLseU7Dmd+aFTKaHf7YaxDlfgRnxeWJXzuSbPtT
+	mPYQ7UQ+/O1R1+U53KxKnSxyVzBPfpkHIceezv8ZwEIh7Vq9obQ7sYqLEA==
+X-Google-Smtp-Source: AGHT+IFa/N/xa3Exi/jCvTm8b4sfp0zO278nWHgfclQtwI7G7JJB2bQFymI9OHFp1sLENhmTpGbadg==
+X-Received: by 2002:a05:6902:1203:b0:e28:fbbf:7406 with SMTP id 3f1490d57ef6-e30e5a3dff1mr1325102276.15.1730326112066;
+        Wed, 30 Oct 2024 15:08:32 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-113.fbsv.net. [2a03:2880:25ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a63368sm34056276.4.2024.10.30.15.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 15:07:25 -0700 (PDT)
+        Wed, 30 Oct 2024 15:08:31 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -72,10 +72,12 @@ Cc: josef@toxicpanda.com,
 	bernd.schubert@fastmail.fm,
 	jefflexu@linux.alibaba.com,
 	laoar.shao@gmail.com,
-	kernel-team@meta.com
-Subject: [PATCH v9 0/3] fuse: add kernel-enforced request timeout option
-Date: Wed, 30 Oct 2024 15:05:59 -0700
-Message-ID: <20241030220559.643853-1-joannelkoong@gmail.com>
+	viro@zeniv.linux.org.uk,
+	kernel-team@meta.com,
+	Bernd Schubert <bschubert@ddn.com>
+Subject: [PATCH v9 1/3] fs_parser: add fsparam_u16 helper
+Date: Wed, 30 Oct 2024 15:08:04 -0700
+Message-ID: <20241030220804.652651-1-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -85,91 +87,74 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are situations where fuse servers can become unresponsive or
-stuck, for example if the server is in a deadlock. Currently, there's
-no good way to detect if a server is stuck and needs to be killed
-manually.
+Add a fsparam helper for unsigned 16 bit values.
 
-This patchset adds a timeout option where if the server does not reply to a
-request by the time the timeout elapses, the connection will be aborted.
-This patchset also adds two dynamically configurable fuse sysctls
-"default_request_timeout" and "max_request_timeout" for controlling/enforcing
-timeout behavior system-wide.
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+---
+ fs/fs_parser.c            | 14 ++++++++++++++
+ include/linux/fs_parser.h |  9 ++++++---
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-Existing systems running fuse servers will not be affected unless they
-explicitly opt into the timeout.
-
-v8:
-https://lore.kernel.org/linux-fsdevel/20241011191320.91592-1-joannelkoong@gmail.com/
-Changes from v8 -> v9:
-* Fix comment for u16 fs_parse_result, ULONG_MAX instead of U32_MAX, fix
-  spacing (Bernd)
-
-v7:
-https://lore.kernel.org/linux-fsdevel/20241007184258.2837492-1-joannelkoong@gmail.com/
-Changes from v7 -> v8:
-* Use existing lists for checking expirations (Miklos)
-
-v6:
-https://lore.kernel.org/linux-fsdevel/20240830162649.3849586-1-joannelkoong@gmail.com/
-Changes from v6 -> v7:
-- Make timer per-connection instead of per-request (Miklos)
-- Make default granularity of time minutes instead of seconds
-- Removed the reviewed-bys since the interface of this has changed (now
-  minutes, instead of seconds)
-
-v5:
-https://lore.kernel.org/linux-fsdevel/20240826203234.4079338-1-joannelkoong@gmail.com/
-Changes from v5 -> v6:
-- Gate sysctl.o behind CONFIG_SYSCTL in makefile (kernel test robot)
-- Reword/clarify last sentence in cover letter (Miklos)
-
-v4:
-https://lore.kernel.org/linux-fsdevel/20240813232241.2369855-1-joannelkoong@gmail.com/
-Changes from v4 -> v5:
-- Change timeout behavior from aborting request to aborting connection
-  (Miklos)
-- Clarify wording for sysctl documentation (Jingbo)
-
-v3:
-https://lore.kernel.org/linux-fsdevel/20240808190110.3188039-1-joannelkoong@gmail.com/
-Changes from v3 -> v4:
-- Fix wording on some comments to make it more clear
-- Use simpler logic for timer (eg remove extra if checks, use mod timer API)
-  (Josef)
-- Sanity-check should be on FR_FINISHING not FR_FINISHED (Jingbo)
-- Fix comment for "processing queue", add req->fpq = NULL safeguard  (Bernd)
-
-v2:
-https://lore.kernel.org/linux-fsdevel/20240730002348.3431931-1-joannelkoong@gmail.com/
-Changes from v2 -> v3:
-- Disarm / rearm timer in dev_do_read to handle race conditions (Bernrd)
-- Disarm timer in error handling for fatal interrupt (Yafang)
-- Clean up do_fuse_request_end (Jingbo)
-- Add timer for notify retrieve requests 
-- Fix kernel test robot errors for #define no-op functions
-
-v1:
-https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoong@gmail.com/
-Changes from v1 -> v2:
-- Add timeout for background requests
-- Handle resend race condition
-- Add sysctls
-
-Joanne Koong (3):
-  fs_parser: add fsparam_u16 helper
-  fuse: add optional kernel-enforced timeout for requests
-  fuse: add default_request_timeout and max_request_timeout sysctls
-
- Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++
- fs/fs_parser.c                          | 14 +++++
- fs/fuse/dev.c                           | 80 +++++++++++++++++++++++++
- fs/fuse/fuse_i.h                        | 31 ++++++++++
- fs/fuse/inode.c                         | 33 ++++++++++
- fs/fuse/sysctl.c                        | 20 +++++++
- include/linux/fs_parser.h               |  9 ++-
- 7 files changed, 211 insertions(+), 3 deletions(-)
-
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index 24727ec34e5a..0e06f9618c89 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -210,6 +210,20 @@ int fs_param_is_bool(struct p_log *log, const struct fs_parameter_spec *p,
+ }
+ EXPORT_SYMBOL(fs_param_is_bool);
+ 
++int fs_param_is_u16(struct p_log *log, const struct fs_parameter_spec *p,
++		    struct fs_parameter *param, struct fs_parse_result *result)
++{
++	int base = (unsigned long)p->data;
++	if (param->type != fs_value_is_string)
++		return fs_param_bad_value(log, param);
++	if (!*param->string && (p->flags & fs_param_can_be_empty))
++		return 0;
++	if (kstrtou16(param->string, base, &result->uint_16) < 0)
++		return fs_param_bad_value(log, param);
++	return 0;
++}
++EXPORT_SYMBOL(fs_param_is_u16);
++
+ int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec *p,
+ 		    struct fs_parameter *param, struct fs_parse_result *result)
+ {
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index 6cf713a7e6c6..84acd7acef50 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -26,9 +26,10 @@ typedef int fs_param_type(struct p_log *,
+ /*
+  * The type of parameter expected.
+  */
+-fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_param_is_u64,
+-	fs_param_is_enum, fs_param_is_string, fs_param_is_blob, fs_param_is_blockdev,
+-	fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gid;
++fs_param_type fs_param_is_bool, fs_param_is_u16, fs_param_is_u32, fs_param_is_s32,
++	fs_param_is_u64, fs_param_is_enum, fs_param_is_string, fs_param_is_blob,
++	fs_param_is_blockdev, fs_param_is_path, fs_param_is_fd, fs_param_is_uid,
++	fs_param_is_gid;
+ 
+ /*
+  * Specification of the type of value a parameter wants.
+@@ -55,6 +56,7 @@ struct fs_parse_result {
+ 	union {
+ 		bool		boolean;	/* For spec_bool */
+ 		int		int_32;		/* For spec_s32/spec_enum */
++		u16             uint_16;	/* For spec_u16{,_octal,_hex}/spec_enum */
+ 		unsigned int	uint_32;	/* For spec_u32{,_octal,_hex}/spec_enum */
+ 		u64		uint_64;	/* For spec_u64 */
+ 		kuid_t		uid;
+@@ -119,6 +121,7 @@ static inline bool fs_validate_description(const char *name,
+ #define fsparam_flag_no(NAME, OPT) \
+ 			__fsparam(NULL, NAME, OPT, fs_param_neg_with_no, NULL)
+ #define fsparam_bool(NAME, OPT)	__fsparam(fs_param_is_bool, NAME, OPT, 0, NULL)
++#define fsparam_u16(NAME, OPT)	__fsparam(fs_param_is_u16, NAME, OPT, 0, NULL)
+ #define fsparam_u32(NAME, OPT)	__fsparam(fs_param_is_u32, NAME, OPT, 0, NULL)
+ #define fsparam_u32oct(NAME, OPT) \
+ 			__fsparam(fs_param_is_u32, NAME, OPT, 0, (void *)8)
 -- 
 2.43.5
 
