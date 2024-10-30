@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-33246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941A99B6343
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 13:45:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3F79B639E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 14:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5316228218D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 12:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E631C20D94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2024 13:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440F91E908D;
-	Wed, 30 Oct 2024 12:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E12B1E907A;
+	Wed, 30 Oct 2024 13:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZgwvwOh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsKHhAEj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916611E9060;
-	Wed, 30 Oct 2024 12:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB9879D2;
+	Wed, 30 Oct 2024 13:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730292303; cv=none; b=sZMAFjjd+KCdIO1g+++mzFbdd/FEB3OZuNZ5oLrNP3LqFLIrsXjy6WdzkA4XwPkyqz8BAT5IACgQh2/SW0g6my7IbTP3KaVYiWIDA0T5nWZYdpfJpfYUpLjhh3glzNZOj4sP1hcat316FOWMhXH4LsQ8E8TDJvBV3KhGWx6uCW4=
+	t=1730293410; cv=none; b=B/wY20X2cjZ70T/79dQEEHjtHmWbKyk0Wg5KEvCFagqfudo5LoMSLm7txxEZHb43YC4/m/nCr1QhCH2pMlqwmFvHFr7I+Q6SgVYf3QXMtReT9xreWSa9f/HZ3/vLilvKPJho5D/8vxRTB0NBtYCFg1LonskrdxWRWI3vljCmJ9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730292303; c=relaxed/simple;
-	bh=dgWvWvtO1T0XvvZpt3XHFm/OJolaOs0xEsAnQRiL46o=;
+	s=arc-20240116; t=1730293410; c=relaxed/simple;
+	bh=4JJuFUF260AEDPKZcNLDY2ITdnV9Hn1qJCgacNVcXI0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LCh71eOo16YLn7ImIhpF5iCcaVQwvsmaqaRFneClVBclaI4eWYpo2BOTtwpTwEnvbGL6OJjgeeqkLAMjYbZFo4eJcozVkALF+xtuTYWFVbckOXuTDBAC9SBcXg2OYBXbNLNQvgk7ReSnx1HKYBmlUBcNw9Y9dU6e8J/W8Nskz4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZgwvwOh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80707C4CEE3;
-	Wed, 30 Oct 2024 12:45:01 +0000 (UTC)
+	 Content-Type:MIME-Version; b=KuoQSSt7x+HN16s/GTZNaDbqwnP9Fp3ioGCcBWZcuildXasySM95/S+gq8HBNrZKWEYSk/Ff+0r5R6Nx0KBk3N2KQK7UCqQIUSlO7oU01hlTGBJXIdI1QwE8/b8fVOrxOUnavqj/sgK08uJR6H8nrLFwbkuY84xqjVBzIH/ANdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsKHhAEj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D94FC4CEE3;
+	Wed, 30 Oct 2024 13:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730292303;
-	bh=dgWvWvtO1T0XvvZpt3XHFm/OJolaOs0xEsAnQRiL46o=;
+	s=k20201202; t=1730293410;
+	bh=4JJuFUF260AEDPKZcNLDY2ITdnV9Hn1qJCgacNVcXI0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BZgwvwOhFbVlos17TVV3IrHtVyCYEUJK0APdCOORFGypWn/J+JxCzBAUjCHNg9nRE
-	 C4Rtr9F2Z5LA4J+xShz0EAiRGREGDkUH6+JrMb16MXHYZHGkcAshaQq6oTEgFSaagx
-	 r6gdi+dfnIbxqK4WvKKBcgH7IaxWvT+mgmvBWJ/TVt9VAPcIGNwVZL5r95ZMyNoMUb
-	 9GIDrqAndXvxpDKEJLkKI5CLnd8VHT1X92WnykskOne+1v/vC2kTuJk8xVPx+Sy55k
-	 fPcATiNEm8YYoUtRkWf7WeAfG5J1JIP2h7qTl1jOKUGr1L1csKg1HgAScZoH8EUOH5
-	 FPbc49GWrZeFA==
-Message-ID: <869eb8b56d8d87f11bd4c1f18c395acf413555d2.camel@kernel.org>
-Subject: Re: [RFC bpf-next fanotify 1/5] fanotify: Introduce fanotify
- fastpath handler
+	b=jsKHhAEj174ZBAEjCPNWFn6LRcIizGpvb0Letj4m3aOyZxCrxX8rqSggxiZKKNURn
+	 TgJVSwQf51t3X3ncQ4qbUM6IMnFVdrjxtIoeAQPK1QiIhVkzyNdtWg58tsnbS9OUJI
+	 jzObHEA0sDoRfivOYy1lSOyDt4TkMhtdEXaoAQtPIQxJSflER9aur+P4m+KDKVeILv
+	 fALxkd+BqeV9xlU7A4HbWB1cb0T1QjkybbIvZ2asZ65i/wAt6GhmdWkl7UFSXIY+bE
+	 3dEdRbk5znzwbA1xjUBdAoNnUYGMAnutUxbXYZrv814igekFWKRCQEgU0850+XMmr4
+	 SQMk/ee5ZTuUQ==
+Message-ID: <5b8318018dd316f618eea059f610579a205c05db.camel@kernel.org>
+Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
 From: Jeff Layton <jlayton@kernel.org>
 To: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -52,10 +52,10 @@ Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
  viro@zeniv.linux.org.uk,  brauner@kernel.org, jack@suse.cz,
  kpsingh@kernel.org, mattbobrowski@google.com,  amir73il@gmail.com,
  repnop@google.com, josef@toxicpanda.com
-Date: Wed, 30 Oct 2024 08:45:00 -0400
-In-Reply-To: <20241029231244.2834368-2-song@kernel.org>
+Date: Wed, 30 Oct 2024 09:03:27 -0400
+In-Reply-To: <20241029231244.2834368-3-song@kernel.org>
 References: <20241029231244.2834368-1-song@kernel.org>
-	 <20241029231244.2834368-2-song@kernel.org>
+	 <20241029231244.2834368-3-song@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -141,456 +141,372 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Tue, 2024-10-29 at 16:12 -0700, Song Liu wrote:
-> fanotify fastpath handler enables handling fanotify events within the
-> kernel, and thus saves a trip to the user space. fanotify fastpath handle=
-r
-> can be useful in many use cases. For example, if a user is only intereste=
-d
-> in events for some files in side a directory, a fastpath handler can be
-> used to filter out irrelevant events.
+> This fastpath handler filters out events for files with certain prefixes.
+> To use it:
 >=20
-> fanotify fastpath handler is attached to fsnotify_group. At most one
-> fastpath handler can be attached to a fsnotify_group. The attach/detach
-> of fastpath handlers are controlled by two new ioctls on the fanotify fds=
-:
-> FAN_IOC_ADD_FP and FAN_IOC_DEL_FP.
+>   [root] insmod fastpath-mod.ko    # This requires root.
 >=20
-> fanotify fastpath handler is packaged in a kernel module. In the future,
-> it is also possible to package fastpath handler in a BPF program. Since
-> loading modules requires CAP_SYS_ADMIN, _loading_ fanotify fastpath
-> handler in kernel modules is limited to CAP_SYS_ADMIN. However,
-> non-SYS_CAP_ADMIN users can _attach_ fastpath handler loaded by sys admin
-> to their fanotify fds. To make fanotify fastpath handler more useful
-> for non-CAP_SYS_ADMIN users, a fastpath handler can take arguments at
-> attach time.
+>   [user] ./fastpath-user /tmp a,b,c &    # Root is not needed
+>   [user] touch /tmp/aa   # a is in the prefix list (a,b,c), no events
+>   [user] touch /tmp/xx   # x is not in the prefix list, generates events
 >=20
-> TODO: Add some mechanism to help users discover available fastpath
-> handlers. For example, we can add a sysctl which is similar to
-> net.ipv4.tcp_available_congestion_control, or we can add some sysfs
-> entries.
+>   Accessing file xx   # this is the output from fastpath_user
 >=20
 > Signed-off-by: Song Liu <song@kernel.org>
 > ---
->  fs/notify/fanotify/Makefile            |   2 +-
->  fs/notify/fanotify/fanotify.c          |  25 ++++
->  fs/notify/fanotify/fanotify_fastpath.c | 171 +++++++++++++++++++++++++
->  fs/notify/fanotify/fanotify_user.c     |   7 +
->  include/linux/fanotify.h               |  45 +++++++
->  include/linux/fsnotify_backend.h       |   3 +
->  include/uapi/linux/fanotify.h          |  26 ++++
->  7 files changed, 278 insertions(+), 1 deletion(-)
->  create mode 100644 fs/notify/fanotify/fanotify_fastpath.c
+>  MAINTAINERS                      |   1 +
+>  samples/Kconfig                  |  20 ++++-
+>  samples/Makefile                 |   2 +-
+>  samples/fanotify/.gitignore      |   1 +
+>  samples/fanotify/Makefile        |   5 +-
+>  samples/fanotify/fastpath-mod.c  | 138 +++++++++++++++++++++++++++++++
+>  samples/fanotify/fastpath-user.c |  90 ++++++++++++++++++++
+>  7 files changed, 254 insertions(+), 3 deletions(-)
+>  create mode 100644 samples/fanotify/fastpath-mod.c
+>  create mode 100644 samples/fanotify/fastpath-user.c
 >=20
-> diff --git a/fs/notify/fanotify/Makefile b/fs/notify/fanotify/Makefile
-> index 25ef222915e5..fddab88dde37 100644
-> --- a/fs/notify/fanotify/Makefile
-> +++ b/fs/notify/fanotify/Makefile
-> @@ -1,2 +1,2 @@
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7ad507f49324..8939a48b2d99 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8658,6 +8658,7 @@ S:	Maintained
+>  F:	fs/notify/fanotify/
+>  F:	include/linux/fanotify.h
+>  F:	include/uapi/linux/fanotify.h
+> +F:	samples/fanotify/
+> =20
+>  FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
+>  M:	Linus Walleij <linus.walleij@linaro.org>
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index b288d9991d27..b0d3dff48bb0 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
+>  	  with it.
+>  	  See also Documentation/driver-api/connector.rst
+> =20
+> +config SAMPLE_FANOTIFY
+> +	bool "Build fanotify monitoring sample"
+> +	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+> +	help
+> +	  When enabled, this builds samples for fanotify.
+> +	  There multiple samples for fanotify. Please see the
+> +	  following configs for more details of these
+> +	  samples.
+> +
+>  config SAMPLE_FANOTIFY_ERROR
+>  	bool "Build fanotify error monitoring sample"
+> -	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+> +	depends on SAMPLE_FANOTIFY
+>  	help
+>  	  When enabled, this builds an example code that uses the
+>  	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
+>  	  errors.
+>  	  See also Documentation/admin-guide/filesystem-monitoring.rst.
+> =20
+> +config SAMPLE_FANOTIFY_FASTPATH
+> +	tristate "Build fanotify fastpath sample"
+> +	depends on SAMPLE_FANOTIFY && m
+> +	help
+> +	  When enabled, this builds kernel module that contains a
+> +	  fanotify fastpath handler.
+> +	  The fastpath handler filters out certain filename
+> +	  prefixes for the fanotify user.
+> +
+>  config SAMPLE_HIDRAW
+>  	bool "hidraw sample"
+>  	depends on CC_CAN_LINK && HEADERS_INSTALL
+> diff --git a/samples/Makefile b/samples/Makefile
+> index b85fa64390c5..108360972626 100644
+> --- a/samples/Makefile
+> +++ b/samples/Makefile
+> @@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) +=3D binderfs
+>  subdir-$(CONFIG_SAMPLE_CGROUP) +=3D cgroup
+>  obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
+>  obj-$(CONFIG_SAMPLE_CONNECTOR)		+=3D connector/
+> -obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+=3D fanotify/
+> +obj-$(CONFIG_SAMPLE_FANOTIFY)		+=3D fanotify/
+>  subdir-$(CONFIG_SAMPLE_HIDRAW)		+=3D hidraw
+>  obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+=3D hw_breakpoint/
+>  obj-$(CONFIG_SAMPLE_KDB)		+=3D kdb/
+> diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
+> index d74593e8b2de..306e1ddec4e0 100644
+> --- a/samples/fanotify/.gitignore
+> +++ b/samples/fanotify/.gitignore
+> @@ -1 +1,2 @@
+>  fs-monitor
+> +fastpath-user
+> diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
+> index e20db1bdde3b..f5bbd7380104 100644
+> --- a/samples/fanotify/Makefile
+> +++ b/samples/fanotify/Makefile
+> @@ -1,5 +1,8 @@
 >  # SPDX-License-Identifier: GPL-2.0-only
-> -obj-$(CONFIG_FANOTIFY)		+=3D fanotify.o fanotify_user.o
-> +obj-$(CONFIG_FANOTIFY)		+=3D fanotify.o fanotify_user.o fanotify_fastpat=
-h.o
-
-This should probably be a compile-time option. Some people might be
-spooked by this and we'd want a way to disable it if it was found to
-cause a big issue later.
-
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
-c
-> index 224bccaab4cc..a40ec06d0218 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -18,6 +18,8 @@
+> -userprogs-always-y +=3D fs-monitor
+> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) +=3D fs-monitor
 > =20
->  #include "fanotify.h"
+>  userccflags +=3D -I usr/include -Wall
 > =20
-> +extern struct srcu_struct fsnotify_mark_srcu;
+> +obj-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) +=3D fastpath-mod.o
 > +
->  static bool fanotify_path_equal(const struct path *p1, const struct path=
- *p2)
->  {
->  	return p1->mnt =3D=3D p2->mnt && p1->dentry =3D=3D p2->dentry;
-> @@ -888,6 +890,7 @@ static int fanotify_handle_event(struct fsnotify_grou=
-p *group, u32 mask,
->  	struct fsnotify_event *fsn_event;
->  	__kernel_fsid_t fsid =3D {};
->  	u32 match_mask =3D 0;
-> +	struct fanotify_fastpath_hook *fp_hook;
-> =20
->  	BUILD_BUG_ON(FAN_ACCESS !=3D FS_ACCESS);
->  	BUILD_BUG_ON(FAN_MODIFY !=3D FS_MODIFY);
-> @@ -933,6 +936,25 @@ static int fanotify_handle_event(struct fsnotify_gro=
-up *group, u32 mask,
->  	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
->  		fsid =3D fanotify_get_fsid(iter_info);
-> =20
-> +	fp_hook =3D srcu_dereference(group->fanotify_data.fp_hook, &fsnotify_ma=
-rk_srcu);
-> +	if (fp_hook) {
-> +		struct fanotify_fastpath_event fp_event =3D {
-> +			.mask =3D mask,
-> +			.data =3D data,
-> +			.data_type =3D data_type,
-> +			.dir =3D dir,
-> +			.file_name =3D file_name,
-> +			.fsid =3D &fsid,
-> +			.match_mask =3D match_mask,
-> +		};
-> +
-> +		ret =3D fp_hook->ops->fp_handler(group, fp_hook, &fp_event);
-> +		if (ret =3D=3D FAN_FP_RET_SKIP_EVENT) {
-> +			ret =3D 0;
-> +			goto finish;
-> +		}
-> +	}
-> +
->  	event =3D fanotify_alloc_event(group, mask, data, data_type, dir,
->  				     file_name, &fsid, match_mask);
->  	ret =3D -ENOMEM;
-> @@ -976,6 +998,9 @@ static void fanotify_free_group_priv(struct fsnotify_=
-group *group)
-> =20
->  	if (mempool_initialized(&group->fanotify_data.error_events_pool))
->  		mempool_exit(&group->fanotify_data.error_events_pool);
-> +
-> +	if (group->fanotify_data.fp_hook)
-> +		fanotify_fastpath_hook_free(group->fanotify_data.fp_hook);
->  }
-> =20
->  static void fanotify_free_path_event(struct fanotify_event *event)
-> diff --git a/fs/notify/fanotify/fanotify_fastpath.c b/fs/notify/fanotify/=
-fanotify_fastpath.c
+> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) +=3D fastpath-user
+> diff --git a/samples/fanotify/fastpath-mod.c b/samples/fanotify/fastpath-=
+mod.c
 > new file mode 100644
-> index 000000000000..0453a1ac25b1
+> index 000000000000..06c4b42ff114
 > --- /dev/null
-> +++ b/fs/notify/fanotify/fanotify_fastpath.c
-> @@ -0,0 +1,171 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/samples/fanotify/fastpath-mod.c
+> @@ -0,0 +1,138 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <linux/fsnotify.h>
 > +#include <linux/fanotify.h>
+> +#include <linux/list.h>
 > +#include <linux/module.h>
+> +#include <linux/string.h>
 > +
-> +#include "fanotify.h"
+> +struct prefix_item {
+> +	const char *prefix;
+> +	struct list_head list;
+> +};
 > +
-> +extern struct srcu_struct fsnotify_mark_srcu;
+> +struct sample_fp_data {
+> +	/*
+> +	 * str_table contains all the prefixes to ignore. For example,
+> +	 * "prefix1\0prefix2\0prefix3"
+> +	 */
+> +	char *str_table;
 > +
-> +static DEFINE_SPINLOCK(fp_list_lock);
-> +static LIST_HEAD(fp_list);
+> +	/* item->prefix points to different prefixes in the str_table. */
+> +	struct list_head item_list;
+> +};
 > +
-> +static struct fanotify_fastpath_ops *fanotify_fastpath_find(const char *=
-name)
+> +static int sample_fp_handler(struct fsnotify_group *group,
+> +			     struct fanotify_fastpath_hook *fp_hook,
+> +			     struct fanotify_fastpath_event *fp_event)
 > +{
-> +	struct fanotify_fastpath_ops *ops;
+> +	const struct qstr *file_name =3D fp_event->file_name;
+> +	struct sample_fp_data *fp_data;
+> +	struct prefix_item *item;
 > +
-> +	list_for_each_entry(ops, &fp_list, list) {
-> +		if (!strcmp(ops->name, name))
-> +			return ops;
+> +	if (!file_name)
+> +		return FAN_FP_RET_SEND_TO_USERSPACE;
+> +	fp_data =3D fp_hook->data;
+> +
+> +	list_for_each_entry(item, &fp_data->item_list, list) {
+> +		if (strstr(file_name->name, item->prefix) =3D=3D (char *)file_name->na=
+me)
+> +			return FAN_FP_RET_SKIP_EVENT;
 > +	}
-> +	return NULL;
+> +
+> +	return FAN_FP_RET_SEND_TO_USERSPACE;
 > +}
+
+The sample is a little underwhelming and everyone hates string parsing
+in the kernel ;). It'd be nice to see a more real-world use-case for
+this.
+
+Could this be used to implement subtree filtering? I guess you'd have
+to walk back up the directory tree and see whether it had a given
+ancestor?
+
 > +
-> +
-> +/*
-> + * fanotify_fastpath_register - Register a new fastpath handler.
-> + *
-> + * Add a fastpath handler to the fp_list. These fastpath handlers are
-> + * available for all users in the system.
-> + *
-> + * @ops:	pointer to fanotify_fastpath_ops to add.
-> + *
-> + * Returns:
-> + *	0	- on success;
-> + *	-EEXIST	- fastpath handler of the same name already exists.
-> + */
-> +int fanotify_fastpath_register(struct fanotify_fastpath_ops *ops)
+> +static int add_item(struct sample_fp_data *fp_data, const char *prev)
 > +{
-> +	spin_lock(&fp_list_lock);
-> +	if (fanotify_fastpath_find(ops->name)) {
-> +		/* cannot register two handlers with the same name */
-> +		spin_unlock(&fp_list_lock);
-> +		return -EEXIST;
-> +	}
-> +	list_add_tail(&ops->list, &fp_list);
-> +	spin_unlock(&fp_list_lock);
+> +	struct prefix_item *item;
+> +
+> +	item =3D kzalloc(sizeof(*item), GFP_KERNEL);
+> +	if (!item)
+> +		return -ENOMEM;
+> +	item->prefix =3D prev;
+> +	list_add_tail(&item->list, &fp_data->item_list);
 > +	return 0;
 > +}
-> +EXPORT_SYMBOL_GPL(fanotify_fastpath_register);
 > +
-> +/*
-> + * fanotify_fastpath_unregister - Unregister a new fastpath handler.
-> + *
-> + * Remove a fastpath handler from fp_list.
-> + *
-> + * @ops:	pointer to fanotify_fastpath_ops to remove.
-> + */
-> +void fanotify_fastpath_unregister(struct fanotify_fastpath_ops *ops)
+> +static void free_sample_fp_data(struct sample_fp_data *fp_data)
 > +{
-> +	spin_lock(&fp_list_lock);
-> +	list_del_init(&ops->list);
-> +	spin_unlock(&fp_list_lock);
+> +	struct prefix_item *item, *tmp;
+> +
+> +	list_for_each_entry_safe(item, tmp, &fp_data->item_list, list) {
+> +		list_del_init(&item->list);
+> +		kfree(item);
+> +	}
+> +	kfree(fp_data->str_table);
+> +	kfree(fp_data);
 > +}
-> +EXPORT_SYMBOL_GPL(fanotify_fastpath_unregister);
 > +
-> +/*
-> + * fanotify_fastpath_add - Add a fastpath handler to fsnotify_group.
-> + *
-> + * Add a fastpath handler from fp_list to a fsnotify_group.
-> + *
-> + * @group:	fsnotify_group that will have add
-> + * @argp:	fanotify_fastpath_args that specifies the fastpath handler
-> + *		and the init arguments of the fastpath handler.
-> + *
-> + * Returns:
-> + *	0	- on success;
-> + *	-EEXIST	- fastpath handler of the same name already exists.
-> + */
-> +int fanotify_fastpath_add(struct fsnotify_group *group,
-> +			  struct fanotify_fastpath_args __user *argp)
+> +static int sample_fp_init(struct fanotify_fastpath_hook *fp_hook, const =
+char *args)
 > +{
-> +	struct fanotify_fastpath_hook *fp_hook;
-> +	struct fanotify_fastpath_ops *fp_ops;
-> +	struct fanotify_fastpath_args args;
-> +	int ret =3D 0;
+> +	struct sample_fp_data *fp_data =3D kzalloc(sizeof(struct sample_fp_data=
+), GFP_KERNEL);
+> +	char *p, *prev;
+> +	int ret;
 > +
-> +	ret =3D copy_from_user(&args, argp, sizeof(args));
-> +	if (ret)
-> +		return -EFAULT;
+> +	if (!fp_data)
+> +		return -ENOMEM;
 > +
-> +	if (args.version !=3D 1 || args.flags || args.init_args_len > FAN_FP_AR=
-GS_MAX)
-> +		return -EINVAL;
-> +
-> +	args.name[FAN_FP_NAME_MAX - 1] =3D '\0';
-> +
-> +	fsnotify_group_lock(group);
-> +
-> +	if (rcu_access_pointer(group->fanotify_data.fp_hook)) {
-> +		fsnotify_group_unlock(group);
-> +		return -EBUSY;
-> +	}
-> +
-> +	fp_hook =3D kzalloc(sizeof(*fp_hook), GFP_KERNEL);
-> +	if (!fp_hook) {
+> +	/* Make a copy of the list of prefix to ignore */
+> +	fp_data->str_table =3D kstrndup(args, FAN_FP_ARGS_MAX, GFP_KERNEL);
+> +	if (!fp_data->str_table) {
 > +		ret =3D -ENOMEM;
-> +		goto out;
+> +		goto err_out;
 > +	}
 > +
-> +	spin_lock(&fp_list_lock);
-> +	fp_ops =3D fanotify_fastpath_find(args.name);
-> +	if (!fp_ops || !try_module_get(fp_ops->owner)) {
-> +		spin_unlock(&fp_list_lock);
-> +		ret =3D -ENOENT;
-> +		goto err_free_hook;
+> +	INIT_LIST_HEAD(&fp_data->item_list);
+> +	prev =3D fp_data->str_table;
+> +	p =3D fp_data->str_table;
+> +
+> +	/* Update the list replace ',' with '\n'*/
+> +	while ((p =3D strchr(p, ',')) !=3D NULL) {
+> +		*p =3D '\0';
+> +		ret =3D add_item(fp_data, prev);
+> +		if (ret)
+> +			goto err_out;
+> +		p =3D p + 1;
+> +		prev =3D p;
 > +	}
-> +	spin_unlock(&fp_list_lock);
 > +
-> +	if (fp_ops->fp_init) {
-> +		char *init_args =3D NULL;
+> +	ret =3D add_item(fp_data, prev);
+> +	if (ret)
+> +		goto err_out;
 > +
-> +		if (args.init_args_len) {
-> +			init_args =3D strndup_user(u64_to_user_ptr(args.init_args),
-> +						 args.init_args_len);
-> +			if (IS_ERR(init_args)) {
-> +				ret =3D PTR_ERR(init_args);
-> +				if (ret =3D=3D -EINVAL)
-> +					ret =3D -E2BIG;
-> +				goto err_module_put;
+> +	fp_hook->data =3D fp_data;
+> +
+> +	return 0;
+> +
+> +err_out:
+> +	free_sample_fp_data(fp_data);
+> +	return ret;
+> +}
+> +
+> +static void sample_fp_free(struct fanotify_fastpath_hook *fp_hook)
+> +{
+> +	free_sample_fp_data(fp_hook->data);
+> +}
+> +
+> +static struct fanotify_fastpath_ops fan_fp_ignore_a_ops =3D {
+> +	.fp_handler =3D sample_fp_handler,
+> +	.fp_init =3D sample_fp_init,
+> +	.fp_free =3D sample_fp_free,
+> +	.name =3D "ignore-prefix",
+> +	.owner =3D THIS_MODULE,
+> +};
+> +
+> +static int __init fanotify_fastpath_sample_init(void)
+> +{
+> +	return fanotify_fastpath_register(&fan_fp_ignore_a_ops);
+> +}
+> +static void __exit fanotify_fastpath_sample_exit(void)
+> +{
+> +	fanotify_fastpath_unregister(&fan_fp_ignore_a_ops);
+> +}
+> +
+> +module_init(fanotify_fastpath_sample_init);
+> +module_exit(fanotify_fastpath_sample_exit);
+> +
+> +MODULE_AUTHOR("Song Liu");
+> +MODULE_DESCRIPTION("Example fanotify fastpath handler");
+> +MODULE_LICENSE("GPL");
+> diff --git a/samples/fanotify/fastpath-user.c b/samples/fanotify/fastpath=
+-user.c
+> new file mode 100644
+> index 000000000000..f301c4e0d21a
+> --- /dev/null
+> +++ b/samples/fanotify/fastpath-user.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define _GNU_SOURCE
+> +#include <err.h>
+> +#include <fcntl.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +#include <sys/fanotify.h>
+> +#include <unistd.h>
+> +#include <sys/ioctl.h>
+> +
+> +static int total_event_cnt;
+> +
+> +static void handle_notifications(char *buffer, int len)
+> +{
+> +	struct fanotify_event_metadata *event =3D
+> +		(struct fanotify_event_metadata *) buffer;
+> +	struct fanotify_event_info_header *info;
+> +	struct fanotify_event_info_fid *fid;
+> +	struct file_handle *handle;
+> +	char *name;
+> +	int off;
+> +
+> +	for (; FAN_EVENT_OK(event, len); event =3D FAN_EVENT_NEXT(event, len)) =
+{
+> +		for (off =3D sizeof(*event) ; off < event->event_len;
+> +		     off +=3D info->len) {
+> +			info =3D (struct fanotify_event_info_header *)
+> +				((char *) event + off);
+> +			switch (info->info_type) {
+> +			case FAN_EVENT_INFO_TYPE_DFID_NAME:
+> +				fid =3D (struct fanotify_event_info_fid *) info;
+> +				handle =3D (struct file_handle *)&fid->handle;
+> +				name =3D (char *)handle + sizeof(*handle) + handle->handle_bytes;
+> +
+> +				printf("Accessing file %s\n", name);
+> +				total_event_cnt++;
+> +				break;
+> +			default:
+> +				break;
 > +			}
 > +		}
-> +		ret =3D fp_ops->fp_init(fp_hook, init_args);
-> +		kfree(init_args);
-> +		if (ret)
-> +			goto err_module_put;
 > +	}
-> +	fp_hook->ops =3D fp_ops;
-> +	rcu_assign_pointer(group->fanotify_data.fp_hook, fp_hook);
-> +
-> +out:
-> +	fsnotify_group_unlock(group);
-> +	return ret;
-> +
-> +err_module_put:
-> +	module_put(fp_ops->owner);
-> +err_free_hook:
-> +	kfree(fp_hook);
-> +	goto out;
 > +}
 > +
-> +void fanotify_fastpath_hook_free(struct fanotify_fastpath_hook *fp_hook)
+> +int main(int argc, char **argv)
 > +{
-> +	if (fp_hook->ops->fp_free)
-> +		fp_hook->ops->fp_free(fp_hook);
+> +	struct fanotify_fastpath_args args =3D {
+> +		.name =3D "ignore-prefix",
+> +		.version =3D 1,
+> +		.flags =3D 0,
+> +	};
+> +	char buffer[BUFSIZ];
+> +	int fd;
 > +
-> +	module_put(fp_hook->ops->owner);
+> +	if (argc < 3) {
+> +		printf("Usage\n"
+> +		       "\t %s <path to monitor> <prefix to ignore>\n",
+> +			argv[0]);
+> +		return 1;
+> +	}
+> +
+> +	args.init_args =3D (__u64)argv[2];
+> +	args.init_args_len =3D strlen(argv[2]) + 1;
+> +
+> +	fd =3D fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR=
+_FID, O_RDONLY);
+> +	if (fd < 0)
+> +		errx(1, "fanotify_init");
+> +
+> +	if (fanotify_mark(fd, FAN_MARK_ADD,
+> +			  FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD,
+> +			  AT_FDCWD, argv[1])) {
+> +		errx(1, "fanotify_mark");
+> +	}
+> +
+> +	if (ioctl(fd, FAN_IOC_ADD_FP, &args))
+> +		errx(1, "ioctl");
+> +
+> +	while (total_event_cnt < 10) {
+> +		int n =3D read(fd, buffer, BUFSIZ);
+> +
+> +		if (n < 0)
+> +			errx(1, "read");
+> +
+> +		handle_notifications(buffer, n);
+> +	}
+> +
+> +	ioctl(fd, FAN_IOC_DEL_FP);
+> +	close(fd);
+> +
+> +	return 0;
 > +}
-> +
-> +void fanotify_fastpath_del(struct fsnotify_group *group)
-> +{
-> +	struct fanotify_fastpath_hook *fp_hook;
-> +
-> +	fsnotify_group_lock(group);
-> +	fp_hook =3D group->fanotify_data.fp_hook;
-> +	if (!fp_hook)
-> +		goto out;
-> +
-> +	rcu_assign_pointer(group->fanotify_data.fp_hook, NULL);
-> +	fanotify_fastpath_hook_free(fp_hook);
-> +
-> +out:
-> +	fsnotify_group_unlock(group);
-> +}
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index 8e2d43fc6f7c..e96cb83f8409 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -987,6 +987,13 @@ static long fanotify_ioctl(struct file *file, unsign=
-ed int cmd, unsigned long ar
->  		spin_unlock(&group->notification_lock);
->  		ret =3D put_user(send_len, (int __user *) p);
->  		break;
-> +	case FAN_IOC_ADD_FP:
-> +		ret =3D fanotify_fastpath_add(group, p);
-> +		break;
-> +	case FAN_IOC_DEL_FP:
-> +		fanotify_fastpath_del(group);
-> +		ret =3D 0;
-> +		break;
->  	}
-> =20
->  	return ret;
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index 89ff45bd6f01..cea95307a580 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -136,4 +136,49 @@
->  #undef FAN_ALL_PERM_EVENTS
->  #undef FAN_ALL_OUTGOING_EVENTS
-> =20
-> +struct fsnotify_group;
-> +struct qstr;
-> +struct inode;
-> +struct fanotify_fastpath_hook;
-> +
 
-This would be a nice place for a doc header that describes what all of
-these fields represent. Most of it should probably be the same as the
-comment header over the struct fsnotify_ops definition:
-
-> +struct fanotify_fastpath_event {
-> +	u32 mask;
-> +	const void *data;
-> +	int data_type;
-> +	struct inode *dir;
-> +	const struct qstr *file_name;
-> +	__kernel_fsid_t *fsid;
-> +	u32 match_mask;
-> +};
-> +
-
-Ditto here. This should have a kerneldoc comment that describes the
-purpose, arguments and the "contract" around these new operations.
-
-> +struct fanotify_fastpath_ops {
-> +	int (*fp_handler)(struct fsnotify_group *group,
-> +			  struct fanotify_fastpath_hook *fp_hook,
-> +			  struct fanotify_fastpath_event *fp_event);
-> +	int (*fp_init)(struct fanotify_fastpath_hook *hook, const char *args);
-> +	void (*fp_free)(struct fanotify_fastpath_hook *hook);
-> +
-> +	char name[FAN_FP_NAME_MAX];
-> +	struct module *owner;
-> +	struct list_head list;
-> +	int flags;
-> +};
-> +
-> +enum fanotify_fastpath_return {
-> +	FAN_FP_RET_SEND_TO_USERSPACE =3D 0,
-> +	FAN_FP_RET_SKIP_EVENT =3D 1,
-> +};
-> +
-> +struct fanotify_fastpath_hook {
-> +	struct fanotify_fastpath_ops *ops;
-> +	void *data;
-> +};
-> +
-> +int fanotify_fastpath_register(struct fanotify_fastpath_ops *ops);
-> +void fanotify_fastpath_unregister(struct fanotify_fastpath_ops *ops);
-> +int fanotify_fastpath_add(struct fsnotify_group *group,
-> +			  struct fanotify_fastpath_args __user *args);
-> +void fanotify_fastpath_del(struct fsnotify_group *group);
-> +void fanotify_fastpath_hook_free(struct fanotify_fastpath_hook *fp_hook)=
-;
-> +
->  #endif /* _LINUX_FANOTIFY_H */
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
-ckend.h
-> index 3ecf7768e577..ef251b4e4e6f 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -117,6 +117,7 @@ struct fsnotify_fname;
->  struct fsnotify_iter_info;
-> =20
->  struct mem_cgroup;
-> +struct fanotify_fastpath_hook;
-> =20
->  /*
->   * Each group much define these ops.  The fsnotify infrastructure will c=
-all
-> @@ -255,6 +256,8 @@ struct fsnotify_group {
->  			int f_flags; /* event_f_flags from fanotify_init() */
->  			struct ucounts *ucounts;
->  			mempool_t error_events_pool;
-> +
-> +			struct fanotify_fastpath_hook __rcu *fp_hook;
->  		} fanotify_data;
->  #endif /* CONFIG_FANOTIFY */
->  	};
-> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.=
-h
-> index 34f221d3a1b9..9c30baeebae0 100644
-> --- a/include/uapi/linux/fanotify.h
-> +++ b/include/uapi/linux/fanotify.h
-> @@ -3,6 +3,7 @@
->  #define _UAPI_LINUX_FANOTIFY_H
-> =20
->  #include <linux/types.h>
-> +#include <linux/ioctl.h>
-> =20
->  /* the following events that user-space can register for */
->  #define FAN_ACCESS		0x00000001	/* File was accessed */
-> @@ -243,4 +244,29 @@ struct fanotify_response_info_audit_rule {
->  				(long)(meta)->event_len >=3D (long)FAN_EVENT_METADATA_LEN && \
->  				(long)(meta)->event_len <=3D (long)(len))
-> =20
-> +#define FAN_FP_NAME_MAX 64
-> +#define FAN_FP_ARGS_MAX 1024
-> +
-> +/* This is the arguments used to add fastpath handler to a group. */
-> +struct fanotify_fastpath_args {
-> +	/* user space pointer to the name of fastpath handler */
-> +	char name[FAN_FP_NAME_MAX];
-> +
-> +	__u32 version;
-> +	__u32 flags;
-> +
-> +	/*
-> +	 * user space pointer to the init args of fastpath handler,
-> +	 * up to init_args_len (<=3D FAN_FP_ARGS_MAX).
-> +	 */
-> +	__u64 init_args;
-> +	/* length of init_args */
-> +	__u32 init_args_len;
-> +} __attribute__((__packed__));
-> +
-> +#define FAN_IOC_MAGIC 'F'
-> +
-> +#define FAN_IOC_ADD_FP _IOW(FAN_IOC_MAGIC, 0, struct fanotify_fastpath_a=
-rgs)
-> +#define FAN_IOC_DEL_FP _IOW(FAN_IOC_MAGIC, 1, char[FAN_FP_NAME_MAX])
-> +
->  #endif /* _UAPI_LINUX_FANOTIFY_H */
-
-Otherwise, this looks fairly straightforward. Nice work, Song!
 --=20
 Jeff Layton <jlayton@kernel.org>
 
