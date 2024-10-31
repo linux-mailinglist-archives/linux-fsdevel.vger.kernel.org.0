@@ -1,154 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-33377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D122A9B85C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B649B85D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 23:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6201C21478
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 21:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0971C22252
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E221CDA0E;
-	Thu, 31 Oct 2024 21:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B211CEABA;
+	Thu, 31 Oct 2024 22:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKBL9jLx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeE8aZve"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E101CCEE8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 21:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84E019B3CB;
+	Thu, 31 Oct 2024 22:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730411595; cv=none; b=D9P+lCCmHVm2qiZBFwnoT1QePAZglIC5ds/q4c9rQLsr0jhTvDNlp0rmClstd2qjrd0YN0/ExsXTDgbnuua8JjaEEWqkP2OzTc150Npl7QJ94eyotAaM5QJkdhirGceJVgKo67hsVkBTU5TY7ywWUzEViyIKgl9r1jbl4UMRUds=
+	t=1730412108; cv=none; b=ByrYHWKwzTuRurI29ezyGxPO74MDpKrn8LAj33wa2TEEokis0heYKN/0n8wLiCthcoah4G1zB45fUABrDDn7ewpIGkdeG6VA0J49FJK1Oo9zWeBh2lVho8Jxy5WvBbTQdT+rwKOfB3fhL/7zZhVrkXpQrrGDLovfpMYaTPaoeo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730411595; c=relaxed/simple;
-	bh=F27qB7pqs4B+H6rgwMgg110YnYCYCyECaYMkJQesej4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HDGOWa1ho+8TLa00RyF4m9aYzZisW7WTWmHbeLqxKFJsGdYMQwroORUfHxPgcEw7ZsA49frIUFugFcauWYiJTfIcd+wbw7suGgBRIrFNzgr7KFBmIQuj+nm5bxiKRwXIe70Zp9729NQd3jQcbeWTbJyZD2aA3IWrHw+01N7XzFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKBL9jLx; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2bdbdee559so1347013276.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 14:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730411588; x=1731016388; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F27qB7pqs4B+H6rgwMgg110YnYCYCyECaYMkJQesej4=;
-        b=XKBL9jLxSoguRbBEZf8oa6Uc9bcprOxBnuO59VCwVN3QmpPWoVallY1kDPHp/Uhh3+
-         J6l8v4zVWP93Q79ivmNmKm6+PuARNCqgiuqKnMart04Yndtd1jsRJ7h4cjD4A9ALqHwG
-         7mG3zUprzlQLfcA8p04qqA2SopOPA5IZ03U9zK+Pd5e72h7ZI8s9a9AXc81+RGEdOlLI
-         NkIXHvQJmPHvDv1hr0nNvl+pViw8rBuV4AJu4NuCahgineZzwGSaoBGqSo52RWZ1rIe4
-         e966v+3aGqXGfsedvhZ/wMhiuwc32sSjnU8MHMmFb1u/x8HslfeiJqSgqmis6ECfZsBn
-         ilNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730411588; x=1731016388;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F27qB7pqs4B+H6rgwMgg110YnYCYCyECaYMkJQesej4=;
-        b=NcO8fwYCy6Kuxva5ktztf6G7fekpPYN5+rW5T4SjpjRArtnskxM16KZx3OmJ+CjD5E
-         J98mjA90qG01mEESkO2hDlck1huIVMxCH5Wu1h+0/ZYKRF3BzkZWC8zNMTaEz1f6J4y+
-         nIeGKuhqyISZowpn3fB2TDY5svvYs7PcsPPb/EH3PUBUGwrrf3C9t0RLlPcRi53VDtBw
-         GISeY45t8eCsfCbBDziVmfDx+238lIeDskq51MZF9eLLD9pdtbin5wf1vqesFBKATHAz
-         8/Er4WLYTfW8f0RKoYPS820dYxAmk8KQpbNfcUsPoPgqWCvIZ0O2yi7b0nksrIuG4BDE
-         djdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkVlCc0HxNDrbe2KswB8xQHIk6qqd/rnvYFiIOtSWlTDdE3I9Q+nPKETGIsYW6CxqV1zJ9D3tQHbcrjJwU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+y/39GfFXbvsalmKrmvj1ITYx9q9hBP3j7bQR9QqX3LL2tpSo
-	vNKsv5NfJccXO3/5UJaWSpHfncoL73U2S/nAOSAWmqVjAZszDpvHuVZhYTBnGJqjjdGz7fl0/q+
-	aYdRd2V0C+jdI2KhIqHT3k7iDYjyB1jWeC+k=
-X-Google-Smtp-Source: AGHT+IHqMc8D1fTcJBHC56Bby5MV6Wwd0AQM0m6uLJ3UMWC4kMsq8PIQR4kUOKsExi9cp8mFoCadMXsDzzN7l83LUiw=
-X-Received: by 2002:a05:6902:2b0a:b0:e29:6571:b107 with SMTP id
- 3f1490d57ef6-e33025b5d7emr1532044276.32.1730411588315; Thu, 31 Oct 2024
- 14:53:08 -0700 (PDT)
+	s=arc-20240116; t=1730412108; c=relaxed/simple;
+	bh=+KErsZIPojez5gVdFx2LEHdy76Mrm3FGs9JwwUfXIEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7Rqciu0OQRSguBJlc81+s/sbUNWicRlonXwVJricGwNdVz2bjcJwPcl3PWG0hbCJdpr7FoqwMmsD+trrw8wgKULpeaIyKSGauqAG05m+XGSCZX5AUUNmuHYyZokscBoT+b7cFEXfad3THQCOz3nF9vcVhXozBOLkXUTqT4Negs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeE8aZve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAF1C4CEC3;
+	Thu, 31 Oct 2024 22:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730412108;
+	bh=+KErsZIPojez5gVdFx2LEHdy76Mrm3FGs9JwwUfXIEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CeE8aZveFfL156p2krInUvKCQyF8wWe69NaroUq3U3qZn8NhyC898/4Gu6rR/u0P5
+	 eAndLl74rtIntSMz8i5hu+x3tToayBjriocQDLr4wmHAihukpUyyD+kI5G6MabBM6u
+	 GHjL/Ulto5cQh+IXD09D82GAcZKKIuYJXy2YCzA6ueiIFptuJONKFLSR7iDqPZY26l
+	 LW20uVikDfOhfmFtorYEBs1DSmcmyERhQQna1vJ3YdouJIo8aP+lWi0gqEviDn5nGR
+	 Wgv3lAhORJO32hcnwwk+8th/r95TQN/rE/CqVfeitBS8MMmlNpx2Z9QY0K/T0OwoJw
+	 myPyRBGvry+Ww==
+Date: Thu, 31 Oct 2024 15:01:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] ext4: Add atomic writes support for DIO
+Message-ID: <20241031220147.GG21832@frogsfrogsfrogs>
+References: <cover.1730286164.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
- <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm> <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
- <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm> <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
- <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
- <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm> <CAJnrk1b9ttYVM2tupaNy+hqONRjRbxsGwdFvbCep75v01RtK+g@mail.gmail.com>
- <4hwdxhdxgjyxgxutzggny4isnb45jxtump7j7tzzv6paaqg2lr@55sguz7y4hu7>
- <CAJnrk1aY-OmjhB8bnowLNYosTP_nTZXGpiQimSS5VRfnNgBoJA@mail.gmail.com> <ipa4ozknzw5wq4z4znhza3km5erishys7kf6ov26kmmh4r7kph@vedmnra6kpbz>
-In-Reply-To: <ipa4ozknzw5wq4z4znhza3km5erishys7kf6ov26kmmh4r7kph@vedmnra6kpbz>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 31 Oct 2024 14:52:57 -0700
-Message-ID: <CAJnrk1aZV=1mXwO+SNupffLQtQNeD3Uz+PBcxL1TKBDgGsgQPg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	hannes@cmpxchg.org, linux-mm@kvack.org, kernel-team@meta.com, 
-	Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1730286164.git.ritesh.list@gmail.com>
 
-On Thu, Oct 31, 2024 at 1:06=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Thu, Oct 31, 2024 at 12:06:49PM GMT, Joanne Koong wrote:
-> > On Wed, Oct 30, 2024 at 5:30=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> [...]
-> > >
-> > > Memory pool is a bit confusing term here. Most probably you are askin=
-g
-> > > about the migrate type of the page block from which tmp page is
-> > > allocated from. In a normal system, tmp page would be allocated from =
-page
-> > > block with MIGRATE_UNMOVABLE migrate type while the page cache page, =
-it
-> > > depends on what gfp flag was used for its allocation. What does fuse =
-fs
-> > > use? GFP_HIGHUSER_MOVABLE or something else? Under low memory situati=
-on
-> > > allocations can get mixed up with different migrate types.
-> > >
-> >
-> > I believe it's GFP_HIGHUSER_MOVABLE for the page cache pages since
-> > fuse doesn't set any additional gfp masks on the inode mapping.
-> >
-> > Could we just allocate the fuse writeback pages with GFP_HIGHUSER
-> > instead of GFP_HIGHUSER_MOVABLE? That would be in fuse_write_begin()
-> > where we pass in the gfp mask to __filemap_get_folio(). I think this
-> > would give us the same behavior memory-wise as what the tmp pages
-> > currently do,
->
-> I don't think it would be the same behavior. From what I understand the
-> liftime of the tmp page is from the start of the writeback till the ack
-> from the fuse server that writeback is done. While the lifetime of the
-> page of the page cache can be arbitrarily large. We should just make it
-> unmovable for its lifetime. I think it is fine to make the page
-> unmovable during the writeback. We should not try to optimize for the
-> bad or buggy behavior of fuse server.
->
-> Regarding the avoidance of wait on writeback for fuse folios, I think we
-> can handle the migration similar to how you are handling reclaim and in
-> addition we can add a WARN() in folio_wait_writeback() if the kernel ever
-> sees a fuse folio in that function.
+On Wed, Oct 30, 2024 at 09:27:37PM +0530, Ritesh Harjani (IBM) wrote:
 
-Awesome, this is what I'm planning to do in v3 to address migration then:
+Assuming Ted acks this series, I have a fun question: Can we merge this
+for 6.13 alongside the single-fsblock xfs implementation?
 
-1) in migrate_folio_unmap(), only call "folio_wait_writeback(src);" if
-src->mapping does not have the AS_NO_WRITEBACK_WAIT bit set on it (eg
-fuse folios will have that AS_NO_WRITEBACK_WAIT bit set)
+And how do we want to merge this?  It looks like Jens took only the
+first three patches from John's series, leaving this:
 
-2) in the fuse filesystem's implementation of the
-mapping->a_ops->migrate_folio callback, return -EAGAIN if the folio is
-under writeback.
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
 
-Does this sound good?
+[PATCH v10 4/8] fs: Export generic_atomic_write_valid() John Garry
+[PATCH v10 5/8] fs: iomap: Atomic write support John Garry
+[PATCH v10 6/8] xfs: Support atomic write for statx John Garry
+[PATCH v10 7/8] xfs: Validate atomic writes John Garry
+[PATCH v10 8/8] xfs: Support setting FMODE_CAN_ATOMIC_WRITE John Garry
 
+Note the fs and iomap stuff is not in that branch.
 
-Thanks,
-Joanne
+So should xfs create a 6.13 merge branch from block-atomic containing
+all of its new stuff including the xfs atomic writes changes?  And then
+I guess merge the ext4 changes too??  ext4 code coming in via xfs, yuck.
+
+Or should cem just create a 6.13 merge branch with everything *except*
+the atomic writes stuff?  Call that branch "xfs-6.13-merge".  Then one
+of us with commit privileges creates a separate branch off of
+block-atomic, add both the xfs series and then the ext4 series?  Call
+that branch "fs-atomic-writes".
+
+Then I guess cem could create a third branch from xfs-6.13-merge, merge
+the fs-atomic-writes branch into that third branch, and push that third
+branch to for-next on git.kernel.org so it can get picked up by
+rothwell's for-next and fs-next?
+
+(Note that Ted could do likewise with ext4; cem doesn't have to be part
+of this.)
+
+Does that work for people?  The "sending multiple branches to linus" way
+is the best method I can think of, though it's more release manager
+work.
+
+--D
+
+> v2 -> v3:
+> ==========
+> 1. Patch-1 adds an "experimental" string in dmesg log during mount when EXT4
+>    detects that it is capable of doing DIO atomic writes on a given device
+>    with min and max unit details.
+> 2. Patch-4 has been updated to avoid returning -ENOTBLK (in ext4_iomap_end)
+>    if the request belongs to atomic write. This patch also adds a WARN_ON_ONCE()
+>    if atomic write ever fallback to buffered-io (to catch any unwanted bugs in the future).
+>    More details in the commit log of patch-4.
+> 3. Collected RBs tag from John for Patch 2 & 3.
+> 
+> [v2]: https://lore.kernel.org/linux-ext4/cover.1729944406.git.ritesh.list@gmail.com/
+> 
+> Previous cover letter log:
+> 
+> In v2, we had split the series and this one only takes care of
+> atomic writes for single fsblock.
+> That means for now this gets only enabled on bs < ps systems on ext4.
+> Enablement of atomic writes for bigalloc (multi-fsblock support) is still
+> under discussion and may require general consensus within the filesystem
+> community [1].
+> 
+> This series adds the base feature support to enable atomic writes in
+> direct-io path for ext4. We advertise the minimum and the maximum atomic
+> write unit sizes via statx on a regular file.
+> 
+> This series allows users to utilize atomic write support using -
+> 1. on bs < ps systems via - mkfs.ext4 -F -b 16384 /dev/sda
+> 
+> This can then be utilized using -
+> 	xfs_io -fdc "pwrite -V 1 -A -b16k 0 16k" /mnt/f1
+> 
+> This is built on top of John's DIO atomic write series for XFS [2].
+> The VFS and block layer enablement for atomic writes were merged already.
+> 
+> 
+> [1]: https://lore.kernel.org/linux-ext4/87jzdvmqfz.fsf@gmail.com
+> [2]: https://lore.kernel.org/linux-xfs/20241019125113.369994-1-john.g.garry@oracle.com/
+> 
+> 
+> Changelogs:
+> ===========
+> PATCH -> PATCH v2:
+> - addressed review comments from John and Darrick.
+> - renamed ext4_sb_info variables names: fs_awu* -> s_awu*
+> - [PATCH]: https://lore.kernel.org/linux-ext4/cover.1729825985.git.ritesh.list@gmail.com/
+> 
+> RFC -> PATCH:
+> - Dropped RFC tag
+> - Last RFC was posted a while ago but back then a lot of VFS and block layer
+>   interfaces were still not merged. Those are now merged, thanks to John and
+>   everyone else.
+> - [RFC] - https://lore.kernel.org/linux-ext4/cover.1709356594.git.ritesh.list@gmail.com/
+> 
+> 
+> 
+> Ritesh Harjani (IBM) (4):
+>   ext4: Add statx support for atomic writes
+>   ext4: Check for atomic writes support in write iter
+>   ext4: Support setting FMODE_CAN_ATOMIC_WRITE
+>   ext4: Do not fallback to buffered-io for DIO atomic write
+> 
+>  fs/ext4/ext4.h  |  9 +++++++++
+>  fs/ext4/file.c  | 24 ++++++++++++++++++++++++
+>  fs/ext4/inode.c | 28 +++++++++++++++++++++++-----
+>  fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
+>  4 files changed, 87 insertions(+), 5 deletions(-)
+> 
+> --
+> 2.46.0
+> 
+> 
 
