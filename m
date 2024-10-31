@@ -1,139 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-33358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B009B7E87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 16:31:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C489B7EC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 16:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D23F1C23A5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 385D0B213F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A096C1A4F01;
-	Thu, 31 Oct 2024 15:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F7B1A38C2;
+	Thu, 31 Oct 2024 15:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="P1Nncupq"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7498E1A01C4;
-	Thu, 31 Oct 2024 15:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3D13342F;
+	Thu, 31 Oct 2024 15:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388674; cv=none; b=IhfO0cDymlHQxBPTuRdWszSzGJH1SzMSmGDzFXpGnR6hz3+Q9nL/DOw/RQ1vSHKJWIX2wckwhWnJ0Ibmzfj3PY/BYki8UjTw6r0tZio/8LqKbu+bqMwZjWE+Rx1Ng55plFPUpYKxHhV5tBKbzHwpzBMn69SX3dC0uP44UPqeQk4=
+	t=1730389404; cv=none; b=n25ai6LxaoripCHQodr7rt/wXlmZzOcK5KnB//hXleqDoSQ1FtshBEVEDSzbF5p7JFs6wpoFTm8KEGMqw1sY3JmVyvWB3KijB9QRC9hTlyeVpXJA3DJAfSbbn4mlCbBiR0lIu8izXNYbQt5vy/Z3gY5221aMeHtKtbDpNJjdKDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388674; c=relaxed/simple;
-	bh=kjEtoR7WXcrlDmWv79wlde5j4Pe/SHsa6DdfWTkJccw=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GhOji7DBOqM+2DDLFPkwBu6YrUR6OsOUKKU1XHk05azrSRb22D2serKvOfly/bC3oHFc3HmdL62KGIpuuVW3+AE/9NhWQ2+v6LFKLynOZhROQLLUmmq7Lr8w4fa/C8o7LjGdflQtRfEIMeuLakU/1gf3k7WkoJQYzwwpaKKwKkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=P1Nncupq; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730388672; x=1761924672;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=kjEtoR7WXcrlDmWv79wlde5j4Pe/SHsa6DdfWTkJccw=;
-  b=P1NncupqU6LYHOGoy8KlIR+/AtrWJhuxD3VTxiGcd5tOAUrH9Ke26JaT
-   ieyjtNMRxIBaAQo7Cglj56PdFUNY4/20oUD9T1Z+PBmaWcIMwdO+V4bwI
-   kSRQbS1fAli84sWWqdMyWuxooU+U6rCRQfGShiezTznwnb11/2SCeWyLe
-   E=;
-X-IronPort-AV: E=Sophos;i="6.11,247,1725321600"; 
-   d="scan'208";a="381479065"
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-Thread-Topic: [PATCH 05/10] guestmemfs: add file mmap callback
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 15:31:03 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:32967]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.199:2525] with esmtp (Farcaster)
- id 2f3f7fde-846e-4fec-9d29-916d333d5f38; Thu, 31 Oct 2024 15:31:00 +0000 (UTC)
-X-Farcaster-Flow-ID: 2f3f7fde-846e-4fec-9d29-916d333d5f38
-Received: from EX19D004EUC003.ant.amazon.com (10.252.51.249) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 31 Oct 2024 15:30:59 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC003.ant.amazon.com (10.252.51.249) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 31 Oct 2024 15:30:59 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Thu, 31 Oct 2024 15:30:59 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
- Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Saenz
- Julienne, Nicolas" <nsaenz@amazon.es>, "Durrant, Paul"
-	<pdurrant@amazon.co.uk>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
-Thread-Index: AQHbKlc3IZ2PqNLJ5E+mkZOTFQYr3bKg/xKA
-Date: Thu, 31 Oct 2024 15:30:59 +0000
-Message-ID: <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805093245.889357-6-jgowans@amazon.com>
-	 <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-In-Reply-To: <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <260366AA7173934389D9B2AED5356A54@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730389404; c=relaxed/simple;
+	bh=QIb+KiWW445jTY1jXtXhMes2+kcSRYXHrtlb1c57A/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aq7shM8R6l1SII4bH19EJ1+coBL0G9+NbGmlhDCYS0PsJzCNrbfuyCXmNrWxTZbzJnUexDtwzmjizhJjuW4fTBmv1JzF6cmQbYSxilUduyxWAHilM2K/iCU6/yjPxQ3ybNdKW/k7RT3FpH9Tj8J+hh1Vp8K54nPoxdLySPsLGJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 153B11FC05;
+	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
+	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
+	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730389399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
+	ED4OEW+BMLkC13CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
+	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
+	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730389399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
+	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
+	ED4OEW+BMLkC13CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 069FD13A53;
+	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LbKXAZelI2fjJgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 31 Oct 2024 15:43:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B2E57A086F; Thu, 31 Oct 2024 16:43:14 +0100 (CET)
+Date: Thu, 31 Oct 2024 16:43:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xattr: remove redundant check on variable err
+Message-ID: <20241031154314.576ksnwaruuqqwq2@quack3>
+References: <20241030180140.3103156-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030180140.3103156-1-colin.i.king@gmail.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.978];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-T24gVHVlLCAyMDI0LTEwLTI5IGF0IDE2OjA1IC0wNzAwLCBFbGxpb3QgQmVybWFuIHdyb3RlOg0K
-PiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjo0MEFNICswMjAwLCBKYW1lcyBHb3dhbnMg
-d3JvdGU6DQo+ID4gTWFrZSB0aGUgZmlsZSBkYXRhIHVzYWJsZSB0byB1c2Vyc3BhY2UgYnkgYWRk
-aW5nIG1tYXAuIFRoYXQncyBhbGwgdGhhdA0KPiA+IFFFTVUgbmVlZHMgZm9yIGd1ZXN0IFJBTSwg
-c28gdGhhdCdzIGFsbCBiZSBib3RoZXIgaW1wbGVtZW50aW5nIGZvciBub3cuDQo+ID4gDQo+ID4g
-V2hlbiBtbWFwaW5nIHRoZSBmaWxlIHRoZSBWTUEgaXMgbWFya2VkIGFzIFBGTk1BUCB0byBpbmRp
-Y2F0ZSB0aGF0IHRoZXJlDQo+ID4gYXJlIG5vIHN0cnVjdCBwYWdlcyBmb3IgdGhlIG1lbW9yeSBp
-biB0aGlzIFZNQS4gUmVtYXBfcGZuX3JhbmdlKCkgaXMNCj4gPiB1c2VkIHRvIGFjdHVhbGx5IHBv
-cHVsYXRlIHRoZSBwYWdlIHRhYmxlcy4gQWxsIFBURXMgYXJlIHByZS1mYXVsdGVkIGludG8NCj4g
-PiB0aGUgcGd0YWJsZXMgYXQgbW1hcCB0aW1lIHNvIHRoYXQgdGhlIHBndGFibGVzIGFyZSB1c2Fi
-bGUgd2hlbiB0aGlzDQo+ID4gdmlydHVhbCBhZGRyZXNzIHJhbmdlIGlzIGdpdmVuIHRvIFZGSU8n
-cyBNQVBfRE1BLg0KPiANCj4gVGhhbmtzIGZvciBzZW5kaW5nIHRoaXMgb3V0ISBJJ20gZ29pbmcg
-dGhyb3VnaCB0aGUgc2VyaWVzIHdpdGggdGhlDQo+IGludGVudGlvbiB0byBzZWUgaG93IGl0IG1p
-Z2h0IGZpdCB3aXRoaW4gdGhlIGV4aXN0aW5nIGd1ZXN0X21lbWZkIHdvcmsNCj4gZm9yIHBLVk0v
-Q29Dby9HdW55YWguDQo+IA0KPiBJdCBtaWdodCd2ZSBiZWVuIG1lbnRpb25lZCBpbiB0aGUgTU0g
-YWxpZ25tZW50IHNlc3Npb24gLS0geW91IG1pZ2h0IGJlDQo+IGludGVyZXN0ZWQgdG8gam9pbiB0
-aGUgZ3Vlc3RfbWVtZmQgYmktd2Vla2x5IGNhbGwgdG8gc2VlIGhvdyB3ZSBhcmUNCj4gb3Zlcmxh
-cHBpbmcgWzFdLg0KPiANCj4gWzFdOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9rdm0vYWU3OTQ4
-OTEtZmU2OS00MTFhLWI4MmUtNjk2M2I1OTRhNjJhQHJlZGhhdC5jb20vVC8NCg0KSGkgRWxsaW90
-LCB5ZXMsIEkgdGhpbmsgdGhhdCB0aGVyZSBpcyBhIGxvdCBtb3JlIG92ZXJsYXAgd2l0aA0KZ3Vl
-c3RfbWVtZmQgbmVjZXNzYXJ5IGhlcmUuIFRoZSBpZGVhIHdhcyB0byBleHRlbmQgZ3Vlc3RtZW1m
-cyBhdCBzb21lDQpwb2ludCB0byBoYXZlIGEgZ3Vlc3RfbWVtZmQgc3R5bGUgaW50ZXJmYWNlLCBi
-dXQgaXQgd2FzIHBvaW50ZWQgb3V0IGF0DQp0aGUgTU0gYWxpZ25tZW50IGNhbGwgdGhhdCBkb2lu
-ZyBzbyB3b3VsZCByZXF1aXJlIGd1ZXN0bWVtZnMgdG8NCmR1cGxpY2F0ZSB0aGUgQVBJIHN1cmZh
-Y2Ugb2YgZ3Vlc3RfbWVtZmQuIFRoaXMgaXMgdW5kZXNpcmFibGUuIEJldHRlcg0Kd291bGQgYmUg
-dG8gaGF2ZSBwZXJzaXN0ZW5jZSBpbXBsZW1lbnRlZCBhcyBhIGN1c3RvbSBhbGxvY2F0b3IgYmVo
-aW5kIGENCm5vcm1hbCBndWVzdF9tZW1mZC4gSSdtIG5vdCB0b28gc3VyZSBob3cgdGhpcyB3b3Vs
-ZCBiZSBhY3R1YWxseSBkb25lIGluDQpwcmFjdGljZSwgc3BlY2lmaWNhbGx5OiANCi0gaG93IHRo
-ZSBwZXJzaXN0ZW50IHBvb2wgd291bGQgYmUgZGVmaW5lZA0KLSBob3cgaXQgd291bGQgYmUgc3Vw
-cGxpZWQgdG8gZ3Vlc3RfbWVtZmQNCi0gaG93IHRoZSBndWVzdF9tZW1mZHMgd291bGQgYmUgcmUt
-ZGlzY292ZXJlZCBhZnRlciBrZXhlYw0KQnV0IGFzc3VtaW5nIHdlIGNhbiBmaWd1cmUgb3V0IHNv
-bWUgd2F5IHRvIGRvIHRoaXMsIEkgdGhpbmsgaXQncyBhDQpiZXR0ZXIgd2F5IHRvIGdvLg0KDQpJ
-J2xsIGpvaW4gdGhlIGd1ZXN0X21lbWZkIGNhbGwgc2hvcnRseSB0byBzZWUgdGhlIGRldmVsb3Bt
-ZW50cyB0aGVyZSBhbmQNCndoZXJlIHBlcnNpc3RlbmNlIHdvdWxkIGZpdCBiZXN0Lg0KDQpIb3Bl
-ZnVsbHkgd2UgY2FuIGZpZ3VyZSBvdXQgaW4gdGhlb3J5IGhvdyB0aGlzIGNvdWxkIHdvcmssIHRo
-ZSBJJ2xsIHB1dA0KdG9nZXRoZXIgYW5vdGhlciBSRkMgc2tldGNoaW5nIGl0IG91dC4NCg0KSkcN
-Cg==
+On Wed 30-10-24 18:01:40, Colin Ian King wrote:
+> Curretly in function generic_listxattr the for_each_xattr_handler loop
+> checks err and will return out of the function if err is non-zero.
+> It's impossible for err to be non-zero at the end of the function where
+> err is checked again for a non-zero value. The final non-zero check is
+> therefore redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Yeah, makes sense. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 05ec7e7d9e87..21beb82ab5dc 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1015,7 +1015,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+>  			return err;
+>  	}
+>  
+> -	return err ? err : buffer_size - remaining_size;
+> +	return buffer_size - remaining_size;
+>  }
+>  EXPORT_SYMBOL(generic_listxattr);
+>  
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
