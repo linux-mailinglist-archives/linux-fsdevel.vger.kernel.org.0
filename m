@@ -1,145 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-33379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC469B85DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 23:03:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5C49B85EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 23:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2932F1C229F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED282829A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFB21CEADC;
-	Thu, 31 Oct 2024 22:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB0D1CFEB9;
+	Thu, 31 Oct 2024 22:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ReK7dDF3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCGMVt5Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CC71CCB39
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 22:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CA61CC16B;
+	Thu, 31 Oct 2024 22:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730412175; cv=none; b=eaWtgnP0SwHm0sBZO8IQ7ntffv/XtfOsarz5xlTkZQWMeosHI3voMzx5SqarTdJT/qzMfD0OmbLKVVwaRc+qzSaG7IvxzHZW3RtCYxuR8QljNSgJHIbxJEOIb2Lfyj9jzhxQ6Ozco/YZWg9y+00IuXsGhjfvr2X4OJP/JkTTqu0=
+	t=1730412646; cv=none; b=XOh0mKV2IqQYZ8cOqgmLDdwDNvulF7bBVtcDfG/1Zszx8G7CJ39dAma2kRjAYFYD9boEp6voKb/bPiDT8ZXLZAA/dfubaCWdSNWIol4DAdQsgSqvDT3XFP95hLCftozGb4fobwGeZAweBkUyhPOXmcX0+kCaI1/noIE17KDIpb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730412175; c=relaxed/simple;
-	bh=xw9c9uRCZip9b5z0xQQXgj61xVnjqCNOu2Ec6UCpIj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R0XuAzTbo1X4DTa1RRtbHqxiE4RtIa81oJenGarIw+Jy6fEPTFZ3punr2j+dguGStaVH+DyHolp+pr7MNnHZmahdW++D/kqSEM9ArJV5vnw5OXKA5m6gvN3EQIMvUtdEp1amIk+k8moBN9xI/rCTEo8HQK8fGZfYpLTTHnv9dZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ReK7dDF3; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a998a5ca499so176840566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 15:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1730412165; x=1731016965; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f6tWGGir5Adx4MqX737fggnZgq14JwkQAdxsqdfZqqg=;
-        b=ReK7dDF3eXpEuPJRD/Z9Rgoj3DqC9qwM0zKsVHuSqWX6O/robcMnvNbDKEIhtTQTQf
-         yZFCdSWkb2xUNPzxe7v8F/klNPPcit4OQi37ImetGAAik1Qq0ysKOFbdTCqDK2ACy2mx
-         2svymG834UbUr6tDDkqmxHxHcG+gKkXpWe9t4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730412165; x=1731016965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f6tWGGir5Adx4MqX737fggnZgq14JwkQAdxsqdfZqqg=;
-        b=BPBsJI6OPHbBsI4JyCcYdrD4/zftvXopdqnnZrD1/kj2GjONIr0+YDrv734vqLFLn9
-         05TWZIjxIa2+DYVYdxjsMTj+SWN0arfPPfCcM888rhUArWPM630C8+urrirhv4RszvMD
-         23Nu7Ok8LKCVfRHzkqmbfWyAT899KYx1Atdblssx9miFp1ruqKWsxp0E8xnDYOSA4e02
-         FbdGiKsMo9V2AnyK2ntgZKzOMB1QexPU+hkGG9W6n/KjaE24JublzWqeS5fEZdGOsGNH
-         aeAJEclCMP0d4+UYxL/95qhIbT26gJE31IaWx8ZzSB3wRp89+aQsDpyhOYGw1akG0tWe
-         SNrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlYWoYuBoAUT7qs5bx2GQe/4A7T86yrzY6yKzb7GDcq0ZUuauiAhxsE4oU9x6tcOQUOE6hnCD8qL3b8Uqi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzloKuuTczbDRmPBEvXd8Z4ybBU+nOXrGhptuVOBw+ABsiyi8v
-	u6O7jLkBMZ5FsdPYCoFPEeOzqssnzx+AyOhmKO30g4LXuNlGjkMJL9d5werHKvn7o/1eUo/21W4
-	pIl8=
-X-Google-Smtp-Source: AGHT+IGWkgOp3KhO6c9LYJzDEfrQJrQA9POUR6Ja6NbMvTOsoUYCUS3lGhgBTMnaYlKFnYCHGfImcA==
-X-Received: by 2002:a17:907:6ea1:b0:a9a:bbcb:5177 with SMTP id a640c23a62f3a-a9e658084bfmr118134866b.63.1730412165423;
-        Thu, 31 Oct 2024 15:02:45 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564941d5sm111135666b.19.2024.10.31.15.02.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 15:02:44 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a998a5ca499so176837366b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 15:02:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGYq/5LxJeaQ/AdNjzFq03LDwR4J00UaCUQQ2QTPuVzQcF/rM1eLcOgupB4rCDr5YFQo5n6B3P7HQwxf7g@vger.kernel.org
-X-Received: by 2002:a17:907:9409:b0:a9a:dfa5:47d2 with SMTP id
- a640c23a62f3a-a9e657fd8dfmr128991966b.59.1730412163769; Thu, 31 Oct 2024
- 15:02:43 -0700 (PDT)
+	s=arc-20240116; t=1730412646; c=relaxed/simple;
+	bh=eJWDa4aohLV/Z7xA2xETjGrhQOcKItwfm9HyMbigK1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YMKzt4JVkTP+BIGpnpQXl9MvasiCAXYg30AlIGj+BPyNPTpFOhp+7MNOp3OuOezrLDeEg9Zf9CzuB3m/9vfndybGvmrEp3zts3JZSYvmUh/KzmwoeAcA5BxQkG56xIEBHwnr/+DdwhWzC8v7nQL/o43FInSdoLlcj7Eeh91se38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCGMVt5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D429C4CED1;
+	Thu, 31 Oct 2024 22:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730412645;
+	bh=eJWDa4aohLV/Z7xA2xETjGrhQOcKItwfm9HyMbigK1A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mCGMVt5QnrQFSrrinkV6U6+X6+MbhpZLeHAntZF6ihcuMVMPN1Co/j9fNo45bs4td
+	 62u3Y1eVaNTlbHr0INFpD53agamzafgSyLdrkDsVVW9vXlFnyZAX2qORqgwsWQIeHh
+	 vDXY7QuM2biKlOHjiEV3W+EHbcy1BaO8QGsdEalUYYCo4pREXCBpmnvn5RyDgA9QY4
+	 MWcDS4aOkk440yHIr5l94Jha7RwixiFHV8xfACXnb8IFPmoOmc8rbskDbID9E8LLXP
+	 gDhQvA3CkHjagc9bUFGrqv+BxsDhLhvUWcnsADCUpkPUQNCwjaU0xjRa4KbtGn+N2M
+	 ESz24DC7k+iBA==
+From: Kees Cook <kees@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Tycho Andersen <tycho@tycho.pizza>
+Cc: Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>
+Subject: Re: [PATCH 1/2] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
+Date: Thu, 31 Oct 2024 15:10:37 -0700
+Message-Id: <173041263505.1781237.9706368369948860422.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241030203732.248767-1-tycho@tycho.pizza>
+References: <20241030203732.248767-1-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
- <20241031-klaglos-geldmangel-c0e7775d42a7@brauner> <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 31 Oct 2024 12:02:26 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
-Message-ID: <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
-Subject: Re: generic_permission() optimization
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 at 09:04, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Maybe. Part of the cost seems to be the call, but a bigger part seems
-> to be the memory accesses around it with that whole
-> inode->i_sb->s_user_ns chain to load it, and then current->cred->fsuid
-> to compare against the result.
->
-> Anyway, I'll play around with this a bit more and try to get better profi=
-les.
+On Wed, 30 Oct 2024 14:37:31 -0600, Tycho Andersen wrote:
+> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> switching to execveat() for service execution, but can't, because the
+> contents of /proc/pid/comm are the file descriptor which was used,
+> instead of the path to the binary. This makes the output of tools like
+> top and ps useless, especially in a world where most fds are opened
+> CLOEXEC so the number is truly meaningless.
+> 
+> [...]
 
-Ok, so I've done some more profiles, and yeah, the costs seem to be
-almost entirely just cache misses.
+Applied to for-next/execve, thanks!
 
-make_vfsuid() shows up on the profile a bit too, but that seems to
-really be literally just "it's called a lot, and takes some I$
-misses".
+[1/2] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
+      https://git.kernel.org/kees/c/7bdc6fc85c9a
+[2/2] selftests/exec: add a test for execveat()'s comm
+      https://git.kernel.org/kees/c/bd104872311a
 
-When the profile looks like this:
+Take care,
 
- 10.71 =E2=94=82      push %rbx
- 15.44 =E2=94=82      mov  %edx,%eax
-  7.88 =E2=94=82      mov  %rdi,%rbx
-       =E2=94=82      cmp  $0xffffffff82532a00,%rdi
-  9.65 =E2=94=82    =E2=86=93 je   3a
-... nothing ...
- 15.00 =E2=94=82ffffffff813493fa:   pop  %rbx
- 41.33 =E2=94=82ffffffff813493fb: =E2=86=92 jmp  ffffffff81bb5460 <__x86_re=
-turn_thunk>
+-- 
+Kees Cook
 
-then it really looks like cache misses and some slow indirect branch
-resolution for 'ret' (that __x86_return_thunk branch is misleading -
-it is rewritten at runtime, but 'perf report' shows the original
-object code).
-
-So some of it is presumably due to IBRS on this CPU, and that's a big
-part of make_vfsuid() in this bare-metal non-idmapped case. But the
-profile does clearly say that in generic_permission(), the problem is
-just the cache misses on the superblock accesses and all the extra
-work with the credential check, even when the mapping is the identity
-mapping.
-
-I still get a fair number of calls to make_vfsuid() even with my patch
-- I guess I'll have to look into why. This is my regular "full build
-of an already built kernel", which I *expected* to be mainly just a
-lot of fstat() calls by 'make' which I would have thought almost
-always hit the fast case.
-
-I might have messed something up.
-
-               Linus
 
