@@ -1,141 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-33356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F40A9B7C72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:09:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9021A9B7D13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FF41F2168C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 14:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F32A2832E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 14:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638E21A070D;
-	Thu, 31 Oct 2024 14:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695D91A0BEC;
+	Thu, 31 Oct 2024 14:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWx7oxo/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaF35z7Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA097483;
-	Thu, 31 Oct 2024 14:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A550C156CF;
+	Thu, 31 Oct 2024 14:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730383779; cv=none; b=CJvhdfB1xtiDVoFhCSNsptOefBeKaHvFCkT/xH2RZCpSr4R2Z6o3YMsOq82328Gc7Ua43lkz2yoo7tcxI5nTjHx/x4cIDma0Z+RXDTqDbza892gfv2HU16rextfWFBgLIXrN4WoEOQkF3Lv/3gGkcXj5n/VTGNS3H56d2g69zM8=
+	t=1730385537; cv=none; b=EorgnSF0gZS/zyHvHEBUGmPO8H7zbsD5jxc4VsW+1+V3jVTd0ReLD6jSyWlAZjc2UEvlSX79q5ZHRNhPKAtSEeX2XpcKT5saeqaQw0reqcEFktruCi+yf7qYMynxlJWlkogW3G00aWRj/3RP4KXZ3maQ+iTC+jJNWuaMtJgqUc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730383779; c=relaxed/simple;
-	bh=4ceT/iOIGZcSpJVdW0LWOwHAcJw2b/1T7CPx9IuqL/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duuy7hsPl5u43/k5F1X6F3TYdauMGex4K8j/RjGTL/wlRK7UncS9KHnnvzlgpfpaOTWsKji8zVNnD6SVs9V+59xs1z9iV4W1CkJkN77PknsI6yEJJBliEeN5Gu79rxZD0RgPbCDjMC7uQ0SzY6qkk4MI94SdKd/FagNdxSsXGl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWx7oxo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB0AC4FF78;
-	Thu, 31 Oct 2024 14:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730383779;
-	bh=4ceT/iOIGZcSpJVdW0LWOwHAcJw2b/1T7CPx9IuqL/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lWx7oxo/BWefgupPnyVBFF4EVpoLomBSGE9ciTgQZWG4GP58bKIm6HsqHGAB0Vui1
-	 xfij0CepoVPLYF+ZkexuvOYQBFhjW+zsTDfelI7ZWd8BpJ0g6HfhEbA+83IrD91ikc
-	 OBOtukngbNprUkkarKpY5+yHCncE6aK4voihvs58+3qw37vJe9ciMzsO+dAnnRtAGL
-	 lWFrUikZ78NpdHv5TlXgAdrGOopyN+ei8Nlh6bgbB0VinjdKUD1L91zAPfQ+TQR0KR
-	 TSJdpHzsba7ExepK7DBbR5XMkPZp/MiZ19Lzq9cxbB3Esmy5FdC1fe+9FCpR/yrBWW
-	 gTyIpMoDfYUGw==
-Date: Thu, 31 Oct 2024 15:08:56 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: chia-yu.chang@nokia-bell-labs.com
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, dsahern@kernel.org, 
-	netfilter-devel@vger.kernel.org, kadlec@netfilter.org, coreteam@netfilter.org, 
-	pablo@netfilter.org, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	kees@kernel.org, mcgrof@kernel.org, ij@kernel.org, ncardwell@google.com, 
-	koen.de_schepper@nokia-bell-labs.com, g.white@cablelabs.com, ingemar.s.johansson@ericsson.com, 
-	mirja.kuehlewind@ericsson.com, cheshire@apple.com, rs.ietf@gmx.at, Jason_Livingood@comcast.com, 
-	vidhi_goel@apple.com
-Subject: Re: [PATCH v4 net-next 14/14] net: sysctl: introduce sysctl
- SYSCTL_FIVE
-Message-ID: <qnrzl4tjlgw5rzlvxavr3pt7fhkslnm4dd62q7uqzb3mfoa2jg@fuayx77rfcs6>
-References: <20241021215910.59767-1-chia-yu.chang@nokia-bell-labs.com>
- <20241021215910.59767-15-chia-yu.chang@nokia-bell-labs.com>
+	s=arc-20240116; t=1730385537; c=relaxed/simple;
+	bh=6G7C/il9g/dzmCRVL+rh/gHJAyO9BLO/eAVlrTtKqdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kr3EnoOn4Qx0yvZOcY9Ic4YDDsx0NNwoTwHLdl0Bt/H2Q4DkHbl9KLYE5HR4sCTyLAyrwsnY+GWAc15iRwbBIsZc++kBFTm48DCsOttbtZfC3MrAMhcDBJJWnDqbgy+YwGTHMJUoDF8Flic9554GuZLbVrbiVSwbkM0XHjKd8cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaF35z7Q; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so129658066b.0;
+        Thu, 31 Oct 2024 07:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730385534; x=1730990334; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VkLkUT2155S8/1ZjBvkJQuF+oTKJuM1LeXuQm4xdwNg=;
+        b=EaF35z7QAw8+27bb48NKUVj6QBfr5FebEwHpqmtus2RbpZK8ipUCHKln4D7GXtRv5+
+         7nLMxGZngs3s5ZW4U90yhIm0fjgw1XmKlKnpfNNL86n4bn20yii3M76K7Xzr6ZfeyrTT
+         x/n+CIFY+Tm8vSx5V7SsBZvnNYfj5tMXMqiDIpkedS2wqltykuQCB6AdUIDhbcc8mOdl
+         UzuKo84ZD12SPjDKDTs8TkGEHgwYeGElvArK0oSYPYWw0AvMxWU/SuXZlWHP6mGgJoYc
+         5nbQ5kpbMB9iNr0XEgXesNTfrwL3qi4zv/Gg+OE/m+n7a7MaeuuLAgiQMqgByTva6J7m
+         enTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730385534; x=1730990334;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkLkUT2155S8/1ZjBvkJQuF+oTKJuM1LeXuQm4xdwNg=;
+        b=WKJRBbzLTH6iip1ZfOx/s3AqSdV99rUTsJF75q1vkClyW6TcBIjrE7zXxqC41z0lET
+         dJo5ym/Hpq99WlarvVRGvdu8UT7kHcqed3PRtY8ZxXAmiydGtn1XpYTondY6MfGfXKmQ
+         9GD3o17CmJDnXyZgSYjJEiHXcQuCx6872EADZtXu9UKTIKtpUivck9lIry7clQR0YsDU
+         2Okc6OUG10+hltZGFe6YsHLAzqiSFVos+d8Iwpit6llgMgceu6DMud+cPsQG1sLGRcIZ
+         GxlV8FMckFxaf6C7y8fJ6WHlM76XmTw52dSEO5cYstIlfbbe7wR/QqboTFf/MdtBmlm7
+         2DjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4V6sAATbGf6L8J46Me79ApGtpFPL+ElT6LPadkfpr6wPP52vZBQLK6c0KAg50sGtC5Eb4ktWBzg==@vger.kernel.org, AJvYcCVufR4/xh0B5lATxeVHyggVGiRk7r58qsD7L0uck4x/faEXKysLXDw9aK2frvvNPxjNThij4X7nQ3SL9C4=@vger.kernel.org, AJvYcCWEAPGHwmWHJxLZuRot3sltpHdUaCu3ohk6ySr/YetQdDuBlclbP14Dl49RKNoVF4h0+yzS+mLKeA9+4A==@vger.kernel.org, AJvYcCWiPV+SUz3npLU9vUu+KFATdrB0IKyUVH81HHIkjnbRPUFkUSU3pePNiig3g2+88IiKV+2+2ISVPrfKKtgwQg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBlQQ41sna3amknwStPOZ7cPBahhqmQWGzsgk9/u7PYtPTQVWp
+	w65/N4CBfcUEfJRkC3iCLBKqPjJ5r+sCEZMeRkGIlm2bWJ9jC0Zv
+X-Google-Smtp-Source: AGHT+IHgy72+xf0zy2u4ibYnZqijgJyothbCzVyB8LNV+B9H3h6X+CKob8pNbhEshHta/sBwmpYt4Q==
+X-Received: by 2002:a17:906:c154:b0:a9a:38e6:2fdf with SMTP id a640c23a62f3a-a9e50ba7dc2mr353194166b.64.1730385533573;
+        Thu, 31 Oct 2024 07:38:53 -0700 (PDT)
+Received: from [192.168.42.106] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c55f4sm74922966b.78.2024.10.31.07.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 07:38:53 -0700 (PDT)
+Message-ID: <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
+Date: Thu, 31 Oct 2024 14:39:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021215910.59767-15-chia-yu.chang@nokia-bell-labs.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
+ with read/write
+To: Keith Busch <kbusch@kernel.org>, Kanchan Joshi <joshi.k@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
+ anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
+References: <20241030180112.4635-1-joshi.k@samsung.com>
+ <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
+ <20241030180112.4635-7-joshi.k@samsung.com>
+ <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 11:59:10PM +0200, chia-yu.chang@nokia-bell-labs.com wrote:
-> From: Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>
-> 
-> Add SYSCTL_FIVE for new AccECN feedback modes of net.ipv4.tcp_ecn.
-> 
-> Signed-off-by: Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>
-> ---
->  include/linux/sysctl.h | 17 +++++++++--------
->  kernel/sysctl.c        |  3 ++-
->  2 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index aa4c6d44aaa0..37c95a70c10e 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -37,21 +37,22 @@ struct ctl_table_root;
->  struct ctl_table_header;
->  struct ctl_dir;
->  
-> -/* Keep the same order as in fs/proc/proc_sysctl.c */
-> +/* Keep the same order as in kernel/sysctl.c */
->  #define SYSCTL_ZERO			((void *)&sysctl_vals[0])
->  #define SYSCTL_ONE			((void *)&sysctl_vals[1])
->  #define SYSCTL_TWO			((void *)&sysctl_vals[2])
->  #define SYSCTL_THREE			((void *)&sysctl_vals[3])
->  #define SYSCTL_FOUR			((void *)&sysctl_vals[4])
-> -#define SYSCTL_ONE_HUNDRED		((void *)&sysctl_vals[5])
-> -#define SYSCTL_TWO_HUNDRED		((void *)&sysctl_vals[6])
-> -#define SYSCTL_ONE_THOUSAND		((void *)&sysctl_vals[7])
-> -#define SYSCTL_THREE_THOUSAND		((void *)&sysctl_vals[8])
-> -#define SYSCTL_INT_MAX			((void *)&sysctl_vals[9])
-> +#define SYSCTL_FIVE			((void *)&sysctl_vals[5])
-Is it necessary to insert the value instead of appending it to the end
-of sysctl_vals? I would actually consider Paolo Abeni's suggestion to
-just use a constant if you are using it only in one place.
+On 10/30/24 21:09, Keith Busch wrote:
+> On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index 024745283783..48dcca125db3 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -105,6 +105,22 @@ struct io_uring_sqe {
+>>   		 */
+>>   		__u8	cmd[0];
+>>   	};
+>> +	/*
+>> +	 * If the ring is initialized with IORING_SETUP_SQE128, then
+>> +	 * this field is starting offset for 64 bytes of data. For meta io
+>> +	 * this contains 'struct io_uring_meta_pi'
+>> +	 */
+>> +	__u8	big_sqe[0];
+>> +};
 
-> +#define SYSCTL_ONE_HUNDRED		((void *)&sysctl_vals[6])
-> +#define SYSCTL_TWO_HUNDRED		((void *)&sysctl_vals[7])
-> +#define SYSCTL_ONE_THOUSAND		((void *)&sysctl_vals[8])
-> +#define SYSCTL_THREE_THOUSAND		((void *)&sysctl_vals[9])
-> +#define SYSCTL_INT_MAX			((void *)&sysctl_vals[10])
->  
->  /* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
-> -#define SYSCTL_MAXOLDUID		((void *)&sysctl_vals[10])
-> -#define SYSCTL_NEG_ONE			((void *)&sysctl_vals[11])
-> +#define SYSCTL_MAXOLDUID		((void *)&sysctl_vals[11])
-> +#define SYSCTL_NEG_ONE			((void *)&sysctl_vals[12])
->  
->  extern const int sysctl_vals[];
->  
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 79e6cb1d5c48..68b6ca67a0c6 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -82,7 +82,8 @@
->  #endif
->  
->  /* shared constants to be used in various sysctls */
-> -const int sysctl_vals[] = { 0, 1, 2, 3, 4, 100, 200, 1000, 3000, INT_MAX, 65535, -1 };
-> +const int sysctl_vals[] = { 0, 1, 2, 3, 4, 5, 100, 200, 1000, 3000, INT_MAX,
-> +			   65535, -1 };
->  EXPORT_SYMBOL(sysctl_vals);
->  
->  const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
-> -- 
-> 2.34.1
+I don't think zero sized arrays are good as a uapi regardless of
+cmd[0] above, let's just do
+
+sqe = get_sqe();
+big_sqe = (void *)(sqe + 1)
+
+with an appropriate helper.
+
+>> +
+>> +/* this is placed in SQE128 */
+>> +struct io_uring_meta_pi {
+>> +	__u16		pi_flags;
+>> +	__u16		app_tag;
+>> +	__u32		len;
+>> +	__u64		addr;
+>> +	__u64		seed;
+>> +	__u64		rsvd[2];
+>>   };
 > 
+> On the previous version, I was more questioning if it aligns with what
+
+I missed that discussion, let me know if I need to look it up
+
+> Pavel was trying to do here. I didn't quite get it, so I was more
+> confused than saying it should be this way now.
+
+The point is, SQEs don't have nearly enough space to accommodate all
+such optional features, especially when it's taking so much space and
+not applicable to all reads but rather some specific  use cases and
+files. Consider that there might be more similar extensions and we might
+even want to use them together.
+
+1. SQE128 makes it big for all requests, intermixing with requests that
+don't need additional space wastes space. SQE128 is fine to use but at
+the same time we should be mindful about it and try to avoid enabling it
+if feasible.
+
+2. This API hard codes io_uring_meta_pi into the extended part of the
+SQE. If we want to add another feature it'd need to go after the meta
+struct. SQE256? And what if the user doesn't need PI but only the second
+feature?
+
+In short, the uAPI need to have a clear vision of how it can be used
+with / extended to multiple optional features and not just PI.
+
+One option I mentioned before is passing a user pointer to an array of
+structures, each would will have the type specifying what kind of
+feature / meta information it is, e.g. META_TYPE_PI. It's not a
+complete solution but a base idea to extend upon. I separately
+mentioned before, if copy_from_user is expensive we can optimise it
+with pre-registering memory. I think Jens even tried something similar
+with structures we pass as waiting parameters.
+
+I didn't read through all iterations of the series, so if there is
+some other approach described that ticks the boxes and flexible
+enough, I'd be absolutely fine with it.
+
 
 -- 
-
-Joel Granados
+Pavel Begunkov
 
