@@ -1,260 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-33371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D099B8454
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 21:27:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66ED9B8569
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221861F23C8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 20:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B3C1C216E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 21:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430301CC15B;
-	Thu, 31 Oct 2024 20:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43791CCB36;
+	Thu, 31 Oct 2024 21:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdJ/Hwsu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScDkG2Dc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DE1A2562;
-	Thu, 31 Oct 2024 20:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1727C13C9B8;
+	Thu, 31 Oct 2024 21:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730406451; cv=none; b=oTbFRfPdCWm6oI6HIdgMzKhzQPHxLILjYjcWrdrOxSdEgh8Rl20pWaj8nFyL5ciQC/yQEfTFdG4lyQZ3aFw3FyXE2umPwx//jd2Yw1qQlmGpiN8Qo7j++UuYF8T8Wyy0TviX8hRdjKg9oY52mbwcDKf7gAqbnk9psIVe99jmdwE=
+	t=1730410602; cv=none; b=l239bj9t0QC1/0lEoCLQNJ94JxGe0IVm58j1LJgGONkS58J7ZWlVU2iegCwBZVFZKyI1dOC7qqwKgMMUt1XlY2/S0qPDCG8S6tHs+3CqWVDtvRmeO6fcjnwCz9JpolEBBzQafT+LeMxVLlypLInhAVKSFB6vygvqwkPej5/9j6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730406451; c=relaxed/simple;
-	bh=kv2+7OlHCjC0tPI/3wz8n3SeaSDAj6aV6+PvgugcIss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MYcmBb0GQhNE2UiN68ZQgdPzrUywBx+8NLMZpqg9xpxmCbFdVEhtZKTQuFu/xFH8t7cLx9O7Xzj5EwtRaXFhkkeg9eha7Jw6NwRxe92kU6Uh4rpelhuP9YXZ0fD267bQ174rU4EssnCgLa2XQitxiPSkZxAC5QA+gW7j97wADCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdJ/Hwsu; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso21977301fa.3;
-        Thu, 31 Oct 2024 13:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730406445; x=1731011245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BEFnsY2CvQcZlMMqwjbmkpFpmklJCE96WVm7txQ8Rak=;
-        b=DdJ/HwsuJjrcMpsfIty2G6fUWkkPB5agCW9zJzOhzeyT5cRd7SCjGE0zwVgXHNRzPL
-         H5yWfmVvZshuimM/U3qZ3Yb9qinCHrkfhfZOZiOt57Co1Wv33k/zyBu28NJpNVnQlSTW
-         Y76URQbBNFn+EqDvQhhoyZ3q8/rTyC7t3W0/UUea35xQn3/uv0lKySoaxhXlH/0NtnfQ
-         RU8nZKjqKT/KTmkdkuGZlDNKatsvfPRsZO+buTrl3uBj5704AUYjEmOKM4CEKMu0Nuut
-         FXMcYQqOREOg7NyKryq1WJl0bjFFltWfO3oEO7Ce9Gnr/5lJqRJREYXdx8KtKS3eiZQ+
-         kSdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730406445; x=1731011245;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BEFnsY2CvQcZlMMqwjbmkpFpmklJCE96WVm7txQ8Rak=;
-        b=fuMtcJZ2XWF8t9A5Z8iOUpyPzSn4+sX/hkL3ywXGflSKGSKuEaMEohFjQAIbnT1gxS
-         xzLc0Tu+1SUtSsZhX/Jn7ksRjXlwP8Vh9B5RyOO4/GG8jUNafUbFDFyzR+gkw1/oXSI+
-         hJF7Oj5G0w1eHrX60zbp0WByB0GK8MVYlTZ3ASqFytCIe2+BsgQCVDP/r8cVAgxLQArY
-         pzMvooajaV+GCHPckMsILjwyCbofWcInIb1tqQl+fFAxVziV4VjCyhq3bWzx+iEpkLQT
-         B0hZNv7NzlltbfoqKI+VtJnagZbp9RYfUIfrY2sG+z2bcCPzr/ep+vHWmcgzPfRGeJdV
-         nBvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO/bZobi6tF2lm8i9VnLkgs7ZcOCrCh5CjWisH7XZ55alGIQhQNffU22UzGPOwwd0UhTBUajWGqvOFVd2C@vger.kernel.org, AJvYcCV/Ce+MwlOkSASvxstKBaB83jgg9c8lDH6FtsZkrGwuhwnhzbYpVRIGYYEUvljcvIuTxHJcMmskVFHuRlAP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVMjMNtrWnP31/jm7jWCnMIlvw080Nmtra03HddTtw3xy9u0+j
-	xbbyii7/lV8drOAYOT3s9KVqyTNHjDlwPSknMYWMn7FhpJ2Zsby9
-X-Google-Smtp-Source: AGHT+IGBDmtpJtMNpaRqVNfV9S5wX3xBApWgSas4UQFhVFwI879M3XeJlV47CsMLYesaysiW6eW7dQ==
-X-Received: by 2002:a2e:a88b:0:b0:2fa:c0b5:ac8c with SMTP id 38308e7fff4ca-2fedb7c9c2dmr11743571fa.21.1730406444835;
-        Thu, 31 Oct 2024 13:27:24 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-40-94.xnet.hr. [88.207.40.94])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08fesm100924666b.134.2024.10.31.13.27.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 13:27:24 -0700 (PDT)
-Message-ID: <4c98507d-8c8e-4f8e-ba23-7805908e1477@gmail.com>
-Date: Thu, 31 Oct 2024 21:26:26 +0100
+	s=arc-20240116; t=1730410602; c=relaxed/simple;
+	bh=Hhb9PnYKWfCqNVzkuy+HjAehT9iVXkzZwdZ2m8mSnGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4AOG5TB0TuVt1QOoCeuNuLCtMPPSyKBn9eFgIdYkj3TWJzXou7hi6xzQZ3wlMGdCkK81btUV5yWwBRzeaH3DtI0+/u72XyfSXdvbbb4vO4h3huQ03HfOLZKqt4P+sEwGjEVysHQFusPX0biZCsJ+94wFWXwerAmvTH8ObEtyaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScDkG2Dc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E77C4CECF;
+	Thu, 31 Oct 2024 21:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730410601;
+	bh=Hhb9PnYKWfCqNVzkuy+HjAehT9iVXkzZwdZ2m8mSnGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ScDkG2Dcn+IFkpGqZrISI4vjpzidzUmvQMjHXjdmAMU37l2safHHLNV9uRN/QpgoG
+	 zbU4AGyXJAzy/1BFHlIlsLjZvy6sqNYhHZF5sM+2NNeiRJzdZXuy2FjiBGILdc2Yhj
+	 Zgk4Wf/zipgEc4EP6RxQrKyb0gGlFMkhsWuUrAQo5PNokq5yH754lpbbIsSOCmxO8b
+	 0NxbTpE6Xlm9dypJHvk4PVUxBZTl1EUe9NH/j2uA7M+HxTiIcY20nWC32hJf8CZZs9
+	 ajYVC/9BHSr8RbtPEq7s0WxK1JBb3Lfuwf/8dy8K3MYf52DRzqREyNSCQDMtCRw8NA
+	 wwbNc84QW0T1Q==
+Date: Thu, 31 Oct 2024 14:36:40 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, John Garry <john.g.garry@oracle.com>,
+	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
+Message-ID: <20241031213640.GB21832@frogsfrogsfrogs>
+References: <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com>
+ <87v7xgmpwo.fsf@gmail.com>
+ <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com>
+ <87ttd0mnuo.fsf@gmail.com>
+ <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
+ <87r084mkat.fsf@gmail.com>
+ <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
+ <87plnomfsy.fsf@gmail.com>
+ <20241025182858.GM2386201@frogsfrogsfrogs>
+ <87jzdvmqfz.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] fs/proc/kcore.c: fix coccinelle reported ERROR
- instances
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jakob Koschel <jakobkoschel@gmail.com>,
- Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
- Oscar Salvador <osalvador@suse.de>,
- Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
- Cristiano Giuffrida <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>,
- Alexey Dobriyan <adobriyan@gmail.com>, Yang Li <yang.lee@linux.alibaba.com>,
- Baoquan He <bhe@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
- Yan Zhen <yanzhen@vivo.com>
-References: <20241029054651.86356-2-mtodorovac69@gmail.com>
- <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzdvmqfz.fsf@gmail.com>
 
-
-Hi, Mr. Andrew,
-
-On 10/30/24 02:29, Andrew Morton wrote:
-> On Tue, 29 Oct 2024 06:46:52 +0100 Mirsad Todorovac <mtodorovac69@gmail.com> wrote:
+On Sat, Oct 26, 2024 at 10:05:44AM +0530, Ritesh Harjani wrote:
+> "Darrick J. Wong" <djwong@kernel.org> writes:
 > 
->> Coccinelle complains about the nested reuse of the pointer `iter' with different
->> pointer type:
->>
->> ./fs/proc/kcore.c:515:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:534:23-27: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:550:40-44: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:568:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:581:28-32: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:599:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:607:38-42: ERROR: invalid reference to the index variable of the iterator on line 499
->> ./fs/proc/kcore.c:614:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
->>
->> Replacing `struct kcore_list *iter' with `struct kcore_list *tmp' doesn't change the
->> scope and the functionality is the same and coccinelle seems happy.
+> > On Fri, Oct 25, 2024 at 07:43:17PM +0530, Ritesh Harjani wrote:
+> >> John Garry <john.g.garry@oracle.com> writes:
+> >> 
+> >> > On 25/10/2024 13:36, Ritesh Harjani (IBM) wrote:
+> >> >>>> So user will anyway will have to be made aware of not to
+> >> >>>> attempt writes of fashion which can cause them such penalties.
+> >> >>>>
+> >> >>>> As patch-6 mentions this is a base support for bs = ps systems for
+> >> >>>> enabling atomic writes using bigalloc. For now we return -EINVAL when we
+> >> >>>> can't allocate a continuous user requested mapping which means it won't
+> >> >>>> support operations of types 8k followed by 16k.
+> >> >>>>
+> >> >>> That's my least-preferred option.
+> >> >>>
+> >> >>> I think better would be reject atomic writes that cover unwritten
+> >> >>> extents always - but that boat is about to sail...
+> >> >> That's what this patch does.
+> >> >
+> >> > Not really.
+> >> >
+> >> > Currently we have 2x iomap restrictions:
+> >> > a. mapping length must equal fs block size
+> >> > b. bio created must equal total write size
+> >> >
+> >> > This patch just says that the mapping length must equal total write size 
+> >> > (instead of a.). So quite similar to b.
+> >> >
+> >> >> For whatever reason if we couldn't allocate
+> >> >> a single contiguous region of requested size for atomic write, then we
+> >> >> reject the request always, isn't it. Or maybe I didn't understand your comment.
+> >> >
+> >> > As the simplest example, for an atomic write to an empty file, there 
+> >> > should only be a single mapping returned to iomap_dio_bio_iter() and 
+> >> > that would be of IOMAP_UNWRITTEN type. And we don't reject that.
+> >> >
+> >> 
+> >> Ok. Maybe this is what I am missing. Could you please help me understand
+> >> why should such writes be rejected? 
+> >> 
+> >> For e.g. 
+> >> If FS could allocate a single contiguous IOMAP_UNWRITTEN extent of
+> >> atomic write request size, that means - 
+> >> 1. FS will allocate an unwritten extent.
+> >> 2. will do writes (using submit_bio) to the unwritten extent. 
+> >> 3. will do unwritten to written conversion. 
+> >> 
+> >> It is ok if either of the above operations fail right? If (3) fails
+> >> then the region will still be marked unwritten that means it will read
+> >> zero (old contents). (2) can anyway fail and will not result into
+> >> partial writes. (1) will anyway not result into any write whatsoever.
+> >> 
+> >> So we can never have a situation where there is partial writes leading
+> >> to mix of old and new write contents right for such cases? Which is what the
+> >> requirement of atomic/untorn write also is?
+> >> 
+> >> Sorry am I missing something here?
+> >
+> > I must be missing something; to perform an untorn write, two things must
+> > happen --
+> >
+> > 1. The kernel writes the data to the storage device, and the storage
+> > device either persists all of it, or throws back an error having
+> > persisted none of it.
+> >
+> > 2. If (1) completes successfully, all file mapping updates for the range
+> > written must be persisted, or an error is thrown back and none of them
+> > are persisted.
+> >
+> > iomap doesn't have to know how the filesystem satisfies (2); it just has
+> > to create a single bio containing all data pages or it rejects the
+> > write.
+> >
+> > Currently, it's an implementation detail that the XFS directio write
+> > ioend code processes the file mapping updates for the range written by
+> > walking every extent mapping for that range and issuing separate
+> > transactions for each mapping update.  There's nothing that can restart
+> > the walk if it is interrupted.  That's why XFS cannot support multi
+> > fsblock untorn writes to blocks with different status.
+> >
+> > As I've said before, the most general solution to this would be to add a
+> > new log intent item that would track the "update all mappings in this
+> > file range" operation so that recovery could restart the walk.  This is
+> > the most technically challenging, so we decided not to implement it
+> > until there is demand.
+> >
+> > Having set aside the idea of redesigning ioend, the second-most general
+> > solution is pre-zeroing unwritten extents and holes so that
+> > ->iomap_begin implementations can present a single mapping to the bio
+> > constructor.  Technically if there's only one unwritten extent or hole
+> > or cow, xfs can actually satisfy (2) because it only creates one
+> > transaction.
+> >
+> > This gets me to the third and much less general solution -- only allow
+> > untorn writes if we know that the ioend only ever has to run a single
+> > transaction.  That's why untorn writes are limited to a single fsblock
+> > for now -- it's a simple solution so that we can get our downstream
+> > customers to kick the tires and start on the next iteration instead of
+> > spending years on waterfalling.
+> >
+> > Did you notice that in all of these cases, the capabilities of the
+> > filesystem's ioend processing determines the restrictions on the number
+> > and type of mappings that ->iomap_begin can give to iomap?
+> >
+> > Now that we have a second system trying to hook up to the iomap support,
+> > it's clear to me that the restrictions on mappings are specific to each
+> > filesystem.  Therefore, the iomap directio code should not impose
+> > restrictions on the mappings it receives unless they would prevent the
+> > creation of the single aligned bio.
+> >
+> > Instead, xfs_direct_write_iomap_begin and ext4_iomap_begin should return
+> > EINVAL or something if they look at the file mappings and discover that
+> > they cannot perform the ioend without risking torn mapping updates.  In
+> > the long run, ->iomap_begin is where this iomap->len <= iter->len check
+> > really belongs, but hold that thought.
+> >
+> > For the multi fsblock case, the ->iomap_begin functions would have to
+> > check that only one metadata update would be necessary in the ioend.
+> > That's where things get murky, since ext4/xfs drop their mapping locks
+> > between calls to ->iomap_begin.  So you'd have to check all the mappings
+> > for unsupported mixed state every time.  Yuck.
+> >
 > 
-> Well that's dumb of it.  Still, the code is presently a bit weird and
-> we don't mind working around such third-party issues.
+> Thanks Darrick for taking time summarizing what all has been done
+> and your thoughts here.
 > 
->> NOTE: There was an issue with using `struct kcore_list *pos' as the nested iterator.
->>       The build did not work!
+> > It might be less gross to retain the restriction that iomap accepts only
+> > one mapping for the entire file range, like Ritesh has here.
 > 
-> It worked for me.  What's wrong with that?
-
-Now with next-20241031 it works for me too:
-
-marvin@defiant:~/linux/kernel/linux-next$ time nice sudo make TARGETS=proc kselftest |& tee ../kself-proc-01a.log; date
-make[3]: Entering directory '.../linux-next/tools/testing/selftests/proc'
-make[3]: Nothing to be done for 'all'.
-make[3]: Leaving directory '.../linux-next/tools/testing/selftests/proc'
-make[3]: Entering directory '.../linux-next/tools/testing/selftests/proc'
-TAP version 13
-1..23
-# timeout set to 45
-# selftests: proc: fd-001-lookup
-ok 1 selftests: proc: fd-001-lookup
-# timeout set to 45
-# selftests: proc: fd-002-posix-eq
-ok 2 selftests: proc: fd-002-posix-eq
-# timeout set to 45
-# selftests: proc: fd-003-kthread
-ok 3 selftests: proc: fd-003-kthread
-# timeout set to 45
-# selftests: proc: proc-2-is-kthread
-ok 4 selftests: proc: proc-2-is-kthread
-# timeout set to 45
-# selftests: proc: proc-loadavg-001
-ok 5 selftests: proc: proc-loadavg-001
-# timeout set to 45
-# selftests: proc: proc-empty-vm
-ok 6 selftests: proc: proc-empty-vm
-# timeout set to 45
-# selftests: proc: proc-pid-vm
-ok 7 selftests: proc: proc-pid-vm
-# timeout set to 45
-# selftests: proc: proc-self-map-files-001
-ok 8 selftests: proc: proc-self-map-files-001
-# timeout set to 45
-# selftests: proc: proc-self-map-files-002
-ok 9 selftests: proc: proc-self-map-files-002
-# timeout set to 45
-# selftests: proc: proc-self-isnt-kthread
-ok 10 selftests: proc: proc-self-isnt-kthread
-# timeout set to 45
-# selftests: proc: proc-self-syscall
-ok 11 selftests: proc: proc-self-syscall
-# timeout set to 45
-# selftests: proc: proc-self-wchan
-ok 12 selftests: proc: proc-self-wchan
-# timeout set to 45
-# selftests: proc: proc-subset-pid
-ok 13 selftests: proc: proc-subset-pid
-# timeout set to 45
-# selftests: proc: proc-tid0
-ok 14 selftests: proc: proc-tid0
-# timeout set to 45
-# selftests: proc: proc-uptime-001
-ok 15 selftests: proc: proc-uptime-001
-# timeout set to 45
-# selftests: proc: proc-uptime-002
-ok 16 selftests: proc: proc-uptime-002
-# timeout set to 45
-# selftests: proc: read
-ok 17 selftests: proc: read
-# timeout set to 45
-# selftests: proc: self
-ok 18 selftests: proc: self
-# timeout set to 45
-# selftests: proc: setns-dcache
-ok 19 selftests: proc: setns-dcache
-# timeout set to 45
-# selftests: proc: setns-sysvipc
-ok 20 selftests: proc: setns-sysvipc
-# timeout set to 45
-# selftests: proc: thread-self
-ok 21 selftests: proc: thread-self
-# timeout set to 45
-# selftests: proc: proc-multiple-procfs
-ok 22 selftests: proc: proc-multiple-procfs
-# timeout set to 45
-# selftests: proc: proc-fsconfig-hidepid
-ok 23 selftests: proc: proc-fsconfig-hidepid
-make[3]: Leaving directory '.../linux-next/tools/testing/selftests/proc'
-
-Unless I badly missed something, the build is OK.
-
->> --- a/fs/proc/kcore.c
->> +++ b/fs/proc/kcore.c
->> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
->>  		 * the previous entry, search for a matching entry.
->>  		 */
->>  		if (!m || start < m->addr || start >= m->addr + m->size) {
->> -			struct kcore_list *iter;
->> +			struct kcore_list *tmp;
+> less gross :) sure. 
 > 
-> `tmp' is a really poor identifier :(
+> I would like to think of this as, being less restrictive (compared to
+> only allowing a single fsblock) by adding a constraint on the atomic
+> write I/O request i.e.  
 > 
-> Let's try `pos':
+> "Atomic write I/O request to a region in a file is only allowed if that
+> region has no partially allocated extents. Otherwise, the file system
+> can fail the I/O operation by returning -EINVAL."
 > 
-> --- a/fs/proc/kcore.c~fs-proc-kcorec-fix-coccinelle-reported-error-instances-fix
-> +++ a/fs/proc/kcore.c
-> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct ki
->  		 * the previous entry, search for a matching entry.
->  		 */
->  		if (!m || start < m->addr || start >= m->addr + m->size) {
-> -			struct kcore_list *tmp;
-> +			struct kcore_list *pos;
->  
->  			m = NULL;
-> -			list_for_each_entry(tmp, &kclist_head, list) {
-> -				if (start >= tmp->addr &&
-> -				    start < tmp->addr + tmp->size) {
-> -					m = tmp;
-> +			list_for_each_entry(pos, &kclist_head, list) {
-> +				if (start >= pos->addr &&
-> +				    start < pos->addr + pos->size) {
-> +					m = pos;
->  					break;
->  				}
->  			}
+> Essentially by adding this constraint to the I/O request, we are
+> helping the user to prevent atomic writes from accidentally getting
+> torned and also allowing multi-fsblock writes. So I still think that
+> might be the right thing to do here or at least a better start. FS can
+> later work on adding such support where we don't even need above
+> such constraint on a given atomic write I/O request.
 
+On today's ext4 call, Ted and Ritesh and I realized that there's a bit
+more to it than this -- it's not possible to support untorn writes to a
+mix of written/(cow,unwritten) mappings even if they all point to the
+same physical space.  If the system fails after the storage device
+commits the write but before any of the ioend processing is scheduled, a
+subsequent read of the previously written blocks will produce the new
+data, but reads to the other areas will produce the old contents (or
+zeroes, or whatever).  That's a torn write.
 
+Therefore, iomap ought to stick to requiring that ->iomap_begin returns
+a single iomap to cover the entire file range for the untorn write.  For
+an unwritten extent, the post-recovery read will see either zeroes or
+the new contents; for a single-mapping COW it'll see old or new contents
+but not both.
 
-I see that it is already applied in next-20241031 and it is just running.
+(Obviously this still requires that the fs can perform the mapping
+updates without tearing too.)
 
-$ uname -rms
-Linux 6.12.0-rc5-next-20241031nxt x86_64
+--D
 
-Please add
-
-Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-
-Thanks.
-
-Best regards,
-Mirsad
+> > Users
+> > might be ok with us saying that you can't do a 16k atomic write to a
+> > region where you previously did an 8k write until you write the other
+> > 8k, even if someone has to write zeroes.  Users might be ok with the
+> > kernel allowing multi-fsblock writes but only if the stars align.
+> 
+> > But
+> > to learn the answers to those questions, we have to put /something/ in
+> > the hands of our users.
+> 
+> On this point, I think ext4 might already has those users who might be
+> using atomic write characteristics of devices to do untorn writes. e.g. 
+> 
+> In [1], Ted has talked about using bigalloc with ext4 for torn write
+> prevention. [2] talks about using ext4 with bigalloc to prevent torn
+> writes on aws cloud.
+> 
+> [1]: https://www.youtube.com/watch?v=gIeuiGg-_iw
+> [2]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configure-twp.html
+> 
+> My point being - Looks like the class of users who are using untorn
+> writes to improve their database performances are already doing so even
+> w/o any such interfaces being exposed to them (with ext4 bigalloc).
+> 
+> The current feature support of allowing atomic writes to only single
+> fsblock might not be helpful to these users who can provide that
+> feedback, who are using ext4 on bs = ps systems with bigalloc. But maybe
+> let's wait and hear from them whether it is ok if -   
+> 
+> "Atomic write I/O request to a region in a file is only allowed if that
+> region has no partially allocated extents. Otherwise, the file system
+> can fail the I/O operation by returning -EINVAL."
+> 
+> >
+> > For now (because we're already at -rc5), let's have xfs/ext4's
+> > ->write_iter implementations restrict atomic writes to a single fsblock,
+> > and get both merged into the kernel.
+> 
+> Yes, I agree with the approach. I agree that we should get a consensus
+> on this from folks.
+> 
+> Let me split this series up and address the review comments on patch
+> [1-4]. Patch-5 & 6 can be worked once we have conclusion on this and can
+> be eyed for 6.14.
+> 
+> > Let's defer the multi fsblock work
+> > to 6.14, though I think we could take this patch.
+> 
+> It's ok to consider this patch along with multi-fsblock work then i.e.
+> for 6.14.
+> 
+> >
+> > Does that sound cool?
+> >
+> > --D
+> 
+> Thanks Darrick :)
+> 
+> -ritesh
+> 
+> >> >> 
+> >> >> If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks())
+> >> >> for atomic writes in ext4_dio_write_checks(), similar to how we detect
+> >> >> overwrites case to decide whether we need a read v/s write semaphore.
+> >> >> So this can check if the user has a partially allocated extent for the
+> >> >> user requested region and if yes, we can return -EINVAL from
+> >> >> ext4_dio_write_iter() itself.
+> >> >  > > I think this maybe better option than waiting until ->iomap_begin().
+> >> >> This might also bring all atomic write constraints to be checked in one
+> >> >> place i.e. during ext4_file_write_iter() itself.
+> >> >
+> >> > Something like this can be done once we decide how atomic writing to 
+> >> > regions which cover mixed unwritten and written extents is to be handled.
+> >> 
+> >> Mixed extent regions (written + unwritten) is a different case all
+> >> together (which can lead to mix of old and new contents).
+> >> 
+> >> 
+> >> But here what I am suggesting is to add following constraint in case of
+> >> ext4 with bigalloc - 
+> >> 
+> >> "Writes to a region which already has partially allocated extent is not supported."
+> >> 
+> >> That means we will return -EINVAL if we detect above case in
+> >> ext4_file_write_iter() and sure we can document this behavior.
+> >> 
+> >> In retrospect, I am not sure why we cannot add a constraint for atomic
+> >> writes (e.g. for ext4 bigalloc) and reject such writes outright,
+> >> instead of silently incurring a performance penalty by zeroing out the
+> >> partial regions by allowing such write request.
+> >> 
+> >> -ritesh
+> >> 
+> 
 
