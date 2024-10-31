@@ -1,189 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-33314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0EC9B7324
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 04:48:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B929B73C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 05:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47421F230ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 03:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888FF2817C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 04:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6799112D1FA;
-	Thu, 31 Oct 2024 03:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E66B126BF5;
+	Thu, 31 Oct 2024 04:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="PyK8HNhc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mFEPOCgH"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gnkUv/Dv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A721BD9DC;
-	Thu, 31 Oct 2024 03:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA1015D1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 04:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730346502; cv=none; b=CcjvaQcMFwSl05WxdQb2pURVYWlBm4FbuHTvkFkoplzEl5Fo64/Umq0GpFf44QwmQ1MC1a922uJBRnu98xrDogRgN8HybcmAiBhGytWGS4jyow5+3h9yvCc4ItQMwrkuh8zR9zgim94+eEJ6LXJ3D5+CWAKm7H1o04lSr8k+E7M=
+	t=1730348206; cv=none; b=XzPfq7xPogOfxWQhz8WzDuv9mTIWiPooHjsQdPROLFIxpgL5JJJOt++yEH3+KWnTEUiUKrISfsyBhAWXq65/0RlkEuBpRbTpmEDeoM55XKiDsiKQGnK2OQqqBluKXAaKQALMMqkVHhCij34+HGdsFM0XSTk6SCG+u8VssLkZ1vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730346502; c=relaxed/simple;
-	bh=0jUZfXGI5qpTB0s6kN6cS8lgMmC7yLOFmqlcI2IrZ9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MFOv57Z8eEuKzb2LasSnlOnZSpGkJaluuLZQhuOPHhBYX353L4MML3OIpLsm2QxllEBOQdJXkV+O15wLmRHVODL6UVIDo13zklVQV5CLWIg349gGErbgKWtcj6wS7MVWvmc5TQtUA5Kll1y3Nt2354Wsivjp8u2XIkJ9f0SJ3l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=PyK8HNhc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mFEPOCgH; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id F39171380231;
-	Wed, 30 Oct 2024 23:48:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 30 Oct 2024 23:48:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1730346496;
-	 x=1730432896; bh=KN2UWDEaGGsmpJJ1ava58l8UF+I41eSZVzp7bkX27+w=; b=
-	PyK8HNhcZZ+A8bA2ky914Qyx/pdYp3CGQ9QXi8oo3xxmiOdkTz8PAQ5H0yiz2/Qn
-	pYsk23OBoS2y58xi4pae9lYZ6Xy0kQTci4Z0Wb1sY5NdwzLP8m1Rs7k6KLl71IYX
-	foFSS1L8TNn0xNgONFHXrXUVAyr9lSWwaxuTzSY/AUeRyZiA8EkVoJqTqUiGS0GO
-	Z+8RkWUEJ+yYdp8idj/6lPprwj/i7UnSljldtQKLTg4uviUZ7DvvuNtYJkb4Uifz
-	wYfQJcu5/ZnLzlPR+YFTd7cDdQanTPYDGDYbdk0v/hCENnLoVJrEGsqiuZNRWu/s
-	zIGsnqN0F+VOxRVFVwwlXw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730346496; x=
-	1730432896; bh=KN2UWDEaGGsmpJJ1ava58l8UF+I41eSZVzp7bkX27+w=; b=m
-	FEPOCgHp0sK5TWiwWtF90jRw5tBoLLoLGPGIglNAx5sgNeOGzBL5XGi1gSSppGfF
-	EcODxehttZhfWscRtlimEDtpNYXKa48f3MK58ICHWtYCOWFYPHmdjyJbkGfPFYNM
-	EuVxliFFVd/iCt3rKFCr0/+xNRTV4LNyueATknMzVvqxYrpdeApMykMC8thVmAfu
-	+ZcMKxpT1HVdv4bCJbFuOeSClr4LFdeZatkwkBTN5XS6k8tCh+FEBB3Wzzpm9SeB
-	Vx1Bz25UAwZhGGtShvYwcXlYG54cuKNDurXy2X7XpsdV4mg0BZENE0/HZu5JI0i+
-	R77ornQ35CMhT4B5DEYnw==
-X-ME-Sender: <xms:AP4iZ6ZrbPhsPxUmdwCEZN8gwnHdbd_CD5Z2qpqT6qU7X0Ch1_HEoA>
-    <xme:AP4iZ9YV36eyeix1BTd2LCe7KGTgDFdKATTLPy8Di6-jJelag0AhF0yuaQswQSH10
-    77KATtm1IzdoBEsxB8>
-X-ME-Received: <xmr:AP4iZ0_oQpTjmWV4GSt-S2KGPbaRMfSbyS4JvN-3ULRyUZZ0wuZJO7agxyb65w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgedgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpefgrhhitgcuufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnuggvvg
-    hnrdhnvghtqeenucggtffrrghtthgvrhhnpeevieekueetfeeujedtheeffedvgeffiedv
-    jeejleffhfeggeejuedtjeeulefhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggp
-    rhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruhhnvg
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeiilhgrnhhgsehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:AP4iZ8pP6ywRRlqN2bjeNfJCjTt5lhbcEJyNJVCiyLcWhuToLuynMQ>
-    <xmx:AP4iZ1o5XIA-ivbRH3wzRmUZ5yhiOs7HI9uwfCjGa2l1-cI59FM4lA>
-    <xmx:AP4iZ6Tjqe5EPnJhtzq-uVGFD-KtOa6tQk4JYBrQtGHJqRqrU6agnQ>
-    <xmx:AP4iZ1rWqMbH4E2BWLOdKAMU2JWvRXF_VyItpGRk34PX266vnWnxyA>
-    <xmx:AP4iZ2cGBJ9YS2OB_vYQgEMwAaY-pp7uevUs07To8xNLA7o868LnjXSe>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 23:48:16 -0400 (EDT)
-Message-ID: <9f489a85-a2b5-4bd0-98ea-38e1f35fed47@sandeen.net>
-Date: Wed, 30 Oct 2024 22:48:15 -0500
+	s=arc-20240116; t=1730348206; c=relaxed/simple;
+	bh=xdTMB5mH53eRmMhNGiRJf3MOmUeu1DjlabGahGpGkSE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RvinlMn2eDf3VtRvTomZShI38wz13Ih+Swvn646+y7Nc6WLWQ1nQyToS5RMPOD9OSGBY/5T0laRqtH6+oT8FCfe1w/bcrDrwQmN9t+pSbl1V3OHgJWXzizMbaxDPtO2IEwQo82PGspQcdkeuIps2snHRSeIn7qwB/BCD8MTLWA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gnkUv/Dv; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cb6704ff6bso716170a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 21:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1730348202; x=1730953002; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PjUUN+pUu7aAtkLIEjQSxN2sW69Zq1jbLWcrZXOkFzM=;
+        b=gnkUv/Dv3W7AB9w3KaVhbQFDVp5QniC0X5qU0YrWM3sA5zPljXhlG5QI7G5HaEDFg6
+         LYc6b+GYydJxpZjooNpg7YviR079chvjxfOe1hSMHOxvatTzHi6cyZ9eGuH4CaFSc4tE
+         IgQ+HgI3IRjSm4DLnjpEL8ThtTMff2dL77D3w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730348202; x=1730953002;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PjUUN+pUu7aAtkLIEjQSxN2sW69Zq1jbLWcrZXOkFzM=;
+        b=mW2XU/gBuXswn39+WL881XeA0bimupxpBZ7Q+pQ8DNYzgnpwcOmkDkssIX/yjlK/Uo
+         Z/n7WMjfbMUgJ/yffdEZFnpt2D4UfNP8LHQbmzmCRq6ML4fUDzDdhZwy/pTvNRQZS34O
+         7kZPmxko79MezXNjsmwe3QQEE+DU6M+QZJXygnv3Fzj+ljT7c+k1Ph4XKueMSlsb2Ubj
+         biP6G0khmxE4ySSiwN38uwAs3nHEcM6JKUxuy66c1ptAIUJHtES8KJuGgd/s/NY7Hw8V
+         6FBlQhs2R+pj5YL5VmtDnnaOi+fl7FvECvmCBJEVkZJ+N9EdUpz4sfnMgVeyHwBV0ePj
+         XIyg==
+X-Gm-Message-State: AOJu0YzoxZpwG7rRZh7d6QxPyVu6BEfopGpIBSDdtbJiZA5vX36JTp2b
+	dVKFJAzIp3lKfzeT3VwvhtumD+uFay0DFemP22ASJrZUq7D8k0deZ9Tu0RaqsRzAuAhfOa7F9SA
+	jBlg=
+X-Google-Smtp-Source: AGHT+IHxWXc7/f6u20FNK+fL9s5pFbGyulbs+GzYw6kALANTDEMrF19p/jryOnmFyzJ6wak+VoRtyg==
+X-Received: by 2002:a17:906:f5a6:b0:a9a:f84:fefd with SMTP id a640c23a62f3a-a9de5edbf04mr1752209866b.36.1730348201554;
+        Wed, 30 Oct 2024 21:16:41 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c5348sm23822766b.49.2024.10.30.21.16.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 21:16:40 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso59471366b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2024 21:16:39 -0700 (PDT)
+X-Received: by 2002:a17:907:6d09:b0:a99:f887:ec09 with SMTP id
+ a640c23a62f3a-a9de5ecade8mr1642383366b.35.1730348199083; Wed, 30 Oct 2024
+ 21:16:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2 (new
- mount APIs)
-To: Christian Brauner <brauner@kernel.org>, Zorro Lang <zlang@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>
-References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Oct 2024 18:16:22 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
+Message-ID: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
+Subject: generic_permission() optimization
+To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000bebb0b0625be152e"
 
-On 10/28/24 7:22 AM, Christian Brauner wrote:
-> On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
->> Hi,
->>
->> Recently, I hit lots of fstests cases fail on overlayfs (xfs underlying, no
->> specific mount options), e.g.
->>
->> FSTYP         -- overlay
->> PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 25 14:29:18 EDT 2024
->> MKFS_OPTIONS  -- -m crc=1,finobt=1,rmapbt=0,reflink=1,inobtcount=1,bigtime=1 /mnt/fstests/SCRATCH_DIR
->> MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /mnt/fstests/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
->>
->> generic/294       [failed, exit status 1]- output mismatch (see /var/lib/xfstests/results//generic/294.out.bad)
->>     --- tests/generic/294.out	2024-10-25 14:38:32.098692473 -0400
->>     +++ /var/lib/xfstests/results//generic/294.out.bad	2024-10-25 15:02:34.698605062 -0400
->>     @@ -1,5 +1,5 @@
->>      QA output created by 294
->>     -mknod: SCRATCH_MNT/294.test/testnode: File exists
->>     -mkdir: cannot create directory 'SCRATCH_MNT/294.test/testdir': File exists
->>     -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': Read-only file system
->>     -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': File exists
->>     +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system call failed: overlay: No changes allowed in reconfigure.
->>     +       dmesg(1) may have more information after failed mount system call.
-> 
-> In the new mount api overlayfs has been changed to reject invalid mount
-> option on remount whereas in the old mount api we just igorned them.
-> If this a big problem then we need to change overlayfs to continue
-> ignoring garbage mount options passed to it during remount.
-> 
+--000000000000bebb0b0625be152e
+Content-Type: text/plain; charset="UTF-8"
 
-It fails on /any/ overlayfs-specific options during reconfigure, invalid or
-not, right?
+So call me crazy, but due to entirely unrelated changes (the x86
+barrier_nospec optimization) I was doing some profiles to check that
+everything looked fine.
 
-        if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
-                /*
-                 * On remount overlayfs has always ignored all mount
-                 * options no matter if malformed or not so for
-                 * backwards compatibility we do the same here.
-                 */
-                if (fc->oldapi)
-                        return 0;
-                
-                /*
-                 * Give us the freedom to allow changing mount options
-                 * with the new mount api in the future. So instead of
-                 * silently ignoring everything we report a proper
-                 * error. This is only visible for users of the new
-                 * mount api.
-                 */
-                return invalfc(fc, "No changes allowed in reconfigure");
-        }
+And just looking at kernel profiles, I noticed that
+"generic_permission()" wasn't entirely in the noise. It was right
+there along with strncpy_from_user() etc. Which is a bit surprising,
+because it should be really cheap to check basic Unix permissions?
 
-        opt = fs_parse(fc, ovl_parameter_spec, param, &result);
-        if (opt < 0)
-                return opt; 
+It's all really just "acl_permission_check()" and that code is
+actually fairly optimized, except that the whole
 
-And because today mount(8) will re-specify everything it finds in
-/proc/mounts during remount, presumably that's why all these tests are
-failing - even a simple remount,ro will fail:
+        vfsuid = i_uid_into_vfsuid(idmap, inode);
 
-# mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merged
-# strace -e fsconfig mount -o remount,ro merged
-fsconfig(4, FSCONFIG_SET_FLAG, "seclabel", NULL, 0) = 0
-fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "lower", 0) = -1 EINVAL (Invalid argument)
-...
+to check whether we're the owner is *not* cheap. It causes a call to
+make_vfsuid(), and it's just messy.
 
-Surely mount -o remount,ro should continue to work for overlayfs when the new
-API is used.
+Which made me wonder: we already have code that says "if the Group and
+Other permission bits are the same wrt the mask we are checking, don't
+bother doing the expensive group checks".
 
-Maybe there's a third way: accept remount options as long as they match
-current options, but fail if they try to modify anything? Not sure how tricky
-that would be.
+Why not extend that to "if any of the UGO choices are ok with the
+permissions, why bother looking up ownership at all?"
 
-(side note: it's a bit worrisome that there is probably no consistency at
-all across filesystems, here.)
+Now, there is one reason to look up the owner: POSIX ACL's don't
+matter to owners, but do matter to others.
 
--Eric
+But we could check for the cached case of "no POSIX ACLs" very
+cheaply, and only do it for that case.
+
+IOW, a patch something like the attached.
+
+No, I didn't really check whether it makes any difference at all. But
+my gut feel is that a *lot* of permission checks succeed for any user,
+with things like system directories are commonly drwxr-xr-x, so if you
+want to check read or execute permissions, it really doesn't matter
+whether you are the User, the Group, or Other.
+
+So thus the code does that
+
+        unsigned int all;
+        all = mode & (mode >> 3); // combine g into o
+        all &= mode >> 6;         // ... and u into o
+
+so now the low three bits of 'all' are the bits that *every* case has
+set. And then
+
+        if (!(mask & ~all & 7))
+                return 0;
+
+basically says "if what we are asking for is not zero in any of those
+bits, we're good".
+
+And it's entirely possible that I'm missing something silly and am
+being just stupid. Somebody hit me with the clue bat if so.
+
+               Linus
+
+--000000000000bebb0b0625be152e
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m2wskrgv0>
+X-Attachment-Id: f_m2wskrgv0
+
+IGZzL25hbWVpLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxl
+IGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9uYW1laS5jIGIvZnMv
+bmFtZWkuYwppbmRleCA0YTRhMjJhMDhhYzIuLjZhZWFiZGUwZWM5ZiAxMDA2NDQKLS0tIGEvZnMv
+bmFtZWkuYworKysgYi9mcy9uYW1laS5jCkBAIC0zMjYsNiArMzI2LDI1IEBAIHN0YXRpYyBpbnQg
+Y2hlY2tfYWNsKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAogCXJldHVybiAtRUFHQUlOOwogfQog
+CisvKgorICogVmVyeSBxdWljayBvcHRpbWlzdGljICJ3ZSBrbm93IHdlIGhhdmUgbm8gQUNMJ3Mi
+IGNoZWNrLgorICoKKyAqIE5vdGUgdGhhdCB0aGlzIGlzIHB1cmVseSBmb3IgQUNMX1RZUEVfQUND
+RVNTLCBhbmQgcHVyZWx5CisgKiBmb3IgdGhlICJ3ZSBoYXZlIGNhY2hlZCB0aGF0IHRoZXJlIGFy
+ZSBubyBBQ0xzIiBjYXNlLgorICoKKyAqIElmIHRoaXMgcmV0dXJucyB0cnVlLCB3ZSBrbm93IHRo
+ZXJlIGFyZSBubyBBQ0xzLiBCdXQgaWYKKyAqIGl0IHJldHVybnMgZmFsc2UsIHdlIG1pZ2h0IHN0
+aWxsIG5vdCBoYXZlIEFDTHMgKGl0IGNvdWxkCisgKiBiZSB0aGUgaXNfdW5jYWNoZWRfYWNsKCkg
+Y2FzZSkuCisgKi8KK3N0YXRpYyBpbmxpbmUgYm9vbCBub19hY2xfaW5vZGUoc3RydWN0IGlub2Rl
+ICppbm9kZSkKK3sKKyNpZmRlZiBDT05GSUdfRlNfUE9TSVhfQUNMCisJcmV0dXJuIGxpa2VseSgh
+UkVBRF9PTkNFKGlub2RlLT5pX2FjbCkpOworI2Vsc2UKKwlyZXR1cm4gdHJ1ZTsKKyNlbmRpZgor
+fQorCiAvKioKICAqIGFjbF9wZXJtaXNzaW9uX2NoZWNrIC0gcGVyZm9ybSBiYXNpYyBVTklYIHBl
+cm1pc3Npb24gY2hlY2tpbmcKICAqIEBpZG1hcDoJaWRtYXAgb2YgdGhlIG1vdW50IHRoZSBpbm9k
+ZSB3YXMgZm91bmQgZnJvbQpAQCAtMzQ4LDYgKzM2NywxOSBAQCBzdGF0aWMgaW50IGFjbF9wZXJt
+aXNzaW9uX2NoZWNrKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLAogCXVuc2lnbmVkIGludCBtb2Rl
+ID0gaW5vZGUtPmlfbW9kZTsKIAl2ZnN1aWRfdCB2ZnN1aWQ7CiAKKwkvKgorCSAqIENvbW1vbiBj
+aGVhcCBjYXNlOiBldmVyeWJvZHkgaGFzIHRoZSByZXF1ZXN0ZWQKKwkgKiByaWdodHMsIGFuZCB0
+aGVyZSBhcmUgbm8gQUNMcyB0byBjaGVjay4gTm8gbmVlZAorCSAqIHRvIGRvIGFueSBvd25lci9n
+cm91cCBjaGVja3MuCisJICovCisJaWYgKG5vX2FjbF9pbm9kZShpbm9kZSkpIHsKKwkJdW5zaWdu
+ZWQgaW50IGFsbDsKKwkJYWxsID0gbW9kZSAmIChtb2RlID4+IDMpOyAvLyBjb21iaW5lIGcgaW50
+byBvCisJCWFsbCAmPSBtb2RlID4+IDY7CSAgLy8gLi4uIGFuZCB1IGludG8gbworCQlpZiAoISht
+YXNrICYgfmFsbCAmIDcpKQorCQkJcmV0dXJuIDA7CisJfQorCiAJLyogQXJlIHdlIHRoZSBvd25l
+cj8gSWYgc28sIEFDTCdzIGRvbid0IG1hdHRlciAqLwogCXZmc3VpZCA9IGlfdWlkX2ludG9fdmZz
+dWlkKGlkbWFwLCBpbm9kZSk7CiAJaWYgKGxpa2VseSh2ZnN1aWRfZXFfa3VpZCh2ZnN1aWQsIGN1
+cnJlbnRfZnN1aWQoKSkpKSB7Cg==
+--000000000000bebb0b0625be152e--
 
