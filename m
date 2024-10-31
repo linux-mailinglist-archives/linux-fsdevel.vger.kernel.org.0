@@ -1,109 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-33383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9809A9B861D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 23:34:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF9B9B8628
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 23:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00F5DB219BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70AA41C21094
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 22:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E8E19D090;
-	Thu, 31 Oct 2024 22:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828141CDFC5;
+	Thu, 31 Oct 2024 22:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BuGm3Nz3"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iRM13131"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F347F1E481
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 22:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5531C7B62
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 22:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730414071; cv=none; b=JtOD5jNA9N+sTOLagE3JUmMKqmUDJbYI18RqUgDxXxKdyV0IydhS150Ywn8aOLEUc5r65Aynw/33vgXUK1KYPOmDUj5Rwg/z88I6eo5L+irHKMWKzO7vWhgedk++3qZuEMXDNrqbHgQplbZ7Cm7bZRAC3BmJD8IIDoF9fgzu5Kg=
+	t=1730414305; cv=none; b=OOyg/wiHeGZUgA7Pro1AqTgP7xRcRjWnpWgirjkW+8h19Ae5AJ5ty9TkHc5M/OKQWL7DkPbpOeixcddTuvS9u+2WEWbM4y+8qa6BsgRewCZ+0GLkA9gpkiJ3Ci93jhqCs/ntYg+lhm+It4+5pY3V+jQ6kITlA4PjLsayUB4WnVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730414071; c=relaxed/simple;
-	bh=LXxLgzrj5/CRNUigUugN/QAkohEPT3VWSqb3wFe+yOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GmsbXnLSCF8b2WI23Qpl4uOOusR44RSMoctJr7PH2DZTsbZxmK0vLKBjIUbbKQ8udTaS89zlAwWVxb5GEWRoeK3ogrzV2tdKpUiuTIaf+EFi8WvqZ6Jie1NxvLwWEil37zucNhO8NCg83WHGhM4Q1U15VVgEo6u7qgPBrJFxPeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BuGm3Nz3; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so1887048a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 15:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1730414064; x=1731018864; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1j9RkpONaFrr53NzZ106y+xSoMSfcVE5fFQ5IghjrE=;
-        b=BuGm3Nz3sIncu4xfz6M5xMZNOqMBg4fhPwvM+uUb7Swan3scxGBX5XZg3dzygg3grw
-         7+AtnJXu+L6oHZVWj8kT8SZyHSXOOy99NIwTPFzZUgXb5wRSyfg4HYf2bwhcklAv7Cpm
-         Nh2LVkACP/y8WjPBqzJBg7LMfNqp+BWRphtX0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730414064; x=1731018864;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e1j9RkpONaFrr53NzZ106y+xSoMSfcVE5fFQ5IghjrE=;
-        b=oZ7tTpNA8AJqZ0GcHevZ8SP1y4PikWFi4g6qzM5LjmTICgllhC5i6d+F4H8aIDkMhc
-         zGvLUxCKPvcGCcPwZJSoBoDuUhrN3O4IkWUVfiQFh6rQ2iICRO9j2Dy0eoybZ910lwhw
-         S++m0CYA/tPGM6BbA//dfV4rstX2qrhPgAJ39SFjDXGlP4D5Y7SiHb1fAzHj8ffLuJjp
-         HDKghnRB9GEp812j1udrhqno0wOUX+HpAcrDGXyGLHyLv4Fkk2CEhjxXilAVd2xSVZav
-         yxbZIMUGnWBID7Vq2pdtAqFJUrjAXqHefxa/e0gyXt7geTLMULby8im85ZeeEiNQx2ec
-         fijw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEP5Qarv22ADA3LDVqrMqLmSV9pk6OCngvViOEgVmud+UhJkLPPjD3z1MZXo5i5ftpMl7DqzXW49eSJhV8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJi/VDvuPbPMMzm+KkZJgCZQOuVGvSAujd7TMZreVxV86jllHM
-	R+ZJZzUsKowZbGIZdEoFhsfABMkBTmR/zsaiFu0tb+1jd7RmLBlvDRSdtOPFfikK60B309iGLpD
-	MC+0=
-X-Google-Smtp-Source: AGHT+IG+FpHhWMCth9gkVKa7LR3VsNv0P+eqKTkcvPfzkKQ3ktgYdp5QOuHbVCDe9Z5dyJldaLmyCA==
-X-Received: by 2002:a05:6402:4316:b0:5ce:b82f:c4eb with SMTP id 4fb4d7f45d1cf-5ceb82fcb42mr1713170a12.8.1730414063981;
-        Thu, 31 Oct 2024 15:34:23 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac74cd08sm950987a12.2.2024.10.31.15.34.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 15:34:22 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso212725466b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 15:34:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNwmjFDU2Q1yQplcQnbUVeIDVOAw2KaoxPofpmUURF0LGLOYlET/pTnWv0CdMSLHOrO7riTyofDOmtSVZY@vger.kernel.org
-X-Received: by 2002:a17:907:97cb:b0:a99:92d3:7171 with SMTP id
- a640c23a62f3a-a9de63327dbmr2025448666b.61.1730414062548; Thu, 31 Oct 2024
- 15:34:22 -0700 (PDT)
+	s=arc-20240116; t=1730414305; c=relaxed/simple;
+	bh=pEtJFirKYNPDxNHu1rbuUAcZ2a+FlpqDvHvQ9or4KQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6mxjOQ+nFJGAajMpxeXUbbBYj+ZVqhhtaykHJRX2rxyCHztzv56JYthEILStVjm9QD/JcikclquRh/3SKB++E2r3aZ3V0kRhKuT0EAAjdVJdO4tz7s7j1Li1itLSnNtEqDkvbwjOHNWq2XuIAWdzJXFjsOTv8wZj8U/rzE6nDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iRM13131; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 31 Oct 2024 15:38:04 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730414291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74hfOt/lovYKoEC45qaB+42kzXinawa2j3XQtAHYyFk=;
+	b=iRM13131QsDUGMtXwAkzV5OvK/9XPSdi/CE9XIu/2W7LzSrhw1f7pI8glxlDDZYFwjHmve
+	1lgOjPtdO4MT3mVWYcXRdjttDeEAb4ZZeC2wGyqe5zosxcFWneRn13ERYc29rTC8shpsDV
+	RbeU2F7cCTM8a7TgH3rOzsJ4ruqzFN0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org, 
+	kernel-team@meta.com, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
+ internal rb tree
+Message-ID: <fqfgkvavsktbgonbdpy766bl3c2634b4c7aghi4tndwurxqhp2@qphspeeemlzg>
+References: <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
+ <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm>
+ <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
+ <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
+ <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
+ <CAJnrk1b9ttYVM2tupaNy+hqONRjRbxsGwdFvbCep75v01RtK+g@mail.gmail.com>
+ <4hwdxhdxgjyxgxutzggny4isnb45jxtump7j7tzzv6paaqg2lr@55sguz7y4hu7>
+ <CAJnrk1aY-OmjhB8bnowLNYosTP_nTZXGpiQimSS5VRfnNgBoJA@mail.gmail.com>
+ <ipa4ozknzw5wq4z4znhza3km5erishys7kf6ov26kmmh4r7kph@vedmnra6kpbz>
+ <CAJnrk1aZV=1mXwO+SNupffLQtQNeD3Uz+PBcxL1TKBDgGsgQPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
- <20241031060507.GJ1350452@ZenIV> <CAHk-=wh-Bom_pGKK+-=6FAnJXNZapNnd334bVcEsK2FSFKthhg@mail.gmail.com>
- <CAHk-=wj16HKdgiBJyDnuHvTbiU-uROc3A26wdBnNSrMkde5u0w@mail.gmail.com> <20241031222837.GM1350452@ZenIV>
-In-Reply-To: <20241031222837.GM1350452@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 31 Oct 2024 12:34:05 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wisMQcFUC5F1_NNPm+nTfBo__P9MwQ5jcGAer7vjz+WzQ@mail.gmail.com>
-Message-ID: <CAHk-=wisMQcFUC5F1_NNPm+nTfBo__P9MwQ5jcGAer7vjz+WzQ@mail.gmail.com>
-Subject: Re: generic_permission() optimization
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1aZV=1mXwO+SNupffLQtQNeD3Uz+PBcxL1TKBDgGsgQPg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 31 Oct 2024 at 12:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Anyway, patch looks sane; I still think that adding || !IS_POSIXACL(inode)
-> wouldn't hurt (yes, it's a dereference of ->i_sb in case when ->i_acl
-> is ACL_NOT_CACHED, but we are going to dereference it shortly after
-> in case we don't take the fast path.  OTOH, that probably matters only
-> for fairly specific loads - massive accesses to procfs and sysfs, mostly.
+On Thu, Oct 31, 2024 at 02:52:57PM GMT, Joanne Koong wrote:
+> On Thu, Oct 31, 2024 at 1:06 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Thu, Oct 31, 2024 at 12:06:49PM GMT, Joanne Koong wrote:
+> > > On Wed, Oct 30, 2024 at 5:30 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > [...]
+> > > >
+> > > > Memory pool is a bit confusing term here. Most probably you are asking
+> > > > about the migrate type of the page block from which tmp page is
+> > > > allocated from. In a normal system, tmp page would be allocated from page
+> > > > block with MIGRATE_UNMOVABLE migrate type while the page cache page, it
+> > > > depends on what gfp flag was used for its allocation. What does fuse fs
+> > > > use? GFP_HIGHUSER_MOVABLE or something else? Under low memory situation
+> > > > allocations can get mixed up with different migrate types.
+> > > >
+> > >
+> > > I believe it's GFP_HIGHUSER_MOVABLE for the page cache pages since
+> > > fuse doesn't set any additional gfp masks on the inode mapping.
+> > >
+> > > Could we just allocate the fuse writeback pages with GFP_HIGHUSER
+> > > instead of GFP_HIGHUSER_MOVABLE? That would be in fuse_write_begin()
+> > > where we pass in the gfp mask to __filemap_get_folio(). I think this
+> > > would give us the same behavior memory-wise as what the tmp pages
+> > > currently do,
+> >
+> > I don't think it would be the same behavior. From what I understand the
+> > liftime of the tmp page is from the start of the writeback till the ack
+> > from the fuse server that writeback is done. While the lifetime of the
+> > page of the page cache can be arbitrarily large. We should just make it
+> > unmovable for its lifetime. I think it is fine to make the page
+> > unmovable during the writeback. We should not try to optimize for the
+> > bad or buggy behavior of fuse server.
+> >
+> > Regarding the avoidance of wait on writeback for fuse folios, I think we
+> > can handle the migration similar to how you are handling reclaim and in
+> > addition we can add a WARN() in folio_wait_writeback() if the kernel ever
+> > sees a fuse folio in that function.
+> 
+> Awesome, this is what I'm planning to do in v3 to address migration then:
+> 
+> 1) in migrate_folio_unmap(), only call "folio_wait_writeback(src);" if
+> src->mapping does not have the AS_NO_WRITEBACK_WAIT bit set on it (eg
+> fuse folios will have that AS_NO_WRITEBACK_WAIT bit set)
+> 
+> 2) in the fuse filesystem's implementation of the
+> mapping->a_ops->migrate_folio callback, return -EAGAIN if the folio is
+> under writeback.
 
-Yeah, so the reason I'd like to avoid it is exactly that the i_sb
-accesses are the ones that show up in profiles.
+3) Add WARN_ONCE() in folio_wait_writeback() if folio->mapping has
+AS_NO_WRITEBACK_WAIT set and return without waiting.
 
-So I'd rather start with just the cheap inode-only "ACL is clearly not
-there" check, and later if we find that the ACL_NOT_CACHED case is
-problematic do we look at that.
+> 
+> Does this sound good?
 
-           Linus
+Yes.
 
