@@ -1,61 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-33335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9E39B7889
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 11:19:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE759B78AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 11:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B815285D3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 10:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C8B285025
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 10:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47FB199231;
-	Thu, 31 Oct 2024 10:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4347199253;
+	Thu, 31 Oct 2024 10:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+H/9k2e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoA1xBuX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A8A195F28;
-	Thu, 31 Oct 2024 10:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289901940BC;
+	Thu, 31 Oct 2024 10:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369979; cv=none; b=HNTGn8pcb5c1L+hdkm8BZd2ZBQ7CbeMlcLcHuXu1BMxRpAY4u5/FuQE+bYuzuyPMamdbqCmjSH/o0yzk/YBq4+BeJGNKskXNVVBJ9kaAE4DL+uDW6ji2wnh84GdGdP0jh1H1NaPxSEycyCYXTVh02bt4/vZUCJ4GTCBP24s/GdU=
+	t=1730370596; cv=none; b=eIA/1Ub2P3vIxU7cuy5PGMZGI8FSxNgr5WJHJKdisu6ac8etEZY1dD5nRbL9vVfqHWuppSQ3IgnEion3MBjFJIce6tFAxIbM+G09bLZiAkgs+vzohTHB5cIXbWury9ixa4LGBiQUQowixsyfCcQDkGxMkQRs3rRtAlLzoJZ8Tvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369979; c=relaxed/simple;
-	bh=HKRz/SHmEjtKuZrR+qUEEamtgN87CawYOO8zIncd/I0=;
+	s=arc-20240116; t=1730370596; c=relaxed/simple;
+	bh=SqtJyNXRaOIlizsyJ91mqNdbxAV84nTcb7bpYktn3ts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=idkwoT7qCaMiSayP3T6qyIPY9aiEZVc7jnodpEKc9/bFmdRFcSpFaesvgDZqImoJVRWXD0UmThIJ/TFKC+XewgCaR4mPbJvEGb0FdVD8isShz++wPNWymFyFc4iU3CxJCWFES5rcYgtIh60OAhcDmgmjuIJfcGj9Xsvf3/ilBoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+H/9k2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D824C4CEC3;
-	Thu, 31 Oct 2024 10:19:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ak4nAsMbjJ5godicXTNqqKGTDj2pzFr3yiRL0oic8G95LuRbUPkU5upJXOEmCxBxSM31haLVjDa7P2yMEbOy4bL5AHwbyRvdL0HC8q4toB8cl2eYCSg1jZ12pp42DqoOcnLKJ0+JUxp1uF73Io8ZCdHVCO2Il/XcuF7qAWx6bik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoA1xBuX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92CEEC4CEC3;
+	Thu, 31 Oct 2024 10:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730369978;
-	bh=HKRz/SHmEjtKuZrR+qUEEamtgN87CawYOO8zIncd/I0=;
+	s=k20201202; t=1730370596;
+	bh=SqtJyNXRaOIlizsyJ91mqNdbxAV84nTcb7bpYktn3ts=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+H/9k2e93/q+EILIZXUrtUPAqec5XC9BcY1VEcki8R4h+eMGbMkD9WVSOJNeslvX
-	 JY7hMv+dEx6tbY2eV0dR9hrFwq8ve1s8PhdXMXH8KpDuO6tFuMUitunhaQj5cuGl31
-	 taElyP8FA5DQPVZYi/8SFHg1QcP8S9ZwjVQaP4AbJMwcqFfGVioco5AquLBLsJdVTk
-	 fiegZjM9XLH2r9LHaji+1W6qT+5rfLQbgfnKtiUOtOgowAiB91cJOplkkZhOOfGB+p
-	 Vw7fJ+Ri7xDtmvDJ+o80qZysJpYSSx7AgcJQR309tfBx++7//L7RHXgKYHh7tpXw4p
-	 HI+YnOEJqEkNA==
-Date: Thu, 31 Oct 2024 11:19:33 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-	Joel Granados <j.granados@samsung.com>
-Subject: Re: [PATCH v2] sysctl: Reduce dput(child) calls in
- proc_sys_fill_cache()
-Message-ID: <3vjfwmskssuqoqrj6s5l5jlppogttiaqaqu37i7ax56ffo3lbh@lz6zmfjzpe77>
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
- <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
- <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
- <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
- <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+	b=CoA1xBuXwKgsG3coiyxkwTh9F+nW3VvMkLOSO46I0HYKOixOAIyrUZNts/ktvwgRv
+	 KmLTTGKAp1B1/3s5GgDnGG0VmEaAGBOCXly6NZrGhq0uaOpZb3E+YZXnQtPNbium9c
+	 b5BBY6JC7UKZxD7PjCbLg+ErP+UcaPMrg1NjXKszXEiK8qdC1HU2RtW/5PilE1K00X
+	 k8kCCpMOr5aFkmtCSB2WKrcvfsa03RwUMb/uXGQY/lHjF8dGkMzLaiuDfPRTFC36oJ
+	 U6aI4j4IDIDuxahnOL3/o2wuWt/wMBs0jtB6EwT11mXMudLE5Fvu7QAmm/t1tRgkun
+	 LWRkwPp+gAUCg==
+Date: Thu, 31 Oct 2024 11:29:51 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Zorro Lang <zlang@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>
+Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2
+ (new mount APIs)
+Message-ID: <20241031-ausdehnen-zensur-c7978b7da9a6@brauner>
+References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
+ <9f489a85-a2b5-4bd0-98ea-38e1f35fed47@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,85 +60,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+In-Reply-To: <9f489a85-a2b5-4bd0-98ea-38e1f35fed47@sandeen.net>
 
-On Wed, Oct 23, 2024 at 05:27:11PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 23 Oct 2024 16:54:59 +0200
+On Wed, Oct 30, 2024 at 10:48:15PM -0500, Eric Sandeen wrote:
+> On 10/28/24 7:22 AM, Christian Brauner wrote:
+> > On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
+> >> Hi,
+> >>
+> >> Recently, I hit lots of fstests cases fail on overlayfs (xfs underlying, no
+> >> specific mount options), e.g.
+> >>
+> >> FSTYP         -- overlay
+> >> PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 25 14:29:18 EDT 2024
+> >> MKFS_OPTIONS  -- -m crc=1,finobt=1,rmapbt=0,reflink=1,inobtcount=1,bigtime=1 /mnt/fstests/SCRATCH_DIR
+> >> MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /mnt/fstests/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
+> >>
+> >> generic/294       [failed, exit status 1]- output mismatch (see /var/lib/xfstests/results//generic/294.out.bad)
+> >>     --- tests/generic/294.out	2024-10-25 14:38:32.098692473 -0400
+> >>     +++ /var/lib/xfstests/results//generic/294.out.bad	2024-10-25 15:02:34.698605062 -0400
+> >>     @@ -1,5 +1,5 @@
+> >>      QA output created by 294
+> >>     -mknod: SCRATCH_MNT/294.test/testnode: File exists
+> >>     -mkdir: cannot create directory 'SCRATCH_MNT/294.test/testdir': File exists
+> >>     -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': Read-only file system
+> >>     -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': File exists
+> >>     +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system call failed: overlay: No changes allowed in reconfigure.
+> >>     +       dmesg(1) may have more information after failed mount system call.
+> > 
+> > In the new mount api overlayfs has been changed to reject invalid mount
+> > option on remount whereas in the old mount api we just igorned them.
+> > If this a big problem then we need to change overlayfs to continue
+> > ignoring garbage mount options passed to it during remount.
+> > 
+> 
+> It fails on /any/ overlayfs-specific options during reconfigure, invalid or
+> not, right?
 
-Small comment: Remember to send out a new patch-set email in order to
-make it easier for tools like b4.
+Yes.
 
 > 
-> Replace two dput(child) calls with one that occurs immediately before
-> the IS_ERR evaluation. This transformation can be performed because
-> dput() gets called regardless of the value returned by IS_ERR(res).
+>         if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+>                 /*
+>                  * On remount overlayfs has always ignored all mount
+>                  * options no matter if malformed or not so for
+>                  * backwards compatibility we do the same here.
+>                  */
+>                 if (fc->oldapi)
+>                         return 0;
+>                 
+>                 /*
+>                  * Give us the freedom to allow changing mount options
+>                  * with the new mount api in the future. So instead of
+>                  * silently ignoring everything we report a proper
+>                  * error. This is only visible for users of the new
+>                  * mount api.
+>                  */
+>                 return invalfc(fc, "No changes allowed in reconfigure");
+>         }
 > 
-> This issue was transformed by using a script for the
-> semantic patch language like the following.
-> <SmPL>
-> @extended_adjustment@
-> expression e, f != { mutex_unlock }, x, y;
-> @@
-> +f(e);
->  if (...)
->  {
->  <+... when != \( e = x \| y(..., &e, ...) \)
-> -   f(e);
->  ...+>
->  }
-> -f(e);
-> </SmPL>
+>         opt = fs_parse(fc, ovl_parameter_spec, param, &result);
+>         if (opt < 0)
+>                 return opt; 
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> V2:
-> * This update suggestion was rebased on source files of the software
->   “Linux next-20241023”.
-> 
-> * The change description was adjusted according to the wording preferences
->   by Joel Granados.
-> 
-> * An SmPL script example was appended.
-> 
-> 
->  fs/proc/proc_sysctl.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 9b9dfc450cb3..b277a1ca392e 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
->  			res = d_splice_alias(inode, child);
->  			d_lookup_done(child);
->  			if (unlikely(res)) {
-> -				if (IS_ERR(res)) {
-> -					dput(child);
-> -					return false;
-> -				}
->  				dput(child);
-> +
-> +				if (IS_ERR(res))
-> +					return false;
-> +
->  				child = res;
->  			}
->  		}
-> --
-> 2.47.0
-> 
+> And because today mount(8) will re-specify everything it finds in
+> /proc/mounts during remount, presumably that's why all these tests are
+> failing - even a simple remount,ro will fail:
 
-This looks good to me. I'll push it to sysctl-next.
-Thx for the patch
+The easiest way is to just fallback to the old behavior and continue to
+ignore unknown mount options. IOW, ignore my change.
 
-Reviewed-by: Joel Granados <joel.granados@kernel.org>
+> 
+> # mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merged
+> # strace -e fsconfig mount -o remount,ro merged
+> fsconfig(4, FSCONFIG_SET_FLAG, "seclabel", NULL, 0) = 0
+> fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "lower", 0) = -1 EINVAL (Invalid argument)
+> ...
+> 
+> Surely mount -o remount,ro should continue to work for overlayfs when the new
+> API is used.
+> 
+> Maybe there's a third way: accept remount options as long as they match
+> current options, but fail if they try to modify anything? Not sure how tricky
+> that would be.
+> 
+> (side note: it's a bit worrisome that there is probably no consistency at
+> all across filesystems, here.)
 
-Best
-
--- 
-
-Joel Granados
+One option would be to add a fsconfig() flag that enforces strict
+remount behavior if the filesystem supports it. So it's would become an
+opt-in thing.
 
