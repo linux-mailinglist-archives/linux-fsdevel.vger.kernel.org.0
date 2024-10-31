@@ -1,58 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-33322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7AD9B74AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 07:43:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5529B74C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 07:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16321F25029
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 06:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2E7281E93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 06:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9D11474BF;
-	Thu, 31 Oct 2024 06:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hLk5HnSZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0D814A4F0;
+	Thu, 31 Oct 2024 06:55:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E51465B4;
-	Thu, 31 Oct 2024 06:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7921487ED;
+	Thu, 31 Oct 2024 06:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730356991; cv=none; b=d8WcXg+QLgBMzVuiXx5w5VrZFQmooN1RwJR4eGbAHGU4gAgvaKZurePOe5PcKZPT/+sM+sANSJziid5bC/36v3vvjlzQdWMfS2BTTX35MGqwIS6R/A3N8QNtVRbms9PuhfrPAIhpdlajsbHoFrtisgSuHG0qYu+Q4ZfLUmlHDd0=
+	t=1730357744; cv=none; b=FhCd+lvK8bS1hZ5GH9l5MlrYyibURBJE/N0KzOdRNBD/VugAXBi5EmpFpP/U8FGq0GiCzFAW0qbT3qYtgje7uGC1NWnOK2OIjEGroXHusrqIuZi2THi5gHTeIuZNCPyHU8HsSRrjv362oPu8VuPDMnIvl2UDoBM8w/e21ZZeSW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730356991; c=relaxed/simple;
-	bh=IUEIAQA7P1uYn/zqdUVz7OLKFK36rMIQuwpNjaL1YH0=;
+	s=arc-20240116; t=1730357744; c=relaxed/simple;
+	bh=QLDIAaSD9844H1amX6uRVboWINL3zB7PYQjgIeituFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/s5vJ2eNYo4qmjFgdgk403KFyasYWLeMONWok3H5nHwiWYJtzsgJMbRN9tXxqytSvASHo9CZ66pUw6KrYI/mR3PIN9Fz4Z9nHUvYKfzyKCwpfn/1qalRPV4ztFTCTazdnBreKoZHCzln/CmSUONaX29pwlmtbPSe4Swpf5gsO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hLk5HnSZ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CKiWvVEKmcC8Dyu608fHEAVQab08HJJoh41UJxZAbKc=; b=hLk5HnSZMZpyA1kqw6NAcrrsvm
-	TS+SBFgi2BGJCOLpuwWQTiWMznyzeCqr8jDL2zhCJhH2Bl/y4xPqqH6Nx/SglwbcrtoGXeOY/rlBd
-	4JGfgqunSKi49YudMFaQLaUp88/JbpnEdfroehCvjM5P1v3eATZnUD799qwJmMyfwv5LGcEgJvVLG
-	/iJRt1L1k7Lg/P1xYlzxz8msh8BE+pmjBFnXgBk6xQ+2WJHu8E6flAqUJP2xa3cGZZ5XdF58U05Xe
-	AbgoqIHSOG61oATdEVkZtxtoCdySXiKHZpbcmG5lr2eGtsyzJBIeyVccz2v+S0rV6CyQmcG20EGR+
-	gXZTrjuQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6Ote-00000009gYV-3PM1;
-	Thu, 31 Oct 2024 06:43:06 +0000
-Date: Thu, 31 Oct 2024 06:43:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] xattr: remove redundant check on variable err
-Message-ID: <20241031064306.GK1350452@ZenIV>
-References: <20241030182547.3103729-1-colin.i.king@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxwsUlM9qFhR+o0sOL88hrsCwzaCHVlKXTrfcGe1sWyzV6tYSVtRpimqIoUSDrYO8Dzjs1E5jqusGcChpIYxbTXOZei0/shEHgFFtrrxBL9/Vlcce8/e8G1Owg4tFFG6SIb2sbPYqA5BzWaHSKMp28I4mFDW4Irdg1NzDfr5bBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id CB0C7227AAD; Thu, 31 Oct 2024 07:55:35 +0100 (CET)
+Date: Thu, 31 Oct 2024 07:55:35 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+	martin.petersen@oracle.com, asml.silence@gmail.com,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org, gost.dev@samsung.com,
+	vishak.g@samsung.com, anuj1072538@gmail.com,
+	Anuj Gupta <anuj20.g@samsung.com>
+Subject: Re: [PATCH v6 04/10] fs, iov_iter: define meta io descriptor
+Message-ID: <20241031065535.GA26299@lst.de>
+References: <20241030180112.4635-1-joshi.k@samsung.com> <CGME20241030181008epcas5p333603fdbf3afb60947d3fc51138d11bf@epcas5p3.samsung.com> <20241030180112.4635-5-joshi.k@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,18 +53,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030182547.3103729-1-colin.i.king@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241030180112.4635-5-joshi.k@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Oct 30, 2024 at 06:25:47PM +0000, Colin Ian King wrote:
-> Curretly in function generic_listxattr the for_each_xattr_handler loop
-> checks err and will return out of the function if err is non-zero.
-> It's impossible for err to be non-zero at the end of the function where
-> err is checked again for a non-zero value. The final non-zero check is
-> therefore redundant and can be removed. Also move the declaration of
-> err into the loop.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, Oct 30, 2024 at 11:31:06PM +0530, Kanchan Joshi wrote:
+> +typedef __u16 uio_meta_flags_t;
 
-Applied (viro/vfs.git #work.xattr2)
+I would have just skipped the typedef, but I don't have strong feelings
+here.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
