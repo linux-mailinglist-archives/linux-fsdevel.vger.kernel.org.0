@@ -1,97 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-33341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E579B7A3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 13:06:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9B19B7A6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 13:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739EA1C21C69
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 12:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626F9B22F9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 12:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7BA19B3DD;
-	Thu, 31 Oct 2024 12:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D42519CC29;
+	Thu, 31 Oct 2024 12:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glHh6Ihs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffvqzONS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94621BC20
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 12:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DE214E2C0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 12:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376369; cv=none; b=nsRry5mIahdXjtjAwt3GUbtCAG17qQBrZJ94pke/sZ9jcSFOvNFcfDuxPugKNyKdFkwQ17fF1Fw0V5VUcSToJLgmEPRzPvGLL0I5taULNalgyQgQ5oPmuk+BmKqoiTeRtQ08mry76qM7KI7Ol8Nc4TJs7g8o3ATF3bi/3WK3G7I=
+	t=1730377405; cv=none; b=FmLcx8p5LBt2eADQcd7NRhWjshJzvdTiHMjcd80d7W29UJ8NNZIXw7FOc1BhnRQv84aLjU/HMZNxiY1JykwdFEmYzm8ZEHpV8PdyeyQCR9RsAWzzhUEKTdrosr7FBaYRF3kX5oLxObTz5Pu1Azrc25kRREisJM5nFkX3c34BJJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376369; c=relaxed/simple;
-	bh=vyN8krpSONVdqVq9MHCuKX0WybNPWRVAc+4ewwQruxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SlViHXOfRyt69ZEcDdzdutxft61UOFS5qG8OqYgKyYjjRvXSXwddZwlMoetWv/bp3hibVeeLvsbEq9sgx4dZNCeuJBeVCeFsMtV1Y5F2Kw5bSQREPH0ZtZDtdHmaOgKxqcQIPdHRD13XOcL01l8n3D+1Il9fdiJcwtA9qASvREc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glHh6Ihs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1CB5C4DE0E;
-	Thu, 31 Oct 2024 12:06:07 +0000 (UTC)
+	s=arc-20240116; t=1730377405; c=relaxed/simple;
+	bh=A/fsDPSLuuMm2ABef3ySgBvfeTYux3yXY0Em56mbk44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W7aLR/Vm/KKdRhOq7VFlkM0/2aYpwshpeBcLeugW/a8Q7i69IclMzbBCbAmBhtoklroX9+rQn/CWPvAEuIi7Dw2rCPU9i9b2r393u7Nzc3Jwv002299RnI4z4rPZIYB6ZDq+MN7kQ7yXPQqIFzfTGAvXILuPr9DG6ATFTc8cxtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffvqzONS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C845C4CED4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 12:23:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730376369;
-	bh=vyN8krpSONVdqVq9MHCuKX0WybNPWRVAc+4ewwQruxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=glHh6IhsrVU/PwXp6gQngSLU/JQCtJ6vrccCpTJ3Em1slgPVkIexDbeWEJRjXIObb
-	 wtyBy32tRJxwzHLbJSL3l7ilb9z1w4BA15T8ShWnrOn3PyjCY6Rng9uD67NwNCx1rK
-	 oPVF6TbeErzgAfla0WhoejBSSYjqBosVOHrdiwN14QKjvDwH0Ksg9DxD6M+xJNZwr5
-	 6fzAeF1cx8FG86pvUU2p2i3N9zkl3vCjO1C9il+o486fhXkdwVHr1RPVC7lH2uk7JC
-	 w3GMQtVinFAy2OV1VWYuRvLKuLi5IITtbHxEbY3P7Jdv7g0B3fhu+t5c8jlBaQk6DA
-	 cMGD46eW1zYIQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Disseldorp <ddiss@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] initramfs: avoid filename buffer overrun
-Date: Thu, 31 Oct 2024 13:05:55 +0100
-Message-ID: <20241031-liedchen-plenarsaal-63d3831b335f@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241030035509.20194-2-ddiss@suse.de>
-References: <20241030035509.20194-2-ddiss@suse.de>
+	s=k20201202; t=1730377404;
+	bh=A/fsDPSLuuMm2ABef3ySgBvfeTYux3yXY0Em56mbk44=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ffvqzONSi+4f05b7uHF/35bVyo8P5b/88BRsgOCuCD4h+ufZFxk+nyu2flJAjI0PT
+	 lM9yIkJFarqz7iZZSStIowHJiPMR0c4TZjk7QErkVoqNuGSpyTdsUM59rYv4BuvRM1
+	 B338BY6/h/8cm/8Gr1mD3JO7pizzIseLtOYWxtVL5NrX/XPLTlUAmQm3Hj0sh5RmkD
+	 g0sztE0U9p7vw2LqPnU+NNBobqnI1ZJx3+2QVfUP+QmjvIY8GywaFQ4mQTSnCgYQ4W
+	 PIcts0NtdIqzB0JpPDNeNpDObc0dKQ3OYzE9IW1OPvLKJYDZzfGiUwseraGnH9Y9Ob
+	 1no6lzxCtb5yA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-28c7f207806so416832fac.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 05:23:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUj4cP6TQOCUzB5+4JTHmuNHILjeCdBul5VfSXSg6QOF1nPx0FnRVSANoqe4boXQ/UE/Slw11vCcb0FqUCH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlfMOpucfNpBad37zEQk5Ir8BTiHg7oIaeNbr8PKXRi8DD0p6t
+	/zSXUFwdQweR+6E9nVLjLbkQvagmWJwA+xsZc1prdN8xef/zjYob1y0R8U6E1OtpsU63Vmx97xW
+	AZ3lx2XvqtHZhM6NNW5DyIpx2188=
+X-Google-Smtp-Source: AGHT+IF3DFNGAPx/6NS6vKLX/FkvbeUSeekrgW8wdnMz3sfsnihLRN8FaX2rBmScXPxRTpssKrcPld5BDdo0Qj51VwM=
+X-Received: by 2002:a05:6870:6387:b0:277:cc56:2300 with SMTP id
+ 586e51a60fabf-2946470278cmr7571091fac.12.1730377403944; Thu, 31 Oct 2024
+ 05:23:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1292; i=brauner@kernel.org; h=from:subject:message-id; bh=vyN8krpSONVdqVq9MHCuKX0WybNPWRVAc+4ewwQruxk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQrF61+J6b15HTQQtuu5C/c7JznhGVPzkn5Jih0N0P6z KZJSvbdHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxNmT4H9biln/EbN0jF8W1 ggw2rt5N7876fxXnevXYkuu4jfSTE4wMex/1303+9vn6G/lHBf7zbKQOxO0R2BE268TCPHfJuHd /+QE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <PUZPR04MB6316005B9D2632DDB7E0E2EB81542@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB6316005B9D2632DDB7E0E2EB81542@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 31 Oct 2024 21:23:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-pdzZc0zmNz9A=dAg0VU5K+D_jbFopiy3NuohwGWEL0w@mail.gmail.com>
+Message-ID: <CAKYAXd-pdzZc0zmNz9A=dAg0VU5K+D_jbFopiy3NuohwGWEL0w@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] exfat: fixes for invalid start_clu
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Oct 2024 03:55:10 +0000, David Disseldorp wrote:
-> The initramfs filename field is defined in
-> Documentation/driver-api/early-userspace/buffer-format.rst as:
-> 
->  37 cpio_file := ALGN(4) + cpio_header + filename + "\0" + ALGN(4) + data
-> ...
->  55 ============= ================== =========================
->  56 Field name    Field size         Meaning
->  57 ============= ================== =========================
-> ...
->  70 c_namesize    8 bytes            Length of filename, including final \0
-> 
-> [...]
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] initramfs: avoid filename buffer overrun
-      https://git.kernel.org/vfs/vfs/c/e017671f534d
+On Wed, Oct 30, 2024 at 4:47=E2=80=AFPM Yuezhang.Mo@sony.com
+<Yuezhang.Mo@sony.com> wrote:
+>
+> Namjae Jeon (1):
+>   exfat: fix uninit-value in __exfat_get_dentry_set
+>
+> Yuezhang Mo (1):
+>   exfat: fix out-of-bounds access of directory entries
+>
+>  fs/exfat/namei.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+Applied them to #dev.
+Thanks!
+>
+> --
+> 2.43.0
+>
 
