@@ -1,176 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-33357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9021A9B7D13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B009B7E87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 16:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F32A2832E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 14:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D23F1C23A5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695D91A0BEC;
-	Thu, 31 Oct 2024 14:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A096C1A4F01;
+	Thu, 31 Oct 2024 15:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaF35z7Q"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="P1Nncupq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A550C156CF;
-	Thu, 31 Oct 2024 14:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7498E1A01C4;
+	Thu, 31 Oct 2024 15:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385537; cv=none; b=EorgnSF0gZS/zyHvHEBUGmPO8H7zbsD5jxc4VsW+1+V3jVTd0ReLD6jSyWlAZjc2UEvlSX79q5ZHRNhPKAtSEeX2XpcKT5saeqaQw0reqcEFktruCi+yf7qYMynxlJWlkogW3G00aWRj/3RP4KXZ3maQ+iTC+jJNWuaMtJgqUc4=
+	t=1730388674; cv=none; b=IhfO0cDymlHQxBPTuRdWszSzGJH1SzMSmGDzFXpGnR6hz3+Q9nL/DOw/RQ1vSHKJWIX2wckwhWnJ0Ibmzfj3PY/BYki8UjTw6r0tZio/8LqKbu+bqMwZjWE+Rx1Ng55plFPUpYKxHhV5tBKbzHwpzBMn69SX3dC0uP44UPqeQk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385537; c=relaxed/simple;
-	bh=6G7C/il9g/dzmCRVL+rh/gHJAyO9BLO/eAVlrTtKqdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kr3EnoOn4Qx0yvZOcY9Ic4YDDsx0NNwoTwHLdl0Bt/H2Q4DkHbl9KLYE5HR4sCTyLAyrwsnY+GWAc15iRwbBIsZc++kBFTm48DCsOttbtZfC3MrAMhcDBJJWnDqbgy+YwGTHMJUoDF8Flic9554GuZLbVrbiVSwbkM0XHjKd8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaF35z7Q; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so129658066b.0;
-        Thu, 31 Oct 2024 07:38:55 -0700 (PDT)
+	s=arc-20240116; t=1730388674; c=relaxed/simple;
+	bh=kjEtoR7WXcrlDmWv79wlde5j4Pe/SHsa6DdfWTkJccw=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GhOji7DBOqM+2DDLFPkwBu6YrUR6OsOUKKU1XHk05azrSRb22D2serKvOfly/bC3oHFc3HmdL62KGIpuuVW3+AE/9NhWQ2+v6LFKLynOZhROQLLUmmq7Lr8w4fa/C8o7LjGdflQtRfEIMeuLakU/1gf3k7WkoJQYzwwpaKKwKkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=P1Nncupq; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730385534; x=1730990334; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VkLkUT2155S8/1ZjBvkJQuF+oTKJuM1LeXuQm4xdwNg=;
-        b=EaF35z7QAw8+27bb48NKUVj6QBfr5FebEwHpqmtus2RbpZK8ipUCHKln4D7GXtRv5+
-         7nLMxGZngs3s5ZW4U90yhIm0fjgw1XmKlKnpfNNL86n4bn20yii3M76K7Xzr6ZfeyrTT
-         x/n+CIFY+Tm8vSx5V7SsBZvnNYfj5tMXMqiDIpkedS2wqltykuQCB6AdUIDhbcc8mOdl
-         UzuKo84ZD12SPjDKDTs8TkGEHgwYeGElvArK0oSYPYWw0AvMxWU/SuXZlWHP6mGgJoYc
-         5nbQ5kpbMB9iNr0XEgXesNTfrwL3qi4zv/Gg+OE/m+n7a7MaeuuLAgiQMqgByTva6J7m
-         enTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730385534; x=1730990334;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VkLkUT2155S8/1ZjBvkJQuF+oTKJuM1LeXuQm4xdwNg=;
-        b=WKJRBbzLTH6iip1ZfOx/s3AqSdV99rUTsJF75q1vkClyW6TcBIjrE7zXxqC41z0lET
-         dJo5ym/Hpq99WlarvVRGvdu8UT7kHcqed3PRtY8ZxXAmiydGtn1XpYTondY6MfGfXKmQ
-         9GD3o17CmJDnXyZgSYjJEiHXcQuCx6872EADZtXu9UKTIKtpUivck9lIry7clQR0YsDU
-         2Okc6OUG10+hltZGFe6YsHLAzqiSFVos+d8Iwpit6llgMgceu6DMud+cPsQG1sLGRcIZ
-         GxlV8FMckFxaf6C7y8fJ6WHlM76XmTw52dSEO5cYstIlfbbe7wR/QqboTFf/MdtBmlm7
-         2DjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4V6sAATbGf6L8J46Me79ApGtpFPL+ElT6LPadkfpr6wPP52vZBQLK6c0KAg50sGtC5Eb4ktWBzg==@vger.kernel.org, AJvYcCVufR4/xh0B5lATxeVHyggVGiRk7r58qsD7L0uck4x/faEXKysLXDw9aK2frvvNPxjNThij4X7nQ3SL9C4=@vger.kernel.org, AJvYcCWEAPGHwmWHJxLZuRot3sltpHdUaCu3ohk6ySr/YetQdDuBlclbP14Dl49RKNoVF4h0+yzS+mLKeA9+4A==@vger.kernel.org, AJvYcCWiPV+SUz3npLU9vUu+KFATdrB0IKyUVH81HHIkjnbRPUFkUSU3pePNiig3g2+88IiKV+2+2ISVPrfKKtgwQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBlQQ41sna3amknwStPOZ7cPBahhqmQWGzsgk9/u7PYtPTQVWp
-	w65/N4CBfcUEfJRkC3iCLBKqPjJ5r+sCEZMeRkGIlm2bWJ9jC0Zv
-X-Google-Smtp-Source: AGHT+IHgy72+xf0zy2u4ibYnZqijgJyothbCzVyB8LNV+B9H3h6X+CKob8pNbhEshHta/sBwmpYt4Q==
-X-Received: by 2002:a17:906:c154:b0:a9a:38e6:2fdf with SMTP id a640c23a62f3a-a9e50ba7dc2mr353194166b.64.1730385533573;
-        Thu, 31 Oct 2024 07:38:53 -0700 (PDT)
-Received: from [192.168.42.106] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c55f4sm74922966b.78.2024.10.31.07.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 07:38:53 -0700 (PDT)
-Message-ID: <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
-Date: Thu, 31 Oct 2024 14:39:09 +0000
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730388672; x=1761924672;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=kjEtoR7WXcrlDmWv79wlde5j4Pe/SHsa6DdfWTkJccw=;
+  b=P1NncupqU6LYHOGoy8KlIR+/AtrWJhuxD3VTxiGcd5tOAUrH9Ke26JaT
+   ieyjtNMRxIBaAQo7Cglj56PdFUNY4/20oUD9T1Z+PBmaWcIMwdO+V4bwI
+   kSRQbS1fAli84sWWqdMyWuxooU+U6rCRQfGShiezTznwnb11/2SCeWyLe
+   E=;
+X-IronPort-AV: E=Sophos;i="6.11,247,1725321600"; 
+   d="scan'208";a="381479065"
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Thread-Topic: [PATCH 05/10] guestmemfs: add file mmap callback
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 15:31:03 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:32967]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.199:2525] with esmtp (Farcaster)
+ id 2f3f7fde-846e-4fec-9d29-916d333d5f38; Thu, 31 Oct 2024 15:31:00 +0000 (UTC)
+X-Farcaster-Flow-ID: 2f3f7fde-846e-4fec-9d29-916d333d5f38
+Received: from EX19D004EUC003.ant.amazon.com (10.252.51.249) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 31 Oct 2024 15:30:59 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D004EUC003.ant.amazon.com (10.252.51.249) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 31 Oct 2024 15:30:59 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Thu, 31 Oct 2024 15:30:59 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
+ Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
+	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
+	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Saenz
+ Julienne, Nicolas" <nsaenz@amazon.es>, "Durrant, Paul"
+	<pdurrant@amazon.co.uk>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
+Thread-Index: AQHbKlc3IZ2PqNLJ5E+mkZOTFQYr3bKg/xKA
+Date: Thu, 31 Oct 2024 15:30:59 +0000
+Message-ID: <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+	 <20240805093245.889357-6-jgowans@amazon.com>
+	 <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+In-Reply-To: <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <260366AA7173934389D9B2AED5356A54@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
- with read/write
-To: Keith Busch <kbusch@kernel.org>, Kanchan Joshi <joshi.k@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
- anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
-References: <20241030180112.4635-1-joshi.k@samsung.com>
- <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
- <20241030180112.4635-7-joshi.k@samsung.com>
- <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10/30/24 21:09, Keith Busch wrote:
-> On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index 024745283783..48dcca125db3 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -105,6 +105,22 @@ struct io_uring_sqe {
->>   		 */
->>   		__u8	cmd[0];
->>   	};
->> +	/*
->> +	 * If the ring is initialized with IORING_SETUP_SQE128, then
->> +	 * this field is starting offset for 64 bytes of data. For meta io
->> +	 * this contains 'struct io_uring_meta_pi'
->> +	 */
->> +	__u8	big_sqe[0];
->> +};
-
-I don't think zero sized arrays are good as a uapi regardless of
-cmd[0] above, let's just do
-
-sqe = get_sqe();
-big_sqe = (void *)(sqe + 1)
-
-with an appropriate helper.
-
->> +
->> +/* this is placed in SQE128 */
->> +struct io_uring_meta_pi {
->> +	__u16		pi_flags;
->> +	__u16		app_tag;
->> +	__u32		len;
->> +	__u64		addr;
->> +	__u64		seed;
->> +	__u64		rsvd[2];
->>   };
-> 
-> On the previous version, I was more questioning if it aligns with what
-
-I missed that discussion, let me know if I need to look it up
-
-> Pavel was trying to do here. I didn't quite get it, so I was more
-> confused than saying it should be this way now.
-
-The point is, SQEs don't have nearly enough space to accommodate all
-such optional features, especially when it's taking so much space and
-not applicable to all reads but rather some specific  use cases and
-files. Consider that there might be more similar extensions and we might
-even want to use them together.
-
-1. SQE128 makes it big for all requests, intermixing with requests that
-don't need additional space wastes space. SQE128 is fine to use but at
-the same time we should be mindful about it and try to avoid enabling it
-if feasible.
-
-2. This API hard codes io_uring_meta_pi into the extended part of the
-SQE. If we want to add another feature it'd need to go after the meta
-struct. SQE256? And what if the user doesn't need PI but only the second
-feature?
-
-In short, the uAPI need to have a clear vision of how it can be used
-with / extended to multiple optional features and not just PI.
-
-One option I mentioned before is passing a user pointer to an array of
-structures, each would will have the type specifying what kind of
-feature / meta information it is, e.g. META_TYPE_PI. It's not a
-complete solution but a base idea to extend upon. I separately
-mentioned before, if copy_from_user is expensive we can optimise it
-with pre-registering memory. I think Jens even tried something similar
-with structures we pass as waiting parameters.
-
-I didn't read through all iterations of the series, so if there is
-some other approach described that ticks the boxes and flexible
-enough, I'd be absolutely fine with it.
-
-
--- 
-Pavel Begunkov
+T24gVHVlLCAyMDI0LTEwLTI5IGF0IDE2OjA1IC0wNzAwLCBFbGxpb3QgQmVybWFuIHdyb3RlOg0K
+PiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjo0MEFNICswMjAwLCBKYW1lcyBHb3dhbnMg
+d3JvdGU6DQo+ID4gTWFrZSB0aGUgZmlsZSBkYXRhIHVzYWJsZSB0byB1c2Vyc3BhY2UgYnkgYWRk
+aW5nIG1tYXAuIFRoYXQncyBhbGwgdGhhdA0KPiA+IFFFTVUgbmVlZHMgZm9yIGd1ZXN0IFJBTSwg
+c28gdGhhdCdzIGFsbCBiZSBib3RoZXIgaW1wbGVtZW50aW5nIGZvciBub3cuDQo+ID4gDQo+ID4g
+V2hlbiBtbWFwaW5nIHRoZSBmaWxlIHRoZSBWTUEgaXMgbWFya2VkIGFzIFBGTk1BUCB0byBpbmRp
+Y2F0ZSB0aGF0IHRoZXJlDQo+ID4gYXJlIG5vIHN0cnVjdCBwYWdlcyBmb3IgdGhlIG1lbW9yeSBp
+biB0aGlzIFZNQS4gUmVtYXBfcGZuX3JhbmdlKCkgaXMNCj4gPiB1c2VkIHRvIGFjdHVhbGx5IHBv
+cHVsYXRlIHRoZSBwYWdlIHRhYmxlcy4gQWxsIFBURXMgYXJlIHByZS1mYXVsdGVkIGludG8NCj4g
+PiB0aGUgcGd0YWJsZXMgYXQgbW1hcCB0aW1lIHNvIHRoYXQgdGhlIHBndGFibGVzIGFyZSB1c2Fi
+bGUgd2hlbiB0aGlzDQo+ID4gdmlydHVhbCBhZGRyZXNzIHJhbmdlIGlzIGdpdmVuIHRvIFZGSU8n
+cyBNQVBfRE1BLg0KPiANCj4gVGhhbmtzIGZvciBzZW5kaW5nIHRoaXMgb3V0ISBJJ20gZ29pbmcg
+dGhyb3VnaCB0aGUgc2VyaWVzIHdpdGggdGhlDQo+IGludGVudGlvbiB0byBzZWUgaG93IGl0IG1p
+Z2h0IGZpdCB3aXRoaW4gdGhlIGV4aXN0aW5nIGd1ZXN0X21lbWZkIHdvcmsNCj4gZm9yIHBLVk0v
+Q29Dby9HdW55YWguDQo+IA0KPiBJdCBtaWdodCd2ZSBiZWVuIG1lbnRpb25lZCBpbiB0aGUgTU0g
+YWxpZ25tZW50IHNlc3Npb24gLS0geW91IG1pZ2h0IGJlDQo+IGludGVyZXN0ZWQgdG8gam9pbiB0
+aGUgZ3Vlc3RfbWVtZmQgYmktd2Vla2x5IGNhbGwgdG8gc2VlIGhvdyB3ZSBhcmUNCj4gb3Zlcmxh
+cHBpbmcgWzFdLg0KPiANCj4gWzFdOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9rdm0vYWU3OTQ4
+OTEtZmU2OS00MTFhLWI4MmUtNjk2M2I1OTRhNjJhQHJlZGhhdC5jb20vVC8NCg0KSGkgRWxsaW90
+LCB5ZXMsIEkgdGhpbmsgdGhhdCB0aGVyZSBpcyBhIGxvdCBtb3JlIG92ZXJsYXAgd2l0aA0KZ3Vl
+c3RfbWVtZmQgbmVjZXNzYXJ5IGhlcmUuIFRoZSBpZGVhIHdhcyB0byBleHRlbmQgZ3Vlc3RtZW1m
+cyBhdCBzb21lDQpwb2ludCB0byBoYXZlIGEgZ3Vlc3RfbWVtZmQgc3R5bGUgaW50ZXJmYWNlLCBi
+dXQgaXQgd2FzIHBvaW50ZWQgb3V0IGF0DQp0aGUgTU0gYWxpZ25tZW50IGNhbGwgdGhhdCBkb2lu
+ZyBzbyB3b3VsZCByZXF1aXJlIGd1ZXN0bWVtZnMgdG8NCmR1cGxpY2F0ZSB0aGUgQVBJIHN1cmZh
+Y2Ugb2YgZ3Vlc3RfbWVtZmQuIFRoaXMgaXMgdW5kZXNpcmFibGUuIEJldHRlcg0Kd291bGQgYmUg
+dG8gaGF2ZSBwZXJzaXN0ZW5jZSBpbXBsZW1lbnRlZCBhcyBhIGN1c3RvbSBhbGxvY2F0b3IgYmVo
+aW5kIGENCm5vcm1hbCBndWVzdF9tZW1mZC4gSSdtIG5vdCB0b28gc3VyZSBob3cgdGhpcyB3b3Vs
+ZCBiZSBhY3R1YWxseSBkb25lIGluDQpwcmFjdGljZSwgc3BlY2lmaWNhbGx5OiANCi0gaG93IHRo
+ZSBwZXJzaXN0ZW50IHBvb2wgd291bGQgYmUgZGVmaW5lZA0KLSBob3cgaXQgd291bGQgYmUgc3Vw
+cGxpZWQgdG8gZ3Vlc3RfbWVtZmQNCi0gaG93IHRoZSBndWVzdF9tZW1mZHMgd291bGQgYmUgcmUt
+ZGlzY292ZXJlZCBhZnRlciBrZXhlYw0KQnV0IGFzc3VtaW5nIHdlIGNhbiBmaWd1cmUgb3V0IHNv
+bWUgd2F5IHRvIGRvIHRoaXMsIEkgdGhpbmsgaXQncyBhDQpiZXR0ZXIgd2F5IHRvIGdvLg0KDQpJ
+J2xsIGpvaW4gdGhlIGd1ZXN0X21lbWZkIGNhbGwgc2hvcnRseSB0byBzZWUgdGhlIGRldmVsb3Bt
+ZW50cyB0aGVyZSBhbmQNCndoZXJlIHBlcnNpc3RlbmNlIHdvdWxkIGZpdCBiZXN0Lg0KDQpIb3Bl
+ZnVsbHkgd2UgY2FuIGZpZ3VyZSBvdXQgaW4gdGhlb3J5IGhvdyB0aGlzIGNvdWxkIHdvcmssIHRo
+ZSBJJ2xsIHB1dA0KdG9nZXRoZXIgYW5vdGhlciBSRkMgc2tldGNoaW5nIGl0IG91dC4NCg0KSkcN
+Cg==
 
