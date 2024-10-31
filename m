@@ -1,111 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-33370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E791A9B8422
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 21:06:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D099B8454
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 21:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF3A1F23DEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 20:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221861F23C8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 20:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3911BDA99;
-	Thu, 31 Oct 2024 20:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430301CC15B;
+	Thu, 31 Oct 2024 20:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T+1tP24o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdJ/Hwsu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8C19ABB4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 20:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DE1A2562;
+	Thu, 31 Oct 2024 20:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730405212; cv=none; b=KeZlywT+us577us7ea6Fomf5V9Q1lrH6R6IMuERwQBppCSVEZdljEAKmymI7oK8qDmJaxlEr9wU5foCjMFvLIc6IMGyts1avRIF9mpT+9viOrDrJYEA1h64lilWuUkPcNicLoEZxTpdiIV+vE6hUG0wi1l0WS0Ye0moeLYQUPPY=
+	t=1730406451; cv=none; b=oTbFRfPdCWm6oI6HIdgMzKhzQPHxLILjYjcWrdrOxSdEgh8Rl20pWaj8nFyL5ciQC/yQEfTFdG4lyQZ3aFw3FyXE2umPwx//jd2Yw1qQlmGpiN8Qo7j++UuYF8T8Wyy0TviX8hRdjKg9oY52mbwcDKf7gAqbnk9psIVe99jmdwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730405212; c=relaxed/simple;
-	bh=xYp87ytXITIBe+LgHJTWBTLcpckebczgMOYRxTkeeGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZ+5cYV5H5FuGL7sz2/AtD1yOu3CI3brXbuSX3rh5UoFkqI1Cll9IJrZ9esDFdRvsV0kD5vsCg9O5msctQQyw2tVPIJi6kgHJFIdJEvH0alwDkSMmW1Hb9IbIN7UIhOxqyW3ED/gzf5xhz0FBSDfaKZ0DGcel1Jmzh/dhjOywCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T+1tP24o; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 31 Oct 2024 13:06:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730405208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/3piDMTe1Kk4AU/igSSQtPB4+xpblPFIYxIyz1dyWvI=;
-	b=T+1tP24oQEx0lYJwh8asvqHHD7CJAWJxtU/lIN3BRw2a2NNmTEgeTEWYIHLFKdGuAY7eFr
-	2HNS4bD5SOrL5n8pmwz9EUxrnl6tR6cjMEg8oTEsIRPS3SRQFe7kpowy+TEhLXZdV1+Z9E
-	worvHcF1Vz1omdEvc8aKnEQ1Hyzv5ko=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org, 
-	kernel-team@meta.com, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
- internal rb tree
-Message-ID: <ipa4ozknzw5wq4z4znhza3km5erishys7kf6ov26kmmh4r7kph@vedmnra6kpbz>
-References: <CAJnrk1b=ntstDcnjgLsmX+wTyHaiC9SZ7cdSRF2Zbb+0SAG1Zw@mail.gmail.com>
- <023c4bab-0eb6-45c5-9a42-d8fda0abec02@fastmail.fm>
- <CAJnrk1aqMY0j179JwRMZ3ZWL0Hr6Lrjn3oNHgQEiyUwRjLdVRw@mail.gmail.com>
- <c1cac2b5-e89f-452a-ba4f-95ed8d1ab16f@fastmail.fm>
- <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
- <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
- <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
- <CAJnrk1b9ttYVM2tupaNy+hqONRjRbxsGwdFvbCep75v01RtK+g@mail.gmail.com>
- <4hwdxhdxgjyxgxutzggny4isnb45jxtump7j7tzzv6paaqg2lr@55sguz7y4hu7>
- <CAJnrk1aY-OmjhB8bnowLNYosTP_nTZXGpiQimSS5VRfnNgBoJA@mail.gmail.com>
+	s=arc-20240116; t=1730406451; c=relaxed/simple;
+	bh=kv2+7OlHCjC0tPI/3wz8n3SeaSDAj6aV6+PvgugcIss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYcmBb0GQhNE2UiN68ZQgdPzrUywBx+8NLMZpqg9xpxmCbFdVEhtZKTQuFu/xFH8t7cLx9O7Xzj5EwtRaXFhkkeg9eha7Jw6NwRxe92kU6Uh4rpelhuP9YXZ0fD267bQ174rU4EssnCgLa2XQitxiPSkZxAC5QA+gW7j97wADCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdJ/Hwsu; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso21977301fa.3;
+        Thu, 31 Oct 2024 13:27:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730406445; x=1731011245; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BEFnsY2CvQcZlMMqwjbmkpFpmklJCE96WVm7txQ8Rak=;
+        b=DdJ/HwsuJjrcMpsfIty2G6fUWkkPB5agCW9zJzOhzeyT5cRd7SCjGE0zwVgXHNRzPL
+         H5yWfmVvZshuimM/U3qZ3Yb9qinCHrkfhfZOZiOt57Co1Wv33k/zyBu28NJpNVnQlSTW
+         Y76URQbBNFn+EqDvQhhoyZ3q8/rTyC7t3W0/UUea35xQn3/uv0lKySoaxhXlH/0NtnfQ
+         RU8nZKjqKT/KTmkdkuGZlDNKatsvfPRsZO+buTrl3uBj5704AUYjEmOKM4CEKMu0Nuut
+         FXMcYQqOREOg7NyKryq1WJl0bjFFltWfO3oEO7Ce9Gnr/5lJqRJREYXdx8KtKS3eiZQ+
+         kSdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730406445; x=1731011245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BEFnsY2CvQcZlMMqwjbmkpFpmklJCE96WVm7txQ8Rak=;
+        b=fuMtcJZ2XWF8t9A5Z8iOUpyPzSn4+sX/hkL3ywXGflSKGSKuEaMEohFjQAIbnT1gxS
+         xzLc0Tu+1SUtSsZhX/Jn7ksRjXlwP8Vh9B5RyOO4/GG8jUNafUbFDFyzR+gkw1/oXSI+
+         hJF7Oj5G0w1eHrX60zbp0WByB0GK8MVYlTZ3ASqFytCIe2+BsgQCVDP/r8cVAgxLQArY
+         pzMvooajaV+GCHPckMsILjwyCbofWcInIb1tqQl+fFAxVziV4VjCyhq3bWzx+iEpkLQT
+         B0hZNv7NzlltbfoqKI+VtJnagZbp9RYfUIfrY2sG+z2bcCPzr/ep+vHWmcgzPfRGeJdV
+         nBvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO/bZobi6tF2lm8i9VnLkgs7ZcOCrCh5CjWisH7XZ55alGIQhQNffU22UzGPOwwd0UhTBUajWGqvOFVd2C@vger.kernel.org, AJvYcCV/Ce+MwlOkSASvxstKBaB83jgg9c8lDH6FtsZkrGwuhwnhzbYpVRIGYYEUvljcvIuTxHJcMmskVFHuRlAP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVMjMNtrWnP31/jm7jWCnMIlvw080Nmtra03HddTtw3xy9u0+j
+	xbbyii7/lV8drOAYOT3s9KVqyTNHjDlwPSknMYWMn7FhpJ2Zsby9
+X-Google-Smtp-Source: AGHT+IGBDmtpJtMNpaRqVNfV9S5wX3xBApWgSas4UQFhVFwI879M3XeJlV47CsMLYesaysiW6eW7dQ==
+X-Received: by 2002:a2e:a88b:0:b0:2fa:c0b5:ac8c with SMTP id 38308e7fff4ca-2fedb7c9c2dmr11743571fa.21.1730406444835;
+        Thu, 31 Oct 2024 13:27:24 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-40-94.xnet.hr. [88.207.40.94])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08fesm100924666b.134.2024.10.31.13.27.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 13:27:24 -0700 (PDT)
+Message-ID: <4c98507d-8c8e-4f8e-ba23-7805908e1477@gmail.com>
+Date: Thu, 31 Oct 2024 21:26:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1aY-OmjhB8bnowLNYosTP_nTZXGpiQimSS5VRfnNgBoJA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] fs/proc/kcore.c: fix coccinelle reported ERROR
+ instances
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jakob Koschel <jakobkoschel@gmail.com>,
+ Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Oscar Salvador <osalvador@suse.de>,
+ Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+ Cristiano Giuffrida <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>,
+ Alexey Dobriyan <adobriyan@gmail.com>, Yang Li <yang.lee@linux.alibaba.com>,
+ Baoquan He <bhe@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
+ Yan Zhen <yanzhen@vivo.com>
+References: <20241029054651.86356-2-mtodorovac69@gmail.com>
+ <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <20241029182914.9006075cf5844bc8e679f72c@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 12:06:49PM GMT, Joanne Koong wrote:
-> On Wed, Oct 30, 2024 at 5:30 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-[...]
-> >
-> > Memory pool is a bit confusing term here. Most probably you are asking
-> > about the migrate type of the page block from which tmp page is
-> > allocated from. In a normal system, tmp page would be allocated from page
-> > block with MIGRATE_UNMOVABLE migrate type while the page cache page, it
-> > depends on what gfp flag was used for its allocation. What does fuse fs
-> > use? GFP_HIGHUSER_MOVABLE or something else? Under low memory situation
-> > allocations can get mixed up with different migrate types.
-> >
+
+Hi, Mr. Andrew,
+
+On 10/30/24 02:29, Andrew Morton wrote:
+> On Tue, 29 Oct 2024 06:46:52 +0100 Mirsad Todorovac <mtodorovac69@gmail.com> wrote:
 > 
-> I believe it's GFP_HIGHUSER_MOVABLE for the page cache pages since
-> fuse doesn't set any additional gfp masks on the inode mapping.
+>> Coccinelle complains about the nested reuse of the pointer `iter' with different
+>> pointer type:
+>>
+>> ./fs/proc/kcore.c:515:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:534:23-27: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:550:40-44: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:568:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:581:28-32: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:599:27-31: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:607:38-42: ERROR: invalid reference to the index variable of the iterator on line 499
+>> ./fs/proc/kcore.c:614:26-30: ERROR: invalid reference to the index variable of the iterator on line 499
+>>
+>> Replacing `struct kcore_list *iter' with `struct kcore_list *tmp' doesn't change the
+>> scope and the functionality is the same and coccinelle seems happy.
 > 
-> Could we just allocate the fuse writeback pages with GFP_HIGHUSER
-> instead of GFP_HIGHUSER_MOVABLE? That would be in fuse_write_begin()
-> where we pass in the gfp mask to __filemap_get_folio(). I think this
-> would give us the same behavior memory-wise as what the tmp pages
-> currently do,
+> Well that's dumb of it.  Still, the code is presently a bit weird and
+> we don't mind working around such third-party issues.
+> 
+>> NOTE: There was an issue with using `struct kcore_list *pos' as the nested iterator.
+>>       The build did not work!
+> 
+> It worked for me.  What's wrong with that?
 
-I don't think it would be the same behavior. From what I understand the
-liftime of the tmp page is from the start of the writeback till the ack
-from the fuse server that writeback is done. While the lifetime of the
-page of the page cache can be arbitrarily large. We should just make it
-unmovable for its lifetime. I think it is fine to make the page
-unmovable during the writeback. We should not try to optimize for the
-bad or buggy behavior of fuse server.
+Now with next-20241031 it works for me too:
 
-Regarding the avoidance of wait on writeback for fuse folios, I think we
-can handle the migration similar to how you are handling reclaim and in
-addition we can add a WARN() in folio_wait_writeback() if the kernel ever
-sees a fuse folio in that function.
+marvin@defiant:~/linux/kernel/linux-next$ time nice sudo make TARGETS=proc kselftest |& tee ../kself-proc-01a.log; date
+make[3]: Entering directory '.../linux-next/tools/testing/selftests/proc'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '.../linux-next/tools/testing/selftests/proc'
+make[3]: Entering directory '.../linux-next/tools/testing/selftests/proc'
+TAP version 13
+1..23
+# timeout set to 45
+# selftests: proc: fd-001-lookup
+ok 1 selftests: proc: fd-001-lookup
+# timeout set to 45
+# selftests: proc: fd-002-posix-eq
+ok 2 selftests: proc: fd-002-posix-eq
+# timeout set to 45
+# selftests: proc: fd-003-kthread
+ok 3 selftests: proc: fd-003-kthread
+# timeout set to 45
+# selftests: proc: proc-2-is-kthread
+ok 4 selftests: proc: proc-2-is-kthread
+# timeout set to 45
+# selftests: proc: proc-loadavg-001
+ok 5 selftests: proc: proc-loadavg-001
+# timeout set to 45
+# selftests: proc: proc-empty-vm
+ok 6 selftests: proc: proc-empty-vm
+# timeout set to 45
+# selftests: proc: proc-pid-vm
+ok 7 selftests: proc: proc-pid-vm
+# timeout set to 45
+# selftests: proc: proc-self-map-files-001
+ok 8 selftests: proc: proc-self-map-files-001
+# timeout set to 45
+# selftests: proc: proc-self-map-files-002
+ok 9 selftests: proc: proc-self-map-files-002
+# timeout set to 45
+# selftests: proc: proc-self-isnt-kthread
+ok 10 selftests: proc: proc-self-isnt-kthread
+# timeout set to 45
+# selftests: proc: proc-self-syscall
+ok 11 selftests: proc: proc-self-syscall
+# timeout set to 45
+# selftests: proc: proc-self-wchan
+ok 12 selftests: proc: proc-self-wchan
+# timeout set to 45
+# selftests: proc: proc-subset-pid
+ok 13 selftests: proc: proc-subset-pid
+# timeout set to 45
+# selftests: proc: proc-tid0
+ok 14 selftests: proc: proc-tid0
+# timeout set to 45
+# selftests: proc: proc-uptime-001
+ok 15 selftests: proc: proc-uptime-001
+# timeout set to 45
+# selftests: proc: proc-uptime-002
+ok 16 selftests: proc: proc-uptime-002
+# timeout set to 45
+# selftests: proc: read
+ok 17 selftests: proc: read
+# timeout set to 45
+# selftests: proc: self
+ok 18 selftests: proc: self
+# timeout set to 45
+# selftests: proc: setns-dcache
+ok 19 selftests: proc: setns-dcache
+# timeout set to 45
+# selftests: proc: setns-sysvipc
+ok 20 selftests: proc: setns-sysvipc
+# timeout set to 45
+# selftests: proc: thread-self
+ok 21 selftests: proc: thread-self
+# timeout set to 45
+# selftests: proc: proc-multiple-procfs
+ok 22 selftests: proc: proc-multiple-procfs
+# timeout set to 45
+# selftests: proc: proc-fsconfig-hidepid
+ok 23 selftests: proc: proc-fsconfig-hidepid
+make[3]: Leaving directory '.../linux-next/tools/testing/selftests/proc'
+
+Unless I badly missed something, the build is OK.
+
+>> --- a/fs/proc/kcore.c
+>> +++ b/fs/proc/kcore.c
+>> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>  		 * the previous entry, search for a matching entry.
+>>  		 */
+>>  		if (!m || start < m->addr || start >= m->addr + m->size) {
+>> -			struct kcore_list *iter;
+>> +			struct kcore_list *tmp;
+> 
+> `tmp' is a really poor identifier :(
+> 
+> Let's try `pos':
+> 
+> --- a/fs/proc/kcore.c~fs-proc-kcorec-fix-coccinelle-reported-error-instances-fix
+> +++ a/fs/proc/kcore.c
+> @@ -493,13 +493,13 @@ static ssize_t read_kcore_iter(struct ki
+>  		 * the previous entry, search for a matching entry.
+>  		 */
+>  		if (!m || start < m->addr || start >= m->addr + m->size) {
+> -			struct kcore_list *tmp;
+> +			struct kcore_list *pos;
+>  
+>  			m = NULL;
+> -			list_for_each_entry(tmp, &kclist_head, list) {
+> -				if (start >= tmp->addr &&
+> -				    start < tmp->addr + tmp->size) {
+> -					m = tmp;
+> +			list_for_each_entry(pos, &kclist_head, list) {
+> +				if (start >= pos->addr &&
+> +				    start < pos->addr + pos->size) {
+> +					m = pos;
+>  					break;
+>  				}
+>  			}
+
+
+
+I see that it is already applied in next-20241031 and it is just running.
+
+$ uname -rms
+Linux 6.12.0-rc5-next-20241031nxt x86_64
+
+Please add
+
+Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+
+Thanks.
+
+Best regards,
+Mirsad
 
