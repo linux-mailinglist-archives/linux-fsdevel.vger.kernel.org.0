@@ -1,160 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-33362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72EE9B7FA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 17:06:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7659B7FAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 17:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838C21F22A4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 16:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA7C1C217F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2024 16:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A3E1B5338;
-	Thu, 31 Oct 2024 16:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01091B3F30;
+	Thu, 31 Oct 2024 16:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Rp81pflZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnV+FhhZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB091A38C2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 16:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399F919DF49;
+	Thu, 31 Oct 2024 16:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730390801; cv=none; b=CID5MhiOJ4kbNBtEm+4506fT6UIpov5RB5k7BPpoOVrLMNyBtVuENAmU1Mtvc93LeFe+pLeCC1QYnlrbm9W6zZFTBCWf2W0SY7p/AEpuufEvNBAC69R2nrZvWx1KblovN5aIiNRwBeZLRdY+L3lSYn+svKTJ5Esnvb//zmxyhgU=
+	t=1730391069; cv=none; b=uUZEq467epB2lNVS63ZibvwbqTKxgiGcrq3/s4xeRHs3yWgARQF/QdIFJhoiEPASuN88IwTBfh96bhUpVHYcOBgXebr13M4B+EAGBL7oNgJt3XyiI4Ecsd4VDfALBo7nlYKw0FenC6vHIx04YhVPl8MEza6ta4BDTT9/5YQHke0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730390801; c=relaxed/simple;
-	bh=3L16LhwJhmR5YVUl5G1cLEUacyJlZ/KxsP8N3vb0Qi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dezBIn/JVT9hA49LwsS+Y0VWDXNZC/XsHyAlCiJyCUKKoKDAVstQwuKQtY2CyFceZv6EjNFTAc6srh1hZ+nFpp0V7nY0bornt3VDgXQV9OkKw3lvekNxVzzgYSrzJo4unDdXy5AvTxlq7Qhe95yzMazy1hWa21n6gUTXe4g7l5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Rp81pflZ; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460ad98b031so7273561cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 09:06:39 -0700 (PDT)
+	s=arc-20240116; t=1730391069; c=relaxed/simple;
+	bh=IJONyDekfDFWRc5UQ3Yl6ornL+fxJATS1eKBVCn8vIA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CDj6HZc5sMyE1mxqhbVhnuE1A+PCv1m0IRoT6iXXc6ar5KmV9l6kiDKyorjpZiJ0w3qYE/vsJi7ilurCFjAYkz0/QJlm/iYGFiyERt4/ntwkUYBlqvAzZvT7CBuWkLQ6hSr+EdMtcPKTI0OXPe1MlIE7XR4h8EPl9ScjpeQNW9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnV+FhhZ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d808ae924so641271f8f.0;
+        Thu, 31 Oct 2024 09:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1730390798; x=1730995598; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SO7v+RfZoLfypZ4KKZMOHUyo7JMuVsRRPoIxDWu9s38=;
-        b=Rp81pflZkiAq1uY40rfspUrHNd3Y5gYKXtqfQuLjJxahBYKUaIAanunovQ2NG0vHYT
-         194vXatq99nOfPYCRvLSw7sklpStP8Mt/XVacQlO2VRBJhOgSjghCcjYxO+22yEZdy/n
-         8YwVqksefroZdtm9iny3ecDJ2X7AJyQXWemnSsK6/ft8eI1QmsWWPACQP+ZhyLUc7NQb
-         jCl1odvbVRVAiamnS4Ef5BK5ZKTbnQV7VxpcN42GlZk5yMAXvm83lNxdQ7akRojO/XIY
-         8wozGof9zy3up+/BeZTiypyYybcvdwA/D2F0/oBnaObWam+n3yK+orY9jb1olvV3UgFD
-         yGhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730390798; x=1730995598;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730391065; x=1730995865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SO7v+RfZoLfypZ4KKZMOHUyo7JMuVsRRPoIxDWu9s38=;
-        b=IzEsr2mwVDf0DjofCyD31yuAUSXhA0Co/COuak2EyxSAdSv1jUMUGJJh69JHGir4GL
-         5BKsb1GG8UtdlTmo26ElUFZNL/m9QzmlgOGKubvrKe98UiOhtsjo+fxDtBo3Ci/en3Hw
-         CYjKi1ymY0NRNYezS2NuaE8dBf+549jgOnb37920bO+HHsPNtUnoxBuV3Yvvpy7YJNrw
-         SXpd0Yjtmw3B02Z/TxBHSIB1cC1wcf/nHoKMUW0Vm9lGCD9Gdd2ScU5uHAVRMzcVsnqy
-         PU1y4k7yzNLS2rYABmdY81VUdV4oYiSoJ1UYqk18a3oswewqcSxUiGnF6XMiPccZpZ9S
-         uleg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrkxXMmJivEKQz6lJEPG7jtYO8w4ZVRlM71aq5NI1kYWeDn/gdHSnOBTB0On9GaOYCN1j6HU4kbuyCmVZa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmIZmBrLBiIXeLXCZQpdUXfKNVO4m325CNq+1rQvaPME+yzh4A
-	ITA8A7Mfq89vx2X7hAdPNMiJjGeCJparrB3eT13/pBioWhPlRYwH5yl0Ch7E5JA=
-X-Google-Smtp-Source: AGHT+IED7ZEPsYL/J2+WAEkVhkkEbmae8OqhC99bUW9D4jOFLXnCuUGOPCgezgCfHDV8eABlx8kETQ==
-X-Received: by 2002:a05:622a:144b:b0:461:15fc:7fe7 with SMTP id d75a77b69052e-462b86a6a75mr989681cf.28.1730390796638;
-        Thu, 31 Oct 2024 09:06:36 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354177d2fsm9043376d6.107.2024.10.31.09.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 09:06:35 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1t6Xgx-00000000Ic7-0kQP;
-	Thu, 31 Oct 2024 13:06:35 -0300
-Date: Thu, 31 Oct 2024 13:06:35 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Gowans, James" <jgowans@amazon.com>
-Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"Graf (AWS), Alexander" <graf@amazon.de>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"Durrant, Paul" <pdurrant@amazon.co.uk>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-Message-ID: <20241031160635.GA35848@ziepe.ca>
-References: <20240805093245.889357-1-jgowans@amazon.com>
- <20240805093245.889357-6-jgowans@amazon.com>
- <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
- <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+        bh=vkVYFCrUf9lnrWXXH+FWVeusgMRdqmFXIn3Y3pXJD/s=;
+        b=VnV+FhhZ8ZZo1KbXqbeSAM4A05M9morlAvel32sG0StNLlMcKrcY/MiQsYCK+Oi/x5
+         gkawBfKctkcEGtLfQlmgdurKWI9rIa0GCeZ9H6NjxvphfJQuNZd65fUrycfLcXiNcvvv
+         DdbHj/LeMfoPxW0LLwSySDCM5iEbsYCVAekf2TeuVayv6v6nCtpGJ6hGX7h9S+B6rj7R
+         Md/fes2NrjjQEmoFVxvfgmUD3juqMn9dQlR99I0tTsy7mBiyRBpnrw3nGtFBcT4jS0Ub
+         gfPb/cDNRvMS3WS2Xcb6eZDt2564X1rSuJnB75cXASyddLOAJLPZeUBAQpFKz/xWtxXa
+         P+iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730391065; x=1730995865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vkVYFCrUf9lnrWXXH+FWVeusgMRdqmFXIn3Y3pXJD/s=;
+        b=RBHzT4px0wtL8gs0Ln9g9PzGlL609miDplqvo1HbLrOebgwzXEhZdrAw4naxiE5ClC
+         gA4cVwCDJ2XmJYXxgivOslSix/pPp+9vk44/hKy7my7kMLNJ+kzYm8GSg5Duh70WWSgA
+         NqBHbD1k9UQ8IKlnLxqZYg9GfQihPFzQYckluVOkau/iHPh8HAO6NwOhmDBnLRWMuBYu
+         J3Xd+qN7c4LUKnrqR49bDuNoXOOIpWIa1uCGz1AjOzSBkkHG/m7jAMz7pe5rxorsLCIy
+         t+ewzGHpA9wlgzNsBIyCAk9pdQRFp0ykMYP9eCmUTmJXk+vaFFfJs9c/HJ6XabmRk7n4
+         HFtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnGdHEpynzog7Abk0kiCgEiOPrq+nCkSQW50vYazk422XRu6QL4CN8heQtO4gH1FLktzBzEkUpHgiMaXWW@vger.kernel.org, AJvYcCXEA9iKpnX88fYd5wxUzn45sipAdY3AVXqEj3g0bBsZsmeZBcbXV9XtTLnN+m74g+Kba1bxGhTGg/6JHHpGKw==@vger.kernel.org, AJvYcCXWNwkiyByjPzI42aDyXEFe4HC122GeAmdzKKJM096YLmMGpCmoU6VZJNurDel2uhh73WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFO5eI4kDivUoF+9YwszEE61Ua/bPa7tj1lQfivo4dVyjINPem
+	9NFjF3Stxf1xcYDkezPRSpRr8h7564Pk1nXNHuG2NgHMyCL2+5x+KrVSYYVmWSEDd2dvECgdzya
+	DCpZXHKamhOkM2DS6v1Rv+zSo9Oc=
+X-Google-Smtp-Source: AGHT+IHos3YbZVQo+uTr9o4cIsciMIcISsevDhXKg/ZyCHNdw3WAexka2CwqOl7OZiCqVJV1A/Dw7P2WrCzBiOxZK8g=
+X-Received: by 2002:a5d:5590:0:b0:37d:4fe9:b6a6 with SMTP id
+ ffacd0b85a97d-38061163240mr14442794f8f.29.1730391065309; Thu, 31 Oct 2024
+ 09:11:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+References: <Zw34dAaqA5tR6mHN@infradead.org> <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
+ <Zw384bed3yVgZpoc@infradead.org> <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
+ <20241016135155.otibqwcyqczxt26f@quack3> <20241016-luxus-winkt-4676cfdf25ff@brauner>
+ <ZxEnV353YshfkmXe@infradead.org> <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
+ <ZxibdxIjfaHOpGJn@infradead.org> <41CA4718-EE8E-499B-AC3C-E22C311035E7@fb.com>
+ <ZyMqOyswxw1s1Jbt@infradead.org> <B6CD210E-96C6-4730-BD05-EC3A0C6905EB@fb.com>
+In-Reply-To: <B6CD210E-96C6-4730-BD05-EC3A0C6905EB@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 31 Oct 2024 09:10:53 -0700
+Message-ID: <CAADnVQKW4vq-0_Z8kec_Omox1urBCsA-Fpx=H1cY0WVwZHEOQQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
+ cover security.bpf xattr names
+To: Song Liu <songliubraving@meta.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 03:30:59PM +0000, Gowans, James wrote:
-> On Tue, 2024-10-29 at 16:05 -0700, Elliot Berman wrote:
-> > On Mon, Aug 05, 2024 at 11:32:40AM +0200, James Gowans wrote:
-> > > Make the file data usable to userspace by adding mmap. That's all that
-> > > QEMU needs for guest RAM, so that's all be bother implementing for now.
-> > > 
-> > > When mmaping the file the VMA is marked as PFNMAP to indicate that there
-> > > are no struct pages for the memory in this VMA. Remap_pfn_range() is
-> > > used to actually populate the page tables. All PTEs are pre-faulted into
-> > > the pgtables at mmap time so that the pgtables are usable when this
-> > > virtual address range is given to VFIO's MAP_DMA.
-> > 
-> > Thanks for sending this out! I'm going through the series with the
-> > intention to see how it might fit within the existing guest_memfd work
-> > for pKVM/CoCo/Gunyah.
-> > 
-> > It might've been mentioned in the MM alignment session -- you might be
-> > interested to join the guest_memfd bi-weekly call to see how we are
-> > overlapping [1].
-> > 
-> > [1]: https://lore.kernel.org/kvm/ae794891-fe69-411a-b82e-6963b594a62a@redhat.com/T/
-> 
-> Hi Elliot, yes, I think that there is a lot more overlap with
-> guest_memfd necessary here. The idea was to extend guestmemfs at some
-> point to have a guest_memfd style interface, but it was pointed out at
-> the MM alignment call that doing so would require guestmemfs to
-> duplicate the API surface of guest_memfd. This is undesirable. Better
-> would be to have persistence implemented as a custom allocator behind a
-> normal guest_memfd. I'm not too sure how this would be actually done in
-> practice, specifically: 
-> - how the persistent pool would be defined
-> - how it would be supplied to guest_memfd
-> - how the guest_memfds would be re-discovered after kexec
-> But assuming we can figure out some way to do this, I think it's a
-> better way to go.
+On Thu, Oct 31, 2024 at 9:02=E2=80=AFAM Song Liu <songliubraving@meta.com> =
+wrote:
+>
+> >  Not sure how you want to best handle that.
+>
+>  We may also introduce other prefixes for future use cases.
 
-I think the filesystem interface seemed reasonable, you just want
-open() on the filesystem to return back a normal guest_memfd and
-re-use all of that code to implement it.
-
-When opened through the filesystem guest_memfd would get hooked by the
-KHO stuff to manage its memory, somehow.
-
-Really KHO just needs to keep track of the addresess in the
-guest_memfd when it serializes, right? So maybe all it needs is a way
-to freeze the guest_memfd so it's memory map doesn't change anymore,
-then a way to extract the addresses from it for serialization?
-
-Jason
+bpf infra makes zero effort to prevent insecure/nonsensical bpf programs.
+It's futile. Humans will always find ways to shoot themselves in the foot.
+Before bpf-lsm existed people were selling "security" products
+where _tracing_ bpf programs monitored syscall activity with kprobes
+suffering all TOCTOU issues and signaling root user same daemon
+via bpf maps/ring buffers to kill "bad" processes.
+Such startups still exist. There is no technical solution
+to human "ingenuity".
 
