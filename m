@@ -1,257 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-33494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE859B96E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 18:54:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946AA9B972C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DBB1C21C01
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 17:54:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE28B21660
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 18:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEA61CDA04;
-	Fri,  1 Nov 2024 17:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE441CDFD3;
+	Fri,  1 Nov 2024 18:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nw2TZno7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHetmEKU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA41A19B595
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 17:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134E11CDA35;
+	Fri,  1 Nov 2024 18:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483674; cv=none; b=Vt0ErJ+L3s31NFCcF1a7vYdO3/QOxLHGOJxdhsV7+93i2Neoj+e2FIEOC7fvRD4IwSRanWqwRer90e0P+BGh9C7+sAMmVIOejzQ2iAZlXoS1IE3kAeWz/9VpnUFzdfTSpxIZfq4sRh5zFRcda9EDUfmu/bUhh6m3dv2YfjzJNTc=
+	t=1730484790; cv=none; b=H9HxCLwBhqJiVcQrP9Esit2ZBtMfAwcfIVLDV96bkVmZg7oFQETHpqcV8Y1rVa0ymcSyFvCE3PUzjbM56Jx2nvNzxzpq5d67hO72fsClC7iZonSX1UwFoz60EDdkBE9SttDCjG1CzDOHqj0vpHTNNsB4AyyPPMT48YWW/hWhUsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483674; c=relaxed/simple;
-	bh=ACjPRHF4938imeJvdByUPKKOQmFwdW/Irc+W/vwpLlI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
-	 Content-Type:References; b=EWQacbiNZ/cJW6HrVQBOeR9neJKpqGaqekLz247Uo5gk14YdkWe9DWiQoB+4YhbFVVqIKgfcXPbh8dz7oh8rFbMhQk4UqktXsx83lOIa0d0AS3AGHAQiFj3rkZp7N6E4qMeqdQLimrAkt0UOPQtmoZQyUQq23jU8q709rmpCJUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nw2TZno7; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241101175429epoutp013f913c37ea2c95538ba2904808761472~D6bqspRib2658826588epoutp01Z
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 17:54:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241101175429epoutp013f913c37ea2c95538ba2904808761472~D6bqspRib2658826588epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730483669;
-	bh=c5jILukSrTG9L/qJp/8Gej0z2povjeMHGl5jO0D8TP0=;
-	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-	b=Nw2TZno78l9tlvABsOX9z0rmkhpicF4+nb4/eSmRY1riinm0J/PYloaGtkyfdreAh
-	 CImq2P764BQwCkh0pPbkuPh0qhg8boXPe8AGX3ZJ19Jy+pAcT2Qrt4p1H2CZKuvn0h
-	 vWAhtaJl/eg1BOz6Kss6wLtyLEhmhudcd60PwNOc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241101175428epcas5p174f072c7185d446f8c447b919b273d26~D6bpfM0MU0354703547epcas5p10;
-	Fri,  1 Nov 2024 17:54:28 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Xg7m321Bpz4x9Pp; Fri,  1 Nov
-	2024 17:54:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	03.3E.09800.3D515276; Sat,  2 Nov 2024 02:54:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241101175426epcas5p28cd4ef5a2e01db38ff56c3aeaf0b2ca6~D6bnWj7ne1320513205epcas5p2p;
-	Fri,  1 Nov 2024 17:54:26 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241101175426epsmtrp2ec9ba1f4ac89e4fb7213a1440da6d111~D6bnVy0jK0075700757epsmtrp2J;
-	Fri,  1 Nov 2024 17:54:26 +0000 (GMT)
-X-AuditID: b6c32a4b-4a7fa70000002648-d6-672515d3cd85
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B3.5F.07371.2D515276; Sat,  2 Nov 2024 02:54:26 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241101175423epsmtip15b00205ce519e8e19cacac9cec420314~D6bk6BkzR2648426484epsmtip1u;
-	Fri,  1 Nov 2024 17:54:23 +0000 (GMT)
-Message-ID: <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
-Date: Fri, 1 Nov 2024 23:24:15 +0530
+	s=arc-20240116; t=1730484790; c=relaxed/simple;
+	bh=NmGNWEO778eZ5xMOzouTP+rKGh09L8t95Tna+go8GGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=It7/GQ6kWE8tBtB/b8hsBrjEZStd47fZcS0NK5Fn0QlFDUUjXc7YEtGudLL3HK7MF07yS5nCn/tQfYDcotUXftZyqcsle/uRbH940LuoaCL+DP41xYc8YanqUjh2xEwGurzvNSOl/7e+5VONQTNMJ1psXfOWH1FzAHmrElo6DSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHetmEKU; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso1091299b3a.3;
+        Fri, 01 Nov 2024 11:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730484788; x=1731089588; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PiW9SEzE14uWJXxy3FOB2Ud96GmiPqBall1rSE+SePk=;
+        b=UHetmEKUqtmkHAIWZDHjCu97GsC+K0ipogPE6US5QyYqvT3XwOmquIsDKnNmGPCHEC
+         4wRMRV0N8Fjf5j3BFkBNxffS3b1y08siN8s0LOno3sjEDrT50gRr7RmzE6WIdueJe7Tv
+         psM/2WXGbHlPIdr/0HjmdNeDy2eDL7kk7DXgxZV8W9hnwMXm85ff6PAa+Ac3cUxTT6vF
+         XIFVZDPFDcx6dXTXqaZ/At6r1J5DJkBbr0BcSTCqIF5V6il9IziCGgCus2ykWwySwCTw
+         ZGgJ8KgeExJd676x4ndagCT2OyIXfIVc6ukZVh4HExrekX2j59VeFhAIU99r5dwsep4o
+         UZMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730484788; x=1731089588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PiW9SEzE14uWJXxy3FOB2Ud96GmiPqBall1rSE+SePk=;
+        b=bozwg0HpvuAnACzgf7INJkagNPKsy1+kUin5HJeQvTwYbA/E6njqepe0wq4NXbLs40
+         1yMDQlIzByRrJ99hTDcV8QHuK4r3aqH27VFwj9AXei+oS+kocqsFzkOIEqbD+nzdHb4C
+         QZbtycHwGNMi96AQaO7n19DfohQWlqj2cwRSulLFT/MQqAEIOn7EmaZ8/PjOdVBX/4uJ
+         ZV8HJotn2KDli5D/MZ/imxwkMU4J/iHlGzndxMruIEU5h91MOEcOycAUS5csydMtYFa/
+         bRiNHYX4NiIBToBe2ni9vFtRQduPVg6P2Ka5OM/6RA8rNEmmEp78fsq22mXKpU+bZQVQ
+         cOPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUbpOobXIw8OKFfZle1Sta9vEWWCvCp9gSZc/cbsL6DzPmzlboiw3lQTivH8jvXvxfVke5tXCl@vger.kernel.org, AJvYcCXPK9vvCSdEf9naV4xMCoNLCjWI9ioRNLVl/cRTxdNk2aX4513Ig8aowEwv15CobPKmyA4Mncir/Fg7JD1m2w==@vger.kernel.org, AJvYcCXaPzJsjurkTXbJ+7p+UnFydc5zZHwR5fEudFn14SPQBFbbxL2Cnl5sVYY5arSOJD9B/x4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztsWxqcgbX5+TZuIFGoHGRBy328djVkxNF7iXqHKCKEYnvo1g1
+	ks1W3wR9NuMlTx2ficFSS29xybShUTfRHV/sgGTzYNsKDJ13JhaIQalGNlJP1ZQZTo2/9gFKR/s
+	IZcIm0vvALwuGvFE++eSSX2IvVxo=
+X-Google-Smtp-Source: AGHT+IEk5xx3/JFmK3SmabSdACLb2Y3za3f+3kE6RcmNc7n4e0XhM9sTxifeXbsjGY0xW5T523PyYTIoJXLl8NRIFS0=
+X-Received: by 2002:a05:6a21:78c:b0:1d9:261c:5942 with SMTP id
+ adf61e73a8af0-1d9a8403ce0mr30567357637.28.1730484788340; Fri, 01 Nov 2024
+ 11:13:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata
- along with read/write
-To: Pavel Begunkov <asml.silence@gmail.com>, Keith Busch <kbusch@kernel.org>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
-Content-Language: en-US
-In-Reply-To: <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUwTZxzH81yv1ytJx1EkPFSFes4gLGA723o4wTncdomSMZ2b7h+40Fth
-	lLb0WvaSuZU5mLgNQdyAwgYYNre6jFCoA4EMW3mTISw4hGa8iJAQEUEck00haz3c+O+T7+/3
-	fX4vz/PgAukkJsMzDBbWbGD0JBaAXvRERcUMhmzTKU4+ElH3lh6i1MdFKwKq0nERUBdGT2PU
-	rGcRUCPtzQj1w4UOhLqbdw2lKkpPINQZ9xCg2rzPUK1tPShV9d20iPrsRhNGne9aRaj+lS4h
-	1W+vFD0fRDfbR0X0YJ+VdjoKMLqh9iO6ZcSG0femvShd2OgA9K/VV0T0fWc47ZyaQ5ID3szc
-	k84yWtYsZw1pRm2GQRdPHjickpii1iiUMco4ahcpNzBZbDy5/2ByzEsZet84pDyH0Vt9UjLD
-	ceSOhD1mo9XCytONnCWeZE1avUlliuWYLM5q0MUaWMtupULxrNqXmJqZ/nnLAGYa3/buQt3P
-	mA2UhJ8CYhwSKuiq7MVOgQBcSrQA2PqJA/EHpMQigJ2zkA/8BaDXOYM9cfxd1Y7ygTYAXXdq
-	RLxjDsDz0wl+lhAJ0DU7IPQzSjwNz/UOIrweBHvKp1A/hxARcNxb5vPiOEZEwYESq18OJlLg
-	1TtLwM8biIOwpGpR5K8lIJYReL284HFAQIRC71TV4zPFRDycqC9FeT0CnnBVCPwGSCzj8Jdb
-	vQjf9X44OvZAwHMwvN3VKOJZBu/fbVubLBNOTE6gPH8AmxoKhTzvhbZHw0J/owJfo3WXdvC1
-	noJfPJxC/DIkJPBkvpTP3gLHzkyvOUPhzbLaNaZh41wT4PdWg8CvivNFRUBuX7cW+7rR7OvG
-	sf9fuRqgDhDGmrgsHcupTTsN7Dv/3XeaMcsJHj/26ANNYHJiIdYNEBy4AcQF5AbJgmmrTirR
-	Mu+9z5qNKWarnuXcQO27n2KBLCTN6PstBkuKUhWnUGk0GlXcTo2SDJXM5n2tlRI6xsJmsqyJ
-	NT/xIbhYZkNS/0Q36kvZgp5Isa16a+5zzaeTOvH+XM8/wm86NiXqjmscxzaryTde0I8N7br8
-	O1o/vxg8nbT7XLTy1vHIhrA+w/eu4fZDN/KOBWu/7V4twG3XtTWe4CJL4XA1Qbwy+CDD9ls5
-	JlNcpTPqX2+tFSd9KXv7SJhnPDGi/OjZzsTLpT/Od+sy33KMyfFydvtQdtTmVwODApH5vX8w
-	qyEd3uwZp/i1mfDUCi+5SubHX9livfbTy6IOZfZRrq9vpCOnmEDc28s8brN0n6qbIj22dlvj
-	EXb5xaWNDbn7As7eFipyDh/6dCUy0NOivhRoSa9blvRsioVJtpty1AXxooQPs0mUS2eU0QIz
-	x/wLle6hs3UEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsWy7bCSnO4lUdV0gx9X2Cw+fv3NYtE04S+z
-	xZxV2xgtVt/tZ7N4ffgTo8XNAzuZLFauPspk8a71HIvF7OnNTBaTDl1jtNh7S9tiz96TLBbz
-	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
-	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAVxSXTUpqTmZZapG+XQJXRs/uC2wF91UrPqzfztbA
-	OFmui5GTQ0LAROLn/AMsXYxcHEICuxkl7m/rZoZIiEs0X/vBDmELS6z89xzMFhJ4zSgx9UIF
-	iM0rYCex9fUFVhCbRUBFYtHpy0wQcUGJkzOfsIDYogLyEvdvzQDq5eBgE9CUuDC5FMQUFoiX
-	2DdTB6RCRMBHYvL8T+wgJzAL/GCS2NZzDWrVQiaJrt+SIDYz0Dm3nswHG88pYCvxYON0Foi4
-	mUTX1i5GCFteonnrbOYJjEKzkFwxC0n7LCQts5C0LGBkWcUomVpQnJuem2xYYJiXWq5XnJhb
-	XJqXrpecn7uJERzDWho7GO/N/6d3iJGJg/EQowQHs5II74cC5XQh3pTEyqrUovz4otKc1OJD
-	jNIcLErivIYzZqcICaQnlqRmp6YWpBbBZJk4OKUamKJDv2i9+Pv5zCYXsXLGgz5JuYezp6+X
-	6lq2szDiqz93+EKtk//W83//Gtn26mBiAP+B7KfL/yWHvRB9cfIq02u2FSsK2Ta2h6b0XhFj
-	ifubK66woPPXnPZ5b79uyZ6aOTMvP/n37prDKuri1vcqOV3cr8T6NSYt2sFb73C7p3dlbMjT
-	VqOYI9Vrzu8OejzPIE1xjpL96Z7M0Hl1E7YuvBkfoT/9aPB9i5I1qfN2s/xP3Xs5dN0OJ+HN
-	H3P+yn/8+cz3qeupS48f80pHRn/jYqp7ldBY82LKSRmTR459n2dPPZEpyOvyK5rhppTf3NiM
-	qyxZiw08TX7/k9t5ynWOzOnzzM1TlINe/7BfJJzpv1GJpTgj0VCLuag4EQCSpVXGUAMAAA==
-X-CMS-MailID: 20241101175426epcas5p28cd4ef5a2e01db38ff56c3aeaf0b2ca6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241030181013epcas5p2762403c83e29c81ec34b2a7755154245
-References: <20241030180112.4635-1-joshi.k@samsung.com>
-	<CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
-	<20241030180112.4635-7-joshi.k@samsung.com>
-	<ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
-	<914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
+References: <20240829174232.3133883-1-andrii@kernel.org> <20240829174232.3133883-2-andrii@kernel.org>
+ <ZyTde66MF0GUqbvB@krava>
+In-Reply-To: <ZyTde66MF0GUqbvB@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 1 Nov 2024 11:12:55 -0700
+Message-ID: <CAEf4BzaFd2G0HqXLSd5JbQ4HYwzTzAsAskQJNbE9hb8KuTEWTg@mail.gmail.com>
+Subject: Re: [PATCH v7 bpf-next 01/10] lib/buildid: harden build ID parsing logic
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
+	jannh@google.com, linux-fsdevel@vger.kernel.org, willy@infradead.org, 
+	stable@vger.kernel.org, Eduard Zingerman <eddyz87@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/31/2024 8:09 PM, Pavel Begunkov wrote:
-> On 10/30/24 21:09, Keith Busch wrote:
->> On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
->>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/ 
->>> io_uring.h
->>> index 024745283783..48dcca125db3 100644
->>> --- a/include/uapi/linux/io_uring.h
->>> +++ b/include/uapi/linux/io_uring.h
->>> @@ -105,6 +105,22 @@ struct io_uring_sqe {
->>>            */
->>>           __u8    cmd[0];
->>>       };
->>> +    /*
->>> +     * If the ring is initialized with IORING_SETUP_SQE128, then
->>> +     * this field is starting offset for 64 bytes of data. For meta io
->>> +     * this contains 'struct io_uring_meta_pi'
->>> +     */
->>> +    __u8    big_sqe[0];
->>> +};
-> 
-> I don't think zero sized arrays are good as a uapi regardless of
-> cmd[0] above, let's just do
-> 
-> sqe = get_sqe();
-> big_sqe = (void *)(sqe + 1)
-> 
-> with an appropriate helper.
+On Fri, Nov 1, 2024 at 6:54=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
+>
+> On Thu, Aug 29, 2024 at 10:42:23AM -0700, Andrii Nakryiko wrote:
+> > Harden build ID parsing logic, adding explicit READ_ONCE() where it's
+> > important to have a consistent value read and validated just once.
+> >
+> > Also, as pointed out by Andi Kleen, we need to make sure that entire EL=
+F
+> > note is within a page bounds, so move the overflow check up and add an
+> > extra note_size boundaries validation.
+> >
+> > Fixes tag below points to the code that moved this code into
+> > lib/buildid.c, and then subsequently was used in perf subsystem, making
+> > this code exposed to perf_event_open() users in v5.12+.
+> >
+> > Cc: stable@vger.kernel.org
+> > Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> > Suggested-by: Andi Kleen <ak@linux.intel.com>
+> > Fixes: bd7525dacd7e ("bpf: Move stack_map_get_build_id into lib")
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  lib/buildid.c | 76 +++++++++++++++++++++++++++++----------------------
+> >  1 file changed, 44 insertions(+), 32 deletions(-)
+> >
+> > diff --git a/lib/buildid.c b/lib/buildid.c
+> > index e02b5507418b..26007cc99a38 100644
+> > --- a/lib/buildid.c
+> > +++ b/lib/buildid.c
+> > @@ -18,31 +18,37 @@ static int parse_build_id_buf(unsigned char *build_=
+id,
+> >                             const void *note_start,
+> >                             Elf32_Word note_size)
+> >  {
+> > -     Elf32_Word note_offs =3D 0, new_offs;
+> > -
+> > -     while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
+> > -             Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_off=
+s);
+> > +     const char note_name[] =3D "GNU";
+> > +     const size_t note_name_sz =3D sizeof(note_name);
+> > +     u64 note_off =3D 0, new_off, name_sz, desc_sz;
+> > +     const char *data;
+> > +
+> > +     while (note_off + sizeof(Elf32_Nhdr) < note_size &&
+> > +            note_off + sizeof(Elf32_Nhdr) > note_off /* overflow */) {
+> > +             Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_off=
+);
+> > +
+> > +             name_sz =3D READ_ONCE(nhdr->n_namesz);
+> > +             desc_sz =3D READ_ONCE(nhdr->n_descsz);
+> > +
+> > +             new_off =3D note_off + sizeof(Elf32_Nhdr);
+> > +             if (check_add_overflow(new_off, ALIGN(name_sz, 4), &new_o=
+ff) ||
+> > +                 check_add_overflow(new_off, ALIGN(desc_sz, 4), &new_o=
+ff) ||
+> > +                 new_off > note_size)
+> > +                     break;
+> >
+> >               if (nhdr->n_type =3D=3D BUILD_ID &&
+> > -                 nhdr->n_namesz =3D=3D sizeof("GNU") &&
+> > -                 !strcmp((char *)(nhdr + 1), "GNU") &&
+> > -                 nhdr->n_descsz > 0 &&
+> > -                 nhdr->n_descsz <=3D BUILD_ID_SIZE_MAX) {
+> > -                     memcpy(build_id,
+> > -                            note_start + note_offs +
+> > -                            ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhd=
+r),
+> > -                            nhdr->n_descsz);
+> > -                     memset(build_id + nhdr->n_descsz, 0,
+> > -                            BUILD_ID_SIZE_MAX - nhdr->n_descsz);
+> > +                 name_sz =3D=3D note_name_sz &&
+> > +                 memcmp(nhdr + 1, note_name, note_name_sz) =3D=3D 0 &&
+> > +                 desc_sz > 0 && desc_sz <=3D BUILD_ID_SIZE_MAX) {
+> > +                     data =3D note_start + note_off + ALIGN(note_name_=
+sz, 4);
+> > +                     memcpy(build_id, data, desc_sz);
+> > +                     memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX -=
+ desc_sz);
+> >                       if (size)
+> > -                             *size =3D nhdr->n_descsz;
+> > +                             *size =3D desc_sz;
+> >                       return 0;
+> >               }
+>
+> hi,
+> this fix is causing stable kernels to return wrong build id,
+> the change below seems to fix that (based on 6.6 stable)
+>
+> if we agree on the fix I'll send it to all affected stable trees
+>
+> jirka
+>
+>
+> ---
+> The parse_build_id_buf does not account Elf32_Nhdr header size
+> when getting the build id data pointer and returns wrong build
+> id data as result.
+>
+> This is problem only stable trees that merged c83a80d8b84f fix,
+> the upstream build id code was refactored and returns proper
+> build id.
+>
+> Fixes: c83a80d8b84f ("lib/buildid: harden build ID parsing logic")
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  lib/buildid.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index d3bc3d0528d5..9fc46366597e 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -40,7 +40,7 @@ static int parse_build_id_buf(unsigned char *build_id,
+>                     name_sz =3D=3D note_name_sz &&
+>                     memcmp(nhdr + 1, note_name, note_name_sz) =3D=3D 0 &&
+>                     desc_sz > 0 && desc_sz <=3D BUILD_ID_SIZE_MAX) {
+> -                       data =3D note_start + note_off + ALIGN(note_name_=
+sz, 4);
+> +                       data =3D note_start + note_off + sizeof(Elf32_Nhd=
+r) + ALIGN(note_name_sz, 4);
 
-In one of the internal version I did just that (i.e., sqe + 1), and 
-that's fine for kernel.
-But afterwards added big_sqe so that userspace can directly access 
-access second-half of SQE_128. We have the similar big_cqe[] within 
-io_uring_cqe too.
+ah, my screw up, sorry. LGTM
 
-Is this still an eyesore?
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
->>> +
->>> +/* this is placed in SQE128 */
->>> +struct io_uring_meta_pi {
->>> +    __u16        pi_flags;
->>> +    __u16        app_tag;
->>> +    __u32        len;
->>> +    __u64        addr;
->>> +    __u64        seed;
->>> +    __u64        rsvd[2];
->>>   };
->>
->> On the previous version, I was more questioning if it aligns with what
-> 
-> I missed that discussion, let me know if I need to look it up
-
-Yes, please take a look at previous iteration (v5):
-https://lore.kernel.org/io-uring/e7aae741-c139-48d1-bb22-dbcd69aa2f73@samsung.com/
-
-Also the corresponding code, since my other answers will use that.
-
->> Pavel was trying to do here. I didn't quite get it, so I was more
->> confused than saying it should be this way now.
-> 
-> The point is, SQEs don't have nearly enough space to accommodate all
-> such optional features, especially when it's taking so much space and
-> not applicable to all reads but rather some specific  use cases and
-> files. Consider that there might be more similar extensions and we might
-> even want to use them together.
-> 
-> 1. SQE128 makes it big for all requests, intermixing with requests that
-> don't need additional space wastes space. SQE128 is fine to use but at
-> the same time we should be mindful about it and try to avoid enabling it
-> if feasible.
-
-Right. And initial versions of this series did not use SQE128. But as we 
-moved towards passing more comprehensive PI information, first SQE was 
-not enough. And we thought to make use of SQE128 rather than taking 
-copy_from_user cost.
-
- > 2. This API hard codes io_uring_meta_pi into the extended part of the
-> SQE. If we want to add another feature it'd need to go after the meta
-> struct. SQE256?
-
-Not necessarily. It depends on how much extra space it needs for another 
-feature. To keep free space in first SQE, I chose to place PI in the 
-second one. Anyone requiring 20b (in v6) or 18b (in v5) space, does not 
-even have to ask for SQE128.
-For more, they can use leftover space in second SQE (about half of 
-second sqe will still be free). In v5, they have entire second SQE if 
-they don't want to use PI.
-If contiguity is a concern, we can move all PI bytes (about 32b) to the 
-end of second SQE.
-
-
- > And what if the user doesn't need PI but only the second
-> feature?
-
-Not this version, but v5 exposed meta_type as bit flags.
-And with that, user will not pass the PI flag and that enables to use 
-all the PI bytes for something else. We will have union of PI with some 
-other info that is known not to co-exist.
-
-> In short, the uAPI need to have a clear vision of how it can be used
-> with / extended to multiple optional features and not just PI.
-> 
-> One option I mentioned before is passing a user pointer to an array of
-> structures, each would will have the type specifying what kind of
-> feature / meta information it is, e.g. META_TYPE_PI. It's not a
-> complete solution but a base idea to extend upon. I separately
-> mentioned before, if copy_from_user is expensive we can optimise it
-> with pre-registering memory. I think Jens even tried something similar
-> with structures we pass as waiting parameters.
-> 
-> I didn't read through all iterations of the series, so if there is
-> some other approach described that ticks the boxes and flexible
-> enough, I'd be absolutely fine with it.
-
-Please just read v5. I think it ticks as many boxes as possible without 
-having to resort to copy_from_user.
-
+>                         memcpy(build_id, data, desc_sz);
+>                         memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX -=
+ desc_sz);
+>                         if (size)
+> --
+> 2.47.0
+>
 
