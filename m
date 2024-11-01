@@ -1,168 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-33466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934549B9171
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:01:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02A99B9183
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1820E1F21C09
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01D21C21CDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E5F19F421;
-	Fri,  1 Nov 2024 13:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAC319F131;
+	Fri,  1 Nov 2024 13:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="jrIQIU3r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ21h6SX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5C1990C0;
-	Fri,  1 Nov 2024 13:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D22487A7;
+	Fri,  1 Nov 2024 13:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466068; cv=none; b=XxGogc+V9CTQ+fS3/Qc82HmTl0XAzCa+PwEAD64QV2BWy6IAm2laFy7ukAe0xsAElFvJ3e6iEsjp1OhQTL90vIjKtMP+McwnHYZIgUVE487SbJY3DquvVRcM9B0+LyYwfn/4fufR7kk1fzFnMqJ0nXum3gXRRygGkpbzyw4JalM=
+	t=1730466460; cv=none; b=nF3s8grJYXnUkSdTjuXcYNrhHC2T/0VtBWWcCARLQkYBuYNM/e0rZU8xXvieH7YNW20Czz+8wX3ILu+4KNvSDTrCu1FqhBZp/ugcj+GlAcbv16JSO0/pOr9pfN84Zs5LXcksbqh9RJpR67JDf/HEbuzmEFY3elTnPbdwlCnj89w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466068; c=relaxed/simple;
-	bh=V6NpXkEbRqzudi+uwHwdqoba+Kdq76cN1fCEb58mUKg=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Za20bpdFj0xTbtL/HKA2X6nByOK5YN/pXeDIWxBKEfwS3aoP/DDE07kZ/tCZk59k7jbAVCADkqGFoKq7xCgf0A9ic83iCIAk+UgEgaleUMVV21r7OUWHQ2R7EjCeoSBCZ0DBhWzAjbspoyPMlW/87O+Ah0BQL5CpNyUr9gwjN6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=jrIQIU3r; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730466067; x=1762002067;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=V6NpXkEbRqzudi+uwHwdqoba+Kdq76cN1fCEb58mUKg=;
-  b=jrIQIU3r0HNc3NYlXRelbA7HJ4WPR5WM5HCAuFxPcg3qEgwKvBXjWvC7
-   4qwMIsqoeDIIipS4IVUK4gj/X1f6GGTvW+7DNWGtpek7asOLer/vZt2/X
-   H6cyCAMfsglBxgEUJ486aCtO5Qq7WRYPAyRMoF5WLb+/YVRJSn1AGDcgR
-   A=;
-X-IronPort-AV: E=Sophos;i="6.11,249,1725321600"; 
-   d="scan'208";a="692299084"
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-Thread-Topic: [PATCH 05/10] guestmemfs: add file mmap callback
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 13:01:03 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:37212]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.199:2525] with esmtp (Farcaster)
- id db462b59-ddb3-40e3-bdd1-54faaf62725c; Fri, 1 Nov 2024 13:01:01 +0000 (UTC)
-X-Farcaster-Flow-ID: db462b59-ddb3-40e3-bdd1-54faaf62725c
-Received: from EX19D004EUC002.ant.amazon.com (10.252.51.225) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 1 Nov 2024 13:01:01 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC002.ant.amazon.com (10.252.51.225) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 1 Nov 2024 13:01:01 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Fri, 1 Nov 2024 13:01:00 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "Durrant, Paul"
-	<pdurrant@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "Woodhouse, David"
-	<dwmw@amazon.co.uk>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "Graf (AWS), Alexander"
-	<graf@amazon.de>, "jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Thread-Index: AQHbKlc3IZ2PqNLJ5E+mkZOTFQYr3bKg/xKAgAAJ94CAAV52AA==
-Date: Fri, 1 Nov 2024 13:01:00 +0000
-Message-ID: <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805093245.889357-6-jgowans@amazon.com>
-	 <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-	 <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
-	 <20241031160635.GA35848@ziepe.ca>
-In-Reply-To: <20241031160635.GA35848@ziepe.ca>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E2534BC19271204C81B93414AFF56B02@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730466460; c=relaxed/simple;
+	bh=9GC6gd/VKTtyyozgny3QU95BtNXTBCGrAw1L2qaH6zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LU/TQL1usw7rcu55eeoqsSzMtO/8lXzkBbY/r8ShUIvNajGpRqxaF/dXQT037yxPN/fVL5C0ZtYFVOSGrDb20hGgRqGfeXijlgtgfQO8QS/qnZaa2/+rg1b2XVvq26W0JCd4D4BaYi+jj1eHDEs8kRyEjucfdh8Q3ebwk93P+r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ21h6SX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CCBC4CECD;
+	Fri,  1 Nov 2024 13:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730466459;
+	bh=9GC6gd/VKTtyyozgny3QU95BtNXTBCGrAw1L2qaH6zA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iZ21h6SXe+A/rZoj4EyHi/WdCvSSULj+rIrIdNq3GjylI/2vkdd35x7+0ORpMihyN
+	 1ISZoVSqMOA/hXJa2nw31yU0JptSiysjMVRi2krZdD2ZBgiEI1VDXQPLWefOrHvWbQ
+	 dmMOb8DA7hO91xxqQ0ScUzQ9xVzJCX00IR7YzU5BR3P/OGKeIx8C4yXfD20TnYXc8D
+	 yt1MVh/CtosfoopEDAoTISReRcZgf1O3HlCuWMPn9RvbcNWWdkZQ4/IuLmohmwRPvp
+	 AAMqynU97O1Vajzfq4UgWJ0ylXMfbrtluZWnGB8fCXSuamR5+6iXXc9jt/OulVbjdF
+	 NI8BmiGE7o9xw==
+Date: Fri, 1 Nov 2024 14:07:32 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Alejandro Colomar <alx.manpages@gmail.com>,
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify.7,fanotify_mark.2: update documentation of
+ fanotify w.r.t fsid
+Message-ID: <20241101130732.xzpottv5ru63w4wd@devuan>
+References: <20241008094503.368923-1-amir73il@gmail.com>
+ <20241009153836.xkuzuei2gxeh2ghj@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d723bfrsts26vlyf"
+Content-Disposition: inline
+In-Reply-To: <20241009153836.xkuzuei2gxeh2ghj@quack3>
 
-T24gVGh1LCAyMDI0LTEwLTMxIGF0IDEzOjA2IC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
-DQo+IE9uIFRodSwgT2N0IDMxLCAyMDI0IGF0IDAzOjMwOjU5UE0gKzAwMDAsIEdvd2FucywgSmFt
-ZXMgd3JvdGU6DQo+ID4gT24gVHVlLCAyMDI0LTEwLTI5IGF0IDE2OjA1IC0wNzAwLCBFbGxpb3Qg
-QmVybWFuIHdyb3RlOg0KPiA+ID4gT24gTW9uLCBBdWcgMDUsIDIwMjQgYXQgMTE6MzI6NDBBTSAr
-MDIwMCwgSmFtZXMgR293YW5zIHdyb3RlOg0KPiA+ID4gPiBNYWtlIHRoZSBmaWxlIGRhdGEgdXNh
-YmxlIHRvIHVzZXJzcGFjZSBieSBhZGRpbmcgbW1hcC4gVGhhdCdzIGFsbCB0aGF0DQo+ID4gPiA+
-IFFFTVUgbmVlZHMgZm9yIGd1ZXN0IFJBTSwgc28gdGhhdCdzIGFsbCBiZSBib3RoZXIgaW1wbGVt
-ZW50aW5nIGZvciBub3cuDQo+ID4gPiA+IA0KPiA+ID4gPiBXaGVuIG1tYXBpbmcgdGhlIGZpbGUg
-dGhlIFZNQSBpcyBtYXJrZWQgYXMgUEZOTUFQIHRvIGluZGljYXRlIHRoYXQgdGhlcmUNCj4gPiA+
-ID4gYXJlIG5vIHN0cnVjdCBwYWdlcyBmb3IgdGhlIG1lbW9yeSBpbiB0aGlzIFZNQS4gUmVtYXBf
-cGZuX3JhbmdlKCkgaXMNCj4gPiA+ID4gdXNlZCB0byBhY3R1YWxseSBwb3B1bGF0ZSB0aGUgcGFn
-ZSB0YWJsZXMuIEFsbCBQVEVzIGFyZSBwcmUtZmF1bHRlZCBpbnRvDQo+ID4gPiA+IHRoZSBwZ3Rh
-YmxlcyBhdCBtbWFwIHRpbWUgc28gdGhhdCB0aGUgcGd0YWJsZXMgYXJlIHVzYWJsZSB3aGVuIHRo
-aXMNCj4gPiA+ID4gdmlydHVhbCBhZGRyZXNzIHJhbmdlIGlzIGdpdmVuIHRvIFZGSU8ncyBNQVBf
-RE1BLg0KPiA+ID4gDQo+ID4gPiBUaGFua3MgZm9yIHNlbmRpbmcgdGhpcyBvdXQhIEknbSBnb2lu
-ZyB0aHJvdWdoIHRoZSBzZXJpZXMgd2l0aCB0aGUNCj4gPiA+IGludGVudGlvbiB0byBzZWUgaG93
-IGl0IG1pZ2h0IGZpdCB3aXRoaW4gdGhlIGV4aXN0aW5nIGd1ZXN0X21lbWZkIHdvcmsNCj4gPiA+
-IGZvciBwS1ZNL0NvQ28vR3VueWFoLg0KPiA+ID4gDQo+ID4gPiBJdCBtaWdodCd2ZSBiZWVuIG1l
-bnRpb25lZCBpbiB0aGUgTU0gYWxpZ25tZW50IHNlc3Npb24gLS0geW91IG1pZ2h0IGJlDQo+ID4g
-PiBpbnRlcmVzdGVkIHRvIGpvaW4gdGhlIGd1ZXN0X21lbWZkIGJpLXdlZWtseSBjYWxsIHRvIHNl
-ZSBob3cgd2UgYXJlDQo+ID4gPiBvdmVybGFwcGluZyBbMV0uDQo+ID4gPiANCj4gPiA+IFsxXTog
-aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcva3ZtL2FlNzk0ODkxLWZlNjktNDExYS1iODJlLTY5NjNi
-NTk0YTYyYUByZWRoYXQuY29tL1QvDQo+ID4gDQo+ID4gSGkgRWxsaW90LCB5ZXMsIEkgdGhpbmsg
-dGhhdCB0aGVyZSBpcyBhIGxvdCBtb3JlIG92ZXJsYXAgd2l0aA0KPiA+IGd1ZXN0X21lbWZkIG5l
-Y2Vzc2FyeSBoZXJlLiBUaGUgaWRlYSB3YXMgdG8gZXh0ZW5kIGd1ZXN0bWVtZnMgYXQgc29tZQ0K
-PiA+IHBvaW50IHRvIGhhdmUgYSBndWVzdF9tZW1mZCBzdHlsZSBpbnRlcmZhY2UsIGJ1dCBpdCB3
-YXMgcG9pbnRlZCBvdXQgYXQNCj4gPiB0aGUgTU0gYWxpZ25tZW50IGNhbGwgdGhhdCBkb2luZyBz
-byB3b3VsZCByZXF1aXJlIGd1ZXN0bWVtZnMgdG8NCj4gPiBkdXBsaWNhdGUgdGhlIEFQSSBzdXJm
-YWNlIG9mIGd1ZXN0X21lbWZkLiBUaGlzIGlzIHVuZGVzaXJhYmxlLiBCZXR0ZXINCj4gPiB3b3Vs
-ZCBiZSB0byBoYXZlIHBlcnNpc3RlbmNlIGltcGxlbWVudGVkIGFzIGEgY3VzdG9tIGFsbG9jYXRv
-ciBiZWhpbmQgYQ0KPiA+IG5vcm1hbCBndWVzdF9tZW1mZC4gSSdtIG5vdCB0b28gc3VyZSBob3cg
-dGhpcyB3b3VsZCBiZSBhY3R1YWxseSBkb25lIGluDQo+ID4gcHJhY3RpY2UsIHNwZWNpZmljYWxs
-eToNCj4gPiAtIGhvdyB0aGUgcGVyc2lzdGVudCBwb29sIHdvdWxkIGJlIGRlZmluZWQNCj4gPiAt
-IGhvdyBpdCB3b3VsZCBiZSBzdXBwbGllZCB0byBndWVzdF9tZW1mZA0KPiA+IC0gaG93IHRoZSBn
-dWVzdF9tZW1mZHMgd291bGQgYmUgcmUtZGlzY292ZXJlZCBhZnRlciBrZXhlYw0KPiA+IEJ1dCBh
-c3N1bWluZyB3ZSBjYW4gZmlndXJlIG91dCBzb21lIHdheSB0byBkbyB0aGlzLCBJIHRoaW5rIGl0
-J3MgYQ0KPiA+IGJldHRlciB3YXkgdG8gZ28uDQo+IA0KPiBJIHRoaW5rIHRoZSBmaWxlc3lzdGVt
-IGludGVyZmFjZSBzZWVtZWQgcmVhc29uYWJsZSwgeW91IGp1c3Qgd2FudA0KPiBvcGVuKCkgb24g
-dGhlIGZpbGVzeXN0ZW0gdG8gcmV0dXJuIGJhY2sgYSBub3JtYWwgZ3Vlc3RfbWVtZmQgYW5kDQo+
-IHJlLXVzZSBhbGwgb2YgdGhhdCBjb2RlIHRvIGltcGxlbWVudCBpdC4NCj4gDQo+IFdoZW4gb3Bl
-bmVkIHRocm91Z2ggdGhlIGZpbGVzeXN0ZW0gZ3Vlc3RfbWVtZmQgd291bGQgZ2V0IGhvb2tlZCBi
-eSB0aGUNCj4gS0hPIHN0dWZmIHRvIG1hbmFnZSBpdHMgbWVtb3J5LCBzb21laG93Lg0KPiANCj4g
-UmVhbGx5IEtITyBqdXN0IG5lZWRzIHRvIGtlZXAgdHJhY2sgb2YgdGhlIGFkZHJlc2VzcyBpbiB0
-aGUNCj4gZ3Vlc3RfbWVtZmQgd2hlbiBpdCBzZXJpYWxpemVzLCByaWdodD8gU28gbWF5YmUgYWxs
-IGl0IG5lZWRzIGlzIGEgd2F5DQo+IHRvIGZyZWV6ZSB0aGUgZ3Vlc3RfbWVtZmQgc28gaXQncyBt
-ZW1vcnkgbWFwIGRvZXNuJ3QgY2hhbmdlIGFueW1vcmUsDQo+IHRoZW4gYSB3YXkgdG8gZXh0cmFj
-dCB0aGUgYWRkcmVzc2VzIGZyb20gaXQgZm9yIHNlcmlhbGl6YXRpb24/DQoNClRoYW5rcyBKYXNv
-biwgdGhhdCBzb3VuZHMgcGVyZmVjdC4gSSdsbCB3b3JrIG9uIHRoZSBuZXh0IHJldiB3aGljaCB3
-aWxsOg0KLSBleHBvc2UgYSBmaWxlc3lzdGVtIHdoaWNoIG93bnMgcmVzZXJ2ZWQvcGVyc2lzdGVu
-dCBtZW1vcnksIGp1c3QgbGlrZQ0KdGhpcyBwYXRjaC4NCi0gcmViYXNlZCBvbiB0b3Agb2YgdGhl
-IHBhdGNoZXMgd2hpY2ggcHVsbCBvdXQgdGhlIGd1ZXN0X21lbWZkIGNvZGUgaW50bw0KYSBsaWJy
-YXJ5DQotIHJlYmFzZWQgb24gdG9wIG9mIHRoZSBndWVzdF9tZW1mZCBwYXRjaGVzIHdoaWNoIHN1
-cHBvcnRzIGFkZGluZyBhDQpkaWZmZXJlbnQgYmFja2luZyBhbGxvY2F0b3IgKGh1Z2V0bGJmcykg
-dG8gZ3Vlc3RfbWVtZmQNCi0gd2hlbiBhIGZpbGUgaW4gZ3Vlc3RtZW1mcyBpcyBvcGVuZWQsIGNy
-ZWF0ZSBhIGd1ZXN0X21lbWZkIG9iamVjdCBmcm9tDQp0aGUgZ3Vlc3RfbWVtZmQgbGlicmFyeSBj
-b2RlIGFuZCBzZXQgZ3Vlc3RtZW1mcyBhcyB0aGUgY3VzdG9tIGFsbG9jYXRvcg0KZm9yIHRoZSBm
-aWxlLg0KLSBzZXJpYWxpc2UgYW5kIHJlLWh5ZHJhdGUgdGhlIGd1ZXN0X21lbWZkcyB3aGljaCBo
-YXZlIGJlZW4gY3JlYXRlZCBpbg0KZ3Vlc3RtZW1mcyBvbiBrZXhlYyB2aWEgS0hPLg0KDQpUaGUg
-bWFpbiBkaWZmZXJlbmNlIGlzIHRoYXQgb3BlbmluZyBhIGd1ZXN0bWVtZnMgZmlsZSB3b24ndCBn
-aXZlIGENCnJlZ3VsYXIgZmlsZSwgcmF0aGVyIGl0IHdpbGwgZ2l2ZSBhIGd1ZXN0X21lbWZkIGxp
-YnJhcnkgb2JqZWN0LiBUaGlzDQp3aWxsIGdpdmUgZ29vZCBjb2RlIHJlLXVzZWQgd2l0aCBndWVz
-dF9tZW1mZCBsaWJyYXJ5IGFuZCBwcmV2ZW50IG5lZWRpbmcNCnRvIHJlLWltcGxlbWVudCB0aGUg
-Z3Vlc3RfbWVtZmQgQVBJIHN1cmZhY2UgaGVyZS4NCg0KU291bmRzIGxpa2UgYSBncmVhdCBwYXRo
-IGZvcndhcmQuIDotKQ0KDQpKRw0KDQo+IA0KPiBKYXNvbg0KDQo=
+
+--d723bfrsts26vlyf
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] fanotify.7,fanotify_mark.2: update documentation of
+ fanotify w.r.t fsid
+MIME-Version: 1.0
+
+Hi Amir, Jan,
+
+On Wed, Oct 09, 2024 at 05:38:36PM +0200, Jan Kara wrote:
+> On Tue 08-10-24 11:45:03, Amir Goldstein wrote:
+> > Clarify the conditions for getting the -EXDEV and -ENODEV errors.
+> >=20
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>=20
+> Looks good. Feel free to add:
+
+Please see some minor inline comments below.
+
+> Reviewed-by: Jan Kara <jack@suse.cz>
+
+Thanks!
+
+>=20
+> But I've read somewhere that Alejandro stepped down as manpages maintainer
+> so they are officially unmaintained?
+
+A contract is imminent, and I've started to review/apply old patches
+today already.  I'll probably make an official announcement soon.
+Maintenance is restored.  (As much as I possibly can, since my region
+has limited electricity, water, and internet, after the worst flooding
+in centuries.)
+
+Have a lovely day!
+Alex
+
+>=20
+> 								Honza
+>=20
+> > Hi Alejandro,
+> >=20
+> > This is a followup on fanotify changes from v6.8
+> > that are forgot to follow up on at the time.
+> >=20
+> > Thanks,
+> > Amir.
+> >=20
+> >  man/man2/fanotify_mark.2 | 27 +++++++++++++++++++++------
+> >  man/man7/fanotify.7      | 10 ++++++++++
+> >  2 files changed, 31 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+> > index fc9b83459..b5e091c25 100644
+> > --- a/man/man2/fanotify_mark.2
+> > +++ b/man/man2/fanotify_mark.2
+> > @@ -659,17 +659,16 @@ The filesystem object indicated by
+> >  .I dirfd
+> >  and
+> >  .I pathname
+> > -is not associated with a filesystem that supports
+> > +is associated with a filesystem that reports zero
+> >  .I fsid
+> >  (e.g.,
+> >  .BR fuse (4)).
+> > -.BR tmpfs (5)
+> > -did not support
+> > -.I fsid
+> > -prior to Linux 5.13.
+> > -.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
+> >  This error can be returned only with an fanotify group that identifies
+> >  filesystem objects by file handles.
+> > +Since Linux 6.8,
+> > +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> > +this error can be returned only when
+
+I think "when" is more appropriate in the following line.  It also adds
+some consistency with the rest of the patch below (@@762).
+
+> > +trying to add a mount or filesystem mark.
+> >  .TP
+> >  .B ENOENT
+> >  The filesystem object indicated by
+> > @@ -768,6 +767,22 @@ which uses a different
+> >  than its root superblock.
+> >  This error can be returned only with an fanotify group that identifies
+> >  filesystem objects by file handles.
+> > +Since Linux 6.8,
+> > +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> > +this error will be returned
+> > +when trying to add a mount or filesystem mark on a subvolume,
+> > +when trying to add inode marks in different subvolumes,
+> > +or when trying to add inode marks in a
+> > +.BR btrfs (5)
+> > +subvolume and in another filesystem.
+> > +Since Linux 6.8,
+> > +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> > +this error will also be returned
+> > +when trying to add marks in different filesystems,
+> > +where one of the filesystems reports zero
+> > +.I fsid
+> > +(e.g.,
+> > +.BR fuse (4)).
+> >  .SH STANDARDS
+> >  Linux.
+> >  .SH HISTORY
+> > diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> > index 449af949c..db8fe6c00 100644
+> > --- a/man/man7/fanotify.7
+> > +++ b/man/man7/fanotify.7
+> > @@ -575,6 +575,16 @@ and contains the same value as
+> >  .I f_fsid
+> >  when calling
+> >  .BR statfs (2).
+> > +Note that some filesystems (e.g.,
+> > +.BR fuse (4))
+> > +report zero
+> > +.IR fsid .
+> > +In these cases, it is not possible to use
+
+Please break the line after the comma.
+
+> > +.I fsid
+> > +to associate the event with a specific filesystem instance,
+> > +so monitoring different filesystem instances that report zero
+> > +.I fsid
+> > +with the same fanotify group is not supported.
+> >  .TP
+> >  .I handle
+> >  This field contains a variable-length structure of type
+> > --=20
+> > 2.34.1
+> >=20
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--d723bfrsts26vlyf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmck0pQACgkQnowa+77/
+2zI8yA//T5mqLzgVU/dnY2C22HqDHNCPq2c2rJtzT3Qg7Z7awurqMgkkC3b12vjp
+8UbnYC0ohRV4j3TCemTnu9WNExRlezNfJW/nwFHCWdunDycRtFfvQign9vNZhUuB
+k7jrMmnVcEzxkobSSb5hUt6qI/mO76ZNHw4loHPP7xZPJ+pmRwbwG3AEuDW1KOwZ
+MfXafSyhTe7ScSaFZU10vJ/UObX6Db5RDg0rsnka4Egkkjc6PFQSLtwpCqdNnXiG
+GNVwXOldT/dug1m1bzHftcGkaXakQqTfFywBt/3apXTS6gSj9MIcHv1Hd72KzveE
+TmMM9gbxleuPmp/55LerFECtCUWqqJ3/DpCcwIXHJZdDiyvYBoCJPzs4tjE19NnG
+ATofsqhcs91VhtsJYwGZFaF+inkNgrK9QWJQhPC4Fo3q8b4jJ61lUyzogvCYaB+Q
+bvZadubYKVcM+rP6Otv6GHTAVf/Vaq6Jq1M2qXwuXbkfElVgdqwbEFjezdGHep21
+6Ey4SF3lpxoiR32a/giGlFF/UaB/U4j5YlgQeH1VHZUqTJ2jO6q8t2Xe3a67gzs0
+bxNXUSoGRreM9WlovCrEUOa8x32O7WTj2gGgajiNG6rVjIBUOSvsVYWUYDUmFiOP
+/kWXostURUJfZgEEtrIWm5ecXWi6HO7l9Q90DB7iqvg8mbVxb3s=
+=pwcC
+-----END PGP SIGNATURE-----
+
+--d723bfrsts26vlyf--
 
