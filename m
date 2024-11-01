@@ -1,245 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-33396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F1C9B88AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 02:39:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079AF9B88B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 02:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AF0BB21A1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 01:39:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC94B21F17
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 01:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2594613B7A1;
-	Fri,  1 Nov 2024 01:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B9B80027;
+	Fri,  1 Nov 2024 01:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="P7renoAq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjzI1Y7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340A4204E;
-	Fri,  1 Nov 2024 01:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD8A3F9CC;
+	Fri,  1 Nov 2024 01:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730425100; cv=none; b=Aan6R6uqJDDwlU459qnA4FFRAzRVdasagG9pNGcvutssdfKFq9lY1uCbcCmIkFvi9eDBkM5R4eeuEA0j/RmeKoomUVf65KNAJeJxceAoHFxmGo44q8/6uL2bWe0SENd9fYXLadew+zejaUyceX8AYkO970GgFoOiMqSLfTT/HBo=
+	t=1730425172; cv=none; b=i3I+wtW7HR1YWNjZ//A08cYL1jXc8vrVNFYtvfPLpW7SYLYryJSupu9HxyuFg+l6ApTUVxV6JumWeiViuP06GNjIy5xj3XMG/jLSfsxpF+1xrsq5krGYQ6BrSisYKNAknWV2MuGdgVk46C2jtqFpRvxrucTz6nSwPJR1tCIH//U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730425100; c=relaxed/simple;
-	bh=RypRFdAwIT/de9xunHRWaJyZWX8vXNj6+mr2YNmmVs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GBxXlLIzA6eFlPSzzuEB3LIqUQX2l3MzkRU5XmBRX7w6hqzwFavQb9QSlLzudjqaaUQsg/Uir+a2l6yQz0XzwsZ7NLq14egoKnwFxVLZRxikLXWHHkct1po5Qw60NU3GxBy9nG2XswZwtUxTXEykNRWz5Q8Qyz0Jt17kcX5YYg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=P7renoAq; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=k/VHsL4n8pERS64P5NHMSQf1JEBAuX2jkWl5gqjSdQw=; b=P7renoAq/Nj0A3/1vK6ktV09ha
-	0YPhZg8HwiIH7CYXUUh3/A5MNQ8peqcpFMAQzX/AeCLfbjuEzmFgJVHu/96iSWH7NzooTvRg94Tgo
-	gIA4OKIxxushW8a3C2javH97VxijDClm2UDI+7+h6tooabgWxwmMY4L95Iu7KPgb4n6zy+grPFKAJ
-	jrobxJOCpsjclHQsYboorxe67fkiNuMVAibvI85AqDGo0dsG/jwhSKuCiPzDa4Ao/GdKNM1hV4iMx
-	iYd5PCsCI5aajLgFHt5PEIYKOPQwMOGxLWeDQ8udu/X3kUaZQdrd/6wtKNvk/FvYXi7WddYan2D4x
-	2jm6T2oA==;
-Received: from [189.78.222.89] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t6gbz-000G0m-6J; Fri, 01 Nov 2024 02:38:03 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: linux-mm@kvack.org,
+	s=arc-20240116; t=1730425172; c=relaxed/simple;
+	bh=D8MiN/KZJADEV5fUFXo9y71ewtg1mf1HWR/NiNxIxwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wsk5+R3sdDFg0f+XDHhZDIaZG3J9MZzXqVknX3350Xr1bgv6r/uaAyGkx0FbfsQAbMSmXLjWBZjtd+Uo8xsy/D6OhRcfsUffOiigileJ0YIDCKjTAj9EVefN3EM5QhCIe9GuAE4M0S4xY11/6vLqUeVnlWoWKAmVagXv8HDrS/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjzI1Y7U; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so1145630a91.1;
+        Thu, 31 Oct 2024 18:39:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730425165; x=1731029965; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FFHCorsd27i7xjZdZ8bkwsKx5GCCI+P4Z2Pee224OM=;
+        b=AjzI1Y7UW+SYKDFe6Uf3TqZj1FVsVAYAmRcbC7nCP2ERiuO3dyhps9V39i1Y6AJ48O
+         QnIh/i/GotNiy3bT+rrK8jjJF5qos82DAvkgTm1b69UT85xtoucXafCQcEeqeadjECvz
+         tRcI7yycYn0O3c4prS6HKgn2m343GVWe+pNKpaWfKR/mJRuBeREZgtC1EgKQX00X0vs8
+         V4Kg7/H5awRR0B6VXp4kr3buGChEySZZlypO8Cm43O0Ceu+crc5pObcNNtN737xI/j3C
+         S2IThzmDWleC4Cmp6oMSDZFWyT627AtCr53rI+Eo8+ediPTQxCQDp7XYXhVgzwDd1ydh
+         oeYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730425165; x=1731029965;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FFHCorsd27i7xjZdZ8bkwsKx5GCCI+P4Z2Pee224OM=;
+        b=W7tNKdV4CimwUmcf/6jg4LJ59cfWysnR7jEzUXIzjVf/NlKUMjtIFsNCbcFW/e9oac
+         Q03u2ZhNMWreiEKC/k5ecu5CyPv/cHrRCqKzGQ6KcyTvSbX8XXk0CkaJySIiJQCxuibU
+         gG8jelyWWxcdMS8n7fbfH73/Whx5jOLpX9cnPzEljg1z6FJjT8m1SZrHXS7uGihq7FCp
+         IV4jh6A7Hlwswwnr+yhbDaZ/mHDuZ3IsOpxZheSyr4t0cVQ+0i1pLg+eRsNU4041e2/t
+         Bobsfu/lls7By2dAF2lUwqFs6NLm2q28R3NJrB5g1xPVYCAbJPtc08z7i7gl0ZGlsko3
+         H1kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt+lpYCi02LNf3GWlVMI+dcTEo2Ypv6hWuHHcdTPhtKe0KtkPnsmUBjK+/6eotTwlRkksC0je5IQsqaJA5@vger.kernel.org, AJvYcCX9z98VrtTAX5R7219Dl9U/t5CvpZ0DjwHJ6nyxrNmz/X3rYlX2sr9iG4nvQJZ+t7bfiVMWJEriDb9z/M82@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0zHo4zNxLWLt+IyCawHT+Vo+FkM4sWl7CN/NUqoe6zUrcG/h8
+	nU3sueVcYO4rlTErNAa6AK2zYBlgjkdXkF61yrx1j3Q3k3EPNMWI
+X-Google-Smtp-Source: AGHT+IFCEJNjZwm1qOmxWKm+Co6hGzWHRmIhT9mzcx0gTfNRnxvq9g9F6cdVIiccXXKItgrBb0x7Kg==
+X-Received: by 2002:a17:90b:2786:b0:2e2:af04:8b64 with SMTP id 98e67ed59e1d1-2e94c29ea04mr2640610a91.7.1730425165285;
+        Thu, 31 Oct 2024 18:39:25 -0700 (PDT)
+Received: from xqjcool.lan (d209-121-228-72.bchsia.telus.net. [209.121.228.72])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe7119sm4002219a91.40.2024.10.31.18.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 18:39:24 -0700 (PDT)
+From: Qingjie Xing <xqjcool@gmail.com>
+To: christophe.jaillet@wanadoo.fr,
+	willy@infradead.org,
+	brauner@kernel.org,
+	adobriyan@gmail.com,
+	akpm@linux-foundation.org,
+	xqjcool@gmail.com
+Cc: viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 3/3] tmpfs: Initialize sysfs during tmpfs init
-Date: Thu, 31 Oct 2024 22:37:41 -0300
-Message-ID: <20241101013741.295792-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241101013741.295792-1-andrealmeid@igalia.com>
-References: <20241101013741.295792-1-andrealmeid@igalia.com>
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: Add a way to make proc files writable
+Date: Thu, 31 Oct 2024 18:39:20 -0700
+Message-ID: <20241101013920.28378-1-xqjcool@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Instead of using fs_initcall(), initialize sysfs with the rest of the
-filesystem. This is the right way to do it because otherwise any error
-during tmpfs_sysfs_init() would get silently ignored. It's also useful
-if tmpfs' sysfs ever need to display runtime information.
+Provide an extra function, proc_create_single_write_data() that
+act like its non-write version but also set a write method in
+the proc_dir_entry struct. Alse provide a macro
+proc_create_single_write to reduces the boilerplate code in the callers.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
+Signed-off-by: Qingjie Xing <xqjcool@gmail.com>
 ---
- mm/shmem.c | 130 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 68 insertions(+), 62 deletions(-)
+ fs/proc/generic.c       | 18 ++++++++++++++++++
+ include/linux/proc_fs.h |  8 +++++++-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 6038e1d11987..8ff2f619f531 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5126,6 +5126,66 @@ static struct file_system_type shmem_fs_type = {
- 	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index dbe82cf23ee4..0f32a92195fc 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -641,6 +641,7 @@ static const struct proc_ops proc_single_ops = {
+ 	.proc_read_iter = seq_read_iter,
+ 	.proc_lseek	= seq_lseek,
+ 	.proc_release	= single_release,
++	.proc_write	= proc_simple_write,
  };
  
-+#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
-+
-+#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)			\
-+{									\
-+	.attr	= { .name = __stringify(_name), .mode = _mode },	\
-+	.show	= _show,						\
-+	.store	= _store,						\
-+}
-+
-+#define TMPFS_ATTR_W(_name, _store)				\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0200, NULL, _store)
-+
-+#define TMPFS_ATTR_RW(_name, _show, _store)			\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0644, _show, _store)
-+
-+#define TMPFS_ATTR_RO(_name, _show)				\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0444, _show, NULL)
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+static ssize_t casefold_show(struct kobject *kobj, struct kobj_attribute *a,
-+			char *buf)
-+{
-+		return sysfs_emit(buf, "supported\n");
-+}
-+TMPFS_ATTR_RO(casefold, casefold_show);
-+#endif
-+
-+static struct attribute *tmpfs_attributes[] = {
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	&tmpfs_attr_casefold.attr,
-+#endif
-+	NULL
-+};
-+
-+static const struct attribute_group tmpfs_attribute_group = {
-+	.attrs = tmpfs_attributes,
-+	.name = "features"
-+};
-+
-+static struct kobject *tmpfs_kobj;
-+
-+static int __init tmpfs_sysfs_init(void)
-+{
-+	int ret;
-+
-+	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
-+	if (!tmpfs_kobj)
-+		return -ENOMEM;
-+
-+	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
-+	if (ret)
-+		kobject_put(tmpfs_kobj);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
-+
- void __init shmem_init(void)
- {
- 	int error;
-@@ -5149,6 +5209,14 @@ void __init shmem_init(void)
- 		goto out1;
- 	}
- 
-+#ifdef CONFIG_SYSFS
-+	error = tmpfs_sysfs_init();
-+	if (error) {
-+		pr_err("Could not init tmpfs sysfs\n");
-+		goto out1;
-+	}
-+#endif
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	if (has_transparent_hugepage() && shmem_huge > SHMEM_HUGE_DENY)
- 		SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
-@@ -5546,65 +5614,3 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- 	return page;
+ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+@@ -658,6 +659,23 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
  }
- EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
--
--#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
--
--#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)			\
--{									\
--	.attr	= { .name = __stringify(_name), .mode = _mode },	\
--	.show	= _show,						\
--	.store	= _store,						\
--}
--
--#define TMPFS_ATTR_W(_name, _store)				\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0200, NULL, _store)
--
--#define TMPFS_ATTR_RW(_name, _show, _store)			\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0644, _show, _store)
--
--#define TMPFS_ATTR_RO(_name, _show)				\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0444, _show, NULL)
--
--#if IS_ENABLED(CONFIG_UNICODE)
--static ssize_t casefold_show(struct kobject *kobj, struct kobj_attribute *a,
--			char *buf)
--{
--		return sysfs_emit(buf, "supported\n");
--}
--TMPFS_ATTR_RO(casefold, casefold_show);
--#endif
--
--static struct attribute *tmpfs_attributes[] = {
--#if IS_ENABLED(CONFIG_UNICODE)
--	&tmpfs_attr_casefold.attr,
--#endif
--	NULL
--};
--
--static const struct attribute_group tmpfs_attribute_group = {
--	.attrs = tmpfs_attributes,
--	.name = "features"
--};
--
--static struct kobject *tmpfs_kobj;
--
--static int __init tmpfs_sysfs_init(void)
--{
--	int ret;
--
--	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
--	if (!tmpfs_kobj)
--		return -ENOMEM;
--
--	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
--	if (ret)
--		kobject_put(tmpfs_kobj);
--
--	return ret;
--}
--
--fs_initcall(tmpfs_sysfs_init);
--#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
+ EXPORT_SYMBOL(proc_create_single_data);
+ 
++struct proc_dir_entry *proc_create_single_write_data(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), proc_write_t write,
++		void *data)
++{
++	struct proc_dir_entry *p;
++
++	p = proc_create_reg(name, mode, &parent, data);
++	if (!p)
++		return NULL;
++	p->proc_ops = &proc_single_ops;
++	p->single_show = show;
++	p->write = write;
++	return proc_register(parent, p);
++}
++EXPORT_SYMBOL(proc_create_single_write_data);
++
+ void proc_set_size(struct proc_dir_entry *de, loff_t size)
+ {
+ 	de->size = size;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 0b2a89854440..488d0b76a06f 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -102,7 +102,13 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+ 		int (*show)(struct seq_file *, void *), void *data);
+ #define proc_create_single(name, mode, parent, show) \
+ 	proc_create_single_data(name, mode, parent, show, NULL)
+- 
++struct proc_dir_entry *proc_create_single_write_data(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), proc_write_t write,
++		void *data);
++#define proc_create_single_write(name, mode, parent, show, write) \
++	proc_create_single_write_data(name, mode, parent, show, write, NULL)
++
+ extern struct proc_dir_entry *proc_create_data(const char *, umode_t,
+ 					       struct proc_dir_entry *,
+ 					       const struct proc_ops *,
 -- 
-2.47.0
+2.43.0
 
 
