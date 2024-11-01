@@ -1,267 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-33404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760649B89FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 04:33:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145329B89FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 04:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10801C21013
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 03:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C787E282125
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 03:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC5B144304;
-	Fri,  1 Nov 2024 03:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058E71448C1;
+	Fri,  1 Nov 2024 03:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esi/ot+O"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/OFxVor"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C25F3FF1;
-	Fri,  1 Nov 2024 03:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128573FF1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 03:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730432011; cv=none; b=EkdvD4IgFuEDtgdrz9IJCoKn3tuOkq2aGGdXc+C8X/dzFD5osnvDzbREYUotF+qDMSAINMZDtD00vm2b+U5ZXiUt9EYjbejYheo70eMMXO9IVGuXqc9b0r2ZsHitzVlIm1glcYLOw6IagDSWspvTvmZ4kWak0G5bR2kbzKlaHHY=
+	t=1730432103; cv=none; b=jvFLwK5jxVvuFrYujPNFPqP+04qPhc4bGGzv8c9AY2ckB0BpwHxrtjlKks42pUNIiylHYbLzD88dArUkMyJnAEtYCQ/mi6AXiSWcnbhU1+ca6cPMqv92hUqS2N104KSUhktLvChL6Fj6VpdJZH89N0bYZyPTtYtkzBqXt3h4bmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730432011; c=relaxed/simple;
-	bh=neyokfw9ReJ8nD29TZJGBTmHGKCql/FyKj6TpaBD6Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzUQdlNKcnkVmuFIBfbnb+mOecVfBit8eUBGjFFbbcWD5yxrt2WojBqbNYKLhKbXVCjfFQABzYzdyeWDymBAdhCTROfKssUqUF2ZJpLfTw1CM4i3RbwexBKXkDx8obEZGexSVKphAMYd/tUv8ZB3HLlQhFtpvp/F4mzgWVMFzoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esi/ot+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC186C4CECD;
-	Fri,  1 Nov 2024 03:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730432010;
-	bh=neyokfw9ReJ8nD29TZJGBTmHGKCql/FyKj6TpaBD6Mg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=esi/ot+OiPBktTYiERfpmQ6AtgsP8TlK121d0b8148srjp+oUfyPrOMH/ErdiGchV
-	 eqv20JV4zDpEExgdBvP4hgtWSf724eeDJ3lWIt1mXiTk+F+Lgb/1T3YBRrTv7kYk6G
-	 3Yu4yrM7njMtat3JBuZLgQ9cizPRZSwpH9MG/SwnatBZ3fbclPGPydi4sBl+Nq3wd/
-	 dg2C9kYSjJOKuvFhYsJrqtO8Eo9e9PC0UhbLOpm12fIRtJoXzwq101jxI/3teqOCXY
-	 FXNyusYhOLeqp6asaaouDyWwEkrX2ZGcGcm5aBKYe+JwSMz3ZhZk3JB7Reaz5m5pJA
-	 mUWKNa7Zun9jw==
-Date: Thu, 31 Oct 2024 20:33:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] ext4: Add statx support for atomic writes
-Message-ID: <20241101033330.GE2386201@frogsfrogsfrogs>
-References: <cover.1730286164.git.ritesh.list@gmail.com>
- <3338514d98370498d49ebc297a9b6d48a55282b8.1730286164.git.ritesh.list@gmail.com>
- <20241031214204.GC21832@frogsfrogsfrogs>
- <875xp7znw4.fsf@gmail.com>
+	s=arc-20240116; t=1730432103; c=relaxed/simple;
+	bh=2jIG0cnD5IF+pePg6C45QxbhOkxqPICOWTixX2BTNts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RyYN4N6JLKsfz/GOx2672hQOYu5BmKn9p2w2z4/+Jm8zOgvgbC3tI7E1D6Qgyhqa4frpVLiD3BGAZJFerR69suEKH488DMSC7ftk1pWmpd01oHqxfq8PPJhENZmoShW7Y5kj7bP7vCeixSVaAV6HtioNBC0g2JAXUNP+60L4Pek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/OFxVor; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730432100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yuRKtPDUQaZdgT0CJQ7GSAfyDSMPi8Jk8L0zx2DDabI=;
+	b=V/OFxVorSy8KMU0bN1EghqbN3i99xygh2D3b+bOJoq1+PKE4cz7/2mwT9Qt+ZlICiN3kl0
+	7mFSkonUiqWlQRzilqGISvdO12dPalf0O2+OCp5cc/IuF03VyU5BduHPOKE7hOgmd4klYs
+	wy1sjtWDR3tvVtOo0NyzBqyKzS3Rai8=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-CqGAro8FPXSK6u0Z0koquA-1; Thu, 31 Oct 2024 23:34:58 -0400
+X-MC-Unique: CqGAro8FPXSK6u0Z0koquA-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e2eba0efc6so1658354a91.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 20:34:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730432097; x=1731036897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yuRKtPDUQaZdgT0CJQ7GSAfyDSMPi8Jk8L0zx2DDabI=;
+        b=tLRQd3LeLG8fjDFWoeOogG3MPgUVAbo1bdqpx548E6QviftJFrKqgCjqmTMCfgSHun
+         6qPrsREEbPK+1AchJE5iBat4CeemMreIz54sCAues4YoHjYsEw9nbeIN0i9YT6urSNhm
+         5r3MhpLrFl6yDmLoI7RmycjRy85RRai/dQOAXvwrLNPWCmWwkf3G4+06EL9j+iWo0zQg
+         rFz4lYwJsnPvWN88us+6O+eEBDUudkDIH+f9X3K443twtXeWg0rSalbotNbCYVUWdmgf
+         zQYuiWN1kEShIIspmmwfvoPNQzQR6Y18QgSYTU3C3n+h8WfaUAu9V/Nd4/qv58eS9kPZ
+         xQ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXQpCFG1loLivNA5NZzm6k5C44Q+ZGC6i9gbBTYEWP3W5OfWhPbFKupHyR8FeZinPHxcwZK4qGNfu788FDG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr0Amxdab/pYKaaCZ7PDk1DIYAow2LmbEGoAUIWdrydKQG0zDW
+	JeDTnLu+sfU3/Xj0135AaehlAielvbEtiiNQ+V8jGW+/3j7nDkY7ZJHoO5/UeQ6CGLIs0oIT7qS
+	3jEJwuOaLr8mWAE8vnbiCJW2Xgc5LYDL2vgNUPqBJHOy326xyg6E7VqPJandO9Vjl/pAAm5JDvL
+	lRgwKRn+VAkfWVDWQEQiqsd3vN+JM9IbF+uG9GLA==
+X-Received: by 2002:a17:90b:1350:b0:2e0:9a63:9017 with SMTP id 98e67ed59e1d1-2e94c2e2108mr3144871a91.23.1730432097470;
+        Thu, 31 Oct 2024 20:34:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIki4Y+YGkOXVt5DcnKrErzaK4HT0IVBe2AzrSvO/AfAa/B5JYGjWt1mlru91rQ+eJKLqjHeaaElzLHhiqbko=
+X-Received: by 2002:a17:90b:1350:b0:2e0:9a63:9017 with SMTP id
+ 98e67ed59e1d1-2e94c2e2108mr3144825a91.23.1730432097018; Thu, 31 Oct 2024
+ 20:34:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875xp7znw4.fsf@gmail.com>
+References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
+ <20241031074618.3585491-2-guanjun@linux.alibaba.com> <87v7x8woeq.ffs@tglx>
+ <CAFj5m9KZRjupM+bsuc-r_kTu1h8+wtc_fdmkHWS=cNbg4aU03g@mail.gmail.com> <43FD1116-C188-4729-A3AB-C2A0F5A087D2@linux.alibaba.com>
+In-Reply-To: <43FD1116-C188-4729-A3AB-C2A0F5A087D2@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 1 Nov 2024 11:34:42 +0800
+Message-ID: <CACGkMEs+vzJS9mh-yYPg6vRPC0sWW_OGOb4i8Q5Y9sjLkY8y2Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
+ managed interrupts
+To: mapicccy <guanjun@linux.alibaba.com>
+Cc: Ming Lei <ming.lei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christoph Hellwig <hch@lst.de>, corbet@lwn.net, axboe@kernel.dk, mst@redhat.com, 
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, vgoyal@redhat.com, 
+	stefanha@redhat.com, miklos@szeredi.hu, peterz@infradead.org, 
+	akpm@linux-foundation.org, paulmck@kernel.org, thuth@redhat.com, 
+	rostedt@goodmis.org, bp@alien8.de, xiongwei.song@windriver.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 08:00:35AM +0530, Ritesh Harjani wrote:
-> 
-> Hi John & Darrick,
-> 
-> "Darrick J. Wong" <djwong@kernel.org> writes:
-> 
-> > On Wed, Oct 30, 2024 at 09:27:38PM +0530, Ritesh Harjani (IBM) wrote:
-> >> This patch adds base support for atomic writes via statx getattr.
-> >> On bs < ps systems, we can create FS with say bs of 16k. That means
-> >> both atomic write min and max unit can be set to 16k for supporting
-> >> atomic writes.
-> >> 
-> >> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> >> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> >> ---
-> >>  fs/ext4/ext4.h  |  9 +++++++++
-> >>  fs/ext4/inode.c | 14 ++++++++++++++
-> >>  fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
-> >>  3 files changed, 54 insertions(+)
-> >> 
-> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> >> index 44b0d418143c..6ee49aaacd2b 100644
-> >> --- a/fs/ext4/ext4.h
-> >> +++ b/fs/ext4/ext4.h
-> >> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
-> >>  	 */
-> >>  	struct work_struct s_sb_upd_work;
-> >>  
-> >> +	/* Atomic write unit values in bytes */
-> >> +	unsigned int s_awu_min;
-> >> +	unsigned int s_awu_max;
-> >> +
-> >>  	/* Ext4 fast commit sub transaction ID */
-> >>  	atomic_t s_fc_subtid;
-> >>  
-> >> @@ -3855,6 +3859,11 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
-> >>  	return buffer_uptodate(bh);
-> >>  }
-> >>  
-> >> +static inline bool ext4_can_atomic_write(struct super_block *sb)
-> >> +{
-> >> +	return EXT4_SB(sb)->s_awu_min > 0;
-> >
-> > Huh, I was expecting you to stick to passing in the struct inode,
-> > and then you end up with:
-> >
-> > static inline bool ext4_can_atomic_write(struct inode *inode)
-> > {
-> > 	return S_ISREG(inode->i_mode) &&
-> > 	       EXT4_SB(inode->i_sb)->s_awu_min > 0);
-> > }
-> >
-> 
-> Ok. John also had commented on the same thing before. 
-> We may only need this, when ext4 get extsize hint support. But for now
-> we mainly only need to check that EXT4 SB supports atomic write or not.
-> i.e. s_awu_min should be greater than 0. 
-> 
-> But sure I can make above suggested change to keep it consistent with XFS, along
-> with below discussed change (Please have a look)...
-> 
-> >> +}
-> >> +
-> >>  extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
-> >>  				  loff_t pos, unsigned len,
-> >>  				  get_block_t *get_block);
-> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> >> index 54bdd4884fe6..fcdee27b9aa2 100644
-> >> --- a/fs/ext4/inode.c
-> >> +++ b/fs/ext4/inode.c
-> >> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
-> >>  		}
-> >>  	}
-> >>  
-> >> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
-> >
-> > ...and then the callsites become:
-> >
-> > 	if (request_mask & STATX_WRITE_ATOMIC) {
-> > 		unsigned int awu_min = 0, awu_max = 0;
-> >
-> > 		if (ext4_can_atomic_write(inode)) {
-> > 			awu_min = sbi->s_awu_min;
-> > 			awu_max = sbi->s_awu_max;
-> > 		}
-> >
-> > 		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
-> > 	}
-> >
-> > (I forget, is it bad if statx to a directory returns STATX_WRITE_ATOMIC
-> > even with awu_{min,max} set to zero?)
-> 
-> I mainly kept it consistent with XFS. But it's not a bad idea to do that. 
-> That will help applications check for atomic write support on the root
-> directory mount point rather than creating a regular file just for
-> verification. Because of below result_mask, which we only set within generic_fill_statx_atomic_writes() 
-> 
-> 	stat->result_mask |= STATX_WRITE_ATOMIC;
-> 
-> If we make this change to ext4, XFS will have to fix it too, to keep
-> the behavior consistent for both.
-> Shall I go ahead and make the change in v4 for EXT4?
+On Fri, Nov 1, 2024 at 11:12=E2=80=AFAM mapicccy <guanjun@linux.alibaba.com=
+> wrote:
+>
+>
+>
+> 2024=E5=B9=B410=E6=9C=8831=E6=97=A5 18:50=EF=BC=8CMing Lei <ming.lei@redh=
+at.com> =E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu, Oct 31, 2024 at 6:35=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>
+>
+> On Thu, Oct 31 2024 at 15:46, guanjun@linux.alibaba.com wrote:
+>
+> #ifdef CONFIG_SMP
+>
+> +static unsigned int __read_mostly managed_irqs_per_node;
+> +static struct cpumask managed_irqs_cpumsk[MAX_NUMNODES] __cacheline_alig=
+ned_in_smp =3D {
+> +     [0 ... MAX_NUMNODES-1] =3D {CPU_BITS_ALL}
+> +};
+>
+> +static void __group_prepare_affinity(struct cpumask *premask,
+> +                                  cpumask_var_t *node_to_cpumask)
+> +{
+> +     nodemask_t nodemsk =3D NODE_MASK_NONE;
+> +     unsigned int ncpus, n;
+> +
+> +     get_nodes_in_cpumask(node_to_cpumask, premask, &nodemsk);
+> +
+> +     for_each_node_mask(n, nodemsk) {
+> +             cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n=
+], premask);
+> +             cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n=
+], node_to_cpumask[n]);
+>
+>
+> How is this managed_irqs_cpumsk array protected against concurrency?
+>
+> +             ncpus =3D cpumask_weight(&managed_irqs_cpumsk[n]);
+> +             if (ncpus < managed_irqs_per_node) {
+> +                     /* Reset node n to current node cpumask */
+> +                     cpumask_copy(&managed_irqs_cpumsk[n], node_to_cpuma=
+sk[n]);
+>
+>
+> This whole logic is incomprehensible and aside of the concurrency
+> problem it's broken when CPUs are made present at run-time because these
+> cpu masks are static and represent the stale state of the last
+> invocation.
+>
+> Given the limitations of the x86 vector space, which is not going away
+> anytime soon, there are only two options IMO to handle such a scenario.
+>
+>   1) Tell the nvme/block layer to disable queue affinity management
+>
+>
+> +1
+>
+> There are other use cases, such as cpu isolation, which can benefit from
+> this way too.
+>
+> https://lore.kernel.org/linux-nvme/20240702104112.4123810-1-ming.lei@redh=
+at.com/
+>
 
-Hmmm, that's a good question -- if a program asks for STATX_WRITE_ATOMIC
-on a directory, should we set the ATOMIC flag in statx.stx_mask but
-leave the values as zeroes if the underlying block device/fs supports
-atomic writes at all?  For XFS I guess the "underlying bdev" is
-determined by the directory's RTINHERIT bit && xfs_has_realtime().
+I wonder if we need to do the same for virtio-blk.
 
-Thoughts?
+>
+> Thanks for your reminder. However, in this link only modified the NVMe dr=
+iver,
+> but there is the same issue in the virtio net driver as well.
 
-But maybe that doesn't make sense since (a) fundamentally you can't do a
-directio write to a directory and (b) it's not that hard to create a
-file, set the REALTIME bit on it as desired (on xfs) and then query the
-untorn write geometry.  So maybe that check should be:
+I guess you meant virtio-blk actually?
 
-if (request_mask & STATX_WRITE_ATOMIC && S_ISREG(inode->i_mode))
+>
+> Guanjun
+>
+>
+> Thanks,
+>
 
---D
+Thanks
 
-> -ritesh
-> 
-> >
-> > Other than that nit, this looks good to me.
-> >
-> > --D
-> >
-> >> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> >> +		unsigned int awu_min, awu_max;
-> >> +
-> >> +		if (ext4_can_atomic_write(inode->i_sb)) {
-> >> +			awu_min = sbi->s_awu_min;
-> >> +			awu_max = sbi->s_awu_max;
-> >> +		} else {
-> >> +			awu_min = awu_max = 0;
-> >> +		}
-> >> +
-> >> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
-> >> +	}
-> >> +
-> >>  	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
-> >>  	if (flags & EXT4_APPEND_FL)
-> >>  		stat->attributes |= STATX_ATTR_APPEND;
-> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> >> index 16a4ce704460..ebe1660bd840 100644
-> >> --- a/fs/ext4/super.c
-> >> +++ b/fs/ext4/super.c
-> >> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +/*
-> >> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
-> >> + * @sb: super block
-> >> + * TODO: Later add support for bigalloc
-> >> + */
-> >> +static void ext4_atomic_write_init(struct super_block *sb)
-> >> +{
-> >> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
-> >> +	struct block_device *bdev = sb->s_bdev;
-> >> +
-> >> +	if (!bdev_can_atomic_write(bdev))
-> >> +		return;
-> >> +
-> >> +	if (!ext4_has_feature_extents(sb))
-> >> +		return;
-> >> +
-> >> +	sbi->s_awu_min = max(sb->s_blocksize,
-> >> +			      bdev_atomic_write_unit_min_bytes(bdev));
-> >> +	sbi->s_awu_max = min(sb->s_blocksize,
-> >> +			      bdev_atomic_write_unit_max_bytes(bdev));
-> >> +	if (sbi->s_awu_min && sbi->s_awu_max &&
-> >> +	    sbi->s_awu_min <= sbi->s_awu_max) {
-> >> +		ext4_msg(sb, KERN_NOTICE, "Supports (experimental) DIO atomic writes awu_min: %u, awu_max: %u",
-> >> +			 sbi->s_awu_min, sbi->s_awu_max);
-> >> +	} else {
-> >> +		sbi->s_awu_min = 0;
-> >> +		sbi->s_awu_max = 0;
-> >> +	}
-> >> +}
-> >> +
-> >>  static void ext4_fast_commit_init(struct super_block *sb)
-> >>  {
-> >>  	struct ext4_sb_info *sbi = EXT4_SB(sb);
-> >> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >>  
-> >>  	spin_lock_init(&sbi->s_bdev_wb_lock);
-> >>  
-> >> +	ext4_atomic_write_init(sb);
-> >>  	ext4_fast_commit_init(sb);
-> >>  
-> >>  	sb->s_root = NULL;
-> >> -- 
-> >> 2.46.0
-> >> 
-> >> 
-> 
 
