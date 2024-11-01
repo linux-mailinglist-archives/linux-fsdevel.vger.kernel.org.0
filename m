@@ -1,201 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-33476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D159B92B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:56:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC4B9B9337
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 15:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B403A1C21DA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:56:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE531F23153
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32571A2574;
-	Fri,  1 Nov 2024 13:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804991A727D;
+	Fri,  1 Nov 2024 14:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="LeA5WwjD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ajIH0dX4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clV2wVvV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E261AA7BF;
-	Fri,  1 Nov 2024 13:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398E4136347;
+	Fri,  1 Nov 2024 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730469329; cv=none; b=Ukf870L9D13uuReckUBM5oWxPNgm2M9lb/mkgo+Qb2yUFoxe39zeT6pu6Fz5eI3cIYmmLu0GWZyr0g5AO+P2ZlmocaU8FNlo4zNvcnlZp+mRnQpOEOkEt2Ju+dO3whCbXnurvd+a9n69+F8G+2K4Bp9vWLyFfxUTSD9L5GQGfWs=
+	t=1730471416; cv=none; b=Xu+SgMz6JaGunDGMu2Fq9AODMmPrFttoWivmL8jxk86Fr6BQm0h7D1kAE5pKATSlhkgzjJcETevsgZ1255zmbF+BfhG4rmWVjIvqiRxK+Y7KUHtOVL7RTlKOgMxB5y/NOCD5Jfo3axWpA5beUNJn8qoKRQdXwEa6QqKkQyImVhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730469329; c=relaxed/simple;
-	bh=pFDhFHLBfdJwuTqHyN06kE8QojwExhKmomKGiOhi49U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cPX2dG+ou/Nai/XdJN4PKILpc7o+admasyGrVFz9BgMcsAhRX0mWzrTSy4nF91f6m1QM0CA/p45DU+9rnq/dE01KpCkGvfC9rYKq0YkZzfgUx8zyNezOmqE9M8NegUr6hfGWuZpwHt6XRhnydclESyy4vqPEufUSgh6NloMJ+wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=LeA5WwjD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ajIH0dX4; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 0963A2540115;
-	Fri,  1 Nov 2024 09:55:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 09:55:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1730469324; x=
-	1730555724; bh=192szHnbj9c+YbJkI7hF7+bUn60M5dnEdOqJzMxTjAU=; b=L
-	eA5WwjDCwvlDLjMxLIfH9dZ+fSRij5Nu9nUJlsRQyTz/KXJSTP16bRBUaTkh4+6U
-	xSNu+EafJMCnAi4USPy34rYAZFQuPQH5H1PK9vU3oqlQRRfM9yS9EZrdS4fmI33f
-	DrFSrsdseBBUJVZdNEF7EeK+d/K6f3y0551CjfTxYlkHXem18jxTdCC+5yqVxK3G
-	C3gI6VMpyb1A3UJr6oeQOpNsxM0ukgXLaGQTYm/PwYA/dUf4Ba9vRZdqVNveyACA
-	B92v/x35TFYiSbPKHFnJbRFCEK1dvQ753J2ADiDOD12Ui1EZOPSt2EpoSHDns/l/
-	BLjy+i8eTUmtger1JFB8Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1730469324; x=1730555724; bh=1
-	92szHnbj9c+YbJkI7hF7+bUn60M5dnEdOqJzMxTjAU=; b=ajIH0dX4GPtrgiqcT
-	2lnWzwSV43zhKoN3MdVl4a7Gi9Lp2eEZvfH2AFRyWsZxKBHTv7csxIEzsaKHaNlg
-	EZbBLqHqoK3WGfblZOP6aFaIrV/VHOCVtMYM9HYsCpjeudbvb5DlRwAuflbMaQyK
-	4WWoSgXEfLUAJEcRwM0Gg0jQAwXsxjc6JqgnXYHSeo7hWGYJvIvRwM3SJSc+p2wt
-	+2RICQArNsHFMmh1Y6Tqb6p0As79T36iSnoUHrPkE58jteswJoVw0l7agVrdXOvo
-	U8xqHOazfm7NI1AgBA8Kg57twtdVXHNKJsdt67xFe5+wTZTqz0O+/YN6ESvhBJFG
-	UbLxA==
-X-ME-Sender: <xms:zN0kZ5xRoYOsrszSd0xSa1H3XCAqZ41QW7so028V8kpeVau5T8-9sA>
-    <xme:zN0kZ5QDyMaKVIHn1xzqqXtT8wDT49k1dMZ5t3giz2GfYLAfygBSkzQmYUU3Yrf3C
-    pi3PQ-daELoXlnkxgc>
-X-ME-Received: <xmr:zN0kZzXWMPLyNxgM7obj5ABrquMttI83NYyCSODq6CkjkcPWnOkLDhWaXEI2g43Pd8WbsJ9oAhebDRssFpf1QA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefgrhhinhcuufhhvghphhgvrhgu
-    uceovghrihhnrdhshhgvphhhvghrugesvgegfedrvghuqeenucggtffrrghtthgvrhhnpe
-    eggedvkedtuedvgfevvdehieevveejkeelieektdfggeevgfeiieejtdffledtieenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvrhhinhdrsh
-    hhvghphhgvrhgusegvgeefrdgvuhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopegthhhrihhsthhirghnsegsrhgruhhnvghrrdhioh
-    dprhgtphhtthhopehprghulhesphgruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtohep
-    sghluhgtrgesuggvsghirghnrdhorhhgpdhrtghpthhtohepvghrihhnrdhshhgvphhhvg
-    hrugesvgegfedrvghu
-X-ME-Proxy: <xmx:zN0kZ7g-_rK1tcm3YnV4Zk9qz8wmzDDsLX1gb3HBxgzNMSGdrdxzJg>
-    <xmx:zN0kZ7DIfUAwlQGT0GMfvBje5PQC-3ivdFr0VNniOMEilFDWOAsMkA>
-    <xmx:zN0kZ0IvA5uvPqlUzp71x_5KMMdn0kvimWFdMWXzRKLR1byCyiE_3Q>
-    <xmx:zN0kZ6D8RRzLobZwAuaLFvu9hpX7Z148rMQTBENQFnFKDCJP0bkttw>
-    <xmx:zN0kZ91VttTHp-Ph5O7_atnD5sTVjUVkpK_Z1-TIcZBV5a_FJYK8PvIf>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 09:55:24 -0400 (EDT)
-From: Erin Shepherd <erin.shepherd@e43.eu>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: christian@brauner.io,
-	paul@paul-moore.com,
-	bluca@debian.org,
-	erin.shepherd@e43.eu
-Subject: [PATCH 4/4] pidfs: implement fh_to_dentry
-Date: Fri,  1 Nov 2024 13:54:52 +0000
-Message-ID: <20241101135452.19359-5-erin.shepherd@e43.eu>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241101135452.19359-1-erin.shepherd@e43.eu>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+	s=arc-20240116; t=1730471416; c=relaxed/simple;
+	bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j6wmE/oqM9AwxvXH8nR8oJgRZ1XVDz7CLXIhNJ6n7Cmgis6bd98yN3rBn5s5mpwexO0KkVshvPcpl53RbechQlAXtYmTDYEkGufCG66tlDIaan7AUXLx5lb5AoHXm5/eOc4ua3iJjQ+paPaXU56MSF6UO7Cm/+4KdIloIJqWxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clV2wVvV; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso270847a12.1;
+        Fri, 01 Nov 2024 07:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730471414; x=1731076214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
+        b=clV2wVvVpvtg73poXDClHokmVTSuMI+Fz7X8wserVsovSY/SBHAduC3FMs7xF2EzMo
+         J7MoqPO90lgbhyOCFiRhe+CUurxGxwrZBB/AjpbCvM7EQYTm8jVjIbLwUE+mRigT04Ui
+         FNfMp0t63MjMY3/0xPiC0lf0yBuIZ+BEPTrriV7x9MsDJ4DbcPXxhzptDSdX8xMKPgsd
+         JcP4SFXzzFW1IhWBaGafFUEGxCR1zB41f78L8esOaOdxX+Rwd8X0UJtJC2S7tmTHWkoF
+         eHgzm1FYmYPIl6uaDUqe0GWZSq3D8a3GnkFbdXzJnRE8zgU1QduTCURKo1K9atvS0H2/
+         ShNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730471414; x=1731076214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
+        b=reMdGsOJNS3fZey1MPu4eBzWV9N5DBt65fzufp2TKDSUPj5grOXt630EohOxbz4PZ8
+         6psCDrP4aWzGIvREos6hLEVAouteOAjf/H1LdCCA7EprgpqhWgqOwc0LwY5ecm0WDZp4
+         aX7mgGuqPUXIL4k76SEySmsdzDUX7j5iNVAfP1Jju8XKmY50mWn6Dp+vEJcI4t25zu36
+         juLNujfc4pMZpj6zx8sf2t1alr3tOcLlUBP6OnQaQQ00Q8Vp3fbdHu79miLLnl4Xvc36
+         9Pr8k53thK9c3hv0iWIiu3HxsB8niiUuKaxbeJLlVT23A8ozeuyWueVTD0kecBXSQDNV
+         YdgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcddTIFhAUva6E5m4fxOb8nt4UIPOxfdXgU8wI57ZcNJRdfqeZhg6tbyN49RbIM1jZHBDBJme4OlNk@vger.kernel.org, AJvYcCUe3POq1CKgdLDMz2qn3xbpuLOLoSsK/fl8duCYWjEs7l/wSnwKZhUbvjf4F4JsgTHviP7x@vger.kernel.org, AJvYcCW7KYjj/XP8jOjd80nepQYw5wHuokjARoOMr5Vh2TzM71baJx52ZVYCxXp12zmT9sTzTUlSihPKlMTEF5VupA==@vger.kernel.org, AJvYcCWrA/gIKCcGyaQx5vpm3q4Og4KhwKLVz+LCd+2n1tRcNXKzL/YvgTqdfmqaaPII85tiyBSx1iU0eM71ilrO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAIo/qasMDLO6pQZELkxNxXHnLXTQGTEwCEIl7IwDDjqIkZCZ
+	42F/dGLW/ZJH/dFvpluA70bgmKWcstTjINT737cHaAoBoWFWqqqdO6HjCDCd7Yay+70EslMIpTK
+	7TC5LglDHoBK6OFmm/sZ+os4p2RU=
+X-Google-Smtp-Source: AGHT+IGOQhefEp7FLZkdniAIiiIsTLBIszMwpP4/Ctt+MCmEaSNoKLq4eMcSMtSjAgS5QbXUeuU5N7LkDLjPkosOQVw=
+X-Received: by 2002:a17:902:d50c:b0:20c:5da8:47b8 with SMTP id
+ d9443c01a7336-210c689759amr141323595ad.5.1730471414470; Fri, 01 Nov 2024
+ 07:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+In-Reply-To: <20241101060237.1185533-1-boqun.feng@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 1 Nov 2024 15:30:01 +0100
+Message-ID: <CANiq72ndWJtzSQSFYuVkRPhdan_PvNpvGEhQXKAZKESnt7JVAA@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] LKMM *generic* atomics in Rust
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
+	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This enables userspace to use name_to_handle_at to recover a pidfd
-to a process.
+On Fri, Nov 1, 2024 at 7:03=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
+ote:
+>
+> This time, I try implementing a generic atomic type `Atomic<T>`, since
+> Benno and Gary suggested last time, and also Rust standard library is
+> also going to that direction [1].
 
-We stash the process' PID in the root pid namespace inside the handle,
-and use that to recover the pid (validating that pid->ino matches the
-value in the handle, i.e. that the pid has not been reused).
+I would like to thank Boqun for trying out this approach, even when he
+wasn't (and maybe still isn't) convinced.
 
-We use the root namespace in order to ensure that file handles can be
-moved across namespaces; however, we validate that the PID exists in
-the current namespace before returning the inode.
-
-Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
----
- fs/pidfs.c | 50 +++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 43 insertions(+), 7 deletions(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c8e7e9011550..2d66610ef385 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -348,23 +348,59 @@ static const struct dentry_operations pidfs_dentry_operations = {
- 	.d_prune	= stashed_dentry_prune,
- };
- 
--static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
-+#define PIDFD_FID_LEN 3
-+
-+struct pidfd_fid {
-+	u64 ino;
-+	s32 pid;
-+} __packed;
-+
-+static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 			   struct inode *parent)
- {
- 	struct pid *pid = inode->i_private;
--	
--	if (*max_len < 2) {
--		*max_len = 2;
-+	struct pidfd_fid *fid = (struct pidfd_fid *)fh;
-+
-+	if (*max_len < PIDFD_FID_LEN) {
-+		*max_len = PIDFD_FID_LEN;
- 		return FILEID_INVALID;
- 	}
- 
--	*max_len = 2;
--	*(u64 *)fh = pid->ino;
--	return FILEID_KERNFS;
-+	fid->ino = pid->ino;
-+	fid->pid = pid_nr(pid);
-+	*max_len = PIDFD_FID_LEN;
-+	return FILEID_INO64_GEN;
-+}
-+
-+static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-+					 struct fid *gen_fid,
-+					 int fh_len, int fh_type)
-+{
-+	int ret;
-+	struct path path;
-+	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
-+	struct pid *pid;
-+
-+	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
-+		return NULL;
-+
-+	pid = find_get_pid_ns(fid->pid, &init_pid_ns);
-+	if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0) {
-+		put_pid(pid);
-+		return NULL;
-+	}
-+
-+	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	mntput(path.mnt);
-+	return path.dentry;
- }
- 
- static const struct export_operations pidfs_export_operations = {
- 	.encode_fh = pidfs_encode_fh,
-+	.fh_to_dentry = pidfs_fh_to_dentry,
- };
- 
- static int pidfs_init_inode(struct inode *inode, void *data)
--- 
-2.46.1
-
+Cheers,
+Miguel
 
