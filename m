@@ -1,225 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-33496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946AA9B972C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:13:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D939B9819
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 20:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE28B21660
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 18:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2866F1C21753
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE441CDFD3;
-	Fri,  1 Nov 2024 18:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0CB1CF280;
+	Fri,  1 Nov 2024 19:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHetmEKU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mha3ZbcX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134E11CDA35;
-	Fri,  1 Nov 2024 18:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366511CEAA0;
+	Fri,  1 Nov 2024 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484790; cv=none; b=H9HxCLwBhqJiVcQrP9Esit2ZBtMfAwcfIVLDV96bkVmZg7oFQETHpqcV8Y1rVa0ymcSyFvCE3PUzjbM56Jx2nvNzxzpq5d67hO72fsClC7iZonSX1UwFoz60EDdkBE9SttDCjG1CzDOHqj0vpHTNNsB4AyyPPMT48YWW/hWhUsE=
+	t=1730488147; cv=none; b=dWw9Qm+nb5FYCVDmLJiQd+4aOG9/IS/q+sr4gpRv4bdLDmgBAWmN2nM1a72vDTJDZbcbt+ZewNUVqFbuYrEkTbnpXNroeMIUKhU1ZQuLrIf4J05RpJ+UU3yXkGN0/RBK7msre8Cw/FcoiOp4GPIA54U22SxW/i5YwEaVQe+9j6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484790; c=relaxed/simple;
-	bh=NmGNWEO778eZ5xMOzouTP+rKGh09L8t95Tna+go8GGY=;
+	s=arc-20240116; t=1730488147; c=relaxed/simple;
+	bh=dOhNJ4bqsltqosWvK48KtLLJ8Qr3/+aIrxC5qXMR0c0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=It7/GQ6kWE8tBtB/b8hsBrjEZStd47fZcS0NK5Fn0QlFDUUjXc7YEtGudLL3HK7MF07yS5nCn/tQfYDcotUXftZyqcsle/uRbH940LuoaCL+DP41xYc8YanqUjh2xEwGurzvNSOl/7e+5VONQTNMJ1psXfOWH1FzAHmrElo6DSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHetmEKU; arc=none smtp.client-ip=209.85.210.177
+	 To:Cc:Content-Type; b=Z0lwnWIj4DiABLKKnXzYMSIhrbAP9ly/z2fBb6BIuBfS706B+MNnf2kJ4HnXUzccOwt1DxqmLz2FYqSSMEdddnV1Lwrp5zITk8AhsNQGM0uKci5YVv9eQjJ5p8zcNQeY0XOkC7ynsb5oesXp63YeBCrTW/BG1kq2Kn/IDJzhVAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mha3ZbcX; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso1091299b3a.3;
-        Fri, 01 Nov 2024 11:13:08 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1728649a12.0;
+        Fri, 01 Nov 2024 12:09:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730484788; x=1731089588; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730488145; x=1731092945; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PiW9SEzE14uWJXxy3FOB2Ud96GmiPqBall1rSE+SePk=;
-        b=UHetmEKUqtmkHAIWZDHjCu97GsC+K0ipogPE6US5QyYqvT3XwOmquIsDKnNmGPCHEC
-         4wRMRV0N8Fjf5j3BFkBNxffS3b1y08siN8s0LOno3sjEDrT50gRr7RmzE6WIdueJe7Tv
-         psM/2WXGbHlPIdr/0HjmdNeDy2eDL7kk7DXgxZV8W9hnwMXm85ff6PAa+Ac3cUxTT6vF
-         XIFVZDPFDcx6dXTXqaZ/At6r1J5DJkBbr0BcSTCqIF5V6il9IziCGgCus2ykWwySwCTw
-         ZGgJ8KgeExJd676x4ndagCT2OyIXfIVc6ukZVh4HExrekX2j59VeFhAIU99r5dwsep4o
-         UZMw==
+        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
+        b=Mha3ZbcX4POVTZ1BLshQByFshhUw3tVTb2ULwVxsHm6rp8mxQHlzjzXMFUlF5+6ENg
+         bDj67ZA8v5Sm+rE65E88xPYhKT9AylgRtquWjeVwEecytqdbAA8PptvzUN2gMd+V3ebm
+         FESMlRhf4Dt8RBIZzu7TMrjffSxAYDcnk1GRmBWG5PBFZS40n88lEFC03n52QuwXd1UH
+         RtEoGzZ1bvboPSaEc+4ISz/xzAZECm/04ELISoggjkJMfAADAniYvXCUbeN7vQY5cQl+
+         ZzqlQKQkvCE8NesnY1NKR+daJt0tdBDmKNvemthXJXu8IJjMLc2DSt4CzeIb4H1NUlgX
+         IlKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484788; x=1731089588;
+        d=1e100.net; s=20230601; t=1730488145; x=1731092945;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PiW9SEzE14uWJXxy3FOB2Ud96GmiPqBall1rSE+SePk=;
-        b=bozwg0HpvuAnACzgf7INJkagNPKsy1+kUin5HJeQvTwYbA/E6njqepe0wq4NXbLs40
-         1yMDQlIzByRrJ99hTDcV8QHuK4r3aqH27VFwj9AXei+oS+kocqsFzkOIEqbD+nzdHb4C
-         QZbtycHwGNMi96AQaO7n19DfohQWlqj2cwRSulLFT/MQqAEIOn7EmaZ8/PjOdVBX/4uJ
-         ZV8HJotn2KDli5D/MZ/imxwkMU4J/iHlGzndxMruIEU5h91MOEcOycAUS5csydMtYFa/
-         bRiNHYX4NiIBToBe2ni9vFtRQduPVg6P2Ka5OM/6RA8rNEmmEp78fsq22mXKpU+bZQVQ
-         cOPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUbpOobXIw8OKFfZle1Sta9vEWWCvCp9gSZc/cbsL6DzPmzlboiw3lQTivH8jvXvxfVke5tXCl@vger.kernel.org, AJvYcCXPK9vvCSdEf9naV4xMCoNLCjWI9ioRNLVl/cRTxdNk2aX4513Ig8aowEwv15CobPKmyA4Mncir/Fg7JD1m2w==@vger.kernel.org, AJvYcCXaPzJsjurkTXbJ+7p+UnFydc5zZHwR5fEudFn14SPQBFbbxL2Cnl5sVYY5arSOJD9B/x4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztsWxqcgbX5+TZuIFGoHGRBy328djVkxNF7iXqHKCKEYnvo1g1
-	ks1W3wR9NuMlTx2ficFSS29xybShUTfRHV/sgGTzYNsKDJ13JhaIQalGNlJP1ZQZTo2/9gFKR/s
-	IZcIm0vvALwuGvFE++eSSX2IvVxo=
-X-Google-Smtp-Source: AGHT+IEk5xx3/JFmK3SmabSdACLb2Y3za3f+3kE6RcmNc7n4e0XhM9sTxifeXbsjGY0xW5T523PyYTIoJXLl8NRIFS0=
-X-Received: by 2002:a05:6a21:78c:b0:1d9:261c:5942 with SMTP id
- adf61e73a8af0-1d9a8403ce0mr30567357637.28.1730484788340; Fri, 01 Nov 2024
- 11:13:08 -0700 (PDT)
+        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
+        b=Q9YQlL7GhIb1M8QboPtCD+Um8Gc1vS2A1aRIacxXiXbytVLYAwlIaQeMibv++W9quc
+         VF2UMg73/ME3EekHwUFtBx8aQaHUZANC7uoM8QzL3yCdlY0ebN65EmQvdM5l57rk0A8X
+         XVWM5cFmhHxDdAiJScuP4k6pTFhXSwxMIX9ysLBeyCV8HWCVw80yMImepTf+WmEagm/5
+         vQfe6n+v+voNWBTD1i0OPvqcXJ73XSuyDg+RW0CHFXEH2DR9PKJbw4fImkoO45QbOaZt
+         /EWiSh8jwbiVgUdEPpfDvbDeI5KCkhSlnCWX+Ma4/NArnsH9hm1lMLG5Nc6y7HzUDIHf
+         fy1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuKmevb2P5VTDHJkuq3pq7e659lLwawUhKguA/KeoyXV1Thxpo22tdbZ7HbXs27aXCP0Kx7GsOffOEmK4A@vger.kernel.org, AJvYcCVGxptkNGkg5pMwRd4lE6Jlkg4dLr2k3x93oytBUp9rzXYO6Qx8nCLp0bT8SrEMWSfpQ54=@vger.kernel.org, AJvYcCVR5UtAmIGsKaJVFIl/G18DPll46T3ELN1dDsS7EnlqiJ9jTIYinx/fCu5TqslWvdvQx8oxPck1nGsw8SrAAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSg3SFQPjGGcnlECoR1UQ5VHhhsH9xBFUYLp+WL+YeYJunEH98
+	F32rETray089AzCKBTtxzXCTX6EFWWtUtY+dZYTXjU1Nl0CUaksr0NTTSGjM5G9MSiW7D3Tj7JL
+	p62pNl018sqiyKfD9m6UJ9Cz1TeY=
+X-Google-Smtp-Source: AGHT+IEn2Do/6jRnMA3++ufyOBL20xnaTCPgPAZSoe26DmRbJ5T5EPARCBca+GckzX2dVOaQf3148vho6PwQQBOGO0c=
+X-Received: by 2002:a17:90b:3b89:b0:2e0:a926:19b1 with SMTP id
+ 98e67ed59e1d1-2e8f11dce3amr26813641a91.38.1730488145468; Fri, 01 Nov 2024
+ 12:09:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829174232.3133883-1-andrii@kernel.org> <20240829174232.3133883-2-andrii@kernel.org>
- <ZyTde66MF0GUqbvB@krava>
-In-Reply-To: <ZyTde66MF0GUqbvB@krava>
+References: <AM6PR03MB5848098C1DF99C6C417B405D99542@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 1 Nov 2024 11:12:55 -0700
-Message-ID: <CAEf4BzaFd2G0HqXLSd5JbQ4HYwzTzAsAskQJNbE9hb8KuTEWTg@mail.gmail.com>
-Subject: Re: [PATCH v7 bpf-next 01/10] lib/buildid: harden build ID parsing logic
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	jannh@google.com, linux-fsdevel@vger.kernel.org, willy@infradead.org, 
-	stable@vger.kernel.org, Eduard Zingerman <eddyz87@gmail.com>
+Date: Fri, 1 Nov 2024 12:08:53 -0700
+Message-ID: <CAEf4BzadfF8iSAnhWFDNmXE80ayJXDkucbeg0jv-+=FtoDg5Zg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 3/4] bpf/crib: Add struct file related CRIB kfuncs
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 1, 2024 at 6:54=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
+On Tue, Oct 29, 2024 at 5:17=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
 >
-> On Thu, Aug 29, 2024 at 10:42:23AM -0700, Andrii Nakryiko wrote:
-> > Harden build ID parsing logic, adding explicit READ_ONCE() where it's
-> > important to have a consistent value read and validated just once.
-> >
-> > Also, as pointed out by Andi Kleen, we need to make sure that entire EL=
-F
-> > note is within a page bounds, so move the overflow check up and add an
-> > extra note_size boundaries validation.
-> >
-> > Fixes tag below points to the code that moved this code into
-> > lib/buildid.c, and then subsequently was used in perf subsystem, making
-> > this code exposed to perf_event_open() users in v5.12+.
-> >
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-> > Reviewed-by: Jann Horn <jannh@google.com>
-> > Suggested-by: Andi Kleen <ak@linux.intel.com>
-> > Fixes: bd7525dacd7e ("bpf: Move stack_map_get_build_id into lib")
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  lib/buildid.c | 76 +++++++++++++++++++++++++++++----------------------
-> >  1 file changed, 44 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/lib/buildid.c b/lib/buildid.c
-> > index e02b5507418b..26007cc99a38 100644
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -18,31 +18,37 @@ static int parse_build_id_buf(unsigned char *build_=
-id,
-> >                             const void *note_start,
-> >                             Elf32_Word note_size)
-> >  {
-> > -     Elf32_Word note_offs =3D 0, new_offs;
-> > -
-> > -     while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
-> > -             Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_off=
-s);
-> > +     const char note_name[] =3D "GNU";
-> > +     const size_t note_name_sz =3D sizeof(note_name);
-> > +     u64 note_off =3D 0, new_off, name_sz, desc_sz;
-> > +     const char *data;
-> > +
-> > +     while (note_off + sizeof(Elf32_Nhdr) < note_size &&
-> > +            note_off + sizeof(Elf32_Nhdr) > note_off /* overflow */) {
-> > +             Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_off=
-);
-> > +
-> > +             name_sz =3D READ_ONCE(nhdr->n_namesz);
-> > +             desc_sz =3D READ_ONCE(nhdr->n_descsz);
-> > +
-> > +             new_off =3D note_off + sizeof(Elf32_Nhdr);
-> > +             if (check_add_overflow(new_off, ALIGN(name_sz, 4), &new_o=
-ff) ||
-> > +                 check_add_overflow(new_off, ALIGN(desc_sz, 4), &new_o=
-ff) ||
-> > +                 new_off > note_size)
-> > +                     break;
-> >
-> >               if (nhdr->n_type =3D=3D BUILD_ID &&
-> > -                 nhdr->n_namesz =3D=3D sizeof("GNU") &&
-> > -                 !strcmp((char *)(nhdr + 1), "GNU") &&
-> > -                 nhdr->n_descsz > 0 &&
-> > -                 nhdr->n_descsz <=3D BUILD_ID_SIZE_MAX) {
-> > -                     memcpy(build_id,
-> > -                            note_start + note_offs +
-> > -                            ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhd=
-r),
-> > -                            nhdr->n_descsz);
-> > -                     memset(build_id + nhdr->n_descsz, 0,
-> > -                            BUILD_ID_SIZE_MAX - nhdr->n_descsz);
-> > +                 name_sz =3D=3D note_name_sz &&
-> > +                 memcmp(nhdr + 1, note_name, note_name_sz) =3D=3D 0 &&
-> > +                 desc_sz > 0 && desc_sz <=3D BUILD_ID_SIZE_MAX) {
-> > +                     data =3D note_start + note_off + ALIGN(note_name_=
-sz, 4);
-> > +                     memcpy(build_id, data, desc_sz);
-> > +                     memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX -=
- desc_sz);
-> >                       if (size)
-> > -                             *size =3D nhdr->n_descsz;
-> > +                             *size =3D desc_sz;
-> >                       return 0;
-> >               }
+> This patch adds struct file related CRIB kfuncs.
 >
-> hi,
-> this fix is causing stable kernels to return wrong build id,
-> the change below seems to fix that (based on 6.6 stable)
+> bpf_fget_task() is used to get a pointer to the struct file
+> corresponding to the task file descriptor. Note that this function
+> acquires a reference to struct file.
 >
-> if we agree on the fix I'll send it to all affected stable trees
+> bpf_get_file_ops_type() is used to determine what exactly this file
+> is based on the file operations, such as socket, eventfd, timerfd,
+> pipe, etc, in order to perform different checkpoint/restore processing
+> for different file types. This function currently has only one return
+> value, FILE_OPS_UNKNOWN, but will increase with the file types that
+> CRIB supports for checkpoint/restore.
 >
-> jirka
->
->
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 > ---
-> The parse_build_id_buf does not account Elf32_Nhdr header size
-> when getting the build id data pointer and returns wrong build
-> id data as result.
+>  kernel/bpf/crib/crib.c  |  4 ++++
+>  kernel/bpf/crib/files.c | 44 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 48 insertions(+)
 >
-> This is problem only stable trees that merged c83a80d8b84f fix,
-> the upstream build id code was refactored and returns proper
-> build id.
+
+Please CC Christian Brauner and fs mailing list
+(linux-fsdevel@vger.kernel.org, both cc'ed) on changes like this (this
+entire patch set)
+
+> diff --git a/kernel/bpf/crib/crib.c b/kernel/bpf/crib/crib.c
+> index e6536ee9a845..78ddd19d5693 100644
+> --- a/kernel/bpf/crib/crib.c
+> +++ b/kernel/bpf/crib/crib.c
+> @@ -14,6 +14,10 @@ BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NE=
+XT | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
+>  BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
 >
-> Fixes: c83a80d8b84f ("lib/buildid: harden build ID parsing logic")
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  lib/buildid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> +BTF_ID_FLAGS(func, bpf_fget_task, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_=
+NULL)
+> +BTF_ID_FLAGS(func, bpf_get_file_ops_type, KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
+> +
+>  BTF_KFUNCS_END(bpf_crib_kfuncs)
 >
-> diff --git a/lib/buildid.c b/lib/buildid.c
-> index d3bc3d0528d5..9fc46366597e 100644
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -40,7 +40,7 @@ static int parse_build_id_buf(unsigned char *build_id,
->                     name_sz =3D=3D note_name_sz &&
->                     memcmp(nhdr + 1, note_name, note_name_sz) =3D=3D 0 &&
->                     desc_sz > 0 && desc_sz <=3D BUILD_ID_SIZE_MAX) {
-> -                       data =3D note_start + note_off + ALIGN(note_name_=
-sz, 4);
-> +                       data =3D note_start + note_off + sizeof(Elf32_Nhd=
-r) + ALIGN(note_name_sz, 4);
+>  static const struct btf_kfunc_id_set bpf_crib_kfunc_set =3D {
+> diff --git a/kernel/bpf/crib/files.c b/kernel/bpf/crib/files.c
+> index ececf150303f..8e0e29877359 100644
+> --- a/kernel/bpf/crib/files.c
+> +++ b/kernel/bpf/crib/files.c
+> @@ -5,6 +5,14 @@
+>  #include <linux/fdtable.h>
+>  #include <linux/net.h>
+>
+> +/**
+> + * This enum will grow with the file types that CRIB supports for
+> + * checkpoint/restore.
+> + */
+> +enum {
+> +       FILE_OPS_UNKNOWN =3D 0
+> +};
+> +
+>  struct bpf_iter_task_file {
+>         __u64 __opaque[3];
+>  } __aligned(8);
+> @@ -102,4 +110,40 @@ __bpf_kfunc void bpf_iter_task_file_destroy(struct b=
+pf_iter_task_file *it)
+>                 fput(kit->file);
+>  }
+>
+> +/**
+> + * bpf_fget_task() - Get a pointer to the struct file corresponding to
+> + * the task file descriptor
+> + *
+> + * Note that this function acquires a reference to struct file.
+> + *
+> + * @task: the specified struct task_struct
+> + * @fd: the file descriptor
+> + *
+> + * @returns the corresponding struct file pointer if found,
+> + * otherwise returns NULL
+> + */
+> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigne=
+d int fd)
+> +{
+> +       struct file *file;
+> +
+> +       file =3D fget_task(task, fd);
+> +       return file;
+> +}
+> +
+> +/**
+> + * bpf_get_file_ops_type() - Determine what exactly this file is based o=
+n
+> + * the file operations, such as socket, eventfd, timerfd, pipe, etc
+> + *
+> + * This function will grow with the file types that CRIB supports for
+> + * checkpoint/restore.
+> + *
+> + * @file: a pointer to the struct file
+> + *
+> + * @returns the file operations type
+> + */
+> +__bpf_kfunc unsigned int bpf_get_file_ops_type(struct file *file)
+> +{
+> +       return FILE_OPS_UNKNOWN;
+> +}
+> +
 
-ah, my screw up, sorry. LGTM
+this is not very supportable, users can do the same by accessing
+file->f_op and comparing it to a set of known struct file_operations
+references.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
->                         memcpy(build_id, data, desc_sz);
->                         memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX -=
- desc_sz);
->                         if (size)
+>  __bpf_kfunc_end_defs();
 > --
-> 2.47.0
+> 2.39.5
 >
 
