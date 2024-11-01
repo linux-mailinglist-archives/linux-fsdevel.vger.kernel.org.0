@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-33407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B499B8A11
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 04:48:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6F69B8A20
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 04:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CAEE1F226C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 03:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84382813E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 03:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F9D144304;
-	Fri,  1 Nov 2024 03:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA933145B3F;
+	Fri,  1 Nov 2024 03:52:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2095E4C79;
-	Fri,  1 Nov 2024 03:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3474C79;
+	Fri,  1 Nov 2024 03:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730432892; cv=none; b=MgLZPt6ta6wCvHze9kxg5y08xv6DgYL1yN4yVl2b1OplyX7TCzIGseS/wULn2jnOg9cTQKSjnvC+bpQC/LRRy8q1T9nhl3tUKkORls8GGwRRKBI82pbk+Km8GWS92KXcZRfpMx6YxpsKt0rXsa+Iz9cwvvwpYa2CkBDN4YeOrYo=
+	t=1730433147; cv=none; b=W18jnZhGbTBrVVVaVT7qcRZMqlQpP465W2JiFZjGr7/dgJ3o/qF+AelLVqwZCX9MMdP95XfAb2s8oyX4w+xTSvbxna5i1PCl847e2LpiryDRNp3lPN+wCAyZn5qgo0DUb0xbhuPmXiI/pTBb3xbIeFItD5sRn4viHR5kLqOisi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730432892; c=relaxed/simple;
+	s=arc-20240116; t=1730433147; c=relaxed/simple;
 	bh=/8DGfkrX/uyHXqf8uX35ZAlWorNNEDJzm6qaD4+bFVI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OitQiMwcl4vlsXCwkND4gy9XonYGpql9VCePYQGfv9k8OMsiymU5IENBXSECGeqkfJ3eT/u/Lo74ll+SLK057gSNEjpZXf160GTQNUbIDXnlwCZVZHYuEAHKwjpbGGdrBR9vVUnXR8G8qRnJJZBRwW/CcAnYGmaHBWLCB04HdtA=
+	 MIME-Version:Content-Type; b=WS2FxyYQAOHR9/1sl+gFaN3hsrzHH9ojUVm1DTiMOp2HUJDv2UxHLyR3b5QzcooTPTNEDIZQTFggMtRBHoD3c3mI37cZQ3jQbLuGi+QnqvGzyzXGWngl96aPRkPQfF7bJFm0txZw3+8EkXz+Vi/euVsfJvCpw7dfH9hIQnr1yoU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XfmxH6FFczpXjJ;
-	Fri,  1 Nov 2024 11:46:11 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xfn1Q3wMCzdkb7;
+	Fri,  1 Nov 2024 11:49:46 +0800 (CST)
 Received: from kwepemm600002.china.huawei.com (unknown [7.193.23.29])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1940C18006C;
-	Fri,  1 Nov 2024 11:48:07 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id E284C140361;
+	Fri,  1 Nov 2024 11:52:20 +0800 (CST)
 Received: from huawei.com (10.44.142.84) by kwepemm600002.china.huawei.com
  (7.193.23.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 1 Nov
- 2024 11:48:06 +0800
+ 2024 11:52:20 +0800
 From: Qi Xi <xiqi2@huawei.com>
-To: <bobo.shaobowang@huawei.com>, <xiqi2@huawei.com>, <bhe@redhat.com>,
-	<vgoyal@redhat.com>, <dyoung@redhat.com>, <holzheu@linux.vnet.ibm.com>,
-	<akpm@linux-foundation.org>, <kexec@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>
+To: <ruanjinjie@huawei.com>
+CC: <akpm@linux-foundation.org>, <bhe@redhat.com>,
+	<bobo.shaobowang@huawei.com>, <dyoung@redhat.com>,
+	<holzheu@linux.vnet.ibm.com>, <kexec@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<vgoyal@redhat.com>, <xiqi2@huawei.com>
 Subject: [PATCH v3] fs/proc: Fix compile warning about variable 'vmcore_mmap_ops'
-Date: Fri, 1 Nov 2024 11:43:49 +0800
-Message-ID: <20241101034349.8915-1-xiqi2@huawei.com>
+Date: Fri, 1 Nov 2024 11:48:03 +0800
+Message-ID: <20241101034803.9298-1-xiqi2@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
 References: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
@@ -59,7 +60,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemm600002.china.huawei.com (7.193.23.29)
 
 When build with !CONFIG_MMU, the variable 'vmcore_mmap_ops'
