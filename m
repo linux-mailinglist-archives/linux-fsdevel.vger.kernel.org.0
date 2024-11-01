@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-33474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849A59B92AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A977E9B92AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FF22812DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13921F22892
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D201A76A3;
-	Fri,  1 Nov 2024 13:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349A1A254F;
+	Fri,  1 Nov 2024 13:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="JkCUprLn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UjRKYQ1I"
+	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="REahKJe3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B5gfoaWL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577C01A4F19;
-	Fri,  1 Nov 2024 13:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D571A7273;
+	Fri,  1 Nov 2024 13:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730469323; cv=none; b=D8wsiTwrkVZpR80+UuTvwaYK1n6/EeWyH4hBpbvvAo5IN3dLOOep5Wem+k44ru33o1pFuQwJbNh5wwe3JB8PwNjaeRYOokLXdQUjBmqz7mDb0KTNEeXMSBRChzDn1mkjZgPsy0dsDsbXBIY8SDmt0cri2lIh3ZvNsWRy20uF/sU=
+	t=1730469325; cv=none; b=CcEC0oul6q3edPN4P+xa4NDKkwBPabDF80YJBk2WC3+e43PvByZ1oRulCAddQbr6fiR2acJtyt7QfnE6hYK2hspjOvs7zD1R7XxOg2W6YWkrmUcGCs3PbnTpljwA3+tn7+K+r9JZs03PuY0TA8p1zHO8jActGcMB3TzVDSJz9TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730469323; c=relaxed/simple;
-	bh=5Do7ib1t9wQVq/1iPe/AkeFeP/J3/r4KeqETrfO42PY=;
+	s=arc-20240116; t=1730469325; c=relaxed/simple;
+	bh=T0nDQFuEZwra84gxPs28eZs6BJBZo7mX8bcIGbUZRUY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jQJrC/gzaHc7nJzaREiT+vHQySU2AUSgro10A3OSfsawXT3lzIsJJXHtGjLC03HEbpNkk0XoAYrVSa6HgHbaHoZ7f2uGfI8mPbxVHfWp0J4ub+wmAu2WnAKhlyooEbbpl/iU4KlYqFIeDQNtCDYisPpVDWvU9sUxYku8WePxz6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=JkCUprLn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UjRKYQ1I; arc=none smtp.client-ip=202.12.124.146
+	 MIME-Version; b=igCmVVf+iImySHZZpXjJ5qBTp0CL1UE/QSBRiOzNmGeRQocP/DkMGgfRmHPFVurs8c0MPvktfozX8dM8kdV/Womc8hqbc/QjkRhx5Z5OihqsUPrLZ42GhfHAdw+fDSpPNedo6wR6kgdEGwZMQ8OvFL6xe3EmSaLQb0raWERacqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=REahKJe3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B5gfoaWL; arc=none smtp.client-ip=202.12.124.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 6C43F11400F5;
-	Fri,  1 Nov 2024 09:55:20 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id ACCC3254010F;
+	Fri,  1 Nov 2024 09:55:22 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Fri, 01 Nov 2024 09:55:20 -0400
+  by phl-compute-01.internal (MEProxy); Fri, 01 Nov 2024 09:55:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
 	:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1730469320; x=
-	1730555720; bh=vbcRh1xLMXs6D1grY6D0p73XgEN+cd/HL4E330kHx6c=; b=J
-	kCUprLncek+LzEggD0igyOs90C6oSDpQBlltIfHM9SMjdv8LisciQqMXyjH0mOzJ
-	HkvzzemqzpCsda8hkOTzDjXuiLsWrv7K+CJPnrQNPBzG+I45sByYeXyY+NmuUTUg
-	QAxV+/Snd+QOkmnJS90Dp6CfgsvZk96DLjQcVkRcmPXTwu4BaomPlMUKgNnzuxHm
-	WrTJ0tPSF9rLl8AuHWsLiguZ20/Yghz8df0/As8MpAotcyUadpzui2H0xzpRTzxT
-	iEjpyLNTyq4bj7IDCXjwBBQgRVPNL7pCSwNlDdp3kpP8O79ESZN9mNSSaQuVkEcP
-	kgecCAg7jjpUQxyEGJ5rQ==
+	:reply-to:subject:subject:to:to; s=fm2; t=1730469322; x=
+	1730555722; bh=cw7NL9F9LsI3qVysaim2aItN+y15bcgyhI4NNmXxdLg=; b=R
+	EahKJe3qrw1iA/s52c1uUt4Onojem0oW/32rhKY/ZEm2rAjHKhKCCf4E9q01ptwT
+	fP3QU8usMMfKKnbI0dGgMPrFavtAWr+6x/SKpm2b1di/wA2dZosHR34u5o0B6kEM
+	OrH9VSP20MYPmjP/pz9NyoQOt9sZ6rxiDcTa32PA8YSHoOAsdqp6TuJKRNRdzAfl
+	PxRUiscoQBEo+UOZnCtGFdThuGzUHDVY1DauJ23pejIr6E6zuASMv4WX6mtf6VRZ
+	2zWGqrPygzB8n+JR98bpHzWSuAeEzUq4a/BIuYdD9rlC5QBDZiT44noLlknrpWne
+	TL3EnvLfYNWec8i86QGvA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1730469320; x=1730555720; bh=v
-	bcRh1xLMXs6D1grY6D0p73XgEN+cd/HL4E330kHx6c=; b=UjRKYQ1IkwohDzR9L
-	aHu8pJB4lnMgSEGyLkLSQNRSsd6QzeRa68z4qEPLxQLlr4ylCcsPqkhvKa88hxxX
-	aMIhlKbMcCIl4JaRtqC3USypyreQXkh1pYqE6vDmkSBezwlkd+tJ8/5Z9bLrrWQC
-	sfYjIA9krug06IgF6yoihGN2477d6C0WK/lwHMFysloa0Da+eMyN6JuizzaraMz5
-	K2+l26Uv5YOcc2RO54yzG55qNou1C3vhLGevMb+bimsb9ZGXMzDPNTHDIbP9i0EE
-	koNz8OY+CJmGFK95A0XwaoNsqD20sKQqIHfUpO5cMjvMFyKOABrCQ0D5SQO10Gfy
-	G3/1g==
-X-ME-Sender: <xms:x90kZ1447YFQ2olNoixA2cmqplepQphVCqxXkBOOGBWqTqrGTW8W_Q>
-    <xme:x90kZy6QQzWRpx7xpLWPd17jHdrCc4ECWY3SMS3k9BUMlU1Nou90gtNkj__7PVSaj
-    svvKvdC4jd6Z9OYVM8>
-X-ME-Received: <xmr:x90kZ8cPFid5pA3Yjc1DgtO2_TjiZ-q7KQAN0xI4WVt73b0KA1U7pfadcwn54vnARK-30wNB6fb1EeIKFhQ_8Q>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1730469322; x=1730555722; bh=c
+	w7NL9F9LsI3qVysaim2aItN+y15bcgyhI4NNmXxdLg=; b=B5gfoaWL/1uOkWMGy
+	XOk+6bzqWX8zFlGcu72k2biPJaMu1WveKY0++pF75m4YlhQmDf645KXNN57x7GLu
+	R20o5T7r0k3YeGuyGzEnRmyXZoOLm5TUBs0oBbae7WZeBnha0fwbLm6D++yw7Wxa
+	LNck4OxNrYO2+4Xa6wUAv2jwE9YPKzLbcF9XmHjjK6A/hNNyqmNg1uoSLUbs5vHd
+	PIeseknVNjrukvPj3ihXj8gq7whLkx+RVXH2bwu2wpATAFrRCnwvL5q9tqNeusvu
+	tEePeCk3IV/PoAK11mx6TUVxJAurY1iogjIF+Qs4Suby3cvyPLj0PpkF5M3OCaUa
+	T+ZGw==
+X-ME-Sender: <xms:yt0kZzCtcTbJjQpJ-7KzVYgc4JwuixTYYCBP3qVF6hlEt5D7Q1FRBA>
+    <xme:yt0kZ5j5NeCy6YVm7AgAk6gSZAQjPYlNRJqmr4ZUeGyRrZ6c5TJtzms_hzz_YBYwx
+    NDqfJ1BSOIf5lrbGTw>
+X-ME-Received: <xmr:yt0kZ-ktutSfyfM9mglR_WatxsXYgmY9R6hFfz-jtPAL3LuMobeW4rQz4ya9YPKbFrVVQxmhNjv6Afl_iKfBWQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgheejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
@@ -79,14 +79,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgheejucetufdoteggod
     dprhgtphhtthhopehprghulhesphgruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtohep
     sghluhgtrgesuggvsghirghnrdhorhhgpdhrtghpthhtohepvghrihhnrdhshhgvphhhvg
     hrugesvgegfedrvghu
-X-ME-Proxy: <xmx:x90kZ-Lt6NhLX1M3RuyqJh3zwXyyl4qikpQvluqRFpRZ0VEdADz81Q>
-    <xmx:x90kZ5IZgiVocNRB1e5XjxrfuuEaomNMyD0kR5HQ6O2oL_DaB2Ttwg>
-    <xmx:x90kZ3yr3IpoHAdW3ZkuUZ0itfn_7Zcbt0uNhiFG3hcBW-nCAiLNuw>
-    <xmx:x90kZ1L983L8uZ9Mw3E357GCICQeJaolPGjdh0itejepenpES-BMEA>
-    <xmx:yN0kZx9xsU3xruug_EHDS3CGXCxxA_p9J2esXkyI-6D3lYX9QokFXFsg>
+X-ME-Proxy: <xmx:yt0kZ1xONH7CFD_MIESZPlpaDCGxU8KeVVDmwH5x4v_F1YFBwxxkfw>
+    <xmx:yt0kZ4TJv_uEyNWAXWnOXOZFZjlAS1pQJoaaB7K_kHMaK8eVh4GlHA>
+    <xmx:yt0kZ4YBTD4prWsoTdYqIhzLC_wFQcRo9x14b-sSRKd_D6Z5R5M98Q>
+    <xmx:yt0kZ5Sb4N12WilTo0cTYUR4m1g-5nwW95SmEbuThkfORvfr34VtSg>
+    <xmx:yt0kZ3G-ZNv3BjCqTi6zyuL6q5QIEbin87z63FZNGAzgGxMZtXsp8Dzn>
 Feedback-ID: i313944f9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 09:55:19 -0400 (EDT)
+ 1 Nov 2024 09:55:21 -0400 (EDT)
 From: Erin Shepherd <erin.shepherd@e43.eu>
 To: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -94,9 +94,9 @@ Cc: christian@brauner.io,
 	paul@paul-moore.com,
 	bluca@debian.org,
 	erin.shepherd@e43.eu
-Subject: [PATCH 2/4] pidfs: implement file handle export support
-Date: Fri,  1 Nov 2024 13:54:50 +0000
-Message-ID: <20241101135452.19359-3-erin.shepherd@e43.eu>
+Subject: [PATCH 3/4] pid: introduce find_get_pid_ns
+Date: Fri,  1 Nov 2024 13:54:51 +0000
+Message-ID: <20241101135452.19359-4-erin.shepherd@e43.eu>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241101135452.19359-1-erin.shepherd@e43.eu>
 References: <20241101135452.19359-1-erin.shepherd@e43.eu>
@@ -108,62 +108,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On 64-bit platforms, userspace can read the pidfd's inode in order to
-get a never-repeated PID identifier. On 32-bit platforms this identifier
-is not exposed, as inodes are limited to 32 bits. Instead expose the
-identifier via export_fh, which makes it available to userspace via
-name_to_handle_at
+In some situations it is useful to be able to atomically get a PID
+from a specific PID namespace.
 
 Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
 ---
- fs/pidfs.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/linux/pid.h |  1 +
+ kernel/pid.c        | 10 ++++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 80675b6bf884..c8e7e9011550 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/anon_inodes.h>
-+#include <linux/exportfs.h>
- #include <linux/file.h>
- #include <linux/fs.h>
- #include <linux/magic.h>
-@@ -347,6 +348,25 @@ static const struct dentry_operations pidfs_dentry_operations = {
- 	.d_prune	= stashed_dentry_prune,
- };
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index a3aad9b4074c..965f8b3ff9a8 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -124,6 +124,7 @@ extern struct pid *find_vpid(int nr);
+ /*
+  * Lookup a PID in the hash table, and return with it's count elevated.
+  */
++extern struct pid *find_get_pid_ns(int nr, struct pid_namespace *ns);
+ extern struct pid *find_get_pid(int nr);
+ extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
  
-+static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
-+			   struct inode *parent)
-+{
-+	struct pid *pid = inode->i_private;
-+
-+	if (*max_len < 2) {
-+		*max_len = 2;
-+		return FILEID_INVALID;
-+	}
-+
-+	*max_len = 2;
-+	*(u64 *)fh = pid->ino;
-+	return FILEID_KERNFS;
-+}
-+
-+static const struct export_operations pidfs_export_operations = {
-+	.encode_fh = pidfs_encode_fh,
-+};
-+
- static int pidfs_init_inode(struct inode *inode, void *data)
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 2715afb77eab..2967f8a98330 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -470,16 +470,22 @@ struct task_struct *get_pid_task(struct pid *pid, enum pid_type type)
+ }
+ EXPORT_SYMBOL_GPL(get_pid_task);
+ 
+-struct pid *find_get_pid(pid_t nr)
++struct pid *find_get_pid_ns(pid_t nr, struct pid_namespace *ns)
  {
- 	inode->i_private = data;
-@@ -382,6 +402,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
- 		return -ENOMEM;
+ 	struct pid *pid;
  
- 	ctx->ops = &pidfs_sops;
-+	ctx->eops = &pidfs_export_operations;
- 	ctx->dops = &pidfs_dentry_operations;
- 	fc->s_fs_info = (void *)&pidfs_stashed_ops;
- 	return 0;
+ 	rcu_read_lock();
+-	pid = get_pid(find_vpid(nr));
++	pid = get_pid(find_pid_ns(nr, ns));
+ 	rcu_read_unlock();
+ 
+ 	return pid;
+ }
++EXPORT_SYMBOL_GPL(find_get_pid_ns);
++
++struct pid *find_get_pid(pid_t nr)
++{
++	return find_get_pid_ns(nr, task_active_pid_ns(current));
++}
+ EXPORT_SYMBOL_GPL(find_get_pid);
+ 
+ pid_t pid_nr_ns(struct pid *pid, struct pid_namespace *ns)
 -- 
 2.46.1
 
