@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-33428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767259B8B67
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:52:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F059B8B71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C750282F50
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 06:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C991F23515
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 06:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A8015574E;
-	Fri,  1 Nov 2024 06:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F134E15854A;
+	Fri,  1 Nov 2024 06:51:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654B41531E3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654531531E1;
 	Fri,  1 Nov 2024 06:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730443882; cv=none; b=b48hTtHxFFn/TJRQ4p+pI6PQki5fw7QGkqoOZxs5MdUDF4TwVDkXQDTZWUCQV/sOKHESmtgWb2m2+Dua/ZHhNCuOgjfI7nNA9TNdEfm/7eGWtVu35QTFnwwdQ/PjaPqWzj6QejFenLRDYy6kFH7dSZPWztnVRCGX6P0XIdv8xsg=
+	t=1730443883; cv=none; b=SIUI9dJ6HZrIP0MG8dUKgNzy0MNMbM89blHlY3yVPo52FDR7UtUDq3vS/5zp2bxt/06/MPGCxq4HpR20gfQfHAwFGfrQQgCTyFQtQi8ODntHK+cw/JmQ+5gVtqKUcjw5iyHkfhlrDWb6Q7qFcw9TNvkYEdjDQHMZ5aZ6xO2jkFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730443882; c=relaxed/simple;
-	bh=flwSYDcWTypdwkLTK0g+BKXw2vEs+2Y5lrs2u3gyT+I=;
+	s=arc-20240116; t=1730443883; c=relaxed/simple;
+	bh=a/cgHeC/Lq24iSBi4JLnv4TUpKWchwx9eJaiMYRDZSM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HpJ9dFn/mCF6CQjMelN5IEZ1sGShcSsAUmlMMyWtGIKL7HYhgNfZd8rq4IHAM4glDv1QYe5ydCmnjgUmw40Cxa7qxKBPPryXPMfaTmFrRIA9uzN2cNKxkxT/7OwX29Y6eRuZ4PoiR6unDq1O8o74Z4pqEuEmJfRPWprV4zCwipA=
+	 MIME-Version; b=DgKGPzuwlYlUldrmj1/PlRfRdXwgRqdGrEfbbt+7nKb8beYXFLwsnK5AGOnOV3K3TWOxRP2qNyoTkoI+Q47qL4DKhBa9bz9Ji+qU57OLJ3Kejc2D7/VlbHZJAsc17+dJFa28IQc2z9aZZ9XdRoQqthgfNZS+O+3Ww02PDNpxeJM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xfs2N2gdyz4f3mHK;
-	Fri,  1 Nov 2024 14:50:52 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xfs2V4JJBz4f3jt2;
+	Fri,  1 Nov 2024 14:50:58 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 0249B1A018D;
+	by mail.maildlp.com (Postfix) with ESMTP id 478611A018D;
 	Fri,  1 Nov 2024 14:51:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP3 (Coremail) with SMTP id _Ch0CgAHmcVceiRnzhcPAg--.62749S6;
-	Fri, 01 Nov 2024 14:51:10 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgAHmcVceiRnzhcPAg--.62749S7;
+	Fri, 01 Nov 2024 14:51:11 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: akpm@linux-foundation.org,
 	willy@infradead.org
 Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/6] Xarray: skip unneeded xas_store() and xas_clear_mark() in __xa_alloc()
-Date: Fri,  1 Nov 2024 23:50:26 +0800
-Message-Id: <20241101155028.11702-5-shikemeng@huaweicloud.com>
+Subject: [PATCH 5/6] Xarray: remove repeat check in xas_squash_marks()
+Date: Fri,  1 Nov 2024 23:50:27 +0800
+Message-Id: <20241101155028.11702-6-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20241101155028.11702-1-shikemeng@huaweicloud.com>
 References: <20241101155028.11702-1-shikemeng@huaweicloud.com>
@@ -56,10 +56,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAHmcVceiRnzhcPAg--.62749S6
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW8tFyrKr45tw17AFW5Wrg_yoWfWFg_Aa
-	4vqr9rJw4DKF92q3Wa9rsYvryrArs0krWruFWDtF9ruF4DJrZxC34vyrn8Xas09F4jkFy7
-	Jrs8ur1jkr1IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:_Ch0CgAHmcVceiRnzhcPAg--.62749S7
+X-Coremail-Antispam: 1UD129KBjvdXoWrtFWxKF1Dtr4kXFy7Xw4kCrg_yoWxtwb_Za
+	y0vrn2yF1xCrn7XwsIkFs0yryjkryvqF9rGFW8ta47ur10qry3ur1vqry5Aa4xZw4ayFy7
+	JrsxZr1Y9r15WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
 	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
 	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC
@@ -70,39 +70,33 @@ X-Coremail-Antispam: 1UD129KBjvdXoWruFW8tFyrKr45tw17AFW5Wrg_yoWfWFg_Aa
 	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
 	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
 	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	C0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
 	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
 	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jyYLPUUUUU=
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-If xas_find_marked() failed, there is no need to call xas_store() and
-xas_clear_mark(). Just call xas_store() and xas_clear_mark() if
-xas_find_marked() succeed.
+Caller of xas_squash_marks() has ensured xas->xa_sibs is non-zero. Just
+remove repeat check of xas->xa_sibs in xas_squash_marks().
 
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 ---
- lib/xarray.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ lib/xarray.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/lib/xarray.c b/lib/xarray.c
-index 3fac3f2cea9d..012d0ef5e847 100644
+index 012d0ef5e847..76693aa6cb49 100644
 --- a/lib/xarray.c
 +++ b/lib/xarray.c
-@@ -1860,10 +1860,11 @@ int __xa_alloc(struct xarray *xa, u32 *id, void *entry,
- 		xas_find_marked(&xas, limit.max, XA_FREE_MARK);
- 		if (xas.xa_node == XAS_RESTART)
- 			xas_set_err(&xas, -EBUSY);
--		else
-+		else {
- 			*id = xas.xa_index;
--		xas_store(&xas, entry);
--		xas_clear_mark(&xas, XA_FREE_MARK);
-+			xas_store(&xas, entry);
-+			xas_clear_mark(&xas, XA_FREE_MARK);
-+		}
- 	} while (__xas_nomem(&xas, gfp));
+@@ -128,9 +128,6 @@ static void xas_squash_marks(const struct xa_state *xas)
+ 	unsigned int mark = 0;
+ 	unsigned int limit = xas->xa_offset + xas->xa_sibs + 1;
  
- 	return xas_error(&xas);
+-	if (!xas->xa_sibs)
+-		return;
+-
+ 	do {
+ 		unsigned long *marks = xas->xa_node->marks[mark];
+ 		if (find_next_bit(marks, limit, xas->xa_offset + 1) == limit)
 -- 
 2.30.0
 
