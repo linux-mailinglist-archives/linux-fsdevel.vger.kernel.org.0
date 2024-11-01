@@ -1,174 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-33447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D69B8CE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 09:19:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90469B8DD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 10:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7C51F22AFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 08:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78860286E91
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 09:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8E0156F4C;
-	Fri,  1 Nov 2024 08:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E90158D94;
+	Fri,  1 Nov 2024 09:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nezja3Uy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbr7Nmy1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344B1527A7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475A1156220;
+	Fri,  1 Nov 2024 09:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449161; cv=none; b=NfJq9bd34xt9ocNaH0x2UjfhSbgwuI5Z9lHx+Kk67Coilj1h/BTRtvMf5DCzNsZ3IW9XnV4bkctd3lZKFYOFxL8720oqlpDU3b+ZN/GUekGBnSSX8pt47YNQqSIZZK2ArwxT2EdDsfDBX7/zRGZkDhBJbdU6uUh+Ql6wBYOH5jQ=
+	t=1730453252; cv=none; b=EPuEKd/taLRzRDdMIZZlm7fuk9LWsRCLu8l2fw5PpMZPIvYicaHodQI8Ufd2G1P7TaNgklSlZoyyaUoZ3Yxh/BmFLK7Fhfv0zacjaFiDT2umpO+ZopfVkUtQ37sgBRul60VAuOtx8QgAE9U3F4WoOonvA9gm6y4728SPRgML7mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449161; c=relaxed/simple;
-	bh=IBxCMaTDMwMv7TecQhch3IN0C/Pthjqbj5pJgfI0Dyc=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=qni2sfU2Maxmtaem4g3SayDAp78/yrGgS5+2M5i+m/OGOwwcqWeqF+/4gUkAv4MGCnegLRPvuQ8ReWP5VsBMvRD72NgMgLIbfnTQuOYIQE1Q83fBCHOzG14La4FW6Jb1O+yRRY/TFsRC2nPSwSnl2vvxSwuq5cfdSni1kGtn03Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nezja3Uy; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241101081915euoutp0264945633cff1a26022b6dee8321f5cf6~Dyla642S31344213442euoutp02N
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 08:19:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241101081915euoutp0264945633cff1a26022b6dee8321f5cf6~Dyla642S31344213442euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730449155;
-	bh=u0t4feekxOIswH/gya5PvM4rWukDuX0GEL28uYYRBHM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nezja3UyPadsbJdJFB1BbxfY/LoWbOzC3yTYYCVFi039jTrjHEOildnT6DXmFGDbD
-	 Nu03N73Hf3GUbuYoyYM4I5skLr/WSxhgAC6p59YfchgZhI3wbr8p1ZQ8wp9re0Yx3p
-	 QjbL6r38IvQP4B9ogJn2SxY4kqrcX/WyWXgacEbk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241101081915eucas1p2c8a05e9da2bb94096e29e2c99dc460cc~DylapO37t0479604796eucas1p2O;
-	Fri,  1 Nov 2024 08:19:15 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.23.20821.30F84276; Fri,  1
-	Nov 2024 08:19:15 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241101081914eucas1p269f6f4d515aa0db81f4fb03cd3ae64d7~DylZ8gtLF3182931829eucas1p2Y;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241101081914eusmtrp24265f317813388cfa225d1254c009a9b~DylZ73QdP2944729447eusmtrp2G;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-7a-67248f038fa3
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 47.C0.19654.20F84276; Fri,  1
-	Nov 2024 08:19:14 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241101081914eusmtip2b586a3684238513b723c7a4ad1e26a71~DylZxysUn0659906599eusmtip2a;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 1 Nov 2024 08:19:13 +0000
-Date: Fri, 1 Nov 2024 09:19:12 +0100
-From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To: Hans Holmberg <hans@owltronix.com>
-CC: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, "Keith
- Busch" <kbusch@meta.com>, <linux-block@vger.kernel.org>,
-	<linux-nvme@lists.infradead.org>, <linux-scsi@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<joshi.k@samsung.com>, <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Message-ID: <20241101081912.kvixtd6mattjemxk@ArmHalley.local>
+	s=arc-20240116; t=1730453252; c=relaxed/simple;
+	bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FG6ySq2CA5OEOuULPrU6f/sPoIzlKO1yG9QOM5eKSog5kcSuOJuz5tNq4pkI6qpLMJrO3KiidQFvVQo2hUDwkdLeru952wHS0QAH1SPAT+oCvxoaSFji4nibSIcPTRpfZkdESFNel8NDhNN+x8u1AndwKA63Cdaho/KVAylX9Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbr7Nmy1; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e6048bc23cso1047467b6e.3;
+        Fri, 01 Nov 2024 02:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730453249; x=1731058049; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+        b=bbr7Nmy1hwks5nAfmDITUL3s9lSCUL9Jkrb19AKZpxoGw3pXY7MPPOxGbVeifZxz1i
+         aUyywXzVOGbbM7Kxwe+261px2F7H24XAoVpmYq38YjQkbrcgcRXh0nhJI3GU4XKIs+gg
+         nd8Yiudp48J4n5sPiAUBOgyhltOumuoQdKQMAqnlyesnWI8mTxyszJwG31PTRiiD1R5z
+         88SubsBSbv8xo/1dirTCe9mOmgIIv8CynZXzsR9wOadDLj8SnybkbsC0xxFyqlGoZFBY
+         RnC2lMD/pVoRH1qUSBnu4Jy4LTOF/TyM3oYvVQTU2jCCWQkTThefhbGmOxK0559uLaWy
+         J/Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730453249; x=1731058049;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+        b=M4Hktgi4aoupgcRObDa6tiEPkz8UwCmWsz9DRBPJsC6CUJtS/eEym8cHuxlMxCdoxy
+         Uzesm23xJoQZ4gWjLB+AMPCfj/cE5QbnlYFHh+ctij7KkHSVvLGMlYSH7o7Dlqz3iiK5
+         jIR7YABgx6J4DSFUlKuwh3+67hW6s9oyvQeeJ0uMxsAnlVu3Sf0TSQJ+irHhdmjjK6l5
+         r3MMIPaiHGpHydzJ+Dh2XEmv7jTqkblgabj/Wa8aUFOpOoSU9W5V5AUeT7b2wBh7ZHu0
+         P8tvqcHMB4tesijqgK0BSi78jLS7PwjTGT5V65UulY7/Gd4WvU7DU02FlZgy0AiMRoPO
+         oegw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Xd2HYbM5vPFRym4MtuwOU9hO82C49+zMnAZqhGJSazWnrODHBp6txpoMVGpLkWDGRpYbygIqlrr5uGxU@vger.kernel.org, AJvYcCVydf1VgEn05j99ioO1G3iLxmpkgh4YhtNcy9jLapUzwrgLc55QJb0VSE0olj7Umay+Q2baqwFUipx3@vger.kernel.org, AJvYcCWleCSvAFMyHShRQgCLh+LJYxoX+CrRbHIg9LA4rILwe4PsdtGqYk+dzjsd2PGWw3Lvd1ZVjZwNWUqlewbp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA89TrQSH3+Y4cDDeVaqC5MLyT5mwfL5uE2l9VF/MOtwYlXeTE
+	mGSDLu9KTYTJThxX13FAMifzI+ogxu58bxmyux5gpQJP34mZMgPw
+X-Google-Smtp-Source: AGHT+IEnw1KGe2Yr+hnMsq1dWAe8G0Pz1BzODKOkH9Nt1iSct2D9op4j5ophqjwd3N20iS/bM4YuZQ==
+X-Received: by 2002:a05:6808:1b87:b0:3e6:4f5b:ae87 with SMTP id 5614622812f47-3e64f5bb068mr13279796b6e.47.1730453249109;
+        Fri, 01 Nov 2024 02:27:29 -0700 (PDT)
+Received: from [10.172.23.36] ([38.207.141.200])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f9050sm2205376a12.74.2024.11.01.02.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 02:27:28 -0700 (PDT)
+Message-ID: <73b917c76cff44f3085c79f251d958b1ec6c793a.camel@gmail.com>
+Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in
+ xfs_inode_item_push
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: syzbot <syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com>, 
+	chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Date: Fri, 01 Nov 2024 17:27:24 +0800
+In-Reply-To: <66f5d630.050a0220.38ace9.0002.GAE@google.com>
+References: <66f5d630.050a0220.38ace9.0002.GAE@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-In-Reply-To: <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7rM/SrpBrO2CVlM+/CT2WLu1NWs
-	FnsWTWKyWLn6KJPFu9ZzLBaTDl1jtDhzdSGLxd5b2hZ79p5ksZi/7Cm7Rff1HWwO3B6Xr3h7
-	bFrVyeaxeUm9x+6bDWwe5y5WeBzetIjVY/Ppao/Pm+QCOKK4bFJSczLLUov07RK4MjbO+c9W
-	cJar4sFCqwbGvRxdjJwcEgImEh3LXrJ0MXJxCAmsYJTYfe4zlPOFUaL9xGlGCOczo8TCz8dZ
-	YVr2XbvABpFYzihxaGoDC1zV/KvnoDKbGSWuv3zIDNLCIqAi0fdhPSOIzSZgL3Fp2S2wuIiA
-	msTZFx1MIDazwFUmifcPwOLCAj4S29d/YgOxeQVsJc7f7WKFsAUlTs58wgJRbyXR+aEJKM4B
-	ZEtLLP8H9hCnQKDE/6efmSEuVZJ4/OItI4RdK3Fqyy0mkNskBPo5JY4vPQtV5CLxoncRE4Qt
-	LPHq+BZ2CFtG4v/O+VDxaomGkyegmlsYJVo7toItlhCwlug7kwNR4yix+tgvZogwn8SNt4IQ
-	Z/JJTNo2HSrMK9HRJgRRrSax+t4blgmMyrOQPDYLyWOzEB5bwMi8ilE8tbQ4Nz212DAvtVyv
-	ODG3uDQvXS85P3cTIzBNnf53/NMOxrmvPuodYmTiYDzEKMHBrCTC+6FAOV2INyWxsiq1KD++
-	qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2ampBahFMlomDU6qBKdZWWtn+1Ff+y2tmX3/axmx6
-	8Er3ir0Fv190l55NOOv8+VH5bwvPlIeuVYxLtsetSsrzyQ89U/3nSEbrdM09LQGqD/4Kveq0
-	+Pn6yStx6QfZtQ2ejpvZ9xgtUP21Yves18xP0o6pC+VLpOx9/7pFL/Nfm+6m8+E9k99Mszbh
-	lvRP3hn9WOtBwNObEc/Fp1uypVUITWdWkT800adP5NOX/2eaJKdsqSj/8W3V20n6O+0d/s1b
-	qHc3TqtS8IjyqclT+T7xnjeL4eCpsTF1qvjnZfuyc0e088HT76dM92DS9I5zii9LaL469YKc
-	J8fzDGO39e4xp5vWei64tOYLW3aO+Hc9aat9al0FAVMOcKYfUmIpzkg01GIuKk4EAP8jPTfC
-	AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7pM/SrpBpvblS2mffjJbDF36mpW
-	iz2LJjFZrFx9lMniXes5FotJh64xWpy5upDFYu8tbYs9e0+yWMxf9pTdovv6DjYHbo/LV7w9
-	Nq3qZPPYvKTeY/fNBjaPcxcrPA5vWsTqsfl0tcfnTXIBHFF6NkX5pSWpChn5xSW2StGGFkZ6
-	hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GRvn/GcrOMtV8WChVQPjXo4uRk4OCQET
-	iX3XLrB1MXJxCAksZZSY/+koK0RCRmLjl6tQtrDEn2tdUEUfGSXWL7jMDOFsZpT4tmclE0gV
-	i4CKRN+H9YwgNpuAvcSlZbeYQWwRATWJsy86wGqYBa4ySbx/ABYXFvCR2L7+ExuIzStgK3H+
-	bhcrxNDFLBJvlm6GSghKnJz5hAWi2UJi5vzzQAs4gGxpieX/wF7gFAiU+P/0MzPEpUoSj1+8
-	ZYSwayU+/33GOIFReBaSSbOQTJqFMGkBI/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwHjd
-	duznlh2MK1991DvEyMTBeIhRgoNZSYT3Q4FyuhBvSmJlVWpRfnxRaU5q8SFGU2BQTGSWEk3O
-	ByaMvJJ4QzMDU0MTM0sDU0szYyVxXrYr59OEBNITS1KzU1MLUotg+pg4OKUamMzvPHHZ/mia
-	lfjvmkfnt3lxG99vKuJ4zOf9+UpJ+vbaOW++JV+Ycfu76/XcnWt9/zx1uf5WMfZpXWscy+2z
-	Dqy8xeFnut5siHeo469RTs4QOzc3m+HewQv8vb9PS63lmbD2wewZ1XsS/7OsX/Ob16t2me+k
-	4NWGQi8Ozducu2LtdNYIvVVrVJ49Eu9SmGJ7aMY+Zr0DDDvvpDKmmHp2Kz4tyF7Nlxm55uyX
-	Ncc8X3vZ2uZ5bPA8ryEQWOye/blNnnuPzE69BbznNiyZ3KGw9nA019PshVp2k+dwT37z8/RK
-	oys5Rt1eLgEnX03bUjOj4nKavmvSPJ2e3oiJRb5Zx+4Iz/moErPPsFu9M9Jt0jUlluKMREMt
-	5qLiRABodThwYAMAAA==
-X-CMS-MailID: 20241101081914eucas1p269f6f4d515aa0db81f4fb03cd3ae64d7
-X-Msg-Generator: CA
-X-RootMTR: 20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c
-References: <20241030154556.GA4449@lst.de>
-	<ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
-	<20241030155052.GA4984@lst.de>
-	<ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
-	<20241030165708.GA11009@lst.de>
-	<ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
-	<CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
-	<ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com>
-	<CGME20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c@eucas1p2.samsung.com>
-	<CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
 
-On 01.11.2024 08:16, Hans Holmberg wrote:
->Locking in or not, to constructively move things forward (if we are
->now stuck on how to wire up fs support) I believe it would be
->worthwhile to prototype active fdp data placement in xfs and evaluate
->it. Happy to help out with that.
+On Thu, 2024-09-26 at 14:46 -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+>=20
+> HEAD commit:=C2=A0=C2=A0=C2=A0 11a299a7933e Merge tag 'for-6.12/block-202=
+40925' of
+> git://..
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1378aaa998000=
+0
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3D31f49563bb05c4a8
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D1a28995e12fd13faa44e
+> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0.6=
+, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D164f7627980000
+> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D109=
+23a80580000
+>=20
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/e97035004495/disk-11a299a7.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/0be318a25b1d/vmlinux-11a299a=
+7.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/91f17271baa3/bzImage-11a299a=
+7.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/971400d21e6d/mount_0.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com
+>=20
+> BUG: KASAN: slab-use-after-free in xfs_inode_item_push+0x293/0x2e0
+> fs/xfs/xfs_inode_item.c:775
+> Read of size 8 at addr ffff8880774cfa70 by task xfsaild/loop2/10928
+>=20
+> CPU: 1 UID: 0 PID: 10928 Comm: xfsaild/loop2 Not tainted 6.11.0-
+> syzkaller-10669-g11a299a7933e #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 09/13/2024
+> Call Trace:
+> =C2=A0<TASK>
+> =C2=A0__dump_stack lib/dump_stack.c:94 [inline]
+> =C2=A0dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> =C2=A0print_address_description mm/kasan/report.c:377 [inline]
+> =C2=A0print_report+0x169/0x550 mm/kasan/report.c:488
+> =C2=A0kasan_report+0x143/0x180 mm/kasan/report.c:601
+> =C2=A0xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
+> =C2=A0xfsaild_push_item fs/xfs/xfs_trans_ail.c:395 [inline]
+> =C2=A0xfsaild_push fs/xfs/xfs_trans_ail.c:523 [inline]
+> =C2=A0xfsaild+0x112a/0x2e00 fs/xfs/xfs_trans_ail.c:705
+> =C2=A0kthread+0x2f0/0x390 kernel/kthread.c:389
+> =C2=A0ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> =C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> =C2=A0</TASK>
+>=20
+> Allocated by task 10907:
+> =C2=A0kasan_save_stack mm/kasan/common.c:47 [inline]
+> =C2=A0kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+> =C2=A0unpoison_slab_object mm/kasan/common.c:319 [inline]
+> =C2=A0__kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+> =C2=A0kasan_slab_alloc include/linux/kasan.h:247 [inline]
+> =C2=A0slab_post_alloc_hook mm/slub.c:4086 [inline]
+> =C2=A0slab_alloc_node mm/slub.c:4135 [inline]
+> =C2=A0kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4142
+> =C2=A0xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
+> =C2=A0xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
+> =C2=A0xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
+> =C2=A0xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
+> =C2=A0vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> =C2=A0do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> =C2=A0__do_sys_mkdir fs/namei.c:4300 [inline]
+> =C2=A0__se_sys_mkdir fs/namei.c:4298 [inline]
+> =C2=A0__x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> Freed by task 5213:
+> =C2=A0kasan_save_stack mm/kasan/common.c:47 [inline]
+> =C2=A0kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+> =C2=A0kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+> =C2=A0poison_slab_object mm/kasan/common.c:247 [inline]
+> =C2=A0__kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+> =C2=A0kasan_slab_free include/linux/kasan.h:230 [inline]
+> =C2=A0slab_free_hook mm/slub.c:2343 [inline]
+> =C2=A0slab_free mm/slub.c:4580 [inline]
+> =C2=A0kmem_cache_free+0x1a2/0x420 mm/slub.c:4682
+> =C2=A0xfs_inode_free_callback+0x152/0x1d0 fs/xfs/xfs_icache.c:158
+> =C2=A0rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+> =C2=A0rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+> =C2=A0handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+> =C2=A0__do_softirq kernel/softirq.c:588 [inline]
+> =C2=A0invoke_softirq kernel/softirq.c:428 [inline]
+> =C2=A0__irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+> =C2=A0irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+> =C2=A0instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037
+> [inline]
+> =C2=A0sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1=
+037
+> =C2=A0asm_sysvec_apic_timer_interrupt+0x1a/0x20
+> arch/x86/include/asm/idtentry.h:702
+>=20
+> The buggy address belongs to the object at ffff8880774cfa40
+> =C2=A0which belongs to the cache xfs_ili of size 264
+> The buggy address is located 48 bytes inside of
+> =C2=A0freed 264-byte region [ffff8880774cfa40, ffff8880774cfb48)
+>=20
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0
+> pfn:0x774cf
+> ksm flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff888142abe140 ffffea0001d56080 0000000000000007
+> raw: 0000000000000000 00000000000c000c 00000001f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Reclaimable, gfp_mask
+> 0x52c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_RECLAIMABLE)
+> , pid 5289, tgid 5289 (syz-executor269), ts 76754520423, free_ts
+> 21942205490
+> =C2=A0set_page_owner include/linux/page_owner.h:32 [inline]
+> =C2=A0post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+> =C2=A0prep_new_page mm/page_alloc.c:1545 [inline]
+> =C2=A0get_page_from_freelist+0x3039/0x3180 mm/page_alloc.c:3457
+> =C2=A0__alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+> =C2=A0alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+> =C2=A0alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+> =C2=A0allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+> =C2=A0new_slab mm/slub.c:2632 [inline]
+> =C2=A0___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+> =C2=A0__slab_alloc+0x58/0xa0 mm/slub.c:3909
+> =C2=A0__slab_alloc_node mm/slub.c:3962 [inline]
+> =C2=A0slab_alloc_node mm/slub.c:4123 [inline]
+> =C2=A0kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4142
+> =C2=A0xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
+> =C2=A0xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
+> =C2=A0xfs_icreate+0x13a/0x1f0 fs/xfs/xfs_inode.c:593
+> =C2=A0xfs_symlink+0xa74/0x1230 fs/xfs/xfs_symlink.c:170
+> =C2=A0xfs_vn_symlink+0x1f5/0x740 fs/xfs/xfs_iops.c:443
+> =C2=A0vfs_symlink+0x137/0x2e0 fs/namei.c:4615
+> =C2=A0do_symlinkat+0x222/0x3a0 fs/namei.c:4641
+> page last free pid 1 tgid 1 stack trace:
+> =C2=A0reset_page_owner include/linux/page_owner.h:25 [inline]
+> =C2=A0free_pages_prepare mm/page_alloc.c:1108 [inline]
+> =C2=A0free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
+> =C2=A0free_contig_range+0x152/0x550 mm/page_alloc.c:6748
+> =C2=A0destroy_args+0x8a/0x840 mm/debug_vm_pgtable.c:1017
+> =C2=A0debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+> =C2=A0do_one_initcall+0x248/0x880 init/main.c:1269
+> =C2=A0do_initcall_level+0x157/0x210 init/main.c:1331
+> =C2=A0do_initcalls+0x3f/0x80 init/main.c:1347
+> =C2=A0kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+> =C2=A0kernel_init+0x1d/0x2b0 init/main.c:1469
+> =C2=A0ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> =C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>=20
+> Memory state around the buggy address:
+> =C2=A0ffff8880774cf900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> =C2=A0ffff8880774cf980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8880774cfa00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
+> =C2=A0ffff8880774cfa80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> =C2=A0ffff8880774cfb00: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-I appreciate you willingness to move things forward. I really mean it.
+#syz test
 
-I have talked several times in this thread about collaborating in the
-API that you have in mind. I would _very_ much like to have a common
-abstraction for ZNS, ZUFS, FDP, and whatever people build on other
-protocols. But without tangible patches showing this, we simply cannot
-block this anymore.
-
->
->Fdp and zns are different beasts, so I don't expect the results in the
->presentation to be directly translatable but we can see what we can
->do.
->
->Is RocksDB the only file system user at the moment?
->Is the benchmark setup/config something that could be shared?
-
-It is a YCSB workload. You have the scripts here:
-
-    https://github.com/brianfrankcooper/YCSB/blob/master/workloads/workloada
-
-If you have other standard workload you want us to run, let me know and
-we will post the results in the list too.
-
-We will post the changes to the L3 placement in RocksDB. I think we can
-make them available somewhere for you to test before that. Let me come
-back to you on this.
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
