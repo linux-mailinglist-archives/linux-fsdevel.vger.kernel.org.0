@@ -1,225 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-33454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295A59B8E30
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 10:50:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A759B900A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 12:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE13F28256B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 09:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B532E1F224B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 11:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B6515B971;
-	Fri,  1 Nov 2024 09:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A819924A;
+	Fri,  1 Nov 2024 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xb5Bjqcr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k5RVC1wO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K5oSEMFB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UuNIMjbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E520815A85A
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA718953D;
+	Fri,  1 Nov 2024 11:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730454607; cv=none; b=sYdznRrCsl8gsT1ZbtWr286MIHumCBKxhQJxMuysLaSUzX3liRH9TsgqgoI+w9uQ3DkC+g758aRKT0ax7IvBqwxFhLwgKyjnwDkcQszyGv4BshJ12PmV84iL0iI6uUfaI8FSdHVfj6ATUmgUnAwePR9An6iwIlueOq9oid5Fh54=
+	t=1730459637; cv=none; b=BiZ5V+1MEAEA3jmbOyDst82ha/7xObxxpX0x0n3YWFC40MpKcLRVYnNcWUzSZ/C4DdVKmbAcM79iS/9yrDGoRA1FxvV/3OLFOiZX3uIiaUtM2w1ylxqujT+ZZNPvT2Pa6ZijZMb2OlYfHRCZGh+wnt3o9OCmgGT0z7syUfDiDjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730454607; c=relaxed/simple;
-	bh=kcM2EbvKLIfH4dHiElGR1ZKsPgnDpTgnQNxGBsxMk3s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uk6bIgd6qxd49LgmjMEWjoHt621aQYVOdM3m/pLAZWaw9ERpPqPSh1303PW2rcRi3HKCjltMWFAklSDXaL4Z27aETNCHlwRiLJ5+k4zDyi4IL2C5LX79Xv9ndBA1cXKFJZPsL+OagRQWQAk3InYsIsdn8HZbR4KFyieZcvyR8+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b7974696so1005555ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2024 02:50:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730454604; x=1731059404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GC8dvSTy/Po5Wp92GbZjqkWtERBTQKq319ujLKIqdOo=;
-        b=ccBFLhwoLMAir/snuqXw08p7IWD7Vr4gRP/zFthRf+erzRXGo4GZiA3+9OWFEQ5VtK
-         BrrvqNBvJakuY6ATaRTEIhjWcFFmtASGFMc56keiLE6CDBsxbY0gOfs1gAz0YZTZg31h
-         HEtInbVIB+r2N1V3FoftKfNE1cIQTwpfqy6ADkLtO9QZSZA6lDnQlch7wSpXtlI8nlJd
-         V6DOvCnsE1DBwAxp5QRHv6F26f6Vhf7D0CjaSnjA4GqjoFtojeKf+N4MAM69+xv5LFWc
-         9ThZeu6jPbuZbpB0vkJgWT6VxY/26SUSaqxksp5VDQlBVSXC7vba6dxe6CIAIv5wsumY
-         HP7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVFk4vyR3SQs9t6DFvfdTJiMHM+qdyCobLfPmn3ksLU6sMi/AnIUvF5oCgSMaP73viynJAm4EamasgttspA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXZHxWWDWBkaRutiWq97fKxZzceiZfhQ5XAToiQ52OcnBqjQxT
-	/DeZa/Xggs1vc9V94u8tDZejr8NLXcNuFAiyUd0DNWBtG7GNfkgOUGDh9GQrEPH8UTTzmALgqrG
-	tHgmmmCeh6aWN7db5xZJ4Wn/UthR/qFJEDvEB5cBY0swn7XuZbZH3aUo=
-X-Google-Smtp-Source: AGHT+IF+X1z/WQ+QhtR9uluy/UsYLAbspUDvIzCLo5OodZV42QCiM9BBuTx6hda6oOOb+FA5d3pAo2CplE0NMTaPe6nrhCB+URHf
+	s=arc-20240116; t=1730459637; c=relaxed/simple;
+	bh=wofRbP/pMn87nKTukTcLzSwkzXDzjiYYay3B9CTczQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfzC/L1YaRoWm0nbU91W0Bz+uyxN4BnnD6Qstb4WNK96+UiTFsa0BlauzhGLC4OX/e0tecVn6C98OOMwzcBsOlyGaP9VNOyNCWUthpoWqNISYODpZxHsI9K4TL9i1giR54DbzVu17bsPz4gS9R0xkPwODKNF+vNYvpbn4vscEvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xb5Bjqcr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k5RVC1wO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K5oSEMFB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UuNIMjbF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0960E21E2F;
+	Fri,  1 Nov 2024 11:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730459633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=xb5Bjqcr2eEQJ/x0W1fo4gRcHfea1/4F4em6Xt7l+ax7e2bUtaPGtnS+6ZFaBef97lEbGG
+	jN0cBvTNK80VA1G6v8uQI+DE6grOlt/S0afoGUV+TouLfcxvwZ4Q8e8T14IiRynT+rro4X
+	HfkBXiWnyZz/8AFT6HiRdFk6PoeTTGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730459633;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=k5RVC1wO6G+derlfstBOxTSpOs7DI6rtiakrkaMotBbwO3FfVpuQXNfagPRKdEwzksTbdn
+	8uo/BN3ZSxFfySAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=K5oSEMFB;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UuNIMjbF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730459632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=K5oSEMFBOKBXvqSnmOUbRs50mEXwidlhVoaTtyKLAGpjqPbbfoXypcha2mepBKj7FZo5Vo
+	BvB0Ai0yV4OKPKDbj6vcta6XdWC1QDa3wdVGfCc3T0vIcjCWHpG+pbY+7EckPuowJi3SZ6
+	9ioq+ndxNjphyEHwjzoiXitZf1mfy+w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730459632;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=UuNIMjbF9xclxCvqWukvgTgsqM43sQ106ZLwPH/dyKLhH8RsTF+NOYuoOfdnWt1+olKt43
+	LwZj9K55VnPWEMAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1BFD136D9;
+	Fri,  1 Nov 2024 11:13:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AxX9Ou+3JGdgVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 01 Nov 2024 11:13:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A8D0FA0AF4; Fri,  1 Nov 2024 12:13:36 +0100 (CET)
+Date: Fri, 1 Nov 2024 12:13:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO
+ atomic write
+Message-ID: <20241101111336.j34umexmaww4uyae@quack3>
+References: <cover.1730437365.git.ritesh.list@gmail.com>
+ <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:3a4:e99a:bd41 with SMTP id
- e9e14a558f8ab-3a6b02be160mr34366115ab.12.1730454603912; Fri, 01 Nov 2024
- 02:50:03 -0700 (PDT)
-Date: Fri, 01 Nov 2024 02:50:03 -0700
-In-Reply-To: <73b917c76cff44f3085c79f251d958b1ec6c793a.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6724a44b.050a0220.529b6.00d8.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_inode_item_push
-From: syzbot <syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+X-Rspamd-Queue-Id: 0960E21E2F
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hello,
+On Fri 01-11-24 12:20:54, Ritesh Harjani (IBM) wrote:
+> atomic writes is currently only supported for single fsblock and only
+> for direct-io. We should not return -ENOTBLK for atomic writes since we
+> want the atomic write request to either complete fully or fail
+> otherwise. Hence, we should never fallback to buffered-io in case of
+> DIO atomic write requests.
+> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
+> buffered-io handling for direct-io atomic writes. More details of the
+> discussion [1].
+> 
+> While at it let's add an inline helper ext4_want_directio_fallback() which
+> simplifies the logic checks and inherently fixes condition on when to return
+> -ENOTBLK which otherwise was always returning true for any write or directio in
+> ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
+> 
+> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
+> Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in xfs_inode_item_push
+Looks good. Feel free to add:
 
-==================================================================
-BUG: KASAN: slab-use-after-free in xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
-Read of size 8 at addr ffff888061c9b698 by task xfsaild/loop2/7823
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-CPU: 1 UID: 0 PID: 7823 Comm: xfsaild/loop2 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
- xfsaild_push_item fs/xfs/xfs_trans_ail.c:395 [inline]
- xfsaild_push fs/xfs/xfs_trans_ail.c:523 [inline]
- xfsaild+0x112a/0x2e00 fs/xfs/xfs_trans_ail.c:705
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+								Honza
 
-Allocated by task 7799:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
- xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
- xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6015:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kmem_cache_free+0x1a2/0x420 mm/slub.c:4681
- xfs_inode_free_callback+0x152/0x1d0 fs/xfs/xfs_icache.c:158
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-The buggy address belongs to the object at ffff888061c9b668
- which belongs to the cache xfs_ili of size 264
-The buggy address is located 48 bytes inside of
- freed 264-byte region [ffff888061c9b668, ffff888061c9b770)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x61c9b
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801d3c8dc0 ffffea00017d0300 0000000000000004
-raw: 0000000000000000 00000000800c000c 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x52c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_RECLAIMABLE), pid 6527, tgid 6525 (syz.4.33), ts 123832632595, free_ts 120134322172
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3033/0x3180 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4141
- xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
- xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
- xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
-page last free pid 4674 tgid 4674 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- getname_flags+0xb7/0x540 fs/namei.c:139
- do_sys_openat2+0xd2/0x1d0 fs/open.c:1409
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888061c9b580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888061c9b600: fb fb fb fb fb fc fc fc fc fc fc fc fc fa fb fb
->ffff888061c9b680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff888061c9b700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- ffff888061c9b780: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13345340580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9b3366c241ed3c7
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+> ---
+>  fs/ext4/file.c  |  7 +++++++
+>  fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
+>  2 files changed, 29 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 96d936f5584b..a7de03e47db0 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		ssize_t err;
+>  		loff_t endbyte;
+> 
+> +		/*
+> +		 * There is no support for atomic writes on buffered-io yet,
+> +		 * we should never fallback to buffered-io for DIO atomic
+> +		 * writes.
+> +		 */
+> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
+> +
+>  		offset = iocb->ki_pos;
+>  		err = ext4_buffered_write_iter(iocb, from);
+>  		if (err < 0)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 3e827cfa762e..5b9eeb74ce47 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+> 
+> +static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> +{
+> +	/* must be a directio to fall back to buffered */
+> +	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> +		    (IOMAP_WRITE | IOMAP_DIRECT))
+> +		return false;
+> +
+> +	/* atomic writes are all-or-nothing */
+> +	if (flags & IOMAP_ATOMIC)
+> +		return false;
+> +
+> +	/* can only try again if we wrote nothing */
+> +	return written == 0;
+> +}
+> +
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>  			  ssize_t written, unsigned flags, struct iomap *iomap)
+>  {
+>  	/*
+>  	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code so that we
+> -	 * fallback to buffered I/O and attempt to complete the remainder of
+> -	 * the I/O. Any blocks that may have been allocated in preparation for
+> -	 * the direct I/O will be reused during buffered I/O.
+> +	 * the allocated blocks. If so, return the magic error code for
+> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> +	 * complete the remainder of the I/O.
+> +	 * For non-atomic writes, any blocks that may have been
+> +	 * allocated in preparation for the direct I/O will be reused during
+> +	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+>  	 */
+> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+> +	if (ext4_want_directio_fallback(flags, written))
+>  		return -ENOTBLK;
+> 
+>  	return 0;
+> --
+> 2.46.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
