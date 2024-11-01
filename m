@@ -1,184 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-33435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCBF69B8B7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:54:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF629B8B82
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8669F283B8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 06:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40DE41C22420
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 06:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1352715278E;
-	Fri,  1 Nov 2024 06:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A7C1509BF;
+	Fri,  1 Nov 2024 06:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vh8Hy4mu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e7uK25nQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B24C1714BC;
-	Fri,  1 Nov 2024 06:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D15B14E2CD
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Nov 2024 06:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730443896; cv=none; b=Li9OmYdE/yWogxSLt2BwBeZ92ST1BsvVl79IZ1q6XEiJujlc3WFYwDtlNszwdr2JHt3QO6extIHjvFuWCMOYG0WedKy1818q3AhXkYA26rRDXF/mg+NOqKA7lPSK3hbQDeQ5FGbtoFKDUgSRV1TDii+s2OQxnc5rYimuxuwue+U=
+	t=1730444138; cv=none; b=txOHTzoQnmYYzJO7qvDDQGs3upzi01WNCEuY/G0VpzGPtlzLTz88FDa7L1X8Z4iDyizHwPZpGTIkNpIKnQ3o76tH60sVY9WSBaDN4thRVCHs6Ss/SHXVciE80LXPtEbtb6Uzju3szgxHIBVIwFzo6DL+RfhXYtpkW8GaGt8/7E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730443896; c=relaxed/simple;
-	bh=vNVkQK5HqfJrI3jmXZheJg3/RyjZh6GM0HcqoIQ82F0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LA8PzZwf5MAF27mEK0RVvKr7Jd2er9HwaYv4iBzzG3J0cDGofId8QmE7LeAV2LNLIa21vPTiN8oRbnNGScPWEELTU/v4FCtJDbd8807c26LH//dazifGPJQe33x+HBBFvaPfjTR2WhVjM5pVe9Eqt+dyI/PgJfGn8aZSCJ7xfSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vh8Hy4mu; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-72097a5ca74so1413551b3a.3;
-        Thu, 31 Oct 2024 23:51:34 -0700 (PDT)
+	s=arc-20240116; t=1730444138; c=relaxed/simple;
+	bh=FZ0wTyVQdX+2JcsJ5IMVAH2Qed5SZGbwviEp7thfMPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PuA7k94gZZA3RNObf/TCz2pkxOzuywhNwL0WifmS6JSGroPd70OJ37b5QOknIjNHwJrdfORpBsALrMhqCaF95bWHjmYpWYQ/TlB67kzY7sJY7XqAFZT1pJLaaUl+9YZXebu1aZPWQZiOgoo61lsCVisA/KJh48WKvBa5E0bIxiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e7uK25nQ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4611abb6bd5so11267541cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2024 23:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730443893; x=1731048693; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VUpTv9wExUvhBAoK2KqfAK7bifpKgEoP/EE1D/quHOg=;
-        b=Vh8Hy4muNlikvzTXLpFdVd/s36l9a9K0r0DA8+jT3qF+Uv3udU0kp3vcTASMQl2C2z
-         MHKZOe++dG3jbC/2guuh5PuGponwwB3s9xNth5GmAiPEIFa1E/ALfmte6bwF/gn+Yixt
-         1Yr9zdgQs7Z9q6GfNoSLzWl6SE0K/vUGaXkmiI8FNb/gCy0m0iPFoxRDGLZm0CEeBELa
-         au8q9BlAOuCpONcei/YGI2qm3OmH16AptBzKKGkO6txDC/I6yhcxEFa0yzEy3G/mIaHK
-         SSX2ujbKSGvgDJ9jiBc8qigU8KBTvCJjMMxXOvOy9QFTuFWtAFsyI0Hnd4aWgooaGIyb
-         p8Hg==
+        d=google.com; s=20230601; t=1730444135; x=1731048935; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qS0R2vvx4HsVMkPeLiihBZPoFwvhc46umGxylqvyvss=;
+        b=e7uK25nQy+cBE0nxkoz4d9QYHHtSPb+CUhYor2jTQIyvv6gY9yfA5XTf3uvXru7xuZ
+         FY9Rcw5sG5p1VJCxVwObKiTPwdpV7AJRal/mFEUxcWZrG/OzOvqXIg+XjGZ8SZrLUZlp
+         mpy6LgxZRO12J/pI0RTwuWO3TPV9DgmN7sHmece4vJX9b2rY4YM5Qvj4G7I9zDz/6X/y
+         xzjA/3ldnM2xgOAI7sv2NqUNsCsNrLwiuCQbij+5M20Xaq5ysyeJXwXmmpZhO0nxmWv+
+         BQGXgCKGR1Mst1Qe45PBEE0yY9vzoyPTMNN4X20Mfh+Ng04PvYAwdBobt5WDOKeIM6wY
+         2mXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730443893; x=1731048693;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VUpTv9wExUvhBAoK2KqfAK7bifpKgEoP/EE1D/quHOg=;
-        b=gjg1ZWRXCYsADtdLOppmV1tbInyHbIGT4NLrheQ7GZMeIKLmBH2Y9+g/ZkAKvbv9bW
-         4sZjT+eDu5TToxAuVaI81D2oE/R+nPSw2fy0sSgmUEltu2W0Y2z+xL529tLVtdMROisF
-         0wCtrYQn5TY676PrKw8JsABKMivcaGsgjLTfjtoC8XQN5Lgib/vIjnq+mEOZDFoBC1No
-         7CMiXbyAEbpbsZmzB9xPvf4R2NFg+REUc47gxkhNfUTkCqd87A/Vp3lOpKzeSrGDDtSa
-         SQSFcKT8VWsqByoHX99ZRjbdWSkcGg5YMfp8KwdX0i4m3N3kyBkZ1MvNWVWxy91F9VWp
-         jQiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYGT5sFqRJ4jBE817WEYVS70Gfp9bm6jGSMz2lJoRDNzGo41z6rrdR7DPf9CguBrjtM8ncYrWsXWs8Rdkx@vger.kernel.org, AJvYcCVciixpy+/hJgRZVy8/w9pXGWq3Mw4FQJzJI6EL+g1wsKVXgkIrF9PlvAJM1YXThQISlSYnb5l8G0Ay@vger.kernel.org, AJvYcCXkP/EHxvlRFeS95Z+w177pI001p8+mSIwoSf1qXsG2uGj5zWPRdAODcNkIOsXoz1kHE5FmDi37YPAEGjyK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA1vgGvls5aVDfjYwP3yPXWFmvcY9P5FsC4FYvXD3dw5Ph/R6Y
-	YzH5gtv5NcOb7NH/n/6TOP2/PZSQBCefOuv/c3JRVUPUbB0ymsCnMgGDbw==
-X-Google-Smtp-Source: AGHT+IE+097sdf1GgBu/8uA6WnV5QerdwqvqfQxsQzKml4gDXHjiNGW58zC9ifhtYUrq4e/xLiKiZQ==
-X-Received: by 2002:a05:6a00:1817:b0:71d:f7ea:89f6 with SMTP id d2e1a72fcca58-720c99b5ca0mr3797240b3a.18.1730443892738;
-        Thu, 31 Oct 2024 23:51:32 -0700 (PDT)
-Received: from dw-tp.ibmuc.com ([203.81.243.23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8971sm2196209b3a.12.2024.10.31.23.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 23:51:32 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO atomic write
-Date: Fri,  1 Nov 2024 12:20:54 +0530
-Message-ID: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1730437365.git.ritesh.list@gmail.com>
-References: <cover.1730437365.git.ritesh.list@gmail.com>
+        d=1e100.net; s=20230601; t=1730444135; x=1731048935;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qS0R2vvx4HsVMkPeLiihBZPoFwvhc46umGxylqvyvss=;
+        b=bWuyBdrFpHCxFWFYCcblwNvwAzyaYkr0nZqbBehQLJevV6twK03OM89YLGgolAHO3X
+         u5SLWNd9KnJVPuV600wORbkRBsWANpaYXDQqGdP2IWpsDD/qU8pH4ZhvfU5CL2gNraSC
+         Hc/t1KVO1jk6auzbMbktUdBa9YTNCXY4zqNfME3TY6Qy3C2yt+7XAU5S0RvbIaNYrVm4
+         7Y498PBTaDoofEc+HkS/KdQ27WGQow5aZt/qQdQimeo0/rMw9xlU9RX0ZgVBStGaAf23
+         T7zqYkIs1B6hREhK2dMEKrDj9nQW9pC9NjXrkLRojVapTqv8cd9MrhGUrM3WwK1VycgB
+         rUiA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Q/fXFXiznH2u+GnyIYCsKmeN/eUVnlcPuMyjc2psiRQyoyN9zQh7YeCHs/Zh+ADDIkizhV22mf3cmTrR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdC9VXaj3Aag4UZH+MeMbds0OvhvlcJpbQ4OXodVwvrMUCfwC8
+	4KVbjdQWa+0SMOrMF20rPdwBFAgm99i+OcBMLbZwm9jog67myTJXmCPP5+D3YpAGBZxK1tHvWo+
+	y53+L0pp+P04mqqm77Pqp85pOWkCUQuSzeaL+
+X-Google-Smtp-Source: AGHT+IE4S7Q0h8OJ2H3g3I/XFhR9utnXmELEKEYRR2BzZ8Cx10/IIjWI/q+ZZ+LLbQu427yMJ/JljGi2TFBj5lE9ZAM=
+X-Received: by 2002:a05:6214:5b02:b0:6cb:5605:ffb2 with SMTP id
+ 6a1803df08f44-6d35c14e001mr31591696d6.24.1730444134988; Thu, 31 Oct 2024
+ 23:55:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101060237.1185533-1-boqun.feng@gmail.com> <20241101060237.1185533-12-boqun.feng@gmail.com>
+In-Reply-To: <20241101060237.1185533-12-boqun.feng@gmail.com>
+From: David Gow <davidgow@google.com>
+Date: Fri, 1 Nov 2024 14:55:23 +0800
+Message-ID: <CABVgOSn1eeZo7HggJYNEzzuGGpKABF=NbyMZLQbNjRwCAKXY-w@mail.gmail.com>
+Subject: Re: [RFC v2 11/13] rust: sync: Add memory barriers
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
+	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000fff43f0625d46b9d"
 
-atomic writes is currently only supported for single fsblock and only
-for direct-io. We should not return -ENOTBLK for atomic writes since we
-want the atomic write request to either complete fully or fail
-otherwise. Hence, we should never fallback to buffered-io in case of
-DIO atomic write requests.
-Let's also catch if this ever happens by adding some WARN_ON_ONCE before
-buffered-io handling for direct-io atomic writes. More details of the
-discussion [1].
+--000000000000fff43f0625d46b9d
+Content-Type: text/plain; charset="UTF-8"
 
-While at it let's add an inline helper ext4_want_directio_fallback() which
-simplifies the logic checks and inherently fixes condition on when to return
--ENOTBLK which otherwise was always returning true for any write or directio in
-ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
+On Fri, 1 Nov 2024 at 14:07, Boqun Feng <boqun.feng@gmail.com> wrote:
+>
+> Memory barriers are building blocks for concurrent code, hence provide
+> a minimal set of them.
+>
+> The compiler barrier, barrier(), is implemented in inline asm instead of
+> using core::sync::atomic::compiler_fence() because memory models are
+> different: kernel's atomics are implemented in inline asm therefore the
+> compiler barrier should be implemented in inline asm as well.
+>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  rust/helpers/helpers.c      |  1 +
+>  rust/kernel/sync.rs         |  1 +
+>  rust/kernel/sync/barrier.rs | 67 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 69 insertions(+)
+>  create mode 100644 rust/kernel/sync/barrier.rs
+>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index ab5a3f1be241..f4a94833b29d 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -8,6 +8,7 @@
+>   */
+>
+>  #include "atomic.c"
+> +#include "barrier.c"
 
-[1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
-Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- fs/ext4/file.c  |  7 +++++++
- fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
- 2 files changed, 29 insertions(+), 5 deletions(-)
+It looks like "barrier.c" is missing, so this isn't compiling for me.
+I assume it was meant to be added in this patch...?
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 96d936f5584b..a7de03e47db0 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		ssize_t err;
- 		loff_t endbyte;
+Thanks,
+-- David
 
-+		/*
-+		 * There is no support for atomic writes on buffered-io yet,
-+		 * we should never fallback to buffered-io for DIO atomic
-+		 * writes.
-+		 */
-+		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
-+
- 		offset = iocb->ki_pos;
- 		err = ext4_buffered_write_iter(iocb, from);
- 		if (err < 0)
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 3e827cfa762e..5b9eeb74ce47 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
- 	return ret;
- }
+--000000000000fff43f0625d46b9d
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-+static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-+{
-+	/* must be a directio to fall back to buffered */
-+	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-+		    (IOMAP_WRITE | IOMAP_DIRECT))
-+		return false;
-+
-+	/* atomic writes are all-or-nothing */
-+	if (flags & IOMAP_ATOMIC)
-+		return false;
-+
-+	/* can only try again if we wrote nothing */
-+	return written == 0;
-+}
-+
- static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
- 			  ssize_t written, unsigned flags, struct iomap *iomap)
- {
- 	/*
- 	 * Check to see whether an error occurred while writing out the data to
--	 * the allocated blocks. If so, return the magic error code so that we
--	 * fallback to buffered I/O and attempt to complete the remainder of
--	 * the I/O. Any blocks that may have been allocated in preparation for
--	 * the direct I/O will be reused during buffered I/O.
-+	 * the allocated blocks. If so, return the magic error code for
-+	 * non-atomic write so that we fallback to buffered I/O and attempt to
-+	 * complete the remainder of the I/O.
-+	 * For non-atomic writes, any blocks that may have been
-+	 * allocated in preparation for the direct I/O will be reused during
-+	 * buffered I/O. For atomic write, we never fallback to buffered-io.
- 	 */
--	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-+	if (ext4_want_directio_fallback(flags, written))
- 		return -ENOTBLK;
-
- 	return 0;
---
-2.46.0
-
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgnAZSTbUKSVwXFX+K1mtOMX8DKU2j
+RJnF4AfAllZWGlMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MTAxMDY1NTM1WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAK12YcHU7tsM0oQvmjsFpbUkdCoOs8KrOx0ZIGQb1QQOj+Fz
+RsULjZEVJfCzBZz0IVMaxTNzrGErk7rtE4BX42UPfBtQe8zppg19OTNG2+t1AClH8XN4ltTV+rgT
+gfj0XWYBzMvopFa2mTe8vpge4kJhZ+ztidvj33oerdCcDbP5fbVxcHNC35y/sOv3nGaff334isXm
+Ozp5Qghkv5rX/0qq7w/Qtnumwi4gd8i8sLrACEAt/d8zf/3AJS/wT53cpJmYNojpiSonSwrDGtU7
+6XzNihCYQeM/yW9cM+QYDSYKNZHGTTZgsWaxr6lfYMERgK6VPnAcD+MI1tdVz840b80=
+--000000000000fff43f0625d46b9d--
 
