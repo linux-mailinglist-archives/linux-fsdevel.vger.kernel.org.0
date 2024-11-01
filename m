@@ -1,163 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-33478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6F69B9399
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 15:47:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA899B93BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 15:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AE41F2236D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4205F2837BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAC81AAE05;
-	Fri,  1 Nov 2024 14:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A51AB52F;
+	Fri,  1 Nov 2024 14:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlU4bueS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqviswlY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C61A256C;
-	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC41AA78E;
+	Fri,  1 Nov 2024 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472405; cv=none; b=ebTddsy3AAynLOKGqL41/dhZc5zKRG5I452LWutegaodeYkMkAh/4slrrZRX/ooBSlKrwcw7Mn1JMEXum3aBL4QB52EpeX5z9Zu+XS5sBEWiPg15n5Qv3yZZ56rQgTZ2sIr/iLNpB/9dA1HEkysVQEIiRi7spFauRNZXi/nQlAs=
+	t=1730472556; cv=none; b=H3JCkb7LcwaT5IE5nE9uqGVVrqcZy0i4BeYfg6VDNjnHPfwvOvxobaOqIyn8Ctz7FcOzCxGIt/El0kvZWCk/tT3BPqNesCprz9fp4VsMUdVKGU704xKniv6ggUP46BA24EjPDNoTgZ7pdInmOpFlm+so4WhMqWd6JymBdVU/4+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472405; c=relaxed/simple;
-	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
+	s=arc-20240116; t=1730472556; c=relaxed/simple;
+	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhfPccChCqo+rhhCkXae6Fo3zj7kW3lFr5j+wk+oN4GrppDQjQHeCoClySmD8RRvTSx2S0afr5htyoB1VtbiOlGR9g/FuN2M+vI5lwUr4/l5d919lyEuDbXvxCr3BSZxsM1FNlaj8CMKMZmi40JeTIzl/X81P61i9tugb61BuoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlU4bueS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2C6C4CECD;
-	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBfAeUimU6J0Dijnu2NtLhFu8Y8RbYYEvS+B1WQ1IQJdsGs6JohqgBi6sliykFg8BYzQH+QafelXMTd3OY4LTWEvp6e+dFEEgplewQibODi2GoVftqWs3/9KleIeENlLK8ev57y5v1zkUnVqY4rs6apRk9ZiGbWBoNgAufxQoIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqviswlY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFBFC4CECD;
+	Fri,  1 Nov 2024 14:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730472405;
-	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
+	s=k20201202; t=1730472555;
+	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TlU4bueSqUtO5V+hbz8vO0YzJl4hNnccmNnFi89FPVCl8a+1lACDLOp/Eix3MhKSB
-	 UZJFR80381Q2bRmM91JBI3GGUSxH92CpZ10lEqSMkl/JrU1G3hW3Hq42mzNt1SnV+2
-	 1JA2g+FF8/6lh04uvXW/26CNve07w26yk7EgjnUyB4XDkVGArSsafHuptjFAt+7Vz9
-	 XZxqL97vekLm6oh9COsFdMbu506fGmjQ2GWqnHOn2oQwPcm0ab1ywtqJjTVqFqaf7P
-	 yu7yn/Ers6d5rlJwnXzY75xq1lyapblTxBPhbm+D78y2xNvjOPLfCoR97I7WNzp2Pi
-	 Cugpsn5MaBZlg==
-Date: Fri, 1 Nov 2024 07:46:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO
- atomic write
-Message-ID: <20241101144644.GF2386201@frogsfrogsfrogs>
-References: <cover.1730437365.git.ritesh.list@gmail.com>
- <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+	b=qqviswlYX1BHKuPR5ekMMzxSlcNtysICRu79OUByTD9UMQIsGrpVy/A721KYFuHMe
+	 TZgNQ9laCdOQKoOOdHw+RLLXTRMtPDyj+1aOdIvd/CmVB1QDlxAT1sXJW1ILqbhgQj
+	 r2chJflG1cLWi+WegmVeWDFEgaGMQ1D/J7Vs55mWI6YhP5xHJdg5e1ZqnThl3RcSmW
+	 A/t4EPA6eJxanq/Ag7wG+RZpB6Hdw1r++uL8XIiNJqWdiYaNtOJY5lcWERoBA2hDsR
+	 ustDb/50m8C5CtlUteDhkjp1SoqsrgvAqVnupo9cwHKs137vxOIFE7gwnytEzws0Ol
+	 0wDEgDRoQz2Pw==
+Date: Fri, 1 Nov 2024 08:49:12 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Hans Holmberg <hans@owltronix.com>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
+	javier.gonz@samsung.com, bvanassche@acm.org,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
+Message-ID: <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
+References: <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030154556.GA4449@lst.de>
+ <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030155052.GA4984@lst.de>
+ <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030165708.GA11009@lst.de>
+ <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
+ <CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
+ <ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com>
+ <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
 
-On Fri, Nov 01, 2024 at 12:20:54PM +0530, Ritesh Harjani (IBM) wrote:
-> atomic writes is currently only supported for single fsblock and only
-> for direct-io. We should not return -ENOTBLK for atomic writes since we
-> want the atomic write request to either complete fully or fail
-> otherwise. Hence, we should never fallback to buffered-io in case of
-> DIO atomic write requests.
-> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
-> buffered-io handling for direct-io atomic writes. More details of the
-> discussion [1].
+On Fri, Nov 01, 2024 at 08:16:30AM +0100, Hans Holmberg wrote:
+> On Thu, Oct 31, 2024 at 3:06 PM Keith Busch <kbusch@kernel.org> wrote:
+> > On Thu, Oct 31, 2024 at 09:19:51AM +0100, Hans Holmberg wrote:
+> > > No. The meta data IO is just 0.1% of all writes, so that we use a
+> > > separate device for that in the benchmark really does not matter.
+> >
+> > It's very little spatially, but they overwrite differently than other
+> > data, creating many small holes in large erase blocks.
 > 
-> While at it let's add an inline helper ext4_want_directio_fallback() which
-> simplifies the logic checks and inherently fixes condition on when to return
-> -ENOTBLK which otherwise was always returning true for any write or directio in
-> ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
-> 
-> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
-> Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
+> I don't really get how this could influence anything significantly.(If at all).
 
-Looks good to me now,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Fill your filesystem to near capacity, then continue using it for a few
+months. While the filesystem will report some available space, there
+may not be many good blocks available to erase. Maybe.
+ 
+> > Again, I absolutely disagree that this locks anyone in to anything.
+> > That's an overly dramatic excuse.
+> 
+> Locking in or not, to constructively move things forward (if we are
+> now stuck on how to wire up fs support) 
 
---D
+But we're not stuck on how to wire up to fs. That part was settled and
+in kernel 10 years ago. We're stuck on wiring it down to the driver,
+which should have been the easiest part.
 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  fs/ext4/file.c  |  7 +++++++
->  fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
->  2 files changed, 29 insertions(+), 5 deletions(-)
+> I believe it would be worthwhile to prototype active fdp data
+> placement in xfs and evaluate it. Happy to help out with that.
+
+When are we allowed to conclude evaluation? We have benefits my
+customers want on well tested kernels, and wish to proceed now.
+
+I'm not discouraing anyone from continuing further prototypes,
+innovations, and improvements. I'd like to spend more time doing that
+too, and merging something incrementally better doesn't prevent anyone
+from doing that.
+
+> Fdp and zns are different beasts, so I don't expect the results in the
+> presentation to be directly translatable but we can see what we can
+> do.
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 96d936f5584b..a7de03e47db0 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		ssize_t err;
->  		loff_t endbyte;
-> 
-> +		/*
-> +		 * There is no support for atomic writes on buffered-io yet,
-> +		 * we should never fallback to buffered-io for DIO atomic
-> +		 * writes.
-> +		 */
-> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
-> +
->  		offset = iocb->ki_pos;
->  		err = ext4_buffered_write_iter(iocb, from);
->  		if (err < 0)
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 3e827cfa762e..5b9eeb74ce47 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
->  	return ret;
->  }
-> 
-> +static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> +{
-> +	/* must be a directio to fall back to buffered */
-> +	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> +		    (IOMAP_WRITE | IOMAP_DIRECT))
-> +		return false;
-> +
-> +	/* atomic writes are all-or-nothing */
-> +	if (flags & IOMAP_ATOMIC)
-> +		return false;
-> +
-> +	/* can only try again if we wrote nothing */
-> +	return written == 0;
-> +}
-> +
->  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
->  			  ssize_t written, unsigned flags, struct iomap *iomap)
->  {
->  	/*
->  	 * Check to see whether an error occurred while writing out the data to
-> -	 * the allocated blocks. If so, return the magic error code so that we
-> -	 * fallback to buffered I/O and attempt to complete the remainder of
-> -	 * the I/O. Any blocks that may have been allocated in preparation for
-> -	 * the direct I/O will be reused during buffered I/O.
-> +	 * the allocated blocks. If so, return the magic error code for
-> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
-> +	 * complete the remainder of the I/O.
-> +	 * For non-atomic writes, any blocks that may have been
-> +	 * allocated in preparation for the direct I/O will be reused during
-> +	 * buffered I/O. For atomic write, we never fallback to buffered-io.
->  	 */
-> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-> +	if (ext4_want_directio_fallback(flags, written))
->  		return -ENOTBLK;
-> 
->  	return 0;
-> --
-> 2.46.0
-> 
-> 
+> Is RocksDB the only file system user at the moment?
+
+Rocks is the only open source one I know about. There are propietary
+users, too.
 
