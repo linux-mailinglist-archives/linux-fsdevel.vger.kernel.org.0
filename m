@@ -1,151 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-33484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEBA9B9548
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 17:26:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59C09B9587
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 17:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04126281352
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 16:26:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D284C1C22060
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 16:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9C81CF5F8;
-	Fri,  1 Nov 2024 16:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59B1C7610;
+	Fri,  1 Nov 2024 16:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="phncJ5FX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIcg9who"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE2D1CB315;
-	Fri,  1 Nov 2024 16:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF7130A73;
+	Fri,  1 Nov 2024 16:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478264; cv=none; b=JDzG1CLXWl3ARAgSDT1JRGErgFPpEjIFAmuA04wKPPjTbvcwu0OnP51GimpJfVjKLufZvRKL95jf4ezKwnmSX3ptKMQOIM2GSl7C68N9MtrzeF6MhQd1pjPgYpNuoXOHx8HRRc1ivNnH8FrZr5s7oRf+/gmWhBe6PgN/P7q6aWs=
+	t=1730478923; cv=none; b=Eb4XyH+yFjGkZuAGTwIAz/z79x2YN8CDA5p2uvrphRMFxm+Z3iv1aP95we1EB7A6z/VM6W+wzijMLtEqlgivFKMYXiBu+SndlgFvj/eXI37G/fbwshZOE38/hPFaFH85g4GU+VNQYGjP7ZEzdjBJ7vE9GqBwTfwdmxo/VGmsvw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478264; c=relaxed/simple;
-	bh=b0UAhav8960xcXnvYOfhHi2qXno7YIInP3C/ji4vnCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uz8E1GDa9VSMFgyfLl5w8s1Rd1QV6fWOMposGA5WaotN9Y8FZsU5C6T6fF3QPKrsZ8QT0c0Tx+A+SBbpXEYnO3CDSG/zo9pGl9tzUA/pqrFwbBZYUCh94MADi+3ScdIkER3FkMV1DMd71dLHXLDnmWNHxzPBpe4zfDyakIWo/YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=phncJ5FX; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6Xgaa20mje3eJrSCrnSFC9yazY/wXpJmFMU70h4HLjI=; b=phncJ5FXPhT/q+hCcFE7MtumlU
-	itjmiVSImydeG4klTYxAW740OhGCXkc+VUTKFYqq7n+IjTVb4p1Npb2DJT7u5k6PZ8bIMwYaySm80
-	dLpHXSzEmR3/ILm0emL4o0qRd0gBg1+HXypeRMphrRuserZpPK0hvnDBypYRqWpEqf7voB7MSVBX7
-	wUAJh5PVYf5Ut4LbOewf+oBlotLyCUaB0tgUWMdtNaCvll3CjdUo/W7wvt1iWw1pPAG6C44B1u3Fj
-	6mE+7b9KksqkW5fyI0Xl1yFA25ZkcZybqqVbUiX85ksexTYC+LmzWIqDOqY9eLjjuIBjqGWtt/YKH
-	pTPxaMgg==;
-Received: from [189.78.222.89] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t6uRN-000UYc-HK; Fri, 01 Nov 2024 17:24:01 +0100
-Message-ID: <3754d3af-13bd-499b-9bca-633de721724f@igalia.com>
-Date: Fri, 1 Nov 2024 13:23:55 -0300
+	s=arc-20240116; t=1730478923; c=relaxed/simple;
+	bh=+1C8XZLRKBsstfJe1rtPfe199feU9kaxe8V4whbdD18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o49vM9ztWZd1oxU03Q+SqAz94eC72El56BExRT4f3esRpO98L1rB8YdG3IRsCy+NtrWmK5EVRGVvNrozo1c6mC5vz5z7AqzoCtffwcP8YRupR/lsc3jOQNOVketbC/p5KrDAhFWtEv5X4ukMH6Ir8emdTXNtSxFvmeeEm+xhPx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIcg9who; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0f198d38so323215866b.1;
+        Fri, 01 Nov 2024 09:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730478919; x=1731083719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tpr6TYQOLg8yjzavlYiVrt5ZjA57kPKJZVGbq8xKRME=;
+        b=XIcg9whoUXHa1XlmuLRi5CKcjWCZn5YkHsUYpV/OK2bBPX44/3QroxfR37wI4pFYdb
+         tpVTxIObr/NONKtZorMbERQhPA8rqCKEdmB/c9cE1chwS4ikq5NzGt5YXuvNoxJpMDKA
+         NRNI/kD60kXYTOZEoJnd5eVFbNo2U0uxmKDaRNYUN08Uoz4pU+aGwu3lw3pfPHX8it2Z
+         JngceSZV5Y/WaFC/KY6ozHkVL0hlrNvyV1RcoT/clNBXRlpaS45PIWxaLWn7OSdZ8KGd
+         CagEV97EKyg44lsTgLuqGF/s2fLgo4qYqZTB4SybUHUsf1RSystxpx9OTniFtRGh34us
+         rFNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730478919; x=1731083719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tpr6TYQOLg8yjzavlYiVrt5ZjA57kPKJZVGbq8xKRME=;
+        b=MXcxjweLI0uWNIYsukVZLdHIHLaIrCvxjBnWXO//dq1jFUCKCEvGsorMCRa94Xi36D
+         QuoJ7+1UFdu/qp9P+7O5Kt9XkaKkOltnBm1x+S1tOk1pJNUOw+ldE5dpwvqzj2kl2O2B
+         PXdKT7hw5Sw07I08ie4YiGg7fnIq/+78KIIpUtEyiXC/4nlYGzwogcofStnLQzU/lvqx
+         4f1q2HLPOWWabMWaurUNQGr0C8zIOOcGbT3bXAleubWN2OkGA1MNuYz5lka6zWrPUp3W
+         jPGzpRYlS0lfSioB0sjfJOxy0JEvtHBGEPwsicTB4JvpzQDB5JT+6vMdNJJ/kby/f8Ou
+         UNWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdvhWNPIJW7hh5DvuypzeEBgEZISAZ7WkxEGjlwFtYKyaKIAv90/7DjcEELirmmxMIkiIOuZEhAJVp0kRZ@vger.kernel.org, AJvYcCXYMFZP31zrA5JS7yUYkP/OJlTMJO3S4ZWM42KtSuZrM0DBJQDnV+cu6Iwm5GovIG7MLo4MtaLiFYn37g+d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZaqH+HBbfo++o7YcydhElN0Gv6H+3pQw4kN6jd0uzPOzeX+xV
+	f9dDk3aObYD4+FHFHgtKTkpzbrHCACVF74S/G4JptQCxwK89HPo=
+X-Google-Smtp-Source: AGHT+IEPkDHlV3oZirqn7gb2APSbbjvfSUiHI2RlzZX5BtBGJjrI/zST1FWntl0hYPnzQII0rye3GA==
+X-Received: by 2002:a17:906:f5a5:b0:a99:8edf:a367 with SMTP id a640c23a62f3a-a9e657fd779mr364779566b.57.1730478919134;
+        Fri, 01 Nov 2024 09:35:19 -0700 (PDT)
+Received: from p183 ([46.53.252.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494202sm200956866b.22.2024.11.01.09.35.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 09:35:18 -0700 (PDT)
+Date: Fri, 1 Nov 2024 19:35:16 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qingjie Xing <xqjcool@gmail.com>, christophe.jaillet@wanadoo.fr,
+	willy@infradead.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] proc: Add a way to make proc files writable
+Message-ID: <978cbbac-51ad-4f0b-8cb2-7a3807e6c98d@p183>
+References: <20241101013920.28378-1-xqjcool@gmail.com>
+ <20241031191453.a4c55e8b2bfb4bf8349f4287@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tmpfs: Initialize sysfs during tmpfs init
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- krisman@kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
- Theodore Ts'o <tytso@mit.edu>
-References: <20241101013741.295792-1-andrealmeid@igalia.com>
- <20241101013741.295792-4-andrealmeid@igalia.com>
- <20241101071942.GB2962282@thelio-3990X>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241101071942.GB2962282@thelio-3990X>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241031191453.a4c55e8b2bfb4bf8349f4287@linux-foundation.org>
 
-Em 01/11/2024 04:19, Nathan Chancellor escreveu:
-> Hi André,
+On Thu, Oct 31, 2024 at 07:14:53PM -0700, Andrew Morton wrote:
+> On Thu, 31 Oct 2024 18:39:20 -0700 Qingjie Xing <xqjcool@gmail.com> wrote:
 > 
-> On Thu, Oct 31, 2024 at 10:37:41PM -0300, André Almeida wrote:
->> Instead of using fs_initcall(), initialize sysfs with the rest of the
->> filesystem. This is the right way to do it because otherwise any error
->> during tmpfs_sysfs_init() would get silently ignored. It's also useful
->> if tmpfs' sysfs ever need to display runtime information.
->>
->> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->> ---
->>   mm/shmem.c | 130 ++++++++++++++++++++++++++++-------------------------
->>   1 file changed, 68 insertions(+), 62 deletions(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 6038e1d11987..8ff2f619f531 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -5126,6 +5126,66 @@ static struct file_system_type shmem_fs_type = {
->>   	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
->>   };
->>   
->> +#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
+> > Provide an extra function, proc_create_single_write_data() that
+> > act like its non-write version but also set a write method in
+> > the proc_dir_entry struct. Alse provide a macro
+> > proc_create_single_write to reduces the boilerplate code in the callers.
+> > 
 > 
-> This condition...
+> Please fully describe the reason for making this change.
 > 
->> +static int __init tmpfs_sysfs_init(void)
->> +{
->> +	int ret;
->> +
->> +	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
->> +	if (!tmpfs_kobj)
->> +		return -ENOMEM;
->> +
->> +	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
->> +	if (ret)
->> +		kobject_put(tmpfs_kobj);
->> +
->> +	return ret;
->> +}
->> +#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
->> +
->>   void __init shmem_init(void)
->>   {
->>   	int error;
->> @@ -5149,6 +5209,14 @@ void __init shmem_init(void)
->>   		goto out1;
->>   	}
->>   
->> +#ifdef CONFIG_SYSFS
-> 
-> and this condition are not the same, so there will be a compile error if
-> CONFIG_SHMEM and CONFIG_SYSFS are enabled but CONFIG_TMPFS is not, such
-> as with ARCH=x86_64 allnoconfig for me:
-> 
->    mm/shmem.c: In function 'shmem_init':
->    mm/shmem.c:5243:17: error: implicit declaration of function 'tmpfs_sysfs_init'; did you mean 'uids_sysfs_init'? [-Wimplicit-function-declaration]
->     5243 |         error = tmpfs_sysfs_init();
->          |                 ^~~~~~~~~~~~~~~~
->          |                 uids_sysfs_init
-> 
+> Also, we are reluctant to add a new interface to Linux unless we add
+> new users of that interface at the same time.
 
-Thanks for the catch! Fixed for v2
-
->> +	error = tmpfs_sysfs_init();
->> +	if (error) {
->> +		pr_err("Could not init tmpfs sysfs\n");
->> +		goto out1;
->> +	}
->> +#endif
-> 
-> Cheers,
-> Nathan
-
+Yeah, /proc outside /proc/${pid} and /proc/sys should be pretty dead.
 
