@@ -1,238 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-33495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF2C9B970A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:02:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BE89B96B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 18:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B30B21302
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 18:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F4C1C21B54
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 17:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3381CDFD2;
-	Fri,  1 Nov 2024 18:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB31CCEED;
+	Fri,  1 Nov 2024 17:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAcbDBmd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fjjAXLw6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aHsb90yC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fjjAXLw6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aHsb90yC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C47D1C687;
-	Fri,  1 Nov 2024 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015C71AC884;
+	Fri,  1 Nov 2024 17:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484156; cv=none; b=N0ZWn+rZNirn98rldCR2RmKHpvhJJ0k+8ikWE1dgeeTZlgXKPbBbrljbt7y3KtcADmBCI0KUigcaWxO1XPynE4/su6CEjJVDzT0hVRYpmHMYCO8aY/njGp82yOCuRbzhhXWrs6SE1zK7ZuQh6WGfLdsJIJV3MT7DvmKmcMCgh2g=
+	t=1730482817; cv=none; b=Iz4vqMlrb9Q5IxIgZAiKWP8AKUg8u3PxXUG38pjARAiJdm9u3R4Klpojz8KwfBTiwmHTktl8utnXcNLXU7erSq0t8mloi18FIeW15jHfcBvLQ7CDoYKeMaSvnseMceZi+uXW/ITCLH8KLpbBDDjyB0IzXB7SBE+0M8XHk1OlayQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484156; c=relaxed/simple;
-	bh=FcFVMFA1lnGHpcm6MYuI23U8Olzx2/gJYOuGhGuBujg=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qeIsy3ILRHGxx8eP49o1hsTjJp3Ygt+6EW6JuZL8saPQqt0Ri57OM3y/d9BTSSm9TeHppV6aOYwbVxT18lipszz5HeMJh/fyX1VGj7qPZcrJRHUeMZZwSUKFfaDo8mukdFvs1iPDfVYS1S+oUY/8/BEpeKCjnsxObH1wHOM3Hv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAcbDBmd; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-72097a5ca74so1989925b3a.3;
-        Fri, 01 Nov 2024 11:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730484152; x=1731088952; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LhpDgh5o6hmtsMchkNYiiOk/LDTq+HmIoaJTC5fXcFY=;
-        b=mAcbDBmdf4HUgklveXPMu/1CQHT5HBNBNmObdgx19Q0ii2j3oXzRKIsb6YKApvBwo8
-         pA0x9uAcPhoVGOKt5OWpkCsBHgTi45IdVrpYIcYFCcu8fi4uJdAIbiC6DZDJ66e8TuZZ
-         Ubf5p98ZHpsggyBfWE6xjBejzroI4Mnr2C7u9kn622vns50uGv9n5Gzs56ztNibly21R
-         I8HweMzLw2qJ8MfxX22erZGVNVEGSBnoJ9CcSHdbivj1yE0g7a8qrW1bMOLbPorvbMuO
-         0xoe3hF8azL5XbOH7kSekHTJ8QNPJtsagn5DymCHKAGBuUo4xN9/aJqHJIE5sY97p4Fz
-         Xv1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484152; x=1731088952;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LhpDgh5o6hmtsMchkNYiiOk/LDTq+HmIoaJTC5fXcFY=;
-        b=v+zf9Tb5SN05/cUzdgIq9C29KaRGUsSgFHVAEPRIg8Ypc7qdZblFEc4ZOanvpp8LuR
-         7Rp7tQCFKNRAurYQPJkmbJ5q/yMuLX2lOBAv8C99IkqaInIOcESc+L5s1n1u8w24rTuY
-         OYVy8EqTiIKSe5Yw053LlWaA81lgg3qMOqXPP4bKEwP3d+5NYtdM4VgMr2q3SOWmQ7Pt
-         NX61x65zYn2T077nWYQmUrPxyfHV5NVTx7gMyTBHwXWPh7q4TEmVi8g8B5g4WzFAaI4m
-         p43y8fMdXsJXj+6FLmgnKbV2aIPC9+EXTnd1NQ+daoF8XhJ2u4pGHQNYB7wujMWfCnVe
-         UHlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMue5zw6GWNlUgxA/PeCzGJtUWRsOHChGXVjTSOm7Sp4kML/6gGz1hsrh9RVpE5x+prsUmh1dIT72E@vger.kernel.org, AJvYcCUUTyAZQ6PGEo9Sjnm9AwK0ASiuQvLfe82cekKXNJA+yrxWhJXUvS+r4Gd5bW2AVrpvx4UOcttRW3sc@vger.kernel.org, AJvYcCUYdW5ico8L6BOZzt9hxG+oIfO84rgjL39wGvBlRJu7vCTnzhLx1JSm1hW/1jfPFza9izWmDHB9eglvh/3u@vger.kernel.org, AJvYcCWgVbTIPb+24VqfQLiLmTDFFeWuw16XJKaF9V6/QKL0CrsZ/lI/dCCAFjdAjyTFAdb2useD9MDVoF9C0+8ISQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4/kWfzm88X6hASJ5Etin/aQHJaclKRZ2higEr+hAzHEI57K4a
-	eu95jRAnFUF/KYW20jzu+Rl6BeDcxmHuqei/JvdZGbOIcYmjQIyx/qMpdw==
-X-Google-Smtp-Source: AGHT+IFeCheQNf3wLwjpAi3LuJrAXXy2xOlmbQhIyLvFCcJdSpkKSq4QUMJDDTpgDiiTt2cKk3vpbA==
-X-Received: by 2002:a05:6a21:9d83:b0:1d9:a785:6487 with SMTP id adf61e73a8af0-1dba5219700mr4891565637.1.1730484152449;
-        Fri, 01 Nov 2024 11:02:32 -0700 (PDT)
-Received: from dw-tp ([203.81.243.23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ea695sm2923603b3a.73.2024.11.01.11.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 11:02:31 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] ext4: Add statx support for atomic writes
-In-Reply-To: <4198772d-54c8-44b9-8e85-0ec089032514@oracle.com>
-Date: Fri, 01 Nov 2024 22:53:03 +0530
-Message-ID: <8734kazx54.fsf@gmail.com>
-References: <cover.1730437365.git.ritesh.list@gmail.com> <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com> <4198772d-54c8-44b9-8e85-0ec089032514@oracle.com>
+	s=arc-20240116; t=1730482817; c=relaxed/simple;
+	bh=CZrAVnnpzOJDdVoZU/5ILdchGhlyW/PdozvsrQHMfi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4LQZiS6A9eSC4hQbhomA4xdqvPL9os91uL4dPfVcOuzI+vTWE/LtWOOUiupPPad5FtJh/sWIFc4A5TdGJxyBhY+YieqpuyQisQtvaaDu9ckb2czypqn8AwtIydB1h0WsXCw12ictNW+qQ9+ESYarYkRi/gdG7b83Bm2edQPcR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fjjAXLw6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aHsb90yC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fjjAXLw6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aHsb90yC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 013A41FD1A;
+	Fri,  1 Nov 2024 17:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730482812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EkUVnR3b2RICCgZ0VtY69liY0oePq73KCG0v1Hn+ThA=;
+	b=fjjAXLw61xUIZ3mOr5IxfAcVwcarlS+ogFC4ZIPC39p05+Lyi7I99vNSH0o6gsC3YXZt7a
+	V5isn7hiQ/dIu5MeMcSSr5W6d4MX/899Ohd4GwSPhrpxiKnG03ZnSLL46a1AceQFBlTvFl
+	98519cGcipwUF+F3fsaPwLqv3ySnuqI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730482812;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EkUVnR3b2RICCgZ0VtY69liY0oePq73KCG0v1Hn+ThA=;
+	b=aHsb90yC82idUpXZvg8L0mJHfT2bWGiy1aWtULHBKowsyUw+DfBCg+aleRt4j4IUF1Vn3x
+	ggPTLjvWMRHiPlAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730482812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EkUVnR3b2RICCgZ0VtY69liY0oePq73KCG0v1Hn+ThA=;
+	b=fjjAXLw61xUIZ3mOr5IxfAcVwcarlS+ogFC4ZIPC39p05+Lyi7I99vNSH0o6gsC3YXZt7a
+	V5isn7hiQ/dIu5MeMcSSr5W6d4MX/899Ohd4GwSPhrpxiKnG03ZnSLL46a1AceQFBlTvFl
+	98519cGcipwUF+F3fsaPwLqv3ySnuqI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730482812;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EkUVnR3b2RICCgZ0VtY69liY0oePq73KCG0v1Hn+ThA=;
+	b=aHsb90yC82idUpXZvg8L0mJHfT2bWGiy1aWtULHBKowsyUw+DfBCg+aleRt4j4IUF1Vn3x
+	ggPTLjvWMRHiPlAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E5EF2136C7;
+	Fri,  1 Nov 2024 17:40:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8zzcN3sSJWe7OAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 01 Nov 2024 17:40:11 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6C502A0AF7; Fri,  1 Nov 2024 18:39:56 +0100 (CET)
+Date: Fri, 1 Nov 2024 18:39:56 +0100
+From: Jan Kara <jack@suse.cz>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	Alejandro Colomar <alx.manpages@gmail.com>,
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify.7,fanotify_mark.2: update documentation of
+ fanotify w.r.t fsid
+Message-ID: <20241101173956.2neyqoszjkdg53w4@quack3>
+References: <20241008094503.368923-1-amir73il@gmail.com>
+ <20241009153836.xkuzuei2gxeh2ghj@quack3>
+ <20241101130732.xzpottv5ru63w4wd@devuan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101130732.xzpottv5ru63w4wd@devuan>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-John Garry <john.g.garry@oracle.com> writes:
+Hi Alejandro!
 
-> On 01/11/2024 06:50, Ritesh Harjani (IBM) wrote:
->> This patch adds base support for atomic writes via statx getattr.
->> On bs < ps systems, we can create FS with say bs of 16k. That means
->> both atomic write min and max unit can be set to 16k for supporting
->> atomic writes.
->> 
->> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->
-> Regardless of nitpicks:
->
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
->
+On Fri 01-11-24 14:07:32, Alejandro Colomar wrote:
+> On Wed, Oct 09, 2024 at 05:38:36PM +0200, Jan Kara wrote:
+> > On Tue 08-10-24 11:45:03, Amir Goldstein wrote:
+> > > Clarify the conditions for getting the -EXDEV and -ENODEV errors.
+> > > 
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > 
+> > Looks good. Feel free to add:
+> 
+> Please see some minor inline comments below.
+> 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> Thanks!
+> 
+> > 
+> > But I've read somewhere that Alejandro stepped down as manpages maintainer
+> > so they are officially unmaintained?
+> 
+> A contract is imminent, and I've started to review/apply old patches
+> today already.  I'll probably make an official announcement soon.
 
-Thanks John for the review!
+I'm happy to hear that!
 
-Since as you too mentioned the remaining points are minor and not
-critical review comments, I will address them next time in the
-multi-fsblock variant. With all other aspects now finalized in this v4
-version, this looks ready to be picked up for the merge window. 
+> Maintenance is restored.  (As much as I possibly can, since my region
+> has limited electricity, water, and internet, after the worst flooding
+> in centuries.)
 
--ritesh
+I've heard about huge floods in Spain. We had pretty bad ones a month and
+half ago in Czech republic as well. But my area was only lightly affected.
+Stay safe!
+								Honza
 
->> ---
->>   fs/ext4/ext4.h  | 10 ++++++++++
->>   fs/ext4/inode.c | 12 ++++++++++++
->>   fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
->>   3 files changed, 53 insertions(+)
->> 
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index 44b0d418143c..494d443e9fc9 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
->>   	 */
->>   	struct work_struct s_sb_upd_work;
->>   
->> +	/* Atomic write unit values in bytes */
->> +	unsigned int s_awu_min;
->> +	unsigned int s_awu_max;
->> +
->>   	/* Ext4 fast commit sub transaction ID */
->>   	atomic_t s_fc_subtid;
->>   
->> @@ -3855,6 +3859,12 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->>   	return buffer_uptodate(bh);
->>   }
->>   
->> +static inline bool ext4_inode_can_atomic_write(struct inode *inode)
->> +{
->> +
->
-> nit: superfluous blank line
->
-
-Sure.
-
->> +	return S_ISREG(inode->i_mode) && EXT4_SB(inode->i_sb)->s_awu_min > 0;
->
-> I am not sure if the S_ISREG() check is required. Other callers also do 
-> the check (like ext4_getattr() for when calling 
-> ext4_inode_can_atomic_write()) or don't need it (ext4_file_open()). I 
-> say ext4_file_open() doesn't need it as ext4_file_open() is only ever 
-> called for regular files, right?
->
-
-Yes. However I believe we might end up using this from other places when
-we add support of extsize. So we might need S_ISREG check.
-But sure let me re-think on that during the multi-fsblock variant time.
-
->> +}
->> +
->>   extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->>   				  loff_t pos, unsigned len,
->>   				  get_block_t *get_block);
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 54bdd4884fe6..3e827cfa762e 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -5578,6 +5578,18 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
->>   		}
->>   	}
->>   
->> +	if ((request_mask & STATX_WRITE_ATOMIC) && S_ISREG(inode->i_mode)) {
->
-> nit: maybe you could have factored out the S_ISREG() check with 
-> STATX_DIOALIGN
->
-
-Sure.
-
->> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->> +		unsigned int awu_min = 0, awu_max = 0;
->> +
->> +		if (ext4_inode_can_atomic_write(inode)) {
->> +			awu_min = sbi->s_awu_min;
->> +			awu_max = sbi->s_awu_max;
->> +		}
->> +
->> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
->> +	}
->> +
->>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
->>   	if (flags & EXT4_APPEND_FL)
->>   		stat->attributes |= STATX_ATTR_APPEND;
->> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> index 16a4ce704460..ebe1660bd840 100644
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
->>   	return 0;
->>   }
->>   
->> +/*
->> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
->> + * @sb: super block
->> + * TODO: Later add support for bigalloc
->> + */
->> +static void ext4_atomic_write_init(struct super_block *sb)
->> +{
->> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> +	struct block_device *bdev = sb->s_bdev;
->> +
->> +	if (!bdev_can_atomic_write(bdev))
->> +		return;
->> +
->> +	if (!ext4_has_feature_extents(sb))
->> +		return;
->> +
->> +	sbi->s_awu_min = max(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_min_bytes(bdev));
->> +	sbi->s_awu_max = min(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_max_bytes(bdev));
->> +	if (sbi->s_awu_min && sbi->s_awu_max &&
->> +	    sbi->s_awu_min <= sbi->s_awu_max) {
->> +		ext4_msg(sb, KERN_NOTICE, "Supports (experimental) DIO atomic writes awu_min: %u, awu_max: %u",
->> +			 sbi->s_awu_min, sbi->s_awu_max);
->> +	} else {
->> +		sbi->s_awu_min = 0;
->> +		sbi->s_awu_max = 0;
->> +	}
->> +}
->> +
->>   static void ext4_fast_commit_init(struct super_block *sb)
->>   {
->>   	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->>   
->>   	spin_lock_init(&sbi->s_bdev_wb_lock);
->>   
->> +	ext4_atomic_write_init(sb);
->>   	ext4_fast_commit_init(sb);
->>   
->>   	sb->s_root = NULL;
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
