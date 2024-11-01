@@ -1,206 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-33497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D939B9819
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 20:09:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B079B98C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 20:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2866F1C21753
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D26E1C20F99
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0CB1CF280;
-	Fri,  1 Nov 2024 19:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633D81D0DE8;
+	Fri,  1 Nov 2024 19:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mha3ZbcX"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P4Lod8Yt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366511CEAA0;
-	Fri,  1 Nov 2024 19:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DC156880;
+	Fri,  1 Nov 2024 19:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730488147; cv=none; b=dWw9Qm+nb5FYCVDmLJiQd+4aOG9/IS/q+sr4gpRv4bdLDmgBAWmN2nM1a72vDTJDZbcbt+ZewNUVqFbuYrEkTbnpXNroeMIUKhU1ZQuLrIf4J05RpJ+UU3yXkGN0/RBK7msre8Cw/FcoiOp4GPIA54U22SxW/i5YwEaVQe+9j6Q=
+	t=1730489839; cv=none; b=TxC6YyV7lGh23fvs/qSfsTh+/AMFco7oqoaUCaT8oqpYnZs12zBCnq6im9hbQtKtCyv3S2kqbo6PG8mHav40W2J4RmC1+cY3XIxvlU1LangbR6VjSnZSb61HsGbnRWnkX6wDgTT9ANZ1qKYBUglEH29iBSMFIXi2rQOJF2SmYdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730488147; c=relaxed/simple;
-	bh=dOhNJ4bqsltqosWvK48KtLLJ8Qr3/+aIrxC5qXMR0c0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0lwnWIj4DiABLKKnXzYMSIhrbAP9ly/z2fBb6BIuBfS706B+MNnf2kJ4HnXUzccOwt1DxqmLz2FYqSSMEdddnV1Lwrp5zITk8AhsNQGM0uKci5YVv9eQjJ5p8zcNQeY0XOkC7ynsb5oesXp63YeBCrTW/BG1kq2Kn/IDJzhVAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mha3ZbcX; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1728649a12.0;
-        Fri, 01 Nov 2024 12:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730488145; x=1731092945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
-        b=Mha3ZbcX4POVTZ1BLshQByFshhUw3tVTb2ULwVxsHm6rp8mxQHlzjzXMFUlF5+6ENg
-         bDj67ZA8v5Sm+rE65E88xPYhKT9AylgRtquWjeVwEecytqdbAA8PptvzUN2gMd+V3ebm
-         FESMlRhf4Dt8RBIZzu7TMrjffSxAYDcnk1GRmBWG5PBFZS40n88lEFC03n52QuwXd1UH
-         RtEoGzZ1bvboPSaEc+4ISz/xzAZECm/04ELISoggjkJMfAADAniYvXCUbeN7vQY5cQl+
-         ZzqlQKQkvCE8NesnY1NKR+daJt0tdBDmKNvemthXJXu8IJjMLc2DSt4CzeIb4H1NUlgX
-         IlKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730488145; x=1731092945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
-        b=Q9YQlL7GhIb1M8QboPtCD+Um8Gc1vS2A1aRIacxXiXbytVLYAwlIaQeMibv++W9quc
-         VF2UMg73/ME3EekHwUFtBx8aQaHUZANC7uoM8QzL3yCdlY0ebN65EmQvdM5l57rk0A8X
-         XVWM5cFmhHxDdAiJScuP4k6pTFhXSwxMIX9ysLBeyCV8HWCVw80yMImepTf+WmEagm/5
-         vQfe6n+v+voNWBTD1i0OPvqcXJ73XSuyDg+RW0CHFXEH2DR9PKJbw4fImkoO45QbOaZt
-         /EWiSh8jwbiVgUdEPpfDvbDeI5KCkhSlnCWX+Ma4/NArnsH9hm1lMLG5Nc6y7HzUDIHf
-         fy1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUuKmevb2P5VTDHJkuq3pq7e659lLwawUhKguA/KeoyXV1Thxpo22tdbZ7HbXs27aXCP0Kx7GsOffOEmK4A@vger.kernel.org, AJvYcCVGxptkNGkg5pMwRd4lE6Jlkg4dLr2k3x93oytBUp9rzXYO6Qx8nCLp0bT8SrEMWSfpQ54=@vger.kernel.org, AJvYcCVR5UtAmIGsKaJVFIl/G18DPll46T3ELN1dDsS7EnlqiJ9jTIYinx/fCu5TqslWvdvQx8oxPck1nGsw8SrAAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSg3SFQPjGGcnlECoR1UQ5VHhhsH9xBFUYLp+WL+YeYJunEH98
-	F32rETray089AzCKBTtxzXCTX6EFWWtUtY+dZYTXjU1Nl0CUaksr0NTTSGjM5G9MSiW7D3Tj7JL
-	p62pNl018sqiyKfD9m6UJ9Cz1TeY=
-X-Google-Smtp-Source: AGHT+IEn2Do/6jRnMA3++ufyOBL20xnaTCPgPAZSoe26DmRbJ5T5EPARCBca+GckzX2dVOaQf3148vho6PwQQBOGO0c=
-X-Received: by 2002:a17:90b:3b89:b0:2e0:a926:19b1 with SMTP id
- 98e67ed59e1d1-2e8f11dce3amr26813641a91.38.1730488145468; Fri, 01 Nov 2024
- 12:09:05 -0700 (PDT)
+	s=arc-20240116; t=1730489839; c=relaxed/simple;
+	bh=OoWxJf4iBVjyTXJT/wfor5l782OhFK0RcLD9B0iQNFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=su4lfEQ5yqj47oW05+gM7b+drQiybWdI7zTdypkt6i2fzAVQY+afUVINIpDaYSvqmPLiHk6eTQ2YChDkbiYa9f8nW0V9JxrZxEmVf+fXQikTcnbW+efdEo3Xy33Qq2KGVcFfvdOolnCst5WGwFo7F8GObxL3QbhO1BZjM037+DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P4Lod8Yt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1EV4qN030018;
+	Fri, 1 Nov 2024 19:37:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=i2l4/Hj/mhka24zQg0cu1LYa/T2592hz+kjCUgTjJ
+	Ek=; b=P4Lod8YtCK3/AYqk+nTvGgqgQ1bSwfovsVBtwS0+xDwnkxgKdGQdZ0YWF
+	vchaI5plG2mnxi+UzocYn42Wf6tweHY+sTSUJ5g+EjMS3+MsRtIBPQMRCwgk7UlN
+	tN/qMM/fAIZ+WkQgJKK7oTkHBuTFDp0tezKi8m75Dj3t+cwm+6uepOz3WDBSe3BX
+	QjzbbOnt5TqfJsR6Cn0QXX5XOLA0/+bXHBbj7boLCRBNeThsKfulhTavrLF4IGTY
+	otMVbM6AjDTKwqpk98Pb/+KQOcs7EauKgfJDHZnFkEljIO4Ftt7pc7q1NdUw9EPo
+	tQKhfQlRXfpCqSzQ5t08cGNUwduzQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5ss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:08 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A1Jb7vs004278;
+	Fri, 1 Nov 2024 19:37:07 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5sp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:07 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1FYwKd028181;
+	Fri, 1 Nov 2024 19:37:06 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4yb91f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:06 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A1Jb50n53018924
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Nov 2024 19:37:05 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A83E58060;
+	Fri,  1 Nov 2024 19:37:05 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E4E1F5803F;
+	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Stefan Berger <stefanb@linux.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
+Date: Fri,  1 Nov 2024 15:37:03 -0400
+Message-ID: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.47.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: yG6F-hGE31ukWHgEfDQCKAvMFaRmBF7w
+X-Proofpoint-GUID: JeiN5rPZehDvztK6czFOzCyPW_j7Pa1Q
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5848098C1DF99C6C417B405D99542@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 1 Nov 2024 12:08:53 -0700
-Message-ID: <CAEf4BzadfF8iSAnhWFDNmXE80ayJXDkucbeg0jv-+=FtoDg5Zg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 3/4] bpf/crib: Add struct file related CRIB kfuncs
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 mlxscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010138
 
-On Tue, Oct 29, 2024 at 5:17=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
-> This patch adds struct file related CRIB kfuncs.
->
-> bpf_fget_task() is used to get a pointer to the struct file
-> corresponding to the task file descriptor. Note that this function
-> acquires a reference to struct file.
->
-> bpf_get_file_ops_type() is used to determine what exactly this file
-> is based on the file operations, such as socket, eventfd, timerfd,
-> pipe, etc, in order to perform different checkpoint/restore processing
-> for different file types. This function currently has only one return
-> value, FILE_OPS_UNKNOWN, but will increase with the file types that
-> CRIB supports for checkpoint/restore.
->
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
->  kernel/bpf/crib/crib.c  |  4 ++++
->  kernel/bpf/crib/files.c | 44 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 48 insertions(+)
->
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Please CC Christian Brauner and fs mailing list
-(linux-fsdevel@vger.kernel.org, both cc'ed) on changes like this (this
-entire patch set)
+Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
+function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
+call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
+Now, simplify the getattr interface functions of filesystems where the flag
+AT_GETATTR_NOSEC is checked.
 
-> diff --git a/kernel/bpf/crib/crib.c b/kernel/bpf/crib/crib.c
-> index e6536ee9a845..78ddd19d5693 100644
-> --- a/kernel/bpf/crib/crib.c
-> +++ b/kernel/bpf/crib/crib.c
-> @@ -14,6 +14,10 @@ BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NE=
-XT | KF_RET_NULL)
->  BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
->  BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
->
-> +BTF_ID_FLAGS(func, bpf_fget_task, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_=
-NULL)
-> +BTF_ID_FLAGS(func, bpf_get_file_ops_type, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
-> +
->  BTF_KFUNCS_END(bpf_crib_kfuncs)
->
->  static const struct btf_kfunc_id_set bpf_crib_kfunc_set =3D {
-> diff --git a/kernel/bpf/crib/files.c b/kernel/bpf/crib/files.c
-> index ececf150303f..8e0e29877359 100644
-> --- a/kernel/bpf/crib/files.c
-> +++ b/kernel/bpf/crib/files.c
-> @@ -5,6 +5,14 @@
->  #include <linux/fdtable.h>
->  #include <linux/net.h>
->
-> +/**
-> + * This enum will grow with the file types that CRIB supports for
-> + * checkpoint/restore.
-> + */
-> +enum {
-> +       FILE_OPS_UNKNOWN =3D 0
-> +};
-> +
->  struct bpf_iter_task_file {
->         __u64 __opaque[3];
->  } __aligned(8);
-> @@ -102,4 +110,40 @@ __bpf_kfunc void bpf_iter_task_file_destroy(struct b=
-pf_iter_task_file *it)
->                 fput(kit->file);
->  }
->
-> +/**
-> + * bpf_fget_task() - Get a pointer to the struct file corresponding to
-> + * the task file descriptor
-> + *
-> + * Note that this function acquires a reference to struct file.
-> + *
-> + * @task: the specified struct task_struct
-> + * @fd: the file descriptor
-> + *
-> + * @returns the corresponding struct file pointer if found,
-> + * otherwise returns NULL
-> + */
-> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigne=
-d int fd)
-> +{
-> +       struct file *file;
-> +
-> +       file =3D fget_task(task, fd);
-> +       return file;
-> +}
-> +
-> +/**
-> + * bpf_get_file_ops_type() - Determine what exactly this file is based o=
-n
-> + * the file operations, such as socket, eventfd, timerfd, pipe, etc
-> + *
-> + * This function will grow with the file types that CRIB supports for
-> + * checkpoint/restore.
-> + *
-> + * @file: a pointer to the struct file
-> + *
-> + * @returns the file operations type
-> + */
-> +__bpf_kfunc unsigned int bpf_get_file_ops_type(struct file *file)
-> +{
-> +       return FILE_OPS_UNKNOWN;
-> +}
-> +
+There is only a single caller of inode_operations getattr function and it
+is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
+one from which the AT_GETATTR_NOSEC flag is passed from.
 
-this is not very supportable, users can do the same by accessing
-file->f_op and comparing it to a set of known struct file_operations
-references.
+Two filesystems are checking this flag in .getattr and the flag is always
+passed to them unconditionally from only vfs_getattr_nosec:
 
->  __bpf_kfunc_end_defs();
-> --
-> 2.39.5
->
+- ecryptfs:  Simplify by always calling vfs_getattr_nosec in
+             ecryptfs_getattr. From there the flag is passed to no other
+             function and this function is not called otherwise.
+
+- overlayfs: Simplify by always calling vfs_getattr_nosec in
+             ovl_getattr. From there the flag is passed to no other
+             function and this function is not called otherwise.
+
+The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
+any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
+important inside this function. Also, since no filesystem is checking the
+flag anymore, remove the flag entirely now, including the BUG_ON check that
+never triggered.
+
+The net change of the changes here combined with the originan commit is
+that ecryptfs and overlayfs do not call vfs_getattr but only
+vfs_getattr_nosec.
+
+Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
+Cc: Tyler Hicks <code@tyhicks.com>
+Cc: ecryptfs@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-unionfs@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ fs/ecryptfs/inode.c        | 12 ++----------
+ fs/overlayfs/inode.c       | 10 +++++-----
+ fs/overlayfs/overlayfs.h   |  8 --------
+ fs/stat.c                  |  5 +----
+ include/uapi/linux/fcntl.h |  4 ----
+ 5 files changed, 8 insertions(+), 31 deletions(-)
+
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index cbdf82f0183f..a9819ddb1ab8 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
+ 	return rc;
+ }
+ 
+-static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
+-			       u32 request_mask, unsigned int flags)
+-{
+-	if (flags & AT_GETATTR_NOSEC)
+-		return vfs_getattr_nosec(path, stat, request_mask, flags);
+-	return vfs_getattr(path, stat, request_mask, flags);
+-}
+-
+ static int ecryptfs_getattr(struct mnt_idmap *idmap,
+ 			    const struct path *path, struct kstat *stat,
+ 			    u32 request_mask, unsigned int flags)
+@@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
+ 	struct kstat lower_stat;
+ 	int rc;
+ 
+-	rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
+-				 &lower_stat, request_mask, flags);
++	rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
++			       &lower_stat, request_mask, flags);
+ 	if (!rc) {
+ 		fsstack_copy_attr_all(d_inode(dentry),
+ 				      ecryptfs_inode_to_lower(d_inode(dentry)));
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 35fd3e3e1778..8b31f44c12cd 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 
+ 	type = ovl_path_real(dentry, &realpath);
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+-	err = ovl_do_getattr(&realpath, stat, request_mask, flags);
++	err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
+ 	if (err)
+ 		goto out;
+ 
+@@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 					(!is_dir ? STATX_NLINK : 0);
+ 
+ 			ovl_path_lower(dentry, &realpath);
+-			err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
+-					     flags);
++			err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
++						flags);
+ 			if (err)
+ 				goto out;
+ 
+@@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 
+ 			ovl_path_lowerdata(dentry, &realpath);
+ 			if (realpath.dentry) {
+-				err = ovl_do_getattr(&realpath, &lowerdatastat,
+-						     lowermask, flags);
++				err = vfs_getattr_nosec(&realpath, &lowerdatastat,
++							lowermask, flags);
+ 				if (err)
+ 					goto out;
+ 			} else {
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 0bfe35da4b7b..910dbbb2bb7b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
+ 	return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
+ }
+ 
+-static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
+-				 u32 request_mask, unsigned int flags)
+-{
+-	if (flags & AT_GETATTR_NOSEC)
+-		return vfs_getattr_nosec(path, stat, request_mask, flags);
+-	return vfs_getattr(path, stat, request_mask, flags);
+-}
+-
+ /* util.c */
+ int ovl_get_write_access(struct dentry *dentry);
+ void ovl_put_write_access(struct dentry *dentry);
+diff --git a/fs/stat.c b/fs/stat.c
+index 41e598376d7e..cbc0fcd4fba3 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(idmap, path, stat,
+ 					    request_mask,
+-					    query_flags | AT_GETATTR_NOSEC);
++					    query_flags);
+ 
+ 	generic_fillattr(idmap, request_mask, inode, stat);
+ 	return 0;
+@@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
+ {
+ 	int retval;
+ 
+-	if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
+-		return -EPERM;
+-
+ 	retval = security_inode_getattr(path);
+ 	if (retval)
+ 		return retval;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 87e2dec79fea..a40833bf2855 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -154,8 +154,4 @@
+ 					   usable with open_by_handle_at(2). */
+ #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+ 
+-#if defined(__KERNEL__)
+-#define AT_GETATTR_NOSEC	0x80000000
+-#endif
+-
+ #endif /* _UAPI_LINUX_FCNTL_H */
+-- 
+2.47.0
+
 
