@@ -1,120 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-33479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA899B93BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 15:49:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C3A9B9417
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 16:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4205F2837BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 14:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB301C20FF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 15:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A51AB52F;
-	Fri,  1 Nov 2024 14:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7444A1BBBD0;
+	Fri,  1 Nov 2024 15:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqviswlY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXjwbnlx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC41AA78E;
-	Fri,  1 Nov 2024 14:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16DF1AC884;
+	Fri,  1 Nov 2024 15:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472556; cv=none; b=H3JCkb7LcwaT5IE5nE9uqGVVrqcZy0i4BeYfg6VDNjnHPfwvOvxobaOqIyn8Ctz7FcOzCxGIt/El0kvZWCk/tT3BPqNesCprz9fp4VsMUdVKGU704xKniv6ggUP46BA24EjPDNoTgZ7pdInmOpFlm+so4WhMqWd6JymBdVU/4+E=
+	t=1730473979; cv=none; b=a6aeOVVkIKWLT///ohXil00O049rMj1HFy0Sry5S/ryveK4fc8olpCpXTIZACNypvM6XqY8jglt/WGKLiTMDuYVsIMnJDmf+9HTRTbLUWOLYWrcIJaI3evHIcJA+NnTM2fIRw62NZXoB6/p03PypXR41GQabZDiYqy5ArTP8nKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472556; c=relaxed/simple;
-	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
+	s=arc-20240116; t=1730473979; c=relaxed/simple;
+	bh=ekg2hMYbznCWaygXXUdGZ3n+I2d1nv9q5j+6mo/Z790=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBfAeUimU6J0Dijnu2NtLhFu8Y8RbYYEvS+B1WQ1IQJdsGs6JohqgBi6sliykFg8BYzQH+QafelXMTd3OY4LTWEvp6e+dFEEgplewQibODi2GoVftqWs3/9KleIeENlLK8ev57y5v1zkUnVqY4rs6apRk9ZiGbWBoNgAufxQoIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqviswlY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFBFC4CECD;
-	Fri,  1 Nov 2024 14:49:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fm+GgRcIVFVqNfMaR5azITrWh75RVse95wWVlS2YXFjBOWQHcdNC+0jxm2vRMoNlfNcRQEWrqLdjfRgkRMJQFbJgs2Q6kOQzzAGDFcyt18JTIhbD4lI+GBXysDgXAAKchDuuzdoCmW68Q+3x8gwBmvZWl2fR24Vpf/r9OI0S/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXjwbnlx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F3BDC4CECD;
+	Fri,  1 Nov 2024 15:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730472555;
-	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
+	s=k20201202; t=1730473979;
+	bh=ekg2hMYbznCWaygXXUdGZ3n+I2d1nv9q5j+6mo/Z790=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qqviswlYX1BHKuPR5ekMMzxSlcNtysICRu79OUByTD9UMQIsGrpVy/A721KYFuHMe
-	 TZgNQ9laCdOQKoOOdHw+RLLXTRMtPDyj+1aOdIvd/CmVB1QDlxAT1sXJW1ILqbhgQj
-	 r2chJflG1cLWi+WegmVeWDFEgaGMQ1D/J7Vs55mWI6YhP5xHJdg5e1ZqnThl3RcSmW
-	 A/t4EPA6eJxanq/Ag7wG+RZpB6Hdw1r++uL8XIiNJqWdiYaNtOJY5lcWERoBA2hDsR
-	 ustDb/50m8C5CtlUteDhkjp1SoqsrgvAqVnupo9cwHKs137vxOIFE7gwnytEzws0Ol
-	 0wDEgDRoQz2Pw==
-Date: Fri, 1 Nov 2024 08:49:12 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Hans Holmberg <hans@owltronix.com>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
-	javier.gonz@samsung.com, bvanassche@acm.org,
-	Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Message-ID: <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
-References: <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
- <20241030154556.GA4449@lst.de>
- <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
- <20241030155052.GA4984@lst.de>
- <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
- <20241030165708.GA11009@lst.de>
- <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
- <CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
- <ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com>
- <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
+	b=LXjwbnlxiTg55GSnTO31Ut03qEys8JTLEYgutdQfLcHxxyuP7PO2gsr6scoeuZdPx
+	 TDa/kIFuLE3jEQdz32QVirg3VkJmK5iAHtoeylhbaqsmoeOvg0kzKrlLTEIWLeUJls
+	 4D+/+Qj9NQxYu6LE5Nb3g6iUd/nCBoWspM1y2olcEk0FValyyE3RUgPgjkfm+4jJkx
+	 G8cOsnzk6fqRAjO/AvjNVnwYxNVBnFAkqePhIUiRjJzgGrHAhJdYQx2fhqBZ6wXyoi
+	 vgNJMRA4PMmj80oq7QR7R++/pGnva1GcfHEBh6MnJpVKBS4EDMf2B4w8IzmCi1RvcP
+	 XIlKkeRGxWBYA==
+Date: Fri, 1 Nov 2024 08:12:58 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] ext4: Add statx support for atomic writes
+Message-ID: <20241101151258.GG2386201@frogsfrogsfrogs>
+References: <cover.1730437365.git.ritesh.list@gmail.com>
+ <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
+In-Reply-To: <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
 
-On Fri, Nov 01, 2024 at 08:16:30AM +0100, Hans Holmberg wrote:
-> On Thu, Oct 31, 2024 at 3:06 PM Keith Busch <kbusch@kernel.org> wrote:
-> > On Thu, Oct 31, 2024 at 09:19:51AM +0100, Hans Holmberg wrote:
-> > > No. The meta data IO is just 0.1% of all writes, so that we use a
-> > > separate device for that in the benchmark really does not matter.
-> >
-> > It's very little spatially, but they overwrite differently than other
-> > data, creating many small holes in large erase blocks.
+On Fri, Nov 01, 2024 at 12:20:51PM +0530, Ritesh Harjani (IBM) wrote:
+> This patch adds base support for atomic writes via statx getattr.
+> On bs < ps systems, we can create FS with say bs of 16k. That means
+> both atomic write min and max unit can be set to 16k for supporting
+> atomic writes.
 > 
-> I don't really get how this could influence anything significantly.(If at all).
+> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-Fill your filesystem to near capacity, then continue using it for a few
-months. While the filesystem will report some available space, there
-may not be many good blocks available to erase. Maybe.
- 
-> > Again, I absolutely disagree that this locks anyone in to anything.
-> > That's an overly dramatic excuse.
+Looks good to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/ext4/ext4.h  | 10 ++++++++++
+>  fs/ext4/inode.c | 12 ++++++++++++
+>  fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
+>  3 files changed, 53 insertions(+)
 > 
-> Locking in or not, to constructively move things forward (if we are
-> now stuck on how to wire up fs support) 
-
-But we're not stuck on how to wire up to fs. That part was settled and
-in kernel 10 years ago. We're stuck on wiring it down to the driver,
-which should have been the easiest part.
-
-> I believe it would be worthwhile to prototype active fdp data
-> placement in xfs and evaluate it. Happy to help out with that.
-
-When are we allowed to conclude evaluation? We have benefits my
-customers want on well tested kernels, and wish to proceed now.
-
-I'm not discouraing anyone from continuing further prototypes,
-innovations, and improvements. I'd like to spend more time doing that
-too, and merging something incrementally better doesn't prevent anyone
-from doing that.
-
-> Fdp and zns are different beasts, so I don't expect the results in the
-> presentation to be directly translatable but we can see what we can
-> do.
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 44b0d418143c..494d443e9fc9 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+>  	 */
+>  	struct work_struct s_sb_upd_work;
+>  
+> +	/* Atomic write unit values in bytes */
+> +	unsigned int s_awu_min;
+> +	unsigned int s_awu_max;
+> +
+>  	/* Ext4 fast commit sub transaction ID */
+>  	atomic_t s_fc_subtid;
+>  
+> @@ -3855,6 +3859,12 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+>  	return buffer_uptodate(bh);
+>  }
+>  
+> +static inline bool ext4_inode_can_atomic_write(struct inode *inode)
+> +{
+> +
+> +	return S_ISREG(inode->i_mode) && EXT4_SB(inode->i_sb)->s_awu_min > 0;
+> +}
+> +
+>  extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>  				  loff_t pos, unsigned len,
+>  				  get_block_t *get_block);
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 54bdd4884fe6..3e827cfa762e 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5578,6 +5578,18 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+>  		}
+>  	}
+>  
+> +	if ((request_mask & STATX_WRITE_ATOMIC) && S_ISREG(inode->i_mode)) {
+> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +		unsigned int awu_min = 0, awu_max = 0;
+> +
+> +		if (ext4_inode_can_atomic_write(inode)) {
+> +			awu_min = sbi->s_awu_min;
+> +			awu_max = sbi->s_awu_max;
+> +		}
+> +
+> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+> +	}
+> +
+>  	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+>  	if (flags & EXT4_APPEND_FL)
+>  		stat->attributes |= STATX_ATTR_APPEND;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 16a4ce704460..ebe1660bd840 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
+> + * @sb: super block
+> + * TODO: Later add support for bigalloc
+> + */
+> +static void ext4_atomic_write_init(struct super_block *sb)
+> +{
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +	struct block_device *bdev = sb->s_bdev;
+> +
+> +	if (!bdev_can_atomic_write(bdev))
+> +		return;
+> +
+> +	if (!ext4_has_feature_extents(sb))
+> +		return;
+> +
+> +	sbi->s_awu_min = max(sb->s_blocksize,
+> +			      bdev_atomic_write_unit_min_bytes(bdev));
+> +	sbi->s_awu_max = min(sb->s_blocksize,
+> +			      bdev_atomic_write_unit_max_bytes(bdev));
+> +	if (sbi->s_awu_min && sbi->s_awu_max &&
+> +	    sbi->s_awu_min <= sbi->s_awu_max) {
+> +		ext4_msg(sb, KERN_NOTICE, "Supports (experimental) DIO atomic writes awu_min: %u, awu_max: %u",
+> +			 sbi->s_awu_min, sbi->s_awu_max);
+> +	} else {
+> +		sbi->s_awu_min = 0;
+> +		sbi->s_awu_max = 0;
+> +	}
+> +}
+> +
+>  static void ext4_fast_commit_init(struct super_block *sb)
+>  {
+>  	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>  
+>  	spin_lock_init(&sbi->s_bdev_wb_lock);
+>  
+> +	ext4_atomic_write_init(sb);
+>  	ext4_fast_commit_init(sb);
+>  
+>  	sb->s_root = NULL;
+> -- 
+> 2.46.0
 > 
-> Is RocksDB the only file system user at the moment?
-
-Rocks is the only open source one I know about. There are propietary
-users, too.
+> 
 
