@@ -1,207 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-33438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CC49B8BB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 08:05:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7433E9B8BBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 08:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE891F2235B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33104282050
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 07:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01161531EF;
-	Fri,  1 Nov 2024 07:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F161531F0;
+	Fri,  1 Nov 2024 07:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBVjOAXc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJKLmiem"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98E1494A7;
-	Fri,  1 Nov 2024 07:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1281E495;
+	Fri,  1 Nov 2024 07:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730444724; cv=none; b=jmqfCTieC+aHOOKkb4r+BgxQmJsJc3qL7Fatz6EgjQlmzFOagAF48CTgGhXtrrGFeDURM6yOivYyXuNd682Nz0lyHHjzEGvR5h1BkP76NJSgGoscVIPdVyv5sXMj07Kjz9VY8PxKdh4QT7z1r6c2KNuLCUmvDYsDECMr7sMbOxY=
+	t=1730444769; cv=none; b=T+OmvXR3JM2zY0rrtkVH9pxIXrfeW+Ek8OWE0MYtjl7zAFGb5rX5HQvWYQVOkT5GZrf5lUGe/T+pmL7NlthZ7EKcVZRwl4f3TCz3+FGY5pMxwZsNxjzg2BOjI5fQrSErfV0MKlfSLxgI3dJ4HlkgT80QM+mCDF28B2Tj0JeY1Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730444724; c=relaxed/simple;
-	bh=ThxAaKztzBi0/cRlZPNliYJwvg/hi15Q8xMYGl3W3fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nj070xdla1VMfY2rT6xVD72pPZG+n/9u1cLVoRMiDWfWZSNF5vBi96+bluGDWfSwe9MDyLidf8rWuR7ZwdiFMAwITqFi0KawwSb5ES/4KoxdJfA5L9SqRk8LqA0J1LnVCzI+H92ak+3vZnk0Nvoc1tCAiQTi3BSofv7w8IqbN4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBVjOAXc; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cc2ea27a50so24210786d6.0;
-        Fri, 01 Nov 2024 00:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730444721; x=1731049521; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CeRtSAMS9mSdK5Z3YnzN1Gk/iNcxNQ7vtANptzs5s5s=;
-        b=KBVjOAXcWCexCu+G2KqhxQzfb2JOdXzNpnggaysw6apOFIGb7wvGFcRYUI7e71Go7y
-         REDznD85wYKUxpZDtinEVHMjjLDoPheLi+dV71tNGf5hyDCjNcbfjH91/2YM1NevGwpX
-         Bz/nX88xoDAYYRN/u0LLq8EvWMG1ScHtkLqeXMNWIpb3FlR9th4OVnNK8/f9C1D1w06x
-         86SsSucgDi3BjzHCRV63+7zBZz8LU/kOzjYhviMkRfTLp6X1Ud+F1swHhQFluekAftre
-         v9m+qwrlFK+BI/xB3NbZvCPNTrGU+nXy6sJBnjpTUmD9kfms5ofV5GINl3PBxOB7/aPc
-         CWLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730444721; x=1731049521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CeRtSAMS9mSdK5Z3YnzN1Gk/iNcxNQ7vtANptzs5s5s=;
-        b=AjuERcGMAme3mlskIXqHsn2rBEAo/7QiONToEHupAEUG/nAsdzO0c5KjPpNFNK2jEm
-         Fg8T2Pw13FW4fuW9q4qSgSArA8DgeeIzYrA9bn0tldROoVDZnyfu2TIZSfS8+o1Favd6
-         OD72/oW00tu7fwxKgO+w5XQcQt88w+wjk/JFyV68yiihmnwq7tC6t+y0liBGSvK5hcVZ
-         UC4LPukjCeLOybAmhzkAGNlKGpkyu4ypL8cxWhVpna0jxq4bJdpE0BaltQ0onmVpWp45
-         gbFyDoVzLOLKsyOSsSJD5n9GacLHHlW6qRicw//+YB524WQ0kE0K9b8fGGP+EX18CXQ0
-         nCyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaAOC21FyDtN3YIOWYh/ByLFOPYGowcQ4UKs5Mqv78he1ke4Wm1YrdZifbudJpoE2Z73AL7vF/aaVM7V03ZQ==@vger.kernel.org, AJvYcCViM6D1W8GJzBJm2GHaDzk7c8dFDYaiv9E46N7j2KSdl5chWsvGat6ekFUiVfQPsd9DLT3E@vger.kernel.org, AJvYcCWPrPQDfQPUl63g8YGmsZmiuGPcNPYxvhTh/xraf8Sh3X8+zRnjNRaoRWIadUyVJxgBh0OJgjviHH8AIHzK@vger.kernel.org, AJvYcCXcrs70+fXUU0EubW3zmBKBZYSkoAdRmStISrHg318O8HuqhrZsUET88GmCQf5HHYjcNJeqAZpMvvKi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGhEQX0En9zMT8UnvmSte8c0Vd0ZXrpQxoH0aEUyHO+qDpg+6w
-	6SRoOZGuboNT8x64U2dNWQprH7/QLk0gxqLBDO2cHM3sB+Uv8BoGlBeiVoFI
-X-Google-Smtp-Source: AGHT+IFrsBo99R77+QegcYKVQJQa7o75kxQSDycQVpMwSj1BelPv4m5AvmbCAqFWjQIDvFEi2jWTGQ==
-X-Received: by 2002:a0c:c682:0:b0:6d1:6fae:6451 with SMTP id 6a1803df08f44-6d3542aa362mr74394476d6.10.1730444721125;
-        Fri, 01 Nov 2024 00:05:21 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9f4e4sm16288896d6.10.2024.11.01.00.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 00:05:20 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 4AB8A1200043;
-	Fri,  1 Nov 2024 03:05:20 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 03:05:20 -0400
-X-ME-Sender: <xms:sH0kZ08A3ouC4fowzy8CSGkVPjbjWmcH-KuAODKOAsrCLPXJl3Z70A>
-    <xme:sH0kZ8s3lxTPyi2hDzujZuvrhYp-WVf8-Sf965vl8Mk3R2lql72y6v2VufyoFEwaz
-    oOXSs2tRAG9rZPtcw>
-X-ME-Received: <xmr:sH0kZ6B7BxHG5qIwZWa1yZDfbd6nweSSBw-d-22bBr5sYk5gUgAUybdtWTM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekkedguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeehkedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiughgohifsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhlvhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhk
-    mhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepohhjvggurgeskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtgho
-    mh
-X-ME-Proxy: <xmx:sH0kZ0fPpPWT-ZMfAxLmoGiEJHvS0eh430pWhKA5tKb98M7sCRzotQ>
-    <xmx:sH0kZ5PPHY1qYd6c1_1iUjnQTJ0cl6EE16KaUf7P8wfTPdmLjVqmlg>
-    <xmx:sH0kZ-kPmjSKwJbiG5nyq4rQA1UfTXHPU9ulFdJ5SBKWQExnooNYpg>
-    <xmx:sH0kZ7utTfsVwCtwWjp_A8pra2-EkoBQjbUGOpgE0RhPKsLrU44XVQ>
-    <xmx:sH0kZ3vHPSUXZMOXlCAjhtq15r6J38ifscptCou0h_BaMU1BRYJYHLol>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 03:05:19 -0400 (EDT)
-Date: Fri, 1 Nov 2024 00:04:09 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Gow <davidgow@google.com>
-Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, lkmm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
- Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
- Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org
-Subject: Re: [RFC v2 11/13] rust: sync: Add memory barriers
-Message-ID: <ZyR9aTAhtCdpdC-h@boqun-archlinux>
-References: <20241101060237.1185533-1-boqun.feng@gmail.com>
- <20241101060237.1185533-12-boqun.feng@gmail.com>
- <CABVgOSn1eeZo7HggJYNEzzuGGpKABF=NbyMZLQbNjRwCAKXY-w@mail.gmail.com>
+	s=arc-20240116; t=1730444769; c=relaxed/simple;
+	bh=ZvZeBAnC9kYknUDCBX/xc2CDVq0IkqW7BT2/xp+xC7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EE/oSvhv+LRQsFxupOHkHG8Oj3mlKcFfHoNAI8KpfcetsrX4bCP674jrXzuv4TjTeWXulnoUtv6AE6Cb3NMw5JgEr1zQ1aYdEAa3KnWyXHqEROeUBM7wTXJmYECatL14YbtxL1IdTsCIZo3KqOac5ZTvUMAH73R0R4H6MqCV7x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJKLmiem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC26C4CECD;
+	Fri,  1 Nov 2024 07:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730444768;
+	bh=ZvZeBAnC9kYknUDCBX/xc2CDVq0IkqW7BT2/xp+xC7c=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=vJKLmiemKA7iqYmXQ81GxW51cKMwjrvpGMvZJ7mpPlWM2L8bsH7Af92qlOlhacgY5
+	 GxRWALUCbFjAn6wtm+9c0N2EINFFLG8wZ2x9/+P+ecGuz6pFKlkJ+C/sMpV/6aCkkn
+	 rXBffDnS9EeQyCTF6FbFjimym0xpQqDCiwBkhO2sCkyqnBsplxuPcEVn1rEGnL2Y8M
+	 KIZkNJeIRd5tSqlmOvHM1szrts7eJjDnfn+vaC8/t/PVXLWeyZ3jly+v01mtmL6nn9
+	 P3jzrSJ2TW90qP7v4K+Rkui2+Q2Mf9ZFkA0aIZBLX2paHkx8RS35Nw8N1ABD/0km/d
+	 iRyVHTkxplelg==
+Message-ID: <0f5c1192-090b-4c00-a951-9613289057df@kernel.org>
+Date: Fri, 1 Nov 2024 08:06:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOSn1eeZo7HggJYNEzzuGGpKABF=NbyMZLQbNjRwCAKXY-w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
+ managed interrupts
+To: 'Guanjun' <guanjun@linux.alibaba.com>, corbet@lwn.net, axboe@kernel.dk,
+ mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ eperezma@redhat.com, vgoyal@redhat.com, stefanha@redhat.com,
+ miklos@szeredi.hu, tglx@linutronix.de, peterz@infradead.org,
+ akpm@linux-foundation.org, paulmck@kernel.org, thuth@redhat.com,
+ rostedt@goodmis.org, bp@alien8.de, xiongwei.song@windriver.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
+References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
+ <20241031074618.3585491-2-guanjun@linux.alibaba.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241031074618.3585491-2-guanjun@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 01, 2024 at 02:55:23PM +0800, David Gow wrote:
-> On Fri, 1 Nov 2024 at 14:07, Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > Memory barriers are building blocks for concurrent code, hence provide
-> > a minimal set of them.
-> >
-> > The compiler barrier, barrier(), is implemented in inline asm instead of
-> > using core::sync::atomic::compiler_fence() because memory models are
-> > different: kernel's atomics are implemented in inline asm therefore the
-> > compiler barrier should be implemented in inline asm as well.
-> >
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  rust/helpers/helpers.c      |  1 +
-> >  rust/kernel/sync.rs         |  1 +
-> >  rust/kernel/sync/barrier.rs | 67 +++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 69 insertions(+)
-> >  create mode 100644 rust/kernel/sync/barrier.rs
-> >
-> > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> > index ab5a3f1be241..f4a94833b29d 100644
-> > --- a/rust/helpers/helpers.c
-> > +++ b/rust/helpers/helpers.c
-> > @@ -8,6 +8,7 @@
-> >   */
-> >
-> >  #include "atomic.c"
-> > +#include "barrier.c"
+Hi,
+
+On 31. 10. 24, 8:46, 'Guanjun' wrote:
+> From: Guanjun <guanjun@linux.alibaba.com>
 > 
-> It looks like "barrier.c" is missing, so this isn't compiling for me.
-> I assume it was meant to be added in this patch...?
+> Commit c410abbbacb9 (genirq/affinity: Add is_managed to struct irq_affinity_desc)
+> introduced is_managed bit to struct irq_affinity_desc. Due to queue interrupts
+> treated as managed interrupts, in scenarios where a large number of
+> devices are present (using massive msix queue interrupts), an excessive number
+> of IRQ matrix bits (about num_online_cpus() * nvecs) are reserved during
+> interrupt allocation. This sequently leads to the situation where interrupts
+> for some devices cannot be properly allocated.
 > 
+> Support for limiting the number of managed interrupts on every node per allocation.
+> 
+> Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  9 +++
+>   block/blk-mq-cpumap.c                         |  2 +-
+>   drivers/virtio/virtio_vdpa.c                  |  2 +-
+>   fs/fuse/virtio_fs.c                           |  2 +-
+>   include/linux/group_cpus.h                    |  2 +-
+>   kernel/irq/affinity.c                         | 11 ++--
+>   lib/group_cpus.c                              | 55 ++++++++++++++++++-
+>   7 files changed, 73 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 9b61097a6448..ac80f35d04c9 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3238,6 +3238,15 @@
+>   			different yeeloong laptops.
+>   			Example: machtype=lemote-yeeloong-2f-7inch
+>   
+> +	managed_irqs_per_node=
+> +			[KNL,SMP] Support for limiting the number of managed
+> +			interrupts on every node to prevent the case that
+> +			interrupts cannot be properly allocated where a large
+> +			number of devices are present. The default number is 0,
+> +			that means no limit to the number of managed irqs.
+> +			Format: integer between 0 and num_possible_cpus() / num_possible_nodes()
+> +			Default: 0
 
-Yes, I just send an updated one.
+Kernel parameters suck. Esp. here you have to guess to even properly 
+boot. Could this be auto-tuned instead?
 
-Glad being "checking missing files" buddies with you ;-) Thanks!
+> --- a/lib/group_cpus.c
+> +++ b/lib/group_cpus.c
+> @@ -11,6 +11,30 @@
+>   
+>   #ifdef CONFIG_SMP
+>   
+> +static unsigned int __read_mostly managed_irqs_per_node;
+> +static struct cpumask managed_irqs_cpumsk[MAX_NUMNODES] __cacheline_aligned_in_smp = {
 
-Regards,
-Boqun
+This is quite excessive. On SUSE configs, this is 8192 cpu bits * 1024 
+nodes = 1 M. For everyone. You have to allocate this dynamically 
+instead. See e.g. setup_node_to_cpumask_map().
 
-> Thanks,
-> -- David
+> +	[0 ... MAX_NUMNODES-1] = {CPU_BITS_ALL}
+> +};
+> +
+> +static int __init irq_managed_setup(char *str)
+> +{
+> +	int ret;
+> +
+> +	ret = kstrtouint(str, 10, &managed_irqs_per_node);
+> +	if (ret < 0) {
+> +		pr_warn("managed_irqs_per_node= cannot parse, ignored\n");
 
+could not be parsed
+
+> +		return 0;
+> +	}
+> +
+> +	if (managed_irqs_per_node * num_possible_nodes() > num_possible_cpus()) {
+> +		managed_irqs_per_node = num_possible_cpus() / num_possible_nodes();
+> +		pr_warn("managed_irqs_per_node= cannot be larger than %u\n",
+> +			managed_irqs_per_node);
+> +	}
+> +	return 1;
+> +}
+> +__setup("managed_irqs_per_node=", irq_managed_setup);
+> +
+>   static void grp_spread_init_one(struct cpumask *irqmsk, struct cpumask *nmsk,
+>   				unsigned int cpus_per_grp)
+>   {
+...
+> @@ -332,6 +380,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+>   /**
+>    * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+>    * @numgrps: number of groups
+> + * @is_managed: if these groups managed by kernel
+
+are managed by the kernel
+
+>    *
+>    * Return: cpumask array if successful, NULL otherwise. And each element
+>    * includes CPUs assigned to this group
+
+thanks,
+-- 
+js
+suse labs
 
 
