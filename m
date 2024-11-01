@@ -1,121 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-33461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AA89B9112
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:23:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C386C9B913C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 13:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79D428333E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 12:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5201F22AC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 12:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9A819DF41;
-	Fri,  1 Nov 2024 12:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95AB19E99E;
+	Fri,  1 Nov 2024 12:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="xNoiSdfS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTQ108ki"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B47C13C;
-	Fri,  1 Nov 2024 12:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51D19E7F7;
+	Fri,  1 Nov 2024 12:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730463774; cv=none; b=M+V1l4ES+VvonFDxXBIpzTfe+XZsN7sbOOjg6xw0eRxL9ZTVmOn2Ef4OpiGD/hgjRMpWNSTnMtnYXDmHAS0m4y57yQEvXDA4ILtlvN7Ryex2rma0yJ1ur7PHMF2J4b//S4xThBH9CMeO+QjwprpWDxaJKf1yJ9W1tMDxoeC04NQ=
+	t=1730465010; cv=none; b=mnSpeoy2tNy3ptWdi/thXTCA9B6VVAvOJDGnhHwp9zUR3z5cETj+x1QWWyjJLZGb8cuIyi2yz0shUux7P8i7TVBitkSdLYaAlOnZ5s3L7katy8tL762Gs2e2taNCQZ7EgR8zSYEu4fK/M4Uewpcj8iz59nVnCbFyphVDweVATXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730463774; c=relaxed/simple;
-	bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OibAUpu0koSHLcpM9Gjk6kgTw9yvNRzCJVFKPSVIggDPFKktXJLoi8d3+TT9Ff/Uk3fiBBbtOjZ9+8xw44bgL0NnAl1008T0uykdnZmPpbM9OjYVFni5ZEvC1NQf+OBXhaKOPT3UXj/26Og8EaBuHSjInKr81l05LKTKvEPnpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=xNoiSdfS; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 0025F432AE;
-	Fri,  1 Nov 2024 12:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1730463768;
-	bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
-	h=From:Date:Subject:To:Cc;
-	b=xNoiSdfS611jDnBHnoMcOBL5g9pU7Hl804x7mbaxffwGon4vQUVIfWf0f7zhxFKMo
-	 fyhJ5KLUy5siPpuOYs17FeECUzvgzfo4oIM9iyj0ViDVirwvZQUkrA17MyzmJXeTD2
-	 dmu7p+ExDLVOHgdEKNh7x0eCYWudlP8A0em5V+qaxSLN+ZLji3jHz54tisc4Tjf/2p
-	 Cn+rs1gFwvYCaz/+MnVh9nTGYlhpdOBiP17NdALfj4xPnvdr8Tg0V+pBQ1dC03/rfS
-	 Lj+ueaf2BNjR+fVuCLRtfYreV3k2TK/TtGNkIwYZXglkw8hTWxHtkH29cFoa1QuWP3
-	 u61x5um0uKguA==
-From: Asahi Lina <lina@asahilina.net>
-Date: Fri, 01 Nov 2024 21:22:31 +0900
-Subject: [PATCH] dax: Allow block size > PAGE_SIZE
+	s=arc-20240116; t=1730465010; c=relaxed/simple;
+	bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kGh1zURWoTWR6z5LhN60HveS+DaSCRou9kl7XK51NyoX6ke0ubsEyRJ+D0PUVcwm+nZ3mGtWQJOl0l5Arz2S0YWKsvTbb/54Dbcei/DzRJcp9cdXmdrEFfRtHysKXlIi0i6/l2SaQk6eSCLl1TLCQ4z550GK9hC3XUSXQ3C3qM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTQ108ki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7D6C4CECE;
+	Fri,  1 Nov 2024 12:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730465009;
+	bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hTQ108kikP8x12oxffI82zsXg6c0NtrMDkTtRGBM0jxRogs7+aF07hGH+m265vkOa
+	 HqqNZsqrxra6Tpo8i4YfWRJIMShllKx/0xQ8LuaY2L+FQEjwLwaVBWIlTdjCa2G0P9
+	 sfYWbv/X0Bo1lirL5OBx3l+s4EgOQfnrTJYEcWXV+YWTJUmo7ueVFIeYuNiNg0ujlY
+	 wCA+a5EUradafD2LLizEeHm2b8KGOAY2LCQd/wY2OSDUE8n6a3Xdu7Z8LXUKdCDIOQ
+	 C2JLm2qOt5mCvFAckwp0jSGH0GVyNCmtklkSm6sPeAQEF5W9HD5ZIiHfKyCz/1hUxY
+	 j9oeDHvK1j2lg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri,  1 Nov 2024 13:43:21 +0100
+Message-ID: <20241101-vfs-fixes-11d83463b3ce@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
-X-B4-Tracking: v=1; b=H4sIAAbIJGcC/x2MQQqAIBAAvyJ7TnBTKPpKdNDcai8mCiGJf086z
- sBMhUyJKcMiKiR6OPMdOuAgYL9sOEmy7wyjGg2iQultkdF2n/klOWuLatLOEDroTUx0cPl/69b
- aB5XInvBfAAAA
-X-Change-ID: 20241101-dax-page-size-83a1073b4e1b
-To: Dan Williams <dan.j.williams@intel.com>, 
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>
-Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-fsdevel@vger.kernel.org, 
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730463767; l=1369;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
- b=sme8DUTSaze8Opt4hubzoO/tMB7K2MMTGXJNmRMpSSZwtZbnDp236oTHUIuMtt0wgQmzowHlX
- 0ZM9LKYWCV6CcgFSXnPTS8pR4ZWkuJQwC/gZWnNoAcAfqUUxKU671+O
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3217; i=brauner@kernel.org; h=from:subject:message-id; bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSrnHm1M1nJyVh8RcjJi9Fu7z70FEhfY/lzVEt7ncWES Nfc+WtdO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbysZXhn/nkAC8FC4G2thnH zx9kUng7VfO/T/JvC16DS9+3lZUmPmZkaPV0essRydZooRw+oUdMqFM7a7XEg69/tdYbXRRp1Xj MBAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-For virtio-dax, the file/FS blocksize is irrelevant. FUSE always uses
-large DAX blocks (2MiB), which will work with all host page sizes. Since
-we are mapping files into the DAX window on the host, the underlying
-block size of the filesystem and its block device (if any) are
-meaningless.
+Hey Linus,
 
-For real devices with DAX, the only requirement should be that the FS
-block size is *at least* as large as PAGE_SIZE, to ensure that at least
-whole pages can be mapped out of the device contiguously.
+/* Summary */
+This contains a few fixes:
 
-Fixes warning when using virtio-dax on a 4K guest with a 16K host,
-backed by tmpfs (which sets blksz == PAGE_SIZE on the host).
+VFS:
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- Fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP=y is set.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index c62acd2812f8d4981aaba82acfeaf972f555362a..406fb75bdbe9d17a6e4bf3d4cb92683e90f05910 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1032,7 +1032,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 	int ret = 0;
- 	unsigned int scanned = 0;
- 
--	if (WARN_ON_ONCE(inode->i_blkbits != PAGE_SHIFT))
-+	if (WARN_ON_ONCE(inode->i_blkbits < PAGE_SHIFT))
- 		return -EIO;
- 
- 	if (mapping_empty(mapping) || wbc->sync_mode != WB_SYNC_ALL)
+- Add a get_tree_bdev_flags() helper that allows to modify e.g., whether
+  errors are logged into the filesystem context during superblock
+  creation. This is used by erofs to fix a userspace regression where an
+  error is currently logged when its used on a regular file which is an
+  new allowed mode in erofs.
 
----
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-change-id: 20241101-dax-page-size-83a1073b4e1b
+netfs:
 
-Cheers,
-~~ Lina
+- Fix the sysfs debug path in the documentation.
 
+- Fix iov_iter_get_pages*() for folio queues by skipping the page
+  extracation if we're at the end of a folio.
+
+afs:
+
+- Fix moving subdirectories to different parent directory.
+
+autofs:
+
+- Fix handling of AUTOFS_DEV_IOCTL_TIMEOUT_CMD ioctl in
+  validate_dev_ioctl(). The actual ioctl number, not the ioctl command
+  needs to be checked for autofs.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
+
+All patches are based on v6.11-rc4 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+No known conflicts.
+
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc6.fixes
+
+for you to fetch changes up to c749d9b7ebbc5716af7a95f7768634b30d9446ec:
+
+  iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP (2024-10-28 13:39:35 +0100)
+
+(Note, I'm still not fully recovered so currently with a little reduced
+ activity.)
+Please consider pulling these changes from the signed vfs-6.12-rc6.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12-rc6.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "fs/super.c: introduce get_tree_bdev_flags()"
+
+David Howells (2):
+      afs: Fix missing subdir edit when renamed between parent dirs
+      iov_iter: Fix iov_iter_get_pages*() for folio_queue
+
+Gao Xiang (2):
+      fs/super.c: introduce get_tree_bdev_flags()
+      erofs: use get_tree_bdev_flags() to avoid misleading messages
+
+Hongbo Li (1):
+      doc: correcting the debug path for cachefiles
+
+Hugh Dickins (1):
+      iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP
+
+Ian Kent (1):
+      autofs: fix thinko in validate_dev_ioctl()
+
+ Documentation/filesystems/caching/cachefiles.rst |  2 +-
+ fs/afs/dir.c                                     | 25 +++++++
+ fs/afs/dir_edit.c                                | 91 +++++++++++++++++++++++-
+ fs/afs/internal.h                                |  2 +
+ fs/autofs/dev-ioctl.c                            |  5 +-
+ fs/erofs/super.c                                 |  4 +-
+ fs/super.c                                       | 26 +++++--
+ include/linux/fs_context.h                       |  6 ++
+ include/trace/events/afs.h                       |  7 +-
+ lib/iov_iter.c                                   | 25 ++++---
+ 10 files changed, 169 insertions(+), 24 deletions(-)
 
