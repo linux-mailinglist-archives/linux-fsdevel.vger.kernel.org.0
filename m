@@ -1,281 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-33498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B079B98C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 20:37:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FE19B9982
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 21:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D26E1C20F99
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 19:37:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48281C21CF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2024 20:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633D81D0DE8;
-	Fri,  1 Nov 2024 19:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3681D9A78;
+	Fri,  1 Nov 2024 20:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P4Lod8Yt"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="QL4ptvxF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from forward205b.mail.yandex.net (forward205b.mail.yandex.net [178.154.239.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DC156880;
-	Fri,  1 Nov 2024 19:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4E61CC8A7;
+	Fri,  1 Nov 2024 20:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489839; cv=none; b=TxC6YyV7lGh23fvs/qSfsTh+/AMFco7oqoaUCaT8oqpYnZs12zBCnq6im9hbQtKtCyv3S2kqbo6PG8mHav40W2J4RmC1+cY3XIxvlU1LangbR6VjSnZSb61HsGbnRWnkX6wDgTT9ANZ1qKYBUglEH29iBSMFIXi2rQOJF2SmYdM=
+	t=1730493281; cv=none; b=HUw1/bLiG3TGNH9gX8IWBgFZ/Us/REX6i7U77+AD//n/Zt5qCbdS6OoY6f+ipX7TVdgsGtfuoVVPs7+bEZzG6FW+M3tdRP+Jhu5TKl22xsAmvX3RaI2fnCysGLA1BrV/IRThWZqIriiE1Welm41WWGXr0x+MsNqNvlypZ+wj/ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489839; c=relaxed/simple;
-	bh=OoWxJf4iBVjyTXJT/wfor5l782OhFK0RcLD9B0iQNFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=su4lfEQ5yqj47oW05+gM7b+drQiybWdI7zTdypkt6i2fzAVQY+afUVINIpDaYSvqmPLiHk6eTQ2YChDkbiYa9f8nW0V9JxrZxEmVf+fXQikTcnbW+efdEo3Xy33Qq2KGVcFfvdOolnCst5WGwFo7F8GObxL3QbhO1BZjM037+DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P4Lod8Yt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1EV4qN030018;
-	Fri, 1 Nov 2024 19:37:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=i2l4/Hj/mhka24zQg0cu1LYa/T2592hz+kjCUgTjJ
-	Ek=; b=P4Lod8YtCK3/AYqk+nTvGgqgQ1bSwfovsVBtwS0+xDwnkxgKdGQdZ0YWF
-	vchaI5plG2mnxi+UzocYn42Wf6tweHY+sTSUJ5g+EjMS3+MsRtIBPQMRCwgk7UlN
-	tN/qMM/fAIZ+WkQgJKK7oTkHBuTFDp0tezKi8m75Dj3t+cwm+6uepOz3WDBSe3BX
-	QjzbbOnt5TqfJsR6Cn0QXX5XOLA0/+bXHBbj7boLCRBNeThsKfulhTavrLF4IGTY
-	otMVbM6AjDTKwqpk98Pb/+KQOcs7EauKgfJDHZnFkEljIO4Ftt7pc7q1NdUw9EPo
-	tQKhfQlRXfpCqSzQ5t08cGNUwduzQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5ss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 19:37:08 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A1Jb7vs004278;
-	Fri, 1 Nov 2024 19:37:07 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5sp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 19:37:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1FYwKd028181;
-	Fri, 1 Nov 2024 19:37:06 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4yb91f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 19:37:06 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A1Jb50n53018924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Nov 2024 19:37:05 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A83E58060;
-	Fri,  1 Nov 2024 19:37:05 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E4E1F5803F;
-	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+	s=arc-20240116; t=1730493281; c=relaxed/simple;
+	bh=Xh53WnxbzrLpeFD4qA+ULQsuht3m/R0vILxRTS86S1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fz6ycGMBFHBfFqLTP0etRlHSe+cHg5rsVQY523KK7utYx/JqAjYeEzsIF6OcTTkX39UZWRFXQDlKYmon+WsWlrKi17iPMZbbITwDdO8AfKOJR3LROb5QGTqlhTir5nbjInZZL7UANpvZ/xiFt5Tmns3D19mOcWff7dB+4w8WA/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=QL4ptvxF; arc=none smtp.client-ip=178.154.239.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward205b.mail.yandex.net (Yandex) with ESMTPS id 751DF67CBD;
+	Fri,  1 Nov 2024 23:27:24 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c16:179d:0:640:38f5:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 91345609A4;
+	Fri,  1 Nov 2024 23:27:15 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id DRjrc0hXoCg0-ppQ2TVzM;
+	Fri, 01 Nov 2024 23:27:14 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1730492834; bh=jirBRe0Gzm5qlc+JfJ2U0mcnBLShKzZR40RQrJHImeU=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=QL4ptvxFS+5PAsUIYEmAFYlQ+mcbh7KgSuA7ydmWcBGPXCzqlct6hUYDPxs3nKLSw
+	 268z/n6LDK5zePAtsTVNFZ/fvkAMTqbseWiLN4vFZnIL94NyZI8AWJQhjAG+O3hhKV
+	 XaEQBmSyK4/v5gjXmWWAe/0Gl5A/+0O4D5cUpWQ0=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Stas Sergeev <stsp2@yandex.ru>
 To: linux-kernel@vger.kernel.org
-Cc: Stefan Berger <stefanb@linux.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
-Date: Fri,  1 Nov 2024 15:37:03 -0400
-Message-ID: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+Cc: Stas Sergeev <stsp2@yandex.ru>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Kees Cook <kees@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>
+Subject: [POC, RFC] scheme for transferring group_list between processes
+Date: Fri,  1 Nov 2024 23:26:57 +0300
+Message-ID: <20241101202657.468595-1-stsp2@yandex.ru>
 X-Mailer: git-send-email 2.47.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: yG6F-hGE31ukWHgEfDQCKAvMFaRmBF7w
-X-Proofpoint-GUID: JeiN5rPZehDvztK6czFOzCyPW_j7Pa1Q
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- spamscore=0 mlxscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010138
+Content-Transfer-Encoding: 8bit
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+Note: this patch is a POC and RFC. It "parasites" on pidfd code
+just for the sake of a demo. It has nothing to do with pidfd.
 
-Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
-function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
-call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
-Now, simplify the getattr interface functions of filesystems where the flag
-AT_GETATTR_NOSEC is checked.
+The problem:
+If you use suid/sgid bits to switch to a less-privileged (home-less)
+user, then the group list can't be changed, effectively nullifying
+any supposed restrictions. As such, suid/sgid to non-root creds is
+currently practically useless.
 
-There is only a single caller of inode_operations getattr function and it
-is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
-one from which the AT_GETATTR_NOSEC flag is passed from.
+Previous solutions:
+https://www.spinics.net/lists/kernel/msg5383847.html
+This solution allows to restrict the groups from group list.
+It failed to get any attention for probably being too ad-hoc.
+https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@xxxxxxxxxxxxxxxx/
+This solution from Josh Tripplett was considered insecure.
 
-Two filesystems are checking this flag in .getattr and the flag is always
-passed to them unconditionally from only vfs_getattr_nosec:
+New proposal:
+This proposal was inspired by the credfd proposal of Andy Lutomirski:
+https://lkml2.uits.iu.edu/hypermail/linux/kernel/1403.3/01528.html
+When we send an fd with SCM_RIGHTS, is has entire creds of the sender,
+captured at a moment of opening the file.
+Now if we have a "capable" server process, it can do SO_PEERCRED to
+retrieve client's uid/gid. Then it does getgrouplist() and setgroups()
+with client's uid/gid to set the group list desired for that client.
+Then it sets euid/egid to match client's. Then it opens some file
+(pidfd file in this POC, but should be credfd) and sends it to client.
+Client then does a special ioctl() on that fd to actually set up the
+received group list.
+Such ioctl() must ensure that the change is safe:
+- If process has CAP_SETGID - ok
+- Otherwise we need to make sure the server process explicitly permitted
+  the change (not in this POC), make sure that uid==euid==suid
+  (i.e. the process won't change its creds after setting group list)
+  and make sure that euid/egid match those of the server.
+After doing these checks, the group list is applied.
 
-- ecryptfs:  Simplify by always calling vfs_getattr_nosec in
-             ecryptfs_getattr. From there the flag is passed to no other
-             function and this function is not called otherwise.
+Simply put, this proposal allows to move CAP_SETGID from the main
+process to the helper (server) process, keeping the main process
+cap-less. Its advantage over the previous proposals is that you
+end up with the _correct_ group list that _naturally_ belongs to
+that UID. Previous proposals either ended up with an empty group
+list or "restricted" group list, but never with the right one.
 
-- overlayfs: Simplify by always calling vfs_getattr_nosec in
-             ovl_getattr. From there the flag is passed to no other
-             function and this function is not called otherwise.
+I put the user-space usage example here:
+https://github.com/stsp/cred_test
 
-The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
-any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
-important inside this function. Also, since no filesystem is checking the
-flag anymore, remove the flag entirely now, including the BUG_ON check that
-never triggered.
+Would be good to hear if something like this can be considered.
 
-The net change of the changes here combined with the originan commit is
-that ecryptfs and overlayfs do not call vfs_getattr but only
-vfs_getattr_nosec.
+Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
 
-Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
-Cc: Tyler Hicks <code@tyhicks.com>
-Cc: ecryptfs@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>
+CC: Jan Kara <jack@suse.cz>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Kees Cook <kees@kernel.org>
+CC: Oleg Nesterov <oleg@redhat.com>
+CC: linux-fsdevel@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: Eric Biederman <ebiederm@xmission.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Josh Triplett <josh@joshtriplett.org>
 ---
- fs/ecryptfs/inode.c        | 12 ++----------
- fs/overlayfs/inode.c       | 10 +++++-----
- fs/overlayfs/overlayfs.h   |  8 --------
- fs/stat.c                  |  5 +----
- include/uapi/linux/fcntl.h |  4 ----
- 5 files changed, 8 insertions(+), 31 deletions(-)
+ fs/pidfs.c                 | 31 +++++++++++++++++++++++++++++++
+ include/linux/cred.h       |  4 ++++
+ include/uapi/linux/pidfd.h |  1 +
+ 3 files changed, 36 insertions(+)
 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index cbdf82f0183f..a9819ddb1ab8 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
- 	return rc;
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 80675b6bf884..06209d3b5e61 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -114,6 +114,28 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+ 	return poll_flags;
  }
  
--static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
--			       u32 request_mask, unsigned int flags)
--{
--	if (flags & AT_GETATTR_NOSEC)
--		return vfs_getattr_nosec(path, stat, request_mask, flags);
--	return vfs_getattr(path, stat, request_mask, flags);
--}
--
- static int ecryptfs_getattr(struct mnt_idmap *idmap,
- 			    const struct path *path, struct kstat *stat,
- 			    u32 request_mask, unsigned int flags)
-@@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
- 	struct kstat lower_stat;
- 	int rc;
- 
--	rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
--				 &lower_stat, request_mask, flags);
-+	rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
-+			       &lower_stat, request_mask, flags);
- 	if (!rc) {
- 		fsstack_copy_attr_all(d_inode(dentry),
- 				      ecryptfs_inode_to_lower(d_inode(dentry)));
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 35fd3e3e1778..8b31f44c12cd 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 	type = ovl_path_real(dentry, &realpath);
- 	old_cred = ovl_override_creds(dentry->d_sb);
--	err = ovl_do_getattr(&realpath, stat, request_mask, flags);
-+	err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
- 	if (err)
- 		goto out;
- 
-@@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 					(!is_dir ? STATX_NLINK : 0);
- 
- 			ovl_path_lower(dentry, &realpath);
--			err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
--					     flags);
-+			err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
-+						flags);
- 			if (err)
- 				goto out;
- 
-@@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 			ovl_path_lowerdata(dentry, &realpath);
- 			if (realpath.dentry) {
--				err = ovl_do_getattr(&realpath, &lowerdatastat,
--						     lowermask, flags);
-+				err = vfs_getattr_nosec(&realpath, &lowerdatastat,
-+							lowermask, flags);
- 				if (err)
- 					goto out;
- 			} else {
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 0bfe35da4b7b..910dbbb2bb7b 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
- 	return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
- }
- 
--static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
--				 u32 request_mask, unsigned int flags)
--{
--	if (flags & AT_GETATTR_NOSEC)
--		return vfs_getattr_nosec(path, stat, request_mask, flags);
--	return vfs_getattr(path, stat, request_mask, flags);
--}
--
- /* util.c */
- int ovl_get_write_access(struct dentry *dentry);
- void ovl_put_write_access(struct dentry *dentry);
-diff --git a/fs/stat.c b/fs/stat.c
-index 41e598376d7e..cbc0fcd4fba3 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(idmap, path, stat,
- 					    request_mask,
--					    query_flags | AT_GETATTR_NOSEC);
-+					    query_flags);
- 
- 	generic_fillattr(idmap, request_mask, inode, stat);
- 	return 0;
-@@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
++static bool can_borrow_groups(const struct cred *cred)
++{
++	kuid_t uid = current_uid();
++	kgid_t gid = current_gid();
++	kuid_t euid = current_euid();
++	kgid_t egid = current_egid();
++
++	if (may_setgroups())
++		return 1;
++	/* TODO: make sure peer actually allowed to borrow his groups. */
++
++	/* Make sure the process can't switch uid/gid. */
++	if (!uid_eq(euid, uid) || !uid_eq(current_suid(), uid))
++		return 0;
++	if (!gid_eq(egid, gid) || !gid_eq(current_sgid(), gid))
++		return 0;
++	/* Make sure the euid/egid of 2 processes are equal. */
++	if (!uid_eq(cred->euid, euid) || !gid_eq(cred->egid, egid))
++		return 0;
++	return 1;
++}
++
+ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  {
- 	int retval;
+ 	struct task_struct *task __free(put_task) = NULL;
+@@ -141,8 +163,10 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	 * We're trying to open a file descriptor to the namespace so perform a
+ 	 * filesystem cred ptrace check. Also, we mirror nsfs behavior.
+ 	 */
++/*
+ 	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+ 		return -EACCES;
++*/
  
--	if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
--		return -EPERM;
--
- 	retval = security_inode_getattr(path);
- 	if (retval)
- 		return retval;
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 87e2dec79fea..a40833bf2855 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -154,8 +154,4 @@
- 					   usable with open_by_handle_at(2). */
- #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+ 	switch (cmd) {
+ 	/* Namespaces that hang of nsproxy. */
+@@ -209,6 +233,13 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 			rcu_read_unlock();
+ 		}
+ 		break;
++	case PIDFD_BORROW_GROUPS:
++		if (task == current)
++			return 0;
++		if (!can_borrow_groups(file->f_cred))
++			return -EPERM;
++		set_current_groups(file->f_cred->group_info);
++		return 0;
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 2976f534a7a3..cfdeebbd7db6 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -83,6 +83,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+ {
+ 	return 1;
+ }
++static inline bool may_setgroups(void)
++{
++	return 1;
++}
+ #endif
  
--#if defined(__KERNEL__)
--#define AT_GETATTR_NOSEC	0x80000000
--#endif
--
- #endif /* _UAPI_LINUX_FCNTL_H */
+ /*
+diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+index 565fc0629fff..1ef8e31fefed 100644
+--- a/include/uapi/linux/pidfd.h
++++ b/include/uapi/linux/pidfd.h
+@@ -28,5 +28,6 @@
+ #define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
+ #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
+ #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
++#define PIDFD_BORROW_GROUPS                   _IO(PIDFS_IOCTL_MAGIC, 11)
+ 
+ #endif /* _UAPI_LINUX_PIDFD_H */
 -- 
 2.47.0
 
