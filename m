@@ -1,84 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-33571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C469BA268
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 21:20:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0348A9BA2D9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 23:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B071C220E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 20:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390211C21501
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 22:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EC21ABEAC;
-	Sat,  2 Nov 2024 20:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="WQZqGS87"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250521ABEBB;
+	Sat,  2 Nov 2024 22:58:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19824EB50;
-	Sat,  2 Nov 2024 20:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41083170A19
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Nov 2024 22:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730578823; cv=none; b=azhmeUWKvN+6Rx6/he6hvPDIcoBanQ9ekpfArdwdi5mjW2arvh1je7wAhDr1UzQR90Y2j6+NWIu6g2fvNxLnLpPB4YAGlkY+azycX20zCpzq34nJiQwO/CZHSwXVG42gAvqHNydd6rvz8IDGCL2U/JJRH0QQ/24QK5drmCBfBrk=
+	t=1730588285; cv=none; b=H+qKHsClb96yhHd3E96PxYSNMM0F1Y7MG1dEWjenGmLkdK1Ic9cMtT7TUHI+HHZOTO4xqEMtVBrE3b/UpLfIqHAr6d1BzZJPxNv3vtOkXVAKwiKnJiEzBPuSAbo6YsXBTLfI+gzVdjvAH86OSoOWJ5QIRIv3x0JwsVJD4vwjZYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730578823; c=relaxed/simple;
-	bh=MCQ3fDQH1zb0wCaMg7Jj/z86jg/r5zXBrm9w0LNaa5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ol+bX0cbRkFTu4oxFN1ZmaCxF2GWR+DMVpJWCzKuR/AesgsSa+8OrtZ1/9qd4RrY/H6unsyzdeFF6ug2CDu+kCHPmM0MkzclU5JU5FfnpjoVt+yzUmODP3Z0IuZUXGFD+MwhYDmM5KL1Cq1YnnPDSGGM+waZXJ49jpleR9RwX0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=WQZqGS87; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 04FD71770FE; Sat,  2 Nov 2024 20:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730578821; bh=MCQ3fDQH1zb0wCaMg7Jj/z86jg/r5zXBrm9w0LNaa5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQZqGS87fNtHQE/POPwg9D6SH7OeHuuxCiKV2c07DkbEhstJCoq3h12Q9E6RVavdn
-	 NiBXy77Qz2k25T7O6RzgU/ApY4rYBiRzxDdVlhg2jIh/QMA0gkxIlRhVModiGtwSDl
-	 WOJVB8JJQ7cVwIoM3OhWwtOmFg92w9+A/QQMnTnPRuPdjF4ReRgRi9RerILbF13GQy
-	 5LtYvtLfpexyfqA/7ILWdIPBg/YuqF7NNqpUUgpqPa56lUKzJKiPBTyo1lZbJsDZ13
-	 lA0cEPwscK9SBiYK/37ZrVt0TMYzwQ90nfkyiXZ17oG6uuPH0l0oqDGrVqQQidVWrY
-	 huOYTe46LeNHQ==
-Date: Sat, 2 Nov 2024 20:20:20 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Kees Cook <kees@kernel.org>
-Cc: ebiederm@xmission.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exec: move warning of null argv to be next to the
- relevant code
-Message-ID: <20241102202020.GA51482@lichtman.org>
-References: <ZyYUgiPc8A8i_3FH@nirs-laptop.>
- <173057792683.2382793.11435101948652154284.b4-ty@kernel.org>
+	s=arc-20240116; t=1730588285; c=relaxed/simple;
+	bh=lQTJmVE2dpbn2916q3lXchAWyB180O9oib1aRjyR9Zk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UwcUXDsaFdn4iWTu0scNWQAdh8u4x6LRV6yu+8f+9n+UwAgU96723VtXfTt1xtX6ak613bll8D5pZ+r7+fvXTxv2O4MEaZr7P8s6IRrrcuKlAD/yDGxEsGsHusPjirqqcpfTnCVVdYaSXgDi+2IE2Hquv2tRxKWsrGZCBxLuYq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso30347895ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Nov 2024 15:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730588283; x=1731193083;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3yBzUyljWebaGC+XnQZjALDFZL0q7JsGCGKAUh0yZEw=;
+        b=qlX1jxOYkq7JPk1IyRWLBhvQQdl4xmzF6JYzzxnBgmhyd2/teKA1KcpVZIjMvIb9zh
+         /D+QNuRpIMc66kGYLJVIxvGjea+VKhJewRHj064uvX0yjV7fSWDlGX5Rpo+wix31dlkd
+         zHjKcqVIjh63CZ0c5lwArBLbQCdR/HFdYlMPEWZ9O57fsx6tE6clJzhj05HMsAt7RljD
+         Ou9ZUrZiT8NGqu3dkdkdUMHXSV2KDgV0UfugaL3V0rzuu6na46X/NvFzJlMQbNp2p3m1
+         CxzGDsxz2iaJEyZnGYmpao7rhfV1POdNnwqaGYBDBIDDExB9spvpsH/TIvrYSf5U7HLP
+         xdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY1nYTUeryoiOEL61ZrxfY5FcLl/7XCfKogiWvVYgx7DoGjGdBh7vl6cP9kBYjqMmYYAuNTSAk6AIygabD@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywll3dUyw3SblHZWem4RhUUPZP9kY8jiX2+bf0M5iJ7WRIqJaYZ
+	HZQfVAcAnZrP/dm7gzPfdTk8Ix5CT/3xllbSrlCq7M3kjtYMiTN7mhHsDhEtCqBCntwcJm/uhol
+	cJTtGb6UTDKUfih8HJGoDyYN2puYEVXH6lJy3G9iAWDRY0UrBQAfcTWI=
+X-Google-Smtp-Source: AGHT+IHiBflm0OrHzRauDd2+Qk79yPQ2UsUXEsZO3NY2JhYxJXK8UlMJyJX29+TPwFZDLAECael9bu2Y9DD9M2ZTmExsyybtfnvw
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173057792683.2382793.11435101948652154284.b4-ty@kernel.org>
+X-Received: by 2002:a92:cdac:0:b0:3a2:6cd7:3250 with SMTP id
+ e9e14a558f8ab-3a4ed29dcdemr256947425ab.10.1730588283359; Sat, 02 Nov 2024
+ 15:58:03 -0700 (PDT)
+Date: Sat, 02 Nov 2024 15:58:03 -0700
+In-Reply-To: <000000000000163e1406152c6877@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6726ae7b.050a0220.35b515.018a.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_xattr_inode_iget (3)
+From: syzbot <syzbot+ee72b9a7aad1e5a77c5c@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, adilger@dilger.ca, eadavis@qq.com, 
+	hdanton@sina.com, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
+	wojciech.gladysz@infogain.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 02, 2024 at 01:05:29PM -0700, Kees Cook wrote:
-> On Sat, 02 Nov 2024 14:01:22 +0200, nir@lichtman.org wrote:
-> > Problem: The warning is currently printed where it is detected that the
-> > arg count is zero but the action is only taken place later in the flow
-> 
-> Applied to for-next/execve, thanks!
+syzbot suspects this issue was fixed by commit:
 
-Noted about the warn once, and thanks :)
+commit d1bc560e9a9c78d0b2314692847fc8661e0aeb99
+Author: Wojciech G=C5=82adysz <wojciech.gladysz@infogain.com>
+Date:   Thu Aug 1 14:38:27 2024 +0000
 
-> 
-> [1/1] exec: move warning of null argv to be next to the relevant code
->       https://git.kernel.org/kees/c/cc0be150ca0e
-> 
-> Take care,
-> 
-> -- 
-> Kees Cook
-> 
+    ext4: nested locking for xattr inode
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1245f55f9800=
+00
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel.=
+.
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1a07d5da4eb2158=
+6
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dee72b9a7aad1e5a77=
+c5c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12407f4518000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D140d9db1180000
+
+If the result looks correct, please mark the issue as fixed by replying wit=
+h:
+
+#syz fix: ext4: nested locking for xattr inode
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
