@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-33534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F91E9B9D2D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:13:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE6D9B9D15
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F88B1F241F8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A512A1C221EE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38C1ABED8;
-	Sat,  2 Nov 2024 05:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E250D19CC2D;
+	Sat,  2 Nov 2024 05:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ciK6J3wP"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ndOO70n+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5AB156677;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F7F156C70;
 	Sat,  2 Nov 2024 05:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730524116; cv=none; b=fp3Eka3XcjmRdV2bObapk4xHL7Mu+4tbY9r90XEGCkq9jUSoGz6+/NiAi2x/3ZLkoYZjacEoweFJuBZmE4IXlhWoWwi5um4ziOSIRuEG/ym7a34le9vPPJnsQfkx7844Wla960UEwNSYcgdxE3fcLha4/b2iIWOvkx6VNooGnYM=
+	t=1730524115; cv=none; b=UnJj9n4XIqxvUDAknSE+8xubQNPix1Z/10nnio7M9knQXWaC+C6t5EpHX2jKlLBgIcYFD6Ban9ZqOxp9EGBqHmxK8TTBlx23JU88sIJPwPyn6qkXpexGRtKZ0g+95YgLlmcxa6Lw5FGB1u1YqZ6bQytfAXs2W0qiYHRTBR8Fy7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730524116; c=relaxed/simple;
-	bh=vWNJWiojtyftbzVFc97pG2AiLM1BY1aPuFgpta6i410=;
+	s=arc-20240116; t=1730524115; c=relaxed/simple;
+	bh=y9A9hE1UH4j+XxOd0QcxpZAi3sxhvQPsBapMhwBR0Ro=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H4niztxHEIt1MphRbTtpqo840WNxW4e1eO7KkOTLNHjf7nRbMuDMcwM765uRbt93rWUYNge7Zhpfn70L9qh5UXKMNyXlz+XqyrJFq5LFo4VrKndldo/jiHiA0pBqys58wzXNPqy+HPFGXXe85qWaCXYDXgJCJwR9z38nkOABJWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ciK6J3wP; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=HPTSzfGRObLfl7p2/U5ivTBBt9MZCLnCmZcRYn/OzLBMLGacwgnlGnwxqphk/BUNbZn1caxX0ubiLbk1DAcXyppo7Ih5Iw+K7BVsnkH8OVWEFe3E6DCA9aWd5IycVKVfBptMOTmfWIJECYfuXfZ/cKvhTv8qzCUFUL4m/BSg228=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ndOO70n+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=9xwP8b5XYu0N16WwsP078Fg/o2eYPBzzou+rLvxxP9U=; b=ciK6J3wPy7VUON8CWKA8GJtnen
-	KeTjOHHuXF34P7AqJNWyInPiRsozKIng79dA3hhB7YVJFPcPFpmfvNbyTiaknW8bBNbzfKJL9aezp
-	o93p86zZtbog7rZ9wKWsyuN/zCEm3Cnbda2R9LIHmEC/kmoMPN945P+oATWd+2uxV6MkvCE9kAYu1
-	lS6gOfPylTSK/nHAi1xUn3jJxAGcbNHL0Vd7Napet5hKzVd6D9R7ncR5t5sU7N4kvfRtxfdJnqNDk
-	dKs69/zstOhWZWlTyvKdsx2W2CcGk4iOoScnw2Q3L7Jcyrh7ctT/VPHJcJhNy4qYnY0+3dyihG8Xj
-	1rRdoxog==;
+	bh=WJ1jclsboPTR+HyjmMStNlGD9G7+6MgWUazJ2tWZgsA=; b=ndOO70n+uIHy58XRAJrdFYburi
+	Wt6ZaIwnKIqafHMOLh7lFBDdiZ3qZIFeHN0JvxyfpXoLsqLqJkkpGs9exwhiDQvhe6vAnwEBYdbu6
+	a4V/TLLpJfSfJK6MW3Mp7yXh2a4N9nAAMJ659vuER2vjCoHKJa6Xz2dP031bYN5HTu/TbfoFfi+xy
+	kl4OCij1yN+zX2PehJUcsk0fq6aroM+A/ZyVkSV5CLnWk5ivOHjwpLflCFyjofOJP0sAtXOphZtbq
+	KshUkesbAfhr0oEvy3nhwT6O9BloM6K+ZeXrnTAZwrQ2WXtDjP5XrkheYZsP2RJVQW2m88U1Ea/X5
+	LDaZ4Asw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t76NC-0000000AHoL-2yDu;
+	id 1t76NC-0000000AHoS-3nEe;
 	Sat, 02 Nov 2024 05:08:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: viro@zeniv.linux.org.uk,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 25/28] assorted variants of irqfd setup: convert to CLASS(fd)
-Date: Sat,  2 Nov 2024 05:08:23 +0000
-Message-ID: <20241102050827.2451599-25-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 26/28] memcg_write_event_control(): switch to CLASS(fd)
+Date: Sat,  2 Nov 2024 05:08:24 +0000
+Message-ID: <20241102050827.2451599-26-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 References: <20241102050219.GA2450028@ZenIV>
@@ -68,235 +68,134 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-in all of those failure exits prior to fdget() are plain returns and
-the only thing done after fdput() is (on failure exits) a kfree(),
-which can be done before fdput() just fine.
+some reordering required - take both fdget() to the point before
+the allocations, with matching move of fdput() to the very end
+of failure exit(s); after that it converts trivially.
 
-NOTE: in acrn_irqfd_assign() 'fail:' failure exit is wrong for
-eventfd_ctx_fileget() failure (we only want fdput() there) and once
-we stop doing that, it doesn't need to check if eventfd is NULL or
-ERR_PTR(...) there.
+simplify the cleanups that involve css_put(), while we are at it...
 
-NOTE: in privcmd we move fdget() up before the allocation - more
-to the point, before the copy_from_user() attempt.
-
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/vfio/virqfd.c     | 16 +++-------------
- drivers/virt/acrn/irqfd.c | 13 ++++---------
- drivers/xen/privcmd.c     | 17 ++++-------------
- virt/kvm/eventfd.c        | 15 +++------------
- 4 files changed, 14 insertions(+), 47 deletions(-)
+ mm/memcontrol-v1.c | 44 +++++++++++++++-----------------------------
+ 1 file changed, 15 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
-index d22881245e89..aa2891f97508 100644
---- a/drivers/vfio/virqfd.c
-+++ b/drivers/vfio/virqfd.c
-@@ -113,7 +113,6 @@ int vfio_virqfd_enable(void *opaque,
- 		       void (*thread)(void *, void *),
- 		       void *data, struct virqfd **pvirqfd, int fd)
- {
--	struct fd irqfd;
- 	struct eventfd_ctx *ctx;
- 	struct virqfd *virqfd;
- 	int ret = 0;
-@@ -133,8 +132,8 @@ int vfio_virqfd_enable(void *opaque,
- 	INIT_WORK(&virqfd->inject, virqfd_inject);
- 	INIT_WORK(&virqfd->flush_inject, virqfd_flush_inject);
+diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+index 81d8819f13cd..bc54cff7615f 100644
+--- a/mm/memcontrol-v1.c
++++ b/mm/memcontrol-v1.c
+@@ -1911,8 +1911,6 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	struct mem_cgroup_event *event;
+ 	struct cgroup_subsys_state *cfile_css;
+ 	unsigned int efd, cfd;
+-	struct fd efile;
+-	struct fd cfile;
+ 	struct dentry *cdentry;
+ 	const char *name;
+ 	char *endp;
+@@ -1936,6 +1934,12 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	else
+ 		return -EINVAL;
  
--	irqfd = fdget(fd);
--	if (!fd_file(irqfd)) {
-+	CLASS(fd, irqfd)(fd);
-+	if (fd_empty(irqfd)) {
- 		ret = -EBADF;
- 		goto err_fd;
- 	}
-@@ -142,7 +141,7 @@ int vfio_virqfd_enable(void *opaque,
- 	ctx = eventfd_ctx_fileget(fd_file(irqfd));
- 	if (IS_ERR(ctx)) {
- 		ret = PTR_ERR(ctx);
--		goto err_ctx;
-+		goto err_fd;
- 	}
- 
- 	virqfd->eventfd = ctx;
-@@ -181,18 +180,9 @@ int vfio_virqfd_enable(void *opaque,
- 		if ((!handler || handler(opaque, data)) && thread)
- 			schedule_work(&virqfd->inject);
- 	}
--
--	/*
--	 * Do not drop the file until the irqfd is fully initialized,
--	 * otherwise we might race against the EPOLLHUP.
--	 */
--	fdput(irqfd);
--
- 	return 0;
- err_busy:
- 	eventfd_ctx_put(ctx);
--err_ctx:
--	fdput(irqfd);
- err_fd:
- 	kfree(virqfd);
- 
-diff --git a/drivers/virt/acrn/irqfd.c b/drivers/virt/acrn/irqfd.c
-index 9994d818bb7e..b7da24ca1475 100644
---- a/drivers/virt/acrn/irqfd.c
-+++ b/drivers/virt/acrn/irqfd.c
-@@ -112,7 +112,6 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
- 	struct eventfd_ctx *eventfd = NULL;
- 	struct hsm_irqfd *irqfd, *tmp;
- 	__poll_t events;
--	struct fd f;
- 	int ret = 0;
- 
- 	irqfd = kzalloc(sizeof(*irqfd), GFP_KERNEL);
-@@ -124,8 +123,8 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
- 	INIT_LIST_HEAD(&irqfd->list);
- 	INIT_WORK(&irqfd->shutdown, hsm_irqfd_shutdown_work);
- 
--	f = fdget(args->fd);
--	if (!fd_file(f)) {
-+	CLASS(fd, f)(args->fd);
-+	if (fd_empty(f)) {
- 		ret = -EBADF;
- 		goto out;
- 	}
-@@ -133,7 +132,7 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
- 	eventfd = eventfd_ctx_fileget(fd_file(f));
- 	if (IS_ERR(eventfd)) {
- 		ret = PTR_ERR(eventfd);
--		goto fail;
-+		goto out;
- 	}
- 
- 	irqfd->eventfd = eventfd;
-@@ -162,13 +161,9 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
- 	if (events & EPOLLIN)
- 		acrn_irqfd_inject(irqfd);
- 
--	fdput(f);
- 	return 0;
- fail:
--	if (eventfd && !IS_ERR(eventfd))
--		eventfd_ctx_put(eventfd);
--
--	fdput(f);
-+	eventfd_ctx_put(eventfd);
- out:
- 	kfree(irqfd);
- 	return ret;
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 79070494070d..0ca532614343 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -967,10 +967,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
- 	struct privcmd_kernel_irqfd *kirqfd, *tmp;
- 	unsigned long flags;
- 	__poll_t events;
--	struct fd f;
- 	void *dm_op;
- 	int ret, idx;
- 
-+	CLASS(fd, f)(irqfd->fd);
++	CLASS(fd, efile)(efd);
++	if (fd_empty(efile))
++		return -EBADF;
 +
- 	kirqfd = kzalloc(sizeof(*kirqfd) + irqfd->size, GFP_KERNEL);
- 	if (!kirqfd)
++	CLASS(fd, cfile)(cfd);
++
+ 	event = kzalloc(sizeof(*event), GFP_KERNEL);
+ 	if (!event)
  		return -ENOMEM;
-@@ -986,8 +987,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
- 	kirqfd->dom = irqfd->dom;
- 	INIT_WORK(&kirqfd->shutdown, irqfd_shutdown);
+@@ -1946,20 +1950,13 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	init_waitqueue_func_entry(&event->wait, memcg_event_wake);
+ 	INIT_WORK(&event->remove, memcg_event_remove);
  
--	f = fdget(irqfd->fd);
--	if (!fd_file(f)) {
-+	if (fd_empty(f)) {
- 		ret = -EBADF;
- 		goto error_kfree;
+-	efile = fdget(efd);
+-	if (!fd_file(efile)) {
+-		ret = -EBADF;
+-		goto out_kfree;
+-	}
+-
+ 	event->eventfd = eventfd_ctx_fileget(fd_file(efile));
+ 	if (IS_ERR(event->eventfd)) {
+ 		ret = PTR_ERR(event->eventfd);
+-		goto out_put_efile;
++		goto out_kfree;
  	}
-@@ -995,7 +995,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
- 	kirqfd->eventfd = eventfd_ctx_fileget(fd_file(f));
- 	if (IS_ERR(kirqfd->eventfd)) {
- 		ret = PTR_ERR(kirqfd->eventfd);
--		goto error_fd_put;
-+		goto error_kfree;
+ 
+-	cfile = fdget(cfd);
+-	if (!fd_file(cfile)) {
++	if (fd_empty(cfile)) {
+ 		ret = -EBADF;
+ 		goto out_put_eventfd;
+ 	}
+@@ -1968,7 +1965,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	/* AV: shouldn't we check that it's been opened for read instead? */
+ 	ret = file_permission(fd_file(cfile), MAY_READ);
+ 	if (ret < 0)
+-		goto out_put_cfile;
++		goto out_put_eventfd;
+ 
+ 	/*
+ 	 * The control file must be a regular cgroup1 file. As a regular cgroup
+@@ -1977,7 +1974,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	cdentry = fd_file(cfile)->f_path.dentry;
+ 	if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
+ 		ret = -EINVAL;
+-		goto out_put_cfile;
++		goto out_put_eventfd;
  	}
  
  	/*
-@@ -1028,20 +1028,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
- 		irqfd_inject(kirqfd);
- 
- 	srcu_read_unlock(&irqfds_srcu, idx);
--
--	/*
--	 * Do not drop the file until the kirqfd is fully initialized, otherwise
--	 * we might race against the EPOLLHUP.
--	 */
--	fdput(f);
- 	return 0;
- 
- error_eventfd:
- 	eventfd_ctx_put(kirqfd->eventfd);
- 
--error_fd_put:
--	fdput(f);
--
- error_kfree:
- 	kfree(kirqfd);
- 	return ret;
-diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index 6b390b622b72..249ba5b72e9b 100644
---- a/virt/kvm/eventfd.c
-+++ b/virt/kvm/eventfd.c
-@@ -304,7 +304,6 @@ static int
- kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- {
- 	struct kvm_kernel_irqfd *irqfd, *tmp;
--	struct fd f;
- 	struct eventfd_ctx *eventfd = NULL, *resamplefd = NULL;
- 	int ret;
- 	__poll_t events;
-@@ -327,8 +326,8 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	INIT_WORK(&irqfd->shutdown, irqfd_shutdown);
- 	seqcount_spinlock_init(&irqfd->irq_entry_sc, &kvm->irqfds.lock);
- 
--	f = fdget(args->fd);
--	if (!fd_file(f)) {
-+	CLASS(fd, f)(args->fd);
-+	if (fd_empty(f)) {
- 		ret = -EBADF;
- 		goto out;
- 	}
-@@ -336,7 +335,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	eventfd = eventfd_ctx_fileget(fd_file(f));
- 	if (IS_ERR(eventfd)) {
- 		ret = PTR_ERR(eventfd);
--		goto fail;
-+		goto out;
+@@ -2010,7 +2007,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 		event->unregister_event = memsw_cgroup_usage_unregister_event;
+ 	} else {
+ 		ret = -EINVAL;
+-		goto out_put_cfile;
++		goto out_put_eventfd;
  	}
  
- 	irqfd->eventfd = eventfd;
-@@ -440,12 +439,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- #endif
+ 	/*
+@@ -2022,11 +2019,9 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 					       &memory_cgrp_subsys);
+ 	ret = -EINVAL;
+ 	if (IS_ERR(cfile_css))
+-		goto out_put_cfile;
+-	if (cfile_css != css) {
+-		css_put(cfile_css);
+-		goto out_put_cfile;
+-	}
++		goto out_put_eventfd;
++	if (cfile_css != css)
++		goto out_put_css;
  
- 	srcu_read_unlock(&kvm->irq_srcu, idx);
+ 	ret = event->register_event(memcg, event->eventfd, buf);
+ 	if (ret)
+@@ -2037,23 +2032,14 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	spin_lock_irq(&memcg->event_list_lock);
+ 	list_add(&event->list, &memcg->event_list);
+ 	spin_unlock_irq(&memcg->event_list_lock);
 -
--	/*
--	 * do not drop the file until the irqfd is fully initialized, otherwise
--	 * we might race against the EPOLLHUP
--	 */
--	fdput(f);
- 	return 0;
- 
- fail:
-@@ -458,8 +451,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	if (eventfd && !IS_ERR(eventfd))
- 		eventfd_ctx_put(eventfd);
- 
--	fdput(f);
+-	fdput(cfile);
+-	fdput(efile);
 -
- out:
- 	kfree(irqfd);
+ 	return nbytes;
+ 
+ out_put_css:
+-	css_put(css);
+-out_put_cfile:
+-	fdput(cfile);
++	css_put(cfile_css);
+ out_put_eventfd:
+ 	eventfd_ctx_put(event->eventfd);
+-out_put_efile:
+-	fdput(efile);
+ out_kfree:
+ 	kfree(event);
+-
  	return ret;
+ }
+ 
 -- 
 2.39.5
 
