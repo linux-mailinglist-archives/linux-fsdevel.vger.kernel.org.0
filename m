@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-33521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7579F9B9CF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:10:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5561B9B9D00
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02FE8B221ED
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8F91C21F3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB50B176240;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB5E188907;
 	Sat,  2 Nov 2024 05:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oiavVFxp"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JatZtsMv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B87A14A4FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB1414AD38;
 	Sat,  2 Nov 2024 05:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730524113; cv=none; b=JiDnEUkc226U7SjNPyAWtb7Dv5OZhLDTygQ9mvBj+IiQCdxdaV2AR0Kiv2iUdthHK4eUlYyNjmP2yroG5ISi6fC1+ZOC8aeLF04r2Nlcb998pNRPiVPPFdrfAL4MIIeZckzLrMztihr95zggHEhMWsj8T11daRFbkiYna/HFF0U=
+	t=1730524114; cv=none; b=hf9Jlh9FgQZnWTqnV/bauxckMEsHAxo1OpivGylmr6L6LEafVkxa7tlVU/c9CK2M8SwXj94qeQ5QWmOI5buU/m6A8zK49Fmtk1n1vukuwwxt3z84rzqTXwTeuOiIMNv65p6xviTEAgouSCsxtDgkIIqYZun2BHl/9bAmbzDKhvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730524113; c=relaxed/simple;
-	bh=AbWgiEoFsCDPSvk9UBSB7TM6sLazsCj+HOpWxlLzRLg=;
+	s=arc-20240116; t=1730524114; c=relaxed/simple;
+	bh=dm+OiAozS+p8UmpZe+U/PsxH/SYbVmjiUE+walBTZ3M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ee+Ou6gmdZaGaXNTDqPeGyjEmkiMjqbQk9CdM9a/rSKOf++cBpm3KS7hAFM1GVd+rbJh6dK2lGJK/vnStwbWAOtbBA9XKNXOwDn6f1kGaOtDZb7higf7a3nl9Mf7PoT1UX6OJL53fZ1NbjMAj+TaTq/BQd47pZM23aeGeOgOX/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oiavVFxp; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=BiBZjrsCVMkZMW3+BqTGs1RYw5XGEbTdihoVyYa60v0iUuVOglBjzwqXiOBdDTvJwZPQPTfPiophM1wQRNSm/fQ0oigJH6HCwdI8SdPGr43jFz0ANPJmD6aAGT9IYjdrc515rXUT3AioHDVJ6HW9iTu0U2DrPfS6rtRvOsMfxYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JatZtsMv; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=fpTFwC1cwbG/GhgZYQIkCsdmSnGXxenEp8xwckVr6H4=; b=oiavVFxpxIY1eBpfr61Z69z5H0
-	OmjZcEesBViQjOMkS81gEV7eSKlZ54AjUBSLDecYX+Jfi3Z8SuQPW+UDHe5lwFD8+42CBj4GEImMC
-	yyi+UDfgfjUcRTll8EMCaT9FRhpiRFHaPhIVNUxc6srWFfa2kjCnEcj/WJLTzJrwg/YsdEuZdhViU
-	TTwfzNu+/U9b0IUiDhhJAVaxIp9KSkBdnTnDX820Tp1K58SaZekSkjHbD7pxrdEVDBXVD9pSyZYXD
-	p9ueSFJRqe//E8J2shI3Hw5Ngx48kyDXU33x37kZhtRVquVDhFY22xVzf57weAwkQaLapn0RXLoPi
-	dbM9l+DA==;
+	bh=/K0BhcmjV+4n73u3iSBYsRpOEGKMqyoFmjj95TPWqvk=; b=JatZtsMvjHWvPoHucMRy1eqPM4
+	5pfZOU8AFr3Glh+EeQeKpwjMRInKOUemRq2iEZR5Jr+K3RyG8EfVpXTwLjrNWvE7R8EZUSpa1uabQ
+	uFXSCUvxjUsYPTzVB26dp0F5cLPQSGphuUlbDq6QyjvOeOAStvcKE93mmo+Ojx2ip9at5J6dxiFZN
+	2iPmCQjmH+MHjIN49b9NCw9ih/TokBlBlFkdD9EklFcYQjLx9d3dAy7D4CInYPRqOv+qPGASn3s60
+	TT+l/ArC5d3AkjE5CgNfVofTTkhSyi5MpDFB5KYQ08vAC9N6kRiZxvuvNadcw57+3Obr6l+ZYn6LQ
+	bO+cTIvg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t76NC-0000000AHnm-0BKA;
+	id 1t76NC-0000000AHnp-0XHv;
 	Sat, 02 Nov 2024 05:08:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: viro@zeniv.linux.org.uk,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 20/28] convert media_request_get_by_fd()
-Date: Sat,  2 Nov 2024 05:08:18 +0000
-Message-ID: <20241102050827.2451599-20-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 21/28] convert cifs_ioctl_copychunk()
+Date: Sat,  2 Nov 2024 05:08:19 +0000
+Message-ID: <20241102050827.2451599-21-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 References: <20241102050219.GA2450028@ZenIV>
@@ -68,63 +68,62 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-the only thing done after fdput() (in failure cases) is a printk; safely
-transposable with fdput()...
+fdput() moved past mnt_drop_file_write(); harmless, if somewhat cringeworthy.
+Reordering could be avoided either by adding an explicit scope or by making
+mnt_drop_file_write() called via __cleanup.
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/media/mc/mc-request.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ fs/smb/client/ioctl.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/mc/mc-request.c b/drivers/media/mc/mc-request.c
-index e064914c476e..df39c8c11e9a 100644
---- a/drivers/media/mc/mc-request.c
-+++ b/drivers/media/mc/mc-request.c
-@@ -246,22 +246,21 @@ static const struct file_operations request_fops = {
- struct media_request *
- media_request_get_by_fd(struct media_device *mdev, int request_fd)
+diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
+index 2ce193609d8b..56439da4f119 100644
+--- a/fs/smb/client/ioctl.c
++++ b/fs/smb/client/ioctl.c
+@@ -72,7 +72,6 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 			unsigned long srcfd)
  {
--	struct fd f;
- 	struct media_request *req;
+ 	int rc;
+-	struct fd src_file;
+ 	struct inode *src_inode;
  
- 	if (!mdev || !mdev->ops ||
- 	    !mdev->ops->req_validate || !mdev->ops->req_queue)
- 		return ERR_PTR(-EBADR);
+ 	cifs_dbg(FYI, "ioctl copychunk range\n");
+@@ -89,8 +88,8 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 		return rc;
+ 	}
  
--	f = fdget(request_fd);
--	if (!fd_file(f))
--		goto err_no_req_fd;
-+	CLASS(fd, f)(request_fd);
-+	if (fd_empty(f))
-+		goto err;
+-	src_file = fdget(srcfd);
+-	if (!fd_file(src_file)) {
++	CLASS(fd, src_file)(srcfd);
++	if (fd_empty(src_file)) {
+ 		rc = -EBADF;
+ 		goto out_drop_write;
+ 	}
+@@ -98,20 +97,18 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 	if (fd_file(src_file)->f_op->unlocked_ioctl != cifs_ioctl) {
+ 		rc = -EBADF;
+ 		cifs_dbg(VFS, "src file seems to be from a different filesystem type\n");
+-		goto out_fput;
++		goto out_drop_write;
+ 	}
  
- 	if (fd_file(f)->f_op != &request_fops)
--		goto err_fput;
-+		goto err;
- 	req = fd_file(f)->private_data;
- 	if (req->mdev != mdev)
--		goto err_fput;
-+		goto err;
+ 	src_inode = file_inode(fd_file(src_file));
+ 	rc = -EINVAL;
+ 	if (S_ISDIR(src_inode->i_mode))
+-		goto out_fput;
++		goto out_drop_write;
  
- 	/*
- 	 * Note: as long as someone has an open filehandle of the request,
-@@ -272,14 +271,9 @@ media_request_get_by_fd(struct media_device *mdev, int request_fd)
- 	 * before media_request_get() is called.
- 	 */
- 	media_request_get(req);
--	fdput(f);
--
- 	return req;
- 
--err_fput:
--	fdput(f);
--
--err_no_req_fd:
-+err:
- 	dev_dbg(mdev->dev, "cannot find request_fd %d\n", request_fd);
- 	return ERR_PTR(-EINVAL);
- }
+ 	rc = cifs_file_copychunk_range(xid, fd_file(src_file), 0, dst_file, 0,
+ 					src_inode->i_size, 0);
+ 	if (rc > 0)
+ 		rc = 0;
+-out_fput:
+-	fdput(src_file);
+ out_drop_write:
+ 	mnt_drop_write_file(dst_file);
+ 	return rc;
 -- 
 2.39.5
 
