@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-33525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88449B9D0A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:11:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F91E9B9D2D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE13B1C21F29
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F88B1F241F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7703A18A944;
-	Sat,  2 Nov 2024 05:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38C1ABED8;
+	Sat,  2 Nov 2024 05:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d8aabBWO"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ciK6J3wP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2CB153BF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5AB156677;
 	Sat,  2 Nov 2024 05:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730524114; cv=none; b=nDdOZpAK9trwbQ+xIYK2Q9iV4GA3KIYawwu6nC+vcurFw8yfOeYdb9vtgOJCbIvqwFY8YchtAFry6NED/xUQHTm1lhGrmLarMghU7KTicfRNdBq6fC9+pKyJskMZB5b5XyDZdZzDI9VF5RcxF/r5ZbwIPYsoj0XPVnOD9kQuuSQ=
+	t=1730524116; cv=none; b=fp3Eka3XcjmRdV2bObapk4xHL7Mu+4tbY9r90XEGCkq9jUSoGz6+/NiAi2x/3ZLkoYZjacEoweFJuBZmE4IXlhWoWwi5um4ziOSIRuEG/ym7a34le9vPPJnsQfkx7844Wla960UEwNSYcgdxE3fcLha4/b2iIWOvkx6VNooGnYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730524114; c=relaxed/simple;
-	bh=yurPUE3BC0wRqLY1D8u4wRlLV+idEwKbpMZZ5rjuZWU=;
+	s=arc-20240116; t=1730524116; c=relaxed/simple;
+	bh=vWNJWiojtyftbzVFc97pG2AiLM1BY1aPuFgpta6i410=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lFexZdq4hYYJYw5ePn1/BAeSswI25QS0Gihve9OySfJ11gj7/B/TdW0pYTG0fZ2Ponqg65xK/uZctyFqdwgfD096KZBDbW4HOgNU/AGfjbJaoHfUVjGmM/TUwHRAg6MJqSX51/cl3CnHdQregQUz/PHL7N3rv0EBkjkEnNOdYaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d8aabBWO; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=H4niztxHEIt1MphRbTtpqo840WNxW4e1eO7KkOTLNHjf7nRbMuDMcwM765uRbt93rWUYNge7Zhpfn70L9qh5UXKMNyXlz+XqyrJFq5LFo4VrKndldo/jiHiA0pBqys58wzXNPqy+HPFGXXe85qWaCXYDXgJCJwR9z38nkOABJWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ciK6J3wP; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=hxqFjXnH7BwPpg5y6pfARQakEFU/n1A9zdRfJDGPNUE=; b=d8aabBWOPN3NHgeyjx9apgquGh
-	5hSsBLQWfQtSokKSHnYccfabiHexKRN3g35ymSBsnDKvvGW6Dd7MZ2m2mMxVWB+4pvrrkQBUIStOS
-	R1NZrMnlXQoUy5vGiPi8SeTauF22/Uj6/vSH5fj1zN/mI7GswFWsQ/2gr++t3Bf9AN1WWCb/iswfn
-	qoxTU3Oj6OunR8gRckx6phVqRqXg1c8udvDKjCBBXDBnsKGAS5vjqlxZvL6EIxF7reMHo5f4M+5I/
-	iHkXzuqEdBo+ct6MKlcy52cFlb+OX2DbK07MjqcRs3pp583QU0UxzF9/DutFC67tP/BX3nTFunsJd
-	ocfjNgmA==;
+	bh=9xwP8b5XYu0N16WwsP078Fg/o2eYPBzzou+rLvxxP9U=; b=ciK6J3wPy7VUON8CWKA8GJtnen
+	KeTjOHHuXF34P7AqJNWyInPiRsozKIng79dA3hhB7YVJFPcPFpmfvNbyTiaknW8bBNbzfKJL9aezp
+	o93p86zZtbog7rZ9wKWsyuN/zCEm3Cnbda2R9LIHmEC/kmoMPN945P+oATWd+2uxV6MkvCE9kAYu1
+	lS6gOfPylTSK/nHAi1xUn3jJxAGcbNHL0Vd7Napet5hKzVd6D9R7ncR5t5sU7N4kvfRtxfdJnqNDk
+	dKs69/zstOhWZWlTyvKdsx2W2CcGk4iOoScnw2Q3L7Jcyrh7ctT/VPHJcJhNy4qYnY0+3dyihG8Xj
+	1rRdoxog==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t76NC-0000000AHoE-2WfP;
+	id 1t76NC-0000000AHoL-2yDu;
 	Sat, 02 Nov 2024 05:08:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: viro@zeniv.linux.org.uk,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 24/28] do_pollfd(): convert to CLASS(fd)
-Date: Sat,  2 Nov 2024 05:08:22 +0000
-Message-ID: <20241102050827.2451599-24-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 25/28] assorted variants of irqfd setup: convert to CLASS(fd)
+Date: Sat,  2 Nov 2024 05:08:23 +0000
+Message-ID: <20241102050827.2451599-25-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 References: <20241102050219.GA2450028@ZenIV>
@@ -68,80 +68,235 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-lift setting ->revents into the caller, so that failure exits (including
-the early one) would be plain returns.
+in all of those failure exits prior to fdget() are plain returns and
+the only thing done after fdput() is (on failure exits) a kfree(),
+which can be done before fdput() just fine.
 
-We need the scope of our struct fd to end before the store to ->revents,
-since that's shared with the failure exits prior to the point where we
-can do fdget().
+NOTE: in acrn_irqfd_assign() 'fail:' failure exit is wrong for
+eventfd_ctx_fileget() failure (we only want fdput() there) and once
+we stop doing that, it doesn't need to check if eventfd is NULL or
+ERR_PTR(...) there.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+NOTE: in privcmd we move fdget() up before the allocation - more
+to the point, before the copy_from_user() attempt.
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/select.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+ drivers/vfio/virqfd.c     | 16 +++-------------
+ drivers/virt/acrn/irqfd.c | 13 ++++---------
+ drivers/xen/privcmd.c     | 17 ++++-------------
+ virt/kvm/eventfd.c        | 15 +++------------
+ 4 files changed, 14 insertions(+), 47 deletions(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index b41e2d651cc1..e223d1fe9d55 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -855,15 +855,14 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 				     __poll_t busy_flag)
+diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
+index d22881245e89..aa2891f97508 100644
+--- a/drivers/vfio/virqfd.c
++++ b/drivers/vfio/virqfd.c
+@@ -113,7 +113,6 @@ int vfio_virqfd_enable(void *opaque,
+ 		       void (*thread)(void *, void *),
+ 		       void *data, struct virqfd **pvirqfd, int fd)
  {
- 	int fd = pollfd->fd;
--	__poll_t mask = 0, filter;
+-	struct fd irqfd;
+ 	struct eventfd_ctx *ctx;
+ 	struct virqfd *virqfd;
+ 	int ret = 0;
+@@ -133,8 +132,8 @@ int vfio_virqfd_enable(void *opaque,
+ 	INIT_WORK(&virqfd->inject, virqfd_inject);
+ 	INIT_WORK(&virqfd->flush_inject, virqfd_flush_inject);
+ 
+-	irqfd = fdget(fd);
+-	if (!fd_file(irqfd)) {
++	CLASS(fd, irqfd)(fd);
++	if (fd_empty(irqfd)) {
+ 		ret = -EBADF;
+ 		goto err_fd;
+ 	}
+@@ -142,7 +141,7 @@ int vfio_virqfd_enable(void *opaque,
+ 	ctx = eventfd_ctx_fileget(fd_file(irqfd));
+ 	if (IS_ERR(ctx)) {
+ 		ret = PTR_ERR(ctx);
+-		goto err_ctx;
++		goto err_fd;
+ 	}
+ 
+ 	virqfd->eventfd = ctx;
+@@ -181,18 +180,9 @@ int vfio_virqfd_enable(void *opaque,
+ 		if ((!handler || handler(opaque, data)) && thread)
+ 			schedule_work(&virqfd->inject);
+ 	}
+-
+-	/*
+-	 * Do not drop the file until the irqfd is fully initialized,
+-	 * otherwise we might race against the EPOLLHUP.
+-	 */
+-	fdput(irqfd);
+-
+ 	return 0;
+ err_busy:
+ 	eventfd_ctx_put(ctx);
+-err_ctx:
+-	fdput(irqfd);
+ err_fd:
+ 	kfree(virqfd);
+ 
+diff --git a/drivers/virt/acrn/irqfd.c b/drivers/virt/acrn/irqfd.c
+index 9994d818bb7e..b7da24ca1475 100644
+--- a/drivers/virt/acrn/irqfd.c
++++ b/drivers/virt/acrn/irqfd.c
+@@ -112,7 +112,6 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	struct eventfd_ctx *eventfd = NULL;
+ 	struct hsm_irqfd *irqfd, *tmp;
+ 	__poll_t events;
 -	struct fd f;
-+	__poll_t mask, filter;
+ 	int ret = 0;
  
- 	if (fd < 0)
--		goto out;
--	mask = EPOLLNVAL;
--	f = fdget(fd);
--	if (!fd_file(f))
--		goto out;
-+		return 0;
+ 	irqfd = kzalloc(sizeof(*irqfd), GFP_KERNEL);
+@@ -124,8 +123,8 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	INIT_LIST_HEAD(&irqfd->list);
+ 	INIT_WORK(&irqfd->shutdown, hsm_irqfd_shutdown_work);
+ 
+-	f = fdget(args->fd);
+-	if (!fd_file(f)) {
++	CLASS(fd, f)(args->fd);
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto out;
+ 	}
+@@ -133,7 +132,7 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(eventfd)) {
+ 		ret = PTR_ERR(eventfd);
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	irqfd->eventfd = eventfd;
+@@ -162,13 +161,9 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	if (events & EPOLLIN)
+ 		acrn_irqfd_inject(irqfd);
+ 
+-	fdput(f);
+ 	return 0;
+ fail:
+-	if (eventfd && !IS_ERR(eventfd))
+-		eventfd_ctx_put(eventfd);
+-
+-	fdput(f);
++	eventfd_ctx_put(eventfd);
+ out:
+ 	kfree(irqfd);
+ 	return ret;
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 79070494070d..0ca532614343 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -967,10 +967,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	struct privcmd_kernel_irqfd *kirqfd, *tmp;
+ 	unsigned long flags;
+ 	__poll_t events;
+-	struct fd f;
+ 	void *dm_op;
+ 	int ret, idx;
+ 
++	CLASS(fd, f)(irqfd->fd);
 +
-+	CLASS(fd, f)(fd);
-+	if (fd_empty(f))
-+		return EPOLLNVAL;
+ 	kirqfd = kzalloc(sizeof(*kirqfd) + irqfd->size, GFP_KERNEL);
+ 	if (!kirqfd)
+ 		return -ENOMEM;
+@@ -986,8 +987,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	kirqfd->dom = irqfd->dom;
+ 	INIT_WORK(&kirqfd->shutdown, irqfd_shutdown);
  
- 	/* userland u16 ->events contains POLL... bitmap */
- 	filter = demangle_poll(pollfd->events) | EPOLLERR | EPOLLHUP;
-@@ -871,13 +870,7 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 	mask = vfs_poll(fd_file(f), pwait);
- 	if (mask & busy_flag)
- 		*can_busy_poll = true;
--	mask &= filter;		/* Mask out unneeded events. */
+-	f = fdget(irqfd->fd);
+-	if (!fd_file(f)) {
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto error_kfree;
+ 	}
+@@ -995,7 +995,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	kirqfd->eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(kirqfd->eventfd)) {
+ 		ret = PTR_ERR(kirqfd->eventfd);
+-		goto error_fd_put;
++		goto error_kfree;
+ 	}
+ 
+ 	/*
+@@ -1028,20 +1028,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 		irqfd_inject(kirqfd);
+ 
+ 	srcu_read_unlock(&irqfds_srcu, idx);
+-
+-	/*
+-	 * Do not drop the file until the kirqfd is fully initialized, otherwise
+-	 * we might race against the EPOLLHUP.
+-	 */
+-	fdput(f);
+ 	return 0;
+ 
+ error_eventfd:
+ 	eventfd_ctx_put(kirqfd->eventfd);
+ 
+-error_fd_put:
 -	fdput(f);
 -
--out:
--	/* ... and so does ->revents */
--	pollfd->revents = mangle_poll(mask);
--	return mask;
-+	return mask & filter;		/* Mask out unneeded events. */
- }
+ error_kfree:
+ 	kfree(kirqfd);
+ 	return ret;
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 6b390b622b72..249ba5b72e9b 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -304,7 +304,6 @@ static int
+ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ {
+ 	struct kvm_kernel_irqfd *irqfd, *tmp;
+-	struct fd f;
+ 	struct eventfd_ctx *eventfd = NULL, *resamplefd = NULL;
+ 	int ret;
+ 	__poll_t events;
+@@ -327,8 +326,8 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	INIT_WORK(&irqfd->shutdown, irqfd_shutdown);
+ 	seqcount_spinlock_init(&irqfd->irq_entry_sc, &kvm->irqfds.lock);
  
- static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
-@@ -909,6 +902,7 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
- 			pfd = walk->entries;
- 			pfd_end = pfd + walk->len;
- 			for (; pfd != pfd_end; pfd++) {
-+				__poll_t mask;
- 				/*
- 				 * Fish for events. If we found one, record it
- 				 * and kill poll_table->_qproc, so we don't
-@@ -916,8 +910,9 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
- 				 * this. They'll get immediately deregistered
- 				 * when we break out and return.
- 				 */
--				if (do_pollfd(pfd, pt, &can_busy_loop,
--					      busy_flag)) {
-+				mask = do_pollfd(pfd, pt, &can_busy_loop, busy_flag);
-+				pfd->revents = mangle_poll(mask);
-+				if (mask) {
- 					count++;
- 					pt->_qproc = NULL;
- 					/* found something, stop busy polling */
+-	f = fdget(args->fd);
+-	if (!fd_file(f)) {
++	CLASS(fd, f)(args->fd);
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto out;
+ 	}
+@@ -336,7 +335,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(eventfd)) {
+ 		ret = PTR_ERR(eventfd);
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	irqfd->eventfd = eventfd;
+@@ -440,12 +439,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ #endif
+ 
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
+-
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the EPOLLHUP
+-	 */
+-	fdput(f);
+ 	return 0;
+ 
+ fail:
+@@ -458,8 +451,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	if (eventfd && !IS_ERR(eventfd))
+ 		eventfd_ctx_put(eventfd);
+ 
+-	fdput(f);
+-
+ out:
+ 	kfree(irqfd);
+ 	return ret;
 -- 
 2.39.5
 
