@@ -1,262 +1,659 @@
-Return-Path: <linux-fsdevel+bounces-33511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1999A9B9CD4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:02:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522C79B9D34
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D245B21858
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE5A1F24949
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F173A14A4D6;
-	Sat,  2 Nov 2024 05:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2301AF0B2;
+	Sat,  2 Nov 2024 05:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FYAkBL3j"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="A/RL+nbC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF50921364;
-	Sat,  2 Nov 2024 05:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B88718B460;
+	Sat,  2 Nov 2024 05:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730523746; cv=none; b=Vx53yh3Bp9vZtqgmRf04Tlw/lYpMBtpeHkS7mYMC3B5CVHzhXvG3R1jDg+B9RB6/JsfGuhzr32P/ZayoXp81vxe+A3WEqFbIlRWsDaIYYK4J9GAVL6ZSFxEeXO/NTOckGE5m9/Ku8uzO9oxDFWlv2bkXIX7FqVrAdQr8TxkY3aI=
+	t=1730524118; cv=none; b=KtaWfH64umViqZ5woTsXYKRzJmws1YGTUdkWxlErmyauw0yrgd+WfcSS9qjXM1FeIFGtJNoRag6QlRFQNGUwn7smL3wJJ2cmMv7ba4VZaJ06CUmwBTPt7vs+GFCUoAk1AaW5YeokbBzhyYTNORU+d4AwCX5qn3bKvfjO4hJup2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730523746; c=relaxed/simple;
-	bh=kGFVdWWgwPLcOLv8kFKbF4hiZI3g7hWOKWCfBJ6i/74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBZK+xz0gE1xMNXUtOpRJCSs1WsJ/IoKauGRi2YIOFa18TKYvzv8piiiXKOzv0x9GNIwpV3VI1k3Bp9U4daYRvC133QgfBnAoXAanqn0WrOwy9fdCNoSFAagrVe92hmJ1DoVI5NAX1s0w3WIEJbzmUg3iep7hVNzJ08G8C/0U/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FYAkBL3j; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1730524118; c=relaxed/simple;
+	bh=T+6becmJaSHOBfOSKxjuYUZKVWHWhsC7+Il7h3CSCHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WjwDKjZTEv3qwTHsmKyL5l2/6QmEZT/KKc/kk4IetFIn4iMxz9plypsZcrs+/yT/a01klv8X2dgaqBfIxKlabsifWHL/uvLyWO+G/c9ufIhGgkJ5oRV21jGVdxSOi4qSWAFdR6h2TsRKe96TCC/sP6ds+A0rzuEW741QTulbiEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=A/RL+nbC; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4F81d0sfC46fv7mW68t4r9q10n8w2Wf3N+b7YkMfZcQ=; b=FYAkBL3jYvwYpguF4eLYSfb7zT
-	P6ET9B2Jt4g2a4LqeRIOLimsSVFygi4X4/yqAx+/rhY07xj583Ml5H17IJRimfUUbzUGKM5AqpBoW
-	L64IaZ15GjEraP8g4jb/XEfeqxlLV09SUuAcKU5+qGKhTGOY9X3TLzzhWsmLvqllzRbcUWh6Q9SnJ
-	YxdzVoCIx5C/Ji7wJNfwTesquTABLh9GslqN+o4hsddwDCuSAcbu301wY/i36GWT8g7Hr5YCly0vR
-	XLfowyRmFWUWlV+0LrfDbdFv85FVZvZMagaClR+oxsNmyh5UgFaoiujac8VaDMOOBc3f0qg3Fj3M+
-	OTqpoBcw==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=zhScGuCM8MBkjCCVYNUWyV07P2q+rFtLRririUzxfGw=; b=A/RL+nbCM8MqGSNo3rbWfG5dOc
+	pWV67qQjPQs+368drwzAw84YSqx3o9Cw+D+6sAR+SxhHLmRii3x2JYdv3bkPDzJhstSxLLI4yQmLa
+	ptuunlkjg1SppTSGVwXA7BGmcMpWpP3EmHWst1eHJdTr9kaRhmMAhwxXZBxPUjq75zTRnuTqI0WXG
+	ktdToyKKyACG1rK/4ymZFf6KmQWZO0ZhXrYoP3vlu/g5vZZLdGpgndPNJhJG1kFMVSM7dVCmP/QWq
+	hS0m3WoDG4zA5jYrem3C2Z+7eAo7ZiZisPA5iPNsVWemPGwaQzOWV4uB+/Bh1iFW+AQcebg88yJoX
+	kUUqp1zg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t76HD-0000000AHep-3tWz;
-	Sat, 02 Nov 2024 05:02:19 +0000
-Date: Sat, 2 Nov 2024 05:02:19 +0000
+	id 1t76N9-0000000AHm2-0SwD;
+	Sat, 02 Nov 2024 05:08:27 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCHSET v3] struct fd and memory safety
-Message-ID: <20241102050219.GA2450028@ZenIV>
-References: <20240730050927.GC5334@ZenIV>
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	cgroups@vger.kernel.org,
+	kvm@vger.kernel.org,
+	netdev@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: [PATCH v3 01/28] net/socket.c: switch to CLASS(fd)
+Date: Sat,  2 Nov 2024 05:07:59 +0000
+Message-ID: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241102050219.GA2450028@ZenIV>
+References: <20241102050219.GA2450028@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730050927.GC5334@ZenIV>
+Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	struct fd stuff got rebased (with fairly minor conflicts), branch
-lives in the same place -
-	git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.fd
+	The important part in sockfd_lookup_light() is avoiding needless
+file refcount operations, not the marginal reduction of the register
+pressure from not keeping a struct file pointer in the caller.
 
-	Changes since the previous version:
-* branch rebased to 6.12-rc2
-* the fixes gone into mainline.
-* so's the conversion to new layout and accessors.
-* bpf side of things (with modifications) is gone into mainline (via bpf tree).
-* struct fderr side dropped - overlayfs doesn't need that anymore and while it's
-possible that use cases show up, for now there's none.
-* coda_parse_fd() part dropped - no longer valid due to mainline changes.
-* fs/xattr.c and fs/stat.c changes moved to separate branches (#work.xattr2 and
-#work.statx2 resp.)
+	Switch to use fdget()/fdpu(); with sane use of CLASS(fd) we can
+get a better code generation...
 
-Individual patches in followups; review and testing would be welcome.
-If no objections materialize, I'm going to put that into #for-next on
-Monday.
+	Would be nice if somebody tested it on networking test suites
+(including benchmarks)...
 
-Diffstat:
- arch/alpha/kernel/osf_sys.c                |   5 +-
- arch/arm/kernel/sys_oabi-compat.c          |  10 +-
- arch/powerpc/kvm/book3s_64_vio.c           |  21 +-
- arch/powerpc/kvm/powerpc.c                 |  24 +--
- arch/powerpc/platforms/cell/spu_syscalls.c |  68 +++----
- arch/x86/kernel/cpu/sgx/main.c             |  10 +-
- arch/x86/kvm/svm/sev.c                     |  39 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c  |  23 +--
- drivers/gpu/drm/drm_syncobj.c              |   9 +-
- drivers/infiniband/core/ucma.c             |  19 +-
- drivers/infiniband/core/uverbs_cmd.c       |   8 +-
- drivers/media/mc/mc-request.c              |  18 +-
- drivers/media/rc/lirc_dev.c                |  13 +-
- drivers/vfio/group.c                       |   6 +-
- drivers/vfio/virqfd.c                      |  16 +-
- drivers/virt/acrn/irqfd.c                  |  13 +-
- drivers/xen/privcmd.c                      |  28 +--
- fs/btrfs/ioctl.c                           |   5 +-
- fs/eventfd.c                               |   9 +-
- fs/eventpoll.c                             |  38 ++--
- fs/ext4/ioctl.c                            |  21 +-
- fs/f2fs/file.c                             |  15 +-
- fs/fcntl.c                                 |  42 ++--
- fs/fhandle.c                               |   5 +-
- fs/fsopen.c                                |  19 +-
- fs/fuse/dev.c                              |   6 +-
- fs/ioctl.c                                 |  23 +--
- fs/kernel_read_file.c                      |  12 +-
- fs/locks.c                                 |  15 +-
- fs/namei.c                                 |  13 +-
- fs/namespace.c                             |  47 ++---
- fs/notify/fanotify/fanotify_user.c         |  44 ++---
- fs/notify/inotify/inotify_user.c           |  38 ++--
- fs/ocfs2/cluster/heartbeat.c               |  24 +--
- fs/open.c                                  |  61 +++---
- fs/quota/quota.c                           |  12 +-
- fs/read_write.c                            | 145 +++++---------
- fs/readdir.c                               |  28 +--
- fs/remap_range.c                           |  11 +-
- fs/select.c                                |  48 ++---
- fs/signalfd.c                              |   9 +-
- fs/smb/client/ioctl.c                      |  11 +-
- fs/splice.c                                |  78 +++-----
- fs/statfs.c                                |  12 +-
- fs/sync.c                                  |  29 ++-
- fs/timerfd.c                               |  40 ++--
- fs/utimes.c                                |  11 +-
- fs/xfs/xfs_exchrange.c                     |  18 +-
- fs/xfs/xfs_handle.c                        |  16 +-
- fs/xfs/xfs_ioctl.c                         |  69 ++-----
- include/linux/cleanup.h                    |   2 +-
- include/linux/file.h                       |   7 +-
- include/linux/netlink.h                    |   2 +-
- io_uring/sqpoll.c                          |  29 +--
- ipc/mqueue.c                               | 109 +++--------
- kernel/cgroup/cgroup.c                     |  21 +-
- kernel/events/core.c                       |  63 ++----
- kernel/module/main.c                       |  15 +-
- kernel/nsproxy.c                           |   5 +-
- kernel/pid.c                               |  20 +-
- kernel/signal.c                            |  29 +--
- kernel/sys.c                               |  15 +-
- kernel/taskstats.c                         |  18 +-
- kernel/watch_queue.c                       |   6 +-
- mm/fadvise.c                               |  10 +-
- mm/filemap.c                               |  17 +-
- mm/memcontrol-v1.c                         |  44 ++---
- mm/readahead.c                             |  17 +-
- net/core/net_namespace.c                   |  10 +-
- net/netlink/af_netlink.c                   |   9 +-
- net/socket.c                               | 303 +++++++++++++----------------
- security/integrity/ima/ima_main.c          |   7 +-
- security/landlock/syscalls.c               |  45 ++---
- security/loadpin/loadpin.c                 |   8 +-
- sound/core/pcm_native.c                    |   2 +-
- virt/kvm/eventfd.c                         |  15 +-
- virt/kvm/vfio.c                            |  14 +-
- 77 files changed, 751 insertions(+), 1395 deletions(-)
+	sockfd_lookup_light() does fdget(), uses sock_from_file() to
+get the associated socket and returns the struct socket reference to
+the caller, along with "do we need to fput()" flag.  No matching fdput(),
+the caller does its equivalent manually, using the fact that sock->file
+points to the struct file the socket has come from.
 
-Shortlog and commit summaries:
+	Get rid of that - have the callers do fdget()/fdput() and
+use sock_from_file() directly.  That kills sockfd_lookup_light()
+and fput_light() (no users left).
 
-01/28) net/socket.c: switch to CLASS(fd)
-	Get rid of the sockfd_lookup_light() and associated irregularities;
-fput_light() gone, old users of sockfd_lookup_light() switched to CLASS(fd) +
-sock_from_file().
+	What's more, we can get rid of explicit fdget()/fdput() by
+switching to CLASS(fd, ...) - code generation does not suffer, since
+now fdput() inserted on "descriptor is not opened" failure exit
+is recognized to be a no-op by compiler.
 
-02/28) regularize emptiness checks in fini_module(2) and vfs_dedupe_file_range()
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ include/linux/file.h |   6 -
+ net/socket.c         | 303 +++++++++++++++++++------------------------
+ 2 files changed, 137 insertions(+), 172 deletions(-)
 
-Getting rid of passing struct fd by reference:
-03/28) timerfd: switch to CLASS(fd, ...)
-04/28) get rid of perf_fget_light(), convert kernel/events/core.c to CLASS(fd)
+diff --git a/include/linux/file.h b/include/linux/file.h
+index f98de143245a..b49a92295b3f 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -30,12 +30,6 @@ extern struct file *alloc_file_pseudo_noaccount(struct inode *, struct vfsmount
+ extern struct file *alloc_file_clone(struct file *, int flags,
+ 	const struct file_operations *);
+ 
+-static inline void fput_light(struct file *file, int fput_needed)
+-{
+-	if (fput_needed)
+-		fput(file);
+-}
+-
+ /* either a reference to struct file + flags
+  * (cloned vs. borrowed, pos locked), with
+  * flags stored in lower bits of value,
+diff --git a/net/socket.c b/net/socket.c
+index 601ad74930ef..fb3806a11f94 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -509,7 +509,7 @@ static int sock_map_fd(struct socket *sock, int flags)
+ 
+ struct socket *sock_from_file(struct file *file)
+ {
+-	if (file->f_op == &socket_file_ops)
++	if (likely(file->f_op == &socket_file_ops))
+ 		return file->private_data;	/* set in sock_alloc_file */
+ 
+ 	return NULL;
+@@ -549,24 +549,6 @@ struct socket *sockfd_lookup(int fd, int *err)
+ }
+ EXPORT_SYMBOL(sockfd_lookup);
+ 
+-static struct socket *sockfd_lookup_light(int fd, int *err, int *fput_needed)
+-{
+-	struct fd f = fdget(fd);
+-	struct socket *sock;
+-
+-	*err = -EBADF;
+-	if (fd_file(f)) {
+-		sock = sock_from_file(fd_file(f));
+-		if (likely(sock)) {
+-			*fput_needed = f.word & FDPUT_FPUT;
+-			return sock;
+-		}
+-		*err = -ENOTSOCK;
+-		fdput(f);
+-	}
+-	return NULL;
+-}
+-
+ static ssize_t sockfs_listxattr(struct dentry *dentry, char *buffer,
+ 				size_t size)
+ {
+@@ -1853,16 +1835,20 @@ int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen)
+ {
+ 	struct socket *sock;
+ 	struct sockaddr_storage address;
+-	int err, fput_needed;
+-
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (sock) {
+-		err = move_addr_to_kernel(umyaddr, addrlen, &address);
+-		if (!err)
+-			err = __sys_bind_socket(sock, &address, addrlen);
+-		fput_light(sock->file, fput_needed);
+-	}
+-	return err;
++	CLASS(fd, f)(fd);
++	int err;
++
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
++
++	err = move_addr_to_kernel(umyaddr, addrlen, &address);
++	if (unlikely(err))
++		return err;
++
++	return __sys_bind_socket(sock, &address, addrlen);
+ }
+ 
+ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
+@@ -1891,15 +1877,16 @@ int __sys_listen_socket(struct socket *sock, int backlog)
+ 
+ int __sys_listen(int fd, int backlog)
+ {
++	CLASS(fd, f)(fd);
+ 	struct socket *sock;
+-	int err, fput_needed;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (sock) {
+-		err = __sys_listen_socket(sock, backlog);
+-		fput_light(sock->file, fput_needed);
+-	}
+-	return err;
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
++
++	return __sys_listen_socket(sock, backlog);
+ }
+ 
+ SYSCALL_DEFINE2(listen, int, fd, int, backlog)
+@@ -2009,17 +1996,12 @@ static int __sys_accept4_file(struct file *file, struct sockaddr __user *upeer_s
+ int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
+ 		  int __user *upeer_addrlen, int flags)
+ {
+-	int ret = -EBADF;
+-	struct fd f;
++	CLASS(fd, f)(fd);
+ 
+-	f = fdget(fd);
+-	if (fd_file(f)) {
+-		ret = __sys_accept4_file(fd_file(f), upeer_sockaddr,
++	if (fd_empty(f))
++		return -EBADF;
++	return __sys_accept4_file(fd_file(f), upeer_sockaddr,
+ 					 upeer_addrlen, flags);
+-		fdput(f);
+-	}
+-
+-	return ret;
+ }
+ 
+ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
+@@ -2071,20 +2053,18 @@ int __sys_connect_file(struct file *file, struct sockaddr_storage *address,
+ 
+ int __sys_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
+ {
+-	int ret = -EBADF;
+-	struct fd f;
++	struct sockaddr_storage address;
++	CLASS(fd, f)(fd);
++	int ret;
+ 
+-	f = fdget(fd);
+-	if (fd_file(f)) {
+-		struct sockaddr_storage address;
++	if (fd_empty(f))
++		return -EBADF;
+ 
+-		ret = move_addr_to_kernel(uservaddr, addrlen, &address);
+-		if (!ret)
+-			ret = __sys_connect_file(fd_file(f), &address, addrlen, 0);
+-		fdput(f);
+-	}
++	ret = move_addr_to_kernel(uservaddr, addrlen, &address);
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	return __sys_connect_file(fd_file(f), &address, addrlen, 0);
+ }
+ 
+ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
+@@ -2103,26 +2083,25 @@ int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
+ {
+ 	struct socket *sock;
+ 	struct sockaddr_storage address;
+-	int err, fput_needed;
++	CLASS(fd, f)(fd);
++	int err;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		goto out;
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+ 	err = security_socket_getsockname(sock);
+ 	if (err)
+-		goto out_put;
++		return err;
+ 
+ 	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 0);
+ 	if (err < 0)
+-		goto out_put;
+-	/* "err" is actually length in this case */
+-	err = move_addr_to_user(&address, err, usockaddr, usockaddr_len);
++		return err;
+ 
+-out_put:
+-	fput_light(sock->file, fput_needed);
+-out:
+-	return err;
++	/* "err" is actually length in this case */
++	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
+ }
+ 
+ SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
+@@ -2141,26 +2120,25 @@ int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
+ {
+ 	struct socket *sock;
+ 	struct sockaddr_storage address;
+-	int err, fput_needed;
++	CLASS(fd, f)(fd);
++	int err;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (sock != NULL) {
+-		const struct proto_ops *ops = READ_ONCE(sock->ops);
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+-		err = security_socket_getpeername(sock);
+-		if (err) {
+-			fput_light(sock->file, fput_needed);
+-			return err;
+-		}
++	err = security_socket_getpeername(sock);
++	if (err)
++		return err;
+ 
+-		err = ops->getname(sock, (struct sockaddr *)&address, 1);
+-		if (err >= 0)
+-			/* "err" is actually length in this case */
+-			err = move_addr_to_user(&address, err, usockaddr,
+-						usockaddr_len);
+-		fput_light(sock->file, fput_needed);
+-	}
+-	return err;
++	err = READ_ONCE(sock->ops)->getname(sock, (struct sockaddr *)&address, 1);
++	if (err < 0)
++		return err;
++
++	/* "err" is actually length in this case */
++	return move_addr_to_user(&address, err, usockaddr, usockaddr_len);
+ }
+ 
+ SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
+@@ -2181,14 +2159,17 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
+ 	struct sockaddr_storage address;
+ 	int err;
+ 	struct msghdr msg;
+-	int fput_needed;
+ 
+ 	err = import_ubuf(ITER_SOURCE, buff, len, &msg.msg_iter);
+ 	if (unlikely(err))
+ 		return err;
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		goto out;
++
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+ 	msg.msg_name = NULL;
+ 	msg.msg_control = NULL;
+@@ -2198,7 +2179,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
+ 	if (addr) {
+ 		err = move_addr_to_kernel(addr, addr_len, &address);
+ 		if (err < 0)
+-			goto out_put;
++			return err;
+ 		msg.msg_name = (struct sockaddr *)&address;
+ 		msg.msg_namelen = addr_len;
+ 	}
+@@ -2206,12 +2187,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
+ 	if (sock->file->f_flags & O_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+ 	msg.msg_flags = flags;
+-	err = __sock_sendmsg(sock, &msg);
+-
+-out_put:
+-	fput_light(sock->file, fput_needed);
+-out:
+-	return err;
++	return __sock_sendmsg(sock, &msg);
+ }
+ 
+ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
+@@ -2246,14 +2222,18 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
+ 	};
+ 	struct socket *sock;
+ 	int err, err2;
+-	int fput_needed;
+ 
+ 	err = import_ubuf(ITER_DEST, ubuf, size, &msg.msg_iter);
+ 	if (unlikely(err))
+ 		return err;
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		goto out;
++
++	CLASS(fd, f)(fd);
++
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+ 	if (sock->file->f_flags & O_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+@@ -2265,9 +2245,6 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
+ 		if (err2 < 0)
+ 			err = err2;
+ 	}
+-
+-	fput_light(sock->file, fput_needed);
+-out:
+ 	return err;
+ }
+ 
+@@ -2342,17 +2319,16 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+ {
+ 	sockptr_t optval = USER_SOCKPTR(user_optval);
+ 	bool compat = in_compat_syscall();
+-	int err, fput_needed;
+ 	struct socket *sock;
++	CLASS(fd, f)(fd);
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
+-
+-	err = do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+-	fput_light(sock->file, fput_needed);
+-	return err;
++	return do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
+ }
+ 
+ SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
+@@ -2408,20 +2384,17 @@ EXPORT_SYMBOL(do_sock_getsockopt);
+ int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
+ 		int __user *optlen)
+ {
+-	int err, fput_needed;
+ 	struct socket *sock;
+-	bool compat;
++	CLASS(fd, f)(fd);
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+-	compat = in_compat_syscall();
+-	err = do_sock_getsockopt(sock, compat, level, optname,
++	return do_sock_getsockopt(sock, in_compat_syscall(), level, optname,
+ 				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
+-
+-	fput_light(sock->file, fput_needed);
+-	return err;
+ }
+ 
+ SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
+@@ -2447,15 +2420,16 @@ int __sys_shutdown_sock(struct socket *sock, int how)
+ 
+ int __sys_shutdown(int fd, int how)
+ {
+-	int err, fput_needed;
+ 	struct socket *sock;
++	CLASS(fd, f)(fd);
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (sock != NULL) {
+-		err = __sys_shutdown_sock(sock, how);
+-		fput_light(sock->file, fput_needed);
+-	}
+-	return err;
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
++
++	return __sys_shutdown_sock(sock, how);
+ }
+ 
+ SYSCALL_DEFINE2(shutdown, int, fd, int, how)
+@@ -2671,22 +2645,21 @@ long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
+ long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
+ 		   bool forbid_cmsg_compat)
+ {
+-	int fput_needed, err;
+ 	struct msghdr msg_sys;
+ 	struct socket *sock;
+ 
+ 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
+ 		return -EINVAL;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		goto out;
++	CLASS(fd, f)(fd);
+ 
+-	err = ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+-	fput_light(sock->file, fput_needed);
+-out:
+-	return err;
++	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
+ }
+ 
+ SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int, flags)
+@@ -2701,7 +2674,7 @@ SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int
+ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 		   unsigned int flags, bool forbid_cmsg_compat)
+ {
+-	int fput_needed, err, datagrams;
++	int err, datagrams;
+ 	struct socket *sock;
+ 	struct mmsghdr __user *entry;
+ 	struct compat_mmsghdr __user *compat_entry;
+@@ -2717,9 +2690,13 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 
+ 	datagrams = 0;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
++	CLASS(fd, f)(fd);
++
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+ 	used_address.name_len = UINT_MAX;
+ 	entry = mmsg;
+@@ -2756,8 +2733,6 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 		cond_resched();
+ 	}
+ 
+-	fput_light(sock->file, fput_needed);
+-
+ 	/* We only return an error if no datagrams were able to be sent */
+ 	if (datagrams != 0)
+ 		return datagrams;
+@@ -2879,22 +2854,21 @@ long __sys_recvmsg_sock(struct socket *sock, struct msghdr *msg,
+ long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
+ 		   bool forbid_cmsg_compat)
+ {
+-	int fput_needed, err;
+ 	struct msghdr msg_sys;
+ 	struct socket *sock;
+ 
+ 	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
+ 		return -EINVAL;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		goto out;
++	CLASS(fd, f)(fd);
+ 
+-	err = ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+-	fput_light(sock->file, fput_needed);
+-out:
+-	return err;
++	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
+ }
+ 
+ SYSCALL_DEFINE3(recvmsg, int, fd, struct user_msghdr __user *, msg,
+@@ -2911,7 +2885,7 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 			  unsigned int vlen, unsigned int flags,
+ 			  struct timespec64 *timeout)
+ {
+-	int fput_needed, err, datagrams;
++	int err, datagrams;
+ 	struct socket *sock;
+ 	struct mmsghdr __user *entry;
+ 	struct compat_mmsghdr __user *compat_entry;
+@@ -2926,16 +2900,18 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 
+ 	datagrams = 0;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
++	CLASS(fd, f)(fd);
++
++	if (fd_empty(f))
++		return -EBADF;
++	sock = sock_from_file(fd_file(f));
++	if (unlikely(!sock))
++		return -ENOTSOCK;
+ 
+ 	if (likely(!(flags & MSG_ERRQUEUE))) {
+ 		err = sock_error(sock->sk);
+-		if (err) {
+-			datagrams = err;
+-			goto out_put;
+-		}
++		if (err)
++			return err;
+ 	}
+ 
+ 	entry = mmsg;
+@@ -2992,12 +2968,10 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 	}
+ 
+ 	if (err == 0)
+-		goto out_put;
++		return datagrams;
+ 
+-	if (datagrams == 0) {
+-		datagrams = err;
+-		goto out_put;
+-	}
++	if (datagrams == 0)
++		return err;
+ 
+ 	/*
+ 	 * We may return less entries than requested (vlen) if the
+@@ -3012,9 +2986,6 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 		 */
+ 		WRITE_ONCE(sock->sk->sk_err, -err);
+ 	}
+-out_put:
+-	fput_light(sock->file, fput_needed);
+-
+ 	return datagrams;
+ }
+ 
+-- 
+2.39.5
 
-do_mq_notify() regularization:
-05/28) switch netlink_getsockbyfilp() to taking descriptor
-06/28) do_mq_notify(): saner skb freeing on failures
-07/28) do_mq_notify(): switch to CLASS(fd, ...)
-
-After that the weirdness with reassignments in do_mq_notify() is gone
-(and, IMO, the result is easier to follow).
-
-08/28) simplify xfs_find_handle() a bit
-	Massage to get rid of reassignment there; simplifies control flow...
-
-Making sure that fdget() and fdput() are done in the same function:
-09/28) convert vmsplice() to CLASS(fd, ...)
-
-Deal with fdget_raw() and fdget_pos() users - all trivial to convert.
-10/28) fdget_raw() users: switch to CLASS(fd_raw, ...)
-11/28) introduce "fd_pos" class, convert fdget_pos() users to it.
-
-Prep for fdget() conversions:
-12/28) o2hb_region_dev_store(): avoid goto around fdget()/fdput()
-13/28) privcmd_ioeventfd_assign(): don't open-code eventfd_ctx_fdget()
-
-14/28) fdget(), trivial conversions.
-	Big one: all callers that have fdget() done the first thing in
-scope, with all matching fdput() immediately followed by leaving the
-scope.  All of those are trivial to convert.
-15/28) fdget(), more trivial conversions
-	Same, except that fdget() is preceded by some work.  All fdput()
-are still immediately followed by leaving the scope.  These are also
-trivial to convert, and along with the previous commit that takes care
-of the majority of fdget() calls.
-
-16/28) convert do_preadv()/do_pwritev()
-	fdput() is transposable with everything done after it (inc_syscw()
-et.al.)
-17/28) convert cachestat(2)
-	fdput() is transposable with copy_to_user() downstream of it.
-
-18/28) switch spufs_calls_{get,put}() to CLASS() use
-19/28) convert spu_run(2)
-	fdput() used to be followed by spufs_calls_put(); we could transpose
-those two, but spufs_calls_get()/spufd_calls_put() itself can be converted
-to CLASS() use and it's cleaner that way.
-
-20/28) convert media_request_get_by_fd()
-	fdput() is transposable with debugging printk
-
-21/28) convert cifs_ioctl_copychunk()
-	fdput() moved past mnt_drop_file_write(); harmless, if somewhat
-cringeworthy.  Reordering could be avoided either by adding an explicit
-scope or by making mnt_drop_file_write() called via __cleanup...
-
-22/28) convert vfs_dedupe_file_range()
-	fdput() is followed by checking fatal_signal_pending() (and aborting
-the loop in such case).  fdput() is transposable with that check.
-Yes, it'll probably end up with slightly fatter code (call after the
-check has returned false + call on the almost never taken out-of-line path
-instead of one call before the check), but it's not worth bothering with
-explicit extra scope there (or dragging the check into the loop condition,
-for that matter).
-
-23/28) convert do_select()
-	take the logics from fdget() to fdput() into an inlined helper -
-with existing wait_key_set() subsumed into that.
-24/28) do_pollfd(): convert to CLASS(fd)
-	lift setting ->revents into the caller, so that failure exits
-(including the early one) would be plain returns.
-
-25/28) assorted variants of irqfd setup: convert to CLASS(fd)
-	fdput() is transposable with kfree(); some reordering
-is required in one of those (we do fdget() a bit earlier there).
-26/28) memcg_write_event_control(): switch to CLASS(fd)
-	similar to the previous.  As the matter of fact, there
-might be a missing common helper or two hiding in both...
-
-27/28) css_set_fork(): switch to CLASS(fd_raw, ...)
-	could be separated from the series; its use of fget_raw()
-could be converted to fdget_raw(), with the result convertible to
-CLASS(fd_raw)
-
-28/28) deal with the last remaing boolean uses of fd_file()
-	most of them had been converted to fd_empty() by now; pick
-the few remaining strugglers.
 
