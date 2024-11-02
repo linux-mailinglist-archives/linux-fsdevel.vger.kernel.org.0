@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-33529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113329B9D23
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:13:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173099B9D10
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 06:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4680284323
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFD11C22159
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 05:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA3E15F40B;
-	Sat,  2 Nov 2024 05:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0584198A3F;
+	Sat,  2 Nov 2024 05:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="O1EQeMwb"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aT4l83KQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8F5149DF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCEC149E16;
 	Sat,  2 Nov 2024 05:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730524115; cv=none; b=cg4WOI2q1V7lLCXO1LaphBME2d5MX0sLYN8QMoqSw0bTZzhOfQT9cGW+tDImTyk4TbBQPobaxRPR/ePg49fA24qwHFkaLQL7+lPpERB6BQZg4zChI1JsFDiJOZsHFCEzRxh7m7NiMKLoMc3rcyVs8GhOi66sgOrhC21A+v+AvCo=
+	t=1730524115; cv=none; b=fYkWGCeOgiLK2avMADpTdf5Dttl2/erf5zvbhKgerUHQNh3nI/8/A9fNLVLKsUAnS6CFacYIfWunLix78merXYe76BZf4FVz3T7YtAL9q/tY7hPtamtp09baKdF2v7i0ntNYs/TCqQcW3z1n4RUN6aK2Vv1Kfe2fnkPL1v8fpg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730524115; c=relaxed/simple;
-	bh=YAOI0Bms1NyzCK21gEK9b6nfGpEC8zFEszG3umJsMm0=;
+	bh=KlhdToZ7MFNoevhCXmCZr72hgILpTp/aTDnrX9W44bY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LM944SifXB5orV2w2d9LXD5fY0S4T1LyyRlzSPweiEeQWmfHn9fyoIJqK/0Q9sRYYXmIQZiBkJs+xoRkpYnDwryN/+Xop2JTdO/YrjsA4i90IYjORYFE3A0TbOo5c73vWnzDscniFUA/XURGbJXoPdQ4rmuxWhKA4qMQJS9ZQpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=O1EQeMwb; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=Pe7Z8sYkczKt6hzf5g/znBwPEbFWIrnFJqzayxmxV2PG8OGV10aEhgjGLZ9pPzT8vM4DYZgfyWDsYBtiRY4VFywqdspxPHDRupPmXb+P8rjUdFR1/KvSSp5x2+TsZxrhrP6uuINj9qcU7bh4xfmb/mHSCW5ACSAYtUXFCHvVXRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aT4l83KQ; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=gJeBjPaJqIDGTtuoDnaO4yl4cURpz4gw6IFQHbZ2UFQ=; b=O1EQeMwbwGBcMgWqHtq/SRZ3Dh
-	/Q005YZDvFLx/sZEdY2aeP2MxeUv2mV28je0n2WsouiEXtwigQI50lehuE/90Ml759WzMeCIKEHLI
-	a9RJQa4llshvxPRZGDZs2VMTeFCK12Efx5Nu990rvorSi5opOuE3qXC/dtIp7iNgFbYWmNQkc3vxY
-	QJiE3Ok/WSJnqgiUpoVmdjBndlfRmn2Lpyn6nrnyMGhzR67gy4+3E0rLCr8CYSvpc3QWyw7Qym3Qa
-	PBumULVWu/yTW6FXMu2yg/tgP2+A6vtLZZkE87P3aZMEzD316EeLiE2kNqUNO79IvR4BsyVMFM2Wx
-	7hy/uoww==;
+	bh=oaz1BIlbzBJq+h60VrlaptCJhLLOOdcSZiKyBZy7Yx4=; b=aT4l83KQnJ7SACmqBo5SXseGEn
+	IRskUGAKSZKkReS09fuuJ6CMrmczloUJKbykHUY2SBmOA4myg9IytMlsIXQo5+COSZLN5miNf29hP
+	i0PqtpZUj6on6NFGfRrgA07xLg9sL9w9HhwEdW+TzbcYIGB0engdVXqTUC3kjxsLGd5lATpcaJvqA
+	hhV0qudJ4X+uAWx5byLgF2W4rkQWU64L27/lgyMFKfILphqOY9ScJRFbmUNJEyPi2l+ic5WlRbb99
+	y304wzVBN0GIAJ3djxWRTszhwB9J/yDXqb2XJJVCp8v5PjCDR4LZEkJKp3dXvoixq0WEuxqdhSMNE
+	A5eONaTw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t76NB-0000000AHn6-04Eo;
+	id 1t76NB-0000000AHnD-0scu;
 	Sat, 02 Nov 2024 05:08:29 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: viro@zeniv.linux.org.uk,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 14/28] fdget(), trivial conversions
-Date: Sat,  2 Nov 2024 05:08:12 +0000
-Message-ID: <20241102050827.2451599-14-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 15/28] fdget(), more trivial conversions
+Date: Sat,  2 Nov 2024 05:08:13 +0000
+Message-ID: <20241102050827.2451599-15-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 References: <20241102050219.GA2450028@ZenIV>
@@ -68,1391 +68,1616 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-fdget() is the first thing done in scope, all matching fdput() are
-immediately followed by leaving the scope.
+all failure exits prior to fdget() leave the scope, all matching fdput()
+are immediately followed by leaving the scope.
+
+[xfs_ioc_commit_range() chunk moved here as well]
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/powerpc/kvm/book3s_64_vio.c           | 21 +++---------
- arch/powerpc/kvm/powerpc.c                 | 24 ++++---------
- arch/powerpc/platforms/cell/spu_syscalls.c |  6 ++--
- arch/x86/kernel/cpu/sgx/main.c             | 10 ++----
- arch/x86/kvm/svm/sev.c                     | 39 ++++++++--------------
- drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c  | 23 ++++---------
- drivers/gpu/drm/drm_syncobj.c              |  9 ++---
- drivers/media/rc/lirc_dev.c                | 13 +++-----
- fs/btrfs/ioctl.c                           |  5 ++-
- fs/eventfd.c                               |  9 ++---
- fs/eventpoll.c                             | 23 ++++---------
- fs/fhandle.c                               |  5 ++-
- fs/ioctl.c                                 | 23 +++++--------
- fs/kernel_read_file.c                      | 12 +++----
- fs/notify/fanotify/fanotify_user.c         | 15 +++------
- fs/notify/inotify/inotify_user.c           | 17 +++-------
- fs/open.c                                  | 36 +++++++++-----------
- fs/read_write.c                            | 28 +++++-----------
- fs/signalfd.c                              |  9 ++---
- fs/sync.c                                  | 29 ++++++----------
- io_uring/sqpoll.c                          | 29 +++++-----------
- kernel/events/core.c                       | 14 +++-----
- kernel/nsproxy.c                           |  5 ++-
- kernel/pid.c                               |  7 ++--
- kernel/sys.c                               | 15 +++------
- kernel/watch_queue.c                       |  6 ++--
- mm/fadvise.c                               | 10 ++----
- mm/readahead.c                             | 17 +++-------
- net/core/net_namespace.c                   | 10 +++---
- security/landlock/syscalls.c               | 26 +++++----------
- virt/kvm/vfio.c                            |  8 ++---
- 31 files changed, 164 insertions(+), 339 deletions(-)
+ drivers/infiniband/core/ucma.c     | 19 +++-----
+ drivers/vfio/group.c               |  6 +--
+ fs/eventpoll.c                     | 15 ++----
+ fs/ext4/ioctl.c                    | 21 +++------
+ fs/f2fs/file.c                     | 15 ++----
+ fs/fsopen.c                        | 19 +++-----
+ fs/fuse/dev.c                      |  6 +--
+ fs/locks.c                         | 15 ++----
+ fs/namespace.c                     | 47 ++++++------------
+ fs/notify/fanotify/fanotify_user.c | 29 +++++-------
+ fs/notify/inotify/inotify_user.c   | 21 +++------
+ fs/ocfs2/cluster/heartbeat.c       | 13 ++---
+ fs/open.c                          | 12 ++---
+ fs/read_write.c                    | 71 ++++++++++------------------
+ fs/splice.c                        | 45 +++++++-----------
+ fs/utimes.c                        | 11 ++---
+ fs/xfs/xfs_exchrange.c             | 18 ++-----
+ fs/xfs/xfs_ioctl.c                 | 69 +++++++++------------------
+ ipc/mqueue.c                       | 76 +++++++++---------------------
+ kernel/module/main.c               | 11 ++---
+ kernel/pid.c                       | 13 ++---
+ kernel/signal.c                    | 29 ++++--------
+ kernel/taskstats.c                 | 18 +++----
+ security/integrity/ima/ima_main.c  |  7 +--
+ security/loadpin/loadpin.c         |  8 +---
+ virt/kvm/vfio.c                    |  6 +--
+ 26 files changed, 202 insertions(+), 418 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
-index 34c0adb9fdbf..742aa58a7c7e 100644
---- a/arch/powerpc/kvm/book3s_64_vio.c
-+++ b/arch/powerpc/kvm/book3s_64_vio.c
-@@ -115,10 +115,9 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 	struct iommu_table_group *table_group;
- 	long i;
- 	struct kvmppc_spapr_tce_iommu_table *stit;
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 5dbb248e9625..02f1666f3cba 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1615,7 +1615,6 @@ static ssize_t ucma_migrate_id(struct ucma_file *new_file,
+ 	struct ucma_event *uevent, *tmp;
+ 	struct ucma_context *ctx;
+ 	LIST_HEAD(event_list);
 -	struct fd f;
-+	CLASS(fd, f)(tablefd);
- 
--	f = fdget(tablefd);
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
- 	rcu_read_lock();
-@@ -130,16 +129,12 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 	}
- 	rcu_read_unlock();
- 
--	if (!found) {
--		fdput(f);
-+	if (!found)
- 		return -EINVAL;
--	}
- 
- 	table_group = iommu_group_get_iommudata(grp);
--	if (WARN_ON(!table_group)) {
--		fdput(f);
-+	if (WARN_ON(!table_group))
- 		return -EFAULT;
--	}
- 
- 	for (i = 0; i < IOMMU_TABLE_GROUP_MAX_TABLES; ++i) {
- 		struct iommu_table *tbltmp = table_group->tables[i];
-@@ -160,10 +155,8 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 			break;
- 		}
- 	}
--	if (!tbl) {
--		fdput(f);
-+	if (!tbl)
- 		return -EINVAL;
--	}
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(stit, &stt->iommu_tables, next) {
-@@ -174,7 +167,6 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 			/* stit is being destroyed */
- 			iommu_tce_table_put(tbl);
- 			rcu_read_unlock();
--			fdput(f);
- 			return -ENOTTY;
- 		}
- 		/*
-@@ -182,7 +174,6 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 		 * its KVM reference counter and can return.
- 		 */
- 		rcu_read_unlock();
--		fdput(f);
- 		return 0;
- 	}
- 	rcu_read_unlock();
-@@ -190,7 +181,6 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 	stit = kzalloc(sizeof(*stit), GFP_KERNEL);
- 	if (!stit) {
- 		iommu_tce_table_put(tbl);
--		fdput(f);
- 		return -ENOMEM;
- 	}
- 
-@@ -199,7 +189,6 @@ long kvm_spapr_tce_attach_iommu_group(struct kvm *kvm, int tablefd,
- 
- 	list_add_rcu(&stit->next, &stt->iommu_tables);
- 
--	fdput(f);
- 	return 0;
- }
- 
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index f14329989e9a..b3b37ea77849 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -1933,12 +1933,11 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- #endif
- #ifdef CONFIG_KVM_MPIC
- 	case KVM_CAP_IRQ_MPIC: {
--		struct fd f;
-+		CLASS(fd, f)(cap->args[0]);
- 		struct kvm_device *dev;
- 
- 		r = -EBADF;
--		f = fdget(cap->args[0]);
--		if (!fd_file(f))
-+		if (fd_empty(f))
- 			break;
- 
- 		r = -EPERM;
-@@ -1946,18 +1945,16 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 		if (dev)
- 			r = kvmppc_mpic_connect_vcpu(dev, vcpu, cap->args[1]);
- 
--		fdput(f);
- 		break;
- 	}
- #endif
- #ifdef CONFIG_KVM_XICS
- 	case KVM_CAP_IRQ_XICS: {
--		struct fd f;
-+		CLASS(fd, f)(cap->args[0]);
- 		struct kvm_device *dev;
- 
- 		r = -EBADF;
--		f = fdget(cap->args[0]);
--		if (!fd_file(f))
-+		if (fd_empty(f))
- 			break;
- 
- 		r = -EPERM;
-@@ -1968,34 +1965,27 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 			else
- 				r = kvmppc_xics_connect_vcpu(dev, vcpu, cap->args[1]);
- 		}
--
--		fdput(f);
- 		break;
- 	}
- #endif /* CONFIG_KVM_XICS */
- #ifdef CONFIG_KVM_XIVE
- 	case KVM_CAP_PPC_IRQ_XIVE: {
--		struct fd f;
-+		CLASS(fd, f)(cap->args[0]);
- 		struct kvm_device *dev;
- 
- 		r = -EBADF;
--		f = fdget(cap->args[0]);
--		if (!fd_file(f))
-+		if (fd_empty(f))
- 			break;
- 
- 		r = -ENXIO;
--		if (!xive_enabled()) {
--			fdput(f);
-+		if (!xive_enabled())
- 			break;
--		}
- 
- 		r = -EPERM;
- 		dev = kvm_device_from_filp(fd_file(f));
- 		if (dev)
- 			r = kvmppc_xive_native_connect_vcpu(dev, vcpu,
- 							    cap->args[1]);
--
--		fdput(f);
- 		break;
- 	}
- #endif /* CONFIG_KVM_XIVE */
-diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-index cd7d42fc12a6..da4fad7fc8bf 100644
---- a/arch/powerpc/platforms/cell/spu_syscalls.c
-+++ b/arch/powerpc/platforms/cell/spu_syscalls.c
-@@ -64,12 +64,10 @@ SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
- 		return -ENOSYS;
- 
- 	if (flags & SPU_CREATE_AFFINITY_SPU) {
--		struct fd neighbor = fdget(neighbor_fd);
-+		CLASS(fd, neighbor)(neighbor_fd);
- 		ret = -EBADF;
--		if (fd_file(neighbor)) {
-+		if (!fd_empty(neighbor))
- 			ret = calls->create_thread(name, flags, mode, fd_file(neighbor));
--			fdput(neighbor);
--		}
- 	} else
- 		ret = calls->create_thread(name, flags, mode, NULL);
- 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 9ace84486499..eb5848d1851a 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -901,19 +901,15 @@ static struct miscdevice sgx_dev_provision = {
- int sgx_set_attribute(unsigned long *allowed_attributes,
- 		      unsigned int attribute_fd)
- {
--	struct fd f = fdget(attribute_fd);
-+	CLASS(fd, f)(attribute_fd);
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EINVAL;
- 
--	if (fd_file(f)->f_op != &sgx_provision_fops) {
--		fdput(f);
-+	if (fd_file(f)->f_op != &sgx_provision_fops)
- 		return -EINVAL;
--	}
- 
- 	*allowed_attributes |= SGX_ATTR_PROVISIONKEY;
--
--	fdput(f);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 0b851ef937f2..34304f6c36be 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -530,17 +530,12 @@ static int sev_bind_asid(struct kvm *kvm, unsigned int handle, int *error)
- 
- static int __sev_issue_cmd(int fd, int id, void *data, int *error)
- {
--	struct fd f;
--	int ret;
-+	CLASS(fd, f)(fd);
- 
--	f = fdget(fd);
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
--	ret = sev_issue_cmd_external_user(fd_file(f), id, data, error);
--
--	fdput(f);
--	return ret;
-+	return sev_issue_cmd_external_user(fd_file(f), id, data, error);
- }
- 
- static int sev_issue_cmd(struct kvm *kvm, int id, void *data, int *error)
-@@ -2073,23 +2068,21 @@ int sev_vm_move_enc_context_from(struct kvm *kvm, unsigned int source_fd)
- {
- 	struct kvm_sev_info *dst_sev = &to_kvm_svm(kvm)->sev_info;
- 	struct kvm_sev_info *src_sev, *cg_cleanup_sev;
--	struct fd f = fdget(source_fd);
-+	CLASS(fd, f)(source_fd);
- 	struct kvm *source_kvm;
- 	bool charged = false;
- 	int ret;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
--	if (!file_is_kvm(fd_file(f))) {
--		ret = -EBADF;
--		goto out_fput;
--	}
-+	if (!file_is_kvm(fd_file(f)))
-+		return -EBADF;
- 
- 	source_kvm = fd_file(f)->private_data;
- 	ret = sev_lock_two_vms(kvm, source_kvm);
- 	if (ret)
--		goto out_fput;
-+		return ret;
- 
- 	if (kvm->arch.vm_type != source_kvm->arch.vm_type ||
- 	    sev_guest(kvm) || !sev_guest(source_kvm)) {
-@@ -2136,8 +2129,6 @@ int sev_vm_move_enc_context_from(struct kvm *kvm, unsigned int source_fd)
- 	cg_cleanup_sev->misc_cg = NULL;
- out_unlock:
- 	sev_unlock_two_vms(kvm, source_kvm);
--out_fput:
--	fdput(f);
- 	return ret;
- }
- 
-@@ -2798,23 +2789,21 @@ int sev_mem_enc_unregister_region(struct kvm *kvm,
- 
- int sev_vm_copy_enc_context_from(struct kvm *kvm, unsigned int source_fd)
- {
--	struct fd f = fdget(source_fd);
-+	CLASS(fd, f)(source_fd);
- 	struct kvm *source_kvm;
- 	struct kvm_sev_info *source_sev, *mirror_sev;
- 	int ret;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
--	if (!file_is_kvm(fd_file(f))) {
--		ret = -EBADF;
--		goto e_source_fput;
--	}
-+	if (!file_is_kvm(fd_file(f)))
-+		return -EBADF;
- 
- 	source_kvm = fd_file(f)->private_data;
- 	ret = sev_lock_two_vms(kvm, source_kvm);
- 	if (ret)
--		goto e_source_fput;
-+		return ret;
- 
- 	/*
- 	 * Mirrors of mirrors should work, but let's not get silly.  Also
-@@ -2857,8 +2846,6 @@ int sev_vm_copy_enc_context_from(struct kvm *kvm, unsigned int source_fd)
- 
- e_unlock:
- 	sev_unlock_two_vms(kvm, source_kvm);
--e_source_fput:
--	fdput(f);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c
-index b0a8abc7a8ec..341beec59537 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c
-@@ -35,21 +35,19 @@ static int amdgpu_sched_process_priority_override(struct amdgpu_device *adev,
- 						  int fd,
- 						  int32_t priority)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	struct amdgpu_fpriv *fpriv;
- 	struct amdgpu_ctx_mgr *mgr;
- 	struct amdgpu_ctx *ctx;
- 	uint32_t id;
- 	int r;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EINVAL;
- 
- 	r = amdgpu_file_to_fpriv(fd_file(f), &fpriv);
--	if (r) {
--		fdput(f);
-+	if (r)
- 		return r;
--	}
- 
- 	mgr = &fpriv->ctx_mgr;
- 	mutex_lock(&mgr->lock);
-@@ -57,7 +55,6 @@ static int amdgpu_sched_process_priority_override(struct amdgpu_device *adev,
- 		amdgpu_ctx_priority_override(ctx, priority);
- 	mutex_unlock(&mgr->lock);
- 
--	fdput(f);
- 	return 0;
- }
- 
-@@ -66,31 +63,25 @@ static int amdgpu_sched_context_priority_override(struct amdgpu_device *adev,
- 						  unsigned ctx_id,
- 						  int32_t priority)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	struct amdgpu_fpriv *fpriv;
- 	struct amdgpu_ctx *ctx;
- 	int r;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EINVAL;
- 
- 	r = amdgpu_file_to_fpriv(fd_file(f), &fpriv);
--	if (r) {
--		fdput(f);
-+	if (r)
- 		return r;
--	}
- 
- 	ctx = amdgpu_ctx_get(fpriv, ctx_id);
- 
--	if (!ctx) {
--		fdput(f);
-+	if (!ctx)
- 		return -EINVAL;
--	}
- 
- 	amdgpu_ctx_priority_override(ctx, priority);
- 	amdgpu_ctx_put(ctx);
--	fdput(f);
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-index 8e3d2d7060f8..4f2ab8a7b50f 100644
---- a/drivers/gpu/drm/drm_syncobj.c
-+++ b/drivers/gpu/drm/drm_syncobj.c
-@@ -712,16 +712,14 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
- 				    int fd, u32 *handle)
- {
- 	struct drm_syncobj *syncobj;
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	int ret;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EINVAL;
- 
--	if (fd_file(f)->f_op != &drm_syncobj_file_fops) {
--		fdput(f);
-+	if (fd_file(f)->f_op != &drm_syncobj_file_fops)
- 		return -EINVAL;
--	}
- 
- 	/* take a reference to put in the idr */
- 	syncobj = fd_file(f)->private_data;
-@@ -739,7 +737,6 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
- 	} else
- 		drm_syncobj_put(syncobj);
- 
--	fdput(f);
- 	return ret;
- }
- 
-diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
-index f042f3f14afa..a2257dc2f25d 100644
---- a/drivers/media/rc/lirc_dev.c
-+++ b/drivers/media/rc/lirc_dev.c
-@@ -815,28 +815,23 @@ void __exit lirc_dev_exit(void)
- 
- struct rc_dev *rc_dev_get_from_fd(int fd, bool write)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	struct lirc_fh *fh;
- 	struct rc_dev *dev;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return ERR_PTR(-EBADF);
- 
--	if (fd_file(f)->f_op != &lirc_fops) {
--		fdput(f);
-+	if (fd_file(f)->f_op != &lirc_fops)
- 		return ERR_PTR(-EINVAL);
--	}
- 
--	if (write && !(fd_file(f)->f_mode & FMODE_WRITE)) {
--		fdput(f);
-+	if (write && !(fd_file(f)->f_mode & FMODE_WRITE))
- 		return ERR_PTR(-EPERM);
--	}
- 
- 	fh = fd_file(f)->private_data;
- 	dev = fh->rc;
- 
- 	get_device(&dev->dev);
--	fdput(f);
- 
- 	return dev;
- }
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 226c91fe31a7..adb591b1d071 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1308,9 +1308,9 @@ static noinline int __btrfs_ioctl_snap_create(struct file *file,
- 		ret = btrfs_mksubvol(&file->f_path, idmap, name,
- 				     namelen, NULL, readonly, inherit);
- 	} else {
--		struct fd src = fdget(fd);
-+		CLASS(fd, src)(fd);
- 		struct inode *src_inode;
--		if (!fd_file(src)) {
-+		if (fd_empty(src)) {
- 			ret = -EINVAL;
- 			goto out_drop_write;
- 		}
-@@ -1341,7 +1341,6 @@ static noinline int __btrfs_ioctl_snap_create(struct file *file,
- 					       BTRFS_I(src_inode)->root,
- 					       readonly, inherit);
- 		}
--		fdput(src);
- 	}
- out_drop_write:
- 	mnt_drop_write_file(file);
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 22c934f3a080..76129bfcd663 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -347,13 +347,10 @@ EXPORT_SYMBOL_GPL(eventfd_fget);
-  */
- struct eventfd_ctx *eventfd_ctx_fdget(int fd)
- {
--	struct eventfd_ctx *ctx;
--	struct fd f = fdget(fd);
--	if (!fd_file(f))
-+	CLASS(fd, f)(fd);
-+	if (fd_empty(f))
- 		return ERR_PTR(-EBADF);
--	ctx = eventfd_ctx_fileget(fd_file(f));
--	fdput(f);
--	return ctx;
-+	return eventfd_ctx_fileget(fd_file(f));
- }
- EXPORT_SYMBOL_GPL(eventfd_ctx_fdget);
- 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 1ae4542f0bd8..4607dcbc2851 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2254,25 +2254,22 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- {
- 	int error;
- 	int full_check = 0;
--	struct fd f, tf;
- 	struct eventpoll *ep;
- 	struct epitem *epi;
- 	struct eventpoll *tep = NULL;
- 
--	error = -EBADF;
--	f = fdget(epfd);
--	if (!fd_file(f))
--		goto error_return;
-+	CLASS(fd, f)(epfd);
-+	if (fd_empty(f))
-+		return -EBADF;
- 
- 	/* Get the "struct file *" for the target file */
--	tf = fdget(fd);
--	if (!fd_file(tf))
--		goto error_fput;
-+	CLASS(fd, tf)(fd);
-+	if (fd_empty(tf))
-+		return -EBADF;
- 
- 	/* The target file descriptor must support poll */
--	error = -EPERM;
- 	if (!file_can_poll(fd_file(tf)))
--		goto error_tgt_fput;
-+		return -EPERM;
- 
- 	/* Check if EPOLLWAKEUP is allowed */
- 	if (ep_op_has_event(op))
-@@ -2391,12 +2388,6 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 		loop_check_gen++;
- 		mutex_unlock(&epnested_mutex);
- 	}
--
--	fdput(tf);
--error_fput:
--	fdput(f);
--error_return:
--
- 	return error;
- }
- 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 82df28d45cd7..5f801139358e 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -139,12 +139,11 @@ static int get_path_from_fd(int fd, struct path *root)
- 		path_get(root);
- 		spin_unlock(&fs->lock);
- 	} else {
--		struct fd f = fdget(fd);
--		if (!fd_file(f))
-+		CLASS(fd, f)(fd);
-+		if (fd_empty(f))
- 			return -EBADF;
- 		*root = fd_file(f)->f_path;
- 		path_get(root);
--		fdput(f);
- 	}
- 
- 	return 0;
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 6e0c954388d4..638a36be31c1 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -231,11 +231,11 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
- static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 			     u64 off, u64 olen, u64 destoff)
- {
--	struct fd src_file = fdget(srcfd);
-+	CLASS(fd, src_file)(srcfd);
- 	loff_t cloned;
- 	int ret;
- 
--	if (!fd_file(src_file))
-+	if (fd_empty(src_file))
- 		return -EBADF;
- 	cloned = vfs_clone_file_range(fd_file(src_file), off, dst_file, destoff,
- 				      olen, 0);
-@@ -245,7 +245,6 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 		ret = -EINVAL;
- 	else
- 		ret = 0;
--	fdput(src_file);
- 	return ret;
- }
- 
-@@ -892,22 +891,20 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
- 
- SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	int error;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
- 	error = security_file_ioctl(fd_file(f), cmd, arg);
- 	if (error)
--		goto out;
-+		return error;
- 
- 	error = do_vfs_ioctl(fd_file(f), fd, cmd, arg);
- 	if (error == -ENOIOCTLCMD)
- 		error = vfs_ioctl(fd_file(f), cmd, arg);
- 
--out:
--	fdput(f);
- 	return error;
- }
- 
-@@ -950,15 +947,15 @@ EXPORT_SYMBOL(compat_ptr_ioctl);
- COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- 		       compat_ulong_t, arg)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	int error;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
- 	error = security_file_ioctl_compat(fd_file(f), cmd, arg);
- 	if (error)
--		goto out;
-+		return error;
- 
- 	switch (cmd) {
- 	/* FICLONE takes an int argument, so don't use compat_ptr() */
-@@ -1009,10 +1006,6 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- 			error = -ENOTTY;
- 		break;
- 	}
--
-- out:
--	fdput(f);
--
- 	return error;
- }
- #endif
-diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-index 9ff37ae650ea..de32c95d823d 100644
---- a/fs/kernel_read_file.c
-+++ b/fs/kernel_read_file.c
-@@ -175,15 +175,11 @@ ssize_t kernel_read_file_from_fd(int fd, loff_t offset, void **buf,
- 				 size_t buf_size, size_t *file_size,
- 				 enum kernel_read_file_id id)
- {
--	struct fd f = fdget(fd);
--	ssize_t ret = -EBADF;
-+	CLASS(fd, f)(fd);
- 
--	if (!fd_file(f) || !(fd_file(f)->f_mode & FMODE_READ))
--		goto out;
-+	if (fd_empty(f) || !(fd_file(f)->f_mode & FMODE_READ))
-+		return -EBADF;
- 
--	ret = kernel_read_file(fd_file(f), offset, buf, buf_size, file_size, id);
--out:
--	fdput(f);
--	return ret;
-+	return kernel_read_file(fd_file(f), offset, buf, buf_size, file_size, id);
- }
- EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9644bc72e457..07c5ffc8523b 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1003,22 +1003,17 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 		 dfd, filename, flags);
- 
- 	if (filename == NULL) {
--		struct fd f = fdget(dfd);
-+		CLASS(fd, f)(dfd);
- 
--		ret = -EBADF;
--		if (!fd_file(f))
--			goto out;
-+		if (fd_empty(f))
-+			return -EBADF;
- 
--		ret = -ENOTDIR;
- 		if ((flags & FAN_MARK_ONLYDIR) &&
--		    !(S_ISDIR(file_inode(fd_file(f))->i_mode))) {
--			fdput(f);
--			goto out;
--		}
-+		    !(S_ISDIR(file_inode(fd_file(f))->i_mode)))
-+			return -ENOTDIR;
- 
- 		*path = fd_file(f)->f_path;
- 		path_get(path);
--		fdput(f);
- 	} else {
- 		unsigned int lookup_flags = 0;
- 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 0794dcaf1e47..dc645af2a6ad 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -794,33 +794,26 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
- {
- 	struct fsnotify_group *group;
- 	struct inotify_inode_mark *i_mark;
--	struct fd f;
--	int ret = -EINVAL;
-+	CLASS(fd, f)(fd);
- 
--	f = fdget(fd);
--	if (unlikely(!fd_file(f)))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
- 	/* verify that this is indeed an inotify instance */
- 	if (unlikely(fd_file(f)->f_op != &inotify_fops))
--		goto out;
-+		return -EINVAL;
- 
- 	group = fd_file(f)->private_data;
- 
- 	i_mark = inotify_idr_find(group, wd);
- 	if (unlikely(!i_mark))
--		goto out;
--
--	ret = 0;
-+		return -EINVAL;
- 
- 	fsnotify_destroy_mark(&i_mark->fsn_mark, group);
- 
- 	/* match ref taken by inotify_idr_find */
- 	fsnotify_put_mark(&i_mark->fsn_mark);
--
--out:
--	fdput(f);
--	return ret;
-+	return 0;
- }
- 
- /*
-diff --git a/fs/open.c b/fs/open.c
-index a0c1fa3f60d5..24d22f4222f0 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -349,14 +349,12 @@ EXPORT_SYMBOL_GPL(vfs_fallocate);
- 
- int ksys_fallocate(int fd, int mode, loff_t offset, loff_t len)
- {
--	struct fd f = fdget(fd);
--	int error = -EBADF;
-+	CLASS(fd, f)(fd);
- 
--	if (fd_file(f)) {
--		error = vfs_fallocate(fd_file(f), mode, offset, len);
--		fdput(f);
--	}
--	return error;
-+	if (fd_empty(f))
-+		return -EBADF;
-+
-+	return vfs_fallocate(fd_file(f), mode, offset, len);
- }
- 
- SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
-@@ -666,14 +664,12 @@ int vfs_fchmod(struct file *file, umode_t mode)
- 
- SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, mode)
- {
--	struct fd f = fdget(fd);
--	int err = -EBADF;
-+	CLASS(fd, f)(fd);
- 
--	if (fd_file(f)) {
--		err = vfs_fchmod(fd_file(f), mode);
--		fdput(f);
--	}
--	return err;
-+	if (fd_empty(f))
-+		return -EBADF;
-+
-+	return vfs_fchmod(fd_file(f), mode);
- }
- 
- static int do_fchmodat(int dfd, const char __user *filename, umode_t mode,
-@@ -860,14 +856,12 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group)
- 
- int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
- {
--	struct fd f = fdget(fd);
--	int error = -EBADF;
-+	CLASS(fd, f)(fd);
- 
--	if (fd_file(f)) {
--		error = vfs_fchown(fd_file(f), user, group);
--		fdput(f);
--	}
--	return error;
-+	if (fd_empty(f))
-+		return -EBADF;
-+
-+	return vfs_fchown(fd_file(f), user, group);
- }
- 
- SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
-diff --git a/fs/read_write.c b/fs/read_write.c
-index ef3ee3725714..5e3df2d39283 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1663,36 +1663,32 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
- {
- 	loff_t pos_in;
- 	loff_t pos_out;
--	struct fd f_in;
--	struct fd f_out;
- 	ssize_t ret = -EBADF;
- 
--	f_in = fdget(fd_in);
--	if (!fd_file(f_in))
--		goto out2;
-+	CLASS(fd, f_in)(fd_in);
-+	if (fd_empty(f_in))
-+		return -EBADF;
- 
--	f_out = fdget(fd_out);
--	if (!fd_file(f_out))
--		goto out1;
-+	CLASS(fd, f_out)(fd_out);
-+	if (fd_empty(f_out))
-+		return -EBADF;
- 
--	ret = -EFAULT;
- 	if (off_in) {
- 		if (copy_from_user(&pos_in, off_in, sizeof(loff_t)))
--			goto out;
-+			return -EFAULT;
- 	} else {
- 		pos_in = fd_file(f_in)->f_pos;
- 	}
- 
- 	if (off_out) {
- 		if (copy_from_user(&pos_out, off_out, sizeof(loff_t)))
--			goto out;
-+			return -EFAULT;
- 	} else {
- 		pos_out = fd_file(f_out)->f_pos;
- 	}
- 
--	ret = -EINVAL;
- 	if (flags != 0)
--		goto out;
-+		return -EINVAL;
- 
- 	ret = vfs_copy_file_range(fd_file(f_in), pos_in, fd_file(f_out), pos_out, len,
- 				  flags);
-@@ -1714,12 +1710,6 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
- 			fd_file(f_out)->f_pos = pos_out;
- 		}
- 	}
--
--out:
--	fdput(f_out);
--out1:
--	fdput(f_in);
--out2:
- 	return ret;
- }
- 
-diff --git a/fs/signalfd.c b/fs/signalfd.c
-index 736bebf93591..d1a5f43ce466 100644
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -288,20 +288,17 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
- 
- 		fd_install(ufd, file);
- 	} else {
--		struct fd f = fdget(ufd);
--		if (!fd_file(f))
-+		CLASS(fd, f)(ufd);
-+		if (fd_empty(f))
- 			return -EBADF;
- 		ctx = fd_file(f)->private_data;
--		if (fd_file(f)->f_op != &signalfd_fops) {
--			fdput(f);
-+		if (fd_file(f)->f_op != &signalfd_fops)
- 			return -EINVAL;
--		}
- 		spin_lock_irq(&current->sighand->siglock);
- 		ctx->sigmask = *mask;
- 		spin_unlock_irq(&current->sighand->siglock);
- 
- 		wake_up(&current->sighand->signalfd_wqh);
--		fdput(f);
- 	}
- 
- 	return ufd;
-diff --git a/fs/sync.c b/fs/sync.c
-index 67df255eb189..2955cd4c77a3 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -148,11 +148,11 @@ void emergency_sync(void)
-  */
- SYSCALL_DEFINE1(syncfs, int, fd)
- {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	struct super_block *sb;
- 	int ret, ret2;
- 
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 	sb = fd_file(f)->f_path.dentry->d_sb;
- 
-@@ -162,7 +162,6 @@ SYSCALL_DEFINE1(syncfs, int, fd)
- 
- 	ret2 = errseq_check_and_advance(&sb->s_wb_err, &fd_file(f)->f_sb_err);
- 
--	fdput(f);
- 	return ret ? ret : ret2;
- }
- 
-@@ -205,14 +204,12 @@ EXPORT_SYMBOL(vfs_fsync);
- 
- static int do_fsync(unsigned int fd, int datasync)
- {
--	struct fd f = fdget(fd);
--	int ret = -EBADF;
-+	CLASS(fd, f)(fd);
- 
--	if (fd_file(f)) {
--		ret = vfs_fsync(fd_file(f), datasync);
--		fdput(f);
--	}
--	return ret;
-+	if (fd_empty(f))
-+		return -EBADF;
-+
-+	return vfs_fsync(fd_file(f), datasync);
- }
- 
- SYSCALL_DEFINE1(fsync, unsigned int, fd)
-@@ -355,16 +352,12 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
- int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
- 			 unsigned int flags)
- {
--	int ret;
--	struct fd f;
-+	CLASS(fd, f)(fd);
- 
--	ret = -EBADF;
--	f = fdget(fd);
--	if (fd_file(f))
--		ret = sync_file_range(fd_file(f), offset, nbytes, flags);
-+	if (fd_empty(f))
-+		return -EBADF;
- 
--	fdput(f);
--	return ret;
-+	return sync_file_range(fd_file(f), offset, nbytes, flags);
- }
- 
- SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index a26593979887..d5f0c3d9c35f 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -106,29 +106,21 @@ static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
- {
- 	struct io_ring_ctx *ctx_attach;
- 	struct io_sq_data *sqd;
--	struct fd f;
-+	CLASS(fd, f)(p->wq_fd);
- 
--	f = fdget(p->wq_fd);
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return ERR_PTR(-ENXIO);
--	if (!io_is_uring_fops(fd_file(f))) {
--		fdput(f);
-+	if (!io_is_uring_fops(fd_file(f)))
- 		return ERR_PTR(-EINVAL);
--	}
- 
- 	ctx_attach = fd_file(f)->private_data;
- 	sqd = ctx_attach->sq_data;
--	if (!sqd) {
--		fdput(f);
-+	if (!sqd)
- 		return ERR_PTR(-EINVAL);
--	}
--	if (sqd->task_tgid != current->tgid) {
--		fdput(f);
-+	if (sqd->task_tgid != current->tgid)
- 		return ERR_PTR(-EPERM);
--	}
- 
- 	refcount_inc(&sqd->refs);
--	fdput(f);
- 	return sqd;
- }
- 
-@@ -417,16 +409,11 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 	/* Retain compatibility with failing for an invalid attach attempt */
- 	if ((ctx->flags & (IORING_SETUP_ATTACH_WQ | IORING_SETUP_SQPOLL)) ==
- 				IORING_SETUP_ATTACH_WQ) {
--		struct fd f;
--
--		f = fdget(p->wq_fd);
--		if (!fd_file(f))
-+		CLASS(fd, f)(p->wq_fd);
-+		if (fd_empty(f))
- 			return -ENXIO;
--		if (!io_is_uring_fops(fd_file(f))) {
--			fdput(f);
-+		if (!io_is_uring_fops(fd_file(f)))
- 			return -EINVAL;
--		}
--		fdput(f);
- 	}
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
- 		struct task_struct *tsk;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 85b209626dd7..075ce7299973 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -966,22 +966,20 @@ static inline int perf_cgroup_connect(int fd, struct perf_event *event,
- {
- 	struct perf_cgroup *cgrp;
- 	struct cgroup_subsys_state *css;
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
+ 	struct ucma_file *cur_file;
  	int ret = 0;
  
+@@ -1623,21 +1622,17 @@ static ssize_t ucma_migrate_id(struct ucma_file *new_file,
+ 		return -EFAULT;
+ 
+ 	/* Get current fd to protect against it being closed */
+-	f = fdget(cmd.fd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(cmd.fd);
 +	if (fd_empty(f))
- 		return -EBADF;
- 
- 	css = css_tryget_online_from_dir(fd_file(f)->f_path.dentry,
- 					 &perf_event_cgrp_subsys);
--	if (IS_ERR(css)) {
--		ret = PTR_ERR(css);
--		goto out;
+ 		return -ENOENT;
+-	if (fd_file(f)->f_op != &ucma_fops) {
+-		ret = -EINVAL;
+-		goto file_put;
 -	}
-+	if (IS_ERR(css))
-+		return PTR_ERR(css);
++	if (fd_file(f)->f_op != &ucma_fops)
++		return -EINVAL;
+ 	cur_file = fd_file(f)->private_data;
  
- 	ret = perf_cgroup_ensure_storage(event, css);
- 	if (ret)
--		goto out;
-+		return ret;
+ 	/* Validate current fd and prevent destruction of id. */
+ 	ctx = ucma_get_ctx(cur_file, cmd.id);
+-	if (IS_ERR(ctx)) {
+-		ret = PTR_ERR(ctx);
+-		goto file_put;
+-	}
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
  
- 	cgrp = container_of(css, struct perf_cgroup, css);
- 	event->cgrp = cgrp;
-@@ -995,8 +993,6 @@ static inline int perf_cgroup_connect(int fd, struct perf_event *event,
- 		perf_detach_cgroup(event);
- 		ret = -EINVAL;
- 	}
--out:
+ 	rdma_lock_handler(ctx->cm_id);
+ 	/*
+@@ -1678,8 +1673,6 @@ static ssize_t ucma_migrate_id(struct ucma_file *new_file,
+ err_unlock:
+ 	rdma_unlock_handler(ctx->cm_id);
+ 	ucma_put_ctx(ctx);
+-file_put:
 -	fdput(f);
  	return ret;
  }
  
-diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-index dc952c3b05af..c9d97ed20122 100644
---- a/kernel/nsproxy.c
-+++ b/kernel/nsproxy.c
-@@ -545,12 +545,12 @@ static void commit_nsset(struct nsset *nsset)
- 
- SYSCALL_DEFINE2(setns, int, fd, int, flags)
+diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
+index 95b336de8a17..49559605177e 100644
+--- a/drivers/vfio/group.c
++++ b/drivers/vfio/group.c
+@@ -104,15 +104,14 @@ static int vfio_group_ioctl_set_container(struct vfio_group *group,
  {
--	struct fd f = fdget(fd);
-+	CLASS(fd, f)(fd);
- 	struct ns_common *ns = NULL;
- 	struct nsset nsset = {};
- 	int err = 0;
+ 	struct vfio_container *container;
+ 	struct iommufd_ctx *iommufd;
+-	struct fd f;
+ 	int ret;
+ 	int fd;
  
+ 	if (get_user(fd, arg))
+ 		return -EFAULT;
+ 
+-	f = fdget(fd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(fd);
 +	if (fd_empty(f))
  		return -EBADF;
  
- 	if (proc_ns_file(fd_file(f))) {
-@@ -580,7 +580,6 @@ SYSCALL_DEFINE2(setns, int, fd, int, flags)
- 	}
- 	put_nsset(&nsset);
- out:
+ 	mutex_lock(&group->group_lock);
+@@ -153,7 +152,6 @@ static int vfio_group_ioctl_set_container(struct vfio_group *group,
+ 
+ out_unlock:
+ 	mutex_unlock(&group->group_lock);
 -	fdput(f);
+ 	return ret;
+ }
+ 
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 4607dcbc2851..7873d75a43cb 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -2415,8 +2415,6 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+ static int do_epoll_wait(int epfd, struct epoll_event __user *events,
+ 			 int maxevents, struct timespec64 *to)
+ {
+-	int error;
+-	struct fd f;
+ 	struct eventpoll *ep;
+ 
+ 	/* The maximum number of event must be greater than zero */
+@@ -2428,17 +2426,16 @@ static int do_epoll_wait(int epfd, struct epoll_event __user *events,
+ 		return -EFAULT;
+ 
+ 	/* Get the "struct file *" for the eventpoll file */
+-	f = fdget(epfd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(epfd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+ 	/*
+ 	 * We have to check that the file structure underneath the fd
+ 	 * the user passed to us _is_ an eventpoll file.
+ 	 */
+-	error = -EINVAL;
+ 	if (!is_file_epoll(fd_file(f)))
+-		goto error_fput;
++		return -EINVAL;
+ 
+ 	/*
+ 	 * At this point it is safe to assume that the "private_data" contains
+@@ -2447,11 +2444,7 @@ static int do_epoll_wait(int epfd, struct epoll_event __user *events,
+ 	ep = fd_file(f)->private_data;
+ 
+ 	/* Time to fish for events ... */
+-	error = ep_poll(ep, events, maxevents, to);
+-
+-error_fput:
+-	fdput(f);
+-	return error;
++	return ep_poll(ep, events, maxevents, to);
+ }
+ 
+ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 1c77400bd88e..7b9ce71c1c81 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1330,7 +1330,6 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 
+ 	case EXT4_IOC_MOVE_EXT: {
+ 		struct move_extent me;
+-		struct fd donor;
+ 		int err;
+ 
+ 		if (!(filp->f_mode & FMODE_READ) ||
+@@ -1342,30 +1341,26 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			return -EFAULT;
+ 		me.moved_len = 0;
+ 
+-		donor = fdget(me.donor_fd);
+-		if (!fd_file(donor))
++		CLASS(fd, donor)(me.donor_fd);
++		if (fd_empty(donor))
+ 			return -EBADF;
+ 
+-		if (!(fd_file(donor)->f_mode & FMODE_WRITE)) {
+-			err = -EBADF;
+-			goto mext_out;
+-		}
++		if (!(fd_file(donor)->f_mode & FMODE_WRITE))
++			return -EBADF;
+ 
+ 		if (ext4_has_feature_bigalloc(sb)) {
+ 			ext4_msg(sb, KERN_ERR,
+ 				 "Online defrag not supported with bigalloc");
+-			err = -EOPNOTSUPP;
+-			goto mext_out;
++			return -EOPNOTSUPP;
+ 		} else if (IS_DAX(inode)) {
+ 			ext4_msg(sb, KERN_ERR,
+ 				 "Online defrag not supported with DAX");
+-			err = -EOPNOTSUPP;
+-			goto mext_out;
++			return -EOPNOTSUPP;
+ 		}
+ 
+ 		err = mnt_want_write_file(filp);
+ 		if (err)
+-			goto mext_out;
++			return err;
+ 
+ 		err = ext4_move_extents(filp, fd_file(donor), me.orig_start,
+ 					me.donor_start, me.len, &me.moved_len);
+@@ -1374,8 +1369,6 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		if (copy_to_user((struct move_extent __user *)arg,
+ 				 &me, sizeof(me)))
+ 			err = -EFAULT;
+-mext_out:
+-		fdput(donor);
+ 		return err;
+ 	}
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9ae54c4c72fe..8ba0b6d47c8c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3038,32 +3038,27 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ static int __f2fs_ioc_move_range(struct file *filp,
+ 				struct f2fs_move_range *range)
+ {
+-	struct fd dst;
+ 	int err;
+ 
+ 	if (!(filp->f_mode & FMODE_READ) ||
+ 			!(filp->f_mode & FMODE_WRITE))
+ 		return -EBADF;
+ 
+-	dst = fdget(range->dst_fd);
+-	if (!fd_file(dst))
++	CLASS(fd, dst)(range->dst_fd);
++	if (fd_empty(dst))
+ 		return -EBADF;
+ 
+-	if (!(fd_file(dst)->f_mode & FMODE_WRITE)) {
+-		err = -EBADF;
+-		goto err_out;
+-	}
++	if (!(fd_file(dst)->f_mode & FMODE_WRITE))
++		return -EBADF;
+ 
+ 	err = mnt_want_write_file(filp);
+ 	if (err)
+-		goto err_out;
++		return err;
+ 
+ 	err = f2fs_move_file_range(filp, range->pos_in, fd_file(dst),
+ 					range->pos_out, range->len);
+ 
+ 	mnt_drop_write_file(filp);
+-err_out:
+-	fdput(dst);
  	return err;
  }
  
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 2715afb77eab..b5bbc1a8a6e4 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -536,11 +536,10 @@ EXPORT_SYMBOL_GPL(find_ge_pid);
- 
- struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 6cef3deccded..094a7f510edf 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -349,7 +349,6 @@ SYSCALL_DEFINE5(fsconfig,
+ 		int, aux)
  {
+ 	struct fs_context *fc;
 -	struct fd f;
-+	CLASS(fd, f)(fd);
- 	struct pid *pid;
+ 	int ret;
+ 	int lookup_flags = 0;
+ 
+@@ -392,12 +391,11 @@ SYSCALL_DEFINE5(fsconfig,
+ 		return -EOPNOTSUPP;
+ 	}
  
 -	f = fdget(fd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(fd);
 +	if (fd_empty(f))
- 		return ERR_PTR(-EBADF);
+ 		return -EBADF;
+-	ret = -EINVAL;
+ 	if (fd_file(f)->f_op != &fscontext_fops)
+-		goto out_f;
++		return -EINVAL;
  
- 	pid = pidfd_pid(fd_file(f));
-@@ -548,8 +547,6 @@ struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
- 		get_pid(pid);
- 		*flags = fd_file(f)->f_flags;
+ 	fc = fd_file(f)->private_data;
+ 	if (fc->ops == &legacy_fs_context_ops) {
+@@ -407,17 +405,14 @@ SYSCALL_DEFINE5(fsconfig,
+ 		case FSCONFIG_SET_PATH_EMPTY:
+ 		case FSCONFIG_SET_FD:
+ 		case FSCONFIG_CMD_CREATE_EXCL:
+-			ret = -EOPNOTSUPP;
+-			goto out_f;
++			return -EOPNOTSUPP;
+ 		}
  	}
--
+ 
+ 	if (_key) {
+ 		param.key = strndup_user(_key, 256);
+-		if (IS_ERR(param.key)) {
+-			ret = PTR_ERR(param.key);
+-			goto out_f;
+-		}
++		if (IS_ERR(param.key))
++			return PTR_ERR(param.key);
+ 	}
+ 
+ 	switch (cmd) {
+@@ -496,7 +491,5 @@ SYSCALL_DEFINE5(fsconfig,
+ 	}
+ out_key:
+ 	kfree(param.key);
+-out_f:
 -	fdput(f);
- 	return pid;
+ 	return ret;
+ }
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1f64ae6d7a69..0723c6344b20 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2371,13 +2371,12 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+ 	int res;
+ 	int oldfd;
+ 	struct fuse_dev *fud = NULL;
+-	struct fd f;
+ 
+ 	if (get_user(oldfd, argp))
+ 		return -EFAULT;
+ 
+-	f = fdget(oldfd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(oldfd);
++	if (fd_empty(f))
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -2394,7 +2393,6 @@ static long fuse_dev_ioctl_clone(struct file *file, __u32 __user *argp)
+ 		mutex_unlock(&fuse_mutex);
+ 	}
+ 
+-	fdput(f);
+ 	return res;
  }
  
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 4da31f28fda8..ebe10c27a9f4 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1911,12 +1911,11 @@ SYSCALL_DEFINE1(umask, int, mask)
- 
- static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+diff --git a/fs/locks.c b/fs/locks.c
+index 204847628f3e..25afc8d9c9d1 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2136,7 +2136,6 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
  {
--	struct fd exe;
-+	CLASS(fd, exe)(fd);
- 	struct inode *inode;
- 	int err;
+ 	int can_sleep, error, type;
+ 	struct file_lock fl;
+-	struct fd f;
  
--	exe = fdget(fd);
--	if (!fd_file(exe))
-+	if (fd_empty(exe))
+ 	/*
+ 	 * LOCK_MAND locks were broken for a long time in that they never
+@@ -2155,19 +2154,18 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ 	if (type < 0)
+ 		return type;
+ 
+-	error = -EBADF;
+-	f = fdget(fd);
+-	if (!fd_file(f))
+-		return error;
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	if (type != F_UNLCK && !(fd_file(f)->f_mode & (FMODE_READ | FMODE_WRITE)))
+-		goto out_putf;
++		return -EBADF;
+ 
+ 	flock_make_lock(fd_file(f), &fl, type);
+ 
+ 	error = security_file_lock(fd_file(f), fl.c.flc_type);
+ 	if (error)
+-		goto out_putf;
++		return error;
+ 
+ 	can_sleep = !(cmd & LOCK_NB);
+ 	if (can_sleep)
+@@ -2181,9 +2179,6 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ 		error = locks_lock_file_wait(fd_file(f), &fl);
+ 
+ 	locks_release_private(&fl);
+- out_putf:
+-	fdput(f);
+-
+ 	return error;
+ }
+ 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 93c377816d75..d2eccbdd0439 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4105,7 +4105,6 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	struct file *file;
+ 	struct path newmount;
+ 	struct mount *mnt;
+-	struct fd f;
+ 	unsigned int mnt_flags = 0;
+ 	long ret;
+ 
+@@ -4133,19 +4132,18 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		return -EINVAL;
+ 	}
+ 
+-	f = fdget(fs_fd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(fs_fd);
++	if (fd_empty(f))
  		return -EBADF;
  
- 	inode = file_inode(fd_file(exe));
-@@ -1926,18 +1925,14 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
- 	 * sure that this one is executable as well, to avoid breaking an
- 	 * overall picture.
- 	 */
--	err = -EACCES;
- 	if (!S_ISREG(inode->i_mode) || path_noexec(&fd_file(exe)->f_path))
--		goto exit;
-+		return -EACCES;
+-	ret = -EINVAL;
+ 	if (fd_file(f)->f_op != &fscontext_fops)
+-		goto err_fsfd;
++		return -EINVAL;
  
- 	err = file_permission(fd_file(exe), MAY_EXEC);
- 	if (err)
--		goto exit;
-+		return err;
+ 	fc = fd_file(f)->private_data;
  
--	err = replace_mm_exe_file(mm, fd_file(exe));
--exit:
--	fdput(exe);
--	return err;
-+	return replace_mm_exe_file(mm, fd_file(exe));
+ 	ret = mutex_lock_interruptible(&fc->uapi_mutex);
+ 	if (ret < 0)
+-		goto err_fsfd;
++		return ret;
+ 
+ 	/* There must be a valid superblock or we can't mount it */
+ 	ret = -EINVAL;
+@@ -4212,8 +4210,6 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	path_put(&newmount);
+ err_unlock:
+ 	mutex_unlock(&fc->uapi_mutex);
+-err_fsfd:
+-	fdput(f);
+ 	return ret;
  }
  
- /*
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index d36242fd4936..1895fbc32bcb 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -663,16 +663,14 @@ struct watch_queue *get_watch_queue(int fd)
+@@ -4668,10 +4664,8 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+ static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
+ 				struct mount_kattr *kattr, unsigned int flags)
  {
- 	struct pipe_inode_info *pipe;
- 	struct watch_queue *wqueue = ERR_PTR(-EINVAL);
+-	int err = 0;
+ 	struct ns_common *ns;
+ 	struct user_namespace *mnt_userns;
 -	struct fd f;
+ 
+ 	if (!((attr->attr_set | attr->attr_clr) & MOUNT_ATTR_IDMAP))
+ 		return 0;
+@@ -4687,20 +4681,16 @@ static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
+ 	if (attr->userns_fd > INT_MAX)
+ 		return -EINVAL;
+ 
+-	f = fdget(attr->userns_fd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(attr->userns_fd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+-	if (!proc_ns_file(fd_file(f))) {
+-		err = -EINVAL;
+-		goto out_fput;
+-	}
++	if (!proc_ns_file(fd_file(f)))
++		return -EINVAL;
+ 
+ 	ns = get_proc_ns(file_inode(fd_file(f)));
+-	if (ns->ops->type != CLONE_NEWUSER) {
+-		err = -EINVAL;
+-		goto out_fput;
+-	}
++	if (ns->ops->type != CLONE_NEWUSER)
++		return -EINVAL;
+ 
+ 	/*
+ 	 * The initial idmapping cannot be used to create an idmapped
+@@ -4711,22 +4701,15 @@ static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
+ 	 * result.
+ 	 */
+ 	mnt_userns = container_of(ns, struct user_namespace, ns);
+-	if (mnt_userns == &init_user_ns) {
+-		err = -EPERM;
+-		goto out_fput;
+-	}
++	if (mnt_userns == &init_user_ns)
++		return -EPERM;
+ 
+ 	/* We're not controlling the target namespace. */
+-	if (!ns_capable(mnt_userns, CAP_SYS_ADMIN)) {
+-		err = -EPERM;
+-		goto out_fput;
+-	}
++	if (!ns_capable(mnt_userns, CAP_SYS_ADMIN))
++		return -EPERM;
+ 
+ 	kattr->mnt_userns = get_user_ns(mnt_userns);
+-
+-out_fput:
+-	fdput(f);
+-	return err;
++	return 0;
+ }
+ 
+ static int build_mount_kattr(const struct mount_attr *attr, size_t usize,
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 07c5ffc8523b..e19b28b44805 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1677,7 +1677,6 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	struct inode *inode = NULL;
+ 	struct vfsmount *mnt = NULL;
+ 	struct fsnotify_group *group;
+-	struct fd f;
+ 	struct path path;
+ 	struct fan_fsid __fsid, *fsid = NULL;
+ 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+@@ -1747,14 +1746,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		umask = FANOTIFY_EVENT_FLAGS;
+ 	}
+ 
+-	f = fdget(fanotify_fd);
+-	if (unlikely(!fd_file(f)))
++	CLASS(fd, f)(fanotify_fd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+ 	/* verify that this is indeed an fanotify instance */
+-	ret = -EINVAL;
+ 	if (unlikely(fd_file(f)->f_op != &fanotify_fops))
+-		goto fput_and_out;
++		return -EINVAL;
+ 	group = fd_file(f)->private_data;
+ 
+ 	/*
+@@ -1762,23 +1760,21 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	 * marks.  This also includes setting up such marks by a group that
+ 	 * was initialized by an unprivileged user.
+ 	 */
+-	ret = -EPERM;
+ 	if ((!capable(CAP_SYS_ADMIN) ||
+ 	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
+ 	    mark_type != FAN_MARK_INODE)
+-		goto fput_and_out;
++		return -EPERM;
+ 
+ 	/*
+ 	 * Permission events require minimum priority FAN_CLASS_CONTENT.
+ 	 */
+-	ret = -EINVAL;
+ 	if (mask & FANOTIFY_PERM_EVENTS &&
+ 	    group->priority < FSNOTIFY_PRIO_CONTENT)
+-		goto fput_and_out;
++		return -EINVAL;
+ 
+ 	if (mask & FAN_FS_ERROR &&
+ 	    mark_type != FAN_MARK_FILESYSTEM)
+-		goto fput_and_out;
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Evictable is only relevant for inode marks, because only inode object
+@@ -1786,7 +1782,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	 */
+ 	if (flags & FAN_MARK_EVICTABLE &&
+ 	     mark_type != FAN_MARK_INODE)
+-		goto fput_and_out;
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Events that do not carry enough information to report
+@@ -1798,7 +1794,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+ 	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
+ 	    (!fid_mode || mark_type == FAN_MARK_MOUNT))
+-		goto fput_and_out;
++		return -EINVAL;
+ 
+ 	/*
+ 	 * FAN_RENAME uses special info type records to report the old and
+@@ -1806,23 +1802,22 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	 * useful and was not implemented.
+ 	 */
+ 	if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
+-		goto fput_and_out;
++		return -EINVAL;
+ 
+ 	if (mark_cmd == FAN_MARK_FLUSH) {
+-		ret = 0;
+ 		if (mark_type == FAN_MARK_MOUNT)
+ 			fsnotify_clear_vfsmount_marks_by_group(group);
+ 		else if (mark_type == FAN_MARK_FILESYSTEM)
+ 			fsnotify_clear_sb_marks_by_group(group);
+ 		else
+ 			fsnotify_clear_inode_marks_by_group(group);
+-		goto fput_and_out;
++		return 0;
+ 	}
+ 
+ 	ret = fanotify_find_path(dfd, pathname, &path, flags,
+ 			(mask & ALL_FSNOTIFY_EVENTS), obj_type);
+ 	if (ret)
+-		goto fput_and_out;
++		return ret;
+ 
+ 	if (mark_cmd == FAN_MARK_ADD) {
+ 		ret = fanotify_events_supported(group, &path, mask, flags);
+@@ -1901,8 +1896,6 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 
+ path_put_and_out:
+ 	path_put(&path);
+-fput_and_out:
+-	fdput(f);
+ 	return ret;
+ }
+ 
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index dc645af2a6ad..e0c48956608a 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -732,7 +732,6 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	struct fsnotify_group *group;
+ 	struct inode *inode;
+ 	struct path path;
+-	struct fd f;
+ 	int ret;
+ 	unsigned flags = 0;
+ 
+@@ -752,21 +751,17 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	if (unlikely(!(mask & ALL_INOTIFY_BITS)))
+ 		return -EINVAL;
+ 
+-	f = fdget(fd);
+-	if (unlikely(!fd_file(f)))
 +	CLASS(fd, f)(fd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+ 	/* IN_MASK_ADD and IN_MASK_CREATE don't make sense together */
+-	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE))) {
+-		ret = -EINVAL;
+-		goto fput_and_out;
+-	}
++	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE)))
++		return -EINVAL;
+ 
+ 	/* verify that this is indeed an inotify instance */
+-	if (unlikely(fd_file(f)->f_op != &inotify_fops)) {
+-		ret = -EINVAL;
+-		goto fput_and_out;
+-	}
++	if (unlikely(fd_file(f)->f_op != &inotify_fops))
++		return -EINVAL;
+ 
+ 	if (!(mask & IN_DONT_FOLLOW))
+ 		flags |= LOOKUP_FOLLOW;
+@@ -776,7 +771,7 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	ret = inotify_find_inode(pathname, &path, flags,
+ 			(mask & IN_ALL_EVENTS));
+ 	if (ret)
+-		goto fput_and_out;
++		return ret;
+ 
+ 	/* inode held in place by reference to path; group by fget on fd */
+ 	inode = path.dentry->d_inode;
+@@ -785,8 +780,6 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	/* create/update an inode mark */
+ 	ret = inotify_update_watch(group, inode, mask);
+ 	path_put(&path);
+-fput_and_out:
+-	fdput(f);
+ 	return ret;
+ }
+ 
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index bc55340a60c3..4200a0341343 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -1765,7 +1765,6 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
+ 	long fd;
+ 	int sectsize;
+ 	char *p = (char *)page;
+-	struct fd f;
+ 	ssize_t ret = -EINVAL;
+ 	int live_threshold;
+ 
+@@ -1784,23 +1783,23 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
+ 	if (fd < 0 || fd >= INT_MAX)
+ 		return -EINVAL;
+ 
+-	f = fdget(fd);
+-	if (fd_file(f) == NULL)
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
+ 		return -EINVAL;
+ 
+ 	if (reg->hr_blocks == 0 || reg->hr_start_block == 0 ||
+ 	    reg->hr_block_bytes == 0)
+-		goto out2;
++		return -EINVAL;
+ 
+ 	if (!S_ISBLK(fd_file(f)->f_mapping->host->i_mode))
+-		goto out2;
++		return -EINVAL;
+ 
+ 	reg->hr_bdev_file = bdev_file_open_by_dev(fd_file(f)->f_mapping->host->i_rdev,
+ 			BLK_OPEN_WRITE | BLK_OPEN_READ, NULL, NULL);
+ 	if (IS_ERR(reg->hr_bdev_file)) {
+ 		ret = PTR_ERR(reg->hr_bdev_file);
+ 		reg->hr_bdev_file = NULL;
+-		goto out2;
++		return ret;
+ 	}
+ 
+ 	sectsize = bdev_logical_block_size(reg_bdev(reg));
+@@ -1906,8 +1905,6 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
+ 		fput(reg->hr_bdev_file);
+ 		reg->hr_bdev_file = NULL;
+ 	}
+-out2:
+-	fdput(f);
+ 	return ret;
+ }
+ 
+diff --git a/fs/open.c b/fs/open.c
+index 24d22f4222f0..33468aaa5311 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -187,19 +187,13 @@ long do_ftruncate(struct file *file, loff_t length, int small)
+ 
+ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+ {
+-	struct fd f;
+-	int error;
+-
+ 	if (length < 0)
+ 		return -EINVAL;
+-	f = fdget(fd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+-	error = do_ftruncate(fd_file(f), length, small);
+-
+-	fdput(f);
+-	return error;
++	return do_ftruncate(fd_file(f), length, small);
+ }
+ 
+ SYSCALL_DEFINE2(ftruncate, unsigned int, fd, off_t, length)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5e3df2d39283..deb87457aa76 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -745,21 +745,17 @@ SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
+ ssize_t ksys_pread64(unsigned int fd, char __user *buf, size_t count,
+ 		     loff_t pos)
+ {
+-	struct fd f;
+-	ssize_t ret = -EBADF;
+-
+ 	if (pos < 0)
+ 		return -EINVAL;
  
 -	f = fdget(fd);
 -	if (fd_file(f)) {
-+	if (!fd_empty(f)) {
- 		pipe = get_pipe_info(fd_file(f), false);
- 		if (pipe && pipe->watch_queue) {
- 			wqueue = pipe->watch_queue;
- 			kref_get(&wqueue->usage);
- 		}
+-		ret = -ESPIPE;
+-		if (fd_file(f)->f_mode & FMODE_PREAD)
+-			ret = vfs_read(fd_file(f), buf, count, &pos);
 -		fdput(f);
+-	}
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
++		return -EBADF;
+ 
+-	return ret;
++	if (fd_file(f)->f_mode & FMODE_PREAD)
++		return vfs_read(fd_file(f), buf, count, &pos);
++
++	return -ESPIPE;
+ }
+ 
+ SYSCALL_DEFINE4(pread64, unsigned int, fd, char __user *, buf,
+@@ -779,21 +775,17 @@ COMPAT_SYSCALL_DEFINE5(pread64, unsigned int, fd, char __user *, buf,
+ ssize_t ksys_pwrite64(unsigned int fd, const char __user *buf,
+ 		      size_t count, loff_t pos)
+ {
+-	struct fd f;
+-	ssize_t ret = -EBADF;
+-
+ 	if (pos < 0)
+ 		return -EINVAL;
+ 
+-	f = fdget(fd);
+-	if (fd_file(f)) {
+-		ret = -ESPIPE;
+-		if (fd_file(f)->f_mode & FMODE_PWRITE)
+-			ret = vfs_write(fd_file(f), buf, count, &pos);
+-		fdput(f);
+-	}
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
++		return -EBADF;
+ 
+-	return ret;
++	if (fd_file(f)->f_mode & FMODE_PWRITE)
++		return vfs_write(fd_file(f), buf, count, &pos);
++
++	return -ESPIPE;
+ }
+ 
+ SYSCALL_DEFINE4(pwrite64, unsigned int, fd, const char __user *, buf,
+@@ -1307,7 +1299,6 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
+ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 			   size_t count, loff_t max)
+ {
+-	struct fd in, out;
+ 	struct inode *in_inode, *out_inode;
+ 	struct pipe_inode_info *opipe;
+ 	loff_t pos;
+@@ -1318,35 +1309,32 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 	/*
+ 	 * Get input file, and verify that it is ok..
+ 	 */
+-	retval = -EBADF;
+-	in = fdget(in_fd);
+-	if (!fd_file(in))
+-		goto out;
++	CLASS(fd, in)(in_fd);
++	if (fd_empty(in))
++		return -EBADF;
+ 	if (!(fd_file(in)->f_mode & FMODE_READ))
+-		goto fput_in;
+-	retval = -ESPIPE;
++		return -EBADF;
+ 	if (!ppos) {
+ 		pos = fd_file(in)->f_pos;
+ 	} else {
+ 		pos = *ppos;
+ 		if (!(fd_file(in)->f_mode & FMODE_PREAD))
+-			goto fput_in;
++			return -ESPIPE;
+ 	}
+ 	retval = rw_verify_area(READ, fd_file(in), &pos, count);
+ 	if (retval < 0)
+-		goto fput_in;
++		return retval;
+ 	if (count > MAX_RW_COUNT)
+ 		count =  MAX_RW_COUNT;
+ 
+ 	/*
+ 	 * Get output file, and verify that it is ok..
+ 	 */
+-	retval = -EBADF;
+-	out = fdget(out_fd);
+-	if (!fd_file(out))
+-		goto fput_in;
++	CLASS(fd, out)(out_fd);
++	if (fd_empty(out))
++		return -EBADF;
+ 	if (!(fd_file(out)->f_mode & FMODE_WRITE))
+-		goto fput_out;
++		return -EBADF;
+ 	in_inode = file_inode(fd_file(in));
+ 	out_inode = file_inode(fd_file(out));
+ 	out_pos = fd_file(out)->f_pos;
+@@ -1355,9 +1343,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		max = min(in_inode->i_sb->s_maxbytes, out_inode->i_sb->s_maxbytes);
+ 
+ 	if (unlikely(pos + count > max)) {
+-		retval = -EOVERFLOW;
+ 		if (pos >= max)
+-			goto fput_out;
++			return -EOVERFLOW;
+ 		count = max - pos;
  	}
  
- 	return wqueue;
-diff --git a/mm/fadvise.c b/mm/fadvise.c
-index 532dee205c6e..588fe76c5a14 100644
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -190,16 +190,12 @@ EXPORT_SYMBOL(vfs_fadvise);
+@@ -1376,7 +1363,7 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 	if (!opipe) {
+ 		retval = rw_verify_area(WRITE, fd_file(out), &out_pos, count);
+ 		if (retval < 0)
+-			goto fput_out;
++			return retval;
+ 		retval = do_splice_direct(fd_file(in), &pos, fd_file(out), &out_pos,
+ 					  count, fl);
+ 	} else {
+@@ -1402,12 +1389,6 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 	inc_syscw(current);
+ 	if (pos > max)
+ 		retval = -EOVERFLOW;
+-
+-fput_out:
+-	fdput(out);
+-fput_in:
+-	fdput(in);
+-out:
+ 	return retval;
+ }
  
- int ksys_fadvise64_64(int fd, loff_t offset, loff_t len, int advice)
+diff --git a/fs/splice.c b/fs/splice.c
+index 29cd39d7f4a0..2898fa1e9e63 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1622,27 +1622,22 @@ SYSCALL_DEFINE6(splice, int, fd_in, loff_t __user *, off_in,
+ 		int, fd_out, loff_t __user *, off_out,
+ 		size_t, len, unsigned int, flags)
  {
--	struct fd f = fdget(fd);
--	int ret;
-+	CLASS(fd, f)(fd);
+-	struct fd in, out;
+-	ssize_t error;
+-
+ 	if (unlikely(!len))
+ 		return 0;
  
+ 	if (unlikely(flags & ~SPLICE_F_ALL))
+ 		return -EINVAL;
+ 
+-	error = -EBADF;
+-	in = fdget(fd_in);
+-	if (fd_file(in)) {
+-		out = fdget(fd_out);
+-		if (fd_file(out)) {
+-			error = __do_splice(fd_file(in), off_in, fd_file(out), off_out,
++	CLASS(fd, in)(fd_in);
++	if (fd_empty(in))
++		return -EBADF;
++
++	CLASS(fd, out)(fd_out);
++	if (fd_empty(out))
++		return -EBADF;
++
++	return __do_splice(fd_file(in), off_in, fd_file(out), off_out,
+ 					    len, flags);
+-			fdput(out);
+-		}
+-		fdput(in);
+-	}
+-	return error;
+ }
+ 
+ /*
+@@ -1992,25 +1987,19 @@ ssize_t do_tee(struct file *in, struct file *out, size_t len,
+ 
+ SYSCALL_DEFINE4(tee, int, fdin, int, fdout, size_t, len, unsigned int, flags)
+ {
+-	struct fd in, out;
+-	ssize_t error;
+-
+ 	if (unlikely(flags & ~SPLICE_F_ALL))
+ 		return -EINVAL;
+ 
+ 	if (unlikely(!len))
+ 		return 0;
+ 
+-	error = -EBADF;
+-	in = fdget(fdin);
+-	if (fd_file(in)) {
+-		out = fdget(fdout);
+-		if (fd_file(out)) {
+-			error = do_tee(fd_file(in), fd_file(out), len, flags);
+-			fdput(out);
+-		}
+- 		fdput(in);
+- 	}
++	CLASS(fd, in)(fdin);
++	if (fd_empty(in))
++		return -EBADF;
+ 
+-	return error;
++	CLASS(fd, out)(fdout);
++	if (fd_empty(out))
++		return -EBADF;
++
++	return do_tee(fd_file(in), fd_file(out), len, flags);
+ }
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 99b26f792b89..c7c7958e57b2 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -108,18 +108,13 @@ static int do_utimes_path(int dfd, const char __user *filename,
+ 
+ static int do_utimes_fd(int fd, struct timespec64 *times, int flags)
+ {
+-	struct fd f;
+-	int error;
+-
+ 	if (flags)
+ 		return -EINVAL;
+ 
+-	f = fdget(fd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
+ 		return -EBADF;
+-	error = vfs_utimes(&fd_file(f)->f_path, times);
+-	fdput(f);
+-	return error;
++	return vfs_utimes(&fd_file(f)->f_path, times);
+ }
+ 
+ /*
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index 75cb53f090d1..fa29c8b334d2 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -813,8 +813,6 @@ xfs_ioc_exchange_range(
+ 		.file2			= file,
+ 	};
+ 	struct xfs_exchange_range	args;
+-	struct fd			file1;
+-	int				error;
+ 
+ 	if (copy_from_user(&args, argp, sizeof(args)))
+ 		return -EFAULT;
+@@ -828,14 +826,12 @@ xfs_ioc_exchange_range(
+ 	fxr.length		= args.length;
+ 	fxr.flags		= args.flags;
+ 
+-	file1 = fdget(args.file1_fd);
+-	if (!fd_file(file1))
++	CLASS(fd, file1)(args.file1_fd);
++	if (fd_empty(file1))
+ 		return -EBADF;
+ 	fxr.file1 = fd_file(file1);
+ 
+-	error = xfs_exchange_range(&fxr);
+-	fdput(file1);
+-	return error;
++	return xfs_exchange_range(&fxr);
+ }
+ 
+ /* Opaque freshness blob for XFS_IOC_COMMIT_RANGE */
+@@ -909,8 +905,6 @@ xfs_ioc_commit_range(
+ 	struct xfs_commit_range_fresh	*kern_f;
+ 	struct xfs_inode		*ip2 = XFS_I(file_inode(file));
+ 	struct xfs_mount		*mp = ip2->i_mount;
+-	struct fd			file1;
+-	int				error;
+ 
+ 	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
+ 
+@@ -934,12 +928,10 @@ xfs_ioc_commit_range(
+ 	fxr.file2_ctime.tv_sec	= kern_f->file2_ctime;
+ 	fxr.file2_ctime.tv_nsec	= kern_f->file2_ctime_nsec;
+ 
+-	file1 = fdget(args.file1_fd);
++	CLASS(fd, file1)(args.file1_fd);
+ 	if (fd_empty(file1))
+ 		return -EBADF;
+ 	fxr.file1 = fd_file(file1);
+ 
+-	error = xfs_exchange_range(&fxr);
+-	fdput(file1);
+-	return error;
++	return xfs_exchange_range(&fxr);
+ }
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index a20d426ef021..a24fcdc8ad4f 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -881,41 +881,29 @@ xfs_ioc_swapext(
+ 	xfs_swapext_t	*sxp)
+ {
+ 	xfs_inode_t     *ip, *tip;
+-	struct fd	f, tmp;
+-	int		error = 0;
+ 
+ 	/* Pull information for the target fd */
+-	f = fdget((int)sxp->sx_fdtarget);
+-	if (!fd_file(f)) {
+-		error = -EINVAL;
+-		goto out;
+-	}
++	CLASS(fd, f)((int)sxp->sx_fdtarget);
++	if (fd_empty(f))
++		return -EINVAL;
+ 
+ 	if (!(fd_file(f)->f_mode & FMODE_WRITE) ||
+ 	    !(fd_file(f)->f_mode & FMODE_READ) ||
+-	    (fd_file(f)->f_flags & O_APPEND)) {
+-		error = -EBADF;
+-		goto out_put_file;
+-	}
++	    (fd_file(f)->f_flags & O_APPEND))
++		return -EBADF;
+ 
+-	tmp = fdget((int)sxp->sx_fdtmp);
+-	if (!fd_file(tmp)) {
+-		error = -EINVAL;
+-		goto out_put_file;
+-	}
++	CLASS(fd, tmp)((int)sxp->sx_fdtmp);
++	if (fd_empty(tmp))
++		return -EINVAL;
+ 
+ 	if (!(fd_file(tmp)->f_mode & FMODE_WRITE) ||
+ 	    !(fd_file(tmp)->f_mode & FMODE_READ) ||
+-	    (fd_file(tmp)->f_flags & O_APPEND)) {
+-		error = -EBADF;
+-		goto out_put_tmp_file;
+-	}
++	    (fd_file(tmp)->f_flags & O_APPEND))
++		return -EBADF;
+ 
+ 	if (IS_SWAPFILE(file_inode(fd_file(f))) ||
+-	    IS_SWAPFILE(file_inode(fd_file(tmp)))) {
+-		error = -EINVAL;
+-		goto out_put_tmp_file;
+-	}
++	    IS_SWAPFILE(file_inode(fd_file(tmp))))
++		return -EINVAL;
+ 
+ 	/*
+ 	 * We need to ensure that the fds passed in point to XFS inodes
+@@ -923,37 +911,22 @@ xfs_ioc_swapext(
+ 	 * control over what the user passes us here.
+ 	 */
+ 	if (fd_file(f)->f_op != &xfs_file_operations ||
+-	    fd_file(tmp)->f_op != &xfs_file_operations) {
+-		error = -EINVAL;
+-		goto out_put_tmp_file;
+-	}
++	    fd_file(tmp)->f_op != &xfs_file_operations)
++		return -EINVAL;
+ 
+ 	ip = XFS_I(file_inode(fd_file(f)));
+ 	tip = XFS_I(file_inode(fd_file(tmp)));
+ 
+-	if (ip->i_mount != tip->i_mount) {
+-		error = -EINVAL;
+-		goto out_put_tmp_file;
+-	}
+-
+-	if (ip->i_ino == tip->i_ino) {
+-		error = -EINVAL;
+-		goto out_put_tmp_file;
+-	}
++	if (ip->i_mount != tip->i_mount)
++		return -EINVAL;
+ 
+-	if (xfs_is_shutdown(ip->i_mount)) {
+-		error = -EIO;
+-		goto out_put_tmp_file;
+-	}
++	if (ip->i_ino == tip->i_ino)
++		return -EINVAL;
+ 
+-	error = xfs_swap_extents(ip, tip, sxp);
++	if (xfs_is_shutdown(ip->i_mount))
++		return -EIO;
+ 
+- out_put_tmp_file:
+-	fdput(tmp);
+- out_put_file:
+-	fdput(f);
+- out:
+-	return error;
++	return xfs_swap_extents(ip, tip, sxp);
+ }
+ 
+ static int
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 4f1dec518fae..35b4f8659904 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -1063,7 +1063,6 @@ static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
+ 		size_t msg_len, unsigned int msg_prio,
+ 		struct timespec64 *ts)
+ {
+-	struct fd f;
+ 	struct inode *inode;
+ 	struct ext_wait_queue wait;
+ 	struct ext_wait_queue *receiver;
+@@ -1084,37 +1083,27 @@ static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
+ 
+ 	audit_mq_sendrecv(mqdes, msg_len, msg_prio, ts);
+ 
+-	f = fdget(mqdes);
+-	if (unlikely(!fd_file(f))) {
+-		ret = -EBADF;
+-		goto out;
+-	}
++	CLASS(fd, f)(mqdes);
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	inode = file_inode(fd_file(f));
+-	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations)) {
+-		ret = -EBADF;
+-		goto out_fput;
+-	}
++	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations))
++		return -EBADF;
+ 	info = MQUEUE_I(inode);
+ 	audit_file(fd_file(f));
+ 
+-	if (unlikely(!(fd_file(f)->f_mode & FMODE_WRITE))) {
+-		ret = -EBADF;
+-		goto out_fput;
+-	}
++	if (unlikely(!(fd_file(f)->f_mode & FMODE_WRITE)))
++		return -EBADF;
+ 
+-	if (unlikely(msg_len > info->attr.mq_msgsize)) {
+-		ret = -EMSGSIZE;
+-		goto out_fput;
+-	}
++	if (unlikely(msg_len > info->attr.mq_msgsize))
++		return -EMSGSIZE;
+ 
+ 	/* First try to allocate memory, before doing anything with
+ 	 * existing queues. */
+ 	msg_ptr = load_msg(u_msg_ptr, msg_len);
+-	if (IS_ERR(msg_ptr)) {
+-		ret = PTR_ERR(msg_ptr);
+-		goto out_fput;
+-	}
++	if (IS_ERR(msg_ptr))
++		return PTR_ERR(msg_ptr);
+ 	msg_ptr->m_ts = msg_len;
+ 	msg_ptr->m_type = msg_prio;
+ 
+@@ -1172,9 +1161,6 @@ static int do_mq_timedsend(mqd_t mqdes, const char __user *u_msg_ptr,
+ out_free:
+ 	if (ret)
+ 		free_msg(msg_ptr);
+-out_fput:
+-	fdput(f);
+-out:
+ 	return ret;
+ }
+ 
+@@ -1184,7 +1170,6 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+ {
+ 	ssize_t ret;
+ 	struct msg_msg *msg_ptr;
+-	struct fd f;
+ 	struct inode *inode;
+ 	struct mqueue_inode_info *info;
+ 	struct ext_wait_queue wait;
+@@ -1198,30 +1183,22 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+ 
+ 	audit_mq_sendrecv(mqdes, msg_len, 0, ts);
+ 
+-	f = fdget(mqdes);
+-	if (unlikely(!fd_file(f))) {
+-		ret = -EBADF;
+-		goto out;
+-	}
++	CLASS(fd, f)(mqdes);
++	if (fd_empty(f))
++		return -EBADF;
+ 
+ 	inode = file_inode(fd_file(f));
+-	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations)) {
+-		ret = -EBADF;
+-		goto out_fput;
+-	}
++	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations))
++		return -EBADF;
+ 	info = MQUEUE_I(inode);
+ 	audit_file(fd_file(f));
+ 
+-	if (unlikely(!(fd_file(f)->f_mode & FMODE_READ))) {
+-		ret = -EBADF;
+-		goto out_fput;
+-	}
++	if (unlikely(!(fd_file(f)->f_mode & FMODE_READ)))
++		return -EBADF;
+ 
+ 	/* checks if buffer is big enough */
+-	if (unlikely(msg_len < info->attr.mq_msgsize)) {
+-		ret = -EMSGSIZE;
+-		goto out_fput;
+-	}
++	if (unlikely(msg_len < info->attr.mq_msgsize))
++		return -EMSGSIZE;
+ 
+ 	/*
+ 	 * msg_insert really wants us to have a valid, spare node struct so
+@@ -1275,9 +1252,6 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+ 		}
+ 		free_msg(msg_ptr);
+ 	}
+-out_fput:
+-	fdput(f);
+-out:
+ 	return ret;
+ }
+ 
+@@ -1437,21 +1411,18 @@ SYSCALL_DEFINE2(mq_notify, mqd_t, mqdes,
+ 
+ static int do_mq_getsetattr(int mqdes, struct mq_attr *new, struct mq_attr *old)
+ {
+-	struct fd f;
+ 	struct inode *inode;
+ 	struct mqueue_inode_info *info;
+ 
+ 	if (new && (new->mq_flags & (~O_NONBLOCK)))
+ 		return -EINVAL;
+ 
+-	f = fdget(mqdes);
+-	if (!fd_file(f))
++	CLASS(fd, f)(mqdes);
 +	if (fd_empty(f))
  		return -EBADF;
  
--	ret = vfs_fadvise(fd_file(f), offset, len, advice);
--
+-	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations)) {
+-		fdput(f);
++	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations))
+ 		return -EBADF;
+-	}
+ 
+ 	inode = file_inode(fd_file(f));
+ 	info = MQUEUE_I(inode);
+@@ -1475,7 +1446,6 @@ static int do_mq_getsetattr(int mqdes, struct mq_attr *new, struct mq_attr *old)
+ 	}
+ 
+ 	spin_unlock(&info->lock);
 -	fdput(f);
--	return ret;
-+	return vfs_fadvise(fd_file(f), offset, len, advice);
+ 	return 0;
  }
  
- SYSCALL_DEFINE4(fadvise64_64, int, fd, loff_t, offset, loff_t, len, int, advice)
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 3dc6c7a128dd..9a807727d809 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -673,29 +673,22 @@ EXPORT_SYMBOL_GPL(page_cache_async_ra);
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index d785973d8a51..4490924fe24e 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -3219,10 +3219,7 @@ static int idempotent_init_module(struct file *f, const char __user * uargs, int
  
- ssize_t ksys_readahead(int fd, loff_t offset, size_t count)
+ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
  {
--	ssize_t ret;
+-	int err;
 -	struct fd f;
-+	CLASS(fd, f)(fd);
+-
+-	err = may_init_module();
++	int err = may_init_module();
+ 	if (err)
+ 		return err;
  
--	ret = -EBADF;
+@@ -3233,12 +3230,10 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ 		      |MODULE_INIT_COMPRESSED_FILE))
+ 		return -EINVAL;
+ 
 -	f = fdget(fd);
--	if (!fd_file(f) || !(fd_file(f)->f_mode & FMODE_READ))
--		goto out;
-+	if (fd_empty(f) || !(fd_file(f)->f_mode & FMODE_READ))
-+		return -EBADF;
++	CLASS(fd, f)(fd);
+ 	if (fd_empty(f))
+ 		return -EBADF;
+-	err = idempotent_init_module(fd_file(f), uargs, flags);
+-	fdput(f);
+-	return err;
++	return idempotent_init_module(fd_file(f), uargs, flags);
+ }
  
- 	/*
- 	 * The readahead() syscall is intended to run only on files
- 	 * that can execute readahead. If readahead is not possible
- 	 * on this file, then we must return -EINVAL.
- 	 */
+ /* Keep in sync with MODULE_FLAGS_BUF_SIZE !!! */
+diff --git a/kernel/pid.c b/kernel/pid.c
+index b5bbc1a8a6e4..115448e89c3e 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -744,23 +744,18 @@ SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd,
+ 		unsigned int, flags)
+ {
+ 	struct pid *pid;
+-	struct fd f;
+-	int ret;
+ 
+ 	/* flags is currently unused - make sure it's unset */
+ 	if (flags)
+ 		return -EINVAL;
+ 
+-	f = fdget(pidfd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(pidfd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+ 	pid = pidfd_pid(fd_file(f));
+ 	if (IS_ERR(pid))
+-		ret = PTR_ERR(pid);
+-	else
+-		ret = pidfd_getfd(pid, fd);
++		return PTR_ERR(pid);
+ 
+-	fdput(f);
+-	return ret;
++	return pidfd_getfd(pid, fd);
+ }
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 4344860ffcac..6be807ecb94c 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3908,7 +3908,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 		siginfo_t __user *, info, unsigned int, flags)
+ {
+ 	int ret;
+-	struct fd f;
+ 	struct pid *pid;
+ 	kernel_siginfo_t kinfo;
+ 	enum pid_type type;
+@@ -3921,20 +3920,17 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 	if (hweight32(flags & PIDFD_SEND_SIGNAL_FLAGS) > 1)
+ 		return -EINVAL;
+ 
+-	f = fdget(pidfd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(pidfd);
++	if (fd_empty(f))
+ 		return -EBADF;
+ 
+ 	/* Is this a pidfd? */
+ 	pid = pidfd_to_pid(fd_file(f));
+-	if (IS_ERR(pid)) {
+-		ret = PTR_ERR(pid);
+-		goto err;
+-	}
++	if (IS_ERR(pid))
++		return PTR_ERR(pid);
+ 
 -	ret = -EINVAL;
- 	if (!fd_file(f)->f_mapping || !fd_file(f)->f_mapping->a_ops ||
- 	    (!S_ISREG(file_inode(fd_file(f))->i_mode) &&
- 	    !S_ISBLK(file_inode(fd_file(f))->i_mode)))
--		goto out;
+ 	if (!access_pidfd_pidns(pid))
+-		goto err;
 +		return -EINVAL;
  
--	ret = vfs_fadvise(fd_file(f), offset, count, POSIX_FADV_WILLNEED);
--out:
+ 	switch (flags) {
+ 	case 0:
+@@ -3958,28 +3954,23 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 	if (info) {
+ 		ret = copy_siginfo_from_user_any(&kinfo, info);
+ 		if (unlikely(ret))
+-			goto err;
++			return ret;
+ 
+-		ret = -EINVAL;
+ 		if (unlikely(sig != kinfo.si_signo))
+-			goto err;
++			return -EINVAL;
+ 
+ 		/* Only allow sending arbitrary signals to yourself. */
+-		ret = -EPERM;
+ 		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
+ 		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
+-			goto err;
++			return -EPERM;
+ 	} else {
+ 		prepare_kill_siginfo(sig, &kinfo, type);
+ 	}
+ 
+ 	if (type == PIDTYPE_PGID)
+-		ret = kill_pgrp_info(sig, &kinfo, pid);
++		return kill_pgrp_info(sig, &kinfo, pid);
+ 	else
+-		ret = kill_pid_info_type(sig, &kinfo, pid, type);
+-err:
 -	fdput(f);
 -	return ret;
-+	return vfs_fadvise(fd_file(f), offset, count, POSIX_FADV_WILLNEED);
++		return kill_pid_info_type(sig, &kinfo, pid, type);
  }
  
- SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index e39479f1c9a4..b231b27d8268 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -694,20 +694,18 @@ EXPORT_SYMBOL_GPL(get_net_ns);
+ static int
+diff --git a/kernel/taskstats.c b/kernel/taskstats.c
+index 0700f40c53ac..0cd680ccc7e5 100644
+--- a/kernel/taskstats.c
++++ b/kernel/taskstats.c
+@@ -411,15 +411,14 @@ static int cgroupstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
+ 	struct nlattr *na;
+ 	size_t size;
+ 	u32 fd;
+-	struct fd f;
  
- struct net *get_net_ns_by_fd(int fd)
- {
--	struct fd f = fdget(fd);
--	struct net *net = ERR_PTR(-EINVAL);
-+	CLASS(fd, f)(fd);
+ 	na = info->attrs[CGROUPSTATS_CMD_ATTR_FD];
+ 	if (!na)
+ 		return -EINVAL;
  
+ 	fd = nla_get_u32(info->attrs[CGROUPSTATS_CMD_ATTR_FD]);
+-	f = fdget(fd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(fd);
 +	if (fd_empty(f))
- 		return ERR_PTR(-EBADF);
+ 		return 0;
  
- 	if (proc_ns_file(fd_file(f))) {
- 		struct ns_common *ns = get_proc_ns(file_inode(fd_file(f)));
- 		if (ns->ops == &netns_operations)
--			net = get_net(container_of(ns, struct net, ns));
-+			return get_net(container_of(ns, struct net, ns));
+ 	size = nla_total_size(sizeof(struct cgroupstats));
+@@ -427,14 +426,13 @@ static int cgroupstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
+ 	rc = prepare_reply(info, CGROUPSTATS_CMD_NEW, &rep_skb,
+ 				size);
+ 	if (rc < 0)
+-		goto err;
++		return rc;
+ 
+ 	na = nla_reserve(rep_skb, CGROUPSTATS_TYPE_CGROUP_STATS,
+ 				sizeof(struct cgroupstats));
+ 	if (na == NULL) {
+ 		nlmsg_free(rep_skb);
+-		rc = -EMSGSIZE;
+-		goto err;
++		return -EMSGSIZE;
  	}
+ 
+ 	stats = nla_data(na);
+@@ -443,14 +441,10 @@ static int cgroupstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
+ 	rc = cgroupstats_build(stats, fd_file(f)->f_path.dentry);
+ 	if (rc < 0) {
+ 		nlmsg_free(rep_skb);
+-		goto err;
++		return rc;
+ 	}
+ 
+-	rc = send_reply(rep_skb, info);
+-
+-err:
+-	fdput(f);
+-	return rc;
++	return send_reply(rep_skb, info);
+ }
+ 
+ static int cmd_attr_register_cpumask(struct genl_info *info)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 06132cf47016..db5e2dd7cec9 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1062,19 +1062,16 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+  */
+ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+ {
+-	struct fd f;
+-
+ 	if (!buf || !size)
+ 		return;
+ 
+-	f = fdget(kernel_fd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(kernel_fd);
++	if (fd_empty(f))
+ 		return;
+ 
+ 	process_buffer_measurement(file_mnt_idmap(fd_file(f)), file_inode(fd_file(f)),
+ 				   buf, size, "kexec-cmdline", KEXEC_CMDLINE, 0,
+ 				   NULL, false, NULL, 0);
+-	fdput(f);
+ }
+ 
+ /**
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 02144ec39f43..68252452b66c 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -283,7 +283,6 @@ enum loadpin_securityfs_interface_index {
+ 
+ static int read_trusted_verity_root_digests(unsigned int fd)
+ {
+-	struct fd f;
+ 	void *data;
+ 	int rc;
+ 	char *p, *d;
+@@ -295,8 +294,8 @@ static int read_trusted_verity_root_digests(unsigned int fd)
+ 	if (!list_empty(&dm_verity_loadpin_trusted_root_digests))
+ 		return -EPERM;
+ 
+-	f = fdget(fd);
+-	if (!fd_file(f))
++	CLASS(fd, f)(fd);
++	if (fd_empty(f))
+ 		return -EINVAL;
+ 
+ 	data = kzalloc(SZ_4K, GFP_KERNEL);
+@@ -359,7 +358,6 @@ static int read_trusted_verity_root_digests(unsigned int fd)
+ 	}
+ 
+ 	kfree(data);
 -	fdput(f);
  
--	return net;
-+	return ERR_PTR(-EINVAL);
- }
- EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
- #endif
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index f32eb38abd0f..f937f748d9e8 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -241,31 +241,21 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
- static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
- 						    const fmode_t mode)
- {
--	struct fd ruleset_f;
-+	CLASS(fd, ruleset_f)(fd);
- 	struct landlock_ruleset *ruleset;
+ 	return 0;
  
--	ruleset_f = fdget(fd);
--	if (!fd_file(ruleset_f))
-+	if (fd_empty(ruleset_f))
- 		return ERR_PTR(-EBADF);
+@@ -379,8 +377,6 @@ static int read_trusted_verity_root_digests(unsigned int fd)
+ 	/* disallow further attempts after reading a corrupt/invalid file */
+ 	deny_reading_verity_digests = true;
  
- 	/* Checks FD type and access right. */
--	if (fd_file(ruleset_f)->f_op != &ruleset_fops) {
--		ruleset = ERR_PTR(-EBADFD);
--		goto out_fdput;
--	}
--	if (!(fd_file(ruleset_f)->f_mode & mode)) {
--		ruleset = ERR_PTR(-EPERM);
--		goto out_fdput;
--	}
-+	if (fd_file(ruleset_f)->f_op != &ruleset_fops)
-+		return ERR_PTR(-EBADFD);
-+	if (!(fd_file(ruleset_f)->f_mode & mode))
-+		return ERR_PTR(-EPERM);
- 	ruleset = fd_file(ruleset_f)->private_data;
--	if (WARN_ON_ONCE(ruleset->num_layers != 1)) {
--		ruleset = ERR_PTR(-EINVAL);
--		goto out_fdput;
--	}
-+	if (WARN_ON_ONCE(ruleset->num_layers != 1))
-+		return ERR_PTR(-EINVAL);
- 	landlock_get_ruleset(ruleset);
+-	fdput(f);
 -
--out_fdput:
--	fdput(ruleset_f);
- 	return ruleset;
+ 	return rc;
  }
  
 diff --git a/virt/kvm/vfio.c b/virt/kvm/vfio.c
-index 388ae471d258..53262b8a7656 100644
+index 53262b8a7656..72aa1fdeb699 100644
 --- a/virt/kvm/vfio.c
 +++ b/virt/kvm/vfio.c
-@@ -190,11 +190,10 @@ static int kvm_vfio_file_del(struct kvm_device *dev, unsigned int fd)
- {
+@@ -229,14 +229,13 @@ static int kvm_vfio_file_set_spapr_tce(struct kvm_device *dev,
+ 	struct kvm_vfio_spapr_tce param;
  	struct kvm_vfio *kv = dev->private;
  	struct kvm_vfio_file *kvf;
 -	struct fd f;
-+	CLASS(fd, f)(fd);
  	int ret;
  
--	f = fdget(fd);
+ 	if (copy_from_user(&param, arg, sizeof(struct kvm_vfio_spapr_tce)))
+ 		return -EFAULT;
+ 
+-	f = fdget(param.groupfd);
 -	if (!fd_file(f))
++	CLASS(fd, f)(param.groupfd);
 +	if (fd_empty(f))
  		return -EBADF;
  
  	ret = -ENOENT;
-@@ -220,9 +219,6 @@ static int kvm_vfio_file_del(struct kvm_device *dev, unsigned int fd)
- 	kvm_vfio_update_coherency(dev);
+@@ -262,7 +261,6 @@ static int kvm_vfio_file_set_spapr_tce(struct kvm_device *dev,
  
+ err_fdput:
  	mutex_unlock(&kv->lock);
--
 -	fdput(f);
--
  	return ret;
  }
- 
+ #endif
 -- 
 2.39.5
 
