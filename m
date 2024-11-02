@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-33561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA7A9B9FE0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 13:01:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F2B9B9FFD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 13:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23BD1C2170B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 12:01:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D51B21271
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2024 12:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF85188907;
-	Sat,  2 Nov 2024 12:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF41F18A6A8;
+	Sat,  2 Nov 2024 12:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="ocJMli1t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eA1pol+o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EBD6AB8;
-	Sat,  2 Nov 2024 12:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35528149E16;
+	Sat,  2 Nov 2024 12:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548900; cv=none; b=rw5Dx/N6FHo+qQ58VBZ2We2SH8MfNt3On56F1J2TfrEkV7ihlWBXuQ45xfEs9YlKAyteUzMnFZWiqOkAtYay7njLg2Kub+fASh63W70gggKwtHqZgpi4WeDna48/OfutOZgjRzLzuCMSReXXn2m7XwTv41peWWaQjNaUs8RuKPE=
+	t=1730550103; cv=none; b=e6woYNsd+pgVx/GvTZk6qAIF78k2IFJTR7kD2ll4Is5fcFkdJzNUEvdOt/ozA8kx7b+LVfictJmK3Vx5ZuEeqiO3eWP0UvPCrllMFGYPba2tinU8bqilVuvCqQLv6ZShpNf8slaoE5RSm74RTUqR/zvvZCUe34Ve4y9m5Md0WuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548900; c=relaxed/simple;
-	bh=SejvjcKDxw3BthMfHi6eAtNdZaOvse5g9PgP+P44VkM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NGfXTMY5RTzXL8eZ0ROB3raB5GXHIrdjYbKU2i4X0NBMi3d4QA/+6H4kHyFW7jzRKMVPwvU9lGH8i36KXkLXEKnblFsw6VMgQgo7h5xO5MbCiBt1IO8x4vTvfZZ0Iejs/j1BF51BWQH5y0UBSDPH5GaTN2RBAJrXdCcsnXBZSEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=ocJMli1t; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: from nirs-laptop. (unknown [85.130.135.138])
-	by lichtman.org (Postfix) with ESMTPSA id 60B851770C6;
-	Sat,  2 Nov 2024 12:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730548897; bh=SejvjcKDxw3BthMfHi6eAtNdZaOvse5g9PgP+P44VkM=;
-	h=Date:From:To:Subject:From;
-	b=ocJMli1teNm9L03WHiBKgGRViUZAzwIoHtSl47gK3ti12ZphgpwIthUhcZFmQHkV2
-	 N815jvatvwAUhUN6MK9xIAI74LlVpCOnwp0xKuOgHTEcsqny1jVC93U8FyFYVyRrGH
-	 RrnVfj4KMxqUHaLrYjJrfZwHo9+WkIRp5/54LS4LMirxA/s+xXugkS3/4kwLwsfIQx
-	 Bc2DRF+FU7qmAR+ZWBhXqRuXfP1I/b+2uYuXoDAfLkUCAhkxnMqBRlqwmqcEFKyaN8
-	 fNFFkBXtDWzeg362XHvhzGWSkhbuqr2xCzZlmh4PMqGuVAwLyesxe8+oPoIYRiL0PK
-	 JtlFyCXZtcXow==
-Date: Sat, 2 Nov 2024 14:01:22 +0200
-From: nir@lichtman.org
-To: ebiederm@xmission.com, kees@kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exec: move warning of null argv to be next to the relevant
- code
-Message-ID: <ZyYUgiPc8A8i_3FH@nirs-laptop.>
+	s=arc-20240116; t=1730550103; c=relaxed/simple;
+	bh=EUcbs1cSrphp8pI7Q6rosjx620b4eV5z/fHgLoriit4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtR3R4tli8drkgUsrxbTM6yprme1vg2jOK5NtZL+mf6/EA+TATyxRI+TyfAVDfPRtYSVCLQM8ysCXeXoVhIo+n91IpwN2010cVYaca1fs3TkP/0vJFeNAGVcbCv4gOLBj4ylyi/oecSEuNHUkoxlcmsm1np5nVeqRmqlnXSyFLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eA1pol+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7F7C4CEC3;
+	Sat,  2 Nov 2024 12:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730550102;
+	bh=EUcbs1cSrphp8pI7Q6rosjx620b4eV5z/fHgLoriit4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eA1pol+o0LuK3tzs+pdYsRUx47ng/osqRkSYRBzDArN+eNs/QJXVS/WJWFU4hqVfp
+	 wzXtp44VX1j8N2q3QvKziMTBI3xjlRp+Re4FSskzFkA8W2aGJ6/CPJB3FCyWN7EJKo
+	 Bi74c6aEVLz2nDzu/qlCoR1AXvJ599AqO/F7cOm9Od9Y8KzyNB9gvu+tCk/FEw307a
+	 1UzHi1f54zlnl0sehHIKu+RkDWsOeYExwpCm+iB7xT3upaAK20GPsL2G79UcgmV313
+	 +chh/jHmYRLr6+HRzqaVUu7+JVJNBu9EEkGK1C3tlg3cc6bIMYCt8K+GT3ZIneLAIL
+	 HgQTboIMoDFGA==
+Date: Sat, 2 Nov 2024 12:21:32 +0000
+From: Simon Horman <horms@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	cgroups@vger.kernel.org, kvm@vger.kernel.org,
+	netdev@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH v3 01/28] net/socket.c: switch to CLASS(fd)
+Message-ID: <20241102122132.GH1838431@kernel.org>
+References: <20241102050219.GA2450028@ZenIV>
+ <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,55 +59,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241102050827.2451599-1-viro@zeniv.linux.org.uk>
 
-Problem: The warning is currently printed where it is detected that the
-arg count is zero but the action is only taken place later in the flow
-even though the warning is written as if the action is taken place in
-the time of print
+On Sat, Nov 02, 2024 at 05:07:59AM +0000, Al Viro wrote:
+> 	The important part in sockfd_lookup_light() is avoiding needless
+> file refcount operations, not the marginal reduction of the register
+> pressure from not keeping a struct file pointer in the caller.
+> 
+> 	Switch to use fdget()/fdpu(); with sane use of CLASS(fd) we can
+> get a better code generation...
+> 
+> 	Would be nice if somebody tested it on networking test suites
+> (including benchmarks)...
+> 
+> 	sockfd_lookup_light() does fdget(), uses sock_from_file() to
+> get the associated socket and returns the struct socket reference to
+> the caller, along with "do we need to fput()" flag.  No matching fdput(),
+> the caller does its equivalent manually, using the fact that sock->file
+> points to the struct file the socket has come from.
+> 
+> 	Get rid of that - have the callers do fdget()/fdput() and
+> use sock_from_file() directly.  That kills sockfd_lookup_light()
+> and fput_light() (no users left).
+> 
+> 	What's more, we can get rid of explicit fdget()/fdput() by
+> switching to CLASS(fd, ...) - code generation does not suffer, since
+> now fdput() inserted on "descriptor is not opened" failure exit
+> is recognized to be a no-op by compiler.
+> 
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-This could be problematic since there could be a failure between the
-print and the code that takes action which would deem this warning
-misleading
+...
 
-Solution: Move the warning print after the action of adding an empty
-string as the first argument is successful
+> diff --git a/net/socket.c b/net/socket.c
 
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
+...
 
-Side note: I have noticed that currently the warn once variant is used
-for reporting this problem, which I guess is to reduce clutter that
-could go to dmesg, but wouldn't it be better to have this call the
-regular warn instead to better aid catching this type of bug?
+> @@ -2926,16 +2900,18 @@ static int do_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+>  
+>  	datagrams = 0;
+>  
+> -	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+> -	if (!sock)
+> -		return err;
+> +	CLASS(fd, f)(fd);
+> +
+> +	if (fd_empty(f))
+> +		return -EBADF;
+> +	sock = sock_from_file(fd_file(f));
+> +	if (unlikely(!sock))
+> +		return -ENOTSOCK;
 
- fs/exec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi Al,
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 6c53920795c2..4057b8c3e233 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1907,9 +1907,6 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	}
- 
- 	retval = count(argv, MAX_ARG_STRINGS);
--	if (retval == 0)
--		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
--			     current->comm, bprm->filename);
- 	if (retval < 0)
- 		goto out_free;
- 	bprm->argc = retval;
-@@ -1947,6 +1944,9 @@ static int do_execveat_common(int fd, struct filename *filename,
- 		if (retval < 0)
- 			goto out_free;
- 		bprm->argc = 1;
-+
-+		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
-+			     current->comm, bprm->filename);
- 	}
- 
- 	retval = bprm_execve(bprm);
--- 
-2.39.2
+There is an unconditional check on err down on line 2977.
+However, with the above change err is now only conditionally
+set before we reach that line. Are you sure that it will always
+be initialised by the time line 2977 is reached?
 
+...
 
