@@ -1,122 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-33580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB63D9BA44F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2024 07:52:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499749BA5D9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2024 14:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FCEF1F21E89
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2024 06:52:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4AC6B20A8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2024 13:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEB115443B;
-	Sun,  3 Nov 2024 06:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DE9186612;
+	Sun,  3 Nov 2024 13:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qJ9F7FRa"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kl++LKv5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ajs5ogkw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD8E2F2E;
-	Sun,  3 Nov 2024 06:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B693AE552;
+	Sun,  3 Nov 2024 13:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730616722; cv=none; b=hrP6d0+kcOdAu7mpRK5H9c3FR/9sbcMPqfhvIyiv1twpqifiN5Krmj9OzEGc1gOxUYeVud7ERIVh+IBphkDyh68sfiVaRFUIWbQRi2M+Ft8R/QJFcEOqM2s4abgnTEUGV3Fvkn9SxxlF2MA04x67/xOz1GdPQPo0GKLyIoIcMnI=
+	t=1730642259; cv=none; b=VdJYkvOBbX/9HSHYbaKrDjNIUD1WrQnj5iOOjxhi1agc/Bd7WFv0Q1IQRfzgBUtZ4TFFt/o7xXyboDme4wPBAIc+WUOUsEyAHl8Z09AF+uUnpEMeog/VlUfzQqFOryV5PgUNOpCdZ9LkkyltYYGiiGsAlb2LfwVt8O6QWQ2KolE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730616722; c=relaxed/simple;
-	bh=8JfwU+ovhRO1ikKwFrXkcRZWAgSR9nZFlr7GSrXnI2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xr9h2UpiLi7fazAo06YEN3Y4C92oS2uW5qK+FZaEjgLbk0O4EyZPiGVQU9gLzfR0eMg1UNASe/BsL7ui+Iv+iVeujo9kssWSD2H7oPgCd4a4Ed477jfURr8IygE356fr5RheoZlfQkIpQ3LvnaXIm19qPLFyGNMvew4lgAvpjXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qJ9F7FRa; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=63+ZQYbLub28/z6sbLnOEJ1j7zKdeE3rhU3waMkfJgA=; b=qJ9F7FRaXJC17HBqb4zQSLg76D
-	tVtcecKHVxlqgtmThWWj74z1HyDOPSrPR8KCmAP4AW97S0fBE7b8T8ohSCCR3A3K1cWM+qRekmnDD
-	4pYd9vndOCK3R1qoSThlfVKbdo6S/cBj76vc2nRpP1ccwduPvX/ghBXFngZ/hvag8Nw5Pmuel3cG3
-	VaB/dFrdnyDyQeA5m8VTeBfR34fdBaeUeD39H4BhlkSWypJpJY6x0hB52e7SukM/XWNlD6W0C/FpF
-	NZd5vJT7u4cg78szO2PbYdxne5bWOnkS86Y8/1k4+C5D2doAh8WnXEX/3EHPiv4abgjfmI8HuCoOA
-	pL5REx3A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7USq-0000000AeOf-28O9;
-	Sun, 03 Nov 2024 06:51:56 +0000
-Date: Sun, 3 Nov 2024 06:51:56 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	io-uring@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC][PATCHES v2] xattr stuff and interactions with io_uring
-Message-ID: <20241103065156.GS1350452@ZenIV>
-References: <20241002011011.GB4017910@ZenIV>
- <20241102072834.GQ1350452@ZenIV>
- <2a01f70e-111c-4981-9165-5f5170242a8c@kernel.dk>
+	s=arc-20240116; t=1730642259; c=relaxed/simple;
+	bh=zpyduir8KASLB7Yy6vBo7DqLdhBpiamlPJhbHc7oh0o=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eGS0tAdTmX1x8PCa8/HWmnGc8tPq6sHqMAdbHrZ3jvFnr9DojZd+2NM0Wmq2413xctbTWoPioDcNnw8Q+LyBayRgtZiv/ERiaUf1AJt3eFlMsKfLcq1/jYwNE5ssh8IPerfq7wMzJ+BH0manMtpRcR2HMMWfS4u4UJDf7IADdPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kl++LKv5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ajs5ogkw; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 89A10138013E;
+	Sun,  3 Nov 2024 08:57:35 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Sun, 03 Nov 2024 08:57:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730642255;
+	 x=1730728655; bh=ydQGTnO+D+8IgXolqjrApABtyzUTC1FsDHb85LN5EBs=; b=
+	kl++LKv5ur8JF8VDRjLQVLqY+1hqs6JwpI7YEJzRcnCTO3Z8fnvPYbSJn8zaDFjR
+	TzaKNapPTrgDhUimyG7GK+nt+ohFuSWerG5SRxaIHyqy726ehxCHlH89BoPPjzHc
+	a4ozIgZMJasFMzYLfpIFiQi2qzRnxn/57I5JDSgMpadwakvlkpFrC4HRI2bHRZ+z
+	xAFC8RqaVLXPEYXNEQcKhcUo87JZzaaHrDMXeobir65l8iCxg4EV/zjBX+GBdmQB
+	8KETsVcbEBtkGTt76ALzsu8nS1cmlG+MbruPuECjIv3SRM+l9NbnkGMWDySlsbFS
+	X8lUkgAkUlt2m1qjKv2xbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730642255; x=
+	1730728655; bh=ydQGTnO+D+8IgXolqjrApABtyzUTC1FsDHb85LN5EBs=; b=A
+	js5ogkwSnRaA8Gn6DwR9Z0i/ZrMmRHFoM7x1cMS+wR0yB4dG5stM8RxKKpQmHhyO
+	vNBIrNvAU9pZ0Qd/fzTO7vt6kkL6n8yPVgWdsA88TEe4q3dFj0DVDsPkMqqnQNhg
+	LjYotuQvCDgB3IMfzj9cOu+5Z58Q2qtfisqJBabQquPVhaRDVklgLVd114yzUl0L
+	rOYdhhq2JTdizKndUohqgGUuRBbM83Y1axbL665AkKO7zkINw2iEfxbDLfI1ulYi
+	UvVG4XRzzo2oi5JRDo8049BRCXSgXs9S0x/Swtp/OAJb1+tOZuzi35jPRWZKlYti
+	3dJ5LYcUi3Z8lUgaRhLqw==
+X-ME-Sender: <xms:ToEnZ3DJ3gEM7imtb0kDgDLY63odQqLQg2Vy2wqIgVJm7YwjgcksOw>
+    <xme:ToEnZ9iADBCE14U-BLMgoWe7eRJvqGc0UonoqxSCtOtU8zmlq5FcrtChY7C5M0qav
+    iZ6gulHnp9JuhrSa7M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgedgheelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghgiihonhgvshesghhoohhglhgvmh
+    grihhlrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphht
+    thhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhrih
+    hnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshgu
+    vghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivg
+    hnihhvrdhlihhnuhigrdhorhhgrdhukh
+X-ME-Proxy: <xmx:ToEnZylElR-_KhxNM7nl09AQwin57FTlhrWuz2U3aIq-WDZllewGYw>
+    <xmx:ToEnZ5xHejaKCc3wuAKkKo3Q-c08ZZgttYp9LZko6G5hJPFMu1wacg>
+    <xmx:ToEnZ8RpepYdyY2YeMVLDSFxT_iy8vtiTVXMkaoPEln49KYyK-rtTg>
+    <xmx:ToEnZ8a8uwYaGnKI03rs8MY0LQWZaFJLeM4Tezp-_lGCgSDxOjLxXg>
+    <xmx:T4EnZxLmTYt7hpf-Iom7IZFUuBMViJ4Tj4zz01DgHoIE8fcyZUsijRV7>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B93332220071; Sun,  3 Nov 2024 08:57:34 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a01f70e-111c-4981-9165-5f5170242a8c@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Date: Sun, 03 Nov 2024 14:57:14 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jens Axboe" <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, "Christian Brauner" <brauner@kernel.org>,
+ io-uring@vger.kernel.org,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Message-Id: <a8081b55-c770-4709-aa9e-f55c85d78cdb@app.fastmail.com>
+In-Reply-To: <20241103065156.GS1350452@ZenIV>
+References: <20241002011011.GB4017910@ZenIV> <20241102072834.GQ1350452@ZenIV>
+ <2a01f70e-111c-4981-9165-5f5170242a8c@kernel.dk>
+ <20241103065156.GS1350452@ZenIV>
+Subject: Re: [RFC][PATCHES v2] xattr stuff and interactions with io_uring
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 02, 2024 at 08:43:31AM -0600, Jens Axboe wrote:
-> On 11/2/24 1:28 AM, Al Viro wrote:
-> > 	Changes since v1:
-> > * moved on top of (and makes use of) getname_maybe_null() stuff
-> > (first two commits here, form #base.getname-fixed)
-> > * fixed a leak on io_uring side spotted by Jens
-> > * putname(ERR_PTR(-E...)) is a no-op; allows to simplify things on
-> > io_uring side.
-> > * applied reviewed-by
-> > * picked a generic_listxattr() cleanup from Colin Ian King
-> > 
-> > 	Help with review and testing would be welcome; if nobody objects,
-> > to #for-next it goes...
-> 
-> Tested on arm64, fwiw I get these:
-> 
-> <stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-Wcpp]
-> <stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-Wcpp]
-> <stdin>:1609:2: warning: #warning syscall listxattrat not implemented [-Wcpp]
-> <stdin>:1612:2: warning: #warning syscall removexattrat not implemented [-Wcpp]
+On Sun, Nov 3, 2024, at 07:51, Al Viro wrote:
+> On Sat, Nov 02, 2024 at 08:43:31AM -0600, Jens Axboe wrote:
+>> Tested on arm64, fwiw I get these:
+>> 
+>> <stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-Wcpp]
+>> <stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-Wcpp]
+>> <stdin>:1609:2: warning: #warning syscall listxattrat not implemented [-Wcpp]
+>> <stdin>:1612:2: warning: #warning syscall removexattrat not implemented [-Wcpp]
+>
+> arch/arm64/tools/syscall*.tbl bits are missing (as well as
+> arch/sparc/kernel/syscall_32.tbl ones, but that's less of an
+> issue).
+>
+> AFAICS, the following should be the right incremental.  Objections, anyone?
 
-arch/arm64/tools/syscall*.tbl bits are missing (as well as
-arch/sparc/kernel/syscall_32.tbl ones, but that's less of an
-issue).
+Looks fine to me.
 
-AFAICS, the following should be the right incremental.  Objections, anyone?
+I have a patch to convert s390 to use the exact same format
+as the others, and I should push that patch, but it slightly
+conflict with this one.
 
+We can also remove the old include/uapi/asm-generic/unistd.h
+that is no longer used.
 
-diff --git a/arch/arm64/tools/syscall_32.tbl b/arch/arm64/tools/syscall_32.tbl
-index 9a37930d4e26..69a829912a05 100644
---- a/arch/arm64/tools/syscall_32.tbl
-+++ b/arch/arm64/tools/syscall_32.tbl
-@@ -474,3 +474,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index 845e24eb372e..ebbdb3c42e9f 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -403,3 +403,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
+I was planning to have a patch by now to only need to chance a
+single .tbl file for new entries, which is a bit behind some
+other work I have planned for these files.
+
+      Arnd
 
