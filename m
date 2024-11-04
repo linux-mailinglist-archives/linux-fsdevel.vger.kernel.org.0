@@ -1,106 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-33626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CE89BBAA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 17:55:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6C09BBB18
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 18:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6AE81C22868
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 16:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B3A28161A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 17:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717531C4A07;
-	Mon,  4 Nov 2024 16:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFE01C4A2A;
+	Mon,  4 Nov 2024 17:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0rYMgms"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoYK7c7C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762AB1369B6;
-	Mon,  4 Nov 2024 16:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2CD1C1738;
+	Mon,  4 Nov 2024 17:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739305; cv=none; b=iDwSmD2/HQYTsjX+Hky3OXhrC+G8tqZ9E1IQuU8u5ZDFS9XbGir1+vJkVch29lNp4Lya3YATi6VlkkxVdynsCjgVvMNcpUaOQpZq3nU1e/hCwcOdmftm6jVudeshiAslCGApFb00ol2dRsa06Ir1c2wpe2ame4xT8PnHzs5JDR4=
+	t=1730739835; cv=none; b=JOoUL/nUOfT5djBJPmpySW4Mrx8Ib6WG4iBnMcxnQqc8WLXKbcTBUeh+nbyrV2WKL1fe/H22IfsHaQX9gcv6WmCwAamXIdioh8gUFhoB2to9mNM90RxfweMf+igR1RUWLKsSvAQ1rov/zfhsJ3Bm5pi8KRfz7moUxkFCCKUGGl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739305; c=relaxed/simple;
-	bh=Q418ja8tsDXOC77mCOfPiqTbO2OPtGirjJ5OAUF3zK0=;
+	s=arc-20240116; t=1730739835; c=relaxed/simple;
+	bh=SICAjadzqgYxQNrgOYg+UztLoDJSRQ1yNROvKSIJepM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kxui2FFzp3Y/gRnaILcFJ5TXmkO2P2cf+fuokPLjgBIWaxe3xfOVU7HDbLTlEV7i25Y4wzHYdLZckUBcnvYNQrDVC8qlAp3HpQ1SLTmmM+8E3vtIFnocGr/tydW2l7J8pYMG98wRQzx+juR8S4/JvnPC0y7Elgt9+Z3uxjbILds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0rYMgms; arc=none smtp.client-ip=209.85.219.174
+	 To:Cc:Content-Type; b=P/Qc1VILtdMx8Nsibgx30irDRJTY9+xDFspdLBTunP/CErV5NmaliDv2pk7hiKhDd+HTtaq+6LoMWBQ5Es/yl21tMi+Qu8cJxvZZHRHUBZTlcMtPeOvP3qwS2gLDx3SqJ87pVFc9DXpJUwnzWGIIpIas8UdWYyV5bU8umGnRWlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZoYK7c7C; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e2e2baf1087so4088118276.2;
-        Mon, 04 Nov 2024 08:55:04 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460963d6233so28911811cf.2;
+        Mon, 04 Nov 2024 09:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730739303; x=1731344103; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
-        b=P0rYMgmsHK66YDMRRBhA3So7Zc4EyqYpfGx7QNlji5S/vCHoI8JpUoJji2zvDTWW7c
-         TVogSbCuGyw23pWyjU/SKt6tiGU0hNV36Kn/Dt+AU135YdroJ/pDIjRepNMmcJxfJkrq
-         e+O5uJvwEKtWsWzqfUHsO5z5jRkw/SAl+QgxLzgSQxSK2XiAmIbfoxNYg27+9+6pXCOG
-         Mg+WRJyf8pJ5BRpWUWwMvfLWIIedNhSZoDTpyEN/dHAt7Ve4Fw/tBSGw4h7QQ1Cm9vuc
-         xS8yp7SgGvRuIg6HSmnITUir4T22JiEaK6ssxm+QzRXuAzvenFzaXEhenFVLKPHi+CBG
-         1XBw==
+        d=gmail.com; s=20230601; t=1730739833; x=1731344633; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZOGNDRBscOv7asRgZqi0hnlWitc/6LWLRWws462u1mc=;
+        b=ZoYK7c7CubG5odDLCDzkLS1LKK4kgcx873ww0Ec1pu7uNAMP4x9Cxl+BORtgz9j8xg
+         QdkMVU/DGvXCe8fy/Q5CG7nzgM0lV6F3wpDHcslJzc89wSEOhdoEFFbP36Pd4HvyfGDA
+         NtIKl+zsFMQQ1y9LVpaN845J04p2DTaMSfXzK/zd6cc4gdfuhjCnNaWDQuSe1xQm76Em
+         6ii9MMap/FGWU/xhIxD0zck6RRSG/wHOc7g2RYC2dekJKQzPFpR/vZ2MZWjvY4TiWRgG
+         8i3o+ciuILnVP2B64zbqOG+zrJI6uI3eqMZAw7OK0lj/pAop4cJbgWuRaoahJVoQyQEW
+         06Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730739303; x=1731344103;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
-        b=gcoDBETKnZSpXLPwO4vqSUybjHiTDCsh5DsmzIrkNNbeNDMTP5oijReX0dxPVQZSSl
-         VGdYEXgjgqpQfHbw99xHzCcvvfdpAZyZgWTANzg/zl7jFpKJ2+iwJaqcMyoSLe0yr1mZ
-         jg/4c5zsU4nLYF8XZNpAjK2ASwalGmv56xIM7j1vzH5kleElQvwXv+TiXt+NnUAcBWyN
-         WRznCJ3rSQt8pvPCLPM0hcBrQNk7ttuHfLPzg8rI/VGDS9y3X/FnwfOoKapP1f3qXbXe
-         7/UvADcFT/QiQ5aY44H3ZE06bNTskLIxdBCMbcMy+lzDmJa9pfJkbaOFeRqmKpx3+qUE
-         ljmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4HlUPV1NLKKYJNKXWB0C8U9cCKcDzK7Ux1KGY4a0Amd4WPIyz2Y63foFfgKEKXyI7f0yiqDeePHlseZMR@vger.kernel.org, AJvYcCUW0/e8mEf8BqpdaiVOCJYmtUDES8Wv4E1hYtUlL+E9xTzlFgUaK+O/tqfU3wfNc7DFjoemyxOQfUw7QSlY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ0h/6VoVWc6gG71cNDnQGW81UK1/Qpp+0MN78pjFN/JlRs0e3
-	/qMHgokMcJTXSjrpbWuwhQFRrgZV+t4SqDZ40vZ0svrolmm7eI9ATieTdbIBbMOLnC9Zs0fjr9r
-	oGO8Xni1D8IRC0aUGJKq7hLhb97c=
-X-Google-Smtp-Source: AGHT+IFgabJY3MlOmUkApTX3tWXYiMzEsG7DXQ/HOHo3g9GdH/NAinuHn7PyooNEfFQpKUj0Nkzm7FZ9+4at9ONwxwE=
-X-Received: by 2002:a05:690c:690c:b0:6e2:a129:1623 with SMTP id
- 00721157ae682-6ea64be680dmr130287777b3.38.1730739303448; Mon, 04 Nov 2024
- 08:55:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730739833; x=1731344633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZOGNDRBscOv7asRgZqi0hnlWitc/6LWLRWws462u1mc=;
+        b=kpDTISUQ1lMFy1ugCDzWHeJuAbU7+D08LgCXEcOg4CsF1fnSfd4JoiHUHsybZxLQxj
+         wFyM8Bo+wNMLNXNL8o/ZrbOvU04dAQKlRQC8wA1nefVB8lq1bqA3t4qAiphKPaTrc0FR
+         T5oNMWZs6q7SSDcIXNhQBrfomQvicW5xT2g3mVr5My6PuuPBM9d2Ytt6gS/kpBzHAD6a
+         6qaNiZLFrFVkXHlpqk1WsdcnjFKTynbHv3B82h+mHTgJzjRbJhyyMx76xJ1vARW7C5dR
+         ywjHi64RJw6BJFdRPLXswJGPjPpDfvFXnEZJ0h2k/lTObeG6XB/WIH5veKQDU6XDenIC
+         rGBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5OY4zyAE8eJacZQY9J7pIkbbHOWPNYXrqQSYRpQZCF46QNJjyCZMp23p8ZlwcRqrCvgqIDx8cSys3pSsA@vger.kernel.org, AJvYcCVWWGXspHclkLfM8Y9CpmFce2d/HpPfzTYLIIA5ceoJehMrSdE+sjCbultU+FHDGZqk/6pFpcTW8OedwdzHRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Lm9j6tf0LkpCXEmEd6HzNz5q7ydSM+FuwIr9ixQlm4O1QNQd
+	Zf4510yxNMYDMDSglxcalx2+ZLh3BJrofUUs6E2qe0oCAOWx05w5BmIslmY5N7cPnD3h/h3q+h5
+	MlTvJvIvE+U8YISTlkMATG6Bia0w=
+X-Google-Smtp-Source: AGHT+IFWPgM0oQhJ6otrU9zrdF5XZmrGrMFj5ETaueLB2e8eX81G+1jBc8aeJmMCbjo2HpiUByK/Nxen4Rgm3X/dxVw=
+X-Received: by 2002:ac8:5f54:0:b0:447:e769:76fc with SMTP id
+ d75a77b69052e-462ab281dd7mr249615061cf.34.1730739832207; Mon, 04 Nov 2024
+ 09:03:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104084240.301877-1-danielyangkang@gmail.com> <20241104120615.ggsn7g2gblw73c5l@quack3>
-In-Reply-To: <20241104120615.ggsn7g2gblw73c5l@quack3>
-From: Daniel Yang <danielyangkang@gmail.com>
-Date: Mon, 4 Nov 2024 08:54:27 -0800
-Message-ID: <CAGiJo8RrxaUfLhk1LWPk_iDB+XJc0=gMoKXcxAS02qyqHVxJ_Q@mail.gmail.com>
-Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20241028-eigelb-quintessenz-2adca4670ee8@brauner> <20241028192804.axbj2onyoscgzvwi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+In-Reply-To: <20241028192804.axbj2onyoscgzvwi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 4 Nov 2024 18:03:40 +0100
+Message-ID: <CAOQ4uxhoLO2shZAYxMuF7sjZs6GR3GLwpJ8KMT+tW21gZYOkLg@mail.gmail.com>
+Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2 (new
+ mount APIs)
+To: Zorro Lang <zlang@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, sandeen@redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > -                             pipe_buf_release(pipe, buf);
-> > +                             if (buf->ops)
-> > +                                     pipe_buf_release(pipe, buf);
+On Mon, Oct 28, 2024 at 8:28=E2=80=AFPM Zorro Lang <zlang@redhat.com> wrote=
+:
 >
-> Umm, already released pipe buf? How would it get here?
+> On Mon, Oct 28, 2024 at 01:22:52PM +0100, Christian Brauner wrote:
+> > On Sun, Oct 27, 2024 at 02:07:41AM +0800, Zorro Lang wrote:
+> > > Hi,
+> > >
+> > > Recently, I hit lots of fstests cases fail on overlayfs (xfs underlyi=
+ng, no
+> > > specific mount options), e.g.
+> > >
+> > > FSTYP         -- overlay
+> > > PLATFORM      -- Linux/s390x s390x-xxxx 6.12.0-rc4+ #1 SMP Fri Oct 25=
+ 14:29:18 EDT 2024
+> > > MKFS_OPTIONS  -- -m crc=3D1,finobt=3D1,rmapbt=3D0,reflink=3D1,inobtco=
+unt=3D1,bigtime=3D1 /mnt/fstests/SCRATCH_DIR
+> > > MOUNT_OPTIONS -- -o context=3Dsystem_u:object_r:root_t:s0 /mnt/fstest=
+s/SCRATCH_DIR /mnt/fstests/SCRATCH_DIR/ovl-mnt
+> > >
+> > > generic/294       [failed, exit status 1]- output mismatch (see /var/=
+lib/xfstests/results//generic/294.out.bad)
+> > >     --- tests/generic/294.out       2024-10-25 14:38:32.098692473 -04=
+00
+> > >     +++ /var/lib/xfstests/results//generic/294.out.bad      2024-10-2=
+5 15:02:34.698605062 -0400
+> > >     @@ -1,5 +1,5 @@
+> > >      QA output created by 294
+> > >     -mknod: SCRATCH_MNT/294.test/testnode: File exists
+> > >     -mkdir: cannot create directory 'SCRATCH_MNT/294.test/testdir': F=
+ile exists
+> > >     -touch: cannot touch 'SCRATCH_MNT/294.test/testtarget': Read-only=
+ file system
+> > >     -ln: creating symbolic link 'SCRATCH_MNT/294.test/testlink': File=
+ exists
+> > >     +mount: /mnt/fstests/SCRATCH_DIR/ovl-mnt: fsconfig system call fa=
+iled: overlay: No changes allowed in reconfigure.
+> > >     +       dmesg(1) may have more information after failed mount sys=
+tem call.
+> >
+> > In the new mount api overlayfs has been changed to reject invalid mount
+> > option on remount whereas in the old mount api we just igorned them.
+>
+> Not only g/294 fails on new mount utils, not sure if all of them are from=
+ same issue.
+> If you need, I can paste all test failures (only from my side) at here.
 
-If you're talking about the pipe_buf_release before the if statement,
-that line is a - not a + so I basically just added the if statement
-before release to check that buf->ops does not get deterrences in
-pipe_buf_release while null. It's the same two lines as when pipe is
-released in splice_direct_to_actor.
+Please share them.
 
-> We have filled the
-> buffers shortly before so IMHO it indicates some deeper problem. Can you
-> please explain a bit more?
+>
+> > If this a big problem then we need to change overlayfs to continue
+> > ignoring garbage mount options passed to it during remount.
+>
+> Do you mean this behavior change is only for overlayfs, doesn't affect ot=
+her fs?
 
-I just worked off of this crash log:
-https://syzkaller.appspot.com/text?tag=CrashReport&x=16adfaa7980000
+That is correct.
 
-If the buffer is filled before, does that mean the issue would be in
-do_send_file or do_splice_direct?
+>
+> If it's not necessary, I think we'd better to not change the behaviors wh=
+ich we've
+> used so many years. But if you all agree with this change, then we need t=
+o update
+> related regression test cases and more scripts maybe.
+
+Can you check if this workaround (done for ostree) solves the problem:
+
+--- a/common/overlay
++++ b/common/overlay
+@@ -127,7 +127,7 @@ _overlay_base_scratch_mount()
+ _overlay_scratch_mount()
+ {
+        if echo "$*" | grep -q remount; then
+-               $MOUNT_PROG $SCRATCH_MNT $*
++               $MOUNT_PROG --options-source=3Ddisable $SCRATCH_MNT $*
+                return
+        fi
+
+I am not sure about the proper fix for general use cases,
+but if this is enough to fix fstests, I think we should do this anyway.
+
+Thanks,
+Amir.
 
