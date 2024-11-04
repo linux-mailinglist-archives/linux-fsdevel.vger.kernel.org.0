@@ -1,80 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-33600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538029BB649
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 14:36:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C0A9BB75A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 15:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18120282113
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 13:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9B41F223AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2024 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A8C78685;
-	Mon,  4 Nov 2024 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7936C42AA9;
+	Mon,  4 Nov 2024 14:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cQWS9DP3"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Nk4Qqv6r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="j27in6DG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Nk4Qqv6r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="j27in6DG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0D9339A1;
-	Mon,  4 Nov 2024 13:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE4F79FD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Nov 2024 14:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727296; cv=none; b=Q1oYPrxD7x7GjXs3divNsI+g47mEVjomjWfuxJJDM3r1yOrGe6We9/nyiTQPuOyjyu8NE75wZKUyhwkJtHbctN3gCjOA4vgYQdtbKFACQfQVL/naFhiRtOVyBNKZTva2deyySiROUNf1p7Fy3NdZSPuAymGbiE+5SpgWhZwtBC4=
+	t=1730729887; cv=none; b=QHkb0uRjjO5unMRk5OUa7W4NkfLHW+3kVp0TuEkZk6juFrMc99kE+aWRU/C5n1xaiiyTI5Yuxgw/twTdzBBhxp17Z2hUGynAq7Y6UDfofCIMov4LKlDsR4JlUUipzx0t7s1XZ8lYpQ8rGRbBdaJO6OfgOo3QFLCFEClQIYmTC74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727296; c=relaxed/simple;
-	bh=FoNnWAn1QjGzs0pDtAGsMIggtK/8oE9IVMGWWHwKyuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awHQmcRt0ug/0H+IoZkgK3PCMLkPqtSAgSypDv6EYe/a++YoCCCi+mqZkJ8es8h/WywKwHzDO/33pGevez6C5qRGIWLa5mQfKozrX/VwEMMDn92GgunFOG+ctYr4BGPowcaFusiV42QuwIah2GtUHIEGT3lhUnuIZLBvMh5bYLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cQWS9DP3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wJjl7yGTkjI5YAbdJEam0U1MB6eP4I1Grye8pcpbX14=; b=cQWS9DP3tRpDDTg0jHcwFnRd/n
-	ZIWS2mTJ2nfSj8Cx4qPsev8brurXyiPF6A0vJCxjb2gJ8HpzeyjMqV5qJ6eIUroEmZgGm+RqEW6mk
-	aQ/ckFmD7+zltGQ/s5qq4pnaNCpraMNNY1oEX6zrqsoCkHF2Uvb4XHVHOoQ3MwcNmpfRB/equSx8I
-	IKwksBL2A/4m1hK/X++eMbcuPO/A0rHX7Niqltu9EvZCuorSZzliQMUKweBKfxidXf2Hl5EA3SSEd
-	YB6j0UY6NfTpG8r3EjsWR98aa0VgToRWs3LVsRLjX3uZ8/gft/LOjFAmzzrvCzFoZBhkEzh9jlBsS
-	/LeNLOog==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7xEI-00000001DAT-389A;
-	Mon, 04 Nov 2024 13:34:50 +0000
-Date: Mon, 4 Nov 2024 13:34:50 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] Xarray: skip unneeded xas_store() and
- xas_clear_mark() in __xa_alloc()
-Message-ID: <ZyjNeq1GJTFFa3-7@casper.infradead.org>
-References: <20241101155028.11702-1-shikemeng@huaweicloud.com>
- <20241101155028.11702-5-shikemeng@huaweicloud.com>
- <ZyT7qRhtqGDe_AuO@casper.infradead.org>
- <ad978b0c-b814-02ad-6304-6096d5cacf9a@huaweicloud.com>
+	s=arc-20240116; t=1730729887; c=relaxed/simple;
+	bh=tdu0SABTGgzW90wpRU6A0HwQH9ZezzdXJz8MSOQUf+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mL03IzusMGgaOetZmMkyCWh3sc4n5+xz3xclSu0lkCU9RMTrJJSRSTTYWAKEbgKGKzXSzo3Skvdx0Nor8SR0mIDoYQB2jg7TLK/fiD40NDUZJ+ig+t8XHe5c2m8HiSzsW5jPkesdAOlqDTtKbndFUrdEX6yVHgGsJFDgPtR9EBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Nk4Qqv6r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=j27in6DG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Nk4Qqv6r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=j27in6DG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 435D61F7DD;
+	Mon,  4 Nov 2024 14:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730729884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZBJzIDxc1UUe/ckdgFwT1rGy6uzgppkCtCXVgn+HK0c=;
+	b=Nk4Qqv6r5SznYNVRyAC9pMZgrev+mMruv5sxc1KDSvFNvoG4BIdyVn7hTTLko30OhD+G/u
+	MfvqKQI357MVkQ6YPei1KDxw+jSrqyqj0EW8XYTQZwj2QQL6TIVZnQlRFUFzmP1lkhs1Rn
+	0kGi0SHEoIC+3s9/pI2PFr5Q5rhiWG8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730729884;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZBJzIDxc1UUe/ckdgFwT1rGy6uzgppkCtCXVgn+HK0c=;
+	b=j27in6DGH7aJXULLMoe/PhoQXSvAm93+7Q9cmKZyL/Joonqpuk15C1OrMvX81mFg35FXSB
+	fAuyzFopW0n4QYBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Nk4Qqv6r;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=j27in6DG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730729884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZBJzIDxc1UUe/ckdgFwT1rGy6uzgppkCtCXVgn+HK0c=;
+	b=Nk4Qqv6r5SznYNVRyAC9pMZgrev+mMruv5sxc1KDSvFNvoG4BIdyVn7hTTLko30OhD+G/u
+	MfvqKQI357MVkQ6YPei1KDxw+jSrqyqj0EW8XYTQZwj2QQL6TIVZnQlRFUFzmP1lkhs1Rn
+	0kGi0SHEoIC+3s9/pI2PFr5Q5rhiWG8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730729884;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZBJzIDxc1UUe/ckdgFwT1rGy6uzgppkCtCXVgn+HK0c=;
+	b=j27in6DGH7aJXULLMoe/PhoQXSvAm93+7Q9cmKZyL/Joonqpuk15C1OrMvX81mFg35FXSB
+	fAuyzFopW0n4QYBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF60513736;
+	Mon,  4 Nov 2024 14:18:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dckTGZrXKGfGfAAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 04 Nov 2024 14:18:02 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/9] initramfs: kunit tests and cleanups
+Date: Tue,  5 Nov 2024 01:14:39 +1100
+Message-ID: <20241104141750.16119-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad978b0c-b814-02ad-6304-6096d5cacf9a@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 435D61F7DD
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Nov 04, 2024 at 09:55:42AM +0800, Kemeng Shi wrote:
-> > No.  The point of the xas interfaces is that they turn into no-ops once
-> > an error has occurred.
-> Yes, xas interfaces can tolerate error. The question is do we really need to
-> call xas_store(...) here if we already know there is no room to store new entry.
-> But no insistant on this as it's not a big deal anyway.
-> 
-> Will drop this on next version if you still disklike this.
+This patchset adds basic kunit test coverage for initramfs unpacking
+and cleans up some minor buffer handling issues / inefficiencies.
 
-I very much dislike this.  The point is to make the callers simpler.
+Changes since v1 (RFC):
+- rebase atop v6.12-rc6 and filename field overrun fix from
+  https://lore.kernel.org/r/20241030035509.20194-2-ddiss@suse.de
+- add unit test coverage (new patches 1 and 2)
+- add patch: fix hardlink hash leak without TRAILER
+- rework patch: avoid static buffer for error message
+  + drop unnecessary message propagation
+- drop patch: cpio_buf reuse for built-in and bootloader initramfs
+  + no good justification for the change
+
+Feedback appreciated.
+
+David Disseldorp (9):
+      init: add initramfs_internal.h
+      initramfs_test: kunit tests for initramfs unpacking
+      vsprintf: add simple_strntoul
+      initramfs: avoid memcpy for hex header fields
+      initramfs: remove extra symlink path buffer
+      initramfs: merge header_buf and name_buf
+      initramfs: reuse name_len for dir mtime tracking
+      initramfs: fix hardlink hash leak without TRAILER
+      initramfs: avoid static buffer for error message
+
+ include/linux/kstrtox.h   |   1 +
+ init/.kunitconfig         |   3 +
+ init/Kconfig              |   7 +
+ init/Makefile             |   1 +
+ init/initramfs.c          |  73 +++++----
+ init/initramfs_internal.h |   8 +
+ init/initramfs_test.c     | 387 ++++++++++++++++++++++++++++++++++++++++++++++
+ lib/vsprintf.c            |   7 +
+ 8 files changed, 455 insertions(+), 32 deletions(-)
+ create mode 100644 init/.kunitconfig
+ create mode 100644 init/initramfs_internal.h
+ create mode 100644 init/initramfs_test.c
 
 
