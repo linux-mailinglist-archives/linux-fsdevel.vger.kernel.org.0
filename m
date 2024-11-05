@@ -1,276 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-33650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07629BC80D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 09:31:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2309C9BC814
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 09:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BD51C21B50
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 08:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CCE283766
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 08:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEE11CEAAA;
-	Tue,  5 Nov 2024 08:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F8ErgTCT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1071C1738;
+	Tue,  5 Nov 2024 08:35:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC122C1A2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 08:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D4D1E89C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 08:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730795502; cv=none; b=IP5Fo/I8IzatB6gZoZbFQJTYk5iUEVcvfP7O0qDFuEiGGsMddxWzjf/gi7XWTqW749WsQM88P3Fxx1evxW3PyTJ2zSDzoqaqYTxWhHQGiWfIPhi3DekSanDt0fC47bLEwCZGVGDBpBHgGr9g8AG9HR707ya9xS5a6Us54cwjx/g=
+	t=1730795732; cv=none; b=KQO3rABMOQ6DkOm6hvB4A3+FYwxH7bIxOHiH54IPLQN1Rlj99tmZ0HWJzTM/j2XKHNgHbqHBTXnHZgZthVwVqtG/J4wgzVsnZXMjlPjjd6Y3dWmI+A613RfR3issFOW79oLF5CWyRBw7gUdHkczY2GCwO2scM33ZQ8w6iBrTnBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730795502; c=relaxed/simple;
-	bh=a+/Z5HCLWAqFe9kJLjCtp3TP8nih4/kqHmqtcCTiBa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7f+XG2FEEE6MVc1XhPakWwMA17/DYvDJNjtVkScf0/IRdD5khQlyIBDBXYUK0aJ7T1SA7VYFWn34uqngIZ1Gb2Vfq3hoTYI4y3KPEX4KVRfpfgWfAgaocaTTCHxk6BM3FfgOunqbsDd36AaFYkxfquu5re8KRZEXZxC/6v6r38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F8ErgTCT; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e291cbbf05bso4922091276.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 00:31:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730795497; x=1731400297; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ze9WHQ0beEz8+ocNfaZ5viUgzsEDrj/TAqXIVsGM76k=;
-        b=F8ErgTCThQy4UrOiq4VQHc30DTBwtTe1ztuaOMQc0WBwzWSuWadHh0pPMr7UXhtGeB
-         5yWVpHcKXOaEych2oYu/wcdOCDqBSPg7ik8ZRk5O6klvGwnblPUiBxp81CGzthvMyErx
-         LBOgLNxpkjXwyksSqM4a18v97rjwlqG6o8GNQ=
+	s=arc-20240116; t=1730795732; c=relaxed/simple;
+	bh=/2kyD+72UszYeHBw8XDoFHwoW/81/FaJmGVnIumd/f0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iT0s0K5nXuKMpQ6WaVEZnIMd/O9xXzrBDrD0zp2Aj+MHHklnMM3pR3L2s9c5Rcufr7oSzcwSu0elp4oPSwtkIuX76HdU+P0TZYlj/HdrO8vduziaC/pp6NAVh7yueNRK1TKQkRkdBg8YGF7ZksBjquAjQqUbt0sifAidLlICHNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ac0354401so590789039f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 00:35:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730795497; x=1731400297;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ze9WHQ0beEz8+ocNfaZ5viUgzsEDrj/TAqXIVsGM76k=;
-        b=gCEWAneVYR6C11isUNBDaakJnPcpM2rrFhz/lxurOXFir2JNHbquHrNQO8ubG4Bd3e
-         zq9cbZP+/3zDgbSGn8aJ0Yrune5fIZ0tk9enYuQEHRjqPKciqBx/5++Cvx9xNtVRsnDF
-         Rqn7FSicz6ceLEsAvYmbABZpLSUoDA2B0mVcS04VnbEXiFImtblW/mw0hVPq5A7OzE89
-         ndpFXnEiL91Cfay9xEvOT7fP0Bj4aEpvZTNiRrUKiuNfZ1Q0bI+adg6kZR5BT6HcMQmy
-         YGRgNb2pX3yDRSK0UgrITlYofDNKaxxTH16zNF+htDj3NPnKM6/PM2KpW3JZBGh2J8Bx
-         gDkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjwP5r5eO664WAS7MVDEKP9yfCT5WDEtReV+rwD8La8zsmvcQdgWGTY+dKT2i+NPoUqeGZveOZGT5jqgnI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsZktg+Nu31vOpJL92XHyLONTmlm6r3611P+MnhuTLCZ8yziUJ
-	8BaFmNrbRiI/K+VNVRQMp1hpSaJeIyUX7UMqTvJ3zBYCA9YHhX4h8jSRd/s3BYEgxVEW2RSKA85
-	JzJsN6CcN24srFwPOehUxQPSuIPyE7ATpQs9qOQ==
-X-Google-Smtp-Source: AGHT+IHemnM16Rf3hM25uBaKAMuFL0NVZTdWj5pD/ZJ/9CsWuTjJ2lAXkP9rWfJpmBYmKxlx8VPnjp7sKeqF7CLT0yQ=
-X-Received: by 2002:a05:6902:1081:b0:e25:fc6f:9cbf with SMTP id
- 3f1490d57ef6-e30e5b3b269mr17448141276.52.1730795497472; Tue, 05 Nov 2024
- 00:31:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730795729; x=1731400529;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oviZhehDSsEpnXMuoH8iyR+xsk4jykhgYH2tvqOHVEc=;
+        b=hDXHBnKmZe191RN6TqrGyorSmzfheifUpEXrIdPkqfcdA3YqKG3ufJXSAuZMqL5ezQ
+         IZ5NwTTMKHkmYvj2qANBj8EWdoGhVwQVRLef4wHVuaKqPNm+bXbpZmrBIIWbCH9rhHep
+         0y0qdI2lsmsH3wGTM0fYHdjo/8vKY7Bppp5mQG8vza6GA4k/Z9wOs/brXV/GeRoD3AKn
+         vV/p1g8Cv4XgxK5x5IghfcEyAmgjmHdC7ofEQBvXREf3AmN+uMpHTQlZFj9ZUI1LqEFA
+         ESDK6i6fVV7NsHDRDXjTOe/0eA/cJa7V2JYTY+5HK/+zmCJa2C0VfGqVXUOAdv92/t9L
+         gxLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7+9L56IbsYLSC8+bACIQ87mLiE6SC4D66yvgPbWQRaHK1mCl+M3I/0tEtHLD6fDrPdelZAXRPoFk1gJK5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQZIxeqbIAXdOyPlBjkattaN6Osp+Ya2jtn/y3JCvsILfAzCGD
+	q97tMDw0+4c/pcdfdPk7E3SVNrm/jrAqtbFUjDJh8VS06yrN0PjtShoOqiFWo/OwoNhfXM775YI
+	EcmJVLT+m/FQ1sIdnnSdovAm9rhQv8XL4LCx0DptxGLYMJ2xcVJFsmqw=
+X-Google-Smtp-Source: AGHT+IFv07pVVVY8LHLcKsBF0K1au8ggHNhDSda/0ruptJ5yhwKV6+CbOw9aI16LzC2y9jEqdmOk5d0aBIuneUbYGF7/jEuXY2pi
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
-In-Reply-To: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 5 Nov 2024 09:31:26 +0100
-Message-ID: <CAJfpegvGGt+XankFJjuijr6QXVUFXRUWTotLNXLQ4n21ELf=Xg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Simplify getattr interface function checking
- AT_GETATTR_NOSEC flag
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	LSM <linux-security-module@vger.kernel.org>
+X-Received: by 2002:a05:6e02:12e6:b0:3a6:ac17:13de with SMTP id
+ e9e14a558f8ab-3a6b032b298mr157204745ab.20.1730795729760; Tue, 05 Nov 2024
+ 00:35:29 -0800 (PST)
+Date: Tue, 05 Nov 2024 00:35:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6729d8d1.050a0220.701a.0017.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] kernel BUG in free_bprm
+From: syzbot <syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com>
+To: brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz, kees@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, tandersen@netflix.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 1 Nov 2024 at 20:37, Stefan Berger <stefanb@linux.vnet.ibm.com> wrote:
->
-> From: Stefan Berger <stefanb@linux.ibm.com>
->
-> Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
-> function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
-> call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
-> Now, simplify the getattr interface functions of filesystems where the flag
-> AT_GETATTR_NOSEC is checked.
->
-> There is only a single caller of inode_operations getattr function and it
-> is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
-> one from which the AT_GETATTR_NOSEC flag is passed from.
->
-> Two filesystems are checking this flag in .getattr and the flag is always
-> passed to them unconditionally from only vfs_getattr_nosec:
->
-> - ecryptfs:  Simplify by always calling vfs_getattr_nosec in
->              ecryptfs_getattr. From there the flag is passed to no other
->              function and this function is not called otherwise.
->
-> - overlayfs: Simplify by always calling vfs_getattr_nosec in
->              ovl_getattr. From there the flag is passed to no other
->              function and this function is not called otherwise.
->
-> The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
-> any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
-> important inside this function. Also, since no filesystem is checking the
-> flag anymore, remove the flag entirely now, including the BUG_ON check that
-> never triggered.
->
-> The net change of the changes here combined with the originan commit is
-> that ecryptfs and overlayfs do not call vfs_getattr but only
-> vfs_getattr_nosec.
+Hello,
 
-[Adding LSM list.]
+syzbot found the following issue on:
 
-The original intention was I think that security_inode_getattr()
-should be called on the backing inode IFF it was called on the backed
-(overlay/ecryptfs) inode.
+HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17911630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3ebcda5c61915e91
+dashboard link: https://syzkaller.appspot.com/bug?extid=03e1af5c332f7e0eb84b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1626d340580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10156187980000
 
-The implementation was broken, but the question remains whether this
-is needed or not.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/02f4cb9cc7aa/disk-c88416ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/253f54d7165b/vmlinux-c88416ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9f9612540588/bzImage-c88416ba.xz
 
-Thanks,
-Miklos
+The issue was bisected to:
+
+commit 7bdc6fc85c9a1008e00e624612f82932136d7545
+Author: Tycho Andersen <tandersen@netflix.com>
+Date:   Wed Oct 30 20:37:31 2024 +0000
+
+    exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f1aaa7980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1009aaa7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f1aaa7980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
+Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
+
+process 'syz-executor210' launched '/dev/fd/3' with NULL argv: empty string added
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:23!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5846 Comm: syz-executor210 Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__phys_addr+0x16a/0x170 arch/x86/mm/physaddr.c:23
+Code: 40 a8 7a 8e 4c 89 f6 4c 89 fa e8 b1 4d aa 03 e9 45 ff ff ff e8 a7 1a 52 00 90 0f 0b e8 9f 1a 52 00 90 0f 0b e8 97 1a 52 00 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003dd7da0 EFLAGS: 00010293
+RAX: ffffffff8143a369 RBX: 000000007ffffff2 RCX: ffff88807bf53c00
+RDX: 0000000000000000 RSI: 000000007ffffff2 RDI: 000000001fffffff
+RBP: 1ffff1100546a409 R08: ffffffff8143a305 R09: 1ffffffff203a1f6
+R10: dffffc0000000000 R11: fffffbfff203a1f7 R12: dffffc0000000000
+R13: fffffffffffffff2 R14: 000000007ffffff2 R15: ffff8880760fc158
+FS:  000055557e80e380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f81836d5440 CR3: 000000002f60c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ virt_to_folio include/linux/mm.h:1294 [inline]
+ kfree+0x71/0x420 mm/slub.c:4738
+ free_bprm+0x2b5/0x300 fs/exec.c:1499
+ do_execveat_common+0x3ae/0x750 fs/exec.c:1978
+ do_execveat fs/exec.c:2061 [inline]
+ __do_sys_execveat fs/exec.c:2135 [inline]
+ __se_sys_execveat fs/exec.c:2129 [inline]
+ __x64_sys_execveat+0xc4/0xe0 fs/exec.c:2129
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f432f022329
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd7487b7e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 00007ffd7487b9b8 RCX: 00007f432f022329
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007f432f095610 R08: 0000000000001000 R09: 00007ffd7487b9b8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffd7487b9a8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0x16a/0x170 arch/x86/mm/physaddr.c:23
+Code: 40 a8 7a 8e 4c 89 f6 4c 89 fa e8 b1 4d aa 03 e9 45 ff ff ff e8 a7 1a 52 00 90 0f 0b e8 9f 1a 52 00 90 0f 0b e8 97 1a 52 00 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003dd7da0 EFLAGS: 00010293
+RAX: ffffffff8143a369 RBX: 000000007ffffff2 RCX: ffff88807bf53c00
+RDX: 0000000000000000 RSI: 000000007ffffff2 RDI: 000000001fffffff
+RBP: 1ffff1100546a409 R08: ffffffff8143a305 R09: 1ffffffff203a1f6
+R10: dffffc0000000000 R11: fffffbfff203a1f7 R12: dffffc0000000000
+R13: fffffffffffffff2 R14: 000000007ffffff2 R15: ffff8880760fc158
+FS:  000055557e80e380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f81836d5440 CR3: 000000002f60c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
->
-> Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
-> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-> Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
-> Cc: Tyler Hicks <code@tyhicks.com>
-> Cc: ecryptfs@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  fs/ecryptfs/inode.c        | 12 ++----------
->  fs/overlayfs/inode.c       | 10 +++++-----
->  fs/overlayfs/overlayfs.h   |  8 --------
->  fs/stat.c                  |  5 +----
->  include/uapi/linux/fcntl.h |  4 ----
->  5 files changed, 8 insertions(+), 31 deletions(-)
->
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index cbdf82f0183f..a9819ddb1ab8 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
->         return rc;
->  }
->
-> -static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
-> -                              u32 request_mask, unsigned int flags)
-> -{
-> -       if (flags & AT_GETATTR_NOSEC)
-> -               return vfs_getattr_nosec(path, stat, request_mask, flags);
-> -       return vfs_getattr(path, stat, request_mask, flags);
-> -}
-> -
->  static int ecryptfs_getattr(struct mnt_idmap *idmap,
->                             const struct path *path, struct kstat *stat,
->                             u32 request_mask, unsigned int flags)
-> @@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
->         struct kstat lower_stat;
->         int rc;
->
-> -       rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
-> -                                &lower_stat, request_mask, flags);
-> +       rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
-> +                              &lower_stat, request_mask, flags);
->         if (!rc) {
->                 fsstack_copy_attr_all(d_inode(dentry),
->                                       ecryptfs_inode_to_lower(d_inode(dentry)));
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index 35fd3e3e1778..8b31f44c12cd 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
->
->         type = ovl_path_real(dentry, &realpath);
->         old_cred = ovl_override_creds(dentry->d_sb);
-> -       err = ovl_do_getattr(&realpath, stat, request_mask, flags);
-> +       err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
->         if (err)
->                 goto out;
->
-> @@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
->                                         (!is_dir ? STATX_NLINK : 0);
->
->                         ovl_path_lower(dentry, &realpath);
-> -                       err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
-> -                                            flags);
-> +                       err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
-> +                                               flags);
->                         if (err)
->                                 goto out;
->
-> @@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
->
->                         ovl_path_lowerdata(dentry, &realpath);
->                         if (realpath.dentry) {
-> -                               err = ovl_do_getattr(&realpath, &lowerdatastat,
-> -                                                    lowermask, flags);
-> +                               err = vfs_getattr_nosec(&realpath, &lowerdatastat,
-> +                                                       lowermask, flags);
->                                 if (err)
->                                         goto out;
->                         } else {
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 0bfe35da4b7b..910dbbb2bb7b 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
->         return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
->  }
->
-> -static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
-> -                                u32 request_mask, unsigned int flags)
-> -{
-> -       if (flags & AT_GETATTR_NOSEC)
-> -               return vfs_getattr_nosec(path, stat, request_mask, flags);
-> -       return vfs_getattr(path, stat, request_mask, flags);
-> -}
-> -
->  /* util.c */
->  int ovl_get_write_access(struct dentry *dentry);
->  void ovl_put_write_access(struct dentry *dentry);
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 41e598376d7e..cbc0fcd4fba3 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
->         if (inode->i_op->getattr)
->                 return inode->i_op->getattr(idmap, path, stat,
->                                             request_mask,
-> -                                           query_flags | AT_GETATTR_NOSEC);
-> +                                           query_flags);
->
->         generic_fillattr(idmap, request_mask, inode, stat);
->         return 0;
-> @@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
->  {
->         int retval;
->
-> -       if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
-> -               return -EPERM;
-> -
->         retval = security_inode_getattr(path);
->         if (retval)
->                 return retval;
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 87e2dec79fea..a40833bf2855 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -154,8 +154,4 @@
->                                            usable with open_by_handle_at(2). */
->  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 unique mount ID. */
->
-> -#if defined(__KERNEL__)
-> -#define AT_GETATTR_NOSEC       0x80000000
-> -#endif
-> -
->  #endif /* _UAPI_LINUX_FCNTL_H */
-> --
-> 2.47.0
->
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
