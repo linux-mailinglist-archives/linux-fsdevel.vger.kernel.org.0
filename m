@@ -1,135 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-33702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401E19BD8B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:30:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D91C9BD8F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E502821BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 22:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F234B1F23B3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 22:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3966216456;
-	Tue,  5 Nov 2024 22:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E82216429;
+	Tue,  5 Nov 2024 22:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8xMWFHi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5VXEGAD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0599621643F;
-	Tue,  5 Nov 2024 22:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE601CCB2D;
+	Tue,  5 Nov 2024 22:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730845795; cv=none; b=rrrDp1jiAIIWjvLvprbpCysUnb262auKWTbdROpf5wR5yhGpL/XM8miCuHvPrNuFeqLQGZ39VOSBa58A16jCfR9U9AprSXrKvVuVdpRHwNlWZfarZXKR4JfEAFur8o6KtH2HIoUBluijnpfG0xbwssgtqeCOfzCM9lggrzN/9B4=
+	t=1730846608; cv=none; b=j1GKo8ypTAmSiOBg3G+awKu6B4WqQj6HFh6auevvzSl4BlZOjyzqKuNd/Jglhkce/tmz+gfuV8nSRH2QtkyxQ2nXzGcInHYSFaCkxKVVEkCGjzf0CM9rb4iVbFyUct6jZIpnU/Yw24wAWl+RsWCytMs4w59ce5jmjHQn/2j6Qp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730845795; c=relaxed/simple;
-	bh=htBv5vhtj1g1tXjsFjudpAnH24M0BwR4i74PtkzRQnU=;
-	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t5J1Chmr1tsVuUb1npaxzU3qsg89GDr4Mt/rMbFsV1Nz3lpH84an0bxk1wSBLBVJbWqhn60B4+uzU7b4YpUXdYWechdqgaFeFr5vpszB/kofU+BPpg0Zq5KJarlcjjV/AungA9FHdBE2jKvNTIg/uphumTd9oZTR7UBBAW3hPDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8xMWFHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F5FC4CECF;
-	Tue,  5 Nov 2024 22:29:54 +0000 (UTC)
+	s=arc-20240116; t=1730846608; c=relaxed/simple;
+	bh=29VB2TXgezrGxJiDRLSawh3OzeWo4mP3g/A1sgE/KEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEVuVwn0glMADJ1FtDwi47OLgYyQ4k74q/NsjMTJ9IosCKLUR1tiurQDCz+ixpobJ96b02fm/qqpAA2uzSaT8PFntNmuZQF1dErH2BWdYF2w4hqw2zB/0ZX6d0EViBiZMUwMVhWfL1TS39B58ozYOXiCK7SQr2p84Q5Jl8kb/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5VXEGAD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B834AC4CECF;
+	Tue,  5 Nov 2024 22:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730845794;
-	bh=htBv5vhtj1g1tXjsFjudpAnH24M0BwR4i74PtkzRQnU=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=J8xMWFHirGWWWmnVJfALe80h79JLE+UEYy/GpcVw8kH2KXlN3BFtCgIIFbvWv1hmH
-	 bpCEs+w9qa7qjvnVEfXk6b+Ra6VOWqRt1xdhhYfPfp1PEreE1iu87LAzQ74XA14Wd/
-	 6r4YGwQUB3psqqluqZ1ndv4zWUsygwQkmhIN5JalvJ5oGPXf9dL6W9j/rHJJqTflsD
-	 Q3S+JWZgYOeIo0+/nxQF+iXHN+on8OeqaQd7MHSrs9K2u2F2j9M9OLlAQZSS+h7fQw
-	 OcekuFs+VOpMZKHKA89TB9jEXOlbEGvQlq39pLK6lv/rHx7Io0ZW8i4fsieNA4mqF7
-	 nK+O6jBL3YEAQ==
-Date: Tue, 05 Nov 2024 14:29:54 -0800
-Subject: [PATCH 2/2] iomap: add a merge boundary flag
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: cem@kernel.org, djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <173084397681.1871760.17873379498000050956.stgit@frogsfrogsfrogs>
-In-Reply-To: <173084397642.1871760.15713612607469138511.stgit@frogsfrogsfrogs>
-References: <173084397642.1871760.15713612607469138511.stgit@frogsfrogsfrogs>
+	s=k20201202; t=1730846607;
+	bh=29VB2TXgezrGxJiDRLSawh3OzeWo4mP3g/A1sgE/KEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j5VXEGADucAFWOV/mozkObc6ls8gN8ONauf78U5mrAmyQGc5n9H/3R06b5KaUmemZ
+	 CtR9i9BmwyzxqypoMGjxlKSWysalCt05IbvL+m7wLQevz4+ugy40wV+xJ/FF+6zWPG
+	 iSTquanDYGKSBeEFWOdXLn49L7skemcJksUQeTrV3PuD5bP6lPhJX7dqvyx3F2RQbq
+	 wH5K+ASAtwWFB7TcORUYpUzkL8B72lThzG1S816m2+MAjaSKo5fSdYu6i1Gj/h00PP
+	 eSuOOAmit3e2/Fb0lePKcFlfC+MLQg0Vn8xQZA/353JwQNzBzTUIs2UGG6ySVeEKsT
+	 USn/iRIaIihtg==
+Date: Tue, 5 Nov 2024 23:43:24 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fanotify.7,fanotify_mark.2: update documentation of
+ fanotify w.r.t fsid
+Message-ID: <6zhqson7n7774gol46cmpcgbgyhsly3ehnpyzl5u54dudd7syl@vosk5uoaifqg>
+References: <20241105144939.181820-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-
-From: Christoph Hellwig <hch@lst.de>
-
-File systems might have boundaries over which merges aren't possible.
-In fact these are very common, although most of the time some kind of
-header at the beginning of this region (e.g. XFS alloation groups, ext4
-block groups) automatically create a merge barrier.  But if that is
-not present, say for a device purely used for data we need to manually
-communicate that to iomap.
-
-Add a IOMAP_F_BOUNDARY flag to never merge I/O into a previous mapping.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/iomap/buffered-io.c |    6 ++++++
- include/linux/iomap.h  |    4 ++++
- 2 files changed, 10 insertions(+)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kthqnoivccu52h6w"
+Content-Disposition: inline
+In-Reply-To: <20241105144939.181820-1-amir73il@gmail.com>
 
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ef0b68bccbb612..fcadd31017d138 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1601,6 +1601,8 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
- {
- 	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
- 		return false;
-+	if (next->io_flags & IOMAP_F_BOUNDARY)
-+		return false;
- 	if ((ioend->io_flags & IOMAP_F_SHARED) ^
- 	    (next->io_flags & IOMAP_F_SHARED))
- 		return false;
-@@ -1720,6 +1722,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 	INIT_LIST_HEAD(&ioend->io_list);
- 	ioend->io_type = wpc->iomap.type;
- 	ioend->io_flags = wpc->iomap.flags;
-+	if (pos > wpc->iomap.offset)
-+		wpc->iomap.flags &= ~IOMAP_F_BOUNDARY;
- 	ioend->io_inode = inode;
- 	ioend->io_size = 0;
- 	ioend->io_offset = pos;
-@@ -1731,6 +1735,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 
- static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
- {
-+	if (wpc->iomap.offset == pos && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-+		return false;
- 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
- 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
- 		return false;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index f61407e3b12192..9ecb8ea7714cf9 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -53,6 +53,9 @@ struct vm_fault;
-  *
-  * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
-  * rather than a file data extent.
-+ *
-+ * IOMAP_F_BOUNDARY indicates that I/O and I/O completions for this iomap must
-+ * never be merged with the mapping before it.
-  */
- #define IOMAP_F_NEW		(1U << 0)
- #define IOMAP_F_DIRTY		(1U << 1)
-@@ -64,6 +67,7 @@ struct vm_fault;
- #define IOMAP_F_BUFFER_HEAD	0
- #endif /* CONFIG_BUFFER_HEAD */
- #define IOMAP_F_XATTR		(1U << 5)
-+#define IOMAP_F_BOUNDARY	(1U << 6)
- 
- /*
-  * Flags set by the core iomap code during operations:
+--kthqnoivccu52h6w
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fanotify.7,fanotify_mark.2: update documentation of
+ fanotify w.r.t fsid
+References: <20241105144939.181820-1-amir73il@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20241105144939.181820-1-amir73il@gmail.com>
 
+Hi Amir,
+
+On Tue, Nov 05, 2024 at 03:49:39PM GMT, Amir Goldstein wrote:
+> Clarify the conditions for getting the -EXDEV and -ENODEV errors.
+>=20
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+Patch applied.  Thanks!
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3Df6ebb46dfba40902656321f16bfb38daf4d99377>
+
+I've also applied Jan's Review tag, since the changes are minimal.
+BTW, I would appreciate range-diffs, as recommended in
+<./CONTRIBUTING.d/patches>.
+
+Please have a look at these:
+<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUT=
+ING.d/patches>
+<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUT=
+ING.d/git>
+
+Have a lovely night!
+Alex
+
+> ---
+>=20
+> Changes since v1:
+> - Fix review comments [1]
+>=20
+> [1] https://lore.kernel.org/linux-fsdevel/20241101130732.xzpottv5ru63w4wd=
+@devuan/
+>=20
+>  man/man2/fanotify_mark.2 | 27 +++++++++++++++++++++------
+>  man/man7/fanotify.7      | 11 +++++++++++
+>  2 files changed, 32 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+> index fc9b83459..47cafb21c 100644
+> --- a/man/man2/fanotify_mark.2
+> +++ b/man/man2/fanotify_mark.2
+> @@ -659,17 +659,16 @@ The filesystem object indicated by
+>  .I dirfd
+>  and
+>  .I pathname
+> -is not associated with a filesystem that supports
+> +is associated with a filesystem that reports zero
+>  .I fsid
+>  (e.g.,
+>  .BR fuse (4)).
+> -.BR tmpfs (5)
+> -did not support
+> -.I fsid
+> -prior to Linux 5.13.
+> -.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
+>  This error can be returned only with an fanotify group that identifies
+>  filesystem objects by file handles.
+> +Since Linux 6.8,
+> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> +this error can be returned
+> +when trying to add a mount or filesystem mark.
+>  .TP
+>  .B ENOENT
+>  The filesystem object indicated by
+> @@ -768,6 +767,22 @@ which uses a different
+>  than its root superblock.
+>  This error can be returned only with an fanotify group that identifies
+>  filesystem objects by file handles.
+> +Since Linux 6.8,
+> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> +this error will be returned
+> +when trying to add a mount or filesystem mark on a subvolume,
+> +when trying to add inode marks in different subvolumes,
+> +or when trying to add inode marks in a
+> +.BR btrfs (5)
+> +subvolume and in another filesystem.
+> +Since Linux 6.8,
+> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
+> +this error will also be returned
+> +when trying to add marks in different filesystems,
+> +where one of the filesystems reports zero
+> +.I fsid
+> +(e.g.,
+> +.BR fuse (4)).
+>  .SH STANDARDS
+>  Linux.
+>  .SH HISTORY
+> diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> index 449af949c..b270f3c99 100644
+> --- a/man/man7/fanotify.7
+> +++ b/man/man7/fanotify.7
+> @@ -575,6 +575,17 @@ and contains the same value as
+>  .I f_fsid
+>  when calling
+>  .BR statfs (2).
+> +Note that some filesystems (e.g.,
+> +.BR fuse (4))
+> +report zero
+> +.IR fsid .
+> +In these cases,
+> +it is not possible to use
+> +.I fsid
+> +to associate the event with a specific filesystem instance,
+> +so monitoring different filesystem instances that report zero
+> +.I fsid
+> +with the same fanotify group is not supported.
+>  .TP
+>  .I handle
+>  This field contains a variable-length structure of type
+> --=20
+> 2.34.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--kthqnoivccu52h6w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmcqn4wACgkQnowa+77/
+2zLh8w/9GV+eQy78V1nxTuJjyjrH38fT3VuJHng96dvWAKv8PWQFoF9b8++4svPO
+EbMjtisYuilAOXTCYV9Aa7KcAtcnWphX+lTmN0/KqIVzntui2WEDE/YUo1tRTlJy
+LD+haPUoMR8cwx5M56UHVJ5gSDaHl1V2Ef2L8mkXz4rhI7+Ca/75v+eZpusyhcu5
+7kC3nnHS5PJPsyNwRpHH/5I+4vKtUUGd6UMJkVE+Ux8fh8D5ibfkeTifvn7Vn4Or
+8tFpz/XzN0ibYtU6Pr+ypXmPQvvkJ7Zgvw1puN6WX5RhAM1Cbp5ib3olb48fbe1R
+z4tPbn+1VeIFHSqPo0m3zNo3PC9TQLLDr5nx/6LAE0U26tdZCWYF+v0l0nsyfsX8
+t+bRXsLqYfkFnSWuQBvnmswbTFOAnA9iKBvROPgBl5Fv9JNN7XD2Kei0RvaLJYKJ
+GY+fKg8lZUCxLBxFsNoKRsjM6QhjUe1AJYET8t3j1thIpmmVm1SNwY0emiH78+hB
+EydUwh3TQzRHOtlJJtdrbKcNn9UHIVo5037x5WaIvX6ncItdkaRq6we/t7PovUM8
+oY843zCldeToMsGC2iVnSKFlqyWmtfZwN/ivUTFdQdpUf1r14baxz16GYOZ02fOb
+e6qEHU3kQ4yadSxwxH+HfR2uDjK+pxBxH6Xvx7CD6XQKTXn8c+Y=
+=gJJa
+-----END PGP SIGNATURE-----
+
+--kthqnoivccu52h6w--
 
