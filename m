@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-33648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEFA9BC39D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 04:09:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A449BC3AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 04:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F3C7B22107
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 03:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5004A1F22DC3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 03:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2294E14D280;
-	Tue,  5 Nov 2024 03:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A2B1607A4;
+	Tue,  5 Nov 2024 03:10:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08A313FD72;
-	Tue,  5 Nov 2024 03:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBA76A33B;
+	Tue,  5 Nov 2024 03:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776110; cv=none; b=LTZIrtqFJ5b5vmIXcLTEWox3p1CUwx8BimzfWTIRwsqnmFqVBSJH4y8Fp0mGW9B1iJRw+dB4Jwhhx/+tzW6JJELc/b0Cgg5q5MuAFBwWHaDjOY7dm1IK4inrVSuMMhUvGm2b/vM4jbiAWvUfVaMTaKFw9/38cQbTjD+9gIOxkDs=
+	t=1730776236; cv=none; b=FTkHijGbVn2BZj3p8x6Kqxqt/cW0a8TAmu9/LxdwqpO/mMSoRCbMvQr/loJdHrP4qfu8DrZrK21tcJGWqCwlKyQpsGq9M0OccsZVv5odliiyhVE8L4na8oD2eaR4CJYwDKZE7spHkcCM19YEt2jILVqmF8xihc3pni7qtJW4g6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776110; c=relaxed/simple;
-	bh=QK9o6vf/BfAp69JdlPPRihF0OHVGvfwR7zN9xbSREro=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fMkwY3rXxjKmuZ4B4vUo//PjfWbhSWEbwyUQdfRWiHKmKM3wmL44hKcEjv8TflI90q0YnSIdym2nZgrEM+A1/69Hn5QcqCiNp7WlIf2ET+Koe9lNMWh9ea6v7n+6PHnTygwm7Jfy8bJteDMFrj/mF33b3r5vJ6o3ahxB8qjgVTg=
+	s=arc-20240116; t=1730776236; c=relaxed/simple;
+	bh=25oeWFuoIWocaEkkD3V0Ha8+s29QJfJBFCSghi/3QTc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UlKVhYQpxG33cFix4sSH9oLDvRAWVylx/hXpuFwXWDwolbYebICrgYJstq9dzCBK2CBWOp+SH33mGWQPpqVkNLMDMCBwGi8SIE5qA61wlI3nJkMcifM70nn00nz4o32lS7hLuc+45v7qAKrBtQBVwIru3rI1LpWtV9clNOFix7o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A51gvXJ024682;
-	Tue, 5 Nov 2024 03:08:08 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42n9a0jjc4-1
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A52WpUm029056;
+	Tue, 5 Nov 2024 03:10:29 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42nb28afnk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 05 Nov 2024 03:08:08 +0000 (GMT)
+	Tue, 05 Nov 2024 03:10:28 +0000 (GMT)
 Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 4 Nov 2024 19:08:06 -0800
+ 15.1.2507.39; Mon, 4 Nov 2024 19:10:27 -0800
 Received: from pek-lpd-ccm5.wrs.com (147.11.136.210) by
  ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 19:08:04 -0800
+ 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 19:10:25 -0800
 From: Yun Zhou <yun.zhou@windriver.com>
 To: <mcgrof@kernel.org>, <kees@kernel.org>, <joel.granados@kernel.org>,
         <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
         <yun.zhou@windriver.com>
 CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-trace-kernel@vger.kernel.org>
-Subject: [PATCH] kernel: add pid_max to pid_namespace
-Date: Tue, 5 Nov 2024 11:08:03 +0800
-Message-ID: <20241105030803.3854246-1-yun.zhou@windriver.com>
+Subject: [PATCH v2] kernel: add pid_max to pid_namespace
+Date: Tue, 5 Nov 2024 11:10:24 +0800
+Message-ID: <20241105031024.3866383-1-yun.zhou@windriver.com>
 X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -60,15 +60,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=H7mJwPYi c=1 sm=1 tr=0 ts=67298c18 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=VlfZXiiP6vEA:10 a=t7CeM3EgAAAA:8 a=Xi3v-mgWfji5ICalIy4A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: brxOuDuPkaSYhmxppXoEWrYa_S_FmqxS
-X-Proofpoint-GUID: brxOuDuPkaSYhmxppXoEWrYa_S_FmqxS
+X-Authority-Analysis: v=2.4 cv=CfNa56rl c=1 sm=1 tr=0 ts=67298ca4 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=t7CeM3EgAAAA:8 a=VwQbUJbxAAAA:8 a=Q_y-cLcJQs12tt3JvBMA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: uI7GLaIKgy391YtmvlckW-ZROhEnIAaK
+X-Proofpoint-GUID: uI7GLaIKgy391YtmvlckW-ZROhEnIAaK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-11-04_22,2024-11-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 suspectscore=0 clxscore=1015 impostorscore=0
  phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
  engine=8.21.0-2409260000 definitions=main-2411050023
 
@@ -80,6 +80,9 @@ conflicts with other containers and also limit the maximum number of
 tasks for the entire system.
 
 Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ - Remove sentinels from ctl_table arrays.
+v1 - https://lore.kernel.org/all/20241030052933.1041408-1-yun.zhou@windriver.com/
 ---
  include/linux/pid_namespace.h     |  1 +
  kernel/pid.c                      | 12 +++++------
