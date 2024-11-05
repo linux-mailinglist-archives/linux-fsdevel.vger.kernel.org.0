@@ -1,148 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-33662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD76A9BCD17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 13:53:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2F69BCD50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 14:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4891F21E0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 12:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304D92831DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 13:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4271D8A1D;
-	Tue,  5 Nov 2024 12:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E2D1D61AF;
+	Tue,  5 Nov 2024 13:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="i/3V9+s3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBI0PQEz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B961D61B7
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 12:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64231AA785;
+	Tue,  5 Nov 2024 13:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730811132; cv=none; b=naD3hqDKJ/s/jqxYzAE7Ftc5iFfORoiOUG7KzxfMstxyeFFuv/0B16tyoYdKbzO5+MiZEBYIxO0HkJRQ5H4hDlUvSf8vYKnm20xt6uuIDC3VT7GILnjI+T4j01/7JauQFrTZcgIags607Rh5dcXfAg+5bqMlrfvSLp5YjZBnQI0=
+	t=1730811911; cv=none; b=mr8+PmXHw797/24K7nC98sva2a0Q9UOzZ0NZnBKyynXFYu/O3mCRXlz2F7l2eBuQcH4uLRI4zJ6VAT+QqhJipeYoFZixbXw0cWG3ZmX+TP0vOVl3y61kt9c0etPfQgSkxypOCtl/NgSWRV1s1zo218fOtwKTKySCBBsfc7Zo26Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730811132; c=relaxed/simple;
-	bh=5AavB2k8eTzT+b9vnQylCFfBcymntVGRSHXHCEWFvuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mtxU2agrZ/DijUKERNYdcZG09zI6XHvg2kI8NT4bwgjKqNNaNEia+/wWr4uklx5oZlYytF10SpNwh/CWfg7C6OK/rWgUXT1ctajpiDbxEmrYHo8QmI87Z3nD52PYV/uDBOvWZ1g7tBxX/6qmgDuG2j6lHPTTEKQe28ZLGn8uiiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=i/3V9+s3; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2bb1efe78so3837153a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 04:52:09 -0800 (PST)
+	s=arc-20240116; t=1730811911; c=relaxed/simple;
+	bh=fTH4WFQl44MZo2K8HCqfF+HKDqxdQyvMXtNA1sRPJUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m1I+ZpcShlZIgeX2Z0GFoJwn+8vTMjalxLKrY9+v/ah2iX1jBd+5TtAaL9GuqU3x/ob5nnYFp7ig7dWC9FgHEyj1T/2tYyF2BKf7JoM9xxIuxWjt/d8GDPr23IsajkzPQxeQ0LemE7DiX0Gk/WV4myusQuphS5C5KShliuwRBP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBI0PQEz; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5ceb75f9631so5568447a12.0;
+        Tue, 05 Nov 2024 05:05:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730811128; x=1731415928; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=At2805czTihicDRdY+YJdDpwWq0X5S/HDbS43yOjnkM=;
-        b=i/3V9+s3/JNEFfHOcuRpBzd5G7491DomHO3MF90MHZr8nK8fiYJ+KudnQUZquDj8b6
-         q45RrF536g5AH9//3l+BOQjbAHt58ppvReuxu5e3yaqb7r9oEZMX3lmp+3tcyFHTSHzy
-         8GCycCWQlYOpKejYxa4qUFhVBlgQaIKYyPHncdAnpi31kmHc72bcE3+saecPfyG7O4A5
-         7auenblDUBKF4Yjpe5RZ3yGBgcHjIq/ZD79uzbAtuiUNbCQC9JvGE57DFYLpep7tdnmi
-         r1ogtFk78mBsXAhjUM1xCDvzqm80jvNF1b3OFJ/g2YRpTzrwawYA4S2HFhXrIIrJrK6s
-         kh/w==
+        d=gmail.com; s=20230601; t=1730811908; x=1731416708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fTH4WFQl44MZo2K8HCqfF+HKDqxdQyvMXtNA1sRPJUQ=;
+        b=TBI0PQEzd2eycVToUg8AJOCKJwwonqX6Mx/T8l38ix8RuzfDXYenK38PRuEDqPcIiB
+         ilsJsGJ/0u6/3nfCT/jqXM5QftyeOqPC6pX2b1RHJE7gj1y/AeGRbBzeaCteCylD3HTq
+         v/f5NoirUrIdjkCHtTRNHqUZ7i9PIxgFMJ5DNPWBBSnDONdyguHweegB2e1N3jgWDhs1
+         dU+rSGtZisT4mah8JT1GUTJk7CIsZoF6ghuMpO35l0mlgoxYSY/+lCluHMzNskp4JvhU
+         Pmy09pzh0nZDZk9Ek59WGP5auNZLuHCg0OvJxgVpS24cbW3ODfz2gYZ21IVjuOjg6ifc
+         o/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730811128; x=1731415928;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=At2805czTihicDRdY+YJdDpwWq0X5S/HDbS43yOjnkM=;
-        b=whGCszqPdxaNv/Z65xhfzLeyBbRhc2mvn6rl4IU/7FD1sJSzlRgtkN3mNL8XzsgYf2
-         yLfWpz96yQl9Ipyi/3YKzvu8Q+tAAxT0/lXjfKiI5NDJIojxDil34aM+IEibS6W45pVR
-         P5zJ3ip7DbIsR2QDjNjVu3aGt3KRz2nU7TUrFr0nKqYUKvYI4SKoubiqi53i6cz0ri/i
-         TRLBTKDDBUbTy88n3Ofrq9mhvDFboDZanv1jc8ugFbfVALyNbhRFjvKJ0z5uuGmE5ION
-         Dxp1nxWEpo/b38Lp5TgaMzntJ0vdN/8eA+xqqKb5j7Q8rJqG5dpwp96hEitPNod/kjnA
-         lSzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEsrWGyh1cIGM0N6zHcrDsLERaylhIq+7LN6SC6IcHWu2AkXdR6oxF0jqjnzCe0g12uZ8ImLdo7OsYfwj+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr0+pRaPLWFzUAyTNT5nBwIPJgrYDidgdf7l53wx3NDQh1g8KL
-	BuvnDmuHkDGxmVPoQVpHwMBF1AIPxkJyhF+QSe1w4NgCc1iEWZjcIUfWDn28qeI=
-X-Google-Smtp-Source: AGHT+IFZ2rqlU9xmlbidWBPBOCsO4c5ZoLFE3W7KH4q7MLqnYLyStlgN4LLR9uK8B2J9oi1JSXBZXQ==
-X-Received: by 2002:a17:90b:540c:b0:2e2:b94c:d6a2 with SMTP id 98e67ed59e1d1-2e93ddf4d4fmr29684686a91.0.1730811128404;
-        Tue, 05 Nov 2024 04:52:08 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe0252sm11939317a91.45.2024.11.05.04.52.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 04:52:07 -0800 (PST)
-Message-ID: <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
-Date: Tue, 5 Nov 2024 05:52:05 -0700
+        d=1e100.net; s=20230601; t=1730811908; x=1731416708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fTH4WFQl44MZo2K8HCqfF+HKDqxdQyvMXtNA1sRPJUQ=;
+        b=wiFWiQA436lWIgFXNQOeR9ZGI9rIlpGuVNc+X1oldRIhjY5iK8MwiDTF4KJuHOXIbi
+         9LyQEIQ6wiSFlN43jZlVzD+WR8Usx6/jfob/NTGHT/7wlKVFMA/+pU9OL2VLlcQkbsZh
+         TCPS2+TDO03otWU88vW43p9uBEB/8q3whsgRVT54zWP2S60LGa4uRTMahVOe31QMA4eX
+         LzVFaK86KVCTPp7aaofo3e/PTNNuoJiZr/exZOyfZij2mrWIrzNmurqYqxJ0Zt0XZVwP
+         f7Ehxth0gERvUQK2Kb/YjfxHBQuECpM52eHn9xRyhgu8OGzW7wTRXzQNLev9LLRQH5kH
+         83ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5dUxnHba+/zpzk2LZanKW2NxDE9K/Hqxfz+ag2mHDOOW/zm0JJa2GTnb/uF5uv3Ye/y6TzIWe+uYfQ==@vger.kernel.org, AJvYcCUq/b+IN5LY3yUYXPsingvcRNc8rD/LgNacf5YgmhE4ORTwAaj6jB8NyyA6Qtlj1+/8XwrhNe+P63Try1PpSg==@vger.kernel.org, AJvYcCUynic38+62aZqFlBn9u6cKu/azZzhixeKL2Xa54QyiMpcWBIy2tLxz6asYGs6RyuEUesocIP0eW2HR+5Q=@vger.kernel.org, AJvYcCVEqTvXX7PyfzmI3RJpUh83jZLr4ijSk/KQvNZz6w6+tYzCCgbFa66PPgU/r2ttAbHEk4wcU0Hv6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKqWw4E5nrRsa8WuWMtywc0LAW5rdQsnQfPcKveckSFosFC4Zf
+	G1wjswpVN8UrG7LtByxEUpJgcvxiXqQ3VUNCKFCX3Qhui4InWNmZU77Olu+6Ki5v2rgKNchw1J0
+	rjGHpQlI5C4nAfZRL5ypgzM3RYg==
+X-Google-Smtp-Source: AGHT+IF01wR05OjwQeh992AAL/y5UPKmRBQ8OJmD/daNR7F3czK12/2t8R6t75acTlCyTboaI0WJ85eVBHqdyctE/Ic=
+X-Received: by 2002:a05:6402:1e8c:b0:5ce:c8d4:c6e5 with SMTP id
+ 4fb4d7f45d1cf-5cec8d4ca1emr8823138a12.22.1730811907858; Tue, 05 Nov 2024
+ 05:05:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
-To: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
- Catherine Hoang <catherine.hoang@oracle.com>, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo
- <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20241105004341.GO21836@frogsfrogsfrogs>
- <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241104140601.12239-1-anuj20.g@samsung.com> <CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com>
+ <20241104140601.12239-7-anuj20.g@samsung.com> <20241105095621.GB597@lst.de>
+In-Reply-To: <20241105095621.GB597@lst.de>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Tue, 5 Nov 2024 18:34:29 +0530
+Message-ID: <CACzX3AuNFoE-EC_xpDPZkoiUk1uc0LXMNw-mLnhrKAG4dnJzQw@mail.gmail.com>
+Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata along
+ with read/write
+To: Christoph Hellwig <hch@lst.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org, 
+	martin.petersen@oracle.com, asml.silence@gmail.com, brauner@kernel.org, 
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, 
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com, 
+	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/5/24 4:19 AM, Carlos Maiolino wrote:
-> On Mon, Nov 04, 2024 at 04:43:41PM -0800, Darrick J. Wong wrote:
->> Hi everyone,
->>
->> Nobody else has stepped up to do this, so I've created a work branch for
->> the fs side of untorn writes:
->> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-04
->>
->> Can you all check this to make sure that I merged it correctly?  And
->> maybe go test this on your storage hardware? :)
->>
->> If all goes well then I think the next step is to ask brauner very
->> nicely if he'd consider adding this to the vfs trees for 6.13.  If not
->> then I guess we can submit it ourselves, though we probably ought to ask
->> rothwell to add the branch to for-next asap.
->>
->> PS: We're now past -rc6 so please reply quickly so that this doesn't
->> slip yet another cycle.
->>
->> Catherine: John's on vacation all week, could you please send me the
->> latest versions of the xfs_io pwrite-atomic patch and the fstest for it?
-> 
-> I am kind confused here now. IIRC Jens pulled the first three patches
-> from John's series into his tree, and John asked me to pull the other
-> ones. I'm much happier to see a single person pulling the whole series
-> instead of splitting it into different maintainers though.
-> 
-> Giving how spread the series is, I'd say going through vfs tree would
-> be the best place, but I'm not opposed to pull them myself.
+On Tue, Nov 5, 2024 at 3:26=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
+:
+>
+> On Mon, Nov 04, 2024 at 07:35:57PM +0530, Anuj Gupta wrote:
+> > read/write. A new meta_type field is introduced in SQE which indicates
+> > the type of metadata being passed.
+>
+> I still object to this completely pointless and ill-defined field.
 
-Guys, not sure why this is so difficult to grasp. I already pulled the
-initial bits weeks ago, into an immutable branch:
-
-https://git.kernel.dk/cgit/linux/log/?h=for-6.13/block-atomic
-
-which was subsequently also pulled into for-6.13/block. Whoever wants
-to stage the xfs bits must simply:
-
-1) Pull the above for-6.13/block-atomic branch
-2) Apply XFS bits on top
-
-Why is this so difficult to grasp? It's a pretty common method for cross
-subsystem work - it avoids introducing conflicts when later work goes
-into each subsystem, and freedom of either side to send a PR before the
-other.
-
-So please don't start committing the patches again, it'll just cause
-duplicate (and empty) commits in Linus's tree.
-
--- 
-Jens Axboe
+The field is used only at io_uring level, and it helps there in using the
+SQE space flexibly.
+Overall, while all other pieces are sorted, we are only missing the consens=
+us
+on io_uring bits. This is also an attempt to gain that. We will have to see
+in what form Jens/Pavel would like to see this part.
 
