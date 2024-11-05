@@ -1,167 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-33700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009C69BD89E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 246EF9BD8AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1ACF28464D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 22:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE641283BCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 22:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61354216A18;
-	Tue,  5 Nov 2024 22:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0019521643F;
+	Tue,  5 Nov 2024 22:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SLEQktjv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMHQZOTE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A281216A00;
-	Tue,  5 Nov 2024 22:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F63E433B5;
+	Tue,  5 Nov 2024 22:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730845636; cv=none; b=irkjCpdi3lrK34AyHmfEA8T29gcd53MutOtM8AxKK5ctQmvlvZUzwwMK6jyls+vpJug4w/4Q8cnfb+giJq/Kr/W5zymesMBIpS7sdey0Va3VLHXmg4tj4KQGeWd1bSGUtcGVH/pDT5B0FGHb+ZElovfmTclB3rnSvCnNzu04Y2A=
+	t=1730845779; cv=none; b=FkMXRHJKNjW1xznov+UuJhiXzXZLPhMiqeEJduCvWSD58GlWgQdWnqxT0HnbbNnkX6PbaYrPQnmeslojw2n96HNagB4qzSFCehpmZOGNKFEPn1cKo75Ug1mdTl4F9HC50QshI8DWTgHSOoLT8GPMWYVZjajY0YkimOvOG9BHbTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730845636; c=relaxed/simple;
-	bh=2T40XpaqtxgeuN0I8keNWpQc6lEEgaKrm7K/bebhG/w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ipgffls4O9W4hn8ZQ3kGGk6DNCwH6URFuplLfz10yDsAKU5M4wdYNi8TK/Fsx5eJdQJPlz1ebfTYHHhwx2g2eevNOjfyWtO8c2vyVKIWTydT301tbEwm7D2nYI1qPGWpGbqWJmaST32MViZ2ITY5FXEBOXWo8Bt3FHKjEayulHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SLEQktjv; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730845636; x=1762381636;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=2T40XpaqtxgeuN0I8keNWpQc6lEEgaKrm7K/bebhG/w=;
-  b=SLEQktjvVMKDIz04oZoqq7AxrsNCtX/0tO5T/3O8UmJ1iyrtXtjwqllC
-   eYlFOP2NwuNBwOwAUWxb3FxV73OWSlAQTZZwinMKxb9XUKdzYOtCSnN07
-   uALLd7mc+yKKd5TYclvVepHZgwOE2wXNMvgmatJIEagtRy+aAL6ByVGm0
-   TF5rgdpkTWwkr5D2i3jj82eVZNk23gdm78Seq61aRcvh/vQnnebxbqQhU
-   ro3jIJoJaOWREu2KonTpDNFoq5JNEEGyoeW23kR32b0cKsSlzieVVC3YU
-   4HPw5LrZIEa7+La4XisrRxlgv1gwHToIvKmhmvys+b/nAUP84XOXHxqnY
-   A==;
-X-CSE-ConnectionGUID: v1GjZUMeRPGfYAZgnqKz5A==
-X-CSE-MsgGUID: lsupN1ktReWnF8w6AKFA6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="56020738"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="56020738"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 14:27:15 -0800
-X-CSE-ConnectionGUID: HeOGFYR9SsKNOe0QbM4hHg==
-X-CSE-MsgGUID: 6iruFa55RAK6hE29LMIryA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="83730334"
-Received: from ehanks-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.238])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 14:27:14 -0800
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH overlayfs-next v3 0/4] overlayfs: Optimize
- override/revert creds
-In-Reply-To: <CAOQ4uxiaRE_cQ9m9LZMEiDCeSQKkZDfsJbpt85ds6hgvjnwHUQ@mail.gmail.com>
-References: <20241105193514.828616-1-vinicius.gomes@intel.com>
- <CAOQ4uxiaRE_cQ9m9LZMEiDCeSQKkZDfsJbpt85ds6hgvjnwHUQ@mail.gmail.com>
-Date: Tue, 05 Nov 2024 14:27:13 -0800
-Message-ID: <871pzpqptq.fsf@intel.com>
+	s=arc-20240116; t=1730845779; c=relaxed/simple;
+	bh=RTUzcOj1zOkR/wRkPpifiR9ZrN2kO5e4mfFr7auibZ8=;
+	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KE0ntknMDyZadp0wTGwXEV5W0Lmy5apD1dFcKPCIoSM58eWmQct5dYfqspZwZpFUTRNypMH/C74Z2gO19ERaHFoS84FcEoX7GuyaCwg1xnZHAF2Rc4gndE0fdBhsXRHBdx99Wi1m0yWFDD4/66imrmL43BWlU00x+drXzpgnhoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMHQZOTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EC2C4CECF;
+	Tue,  5 Nov 2024 22:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730845779;
+	bh=RTUzcOj1zOkR/wRkPpifiR9ZrN2kO5e4mfFr7auibZ8=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=XMHQZOTEBq11MeSTb/bv47sdBrSzR6RcmwYBNhfc2DhOwQQo19IO5HUdKRTjW/7R2
+	 Mr5PF+f74n7lY+wl7fO3FEvM2j7BQOAPGage2z+o40G3iIYe3ZQfDudyZ+aCLEAAIG
+	 1j7fHUSj5WWTZ5vC+EwCuU9DWvNiMCPBBb0kYIt6GinrarQdEZoHzdfI6fFqdF5O3v
+	 y5IAx9h5N0YmFLfY0IIozyFbNVGYRYbDW4H8BtxDBdqJdwULevjlVUzJi0JwlbFt50
+	 3zgE9aHjtHU+i5q145tdwzfKojyMziSE6XEvKEJsJlFWG3wjC2G199pSrjnR3x0V6i
+	 JChuxb9UKzv+Q==
+Date: Tue, 05 Nov 2024 14:29:38 -0800
+Subject: [PATCH 1/2] xfs: fix rt device offset calculations for FITRIM
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: cem@kernel.org, djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Message-ID: <173084397664.1871760.3393564037807268704.stgit@frogsfrogsfrogs>
+In-Reply-To: <173084397642.1871760.15713612607469138511.stgit@frogsfrogsfrogs>
+References: <173084397642.1871760.15713612607469138511.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+From: Darrick J. Wong <djwong@kernel.org>
 
-Amir Goldstein <amir73il@gmail.com> writes:
+FITRIM on xfs has this bizarro uapi where we flatten all the physically
+addressable storage across two block devices into a linear address
+space.  In this address space, the realtime device comes immediately
+after the data device.  Therefore, the xfs_trim_rtdev_extents has to
+convert its input parameters from the linear address space to actual
+rtdev block addresses on the realtime volume.
 
-> On Tue, Nov 5, 2024 at 8:35=E2=80=AFPM Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Hi,
->>
->> This series is rebased on top of Amir's overlayfs-next branch.
->>
->> Changes from v2:
->>  - Removed the "convert to guard()/scoped_guard()" patches (Miklos Szere=
-di);
->>  - In the overlayfs code, convert all users of override_creds()/revert_c=
-reds() to the _light() versions by:
->>       1. making ovl_override_creds() use override_creds_light();
->>       2. introduce ovl_revert_creds() which calls revert_creds_light();
->>       3. convert revert_creds() to ovl_revert_creds()
->>    (Amir Goldstein);
->>  - Fix an potential reference counting issue, as the lifetime
->>    expectations of the mounter credentials are different (Christian
->>    Brauner);
->>
->
-> Hi Vicius,
->
-> The end result looks good to me, but we still need to do the series a
-> bit differently.
->
->> The series is now much simpler:
->>
->> Patch 1: Introduce the _light() version of the override/revert cred oper=
-ations;
->> Patch 2: Convert backing-file.c to use those;
->> Patch 3: Do the conversion to use the _light() version internally;
->
-> This patch mixes a small logic change and a large mechanical change
-> that is not a good mix.
->
-> I took the liberty to split out the large mechanical change to
-> ovl: use wrapper ovl_revert_creds()
-> and pushed it to branch
-> https://github.com/amir73il/linux/commits/ovl_creds
->
-> I then rebased overlayfs-next over this commit and resolved the
-> conflicts with the pure mechanical change.
->
-> Now you can rebase your patches over ovl_creds and they should
-> not be conflicting with overlayfs-next changes.
->
-> The reason I wanted to do this is that Christian could take your changes
-> as well as my ovl_creds branch through the vfs tree if he chooses to do s=
-o.
->
+Right now the address space conversion is done in units of rtblocks.
+However, a future patchset will convert xfs_rtblock_t to be a segmented
+address space (group:blkno) like the data device.  Change the conversion
+code to be done in units of daddrs since those will never be segmented.
 
-Makes sense.
-
->> Patch 4: Fix a potential refcounting issue
->
-> This patch cannot be separated from patch #3 because it would introduce t=
-he
-> refcount leak mid series.
->
-> But after I took out all the mechanical changes out of patch #3,
-> there should be no problem for you to squash patches #3 and #4 together.
->
-
-Done.=20
-
-> One more nit: please use "ovl: ..." for commit titles instead of
-> "fs/overlayfs: ...".
->
-
-Also done. Will give the series a round of testing, just to be sure, and
-will send the next version tomorrow.
-
-> Thanks,
-> Amir.
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/xfs/xfs_discard.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
 
-Cheers,
---=20
-Vinicius
+diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
+index 4f3e4736f13ea6..42b8b5e0e931b7 100644
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -480,7 +480,7 @@ xfs_discard_rtdev_extents(
+ 		trace_xfs_discard_rtextent(mp, busyp->bno, busyp->length);
+ 
+ 		error = __blkdev_issue_discard(bdev,
+-				XFS_FSB_TO_BB(mp, busyp->bno),
++				xfs_rtb_to_daddr(mp, busyp->bno),
+ 				XFS_FSB_TO_BB(mp, busyp->length),
+ 				GFP_NOFS, &bio);
+ 		if (error)
+@@ -612,22 +612,25 @@ xfs_trim_rtdev_extents(
+ 	xfs_rtblock_t		start_rtbno, end_rtbno;
+ 	xfs_rtxnum_t		start_rtx, end_rtx;
+ 	xfs_rgnumber_t		start_rgno, end_rgno;
++	xfs_daddr_t		daddr_offset;
+ 	int			last_error = 0, error;
+ 	struct xfs_rtgroup	*rtg = NULL;
+ 
+ 	/* Shift the start and end downwards to match the rt device. */
++	daddr_offset = XFS_FSB_TO_BB(mp, mp->m_sb.sb_dblocks);
++	if (start > daddr_offset)
++		start -= daddr_offset;
++	else
++		start = 0;
+ 	start_rtbno = xfs_daddr_to_rtb(mp, start);
+-	if (start_rtbno > mp->m_sb.sb_dblocks)
+-		start_rtbno -= mp->m_sb.sb_dblocks;
+-	else
+-		start_rtbno = 0;
+ 	start_rtx = xfs_rtb_to_rtx(mp, start_rtbno);
+ 	start_rgno = xfs_rtb_to_rgno(mp, start_rtbno);
+ 
++	if (end <= daddr_offset)
++		return 0;
++	else
++		end -= daddr_offset;
+ 	end_rtbno = xfs_daddr_to_rtb(mp, end);
+-	if (end_rtbno <= mp->m_sb.sb_dblocks)
+-		return 0;
+-	end_rtbno -= mp->m_sb.sb_dblocks;
+ 	end_rtx = xfs_rtb_to_rtx(mp, end_rtbno + mp->m_sb.sb_rextsize - 1);
+ 	end_rgno = xfs_rtb_to_rgno(mp, end_rtbno);
+ 
+
 
