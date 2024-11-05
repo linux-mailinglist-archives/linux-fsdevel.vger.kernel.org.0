@@ -1,145 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-33680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2939BD23A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:23:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7B49BD2B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222D91C226A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F361C20EE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A9E1D516F;
-	Tue,  5 Nov 2024 16:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C55F1DAC96;
+	Tue,  5 Nov 2024 16:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0lbXYQi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at77DxNn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B02225D7;
-	Tue,  5 Nov 2024 16:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA0C166F1A;
+	Tue,  5 Nov 2024 16:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730823803; cv=none; b=B8+9y4AmJ40HxC5KNN4q4iHJUEJXjB9oFiQV+Ub2Ki7+L7FXhe5X4rDIkkg5i5BkJAnmxcBnvN+UokxyIRbmhj0vsJ7rLK4mOlDKpGG0L9qjCbs0RSzZL3oKJiqQp21dQMpS2MP1lMo7+h3SofK2KDV9PjI25rwlXdoxV9r1Pw8=
+	t=1730825070; cv=none; b=S4DNuQGYfVuSRzjKvyTeZ3+7wy9bUTKuEcDu2bZMwMwHS3fg3ti0nbaX+2cMUxxlgcmyT+EVM546bs5Dn8gOCvKBDrdYugNZ3yDCaKueIFAIj+j/FeK6RPsNNamvNqI1ab9gRAi7THyuSfxdvYK+oxInsmY/wAMv4QWbnjNhfws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730823803; c=relaxed/simple;
-	bh=ZPfLD/2VaFCfV9JuHuS2PCs5o0Wj11DZmxWwPCOO9rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFkxmhI9o1FbnuX1DGygJxJHsrvK4fyFFL6P3sl3ADEAf5J1HgzKmafvd66HuGiAQEoQ+o9Rn5TEECS1Cp/kXr05eiWtx1f9Nay/+TPOrsaYY+zrVrqVTuTcvjsEJ6OrZBPUvFpSAwWBwF486T5v3UcxRJ2h11ugoDJu1wHvYyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0lbXYQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15341C4CECF;
-	Tue,  5 Nov 2024 16:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730823803;
-	bh=ZPfLD/2VaFCfV9JuHuS2PCs5o0Wj11DZmxWwPCOO9rk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u0lbXYQi3mp8/ZT3f6YH5dPczmOpUk6qRa/r7FDwMDi9GoulBKrmRmyG3gjBp3tgW
-	 9x6KoahAWPbe/2+O8iKWUNowXkurRxeRNzpfJ6xBCVehAxuitPgAGcpQO+evpuXIwD
-	 hgNHpfb8cIjgYF8W9vYILFv66VQfs3JxCVlaNJFDCZHhRdgdXllf489zEhwq/5We/3
-	 umfOcclj+lsGAC5O4fwzIUcanhDD9DZYJVJOzVkGcgGEwWZrQmK+xozOddiKDk5NSm
-	 Y+JVz0yQiodH+25JJgkHK7oG+vhAt4X/JfM+SKVqmo4gt+5RnkCdYUoyKlo+e6NpW+
-	 kVCxHgrV/CiPA==
-Date: Tue, 5 Nov 2024 09:23:19 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, Anuj gupta <anuj1072538@gmail.com>,
-	Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata along
- with read/write
-Message-ID: <ZypGd_-HzEekrcMs@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241104140601.12239-1-anuj20.g@samsung.com>
- <CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com>
- <20241104140601.12239-7-anuj20.g@samsung.com>
- <20241105095621.GB597@lst.de>
- <CACzX3AuNFoE-EC_xpDPZkoiUk1uc0LXMNw-mLnhrKAG4dnJzQw@mail.gmail.com>
- <20241105135657.GA4775@lst.de>
- <b52ecf88-1786-4b6f-b8f3-86cccaa51917@samsung.com>
- <20241105160051.GA7599@lst.de>
+	s=arc-20240116; t=1730825070; c=relaxed/simple;
+	bh=xoo0q5V8wjvE7q4lC7VQmHKa9nUZeAijOvblSEeRZm4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=uwgAl7TaApjTRjjSyGPXEdkTWsUrGSatIHrO8OuCsy77KwuAUAEjP3EdZAifnWbqrHQVAtZBdRaRLDqnsDatGyVgkJcE3IZKYvjkEjTJZCTH9zM5ZftszTLNv4qSNqBdyCMaO7ZXcF5EKQ5O69zFzNaWh/c4Yfcj4si4NhJV2s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at77DxNn; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e52582cf8so4907458b3a.2;
+        Tue, 05 Nov 2024 08:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730825068; x=1731429868; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3rhwRI9JuhsZtMEiJ0JD5YM4F04aW09mvO+gxbR/BxI=;
+        b=at77DxNnUCxbQ9cfuKwfPifgxOpb83UMSNzKbDVc5puFqhu5ZWy8GdWuC7ejCIbLyE
+         Ww/baMcPVcHd3WlNNzxKTPNlIoCPLgtGZ9VFj6Sr3S0mTbS3J6cc1uGsxilA7Pq9Hh1Y
+         32Y2iw9bfpvAU5mhXRDzAldxbT1bbeexNkw4NgID4/2+mM4hG0p9La3/IyHG1bhhIiJW
+         CyaeRkWBhijSlP0k2L9cU64FrrPoLFt2hK3mHoEom0rGhisMTNALBEif1nRMyID2rrT4
+         f4+sSlB5UqSLYZI+xxg+rixiCeWVMHihutuqhNP+y6gt7oezBQzL8NziG9JQv8i2Tf5g
+         IEIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730825068; x=1731429868;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rhwRI9JuhsZtMEiJ0JD5YM4F04aW09mvO+gxbR/BxI=;
+        b=ZIF4qmJKo7X3vef2CMyPcM+Ap3C+NGcI27YK4NucVjBJbzt77JrgEy09FBReUA7Tgo
+         Xk5DKLFi/KqCmQgBdgDOKjCU8RllE8pdGmtpIwwl1pt8sdLzLrYI4PZLkv1zENG7Qtb/
+         3fTv0kPSyJ7OZiwoXQuUZ1hQvhkTNkBzG2rdDn92ZNvF9XV2s5PrdCFKrUqbUxM8084k
+         0VlxFuFKZj0tzudJZN0GnKt9rFuiM1Ifx6X+4oSgVHSuWpSY7cg6ILSODwM9S68i0g32
+         eIdauYEXqZTMRexZfknnWM+5wK5x3Lcy+ceqghCdnF6qRpUsm9PzvondoBC+Bwr9dw4r
+         2fzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4vbPPcpnBqTayBhFieG1Gqd7SSRY31Iqnzzt/7mgw5L/f+OPc3L1s+pZbtnWi7Kq1wjADFXaU4e5PPv+8DA==@vger.kernel.org, AJvYcCVPiFUi9HO/1dhHwNYupNbGlULRQYuxE5irBO1O7BIs8qdIhdxHTUBwwcFn3CHP9NXd0tLwKtTQ040H/Wmm@vger.kernel.org, AJvYcCWkEdDlAsrst4pZc+bh8L53mdDfbRZuyCy/tOf/EqjMHYcwLEBuFXzFSVHHCgYGTNCm8Si7V/JM7jH3sA==@vger.kernel.org, AJvYcCXVnjlR5hCE2Rvl6JDuFsMjfTsm0vvR7LU1L9/HMyffbyIl6QdfQYTFVXwQ5K7rX0Xy4LewpVUHbMbu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2BF4oYAIHyiq0lX2zTF06FHJPFWQQMvdi3Rv0SlSawciZMYfv
+	00vppsddv4DOToFVBvYp8lW1cMbfrQg72EKEETZQMP8zXEQ66gS4bStqHT6q
+X-Google-Smtp-Source: AGHT+IE+msBBk5xTD+37yuN0TqDTIzB8QG+0iDim6ovw09YJxH9+iCpRyCjKlpFHLHdMZJSNAaLlBQ==
+X-Received: by 2002:a05:6a00:2d89:b0:71e:21:d2d8 with SMTP id d2e1a72fcca58-720c98d32c6mr23148208b3a.7.1730825067732;
+        Tue, 05 Nov 2024 08:44:27 -0800 (PST)
+Received: from dw-tp ([49.36.182.29])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2eb586sm10159932b3a.149.2024.11.05.08.44.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 08:44:27 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>, John Garry <john.g.garry@oracle.com>, brauner@kernel.org, Catherine Hoang <catherine.hoang@oracle.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
+In-Reply-To: <20241105004341.GO21836@frogsfrogsfrogs>
+Date: Tue, 05 Nov 2024 21:56:45 +0530
+Message-ID: <87pln9sl2y.fsf@gmail.com>
+References: <20241105004341.GO21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105160051.GA7599@lst.de>
 
-On Tue, Nov 05, 2024 at 05:00:51PM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 05, 2024 at 09:21:27PM +0530, Kanchan Joshi wrote:
-> > Can add the documentation (if this version is palatable for Jens/Pavel), 
-> > but this was discussed in previous iteration:
-> > 
-> > 1. Each meta type may have different space requirement in SQE.
-> > 
-> > Only for PI, we need so much space that we can't fit that in first SQE. 
-> > The SQE128 requirement is only for PI type.
-> > Another different meta type may just fit into the first SQE. For that we 
-> > don't have to mandate SQE128.
-> 
-> Ok, I'm really confused now.  The way I understood Anuj was that this
-> is NOT about block level metadata, but about other uses of the big SQE.
-> 
-> Which version is right?  Or did I just completely misunderstand Anuj?
+"Darrick J. Wong" <djwong@kernel.org> writes:
 
-Let's not call this "meta_type". Can we use something that has a less
-overloaded meaning, like "sqe_extended_capabilities", or "ecap", or
-something like that.
- 
-> > 2. If two meta types are known not to co-exist, they can be kept in the 
-> > same place within SQE. Since each meta-type is a flag, we can check what 
-> > combinations are valid within io_uring and throw the error in case of 
-> > incompatibility.
-> 
-> And this sounds like what you refer to is not actually block metadata
-> as in this patchset or nvme, (or weirdly enough integrity in the block
-> layer code).
-> 
-> > 3. Previous version was relying on SQE128 flag. If user set the ring 
-> > that way, it is assumed that PI information was sent.
-> > This is more explicitly conveyed now - if user passed META_TYPE_PI flag, 
-> > it has sent the PI. This comment in the code:
-> > 
-> > +       /* if sqe->meta_type is META_TYPE_PI, last 32 bytes are for PI */
-> > +       union {
-> > 
-> > If this flag is not passed, parsing of second SQE is skipped, which is 
-> > the current behavior as now also one can send regular (non pi) 
-> > read/write on SQE128 ring.
-> 
-> And while I don't understand how this threads in with the previous
-> statements, this makes sense.  If you only want to send a pointer (+len)
-> to metadata you can use the normal 64-byte SQE.  If you want to send
-> a PI tuple you need SEQ128.  Is that what the various above statements
-> try to express?  If so the right API to me would be to have two flags:
-> 
->  - a flag that a pointer to metadata is passed.  This can work with
->    a 64-bit SQE.
->  - another flag that a PI tuple is passed.  This requires a 128-byte
->    and also the previous flag.
+> Hi everyone,
+>
+> Nobody else has stepped up to do this, so I've created a work branch for
+> the fs side of untorn writes:
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-04
+>
+> Can you all check this to make sure that I merged it correctly?
 
-I don't think anything done so far aligns with what Pavel had in mind.
-Let me try to lay out what I think he's going for. Just bare with me,
-this is just a hypothetical example.
+Sorry, I couldn't reply earlier(I am currently on travel). Yes, the ext4
+merge looks correct to me. You have taken the latest v4 of the ext4
+atomic write series [1]. 
 
-  This patch adds a PI extension.
-  Later, let's say write streams needs another extenion.
-  Then key per-IO wants another extention.
-  Then someone else adds wizbang-awesome-feature extention.
+[1]: https://lore.kernel.org/linux-ext4/cover.1730437365.git.ritesh.list@gmail.com/
 
-Let's say you have device that can do all 4, or any combination of them.
-Pavel wants a solution that is future proof to such a scenario. So not
-just a single new "meta_type" with its structure, but a list of types in
-no particular order, and their structures.
+> And maybe go test this on your storage hardware? :)
 
-That list can exist either in the extended SQE, or in some other user
-address that the kernel will need copy.
+Due to limited connectivity during my travel, I don't have the access to
+the hardware. But as I mentioned the merge looks correct to me and I had
+tested those patches earlier on Power and x86.
+But I will in general re-test the mentioned fs branch for both XFS and
+ext4 once I reach back but I don't think we need to wait for that as the
+merge looks good to me.
+
+Also, I noticed that we might have missed to add a Tested-by from
+Ojaswin for XFS series here [2]. Although Ojaswin mentioned that he
+might also re-test the mentioned FS atomic write branch for both XFS and
+EXT4.
+
+[2]: https://lore.kernel.org/linux-xfs/Zxnp8bma2KrMDg5m@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com/
+
+
+-ritesh
+
+> If all goes well then I think the next step is to ask brauner very
+> nicely if he'd consider adding this to the vfs trees for 6.13.  If not
+> then I guess we can submit it ourselves, though we probably ought to ask
+> rothwell to add the branch to for-next asap.
+>
+> PS: We're now past -rc6 so please reply quickly so that this doesn't
+> slip yet another cycle.
+>
+> Catherine: John's on vacation all week, could you please send me the
+> latest versions of the xfs_io pwrite-atomic patch and the fstest for it?
+>
+> --D
 
