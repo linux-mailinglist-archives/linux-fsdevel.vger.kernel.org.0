@@ -1,128 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-33660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9629BCBED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 12:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 343A29BCC4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 13:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A8D1C22A83
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 11:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D591C20D46
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 12:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B831D4350;
-	Tue,  5 Nov 2024 11:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DF61D5151;
+	Tue,  5 Nov 2024 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LX1wFNqQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZlJiItq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37CB1D4141
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 11:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509851D31A2;
+	Tue,  5 Nov 2024 12:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730806496; cv=none; b=I/1qAPHZdPPpkovQ3Sl3jb9tNb3qliae9eXfM2N7y2/+BOBTY68J9EezLPvo32HKXguXDgFJ7OIJLeErlLceTL1CXohDcHFXE/kqyRR6cfNIwPnSgijxBip5BlDgu5ig7C+xf4j2YtetSkq5+VVGF1P749DN8Zrc9O//DR/h4XE=
+	t=1730808234; cv=none; b=e6TL5GJSregsXpHkpaQ4z4b6rhRP6cG9vWfavjn8axStd0fwyVWrz/akR0VlXo5XGrLULl+SALwDmnoHrMKxaA2uK5ooxVem21BD/02ssZFzEMtXZresWRBAeda/s2DnmDv5XSUsr4Qm4yc3FIMePUdFci59kecC9yIv73mFCkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730806496; c=relaxed/simple;
-	bh=5hOqNCQn601FkDuP2nCWB1ATvSZ1VINosMu3McQuJAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B1piVZoDCZPcQTv4wcAcjJDtsnFTPkNOGTikhwIbCQdNCgMV54cohXSwAolwDdOTEyQyKTVQV9ERXEH6zq4KtjGMp7v2wiv19rJUUZ+dx/fhQ+/ytpV/3DpMPpaceYp6eIEHjMO6VS2j7qi6PT4A7zi1PNeFfq+uC6l/laD27fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LX1wFNqQ; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460b16d4534so31310231cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 03:34:54 -0800 (PST)
+	s=arc-20240116; t=1730808234; c=relaxed/simple;
+	bh=2scUw8T/1u0DGMQY0Ee1Um3A775p657KQNRNFv94Y3A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mySSuyyUpTcyWiJRd2rziGtXbVLkhKFrpT4EnNO5BTBoP28T6LYsz/aghHl+clH2V5B0bJ32gduCuD44wFUhG6v54+NjhpeVVkHqMKmXZM+cWIxuAWHw6CIn/1Ah24DLgSZ1X25Vdw4vYd3HCoN5k1qf+N4bKCPwlRoy6XkM5LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZlJiItq; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30cef4ac5dso4782617276.0;
+        Tue, 05 Nov 2024 04:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730806494; x=1731411294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=psWw/Rad+KTcv4OScEPwUco7plFjBWP/BEIctwXEWNo=;
-        b=LX1wFNqQemfMpNMlAn6G21W5VZAdXrvLm0ULGDsSrUEE0IRNkqLY45uEuqGL3IgxIg
-         r5SNJtuICuX6rMGYdKKlvl7WUxedaLAQN0urdsqGrD6Xxo3CtSNWi+W+itnos534tO31
-         5FrTQJ1RXkW8mZB42sHkTTDjSd+OKba4GL7/4=
+        d=gmail.com; s=20230601; t=1730808232; x=1731413032; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mQe9CPTZg0iYP3rFcpBCYNv2Ed7deu8K6ZCVDXo57I=;
+        b=PZlJiItqbNtj3h5tU9i9F02aZ0AERZT4ovmvX4xKq1Osv02b5kU5A7LPzxf5JkNsWY
+         fBaTUYY9yT1h8kMMXAWEJ8bFMl8/ryeYslkJvdYTJopuSJBwng9+CdxVbWXJmbeZxofB
+         tn0J+sfGGubamu6mfA6wAN2keN6fxf3Mu2WP8vzccf12tsk2Le5Yagb/1EOZT24a+xgR
+         9QySfBv06GTVND8U6MwANNeYO3SOXcWvYlo7FKizR5trqjrhT9XRQ3MqYQuha1w6kqRB
+         c7SafQV5LSxxEa5OsLJwQ4JWOxWKDTj+4+AJcHBtcBAHVCU108+By7Sp3Bex9EBxOVJO
+         uSjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730806494; x=1731411294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=psWw/Rad+KTcv4OScEPwUco7plFjBWP/BEIctwXEWNo=;
-        b=Rdt6otPXMWfX9lB7OiOIjc/Hk608bTILWc29NxMinL/SUu+jVFRcrWn9atr8PUG4/n
-         Ot9Rk0EfrQx/mNzk44IivDB6f4Tg6uedwqPnTFWIF27K2k7kPNxWZxdGApZJ+/fL3BO7
-         qdkFe216tCOaL6Wah98kjcrIVKhglGTTDr4LXuwXgFhuf/Qn1h61e6eUl3EszVcdQNfI
-         5ZxeEBh0+4oLx50sdDIPql1ww3JR5j4yDpjT4pa9Zy6PCUggsRux/p2L5i5XBmzrQVQw
-         pZkK8R9E90kWrQNee1a+ZLOk+MekuP4MH4Hu/R4srowJuoGAweQYDHUlzrJpoRQ8qyk7
-         Z7SA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/TFp5JPFUL7RDNScSt3F5PWZ8nFqhoRzbwJKLEHnycSmxYqKDluw6XeSf/YZSI0QTCQr+4meBLFm9pJmr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV7tzaVNPmnXEKaKj3avihA8OWszOSy5oxXP7lTkRbTrCpPD/T
-	4osOG4dvgKB9oFTTHQqsoSvIXCN8Mwe7N2elVQ0EgKfs3MFXsuwG482U22+JaGUIbbUAkqVP3Z2
-	B34r06Z3SzgZb5iPGKMack4xLaMDpPdGGE2yayg==
-X-Google-Smtp-Source: AGHT+IH7/d1rmM7VWLPRdbK3Mx/FHurc8/ZPHObnO2Y9DUt0VsVdAZFPZ5dxnw5XFLU0s99im+MGu2kVCQSjcLwlGLE=
-X-Received: by 2002:ac8:7f54:0:b0:461:1474:2057 with SMTP id
- d75a77b69052e-4613c19b6f4mr546758841cf.53.1730806493688; Tue, 05 Nov 2024
- 03:34:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730808232; x=1731413032;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4mQe9CPTZg0iYP3rFcpBCYNv2Ed7deu8K6ZCVDXo57I=;
+        b=ZuDlaSkgBA+mVWUSn194dsKimX06av/yNCVx2OEl7Tuine0jfgiazz1sq1rk58PPN1
+         jAqfcVMelMAVPgDvetqCSqM11+ptfil7g3OQkHz5KA8D7ruADE5DWFMHXJuB5ZctvbDz
+         p3iY9AL2zTK0yCrrbiLboaA/GsRXgKpkR22mYFzqFlRy8iSVtIlO4OK0bH0yuFy6LTnO
+         5bPaTS4xQv+jOxuLMQmoRvcZAvGG8W0H0tCfAhGR7Y4cOB4gEc4QKN5AvYIJeUp+vTLm
+         +80U3WOL1hCDYjekR9UJrmlaHZU2sw3tUbHc4Cgs+1jXSf99Jo/jZ7p+Ed/++Zr54qbW
+         X+2g==
+X-Forwarded-Encrypted: i=1; AJvYcCURXAUPw42sW4LGcx2AqWLvrYzH5BjW94fEgItgqPSz+hPkGeBrC/r0C3fVyx7j5R21MxznGsVQQOU=@vger.kernel.org, AJvYcCWzgcyM6PUPeRKBb8J1jfvVxccx6mVYK8MQvWwGPfD6X4sVPf02q+YJNqELc+0GqI9FDJq0X0y+J0ng/F1B@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItYmFMtxjhkWj97d/FMB47phYgtt3qSQLCtgu8opHOJqb6DKj
+	6Oz2DYL0h9PlhaHHF7oByIuJl/6SsVqyxIV5Dad6uzrwi3izzdbbSCmqukC1et4=
+X-Google-Smtp-Source: AGHT+IGFzGNU7gdlibESHBuvspL2ArIC4VbdyAKDhERoA2yh98mJEI+YtpvI0J6+dmCG02TAJZyeeA==
+X-Received: by 2002:a05:6902:18c6:b0:e29:6571:e25e with SMTP id 3f1490d57ef6-e30cf4323e8mr24573611276.27.1730808231767;
+        Tue, 05 Nov 2024 04:03:51 -0800 (PST)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (186-189-50-43.setardsl.aw. [186.189.50.43])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a6113csm2466779276.2.2024.11.05.04.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 04:03:50 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 05 Nov 2024 08:03:42 -0400
+Subject: [PATCH RESEND v5] XArray: minor documentation improvements
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025150154.879541-1-mszeredi@redhat.com> <CAOQ4uxhA-o_=4jE2DyNSAW8OWt3vOP1uaaua+t3W5aA-nV+34Q@mail.gmail.com>
- <20241026065619.GD1350452@ZenIV>
-In-Reply-To: <20241026065619.GD1350452@ZenIV>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 5 Nov 2024 12:34:42 +0100
-Message-ID: <CAJfpegt3qfhP85f+L+Qz03JAfOcSP4fzfz-x_8dvwoP9CgLdnw@mail.gmail.com>
-Subject: Re: [PATCH v2] ovl: replace dget/dput with d_drop in ovl_cleanup()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-xarray-documentation-v5-1-8e1702321b41@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
+ Bagas Sanjaya <bagasdotme@gmail.com>, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-On Sat, 26 Oct 2024 at 08:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sat, Oct 26, 2024 at 08:30:54AM +0200, Amir Goldstein wrote:
-> > On Fri, Oct 25, 2024 at 5:02=E2=80=AFPM Miklos Szeredi <mszeredi@redhat=
-.com> wrote:
-> > >
-> > > The reason for the dget/dput pair was to force the upperdentry to be
-> > > dropped from the cache instead of turning it negative and keeping it
-> > > cached.
-> > >
-> > > Simpler and cleaner way to achieve the same effect is to just drop th=
-e
-> > > dentry after unlink/rmdir if it was turned negative.
-> > >
-> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> >
-> > Looks sane.
-> > Applied to overlayfs-next for testing.
->
-> I thought it was about preventing an overlayfs objects with negative ->__=
-upperdentry;
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Mention `xa_erase` in discussion of multi-index entries.  Split this
+  into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
+- Add caveat that `xa_store` and `xa_erase` are not equivalent in the
+  presence of `XA_FLAGS_ALLOC`.
 
-Yeah, I overlooked that aspect.   Amir, please drop this patch.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v5:
+- Add trailers; otherwise resend of v4. Sent as v5 due to tooling issue.
+- Link to v4: https://lore.kernel.org/r/20241010214150.52895-2-tamird@gmail.com/
 
-> why would a negative dentry in upper layer be a problem otherwise?
+Changes in v4:
+- Remove latent sentence fragment.
 
-Double caching, see this commit:
+Changes in v3:
+- metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
+- mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the presence
+  of `XA_FLAGS_ALLOC`.
 
-commit 1434a65ea625c51317ccdf06dabf4bd27d20fa10
-Author: Chengguang Xu <cgxu519@mykernel.net>
-Date:   Tue May 26 09:35:57 2020 +0800
+Changes in v2:
+- s/use/you/ (Darrick J. Wong)
+---
+ Documentation/core-api/xarray.rst | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-    ovl: drop negative dentry in upper layer
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6f8e632e7d28d17fd1c60fcf0b5c4..f6a3eef4fe7f0a84068048175cb857d566f63516 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether you want to store value entries or tagged pointers in any
++particular XArray.
+ 
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,9 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Unsetting (using
++xa_erase() or xa_store() with ``NULL``) any entry will cause the XArray
++to forget about the range.
+ 
+ Normal API
+ ==========
+@@ -63,13 +64,14 @@ for statically allocated XArrays or xa_init() for dynamically
+ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
+ 
+-You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
+-new entry and return the previous entry stored at that index.  You can
+-use xa_erase() instead of calling xa_store() with a
+-``NULL`` entry.  There is no difference between an entry that has never
+-been stored to, one that has been erased and one that has most recently
+-had ``NULL`` stored to it.
++You can then set entries using xa_store() and get entries using
++xa_load().  xa_store() will overwrite any entry with the new entry and
++return the previous entry stored at that index.  You can unset entries
++using xa_erase() or by setting the entry to ``NULL`` using xa_store().
++There is no difference between an entry that has never been stored to
++and one that has been erased with xa_erase(); an entry that has most
++recently had ``NULL`` stored to it is also equivalent except if the
++XArray was initialized with ``XA_FLAGS_ALLOC``.
+ 
+ You can conditionally replace an entry at an index by using
+ xa_cmpxchg().  Like cmpxchg(), it will only succeed if
 
-    Negative dentries of upper layer are useless after construction of
-    overlayfs' own dentry and may keep in the memory long time even after
-    unmount of overlayfs instance. This patch tries to drop unnecessary
-    negative dentry of upper layer to effectively reclaim memory.
+---
+base-commit: 850925a8133c73c4a2453c360b2c3beb3bab67c9
+change-id: 20241026-xarray-documentation-86e1f2d047db
 
-The reason lower dentries are different is that lower layers could be
-(and often are) shared, while the upper layer is always private.
+Best regards,
+-----BEGIN SSH SIGNATURE-----
+U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7h
+JgsMRt+XVZTrIzMVIAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5
+AAAAQC+xZK2BwwOe02PlxGG7H8RrxZYY51gb8CdxLI3ED8WXT/GVeL/Ya7k+bir1TUuu/A
+pWBj+lROjke/NRDPTiJAQ=
+-----END SSH SIGNATURE-----
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
-Thanks,
-Miklos
 
