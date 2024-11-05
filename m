@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-33652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C2C9BC9AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 10:56:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DD09BC9B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 10:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B48BCB216B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 09:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DE1282D4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 09:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A0E1D1747;
-	Tue,  5 Nov 2024 09:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848431D1745;
+	Tue,  5 Nov 2024 09:56:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C4A1367;
-	Tue,  5 Nov 2024 09:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FB51367;
+	Tue,  5 Nov 2024 09:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800551; cv=none; b=cIFMD2qmluSjZwpaQZKyjxvBF1lN5kV4VV0hExeUHdjTx0PK5aH4E39QI7ErOMdtEoMZ98zfQJP2nZrGsmkUaovmKUR6ezQnZ50q90mnAU0fOYnWeAs7TP0BrIGgM5yXgJu+JpV0hkrECeSMScN23KIBKQ0TCTN8j9MqzoBaoTA=
+	t=1730800586; cv=none; b=S6m8YdgNRheFOOIdzLVUbTUTz1L4B32UDHjfwCMpEECqbkgtQNnjspKEoB9rCikX+yH5FH7hBpmrI9hYnNMqCCb1445Q8k/HDTYrsAJ8GhYOg77ZATISbh9uFkXfVp+mdVP/oQpZtbNSijRWvGDaLt15tQPQH0a1ToGq5PuLWNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800551; c=relaxed/simple;
-	bh=3ebZI/gEFKmyBuM4555MQ3afYl+L4sNL1v8qnaoY3Ms=;
+	s=arc-20240116; t=1730800586; c=relaxed/simple;
+	bh=R8k/LtOTJ6Fl/T07OjvkM0AOL3V868HkOcnHNDfi7Fc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uABPB53//0yptp+GLtEpM5012v+eWhBZkpVySdmYV+UTMe36u3t0wmW1wveLZj0X8+SawWH2FeTcUV7vWJ3wzJRfABqdGJWEjM17Wj/d71r+/YyAx8ZEEnQJXEko6EUJIFkIkX5CJeuREVxDrY+PNHTFoEyj+ejkHfN8oddJDac=
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dv4I+s1XhGLwOEUMxScjWv7lztAcpR6wv2WO4tt4VCZtlxbVa6cUhJdo+FnVepO7ZGx2mN3bsStiYAbjzRUFqZcyVCkz5dBBSOZa8o47QuP7+mX+sKkAR0otbLaryKPEuJckgPsyvr9vjNnByaPPwp2nazgUebvKI41DceWb0ec=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6D5D568C4E; Tue,  5 Nov 2024 10:55:38 +0100 (CET)
-Date: Tue, 5 Nov 2024 10:55:38 +0100
+	id 3AFF9227AA8; Tue,  5 Nov 2024 10:56:21 +0100 (CET)
+Date: Tue, 5 Nov 2024 10:56:21 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Anuj Gupta <anuj20.g@samsung.com>
 Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
@@ -42,9 +42,10 @@ Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
 	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
 	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
 	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v7 04/10] fs, iov_iter: define meta io descriptor
-Message-ID: <20241105095538.GA597@lst.de>
-References: <20241104140601.12239-1-anuj20.g@samsung.com> <CGME20241104141453epcas5p201e4aabfa7aa1f4af1cdf07228f8d4e7@epcas5p2.samsung.com> <20241104140601.12239-5-anuj20.g@samsung.com>
+Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata
+ along with read/write
+Message-ID: <20241105095621.GB597@lst.de>
+References: <20241104140601.12239-1-anuj20.g@samsung.com> <CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com> <20241104140601.12239-7-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,20 +54,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241104140601.12239-5-anuj20.g@samsung.com>
+In-Reply-To: <20241104140601.12239-7-anuj20.g@samsung.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Nov 04, 2024 at 07:35:55PM +0530, Anuj Gupta wrote:
-> Add flags to describe checks for integrity meta buffer. Also, introduce
-> a  new 'uio_meta' structure that upper layer can use to pass the
-> meta/integrity information.
-> 
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+On Mon, Nov 04, 2024 at 07:35:57PM +0530, Anuj Gupta wrote:
+> read/write. A new meta_type field is introduced in SQE which indicates
+> the type of metadata being passed.
 
-I'm pretty sure I reviewed this already last time, but here we go
-again in case I'm misremembering:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I still object to this completely pointless and ill-defined field.
 
 
