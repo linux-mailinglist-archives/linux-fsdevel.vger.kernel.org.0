@@ -1,115 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-33679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517449BD1A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:07:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E919BD23C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CE71C236FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0C11F22DF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B3B1D9677;
-	Tue,  5 Nov 2024 16:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A11D2B22;
+	Tue,  5 Nov 2024 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfLyciYR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3390D1552F6;
-	Tue,  5 Nov 2024 16:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391CA15C138;
+	Tue,  5 Nov 2024 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822459; cv=none; b=mTO2J1fb0eteNY5iVQXrchzldrPq99dbW1A/a+x+MkLHhvVI/QWXenvKO4GK1uc1sUZXFH4qsq83TpSqNyZr4Sidxw2p7xGfC6E+ZaUTRqz44lOnKJxT8XCuK2de42FGapGTZIc5V1Dz7PQIq8P51gp/l6I+FLVgdBexDXussUQ=
+	t=1730823816; cv=none; b=X1nuF1ws3QvabYH19IoUnd22nzEbgQVcbrqc+XNz9n/oiYRdcCi+AoOIrwCE8VlWmb1c8XfnApgKGicDg4e+Uq5DELBSrBNiyeWdfpUyTVa/Ri2Gd1AJVXDr/GV9egl2Geg0l/uQECz2SJRARziWaH2+mziLH6Ab74WEpHP5InQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822459; c=relaxed/simple;
-	bh=0hFYpv05gf9VcHrx0UUx/n/00VxqWSThLGDwJAV0lm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDqHusfOyI5CrJClASLa0PTZGePFTuFyV2+KhaUGFPwvixJFbJiVJEw8Gse4HFTpHhxvjcJAy8KRvoPXHFzf7wpTg1+hszIQ4SAT/kVQL2ZJDZyS3hCH/sxpjm5Jhv1etDK4kzb1/LLPWP3m+mvUDfCUBjLM8U/n32fMFi3ndwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DD1D5227AAC; Tue,  5 Nov 2024 17:00:51 +0100 (CET)
-Date: Tue, 5 Nov 2024 17:00:51 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Anuj gupta <anuj1072538@gmail.com>,
-	Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk,
-	kbusch@kernel.org, martin.petersen@oracle.com,
-	asml.silence@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata
- along with read/write
-Message-ID: <20241105160051.GA7599@lst.de>
-References: <20241104140601.12239-1-anuj20.g@samsung.com> <CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com> <20241104140601.12239-7-anuj20.g@samsung.com> <20241105095621.GB597@lst.de> <CACzX3AuNFoE-EC_xpDPZkoiUk1uc0LXMNw-mLnhrKAG4dnJzQw@mail.gmail.com> <20241105135657.GA4775@lst.de> <b52ecf88-1786-4b6f-b8f3-86cccaa51917@samsung.com>
+	s=arc-20240116; t=1730823816; c=relaxed/simple;
+	bh=SYabQGF+mNiDvJMTK40v1FOHtZBigPP3e+Ea7xTU2WE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dGxUomBHdeOWkV+QYLkU9YQ3PYTL8VLs86KpEEzhbvn1t2tFHLMij5Ue4RG6a7aMOXfbf/EwJSf0lqcHA1fUXmlWGzo9pm4msSp8s+CqDKDpOUTFkPLZNgZGPbdf+PZtR7l9Ak4dv1OaQeBwnoDbcV2/+21ZGmaH544g19LkJeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfLyciYR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F962C4CED2;
+	Tue,  5 Nov 2024 16:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730823816;
+	bh=SYabQGF+mNiDvJMTK40v1FOHtZBigPP3e+Ea7xTU2WE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EfLyciYRNJJKB/xDvloMJ3dhvkRpm+uQ86nqvDfO+ttL1bIXldsFv4u0c9Nv7RtET
+	 1r/Rfa+/FfICZdQyJ8tr41BYnZjoR/wIxH0EmpR8GeOQYGGSsuMqQwyrNxkpsJw9qh
+	 RuOFkmD0Y+60tDwS/Yki9tEa3s1gm6sO0wltsd2V7DtS0fpKIkFWHszQwn98aotBvT
+	 QlwLwY6c6nwN5wwgn2nWy39iikKGu1+wa188IMuGNw37DAZp5WjnaUqkkhXdkEsGGL
+	 ZqFVJQ4+YDh5FbeRhhijDwXyKdLE5BEhg7ZBiKOBwi00rFwMvuJY9DpqZJzDFRNvYo
+	 hiW8M7+q4Qg9A==
+From: Christian Brauner <brauner@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	ecryptfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Tyler Hicks <code@tyhicks.com>
+Subject: Re: [PATCH v2 00/10] Convert ecryptfs to use folios
+Date: Tue,  5 Nov 2024 17:21:20 +0100
+Message-ID: <20241105-geste-statik-9e3f7793abb8@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241025190822.1319162-1-willy@infradead.org>
+References: <20241025190822.1319162-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b52ecf88-1786-4b6f-b8f3-86cccaa51917@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2726; i=brauner@kernel.org; h=from:subject:message-id; bh=SYabQGF+mNiDvJMTK40v1FOHtZBigPP3e+Ea7xTU2WE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRrudUfKW48/Hf1/EYX4+q1vFkWpw6H3/u/4K3rCrWX+ 3hd0jUWd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyE/wfDP4WlqXnR6dr7Diql u15TZHFVCZ7z4tiFMrPbt2vKMte0XGZk+P1ob0n061eStdN8hL90KSnVvVJ8NJnNRu7qqb+vviZ c4gAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 09:21:27PM +0530, Kanchan Joshi wrote:
-> Can add the documentation (if this version is palatable for Jens/Pavel), 
-> but this was discussed in previous iteration:
+On Fri, 25 Oct 2024 20:08:10 +0100, Matthew Wilcox (Oracle) wrote:
+> The next step in the folio project is to remove page->index.  This
+> patchset does that for ecryptfs.  As an unloved filesystem, I haven't
+> made any effort to support large folios; this is just "keep it working".
+> I have only compile tested this, but since it's a straightforward
+> conversion I'm not expecting any problems beyond my fat fingers.
 > 
-> 1. Each meta type may have different space requirement in SQE.
+> v2:
+>  - Switch from 'rc' to 'err' in ecryptfs_read_folio
+>  - Use folio_end_read() in ecryptfs_read_folio
+>  - Remove kernel-doc warnings that 0day warned about
+>  - R-b tags from Pankaj
 > 
-> Only for PI, we need so much space that we can't fit that in first SQE. 
-> The SQE128 requirement is only for PI type.
-> Another different meta type may just fit into the first SQE. For that we 
-> don't have to mandate SQE128.
+> [...]
 
-Ok, I'm really confused now.  The way I understood Anuj was that this
-is NOT about block level metadata, but about other uses of the big SQE.
+I hope to be back on a regular schedule tomorrow.
+I have been down with atypical pneumonia (who knows how I got that) and
+have not been able to do anything for a while.
 
-Which version is right?  Or did I just completely misunderstand Anuj?
+---
 
-> 2. If two meta types are known not to co-exist, they can be kept in the 
-> same place within SQE. Since each meta-type is a flag, we can check what 
-> combinations are valid within io_uring and throw the error in case of 
-> incompatibility.
+Applied to the vfs.ecryptfs branch of the vfs/vfs.git tree.
+Patches in the vfs.ecryptfs branch should appear in linux-next soon.
 
-And this sounds like what you refer to is not actually block metadata
-as in this patchset or nvme, (or weirdly enough integrity in the block
-layer code).
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> 3. Previous version was relying on SQE128 flag. If user set the ring 
-> that way, it is assumed that PI information was sent.
-> This is more explicitly conveyed now - if user passed META_TYPE_PI flag, 
-> it has sent the PI. This comment in the code:
-> 
-> +       /* if sqe->meta_type is META_TYPE_PI, last 32 bytes are for PI */
-> +       union {
-> 
-> If this flag is not passed, parsing of second SQE is skipped, which is 
-> the current behavior as now also one can send regular (non pi) 
-> read/write on SQE128 ring.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-And while I don't understand how this threads in with the previous
-statements, this makes sense.  If you only want to send a pointer (+len)
-to metadata you can use the normal 64-byte SQE.  If you want to send
-a PI tuple you need SEQ128.  Is that what the various above statements
-try to express?  If so the right API to me would be to have two flags:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
- - a flag that a pointer to metadata is passed.  This can work with
-   a 64-bit SQE.
- - another flag that a PI tuple is passed.  This requires a 128-byte
-   and also the previous flag.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.ecryptfs
 
-
-> 
-> 
-> 
-> 
-> 
----end quoted text---
+[01/10] ecryptfs: Convert ecryptfs_writepage() to ecryptfs_writepages()
+        https://git.kernel.org/vfs/vfs/c/807a11dab9dc
+[02/10] ecryptfs: Use a folio throughout ecryptfs_read_folio()
+        https://git.kernel.org/vfs/vfs/c/064fe6b4752c
+[03/10] ecryptfs: Convert ecryptfs_copy_up_encrypted_with_header() to take a folio
+        https://git.kernel.org/vfs/vfs/c/497eb79c3191
+[04/10] ecryptfs: Convert ecryptfs_read_lower_page_segment() to take a folio
+        https://git.kernel.org/vfs/vfs/c/890d477a0fcd
+[05/10] ecryptfs: Convert ecryptfs_write() to use a folio
+        https://git.kernel.org/vfs/vfs/c/4d3727fd065b
+[06/10] ecryptfs: Convert ecryptfs_write_lower_page_segment() to take a folio
+        https://git.kernel.org/vfs/vfs/c/de5ced2721f9
+[07/10] ecryptfs: Convert ecryptfs_encrypt_page() to take a folio
+        https://git.kernel.org/vfs/vfs/c/6b9c0e813743
+[08/10] ecryptfs: Convert ecryptfs_decrypt_page() to take a folio
+        https://git.kernel.org/vfs/vfs/c/c15b81461df9
+[09/10] ecryptfs: Convert lower_offset_for_page() to take a folio
+        https://git.kernel.org/vfs/vfs/c/bf64913dfe62
+[10/10] ecryptfs: Pass the folio index to crypt_extent()
+        https://git.kernel.org/vfs/vfs/c/9b4bb822448b
 
