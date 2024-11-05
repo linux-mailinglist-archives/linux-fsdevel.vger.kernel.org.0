@@ -1,115 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-33690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855849BD46B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 19:19:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61749BD57A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 19:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73A71C21A4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 18:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB580284120
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 18:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657741E7C16;
-	Tue,  5 Nov 2024 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CD71EABC6;
+	Tue,  5 Nov 2024 18:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzta4frQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FPVui947"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90541E7647;
-	Tue,  5 Nov 2024 18:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B111E766B;
+	Tue,  5 Nov 2024 18:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830761; cv=none; b=Ic6v86FIpCO2lWdt9bcComtSn6tVZivIq79dxDF+7MWegTAc7lEcarZg29jAjNlpyYxBSm8iR8q5kRC/8pOaz9NXqMZqli+EY+WOFE2j6T2M8EpZbFlPKxWsommyMXJI2wbyCcpEw+VvLR3F4Qo6rvhgVXPLCmGHMKiV6j8fg/c=
+	t=1730832946; cv=none; b=upRHdqvp3N2z8JwJskkKK0DXwgqa29obiBAZozdhSL9uUUF0hTcFQGFOvqz8g5mJ8fnrgYcrn/qtL9cIT+VgUd8OfYlukse0mWAaZLXrtFTGqmj6mwx7rRCDQ2pjE6rrSGgFCJJvAY/GkuucZ+V8BMIZhq2fgStkveSoI3D+dow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830761; c=relaxed/simple;
-	bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=utdY3NG2K9a0yJtXEFf90u/Yji33LZg9ZcNG9N1C7cu+hz4m2ZnHlQzXCK3LoSdPmCVLaiOYgRwJxcZAqpeDmjDSuljUUW93Z9U57+m5LFXZATymw7okkSSWhwnnvKfhclHjj7vvujimw+oCIxDqBr7GEzwiwC8f9YrM/n/D3BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzta4frQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F80C4CECF;
-	Tue,  5 Nov 2024 18:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730830760;
-	bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Wzta4frQAfI+4x29xiW8d95oYiYMxDwzeUtVWVyxDS1oUTnFvakcknjMNjmV59u8x
-	 s6w5C7WqSSq5pm152rGl/d+Ns/2NXaRTkrTeFe4kMlW3/ugHTz/Iw9//DMH0TL043G
-	 WGWXmMW6T/oRX9lkWkk5VWWNEpssvtmrDa18Re9xeN/uOFm4VPEnrgIhkW2NCuSSTY
-	 sWg1NgdhxcjETb4r1O47SzSPTEFSihoziq/5Y5RVOuIjXFN5mHxzZ2Ik/lpoNU3T16
-	 ThWrqxS5f8u/XdkUPaRQZHRJsv/njGi9uL6/eE8elHb4k0J3eIRjmO22YfB29R3Qco
-	 tf6VjvAeNvy5g==
-From: Kees Cook <kees@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <kees@kernel.org>,
-	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] exec: NULL out bprm->argv0 when it is an ERR_PTR
-Date: Tue,  5 Nov 2024 10:19:11 -0800
-Message-Id: <20241105181905.work.462-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730832946; c=relaxed/simple;
+	bh=FyJwrbSOcefmy8hObu/h5kbLIkpKrzUHjU9Sx8dH+Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sp9yCkqLOLpAIbKbqRY7Px6+k8AGgrTBbRkWnpd27AmRk4lWIMXu+xMyRBTZbG/+DYSZaFngCIAQMLOT1hIHlkK4GNvFqNZNJBfEWIRYUycCRG5VBEECtRXZra7divgON/RznWP3vm3QP26mt9B8xo0hj5zG/2FsfsclQAx8J7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FPVui947; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=csnfmaX6tlJo2e1eAq4rsKokiFMcmhKAZZMJd6wjEOo=; b=FPVui947CyQVumsA4kSLOHx2jG
+	spiyu2eEwhqOv10c3+Cy5zAaO0g8RtQFw7P/9bC91PgnvxTHviirZm0Ie69+03ccTOzmjScAGG66U
+	Wq5BXDoq553rH6hMz4v64bZty6Bb4lZtRz3t8ih8Yg5/W6B9egy7z7zWixbgXb0CpW+fL6LXA7qT0
+	qPNR1+I4R5xn+pxUhM2wB2IvMaqbGH+Hkc0mW8SoLOYe2JJhCwiQBLODdErd8HSxY1lKZ4k7Io132
+	mG4P3OnM4Ezlzw7TaqiXA0aXcq4vySmfOcI6jfVmNw4RWVZuDsUYFy/h0AkCCO/7QywZwTlOxnF9M
+	a9arNg0w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8OiF-00000003Tnf-38ZX;
+	Tue, 05 Nov 2024 18:55:35 +0000
+Date: Tue, 5 Nov 2024 18:55:35 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Shivank Garg <shivankg@amd.com>
+Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, kvm@vger.kernel.org, chao.gao@intel.com,
+	pgonda@google.com, thomas.lendacky@amd.com, seanjc@google.com,
+	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, arnd@arndb.de, pbonzini@redhat.com,
+	kees@kernel.org, bharata@amd.com, nikunj@amd.com,
+	michael.day@amd.com, Neeraj.Upadhyay@amd.com
+Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
+ guest_memfd
+Message-ID: <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+References: <20241105164549.154700-1-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1391; i=kees@kernel.org; h=from:subject:message-id; bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=; b=owGbwMvMwCVmps19z/KJym7G02pJDOlaifPnGyS82b/muRhXf1nrDL+nbivKFV8oKxtG8T/fs vIHt6hCRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwES4rjL8lV0nvoYlzPJdBW/x 9vUhHHsKS4qPP2dLPv+y+69b4t/7mYwML71dr6nqdhzI+PWgVKKNuSjg68a+13YiemdmpygVVd7 mBAA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105164549.154700-1-shivankg@amd.com>
 
-Attempting to free an ERR_PTR will not work. ;)
+On Tue, Nov 05, 2024 at 04:45:45PM +0000, Shivank Garg wrote:
+> This patch series introduces fbind() syscall to support NUMA memory
+> policies for KVM guest_memfd, allowing VMMs to configure memory placement
+> for guest memory. This addresses the current limitation where guest_memfd
+> allocations ignore NUMA policies, potentially impacting performance of
+> memory-locality-sensitive workloads.
 
-    process 'syz-executor210' launched '/dev/fd/3' with NULL argv: empty string added
-    kernel BUG at arch/x86/mm/physaddr.c:23!
-
-Set bprm->argv0 to NULL if it fails to get a string from userspace so
-that bprm_free() will not try to free an invalid pointer when cleaning up.
-
-Reported-by: syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6729d8d1.050a0220.701a.0017.GAE@google.com
-Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
----
- fs/exec.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 79045c1d1608..65448ea609a2 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1522,8 +1522,12 @@ static int bprm_add_fixup_comm(struct linux_binprm *bprm,
- 		return 0;
- 
- 	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
--	if (IS_ERR(bprm->argv0))
--		return PTR_ERR(bprm->argv0);
-+	if (IS_ERR(bprm->argv0)) {
-+		int rc = PTR_ERR(bprm->argv0);
-+
-+		bprm->argv0 = NULL;
-+		return rc;
-+	}
- 
- 	return 0;
- }
--- 
-2.34.1
-
+Why does guest_memfd ignore numa policies?  The pagecache doesn't,
+eg in vma_alloc_folio_noprof().
 
