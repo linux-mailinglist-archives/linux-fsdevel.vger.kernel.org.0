@@ -1,215 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-33703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D91C9BD8F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:43:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7459BD962
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 00:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F234B1F23B3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 22:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33D31F2360E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 23:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E82216429;
-	Tue,  5 Nov 2024 22:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA021643B;
+	Tue,  5 Nov 2024 23:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5VXEGAD"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="ONN2+2My"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE601CCB2D;
-	Tue,  5 Nov 2024 22:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730846608; cv=none; b=j1GKo8ypTAmSiOBg3G+awKu6B4WqQj6HFh6auevvzSl4BlZOjyzqKuNd/Jglhkce/tmz+gfuV8nSRH2QtkyxQ2nXzGcInHYSFaCkxKVVEkCGjzf0CM9rb4iVbFyUct6jZIpnU/Yw24wAWl+RsWCytMs4w59ce5jmjHQn/2j6Qp0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730846608; c=relaxed/simple;
-	bh=29VB2TXgezrGxJiDRLSawh3OzeWo4mP3g/A1sgE/KEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEVuVwn0glMADJ1FtDwi47OLgYyQ4k74q/NsjMTJ9IosCKLUR1tiurQDCz+ixpobJ96b02fm/qqpAA2uzSaT8PFntNmuZQF1dErH2BWdYF2w4hqw2zB/0ZX6d0EViBiZMUwMVhWfL1TS39B58ozYOXiCK7SQr2p84Q5Jl8kb/4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5VXEGAD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B834AC4CECF;
-	Tue,  5 Nov 2024 22:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730846607;
-	bh=29VB2TXgezrGxJiDRLSawh3OzeWo4mP3g/A1sgE/KEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5VXEGADucAFWOV/mozkObc6ls8gN8ONauf78U5mrAmyQGc5n9H/3R06b5KaUmemZ
-	 CtR9i9BmwyzxqypoMGjxlKSWysalCt05IbvL+m7wLQevz4+ugy40wV+xJ/FF+6zWPG
-	 iSTquanDYGKSBeEFWOdXLn49L7skemcJksUQeTrV3PuD5bP6lPhJX7dqvyx3F2RQbq
-	 wH5K+ASAtwWFB7TcORUYpUzkL8B72lThzG1S816m2+MAjaSKo5fSdYu6i1Gj/h00PP
-	 eSuOOAmit3e2/Fb0lePKcFlfC+MLQg0Vn8xQZA/353JwQNzBzTUIs2UGG6ySVeEKsT
-	 USn/iRIaIihtg==
-Date: Tue, 5 Nov 2024 23:43:24 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fanotify.7,fanotify_mark.2: update documentation of
- fanotify w.r.t fsid
-Message-ID: <6zhqson7n7774gol46cmpcgbgyhsly3ehnpyzl5u54dudd7syl@vosk5uoaifqg>
-References: <20241105144939.181820-1-amir73il@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE41A1D3193;
+	Tue,  5 Nov 2024 23:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730847748; cv=fail; b=H0w7pW/dxwtBfE8QFN54qqw5zZ3oc/vlLKCAiaXUxOdlwELB7x1nw8l51VSEBHI9fQp7HSVMrPizxjA4QskewMrY68CNoyATi5HTplXonxSFbj6KVst9r2iMBwyAB7YgAdi9yNvZyU860SpQKl9vYDTFgl33n5FKXZHwKkhcTtM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730847748; c=relaxed/simple;
+	bh=aYMes/aaYGOqbBglgk8dHKN6jZegbR5Ipct2fBm3hGs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LAlmXqOD2Gmg8NZX2MeMI93sD8pI0JTqwVMpQOmWZU+R/144UervMGa5WrdBfIwtVnztUFX2J7zcQMFWXKt5IxjT2w0WPPo51Lqa0Mymi2wJ1JDSL4ksHen2xewiq9EiLZmudoaWcTdnDeVigZZvkUguTnADjxDbMoPmxjxRcK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=ONN2+2My; arc=fail smtp.client-ip=209.222.82.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2043.outbound.protection.outlook.com [104.47.51.43]) by mx-outbound44-80.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 05 Nov 2024 23:02:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oRGowHutKKkM+HJzKjKTkqHI+Y7qm3qpyYSlGrqFOSpZ9qq4lODwgUr+EOVdJS74PSHmRKfvmp0v16D1tN7m5RM+SpOV57G5K2Exxf22hXq0QDcCLsfKrIgeFEKOfK/YTqFZdZ/cY57hBpMgMthgKpc0idLMsfXWDEu7b722DL71jkiM9tEj1PN7wYgpfPbLhWDn5YcyTHiV5Ejp6TMKM2flqxpy+Wm41xxRHlfS+TN99WEboNyqogPKpOjIZQqpIYMoGIpSNwSeKG1Z2uw3l9ZUbiUWsOzyv6fqLsJ5OKgYYXF9Fe+GdsxgQFAM5Wn/DWdtszrmcooEXEbATe4EYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZIJmlOlw85CN1OlneWqlM5/+Ytk4Uc6U99UK1zOdf3k=;
+ b=RClKxYk1PaWTNmtpoCfeNfOLaBZkr56wys9Vq7zOkNxdhNrEseUadygfim9R5meHvYfu9iGgxkuF7fL85itik9z3h7hqOT21mcYBOMMasQnqTJsNpJmRU/Gb0CKMQyhslNUMdr3FAIXhoFb9kAeqjdOxzSEvECet2+x9z2GZxQf7W9qJyrrcHEyPccjxsdnCXw9POUlc25hag974tP1FI6wNQMp7Iqu7tdtTh6il9YPX3lxB5LjSrDPV8ipRy0h3/fqeG76KfvvMyHSKkWB3cYPrabe+EnufwAaPP8Z75qyzNyz1X5w3RlGwXmgfWoAZ2sUzzE+1awfopLjfNh+3Kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZIJmlOlw85CN1OlneWqlM5/+Ytk4Uc6U99UK1zOdf3k=;
+ b=ONN2+2MyuHKyj14RWM//vusoeHL583vZaDmUuZ2AjeWRkuoOqYtfDUbpJSxsNBFikUrWR4rlGoOG3QollQOo8G1fIo2/1S79XAW+WjXzAfi0Jd8kTCwm2AGcwOjGrrTTTThFJ+gV87G9LA6W1efIuwlEHwfmyL3OdJwM4DGwPq8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+Received: from CH2PR19MB3864.namprd19.prod.outlook.com (2603:10b6:610:93::21)
+ by PH7PR19MB7463.namprd19.prod.outlook.com (2603:10b6:510:27a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Tue, 5 Nov
+ 2024 23:02:10 +0000
+Received: from CH2PR19MB3864.namprd19.prod.outlook.com
+ ([fe80::abe1:8b29:6aaa:8f03]) by CH2PR19MB3864.namprd19.prod.outlook.com
+ ([fe80::abe1:8b29:6aaa:8f03%3]) with mapi id 15.20.8114.028; Tue, 5 Nov 2024
+ 23:02:10 +0000
+Message-ID: <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
+Date: Wed, 6 Nov 2024 00:02:05 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 12/15] io_uring/cmd: let cmds to know about dying
+ task
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com>
+ <b4e388fe-4986-4ce7-b696-31f2d725cf1c@gmail.com>
+ <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
+ <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com>
+From: Bernd Schubert <bschubert@ddn.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0274.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:373::19) To CH2PR19MB3864.namprd19.prod.outlook.com
+ (2603:10b6:610:93::21)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kthqnoivccu52h6w"
-Content-Disposition: inline
-In-Reply-To: <20241105144939.181820-1-amir73il@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR19MB3864:EE_|PH7PR19MB7463:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9476777-98df-46c5-c44e-08dcfdede0ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eXMrY2dNNFQrTlZoQzF3S3JGSjQ5S3lIVVJ1bjJHaWhRNHlaZ2R5QUdDeHdY?=
+ =?utf-8?B?QUlzT0xCOU1XNHRoeVFTNTZ3ZEh3NFY4UE5CaGtWbWdNcTE0d04rR1pYa01M?=
+ =?utf-8?B?K3lsckRMZzV5Y1hJQVpZWDNHK29jdkRBaWJVd3pHUU12NFJ6dTlwVnZSQTVm?=
+ =?utf-8?B?WlBQZDVZU3pxdlh0amhHM0NvZmtqNVhMQi96ejBPMzg0b3d1cGRmcGZXTCtT?=
+ =?utf-8?B?L2dWUjFINTZ1Z0xXSTRPSVEyeUoxUXZGUzNVNzNnc0JjcERUWHVjWVF0aXFP?=
+ =?utf-8?B?QTBBamdNSW16QjBhSEtRd3FCb0Y1cmNpUVdGcG5TZzdBUWpTNU1UKzRIaFVH?=
+ =?utf-8?B?ci9UVCtGb2F2aExZbEJwTDZaaEZCczdYMWkyS0NieWVRdDg4aWVGSytnSGpF?=
+ =?utf-8?B?OWlyUkpNZ1RUdmU0MUtHREJCdnUvRDI2Sm13anY1Y3RsNjB4ZzAxM0pwV2NN?=
+ =?utf-8?B?bkhZU3JhZ3dnL3Zqek8wTUxrK2VlQkU1WlZkalcvYjNzcnc4azJoWFh4cC9R?=
+ =?utf-8?B?WDcxMEJtQ1hzc1FPdk1YVCsxc25qUGdwSUpRVzR1NEptSWhqSjNVZGNvS2FY?=
+ =?utf-8?B?dXRpeEVpZXhMaS9qWWM3MG9LM3JCR1NjY2VuWXhKa2trRlZLdVhzQXZhUm51?=
+ =?utf-8?B?YS8reHo4S1NvcHdHVHkva29JQVgxbWhNNHFGUnpiUkhqaGRrWXI4Y2FvU2NW?=
+ =?utf-8?B?RnBvcWp3WHBGRmNKbGwyczYrL2QvLzA3MXJOT2FRZEJOdy95YmlYdGltM2ZG?=
+ =?utf-8?B?cTdGM2xDY004KzhLNXJROWpMQThMRmtCdy95eElVZGVqeGQ5RnNTd2RHUFVM?=
+ =?utf-8?B?RUFJVGMxbjUrc242ZFlxZGFlSEZzQVIzQ2R4OFpZYjNuTk95L0E2aEZJMk1s?=
+ =?utf-8?B?S0JrbnNpMldyK245cCtVNkZIZlZZcjg3SHpNcEdibjhyNE9jWkg2SmMvZEs0?=
+ =?utf-8?B?L1kwWGlpZXk5OXBBRlpyQy9nYVp6U3F4RDRHWlEzSllSZzFHeTNmTnlOdGdB?=
+ =?utf-8?B?Y0NjbHJDSy9GL0VmeWRwZllNcC9qeHZrdnJhcVQ1cW5QaWZuS21hQUttZnRo?=
+ =?utf-8?B?Yi9XRHA5MW8wU1czdjNDWmtzcExwZmxqTGxYaXJpMXFBcGZXb0tTVkhqSGVq?=
+ =?utf-8?B?Y0ljMkFacC9PWlFDaWxYQU56TTBqb2xwTkltWFZyMHFyUzdVbzI1ZXFYMngw?=
+ =?utf-8?B?OXNuTXJWM1VQOWlUbkNGbENDUkZueFlsbFE4U0NPNU1JOXFWQ0YwczFBMVZ6?=
+ =?utf-8?B?ay9IUFg0MytERU80T1RmWjc0MHFhYUR4Zy8wbGdvTXhBbmwwQlBzWmt4Nk9w?=
+ =?utf-8?B?VVpvSEdYNzY4SE5kb0k3aDI4Yi96ZnhJZ1d2c0FyaVBGaVFWM1c2OGFWYUkw?=
+ =?utf-8?B?enBVU25xeXkzQk1lMEVBejdXZ1RFbldYSjZoVTRrZDFUZ2xVdS9LNEc4Lytq?=
+ =?utf-8?B?NElJSmYwaUZ5Q1Q4NCswbmRxVzg0LzVFL051WDlTcFJKK3VERFgrMXJuUkZs?=
+ =?utf-8?B?TExFUEhsUTNtcGcwbXlMM2dWQmxBRWZibGhrbjBXbWZMTVRuN3AyT0UyRnYv?=
+ =?utf-8?B?YURkcDBVSkp2T0pudXE5SWVHV0hSU0pCTWdyWVREbHlEU2pjNnNlN01INmZU?=
+ =?utf-8?B?ZXk3WVdEVlM2QS9ZN1U4bldON0s2TlIzMWFWaWtDUEtQUE5iblFsNGFUejdT?=
+ =?utf-8?B?U3FQaXZFb3NUTTV3K3RLa1RHRUpkczNwTGxHNFE2NXFwNmora2JTSEo2N0ha?=
+ =?utf-8?Q?4T8Die0xHQnNWY7k98=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR19MB3864.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGJXSm1paENNd0J2SWZRYnhxUVE2U2wyT2cxTU9id2dlV01VQUMwellaMkRW?=
+ =?utf-8?B?TlI1NGUxMC9sWldMNEtXY2IySDU4WEFjdE5vdWJpN2dhTDJrYnFSZnB6QnRE?=
+ =?utf-8?B?VzVsWGg4M0lUZmhhTXROQjdlM0tIank1Tkd6Qk1SaE5zT0JJeThuUk45cWRS?=
+ =?utf-8?B?b0xXSWRLSkREYk1sTHc3ZXMvdzlLM2Z6eFdYbzJYZzBOUEM0MW5lRExCVUhX?=
+ =?utf-8?B?TTV5a2hRaHNqUGlJeXdta1JvWHFNcUcwRCtMcGViMi84ZlVFNHlxZExkZ2tQ?=
+ =?utf-8?B?TnVueWdVZG8vSVhDTzNGL1crVm1YeTVmM1gzRVRkRWNwdFVTR2RyeEZUVmlj?=
+ =?utf-8?B?Rk1EQ24xakZWUFR4akhRajYwa3RwMEx1M294RHZYQkVPa2tDQzdBbjVEYW9r?=
+ =?utf-8?B?MUlBWEZyTGtwWDA3OFpreEFFcFhxZkZkb1MvNWlSVXNURnlLaGhYNjZNbWhi?=
+ =?utf-8?B?bzljRHNtU3l6VlIyR1llelJEak5CeWcyNThiemE2R0pZTFhrOVlvTnBYOWNQ?=
+ =?utf-8?B?Nm1WTlo5ZkhOcHZmMmRTQUZqY3BXcytXenROZ3NBRldhaEs0S0VkT3lVL3VI?=
+ =?utf-8?B?TEtGNkRCbUhQVzdqdkNkcjgveit3cGFDQWdEbE5uVktZVnExTE5ROWtsdEdy?=
+ =?utf-8?B?Q2pmOVpLcitPa0RJenl3LzUwVVVQc2I5NGtRcFNaR0l1SlF4NDMvM01LRlR5?=
+ =?utf-8?B?RmNFNDA0SUVtYlVESjVmcGVNWEtJck4zVGcySDY4Z1NlZHNmcG5qWGs3dTJ3?=
+ =?utf-8?B?K0pjUHQzUzdxMTN0VFdBL3JxT1ZxQjJRZzlEZVNCaGM0NTdqTUk2dUw1N09w?=
+ =?utf-8?B?OXdHOXRPRFBXc2VRQjBiOXltZzRZaDBJZi8zU3Y2Q1BMMEtmVm01QS83TEdL?=
+ =?utf-8?B?c0QwOU1mY1hMbGRycVJwcE1OdkhjV3dxOW5OSFUzU0FERkdiOEE3RmJQK3p2?=
+ =?utf-8?B?cU1CaVRwL29tdUxUSFZWWSt3UlB3N2tzSXhZa2xodjNzZGQ0YStScEFYcDB3?=
+ =?utf-8?B?MDdBbXc4NmVENGt5Z0k1RjVPdG93WXpxUE1qSnZEZWFnNGpDQzEzVWEyRE9D?=
+ =?utf-8?B?TGpoakcwbTAzd0FkeDdNWERPdWRVb3JwSlV1ckpacTNlSk96Q001RSsxVGxO?=
+ =?utf-8?B?S2FmdWhCUldReStsTU11eFg0V2FHSjhLS0t4eHhRQTh1MlUrcHE4eXpwU0RM?=
+ =?utf-8?B?OWY0N2RWbkZMMDZwc2dXYUQ2RHR5ZHB4M3cvdzFJa2g1MVowSWt4MUhtQlha?=
+ =?utf-8?B?d2hubWdEVHVTa0QrRUtMZy85RExobFhYRW9tMTd3VDRtZmhtWDdDMDF6eGlX?=
+ =?utf-8?B?aTdwd2w2WDY2OFQ3NG1YMmNRU0N6TmtaYlVxbkhLWDU3M2tDNUVlOXgxMGFV?=
+ =?utf-8?B?bkMya29vbHN4YXRGRVVGQ0NzR0x6SU92UWpJci9UV2hHeWU0eGxTMDVVbStF?=
+ =?utf-8?B?cUNXRkZKL2VwNVNVTUJnMUluQlNQQ1pRa2tEVnlQVG4zMENUc0RxNVZWSEUw?=
+ =?utf-8?B?Z0xPeEhuZklpMUhSRk9mQWNOMFViT3pSMFkxUFpCVmFjY1h5dUNJVEdwTVlN?=
+ =?utf-8?B?RFczbEVlbHRHRTRKQkhWQkx4NUtjeVVVeU05cjFjT2N0Yk8xUnNyZ1liamtu?=
+ =?utf-8?B?R3NpYUcrSUJLZTkvY0NtVFZPSHo4QnJYVkwzQkh2L2VKcUtnUm9JdnBicWdI?=
+ =?utf-8?B?QVp4Mk9RTklSZDJQMHBEbHRWV0JTN3ZsQ0VaN2xoR3I0WDhuZTlwMEZ1eGYx?=
+ =?utf-8?B?MFRtY3ZUckJzUytVUlMzcmF1dFNkVmlmSkJqcEJMUm5POGc0WjlFSWFmVXB1?=
+ =?utf-8?B?dDFHK1FYd25kZ2hIbytTSFdJcFVLazlrYzcxRnE3WUc5dDFpSE0wbVJjOHJT?=
+ =?utf-8?B?K3dHNE9JWVUrK0hMSkJFQWpDdDl3VU8xSGhTaWtHOVdsdHErYnZWT2hvdjJ0?=
+ =?utf-8?B?Y2RpTU11VE9iU2t4d2dwNmtmWHlzOWxqbnRyMUtoNlVDbnpsQXVLL21XZ3dr?=
+ =?utf-8?B?VkpGRzZydi9VMkZaVGpySzBNWUpMU29GLzU2QzlCVEpmVDVJUHhNcXd0ZkMx?=
+ =?utf-8?B?U1VkR0FEYy9BUEJUU1hPbERXcTVLemU0R1hTK1YxTUNQOEw0emtNYlczVGs3?=
+ =?utf-8?B?R0dOZ3NXbHFqbG5EZXluNFJuQ0pnNGtqT3NKcjR5Y0xmRWl2ZFNlMU9IQ2Zj?=
+ =?utf-8?Q?t5IErmQVi7oaVox2F/ZrWUjHjDDp7qzABDW7W+SvotmK?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9085iY5zKXxoRRerJaKFMfvBsXWlUXig32+dTQ8azDQkhSwKBQXJIIztpCuhnA5x1QtzrkV0DR/JVjtq0n4ULlqpm0wUexVT+2LQAsBv3ehBbMkKsXBfRm/LFzTVEPP5JsvnAHg+1QA2awg6ySbuwC/5S9yeZs3/zfaKCU+EicDX+IiNjibyXuDajK6Hj1FhQER6TiQkBz16n7YH7wKYYQVgjYl/0vbsisdMJ7Me//oPCXFIBZqO0bN4NDnbyxMlGnEd6HcLCq2CTkZTwJcHXb7aI3XCAJW8fIy3a3XwyHtL0xqL9tbsWFSRfXOt+jCFoepiXWi+rVuEy53Vyf0LwC6zIE1Q8xH0WRoY2Caih6w8Ai/IhdcKahyMNca5U1gskGk646ByU9U23j/vXfIMTbVb7wffpMBq0cB/rYBfOXbSR6SSkNn6dIwVALl/jHDB5ln+FVBYHsXRhEPZy6ymekSW/RRQpC8wv5+1w3c/K4YFfntD2vHlh9QyVEHfalm92SIGUqzMhsUPzDaubUSghUuAN2odZCbh2iNBCxyEokrKVLnQfFII20A1ZV4x1UMrWM032ES+XCf/p7mijxF2EN0Npo3Udqxe4BEAf1YRfySXRJ3EFHlZS+JAk0SEQigwcDnj7IpK62MMv+FEXSZmBg==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9476777-98df-46c5-c44e-08dcfdede0ba
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR19MB3864.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 23:02:10.1696
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bHZq4SpcT/oh17ipMR7BEkKcChlNlGCx77SQQrQppV0nkP5CBt7E+lGlNt0KvOUO9aKb/YTFMjRwtO9qpcNvlw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR19MB7463
+X-BESS-ID: 1730847734-111344-12680-78273-1
+X-BESS-VER: 2019.1_20241018.1852
+X-BESS-Apparent-Source-IP: 104.47.51.43
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamRuZAVgZQMCkx1czE0ijRKN
+	ksKckiJTklzcIwDShtbpmYZmGZYq5UGwsAkTzyTEEAAAA=
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.260230 [from 
+	cloudscan20-172.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
 
---kthqnoivccu52h6w
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fanotify.7,fanotify_mark.2: update documentation of
- fanotify w.r.t fsid
-References: <20241105144939.181820-1-amir73il@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20241105144939.181820-1-amir73il@gmail.com>
 
-Hi Amir,
+On 11/5/24 02:08, Pavel Begunkov wrote:
+> On 11/4/24 22:15, Bernd Schubert wrote:
+>> On 11/4/24 01:28, Pavel Begunkov wrote:
+> ...
+>>> In general if you need to change something, either stick your
+>>> name, so that I know it might be a derivative, or reflect it in
+>>> the commit message, e.g.
+>>>
+>>> Signed-off-by: initial author
+>>> [Person 2: changed this and that]
+>>> Signed-off-by: person 2
+>>
+>> Oh sorry, for sure. I totally forgot to update the commit message.
+>>
+>> Somehow the initial version didn't trigger. I need to double check to
+> 
+> "Didn't trigger" like in "kernel was still crashing"?
 
-On Tue, Nov 05, 2024 at 03:49:39PM GMT, Amir Goldstein wrote:
-> Clarify the conditions for getting the -EXDEV and -ENODEV errors.
->=20
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+My initial problem was a crash in iov_iter_get_pages2() on process
+kill. And when I tested your initial patch IO_URING_F_TASK_DEAD didn't
+get set. Jens then asked to test with the version that I have in my
+branch and that worked fine. Although in the mean time I wonder if
+I made test mistake (like just fuse.ko reload instead of reboot with
+new kernel). Just fixed a couple of issues in my branch (basically
+ready for the next version send), will test the initial patch
+again as first thing in the morning.
 
-Patch applied.  Thanks!
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3Df6ebb46dfba40902656321f16bfb38daf4d99377>
 
-I've also applied Jan's Review tag, since the changes are minimal.
-BTW, I would appreciate range-diffs, as recommended in
-<./CONTRIBUTING.d/patches>.
+> 
+> FWIW, the original version is how it's handled in several places
+> across io_uring, and the difference is a gap for !DEFER_TASKRUN
+> when a task_work is queued somewhere in between when a task is
+> started going through exit() but haven't got PF_EXITING set yet.
+> IOW, should be harder to hit.
+> 
 
-Please have a look at these:
-<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUT=
-ING.d/patches>
-<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUT=
-ING.d/git>
+Does that mean that the test for PF_EXITING is racy and we cannot
+entirely rely on it?
 
-Have a lovely night!
-Alex
 
-> ---
->=20
-> Changes since v1:
-> - Fix review comments [1]
->=20
-> [1] https://lore.kernel.org/linux-fsdevel/20241101130732.xzpottv5ru63w4wd=
-@devuan/
->=20
->  man/man2/fanotify_mark.2 | 27 +++++++++++++++++++++------
->  man/man7/fanotify.7      | 11 +++++++++++
->  2 files changed, 32 insertions(+), 6 deletions(-)
->=20
-> diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
-> index fc9b83459..47cafb21c 100644
-> --- a/man/man2/fanotify_mark.2
-> +++ b/man/man2/fanotify_mark.2
-> @@ -659,17 +659,16 @@ The filesystem object indicated by
->  .I dirfd
->  and
->  .I pathname
-> -is not associated with a filesystem that supports
-> +is associated with a filesystem that reports zero
->  .I fsid
->  (e.g.,
->  .BR fuse (4)).
-> -.BR tmpfs (5)
-> -did not support
-> -.I fsid
-> -prior to Linux 5.13.
-> -.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
->  This error can be returned only with an fanotify group that identifies
->  filesystem objects by file handles.
-> +Since Linux 6.8,
-> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-> +this error can be returned
-> +when trying to add a mount or filesystem mark.
->  .TP
->  .B ENOENT
->  The filesystem object indicated by
-> @@ -768,6 +767,22 @@ which uses a different
->  than its root superblock.
->  This error can be returned only with an fanotify group that identifies
->  filesystem objects by file handles.
-> +Since Linux 6.8,
-> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-> +this error will be returned
-> +when trying to add a mount or filesystem mark on a subvolume,
-> +when trying to add inode marks in different subvolumes,
-> +or when trying to add inode marks in a
-> +.BR btrfs (5)
-> +subvolume and in another filesystem.
-> +Since Linux 6.8,
-> +.\" commit 30ad1938326bf9303ca38090339d948975a626f5
-> +this error will also be returned
-> +when trying to add marks in different filesystems,
-> +where one of the filesystems reports zero
-> +.I fsid
-> +(e.g.,
-> +.BR fuse (4)).
->  .SH STANDARDS
->  Linux.
->  .SH HISTORY
-> diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
-> index 449af949c..b270f3c99 100644
-> --- a/man/man7/fanotify.7
-> +++ b/man/man7/fanotify.7
-> @@ -575,6 +575,17 @@ and contains the same value as
->  .I f_fsid
->  when calling
->  .BR statfs (2).
-> +Note that some filesystems (e.g.,
-> +.BR fuse (4))
-> +report zero
-> +.IR fsid .
-> +In these cases,
-> +it is not possible to use
-> +.I fsid
-> +to associate the event with a specific filesystem instance,
-> +so monitoring different filesystem instances that report zero
-> +.I fsid
-> +with the same fanotify group is not supported.
->  .TP
->  .I handle
->  This field contains a variable-length structure of type
-> --=20
-> 2.34.1
->=20
+Thanks,
+Bernd
 
---=20
-<https://www.alejandro-colomar.es/>
-
---kthqnoivccu52h6w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmcqn4wACgkQnowa+77/
-2zLh8w/9GV+eQy78V1nxTuJjyjrH38fT3VuJHng96dvWAKv8PWQFoF9b8++4svPO
-EbMjtisYuilAOXTCYV9Aa7KcAtcnWphX+lTmN0/KqIVzntui2WEDE/YUo1tRTlJy
-LD+haPUoMR8cwx5M56UHVJ5gSDaHl1V2Ef2L8mkXz4rhI7+Ca/75v+eZpusyhcu5
-7kC3nnHS5PJPsyNwRpHH/5I+4vKtUUGd6UMJkVE+Ux8fh8D5ibfkeTifvn7Vn4Or
-8tFpz/XzN0ibYtU6Pr+ypXmPQvvkJ7Zgvw1puN6WX5RhAM1Cbp5ib3olb48fbe1R
-z4tPbn+1VeIFHSqPo0m3zNo3PC9TQLLDr5nx/6LAE0U26tdZCWYF+v0l0nsyfsX8
-t+bRXsLqYfkFnSWuQBvnmswbTFOAnA9iKBvROPgBl5Fv9JNN7XD2Kei0RvaLJYKJ
-GY+fKg8lZUCxLBxFsNoKRsjM6QhjUe1AJYET8t3j1thIpmmVm1SNwY0emiH78+hB
-EydUwh3TQzRHOtlJJtdrbKcNn9UHIVo5037x5WaIvX6ncItdkaRq6we/t7PovUM8
-oY843zCldeToMsGC2iVnSKFlqyWmtfZwN/ivUTFdQdpUf1r14baxz16GYOZ02fOb
-e6qEHU3kQ4yadSxwxH+HfR2uDjK+pxBxH6Xvx7CD6XQKTXn8c+Y=
-=gJJa
------END PGP SIGNATURE-----
-
---kthqnoivccu52h6w--
 
