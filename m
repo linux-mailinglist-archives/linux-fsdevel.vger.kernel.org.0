@@ -1,184 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-33655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643379BCB14
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 11:55:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61ECC9BCB8B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 12:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89501F23B66
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 10:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54DD1F2450A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DBB1D2B39;
-	Tue,  5 Nov 2024 10:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB0D1D31B5;
+	Tue,  5 Nov 2024 11:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zu13r4TA"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="n8NUD6SU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from forward202a.mail.yandex.net (forward202a.mail.yandex.net [178.154.239.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9698E1D2F46
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 10:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7911D358D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 11:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730804127; cv=none; b=itjdiDLFbwwLtgflr8PZd3Yldp6zwuvTuc97jhswYHiMLIUxX0/Od1s59tVzl4ud04Y6f28GXz0uboqSkghgUD0f+wgCHAV3HyImd3XRRSkHexmH3JgO86afqkcJnj/t8OSezNZpl1w1zbstWlgm+m7IUotz/ELfsJrtUJOFdz8=
+	t=1730805700; cv=none; b=X7ckxFV5fcJpg9y/xhwaKiyo/3GYbnGWjMVxSD6GUdFLBAYjYKIEZUOleNqiehezFo04ak3w+v5yGD1rN3YoJjaEaRTHs2jD1AUhRo6AjljbGLJNKXLyr6eZjqqoH42B890yA18zu9/qM5BXHpxl4jy1CwIzT8oZFK9VVy0EzbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730804127; c=relaxed/simple;
-	bh=QxlVY9iIc87G65qsh55TWdv+Ql7CEdjQwusBDD0Rh6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEe2+wui5k6cf09cGYg+TVgNq/k/YfzQUVx+sKcvyAnoGVQGJNzuYB3MrnAH04ycsK/OFPQ7pb5zKUJF8AlioPiMnUkM8DFTYri/WW+bn0Cg+LCagr+n4vRpBEfYAY020oqRnWDkCLk3Yjz0mSxtczbQLSNRkoVy+WzGw5mAO94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zu13r4TA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730804126; x=1762340126;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QxlVY9iIc87G65qsh55TWdv+Ql7CEdjQwusBDD0Rh6U=;
-  b=Zu13r4TA+LrNCA4rXXy9o1y8EYGT/4lu0ZYiTS+vlh6OwoxvGiZmeGS+
-   djqN15GFzt5TacgfgS+I+i/N7nSaq7lGIax42U4tAcobjowZD2lrtcKUL
-   4POidK3waIP0V7ICEVVXE0gmH5dWsHRU2B/S+aNCOg6Wnrg05li7BPrkK
-   ekBEbqPPHqXsllvvhUPlbYJpH/U8GmpUPg4BSTuRgRzNc73aSgAsTbUj7
-   k0G189rGo5YUqyv0CdwuXCiGFYlxaHd8Eyg1FluJbZe2XZRSH12/LxRvx
-   jRPdcG7zzvr7bLTM+Npst08QBqPG3IZbWN9uHN8pdOtx7Qs3/u3P+SGVB
-   w==;
-X-CSE-ConnectionGUID: f14WOt2oT3qdC8Cebk7vJQ==
-X-CSE-MsgGUID: 2RVD7K7iQYWhrSZeTQrZBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34232865"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="34232865"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 02:55:26 -0800
-X-CSE-ConnectionGUID: nBt0j7+TRbScQ9epErXFZg==
-X-CSE-MsgGUID: UQ9+UextR9aE5JsRi0u58w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="83493956"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 05 Nov 2024 02:55:23 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8HDV-000lwH-0D;
-	Tue, 05 Nov 2024 10:55:21 +0000
-Date: Tue, 5 Nov 2024 18:54:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>,
+	s=arc-20240116; t=1730805700; c=relaxed/simple;
+	bh=Zs6R+sbXRe9oUhxPUrnGsbevcIuQBq/PDAD+KcSX2dY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t9/lY4mTU7FNefvfxgFHDsu+Eq7cHa4Ve5+WvebyP68eBXfSoz0KrX/tDuAs9KUgowoBLJ4+QHDdmlQnjCh5g2KxkWb7K8xoD/mJOfe1kY9ops2rAUrHBGyAJIpSENJcoa9I8WJ/aNu8wTadT12/GvEMXvN4s+1xn7P+QgzMwr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=n8NUD6SU; arc=none smtp.client-ip=178.154.239.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d101])
+	by forward202a.mail.yandex.net (Yandex) with ESMTPS id AEEDC697A3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 14:14:27 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2e15:0:640:bcf8:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 5F64A60DC3;
+	Tue,  5 Nov 2024 14:14:20 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id IEe9B37qB8c0-hxYvLQYY;
+	Tue, 05 Nov 2024 14:14:19 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1730805259; bh=VkCUlBwbHpvqxpryuAIL9yfb2eN3wHf9AAGorb+LevM=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=n8NUD6SUZ6c33eErZQZ1syfDP25jIB2JFyQAbmnjaQw/5whUbpXtN9CJmTJoLhY+I
+	 xNIAioBfc7wmdNobSJrVLnmOEQ32lYnMQaQBCNsBG81IjSk2PUnP8NxfkaDO6zrTjN
+	 jl2BEjNidf3E6dfq1rTmzJ8qqGfc9nKQcfoRylWo=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Tycho Andersen <tandersen@netflix.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	David Disseldorp <ddiss@suse.de>
-Subject: Re: [PATCH v2 2/9] initramfs_test: kunit tests for initramfs
- unpacking
-Message-ID: <202411051801.XD3QJjcO-lkp@intel.com>
-References: <20241104141750.16119-3-ddiss@suse.de>
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
+Subject: [PATCH] exec: do not pass invalid pointer to kfree() from free_bprm()
+Date: Tue,  5 Nov 2024 14:13:44 +0300
+Message-ID: <20241105111344.2532040-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104141750.16119-3-ddiss@suse.de>
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Syzbot has reported the following BUG:
 
-kernel test robot noticed the following build errors:
+kernel BUG at arch/x86/mm/physaddr.c:23!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 2 UID: 0 PID: 5869 Comm: repro Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+RIP: 0010:__phys_addr+0x16a/0x170
+Code: 40 a8 7a 8e 4c 89 f6 4c 89 fa e8 b1 4d aa 03 e9 45 ff ff ff e8 a7 1a 52 00 90 0f 0b e8 9f 1a 52 00 90 0f 0b e8 97 1a 52 00 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002f7fda0 EFLAGS: 00010293
+RAX: ffffffff8143a369 RBX: 000000007ffffff2 RCX: ffff888106df5640
+RDX: 0000000000000000 RSI: 000000007ffffff2 RDI: 000000001fffffff
+RBP: 1ffff11020df6d09 R08: ffffffff8143a305 R09: 1ffffffff203a1f6
+R10: dffffc0000000000 R11: fffffbfff203a1f7 R12: dffffc0000000000
+R13: fffffffffffffff2 R14: 000000007ffffff2 R15: ffff88802bc12d58
+FS:  00007f01bd1a7600(0000) GS:ffff888062900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff8 CR3: 0000000011f80000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? __die_body+0x5f/0xb0
+ ? die+0x9e/0xc0
+ ? do_trap+0x15a/0x3a0
+ ? __phys_addr+0x16a/0x170
+ ? do_error_trap+0x1dc/0x2c0
+ ? __phys_addr+0x16a/0x170
+ ? __pfx_do_error_trap+0x10/0x10
+ ? handle_invalid_op+0x34/0x40
+ ? __phys_addr+0x16a/0x170
+ ? exc_invalid_op+0x38/0x50
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? __phys_addr+0x105/0x170
+ ? __phys_addr+0x169/0x170
+ ? __phys_addr+0x16a/0x170
+ ? free_bprm+0x2b5/0x300
+ kfree+0x71/0x420
+ ? free_bprm+0x295/0x300
+ free_bprm+0x2b5/0x300
+ do_execveat_common+0x3ae/0x750
+ __x64_sys_execveat+0xc4/0xe0
+ do_syscall_64+0xf3/0x230
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f01bd0c36a9
+Code: 5c c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 4f 37 0d 00 f7 d8 64 89 01 48
+RSP: 002b:00007fff034da398 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 0000000000403e00 RCX: 00007f01bd0c36a9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 0000000000000001 R08: 0000000000001000 R09: 0000000000403e00
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff034da4b8
+R13: 00007fff034da4c8 R14: 0000000000401050 R15: 00007f01bd1dca80
+ </TASK>
 
-[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
-[also build test ERROR on brauner-vfs/vfs.all linus/master v6.12-rc6 next-20241105]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Since 'bprm_add_fixup_comm()' may set 'bprm->argv0' to 'ERR_PTR()',
+errno-lookalike invalid pointer should not be passed to 'kfree()'.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Disseldorp/init-add-initramfs_internal-h/20241104-223438
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20241104141750.16119-3-ddiss%40suse.de
-patch subject: [PATCH v2 2/9] initramfs_test: kunit tests for initramfs unpacking
-config: arm-randconfig-004-20241105 (https://download.01.org/0day-ci/archive/20241105/202411051801.XD3QJjcO-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411051801.XD3QJjcO-lkp@intel.com/reproduce)
+Reported-by: syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=03e1af5c332f7e0eb84b
+Fixes: 7afad450c998 ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/exec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411051801.XD3QJjcO-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> init/initramfs_test.c:210:9: error: call to undeclared function 'filp_open'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           file = filp_open(c[0].fname, O_RDONLY, 0);
-                  ^
->> init/initramfs_test.c:210:31: error: use of undeclared identifier 'O_RDONLY'
-           file = filp_open(c[0].fname, O_RDONLY, 0);
-                                        ^
->> init/initramfs_test.c:217:8: error: call to undeclared function 'kernel_read'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-           len = kernel_read(file, cpio_srcbuf, c[0].filesize, NULL);
-                 ^
-   init/initramfs_test.c:217:8: note: did you mean 'kref_read'?
-   include/linux/kref.h:34:28: note: 'kref_read' declared here
-   static inline unsigned int kref_read(const struct kref *kref)
-                              ^
-   3 errors generated.
-
-
-vim +/filp_open +210 init/initramfs_test.c
-
-   176	
-   177	static void __init initramfs_test_data(struct kunit *test)
-   178	{
-   179		char *err, *cpio_srcbuf;
-   180		size_t len;
-   181		struct file *file;
-   182		struct initramfs_test_cpio c[] = { {
-   183			.magic = "070701",
-   184			.ino = 1,
-   185			.mode = S_IFREG | 0777,
-   186			.uid = 0,
-   187			.gid = 0,
-   188			.nlink = 1,
-   189			.mtime = 1,
-   190			.filesize = sizeof("ASDF") - 1,
-   191			.devmajor = 0,
-   192			.devminor = 1,
-   193			.rdevmajor = 0,
-   194			.rdevminor = 0,
-   195			.namesize = sizeof("initramfs_test_data"),
-   196			.csum = 0,
-   197			.fname = "initramfs_test_data",
-   198			.data = "ASDF",
-   199		} };
-   200	
-   201		/* +6 for max name and data 4-byte padding */
-   202		cpio_srcbuf = kmalloc(CPIO_HDRLEN + c[0].namesize + c[0].filesize + 6,
-   203				      GFP_KERNEL);
-   204	
-   205		len = fill_cpio(c, ARRAY_SIZE(c), cpio_srcbuf);
-   206	
-   207		err = unpack_to_rootfs(cpio_srcbuf, len);
-   208		KUNIT_EXPECT_NULL(test, err);
-   209	
- > 210		file = filp_open(c[0].fname, O_RDONLY, 0);
-   211		if (!file) {
-   212			KUNIT_FAIL(test, "open failed");
-   213			goto out;
-   214		}
-   215	
-   216		/* read back file contents into @cpio_srcbuf and confirm match */
- > 217		len = kernel_read(file, cpio_srcbuf, c[0].filesize, NULL);
-   218		KUNIT_EXPECT_EQ(test, len, c[0].filesize);
-   219		KUNIT_EXPECT_MEMEQ(test, cpio_srcbuf, c[0].data, len);
-   220	
-   221		fput(file);
-   222		KUNIT_EXPECT_EQ(test, init_unlink(c[0].fname), 0);
-   223	out:
-   224		kfree(cpio_srcbuf);
-   225	}
-   226	
-
+diff --git a/fs/exec.c b/fs/exec.c
+index ef18eb0ea5b4..df70ed8e36fe 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1496,7 +1496,8 @@ static void free_bprm(struct linux_binprm *bprm)
+ 	if (bprm->interp != bprm->filename)
+ 		kfree(bprm->interp);
+ 	kfree(bprm->fdpath);
+-	kfree(bprm->argv0);
++	if (!IS_ERR(bprm->argv0))
++		kfree(bprm->argv0);
+ 	kfree(bprm);
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
