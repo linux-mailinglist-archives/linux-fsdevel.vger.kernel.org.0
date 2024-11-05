@@ -1,208 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-33682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB4D9BD2A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:40:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABD19BD2BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 17:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEF12832D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2809FB21395
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2024 16:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE0D1DD557;
-	Tue,  5 Nov 2024 16:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5779F1DBB36;
+	Tue,  5 Nov 2024 16:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="osPp7PHZ"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GFb4TmS2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24E1D9679
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 16:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824743; cv=none; b=VE4ETurjwWWrwPB25kfzgUNlc2OgB151adjhIr56J/PaRaC/fcDWSWgLf+B8EWpVBcQ1OnJ7qYdNsw0sDyP+bvQGfDiTqApqfpRWWlKYSmn8JQs6H+5kEAaSv1GwLyaaytdw8xJUk1qDFbcHEF7d6is432auZACqpB3pqNgmfOU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824743; c=relaxed/simple;
-	bh=JZoeli1ekR1Ea3em7KTi06yOpUXiX1Nirv66M+wA1iA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=FKiquMw/6OrYsnm7C6iCGZyTxv5uFui33tEzaMVvT++wY0TJvXxWV7xLnjGN9371/dUa3Jm3vW507+Qp0I2Z2MmLYv7mqzZHcXz1Fgfyuk7oRtd0mTVlT1MVujo3MPh68rmw+SsolxZPkb3QZuyHRQJDbJym8hPIy3jwJwzXHxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=osPp7PHZ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241105163852epoutp0160bc7701808a41a1e77829b34543187e~FH_yaCw5T1125211252epoutp01b
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Nov 2024 16:38:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241105163852epoutp0160bc7701808a41a1e77829b34543187e~FH_yaCw5T1125211252epoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730824732;
-	bh=018tCczGIWlDYFfcL/g7H7zKEzrYeq38C52P6ZKfViY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=osPp7PHZUAtkBm1wiwTZw/gOj2xcLI3y0MN3ZlTpaCHtLrINvymiQRtaO70usE5qo
-	 vFbc30FAisaSI5QET7UdnXOTwLNjVBNDKI7hBYzHkuNgCfMEyzMIco5VvCvhV4XElH
-	 q1gqAe0DR6D7ZYNHWtJ2gapqBTltpN5qEwalY0ds=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241105163852epcas5p478c4615e2673a5ae8b551bfaa82c5aa7~FH_x7KjzV2725427254epcas5p4c;
-	Tue,  5 Nov 2024 16:38:52 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XjYty5FL4z4x9Pp; Tue,  5 Nov
-	2024 16:38:50 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	71.E2.08574.A1A4A276; Wed,  6 Nov 2024 01:38:50 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241105163849epcas5p485baa527d07ca146440e9076ccb469fa~FH_vvB_mR2725427254epcas5p4Z;
-	Tue,  5 Nov 2024 16:38:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241105163849epsmtrp232a800c9de2ecb017bee1d36bb0fcc95~FH_vuSlVD0962709627epsmtrp2h;
-	Tue,  5 Nov 2024 16:38:49 +0000 (GMT)
-X-AuditID: b6c32a44-6dbff7000000217e-19-672a4a1a7402
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	37.A9.18937.91A4A276; Wed,  6 Nov 2024 01:38:49 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241105163847epsmtip1afd91732e6a51e9aa25417fdf00c3856~FH_tY5x5r2948929489epsmtip1j;
-	Tue,  5 Nov 2024 16:38:47 +0000 (GMT)
-Message-ID: <51b67939-cbd8-4213-967a-9c6b2ecd5813@samsung.com>
-Date: Tue, 5 Nov 2024 22:08:46 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0935BBE4E;
+	Tue,  5 Nov 2024 16:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730825237; cv=fail; b=d2xy3azGoxNcxdoGE+2J3re5zyUTilY2qxoq7abmUmeVcuWo7OIHtAL+X+4IkBoPJr6xgH+8Fh4oG6DfycSkGiVqOOXv6aVryNqoSQ50Nh0gjc7UDt9UQfKoONXMt6zo3zYXmG+iR9OabdcnCcoM3kkV4ZxPHWHGTReJFAhQdX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730825237; c=relaxed/simple;
+	bh=p3dGUmFjx7g/q1yleSE7APyMrHGMH/qcoG+o0+V7e5c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fLWNCHX+JoUFxNpkJmcICWqdBplDVuF+5J+hly6nhfADxxsw680iKTbwE2psSjqf6KXgEOlLoUYuUwzUhTgjcXYFoI9qliUVZ8t1Nb5lQ+K97emizM+pyONwBUn8WD9ZMEJnRJWAdNCRa75SmT9Z/raZPGLEbxHfI4qAPAE2fV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GFb4TmS2; arc=fail smtp.client-ip=40.107.92.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PD9rhGM5rq3lg/QCgn4MpFa0CQwed7nDrEinuD6QHoDUAi17QGd1s5AYv+tBUO0A+NzohlgRufOsNAWOdxzolGs0qw9FBnQQQm90YJEJ77ghMFXX+SGVFbuLi3yIwePvLjNOOZT6j61ffz8Ij9xyg1T013i2TYcAwxCqtFbVPHRmhl3ASg0YvvTM1pivs45+5xnW73ohT8N3cMpie9H4My0asXyETdxkJ5+bSVsql/PqVQ2/lkdz1tuYhSZpYyh6W1Athk8w7fUcrrHA2sT2I4xDEgDbM6jh/PQHV39zapcvXUN/oNXnmHVzMczhWNZFwSuzLqFxfERSPq96Rh35rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RS8Nrwsw2BXdXOZ6i/UQ4YfnkD5oo8PUth2GFkeVzb8=;
+ b=cK8GEhCMJMwzyMLQrm7g8OfpiMXmxDsRruhIm36N7GAIUFHIW8gCeA+o7D+loapfNGuMcGPJXLlCMlz5qV2z8Kk3Ri9Iz/Zf0mQOEupzxUc2N3BGlcdSACqeYCMBOHsFou/PZaxJJ3a4jT18FopknQVysyuNgJlMJHxJT03ZYy88ymGKIJAcqrQ0MQDHacThE/yURve0qApgjL9fKhhatZdH7gr1GksobEO1EoalxYLe8OkePrIA6gkd0QelkFjI0JXmfQ4VqHeHAx7ztnLs9FhjDcXRQbEFGtJyUn5gab2aKx+W4Kf7DogxKmaBpAHDoI0SJ8CNsRKEf1GU58tdYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RS8Nrwsw2BXdXOZ6i/UQ4YfnkD5oo8PUth2GFkeVzb8=;
+ b=GFb4TmS2dVcJ9yYRgkMa0558h8FeJnA+aOvkxZuzOBCSJFvyF3X+0/nRUat2spr1Yxw5vhdl5r/5VynolLP0C2FWXN7D39AD1sLdamw0oFm3HgLE2mpI3vfuB07xjF2uYTxQO+uUH+k8e8g1fmq32mEhuIbDfLFf5034k3fNmbw=
+Received: from CH0PR03CA0288.namprd03.prod.outlook.com (2603:10b6:610:e6::23)
+ by CYYPR12MB8732.namprd12.prod.outlook.com (2603:10b6:930:c8::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Tue, 5 Nov
+ 2024 16:47:08 +0000
+Received: from CH2PEPF00000149.namprd02.prod.outlook.com
+ (2603:10b6:610:e6:cafe::53) by CH0PR03CA0288.outlook.office365.com
+ (2603:10b6:610:e6::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31 via Frontend
+ Transport; Tue, 5 Nov 2024 16:47:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000149.mail.protection.outlook.com (10.167.244.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Tue, 5 Nov 2024 16:47:08 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 5 Nov
+ 2024 10:47:00 -0600
+From: Shivank Garg <shivankg@amd.com>
+To: <x86@kernel.org>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-api@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+CC: <chao.gao@intel.com>, <pgonda@google.com>, <thomas.lendacky@amd.com>,
+	<seanjc@google.com>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<willy@infradead.org>, <arnd@arndb.de>, <pbonzini@redhat.com>,
+	<kees@kernel.org>, <shivankg@amd.com>, <bharata@amd.com>, <nikunj@amd.com>,
+	<michael.day@amd.com>, <Neeraj.Upadhyay@amd.com>
+Subject: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM guest_memfd
+Date: Tue, 5 Nov 2024 16:45:45 +0000
+Message-ID: <20241105164549.154700-1-shivankg@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata
- along with read/write
-To: Christoph Hellwig <hch@lst.de>
-Cc: Anuj gupta <anuj1072538@gmail.com>, Anuj Gupta <anuj20.g@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
-	asml.silence@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241105160051.GA7599@lst.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCJsWRmVeSWpSXmKPExsWy7bCmpq6Ul1a6wemrqhYfv/5msWia8JfZ
-	Ys6qbYwWq+/2s1m8PvyJ0eLmgZ1MFitXH2WyeNd6jsVi9vRmJotJh64xWuy9pW2xZ+9JFov5
-	y56yW3Rf38Fmsfz4PyaL83+Ps1qcnzWH3UHQY+esu+wel8+Wemxa1cnmsXlJvcfumw1sHh+f
-	3mLx6NuyitHjzIIj7B6fN8l5bHrylimAKyrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ
-	19DSwlxJIS8xN9VWycUnQNctMwfoHSWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpO
-	gUmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsbJr48YC65JVFyZu5u5gXG7cBcjJ4eEgInEld9v
-	mLsYuTiEBHYzSixo/gDlfGKU2Lp5KxOcc/r8fnaYlm3dj9khEjsZJd7/uAvV8pZR4lffA2aQ
-	Kl4BO4nTiz4xgdgsAioSzXPbmSDighInZz5hAbFFBeQl7t+aATZVWCBeYvnC42BxEQEliaev
-	zjKCDGUWWMYs0fNiE1iCWUBc4taT+UCDODjYBDQlLkwuBQlzCmhLtN58ygpRIi+x/e0csIMk
-	BD5wSBz6fAjqbBegTzuhbGGJV8e3QNlSEp/f7WWDsLMlHjx6wAJh10js2NzHCmHbSzT8ucEK
-	spcZaO/6XfoQu/gken8/ATtHQoBXoqNNCKJaUeLepKdQneISD2csgbI9JFZuWMoGCauZzBLX
-	L95jn8CoMAspWGYh+XIWkndmIWxewMiyilEytaA4Nz012bTAMC+1HB7jyfm5mxjByV3LZQfj
-	jfn/9A4xMnEwHmKU4GBWEuGdl6qeLsSbklhZlVqUH19UmpNafIjRFBg/E5mlRJPzgfklryTe
-	0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGpnm+/V+jZ3Xc2bXeZ/61
-	GSlzNfwdqrRntxe/Ofnszv3dSxZdiHc7Ixq5Yt8BmYspws8mhWz92SL2N0wi0v9NkPTdfW8s
-	NjVrh2xmmmgb6FnrEVLHfbWxwfG2hkkYd3qWYfw9I/4/ItOmPFH51vZSJUzDfVnQGsOFenJX
-	J0ldnv3+DjNz8/y+nQuOzIqp3nE++ujKaVd6NbI8J114P+3e1vOcp4U9zmSJbpRcYX9n4cZN
-	KpnB8VvXn5u1ofD/5J65GiduvsjuzbGXtFPe9m8yQ/nGjjZ9/TlWu+233/Xo/Lqo5Ob7bW9b
-	rU9czXkqvSb1+gbdu9P4LZWPzspba2Aulbj2yuJHD4tCHvBZOB+/eHqfEktxRqKhFnNRcSIA
-	qKLg+ncEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7bCSnK6kl1a6wf7nRhYfv/5msWia8JfZ
-	Ys6qbYwWq+/2s1m8PvyJ0eLmgZ1MFitXH2WyeNd6jsVi9vRmJotJh64xWuy9pW2xZ+9JFov5
-	y56yW3Rf38Fmsfz4PyaL83+Ps1qcnzWH3UHQY+esu+wel8+Wemxa1cnmsXlJvcfumw1sHh+f
-	3mLx6NuyitHjzIIj7B6fN8l5bHrylimAK4rLJiU1J7MstUjfLoEr4+TXR4wF1yQqrszdzdzA
-	uF24i5GTQ0LARGJb92P2LkYuDiGB7YwSW5uuskAkxCWar/1gh7CFJVb+ew5V9JpR4sejiWBF
-	vAJ2EqcXfWICsVkEVCSa57YzQcQFJU7OfAJWIyogL3H/1gywQcIC8RLNE5cwg9giAkoST1+d
-	ZQQZyiywjFli6oy7TBAbZjJLvL75lxWkihnojFtP5gMlODjYBDQlLkwuBQlzCmhLtN58ClVi
-	JtG1tYsRwpaX2P52DvMERqFZSO6YhWTSLCQts5C0LGBkWcUomlpQnJuem1xgqFecmFtcmpeu
-	l5yfu4kRHMFaQTsYl63/q3eIkYmD8RCjBAezkgjvvFT1dCHelMTKqtSi/Pii0pzU4kOM0hws
-	SuK8yjmdKUIC6YklqdmpqQWpRTBZJg5OqQamKWanM5je2Uwye9bk7qPXcNY6pDEzpuuCEm/K
-	3d/XRQS2sJhaGb7sFCgL39q4J+S/x+Ev004uyWlX9E6M5L6/81vj3rJ1W1YKbz2jKiaUMf8g
-	32fPrdHyp4wWf1XOSRKIluv9JHHkXfrL2za8DHkaD1pNhQ+KP/68vnoqp9b+1vubTp1+Wf34
-	WmhYw/Fvj3xOFeTkdilZfFOpe+x2d855717tHdkT/IWtF89V2Sy5vuH+nl2uTTJFqhXCyy7H
-	8Dy+35UTYeqwrL70gNLd470raxYGbuq6viqZadK98EM75y35HBAxMSt35td17AUtp8vSN0Yy
-	HpLiKNmtdr/ezu27WrDkrger/dS7rBfE/5qoxFKckWioxVxUnAgAbBP0eE8DAAA=
-X-CMS-MailID: 20241105163849epcas5p485baa527d07ca146440e9076ccb469fa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c
-References: <20241104140601.12239-1-anuj20.g@samsung.com>
-	<CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com>
-	<20241104140601.12239-7-anuj20.g@samsung.com> <20241105095621.GB597@lst.de>
-	<CACzX3AuNFoE-EC_xpDPZkoiUk1uc0LXMNw-mLnhrKAG4dnJzQw@mail.gmail.com>
-	<20241105135657.GA4775@lst.de>
-	<b52ecf88-1786-4b6f-b8f3-86cccaa51917@samsung.com>
-	<20241105160051.GA7599@lst.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000149:EE_|CYYPR12MB8732:EE_
+X-MS-Office365-Filtering-Correlation-Id: 706376f1-6bcc-4579-81b5-08dcfdb97cb2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oAm5WvfHnHi1kwbK71H0X7hU6WE2tssB60WtgdXL8lClqU9F4VLJxoVUgYmC?=
+ =?us-ascii?Q?m1Hj/FZeb5Ngfc7ll5VMMYEfe5gwceM1Dw5WhTKS/MUpk96D9SU8eVg18Epx?=
+ =?us-ascii?Q?yI2Vzy2RMBYJ+MDO/8gDD9ucqliJ3/RgRigoqO1gyM/TRt6MnM0lLvqXb4xD?=
+ =?us-ascii?Q?EtdWF64zg9tNLzoCmp+96QkuBKOAOVezgtABQWdA5nwL+kkI5raqPiKJ3jP8?=
+ =?us-ascii?Q?hFoCjOPO1ezfYlk7hNR5QA0+tWyQP21FE+OpU29y9qDWb1Uaa5ucxKV1IlRh?=
+ =?us-ascii?Q?WrCx6RC7wUYQsudnzycQsd5w/AcZvTt+PXrHlbxGxUCD4ZgwaRxVw6AZRB4L?=
+ =?us-ascii?Q?0T1phl3npqLg1ArxGL1Q7wRIy5bo63CiX6vWAkEdN7NxTLG2OWGUBw0/oVYt?=
+ =?us-ascii?Q?bUuhD5BJjyr4Rl3mvfKm341C8Z3RKJs93i0a9hPlrJ9IM0mUVPm1mdStnuVi?=
+ =?us-ascii?Q?WL89YjMbGEU52cpdpKBRzSe/x8NWMyvalwZu533wK8cJaAlz1g3RbXf8Iz2F?=
+ =?us-ascii?Q?yDnTX9v707IArbb/AIvDofI1NlYovvk3TJULNJAljYxcMpF5UQUPZSfUp/Xx?=
+ =?us-ascii?Q?2rhVQK35yZ5s+cz+ccKqMl5MkoddL3/VNHkhW+ZtopPNyGE9j0riXiFr6glj?=
+ =?us-ascii?Q?IznjRmioP5NAxFF+cqwKfbGpZk91qswX4ckal17vZ0CbNK2jfhYiuN5nmTSc?=
+ =?us-ascii?Q?QJtxCOC5j5PCAhJ9ZLbBWI8fFjpRP7Zc8vRb3anZzeKb+aVzSmcHOKaz9PUl?=
+ =?us-ascii?Q?dYbSRU+8FQnz2FCCw7MazsKL86BHTGiRYcsYx6MHC7BECR839D07+YrsrQ0e?=
+ =?us-ascii?Q?RCCxsBUfTqTna0IGMXErEZRxmUK9TH7zKjlHslW4CPM/ONIJQwYw1KcFaRj0?=
+ =?us-ascii?Q?gwS52ZZZo3sb18Ja6VNvp5VxEgh/msCIdpR8m6iJxccD7WopkQMO0jbGWanN?=
+ =?us-ascii?Q?XDbanMseVh6Lsdz5rm1vpq35i16QvxQFZn6ry1Se19As0XPzB4spXToCYIiq?=
+ =?us-ascii?Q?K+vtVvt2kBfLnOU/qauc/lITN62Q67gQ34hCnrYzxlyOq94gQDa6w2elZFI/?=
+ =?us-ascii?Q?eJsVFXz/iZOIwgZwG4McGfWJPW2HN5y2CaKKg4CCP/iYEsYefhQiA6L4Y85e?=
+ =?us-ascii?Q?Nz5enOyzIpE+H2MCEvA5CNGdU4vvrgrViPsBDBblf1WIcMS5wzluP68ndNFn?=
+ =?us-ascii?Q?MeHZ4Lh5giEiVG+FOSICdR8owZ437frtYTzFWAmKwTBieM4o1JOLQ0bSEhWv?=
+ =?us-ascii?Q?Xa1/B6fLXYWIZ/Dy4CagetXyLWe1xD+FbDVDrTk6bXHNgugrOahpTUCM2orn?=
+ =?us-ascii?Q?4QXy9oEtBAmK4Mu1Zkm2K05MascafSYcgSnD3IiH3+3VAsh0vb2wie7OPxOe?=
+ =?us-ascii?Q?MVzGy9e9pznLgEeXKbyzXYtkgHi6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 16:47:08.1680
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 706376f1-6bcc-4579-81b5-08dcfdb97cb2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000149.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8732
 
-On 11/5/2024 9:30 PM, Christoph Hellwig wrote:
-> On Tue, Nov 05, 2024 at 09:21:27PM +0530, Kanchan Joshi wrote:
->> Can add the documentation (if this version is palatable for Jens/Pavel),
->> but this was discussed in previous iteration:
->>
->> 1. Each meta type may have different space requirement in SQE.
->>
->> Only for PI, we need so much space that we can't fit that in first SQE.
->> The SQE128 requirement is only for PI type.
->> Another different meta type may just fit into the first SQE. For that we
->> don't have to mandate SQE128.
-> 
-> Ok, I'm really confused now.  The way I understood Anuj was that this
-> is NOT about block level metadata, but about other uses of the big SQE.
-> 
-> Which version is right?  Or did I just completely misunderstand Anuj?
+This patch series introduces fbind() syscall to support NUMA memory
+policies for KVM guest_memfd, allowing VMMs to configure memory placement
+for guest memory. This addresses the current limitation where guest_memfd
+allocations ignore NUMA policies, potentially impacting performance of
+memory-locality-sensitive workloads.
 
-We both mean the same. Currently read/write don't [need to] use big SQE 
-as all the information is there in the first SQE.
-Down the line there may be users fighting for space in SQE. The flag 
-(meta_type) may help a bit when that happens.
+Currently, while mbind() enables NUMA policy support for userspace
+applications, it cannot be used with guest_memfd as the memory isn't mapped
+to userspace. This results in guest memory being allocated randomly across
+host NUMA nodes, even when specific policies and node preferences are
+specified in QEMU commands.
 
->> 2. If two meta types are known not to co-exist, they can be kept in the
->> same place within SQE. Since each meta-type is a flag, we can check what
->> combinations are valid within io_uring and throw the error in case of
->> incompatibility.
-> 
-> And this sounds like what you refer to is not actually block metadata
-> as in this patchset or nvme, (or weirdly enough integrity in the block
-> layer code).
+The fbind() syscall is particularly useful for SEV-SNP guests.
 
-Right, not about block metadata/pi. But some extra information 
-(different in size/semantics etc.) that user wants to pass into SQE 
-along with read/write.
+Following suggestions from LPC and review comment [1], I switched from an
+IOCTL-based approach [2] to fbind() [3]. The fbind() approach is preferred
+as it provides a generic NUMA policy configuration working with any fd,
+rather than being tied to guest-memfd.
 
->> 3. Previous version was relying on SQE128 flag. If user set the ring
->> that way, it is assumed that PI information was sent.
->> This is more explicitly conveyed now - if user passed META_TYPE_PI flag,
->> it has sent the PI. This comment in the code:
->>
->> +       /* if sqe->meta_type is META_TYPE_PI, last 32 bytes are for PI */
->> +       union {
->>
->> If this flag is not passed, parsing of second SQE is skipped, which is
->> the current behavior as now also one can send regular (non pi)
->> read/write on SQE128 ring.
-> 
-> And while I don't understand how this threads in with the previous
-> statements, this makes sense.  If you only want to send a pointer (+len)
-> to metadata you can use the normal 64-byte SQE.  If you want to send
-> a PI tuple you need SEQ128.  Is that what the various above statements
-> try to express? 
+Testing:
+QEMU tree- https://github.com/AMDESE/qemu/tree/guest_memfd_fbind_NUMA
+Based upon
+Github tree- https://github.com/AMDESE/linux/tree/snp-host-latest
+Branch: snp-host-latest commit: 85ef1ac
 
-Not exactly. You are talking about pi-type 0 (which only requires meta 
-buffer/len) versus !0 pi-type. We thought about it, but decided to keep 
-asking for SQE128 regardless of that (pi 0 or non-zero). In both cases 
-user will set meta-buffer/len, and other type-specific flags are taken 
-care by the low-level code. This keeps thing simple and at io_uring 
-level we don't have to distinguish that case.
+Example command to run a SEV-SNP guest bound to NUMA Node 0 of the host:
+$ qemu-system-x86_64 \
+   -enable-kvm \
+  ...
+   -machine memory-encryption=sev0,vmport=off \
+   -object sev-snp-guest,id=sev0,cbitpos=51,reduced-phys-bits=1 \
+   -numa node,nodeid=0,memdev=ram0,cpus=0-15 \
+   -object memory-backend-memfd,id=ram0,policy=bind,host-nodes=0,size=1024M,share=true,prealloc=false
 
-What I rather meant in this statement was - one can setup a ring with 
-SQE128 today and send IORING_OP_READ/IORING_OP_WRITE. That goes fine 
-without any processing/error as SQE128 is skipped completely. So relying 
-only on SQE128 flag to detect the presence of PI is a bit fragile.
+[1]: https://lore.kernel.org/linux-mm/ZvEga7srKhympQBt@intel.com/
+[2]: https://lore.kernel.org/linux-mm/20240919094438.10987-1-shivankg@amd.com
+[3]: https://lore.kernel.org/kvm/ZOjpIL0SFH+E3Dj4@google.com/
+
+
+Shivank Garg (3):
+  Introduce fbind syscall
+  KVM: guest_memfd: Pass file pointer instead of inode in guest_memfd
+    APIs
+  KVM: guest_memfd: Enforce NUMA mempolicy if available
+
+Shivansh Dhiman (1):
+  mm: Add mempolicy support to the filemap layer
+
+ arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ include/linux/fs.h                     |  3 ++
+ include/linux/mempolicy.h              |  3 ++
+ include/linux/pagemap.h                | 40 ++++++++++++++++
+ include/linux/syscalls.h               |  3 ++
+ include/uapi/asm-generic/unistd.h      |  5 +-
+ kernel/sys_ni.c                        |  1 +
+ mm/Makefile                            |  2 +-
+ mm/fbind.c                             | 49 +++++++++++++++++++
+ mm/filemap.c                           | 30 ++++++++++--
+ mm/mempolicy.c                         | 57 ++++++++++++++++++++++
+ virt/kvm/guest_memfd.c                 | 66 +++++++++++++++++++++-----
+ 13 files changed, 242 insertions(+), 19 deletions(-)
+ create mode 100644 mm/fbind.c
+
+-- 
+2.34.1
+
 
