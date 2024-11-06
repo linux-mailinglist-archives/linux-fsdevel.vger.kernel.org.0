@@ -1,94 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-33836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2F49BF970
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 23:46:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05C49BF975
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 23:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF9EB21F6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 22:46:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41042B2236E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 22:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044D420D4F1;
-	Wed,  6 Nov 2024 22:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1440020D4F0;
+	Wed,  6 Nov 2024 22:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="BPbPH0jm"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="maOpXXhY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2082.outbound.protection.outlook.com [40.92.90.82])
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2023.outbound.protection.outlook.com [40.92.90.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5E1D7E5C;
-	Wed,  6 Nov 2024 22:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E273645;
+	Wed,  6 Nov 2024 22:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.23
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730933171; cv=fail; b=fUN5P5SLyjDgt+MhkDxMB4ZW2I4wrEXUcYfPXRQM5L055NEkmuPK1p7zgh66BmdOEOjTlelRVSmclEMBl2cv2EIGSDdzICUZfAoTCDK+hnwcWbE+yDocujuhn/9HWXLXeL9K5C6lzI31YnEFzJ4dMtsDmu2z+9ccpL+SC7pfKcg=
+	t=1730933372; cv=fail; b=Vnnk4ihkfzA/YimxgTfupcsi0YJqH2N6/mB43i4pUNQgPUxkpX/eUefulSfLZZvyfnRl9IKJKa5y9yc2mz8/1Jn4Xf2AVmIM3Cu1St4BGVjsJ/UhuRp1rjjqjhdz4Wlk9tKqr4eL5Me8Cw5Dzmd1d0ALwgoFoXSMMwKklb0htsg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730933171; c=relaxed/simple;
-	bh=mody8pGjtk15Fv05MHtt1+VMhpMFGd6O1F4IGAuoVJg=;
+	s=arc-20240116; t=1730933372; c=relaxed/simple;
+	bh=sZ+8e0wDNiibETJ4qItX8SFnp6snVpBEQW9/0p2DJTk=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n8ARh20xGuOmj/+JOxwTVbthPtApJjvkBkLpEH2DVNAenONFz1+gcEX6eCcMTf7hoYMnXeDnsl3btlc39I3n7wJXd+MERUPIgwhmsirzciCQxPpL8Vb2FpGZDny0vTOc/ZbRKujj7QUy3ZLbjHSvuX4NC2q2YuF61qayTVI535k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=BPbPH0jm; arc=fail smtp.client-ip=40.92.90.82
+	 Content-Type:MIME-Version; b=nFzp9N2in24PyFzkdrUf6SdILb3CGBOyniMMWUoHmJr9ZfflEkVhRR+svSW3UgIFZhubuAuZHpcLT9N/HrmqyhHbGxLTlv+ld9PqqT89m7f7C9eVOyDFRgyQ3Cb0KCLY9ggueeseOYcohUhxoV4LBrexvIUMwT0nkA7KupMT4rs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=maOpXXhY; arc=fail smtp.client-ip=40.92.90.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VjwL3KpdIiulJhqSd542PX5nnedSJUJbtxTjV6VB3YmbbZgTiT7/S+Y8edtjM/drc6Kr4oXBvc7dsfejGs5Px+5fCK3E9tH4xdEVmFj07XKdUyGGml+YJpmHPBLsHXtP0UcOg7Ni8D7+6WN2a1Z0Gw2M/TDdID9DZuurNk+dSyF83RVO/QOKW2+Bya0hTznTpCjRA7fnCTmGHCOiXIVqEwUB2MmeDGB3U5Oxa2k29L2NtjAxrSzwvO6lfKfn04Ny4gYcxHSmY8VDq5BD1UfRsOAY/pIFesPNdVdAz014TesNCXs3u0rqvXRs60CtHcei1jFq0JGQkElhiSTSdm8sNw==
+ b=iBtzJcOqAsmPgnoOAqSViqLdRh6drIfGhHkMaX1UdINZ8XOCCP8LLb/BsGEVB51Jzg549nnu+ktXfniOqZKxEt5FVfjcolwbb31oyUAUkvw8yb97c/1vXmT7IrjPpIQnRmVsFImZNygwYBafprkKeWnOrSbuy33YR5FfWVOgov8uddOfMLx8jmmFNUy/MWvBDwOCMlZsnjJ6IapB+jkve8UiU7ludfH0PauXxNeYjZMGUv/YIyOQAzSFf3iXI0OcIp9c5bs7Celri8bLRx1NTnVGOqkoxXsCdKGKaZ1R/OrVEka+UPkEI0BwxjBu+2n9TLnTcxbu+VxL15dcApwXNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pXQooo7Xkq1ri3iAaL504gDS+mHxuw2Hef4PzidOkPw=;
- b=Epqk/fQY3YE9cUisLI8Mru7+7SlNGbkK/UW7kJ7ajESA5pUhRGDWOktZlxL2zv5Xm2NmgvwiHDwbZyRV+tGm+NI/NkgEwtWHYLHRAcLng0TXCBQNRJ6cupSY7tHQf/gJl5ZBclPhhFvBeWd7TTuCtlTL0ybNvESWOSik9M7U7lk3k0u1MnyMyQa6nrJ7fYAxMC+RodbNaxwtIAK9uOKGDvCrI0TLRhecZRZeSOgR87be+neQeYDWi22ZALTGe8WzXjpEqMMxkPoeEuVLZARXiqGWTb4TXd0RXR6ounR+YE/jWgl2DC4k+Ad6F2YIu344ewF8D3xLNIsiQFeLE12RqQ==
+ bh=8+1KAaOs+qVe13Le+jjIxLZBz2RWesm1B4V31LbFYKE=;
+ b=ih1uEfeJxEOo0whzNpotDDvI3oMODRxYA3HtgfQiGsM9w2I8Gd+eHGSPrxoSGli2ibkhHJWIu4Njk59PKwAbaX+XLV1VXQHdipCy9W4uO3+G7/2pPnYWrTlhs1Ne4H7rj1MFKQs++XVdUpnzuBh3E3Lzc539mxoaSwTJjhEyzkVjIW1RU9mf4iKJ66ZWtdc3RR7SqHuI6rj80oyqU8EX2DNsxeqbx772HBrmzOKWHgO+PrK23O/Y4GTHlvB09++9OsmTd0NB/2804WPP9JYtOg/VXmvzzfrqInX1IRZ5zP0dGcZhiX9U8WauZmWs7I/Akm8/0UNl28TMQMsCFweOFg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pXQooo7Xkq1ri3iAaL504gDS+mHxuw2Hef4PzidOkPw=;
- b=BPbPH0jmhFaE3BsD+36lb8EuAx9aTScla90N4/VofrrTBjO1UojzkZzXZHduH3Vmdjag0c1M7Ukb+MQSyKbURVBWCpbrcqdbicJSV0vr+u6WM9uC/fB5MmfgO6LI2o8CnQDkf6gOIe3mHkgXjFvbSJa0noCPXRil35Zg0Q8ToileI27AfckyF9D+zyKd6WyJ7j/BST1Jt2Fj5kB9IMUcSTdH+5aBQxSsfeY3xmPNdgNx+tbzZDuhapyWuEVhvd1Icq1ylZTVSpycf1DbIcwCPdgCyrFdoxNXwbP7A/6chxB32YH3NiFqjH/m5MC3VrppyO1UuJL0oNfw62WJQJdNNA==
+ bh=8+1KAaOs+qVe13Le+jjIxLZBz2RWesm1B4V31LbFYKE=;
+ b=maOpXXhYZv6h1O9BzawL/A8/7YVWyvuE46GOAJwlrDteJ6CtiQ1hGUPKld7aHsorjQanJJGs9oaTvlrzNSNOuAgax6hrbmiS/Prku029pDaub58TldwEPWkaffj5PyhOydLEYG7+DtEXhAcymZWqxOeRKWgYCLOjzY9qYuS5DzkqXSyXHkg5fy4GnVFvLS1mXUy5WET1qZu5lX+XXBKAykCUwkz2LxXrHuhQgWmMCrsFqWhrFVqo4lZdQj9F9/hmWjl7PJqzKi1Hjav67/cYVTNTodzFoD36KF0rWDzzzpc8fhFBKOZ5/+C1PwwLP881nB8nqXjiyPEFcdGduDWIhg==
 Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
  by AS8PR03MB6808.eurprd03.prod.outlook.com (2603:10a6:20b:29c::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
- 2024 22:46:06 +0000
+ 2024 22:49:27 +0000
 Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
  ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
  ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.8093.027; Wed, 6 Nov 2024
- 22:46:06 +0000
+ 22:49:27 +0000
 Message-ID:
- <AM6PR03MB58485AC0EC31E8DA0D5169FC99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Date: Wed, 6 Nov 2024 22:46:05 +0000
+ <AM6PR03MB58481666F9D89607DFDD4C4F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Date: Wed, 6 Nov 2024 22:49:26 +0000
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded
- iterator kfuncs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
- Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next v3 0/4] bpf/crib: Add open-coded style process
+ file iterator and file related CRIB kfuncs
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com,
+ brauner@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
 References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com>
- <CAEf4BzYib5jyu90tJYSTEmhpZ-4aF135719V+A7J7pzMj7RpNA@mail.gmail.com>
- <CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com>
+ <CAEf4BzZJuWcCLeUdmzhRVe9nyi9jAN8y=u2nK=mqzxXG6DTkDw@mail.gmail.com>
 Content-Language: en-US
 From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com>
+In-Reply-To: <CAEf4BzZJuWcCLeUdmzhRVe9nyi9jAN8y=u2nK=mqzxXG6DTkDw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0455.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:e::35) To AM6PR03MB5848.eurprd03.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0447.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::27) To AM6PR03MB5848.eurprd03.prod.outlook.com
  (2603:10a6:20b:e4::10)
 X-Microsoft-Original-Message-ID:
- <ee73d24e-4a19-4795-a965-33d5b218b367@outlook.com>
+ <8eaf71c5-f84a-4fa7-ac4f-495e62c333ed@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,70 +88,74 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AS8PR03MB6808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30ea88a0-672c-4a58-2d29-08dcfeb4cce3
+X-MS-Office365-Filtering-Correlation-Id: 0734dbbb-01ea-4691-a07a-08dcfeb54451
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|6090799003|5072599009|15080799006|461199028|440099028|3412199025;
+	BCL:0;ARA:14566002|8060799006|19110799003|6090799003|5072599009|15080799006|461199028|56899033|1602099012|10035399004|440099028|3412199025|4302099013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V2VreFU0NFBMQmNIeHpTWmJjcmpLTTdhZUJTTUIwUlJsVFpVdlNTQko1NDdR?=
- =?utf-8?B?MjFnNDJQUnFaS2NUSHBzazJSUzVwYmZnQXRNd3U0NjZCNEovODg1ZnQySFc5?=
- =?utf-8?B?dlhyYmM1NHFEWHdqUlRPVVpkWUczeVM2M3FQdktONHdsdElWQmR4QUdOUW9v?=
- =?utf-8?B?cURMbVljTEg1N094STR3YUNhVVpQNkdNNGZ5UnIzQTU2dXBGdkVaVEg3aEZz?=
- =?utf-8?B?dE1CZE04RXh0SmxKTDNJejZVWTNRS2pqd1dRSHRmbVBDT1JSajYyYkU3Y1p3?=
- =?utf-8?B?SkY1enplbGF0RW1yNS85NmpmV1YwQmtBa1o2emFBS0xtYnp4bXZOVHJzU1My?=
- =?utf-8?B?V3MrVFMvRGxyRkwveHlhN3hjMSthQ1pMRkNIV2FTWU9VMm9TaWQrdndxd2ZU?=
- =?utf-8?B?OVNTTlN3S1VoTVVpWmFCeFlpVXY2NHpUVTZPOUhGYlhLUkpheFV1c1UybjlS?=
- =?utf-8?B?QWV0LzcyU3lwZUQ3U1NkdkVFaTU1dk5XaE9jakM5NHhZYnZHNGhDZzBzN3lt?=
- =?utf-8?B?NStFKzVLeEQyY0NRVG9Mdzl1b1FtZmN5eDRaaHY5WkVZelRTT0Q2TzJGZm9z?=
- =?utf-8?B?Z0NrYTNLeTFld0JGR3QxeGVhQzc2MGdqcjZZR1Zaam9FVmdkY1VqK0xiZGdC?=
- =?utf-8?B?bUExUjlxRHNZRk9wQ3JYNW9IS2F3NWNZODZQaGVab1N3Z3BhbmsyeGhNM1h2?=
- =?utf-8?B?bnpqWnlKNTVJM2ZaTitBL3RqcmxKOVd2ODVzUmVxcjlUclVmY3dIbVgxWHpE?=
- =?utf-8?B?VU5lbnJCbXNTZzB0OGZ3b2NCY0wyZ0xlZkorako4bnNBQmxQcGxuRHpKa1JI?=
- =?utf-8?B?V2RUYzVUWW9PVzNqN2tkeSs2aUdERUZQQ0x0TjhXVmE4ckU5UG9iVHo0U2dW?=
- =?utf-8?B?cTBSN2lMR2lCbTEvaGRqcXMwSkp4eEpOZjBGV2tueGVRTlJYcy9lUVpDbUNm?=
- =?utf-8?B?SjdGRGhldWNIaDhKLytCR0lxMTBRekwreXhrZEkzUytvUEpGSGJwcHhjVGRX?=
- =?utf-8?B?S29qSnk4Y0o1Y1B5VDlwRE1wL2VuT1lJWEwyWnN0TlNnQi93Z3B3THQ4ZnVm?=
- =?utf-8?B?aXZjZ3RFWktXeHV2aEpEcDVSZlVRT1RKNms3M09TaUVMazhrMWExSWdHd3Y0?=
- =?utf-8?B?SUpZNWVsRWE5UnlvVWd2YmZ1cEFwdW03d013VDRYYjdYZVIxd3hUUTIvZ2ZE?=
- =?utf-8?B?NDg4aHZINGEyblhGQUhjVXJpV3NRRWRMSnd4Y2taOEd4SDlVUEtzdE1JSXNl?=
- =?utf-8?B?Q3dsNW52NHk3enl0eStvcDFTRm1wempkZzZHTTJ2bzFFQmVYQnZwSXZhSHFz?=
- =?utf-8?B?d3ltNjZpNWxDS2R1dGJEUVU5Q1NTbU5tTUI3aVR1VlJWZkw4c01GZ21Pa0tU?=
- =?utf-8?Q?rZDlRiMJD6WCG/bidRyvtTBKc44TvXKQ=3D?=
+	=?utf-8?B?OGRtUkdvVUExRC9FK1RaNXdDYmpTY0x0OE5sNFBmWlZDZ0pKdUt6S3BQZkVy?=
+ =?utf-8?B?eVJOWFFPRjUwUnp2dnNjQThvbHJHRnZqS2hNQjAxOHBxa09NZTNWMHZpQmpT?=
+ =?utf-8?B?ajA0L21iY1k3QU5sMnBvSkNmcmRBeVBsNVpLT21GL2t6alV5S2dsWmltM2VG?=
+ =?utf-8?B?ay9EM1creHpKRGgxQVRSWlFTaHZhUG1NM2xvQWtmendKd2VTcGw0MGJrK3BX?=
+ =?utf-8?B?Q2VQR0s4a3oveW51czVMV0JBaFRDSjhEWnJLOW1GTHB2blQ2emVJdFZaSk9M?=
+ =?utf-8?B?NVVteFV1czNoUjhRbHhrTVpHWXc3Ly9Rc011cEdHRkFaS0U5VWdZS3FLandp?=
+ =?utf-8?B?dHlOWVNhTnlsM1Y4Q2d6dVF3RHlXSk53RDNQUE5vcHg1c24wTHVwUlZEVHBC?=
+ =?utf-8?B?TEZYNUQ4dGNWaGl6OXF6aEZJYUtaMXE4Z0hSbUVXVEw5STlvZVMrQkhja1lB?=
+ =?utf-8?B?d2ZPY1V1NVA1cThZSDR0NUZRbUNmVlRxaDhOZzM0RUY1cktEbkxUUEovdnpK?=
+ =?utf-8?B?WmpTaWJ3S09kckljZjVQVmhBZEpINTVNQm41WDM1SUNybkJXelhNKzhnRm9T?=
+ =?utf-8?B?ZXo1SnQwRERkTjRPUGhIQU5vREtYZjZVb1JKM3lIeDRJWCt4S3kyVGFlUG03?=
+ =?utf-8?B?bjVGdVAveFJCWW1GSkRydk9wZkhDci9wTEFCdGp2ZE9iQjlYcXVtVk5qdHR5?=
+ =?utf-8?B?RVZCUyt0R09ucFVmTkpySHpwL1dCYXN5eGZmNWJjaGpoN0FCeHFZQzVsdnpr?=
+ =?utf-8?B?SmY1QUNBTFkyVzV4N3Ftb1cvWjRPdkFHa2F0MW1xVzJ5UVRQYnFsbXNQckpv?=
+ =?utf-8?B?VElJeUtzWkFLdnVuSmRhWFpiOThXa3lZR25RUm5LQjlRT2RNdjNoRmJicW9H?=
+ =?utf-8?B?VTM2UUZNZHNkQWhQS21oVTAwMFBvaWl4Q3RiWUxwdnRGam1KblR3Z1lqZThS?=
+ =?utf-8?B?enlpQ2d5b2ZsOFJQUUExcnAzTnUzNXdBN2ZkSmkvWE5ocXo1ZkFZV1ZpdEJD?=
+ =?utf-8?B?ZUZLYjRVN0tzdTEwZkoyR2kyQ2x4YWJnSGVFTk5uUkRMK2hsQWhmM1lURm9h?=
+ =?utf-8?B?THlQbUlTYnV4OWNVcjdyUW12SlptQ3FQTTQ2TkNGMTZKaHVVdUtCTjdGSGlR?=
+ =?utf-8?B?NWw0amlnRWdBa3BaM3BvQnR1eUttSDNiSStBY3ZCTUhnK2tOTUJ0dzZzMWp1?=
+ =?utf-8?B?SnpTRmc3dzRwL0NZQzl6dVQ5Q0VnRFZ1WXEycCs1Y0FQcjdVUFJtK0YyeWQx?=
+ =?utf-8?B?TVQrTzlDWWpoTXIrWEplWkwyVmZKbVI1VXNxMlFYdDQ2Z2Z2aXpnNUVHK3ds?=
+ =?utf-8?B?L2hYekJySDBuWUdaY0ZmeGpRUjhjMlBrWkdGeXJuTGUzUE9hNGdCaGNycm1y?=
+ =?utf-8?B?Tk5RYm5zcUJGL3pTU25kM0hBQ1hxMlZMM25UYk1nWE9pcTVZVWg3ZkZwTWZi?=
+ =?utf-8?B?eGZjajNUbEF5M0luVEVDVFkwU1FPZFdhaHdFK3RTS1VqTmIrMWIzZE81NElm?=
+ =?utf-8?B?NHBOcmN1NitlVlIyZ201ZlhneG5rYkhScFlwZCtKWHdJd054Q3NyUU1PS2l2?=
+ =?utf-8?B?UHlaZXBHVWxKY1hZeCtvN2dkcUFIc2pabW1OL0o5eDByS0crOUQ2a3BySzBT?=
+ =?utf-8?B?aHNtZmlNQXVwZFlqdWNSSCtYN1YweFE9PQ==?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RzJ4M2tEUVpOcUNzdGlqcEtyS3NpbldNL2NKZ3VLU1NtYkhHekJRS3FMcTRR?=
- =?utf-8?B?d2RyaUY3ZzIxNGNFY2xtcmVjS0kvUm5BSjBqRHVIcmdlWWEwQUltak90dHBV?=
- =?utf-8?B?MDlzN3MrM0RvT2tyWUp2V1RHWkhHeUdjWEhoNUJ0OWM4bjZRM1B4cEZpZDUw?=
- =?utf-8?B?ZUx1WnJRWGhXNXJNTlpVdHNLWE4xNjhIb3RDYnlDMlJEYVQ2aFA1TXhTMmZ3?=
- =?utf-8?B?b25MaWVhT0gxbnppcUE4TmxIb0c2a3YvOTduMCtvR3F5d3pBRmppblRtZnlU?=
- =?utf-8?B?R3MxcnBQTWV0RlMybGtXTWtWZUVMMDFlSlpWOUg2UWY4a0hYcDM0cmEzN3l2?=
- =?utf-8?B?dzhQbFVueEQ2Ni95UXZXcERiRG1Dczk5YVRwcWZJb25TRjZHUlJkSVNMdit6?=
- =?utf-8?B?VVVvNzVDWlJ0aFFkVWRPRUV2anZZbjNoakRUNW9jY3NzZHFZYzFxSzFVMTFR?=
- =?utf-8?B?MnBaZ3l1YnE0eHhMVFJBbS9hTm1vL0dKQ1lGZ3dJS0JUWktiN041ZUk1eVVz?=
- =?utf-8?B?OWRXMlpmcUJ4TnZnVFpxSVo0QkdqSVIxWWcwSHBmbUdDemIvdng2VXhiUUZi?=
- =?utf-8?B?UEpibGNQWEdtWFZPL0t1L1RsUTd0YXkyK280eEl6SzhiMk9PVzNSb25mUlF1?=
- =?utf-8?B?RWkvQmRlaWtHQWxiSVRkVUF0eXVIaWZIQWNUSW9FUTI2VmprbW83emVJcDZu?=
- =?utf-8?B?VFB3eURDdWloMGVVT3ZjSkFJSVpHWjI3eXVsV3c1bXp6N3VXZ3R0SXk5bzdV?=
- =?utf-8?B?L0VSVEovVmswa1pId0J4cEJYcXpIZkFIZmtJMlJOeWJ5dDJNSTlGK0VnL2l6?=
- =?utf-8?B?OVdKZ0svaHBMWmk3ZkpwNnR2ZW1tSWdTaGl3bC8xenY2M3hVRWlMdDEyQ2Jv?=
- =?utf-8?B?TmtRdWNJL2hmckxVVEg3djVaZGJlV0d3djlwemFJTVgrYWpkYlYwcWtFdSts?=
- =?utf-8?B?NmFvb3FLNmxUSWpSQ3I1a2xmdmQ4TkM0ei9zNFhEclJsdnUxNUxHOW9weTRL?=
- =?utf-8?B?RGhXNG13ZXkwa0xZTkhYRkNzQnBUV0o4MGJqVWVoNEVUdVFvdDdrTlNpQS9o?=
- =?utf-8?B?S1gzZ3JyWjZVU2VpbzIvMGE0ekFQUUEza0N2cUZqTjZtdHRWdjJKbnFycFRl?=
- =?utf-8?B?NzRLU1dsZThyRkZRSzBVTG9uQWpZWE5oRFlINzZ5MFFIdktDMEZmQ0VNUksz?=
- =?utf-8?B?ZVEwa2dDNkpWeGUvSFdtVzNXYU16Ty95R3Zhd25vdHI3OG1VbE1RRmR0blB5?=
- =?utf-8?B?T1VZcU50NVl3ZGlTUHhlRXNseXRURmdxdTdjOFJOOVlmTjZIRmE4L3RiWWRn?=
- =?utf-8?B?QnNYbnlJY0tPcXNlTTZWQUk0a3VzalpUNDRHUk03MWpOVHRiVVRha1pmWkdp?=
- =?utf-8?B?OXJyQ3ZwWVA2NFRJWnVMQnIxOHNHaU1IS1AvYTBEc01WRmhNWVcyNTFYWE1z?=
- =?utf-8?B?dWNNRTdrUTJib1o0b0EzclJWLzZkUEt2ZVBqdDd2K01PRFMvZDY3U1dtSWdY?=
- =?utf-8?B?M3pGbUFZa2NTSWo2OTBnRDBJOC9YRHR1QkVONnUxeE9qNXl2Uk41SGt6SlJu?=
- =?utf-8?B?Mm1qbVhROUNDRngwU05xYWFJUHBZUXdGZDBJbWVMdXE4WEc4YXI2Q3RmTzVB?=
- =?utf-8?B?bmFoVzQwNTVybmFZTm1OVWxxOGxSS2lRRytjM2Y5SnVQdnVPTGpnM0ZJL3Za?=
- =?utf-8?Q?/QhOHxv/D1RUAy9OJtA2?=
+	=?utf-8?B?RFVNV1NTYzh2ZUdGSmpSNzZLd2gzUGZ6dHVhQ3Q1OG05NG5Pb2NPVit6NTlp?=
+ =?utf-8?B?NTUvNjViQ3JKOGJYNXhkKzJRcnBpbDFDZmpWSFIzeFZyaHNLdHpKeUpZbCs2?=
+ =?utf-8?B?VVlMd3dFeER5YVdIczBUcTF6cW9vdVNKajQ0MWhjM2FWL1B6Y0dhZDhrYktn?=
+ =?utf-8?B?UWVlTSt6S2ZBNUgyMFNIN2dEWCt1OGNWM3R5blZ1cGZHR1ZrQW50eWJ4eTB2?=
+ =?utf-8?B?c2JzNEEwUFlNcDlqbHhYalFGMmNrcEVnZ1dTUFd5QXR4VWtvdjlBNllyODRt?=
+ =?utf-8?B?eUFnNCtFeDhHK0xIZjAzTnBLb09wTy8vcUx3S1hrVHNlek83U0dmcEFXd2Zv?=
+ =?utf-8?B?L1VoVlRBcFp6ZURwYkZGWW0wL1pRbnBsZ2d3ckR2N3cxallEMnEvV0RlQVli?=
+ =?utf-8?B?LzZhQUlvaUxpdlVFOHBEWFBFZXNPRkpPYStoL0wvN0p0RFh3cTdXRlN3ZlJp?=
+ =?utf-8?B?ejNVU0s1M3BSZEJmOXdSaW1IQVBZY1Y5ME45TjNBc0VrMjhteXhkT3FDZUx3?=
+ =?utf-8?B?ejNwSFQzWHFmc09LNm1UQzBWYWNPenp6cXJ3QWgxOTIrQ0hJQ1NCN3gyeFNj?=
+ =?utf-8?B?SURHMUZZMlh2ak5CSElheFdFbG5GQWsyUDRjUmdVcVVUMW10RkE0eFk3WkxV?=
+ =?utf-8?B?VUxLdFVoVFQ5b3FzWG42cjE5M1lBVjFSM0FGaEFSd1NETmRvcjN0NEF2aUlz?=
+ =?utf-8?B?Smx5WEhXR0sxb285ZGJGK2dnTytrMEpFODZDcDRaWHhaL2VZUUh1R3E2RGgr?=
+ =?utf-8?B?dXlQTnFrQlZJdlpYa2gwRWwvTEYxV2Q0c1FBQUhGOG9iNXJLQ3NnaEF2Njh0?=
+ =?utf-8?B?QnRxd3lBN2FwaXllM281eTNZd2lQQXFNbjlGU0ljWjNzakk4dWZlZzZHNnRZ?=
+ =?utf-8?B?K0xBeGZTZy9rV3hNNWZIa2RCaTJTL0d3ZFNZQ0tQMTF6Q1ROVngvSXJZMUNo?=
+ =?utf-8?B?NTVMVnAzUWhGOGVtSHNiQlppaGJuSmtoYklvZVMzM0RlakRiWDBDNnN3Y0N1?=
+ =?utf-8?B?ZjRDMW9JSnZ5QmZsdlNreVE0TTRsWE9BZ3UxWm1lUHA1N1RJbEo0OFMyTjhP?=
+ =?utf-8?B?ck5wb21uYXZvbXNHMGhyRTZrREJuZ0hPOC82ckIxbEpvMlRDNVJXZlFTTERv?=
+ =?utf-8?B?YXNqaXZ6Y0V1QUtMYndNOFJCVGc0MWNkNjNVeUQxaVZDQ0ttVklRb1VCWkIw?=
+ =?utf-8?B?aGZ5a3UvcE4zMGYrVFlTcUJsNlF5TzJtR2ljU1RDWWViamxWRUVYOEVrSGRy?=
+ =?utf-8?B?OCt5OVdvREdNMmlRVjFHSmVkVmFFVk9NZkZmRC9RZzBvTUVvUDR1bkgrdnhp?=
+ =?utf-8?B?aHhibXdqK3grTzZhQ05Yc1BqUm9sZEpWZDhxOE9CQVcva2JVWGljOFlXK05P?=
+ =?utf-8?B?c3BIcXA0eVdUd0J0cnIzbFUzZEtPN1N1NVZlWFV4ZUFFZ0ZiU2tWclJMOWVC?=
+ =?utf-8?B?bmRRMkhUcks4enhLMGNWY2JUa2lUZFo2OHR4T0hrQkwvdDA4clIxcEFwKzM4?=
+ =?utf-8?B?LzNUZDdpaXdRUlZDZDVSM0lCNjQwNlpDOEU4bXlHVUsvWW5aQUo5UG5TUGw5?=
+ =?utf-8?B?eWRUcFNYeWFLWXhSdG5UTVlQMUc5SGtFOGxkT0VjYWxaZElwc2pFUUpLQ2Ez?=
+ =?utf-8?B?dmQ3WGJIOFRQK0RFRTJZYWk4KzJCVzFzd1B5a2dtQ2FOQmdKZjJGMExmMmVa?=
+ =?utf-8?Q?p+Dt0caD9+pyj1yWuOdJ?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30ea88a0-672c-4a58-2d29-08dcfeb4cce3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0734dbbb-01ea-4691-a07a-08dcfeb54451
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 22:46:06.6754
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 22:49:27.0493
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -169,36 +163,173 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB6808
 
-On 2024/11/6 22:13, Alexei Starovoitov wrote:
-> On Wed, Nov 6, 2024 at 2:10 PM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
->>>> +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it,
->>>> +               struct task_struct *task)
->>>> +{
->>>> +       struct bpf_iter_task_file_kern *kit = (void *)it;
->>>> +
->>>> +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(struct bpf_iter_task_file));
->>>> +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=
->>>> +                    __alignof__(struct bpf_iter_task_file));
->>>> +
->>>> +       kit->task = task;
->>>
->>> This is broken, since task refcnt can drop while iter is running.
+On 2024/11/6 22:15, Andrii Nakryiko wrote:
+> On Wed, Nov 6, 2024 at 11:35 AM Juntong Deng <juntong.deng@outlook.com> wrote:
 >>
->> I noticed this as well, but I thought that given KF_TRUSTED_ARGS we
->> should have a guarantee that the task survives the iteration? Am I
->> mistaken?
+>> This patch series adds open-coded style process file iterator
+>> bpf_iter_task_file and file related kfuncs bpf_fget_task(),
+>> bpf_get_file_ops_type(), and corresponding selftests test cases.
+>>
+>> Known future merge conflict: In linux-next task_lookup_next_fdget_rcu()
+>> has been removed and replaced with fget_task_next() [0], but that has
+>> not happened yet in bpf-next, so I still
+>> use task_lookup_next_fdget_rcu() in bpf_iter_task_file_next().
+>>
+>> [0]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=8fd3395ec9051a52828fcca2328cb50a69dea8ef
+>>
+>> Although iter/task_file already exists, for CRIB we still need the
+>> open-coded iterator style process file iterator, and the same is true
+>> for other bpf iterators such as iter/tcp, iter/udp, etc.
+>>
+>> The traditional bpf iterator is more like a bpf version of procfs, but
+>> similar to procfs, it is not suitable for CRIB scenarios that need to
+>> obtain large amounts of complex, multi-level in-kernel information.
+>>
+>> The following is from previous discussions [1].
+>>
+>> [1]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+>>
+>> This is because the context of bpf iterators is fixed and bpf iterators
+>> cannot be nested. This means that a bpf iterator program can only
+>> complete a specific small iterative dump task, and cannot dump
+>> multi-level data.
+>>
+>> An example, when we need to dump all the sockets of a process, we need
+>> to iterate over all the files (sockets) of the process, and iterate over
+>> the all packets in the queue of each socket, and iterate over all data
+>> in each packet.
+>>
+>> If we use bpf iterator, since the iterator can not be nested, we need to
+>> use socket iterator program to get all the basic information of all
+>> sockets (pass pid as filter), and then use packet iterator program to
+>> get the basic information of all packets of a specific socket (pass pid,
+>> fd as filter), and then use packet data iterator program to get all the
+>> data of a specific packet (pass pid, fd, packet index as filter).
+>>
+>> This would be complicated and require a lot of (each iteration)
+>> bpf program startup and exit (leading to poor performance).
+>>
+>> By comparison, open coded iterator is much more flexible, we can iterate
+>> in any context, at any time, and iteration can be nested, so we can
+>> achieve more flexible and more elegant dumping through open coded
+>> iterators.
+>>
+>> With open coded iterators, all of the above can be done in a single
+>> bpf program, and with nested iterators, everything becomes compact
+>> and simple.
+>>
+>> Also, bpf iterators transmit data to user space through seq_file,
+>> which involves a lot of open (bpf_iter_create), read, close syscalls,
+>> context switching, memory copying, and cannot achieve the performance
+>> of using ringbuf.
+>>
+>> Discussion
+>> ----------
+>>
+>> 1. Do we need bpf_iter_task_file_get_fd()?
+>>
+>> Andrii suggested that next() should return a pointer to
+>> a bpf_iter_task_file_item, which contains *file and fd.
+>>
+>> This is feasible, but it might compromise iterator encapsulation?
 > 
-> KF_TRUSTED_ARGS will only guarantee that the task is valid when it's
-> passed into this kfunc. Right after the prog can call
-> bpf_task_release() to release the ref and kit->task will become
-> dangling.
-> If this object was RCU protected we could have marked this iter
-> as KF_RCU_PROTECTED, then the verifier would make sure that
-> RCU unlock doesn't happen between iter_new and iter_destroy.
+> I don't think so, replied on v2 ([0]). I know you saw that, I'm just
+> linking it for others.
+> 
+>    [0] https://lore.kernel.org/bpf/CAEf4Bzba2N7pxPQh8_BDrVgupZdeow_3S7xSjDmsdhL19eXb3A@mail.gmail.com/
+> 
+> 
+>>
+>> More detailed discussion can be found at [3] [4]
+>>
+>> [3]: https://lore.kernel.org/bpf/CAEf4Bzbt0kh53xYZL57Nc9AWcYUKga_NQ6uUrTeU4bj8qyTLng@mail.gmail.com/
+>> [4]: https://lore.kernel.org/bpf/AM6PR03MB584814D93FE3680635DE61A199562@AM6PR03MB5848.eurprd03.prod.outlook.com/
+>>
+>> What should we do? Maybe more discussion is needed?
+>>
+>> 2. Where should we put CRIB related kfuncs?
+>>
+>> I totally agree that most of the CRIB related kfuncs are not
+>> CRIB specific.
+>>
+>> The goal of CRIB is to collect all relevant information about a process,
+>> which means we need to add kfuncs involving several different kernel
+>> subsystems (though these kfuncs are not complex and many just help the
+>> bpf program reach a certain data structure).
+>>
+>> But here is a question, where should these CRIB kfuncs be placed?
+>> There doesn't seem to be a suitable file to put them in.
+>>
+>> My current idea is to create a crib folder and then create new files for
+>> the relevant subsystems, e.g. crib/files.c, crib/socket.c, crib/mount.c
+>> etc. Putting them in the same folder makes it easier to maintain
+>> them centrally.
+>>
+>> If anyone else wants to use CRIB kfuncs, welcome to use them.
+>>
+> 
+> CRIB is just one of possible applications of such kfuncs, so I'd steer
+> away from over-specifying it as CRIB.
+> 
+> task_file open-coded iterator is generic, and should stay close to
+> other task iterator code, as you do in this revision.
+> 
+> bpf_get_file_ops_type() is unnecessary, as we already discussed on v2,
+> __ksym and comparison is the way to go here.
+> 
+> bpf_fget_task(), if VFS folks agree to add it, probably will have to
+> stay close to other similar VFS helpers.
+> 
 
-Thanks for pointing this out.
+Yes, I agree.
 
-I will fix it in the next version of the patch series.
+Maybe we should put it in fs/bpf_fs_kfuncs.c?
+
+>> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+>> ---
+>> v2 -> v3:
+>> 1. Move task_file open-coded iterator to kernel/bpf/helpers.c.
+>>
+>> 2. Fix duplicate error code 7 in test_bpf_iter_task_file().
+>>
+>> 3. Add comment for case when bpf_iter_task_file_get_fd() returns -1.
+>>
+>> 4. Add future plans in commit message of "Add struct file related
+>> CRIB kfuncs".
+>>
+>> 5. Add Discussion section to cover letter.
+>>
+>> v1 -> v2:
+>> Fix a type definition error in the fd parameter of
+>> bpf_fget_task() at crib_common.h.
+>>
+>> Juntong Deng (4):
+>>    bpf/crib: Introduce task_file open-coded iterator kfuncs
+>>    selftests/bpf: Add tests for open-coded style process file iterator
+>>    bpf/crib: Add struct file related CRIB kfuncs
+>>    selftests/bpf: Add tests for struct file related CRIB kfuncs
+>>
+>>   kernel/bpf/Makefile                           |   1 +
+>>   kernel/bpf/crib/Makefile                      |   3 +
+>>   kernel/bpf/crib/crib.c                        |  28 ++++
+>>   kernel/bpf/crib/files.c                       |  54 ++++++++
+>>   kernel/bpf/helpers.c                          |   4 +
+>>   kernel/bpf/task_iter.c                        |  96 +++++++++++++
+>>   tools/testing/selftests/bpf/prog_tests/crib.c | 126 ++++++++++++++++++
+>>   .../testing/selftests/bpf/progs/crib_common.h |  25 ++++
+>>   .../selftests/bpf/progs/crib_files_failure.c  | 108 +++++++++++++++
+>>   .../selftests/bpf/progs/crib_files_success.c  | 119 +++++++++++++++++
+>>   10 files changed, 564 insertions(+)
+>>   create mode 100644 kernel/bpf/crib/Makefile
+>>   create mode 100644 kernel/bpf/crib/crib.c
+>>   create mode 100644 kernel/bpf/crib/files.c
+>>   create mode 100644 tools/testing/selftests/bpf/prog_tests/crib.c
+>>   create mode 100644 tools/testing/selftests/bpf/progs/crib_common.h
+>>   create mode 100644 tools/testing/selftests/bpf/progs/crib_files_failure.c
+>>   create mode 100644 tools/testing/selftests/bpf/progs/crib_files_success.c
+>>
+>> --
+>> 2.39.5
+>>
 
 
