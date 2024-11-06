@@ -1,148 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-33786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FB39BF01A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 15:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD00E9BF062
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 15:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B5028582B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 14:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D341F21128
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 14:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD95201256;
-	Wed,  6 Nov 2024 14:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D7F202F8C;
+	Wed,  6 Nov 2024 14:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b="K0ELk7ZO"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ehYkobY5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rs+3xF/7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC3F20127C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 14:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67E41CC14B;
+	Wed,  6 Nov 2024 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903200; cv=none; b=RikdCvqY7wnCDvLoHJqrQML21K4MwOd01Bxf7KEJjSS3WipAst2juclm5jsmcHcK5BnfbkhX0g5CzhvH3f3oFqV9qs3nALZOOoasgPfqxS8+hEAtT2Oq/N01Xo6xQSN7NY2wRdaUz8Pwv/2clT2P5q6B2aCzLL/3nahE3dMhhag=
+	t=1730903455; cv=none; b=Rd53mAII1/SUG2jlRUB+Xfoeu/iugN9rDdQmwj46vh7/TlpOmjhtJV5JrespShbOvDP165srVvFwAweMP61gQz+VFMfBSXbbigmDDOWa/rWqgyLmc9GjI5YXjCZ0Tu/NdaqwR03PlNRoN/Ijz2kuRtQE5twjkfaURdxMxGK3WP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903200; c=relaxed/simple;
-	bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HU7TLHq9E8OtSEuzZig3797UoF/AxVhraWLERVKKq1y+6kvvCTRS4uww0NhkETcNfLTOnCaz4z9orz7V7XB6T3Mzn4zLQPUDO3TdBY+IdaUPoNwbn+/T+6lDA2VNnE/AXodLFf9Uy303Ar3M4CtOYDagQeChis/pMclulnU1T5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com; spf=none smtp.mailfrom=owltronix.com; dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b=K0ELk7ZO; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=owltronix.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a850270e2so1129367866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Nov 2024 06:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20230601.gappssmtp.com; s=20230601; t=1730903197; x=1731507997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
-        b=K0ELk7ZOqojBpwfYYFVtlhrgVqwWO9F5XOz+slzrpH7whuThi5sFINpU1Uz2YObfRL
-         RdopoaQbBe9AIueM/xK9qkRcpHa4xbkp9sQ1ZgrPkDzzmE6dLuYVXBoLaa6zn4ZF0Por
-         aMkFouowSW3zErpN1orbPemdy6YLrb8rvl6H36Mru773Dx3Alieh0RZkjYs3iM53nH21
-         8dKWaSlRjYHBC2QXhw1BILFPGFrs3nbW/kufRc7QIZUFCc7FI/o1OFoXFUAe2c9bWdp/
-         qg5rqdNPPloEYVDahsor2ScfawUvljWuiK9BhvMKOazWXD1ys8NY8ELcl7iP6fOW5snV
-         Y5Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730903197; x=1731507997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
-        b=PBNhEZglGDwddAXcYEhY/moIpxslxtb1Ql8JpdW9UjXKg345L+UJ/9AxglLVaXBtyS
-         ubSXvL4R761+bqkEL9u/SskqCG1v2mbQ7WYWia5CaLj3PbuI9RALgxWtUt+eWTMtPiIb
-         Kd3quOfyp/t9uke3ltbRqfO3N7wUV6WlOEBxU5ssWsWdGDYrZfTDcCK2f/csh1xWdjas
-         nIBWTqEXjpuC4lNmQ3fUj3VHJ3pw+3wZn4VZKGiHrs0icBTMiEBWWl7Czn80zYDVsG2v
-         bpVoyLLhbDfp5bo57VPsUwLSYgpvyNRJQG1m9W40QOfaduB/Mhm71Z4yLLXg73XICWjY
-         XGrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWs29rGEl9tCLquSGUSYT+paw5OWUD3NMuK64/j6k/8S8ju675e1GB+Kn9jKJzHT47o0B+afwct0JuVzvlJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFiWFiFwZthLVoMmeC0HvLZpA9ztdQiyjDFdOKm4iqm/CR6eep
-	mPB3X1ICj32M/L8z8EA27qPpdE86L7Nv8aaVAGboLefjMwMMWiEpY3reErT8ovYUZqYrUsmHx+J
-	s9mEUiNisMpF9GXWLLjLDr6KwTgerOK7rR7mE/g==
-X-Google-Smtp-Source: AGHT+IGTNjawymGmZtRv6kzFPFouB6jfAmX0w1MWjwjaaSmC15ADSV9RR263VUeTaevgARYiFWCXry3+rk2bBInzbBw=
-X-Received: by 2002:a17:907:2dac:b0:a99:6791:5449 with SMTP id
- a640c23a62f3a-a9e6587df7fmr2121988466b.52.1730903196776; Wed, 06 Nov 2024
- 06:26:36 -0800 (PST)
+	s=arc-20240116; t=1730903455; c=relaxed/simple;
+	bh=x7jVnVVoWPO5tiQh3eSfB3zX1+LgNqJNsOPsnti6GTA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jNxqIY7yXdLp3/z/RRUpLL+S15maCNJ9ajcqMZpthYbqtFw32gAp80gqGyxasGRw8WkNfyHdPNoS6R5TM62iKE+Bd55fFsMTj+RVFGdOw96SRCyoe4+w0nIHP3byZ9jd+jjqDqCklIRUEn7qpGYXBeXrpF2ijpm52nVXAQQHufk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ehYkobY5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rs+3xF/7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730903446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsFfiRe9gtcetAnwbxi6H3JMAAlIKif645qpkHp/z2E=;
+	b=ehYkobY5sQguPZErJgH9bTk0IptC7qBhodoLwSs2MeKxVBXUe6F3SL/aqNuqlol3M8++kG
+	IQx7SWYyIwgwnzOZp570+kSfC/WsTxQz1ed+txUUXUcD2M0pu55Yxy8WZRv3oKeDDLMGgJ
+	gn9JJVelaaDGu8rPlhPdPG11LUfqaxl7IelTvNjOm31WBwtEMSYvJaM21lTFbOhYHVZHoo
+	2VQOf8NPytnPcIQV5fVCrlsGTHDbksCJxcLPnEKkLIaDU/YVGwTDN/e7OHnicVe6+0tCoN
+	tZE1UMuFiUDl9U6KRwjK2RX/UI68bXyTj0fUtL39MLkLxlU8Rp/NRTVNxD2Grw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730903446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsFfiRe9gtcetAnwbxi6H3JMAAlIKif645qpkHp/z2E=;
+	b=Rs+3xF/7YOpwYfSVFd1QkmE2jNS+l2s82e6ApJ41jIaRgiHXL79hI+xUR6IcRkZTjl6Bna
+	fgnbyLoqPZq4unAQ==
+To: Nam Cao <namcao@linutronix.de>, Shuah Khan <shuah@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, Dylan
+ Hatch <dylanbhatch@google.com>, "Eric W . Biederman"
+ <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
+ coredump
+In-Reply-To: <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+References: <cover.1730883229.git.namcao@linutronix.de>
+ <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+Date: Wed, 06 Nov 2024 15:36:45 +0106
+Message-ID: <848qtwfn8q.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
- <20241030154556.GA4449@lst.de> <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
- <20241030155052.GA4984@lst.de> <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
- <20241030165708.GA11009@lst.de> <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
- <CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
- <ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com> <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
- <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
-From: Hans Holmberg <hans@owltronix.com>
-Date: Wed, 6 Nov 2024 15:26:25 +0100
-Message-ID: <CANr-nt0stXUn38EawwQPa+fGmgvHE7Ch8LH7tGyNp5NPpm1m0w@mail.gmail.com>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, 
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, joshi.k@samsung.com, 
-	javier.gonz@samsung.com, bvanassche@acm.org, Hannes Reinecke <hare@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Nov 1, 2024 at 3:49=E2=80=AFPM Keith Busch <kbusch@kernel.org> wrot=
-e:
+On 2024-11-06, Nam Cao <namcao@linutronix.de> wrote:
+> Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
+> /proc/PID/stat") disabled stack pointer reading, because it is generally
+> dangerous to do so.
 >
-> On Fri, Nov 01, 2024 at 08:16:30AM +0100, Hans Holmberg wrote:
-> > On Thu, Oct 31, 2024 at 3:06=E2=80=AFPM Keith Busch <kbusch@kernel.org>=
- wrote:
-> > > On Thu, Oct 31, 2024 at 09:19:51AM +0100, Hans Holmberg wrote:
-> > > > No. The meta data IO is just 0.1% of all writes, so that we use a
-> > > > separate device for that in the benchmark really does not matter.
-> > >
-> > > It's very little spatially, but they overwrite differently than other
-> > > data, creating many small holes in large erase blocks.
-> >
-> > I don't really get how this could influence anything significantly.(If =
-at all).
+> Commit fd7d56270b52 ("fs/proc: Report eip/esp in /prod/PID/stat for
+> coredumping") made an exception for coredumping thread, because for this
+> case it is safe.
 >
-> Fill your filesystem to near capacity, then continue using it for a few
-> months. While the filesystem will report some available space, there
-> may not be many good blocks available to erase. Maybe.
-
-For *this* benchmark workload, the metadata io is such a tiny fraction
-so I doubt the impact on wa could be measured.
-I completely agree it's a good idea to separate metadata from data
-blocks in general. It is actually a good reason for letting the file
-system control write stream allocation for all blocks :)
-
-> > I believe it would be worthwhile to prototype active fdp data
-> > placement in xfs and evaluate it. Happy to help out with that.
+> The exception was later extended to all threads in a coredumping process by
+> commit cb8f381f1613 ("fs/proc/array.c: allow reporting eip/esp for all
+> coredumping threads").
 >
-> When are we allowed to conclude evaluation? We have benefits my
-> customers want on well tested kernels, and wish to proceed now.
+> The above two commits determine if a task is core dumping by checking the
+> PF_EXITING and PF_DUMPCORE flags.
+>
+> However, commit 92307383082d ("coredump:  Don't perform any cleanups before
+> dumping core") moved coredump to happen earlier and before PF_EXITING is
+> set. Thus, the check of the PF_EXITING flag no longer works.
+>
+> Instead, use task->signal->core_state to determine if coredump is
+> happening. This pointer is set at the beginning of coredump and is cleared
+> once coredump is done. Thus, while this pointer is not NULL, it is safe to
+> read ESP.
+>
+> Fixes: 92307383082d ("coredump:  Don't perform any cleanups before dumping core")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-Christoph has now wired up prototype support for FDP on top of the
-xfs-rt-zoned work + this patch set, and I have had time to look over
-it and started doing some testing on HW.
-In addition to the FDP support, metadata can also be stored on the
-same block device as the data.
-
-Now that all placement handles are available, we can use the full data
-separation capabilities of the underlying storage, so that's good.
-We can map out the placement handles to different write streams much
-like we assign open zones for zoned storage and this opens up for
-supporting data placement heuristics for a wider range use cases (not
-just the RocksDB use case discussed here).
-
-The big pieces that are missing from the FDP plumbing as I see it is
-the ability to read reclaim unit size and syncing up the remaining
-capacity of the placement units with the file system allocation
-groups, but I guess that can be added later.
-
-I've started benchmarking on the hardware I have at hand, iterating on
-a good workload configuration. It will take some time to get to some
-robust write amp measurements since the drives are very big and
-require a painfully long warmup time.
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
