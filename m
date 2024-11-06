@@ -1,147 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-33712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588C09BDE08
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 05:45:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2309BDE1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 06:02:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BF542832E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 04:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5A51F2432D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 05:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F62018FDAA;
-	Wed,  6 Nov 2024 04:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2YqnW7V"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70686190685;
+	Wed,  6 Nov 2024 05:02:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688A013541B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 04:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8183217BB1C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 05:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730868298; cv=none; b=Gy8eCSYNN+ufSnMq87gdUC61usIjagJC3WwavfG1Fgbh44IJtmvGw/NwouNuO4IrZzobvN3V1ErSala0z0BrvhgC8+t/76VtxrruYdBEtq0pUu0ZIOMq/w2Xs3vuz7ZArM1wSwXMQ69h/sOCLRy2TFQ/ivf5Yqpomq9YrpKcDdA=
+	t=1730869341; cv=none; b=tUb7tTktiFXablJ08jSG918kxJueRhMMPY4+pW3REj+LAH1nwiqZCpLZ0sLew85gg7K1I+NEDjmvUjrgfyBrim4X6tMUN2LGvivKwuB7eAZsLj7fLhwS6KLthS9q7Tspoq8GP7nEHKaDS42qvOBhX3PxORJ+AZpjnvFwKmFSK5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730868298; c=relaxed/simple;
-	bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ap3orzAMy6+FV8E2j6QqILpFL9PRLTNGBv5ZqYC3xTaHvP+kPsfzIdtP7KvrrulltPen8NsrKQR0DJ/ZQ9mjSCuN6ZQaFFayWAoR3djI2DcWXbM/z1xjsnPCM0fK9Ve/t11ArLAp7ULwLdaKCk2hKi0ETJPmFRnDrNRxzDuIqmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2YqnW7V; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730868295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
-	b=C2YqnW7VszUMybKNk11xjRl3GoKu1ayEdayCx2Rt36SbglKof+caa+tiaeFvxBjNGVlIkZ
-	vOIH0QEzo6IG3k934fV/eTw5MaEjpcyLWElJHcva29StVfQie/CobZXYcqYniuOscQVfhW
-	gitIYuCfgfWbhA4CEfRHKgAjmuniL64=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-tF6mfvsqP42Y4WUE3uE4Cg-1; Tue, 05 Nov 2024 23:44:53 -0500
-X-MC-Unique: tF6mfvsqP42Y4WUE3uE4Cg-1
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-84fdfb0203eso1780141241.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 20:44:53 -0800 (PST)
+	s=arc-20240116; t=1730869341; c=relaxed/simple;
+	bh=S6HVl5YYmeNgzf4H120DElxRhniXzUnsxIFr8KZvG1Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E2O89dzBM81ONAIlBzf6tsF8ugqnMjZt5Zh9Qm/eGKHJyY0rSXo57dzG1y+piXlsvGGiuaTj6Agoi3gFDunRz20ctAJ56837t43wfThLHg85aqb9F0En2ZZSrCiMPsdmwbVSkcND5GWhAahsU16PlbSW9GdiJrUAUxgt460z0p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so69102905ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2024 21:02:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730868293; x=1731473093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
-        b=QY0kcvaAnM+snZq54TrtylTk3gszg7cDPpxIjR+1msj1xjpivmF9JluXxBfktzP7lR
-         RDevzi7fkoKEqnc2wXCgHu5XPjPqH2L/tlg/BgvE/LfvqrAMIdoP/EperaG45a3/szKV
-         WSySrXl82rkJr/sxoqAhr0l6hRd5gNNVQqVzu3Vy0jGt5qbxfXzF3jc8LMMkZRDFnlR4
-         sv8w6MsoiXlzj6d863kDiEPJEDBDPFCLGvtc93BGZExDLqd7kNMse2ZxZ6q/Us89ggL9
-         miX3g82Jr3CnGm/bWljEAc9/OjBXwKwaOA7knjaYAtKJMCIII3GdzzqqcJjaMX9fYibq
-         bJuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxaZiWLSt2xIJavaOgNbenDrp1kUzlRpz8DMVZk/Pgm6Etr6HsL3eMhWAXb4OZewDUOSHCwkyKd1AHmm9p@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKddZJ3EGGBRjZkYvNbd6NWbe1vaGnCRmU5MWTWUYnJek7mH6k
-	DXBTtBiG3mlIWE1SDEamkCo/7k9vDsIl0ZMsJIe1MaX7Em0awVGqAn40BwIzIISAE6qZvo/ME2o
-	YUrjmGEsO4s+ckX74Jd2HTYc0Sc2it1hbXULzlxvchFG87h5may7seo9oVp21EVdqVTXU13g7YD
-	furQEFNFM/BYiCozVdtRhbBa7wnRTqaI6fB2tTbu7hJ4Pmbejm09p18w==
-X-Received: by 2002:a05:6102:3753:b0:4a4:9363:b84f with SMTP id ada2fe7eead31-4a8cfb25e4amr37666144137.5.1730868292819;
-        Tue, 05 Nov 2024 20:44:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE4iGAezGMJs15MNuuVVJkx2duwmdHhkRxiLbHUY21XKlOr3ugjz4SNSgTPpCow5imWMd0nbAcU7G/vr44oXyY=
-X-Received: by 2002:a05:6102:3753:b0:4a4:9363:b84f with SMTP id
- ada2fe7eead31-4a8cfb25e4amr37666136137.5.1730868292604; Tue, 05 Nov 2024
- 20:44:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730869338; x=1731474138;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+O0Kb3rEGozlsN+xaRfLtSu1aFI8EkV95LDgZv6n7G8=;
+        b=SmIdGjaZUojIPqMTHZAHSBeGbpaTrD0COdEA8fZZmdl9ICogwhGJNxhksGjjKKAbJ9
+         5+gzw0eQtuusprQLT9JTGErSAegwU6bet4p+C750fRB+Aa4iKPXKQQEnTSpJLn1Seu0w
+         /OPpltkdEcIylpXiLGRvpNQ8ZLqrXdPrUZfwVKSsCbGtRe2yfYIS/xZ3jXmnX6ksOgFf
+         CoLMTSr5OUwntzfuqZEQNZUqOTKwrA7NFMorj9u7C/kLi6uC9F6SeE3oDeUGgrQ/YYRQ
+         k6MZ7drhMxxCKTVgAlH1SH//dLLvk1bHvBIarjW5O2h5h6opSrwxs17BpL46QLN+NSyU
+         Ux8Q==
+X-Gm-Message-State: AOJu0Yy+GwC0ptg+V8bP4HWryot119NsJgxTHIsxq7SOD2MRoK0Qy44e
+	fHmmnJgqJ+HrBxvgEAMOxhlICr++whGQ0Ck1CrAyM1F0cN6dYgOfond+2M9m2SgtEs1vMaFc2Ei
+	nD8O6P2K/pMLo4/MypTkTTx1NbpdYhQdWLY0xDtGQiZF5z1cuVueGVEo=
+X-Google-Smtp-Source: AGHT+IFKCCJhaixJy45QcK9k7ayQSOfba2re5g9XCOmmQiFPPBUyevkkPEeMRPp2hNRt3jPgUyXvnsQdOqbCgGoYa55w8c4Sxakz
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
- <20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com>
- <b4e388fe-4986-4ce7-b696-31f2d725cf1c@gmail.com> <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
- <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com> <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
-In-Reply-To: <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Wed, 6 Nov 2024 12:44:41 +0800
-Message-ID: <CAFj5m9L9xjYcm2-B_Dv=L3Ne3kRY5DVQ8mU7pqocqXE13Ajp-g@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 12/15] io_uring/cmd: let cmds to know about dying task
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Jens Axboe <axboe@kernel.dk>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, Joanne Koong <joannelkoong@gmail.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>
+X-Received: by 2002:a05:6e02:2163:b0:39f:5efe:ae73 with SMTP id
+ e9e14a558f8ab-3a5e2436614mr278689915ab.5.1730869338630; Tue, 05 Nov 2024
+ 21:02:18 -0800 (PST)
+Date: Tue, 05 Nov 2024 21:02:18 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672af85a.050a0220.2edce.151c.GAE@google.com>
+Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_cat_bin_cmp_key
+From: syzbot <syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 7:02=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
-rote:
->
->
->
-> On 11/5/24 02:08, Pavel Begunkov wrote:
-> > On 11/4/24 22:15, Bernd Schubert wrote:
-> >> On 11/4/24 01:28, Pavel Begunkov wrote:
-> > ...
-> >>> In general if you need to change something, either stick your
-> >>> name, so that I know it might be a derivative, or reflect it in
-> >>> the commit message, e.g.
-> >>>
-> >>> Signed-off-by: initial author
-> >>> [Person 2: changed this and that]
-> >>> Signed-off-by: person 2
-> >>
-> >> Oh sorry, for sure. I totally forgot to update the commit message.
-> >>
-> >> Somehow the initial version didn't trigger. I need to double check to
-> >
-> > "Didn't trigger" like in "kernel was still crashing"?
->
-> My initial problem was a crash in iov_iter_get_pages2() on process
-> kill. And when I tested your initial patch IO_URING_F_TASK_DEAD didn't
-> get set. Jens then asked to test with the version that I have in my
-> branch and that worked fine. Although in the mean time I wonder if
-> I made test mistake (like just fuse.ko reload instead of reboot with
-> new kernel). Just fixed a couple of issues in my branch (basically
-> ready for the next version send), will test the initial patch
-> again as first thing in the morning.
->
->
-> >
-> > FWIW, the original version is how it's handled in several places
-> > across io_uring, and the difference is a gap for !DEFER_TASKRUN
-> > when a task_work is queued somewhere in between when a task is
-> > started going through exit() but haven't got PF_EXITING set yet.
-> > IOW, should be harder to hit.
-> >
->
-> Does that mean that the test for PF_EXITING is racy and we cannot
-> entirely rely on it?
+Hello,
 
-Another solution is to mark uring_cmd as io_uring_cmd_mark_cancelable(),
-which provides a chance to cancel cmd in the current context.
+syzbot found the following issue on:
 
-Thanks,
+HEAD commit:    6c52d4da1c74 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1069c987980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1edd801cefd6ca3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=968ecf5dc01b3e0148ec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2b55f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1469c987980000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b3257cc2711/disk-6c52d4da.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/826b93a55a16/vmlinux-6c52d4da.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e7be84048c24/bzImage-6c52d4da.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1dd80244cd46/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 1024
+=====================================================
+BUG: KMSAN: uninit-value in hfsplus_cat_bin_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:36
+ hfsplus_cat_bin_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:36
+ hfs_find_rec_by_key+0xb1/0x240 fs/hfsplus/bfind.c:89
+ __hfsplus_brec_find+0x26f/0x7b0 fs/hfsplus/bfind.c:124
+ hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:184
+ hfsplus_brec_read+0x46/0x1a0 fs/hfsplus/bfind.c:211
+ hfsplus_find_cat+0xdb/0x460 fs/hfsplus/catalog.c:202
+ hfsplus_iget+0x729/0xae0 fs/hfsplus/super.c:82
+ hfsplus_fill_super+0x151b/0x2700 fs/hfsplus/super.c:509
+ mount_bdev+0x39a/0x520 fs/super.c:1679
+ hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
+ legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ hfsplus_find_init+0x95/0x1d0 fs/hfsplus/bfind.c:21
+ hfsplus_iget+0x3c4/0xae0 fs/hfsplus/super.c:80
+ hfsplus_fill_super+0x151b/0x2700 fs/hfsplus/super.c:509
+ mount_bdev+0x39a/0x520 fs/super.c:1679
+ hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
+ legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5784 Comm: syz-executor301 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
