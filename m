@@ -1,55 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-33709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AB09BDA1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 01:14:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4290A9BDABD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 01:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF3F1C22298
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 00:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8801F213C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 00:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86732653;
-	Wed,  6 Nov 2024 00:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01621474DA;
+	Wed,  6 Nov 2024 00:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtyhK96z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GU1x2eZA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E1336C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 00:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05E2D613;
+	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730852065; cv=none; b=hef78HotvTB5yo2q+GKt8/9Hk3FKEI1MfhW9g2cZpb2SIRZpwvhOIx3ToAkfldNHTrx6GmwYSjhT1Ll8bqD39PKk6xrYUQmHAhQHLicaxau1pa5M7QSAS6KBqRLEyAhZeLq0I7cWVhoZHeeMCWXbba3xIsi3ATgrqiNE9BMFhig=
+	t=1730854662; cv=none; b=eJBPvOeenoUD0FTUHi6xTfQTRIfWUxypzfcqArBAJ+xiNkdhQqdKNV6XU2UtLUz589jq5YF7ccPiET5Gw7voWnOU0YDpa11MAOTa6FoYeaXIskMN8e5+dDfEEwkPOA3SOYDdtSHhMCcAAZn0HcgvW3bdHZgYgGqmapVFu4Cuoa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730852065; c=relaxed/simple;
-	bh=R0KrIWrGTfA1qUrQLoI4Ams9CNHdTLlBD8k93kZCa3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7f9vs77/eYA8gvdEcE763OM6jYKG6aA4YpBmg05trXebSkK5SCe/U3gjt5Ua+SGx6xuhj6DIY1FcvM6Q9THQGMXzvOt2q+I/LjYQmeEcq30+x/2i3dh02S3KpnpzTmYb5GAb7kw+barKK40tiOFE/kmZ8RaBLKwiGaN/PAZKxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtyhK96z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675E7C4CECF;
-	Wed,  6 Nov 2024 00:14:24 +0000 (UTC)
+	s=arc-20240116; t=1730854662; c=relaxed/simple;
+	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hm6Yf36QRTQl5eKrPsngiMZ4KT8PsfEfDO8rZHuTjYELQSDmK3eWSbLxkqOvxMQApxwFUnMEYuTuNE2z5kAWTZf4LAYclLNmIiovTSmGlJxK7OGf35VOIGgbBlyiYKDL8LABcsuDY7xf5MmzbeBQ2/a5ULFVO0y5ns2Fari1dGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GU1x2eZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A296CC4CECF;
+	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730852064;
-	bh=R0KrIWrGTfA1qUrQLoI4Ams9CNHdTLlBD8k93kZCa3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WtyhK96zsep7p0xe7ZtqOByqx8bPHC82z/+BbtHyBZlcT44J0FD26keeixapRm+sr
-	 E6G3MJYAuE2ss4VWwyeai1hKWLz4NWBH5IAv2mAZHekNBixPt4pf8Nw42ncIgwKHGq
-	 xvDQvTdhfb2AkQrsuP/qmDk0KReJu2Ww9cATPqxwxtDqfavXjwqyufp1AYRet1euge
-	 4nZh6PjwTfYbOkQ87YJK7N0fnb97EQ6RRBd/6WME/U2dI+biD7KqpoEnbEw2ZusOPh
-	 uwowEdF1wppYLKoN6sosSGd24PHTPW3rPiqiTTLZsH5hFNDxLnAt0m2QFx/9SpG7tU
-	 OtX7vtiOQlhmw==
-Date: Tue, 5 Nov 2024 16:14:23 -0800
+	s=k20201202; t=1730854661;
+	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GU1x2eZA9XHMIO4M9v9jE9MleHLUATw50umb4dKqqzAEKt47KLmAA6I8BlfHVpUuI
+	 4cszwID984YUqCVHKuybA9ufRga2t32Vw7E76eUX8x34o0iYOoWzJsQV10izZAZi3M
+	 CfqQLlG5mYjIm8f9shAsfW2P1tIrmcssBxDEZTe1x9Z0ejacqlQi4nIBd/TDxTdxdY
+	 6zBaiD3ZB3yme3ZLRWjwYH15wJPbeYu+qs/MCHGeLiinSkjAYfV7rDk1ih+fYysaOa
+	 3lpINihHVT5hRJGRDSSYKmK1OJy59oN4Ajqdtrg0gP0tWrV/nyeZoqZW0uYjnDWiXF
+	 +AYpsq2O36OjQ==
+Date: Tue, 5 Nov 2024 16:57:40 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iomap: lift zeroed mapping handling into
- iomap_zero_range()
-Message-ID: <20241106001423.GQ21836@frogsfrogsfrogs>
-References: <20241031140449.439576-1-bfoster@redhat.com>
- <20241031140449.439576-2-bfoster@redhat.com>
+To: brauner@kernel.org
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Catherine Hoang <catherine.hoang@oracle.com>,
+	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [ANNOUNCE v2] work tree for untorn filesystem writes
+Message-ID: <20241106005740.GM2386201@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,118 +62,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241031140449.439576-2-bfoster@redhat.com>
 
-On Thu, Oct 31, 2024 at 10:04:47AM -0400, Brian Foster wrote:
-> In preparation for special handling of subranges, lift the zeroed
-> mapping logic from the iterator into the caller. Since this puts the
-> pagecache dirty check and flushing in the same place, streamline the
-> comments a bit as well.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  fs/iomap/buffered-io.c | 63 ++++++++++++++----------------------------
->  1 file changed, 21 insertions(+), 42 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index aa587b2142e2..60386cb7b9ef 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1365,40 +1365,12 @@ static inline int iomap_zero_iter_flush_and_stale(struct iomap_iter *i)
->  	return filemap_write_and_wait_range(mapping, i->pos, end);
->  }
->  
-> -static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
-> -		bool *range_dirty)
-> +static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  {
-> -	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	loff_t pos = iter->pos;
->  	loff_t length = iomap_length(iter);
->  	loff_t written = 0;
->  
-> -	/*
-> -	 * We must zero subranges of unwritten mappings that might be dirty in
-> -	 * pagecache from previous writes. We only know whether the entire range
-> -	 * was clean or not, however, and dirty folios may have been written
-> -	 * back or reclaimed at any point after mapping lookup.
-> -	 *
-> -	 * The easiest way to deal with this is to flush pagecache to trigger
-> -	 * any pending unwritten conversions and then grab the updated extents
-> -	 * from the fs. The flush may change the current mapping, so mark it
-> -	 * stale for the iterator to remap it for the next pass to handle
-> -	 * properly.
-> -	 *
-> -	 * Note that holes are treated the same as unwritten because zero range
-> -	 * is (ab)used for partial folio zeroing in some cases. Hole backed
-> -	 * post-eof ranges can be dirtied via mapped write and the flush
-> -	 * triggers writeback time post-eof zeroing.
-> -	 */
-> -	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN) {
-> -		if (*range_dirty) {
-> -			*range_dirty = false;
-> -			return iomap_zero_iter_flush_and_stale(iter);
-> -		}
-> -		/* range is clean and already zeroed, nothing to do */
-> -		return length;
-> -	}
-> -
->  	do {
->  		struct folio *folio;
->  		int status;
-> @@ -1448,24 +1420,31 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  	bool range_dirty;
->  
->  	/*
-> -	 * Zero range wants to skip pre-zeroed (i.e. unwritten) mappings, but
-> -	 * pagecache must be flushed to ensure stale data from previous
-> -	 * buffered writes is not exposed. A flush is only required for certain
-> -	 * types of mappings, but checking pagecache after mapping lookup is
-> -	 * racy with writeback and reclaim.
-> +	 * Zero range can skip mappings that are zero on disk so long as
-> +	 * pagecache is clean. If pagecache was dirty prior to zero range, the
-> +	 * mapping converts on writeback completion and must be zeroed.
->  	 *
-> -	 * Therefore, check the entire range first and pass along whether any
-> -	 * part of it is dirty. If so and an underlying mapping warrants it,
-> -	 * flush the cache at that point. This trades off the occasional false
-> -	 * positive (and spurious flush, if the dirty data and mapping don't
-> -	 * happen to overlap) for simplicity in handling a relatively uncommon
-> -	 * situation.
-> +	 * The simplest way to deal with this is to flush pagecache and process
-> +	 * the updated mappings. To avoid an unconditional flush, check dirty
-> +	 * state and defer the flush until a combination of dirty pagecache and
-> +	 * at least one mapping that might convert on writeback is seen.
->  	 */
->  	range_dirty = filemap_range_needs_writeback(inode->i_mapping,
->  					pos, pos + len - 1);
-> +	while ((ret = iomap_iter(&iter, ops)) > 0) {
-> +		const struct iomap *s = iomap_iter_srcmap(&iter);
+Hi everyone,
 
-Needs a blank line after the declaration, but other than picking nits
-this looks ok to me.
+Here's a slightly updated working branch for the filesystem side of
+atomic write changes for 6.13:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
+
+This branch is, like yesterday's, based off of axboe's
+for-6.13/block-atomic branch:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+
+The only difference is that I added Ojaswin's Tested-by: tags to the end
+of the xfs series.  I have done basic testing with the shell script at
+the end of this email and am satisfied that it at least seems to do the
+(limited) things that I think we're targeting for 6.13.
+
+Christian: Could you pull this fs-atomic branch into your vfs.git work
+for 6.13, please?  Or would you rather I ask rothwell to include this
+branch into for-next/fs-next and send the PR to Linus myself?
+
+(Actually I might just ask rothwell to do that tomorrow regardless...)
 
 --D
 
-> +		if (s->type == IOMAP_HOLE || s->type == IOMAP_UNWRITTEN) {
-> +			loff_t p = iomap_length(&iter);
-> +			if (range_dirty) {
-> +				range_dirty = false;
-> +				p = iomap_zero_iter_flush_and_stale(&iter);
-> +			}
-> +			iter.processed = p;
-> +			continue;
-> +		}
->  
-> -	while ((ret = iomap_iter(&iter, ops)) > 0)
-> -		iter.processed = iomap_zero_iter(&iter, did_zero, &range_dirty);
-> +		iter.processed = iomap_zero_iter(&iter, did_zero);
-> +	}
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(iomap_zero_range);
-> -- 
-> 2.46.2
-> 
-> 
+#!/bin/bash -x
+
+# Mess around with atomic writes via scsi_debug
+
+mnt=/opt
+
+true "${FSTYP:=xfs}"
+true "${MIN_ATOMIC:=32768}"
+true "${SECTOR_SIZE:=512}"
+true "${FSBLOCK_SIZE:=4096}"
+
+umount $mnt
+rmmod "$FSTYP"
+
+rmmod scsi_debug
+modprobe scsi_debug atomic_wr=1 dev_size_mb=300 \
+	SECTOR_SIZE=$SECTOR_SIZE \
+	atomic_wr_align=$((MIN_ATOMIC / SECTOR_SIZE)) \
+	atomic_wr_gran=$((MIN_ATOMIC / SECTOR_SIZE))
+
+sleep 1
+dev="$(readlink -m /dev/disk/by-id/wwn-0x3333333000*)"
+sysfs=/sys/block/$(basename "$dev")
+
+sysfs-dump $sysfs/queue/atomic_write_*
+
+for ((i = 9; i < 20; i++)); do
+	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $dev
+done
+
+case "$FSTYP" in
+"xfs")
+	mkfs.xfs -f $dev -b size=$MIN_ATOMIC
+	;;
+"ext4")
+	mkfs.ext4 -F $dev -b $FSBLOCK_SIZE -C $MIN_ATOMIC -O bigalloc
+	;;
+*)
+	echo "$FSTYP: not recognized"
+	exit 1
+	;;
+esac
+mount $dev $mnt
+
+xfs_io -f -c 'falloc 0 1m' -c fsync $mnt/a
+filefrag -v $mnt/a
+
+for ((i = 9; i < 20; i++)); do
+	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $mnt/a
+done
+
+# does not support buffered io
+xfs_io -c "pwrite -b 1m -V 1 -AD 0 $MIN_ATOMIC" $mnt/a
+# does not support unaligned directio
+xfs_io -c "pwrite -b 1m -V 1 -AD $SECTOR_SIZE $MIN_ATOMIC" $mnt/a
 
