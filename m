@@ -1,94 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-33724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860C89BE125
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 09:37:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23BB9BE215
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 10:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3142837E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 08:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2331C22F07
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 09:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6401D88B1;
-	Wed,  6 Nov 2024 08:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B101D7E26;
+	Wed,  6 Nov 2024 09:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OJjN9v3r"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aT9IYe8Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6QHqFyb3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aT9IYe8Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6QHqFyb3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5CE1D5171;
-	Wed,  6 Nov 2024 08:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76A818FC79;
+	Wed,  6 Nov 2024 09:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882175; cv=none; b=Ig+NP6l3LYfXQsa2tLzN7R0Ykfx7t92dZvOrGlRn5tOay1NdmXy+oE0G0tK0FBEmIFpS8YwTC0g6zmAJR8nUWrQwFnKdc8s1bdR4KuGqbI/7p/GYTaoflSiM8v3rWmHYVDjtKVERmEVBsiDGuw2o/fsl+B0AscSGY9Sr397l5dE=
+	t=1730884415; cv=none; b=ujbq8zbWbE1NFrNuBKRd9fY2vFtokhSogPTFB/7kia9Vmw4BFC9WhfbWlq1G2WQ3vehZLK5ge5GfDxYo6Td06AZgVxj5xpUbuNqcnO4ZKKy0b+HrTszAC/GsIEVCpQ/ApKOhuFfv2jewmDoRpglcuPS5D4A9QCxpemUlLksnZmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882175; c=relaxed/simple;
-	bh=4lWAHklcm14vPuh3Q9+OKVUs+RH3n6zDXgavv2ivdck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qLqZcNDwj24j+ShPikTt6IIuggZ2D9E/V1knBEek4uW7VaYPIubyg6C59a3qGGiSm2bA79FDaM0C8RH37emua1EbDLwf7svER5qHLZPxoxSmBkKczuIENQDutuja5ohIEifa3v4YhGEyniSH6aav0u0zJ/vcqm8iuWgVH/4E5pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OJjN9v3r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199BAC4CED0;
-	Wed,  6 Nov 2024 08:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730882173;
-	bh=4lWAHklcm14vPuh3Q9+OKVUs+RH3n6zDXgavv2ivdck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJjN9v3rVc4ENn4RYJBUjgoOCXtqvP850TvOAoB/SzkW0mEHaOLMWsCkHdLYOf24P
-	 pSrTGIk7WnEXDrwJ7CY7Uv8hHLkJnBE48ChZedL0PFecpO/c4unHGTkp8vIzZ7Kf2D
-	 0ca7KP3jMz9jfC7g4DUjNTsONxlfLvHvilgWAvQk=
-Date: Wed, 6 Nov 2024 09:35:55 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Christian Ebner <c.ebner@proxmox.com>
-Cc: dhowells@redhat.com, jlayton@kernel.org, stable@vger.kernel.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before
- netfs_clear_unread() tail clean
-Message-ID: <2024110625-blot-uncooked-48f9@gregkh>
-References: <20241027114315.730407-1-c.ebner@proxmox.com>
- <2024110644-audible-canine-30ca@gregkh>
- <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
+	s=arc-20240116; t=1730884415; c=relaxed/simple;
+	bh=94jLYejycYOf9QVMSkq6kFYUacAS7FhoLpY6HToocEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DGr75ng4HdGndexjHLGaMt7wmvZO9RcjbztR7DtefOFRmlUCb7ljJYdbG1698HshOiZrTgLGqdQrWjqcGxTI5HmzrCxVbF8Mm2O36gxqyhV1Aj6yGUifMTtdH6Uixg6yOnFYfUGCPDsuN/v2hLMuB7A0FWDOP9Ez1a9L3WLJ5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aT9IYe8Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6QHqFyb3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aT9IYe8Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6QHqFyb3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 03D2421BEB;
+	Wed,  6 Nov 2024 09:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730884412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=55cWaEw1ej/FBoRaobaIvMtc2C188kjtfQDLtG0KL54=;
+	b=aT9IYe8QVUwwtCjLPdxhkcA3l0hG5I4m3Eek8AwTy86/3FhF14Bt1z3cmhZR6Sd4Lpx95+
+	bQZXLyDI5UpMvO4SkxI+JrscO+wFLQtz4xiDfILLzjVGf46Q5BtnHaoarnxsTIfBjGMsP1
+	aHtW7RfGjnNkWej9b4m8vpI/q5oepbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730884412;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=55cWaEw1ej/FBoRaobaIvMtc2C188kjtfQDLtG0KL54=;
+	b=6QHqFyb3xAlEL1Td6VbzIC6zu85WfgaWwUSNU0u1+j0FMRJeNwA/tdEf4tDuiVzJIriMD8
+	S8yWQgWYVPx+msCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730884412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=55cWaEw1ej/FBoRaobaIvMtc2C188kjtfQDLtG0KL54=;
+	b=aT9IYe8QVUwwtCjLPdxhkcA3l0hG5I4m3Eek8AwTy86/3FhF14Bt1z3cmhZR6Sd4Lpx95+
+	bQZXLyDI5UpMvO4SkxI+JrscO+wFLQtz4xiDfILLzjVGf46Q5BtnHaoarnxsTIfBjGMsP1
+	aHtW7RfGjnNkWej9b4m8vpI/q5oepbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730884412;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=55cWaEw1ej/FBoRaobaIvMtc2C188kjtfQDLtG0KL54=;
+	b=6QHqFyb3xAlEL1Td6VbzIC6zu85WfgaWwUSNU0u1+j0FMRJeNwA/tdEf4tDuiVzJIriMD8
+	S8yWQgWYVPx+msCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3AE0A13736;
+	Wed,  6 Nov 2024 09:13:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VgjBNzgzK2fgTQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Wed, 06 Nov 2024 09:13:28 +0000
+Date: Wed, 6 Nov 2024 20:13:19 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-fsdevel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, Al Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] initramfs_test: kunit tests for initramfs
+ unpacking
+Message-ID: <20241106201319.1241bc4c.ddiss@suse.de>
+In-Reply-To: <202411060625.exdzruA8-lkp@intel.com>
+References: <20241104141750.16119-3-ddiss@suse.de>
+	<202411060625.exdzruA8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Wed, Nov 06, 2024 at 09:26:46AM +0100, Christian Ebner wrote:
-> On 11/6/24 06:59, Greg KH wrote:
-> > We would much rather take the original series of commits, what exactly
-> > are they here?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Hello Greg,
-> thank you for your reply.
-> 
-> AFAIK the relevant patches for this series are commits 80887f31..ee4cdf7b,
-> although the last patch containing the fix does not apply cleanly on the
-> current 6.11.y branch.
-> 
-> Please note, I am not very familiar with the code so unsure if all of the
-> patches in the series are required for the fix. Maybe David Howells as
-> author of the series can provide some more insights?
-> 
-> The patch series introducing the fix is
-> https://lore.kernel.org/all/20240814203850.2240469-1-dhowells@redhat.com/
-> 
-> Please let me know how to proceed, thanks!
+[adding kunit lists to cc, see lore link below for context]
 
-Please try testing the original fixes and providing them as a patch
-series and send them for us to review.
+https://lore.kernel.org/linux-fsdevel/20241104141750.16119-3-ddiss@suse.de/
 
-thanks,
+On Wed, 6 Nov 2024 07:04:21 +0800, kernel test robot wrote:
+...
+> All warnings (new ones prefixed by >>, old ones prefixed by <<):
+> 
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> initramfs_test_extract (section: .init.text)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x30 (section: .data) -> initramfs_test_fname_overrun (section: .init.text)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x60 (section: .data) -> initramfs_test_data (section: .init.text)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x90 (section: .data) -> initramfs_test_csum (section: .init.text)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xc0 (section: .data) -> initramfs_test_hardlink (section: .init.text)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xf0 (section: .data) -> initramfs_test_many (section: .init.text)  
 
-greg k-h
+If I understand correctly, the kunit_case initramfs_test_cases[]
+members can't be flagged __initdata, as they need to be present
+post-init for results queries via debugfs.
+
+The remaining -Wimplicit-function-declaration reports are all valid.
+I'll fix them in v3.
+
+Thanks, David
 
