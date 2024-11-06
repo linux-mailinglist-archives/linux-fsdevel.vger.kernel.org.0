@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-33759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C493A9BEA5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 13:44:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4E19BEA77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 13:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A8D1F2465B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 12:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07E61C25F7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 12:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C4A1F9415;
-	Wed,  6 Nov 2024 12:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDA01FAC4D;
+	Wed,  6 Nov 2024 12:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYu6Bm0F"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eiziHb30"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D554A1EBFFA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 12:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1471FA252
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 12:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730896691; cv=none; b=iFEeODOM5gscHWij8JojTTgN2OVuZPtjASZ2Ks7tPsVBO7tYuaTrKmotvxe9MPLa05EQ8fiox71bl09MvZR3M+pqkQELn03RNQ6z2oVbM4GmILS/DlaWwDHMYSunOxEKe3vBqGakeH1FWedveyf1FlUZYFK8rXRm07t9autmgHc=
+	t=1730896701; cv=none; b=YCCzEyUp7mdYVvR+/u6g2ZCwD7GwPHSZcw7AJSGgys2da9v4IQv4X+KFMoJJevbBoqZF/l/2A52uvsQnRPNUCUsd58G9Rf2mr9At2pslOwq/lOunM+ayL452SsKA1vXDxVGSxMLDdNQeeaGlixe+mhW/DFO0V7WPGdtp3WN6sOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730896691; c=relaxed/simple;
-	bh=5o211Bs9aPlGXgBOv9ZEWRYTJwfzYdkVK8vs4FoRbiQ=;
+	s=arc-20240116; t=1730896701; c=relaxed/simple;
+	bh=90tmfXdOk7PUXqQduFPRhL3TyDiNo9WZvTnvimUkG4w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uaZ1ZDmDG6EE5wS0hsm9PjoSUXIhP4WKm3oCAXtELhmlsldoBAuEw9i53LkTbtU8UnYZW5PHjikYWEnAxXq0uvWEqc5rCydiWj+IIHLKZBn+pPtsjPYk9JmJHJNXZTl3fFhPUPWTyFzH/DqKwpQxTyEUKqqRpNX281lERDnfKy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYu6Bm0F; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=Zznk0fLKL7L8VXYXgR83aHQzBbqLoNPe04tOw4982Ej9AbyzgDXs815XQH1fAUav5DwyQVt7Hj7QApU1lT2VKEYtfzbs3nqaE6eW/kOQIvS7HCYahMx49sVwC0DnSo17wFP/m7h1vocrIhqrN6LUKTgusn2iswcCz0hNvlPL3Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eiziHb30; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730896689;
+	s=mimecast20190719; t=1730896697;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HO1trrAUxh6ged928OSrE9rZIbGVfYli8k1F5yQtGbY=;
-	b=YYu6Bm0F4eK+yU7bvYbPFx2weddT4uFUhBCtvWHjsVT3fkXUQRTgXPjqZ3FJ/k//djt8pU
-	yMldj5itiC2nj46Z1dn7DLOnpOCQLjDZDmdKI+m7SRgxafhQsJ13FqbS8RERgxSYXX5xiK
-	cl+qlHCm1XlonJiUdLzp0ZVp9OzrHVQ=
+	bh=PpSYjRYWbFXxWDdh6eO8irNXCJzGx0/SlE83d2O2JK0=;
+	b=eiziHb30n5wWr+B3nZYgJL+ynZJF6hmmuEWALD2l04g9sFxF6nEaqu6e7t9y9JFbf1Wxga
+	MvnPZPmtroicrHbFI77RrpYf5gblkPVM+zJMxBsFjRzUpZLFDRTTef2FiBsuvgCicL8Wm7
+	zOhr3snaEo8g8z+Aw8tLYzU64sTyeHo=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-aT72E-SrNJek_Ct0HQie_w-1; Wed,
- 06 Nov 2024 07:38:07 -0500
-X-MC-Unique: aT72E-SrNJek_Ct0HQie_w-1
-X-Mimecast-MFC-AGG-ID: aT72E-SrNJek_Ct0HQie_w
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-604-3XojettGO-SysSahWRcLQw-1; Wed,
+ 06 Nov 2024 07:38:14 -0500
+X-MC-Unique: 3XojettGO-SysSahWRcLQw-1
+X-Mimecast-MFC-AGG-ID: 3XojettGO-SysSahWRcLQw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DBA8B195608A;
-	Wed,  6 Nov 2024 12:38:04 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DEE661955F41;
+	Wed,  6 Nov 2024 12:38:11 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5345E1956088;
-	Wed,  6 Nov 2024 12:37:59 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6D6A019560AA;
+	Wed,  6 Nov 2024 12:38:06 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>,
 	Steve French <smfrench@gmail.com>,
@@ -82,9 +82,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 15/33] afs: Fix directory format encoding struct
-Date: Wed,  6 Nov 2024 12:35:39 +0000
-Message-ID: <20241106123559.724888-16-dhowells@redhat.com>
+Subject: [PATCH v3 16/33] netfs: Remove some extraneous directory invalidations
+Date: Wed,  6 Nov 2024 12:35:40 +0000
+Message-ID: <20241106123559.724888-17-dhowells@redhat.com>
 In-Reply-To: <20241106123559.724888-1-dhowells@redhat.com>
 References: <20241106123559.724888-1-dhowells@redhat.com>
 Precedence: bulk
@@ -94,37 +94,120 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The AFS directory format structure, union afs_xdr_dir_block::meta, has too
-many alloc counter slots declared and so pushes the hash table along and
-over the data.  This doesn't cause a problem at the moment because I'm
-currently ignoring the hash table and only using the correct number of
-alloc_ctrs in the code anyway.  In future, however, I should start using
-the hash table to try and speed up afs_lookup().
+In the directory editing code, we shouldn't re-invalidate the directory
+if it is already invalidated.
 
-Fix this by using the correct constant to declare the counter array.
-
-Fixes: 4ea219a839bf ("afs: Split the directory content defs into a header")
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: linux-afs@lists.infradead.org
 ---
- fs/afs/xdr_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/dir_edit.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/fs/afs/xdr_fs.h b/fs/afs/xdr_fs.h
-index 8ca868164507..cc5f143d21a3 100644
---- a/fs/afs/xdr_fs.h
-+++ b/fs/afs/xdr_fs.h
-@@ -88,7 +88,7 @@ union afs_xdr_dir_block {
+diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
+index fe223fb78111..13fb236a3f50 100644
+--- a/fs/afs/dir_edit.c
++++ b/fs/afs/dir_edit.c
+@@ -247,7 +247,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
+ 		 */
+ 		index = b / AFS_DIR_BLOCKS_PER_PAGE;
+ 		if (nr_blocks >= AFS_DIR_MAX_BLOCKS)
+-			goto error;
++			goto error_too_many_blocks;
+ 		if (index >= folio_nr_pages(folio0)) {
+ 			folio = afs_dir_get_folio(vnode, index);
+ 			if (!folio)
+@@ -260,7 +260,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
  
- 	struct {
- 		struct afs_xdr_dir_hdr	hdr;
--		u8			alloc_ctrs[AFS_DIR_MAX_BLOCKS];
-+		u8			alloc_ctrs[AFS_DIR_BLOCKS_WITH_CTR];
- 		__be16			hashtable[AFS_DIR_HASHTBL_SIZE];
- 	} meta;
+ 		/* Abandon the edit if we got a callback break. */
+ 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
+-			goto invalidated;
++			goto already_invalidated;
  
+ 		_debug("block %u: %2u %3u %u",
+ 		       b,
+@@ -348,9 +348,8 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
+ 	_leave("");
+ 	return;
+ 
+-invalidated:
++already_invalidated:
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_create_inval, 0, 0, 0, 0, name->name);
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	kunmap_local(block);
+ 	if (folio != folio0) {
+ 		folio_unlock(folio);
+@@ -358,9 +357,10 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
+ 	}
+ 	goto out_unmap;
+ 
++error_too_many_blocks:
++	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ error:
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_create_error, 0, 0, 0, 0, name->name);
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	goto out_unmap;
+ }
+ 
+@@ -421,7 +421,7 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
+ 
+ 		/* Abandon the edit if we got a callback break. */
+ 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
+-			goto invalidated;
++			goto already_invalidated;
+ 
+ 		if (b > AFS_DIR_BLOCKS_WITH_CTR ||
+ 		    meta->meta.alloc_ctrs[b] <= AFS_DIR_SLOTS_PER_BLOCK - 1 - need_slots) {
+@@ -475,10 +475,9 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
+ 	_leave("");
+ 	return;
+ 
+-invalidated:
++already_invalidated:
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete_inval,
+ 			   0, 0, 0, 0, name->name);
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	kunmap_local(block);
+ 	if (folio != folio0) {
+ 		folio_unlock(folio);
+@@ -489,7 +488,6 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
+ error:
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_delete_error,
+ 			   0, 0, 0, 0, name->name);
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	goto out_unmap;
+ }
+ 
+@@ -530,7 +528,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode *new_d
+ 
+ 		/* Abandon the edit if we got a callback break. */
+ 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
+-			goto invalidated;
++			goto already_invalidated;
+ 
+ 		slot = afs_dir_scan_block(block, &dotdot_name, b);
+ 		if (slot >= 0)
+@@ -564,18 +562,16 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode *new_d
+ 	_leave("");
+ 	return;
+ 
+-invalidated:
++already_invalidated:
+ 	kunmap_local(block);
+ 	folio_unlock(folio);
+ 	folio_put(folio);
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
+ 			   0, 0, 0, 0, "..");
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	goto out;
+ 
+ error:
+ 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
+ 			   0, 0, 0, 0, "..");
+-	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
+ 	goto out;
+ }
 
 
