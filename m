@@ -1,76 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-33739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E7E9BE4FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 11:58:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DD29BE516
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 12:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37124281E63
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 10:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263B71C20C30
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 11:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2266D1DE4E4;
-	Wed,  6 Nov 2024 10:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057DF1DE3B3;
+	Wed,  6 Nov 2024 11:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJR+EJ1g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmcXmFIk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473571DE3C2;
-	Wed,  6 Nov 2024 10:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050638DD8;
+	Wed,  6 Nov 2024 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890684; cv=none; b=dAzZSY9Te1VIkPuCjFYvpRxx3wlgKzk67f+Jwlip+o/pihjMDTyiwHHmSFQD+qtv70ltZAiOQpClIcjMZkHuTAGCDlsrJRUFcoEfj1t6kPXSnMrkFVGNk59lPqoy1YZpTtmOFgGJ1r1BV9drcxR5ii6YZwY+4/I9qoFxazOMugg=
+	t=1730890902; cv=none; b=NM+G7KrRuieXIhgvmJsUA5zeLBSCKVQin3m7+rpCTxNc5giITLbLH86cQ0vPHErzIf6YKqM4fAKbslfTrDksRzu8HLZSE8o/IfeT2Iop5WuA17Noti5P9C+DMTiFTHh/3gqiimi+MOugVJGkISqXPuq546gi0kI9vkHcjrwedfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890684; c=relaxed/simple;
-	bh=DU+cqVwhIllNWlfaxAghOm+01hCv7n/5l2mWWPIECfs=;
+	s=arc-20240116; t=1730890902; c=relaxed/simple;
+	bh=3Ttyl8Nkn8S95rvO5YhBvGG9S2zvLPy1qHxzRNquABU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dgbDBHbVaE6JKiEHECH12nXUv20b3rVhFcNBzuOGWsCuVfnO+krfavXH6sxv1vw9hSUTuM7wTEs6njmz3bdRuUd3+Xmk2fGtyTwXJY8z39psBc7wN1T1m3/g1FESjeAup6qgLiwSlrrwOLKh4x55r7dmu4Iiyqmdd6FfZ+mN0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJR+EJ1g; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=o00DoGThXgqBCOXtdN35hxqPDwIRd2NrmI4+/wucYw2326BuTM6RCUkmrXQKmGWfDoDZDKo19Il/jYVik8hv5vZnvRnS8f84VvT7lgJwQOtnEXwiEgw+nT7m1y6XV5td3QWcABrXj0Hqt8ncfXf6pl09Gm2PGLQ8+Ob3l56ANpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmcXmFIk; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so5363877a12.0;
-        Wed, 06 Nov 2024 02:58:03 -0800 (PST)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea16c7759cso3580769a12.1;
+        Wed, 06 Nov 2024 03:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730890682; x=1731495482; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730890900; x=1731495700; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kTsF9ael3y6Shw0lLZctrR5o30Pguzo63nQZaMsrVCg=;
-        b=CJR+EJ1gF1bj5wtiu2dZwSXTYimoOP61VWa3xGRQPBDUdBtCmhz7LEfyrumP9lpFHx
-         bOTrkJYDIfy0gopAXlBK8dj5h3FSmyoz2bGfdSCeopx6z0HLno/t1/gQ94xLC+YNOTQ2
-         2lvbnpeW4RTPQV5DlmEXWv/wkiQAIrnt9Yw39giMvO6cdKarieRp3X5+2hIvyj/fglWQ
-         iFwWHRRQaeknS86O9Sd5lNZEW9+yNMkR7yl5fsT2cqZetaFQoaebR5mWf994st2hOIIm
-         G4TJcvxk+LIF/+iMIX35zWN7VmRu4tVMY7u+r9So2bFJL+3hxVGReQVC5N/0zKO8fef1
-         jSgg==
+        bh=FqoEH4eHRdA69hXRfFE9hVKR0NbklO4CabBdC7IqTJc=;
+        b=EmcXmFIkOCNe2zWjeTJdQEgPwDc6lHCxgB7tyjpXmb0bWir9SpJWGbC7svdqcCHh41
+         Ro3ayl/vGMju2nEFBTV9x6yXte6wadMTXWmxIo45GxxHln8WZg2bCyfDYRi0LM0Afczw
+         s2IaTDpWMdM7TMClMi9ztbQNAy+I85hCWbKwQumocD49nFSdQAmIWy12klmS5lCjsnWa
+         sv3Zoq2xzwinYj80gvceinQpu6swMjHt/qWPyzJ2HE2KGh7kDICdZij4Y82sObG9zijE
+         gNfxokM0Gk/3W8R5FwtAhepLGIJMAOSwI67fLuYYTRl3FUmw9ZmA+tEweZ39HEt/P2AT
+         WjiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730890682; x=1731495482;
+        d=1e100.net; s=20230601; t=1730890900; x=1731495700;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kTsF9ael3y6Shw0lLZctrR5o30Pguzo63nQZaMsrVCg=;
-        b=VBfcWXtym8M+/WI28SA72tlyRcEVT1BdXb6c6KL16fnO9Lbury/gNGpGd3ylgWSSeX
-         A8LYeUz+mhEZbibYebMC+IluBpyLI7s0l4cacX550v2fZiMi6TSAuFz0nmqQ/eK58JQ8
-         lTEN8ECiIUk0HCpsUE77vJOGUhGEJ2WX264AGp5FDIP0+64JVhH2C0crs6vxVK/f/HFw
-         z7GSqHlqdM26X/C/MUvZbaRurPJDc/oOIiCo2OFTxjvrqU19czYuToPjf4Q4/XjGhgKf
-         uOk17FewevtPI4KVxddu7dfDcfp+uydsXbMX7bm7qrqBxo/PAlYOxKFtFCjokiqOcZXX
-         3b0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWQ7GTegK/2SyjBv6iRXF5hwLzdLAn+eMEgHRpMhjo0Hsv0D9P/ff5nlaoM7bqPdbdyxMEi4ji+LRKPaRi@vger.kernel.org, AJvYcCW5AbISP4KjDAWMn1rlXdJzOk6HAOgC9LJRXaO52jD7/avZUPT7ytMmcztq0NwweLZD23KVi+3s+MppCQNK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1MVhElNnrAAF6HgMP2O52QU9wzEgyM0FCtJQxpJRCwhiXS4Cq
-	EQ8De8UDSfYGQYG8kZ+sr7IBv08dl3VOTQ+pbW3eeXmeMzYfZyJs
-X-Google-Smtp-Source: AGHT+IHEmktzAFbYTQwCm7tERYMACaS6FCHs5NoqJD4/moDeQkOBhuhL3R3KVJdENpcjZf1Pv/V78g==
-X-Received: by 2002:a17:90b:3b85:b0:2e2:edf9:b8b8 with SMTP id 98e67ed59e1d1-2e94c53a1fbmr25114426a91.35.1730890682483;
-        Wed, 06 Nov 2024 02:58:02 -0800 (PST)
+        bh=FqoEH4eHRdA69hXRfFE9hVKR0NbklO4CabBdC7IqTJc=;
+        b=rCtkcSBM2aJsLsdBsDSpoQVquo/VSZFDpuhW/m2TUWRKLp64i+4WTGjjC4MNtQGRxn
+         hVMXtSSrxv2BNepo48ureg33mSWk98KdjQuO/bpbq7Vmw/N4tWrR2M1tLCkac44erkHB
+         iwByJw8BwwLnBSPNvIiOHd3Kr5/VVRCMdfQsOiPJh/6tz/fgCDF0aCUawwFpDwM7Wzx6
+         ohquuXy5yP+bta3WWMetlugp5lsO9M2TqeZoPP35/UKUkqSKcbotijqODWYBqp7ruh1O
+         PSCyE9gCM5Z1FtI6XIBSqEfA4JDszZXNBbW2TUCfJfJ4LHRGIsWtJKh3/cuzS5lI8HOJ
+         i8Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUToDAQb/JIkYISkkMJO+Fd4gzyO5eGluTCVUqBBN8NKi5XXauz6lDJLDg2j9RvKnQRyeOsh7PzjvnWyUrA@vger.kernel.org, AJvYcCWv3UPiSyqui6ZntDeNLx4LSr3YWkHG6H5Ao/HMT2Ow/IuD8X8nkGbiaM12+qliAv31I5PnrGkierA5RuXr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCqtraBaA1WVENN4fanYY4aPq8GNIUerA/6pQI/fHOk8jcuF7N
+	gYEiwEFTA5HOHUFJEeK8MytYIk3MlUD6UTGgQ5WUZGJhyA8SdYT4
+X-Google-Smtp-Source: AGHT+IHsn7RTzpS/5JLW0WEmrwF+aaAAWPEDVhUvtIt+NqL7wdHGauXdVTqGEOmkH7X0jRFpW/YGfA==
+X-Received: by 2002:a17:90b:540d:b0:2e2:d15c:1a24 with SMTP id 98e67ed59e1d1-2e93c1a6cddmr31712372a91.23.1730890900382;
+        Wed, 06 Nov 2024 03:01:40 -0800 (PST)
 Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e99a62d6acsm1190237a91.53.2024.11.06.02.57.57
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee452aa158sm10977927a12.30.2024.11.06.03.01.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:58:01 -0800 (PST)
+        Wed, 06 Nov 2024 03:01:39 -0800 (PST)
 From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: jack@suse.cz
+To: jmoyer@redhat.com
 Cc: bcrl@kvack.org,
 	brauner@kernel.org,
+	jack@suse.cz,
 	linux-aio@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -78,11 +79,11 @@ Cc: bcrl@kvack.org,
 	viro@zeniv.linux.org.uk,
 	willy@infradead.org
 Subject: Re: [PATCH] fs: aio: Transition from Linked List to Hash Table for Active Request Management in AIO
-Date: Wed,  6 Nov 2024 16:27:00 +0530
-Message-ID: <20241106105700.10735-1-pvmohammedanees2003@gmail.com>
+Date: Wed,  6 Nov 2024 16:31:20 +0530
+Message-ID: <20241106110120.11093-1-pvmohammedanees2003@gmail.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241031120423.5rq6uykywklkptkv@quack3>
-References: <20241031120423.5rq6uykywklkptkv@quack3>
+In-Reply-To: <x491pzwtogw.fsf@segfault.usersys.redhat.com>
+References: <x491pzwtogw.fsf@segfault.usersys.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,17 +92,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> Well, I'd say that calling io_cancel() isn't really frequent operation. Or
-> are you aware of any workload that would be regularly doing that? Hence
-> optimizing performance for such operation isn't going to bring much benefit
-> to real users. On the other hand the additional complexity of handling
-> hashtable for requests in flight (although it isn't big on its own) is
-> going to impact everybody using AIO. Hence I agree with Matthew that
-> changes like you propose are not a clear win when looking at the bigger
-> picture and need good justification.
+> ... and cancelation is only supported by usb gadgetfs.  I'd say submit a
+> patch that gets rid of that todo so nobody else wastes time on it.
 
-Makes sense to me, the added complexity may not be worth the 
-marginal performance gain. Thanks for helping me with this!
+Absolutely I'll do just that, do you want me to make it a V2
+or shall send it as a new patch.
 
-
+Thanks!
 
