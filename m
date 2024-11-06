@@ -1,174 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-33813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFC39BF5C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 19:57:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82089BF5E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 20:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A54283E71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 18:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3101F2196F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 19:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D52208988;
-	Wed,  6 Nov 2024 18:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D1220ADE7;
+	Wed,  6 Nov 2024 18:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNijy397"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gwC7plbh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32C220820D;
-	Wed,  6 Nov 2024 18:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551C2209672
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 18:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919411; cv=none; b=nlTDxrDmlQKqH6ZyYVyKIMeH+dMxOMHxq1HJ2rqzTxG3ngN/kR8e2VY2HzLpGNaSTD3TuZFFx7n7NOZj8zZCTAWNe/GNAiZji6A7rbJnMsyW7wtAeAiPmr8VV+7bQ247gk90eNSkhEzZH1oPMACsTiHeaaYeDKfwe6oTeBlAmAw=
+	t=1730919561; cv=none; b=IwtzgflqN0JoFuoBl9Oux4e0lzCR7K15dW9uyt3YkI3oyC3eTjGSWVubOjhfXmeW5BP+FTCm2QybCqfpoeWYlnpj5N+X6yZfgW2nlkM2JWaB0xcArPhGpvKH1lSwpfsbGtg+b7jZixrPQ3dg9D4Dce/lNK/FK5r9VcDHzgPrPE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919411; c=relaxed/simple;
-	bh=hyMv01gLmOo95GlTaKcxVke3e6gveNY0nSXI8qWLs/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkRqu9ANopvElSABGMx6hDBGhXusEq3DLihVusoxQDrlTOhmZKw7kWh77THx4B2p9UrYYeBeNjLbkVr/GcwejgGCwFqLSfDhhqOZ2qxVcNR1BaCN064tRNPlUvzAMzFr2GYm4Tq3M5fET2z5D6phPGgoGCNXy52hGQUgC5NshEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNijy397; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730919410; x=1762455410;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hyMv01gLmOo95GlTaKcxVke3e6gveNY0nSXI8qWLs/U=;
-  b=nNijy397f7M5gzMgCSRjgyuyX2sZ1owdmEQm7DO9SYh5kSF9PwBeWBQR
-   Gn4qPqfQw7dc37+04rPDrY1byDfh1Qsf3f20Sw+O5YNJU29Uq0/KVJtH8
-   xpz58CLhn8ePWeItGsVrFyoPAp4AhwtPFb0cl2IJj/CF49MdY7vl6FBms
-   f+kaMGBaFwJOgm5mnBnXAfQCxxbzmv+nYXDbbhL+zA89cVf+z1l4t6vNV
-   uasxrPtXcapH1eamk2c7UxH01PYjwIMmsBSMJVwcHnGlxMjW+7nEOD62f
-   7+IwbRnu5EsShfSry1R4or+Jut5Yx0nD6FM2R/yQJHmQCLQrQfQTvYfM4
-   A==;
-X-CSE-ConnectionGUID: 5yglTmrqR0e1PG9eYOu54g==
-X-CSE-MsgGUID: 5zlORu1qRFiJuKn3pya3ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41357896"
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="41357896"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 10:56:49 -0800
-X-CSE-ConnectionGUID: x7Xr4cpgR3+Y1QCOQpWbtg==
-X-CSE-MsgGUID: ux6hEzz2S0iV5lh/+fFXow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="89289554"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2024 10:56:32 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8lCg-000pJS-1e;
-	Wed, 06 Nov 2024 18:56:30 +0000
-Date: Thu, 7 Nov 2024 02:56:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, brauner@kernel.org,
-	amir73il@gmail.com, hu1.chen@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, miklos@szeredi.hu,
-	malini.bhandaru@intel.com, tim.c.chen@intel.com,
-	mikko.ylinen@intel.com, linux-unionfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH overlayfs-next v3 1/4] cred: Add a light version of
- override/revert_creds()
-Message-ID: <202411070234.EOrhSGRU-lkp@intel.com>
-References: <20241105193514.828616-2-vinicius.gomes@intel.com>
+	s=arc-20240116; t=1730919561; c=relaxed/simple;
+	bh=CPTlwe4grbdyPIOrfvUXMEfBRZ6IkY8r9X/KnDxuWHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=udmnBdjf+0CF2zxEUww246DyZESoiAU9jOu6WC30/dYN3gOb6y49Kk1M7E4bS3ICA3V6/Mbykk3vs7PxVl404cpfPlRpLPkXupgKWVsPAl5PsrUYWks7uhVhsPAytTycAphOuBB+pt0g4t/JstF2dBKH+ldVGiXsJeJ6ZR/sChE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gwC7plbh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730919558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SKSTA1wlPf7ylAPAEuFscDQ41z0q8//fTZB4PW5qnTQ=;
+	b=gwC7plbh1sSmYsUJHflKTKpNGwl4EtMnayV9YmbIZniRC3n+EHoz8BkkoSDiqhxvp0ss//
+	7epJhXaHCx5OnHGmzwgZ40kDJqd0PWD38YsJYVjsvBZB+M/TGXIMCeiWSJmMXwc0bcg78x
+	2t4Ai+RUV3L7lskeEFBflXc7NWr5LXQ=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-604-j03YbMSUPw-h_qpNYp_EdQ-1; Wed, 06 Nov 2024 13:59:17 -0500
+X-MC-Unique: j03YbMSUPw-h_qpNYp_EdQ-1
+X-Mimecast-MFC-AGG-ID: j03YbMSUPw-h_qpNYp_EdQ
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83adc5130e3so17073239f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Nov 2024 10:59:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730919556; x=1731524356;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SKSTA1wlPf7ylAPAEuFscDQ41z0q8//fTZB4PW5qnTQ=;
+        b=PThtCcveyouhnT7yb0zy/uUYsgVoFBl7cITsbkUK4XiXty9G/xGeK8Kro/tGbMd4+i
+         UQ+sqeZmfVDGh9HNggCcIiwPkNQzDBZd7L0u3YZw5JeMALBjX8MP9oZz2tzVwx4kb5f1
+         gm9rCHqbSoFp7iXndy50cs3+cXI/EiWgCf2F3AmUgeGCKwF5CcCjK1PjcUz4+GbJX93s
+         3RyAo/CFiUrrl3rFzfN7Ug9dcKlCY8sM0IyX3NHN5xAcpBkjpRLCZnNHguL3epnJSDRa
+         S72p/DESjLT+LotvNbQ89M7VNs8Yqif2hxgHti3z5WC7By56EjyGtUnz0m/KOEzSKF1V
+         7Uyg==
+X-Gm-Message-State: AOJu0YxCNRrQ83FzPmeq6+DKAH3u8SjscqjkK51wtPj15YbY80gB/gwg
+	CcGz35ormHMqfdq+8vLGIYgra2NIFOeIrZSP08RxtZretJuvxMlYMyGpcP17xfM5GCzCg/BLkBj
+	3U4nv8sr4QlwPobL+0oNROdlL6FpHq4yQ3BX3pKQubIHdEaQFvi5xbC95InlDwZg=
+X-Received: by 2002:a05:6602:1589:b0:83a:a8c6:21ad with SMTP id ca18e2360f4ac-83b64fc3438mr2044470139f.7.1730919556594;
+        Wed, 06 Nov 2024 10:59:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5fu+BQk98rvYiawDn7mLMHhKgFT39Cp/7oyDEILxh0dPNKOUBpYjLOIhed6eg2JByxajWpA==
+X-Received: by 2002:a05:6602:1589:b0:83a:a8c6:21ad with SMTP id ca18e2360f4ac-83b64fc3438mr2044468639f.7.1730919556276;
+        Wed, 06 Nov 2024 10:59:16 -0800 (PST)
+Received: from [10.0.0.71] ([65.128.110.20])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67ba907esm328037439f.25.2024.11.06.10.59.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 10:59:15 -0800 (PST)
+Message-ID: <9fa5857d-4d3f-4406-8241-20905bcfcc7f@redhat.com>
+Date: Wed, 6 Nov 2024 12:59:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105193514.828616-2-vinicius.gomes@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] isofs: avoid memory leak in iocharset
+To: Hao Ge <hao.ge@linux.dev>, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hao Ge <gehao@kylinos.cn>
+References: <20241106082841.51773-1-hao.ge@linux.dev>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <20241106082841.51773-1-hao.ge@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Vinicius,
+On 11/6/24 2:28 AM, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on next-20241105]
-[also build test WARNING on v6.12-rc6]
-[cannot apply to brauner-vfs/vfs.all linus/master v6.12-rc6 v6.12-rc5 v6.12-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The opt->iocharset is freed inside the isofs_fill_super function,
+> But there may be situations where it's not possible to
+> enter this function.
+> 
+> For example, in the get_tree_bdev_flags function,when
+> encountering the situation where "Can't mount, would change RO state,"
+> In such a case, isofs_fill_super will not have the opportunity
+> to be called,which means that opt->iocharset will not have the chance
+> to be freed,ultimately leading to a memory leak.
+> 
+> Let's move the memory freeing of opt->iocharset into
+> isofs_free_fc function.
+> 
+> Fixes: 1b17a46c9243 ("isofs: convert isofs to use the new mount API")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Costa-Gomes/cred-Add-a-light-version-of-override-revert_creds/20241106-033748
-base:   next-20241105
-patch link:    https://lore.kernel.org/r/20241105193514.828616-2-vinicius.gomes%40intel.com
-patch subject: [PATCH overlayfs-next v3 1/4] cred: Add a light version of override/revert_creds()
-config: x86_64-randconfig-121-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070234.EOrhSGRU-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070234.EOrhSGRU-lkp@intel.com/reproduce)
+Agreed, thank you.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411070234.EOrhSGRU-lkp@intel.com/
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
 
-sparse warnings: (new ones prefixed by >>)
-   kernel/cred.c:104:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/cred.c:104:9: sparse:    struct cred *
-   kernel/cred.c:104:9: sparse:    struct cred const [noderef] __rcu *
-   kernel/cred.c:105:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/cred.c:105:9: sparse:    struct cred *
-   kernel/cred.c:105:9: sparse:    struct cred const [noderef] __rcu *
-   kernel/cred.c:121:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct atomic64_t const [usertype] *v @@     got struct atomic64_t const [noderef] __rcu * @@
-   kernel/cred.c:121:9: sparse:     expected struct atomic64_t const [usertype] *v
-   kernel/cred.c:121:9: sparse:     got struct atomic64_t const [noderef] __rcu *
-   kernel/cred.c:124:22: sparse: sparse: cast removes address space '__rcu' of expression
-   kernel/cred.c:127:17: sparse: sparse: cast removes address space '__rcu' of expression
-   kernel/cred.c:218:13: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   kernel/cred.c:218:13: sparse:     expected struct cred const *old
-   kernel/cred.c:218:13: sparse:     got struct cred const [noderef] __rcu *cred
-   kernel/cred.c:305:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
-   kernel/cred.c:305:47: sparse:     expected struct cred const *cred
-   kernel/cred.c:305:47: sparse:     got struct cred const [noderef] __rcu *cred
-   kernel/cred.c:305:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *real_cred @@     got struct cred const * @@
-   kernel/cred.c:305:30: sparse:     expected struct cred const [noderef] __rcu *real_cred
-   kernel/cred.c:305:30: sparse:     got struct cred const *
-   kernel/cred.c:306:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct atomic64_t const [usertype] *v @@     got struct atomic64_t const [noderef] __rcu * @@
-   kernel/cred.c:306:17: sparse:     expected struct atomic64_t const [usertype] *v
-   kernel/cred.c:306:17: sparse:     got struct atomic64_t const [noderef] __rcu *
-   kernel/cred.c:344:32: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *real_cred @@     got struct cred const * @@
-   kernel/cred.c:344:32: sparse:     expected struct cred const [noderef] __rcu *real_cred
-   kernel/cred.c:344:32: sparse:     got struct cred const *
-   kernel/cred.c:395:38: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *real_cred @@
-   kernel/cred.c:395:38: sparse:     expected struct cred const *old
-   kernel/cred.c:395:38: sparse:     got struct cred const [noderef] __rcu *real_cred
-   kernel/cred.c:400:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/cred.c:400:9: sparse:    struct cred const [noderef] __rcu *
-   kernel/cred.c:400:9: sparse:    struct cred const *
-   kernel/cred.c:519:46: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *override @@     got struct cred const [noderef] __rcu *cred @@
-   kernel/cred.c:519:46: sparse:     expected struct cred const *override
-   kernel/cred.c:519:46: sparse:     got struct cred const [noderef] __rcu *cred
-   kernel/cred.c:301:19: sparse: sparse: dereference of noderef expression
-   kernel/cred.c: note: in included file:
->> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
-   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
-   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
 
-vim +182 include/linux/cred.h
-
-   174	
-   175	/*
-   176	 * Override creds without bumping reference count. Caller must ensure
-   177	 * reference remains valid or has taken reference. Almost always not the
-   178	 * interface you want. Use override_creds()/revert_creds() instead.
-   179	 */
-   180	static inline const struct cred *override_creds_light(const struct cred *override_cred)
-   181	{
- > 182		const struct cred *old = current->cred;
-   183	
-   184		rcu_assign_pointer(current->cred, override_cred);
-   185		return old;
-   186	}
-   187	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
