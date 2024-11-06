@@ -1,191 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-33707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628779BDA16
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 01:11:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2403F9BDA1C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 01:14:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98401B2251F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 00:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC23B2842C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 00:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CAF653;
-	Wed,  6 Nov 2024 00:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8415A80B;
+	Wed,  6 Nov 2024 00:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lvp4JmGP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fhs0oB/E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147EF36C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 00:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4566128EF;
+	Wed,  6 Nov 2024 00:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730851892; cv=none; b=juj8WYGoWQKwvCnvEGq1BytxZjrrpBnyeDsFPutee3hwUl5c6T+i7sAGVLq789X7mhbUVpNnPoXEDqkMTqDsFIZjjfM6tTvLxzWH+qMSvMWdT2GzYqGPOEUhjBCWVyP45kVinr91w6LIO21uhaJ7j2xdoVmYUvKfq1Mas4uhNGc=
+	t=1730852045; cv=none; b=l85ilTP3+Mu7bBonj1TOZAtM4L2vBbs7c5ZbQqOp0ZZhmNTa1L+YGYUCZK+gD8EeevScXrFDLs5J1qcC2b4D0BCTyssYfiTKFf2A4swA67oUlHlaoKdCglAavUaoDph/FnfKFShqPRCkcYK1ZtjSSTlF0bNlRSiu/XScqq7siuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730851892; c=relaxed/simple;
-	bh=NE1vx6DaiKUqN9EcvEEjsmfFBebOKX7Fzj6juiF6qK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk4/qHnw0R3GUfSA01TNJw8XtqSoW54s1iiyfym3rwTKQ35pIs1oal0aC231ySLuogT9Hgccnai1H2FTSTnfwucS1eKQRje0a4ZUN1sErvXANS3ZWnm/SX26TpY4xmXJhy5cVNOQCD0vn3N7Sgnc2xx5Gdu6KDqTI7n22Xv76uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lvp4JmGP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7971CC4CED1;
-	Wed,  6 Nov 2024 00:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730851891;
-	bh=NE1vx6DaiKUqN9EcvEEjsmfFBebOKX7Fzj6juiF6qK4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lvp4JmGPCupcA4wTsOnnnLMI14J6JL+EMyMhPWVHLPqE/Zusm3722GMwVp+oEiJQf
-	 7FsE2JizWnmLJ+48YHZ2kf3tZ4FpwOSvjcFGA/jRME6uhd0k/bHV77qItd4ElmHfMl
-	 XiDtD3y9DHC72NkCUFJb1yAdZyYhfL3HVJSvJOl2iTtG9Le9OW8b6O2ppab26FMudA
-	 erli/h4w0NnjJUYSzIu+8ZdmJAuBYYICIAAsoHYhZ4EegDdo08crhetXEnsFJQ+e1x
-	 Fi76+E8X//wpRNDEuCr0tEyiMlJZuwjvWu4q4Ih+t9THZAJNZW5PSKWNYfHC1SDx3k
-	 +im1L6Q7A5NPw==
-Date: Tue, 5 Nov 2024 16:11:30 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iomap: elide flush from partial eof zero range
-Message-ID: <20241106001130.GP21836@frogsfrogsfrogs>
-References: <20241031140449.439576-1-bfoster@redhat.com>
- <20241031140449.439576-3-bfoster@redhat.com>
+	s=arc-20240116; t=1730852045; c=relaxed/simple;
+	bh=CLjeLCitBOIdpXLVgKbgilth4DryvAcz2ykb5YB0kNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uED0iJxQ1sjYm6jeDortVdnjMu/r3UarvsEkmaj7dfssoizrHXUZFXSHUSgCZvIr+Ska/Tjin/17bP2/yvQqCGfFZzaN3uOTXY0A07ZT1Zjc4/BYBjot+yJTQym69kEGh588NHNEGS2hTJ3q2FRF8hR5/dW5MGffZ47FpQXtMAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fhs0oB/E; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539fb49c64aso8536715e87.0;
+        Tue, 05 Nov 2024 16:14:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730852041; x=1731456841; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8jXeg9pReJwGXB164jjgXYBj7jxz6WhOxzHtjfIF4NQ=;
+        b=Fhs0oB/EC/d4thZJmE4l1R8NldVNKLQhDHeHoUn8PcreAo799UN+ARcUAcQZNtV3QQ
+         U4QWFsEiFiMVK0VMGvCWCA5SmTZCk1IRYIsieXynFvFqNV1KRedE2QM0TPb2gY7LbTIS
+         5ohLIU4qVTc0OnGGbm9tMm66KWxSlJ12oAB1OMK/3xzFlQPFqMTl28ShWYZy6O0HKSjC
+         CtV4WfWM52n8EcW51Eivw/SmxjkXYL5xUVn+FpnUPWMh6BXkRsauKFLdE2j/CC2AXycd
+         h/5XLbhKcDAy2qzrWxE0TBEQ3JcrSdbuE7r73ml8mY5Qp7CpL87bpHcsBDJjpl/6fgzZ
+         dmsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730852041; x=1731456841;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jXeg9pReJwGXB164jjgXYBj7jxz6WhOxzHtjfIF4NQ=;
+        b=fa2v0RHfUDnreUAZcqxAK9mWXxi3at1qrhiTrbA8JmrlgqP51vqtiY8UE3c2w+EVpl
+         +ZVG6u0L5EXhQrtmv6SOTA3QHWsCdRQxs7+ia+pDQl4+WtjrMmMyzLf1N0Qz3CWmxmvJ
+         btZrq0uB9qhWEzlsDxrM3K+p5mtq2fmgF6XLhamRVDJ3JRXBlTziXTUJrx/Yi4FKZemE
+         3J/RLbZTQQ8rvRxRkQGgjzCjIkhmwUhL7XIlFcEju9+Ek+8c7mGJjuBoLc8A8MJ9WRaE
+         vdoSuA+KgLGipmUdjNT1+E98nDXnIaLgQJZfAavIrp7YYpP9mI+wzjbXfY2s3Ao//024
+         6pCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS5zcck6wUmn2PPWYhGUXMpL6eJnYAarJxesEYgFnlzBUKRX8wuffHW1ohxkaIBUPLvTOb/Xj4xw==@vger.kernel.org, AJvYcCW497YWtccTowVs5B3+NV98f1nWF3EOj3WuUGFUspYGwaYHoIjW8wzOAt4Ccu2VVX325gA3Kq8h7oAnxCBHIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwm8TY4XARFyZVRDoyBVIquM9+U/4sC25zvcfjAprfPiiA4yts
+	J1/VRZr/Ew7J9bXi01Ahi2xDYMZSm15+5Yrkkcz9shqJsKmeODgE
+X-Google-Smtp-Source: AGHT+IFckLgFQlbFeWhMkSJ1WTlN3deXJQi75DLShSxEBJGJi9p3mygB0Q1munQK2N6INmFjGa60yQ==
+X-Received: by 2002:a05:6512:6c4:b0:535:6baa:8c5d with SMTP id 2adb3069b0e04-53d65de4d1bmr11310246e87.20.1730852040949;
+        Tue, 05 Nov 2024 16:14:00 -0800 (PST)
+Received: from [192.168.42.189] ([148.252.145.116])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a10cfsm197987166b.9.2024.11.05.16.13.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 16:14:00 -0800 (PST)
+Message-ID: <1ec098a7-8c69-4d9b-8d81-ccb0f4c35904@gmail.com>
+Date: Wed, 6 Nov 2024 00:14:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031140449.439576-3-bfoster@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 12/15] io_uring/cmd: let cmds to know about dying
+ task
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com>
+ <b4e388fe-4986-4ce7-b696-31f2d725cf1c@gmail.com>
+ <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
+ <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com>
+ <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 10:04:48AM -0400, Brian Foster wrote:
-> iomap zero range flushes pagecache in certain situations to
-> determine which parts of the range might require zeroing if dirty
-> data is present in pagecache. The kernel robot recently reported a
-> regression associated with this flushing in the following stress-ng
-> workload on XFS:
+On 11/5/24 23:02, Bernd Schubert wrote:
+> On 11/5/24 02:08, Pavel Begunkov wrote:
+>> On 11/4/24 22:15, Bernd Schubert wrote:
+>>> On 11/4/24 01:28, Pavel Begunkov wrote:
+>> ...
+>>>> In general if you need to change something, either stick your
+>>>> name, so that I know it might be a derivative, or reflect it in
+>>>> the commit message, e.g.
+>>>>
+>>>> Signed-off-by: initial author
+>>>> [Person 2: changed this and that]
+>>>> Signed-off-by: person 2
+>>>
+>>> Oh sorry, for sure. I totally forgot to update the commit message.
+>>>
+>>> Somehow the initial version didn't trigger. I need to double check to
+>>
+>> "Didn't trigger" like in "kernel was still crashing"?
 > 
-> stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
+> My initial problem was a crash in iov_iter_get_pages2() on process
+> kill. And when I tested your initial patch IO_URING_F_TASK_DEAD didn't
+> get set. Jens then asked to test with the version that I have in my
+> branch and that worked fine. Although in the mean time I wonder if
+> I made test mistake (like just fuse.ko reload instead of reboot with
+> new kernel). Just fixed a couple of issues in my branch (basically
+> ready for the next version send), will test the initial patch
+> again as first thing in the morning.
+
+I see. Please let know if it doesn't work, it's not specific
+to fuse, if there is a problem it'd also affects other core
+io_uring parts.
+
+>> FWIW, the original version is how it's handled in several places
+>> across io_uring, and the difference is a gap for !DEFER_TASKRUN
+>> when a task_work is queued somewhere in between when a task is
+>> started going through exit() but haven't got PF_EXITING set yet.
+>> IOW, should be harder to hit.
+>>
 > 
-> This workload involves repeated small, strided, extending writes. On
-> XFS, this produces a pattern of post-eof speculative preallocation,
-> conversion of preallocation from delalloc to unwritten, dirtying
-> pagecache over newly unwritten blocks, and then rinse and repeat
-> from the new EOF. This leads to repetitive flushing of the EOF folio
-> via the zero range call XFS uses for writes that start beyond
-> current EOF.
-> 
-> To mitigate this problem, special case EOF block zeroing to prefer
-> zeroing the folio over a flush when the EOF folio is already dirty.
-> To do this, split out and open code handling of an unaligned start
-> offset. This brings most of the performance back by avoiding flushes
-> on zero range calls via write and truncate extension operations. The
-> flush doesn't occur in these situations because the entire range is
-> post-eof and therefore the folio that overlaps EOF is the only one
-> in the range.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Does that mean that the test for PF_EXITING is racy and we cannot
+> entirely rely on it?
 
-Cc: <stable@vger.kernel.org> # v6.12-rc1
-Fixes: 7d9b474ee4cc37 ("iomap: make zero range flush conditional on unwritten mappings")
+No, the PF_EXITING check was fine, even though it'll look
+different now for unrelated reasons. What I'm saying is that the
+callback can get executed from the desired task, i.e.
+req->task == current, but it can happen from a late exit(2)/etc.
+path where the task is botched and likely doesn't have ->mm.
 
-perhaps?
-
-> ---
->  fs/iomap/buffered-io.c | 42 ++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 38 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 60386cb7b9ef..343a2fa29bec 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -227,6 +227,18 @@ static void ifs_free(struct folio *folio)
->  	kfree(ifs);
->  }
->  
-> +/* helper to reset an iter for reuse */
-> +static inline void
-> +iomap_iter_init(struct iomap_iter *iter, struct inode *inode, loff_t pos,
-> +		loff_t len, unsigned flags)
-
-Nit: maybe call this iomap_iter_reset() ?
-
-Also I wonder if it's really safe to zero iomap_iter::private?
-Won't doing that leave a minor logic bomb?
-
-> +{
-> +	memset(iter, 0, sizeof(*iter));
-> +	iter->inode = inode;
-> +	iter->pos = pos;
-> +	iter->len = len;
-> +	iter->flags = flags;
-> +}
-> +
->  /*
->   * Calculate the range inside the folio that we actually need to read.
->   */
-> @@ -1416,6 +1428,10 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  		.len		= len,
->  		.flags		= IOMAP_ZERO,
->  	};
-> +	struct address_space *mapping = inode->i_mapping;
-> +	unsigned int blocksize = i_blocksize(inode);
-> +	unsigned int off = pos & (blocksize - 1);
-> +	loff_t plen = min_t(loff_t, len, blocksize - off);
->  	int ret;
->  	bool range_dirty;
->  
-> @@ -1425,12 +1441,30 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  	 * mapping converts on writeback completion and must be zeroed.
->  	 *
->  	 * The simplest way to deal with this is to flush pagecache and process
-> -	 * the updated mappings. To avoid an unconditional flush, check dirty
-> -	 * state and defer the flush until a combination of dirty pagecache and
-> -	 * at least one mapping that might convert on writeback is seen.
-> +	 * the updated mappings. First, special case the partial eof zeroing
-> +	 * use case since it is more performance sensitive. Zero the start of
-> +	 * the range if unaligned and already dirty in pagecache.
-> +	 */
-> +	if (off &&
-> +	    filemap_range_needs_writeback(mapping, pos, pos + plen - 1)) {
-> +		iter.len = plen;
-> +		while ((ret = iomap_iter(&iter, ops)) > 0)
-> +			iter.processed = iomap_zero_iter(&iter, did_zero);
-> +
-> +		/* reset iterator for the rest of the range */
-> +		iomap_iter_init(&iter, inode, iter.pos,
-> +			len - (iter.pos - pos), IOMAP_ZERO);
-
-Nit: maybe one more tab ^ here?
-
-Also from the previous thread: can you reset the original iter instead
-of declaring a second one by zeroing the mappings/processed fields,
-re-expanding iter::len, and resetting iter::flags?
-
-I guess we'll still do the flush if the start of the zeroing range
-aligns with an fsblock?  I guess if you're going to do a lot of small
-extensions then once per fsblock isn't too bad?
-
---D
-
-> +		if (ret || !iter.len)
-> +			return ret;
-> +	}
-> +
-> +	/*
-> +	 * To avoid an unconditional flush, check dirty state and defer the
-> +	 * flush until a combination of dirty pagecache and at least one
-> +	 * mapping that might convert on writeback is seen.
->  	 */
->  	range_dirty = filemap_range_needs_writeback(inode->i_mapping,
-> -					pos, pos + len - 1);
-> +					iter.pos, iter.pos + iter.len - 1);
->  	while ((ret = iomap_iter(&iter, ops)) > 0) {
->  		const struct iomap *s = iomap_iter_srcmap(&iter);
->  		if (s->type == IOMAP_HOLE || s->type == IOMAP_UNWRITTEN) {
-> -- 
-> 2.46.2
-> 
-> 
+-- 
+Pavel Begunkov
 
