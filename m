@@ -1,370 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-33797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7309BF05E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 15:31:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7439A9BEF07
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 14:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5091C21349
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 14:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B3A286BBA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 13:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79767205AB7;
-	Wed,  6 Nov 2024 14:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9841D1DFE31;
+	Wed,  6 Nov 2024 13:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u8KgZ9Qs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGHs3fA2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7506A205E01
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 14:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25BB1DB37C;
+	Wed,  6 Nov 2024 13:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903391; cv=none; b=iZ9YWqtVgFllGkYskL6L39l9cF8ivDpmjkGdkju4H8ynDS337b2C6McKOxbc73tAUevjukqVSCe3+NgQJExtB7pmOU3nJqQdw+DLjbSpxaYCYW3phWQX4tZekr11g8R1Pqg7EyjjWxoCkN8ywm21hZTaStARGycJByrO3RA/x9k=
+	t=1730899768; cv=none; b=CQXE69+voTGgQ7jKio6ySoJEMkfUO6sGrF7ga6wSVp35v3D3n5Jlfei36194mSgzfXHrxyn6VW25RzN+J2xjAr7jTIZqXnubo1OUb9c8dLBBt5NJm0vNwLPPr5KGwx9jm6Ya7qcHy51LXc9xIeuP2b2O1t7Wz3gwrn6uz3Kl/wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903391; c=relaxed/simple;
-	bh=3+EpeSIcCbF/6ZjkqBAtW4O9T46NdqwVVHXXGudPBqs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=IYrs9nwDJvEWt3Y9dVsxThzLSvAbbYmW+dSQ4Y7+hcHOklSAyeqgLVs2MB8gBF7sJSCbbtICaQF5XMfRvZqqnpOFRqtqptDPP3L3XOFf+wmNW4PcsZ7TAeO8jeuB10aXIk0nMcLA7Rru1VEW4kLTX7WQajq+cErwmo8sw3IM+ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=u8KgZ9Qs; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241106142946epoutp011839dee2f1deda79bf7a95900ba4e906~FZ3Wo_dd42103321033epoutp01O
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 14:29:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241106142946epoutp011839dee2f1deda79bf7a95900ba4e906~FZ3Wo_dd42103321033epoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730903386;
-	bh=wQsh5MEv2xvuMdMfRC5hx+1fVZ+6hqXmEyHQLubiY3A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u8KgZ9Qsq6feXaF7qxnAd3ZCDRMympaaZ/iZZFZtpNEs1K8irKt4x9kNp7IsiQ164
-	 XioTRCJ29pNvcFjOWmkTxiSlXTdaqQaPHmX8pEpKg0nA/DHpBrR58B8dXlb0lUEFLQ
-	 9piy2KrNXEgXtidv5Dy62+/m21RKZVOjSey/X6sQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20241106142945epcas5p27b22bc354b85cff6c487990cf84f314e~FZ3V1wriO1484514845epcas5p2L;
-	Wed,  6 Nov 2024 14:29:45 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Xk6zX2Kfvz4x9Pv; Wed,  6 Nov
-	2024 14:29:44 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AE.E2.09800.85D7B276; Wed,  6 Nov 2024 23:29:44 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241106122721epcas5p3849e3582fcb6547be2b1b10b031138d4~FYMdpOSTa1876718767epcas5p3z;
-	Wed,  6 Nov 2024 12:27:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241106122721epsmtrp1bdd1f5a15dcf3734ec183b4cc1275f08~FYMdnuyhZ2054020540epsmtrp1T;
-	Wed,  6 Nov 2024 12:27:21 +0000 (GMT)
-X-AuditID: b6c32a4b-4a7fa70000002648-7e-672b7d58f2f4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CA.01.35203.9A06B276; Wed,  6 Nov 2024 21:27:21 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241106122718epsmtip1f4f0cccb196ed013747170516d7b45df~FYMbJ800Q0829608296epsmtip1F;
-	Wed,  6 Nov 2024 12:27:18 +0000 (GMT)
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-	martin.petersen@oracle.com, asml.silence@gmail.com, anuj1072538@gmail.com,
-	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk
-Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>, Anuj
-	Gupta <anuj20.g@samsung.com>
-Subject: [PATCH v8 10/10] block: add support to pass user meta buffer
-Date: Wed,  6 Nov 2024 17:48:42 +0530
-Message-Id: <20241106121842.5004-11-anuj20.g@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241106121842.5004-1-anuj20.g@samsung.com>
+	s=arc-20240116; t=1730899768; c=relaxed/simple;
+	bh=qLoantZZPHrbJnCSNBUn4OTPj0732u5vIdVyCMxVYGI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ew3lC5cBG2Wt2T3XY636shvqzCue2+lgWCcy108W+rRl3AF3RIghYJRJAvThHSXGQLdpQ008JiZ9gBiicvh8V3pQYKy/iLMgcPjoy+kM/aFzgGA7quHpCZ4Y59ewsdCcpeXBdcSL8DaHXHwR53ZgWpHkSDf8/ba/oEX31ItffcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGHs3fA2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4D2C4CED3;
+	Wed,  6 Nov 2024 13:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730899767;
+	bh=qLoantZZPHrbJnCSNBUn4OTPj0732u5vIdVyCMxVYGI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WGHs3fA2TJP3R7VtYkapsjGtrsI0RUib0Nr+GNgqQV72BgIBsUq2YhrJBuiVj7KlR
+	 ArRnzRgrCrhSQw+SeccfVP9q66vdJgG5eEOlsjGzOHTLjjIZmt4dQyKckFn+jbRQVB
+	 sZ9CKBb9dqaozpKHCFP9HcbO5F2O55hUDrIfii/wMoHXfBFtMer5ZI971VQiqLRUp7
+	 bySo3orbC2bpwnHEHyd0dv4SHg8cWSFy0uzdZZQjbXN6bQSpcAedfVpMHeDgoTLLlQ
+	 rdiNlzsSdTwVDsWY7eG/EB3Xg+xaGmmFngbe52Tc2jV5YkQLhkRdbw+j/gmBa7f1ty
+	 kGXYcBK6dTzcw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 06 Nov 2024 08:29:19 -0500
+Subject: [PATCH] fs: add the ability for statmount() to report the
+ fs_subtype
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxj2O+fQ62oORbdvDczuZLoAgbbQ1lPHbRsuJ8FEkv1RtgQLPSmM
-	0na9zEE0a0TQ4SoMQbQi1MkUqs7Bym1Q4xBoQC4bbEi97CbIxKEiY+qaylpaNv897/s+z/Pm
-	+S4slP8zQ8DK15pog1apIRgcrP1KdHTcjr2xavGls2vJhSUvRu6r9KFknaMdkOduVTDIe1ce
-	AdJzuQshm8/1I+T90lGMPFFbgpD9y/MMsqp3EpCu67Fkj2sQIxvOzDDJQ9c6GeRZ9zOEHPO5
-	w8gxWx0zjU912W4xqYkRM9Xq+JRBfdP4CdXtsTCohZnrGHXY6QDUsL2PSS22vkK1Ts8jmZys
-	gqQ8WqmiDUJam6tT5WvVyUTGu9lvZ8vkYkmcREFuJoRaZSGdTKRvy4x7J1/jz0QIP1JqzP5W
-	ptJoJEQpSQad2UQL83RGUzJB61UavVQfb1QWGs1adbyWNm2RiMUJMj9xV0HeQNsvQH9I8fG1
-	iWZgAd/HlwM2C+JSeH5wjFkOOCw+3g2gfXYpLFg8AnDCdzE0+RvAG47LyKrEu9+LBAcuACc7
-	/gwViwBedU6tsBj467BvthQEBuvwHgCtp65igQLFKxFor3WiAVYEvhVOWuuxAMbwjbDl/rRf
-	wWLxcAV8UMIMrtsAj48/XsFsf3tksR0EMA8Ph4PHp1ekqJ9T0nYCDfhD/CYLjtvtKz4QT4dH
-	uzODPhFwzu0MeQrg3YqyEFbDJxMzoWh6WDJwCQRxKiwdqkADNigeDS9+Kwq2o2DN0FdIcO1a
-	aPVOh6Q82Fm/igl4oLkuhCF0jVpCmIItz6qx4GF9BqDLOoVUAqHtuTi25+LY/l9tB6gDvEzr
-	jYVq2ijTJ2rp3f9dc66usBWsPPSYjE7w+68P43sBwgK9ALJQYh1ve1asms9TKYuKaYMu22DW
-	0MZeIPMf9+eoYH2uzv9TtKZsiVQhlsrlcqkiUS4hXuLdKz2p4uNqpYkuoGk9bVjVISy2wIK4
-	jwi2nvRxl5e3DMjWi7kJOZFzPyCGXJugxdOwOWXhdocNd4saI97fkWtOS22rjEkZlj4pmTdV
-	l+0UCedaNsx1NaQn981bR+Tb+qeLtbtq65cuyM6/Ov6dew3bEj5k6XC8UJTYy1aNJvy4pqw6
-	h3eq4CHoThXd4C6hvtNRjPf2v9E9eLAtv2g2z/MbV9QklKWmvWmpOPh13Z3wxeap8tP7nOV1
-	j61ZNTc3fVBpq/miqW03J4M7jIXtKf7y2B9H0eq7rx3AZ6oEnEhFXIHbt/dFh7yxZ6GJeWfP
-	TvbTM3/dbt7kiUro+Ccn3hXpcyZ1XjicVPWgjCv3lvYfeTry01v9sg8JzJinlMSgBqPyX8jA
-	fZRxBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnO7KBO10g40H+Sw+fv3NYtE04S+z
-	xZxV2xgtVt/tZ7N4ffgTo8XNAzuZLFauPspk8a71HIvF7OnNTBZH/79ls5h06Bqjxd5b2hZ7
-	9p5ksZi/7Cm7Rff1HWwWy4//Y7I4//c4q8X5WXPYHYQ8ds66y+5x+Wypx6ZVnWwem5fUe+y+
-	2cDm8fHpLRaPvi2rGD3OLDjC7vF5k5zHpidvmQK4orhsUlJzMstSi/TtErgyjm29z1jQbVlx
-	/fJKxgbGC3pdjJwcEgImEr9bfjN1MXJxCAnsZpR43HeaGSIhIXHq5TJGCFtYYuW/5+wgtpDA
-	R0aJhwfDQWw2AXWJI89bwWpEBE4wSsyf6AYyiFlgBpPE7z8LWEASwgKuEtd654HZLAKqEhvf
-	PQFq4ODgFbCUeN/MDjFfXmLmpe9gNidQ+OznbYwQuywk/izoA7uHV0BQ4uTMJ2BjmIHqm7fO
-	Zp7AKDALSWoWktQCRqZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjB8aaluYNx+6oP
-	eocYmTgYDzFKcDArifD6R2mnC/GmJFZWpRblxxeV5qQWH2KU5mBREucVf9GbIiSQnliSmp2a
-	WpBaBJNl4uCUamDKuPD/xKHcKp9tF/xzJjmfbKxJinljlVP7m/1vWeW/CJeHkcXbs+4+fW+4
-	4vbtpXsKlk96pBdX8bvE/q2WjrzqwwnVtvujFPvLUnhX/FvW6qQW2PDqE+vNzufvXqRmZe8P
-	27U/tz39/nSHL0JMb1/WNss+msr88emTmS3yGlO+rzw4gc/x0KytDAuPrFx25O73aRGT3Dv0
-	P52Kdtn0oF/ATaqX5VXHubX/WB+Xc3tGM2rnrDpn+nj+zaoCwayH23hckuc1O6f8ad3r6533
-	Mrr5ieL7dX8471sl1LW3T+b3zDmzQluCoecv80HO22tPFspESBsEMEi1uZUuP8L+49Us3X12
-	4m2sm39y3wnV3/tDiaU4I9FQi7moOBEAz/uG0iYDAAA=
-X-CMS-MailID: 20241106122721epcas5p3849e3582fcb6547be2b1b10b031138d4
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241106122721epcas5p3849e3582fcb6547be2b1b10b031138d4
-References: <20241106121842.5004-1-anuj20.g@samsung.com>
-	<CGME20241106122721epcas5p3849e3582fcb6547be2b1b10b031138d4@epcas5p3.samsung.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241106-statmount-v1-1-b93bafd97621@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAC5vK2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwMz3eKSxJLc/NK8El3jNEvDRPPUFHPTtEQloPqCotS0zAqwWdGxtbU
+ AkPuL4VsAAAA=
+X-Change-ID: 20241106-statmount-3f91a7ed75fa
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3621; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=qLoantZZPHrbJnCSNBUn4OTPj0732u5vIdVyCMxVYGI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnK282S/roz15eGMUd7udzATG+mPVEs+cqwxlW9
+ r29itiWcECJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZytvNgAKCRAADmhBGVaC
+ FYGFD/9NutuYORMdrfcn5fUGaEt9mnz3GhtoknbXQ/bxX/7hE0onr2A0n2mGC8+TZXeXP1B112q
+ zJfCoWXMlRiVlVKweOtRsu3a8Z/iGtaRBRg7sVb2b5IIF3UVcUMhsr7gAJeStaGYT+f0JV3E+s+
+ ukOA82qI8YHG3zVtTG6EJGQ+zPnQfbs7kH4V5/6+78hvyw3sfcSsobPzoYVAo06WOTSzY4uAXDT
+ fre8L/vs4CTlVOZYoD6OzpejXNmKtUUTCPdz/baUwh9Vfw8YGCOF1iokZwS8Wk7x3HhWe1c7BqE
+ 1l9H7Enuhvyw0NomWfTSHgCw9J7MCpgnp2KiW/qqgPm8UkD4ZbQtQqbnmQjGMD/GWE+G9u1/v/R
+ fHI2AFJXoMgrquu6YqRXD4M3zb/TLgOq/jygSuFCku53WgNTGC8JxEltDvgkJ2nATi1HfphqCwu
+ J1nbHNofRUFwwPJWPdeYXmzAiAAPYdM4QC87XdaSYyLd0KVBVOjzE1THHYdKqXwKKiyem1WDUjC
+ rxDBw6oYfPRHWKk4uscjhIQrtaqv7eu/uAPubfOL3lvNASQZOnz088O7mOh1Vi6p6aXhsyRdgUd
+ yXki9pZptAgO3FhcXDH8qWfGCGEhacpzffM4SXMtPCXkbwqvcSaI1TgetSIE/QLOtVFIWEaSTgV
+ 8EqmZ7ummOI5yWQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-From: Kanchan Joshi <joshi.k@samsung.com>
+/proc/self/mountinfo prints out the sb->s_subtype after the type. In
+particular, FUSE makes use of this to display the fstype as
+fuse.<subtype>.
 
-If an iocb contains metadata, extract that and prepare the bip.
-Based on flags specified by the user, set corresponding guard/app/ref
-tags to be checked in bip.
+Add STATMOUNT_FS_SUBTYPE and claim one of the __spare2 fields to point
+to the offset into the str[] array. The STATMOUNT_FS_SUBTYPE will only
+be set in the return mask if there is a subtype associated with the
+mount.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- block/bio-integrity.c         | 50 +++++++++++++++++++++++++++++++++++
- block/fops.c                  | 45 ++++++++++++++++++++++++-------
- include/linux/bio-integrity.h |  7 +++++
- 3 files changed, 92 insertions(+), 10 deletions(-)
+ fs/namespace.c             | 20 +++++++++++++++++++-
+ include/uapi/linux/mount.h |  5 ++++-
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 3bee43b87001..5d81ad9a3d20 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -364,6 +364,55 @@ int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter)
- 	return ret;
- }
- 
-+static void bio_uio_meta_to_bip(struct bio *bio, struct uio_meta *meta)
-+{
-+	struct bio_integrity_payload *bip = bio_integrity(bio);
-+
-+	if (meta->flags & IO_INTEGRITY_CHK_GUARD)
-+		bip->bip_flags |= BIP_CHECK_GUARD;
-+	if (meta->flags & IO_INTEGRITY_CHK_APPTAG)
-+		bip->bip_flags |= BIP_CHECK_APPTAG;
-+	if (meta->flags & IO_INTEGRITY_CHK_REFTAG)
-+		bip->bip_flags |= BIP_CHECK_REFTAG;
-+
-+	bip->app_tag = meta->app_tag;
-+}
-+
-+int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta)
-+{
-+	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-+	unsigned int integrity_bytes;
-+	int ret;
-+	struct iov_iter it;
-+
-+	if (!bi)
-+		return -EINVAL;
-+	/*
-+	 * original meta iterator can be bigger.
-+	 * process integrity info corresponding to current data buffer only.
-+	 */
-+	it = meta->iter;
-+	integrity_bytes = bio_integrity_bytes(bi, bio_sectors(bio));
-+	if (it.count < integrity_bytes)
-+		return -EINVAL;
-+
-+	/* should fit into two bytes */
-+	BUILD_BUG_ON(IO_INTEGRITY_VALID_FLAGS >= (1 << 16));
-+
-+	if (meta->flags && (meta->flags & ~IO_INTEGRITY_VALID_FLAGS))
-+		return -EINVAL;
-+
-+	it.count = integrity_bytes;
-+	ret = bio_integrity_map_user(bio, &it);
-+	if (!ret) {
-+		bio_uio_meta_to_bip(bio, meta);
-+		bip_set_seed(bio_integrity(bio), meta->seed);
-+		iov_iter_advance(&meta->iter, integrity_bytes);
-+		meta->seed += bio_integrity_intervals(bi, bio_sectors(bio));
-+	}
-+	return ret;
-+}
-+
- /**
-  * bio_integrity_prep - Prepare bio for integrity I/O
-  * @bio:	bio to prepare
-@@ -564,6 +613,7 @@ int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
- 	bip->bip_vec = bip_src->bip_vec;
- 	bip->bip_iter = bip_src->bip_iter;
- 	bip->bip_flags = bip_src->bip_flags & BIP_CLONE_FLAGS;
-+	bip->app_tag = bip_src->app_tag;
- 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..5f2fb692449a9c0a15b60549fb9f7bedd10f1f3d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5006,6 +5006,14 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
  	return 0;
  }
-diff --git a/block/fops.c b/block/fops.c
-index 2d01c9007681..412ae74032ad 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -54,6 +54,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 	struct bio bio;
- 	ssize_t ret;
  
-+	WARN_ON_ONCE(iocb->ki_flags & IOCB_HAS_METADATA);
- 	if (nr_pages <= DIO_INLINE_BIO_VECS)
- 		vecs = inline_vecs;
- 	else {
-@@ -124,12 +125,16 @@ static void blkdev_bio_end_io(struct bio *bio)
- {
- 	struct blkdev_dio *dio = bio->bi_private;
- 	bool should_dirty = dio->flags & DIO_SHOULD_DIRTY;
-+	bool is_sync = dio->flags & DIO_IS_SYNC;
- 
- 	if (bio->bi_status && !dio->bio.bi_status)
- 		dio->bio.bi_status = bio->bi_status;
- 
-+	if (!is_sync && (dio->iocb->ki_flags & IOCB_HAS_METADATA))
-+		bio_integrity_unmap_user(bio);
-+
- 	if (atomic_dec_and_test(&dio->ref)) {
--		if (!(dio->flags & DIO_IS_SYNC)) {
-+		if (!is_sync) {
- 			struct kiocb *iocb = dio->iocb;
- 			ssize_t ret;
- 
-@@ -221,14 +226,16 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 			 * a retry of this from blocking context.
- 			 */
- 			if (unlikely(iov_iter_count(iter))) {
--				bio_release_pages(bio, false);
--				bio_clear_flag(bio, BIO_REFFED);
--				bio_put(bio);
--				blk_finish_plug(&plug);
--				return -EAGAIN;
-+				ret = -EAGAIN;
-+				goto fail;
- 			}
- 			bio->bi_opf |= REQ_NOWAIT;
- 		}
-+		if (!is_sync && (iocb->ki_flags & IOCB_HAS_METADATA)) {
-+			ret = bio_integrity_map_iter(bio, iocb->private);
-+			if (unlikely(ret))
-+				goto fail;
-+		}
- 
- 		if (is_read) {
- 			if (dio->flags & DIO_SHOULD_DIRTY)
-@@ -269,6 +276,12 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	bio_put(&dio->bio);
- 	return ret;
-+fail:
-+	bio_release_pages(bio, false);
-+	bio_clear_flag(bio, BIO_REFFED);
-+	bio_put(bio);
-+	blk_finish_plug(&plug);
-+	return ret;
- }
- 
- static void blkdev_bio_end_io_async(struct bio *bio)
-@@ -286,6 +299,9 @@ static void blkdev_bio_end_io_async(struct bio *bio)
- 		ret = blk_status_to_errno(bio->bi_status);
- 	}
- 
-+	if (iocb->ki_flags & IOCB_HAS_METADATA)
-+		bio_integrity_unmap_user(bio);
-+
- 	iocb->ki_complete(iocb, ret);
- 
- 	if (dio->flags & DIO_SHOULD_DIRTY) {
-@@ -330,10 +346,8 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 		bio_iov_bvec_set(bio, iter);
- 	} else {
- 		ret = bio_iov_iter_get_pages(bio, iter);
--		if (unlikely(ret)) {
--			bio_put(bio);
--			return ret;
--		}
-+		if (unlikely(ret))
-+			goto out_bio_put;
- 	}
- 	dio->size = bio->bi_iter.bi_size;
- 
-@@ -346,6 +360,13 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 		task_io_account_write(bio->bi_iter.bi_size);
- 	}
- 
-+	if (iocb->ki_flags & IOCB_HAS_METADATA) {
-+		ret = bio_integrity_map_iter(bio, iocb->private);
-+		WRITE_ONCE(iocb->private, NULL);
-+		if (unlikely(ret))
-+			goto out_bio_put;
-+	}
-+
- 	if (iocb->ki_flags & IOCB_ATOMIC)
- 		bio->bi_opf |= REQ_ATOMIC;
- 
-@@ -360,6 +381,10 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 		submit_bio(bio);
- 	}
- 	return -EIOCBQUEUED;
-+
-+out_bio_put:
-+	bio_put(bio);
-+	return ret;
- }
- 
- static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 2195bc06dcde..de0a6c9de4d1 100644
---- a/include/linux/bio-integrity.h
-+++ b/include/linux/bio-integrity.h
-@@ -23,6 +23,7 @@ struct bio_integrity_payload {
- 	unsigned short		bip_vcnt;	/* # of integrity bio_vecs */
- 	unsigned short		bip_max_vcnt;	/* integrity bio_vec slots */
- 	unsigned short		bip_flags;	/* control flags */
-+	u16			app_tag;	/* application tag value */
- 
- 	struct bvec_iter	bio_iter;	/* for rewinding parent bio */
- 
-@@ -78,6 +79,7 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio, gfp_t gfp,
- int bio_integrity_add_page(struct bio *bio, struct page *page, unsigned int len,
- 		unsigned int offset);
- int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter);
-+int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta);
- void bio_integrity_unmap_user(struct bio *bio);
- bool bio_integrity_prep(struct bio *bio);
- void bio_integrity_advance(struct bio *bio, unsigned int bytes_done);
-@@ -108,6 +110,11 @@ static int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter)
- 	return -EINVAL;
- }
- 
-+static inline int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta)
++static int statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
 +{
-+	return -EINVAL;
++	struct super_block *sb = s->mnt->mnt_sb;
++
++	seq_puts(seq, sb->s_subtype);
++	return 0;
 +}
 +
- static inline void bio_integrity_unmap_user(struct bio *bio)
+ static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
  {
+ 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+@@ -5064,6 +5072,13 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 		sm->mnt_opts = seq->count;
+ 		ret = statmount_mnt_opts(s, seq);
+ 		break;
++	case STATMOUNT_FS_SUBTYPE:
++		/* ignore if no s_subtype */
++		if (!s->mnt->mnt_sb->s_subtype)
++			return 0;
++		sm->fs_subtype = seq->count;
++		ret = statmount_fs_subtype(s, seq);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(true);
+ 		return -EINVAL;
+@@ -5203,6 +5218,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+ 	if (!err && s->mask & STATMOUNT_MNT_OPTS)
+ 		err = statmount_string(s, STATMOUNT_MNT_OPTS);
+ 
++	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
++		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
++
+ 	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+ 		statmount_mnt_ns_id(s, ns);
+ 
+@@ -5224,7 +5242,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
  }
+ 
+ #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
+-			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS)
++			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
+ 
+ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+ 			      struct statmount __user *buf, size_t bufsize,
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 225bc366ffcbf0319929e2f55f1fbea88e4d7b81..fa206fb56b3b25cf80f7d430e1b6bab19c3220e4 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -173,7 +173,9 @@ struct statmount {
+ 	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+ 	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+ 	__u64 mnt_ns_id;	/* ID of the mount namespace */
+-	__u64 __spare2[49];
++	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
++	__u32 __spare1[1];
++	__u64 __spare2[48];
+ 	char str[];		/* Variable size part containing strings */
+ };
+ 
+@@ -207,6 +209,7 @@ struct mnt_id_req {
+ #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+ #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
+ #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
++#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got subtype */
+ 
+ /*
+  * Special @mnt_id values that can be passed to listmount
+
+---
+base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
+change-id: 20241106-statmount-3f91a7ed75fa
+
+Best regards,
 -- 
-2.25.1
+Jeff Layton <jlayton@kernel.org>
 
 
