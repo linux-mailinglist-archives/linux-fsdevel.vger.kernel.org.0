@@ -1,52 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-33718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1D79BDEA0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 07:12:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58229BDEA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 07:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182991F24C28
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 06:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C0B1C22DAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 06:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C579A1925A4;
-	Wed,  6 Nov 2024 06:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AA31922E5;
+	Wed,  6 Nov 2024 06:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1fTkmcG0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBE71922D8;
-	Wed,  6 Nov 2024 06:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B1C36C;
+	Wed,  6 Nov 2024 06:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730873568; cv=none; b=J/nT3be0hSreGwLAcyu5uITL+LBJiqXmqi0VUP/ljrlO2uPxkkLtTlz5ebhdIiAtwNwM1qSGr1ucFMtb64HhKeJZy0nkDCLFZMOYprZ1evjt1U8CJXPrnjkToBaQPyZ64hdcfTUk/3Pv2XL+b+lu3e+20bflA73l9KokizQ9kWQ=
+	t=1730873778; cv=none; b=I4//3pmFUSngBkaX7lfDLWQQZc6cK5eD1XRiQm8abpHBPwH3Zu2h8XBgtAOfRw60M/tucj3F25v/A2Bgml+APM8got4yRy19VVY1UJKupBFOhKZbooBDXsmOaFkp6LK6/DYApwK9FEXGHNbIoTbIQVnj8gUB91cuyobdgnX5NOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730873568; c=relaxed/simple;
-	bh=7wESXxZaC99QSJ5TyLrHyHFhckEOGKb5htJZ2OOVQAE=;
+	s=arc-20240116; t=1730873778; c=relaxed/simple;
+	bh=pQlq7hHPU1Y1m8Iq0RTWGhBrUrFVOfLg2Zpy9RE9zsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hESM2BmRKxuqfROBAwxw/+IIWXqeeKLb/Gxncq8i/4QZIH6yHy4hp86cKhrUh6wiuBORjaXlkCoBO3g4kyi9B0YZSd0JGdQO18gkk5K/HqBYHZBqMoMzu7Cdtm3D7mfL/iKXVFdRXXnyXWzdFj90LiYCJax6tWB+RMtzljAhcks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E012268AFE; Wed,  6 Nov 2024 07:12:41 +0100 (CET)
-Date: Wed, 6 Nov 2024 07:12:41 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-	Anuj gupta <anuj1072538@gmail.com>,
-	Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] io_uring/rw: add support to send metadata
- along with read/write
-Message-ID: <20241106061241.GA32101@lst.de>
-References: <CGME20241104141459epcas5p27991e140158b1e7294b4d6c4e767373c@epcas5p2.samsung.com> <20241104140601.12239-7-anuj20.g@samsung.com> <20241105095621.GB597@lst.de> <CACzX3AuNFoE-EC_xpDPZkoiUk1uc0LXMNw-mLnhrKAG4dnJzQw@mail.gmail.com> <20241105135657.GA4775@lst.de> <b52ecf88-1786-4b6f-b8f3-86cccaa51917@samsung.com> <20241105160051.GA7599@lst.de> <ZypGd_-HzEekrcMs@kbusch-mbp.dhcp.thefacebook.com> <20241106052927.GA31192@lst.de> <e68f0127-a8a8-46da-8e68-7a2f3af73627@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNf05SuadmXuW1R1VqvpCRvZgDuHpQ7p3zrsOHjjmm7fYK41ZFKYWzNF/e0aJUmdKZk4GXhWIhRUxbobMdF9UJFPrdn16kDOHi1E6dPZa0vIlADCwApZEdFtclAj2iPi4LvZKux8SX8zYyUnQ3jDjKKuYAfm4X4H5etSOsDqnXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1fTkmcG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2CAC4CECD;
+	Wed,  6 Nov 2024 06:16:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730873778;
+	bh=pQlq7hHPU1Y1m8Iq0RTWGhBrUrFVOfLg2Zpy9RE9zsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1fTkmcG0N/uvrisql3iDehlDzBNxDNe9oSfkHDOaITMwxsTkdkYbtTOC9lGFg1dwl
+	 eMRGjVGRQcsNNJJ3jMsXvMea55ta6/60nim8jexRPhGVrhD/NnBNGv5hgahleeqztB
+	 pR75KwmvLCaR4VCYlltAkgEgUf3CMOSWOzvwUlZQ=
+Date: Wed, 6 Nov 2024 07:16:00 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: stable@vger.kernel.org, harry.wentland@amd.com, sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+	daniel@ffwll.ch, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+	hughd@google.com, willy@infradead.org, sashal@kernel.org,
+	srinivasan.shanmugam@amd.com, chiahsuan.chung@amd.com,
+	mingo@kernel.org, mgorman@techsingularity.net, yukuai3@huawei.com,
+	chengming.zhou@linux.dev, zhangpeng.00@bytedance.com,
+	chuck.lever@oracle.com, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org,
+	linux-mm@kvack.org, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+Message-ID: <2024110625-earwig-deport-d050@gregkh>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,34 +65,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e68f0127-a8a8-46da-8e68-7a2f3af73627@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
 
-On Wed, Nov 06, 2024 at 11:30:45AM +0530, Kanchan Joshi wrote:
-> >   1) some space to actually store the extra fields
-> >   2) a flag that the additional values are passed
+On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Yes, this is exactly how the patch is implemented. 'meta-type' is the 
-> flag that tells additional values (representing PI info) are passed.
+> Fix patch is patch 27, relied patches are from:
 > 
-> > any single value is not going to help with supporting arbitrary
-> > combinations,
-> 
-> Not a single value. It is a u16 field, so it can represent 16 possible 
-> flags.
-> This part in the patch:
-> 
-> +enum io_uring_sqe_meta_type_bits {
-> +       META_TYPE_PI_BIT,
-> +       /* not a real meta type; just to make sure that we don't overflow */
-> +       META_TYPE_LAST_BIT,
-> +};
+>  - patches from set [1] to add helpers to maple_tree, the last patch to
+> improve fork() performance is not backported;
 
-Well, then it's grossly misnamed and underdocumented.  For one the
-meta name simply is wrong because it's about all extra features.
-Second a type implies an enumeration of types, not a set of flags.
+So things slowed down?
 
-So if you actually name this extended_features or similar and clearly
-document it might actually make sense.
+>  - patches from set [2] to change maple_tree, and follow up fixes;
+>  - patches from set [3] to convert offset_ctx from xarray to maple_tree;
+> 
+> Please notice that I'm not an expert in this area, and I'm afraid to
+> make manual changes. That's why patch 16 revert the commit that is
+> different from mainline and will cause conflict backporting new patches.
+> patch 28 pick the original mainline patch again.
+> 
+> (And this is what we did to fix the CVE in downstream kernels).
+> 
+> [1] https://lore.kernel.org/all/20231027033845.90608-1-zhangpeng.00@bytedance.com/
+> [2] https://lore.kernel.org/all/20231101171629.3612299-2-Liam.Howlett@oracle.com/T/
+> [3] https://lore.kernel.org/all/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net/
 
+This series looks rough.  I want to have the maintainers of these
+files/subsystems to ack this before being able to take them.
+
+thanks,
+
+greg k-h
 
