@@ -1,346 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-33912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE939C092A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B44249C09A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 16:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922331C23767
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D76A21C23756
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B5F21262E;
-	Thu,  7 Nov 2024 14:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADF521315B;
+	Thu,  7 Nov 2024 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bWGU3Ddm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fn6FjDfu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMk3WUax"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D022DD26D;
-	Thu,  7 Nov 2024 14:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990743; cv=fail; b=miVdRuYMpFEktqUzRhaRzYo6L+nLtfaSLVKauvGfzBUbNJ3fs6DJCo7cQuQJ8FhK6BYqaFaueqwd+58JycLotovszvMaTliwgXXWvUxSdGcZppFralzutZL4p+kXDW6T2NXhZGsMOCWfnAoQ7xLfXJWnwPWczgtkKYDiTZIiOuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990743; c=relaxed/simple;
-	bh=1v0eDtAoYM2SNRKFVLy5AA2TBcUpvbPbqQgaO61V5eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aMLRLkQaylOjIqqrndb49t6/+xoD3iuA65a5p9B+kiDEOjyH734uIIZdpa1Jx8rp7OVBmkoib9veu/gmv/k80MmOEiOGwDwpGL+97Z0gxNyGNQ9gAYZ4xnJUt1n/S5hrCn8m4Yb4x+BSxA17zeAcbQEKDlD1UYl1gpHAR2OvecY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bWGU3Ddm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fn6FjDfu; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7DHa0C025085;
-	Thu, 7 Nov 2024 14:44:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=3F1RjXuxhzHFGS0RRhRByyivHvg/iZhQ699VlUGCFAw=; b=
-	bWGU3DdmkkTDhxRZ0y80AhG0ooELEjeITuu/CSuZ2kZMd/nxFR1QUuPuGoFU6yML
-	sB1ZYuZgh8Jc4L7TnezP9NfxrpPZFh7w/GooU8wxZkBLQ90RrnN4l2CCfktbtKgB
-	zTyUrwFLHyPxBZ3vBXzUExQdB7YOYOCqoW8RDNmTV8D6XqRMcGh5iNACXA+gebf6
-	Om1HwyqSMScNoy8c8MwsrE2+TuUxzbb8B0QeaRhs4NUhjzC/CSE6vQBFryNR5cvt
-	AQbm5kN+OfaREOxrQa8Bk3vlG6qQ1IvUdNf4Cjf6lP9YhnxJeiLOdoVRTVG1w0a9
-	IgiauR3IY51aoV/wPiiZdw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42nap02p1j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 07 Nov 2024 14:44:34 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7D8xE6031461;
-	Thu, 7 Nov 2024 14:44:33 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42nah9tjd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 07 Nov 2024 14:44:33 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FKMxGeD/y5W0YkXMsmCFaCVua3b2MCb1MMSO/Zl336Nlywz5yfHBUnBjZFve7ea80ioOIp6WaxvcXB1BZBrrP6BIuhJJIiXFkzicAm8hIcsdM1Sb9iHWDSJ3f+sVS4rDfRFAeJgUu0qgVmw7dHxoYj2ZChLEefsiZJ4LNBMGxPrjVqVd0enG5VDeC28wDN2CfEXJODThQoMWRicV88dh5/eJTwKAX4shAd8RW/7yqVLsEOj+XU7J+JKCyhgkyEND4eFIwFk0KVPDG6k6CP3DoPYMup8w/jEjGq9IjXKWhHecIt3gz24iejIf4MQPcNWMUVt6+Hnp54iZS1CM9MzJqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3F1RjXuxhzHFGS0RRhRByyivHvg/iZhQ699VlUGCFAw=;
- b=zDnDkPcPUk4UPheFTHQI/Mc7e5qTmuwuHq/rh7ok6nIxfDbIgkHpBWoSOLsO7I3IZ+CfMA4RbrdDPPMwoMnJOulbcYr66f5bFkX8wcafDROaEgONLeY4nhPs+m3PcINNw2wUVOPDnUj1iasstgmfXsbWNeCqMo8RFXT1vxNxOuQnYmRrN739T1V9E8tLWfuHC4nwso93vY5QSaNGwOJNoSPHVnVQwrLlnsixNVcxxr3ETGsTTzVtfO+hqNPb9vmei8eTzBf5tl3bjJGhqknSCb6U1x43KBj+Z6m3dv6q3yV247VLjld5ATTuKnijzpsgtw7p6lOA//SvvgnYdUniAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3F1RjXuxhzHFGS0RRhRByyivHvg/iZhQ699VlUGCFAw=;
- b=fn6FjDfuHnpUFr+1p2eMK8NmpLK3guRzNovoNNfkPB7EAjJFRE8HqJdunRUN9lQdjfcQRyiDI0N0a4OqB4WV0vfBcNzCx6/NBFReqCu09XnCjP9AH+VpX0ueNcK4rKG+TncjDBsjbQaQrRU/0HCE1Ojst03MAWgaRwRVCm99yQE=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by CH4PR10MB8049.namprd10.prod.outlook.com (2603:10b6:610:240::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 14:44:27 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
- 14:44:27 +0000
-Date: Thu, 7 Nov 2024 09:44:24 -0500
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Chuck Lever III <chuck.lever@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-stable <stable@vger.kernel.org>,
-        "harry.wentland@amd.com" <harry.wentland@amd.com>,
-        "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
-        "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
-        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
-        "airlied@gmail.com" <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>,
-        "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
-        "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-        "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
-        yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
-Message-ID: <epkfxxakvk5bsiucbfvrdgjcndpzumabljuginymvviv5edpxg@czr5gtkzxjyb>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Yu Kuai <yukuai1@huaweicloud.com>, Chuck Lever III <chuck.lever@oracle.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, linux-stable <stable@vger.kernel.org>, 
-	"harry.wentland@amd.com" <harry.wentland@amd.com>, "sunpeng.li@amd.com" <sunpeng.li@amd.com>, 
-	"Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>, "alexander.deucher@amd.com" <alexander.deucher@amd.com>, 
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>, 
-	"airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Sasha Levin <sashal@kernel.org>, 
-	"srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>, "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>, 
-	"mingo@kernel.org" <mingo@kernel.org>, "mgorman@techsingularity.net" <mgorman@techsingularity.net>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>, 
-	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	"maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>, linux-mm <linux-mm@kvack.org>, 
-	"yi.zhang@huawei.com" <yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>, 
-	"yukuai (C)" <yukuai3@huawei.com>
-References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
- <2024110625-earwig-deport-d050@gregkh>
- <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
- <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4PR01CA0417.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10b::21) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F049212D31
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 15:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730992037; cv=none; b=I+h4GSQ0wLNV6nYbYPyyMttAf0wROJqZu/QYB/ge1eGn8An8Fg7XtJq75peRyJWJ6gx9/rLSJcrEx5kdchFWc0FI39Y8pHtJ4kHBGYEuM/Brv0RV08HqVw/HwZFVEkxDwoU5/H1HqwVJY+VfnHYMelxzKzysf8ihqLXS7/Ku8+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730992037; c=relaxed/simple;
+	bh=mMgQMIAdR1U6/trMnkruUieVLKWT+EzgS20G8XFGvaQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=MVzWNqYHnOaUsK1udFew0GHeGWd2pYnoLPwo6384/t5V/Zmy03BfbMzusts3SunPEKXpn62PQ/jY5kIVHgKlgtPiq2XVSyyQk6MR5TUbXtnccoHl/Rj6XgtXrNqm/1liuRm70ns/fYOJhPTwiM0Kwp9XLuAY8MJb+Dvq6EHwar4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LMk3WUax; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730992033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=rUULYW5HA71CcadhjfBnhDAiPuL8EUk2+KSGHV8WYRg=;
+	b=LMk3WUaxfMLvz/2ibG/Agfk7PdFt8Uutm6O5q9pgDGoC6DpLgssnhGNzYI8mRnZNPTeoNN
+	OuB2eYRdnSvDsMSZmUqIbeL67IAPFb36ROpaAlgi3jdA6lY4ut7HKW09Db0MMgiYRw8nCy
+	IQmfUlEJr5SLsOduJYIOzH8FdsY32TI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-m4X_UOE8PQiwRNBAzLtmgg-1; Thu, 07 Nov 2024 10:07:12 -0500
+X-MC-Unique: m4X_UOE8PQiwRNBAzLtmgg-1
+X-Mimecast-MFC-AGG-ID: m4X_UOE8PQiwRNBAzLtmgg
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43164f21063so6765255e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 07:07:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730992031; x=1731596831;
+        h=content-transfer-encoding:cc:to:organization:autocrypt:subject:from
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUULYW5HA71CcadhjfBnhDAiPuL8EUk2+KSGHV8WYRg=;
+        b=R30eRxxLznl4u5YMvbFErV90Frx+/ywTKI3jQMVmUF63tNg9jGgx2pFyAMzs5WfCjE
+         Dpzz+3ItH02do1PMip1MNawHnfvW1i2HyToRVa9w5jBTg4VzgeM9/62r3J8Jts+IgM5X
+         LiwVWPMEwx+vhdyL6AksV/qat1hyZ0tdGWcgLKO3IURRMQhB1vkpuLvwFNHaRBppbTdT
+         ebNQTnWgwlDUCQAeH3WlX6b2Blm4orRZCUCRbXTRiQEfcSYaH0mbFycRs1y7u+ei27kA
+         S3pild6+xS3ugrhtSeNWi/RC+kIlweQlTIeLq3XQAuOw4corKxALvGTdRjSQsX9AHkRN
+         Gveg==
+X-Gm-Message-State: AOJu0Yxdg6YP6I8PAKk+6lvU1mWNXVmGA1zz3FVPfsBy220w2mua7r2l
+	t3VMhy/6sBvXzbqfKaJ2LgE/WjK+XaD4QyHE89qpnZ3NWcYczNrR2fg8MtDc/p3hHQdeh1vEFc+
+	pOcZbZaK2ENiSyYv1CJNR26siq0yobtIFR966+H6/Dlx6w29wGVBlMXweACb1DT6SMc3TvtLzq0
+	GUPEoGaqZ2+ZTNz3A3ul/+9y4vzBRW3mo9IwEMzs2lr7cN1A==
+X-Received: by 2002:a05:600c:1e04:b0:431:59b2:f0d1 with SMTP id 5b1f17b1804b1-432b5f93d40mr3188535e9.4.1730992030916;
+        Thu, 07 Nov 2024 07:07:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGQqcExJcKyVOnKxX3c1cjDHIL/l3Y7gyY3Yl4uEcZqFA46iJzi71uSxtUbXoHCkBs4VoKj4w==
+X-Received: by 2002:a05:600c:1e04:b0:431:59b2:f0d1 with SMTP id 5b1f17b1804b1-432b5f93d40mr3187785e9.4.1730992030226;
+        Thu, 07 Nov 2024 07:07:10 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:7900:b88e:c72a:abbd:d3d9? (p200300cbc7087900b88ec72aabbdd3d9.dip0.t-ipconnect.de. [2003:cb:c708:7900:b88e:c72a:abbd:d3d9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c0d33sm27963635e9.27.2024.11.07.07.07.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 07:07:09 -0800 (PST)
+Message-ID: <4febc035-a4ff-4afe-a9a0-d127826852a9@redhat.com>
+Date: Thu, 7 Nov 2024 16:07:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CH4PR10MB8049:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3353ed12-408b-4b96-141d-08dcff3aae38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZysybHhVemZCSzJJZHRKNEx4L0o1dXZBNVdla09VSUJ1OFVKTXJBQURRSFNM?=
- =?utf-8?B?V1hWRzBET3I2ZitSMjdMTUhubTJMVFlYWVNLSTFaUWo2NVdueTdaUkwvcTMw?=
- =?utf-8?B?dlhrb2JRWkt5cjVzRGJpajdFbDZYbGZjS2VGL09yNVZoNTdyVkE4M29xV08w?=
- =?utf-8?B?SkEraXFBbzRDK1c2SkZyakFncjFCNzVrUjQwSVl5MXVkZ1NaVUpiYXZ4MjZ5?=
- =?utf-8?B?Wll1c2ZmdDNiaE1zQzN2WmhqeXRNQjFYb3JVelBPYlJEYUpsMWY0TTB1b3Ey?=
- =?utf-8?B?ZDBpWU1zaTZiRHBDMTdLcjJyNHJkQUhQMVo2ZHBlaXFUWE5JUGVjNENuVktD?=
- =?utf-8?B?eDVKdm5WVUx4RjlrT0o0bHRmclVISS9BWjBFV1VTaFV6bGxSellteGJrWEx0?=
- =?utf-8?B?T0VDcTRhR0JtS3llZzNTL2s0M1VNa0NlZHVvTlc1T01PcFdIQWd2eVBQbGxk?=
- =?utf-8?B?d0F1TlhqWktHN2RiZG5uY1M3MkdwS0JqYVlsMlBvYW1RWVBzVE1aUWJIazNn?=
- =?utf-8?B?UXJtcU8rdkRFWjJkWkdwZUQrdG5UOUxIMXB5UDZSQ0hhZFZoZEZUY2RZNjlT?=
- =?utf-8?B?dGFzSlpMRTl6WVE4OUJ1Vk9PNllEQjVlZkEzbm9rbSthTU9QNmdlcXFIb2gx?=
- =?utf-8?B?WkZta1JsclhDcFlLMVNUdmthQjB2OXNBSVFsVDlVa09hQ3l1NHp5Z0ZQOFR6?=
- =?utf-8?B?bDRJSlYzTmR2YmdXTHNOM2FhT2M1aTVjUmh2Uk12Z2Z2Wk1OLzhCS2YrWTdE?=
- =?utf-8?B?RXhTeTV4dkdLTnUrdW85VmNyeGZYUm5uTThNRjBIRXp3YTFSQnpaRkI1S1dG?=
- =?utf-8?B?QTltblVmeEx6VWhrZlQrMU1RbzhWcmJkQUd3eE14Tm1HZnBWY2V4U2wxRHF2?=
- =?utf-8?B?ekJQT0o2ZENmUjQvRURrQkVLaUxPaTFtUzR6TzN2c25pckNGdEZZanc0dnBN?=
- =?utf-8?B?L1d5WmhDNVlFb3daRnVCdkhVVGorQmVEeEI3WFNZUVZYcTA5WS83M0tFdzAy?=
- =?utf-8?B?MDNTNG9LSDJTaWRmeXl2TWtEbTJ5WDdlSk9kUFVFeGhoNFpIZk83ekdJNjZh?=
- =?utf-8?B?RGgwM1ZqK1psUVVEdTdNZXpaUG5LNlA1ZHdoL1N3MXA5cnNKQ3RYMkROTWJ6?=
- =?utf-8?B?OGp1THpjTmZBTys3YlRTMkxUS2xYZ2ZnRzlPQUFSVm4ySnl3M3ZreXpZOEIz?=
- =?utf-8?B?Q0poOVpFb0MrbnJWUi9mWGJCQS9HdjNwRVQ1d201aU9scXoxT2dkbVRSSWxi?=
- =?utf-8?B?QXhUTEZRT1lEeXdEVkJZSzJMSCs3M2V5bEhTa0Eydmx3Z1NUZWxwa3AyVWZF?=
- =?utf-8?B?SjlOaDQ1TjhqbWpuekxueWcyZFNoUVE0Y1ZXMFhPSytUZTZxSVBCSzhZMmNK?=
- =?utf-8?B?dUFRM3VBOUVqTGNBZ2dYb2FUcFEwajErNVd5VWc5aEdxY0NqeGVxR28xTS8y?=
- =?utf-8?B?V25zSWNUMmJZUnJxNzg4NTlqSWZyUTlyWWNvRW5xdTB6eFJYK3ZEUzUwejU1?=
- =?utf-8?B?MnNrUmIvdUIrSGFyL01zU203ZGRzdXYveENDY2lFVnR1bmFtOHZad2xBVVNT?=
- =?utf-8?B?VWp1bnhSNTZMdFBZa1pvMFlJa2FVZ1R5ankyZDhtVkdRbm5IWGhUTStVYmpW?=
- =?utf-8?B?aXl4a0xUUzN5ZUk4Q2o2aDNLekxpMWZOVmhRUGIzR2hWZkdMWGtYbGdCU3lV?=
- =?utf-8?B?SE41SGJOcVJJUHp5Vmx6NGladjBOeVdFTFE1K3lkSU9CVHpvc2hjRHBvQ0w5?=
- =?utf-8?Q?dnKH36S+dLRDooEclvFhLWhTMn1RD2jsTI3RNNR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K20xTkFpZnNzcURnMXJvenNkTVdYdFlGVVh1SnJPSnl6TVVOQUxJaWJMT2Zu?=
- =?utf-8?B?RWkvQ0hBbTlaWDFzeGZpZnpEZE5iU3NmQWFFQW5mNnB0b2JHcmRtak1JbmVy?=
- =?utf-8?B?TGNqM3J6YzBFSkxQSGNjb1plYzFPVUNMVHBjem9tcE0xZzhJbDVIMzlJZFpp?=
- =?utf-8?B?Z0l0dnFRSU1qenJhWVRzYjc5SGZEQUs5U0hjV0R3YXNXSDhScDZxc0Zpby9k?=
- =?utf-8?B?Y3V3b2RWWUNmaFpJaVhTSXNhVjIvZzQ4SFkzZnZyVmJIS1Z4TExSZVJuaEpn?=
- =?utf-8?B?YTk0dVpja0NiTnlzQnVqdGlHOWdqZVhUT3lyVHdrYkR1Wm1UbmhjbzduclNs?=
- =?utf-8?B?SkZTVE5PNWZiOWV3SEVtekM2bEVIL2FMOGNZOEVjZDR3aEw1a3VTT2V0QjZv?=
- =?utf-8?B?bnBiTGhaQnVMWG1oeDJDTkZpdll6THlBa2JzTEp6WW1CQVMyTmJIbVRyVUZD?=
- =?utf-8?B?b0wxYW9rN1ZTRHd1NCsrazYyOE1STjBwY29jZy8ydFRUeDBuaWtWdU4wUVdE?=
- =?utf-8?B?YjhUMDRmRnVXdDBUU2pFdlExMGxKYllGK3ZCUk9aY251VmhwWHBicGFGTVlr?=
- =?utf-8?B?VkdrNW9kNmFOQXlibkdTSml3TFlGWGtiVGJJUXJaQlBEMmJvRS9tN2VWQWNH?=
- =?utf-8?B?Nml4akFzS2VSQ2FpZmluNGE1SVJUeFMvVXNtVWQrWmJEQWE1NWg5VWhlYTRF?=
- =?utf-8?B?RGc4RmQ4TXU4SEJ0N2ljU0EvY2IrYW9KaGQ4NERNZWdZVGFwMEkrRFQ2dERw?=
- =?utf-8?B?ZU04dFZBNGZ2UXprU0RvSU5Lb3pEb2gyR3NGZE1MTUZhU1ZNdzkvVUhVQTZQ?=
- =?utf-8?B?ZHRMOXNIKzFsMjdNbnJzcDNYZDBwV3lZVE1IY3BtOFZzYUxvSEM2eHAzR1V4?=
- =?utf-8?B?VTl0NVVqcHhRQ0hFa1JMWEl3VllqZVlzbHpzVmg4bHVGNE5qN0FqcGZ3bDdD?=
- =?utf-8?B?R3lub1BOZjJsZjhpSTlXeW9CN1FXcmlOdm1sdzBWRExCSDZrM2dpZGVUcXFZ?=
- =?utf-8?B?SzJVWm03WnRkSTB3WVh4UjdEdXpjeHpTY011VmJFWEpNNlB6WFB4T0xSNncw?=
- =?utf-8?B?WW9INGRpTjdGNGVvSTQ5RWd0bCt2YnJUVVRiM1hWdldYUmVwTmFDRTdTWDBB?=
- =?utf-8?B?SW16SldXZEYzdzFoUVgwZG9VTllocmZvUmhLR1J4M3FEa0RQOTZ0bHBkWUR2?=
- =?utf-8?B?cDZNZkVBSTdaRU0weDBTOXdoM1ZnUk9iVEdES05mZW1IVFBhK0pOMG9Za0E5?=
- =?utf-8?B?aS9wdUhEcGhLYTdDNmV0VFdNVTBGNlJGMkJ5RDcxL0pBaUUrSURjWXVKS2tO?=
- =?utf-8?B?MHYyUmNaT0wyQTZNWXp5bEtualN2MG9yblhZaUdzZXdkQWZzZ3MxNmtlR0RJ?=
- =?utf-8?B?cG04ODlEN0ZiS094aG4vdEhZbHJHQWtYc3Q5ZFpwTkY0K2Z1L3JGL1Rhc0g4?=
- =?utf-8?B?b0tpVXhFRGRXWmN6QS9NWE52L2pKRjVPTnVKTGdLMSswUDRHYjZ3Y1FYcnRo?=
- =?utf-8?B?MXZEMDZaaTFlY1BxQlA4YlB4T0cxKzRpOXhyRExVV2xSZkxGaTczTldEbmx6?=
- =?utf-8?B?QUc0TmE0cERVRHlXeS9Wcm1FV2hnaHI2WERHdVFDZXNnTlI0Z2NzK1JDZGNJ?=
- =?utf-8?B?Mk93b0VQUVJ3b1hYQ1NuZ01qYThSeHlrR2NPYUkxOUtmcng0a0huRi91QkZQ?=
- =?utf-8?B?OG9uUGRyTGVveDdoUmdPWmkxK0c3N0R1QTgzYnhLdUdIWG4rdFdKNDRmWE56?=
- =?utf-8?B?aTErU3lHSjUreTVaRXA4NmtKZWFrTW9wNU16TmNCM0U1RkdPcXZQK1ZkQ0M1?=
- =?utf-8?B?MzgvejBScWVSelk2bzJwcHBWcVl5c2ZvNklEWER3Zjg0T1Y3bkZIUngvN0d1?=
- =?utf-8?B?akRTZjdLamtzbjZPZk9oeXRvajFlVFQrNlVtZmZDR3loMnRSTVd3bE50VEtz?=
- =?utf-8?B?QTVUUzFBVk1qZjdmckRkODRjYlUrN0kwQTlrbWcwbjI3bFJoekV2djhpSXlv?=
- =?utf-8?B?KzFOcWlwVDZDZFpza0hLVk1kZ1ljRFh6M1o0NG55TkV3WTRxZ0s4K1J4Y1Nh?=
- =?utf-8?B?M0tFNE93cTZzZG0wT2V3MFQrSXQwNVdRS2ZsSHkvUHVnclJTUGpQY3puMTZv?=
- =?utf-8?Q?EFYans7qqg5fGR1C+XrQD6pQx?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	GIetk7smwAK/nWxxeXVh04ny4x29QM1fQ8Ei8XOCGxtweAzzmMiDPZuLrPwjdxpXV/sN/Kho3kTb0cuA80m5vh0/zhX8oCh0b8jBgfeOvruSzq38J7geu+Fq+BTA26SC9Wa5hsOi2vljk/eGJnEA11H8cpvpucw0KdXoWdo2LyNb0IFMr8TRgIdxb4RHgdV/EnuYSS2yJVYA/14gDt5ktmWjKuQEGGbeeiOPrrhLaogUYCwVYGMG2GWqWBge69HfPR5i299+8Z4OJKqsrdwE5TlDDgRabkOc+TZen7GDWXbHTzl09+mgFrzvixLq1Dhjitku/ujqBlnA5Chu4wz20UdWDe0sB/Ov5vnCu85qbpWnw2Zfn2v2+i6XmSgB2xa5wYBoZuRUApDR6acMuIGB3O6P1Yfa5oSvv3aImChQaffnetixDNA8yQBT5VY8oCTb3YRQpmGVJEh8aflgEuHfWCdMgFbmFFIM0COUAQkeK87jLwgDYhQdMtNYGtBKPDnV0cCYdImzxw3X7onSuyKtAUSRorc9D8HNuK+reFS9tJDhbn4pUrKXyrGYz7EWzJpLgpCKA5+JBa8GPGjfYNZls7Hk1pg8G2JbvIgoQthxCbA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3353ed12-408b-4b96-141d-08dcff3aae38
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 14:44:27.8094
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1MaI0Qn1ZQzV5iU4L4G1q0Can7mzRe8FrU2aRWtB5fH2v9Osh8mCzpR2HA7DcKgs3IwtWDU+1MJSEsXG7s/I5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR10MB8049
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-07_05,2024-11-07_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 spamscore=0
- phishscore=0 malwarescore=0 adultscore=0 suspectscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411070115
-X-Proofpoint-ORIG-GUID: k84hdgpxQbDeMH7bIF0CJmo3d_1C6PoQ
-X-Proofpoint-GUID: k84hdgpxQbDeMH7bIF0CJmo3d_1C6PoQ
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Subject: [ISSUE] split_folio() and dirty IOMAP folios
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+To: linux-fsdevel@vger.kernel.org, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ kvm@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
+ <djwong@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Thomas Huth <thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Yu Kuai <yukuai1@huaweicloud.com> [241106 19:57]:
-> Hi,
->=20
-> =E5=9C=A8 2024/11/06 23:19, Chuck Lever III =E5=86=99=E9=81=93:
-> >=20
-> >=20
-> > > On Nov 6, 2024, at 1:16=E2=80=AFAM, Greg KH <gregkh@linuxfoundation.o=
-rg> wrote:
-> > >=20
-> > > On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
-> > > > From: Yu Kuai <yukuai3@huawei.com>
-> > > >=20
-> > > > Fix patch is patch 27, relied patches are from:
-> >=20
-> > I assume patch 27 is:
-> >=20
-> > libfs: fix infinite directory reads for offset dir
-> >=20
-> > https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huawei=
-cloud.com/
-> >=20
-> > I don't think the Maple tree patches are a hard
-> > requirement for this fix. And note that libfs did
-> > not use Maple tree originally because I was told
-> > at that time that Maple tree was not yet mature.
-> >=20
-> > So, a better approach might be to fit the fix
-> > onto linux-6.6.y while sticking with xarray.
->=20
-> The painful part is that using xarray is not acceptable, the offet
-> is just 32 bit and if it overflows, readdir will read nothing. That's
-> why maple_tree has to be used.
+Hi,
 
-Why does the xarray cause it to overflow vs the maple tree? The maple
-tree conversion was for performance reasons, as far as I know [1].
+I'm debugging an interesting problem: split_folio() will fail on dirty 
+folios on XFS, and I am not sure who will trigger the writeback in a 
+timely manner so code relying on the split to work at some point (in 
+sane setups where page pinning is not applicable) can make progress.
 
-Thanks,
-Liam
+https://issues.redhat.com/browse/RHEL-58218
 
-[1]. https://lore.kernel.org/all/170820083431.6328.16233178852085891453.stg=
-it@91.116.238.104.host.secureserver.net/
 
->=20
-> Thanks,
-> Kuai
->=20
-> >=20
-> > This is the first I've heard of this CVE. It
-> > would help if the patch authors got some
-> > notification when these are filed.
-> >=20
-> >=20
-> > > > - patches from set [1] to add helpers to maple_tree, the last patch=
- to
-> > > > improve fork() performance is not backported;
-> > >=20
-> > > So things slowed down?
-> > >=20
-> > > > - patches from set [2] to change maple_tree, and follow up fixes;
-> > > > - patches from set [3] to convert offset_ctx from xarray to maple_t=
-ree;
-> > > >=20
-> > > > Please notice that I'm not an expert in this area, and I'm afraid t=
-o
-> > > > make manual changes. That's why patch 16 revert the commit that is
-> > > > different from mainline and will cause conflict backporting new pat=
-ches.
-> > > > patch 28 pick the original mainline patch again.
-> > > >=20
-> > > > (And this is what we did to fix the CVE in downstream kernels).
-> > > >=20
-> > > > [1] https://lore.kernel.org/all/20231027033845.90608-1-zhangpeng.00=
-@bytedance.com/
-> > > > [2] https://lore.kernel.org/all/20231101171629.3612299-2-Liam.Howle=
-tt@oracle.com/T/
-> > > > [3] https://lore.kernel.org/all/170820083431.6328.16233178852085891=
-453.stgit@91.116.238.104.host.secureserver.net/
-> > >=20
-> > > This series looks rough.  I want to have the maintainers of these
-> > > files/subsystems to ack this before being able to take them.
-> > >=20
-> > > thanks,
-> > >=20
-> > > greg k-h
-> >=20
-> > --
-> > Chuck Lever
-> >=20
-> >=20
->=20
+s390x PV ("Protected Virtualization" / "Secure virtualization") does not 
+support large folios. So when we want to convert an individual 4k page 
+to "secure" and we hit a large folio, we have to split it.
+
+In gmap_make_secure(), we call split_folio() if we hit a large folio, 
+and essentially retry forever (after dropping the folio reference).
+
+
+Starting a "protected VM" (similar to encrypted VMs) will not make 
+progress when trying to load the initial encrypted VM state into memory 
+("unpack").
+
+
+I assume other split_folio() users might similarly be affected: 
+split_folio() will frequently just fail without any obvious way to "fix 
+that up" to make progress.
+
+
+Looking into the details, it seems to be an IOMAP limitation: 
+split_folio() will keep failing in filemap_release_folio() because 
+iomap_release_folio() fails on dirty folios. I would have expected 
+background writeback to "fix that", but it's either not happening or 
+because it's just happening too slowly.
+
+I can see that migration code manually triggers writeback, using 
+folio_clear_dirty_for_io() and mapping->a_ops->writepages) when it 
+stumbles over a dirty folio.
+
+Should we do the same in split_folio() directly? Or offer callers 
+(gmap_make_secure()) a way to trigger this conditionally, similarly to 
+how we have ways for waiting for a folio that is under writeback to finish?
+
+... or is there a feasible way forward to make iomap_release_folio() not 
+bail out on dirty folios?
+
+The comment there says:
+
+"If the folio is dirty, we refuse to release our metadata because it may 
+be partially dirty.  Once we track per-block dirty state, we can release 
+the metadata if every block is dirty."
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
