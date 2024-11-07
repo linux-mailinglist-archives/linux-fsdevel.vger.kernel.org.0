@@ -1,140 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-33841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC129BFA81
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 00:56:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D459BFA9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 01:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A2928457F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2024 23:56:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E993B22407
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 00:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B3120E00C;
-	Wed,  6 Nov 2024 23:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0680B23C9;
+	Thu,  7 Nov 2024 00:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gXs7qhov"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vOnUYBxs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hIssntRB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vOnUYBxs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hIssntRB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6E91E04AC
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Nov 2024 23:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646BA7F9;
+	Thu,  7 Nov 2024 00:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937391; cv=none; b=GLvV4z6mgX7erwBgSQuvj4lFnuxDEaYyMDe2P2fcQl2oUGeCH5HyRDFYPquSSbOWclzwwXFhrNlzCkhlSdybWRrnfA9I7Wh4hfWgWdLCJBsIZycV20bVdn/ejyYnRVzGLRwhmhmskfxT75BWLZhV3ug0taK5pzmMPBTsW/ppuwk=
+	t=1730938859; cv=none; b=MR9ibnqCzvYTKyJFkpJESHMb8BcbLjeldIZHwiPm91eU5qvOS4yt7ItKahVCooVr2p0wUD0Z8GPnSLq4tGS5Xxb7tgyQRjiwz/v1CfQ4PaNmdaja53KZeO7ov2XorAHGyvED3sOZ4qE+X+nxZ+6oS+E6x6F+JxsbtP1cBB8t864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937391; c=relaxed/simple;
-	bh=17hqZQBvyXMncvHerWB98+Qft24xcCU27QYBQggL27g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CC5W/LHpg35oRD7Q0DrGgugUHu2375sxocyK0zHjPC3t7ImkyBC4MDZInFkEXEL8eugV6fAsxOhVOX/0TxS4+Cu0mZMPuIgm12OpaIem3YmvyzQcrla6LWtX6XqEn58ZkSuONdaaM143K1Gz6Wp9SVC57ypGtMZloAiQnqffgqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gXs7qhov; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 6 Nov 2024 15:56:19 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730937385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WwjeiWb2K0qdNecBV8zVccaOFulKNeLja/T2sJGrqx8=;
-	b=gXs7qhovA7Kr7NkqaAV458vaw1Tsdw7BPpxBHUmuXkh1bzfYyISZrFwFYbyJCN2Mdaj/yD
-	g+xeVWd87RNCASIe40UyPESC+mFlTykpKcvxaEM7vSafAWwP39khI3cio31wXbpJ6wKfyu
-	FDHWQfKX3CpEr3qvDtqKJLMSQopZlEs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, hannes@cmpxchg.org, linux-mm@kvack.org, 
-	kernel-team@meta.com, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2 2/2] fuse: remove tmp folio for writebacks and
- internal rb tree
-Message-ID: <nvcbtm3b3liqhhkmmbjxg5oakonkcbimf7et2scgwo3zuprigx@ycqf2udv34jl>
-References: <CAJnrk1ZLEUZ9V48UfmXyF_=cFY38VdN=VO9LgBkXQSeR-2fMHw@mail.gmail.com>
- <rdqst2o734ch5ttfjwm6d6albtoly5wgvmdyyqepieyjo3qq7n@vraptoacoa3r>
- <ba12ca3b-7d98-489d-b5b9-d8c5c4504987@fastmail.fm>
- <CAJnrk1b9ttYVM2tupaNy+hqONRjRbxsGwdFvbCep75v01RtK+g@mail.gmail.com>
- <4hwdxhdxgjyxgxutzggny4isnb45jxtump7j7tzzv6paaqg2lr@55sguz7y4hu7>
- <CAJnrk1aY-OmjhB8bnowLNYosTP_nTZXGpiQimSS5VRfnNgBoJA@mail.gmail.com>
- <ipa4ozknzw5wq4z4znhza3km5erishys7kf6ov26kmmh4r7kph@vedmnra6kpbz>
- <CAJnrk1aZV=1mXwO+SNupffLQtQNeD3Uz+PBcxL1TKBDgGsgQPg@mail.gmail.com>
- <fqfgkvavsktbgonbdpy766bl3c2634b4c7aghi4tndwurxqhp2@qphspeeemlzg>
- <CAJnrk1bdJ7E1z_fWpXe1VHk6o-ZYdN+WaVpS4W0oz_6MZNPacA@mail.gmail.com>
+	s=arc-20240116; t=1730938859; c=relaxed/simple;
+	bh=6+9+rOle1yuQCVAHVlrxMiL0JM8WjI6Jzo5bImukIns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gOsTn0E67deWkEDw8C0LMRoScPStGfmjXopYgeLbZI5VqIOqnh9f61Y/wN3TK5cUTACQhs1khrmWxgajGRWV7/KI+dmHKUe4d2tr32BDP02PxaUNA83vXQJXmtRxALpGVh/yO8YKMe0nojePGaEF/kuRa+T9myNHl1IED0hVHsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vOnUYBxs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hIssntRB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vOnUYBxs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hIssntRB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D36A1F392;
+	Thu,  7 Nov 2024 00:20:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730938855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=N4GiKwBTfTRExblGK/c6zX1qlyPUfsg3kHlOZ1kLrAI=;
+	b=vOnUYBxsJovLbk34hRDUsBNwfkJD7iCdPV67OMnRJ7jIkIFEC/oASg8Ay+xiU2PKn7ERCA
+	Ix4I7MHUbRBvWBmdWj9Yo2x7g7X9+W2LNI4HYm8XhoS8tJvU8eK+H9PpyUQezyrewvjncN
+	9N9SyYfHy54O90AAARZOZdlmmLAQ/+8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730938855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=N4GiKwBTfTRExblGK/c6zX1qlyPUfsg3kHlOZ1kLrAI=;
+	b=hIssntRBzn9cuL4kqaFd9tKyRbDwg/RM1g7Xuos0ZsHotmPSmHaR9TJLqM9IjZ9m04f3Sp
+	cyf+2oi1oCeITmDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vOnUYBxs;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hIssntRB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730938855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=N4GiKwBTfTRExblGK/c6zX1qlyPUfsg3kHlOZ1kLrAI=;
+	b=vOnUYBxsJovLbk34hRDUsBNwfkJD7iCdPV67OMnRJ7jIkIFEC/oASg8Ay+xiU2PKn7ERCA
+	Ix4I7MHUbRBvWBmdWj9Yo2x7g7X9+W2LNI4HYm8XhoS8tJvU8eK+H9PpyUQezyrewvjncN
+	9N9SyYfHy54O90AAARZOZdlmmLAQ/+8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730938855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=N4GiKwBTfTRExblGK/c6zX1qlyPUfsg3kHlOZ1kLrAI=;
+	b=hIssntRBzn9cuL4kqaFd9tKyRbDwg/RM1g7Xuos0ZsHotmPSmHaR9TJLqM9IjZ9m04f3Sp
+	cyf+2oi1oCeITmDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 840BE1394A;
+	Thu,  7 Nov 2024 00:20:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xmDCDeUHLGfWYgAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Thu, 07 Nov 2024 00:20:53 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/9] initramfs: kunit tests and cleanups
+Date: Thu,  7 Nov 2024 11:17:18 +1100
+Message-ID: <20241107002044.16477-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1bdJ7E1z_fWpXe1VHk6o-ZYdN+WaVpS4W0oz_6MZNPacA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Queue-Id: 5D36A1F392
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Wed, Nov 06, 2024 at 03:37:11PM -0800, Joanne Koong wrote:
-> On Thu, Oct 31, 2024 at 3:38 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Thu, Oct 31, 2024 at 02:52:57PM GMT, Joanne Koong wrote:
-> > > On Thu, Oct 31, 2024 at 1:06 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > >
-> > > > On Thu, Oct 31, 2024 at 12:06:49PM GMT, Joanne Koong wrote:
-> > > > > On Wed, Oct 30, 2024 at 5:30 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > > [...]
-> > > > > >
-> > > > > > Memory pool is a bit confusing term here. Most probably you are asking
-> > > > > > about the migrate type of the page block from which tmp page is
-> > > > > > allocated from. In a normal system, tmp page would be allocated from page
-> > > > > > block with MIGRATE_UNMOVABLE migrate type while the page cache page, it
-> > > > > > depends on what gfp flag was used for its allocation. What does fuse fs
-> > > > > > use? GFP_HIGHUSER_MOVABLE or something else? Under low memory situation
-> > > > > > allocations can get mixed up with different migrate types.
-> > > > > >
-> > > > >
-> > > > > I believe it's GFP_HIGHUSER_MOVABLE for the page cache pages since
-> > > > > fuse doesn't set any additional gfp masks on the inode mapping.
-> > > > >
-> > > > > Could we just allocate the fuse writeback pages with GFP_HIGHUSER
-> > > > > instead of GFP_HIGHUSER_MOVABLE? That would be in fuse_write_begin()
-> > > > > where we pass in the gfp mask to __filemap_get_folio(). I think this
-> > > > > would give us the same behavior memory-wise as what the tmp pages
-> > > > > currently do,
-> > > >
-> > > > I don't think it would be the same behavior. From what I understand the
-> > > > liftime of the tmp page is from the start of the writeback till the ack
-> > > > from the fuse server that writeback is done. While the lifetime of the
-> > > > page of the page cache can be arbitrarily large. We should just make it
-> > > > unmovable for its lifetime. I think it is fine to make the page
-> > > > unmovable during the writeback. We should not try to optimize for the
-> > > > bad or buggy behavior of fuse server.
-> > > >
-> > > > Regarding the avoidance of wait on writeback for fuse folios, I think we
-> > > > can handle the migration similar to how you are handling reclaim and in
-> > > > addition we can add a WARN() in folio_wait_writeback() if the kernel ever
-> > > > sees a fuse folio in that function.
-> > >
-> > > Awesome, this is what I'm planning to do in v3 to address migration then:
-> > >
-> > > 1) in migrate_folio_unmap(), only call "folio_wait_writeback(src);" if
-> > > src->mapping does not have the AS_NO_WRITEBACK_WAIT bit set on it (eg
-> > > fuse folios will have that AS_NO_WRITEBACK_WAIT bit set)
-> > >
-> > > 2) in the fuse filesystem's implementation of the
-> > > mapping->a_ops->migrate_folio callback, return -EAGAIN if the folio is
-> > > under writeback.
-> >
-> > 3) Add WARN_ONCE() in folio_wait_writeback() if folio->mapping has
-> > AS_NO_WRITEBACK_WAIT set and return without waiting.
-> 
-> For v3, I'm going to change AS_NO_WRITEBACK_RECLAIM to
-> AS_WRITEBACK_MAY_BLOCK and skip 3) because 3) may be too restrictive.
-> For example, for the sync_file_range() syscall, we do want to wait on
-> writeback - it's ok in this case to call folio_wait_writeback() on a
-> fuse folio since the caller would have intentionally passed in a fuse
-> fd to sync_file_range().
-> 
+This patchset adds basic kunit test coverage for initramfs unpacking
+and cleans up some minor buffer handling issues / inefficiencies.
 
-Sounds good.
+Changes since v2 (patch 2 only):
+- fix !CONFIG_INITRAMFS_PRESERVE_MTIME kunit test checks
+- add test MODULE_DESCRIPTION(), as suggested by Jeff Johnson
+- add some missing headers, reported by kernel test robot
+
+Changes since v1 (RFC):
+- rebase atop v6.12-rc6 and filename field overrun fix from
+  https://lore.kernel.org/r/20241030035509.20194-2-ddiss@suse.de
+- add unit test coverage (new patches 1 and 2)
+- add patch: fix hardlink hash leak without TRAILER
+- rework patch: avoid static buffer for error message
+  + drop unnecessary message propagation
+- drop patch: cpio_buf reuse for built-in and bootloader initramfs
+  + no good justification for the change
+
+Feedback appreciated.
+
+David Disseldorp (9):
+      init: add initramfs_internal.h
+      initramfs_test: kunit tests for initramfs unpacking
+      vsprintf: add simple_strntoul
+      initramfs: avoid memcpy for hex header fields
+      initramfs: remove extra symlink path buffer
+      initramfs: merge header_buf and name_buf
+      initramfs: reuse name_len for dir mtime tracking
+      initramfs: fix hardlink hash leak without TRAILER
+      initramfs: avoid static buffer for error message
+
+ include/linux/kstrtox.h   |   1 +
+ init/.kunitconfig         |   3 +
+ init/Kconfig              |   7 +
+ init/Makefile             |   1 +
+ init/initramfs.c          |  73 +++++----
+ init/initramfs_internal.h |   8 +
+ init/initramfs_test.c     | 403 ++++++++++++++++++++++++++++++++++++++++++++++
+ lib/vsprintf.c            |   7 +
+ 8 files changed, 471 insertions(+), 32 deletions(-)
+ create mode 100644 init/.kunitconfig
+ create mode 100644 init/initramfs_internal.h
+ create mode 100644 init/initramfs_test.c
 
