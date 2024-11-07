@@ -1,124 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-33908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F149C08AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:17:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56219C08D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09901F2422C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5415FB23181
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED1B212179;
-	Thu,  7 Nov 2024 14:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4430821265A;
+	Thu,  7 Nov 2024 14:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6qR/WH/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87671E502
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 14:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7C229CF4;
+	Thu,  7 Nov 2024 14:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989035; cv=none; b=FThfyJZ9TTejZmWupMt6yTbPxgAU9y2WyeqVf2V6BdwHZF3rEoalDDtsozDTNpv0LsSSSvsvCcNxuEHMVjNTeSHRQjAqM2bnqBH7TJ09O9oohsg8/aFdrwgA6wXZtMA4Dt2nnHzQOIJ6Hk2RkfApAVZuRJpMsObDyzVFGz3QBZc=
+	t=1730989533; cv=none; b=T/P+U53hWHxMsxu264BOeP2GtIsuJ2+sJ6Li6SdKHL5LXyyVd3HrK8Gdt1tv+LdGrb+7kOkDZMhT7CwR3a9vXdWqmqCtx9iAeETmShMqkFlU9b39Rp02rJJZUj86SdJsqGurP1HebZyAk4yvfVc5jKWAqLYHa078OZyKoDT6j88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989035; c=relaxed/simple;
-	bh=ESEs8cjOlgay8TYK0zWf6mfRl0Dp+XGeRqucTaiwfmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mQi3BZGNG6GZL7dp30xaAesNiSvPKzwg9v9PNeIHSb8Kts+IQBfIlc8G6zbATrnUc5N1N6D+8/N5pHVqz5xkJA6Xnylkngy5s8ETv9ndfhM9ORn0er5jok/Jin36jzDWtYwRU6ZzomZiuaiBbsvxcuWw3notVOYsOtUe+ri8qto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XkkbX2HZdz923c;
-	Thu,  7 Nov 2024 22:14:32 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id B58121402CB;
-	Thu,  7 Nov 2024 22:17:09 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 7 Nov 2024 22:17:09 +0800
-Message-ID: <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
-Date: Thu, 7 Nov 2024 22:17:07 +0800
+	s=arc-20240116; t=1730989533; c=relaxed/simple;
+	bh=41y9W618y09bMakRyllpygtuakSGMrynUlAyQUQqC9k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t2faT8ZwWkIXgu+yWZ+/CXGrg1Rnb/jKQs8Aq7N0pfEj/WJRfjSLWuaWFvYkScx+JFSkZdNEmMEPtx0qwW7sM2BBweITM6KBmsCs7Kg10XMY26ShOekBI7ZYA4ki4N5YqT6FPzknIzX+uj1GpwU8w0JjvxiFezaRkyMdTygBPmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6qR/WH/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84897C4CECC;
+	Thu,  7 Nov 2024 14:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730989533;
+	bh=41y9W618y09bMakRyllpygtuakSGMrynUlAyQUQqC9k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=N6qR/WH/BvdG0JbHgb3iAidfaJWgRoaEryjwv21Cvjs+84HmckGb7rxNbVxVn/1co
+	 3Wse4+pwwfFlLRIZnoLW4amXTVZsWoEFtH6umqz++znNKEB/9pRbveJWlJHNkv3YYc
+	 n5SJG909g4kfQiEQEt59V+bEHmz2PMwHbHC1KZ+vdSJXn4ciq2LNDHAX0rpUZ8igw6
+	 YyFCJ4QpIBjo3QcRUUcu7EMGMBwi9JR0QZA1kirZk76bzf1Oae9q6vQpevV9nYUlYN
+	 KjQiQ29PU0L2rmjahxRyDNS1w3yqjF9kt27YCDOpeeWwWJvubk+LOrS7F2zi1WmYY1
+	 FYlWCF1cUlOXQ==
+Message-ID: <d5e8e8bc74c75f55040bf2c9234e255a6fd0f47a.camel@kernel.org>
+Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report
+ the mount devicename
+From: Jeff Layton <jlayton@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Josef Bacik
+ <josef@toxicpanda.com>,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 07 Nov 2024 09:25:31 -0500
+In-Reply-To: <CAJfpeguufK_JN7y1ePMM6F4yZ5UCWbi-EJhoiWUsJpwG9vxXKw@mail.gmail.com>
+References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org>
+	 <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
+	 <CAJfpeguufK_JN7y1ePMM6F4yZ5UCWbi-EJhoiWUsJpwG9vxXKw@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: UML mount failure with Linux 6.11
-Content-Language: en-US
-To: Johannes Berg <johannes@sipsolutions.net>, <rrs@debian.org>
-CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>, Christian
- Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>
-References: <857ff79f52ed50b4de8bbeec59c9820be4968183.camel@debian.org>
- <2ea3c5c4a1ecaa60414e3ed6485057ea65ca1a6e.camel@sipsolutions.net>
- <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
- <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
- <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
- <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500022.china.huawei.com (7.185.36.66)
 
+On Thu, 2024-11-07 at 14:50 +0100, Miklos Szeredi wrote:
+> On Wed, 6 Nov 2024 at 20:53, Jeff Layton <jlayton@kernel.org> wrote:
+> >=20
+> > /proc/self/mountinfo displays the devicename for the mount, but
+> > statmount() doesn't yet have a way to return it. Add a new
+> > STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
+> > offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
+> > the return mask if there is a device string.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/namespace.c             | 25 ++++++++++++++++++++++++-
+> >  include/uapi/linux/mount.h |  3 ++-
+> >  2 files changed, 26 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 52ab892088f08ad71647eff533dd6f3025bbae03..d4ed2cb5de12c86b4da5862=
+6441e072fc109b2ff 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -5014,6 +5014,19 @@ static void statmount_fs_subtype(struct kstatmou=
+nt *s, struct seq_file *seq)
+> >                 seq_puts(seq, sb->s_subtype);
+> >  }
+> >=20
+> > +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file=
+ *seq)
+> > +{
+> > +       struct super_block *sb =3D s->mnt->mnt_sb;
+> > +       struct mount *r =3D real_mount(s->mnt);
+> > +
+> > +       if (sb->s_op->show_devname)
+> > +               return sb->s_op->show_devname(seq, s->mnt->mnt_root);
+>=20
+> I think the resulting string should be unescaped just like statmount_mnt_=
+root().
+>=20
+> The same goes for the option strings, which went in last cycle.
+>=20
+> I see no reason to require users of this interface to implement
+> unescaping themselves.  Others beside libmount probably won't do it
+> and will be surprised when encountering escaped strings because they
+> are rare.
 
-
-On 2024/11/7 21:09, Johannes Berg wrote:
-> Hi,
-> 
-> So took me a while to grok the context, and to understand why it was
-> working for me, and broken on another machine...
-> 
-> 
->> I have read the context in [1]. It seems your tool has already used new
->> mount api to mount the hostfs.
-> 
-> Yes, however, that's a default that's entirely transparent to the user.
-> This is why I wasn't seeing the errors, depending on the machine I'm
-> running this on, because the 'mount' tool either uses the old or new
-> style and the user can never know.
-> 
->> It now rejects unknown mount options as
->> many other filesystems do regardless of its earlier behavior (which
->> treats any option as the root directory in hostfs).
-> 
-> And that's clearly the root cause of this regression.
-> 
-> You can't even argue it's not a regression, because before cd140ce9f611
-> ("hostfs: convert hostfs to use the new mount API") it still worked with
-> the new fsconfig() API, but with the old mount options...
-> 
->> I'm not sure it is reasonable in this way. If we accept unknown option
->> in the hostfs, it will be treated as root directory. But which one
->> should be used (like mount -t hostfs -o unknown,/root/directory none
->> /mnt). So in the conversion, we introduce the `hostfs` key to mark the
->> root directory. May be we need more discussion about use case.
-> 
-> There's only one option anyway, so I'd think we just need to fix this
-> and not require the hostfs= key. Perhaps if and only if it starts with
-> hostfs= we can treat it as a key, otherwise treat it all as a dir? But I
-
-May be we can do that (just record the unknown option in host_root_path 
-when fs_parse failed). But this lead us to consider the case in which we 
-should handle a long option -o unknown1,hostfs=xxx,unknow2, which one 
-should be treated as the root directory? For new mount api, it will call 
-fsconfig three times to set the root directory. For older one, if one 
-path with that name exactly, may be it can mount successfully.
-
+Good point. I'll fix that up for the next version.
 
 Thanks,
-Hongbo
-
-> guess the API wouldn't make that easy.
-> 
-> Anyway, I dunno, but it seems like a regression to me and we should try
-> to find a way to fix it.
-> 
-> johannes
-> 
+--=20
+Jeff Layton <jlayton@kernel.org>
 
