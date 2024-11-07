@@ -1,173 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-33940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2BF9C0CA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 18:15:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44DB9C0CD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 18:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5B81F22C8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 17:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289231F230CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 17:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AFA216DE3;
-	Thu,  7 Nov 2024 17:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33BB216A32;
+	Thu,  7 Nov 2024 17:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sZXFKR/p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8zVfBtfm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3McfhKv2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oYjRdY0U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zykuer6S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DCC21501F;
-	Thu,  7 Nov 2024 17:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E4DDBE;
+	Thu,  7 Nov 2024 17:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730999694; cv=none; b=h2mlBKj792ECzgXsuP1Qi0jOmIUCeXpPRH5V2WMj1UmIOKjVTA0Ikq0Q4koeWs6R6YyqsJX26us616tAp41IWuVjvI0YvrDZL3SrE7MYHf+BQK2pCMoFoeXXAel1KkzADs3lKGqYQ5LXDX58RB2KLK1DxcBFKOBCjoppkjVn/Jo=
+	t=1731000216; cv=none; b=PM2GmhySn9ObzmZ9/VaebOexBTZ6Njvg9mg4tx/8wiitjH/Gy1c8XEhqlMMRqsQm8/LotKFbCNWK7LpNR1n/XuZDOBYoqt2ZOSCX8SeGzl12j+yZ4H+voh2vhShi3wOk3ljCuGUcWS5L/3NA/eNz4G1bH8f5vhEf/fxrvoAmJpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730999694; c=relaxed/simple;
-	bh=6oA4k/T7OVzyse0dwtaaQ2xHJgH9+T8yVJ4ZbS1FYyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyhT5GSFdeEiT5+dEfCJamNLw3KSQAGZBcETHT65otmgAji1/ZEqLHUUgfQTDlR11Q4/nqKyRCSs1VIPiKziJXdzOhnJuAC9HsBy2KJs7w+g09y+m6GGxwNliU5TIq4hRLhMvyRqgOAef03b+crIFyG9+rawxzd4nJB34WzAQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sZXFKR/p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8zVfBtfm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3McfhKv2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oYjRdY0U; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D94451F7CE;
-	Thu,  7 Nov 2024 17:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730999691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C9YZ64A1YSr5tuwhrHOT8emxFU3dW+6QzaoQchvGWek=;
-	b=sZXFKR/pao99FSFXVj9puC6B+k/pxPbjjOvBMsviTxS43J/xGHRgJyHSjcELoqWYajLC0e
-	SPxEAO5jGYnYoA1VpgtwE9xyIffXERbxasA1IOLJoeap3ajDaqyYBb3NIyqvykM/gUufbn
-	8G2gUWYjZgHdPxRS7r4dx3+i6zlaz6A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730999691;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C9YZ64A1YSr5tuwhrHOT8emxFU3dW+6QzaoQchvGWek=;
-	b=8zVfBtfmfM8Oul8Sks3yfNwJpm8jTuBnoLlYxPFCOVaiWkh/rPIb51nKL12tIBJbhA1K9N
-	1VqaDioUMVIQxcDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730999689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C9YZ64A1YSr5tuwhrHOT8emxFU3dW+6QzaoQchvGWek=;
-	b=3McfhKv2j3Zw2c/zoqEMR6nP6TbCFva0FveJaCNMSY17czOYRA8VsJEz/Jz/ju1MgTrq+m
-	ea1WSVWIYzqp/G6mNizUKdwz2iWnIxeY7wkwJE7WgMOlMOZd1DZXNi4pzcwkIQs0jEuluc
-	RI84LEzZz31r3YHXNqyeO2NbD7rESes=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730999689;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C9YZ64A1YSr5tuwhrHOT8emxFU3dW+6QzaoQchvGWek=;
-	b=oYjRdY0USGtNcxxOlbKyJo8+HQW1PGfUYEUfFcHIjix3RN2yJbkFzGA+ceQ14b1sbYcoIX
-	kP9qiYFaejLLeMCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C70AA139B3;
-	Thu,  7 Nov 2024 17:14:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GEWRMIn1LGfRGAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 17:14:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6D56CA08FE; Thu,  7 Nov 2024 18:14:41 +0100 (CET)
-Date: Thu, 7 Nov 2024 18:14:41 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+ee72b9a7aad1e5a77c5c@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, adilger@dilger.ca, eadavis@qq.com,
-	hdanton@sina.com, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu,
-	wojciech.gladysz@infogain.com
-Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_xattr_inode_iget (3)
-Message-ID: <20241107171441.he2rix37qopi6ane@quack3>
-References: <000000000000163e1406152c6877@google.com>
- <6726ae7b.050a0220.35b515.018a.GAE@google.com>
+	s=arc-20240116; t=1731000216; c=relaxed/simple;
+	bh=GiEBH3vCaFny3F9wCmysPBdsf2lj75atnrwXemAxTp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqzW7wq2YUhoAhpdMQqUHrphAS3pibqIiJZt34UFLxxOZx7qRdmlFHL8ArL1AsBKZSZIFWHUhMum1nCSSbuZYwkzHBFZTGo5izGkRwvAmOo/ScgUrUu5aSpVi5Ksqxx/O07/csRG+UT5t1ZxgPb+4YkVKgYWmd5HwQht70LcCKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zykuer6S; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a16b310f5so195511366b.0;
+        Thu, 07 Nov 2024 09:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731000212; x=1731605012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9FOmBpO65NUUZbynSIJljWcZSxtJSzr/BEmXGDAexTM=;
+        b=Zykuer6S6yeP15AYrU1FHU5KLcR1LBtunF5SopQRn4gZvKgwoSTO+hCiYQ7qzL+SeE
+         YMS/c3Hq5Zu6GOhdbKHnBlXg3wdj/UIWX4u7ngBrXICa9/ZSx11iYqFt7wfrv8cEz5il
+         dyYY1V2N/hcJEWbXjjyN7InwL8C7otYyiYETWaKbdpjRGgkLu3lauQE6pJbx0TXXJgJU
+         1QiQyO7QxySfqvCc8RbVDlitO4om2MESy5Qsz1AFAQ9rEck+quzH67pXGY3U56quUUNA
+         KaoTXFWPkEvCkICzgtxdZiw6BzqOSt8Au65f5anpTJbQFxmKe2l3r3ltxxdctTYFVmZh
+         OIfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731000212; x=1731605012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FOmBpO65NUUZbynSIJljWcZSxtJSzr/BEmXGDAexTM=;
+        b=swsP+TUpTVxmeVr13oxfrvqwRLc8e1uIcBiyuAr4zm6CgKMgOgkk/wOWGNDwCtHUM+
+         D04Z9RbZHdVFiJ8RmTfoerZu6DKeMO7EiOchgmWd14fMPZ2scCgGS7QlOieZdaOg0E+2
+         fv+BLAw8s6UfR3EgcK6CYNIQpAb+W3hEFdLd6RI635BhV921djNIL1o5lubLS2c8+JZr
+         bvruR7AwEqMd6tgXf+IUf+KGtYmIR6G7zKD5GuZY7C7WThSbAGzRQsZOJtR8kB+vO4RU
+         D3d2WJciJ+Dh9rz+YuYNeSK2BBj3HkDYq7PAAuXkTKDWufPFr7sHWi3hjS1Q6PQYsg92
+         ovxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9YW/e+sgRVDYWTacfs6HJaJFAr+z6Z5NG+9SffD27+i7Kj4W2lsfJ+GQKrcREliRkjL+YUZoGPw==@vger.kernel.org, AJvYcCVt63zz0U1aUvPXkH5ClJ62LV5E6ZTJHt5+BAvqfzncp4yXxB7y40nZ4lnSAE0Y8XVFn5r17lTJv02Z7/8=@vger.kernel.org, AJvYcCWDRoqlgMxFrFPFeAaJ/275ygzvuF8ohCIgQVLSpIQ7yQXHwJP01AGOXBywPUFj6++rm5jKwSdOGJLKiQ==@vger.kernel.org, AJvYcCXQKsxlzOqpn9tSrRQhsBTEzsuvBr4EEey/zX0FXf0J+8avmyCyYa0tWgr4LKN2SBGMdivfy1iSjeSUMyku9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhMBow1XKz8E08JiuvwlQ+EFg0z8td6RgexZvxMXqMQEjDXTD4
+	NakwF7b7G8VOE4tL/5xk9IzcyHz7NT6WIoOcwvKu/vYonVZj3Am+
+X-Google-Smtp-Source: AGHT+IGjmKySyNTN/8QcAW8bxivaq94CNWApyrUQEWFwxsq+VaX7hSp+J5pWWeh6pYc6mWGzASLRLw==
+X-Received: by 2002:a17:907:6ea4:b0:a9a:dc3:c86e with SMTP id a640c23a62f3a-a9eeb36c852mr77812166b.11.1731000211235;
+        Thu, 07 Nov 2024 09:23:31 -0800 (PST)
+Received: from [192.168.42.11] (82-132-217-53.dab.02.net. [82.132.217.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def54asm122435866b.157.2024.11.07.09.23.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 09:23:30 -0800 (PST)
+Message-ID: <b11cc81d-08b7-437d-85b4-083b84389ff1@gmail.com>
+Date: Thu, 7 Nov 2024 17:23:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
+ with read/write
+To: Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
+Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
+ anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
+References: <20241030180112.4635-1-joshi.k@samsung.com>
+ <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
+ <20241030180112.4635-7-joshi.k@samsung.com>
+ <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
+ <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
+ <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6726ae7b.050a0220.35b515.018a.GAE@google.com>
-X-Spam-Score: -1.30
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[qq.com,sina.com];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[ee72b9a7aad1e5a77c5c];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[dilger.ca,qq.com,sina.com,vger.kernel.org,googlegroups.com,mit.edu,infogain.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infogain.com:email,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Sat 02-11-24 15:58:03, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On 11/1/24 17:54, Kanchan Joshi wrote:
+> On 10/31/2024 8:09 PM, Pavel Begunkov wrote:
+>> On 10/30/24 21:09, Keith Busch wrote:
+>>> On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
+>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/
+>>>> io_uring.h
+>>>> index 024745283783..48dcca125db3 100644
+>>>> --- a/include/uapi/linux/io_uring.h
+>>>> +++ b/include/uapi/linux/io_uring.h
+>>>> @@ -105,6 +105,22 @@ struct io_uring_sqe {
+>>>>             */
+>>>>            __u8    cmd[0];
+>>>>        };
+>>>> +    /*
+>>>> +     * If the ring is initialized with IORING_SETUP_SQE128, then
+>>>> +     * this field is starting offset for 64 bytes of data. For meta io
+>>>> +     * this contains 'struct io_uring_meta_pi'
+>>>> +     */
+>>>> +    __u8    big_sqe[0];
+>>>> +};
+>>
+>> I don't think zero sized arrays are good as a uapi regardless of
+>> cmd[0] above, let's just do
+>>
+>> sqe = get_sqe();
+>> big_sqe = (void *)(sqe + 1)
+>>
+>> with an appropriate helper.
 > 
-> commit d1bc560e9a9c78d0b2314692847fc8661e0aeb99
-> Author: Wojciech Gładysz <wojciech.gladysz@infogain.com>
-> Date:   Thu Aug 1 14:38:27 2024 +0000
+> In one of the internal version I did just that (i.e., sqe + 1), and
+> that's fine for kernel.
+> But afterwards added big_sqe so that userspace can directly access
+> access second-half of SQE_128. We have the similar big_cqe[] within
+> io_uring_cqe too.
 > 
->     ext4: nested locking for xattr inode
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1245f55f980000
-> start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ee72b9a7aad1e5a77c5c
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12407f45180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140d9db1180000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
+> Is this still an eyesore?
 
-Makes sense:
+Yes, let's kill it as well please, and I don't think the feature
+really cares about it, so should be easy to do if not already in
+later revisions.
 
-#syz fix: ext4: nested locking for xattr inode
+>>>> +
+>>>> +/* this is placed in SQE128 */
+>>>> +struct io_uring_meta_pi {
+>>>> +    __u16        pi_flags;
+>>>> +    __u16        app_tag;
+>>>> +    __u32        len;
+>>>> +    __u64        addr;
+>>>> +    __u64        seed;
+>>>> +    __u64        rsvd[2];
+>>>>    };
+>>>
+>>> On the previous version, I was more questioning if it aligns with what
+>>
+>> I missed that discussion, let me know if I need to look it up
+> 
+> Yes, please take a look at previous iteration (v5):
+> https://lore.kernel.org/io-uring/e7aae741-c139-48d1-bb22-dbcd69aa2f73@samsung.com/
 
-								Honza
+"But in general, this is about seeing metadata as a generic term to
+encode extra information into io_uring SQE."
+
+Yep, that's the idea, and it also sounds to me that stream hints
+is one potential user as well. To summarise, the end goal is to be
+able to add more meta types/attributes in the future, which can be
+file specific, e.g. pipes don't care about integrity data, and to
+be able to pass an arbitrary number of such attributes to a single
+request.
+
+We don't need to implement it here, but the uapi needs to be flexible
+enough to be able to accommodate that, or we should have an
+understanding how it can be extended without dirty hacks.
+
+> Also the corresponding code, since my other answers will use that.
+> 
+>>> Pavel was trying to do here. I didn't quite get it, so I was more
+>>> confused than saying it should be this way now.
+>>
+>> The point is, SQEs don't have nearly enough space to accommodate all
+>> such optional features, especially when it's taking so much space and
+>> not applicable to all reads but rather some specific  use cases and
+>> files. Consider that there might be more similar extensions and we might
+>> even want to use them together.
+>>
+>> 1. SQE128 makes it big for all requests, intermixing with requests that
+>> don't need additional space wastes space. SQE128 is fine to use but at
+>> the same time we should be mindful about it and try to avoid enabling it
+>> if feasible.
+> 
+> Right. And initial versions of this series did not use SQE128. But as we
+> moved towards passing more comprehensive PI information, first SQE was
+> not enough. And we thought to make use of SQE128 rather than taking
+> copy_from_user cost.
+
+Do we have any data how expensive it is? I don't think I've ever
+tried to profile it. And where the overhead comes from? speculation
+prevention?
+
+If it's indeed costly, we can add sth to io_uring like pre-mapping
+memory to optimise it, which would be useful in other places as
+well.
+  
+>   > 2. This API hard codes io_uring_meta_pi into the extended part of the
+>> SQE. If we want to add another feature it'd need to go after the meta
+>> struct. SQE256?
+> 
+> Not necessarily. It depends on how much extra space it needs for another
+> feature. To keep free space in first SQE, I chose to place PI in the
+> second one. Anyone requiring 20b (in v6) or 18b (in v5) space, does not
+> even have to ask for SQE128.
+> For more, they can use leftover space in second SQE (about half of
+> second sqe will still be free). In v5, they have entire second SQE if
+> they don't want to use PI.
+> If contiguity is a concern, we can move all PI bytes (about 32b) to the
+> end of second SQE.
+> 
+> 
+>   > And what if the user doesn't need PI but only the second
+>> feature?
+> 
+> Not this version, but v5 exposed meta_type as bit flags.
+
+There has to be a type, I assume it's being added back.
+
+> And with that, user will not pass the PI flag and that enables to use
+> all the PI bytes for something else. We will have union of PI with some
+> other info that is known not to co-exist.
+
+Let's say we have 3 different attributes META_TYPE{1,2,3}.
+
+How are they placed in an SQE?
+
+meta1 = (void *)get_big_sqe(sqe);
+meta2 = meta1 + sizeof(?); // sizeof(struct meta1_struct)
+meta3 = meta2 + sizeof(struct meta2_struct);
+
+Structures are likely not fixed size (?). At least the PI looks large
+enough to force everyone to be just aliased to it.
+
+And can the user pass first meta2 in the sqe and then meta1?
+
+meta2 = (void *)get_big_sqe(sqe);
+meta1 = meta2 + sizeof(?); // sizeof(struct meta2_struct)
+
+If yes, how parsing should look like? Does the kernel need to read each
+chunk's type and look up its size to iterate to the next one?
+
+If no, what happens if we want to pass meta2 and meta3, do they start
+from the big_sqe?
+
+How do we pass how many of such attributes is there for the request?
+
+It should support arbitrary number of attributes in the long run, which
+we can't pass in an SQE, bumping the SQE size is not scalable in
+general, so it'd need to support user pointers or sth similar at some
+point. Placing them in an SQE can serve as an optimisation, and a first
+step, though it might be easier to start with user pointer instead.
+
+Also, when we eventually come to user pointers, we want it to be
+performant as well and e.g. get by just one copy_from_user, and the
+api/struct layouts would need to be able to support it. And once it's
+copied we'll want it to be handled uniformly with the SQE variant, that
+requires a common format. For different formats there will be a question
+of perfomance, maintainability, duplicating kernel and userspace code.
+
+All that doesn't need to be implemented, but we need a clear direction
+for the API. Maybe we can get a simplified user space pseudo code
+showing how the end API is supposed to look like?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
 
