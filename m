@@ -1,409 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-33974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF299C117B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 23:05:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D10C9C11A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 23:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13A8282D8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3CB1C221D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE369218950;
-	Thu,  7 Nov 2024 22:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E57218D7D;
+	Thu,  7 Nov 2024 22:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="hr729IfR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJaM+unM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward202b.mail.yandex.net (forward202b.mail.yandex.net [178.154.239.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB6921894E;
-	Thu,  7 Nov 2024 22:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1787218D64
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 22:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731017118; cv=none; b=snFTTa/e/kdpTG9R156bkxgpjUBZ779OQoX7Vn/CvE6zYUwMoTznhE31fiUUc5eqBVhPfOkRURLr9wiVyh+mFCgpeWp4yPDaNtywBU18D9TWbj9dhYZxXnV2VibL6grF4qHcI8ypSUjzCMcuRCU1ipnrzp57U+HLUR4liSH80YE=
+	t=1731018151; cv=none; b=saQ0ThThWSP8E31wzO11cUH+CMGj+s+V9a+P1pAQjJJn37ZaRoxs9dF0af5mx9mEnPjZsFNtljiILyTUcqqV3fMWXDDheJFNCvFcoxzT2fTtewBNdjUzxDRmAbX1DC1cVTWAtI5Nq/R+o2C9S6Z9gHNSAfzOQQI4MAxjrQJsz1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731017118; c=relaxed/simple;
-	bh=PEn/ZZYYfed9ZRpg9tWG1mYyC1xvWLSUMT6AacmRE0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mvCEE3nTA10M5JFtGJ7ocw9cY4A9Awv4JnAEeZWMTqkJxp5EKgdW8wYsIBUfVzZzTNasu1Qbez8ammEC8F/pYP4kU6+zPJEBxmGOw2nEDxpgE8X1o9m+t3tWY/qvrxgb0TdiVEut4bBmJEMNE9T3S8OPTbSKD44dVlYEBj4XKkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=hr729IfR; arc=none smtp.client-ip=178.154.239.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d101])
-	by forward202b.mail.yandex.net (Yandex) with ESMTPS id CE92B67320;
-	Fri,  8 Nov 2024 00:59:21 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-36.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-36.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:716:0:640:819a:0])
-	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 820F360C70;
-	Fri,  8 Nov 2024 00:59:13 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-36.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 7xqTJcE2G4Y0-IAw36Ajz;
-	Fri, 08 Nov 2024 00:59:12 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1731016752; bh=nb4RF3zmhfOzng2pvxmajKnitYSxN0AJqK6SlK8/sJE=;
-	h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=hr729IfR26+jyHEznDalmgj8aE8n9Kk5mDk670um5f2zY21tbux5LFsbqFysLvh+k
-	 3njWwoL1SKPWaIsUFG/v4lIirk+Jm1b4nZxG1sMJqTLjwITcuGIXZCLzpDEIrhx14x
-	 flJN2J6IhBlJnrKxwSPwi8w3ry7cB7+DNbiUJjhY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-36.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Stas Sergeev <stsp2@yandex.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Stas Sergeev <stsp2@yandex.ru>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Felix Moessbauer <felix.moessbauer@siemens.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Oleg Nesterov <oleg@redhat.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] procfs: implement PROCFS_SET_GROUPS ioctl
-Date: Fri,  8 Nov 2024 00:58:21 +0300
-Message-ID: <20241107215821.1514623-3-stsp2@yandex.ru>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241107215821.1514623-1-stsp2@yandex.ru>
-References: <20241107215821.1514623-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1731018151; c=relaxed/simple;
+	bh=vbiiK5s0HFH7enusbvvY69b81sO3o9ywaBdVN4VWfcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eARKPTjDFUpIrDOeWnDYipvd4etECS1nqZtb0rvK14jMBok8PzRrKJ4pX6IyseLJsB6PtBy/6W/js63khdcdWYa1UQD/+Sulpjgy7IRSmjBZNWjMQnoPwI5JYHuI5ydscxVERnjSFViUQnSCIv67u+v+zt7P34mzm1QsOtzLqSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJaM+unM; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so13498205e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 14:22:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731018148; x=1731622948; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/SNWr8oNBc1bO1oQ+Jn+ysVNTdV3p4zQURl3AH9mEw4=;
+        b=dJaM+unMvPAiQlMNhhee1L3mcMxWJCYQp4FJDDcYOnOJAmX0qkv1DtOVwZSV7G18wA
+         YiFJZriT87PdOfb9j4JiWVMh3TB9xRD0+06iVAeeMlRKwamgX5O1RB9cn9HpYglfePVR
+         h/dL6aX1nnik4jB+P1idypkBBRqQeujMuqSTkYvknyXvvA41zBsVoWctJtDh/dX4HU7G
+         67Mxovr4M5wWc0G875A2nHt7IAJEGE5OqkmRtbm4NBg1g/qc2xa1KJvyWzSVL/7Ik4Hj
+         uXWWykBrrXVutFg7tWwN+jZgaQFyp8XGxY2O4VADsmTCWl037vCu4cEzxg9cuUuxpFnB
+         lsLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731018148; x=1731622948;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/SNWr8oNBc1bO1oQ+Jn+ysVNTdV3p4zQURl3AH9mEw4=;
+        b=YKyMT6cvfBd/6gJ74svZyF4JPY205e2O44A8qyqeHv0wdgYHnkrV7yxW//9GepT7Xa
+         Gfnt2UmRgLsZqwm0aYEGf0bbtV7/ZaqE+iVWvH5NMLHs8WsPmg8Ycw+/Dcb62oWTO+Px
+         KSodHOcvR4TVrXgClqFEi8nXVlzyIkXrwgW3nGMwxBM2kDj66mv5Rm3sU/qaQh5mm26y
+         4ySGHtzEkfpHKY3r6jiukVU+XBYoE2C7KjLIOKbhuLjlJ76lx9Qi1fOIH9SgiU+OHZj6
+         AW0MI1bKhW/RCXbxgfJWVbWaPC7b2rc9DUyhH6O3VrNH/CuHOEvPMDqZH3kw7wlkSRcF
+         PSqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo/xqheLzCRr3fGwDRXvlZLwwwKc3D3bY2qAZU1iV5Kg73j0h+NivqO1k9Gk61CBBlo2ziDQY+gWdM+Jy3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsW9EMqsXtEi4ohS+H0Tkca7bWL6S795oAumRhD2BHpYIqULp+
+	8UXqsW9wogOjTDNNfUMsQ+2jGyB13O2HySqolO/R9zVCUur87N/f
+X-Google-Smtp-Source: AGHT+IFioPDUzFyMcA4xLKz8ofD3+sF40o01GM4YxEOyd/SJeWJYRle0Dcqf2Fi5PuI4D6FAPtImVw==
+X-Received: by 2002:a05:600c:1c9a:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-432b74fc837mr3403455e9.4.1731018147548;
+        Thu, 07 Nov 2024 14:22:27 -0800 (PST)
+Received: from f (cst-prg-87-218.cust.vodafone.cz. [46.135.87.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda03696sm2841698f8f.87.2024.11.07.14.22.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 14:22:26 -0800 (PST)
+Date: Thu, 7 Nov 2024 23:22:15 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: generic_permission() optimization
+Message-ID: <a7gys7zvegqwj2box4cs56bvvgb5ft3o3kn4e7iz43hojd4c6g@d3hihtreqdoy>
+References: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
+ <20241031-klaglos-geldmangel-c0e7775d42a7@brauner>
+ <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
+ <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
+ <CAHk-=wiB6vJNexDzBhc3xEwPTJ8oYURvcRLsRKDNNDeFTSTORg@mail.gmail.com>
+ <CAHk-=whSzc75TLLPWskV0xuaHR4tpWBr=LduqhcCFr4kCmme_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whSzc75TLLPWskV0xuaHR4tpWBr=LduqhcCFr4kCmme_w@mail.gmail.com>
 
-This patch implements PROCFS_SET_GROUPS ioctl for /proc/self/status
-files. The fd must be transferred with SCM_RIGHTS to another process
-in order for this ioctl to work. Below the process that opened the
-file, is referred to as "opener" and the process that calls this ioctl(),
-is called "setter".
+On Thu, Nov 07, 2024 at 09:54:36AM -1000, Linus Torvalds wrote:
+> On Thu, 31 Oct 2024 at 12:31, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Added some stats, and on my load (reading email in the web browser,
+> > some xterms and running an allmodconfig kernel build), I get about a
+> > 45% hit-rate for the fast-case: out of 44M calls to
+> > generic_permission(), about 20M hit the fast-case path.
+> 
+> So the 45% hit rate really bothered me, because on the load I was
+> testing I really thought it should be 100%.
+> 
+> And in fact, sometimes it *was* 100% when I did profiles, and I never
+> saw the slow case at all. So I saw that odd bimodal behavior where
+> sometimes about half the accesses went through the slow path, and
+> sometimes none of them did.
+> 
+> It took me way too long to realize why that was the case:  the quick
+> "do we have ACL's" test works wonderfully well when the ACL
+> information is cached, but the cached case isn't always filled in.
+> 
+> For some unfathomable reason I just mindlessly thought that "if the
+> ACL info isn't filled in, and we will go to the slow case, it now
+> *will* be filled in, so next time around we'll have it in the cache".
+> 
+> But that was just silly of me. We may never call "check_acl()" at all,
+> because if we do the lookup as the owner, we never even bother to look
+> up any ACL information:
+> 
+>         /* Are we the owner? If so, ACL's don't matter */
+> 
+> So next time around, the ACL info *still* won't be filled in, and so
+> we *still* won't take the fastpath.
+> 
+> End result: that patch is not nearly as effective as I would have
+> liked. Yes, it actually gets reasonable hit-rates, but the
+> ACL_NOT_CACHED state ends up being a lot stickier than my original
+> mental model incorrectly throught it would be.
+> 
 
-The following checks are performed about the opener:
-- Opener opened his own status, not someone else's.
-- Opener process still exist, so his proc entry is still valid.
-- The groups weren't changed since opening the file.
-- Opener was capable of CAP_SYS_ADMIN when opening the file.
+How about filesystems maintaing a flag: IOP_EVERYONECANTRAREVERSE?
+The name is a keybordfull and not the actual proposal.
 
-The following checks are performed about the setter:
-- Setter is a different process (thread) than an opener.
-- PFA_NO_NEW_PRIVS not set.
-- Either the process must be setgid-capable, or all the below must be
-  true:
-- euid==uid==suid i.e. no possibility to switch uid
-- egid==gid==sgid i.e. no possibility to switch gid
-- euid/egid of current process matches uid/gid of an opener process
-  had at the time of opening the file.
+Rationale:
+To my reading generic_permission gets called for all path components,
+where almost all of them just want to check if they can traverse.
 
-The setter can read from an fd to find out what group list is there
-to decide whether or not he wants to use it. The opener can't trick
-that by changing the groups in between, as then ioctl() detects that
-the group list was ever changed and fails with -EPERM.
-This is also the reason why the opener is required to "exist" (and
-not exit) for the duration of entire operation: otherwise his status
-file may not be readable by setter.
+So happens for vast majority of real path components the x is there for
+*everyone*. Even in case of /home/$user/crap, while the middle dir has x
+only for the owner and maybe the group, everything *below* tends to also
+be all x.
 
-Why /proc/self/status?
-Because this file carries the group list and other credentials
-already. Its quite natural to add an ioctl to apply whatever is
-already there. Client is therefore able to read the needed information
-and validate it in any way he wants, before applying. It is guaranteed
-that the information ever read, would match the one applied, because
-any change of the group info after the file was opened, disables the
-ioctl.
+I just did a kernel build while poking at the state with bpftrace:
+bpftrace -e 'kprobe:generic_permission { @[(((struct inode *)arg1)->i_mode & 0x49) == 0x49] = count(); }'
 
-What problem does this solve?
-Currently there is no way to change the group list if the process
-uses suid/sgid bits to switch to a less-privileged user to restrict
-the access to the original user's files. So such restriction itself
-requires CAP_SETGID to work. I.e. you need cap to drop the rights.
-This ioctl allows to move CAP_SETGID from the main process to the
-helper (server) process, keeping the main process cap-less.
-This particular implementation also requires CAP_SYS_ADMIN on helper
-side, but there may be a finer-grained approaches.
+result:
+@[0]: 5623736
+@[1]: 64867147
 
-Usage scenario:
-Main process connects to the helper via the AF_UNIX socket. Helper
-uses SO_PEERCRED to retrieve client's uid/gid and then does initgroups()
-with client's uid/gid to set the desired group list. Then it sets
-uid/gid to match client's. It should keep his euid/egid untouched
-or keep caps, as CAP_SYS_ADMIN check is performed by this ioctl.
-Then it opens /proc/self/status and sends it to client with SCM_RIGHTS.
-Client then reads from fd to validate the info in any way he wants,
-and uses ioctl(PROCFS_SET_GROUPS) on that fd to actually set up the
-received group list. It then replies to the server with the operation
-status, or just closes the connection. At that point server is allowed
-to exit.
+iow in 92% of calls everyone had x. Also note this collects calls for
+non-traversal, so the real hit ratio is higher so to speak. I don't use
+acls here so they were of no consequence anyway btw.
 
-Security considerations:
-As explained above, the server process, when opening the status file,
-must have uid/gid matching those of client (getting them via
-SO_PEERCRED), or ioctl() fails. This may mean either of the below:
-1. The server is setuid/setgid-capable. In this case we trust it does
-   the right thing, namely, calls initgroups() with client's creds.
-2. The server was capable but dropped the caps after changing creds.
-   Same as above.
-3. The server got the appropriate creds via login process. In this
-   case it can transfer only the proper group list, as he doesn't
-   have anything else and can't switch anything.
-4. The server used suid/sgid bits to adjust the uid/gid. In this
-   case he doesn't have the right group list to share.
-5. The server was spawned by someone else capable, like
-   `sudo setpriv --clear-groups --ruid=$RUID --rgid=$RGID ./server`
-   and has the appropriate uid/gid but wrong group list (or empty
-   group list, in case of --clear-groups).
+So if a filesystem cares to be faster, when instatianating an inode or
+getting setattr called on it it can (re)compute if there is anything
+blocking x for anyone. If nothing is in the way it can the flag and
+allow link_path_walk to skip everything, otherwise *unset* the flag (as
+needed).
 
-Cases 4 and 5 have a malicious potential and are difficult to
-distinguish from 2 and 3 on kernel level.
-While it may be possible to come up with the more fine-grained
-strategy, in this patch I took the simple approach: check the server
-for CAP_SYS_ADMIN. In that case he definitely has the right to send
-the needed groups to anyone. Server explicitly expresses his will to
-do so by changing uid/gid to client's before opening the file. Sending
-/proc/self/status via SCM_RIGHTS probably never happened "in a wild"
-before, and for sure in any pre-existing practice CAP_SYS_ADMIN-capable
-server won't change his uid/gid to client's before opening that file.
-So I figured these steps are explicit enough to not add a new open()
-flag or another ioctl() to allow the group info sharing in a yet more
-explicit way. That check is not performed if the client is setgid-capable,
-as in this case it could set the similar group list by other means
-anyway.
+This is completely transparent to filesystems which don't participate.
 
-It may be useful to inherit such fds via exec(), so O_CLOEXEC is
-not required in this patch.
-
-PFA_NO_NEW_PRIVS disables this ioctl.
-
-Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
-
-CC: Eric Biederman <ebiederm@xmission.com>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Aleksa Sarai <cyphar@cyphar.com>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
-CC: Christian Brauner <brauner@kernel.org>
-CC: Jan Kara <jack@suse.cz>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Jeff Layton <jlayton@kernel.org>
-CC: John Johansen <john.johansen@canonical.com>
-CC: Chengming Zhou <chengming.zhou@linux.dev>
-CC: Casey Schaufler <casey@schaufler-ca.com>
-CC: Adrian Ratiu <adrian.ratiu@collabora.com>
-CC: Felix Moessbauer <felix.moessbauer@siemens.com>
-CC: Jens Axboe <axboe@kernel.dk>
-CC: Oleg Nesterov <oleg@redhat.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-CC: linux-kernel@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
----
- fs/proc/base.c          | 137 +++++++++++++++++++++++++++++++++++++++-
- include/linux/cred.h    |   4 ++
- include/uapi/linux/fs.h |   2 +
- 3 files changed, 141 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 015db8752a99..67fae857372f 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -98,6 +98,7 @@
- #include <linux/resctrl.h>
- #include <linux/cn_proc.h>
- #include <linux/ksm.h>
-+#include <linux/cred.h>
- #include <uapi/linux/lsm.h>
- #include <trace/events/oom.h>
- #include "internal.h"
-@@ -829,6 +830,138 @@ static const struct file_operations proc_single_file_operations = {
- };
- 
- 
-+static int proc_status_open(struct inode *inode, struct file *filp)
-+{
-+	struct proc_inode *pi = PROC_I(inode);
-+	struct pid *opener = get_task_pid(current, PIDTYPE_PID);
-+
-+	pi->op.proc_show = proc_pid_status;
-+	return single_open(filp, proc_single_show, opener);
-+}
-+
-+static int proc_status_release(struct inode *inode, struct file *file)
-+{
-+	struct seq_file *seq = file->private_data;
-+	struct pid *opener = seq->private;
-+
-+	put_pid(opener);
-+	return single_release(inode, file);
-+}
-+
-+static bool can_borrow_groups(const struct cred *cur_cred,
-+			      const struct cred *f_cred)
-+{
-+	if (may_setgroups())
-+		return 1;
-+	/* Make sure the process can't switch uid/gid. */
-+	if (!uid_eq(cur_cred->euid, cur_cred->uid) ||
-+			!uid_eq(cur_cred->suid, cur_cred->uid))
-+		return 0;
-+	if (!gid_eq(cur_cred->egid, cur_cred->gid) ||
-+			!gid_eq(cur_cred->sgid, cur_cred->gid))
-+		return 0;
-+	/* Make sure the euid/egid of current processes are equal
-+	 * to uid/gid of an opener at file open time.
-+	 */
-+	if (!uid_eq(f_cred->uid, cur_cred->euid) ||
-+			!gid_eq(f_cred->gid, cur_cred->egid))
-+		return 0;
-+	return 1;
-+}
-+
-+static int do_proc_setgroups(const struct cred *task_cred,
-+			     const struct cred *cur_cred,
-+			     const struct cred *f_cred)
-+{
-+	struct group_info *cgi = get_group_info(cur_cred->group_info);
-+	struct group_info *gi = get_group_info(task_cred->group_info);
-+	int err;
-+
-+	/* Make sure groups didn't change since file open. */
-+	err = -EPERM;
-+	if (f_cred->group_info != gi)
-+		goto out_gi;
-+	/* Don't error if the process is setting the same list again. */
-+	err = 0;
-+	if (cgi == gi)
-+		goto out_gi;
-+
-+	err = -EPERM;
-+	if (!can_borrow_groups(cur_cred, f_cred))
-+		goto out_gi;
-+	err = set_current_groups(gi);
-+
-+out_gi:
-+	put_group_info(gi);
-+	put_group_info(cgi);
-+	return err;
-+}
-+
-+static int do_status_ioctl(struct task_struct *task, struct file *file,
-+			    unsigned int cmd, unsigned long arg)
-+{
-+	const struct cred *task_cred;
-+	const struct cred *cur_cred;
-+	int err = -EINVAL;
-+
-+	switch (cmd) {
-+	case PROCFS_SET_GROUPS:
-+		if (arg)
-+			break;
-+		/* Disallow opener process to set his own groups. */
-+		err = -EPERM;
-+		if (task == current)
-+			break;
-+		/* Don't change anything if current has NO_NEW_PRIVS. */
-+		if (task_no_new_privs(current))
-+			break;
-+		/* Opener must be capable of granting his groups. */
-+		if (!file_ns_capable(file, &init_user_ns, CAP_SYS_ADMIN))
-+			break;
-+		task_cred = get_task_cred(task);
-+		cur_cred = get_current_cred();
-+		err = do_proc_setgroups(task_cred, cur_cred, file->f_cred);
-+		put_cred(cur_cred);
-+		put_cred(task_cred);
-+		break;
-+	}
-+	return err;
-+}
-+
-+static long proc_status_ioctl(struct file *file, unsigned int cmd,
-+			      unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct pid *pid = proc_pid(inode);
-+	struct seq_file *seq = file->private_data;
-+	struct pid *opener = seq->private;
-+	struct task_struct *task;
-+	long err;
-+
-+	/* Make sure opener opened his own proc entry. */
-+	if (pid != opener)
-+		return -EPERM;
-+
-+	task = get_pid_task(pid, PIDTYPE_PID);
-+	if (!task)
-+		return -ESRCH;
-+
-+	err = do_status_ioctl(task, file, cmd, arg);
-+
-+	put_task_struct(task);
-+	return err;
-+}
-+
-+static const struct file_operations proc_status_operations = {
-+	.open		= proc_status_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= proc_status_release,
-+	.unlocked_ioctl	= proc_status_ioctl,
-+	.compat_ioctl	= proc_status_ioctl,
-+};
-+
-+
- struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(inode);
-@@ -3314,7 +3447,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- 	REG("environ",    S_IRUSR, proc_environ_operations),
- 	REG("auxv",       S_IRUSR, proc_auxv_operations),
--	ONE("status",     S_IRUGO, proc_pid_status),
-+	REG("status",     S_IRUGO, proc_status_operations),
- 	ONE("personality", S_IRUSR, proc_pid_personality),
- 	ONE("limits",	  S_IRUGO, proc_pid_limits),
- #ifdef CONFIG_SCHED_DEBUG
-@@ -3665,7 +3798,7 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- 	REG("environ",   S_IRUSR, proc_environ_operations),
- 	REG("auxv",      S_IRUSR, proc_auxv_operations),
--	ONE("status",    S_IRUGO, proc_pid_status),
-+	REG("status",    S_IRUGO, proc_status_operations),
- 	ONE("personality", S_IRUSR, proc_pid_personality),
- 	ONE("limits",	 S_IRUGO, proc_pid_limits),
- #ifdef CONFIG_SCHED_DEBUG
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..cfdeebbd7db6 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -83,6 +83,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	return 1;
- }
-+static inline bool may_setgroups(void)
-+{
-+	return 1;
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 753971770733..d4b3fbfdac79 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -552,4 +552,6 @@ struct procmap_query {
- 	__u64 build_id_addr;		/* in */
- };
- 
-+#define PROCFS_SET_GROUPS	_IO(PROCFS_IOCTL_MAGIC, 18)
-+
- #endif /* _UAPI_LINUX_FS_H */
--- 
-2.47.0
-
+So that would be my proposal, no interest in coding it.
 
