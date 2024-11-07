@@ -1,124 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-33907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846CF9C0817
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:51:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F149C08AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49AAF283330
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 13:51:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09901F2422C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB66212636;
-	Thu,  7 Nov 2024 13:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvO/ImY7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED1B212179;
+	Thu,  7 Nov 2024 14:17:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DA520F5AA
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87671E502
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 14:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987469; cv=none; b=ZOJPKIg0lS0Hct4mVE1jrxfntATw300dbtOOm84QnNw6ZzPqy1KJzlX0cyRWZ6DE+6kcSLRQ5DrYOZhopGILUQ6rx4N/j3sH/YJFtssuvwzrTBRS/o7L8U8yGgpZNI/y7/SNEyOLgcmUrxlavprHNy2P8/ixJedkc+wqcg8d2AA=
+	t=1730989035; cv=none; b=FThfyJZ9TTejZmWupMt6yTbPxgAU9y2WyeqVf2V6BdwHZF3rEoalDDtsozDTNpv0LsSSSvsvCcNxuEHMVjNTeSHRQjAqM2bnqBH7TJ09O9oohsg8/aFdrwgA6wXZtMA4Dt2nnHzQOIJ6Hk2RkfApAVZuRJpMsObDyzVFGz3QBZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987469; c=relaxed/simple;
-	bh=trEKegl2FHDDStbX9laY/xAPw7CpJ4etahs2VyqANbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f03IFhWy3ll+ks/LVXtYHbg+HgQde8igqfRbFtDweCIi7M6w5PM60X7bT0+kD29egZF4X5LU9gM2S2hWvhclJRGcS3sVDsEbZPOGRyY6Q+vrnjW5zsUYPThQKHk1udu07DMrkmXxxWYwSsagnwQynxrV4bvVg3HcuzlNbXJieYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvO/ImY7; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4609beb631aso6221541cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 05:51:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730987467; x=1731592267; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
-        b=lvO/ImY7jRb4oJ9GCI9PAcPoKzU8ue9XWUKzZ2Oj31iiV4ldUmm5I9/exvW6/5I7Xh
-         U5cd03+ShgHyW8a0hE7SmjPXYK1U2aDZ20PnFhph63ttAhNyw2+8tVPyPMd5PMD2KGpi
-         2ADBNbqvByTwbuB8sfOezqqGI6CnnIAzLsNwc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987467; x=1731592267;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
-        b=mfYlDE47d75EPwK/c++1kx/hlyPklOOUlvsII3APrXFjVWMpZu+AISd0qe63b9WRaH
-         7FUPDXAuZPzKItULEmNndE2pdYFAgpZ2gtTOqy7lipxiYba14LPd00DoHF5gaZ2b0N8f
-         RKSfI4c7R8CJSWkhmCeDATQhAlzhbFpOXwI7Z6Xky+Q2G5gqm3sMO3mJ37vYTWjjtoPx
-         rvopve5AF0eGDHbyp1OM52tuxrhyys+wdo0pmVURrdk8XD3i2BkhDxJmAagnyoEDtpU+
-         wa7+2QDO0/wZrFlM51HbdgQSfqGxYyIt7ajofMqZiqEgH8fwgCQTv74+M3CUeugxS63N
-         Mp7g==
-X-Forwarded-Encrypted: i=1; AJvYcCURT9daLmZAqUot+F8sLwPpdmi4Ofzn2Djewvut3HdOWS9B1jQC4IcFgWY8t+5o9ZIhpbuCN/+zdxwo0sJ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxyUBqfGl3zh3Je7+YtS6QFtyxsGD+BPMXwBMi1Hm26qes501o
-	nyD7c9GZz548TdW3D8fqBhF4IaKxOilsdzY0yhsT9snkOoRUCj6h0PSmRry/OztNmqWlHahvyuo
-	eMxoVQJtsV/LzDspiGdwAAxYPZlkXNz4I+kYt3g==
-X-Google-Smtp-Source: AGHT+IGMnmumBMb+3kuOO+F0xYzmD0dh5oV9KLJbqWkglpw859Yu8qzT99hqpfqG9orBIBT6bwMX6D9jL0g85BVP+Fs=
-X-Received: by 2002:a05:622a:492:b0:460:4ef4:6377 with SMTP id
- d75a77b69052e-462b8646b74mr411352341cf.6.1730987466753; Thu, 07 Nov 2024
- 05:51:06 -0800 (PST)
+	s=arc-20240116; t=1730989035; c=relaxed/simple;
+	bh=ESEs8cjOlgay8TYK0zWf6mfRl0Dp+XGeRqucTaiwfmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mQi3BZGNG6GZL7dp30xaAesNiSvPKzwg9v9PNeIHSb8Kts+IQBfIlc8G6zbATrnUc5N1N6D+8/N5pHVqz5xkJA6Xnylkngy5s8ETv9ndfhM9ORn0er5jok/Jin36jzDWtYwRU6ZzomZiuaiBbsvxcuWw3notVOYsOtUe+ri8qto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XkkbX2HZdz923c;
+	Thu,  7 Nov 2024 22:14:32 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id B58121402CB;
+	Thu,  7 Nov 2024 22:17:09 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 7 Nov 2024 22:17:09 +0800
+Message-ID: <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+Date: Thu, 7 Nov 2024 22:17:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org> <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
-In-Reply-To: <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 7 Nov 2024 14:50:56 +0100
-Message-ID: <CAJfpeguufK_JN7y1ePMM6F4yZ5UCWbi-EJhoiWUsJpwG9vxXKw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report the
- mount devicename
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: UML mount failure with Linux 6.11
+Content-Language: en-US
+To: Johannes Berg <johannes@sipsolutions.net>, <rrs@debian.org>
+CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>, Christian
+ Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>
+References: <857ff79f52ed50b4de8bbeec59c9820be4968183.camel@debian.org>
+ <2ea3c5c4a1ecaa60414e3ed6485057ea65ca1a6e.camel@sipsolutions.net>
+ <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
+ <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
+ <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+ <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Wed, 6 Nov 2024 at 20:53, Jeff Layton <jlayton@kernel.org> wrote:
->
-> /proc/self/mountinfo displays the devicename for the mount, but
-> statmount() doesn't yet have a way to return it. Add a new
-> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
-> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
-> the return mask if there is a device string.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/namespace.c             | 25 ++++++++++++++++++++++++-
->  include/uapi/linux/mount.h |  3 ++-
->  2 files changed, 26 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 52ab892088f08ad71647eff533dd6f3025bbae03..d4ed2cb5de12c86b4da58626441e072fc109b2ff 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5014,6 +5014,19 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
->                 seq_puts(seq, sb->s_subtype);
->  }
->
-> +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
-> +{
-> +       struct super_block *sb = s->mnt->mnt_sb;
-> +       struct mount *r = real_mount(s->mnt);
-> +
-> +       if (sb->s_op->show_devname)
-> +               return sb->s_op->show_devname(seq, s->mnt->mnt_root);
 
-I think the resulting string should be unescaped just like statmount_mnt_root().
 
-The same goes for the option strings, which went in last cycle.
+On 2024/11/7 21:09, Johannes Berg wrote:
+> Hi,
+> 
+> So took me a while to grok the context, and to understand why it was
+> working for me, and broken on another machine...
+> 
+> 
+>> I have read the context in [1]. It seems your tool has already used new
+>> mount api to mount the hostfs.
+> 
+> Yes, however, that's a default that's entirely transparent to the user.
+> This is why I wasn't seeing the errors, depending on the machine I'm
+> running this on, because the 'mount' tool either uses the old or new
+> style and the user can never know.
+> 
+>> It now rejects unknown mount options as
+>> many other filesystems do regardless of its earlier behavior (which
+>> treats any option as the root directory in hostfs).
+> 
+> And that's clearly the root cause of this regression.
+> 
+> You can't even argue it's not a regression, because before cd140ce9f611
+> ("hostfs: convert hostfs to use the new mount API") it still worked with
+> the new fsconfig() API, but with the old mount options...
+> 
+>> I'm not sure it is reasonable in this way. If we accept unknown option
+>> in the hostfs, it will be treated as root directory. But which one
+>> should be used (like mount -t hostfs -o unknown,/root/directory none
+>> /mnt). So in the conversion, we introduce the `hostfs` key to mark the
+>> root directory. May be we need more discussion about use case.
+> 
+> There's only one option anyway, so I'd think we just need to fix this
+> and not require the hostfs= key. Perhaps if and only if it starts with
+> hostfs= we can treat it as a key, otherwise treat it all as a dir? But I
 
-I see no reason to require users of this interface to implement
-unescaping themselves.  Others beside libmount probably won't do it
-and will be surprised when encountering escaped strings because they
-are rare.
+May be we can do that (just record the unknown option in host_root_path 
+when fs_parse failed). But this lead us to consider the case in which we 
+should handle a long option -o unknown1,hostfs=xxx,unknow2, which one 
+should be treated as the root directory? For new mount api, it will call 
+fsconfig three times to set the root directory. For older one, if one 
+path with that name exactly, may be it can mount successfully.
+
 
 Thanks,
-Miklos
+Hongbo
+
+> guess the API wouldn't make that easy.
+> 
+> Anyway, I dunno, but it seems like a regression to me and we should try
+> to find a way to fix it.
+> 
+> johannes
+> 
 
