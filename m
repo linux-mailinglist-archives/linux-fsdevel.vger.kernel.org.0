@@ -1,173 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-33894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44AC9C03BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 12:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EEE9C03D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 12:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297B21F2218D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 11:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0922E1F2317A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 11:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAC61F5833;
-	Thu,  7 Nov 2024 11:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoDKCozQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECD21F582D;
+	Thu,  7 Nov 2024 11:24:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E311F4723;
-	Thu,  7 Nov 2024 11:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716671F4FA8
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 11:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978414; cv=none; b=Qk4U1sTWtaCK0yzZp9qVIVfjItvOnkjR0ywsUuOmbNeF+SYetXMKeGQofE+X0XQ9osiXYtALdNES3iAhFXrDt3/Jk/QRlnACoR+oQIH0dmwMfqVSutfcwQUpj070budO1RPrlw4qVIwDg/9OmVmpvFjhMQwFNRj7i7ZyInf5V7Y=
+	t=1730978645; cv=none; b=hVauQKsU1nYSKqeWMAKBbSNSVEBdvpphMUL3r/q7F+3T3UUF+q2Y78FO5cnqCYG1WpkoeoW8Tt5Kixz5TGYS4ii1GH072qASi+edBXk+NMg9PXmrDa71aL/9olVITAgEDCQu1YDQfBNnKx0lxh5rLndjLzgHsFiy+FRZTgXbaA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978414; c=relaxed/simple;
-	bh=cKs3nGlKrYKwfxl2ze6Z47cN9UUOS6ICPa53w8GB5GU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yf3max64mzSgOTFSodWVxWwocj8cZLULQThE+DGp+11D5nonwv+Sjj8IupLM/778kxR4glNwk8cphgNh1kTe+On0SlE+2V5ykAFdUFwFgP9MacI9yq4590pgnIKCrVIggrVMMVEGGhrLrH8lZlbccgtdMPpJ6a9n6F+QoFUMO98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoDKCozQ; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cf04f75e1aso643999a12.1;
-        Thu, 07 Nov 2024 03:20:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730978411; x=1731583211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cKs3nGlKrYKwfxl2ze6Z47cN9UUOS6ICPa53w8GB5GU=;
-        b=aoDKCozQvDpED4BBs3ACLRhe/RytwMFDTrrzWTU+h8ImcBnSSRumwPCvl9YiDiIypP
-         2EL+0EbVJynkxqIaK3rXAIThE2MmzcXPa30TSE8AErbFJZJcWrfMnmt/bJ8QJnSsEkIV
-         0948Bwh7e+ujE+V9cFmIMe0Djs3TfIOBY7ZH+t7P578v9KKX4B8zA3Nd1kUkrS+EeZku
-         kXSrm7agbTgthzV/x2346udkehtjDlztXmwcoJ6lJzyN5tUqTx42/hr+LC15cuti0X0N
-         rJb+BAdYQ/728fEEiH9kO9CT+RioAtu+WqTn6e0qmA5+r/L6s/Z4Y9UAobwCnzXEUT0R
-         LoMQ==
+	s=arc-20240116; t=1730978645; c=relaxed/simple;
+	bh=SJ5DaTFfA9NE7JO1TVV/AkfS+1CT0OW/Iim1MWeWxL4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZXfmkv+hQTKKffhxw30ZXOLzVkXLMWwZkHc8zFnHGKecQ3+JFZpnwTj/HrbcvZy1zShpmjX7UxZBHuQPV9Fi2ZdY7WS4zUJcS0TJeAEye4alMlGNKrAgH4g6BibNVStHQnRBuvSSKyta6YdAQHSZz3LLZShksG2ptaHJL8st2Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6c01d8df2so8429225ab.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 03:24:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730978411; x=1731583211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cKs3nGlKrYKwfxl2ze6Z47cN9UUOS6ICPa53w8GB5GU=;
-        b=kDqbgOGXWXtw9E7yZCSXMY1pggTqCFJKc6joKoIFRJaOGSqbNzXnpI4ddjzBC9El9W
-         uEecjvhRP3WrIkIlha18bPyR3seYCZMFvdQW8XCZRA6PC2L7yQuF0vk6z31Z9OrUftf3
-         VbqaqjT1bebStSMYisVDDK2QLDoCKwiwbl+vTsCuuajp3qQViG2ZWPipOHmbV3VNP4PA
-         yAPZErt0o7xWrXaf4U4IV5/WwTEaWW1ktWPFS7iBsDeh99NROLZVLYfRZo3VeQ0xxkju
-         3oHJ+7gWjOBKawVKkwwdUaT5614OVOriXIsgRI8k8DG8XJhQ7gg8bkIW7iy6bxxz0ABu
-         dQnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnm6X/oniBzz3n6Ds1BNBmR8kUtcsNEMTTl72YGw1x9S4if8XK4PeuLMsza2OiTzvbZZA=@vger.kernel.org, AJvYcCWAwy7mnGy5A4f/g/xD8siiiM55jEs0MODCxK9Y3An06bHCRAh+1XGLx+1v8a3ILBBAPjz/GAyHN4qIk3AM2g==@vger.kernel.org, AJvYcCWlvt+kAITmSqfCf0TnWlsXe4BbUrrcJ0M23haakkkOv7KnLdozCURET1n6U7NKkKwsAZTs7WJ66uzPNPcM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNY1z5PTURn98Lb6VQpvg4+GoMeihPM3znuVRxARaM4flgCBhg
-	GVuZUGybX2rICoE8IA0h4LM6wVM901PEvdLfnrCcIydjzesmF3j4VvkKAoMQhc0oL55zaY6pLTQ
-	KOnUOUDRD533O0PySzeUxywVV0fw=
-X-Google-Smtp-Source: AGHT+IEIV/Bzp+Gx4s/r67H6BJfcYRWGFvR6PRJ+8aViwXu1qLCvYuzb8jBBqyJmUmI5C6+T3ZbgJas44MxPHsQMe3o=
-X-Received: by 2002:a17:907:e6c7:b0:a9e:d49e:c475 with SMTP id
- a640c23a62f3a-a9ed49ec528mr227318266b.26.1730978410528; Thu, 07 Nov 2024
- 03:20:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730978642; x=1731583442;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/kuQX3VmdU3VvGHoe3B0rpGazcaxNvNoeaIsi40NWo=;
+        b=nGWrvF3taGWSTUvj44yb1YWw/S4v77V5Q1q1zJLnnXaC/JgnbmFV9xpFTCZtre7Vqf
+         NzarJIPxiCktvCtSJeYZquSdRvbZreheJmxzKYF/K5SZXDavhV3O8TkYB/SFUl2hWAlE
+         zI/XhviKoC/5cHCuux/yIlGGAMM5gap1wNis6k/5oZZ2Mp3fvZ+9R2sfnbh+O+yvYdDx
+         zU7Gg6VxS2TaA2GgW0QXT71NYAESStavkUptXqtGv9AJm0Ug0g+kTmYvibjZ9cDr0Tbp
+         Sv8LBHGit1qNx9wxtMqrps+IfrezqGgQ9Nhz+YaoziH+cm/0Q8byahojKA4N23QA/nO6
+         XI6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVClwx+8s2sonT9NmIIf0QcFflmKVSWDv+WtInAaCH5W3uQGNPCgcY++h9kSD0mAe7nNv4HfwrKrxTqqqFE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5bvW0VOZXgmLxuTss7GG5l1kVPCPvNJCaiKZTDdNbryhxvWIy
+	aarLEnZT3N3KHCyS2B51inxoitdLonxeD8iYNxLOIjQszd0wGq7wUDBSvF0lDPpWaEwepq5C4+k
+	MXwcCkCBTEXNvBBSGvWGRcere0GaCs8YHQrtYdXnF3CD4xlQrF23GiAg=
+X-Google-Smtp-Source: AGHT+IEZMvGy+Rp/56yyZKCtVAevUqCgApOzY5XSVvj5+Y6pII/CzZ4rRBxjpyqjQ8+85SERwlGxg2v/nv9K9CyM5ptoFmqLg6gB
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029231244.2834368-1-song@kernel.org> <20241029231244.2834368-3-song@kernel.org>
- <5b8318018dd316f618eea059f610579a205c05db.camel@kernel.org>
- <D21DC5F6-A63A-4D94-A73D-408F640FD075@fb.com> <22c12708ceadcdc3f1a5c9cc9f6a540797463311.camel@kernel.org>
- <2602F1B5-6B73-4F8F-ADF5-E6DE9EAD4744@fb.com>
-In-Reply-To: <2602F1B5-6B73-4F8F-ADF5-E6DE9EAD4744@fb.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 7 Nov 2024 12:19:56 +0100
-Message-ID: <CAOQ4uxgyC=h4+kXvem8nDf0Niu-HgswoamxYnFXz03K5dFe6Zw@mail.gmail.com>
-Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
- fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	"repnop@google.com" <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>
+X-Received: by 2002:a05:6e02:194d:b0:3a6:abb0:59a0 with SMTP id
+ e9e14a558f8ab-3a6edc0d719mr6699605ab.0.1730978642648; Thu, 07 Nov 2024
+ 03:24:02 -0800 (PST)
+Date: Thu, 07 Nov 2024 03:24:02 -0800
+In-Reply-To: <0000000000008886db06150bcc92@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672ca352.050a0220.2dcd8c.0028.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in
+ do_mpage_readpage (2)
+From: syzbot <syzbot+6783b9aaa6a224fabde8@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 2:52=E2=80=AFAM Song Liu <songliubraving@meta.com> =
-wrote:
->
-> Hi Jeff,
->
-> > On Oct 30, 2024, at 5:23=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> w=
-rote:
->
-> [...]
->
-> >> If the subtree is all in the same file system, we can attach fanotify =
-to
-> >> the whole file system, and then use some dget_parent() and follow_up()
-> >> to walk up the directory tree in the fastpath handler. However, if the=
-re
-> >> are other mount points in the subtree, we will need more logic to hand=
-le
-> >> these mount points.
-> >>
-> >
-> > My 2 cents...
-> >
-> > I'd just confine it to a single vfsmount. If you want to monitor in
-> > several submounts, then you need to add new fanotify watches.
-> >
-> > Alternately, maybe there is some way to designate that an entire
-> > vfsmount is a child of a watched (or ignored) directory?
-> >
-> >> @Christian, I would like to know your thoughts on this (walking up the
-> >> directory tree in fanotify fastpath handler). It can be expensive for
-> >> very very deep subtree.
-> >>
-> >
-> > I'm not Christian, but I'll make the case for it. It's basically a
-> > bunch of pointer chasing. That's probably not "cheap", but if you can
-> > do it under RCU it might not be too awful. It might still suck with
-> > really deep paths, but this is a sample module. It's not expected that
-> > everyone will want to use it anyway.
->
-> Thanks for the suggestion! I will try to do it under RCU.
->
-> >
-> >> How should we pass in the subtree? I guess we can just use full path i=
-n
-> >> a string as the argument.
-> >>
-> >
-> > I'd stay away from string parsing. How about this instead?
-> >
-> > Allow a process to open a directory fd, and then hand that fd to an
-> > fanotify ioctl that says that you want to ignore everything that has
-> > that directory as an ancestor. Or, maybe make it so that you only watch
-> > dentries that have that directory as an ancestor? I'm not sure what
-> > makes the most sense.
->
-> Yes, directory fd is another option. Currently, the "attach to group"
-> function only takes a string as input. I guess it makes sense to allow
-> taking a fd, or maybe we should allow any random format (pass in a
-> pointer to a structure. Let me give it a try.
->
+syzbot suspects this issue was fixed by commit:
 
-IIUC, the BFP program example uses another API to configure the filter
-(i.e. the inode map).
+commit 1fd21919de6de245b63066b8ee3cfba92e36f0e9
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Thu Aug 22 11:43:32 2024 +0000
 
-IMO, passing any single argument during setup time is not scalable
-and any filter should have its own way to reconfigure its parameters
-in runtime (i.e. add/remove watched subtree).
+    fs/ntfs3: Stale inode instead of bad
 
-Assuming that the same module/bfp_prog serves multiple fanotify
-groups and each group may have a different filter config, I think that
-passing an integer arg to identify the config (be it fd or something else)
-is the most we need for this minimal API.
-If we need something more elaborate, we can extend the ioctl size
-or add a new ioctl later.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f3bd5f980000
+start commit:   d5d547aa7b51 Merge tag 'random-6.11-rc6-for-linus' of git:..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d806687521800cad
+dashboard link: https://syzkaller.appspot.com/bug?extid=6783b9aaa6a224fabde8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140ddf93980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c83909980000
 
-Thanks,
-Amir.
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs/ntfs3: Stale inode instead of bad
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
