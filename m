@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-33952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C5F9C0EBD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 20:17:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7F99C0EBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 20:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B39F1F28069
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 19:17:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0811C25DE6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 19:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D387217677;
-	Thu,  7 Nov 2024 19:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D962F21745F;
+	Thu,  7 Nov 2024 19:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIS1xVLe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D606zg3P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21A21733F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 19:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F2821733B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 19:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007050; cv=none; b=YJXfsbGiN+tZgvzSXT8k/P4NlOWFa2KbNJftUiG1zAuUo16O79Iq9DPRudVZfn49CyFr3DKsIrRe2Y64+ZOmorGgJ5gQtuFQWoivcFyk8LA15ftrjHG59gZ0siCH9SKtJ6cQE1g3xJXtsDhiP8Owoy9Qb4I295gOjINXVyqZ7R4=
+	t=1731007051; cv=none; b=K8xMu1knQOfhjurfmwZXeDFVOFJxkCzWxwjC2koLc4cgtVAlJqUpx61VyoXwhyiYvpwcYzJ1rZhv2HK+KvRtucUtgTNeP+EHDKRonhD7RqHpUGDHHf6v/YeVIaAMpH4YOVF+yXMSM8EDCf1i/vBzKdDsj4H+nBqdnZkgFnR3R7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007050; c=relaxed/simple;
-	bh=3cbO7y0pACrtoUjmXCfJYrCv/UHydIb1Y40En1V5hgE=;
+	s=arc-20240116; t=1731007051; c=relaxed/simple;
+	bh=0ISNyka0c8g3ggGAopkqyoWrgbOmnfjf6wXkVtDXPS8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kfd3BExdE7MrqSWx2R29jke92EFduEpad1vevYS7WhGk8v66ZUI25dB8FJBaz/LcZ3Zea3xC51qRDgi0FfRYUn7ubyQWG8PRhfaG8tyiA5gt4MaCzKKz2KECwK3P5Sj9HwBdgnJ0T7YtsKw1OAYUTNQK61W/ye7hDHUM1avxPnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIS1xVLe; arc=none smtp.client-ip=209.85.219.181
+	 MIME-Version; b=gukL3t4HeotVEB1cZke3tIkYH9SWAKibwiEQymqSU3LHVxJv5MjLmnV7K/0V9AMEcnPXSNXkXfymbHTimAGWyyYjwBljLisvfELA6ozmyfYG5Ye2IiMtgYpJnemzcyXO41wbRCQSQJ4WBuv1x9WVeBZ+/32qNPhRPmgIe92dBd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D606zg3P; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e29047bec8fso2003004276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 11:17:28 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e28fe3b02ffso1290937276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 11:17:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731007047; x=1731611847; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731007048; x=1731611848; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u2CBAn6giMXXiKhPOgLeKDCo9Vrjd3aYf+IrGQBfRgc=;
-        b=GIS1xVLeyBiwtx6UAZivgi7qFs4hnTsrPdcRV3pyk3ouKum+7goLQXd6jhOraxnxCN
-         u0l06dUnbQVYoHW3ZSBzvvqSI0Veo1FL5PjBbLP9awn93cNUuONSvVBJQd/txtDiltmz
-         hASsU8Kmmf8wT/BiDHurSvcgxBMb5hFXp2OpsoOVfXT++Qpcp+QggK/A0Av5gEq3TpR6
-         H+PwIW54E+rZUxLbwwSObDxEDIXHMReIJSsksr21MB6iWWLzWCbrHJwIvxtNP/df3m71
-         peS+SUE27cdYLMjAEPRK24FTZVKPKUkMH1SdU1jILpWSFGzcDVoKJdiCA0JIJV14lXHL
-         cqXA==
+        bh=MG5iK0PNmiW0m0S9ll/rGoWwCANqU1Z5kMah1Ao73Dk=;
+        b=D606zg3PMNbDqUZ19QIIdo4OL9a9h8zktab9J5Sg2a45kGKeVJtLyL5VRI9vSpI9+K
+         9cbh3DIiLXfeJyIAfngV8sBE9BmL/bvM4LbdABIw3JAmESrPKqEM7LEKfRx99UH34o13
+         B3XZYwE3pbNhkVoACsxzdaIFnqP/Pzo5bYfmZm1q24sss4herVscMQJTPPAxjPKOnhSX
+         dRxMOl97JzdBhY4j7MqTiVlGCBoBBnHtHhzkPiZHuDmYR7c/HbXlKJwZ9w2omxnFra85
+         XSzgD3rXFliN92dpuk/3IRRINkZyvHZSotAVR8UOYUMx9eM19cKYjeOACFyJ6lKc9dQn
+         s9JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731007047; x=1731611847;
+        d=1e100.net; s=20230601; t=1731007048; x=1731611848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u2CBAn6giMXXiKhPOgLeKDCo9Vrjd3aYf+IrGQBfRgc=;
-        b=R/yysLbzh7pc2vi3qnH8a+tu/KAxzcvbMJwxD+/+mvDTLLvguiTH6Nny6ilejTf2cT
-         m/f+KqTIpSekLOWa+EZLUflX6A0d1CgtMMv8yQyiU3GVwRhqfNEQp4G6IdnolW4eQJad
-         QKK7C6dKXpPYBZYizC6VASljK7dVkZi7S4YxKp3YNyUPhUDwBLFV+vFfjk+J5Y/km1QH
-         TGjcf9ikPC3A7UhsvmDF2Tilg46p0lp4t3IqK8/Bt6pTcLEEi+jfeuVPZ6bMLQVkLi1B
-         lPGTuSULx4XUYrgfajDLcpkf3U/2BWiYNZC+JE5UHZAOUCBmVnxPKygCnrJN3QWbsz0f
-         lkdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTIsbkDTF9VhAKc25tjlyYwsOWFsM+61b9fVtV1hH9NyzgJDTCKlNXCq3VGRnkXQNoYcxdPoDrOVfkC84D@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPPP8Z28lHRaeIlsFFefpo212/VbxPSdNMmKOQj87Ga5ZNSUrC
-	IfWDAsOtlWzyVdQYUGDBeYT+ssu8T74h4da8zvTDeGgtLeUSCisg
-X-Google-Smtp-Source: AGHT+IEkpWzZirMthRa1KIppd+IoM2B6ZQrYg1W/sBImn83Wn53xX/nxsQKorMCpOKraG2RVdoxyYg==
-X-Received: by 2002:a05:690c:fd2:b0:6db:e1e0:bf6a with SMTP id 00721157ae682-6eadc0a0bbemr9007977b3.7.1731007047220;
-        Thu, 07 Nov 2024 11:17:27 -0800 (PST)
-Received: from localhost (fwdproxy-nha-008.fbsv.net. [2a03:2880:25ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8f1c74sm4067837b3.31.2024.11.07.11.17.26
+        bh=MG5iK0PNmiW0m0S9ll/rGoWwCANqU1Z5kMah1Ao73Dk=;
+        b=HA7SSXQtdlArnYREHxZmVZGLRo4N8KpYIHoPOrqr6cgBJSaEehUcjSuBNKXZPR2oiC
+         qUzfopvfYars61ZJX87p0T82FeklYxKxZ/qtpZB4E/0kRhSwIxq4yYNzw+sIgi3lwQB/
+         ISlfexBHkRHUj+2Qm/r6Jajmk3NsMiQZ9v6L/XVAxu7aw463Zo8sRw/lDKZkF8SuCIY3
+         iyLKOg9gRTI0gD0mh/VFSqYRKR9N+38T10+bgkIQoa2f0E307OW8Ov3AWMQZ1wlVyg+n
+         LMqBRf4Mjk/rpivucNt0XcNUC+NEewvfmZfCoUghmT/SjNINMybuBPT7IER+hDTHH1Yi
+         6Nvg==
+X-Forwarded-Encrypted: i=1; AJvYcCX633MMxuHDotHkZrgBjR5V4/z72ZDt58ZdRyNIUcueF9G+nGaLoWd0uPYs4/QXqnsw4UFlkrnsCiUJAAvs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4xpyTOHoIxqxCLhqf6f6SqsygL04+QkQDf64ywBT1N/g986P6
+	s9tL/33aRS1HCqss8FL8ARzRUGnmuOmxU/GpB8yRot4eLMJzJQCg
+X-Google-Smtp-Source: AGHT+IFcIlGFpbiDZRAZoKdELB0Ba2H780dbAB8bPQD2I1i+kogNUBV3Xb4R3gifXVFOfN141DB5Gg==
+X-Received: by 2002:a05:6902:f84:b0:e29:948:69cc with SMTP id 3f1490d57ef6-e337f844097mr171360276.6.1731007048555;
+        Thu, 07 Nov 2024 11:17:28 -0800 (PST)
+Received: from localhost (fwdproxy-nha-013.fbsv.net. [2a03:2880:25ff:d::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336f1ba8e5sm386281276.43.2024.11.07.11.17.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 11:17:27 -0800 (PST)
+        Thu, 07 Nov 2024 11:17:28 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -76,9 +76,9 @@ Cc: shakeel.butt@linux.dev,
 	linux-mm@kvack.org,
 	bernd.schubert@fastmail.fm,
 	kernel-team@meta.com
-Subject: [PATCH v3 4/6] mm/memory-hotplug: add finite retries in offline_pages() if migration fails
-Date: Thu,  7 Nov 2024 11:16:15 -0800
-Message-ID: <20241107191618.2011146-5-joannelkoong@gmail.com>
+Subject: [PATCH v3 5/6] mm/migrate: fail MIGRATE_SYNC for folios under writeback with AS_WRITEBACK_MAY_BLOCK mappings
+Date: Thu,  7 Nov 2024 11:16:16 -0800
+Message-ID: <20241107191618.2011146-6-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241107191618.2011146-1-joannelkoong@gmail.com>
 References: <20241107191618.2011146-1-joannelkoong@gmail.com>
@@ -90,75 +90,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In offline_pages(), do_migrate_range() may potentially retry forever if
-the migration fails. Add a return value for do_migrate_range(), and
-allow offline_page() to try migrating pages 5 times before erroring
-out, similar to how migration failures in __alloc_contig_migrate_range()
-is handled.
+For folios with mappings that have the AS_WRITEBACK_MAY_BLOCK flag set
+on it, fail MIGRATE_SYNC mode migration with -EBUSY if the folio is
+currently under writeback. If the AS_WRITEBACK_MAY_BLOCK flag is set on
+the mapping, the writeback may take an indeterminate amount of time to
+complete, so we cannot wait on writeback.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- mm/memory_hotplug.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ mm/migrate.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 621ae1015106..49402442ea3b 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1770,13 +1770,14 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
- 	return 0;
- }
- 
--static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-+static int do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- {
- 	struct folio *folio;
- 	unsigned long pfn;
- 	LIST_HEAD(source);
- 	static DEFINE_RATELIMIT_STATE(migrate_rs, DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
-+	int ret = 0;
- 
- 	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
- 		struct page *page;
-@@ -1833,7 +1834,6 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 			.gfp_mask = GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
- 			.reason = MR_MEMORY_HOTPLUG,
- 		};
--		int ret;
- 
- 		/*
- 		 * We have checked that migration range is on a single zone so
-@@ -1863,6 +1863,7 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 			putback_movable_pages(&source);
- 		}
- 	}
-+	return ret;
- }
- 
- static int __init cmdline_parse_movable_node(char *p)
-@@ -1940,6 +1941,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 	const int node = zone_to_nid(zone);
- 	unsigned long flags;
- 	struct memory_notify arg;
-+	unsigned int tries = 0;
- 	char *reason;
- 	int ret;
- 
-@@ -2028,11 +2030,8 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 
- 			ret = scan_movable_pages(pfn, end_pfn, &pfn);
- 			if (!ret) {
--				/*
--				 * TODO: fatal migration failures should bail
--				 * out
--				 */
--				do_migrate_range(pfn, end_pfn);
-+				if (do_migrate_range(pfn, end_pfn) && ++tries == 5)
-+					ret = -EBUSY;
- 			}
- 		} while (!ret);
- 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index df91248755e4..1d038a4202ae 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+ 		 */
+ 		switch (mode) {
+ 		case MIGRATE_SYNC:
+-			break;
++			if (!src->mapping ||
++			    !mapping_writeback_may_block(src->mapping))
++				break;
++			fallthrough;
+ 		default:
+ 			rc = -EBUSY;
+ 			goto out;
 -- 
 2.43.5
 
