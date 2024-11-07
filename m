@@ -1,51 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-33873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631E99BFF25
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEF69BFF21
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0947C1F22B04
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 07:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECCDE1F22B97
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 07:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102921DA109;
-	Thu,  7 Nov 2024 07:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B061D2F73;
+	Thu,  7 Nov 2024 07:30:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5D61922CC;
-	Thu,  7 Nov 2024 07:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9B018E756;
+	Thu,  7 Nov 2024 07:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730964624; cv=none; b=AHogf8UsOcNxZDH1DXztrkGd3jdyXQBWqMvDA7G+imRBdTv+2O+D/7VPv65x1/NVaN1NbyBSO22TvMWIQK6m83aPEkHRBNgdi7cIRw3Cn+WmJgpKhQCqNkHiguhUs1QQ81y99uPVJVIrNikfT1LMdaU7zEmjxYgPGmyXA+E4m4U=
+	t=1730964623; cv=none; b=QLVmgDW4kIOt93U1/nEO/sRPTMVUmGJloihpPRPYQL28J+1ayZknKg/XqQh/ao1MwTN5bp+5R/sNlyvMTh7UxTvzLUu2TJ/ub+gaANpxVr7SOMaPENQqsGSmWmnfe7yIfxlItbhyMp+qP866ejImQ5OnTkxIGmB74c7Slijv/P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730964624; c=relaxed/simple;
-	bh=wdvtLC5ulGCY1T01mm9zMUMjvGRUSfUxdg3fNyaNeEI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TxHTG8jItpFpx0OfBWey86tPoESyoQiJ9P2loAIq3gznSB5RvhDua6arly7ig3Z7y1/HY9Y2ERQnn2lvqS1jgZI4wIbVc2ReeA+X8eM9BANUhyUYhoSpu598ty7KbhX1Uf5nVBXt/G77Jjjj+HCKP7LrEmZTOV14HYIq6lcz0wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	s=arc-20240116; t=1730964623; c=relaxed/simple;
+	bh=SEq7DKLBNmA29ldzeeouDHYzH9koQTD4ZArvWUUL63Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kDieMnSr33Gdq3oQRFwvvJiQDUnZwrdOdqqrfqmRaX1YulhyvHdNFFj28i/s0b1UyF0F/CwlpE9bdaN88GM40IWCBtmtdJhne8oYHT0WqC9zdW84ECs8lteJ3+5NnYeVz4Ts0ogrxceaEoStqzgQfMGfTU6YI4/wIkwdKReHlkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkYcj6N0gz4f3kk5;
-	Thu,  7 Nov 2024 15:29:57 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XkYcd02qVz4f3jXw;
+	Thu,  7 Nov 2024 15:29:53 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id C208E1A0196;
-	Thu,  7 Nov 2024 15:30:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 070451A0568;
+	Thu,  7 Nov 2024 15:30:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP1 (Coremail) with SMTP id cCh0CgB3Ha+BbCxnnlhABA--.55387S2;
+	by APP1 (Coremail) with SMTP id cCh0CgB3Ha+BbCxnnlhABA--.55387S3;
 	Thu, 07 Nov 2024 15:30:10 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: akpm@linux-foundation.org,
 	willy@infradead.org
 Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 0/5] Fixes and cleanups to xarray
-Date: Fri,  8 Nov 2024 00:29:15 +0800
-Message-Id: <20241107162920.208796-1-shikemeng@huaweicloud.com>
+Subject: [PATCH v2 1/5] Xarray: Do not return sibling entries from xas_find_marked()
+Date: Fri,  8 Nov 2024 00:29:16 +0800
+Message-Id: <20241107162920.208796-2-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20241107162920.208796-1-shikemeng@huaweicloud.com>
+References: <20241107162920.208796-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,44 +56,90 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgB3Ha+BbCxnnlhABA--.55387S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr4xur17Xr47JFy5GrWDtwb_yoW3urb_ua
-	4vkF9rKr4UAFWUJay29Fn0q395Gr48Gr1jvFyYgw43ZFyUXr9xJr4kCr45Xrn7WFy2ya4D
-	XFZ8ZryFkw17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
-	AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
-	JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
-	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
-	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
-	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
-	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
-	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
-	vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j-6pPUUUUU=
+X-CM-TRANSID:cCh0CgB3Ha+BbCxnnlhABA--.55387S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFyrArW8Xr4rWF17uw1xKrg_yoW8KF15pF
+	W8Ga40gF4xtr4jyry0yayUXayF9wn8XFWFyay8Gr1SyFnxJ3W0yr4jkryDtF9rZrW5Zw43
+	C3WFq345Za1DJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+	8IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY020Ec7CjxVAFwI0_Jrv_JF4l8cAvFVAK
+	0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4
+	x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l
+	84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07js2-5UUUUU=
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-v1->v2:
--Drop patch "Xarray: skip unneeded xas_store() and xas_clear_mark() in
-__xa_alloc()"
+Similar to issue fixed in commit cbc02854331ed ("XArray: Do not return
+sibling entries from xa_load()"), we may return sibling entries from
+xas_find_marked as following:
+    Thread A:               Thread B:
+                            xa_store_range(xa, entry, 6, 7, gfp);
+			    xa_set_mark(xa, 6, mark)
+    XA_STATE(xas, xa, 6);
+    xas_find_marked(&xas, 7, mark);
+    offset = xas_find_chunk(xas, advance, mark);
+    [offset is 6 which points to a valid entry]
+                            xa_store_range(xa, entry, 4, 7, gfp);
+    entry = xa_entry(xa, node, 6);
+    [entry is a sibling of 4]
+    if (!xa_is_node(entry))
+        return entry;
 
-This series contains some random fixes and cleanups to xarray. Patch 1-3
-are fixes and patch 4-6 are cleanups. More details can be found in
-respective patches. Thanks!
+Skip sibling entry like xas_find() does to protect caller from seeing
+sibling entry from xas_find_marked().
 
-Kemeng Shi (5):
-  Xarray: Do not return sibling entries from xas_find_marked()
-  Xarray: distinguish large entries correctly in xas_split_alloc()
-  Xarray: move forward index correctly in xas_pause()
-  Xarray: remove repeat check in xas_squash_marks()
-  Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
+Besides, load_race() test is modified to catch mentioned issue and modified
+load_race() only passes after this fix is merged.
 
- lib/test_xarray.c                     | 35 +++++++++++++++++++++++++++
- lib/xarray.c                          | 26 +++++++++++---------
- tools/testing/radix-tree/multiorder.c |  4 +++
- 3 files changed, 54 insertions(+), 11 deletions(-)
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+---
+ lib/xarray.c                          | 2 ++
+ tools/testing/radix-tree/multiorder.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 32d4bac8c94c..fa87949719a0 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1382,6 +1382,8 @@ void *xas_find_marked(struct xa_state *xas, unsigned long max, xa_mark_t mark)
+ 		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
+ 		if (!entry && !(xa_track_free(xas->xa) && mark == XA_FREE_MARK))
+ 			continue;
++		if (xa_is_sibling(entry))
++			continue;
+ 		if (!xa_is_node(entry))
+ 			return entry;
+ 		xas->xa_node = xa_to_node(entry);
+diff --git a/tools/testing/radix-tree/multiorder.c b/tools/testing/radix-tree/multiorder.c
+index cffaf2245d4f..eaff1b036989 100644
+--- a/tools/testing/radix-tree/multiorder.c
++++ b/tools/testing/radix-tree/multiorder.c
+@@ -227,6 +227,7 @@ static void *load_creator(void *ptr)
+ 			unsigned long index = (3 << RADIX_TREE_MAP_SHIFT) -
+ 						(1 << order);
+ 			item_insert_order(tree, index, order);
++			xa_set_mark(tree, index, XA_MARK_1);
+ 			item_delete_rcu(tree, index);
+ 		}
+ 	}
+@@ -242,8 +243,11 @@ static void *load_worker(void *ptr)
+ 
+ 	rcu_register_thread();
+ 	while (!stop_iteration) {
++		unsigned long find_index = (2 << RADIX_TREE_MAP_SHIFT) + 1;
+ 		struct item *item = xa_load(ptr, index);
+ 		assert(!xa_is_internal(item));
++		item = xa_find(ptr, &find_index, index, XA_MARK_1);
++		assert(!xa_is_internal(item));
+ 	}
+ 	rcu_unregister_thread();
+ 
 -- 
 2.30.0
 
