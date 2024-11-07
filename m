@@ -1,141 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-33878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E34D9C00AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 09:58:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631E99BFF25
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:31:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527721C217E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0947C1F22B04
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 07:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D531DF258;
-	Thu,  7 Nov 2024 08:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RymHR9Bh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102921DA109;
+	Thu,  7 Nov 2024 07:30:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1A41DD866
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 08:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5D61922CC;
+	Thu,  7 Nov 2024 07:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969897; cv=none; b=ee5cI7eysa47FrXL6Dj/8GaAeMBoz2gsWHtCxk/hpg6roH8fmHkHlIUyCpyOdMNgveQpYGAC7RMQAJoW5x8IpilJKUQwkYE2je5DAq0kVMttSIFTg7uJuw7IMJpH2wREu2Qj1rtYsrMyoYJNzhgswiwty3MaQfelVpeMfCXguHU=
+	t=1730964624; cv=none; b=AHogf8UsOcNxZDH1DXztrkGd3jdyXQBWqMvDA7G+imRBdTv+2O+D/7VPv65x1/NVaN1NbyBSO22TvMWIQK6m83aPEkHRBNgdi7cIRw3Cn+WmJgpKhQCqNkHiguhUs1QQ81y99uPVJVIrNikfT1LMdaU7zEmjxYgPGmyXA+E4m4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969897; c=relaxed/simple;
-	bh=XrCKTdSFrneJtpr4KeJ/1FrI8UZO5czXGK0I+q8xUNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pS3EZryX/u9t0E7IG4jsTqJnNMJJPUzDowtyNYIT5eiL+Lb7zHMf4pMJvpRw9d56c4x7rtdAh3KifrSqMC6v5oddEJUDYqPR3ehKb/0HvSGHf+5ckLhshC4fk7Rm5BA2cOdZWCWwp8U4bMdQhCZOXjPBPA3qOyDY1g5dXBYLl3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RymHR9Bh; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460ad0440ddso3694901cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 00:58:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730969893; x=1731574693; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I8US13aD05PtGROBNY39A0+lWIja+wUH11z2O2DFmBA=;
-        b=RymHR9Bh0pgRR0IgSOT1+bFskjCR/mYgDnSV7HKzrbTZ9eRwNDWMKx1scs6Gnq4wss
-         8zqZwYZI9jWagHV1/Fr+wp47gCtksRxi7j3DCAy0wRqMD+ItwLItkW5pxrsLiVKezUTf
-         k6ND8RTgrxZix8Br4q1FaULboE4itmWIvlMXM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730969893; x=1731574693;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I8US13aD05PtGROBNY39A0+lWIja+wUH11z2O2DFmBA=;
-        b=IgjI9wL/ivCDloQED+RGD8DgkHz8TvzRT1ZZRJHXJkvHL6RcXZkIfMRc2EUbOoWZyI
-         HQUBvMx+qG/tLIpjW/D20odYoMhMAGDOfeu/bLeGeCFgv/M5yPDJGYdBbIJnY59jxheY
-         CUfYiIOo8v+ox9M6hTHmgwATlK8Bf+8355kKavZ3d0vbn9kwy/CfRTuKoMiDS3+qb5wO
-         /RiJZW2FpwLD9Xfp9jQXVJpdsgkjB9swot1rLFukFlY9uzNGPMeiInHgLLsgVkIjjS6H
-         wsWkmMk87JmF6oNRGRZ6rDdzgDvZ7tgdF//hG3T9/xjjMwgdqY0tccfExDdlrB62Lmcm
-         DXRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0uDhWdW0zUDBs3jDEx8pXqCHeb8bR94cZzUecb059eM96BGq1tEDs0NRaqdHJ4lKaV7RtQRH2uHVyQ8Vg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJIZOErDZ7Ovo3v7Qb7bnYnSpGLVcgPh8ziqACNx+avZhIGajm
-	8bLaUUNR+I6Bnx7xtKajiUB4G57V/E70DRgtEnd0q6Zwcmhc2MGwAotOaf3sZsYfyFsFzrQQNcP
-	8GbMyh29d+z3QSGP9bV2HiLm4gK1LeWQCD+MSJA==
-X-Google-Smtp-Source: AGHT+IHxPaWfeaWr7QYviaFixyD3GiKGEj6bLFLoEq9c1pZwSytCfLOCtXu+dknJoRl+41zTEmU1wKDp6CHqkFdc/0c=
-X-Received: by 2002:a05:622a:1a0a:b0:462:f690:d202 with SMTP id
- d75a77b69052e-462f690d251mr43546551cf.40.1730969892756; Thu, 07 Nov 2024
- 00:58:12 -0800 (PST)
+	s=arc-20240116; t=1730964624; c=relaxed/simple;
+	bh=wdvtLC5ulGCY1T01mm9zMUMjvGRUSfUxdg3fNyaNeEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TxHTG8jItpFpx0OfBWey86tPoESyoQiJ9P2loAIq3gznSB5RvhDua6arly7ig3Z7y1/HY9Y2ERQnn2lvqS1jgZI4wIbVc2ReeA+X8eM9BANUhyUYhoSpu598ty7KbhX1Uf5nVBXt/G77Jjjj+HCKP7LrEmZTOV14HYIq6lcz0wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkYcj6N0gz4f3kk5;
+	Thu,  7 Nov 2024 15:29:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id C208E1A0196;
+	Thu,  7 Nov 2024 15:30:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP1 (Coremail) with SMTP id cCh0CgB3Ha+BbCxnnlhABA--.55387S2;
+	Thu, 07 Nov 2024 15:30:10 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/5] Fixes and cleanups to xarray
+Date: Fri,  8 Nov 2024 00:29:15 +0800
+Message-Id: <20241107162920.208796-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024164726.77485-1-hreitz@redhat.com>
-In-Reply-To: <20241024164726.77485-1-hreitz@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 7 Nov 2024 09:58:02 +0100
-Message-ID: <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
-Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
-To: Hanna Czenczek <hreitz@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>, 
-	German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgB3Ha+BbCxnnlhABA--.55387S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr4xur17Xr47JFy5GrWDtwb_yoW3urb_ua
+	4vkF9rKr4UAFWUJay29Fn0q395Gr48Gr1jvFyYgw43ZFyUXr9xJr4kCr45Xrn7WFy2ya4D
+	XFZ8ZryFkw17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
+	AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
+	JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
+	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
+	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
+	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
+	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+	vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j-6pPUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Thu, 24 Oct 2024 at 18:47, Hanna Czenczek <hreitz@redhat.com> wrote:
+v1->v2:
+-Drop patch "Xarray: skip unneeded xas_store() and xas_clear_mark() in
+__xa_alloc()"
 
-> To be able to issue INIT (and GETATTR), we need to at least partially
-> initialize the super_block structure, which is currently done via
-> fuse_fill_super_common().
+This series contains some random fixes and cleanups to xarray. Patch 1-3
+are fixes and patch 4-6 are cleanups. More details can be found in
+respective patches. Thanks!
 
-What exactly is needed to be initialized?
+Kemeng Shi (5):
+  Xarray: Do not return sibling entries from xas_find_marked()
+  Xarray: distinguish large entries correctly in xas_split_alloc()
+  Xarray: move forward index correctly in xas_pause()
+  Xarray: remove repeat check in xas_squash_marks()
+  Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
 
-> @@ -1762,18 +1801,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->         sb->s_d_op = &fuse_dentry_operations;
->
->         mutex_lock(&fuse_mutex);
-> -       err = -EINVAL;
-> -       if (ctx->fudptr && *ctx->fudptr)
-> -               goto err_unlock;
-> -
->         err = fuse_ctl_add_conn(fc);
->         if (err)
->                 goto err_unlock;
->
->         list_add_tail(&fc->entry, &fuse_conn_list);
->         sb->s_root = root_dentry;
-> -       if (ctx->fudptr)
-> -               *ctx->fudptr = fud;
+ lib/test_xarray.c                     | 35 +++++++++++++++++++++++++++
+ lib/xarray.c                          | 26 +++++++++++---------
+ tools/testing/radix-tree/multiorder.c |  4 +++
+ 3 files changed, 54 insertions(+), 11 deletions(-)
 
-This is wrong, because we need the fuse_mutex protection for checking
-and setting the private_data on the fuse device file.
+-- 
+2.30.0
 
-If this split is needed (which I'm not sure) then fud allocation
-should probably be moved to part2 instead of moving the *ctx->fudptr
-setup to part1.
-
-
-> @@ -1635,8 +1657,16 @@ static void virtio_kill_sb(struct super_block *sb)
->         struct fuse_mount *fm = get_fuse_mount_super(sb);
->         bool last;
->
-> -       /* If mount failed, we can still be called without any fc */
-> -       if (sb->s_root) {
-> +       /*
-> +        * Only destroy the connection after full initialization, i.e.
-> +        * once s_root is set (see commit d534d31d6a45d).
-> +        * One exception: For virtio-fs, we call INIT before s_root is
-> +        * set so we can determine the root node's mode.  We must call
-> +        * DESTROY after INIT.  So if an error occurs during that time
-> +        * window (specifically in fuse_make_root_inode()), we still
-> +        * need to call virtio_fs_conn_destroy() here.
-> +        */
-> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submount)) {
-
-How could fm->submount be set if sb->s_root isn't?  Or sb->s_root set
-and fc->initialized isn't?
-
-Seems it would be sufficient to check fm->fc->initialized, no?
-
-Thanks,
-Miklos
 
