@@ -1,102 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-33914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C309C09AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 16:10:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EEF9C09C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 16:13:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A11283B12
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4661F24D87
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01314213149;
-	Thu,  7 Nov 2024 15:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997BD2141BB;
+	Thu,  7 Nov 2024 15:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GuCmWcel"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="fZqihrX1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A1F12B63;
-	Thu,  7 Nov 2024 15:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BF3213141
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992216; cv=none; b=FTHZ7lg7LDu/ENe3v7PmB0O/yP+DHcvTtu4M9rsWltYa/RkIprtfuFTk8HGoK0s55GCgh3bUV+YUUMC/Py0SjW8i2JAZ9ZiQFgRM3q5TYIXERJf5vGRuM2s9K/Yi9sTwSFI4Fi80eHSRmdwGZnT9ESsvZ7xU1/Al+Ae9YQwD0gw=
+	t=1730992404; cv=none; b=dGvBNEjJoNRJ9rAfaEEFqlhev7PXgfDSHXGNbnOt1n7M28mNilB+9QUQNjjsAKovivvlVh2K3ig4G92UVhIVKfwG7yKpqqppjG0v2dhSLNT5/+ujMkLt46OI018M3ugzmnfujzVGHPBLz2MtfqXxDzESyYgKvMoAh+z0VLflj9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992216; c=relaxed/simple;
-	bh=dF5XVTxIII6iMggWIEemDLIC7Cxe07E6GULEaQ+Lc60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQndNuMuedmJb3dtHuc5qNGRgVUZQgieh2pbZil1a3vCBve3TYcpocqTzhLIub8j+9w12MGcdbLQuiYo404AhihM7qTlwwZeR/Iw++bnrr3jAKd2ypu8twMjrR5qfklDq5ll4OP8idqbvUGpBLVvfzBRjuY6qNqe86TL4YmSxkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GuCmWcel; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vom1WJYdLvjku2r/Xl0EhIhQ5E31YZkW3BtO+U5Dsek=; b=GuCmWcelHu3QNDVTgzwIceTERX
-	/vZoa+fZx0pT+5jVIJzTCv4ZeGycAXKZ3WwH8ZIMz+UT6M09CyrfQf1dpKHT0h9TQDt7wIIwZFQMR
-	jqTi79AogfM+fEMudUmIdznL/18LTQnR5GyxB3te8KLOPk2/tBUc41LuSKeak40E/SdOtz73JCu6G
-	XqwMJZZPYY+Ahs8ZDynRIykD5DX82jInNorF8DV35Rroz+gdSejfsjnLsw+r9X9jP0LPRRRbCHyyU
-	BTuDrcnLXh+iFBOFnLbAulo4+xDfmkRer56WnCT4YEvMuRMroRNIuix2qLa2bU/s9nzQ0smuqQsK9
-	dgIZeC2Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t949B-00000006rdv-0Z6w;
-	Thu, 07 Nov 2024 15:10:09 +0000
-Date: Thu, 7 Nov 2024 15:10:08 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, kvm@vger.kernel.org, chao.gao@intel.com,
-	pgonda@google.com, thomas.lendacky@amd.com, seanjc@google.com,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, arnd@arndb.de, pbonzini@redhat.com,
-	kees@kernel.org, bharata@amd.com, nikunj@amd.com,
-	michael.day@amd.com, Neeraj.Upadhyay@amd.com,
-	linux-coco@lists.linux.dev
-Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
- guest_memfd
-Message-ID: <ZyzYUOX_r3uWin5f@casper.infradead.org>
-References: <20241105164549.154700-1-shivankg@amd.com>
- <ZypqJ0e-J3C_K8LA@casper.infradead.org>
- <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+	s=arc-20240116; t=1730992404; c=relaxed/simple;
+	bh=6l5mXSUwsa0e8zSOdsjdHS2z8nTbsBhCbURZxcPvnow=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LbK+IcZv+TS2kTcsiGaVImQXx+1ZGDi8drPXWFkF4fNJS3nWCbuvPK3O3lN1DAfNcdzrJkdrAnpwxPGpPVVAHj3u09uAWM5D1qtRf48I7wLeCJjlHHGHwy8b+1JTzFZyQdH/oT2YPDs1S88SVxf4FVFGhmaUTG67WSs6i6+DaAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=fZqihrX1; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A7FD64X003521
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 10:13:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1730992388; bh=gF6tgpZVjlzW/6qkLSleVCiPXZtrJcTCC1bsI96b+2Q=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=fZqihrX1H038m4g9Wwz5BfzkGzj86qnu+ER5o7lZc6DTQAFCkFc5NvsxjT+aaTFKJ
+	 6QlnvAqXE59Mu68ChrzNjTPdRqBvb2ks2yzhlG/giyWfHzKGiv4prmfmIYKQOQyyiu
+	 VxD5G0TlKKKwvcq/2txDZcM+PdZNrYrvEI2jhFo6lBNMitrNxB9KfJKrgE+n5WGVaq
+	 9Hmz5YW44SGzLEmexigOHOUzrlXV9ESO5bjhANvHLeF5PeL0YEuZuezRKGG+YuedEV
+	 vm5YHdLs1JJwxDo+mFsXjz50ueuHooPueysF4jWeH1z0a99dE1XCiq/TI1lSpCoVBF
+	 IK4pESH8nb15Q==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 42DDF15C0332; Thu, 07 Nov 2024 10:13:06 -0500 (EST)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+        Brian Foster <bfoster@redhat.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        willy@infradead.org
+Subject: Re: [PATCH 0/2] ext4, mm: improve partial inode eof zeroing
+Date: Thu,  7 Nov 2024 10:12:55 -0500
+Message-ID: <173099237654.321265.9905047947203401102.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240919160741.208162-1-bfoster@redhat.com>
+References: <20240919160741.208162-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 07, 2024 at 02:24:20PM +0530, Shivank Garg wrote:
-> The folio allocation path from guest_memfd typically looks like this...
+
+On Thu, 19 Sep 2024 12:07:39 -0400, Brian Foster wrote:
+> I've been poking around at testing zeroing behavior after a couple
+> recent enhancements to iomap_zero_range() and fsx[1]. Running [1] on
+> ext4 has uncovered a couple issues that I think share responsibility
+> between the fs and pagecache.
 > 
-> kvm_gmem_get_folio
->   filemap_grab_folio
->     __filemap_get_folio
->       filemap_alloc_folio
->         __folio_alloc_node_noprof
->           -> goes to the buddy allocator
+> The details are in the commit logs, but patch 1 updates ext4 to do
+> partial eof block zeroing in more cases and patch 2 tweaks
+> pagecache_isize_extended() to do eof folio zeroing similar to as is done
+> during writeback (i.e., ext4_bio_write_folio(),
+> iomap_writepage_handle_eof(), etc.). These kind of overlap, but the fs
+> changes handle the case of a block straddling eof (so we're writing to
+> disk in that case) and the pagecache changes handle the case of a folio
+> straddling eof that might be at least partially hole backed (i.e.
+> sub-page block sizes, so we're just clearing pagecache).
 > 
-> Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
+> [...]
 
-It only takes that path if cpuset_do_page_mem_spread() is true.  Is the
-real problem that you're trying to solve that cpusets are being used
-incorrectly?
+Applied, thanks!
 
-Backing up, it seems like you want to make a change to the page cache,
-you've had a long discussion with people who aren't the page cache
-maintainer, and you all understand the pros and cons of everything,
-and here you are dumping a solution on me without talking to me, even
-though I was at Plumbers, you didn't find me to tell me I needed to go
-to your talk.
+[1/2] ext4: partial zero eof block on unaligned inode size extension
+      commit: 462a214e71f3fbc40d28f0a00fe6f0d4c4041c98
+[2/2] mm: zero range of eof folio exposed by inode size extension
+      commit: faf7bba6b84981443773952289571e5ebeda1767
 
-So you haven't explained a damned thing to me, and I'm annoyed at you.
-Do better.  Starting with your cover letter.
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
