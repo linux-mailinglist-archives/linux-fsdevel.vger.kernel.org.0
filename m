@@ -1,142 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-33967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684309C101C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:53:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02589C1095
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C448284CCD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 20:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BF1B25B5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F95E21832F;
-	Thu,  7 Nov 2024 20:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B6A219C9D;
+	Thu,  7 Nov 2024 21:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cr6DtKJg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvTpvvXV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558F4322E;
-	Thu,  7 Nov 2024 20:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B35216420;
+	Thu,  7 Nov 2024 21:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731012777; cv=none; b=CUi8o4mFr/ZGjXOSoOWB7tZHNsXynT190UiGUWa7tvpNAW3Zy00SnWxd0jlkG7XEbjjH6nO2hAusQyCGCzRmVvMgpeS6On1/QxXTK2OIJptebbiwb19sCKNU02MKZlfp9JJJMylVGHnYtg2ebOOH4yUCTbL0FSDDP6KLVcawqdM=
+	t=1731013217; cv=none; b=lrdGI4LzL54yFQ41bk5kVX2QUWl19c2yyVYwmljXuopXjjy0QLszKU704IkHc5YASAclg7Ce0yQ4dFFmaHgwc2PDnz/5yfoqKmk8RfTkJ8xQ2XuQFC8N8zRC49FSAyVXsEiZ5OTqtEogecWx1bn5KXNf2qwbIku1T0OXCIlbK5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731012777; c=relaxed/simple;
-	bh=usptPoertbPSR+oleLXAHaIeE16gQoLLH+fSptWK5ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APTShylcMPfY3DSzAAUBnmotJhFdYlxeT7MG2IQSX9D1URQdf9rvCIS2cfqx1451WsXNnkWymx/kzSD6+4e5Lfibj84fwWRPYdfsXtrdaqoWHvUYyONNOvTMtToFOGaxsJ6GfOZAKGB4trKTVfPS9pDG8eLJBFotic2tNjm9DiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cr6DtKJg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yl+OOEXvHsPnP3J48r75DDPeER85xSNgZKhr4gd7Cm0=; b=Cr6DtKJgjYQEyswyIdkAroIYcg
-	S7S3EuFJZAKezkZPFb8wXYhElk3wSVijoY+UpH8S3IdsaCceoEu+C+DHJHevrKbZ/9v0FOwekuYCx
-	oyHQz21JO7AsDw0U1cgnC/2ne3Wx0s1e/Ts0upk6Opwvv36gSdYLvGL/9PYlT45X0a2cOshaGN1Ai
-	SpyuOtvT+FoT86Q67vuqEy5ZNJVGde4IMU6pyTqU7l2iFd2PQyEyDiEt9jpwoZT2lyMF4Z+HIB5PJ
-	1r53njx9wd8lEDAvlAzuSJ1ewANYeESfrBp37WqBPF9z/y5uD8oVVgyQBeYNowo9JT98ecPS07fFO
-	QoHEhKRA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t99Uk-00000007NpN-1y8X;
-	Thu, 07 Nov 2024 20:52:46 +0000
-Date: Thu, 7 Nov 2024 20:52:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Asahi Lina <lina@asahilina.net>, Jan Kara <jack@suse.cz>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sergio Lopez Pascual <slp@redhat.com>,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <Zy0onj9R_VJnk17p@casper.infradead.org>
-References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
- <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+	s=arc-20240116; t=1731013217; c=relaxed/simple;
+	bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZEI8N9KNw77a/KKSbJLQWdKKXCHtlJ8/8Mq3gyf+BVzx1I+oUxXp49xixGTunADEJenlvtYZ+AvdFpKp0v6ofpp2htB+wMq7IEBtiGd5PXym290z+gScATCAO3YK/I554N08DkVGa8tpwkeliQPUIZWYxJta26gH1FktNBjaAmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvTpvvXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F82C4CECC;
+	Thu,  7 Nov 2024 21:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731013217;
+	bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+	h=From:Subject:Date:To:Cc:From;
+	b=NvTpvvXV3wiSN2wzG6XMuaLhJoQMV8fVwKUpvtQzL1tnnR/w2oNcDZ4+OHC0+sPBI
+	 MCNY0B0UVV4rFboUAE5UzKEvlizirny6t5fba+P/vPrk05ZGeKF8A3aw18LMQw40He
+	 UUxveFEAzRftSqElHprfsjulaARZTnKPIgsUZMAAa4bHHFUOrfKTjsCEzFNSJLT2z+
+	 sfcvd8GqHBRw6Axpg1KbPAcXLn32UwicvqKNjw/itM2YLpVMktdHd81m/+CGfKgYkg
+	 Q10dN2hUrB5+G06lo1jxddL58hUc+yTOHPzbEPhCaphM3ykpYrCMrL4pqR/f3unB4Z
+	 fEWlTYtYM8LuQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
+ devname
+Date: Thu, 07 Nov 2024 16:00:05 -0500
+Message-Id: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFUqLWcC/3WMQQ7CIBBFr2Jm7ZgOaGtdeQ/jgsrQEhUMINE0v
+ bu0OxNdvp//3giRg+UIh9UIgbON1rsCcr2Cy6Bcz2h1YRCV2BJVNcak0t0/XUJpWlIN62ZnFJT
+ /I7Cxr6V1OhcebEw+vJd0pnn9VcmEhF0rO2V029SCjlcOjm8bH3qYM1n8VQVWOJtCKS33+ludp
+ ukDt3AKmt4AAAA=
+X-Change-ID: 20241106-statmount-3f91a7ed75fa
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, 
+ Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1246; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnLSpfGyoMPss40glOgHHEY5CBLo6BC/bgPGS5K
+ JS1mxPh21CJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZy0qXwAKCRAADmhBGVaC
+ FTagEACky1OeObGYBFFh9gZA6EDyF8nIWUGqGPr13e+NpiiOKTq9S3rOZtxmjpazKBrzndMhlnp
+ Nlb2h2oNMJEcG/PD4Z1ABF6aVUwTcWiv1xVgq+Z/ccSxeekHome7VQi/D1sEuD92ZMYExi86rSG
+ waTV68gIX0SxirJJMIHiCFdFK0pvfZCFborvARR1d5MgjUuZlHNriwTR7aKFw57OCp34IP4CTgp
+ HhFIGlWx7gNrtC5McOdRHaB+HTYY34QWaOmy55nBJFSbHMCvmTu9ntn+CzmdtV+o343JLkFAOwm
+ dx44zAlgiXtwW7YL3nxZ5uWoywQp9bIS9r08AXVJq9CV2vXNdhA5U3Zs1OffUW4+pVI1as1+vJm
+ kpSygmMDY5hD1iSL0gzcwSui0PtPGo2HeMy8VAcKXIgEIgHdzNWAK6RQZAKn1X3QF9GM+fd0fgx
+ QQajohcBnV79TTsRgBZkiFnQJFo14Kag+RaM/CmmC+4VTtBKkFwsPLVorOI9HgnlWaK5p7LJggL
+ AaB3A8+eI/6X5ptwfHBzMv6GO481q301fBRI9qAe3CwOY3TBdnNs5XPePn1iuPbYyPfTIHGaIwV
+ Srs+VZpf39a30142VG7kis8psiOusXDgcUmyqxFG8/jfFQV6L/1Om4G3AVMwEqCxgLimzLDEdR8
+ fxb+KwDC0gfvy/Q==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Tue, Nov 05, 2024 at 09:16:40AM +1100, Dave Chinner wrote:
-> The DAX infrastructure needs the same changes for fsb > page size
-> support. We have a limited number bits we can use for DAX entry
-> state:
-> 
-> /*
->  * DAX pagecache entries use XArray value entries so they can't be mistaken
->  * for pages.  We use one bit for locking, one bit for the entry size (PMD)
->  * and two more to tell us if the entry is a zero page or an empty entry that
->  * is just used for locking.  In total four special bits.
->  *
->  * If the PMD bit isn't set the entry has size PAGE_SIZE, and if the ZERO_PAGE
->  * and EMPTY bits aren't set the entry is a normal DAX entry with a filesystem
->  * block allocation.
->  */
-> #define DAX_SHIFT       (4)
-> #define DAX_LOCKED      (1UL << 0)
-> #define DAX_PMD         (1UL << 1)
-> #define DAX_ZERO_PAGE   (1UL << 2)
-> #define DAX_EMPTY       (1UL << 3)
-> 
-> I *think* that we have at most PAGE_SHIFT worth of bits we can
-> use because we only store the pfn part of the pfn_t in the dax
-> entry. There are PAGE_SHIFT high bits in the pfn_t that hold
-> pfn state that we mask out.
+Meta has some internal logging that scrapes /proc/self/mountinfo today.
+I'd like to convert it to use listmount()/statmount(), so we can do a
+better job of monitoring with containers. We're missing some fields
+though. This patchset adds them.
 
-We're a lot more constrained than that on 32-bit.  We support up to 40
-bits of physical address on arm32 (well, the hardware supports it ...
-Linux is not very good with that amount of physical space).  Assuming a
-PAGE_SHIFT of 12, we've got 3 bits (yes, the current DAX doesn't support
-the 40th bit on arm32).  Fortunately, we don't need more than that.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v3:
+- Unescape the result of ->show_devname
+- Move handling of nothing being emitted out of the switch statement
+- Link to v2: https://lore.kernel.org/r/20241106-statmount-v2-0-93ba2aad38d1@kernel.org
 
-There are a set of encodings which don't seem to have a name (perhaps
-I should name it after myself) that can encode any power-of-two that is
-naturally aligned by using just one extra bit.  I've documented it here:
+Changes in v2:
+- make statmount_fs_subtype
+- return fast if no subtype is emitted
+- new patch to allow statmount() to return devicename
+- Link to v1: https://lore.kernel.org/r/20241106-statmount-v1-1-b93bafd97621@kernel.org
 
-https://kernelnewbies.org/MatthewWilcox/NaturallyAlignedOrder
+---
+Jeff Layton (2):
+      fs: add the ability for statmount() to report the fs_subtype
+      fs: add the ability for statmount() to report the mnt_devname
 
-So we can just recycle the DAX_PMD bit as bit 0 of the encoding.
-We can also reclaim DAX_EMPTY by using the "No object" encoding as
-DAX_EMPTY.  So that gives us a bit back.
+ fs/namespace.c             | 68 ++++++++++++++++++++++++++++++++++++++++++----
+ include/uapi/linux/mount.h |  6 +++-
+ 2 files changed, 67 insertions(+), 7 deletions(-)
+---
+base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
+change-id: 20241106-statmount-3f91a7ed75fa
 
-ie the functions I'd actually have in dax.c would be:
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-#define DAX_LOCKED	1
-#define DAX_ZERO_PAGE	2
-
-unsigned int dax_entry_order(void *entry)
-{
-	return ffsl(xa_to_value(entry) >> 2) - 1;
-}
-
-unsigned long dax_to_pfn(void *entry)
-{
-	unsigned long v = xa_to_value(entry) >> 2;
-	return (v & (v - 1)) / 2;
-}
-
-void *dax_make_entry(pfn_t pfn, unsigned int order, unsigned long flags)
-{
-	VM_BUG_ON(pfn_t_to_pfn(pfn) & ((1UL << order) - 1) != 0);
-	flags |= (4UL << order) | (pfn_t_to_pfn(pfn) * 8);
-	return xa_mk_value(flags);
-}
-
-bool dax_is_empty_entry(void *entry)
-{
-	return (xa_to_value(entry) >> 2) == 0;
-}
 
