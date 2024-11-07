@@ -1,93 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-33899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101C79C0470
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 12:45:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EFD9C04E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 12:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF781C211A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 11:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159672860E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 11:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9220EA59;
-	Thu,  7 Nov 2024 11:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B688820EA57;
+	Thu,  7 Nov 2024 11:51:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A896E20EA3E;
-	Thu,  7 Nov 2024 11:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6B720B1E7;
+	Thu,  7 Nov 2024 11:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979900; cv=none; b=rhaotA0Y/r7FbDacd25uOBKGQIi9ukwe9ggMXwreTCnT065ezL/VWa2NNCISwLkorYCErzNnhhZen49l/6aObLGqIrvndJJngVYHQB+uXlDSFp09VISVgeqn72eBBhJIxkujK/mDA0pNjxLYYgQ4Z+MLxSq+NDdwB9SQ1XV96H4=
+	t=1730980285; cv=none; b=ZhR3uRgNVCBq4V8XQamP1VwSz2jg9D6UzZGv83YNwIvAUfskjrJHhBCDx5f2TCcYRJVWViNxHOYepCz+/VggbFqGDvoEdONPL4HVYOkWG4IjMOTJduphkmW297xvkFcIrCjRoUDd4tj+/OLIRCZd9MjZVVLj5Cuei2v0kQV4EtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979900; c=relaxed/simple;
-	bh=/OpbqR2YxOIoxT9LA89l3XTqHM7jQEnOj4247aoH6vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRgra3t+ePZS56pX7+kxvnnzs764kH6BLxYMHLrdTlLX//XUgbky4w9bnnipFfgqnpz27redHtAO/+c+PjlivWKBwbhLEY3d6wdz7p9WboqZ06eyNbwOEFOJ3j/szsSkSVitSPgXcwQglwbWUEQD62dweYTSfynWZsjjk1jA328=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8C64D68B05; Thu,  7 Nov 2024 12:44:52 +0100 (CET)
-Date: Thu, 7 Nov 2024 12:44:52 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Anuj gupta <anuj1072538@gmail.com>,
-	axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
-	asml.silence@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v8 06/10] io_uring/rw: add support to send metadata
- along with read/write
-Message-ID: <20241107114452.GA31441@lst.de>
-References: <20241106121842.5004-1-anuj20.g@samsung.com> <CGME20241106122710epcas5p2b314c865f8333c890dd6f22cf2edbe2f@epcas5p2.samsung.com> <20241106121842.5004-7-anuj20.g@samsung.com> <20241107055542.GA2483@lst.de> <CACzX3As284BTyaJXbDUYeKB96Hy+JhgDXs+7qqP6Rq6sGNtEsw@mail.gmail.com> <20241107073852.GA5195@lst.de> <20241107104000.GB9730@green245>
+	s=arc-20240116; t=1730980285; c=relaxed/simple;
+	bh=0AtubCeFukFj7oJ5lpiZaEPaElzTFMpovpQKmNfwuE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RyOFgO5tmaAJ8NVz7d4bPUK9LatxXeY4nP4wsoxhj9pSgGkcZe8VBt+q1zb/3kWMpzJ1/BJGvUK1ypiljpkvLjhwqDP91lCK8LjY3TrKlm8BEc0stU7Z6I6rrBQq1W+Jt5UNJ7M0uj8J1HDp0MwYwBmuHBCEZZEL52YyUYUg5gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 681D248F39;
+	Thu,  7 Nov 2024 12:51:15 +0100 (CET)
+Message-ID: <fac697e2-22aa-40e5-942a-a6e40efee0b2@proxmox.com>
+Date: Thu, 7 Nov 2024 12:51:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107104000.GB9730@green245>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before
+ netfs_clear_unread() tail clean
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: dhowells@redhat.com, jlayton@kernel.org, stable@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241027114315.730407-1-c.ebner@proxmox.com>
+ <2024110644-audible-canine-30ca@gregkh>
+ <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
+ <2024110625-blot-uncooked-48f9@gregkh>
+Content-Language: en-US, de-DE
+From: Christian Ebner <c.ebner@proxmox.com>
+In-Reply-To: <2024110625-blot-uncooked-48f9@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> +/*
-> + * If sqe->ext_cap is set to this for IORING_OP_READ/WRITE, then the SQE
-> + * contains protection information, and ring needs to be setup with SQE128
-> + */
-> +#define EXT_CAP_PI	(1U << 0)
-> +
-> +/* Second half of SQE128 for IORING_OP_READ/WRITE */
-> +struct io_uring_sqe_ext {
-> +	/*
-> +	 * Reserved space for extended capabilities that are added down the
-> +	 * line. Kept in beginning to maintain contiguity with the free space
-> +	 * in first SQE
-> +	 */
-> +	__u64	rsvd0[4];
+On 11/6/24 09:35, Greg KH wrote:
+> On Wed, Nov 06, 2024 at 09:26:46AM +0100, Christian Ebner wrote:
+> 
+> Please try testing the original fixes and providing them as a patch
+> series and send them for us to review.
+> 
+> thanks,
+> 
+> greg k-h
 
-Thanks for documenting the design decision.  But I still don't understand
-it.  Due to the layout it will be a bit hard to have fields spreading
-form the "normal" SQE into the extended area anyway.  Note that this
-is not a rejection of the approach, but I don't understand the argument
-for it.
+Hi Greg,
 
-> +	/* only valid when EXT_CAP_PI is set */
-> +	__u16	flags;
-> +	__u16	pi_app_tag;
-> +	__u32	pi_len;
-> +	__u64	pi_addr;
-> +	__u64	pi_seed;
-> +	__u64	rsvd1;
+as mentioned, the original series does not apply on stable-6.11.y and 
+securely and correctly back-porting this is out of scope for us, given 
+resource and time constraints.
 
-.. but either way it would probably make sense to keep the reserved
-areas together instead of spread out.
+The main intend was to contribute back a patch which is also 
+back-portable to older kernels. This seems unfeasible with the huge 
+original patch series. The submitted patch has successfully been tested 
+on our side and fixes the issue for affected customers which were 
+willing to test the patch.
 
-Otherwise this looks good to me.
+Thanks for your time.
+
+Best regards,
+Christian Ebner
+
+
+
+
+
 
