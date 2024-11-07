@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-33969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCDD9C1096
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A09AD9C1098
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A92B1C2254A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A134B1C223E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326C6227BAA;
-	Thu,  7 Nov 2024 21:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22922802E;
+	Thu,  7 Nov 2024 21:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYq6UO4K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5NtMwQT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BABD227B91;
-	Thu,  7 Nov 2024 21:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E9F227BBB;
+	Thu,  7 Nov 2024 21:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731013218; cv=none; b=hC9J+U45eICBJ2qdjb59SXeVl7bfPw3bQGEmTTd0qgmp8tvfbZ7vBErgV4ZAKnFx2O+dYMVrQjtkNRWKiUFxcHb95fUSKIrJRMh1rusdgRltF9gaXC9+R6ObL1rRdIEZ5ZAj367/ypuCqHgVs5ctS12TTwS/HMjWapOIfY8icWg=
+	t=1731013220; cv=none; b=sQEoiQb4MQQmMN4nbA1inO22LclhzHvQPpvODUx/IkWRJ7gEFIj9CX5eusULV70GiO6U9a3tqeLklYD2uisUtBCIAwqmnFzijm+wGk9E7Egu5XghWiUtlyU2XciA1LITrGyvlgGQWz1jRXQP2DfuoJHiibYQLFOsJR397fDIHZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731013218; c=relaxed/simple;
-	bh=Xk5GmckVGwbKY64HejHicOU/dRi3TybyQoiny9Ds7dI=;
+	s=arc-20240116; t=1731013220; c=relaxed/simple;
+	bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MdoUvyDkpUPkOG6ZBDoq85pUvaXZ/7I/693FfgWmZUtqmjvTe80hzJfsSKI6wr2iqNJWmd0ms+VZC4NhLXM5tu9mR5BA+JxMIzr55iA2u1THg3MTkpSZGGBjQE2RcQtZ1k1ki7Qkutk/cTI11KxnjZQuvytYxdOKNvUy+lYuVWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYq6UO4K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5885DC4CECE;
-	Thu,  7 Nov 2024 21:00:17 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=G9KAgxPAN8BnoZqGQYzDHVdS1qHFltHXQb+aTwmm4r4iFqKiTsxtxguNL6UWBHpLBRMyBgcjSfZI8KY/YDbOoO2zcEx7v2W6rtIXhaFF8FqXuBLKHJXnNYuBoxbFwTrbknP3dATGmKFH+NYxbTQb6q6GjvjR4Vvioq+6QQGuBQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5NtMwQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A1CC4CED4;
+	Thu,  7 Nov 2024 21:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731013218;
-	bh=Xk5GmckVGwbKY64HejHicOU/dRi3TybyQoiny9Ds7dI=;
+	s=k20201202; t=1731013219;
+	bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JYq6UO4Kr/cTMEFxLhhFbFJaDY7tFVWylaFki9TIg8xvdy6Q1sKuAOfyX5iwyAyuv
-	 OmfF94E41Bkc9ZgfdAipq60QEre4QjIGFMvcYzAXt1WuTusekgJxlfIv1qfEjGqfAY
-	 Fr0ChgckyYRP5o0XetclevdRdG7Nm3o+AKiClAcqJxHZCKs1s1lKJ2WTq+B+1gHcQc
-	 FkPxddv8FefI3i0PK/CpJ+EnD1qoppWqbhz08nkOv1ZwP5NTWob5cJcn3SJ5ZQ3Ogf
-	 3vvLvwUeLE4soPsl+dvMQHLve5y1Y2KdOogQrhJYUiOtB/ToG1ao8NGoR/qtgH2u2O
-	 pPCF0wOoEBANA==
+	b=h5NtMwQTMeVw5jnN0sF52dxAw6Ljx9QJaB0RsshTORI3o1FJABNSajKu3IxtHfbp7
+	 cjZWuhHi7NCdYYu7DK39ZAMii3Xr4x9+Cgjq0uOlh8XgBXGuh+Bio8m72Bc21ErZ7H
+	 aIBft6Sy5L4F+lPA36WGsjVvefA0dSdmmLePE7VpYbLi7VDykKNBjNddzFMublFKKo
+	 acwuaDJBS/G8wbmkodc0rKkoyOwXJAdFhm8GMSJD4TXB/g5uy2o4v4w6ypPRayd4zJ
+	 XA31nxQj713gFVk4Le9vlE9jZFPEAFiGjW2vsjVGLyKL1E7C0/3p/YhwBXbHVSeggk
+	 S5iAhosq2PamA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 07 Nov 2024 16:00:06 -0500
-Subject: [PATCH v3 1/2] fs: add the ability for statmount() to report the
- fs_subtype
+Date: Thu, 07 Nov 2024 16:00:07 -0500
+Subject: [PATCH v3 2/2] fs: add the ability for statmount() to report the
+ mnt_devname
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-statmount-v3-1-da5b9744c121@kernel.org>
+Message-Id: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
 References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
 In-Reply-To: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -62,150 +62,121 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
  Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4590; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Xk5GmckVGwbKY64HejHicOU/dRi3TybyQoiny9Ds7dI=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnLSpfYG+d1kMK04rIn89VYAQARS0GrwjMCH5MM
- x2TIxls4GyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZy0qXwAKCRAADmhBGVaC
- FbEgD/922p3HIAQxKFePCk3K3NL5wC+/2S7ZJn55RQ1aApbsot4hgIG01JpJtwBW1TweSB2jCAr
- pdm0Dx/JcsbQsVx0S14Iz8bIHyCm1fq/NqpSQYuZ1lkeFvxWR7xEQ8u6QxwRjzUmCvwC9ZNYi8C
- P7m8S6+1YyehQyoI/g+F8f+CgdQT1lhPZ9Z29B3IssWlo8rzvKwzMF6Cu4wxGcAFIKw0dmE+KB7
- HMpKr2KBBkp3tqYWUNFHpBF2fNhs7IajppbYwjpTqNMw8lqYsi2MrTZHm97S7uq8KLfOx4StqIB
- Rz5RUJCZquiihnbKtqsygw41sKRLFe9a0mpMgS5YEaIbqxFlTEunSf/5ECU+B5zLR6NLMmGMBF6
- Lnp2Hqwhi29FeQrcuOwc9KFvm7GhkNIX1wsAlGGXg6lz4YO3bDlDHhYyOGyrX6I+aA1FDmek/Mz
- BZOFIhvIOWw/Uc6N1giLRTFkVuAgI/jOGmnNgHEtGQeyi4CPAUhpwiq/a9M3hYyppMfvb7h6E2H
- ahWyO9ioRDEBQl7HMuXmmZIaA87xZTsEZUHFO2fvauprhlWm9ClB6z8IHcYr5OLI279rnekd4Jp
- NtzbrQZEtzsrnKZAp2HzjWpCfvuwRZ8dTgWQKrV5EDnxL1ubhulJCPNGFssAuKqNp6IZyGOtVWq
- tnpiSA4okLLBYbA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3899; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnLSpgu+dQtyWXLsC8tfCTuaArcNvBOte92SNN6
+ qtC/2NUO3eJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZy0qYAAKCRAADmhBGVaC
+ FXysD/97HnQ/uSr74GpOmLPZQPEwa3xrTdqIkL/H+zMzpaGQlZl7iahTdelIxungZ6Khni9mcSs
+ X7tifNInv7M+NeYrC6BJ1WkPXfH5IgHrQ+K7oadsRWWc0aJ+k7kjqW4BZGw3Rgp2wFsid/C7pQ5
+ ER5NtUQ+H6kPcqZi05fyvki4U+iTCz9MIRXpT9TCeRnad91XEvjRepBX3w8LYGoL94umHyf66dz
+ 9pXSkrSw3fM4VUhNkO9wA/OgfsDAnIYHw/Q90fTtMI/IFQS1YX8ejs4wNS3hehUzT5vJeaSlSOL
+ 8AHMn/x2nBKnUcbQaD5SUSFBAj2r80nF4gCpV1vaYqWRwISgjOwqfZ6L4Aas3N+BOMvTysaeXOH
+ /xc6ixRRXGO59PwJz9YAYFrDhti9heuAts6ZpGrbBtKNPS6dHiQHD0ZrVf4yT7yH/k8EZAxEyAJ
+ +ino2zDVxQixPlyf+pUlLYnj7qZXxcvM9W3uXIF3tzFRP4fy9WNgCO/1La7A8nZ7N5C4BigJOBt
+ K+nmFuzJSQb0oIaf6pxWBuXA+IgKwzgy54P50ZTjwiQF8mOYvj1KyZjJWFEcFLCUxwbuI18lLHK
+ 0LezOK2YtG8Jzs16iPKFB4cqLMuiqPR0AeIlfHPCjQHQdk7OMhIg/rC0kcnO9Vz9aAcYQ/iNZsT
+ mORw5Nw/kIbsP/Q==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-/proc/self/mountinfo prints out the sb->s_subtype after the type. This
-is particularly useful for disambiguating FUSE mounts (at least when the
-userland driver bothers to set it).
+/proc/self/mountinfo displays the devicename for the mount, but
+statmount() doesn't yet have a way to return it. Add a new
+STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
+offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
+the return mask if there is a device string.
 
-Add STATMOUNT_FS_SUBTYPE and claim one of the __spare2 fields to point
-to the offset into the str[] array.
-
-Handle the case where there is no subtype by not setting
-STATMOUNT_FS_SUBTYPE in the returned mask. Check whether the function
-emitted anything and just return immediately if not.
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ian Kent <raven@themaw.net>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/namespace.c             | 34 ++++++++++++++++++++++++++++------
- include/uapi/linux/mount.h |  5 ++++-
- 2 files changed, 32 insertions(+), 7 deletions(-)
+ fs/namespace.c             | 36 +++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/mount.h |  3 ++-
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..fc4f81891d544305caf863904c0a6e16562fab49 100644
+index fc4f81891d544305caf863904c0a6e16562fab49..56750fcc890271e22b3b722dc0b4af445686bb86 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -5006,6 +5006,14 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
- 	return 0;
+@@ -5014,6 +5014,32 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
+ 		seq_puts(seq, sb->s_subtype);
  }
  
-+static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
++static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
 +{
 +	struct super_block *sb = s->mnt->mnt_sb;
++	struct mount *r = real_mount(s->mnt);
 +
-+	if (sb->s_subtype)
-+		seq_puts(seq, sb->s_subtype);
++	if (sb->s_op->show_devname) {
++		size_t start = seq->count;
++		int ret;
++
++		ret = sb->s_op->show_devname(seq, s->mnt->mnt_root);
++		if (ret)
++			return ret;
++
++		if (unlikely(seq_has_overflowed(seq)))
++			return -EAGAIN;
++
++		/* Unescape the result */
++		seq->buf[seq->count] = '\0';
++		seq->count = start;
++		seq_commit(seq, string_unescape_inplace(seq->buf + start, UNESCAPE_OCTAL));
++	} else if (r->mnt_devname) {
++		seq_puts(seq, r->mnt_devname);
++	}
++	return 0;
 +}
 +
  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
  {
  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
-@@ -5042,33 +5050,44 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 
- static int statmount_string(struct kstatmount *s, u64 flag)
- {
--	int ret;
-+	int ret = 0;
- 	size_t kbufsize;
- 	struct seq_file *seq = &s->seq;
- 	struct statmount *sm = &s->sm;
-+	u32 start = seq->count;
- 
- 	switch (flag) {
- 	case STATMOUNT_FS_TYPE:
--		sm->fs_type = seq->count;
-+		sm->fs_type = start;
- 		ret = statmount_fs_type(s, seq);
+@@ -5077,6 +5103,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 		sm->fs_subtype = start;
+ 		statmount_fs_subtype(s, seq);
  		break;
- 	case STATMOUNT_MNT_ROOT:
--		sm->mnt_root = seq->count;
-+		sm->mnt_root = start;
- 		ret = statmount_mnt_root(s, seq);
- 		break;
- 	case STATMOUNT_MNT_POINT:
--		sm->mnt_point = seq->count;
-+		sm->mnt_point = start;
- 		ret = statmount_mnt_point(s, seq);
- 		break;
- 	case STATMOUNT_MNT_OPTS:
--		sm->mnt_opts = seq->count;
-+		sm->mnt_opts = start;
- 		ret = statmount_mnt_opts(s, seq);
- 		break;
-+	case STATMOUNT_FS_SUBTYPE:
-+		sm->fs_subtype = start;
-+		statmount_fs_subtype(s, seq);
++	case STATMOUNT_MNT_DEVNAME:
++		sm->mnt_devname = seq->count;
++		ret = statmount_mnt_devname(s, seq);
 +		break;
  	default:
  		WARN_ON_ONCE(true);
  		return -EINVAL;
- 	}
+@@ -5225,6 +5255,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+ 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
+ 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
  
-+	/*
-+	 * If nothing was emitted, return to avoid setting the flag
-+	 * and terminating the buffer.
-+	 */
-+	if (seq->count == start)
-+		return ret;
- 	if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
- 		return -EOVERFLOW;
- 	if (kbufsize >= s->bufsize)
-@@ -5203,6 +5222,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
- 	if (!err && s->mask & STATMOUNT_MNT_OPTS)
- 		err = statmount_string(s, STATMOUNT_MNT_OPTS);
- 
-+	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
-+		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
++	if (!err && s->mask & STATMOUNT_MNT_DEVNAME)
++		err = statmount_string(s, STATMOUNT_MNT_DEVNAME);
 +
  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
  		statmount_mnt_ns_id(s, ns);
  
-@@ -5224,7 +5246,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
+@@ -5246,7 +5279,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
  }
  
  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
--			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS)
-+			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
+-			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
++			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
++			      STATMOUNT_FS_SUBTYPE | STATMOUNT_MNT_DEVNAME)
  
  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
  			      struct statmount __user *buf, size_t bufsize,
 diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 225bc366ffcbf0319929e2f55f1fbea88e4d7b81..2e939dddf9cbabe574dafdb6cff9ad4cf9298a74 100644
+index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
 --- a/include/uapi/linux/mount.h
 +++ b/include/uapi/linux/mount.h
-@@ -173,7 +173,9 @@ struct statmount {
- 	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+@@ -174,7 +174,7 @@ struct statmount {
  	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
  	__u64 mnt_ns_id;	/* ID of the mount namespace */
--	__u64 __spare2[49];
-+	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
-+	__u32 __spare1[1];
-+	__u64 __spare2[48];
+ 	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
+-	__u32 __spare1[1];
++	__u32 mnt_devname;	/* [str] Device string for the mount */
+ 	__u64 __spare2[48];
  	char str[];		/* Variable size part containing strings */
  };
- 
-@@ -207,6 +209,7 @@ struct mnt_id_req {
- #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+@@ -210,6 +210,7 @@ struct mnt_id_req {
  #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
  #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
-+#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+ #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
++#define STATMOUNT_MNT_DEVNAME		0x00000200U	/* Want/got mnt_devname */
  
  /*
   * Special @mnt_id values that can be passed to listmount
