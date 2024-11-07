@@ -1,91 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-33916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4768D9C09D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 16:15:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C038F9C0A22
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 16:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36451F230D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7258A1F2340C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 15:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A21212EE0;
-	Thu,  7 Nov 2024 15:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549B0212EFB;
+	Thu,  7 Nov 2024 15:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="fNtYKep2"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27IKjOHy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="50NzdFIG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27IKjOHy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="50NzdFIG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDB1714DF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 15:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94929CF4;
+	Thu,  7 Nov 2024 15:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992547; cv=none; b=pBGZcKvDP320jEtg6zfopTP57HpCA5gWWgMpOBHTUzd7nK7s6LlDBe1Sm0b/47BY2DW3ripFQMUkMEbnN2zTpsCdqPHDZrP/GIM5WyWvYyn7rAQ0W3EFFKyC8mjGSH7SvsyT6fgovF1a7C2G688HNjqJiA0Gx0VgWd3zuR/4Y4c=
+	t=1730993543; cv=none; b=R1D7mzIR0SH/stHIBDB1Q1h1Z9WMxMpTxuoPMjCspvIqkUPqNFFhBXHmORv357cDLStGYwS8rg2n9MvexeVNwA3dLmU8thnRhqzvFtcBKyMW85k8AQruR1zihAOHQqM/q6q/EI9CslIJ2MppdHPUlqSeh0Uola81NbqRoHAmb4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992547; c=relaxed/simple;
-	bh=f53VMlD9u95v+55/gffunntgJ3OC/A8Q9e72woQmo3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CLEZPc8xP5Q+o3hCnNh40edC/16E7ELHHGPZCiFKSlveVxZSovN6E+j6tlEjKODGByOQCe9djE849AOgc6/zEnB2yFcvj7lkxh4EF5t1Fgf7t3dQHSjyfWE3Ae5qHltVJbZ8lAC9ErbF2Z56e1KFcaP6JqaaCH5BfxKNa/8uXnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=fNtYKep2; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A7FD8Q2003576
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 10:13:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1730992391; bh=NpRVto2oJv1r9qgeFToO/9vEnPP/tQoaldlTKis7JNI=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=fNtYKep2oIzKI0QbVF5GbmbCv8UL4jeeHYSSFO1mOyOGVfkmjoq3uOtPkJsXaUCPK
-	 yTGBQAZ3MEplk9TcRBzGxrnoaoWlR+8Uo9fMirOckuJd+TNOtIzYDl9M/Xro52Ty00
-	 WoxGJxZRHkLCe4TxQApGDDWTTtPuQ9APjLwcP23PqY6T9AF5of1c4d4obrWKgrN6oh
-	 VvthQb6lSQL+FISiQPO067/RIVByvDXQWCBqTh1ARDE6Nsg0wN23v09GbQU6+6yg2z
-	 n6YY3pC13TTm44cx5UvAuzy7gXOPITP6iYNhOpMSJGhs95OmasyXJLwFjFBepK70G5
-	 h45Odjo5gi8NQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 4F03315C1C63; Thu, 07 Nov 2024 10:13:06 -0500 (EST)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-        yukuai3@huawei.com
-Subject: Re: [PATCH -next] ext4: don't pass full mapping flags to ext4_es_insert_extent()
-Date: Thu,  7 Nov 2024 10:13:01 -0500
-Message-ID: <173099237653.321265.15423417228670209283.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
-References: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1730993543; c=relaxed/simple;
+	bh=MNIDAM9F2mP1cQXpXuguySZM881HcFtfjihzPCdfe/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYivuzBf7PT+GBHif8NF52CjPOKJEuUc80mmgORfhDj/OGHNgXKbrQQ6ALxyRYjoKPmWyvtz/X19oxUrTDaR/6Ts+fUBFrxkjVrdhdA534FXrQh5T4xJSexRkftyXXpITGXGuHBER9N52cnwheLUi3wdVNWnna1w5AgAZ6WZohI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27IKjOHy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=50NzdFIG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27IKjOHy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=50NzdFIG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D9F51FB4A;
+	Thu,  7 Nov 2024 15:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730993538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6+0m2CEqNZ49h/raDsmRZOTYIT7S6RDGtUP6QOTVYgA=;
+	b=27IKjOHyAJgZJwgGAzjBfAwdmP/TXLs51G7RHvfRCGgOcAsJzknmIjdewGKwaa1mOX/9I3
+	NN/1XvwdPvWVuBGsUa9UcnL/BNS9QwMFyUYyQsWKtP1gI5FN3Ey9Ku1XvsmweowaoQ34T7
+	Pg/4ao3Q1O1eg+kZ0OfJibR4EsRKuEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730993538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6+0m2CEqNZ49h/raDsmRZOTYIT7S6RDGtUP6QOTVYgA=;
+	b=50NzdFIG4HJXESRzKFBO0uQg92WktmZxY/JARePzBqJjGO0tyxcfvpMN20l1VQQIoZYF3l
+	ENVWu76lKgSS04Ag==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=27IKjOHy;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=50NzdFIG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730993538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6+0m2CEqNZ49h/raDsmRZOTYIT7S6RDGtUP6QOTVYgA=;
+	b=27IKjOHyAJgZJwgGAzjBfAwdmP/TXLs51G7RHvfRCGgOcAsJzknmIjdewGKwaa1mOX/9I3
+	NN/1XvwdPvWVuBGsUa9UcnL/BNS9QwMFyUYyQsWKtP1gI5FN3Ey9Ku1XvsmweowaoQ34T7
+	Pg/4ao3Q1O1eg+kZ0OfJibR4EsRKuEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730993538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6+0m2CEqNZ49h/raDsmRZOTYIT7S6RDGtUP6QOTVYgA=;
+	b=50NzdFIG4HJXESRzKFBO0uQg92WktmZxY/JARePzBqJjGO0tyxcfvpMN20l1VQQIoZYF3l
+	ENVWu76lKgSS04Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51CEF139B3;
+	Thu,  7 Nov 2024 15:32:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 31rtE4LdLGfYdAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 15:32:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EC946A08FE; Thu,  7 Nov 2024 16:32:17 +0100 (CET)
+Date: Thu, 7 Nov 2024 16:32:17 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jim Zhao <jimzhao.ai@gmail.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write
+ blocking with strictlimit
+Message-ID: <20241107153217.j6kwfgihzhj33dia@quack3>
+References: <20241023100032.62952-1-jimzhao.ai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023100032.62952-1-jimzhao.ai@gmail.com>
+X-Rspamd-Queue-Id: 5D9F51FB4A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-
-On Fri, 06 Sep 2024 14:14:01 +0800, Zhang Yi wrote:
-> When converting a delalloc extent in ext4_es_insert_extent(), since we
-> only want to pass the info of whether the quota has already been claimed
-> if the allocation is a direct allocation from ext4_map_create_blocks(),
-> there is no need to pass full mapping flags, so changes to just pass
-> whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
+On Wed 23-10-24 18:00:32, Jim Zhao wrote:
+> With the strictlimit flag, wb_thresh acts as a hard limit in
+> balance_dirty_pages() and wb_position_ratio(). When device write
+> operations are inactive, wb_thresh can drop to 0, causing writes to
+> be blocked. The issue occasionally occurs in fuse fs, particularly
+> with network backends, the write thread is blocked frequently during
+> a period. To address it, this patch raises the minimum wb_thresh to a
+> controllable level, similar to the non-strictlimit case.
 > 
-> 
-> [...]
+> Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
 
-Applied, thanks!
+...
 
-[1/1] ext4: don't pass full mapping flags to ext4_es_insert_extent()
-      commit: a274f8059aa45b2af52e8b92424d53f6139a3c4e
+> +	/*
+> +	 * With strictlimit flag, the wb_thresh is treated as
+> +	 * a hard limit in balance_dirty_pages() and wb_position_ratio().
+> +	 * It's possible that wb_thresh is close to zero, not because
+> +	 * the device is slow, but because it has been inactive.
+> +	 * To prevent occasional writes from being blocked, we raise wb_thresh.
+> +	 */
+> +	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+> +		unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
+> +		u64 wb_scale_thresh = 0;
+> +
+> +		if (limit > dtc->dirty)
+> +			wb_scale_thresh = (limit - dtc->dirty) / 100;
+> +		wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh / 4));
+> +	}
 
-Best regards,
+What you propose makes sense in principle although I'd say this is mostly a
+userspace setup issue - with strictlimit enabled, you're kind of expected
+to set min_ratio exactly if you want to avoid these startup issues. But I
+tend to agree that we can provide a bit of a slack for a bdi without
+min_ratio configured to ramp up.
+
+But I'd rather pick the logic like:
+
+	/*
+	 * If bdi does not have min_ratio configured and it was inactive,
+	 * bump its min_ratio to 0.1% to provide it some room to ramp up.
+	 */
+	if (!wb_min_ratio && !numerator)
+		wb_min_ratio = min(BDI_RATIO_SCALE / 10, wb_max_ratio / 2);
+
+That would seem like a bit more systematic way than the formula you propose
+above...
+
+								Honza
 -- 
-Theodore Ts'o <tytso@mit.edu>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
