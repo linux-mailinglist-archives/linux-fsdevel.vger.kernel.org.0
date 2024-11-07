@@ -1,185 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-33945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC1F9C0D65
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 18:59:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3539C0DFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 19:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F16C7B214F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 17:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9604283235
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 18:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D925216DE8;
-	Thu,  7 Nov 2024 17:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A08721731D;
+	Thu,  7 Nov 2024 18:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QbtHYwpY"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wSR1Jxk2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645FD21315C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 17:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B5C18F2C3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 18:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731002367; cv=none; b=pdmGVujLHskBJMyDHvPBGx6Xw4xTzVsgJzguwkPfAwIZBhGQ2TWqXZXf+LARyuJjdNy3wFSosbdPVM1Sk7ifTCq5Oe9RlBubaCyLizTcQZjvzVkVuz+7tPR5TaFVTbVjjBnHh6zrfQJA6ktyib2Yd3KXOMo1fl8gMqdoTBK+wdo=
+	t=1731005016; cv=none; b=XD38UnqFL6OWUfbEVZF6qottxXJlDQqOMGyLprgBJAsa06WjipxXuL1bwiOm47YfHQyk2D9t0V8a5MvxwUbnGzOOL5OJsOISdv4DDBKBGTjtR8Pmn1ks6v6ZHYuTktAj8Qdb/Fng6VjDKs2U0N7b+dkqqEI/Pa9OxO/IqrkOxWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731002367; c=relaxed/simple;
-	bh=QlD2/t4mRIBt65kddDKgnMs/F7AlUZTCBmuyr/f1Fvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r1dGNNl3lLRGGwGnCJhoQ3vyuQ1RjSFrN/hi2gULyyibNBjHVJJQ0SMoT9x6Tv2bxLf9fUckM+fVXOatn4tCzOwswSGIUCnv7K+dnOTTSQ7tcBQlOSYvTfrF42qM+AEUsneKy/M+6xqJKHarA5LGc1Pr69UKtWIyWAXaV77wEx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QbtHYwpY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731002364;
+	s=arc-20240116; t=1731005016; c=relaxed/simple;
+	bh=LnM2i5iHpMyx76qbizXXkeFTp45ZF8No6yJH1OATCfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUuWtQAhep6wWx2g0kXecWE4PRWT7qtWPTDGTROlaVoHycFRJC8PGUR8fuPWnewZUdMDTEBbbab+9XDjxAhWWX4zZQz3srPw1GZsgiKpYQyYDCn6OaJcjTdT8HPVC8bd0mjYE+n8VUYMnCugE2+GZwtwwgnyouA+YCZJf1WHBUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wSR1Jxk2; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 7 Nov 2024 10:43:19 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731005012;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4mRr/ado//dqpuyVTA/Mq5FxzZMBnNf5uAVrKJfSB8U=;
-	b=QbtHYwpYTVTIINSzFuHeyXl4iL6OWvxN8i9slpoq+sL0ROBHXDbz/29GQsF10TRSCpi7ZX
-	fUujpxTQJVfoWnwFz/TpztRN9RvRWsEwNnc9bMEUOAXLEPCaCJq5tMycb/sRz0CzPZZgTh
-	i3YqaQXhX6u9FLHB6fvuHKAR+b6TAs8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-e-P8ViklO12kXqdzcFhWsA-1; Thu, 07 Nov 2024 12:59:23 -0500
-X-MC-Unique: e-P8ViklO12kXqdzcFhWsA-1
-X-Mimecast-MFC-AGG-ID: e-P8ViklO12kXqdzcFhWsA
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-431518ae047so12675315e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 09:59:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731002362; x=1731607162;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mRr/ado//dqpuyVTA/Mq5FxzZMBnNf5uAVrKJfSB8U=;
-        b=HMZsdl9srNtNIcGu7NqlvxkL1Em1+0GALPfu7F4PlASPzlPy9BzWenG+ALpPNgdiYS
-         gLWBpCPPupma+jiVvjsd56BzX3nZFFZmXToq5fzZNKsauyyEJEcECoe4AkzXBWscwnME
-         5S/F+cd+WbWfBQOX0K+bsBdCGhsQCbgpwAMt9gJ6k/6D6QKzmw/H8GAtQhMaHVH41YHQ
-         U/F4uXzdvCe+tmbxE3WFTJ6LFuJtjNhRe+vqwfo0WUUnNFUP7uFAyXfBLrIy9ie0qKwy
-         MQPIa+ZjzC9RPA2TPYo85chtQ1nnMaBbc4//Xc2akVyjdSnhP8sbWRpVZptHMDPf9mpW
-         wxVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0NBA7CA9N7IRRCYpMcgEBn+GAUbQVv6tKjgu0W6j+WuFO6fUk0duY0mcgj2pbvVr7bs04bMFo6S87Xg7V@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyWTgVuh3ghKXjkRVM7RAyHQErgX60sM3pg2Lmcx0tSugpUG5X
-	iF/S2M3owcEpAeVj6ZWKhuvYPdK+irSsXTOSFRqCdGl1emPngsXSGa+rCB5ncwbaaua/5CkcXuX
-	xJJ0cXCQ/oRYLuaVtXWuB4oXZuRRtX0W3jqmZ3oEgIyxFSetaawbmDaS0ZHzA5JE=
-X-Received: by 2002:a5d:5f42:0:b0:374:cd3c:db6d with SMTP id ffacd0b85a97d-381f0f40dc1mr453552f8f.6.1731002361846;
-        Thu, 07 Nov 2024 09:59:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEodIAZG1/hqqV37r0z4nHa4TuZO197WEmrItnsoLeVMlxggBPgex4kBUzlAVvgpAzvjwpmjQ==
-X-Received: by 2002:a5d:5f42:0:b0:374:cd3c:db6d with SMTP id ffacd0b85a97d-381f0f40dc1mr453534f8f.6.1731002361458;
-        Thu, 07 Nov 2024 09:59:21 -0800 (PST)
-Received: from ?IPV6:2003:cf:d711:bb59:b57d:a166:ac57:9bc2? (p200300cfd711bb59b57da166ac579bc2.dip0.t-ipconnect.de. [2003:cf:d711:bb59:b57d:a166:ac57:9bc2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c1205sm71883915e9.26.2024.11.07.09.59.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 09:59:20 -0800 (PST)
-Message-ID: <ece87ac3-71e2-4c43-a144-659d19b1e75d@redhat.com>
-Date: Thu, 7 Nov 2024 18:59:19 +0100
+	bh=MN7ppjSl5NrWL94TOJ8Rsf6n0UV1JNOurCJmTruhpog=;
+	b=wSR1Jxk2M2iDL0nYmozOeTOx5v/p7joRmWS7gYq9Hx28tykH20FigoYnvqcY+wfcEcORs+
+	TKynLKVvJAIu0n9fCtB3syEVfucSFPtl881XtfGHWtTL7XWH3cwj1CNB3c28NwLdSsJDX/
+	beozCsZpAp2wIwglz7y2RIDd5pf2tPM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: gregkh@linuxfoundation.org, dakr@redhat.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] selftests/firmware/fw_namespace.c: sanity check on
+ initialization
+Message-ID: <20241107184319.vstzt6z4hhxmhzdv@4VRSMR2-DT.corp.robot.car>
+References: <20241105013056.3711427-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>,
- German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi
- <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>
-References: <20241024164726.77485-1-hreitz@redhat.com>
- <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
- <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com>
- <CAJfpegvfYhL4-U-4=sSkcne3MSNZk3P3jqBAPYWp5b5o4Ryk6w@mail.gmail.com>
-Content-Language: en-US
-From: Hanna Czenczek <hreitz@redhat.com>
-In-Reply-To: <CAJfpegvfYhL4-U-4=sSkcne3MSNZk3P3jqBAPYWp5b5o4Ryk6w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105013056.3711427-1-mcgrof@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 07.11.24 13:18, Miklos Szeredi wrote:
-> On Thu, 7 Nov 2024 at 11:00, Hanna Czenczek <hreitz@redhat.com> wrote:
->> It isn’t much, but I believe it’s most of fuse_fill_super_common()
->> (without restructuring the code so flags returned by INIT are put into a
->> separate structure and then re-joined into sb and fc later).
-> Probably not worth it.
->
->> fuse_send_init() reads sb->s_bdi->ra_pages, process_init_reply() writes
->> it and sb->s_time_gran, ->s_flags, ->s_stack_depth, ->s_export_op, and
->> ->s_iflags.  In addition, process_init_reply() depends on several flags
->> and objects in fc being set up (among those are fc->dax and
->> fc->default_permissions), which is done by fuse_fill_super_common().
-> Okay, got it.
->
->> So I think what we need from fuse_fill_super_common() is:
->> - fuse_sb_defaults() (so these values can then be overwritten by
->> process_init_reply()),
->> - fuse_dax_conn_alloc(),
->> - fuse_bdi_init(),
->> - fc->default_permissions at least, but I’d just take the fc->[flag]
->> setting block as a whole then.
->>
->> I assume we’ll also want the SB_MANDLOCK check then, and
->> rcu_assign_pointer().  Then we might as well also set the block sizes
->> and the subtype.
->>
->> The problem is that I don’t know the order things in
->> fuse_fill_super_common() need to be in, and fuse_dev_alloc_install() is
->> called before fuse_bdi_init(), so I didn’t want to move that.
->>
->> So what I understand is that calling fuse_dev_alloc_install() there
->> isn’t necessary?  I’m happy to move that to part 2, as you suggest, but
-> Hmm, fuse_dev_install() chains the fud onto fc->devices.  This is used
-> by fuse_resend() and fuse_abort_conn().  Resending isn't really
-> interesting at this point, but aborting should work from the start, so
-> this should not be moved after sending requests.
->
->> I’m not sure we can really omit much from part 1 without changing how
->> process_init_reply() operates.  We could in theory delay
->> process_init_reply() until after GETATTR (and thus after setting
->> s_root), but that seems kind of wrong, and would still require setting
->> up BDI and DAX for fuse_send_init().
-> Agree, let's keep the split as is, but store the fud temporarily in
-> fuse_fs_context and leave setting *ctx->fudptr to part2.
+On Mon, Nov 04, 2024 at 05:30:56PM -0800, Luis R. Rodriguez wrote:
+> From: Luis Chamberlain <mcgrof@kernel.org>
+> 
+> The fw_namespace.c test runs in a pretty self contained environment.
+> It can easily fail with false positive if the DUT does not have the
+> /lib/firmware directory created though, and CI tests will use minimal
+> guests which may not have the directory created. Although this can
+> be fixed by the test runners, it is also easy to just ensure the
+> directory is created by the test itself.
+> 
+> While at it, clarify that the test is expected to run in the same
+> namespace as the first process, this will save folks trying to debug
+> this test some time in terms of context. The mounted tmpfs later will
+> use the same init namespace for some temporary testing for this test.
+> 
+> Fixes: 901cff7cb9614 ("firmware_loader: load files from the mount namespace of init")
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Sure!
+Reviewed-by: Russ Weight <russ.weight@linux.dev>
 
->>>> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submount)) {
->>> How could fm->submount be set if sb->s_root isn't?
->> fuse_get_tree_submount(), specifically fuse_fill_super_submount() whose
->> error path leads to deactivate_locked_super(), can fail before
->> sb->s_root is set.
-> Right.
->
->> Still, the idea was rather to make it clear that this condition (INIT
->> sent but s_root not set) is unique to non-submounts, so as not to mess
->> with the submount code unintentionally.
->>
->>> Or sb->s_root set
->>> and fc->initialized isn't?
->> That would be the non-virtio-fs non-submount case (fuse_fill_super()),
->> where s_root is set first and INIT sent after.
-> But this is virtiofs specific code.
-
-Ah, right…  I must have forgotten that at some point.
-
-> Regardless, something smells here: fuse_mount_remove() is only called
-> if sb->s_root is set (both plain fuse and virtiofs).  The top level
-> fuse_mount is added to fc->mounts in fuse_conn_init(), way before
-> sb->s_root is set...
->
-> Will look into this.
-
-Thanks!
-
-Hanna
-
->
-> Thanks,
-> Miklos
->
-
+> ---
+>  .../testing/selftests/firmware/fw_namespace.c | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/firmware/fw_namespace.c b/tools/testing/selftests/firmware/fw_namespace.c
+> index 04757dc7e546..9f4199a54a38 100644
+> --- a/tools/testing/selftests/firmware/fw_namespace.c
+> +++ b/tools/testing/selftests/firmware/fw_namespace.c
+> @@ -112,6 +112,40 @@ static bool test_fw_in_ns(const char *fw_name, const char *sys_path, bool block_
+>  	exit(EXIT_SUCCESS);
+>  }
+>  
+> +static void verify_init_ns(void)
+> +{
+> +    struct stat init_ns, self_ns;
+> +
+> +    if (stat("/proc/1/ns/mnt", &init_ns) != 0)
+> +        die("Failed to stat init mount namespace: %s\n",
+> +            strerror(errno));
+> +
+> +    if (stat("/proc/self/ns/mnt", &self_ns) != 0)
+> +        die("Failed to stat self mount namespace: %s\n",
+> +            strerror(errno));
+> +
+> +    if (init_ns.st_ino != self_ns.st_ino)
+> +        die("Test must run in init mount namespace\n");
+> +}
+> +
+> +static void ensure_firmware_dir(void)
+> +{
+> +    struct stat st;
+> +
+> +    if (stat("/lib/firmware", &st) == 0) {
+> +        if (!S_ISDIR(st.st_mode))
+> +            die("/lib/firmware exists but is not a directory\n");
+> +        return;
+> +    }
+> +
+> +    if (errno != ENOENT)
+> +        die("Failed to stat /lib/firmware: %s\n", strerror(errno));
+> +
+> +    if (mkdir("/lib/firmware", 0755) != 0)
+> +        die("Failed to create /lib/firmware directory: %s\n",
+> +            strerror(errno));
+> +}
+> +
+>  int main(int argc, char **argv)
+>  {
+>  	const char *fw_name = "test-firmware.bin";
+> @@ -119,6 +153,9 @@ int main(int argc, char **argv)
+>  	if (argc != 2)
+>  		die("usage: %s sys_path\n", argv[0]);
+>  
+> +	verify_init_ns();
+> +	ensure_firmware_dir();
+> +
+>  	/* Mount tmpfs to /lib/firmware so we don't have to assume
+>  	   that it is writable for us.*/
+>  	if (mount("test", "/lib/firmware", "tmpfs", 0, NULL) == -1)
+> -- 
+> 2.43.0
+> 
 
