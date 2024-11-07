@@ -1,264 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-33876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900509BFFB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 09:07:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DAF9C0076
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 09:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FAEA1F2254E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35FAF283BA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E11D0DEC;
-	Thu,  7 Nov 2024 08:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370C91DE2B5;
+	Thu,  7 Nov 2024 08:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="f9yimetb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF1217DE36
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 08:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966850; cv=none; b=UOSIZfb9eNtI1kiwhg13FodkpplXeFvz+S+IiIeVwk0oA7dIQGhx2hzYPNJmZSHk0EwwBWws9yOt/G2nU2/TWGo2E0tMKNy41643hvwlABu5TayzGiAOnvIHjY6JkSEkM9nVQ8qyqzHCqHzridZ7U7zMD4lRg7vHLx4BREXTJBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966850; c=relaxed/simple;
-	bh=2V47KTTKsgSskEbASEagPIL6uX+vROs65N/OXrhxkPQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZTvGLj77jAZAvDyAxvkNtbBrpqTTrZchCnKGV7xOzK8DN3BZswfpSGLDSAsaRzDvnksWqybP7l44LU9omVlIG5lyY/t1cFG8qNNabAI0rRW6SIIYswOJvMKmxgZzqoI5sJyTCR7FWTIo1EqkeLZz6URQyP2llSULgannKyKNvjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so8032315ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 00:07:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730966847; x=1731571647;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ywJI1RizHtNoeacvYINknT2lGhzvBKSC2a9W7mPrTPM=;
-        b=MkF6YX4q7UR7H8xOMDm9GeFJygmoYNH+nr0tDw9GmgqQAjOg76qY02HDW0Tfmm3aIB
-         pJUmBVGr3gvkJxp5U/+p+v8VtGOJ3p9275u2t+MP9O3xjwTZcjdTzUAV+iEJyqGN/wWe
-         WmIV13epltltXwUNK65APD41UJMGc90f4j3vBI+uGD1ap27dxMGKx+4MzDh6gYFngZ0O
-         Bek09PVb2ZvqfCUTL/blpzq4f/1xgDzhVO/jooaSBQSueXjgHtC25h4Tro0tUkvbEgHq
-         hox27/oDC1Shinv33eZiOB10SvXR0xfqAY7T86OHN736l5LIuApp2pP82R3d3j3yuWXg
-         WmUQ==
-X-Gm-Message-State: AOJu0YyMCufkUQI6sUx26kPQJ0aNIPjsiFGoftbdgcRTR4OwyBMv9npi
-	cRobnBlLB6XEptdRBoMKo7dBsDMyEkAwHNiOH5Sjvk1sCfUJLZ7PIeMaUn2cR0TfgxXhiDkRmd0
-	0CUnAPil4Gj0ENZ2AV6l4bTvIO/P5kM7ubtKbovu8E/LqRXsxnWkpr9w=
-X-Google-Smtp-Source: AGHT+IEgxTDOf22PP8xGLXCGHRNIFNamlBck6mUdYtXnATlVLH8RqNQe6U5sblaKTwdz/YsZQqy/hhGd92ZMAF2xqA2tfPCsLsEI
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12EF199FA2;
+	Thu,  7 Nov 2024 08:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730969680; cv=fail; b=agCyo80RhgdfGxLP7SYVm6kdRhK9nELKm9nozhE7/4cTpjtNiMyonOO1ul8j+NKq8ezUNx0wJ31yR6kf5OZCep6xt4nf8I1tkP6xHKNYlXu3q5Ghq7JNa5/KjVcQ0MTG/obxTE1/42vRpgJEjocNwgiPreHWNfuAsJiMWmq5HAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730969680; c=relaxed/simple;
+	bh=hAP/UBeJMMKqQoQauDwwL/ZyuE3KCprHnXmVc5e9bYc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XDxsKbPDo9gmJh4yf/YI6NvuEjzt6IpQ/mdY5RIkSvmn7iFzHGSWAj989ZV5m+9v/iwv9QfvbZupP/N/+CFrMe834JfPsoCFUKAQIsZ1mBzDBrSRGNF54ygH1nAjlpveACVCL6T8qhzuDuh2LK0A+nI8PcXqeKZbgJO93LDeLgk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=f9yimetb; arc=fail smtp.client-ip=40.107.94.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jm9qPaM/tmPbFxELRUN2+Wu8T4elVfNOVaS1AsdlU/4gCUldfeVEuy4gsu0k648qPHIXiDGF+ibgaltlRhFELSNZHNeIsX8YaTv9+bb/b0Kq7+jVUyfl/undG90NfKy8+zaWmy1ckoWohUlF5LJOOvUKbW7aM85SSzlvXLe/RyM8evOx3Qvd6LwsuxDDWTzGf0atGQFQyk9AHSYhM2uMihaKVTS5sIeS+eILyMOnT+/JtZsxLbSFv/KiYiEz22h6ifzQKM6S+rM/yfrz8G3gT9H2qck3TVIQm44HVRjzn8/ROqsjoUSmCM9z8eTNGo+UhQ0V5ZuCYtp0yfXOvIX5pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S/Ztmghk0ekMKHppeyjI/SVZeme35m4F8pJguR4BZLo=;
+ b=JbnRRJGqERvzbeX6ggIv6Nqy03TGUNd4NAhtJhRKuRx/j2/Ny58YQzvxjzTikNxDiMji3/VFmN3MKyrpUwPE4fSXUf0c0ADJJuHRjFBtxf7lnGA/+xAyxzmB1/tVkS2ewztrv0CoO0ooCMT1YdKSkS5YXgrGzbU+rY8mlXp+xnKXTAGKod5vWtFmuAO4RIiIyYM7mnVmOrxf71oJyS7uGWy2EBEUkBTebR+XWiu8KNWEzsW8OVOpMD0kW1GO7x76JMpknP41t+6JSUxlk5wH90CqDSsprCFtAQYfHDTfSiWqeugUNf/Y32ZUA4wBrjd7yjSu6zsdTgW2c+wsOovDCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S/Ztmghk0ekMKHppeyjI/SVZeme35m4F8pJguR4BZLo=;
+ b=f9yimetb/28iW+wewy/szP1l8hryYoWxxYf1EV1ImYDbNILStlcMGaDuH+/FKHxisAFgkGHEZa2VnUaJP65vYs6qLVkCb2+p42p7D/fQfUtH4kY9dMWWFp/uPxbSY3vtM3rDgnWnEK/ajFmEr0v7cOZG5lPeP6LN69fbUHAucuw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB4270.namprd12.prod.outlook.com (2603:10b6:208:1d9::21)
+ by PH7PR12MB6836.namprd12.prod.outlook.com (2603:10b6:510:1b6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Thu, 7 Nov
+ 2024 08:54:36 +0000
+Received: from MN2PR12MB4270.namprd12.prod.outlook.com
+ ([fe80::2e50:d5b4:45f2:684d]) by MN2PR12MB4270.namprd12.prod.outlook.com
+ ([fe80::2e50:d5b4:45f2:684d%7]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
+ 08:54:35 +0000
+Message-ID: <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+Date: Thu, 7 Nov 2024 14:24:20 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
+ guest_memfd
+To: Matthew Wilcox <willy@infradead.org>
+Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, kvm@vger.kernel.org,
+ chao.gao@intel.com, pgonda@google.com, thomas.lendacky@amd.com,
+ seanjc@google.com, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, arnd@arndb.de,
+ pbonzini@redhat.com, kees@kernel.org, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, Neeraj.Upadhyay@amd.com, linux-coco@lists.linux.dev
+References: <20241105164549.154700-1-shivankg@amd.com>
+ <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+Content-Language: en-US
+From: Shivank Garg <shivankg@amd.com>
+In-Reply-To: <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0006.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:95::10) To MN2PR12MB4270.namprd12.prod.outlook.com
+ (2603:10b6:208:1d9::21)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c249:0:b0:3a6:b0d0:ee2d with SMTP id
- e9e14a558f8ab-3a6ed0b4b99mr3107245ab.9.1730966847509; Thu, 07 Nov 2024
- 00:07:27 -0800 (PST)
-Date: Thu, 07 Nov 2024 00:07:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c753f.050a0220.31356.0003.GAE@google.com>
-Subject: [syzbot] [hfs?] possible deadlock in hfsplus_file_fsync
-From: syzbot <syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4270:EE_|PH7PR12MB6836:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76f23d1e-fd3b-4c63-4aab-08dcff09cd99
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wi9kNGJRNFJSUFoyZElrVlFKWWx0bkJVaGZsZjlQUmJPd25QYnlBbFRPTkVo?=
+ =?utf-8?B?N1FiS3R1Tmt0VzBGTjMzSmd5M05zYlMwOG1pNkNxOTNTaUVIMjd2YW14SjY3?=
+ =?utf-8?B?dk1GNVhHdUh0b05Zb0tmdlVHMldmd0ZZZHNIYUVZa0lDQTB5M0ZQV2NQcC8z?=
+ =?utf-8?B?TU5vRWZVQkNxQUNROGtFQmI2bGJPUXBzeTBxV1Yxd0FXVkxYdFhCa2Rua2Uv?=
+ =?utf-8?B?dVVFZnlGN0RHTmVrNk5aQ0tCTFVQaWdHV1dsSVNRRFJWeW0vY3hQT3NURUFm?=
+ =?utf-8?B?ZFI2MG0vOHVEcVRrUGFYWWRvellDSk0wQnlFNGxLM1gzdll6RXRkbC90aXpU?=
+ =?utf-8?B?VVhzV2k2a1JmekR6ank2enBOMXQxazZ3MStWVjVGbEkzSFV1RlRtLy9sVjhC?=
+ =?utf-8?B?WDdGaTk4VENBeUdJQmpKOWdtZW9xdnVqdnUzdWhRdko2VkFFcVVSQ0pvclcz?=
+ =?utf-8?B?cGdUSE9BbDRraFB4VmR6SGZod0ZEU09uVTRwc2F4K1pKRWtFZVp0ZUNLbDRk?=
+ =?utf-8?B?cnVOYktHd3N4SHUwOS9zVVA0T1dNMk1MNnlseVlzZFdtc1NjSFRHZ1hwL2ts?=
+ =?utf-8?B?aXU0S3dDUTE2T2t6aHdrajlKRUJ0N3dSTkpza0tWamxSdm1jeU1vUzFGY0hM?=
+ =?utf-8?B?SVlaYld1SjhjQ25pM3BxelNldEpZbjEyZ3VZeXY2MmMxelF6RldIRlJvR3I3?=
+ =?utf-8?B?ekFsbGdCYVBDanNmaVNSeFc3bG9TREpFMEFRTTQ2ZnYzcDcwS1Z0UGhmT0Jw?=
+ =?utf-8?B?WU5NMWRkbERBYXp2eGJkWTdIZ1pad2IwOHpad3dzVlMvbHJYbWxLMUFGNEhh?=
+ =?utf-8?B?TDdmSjFVUVRRM05MYjVPYXNGZEIrRy80ZW0wQTZQVXNNOEFLbTZQT2t1WU1s?=
+ =?utf-8?B?dm56NTZuWDhteGxWNlJTUmJMZVVzZnFlV2gwSVk3eExPb3ZMb2hvcGN4OXZm?=
+ =?utf-8?B?SUhrK3VxRzFzTzlZeGEzd0FwSFVvVHR5MGxvS1dvUTZDNGN4VlBtS2k0NFl4?=
+ =?utf-8?B?RkNzemdub1NhUVJLYzZ0ODNjUFhNaDBmSEVHbEZBREZ2RFpxdWg1elQwUUho?=
+ =?utf-8?B?MEswY1pDNEZmbWo4c3dCVERZZ21RSktMSnlvMTNXeEZZWUt3RGJ2K0hPMklz?=
+ =?utf-8?B?YVptaDA3dWRUaFpBUEdVTTNlc2FnbjBXZUhjN2JDbE1iMmVJZ0JUSlhaWE5U?=
+ =?utf-8?B?eWp3Y2ZqZUZnVU1ibmc5Vm5wV3BDa2cwZEIxYitndGgvYldHampqaDZrOE92?=
+ =?utf-8?B?ZTdQY2ZuS2dRWXBLUURQMTR1OEh6R3R2Ukx4SUc1QVB0b0w0MFdqNDdTM2wv?=
+ =?utf-8?B?ZGo3ZTZzOUt3WlJGTk5hS1JNd0ZZZ3BUdnBlUWw1VmtMajV1enpJeGo0bkhT?=
+ =?utf-8?B?bEYxdkxneTI3OHNIeVBFbWJMSDExbE5tU3Z2OGhOMHRtMDhlVE1zbHVuSXVl?=
+ =?utf-8?B?bWtOUEhNb0RZMWxNMTJJRFVQQTg5aWVUNndicHdjcmZad3QvMUhjNk0xRTJn?=
+ =?utf-8?B?YVkrZWRGeXV4WTJ6dk1NQ0FNd1pMOXFteHQ5cUZUOHB2VlluNmtjb0lnM1da?=
+ =?utf-8?B?NzRkRlgwSVVaSTFkQ3VPRVBpRGFyYllJeEg2WVlhSEl6UVJiS1FMSURndER1?=
+ =?utf-8?B?K2lzVG9HWTU1K2JCL0RwOGQrS0pJSmlOTGFYbWZZTDNYUE42eDNnVk9Xd3hL?=
+ =?utf-8?B?T2t2MjdHS2lCdm9jbTdUQzB2b3FERDdVeXhoS0s0aWRkVVFXb1pEQmNpZ1d2?=
+ =?utf-8?Q?LMVqfaW4CFWji9IHXfbHgvMbMNNe9G/uTRJyHt+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4270.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L0VHcllVUUljU0lEcDQ0ZTA4aXcvMVljN1pyYWFJV0VUTWd0ZnB5Wkw0OU1B?=
+ =?utf-8?B?SWNqTWh3NzNjT2VMNjIyWjI5Ym83QTY5V0E1TElhVk52ZTRIVnZNNVFUekNn?=
+ =?utf-8?B?ajNWSEdLVDNUc2ZXUUhrd3FETFVDRHMvK09oa0NyMW53a1RpT3pqSi9rOGxa?=
+ =?utf-8?B?UmIrdGo4UE5SUEEydkhVSUcvVEw2eDlka1dWSXIyOTgzMGVBZ3IxTi9JanQ4?=
+ =?utf-8?B?ZUY2TmxmbDlrVHAvVlVmUVQzVi9MSnhjU1dGVWJmRnVvOVZXeHlvNVdibTJF?=
+ =?utf-8?B?eWRSYzJWbVBHaUU0eG0rVGVjVE5hTlZiNVRZbjNnTDRsckVrVGNieDRFSHhX?=
+ =?utf-8?B?SkttQXBrbURHU01mQ0I3dWxwM1Y3UC9jVWlDVzNtK3ZGdVRINFdBRXUycms4?=
+ =?utf-8?B?WHZybzVUT0tLbHVwbHZUbU1JV3ppN1JFMHh0R0VwTmttWTd2MmxQQ3p0dFVM?=
+ =?utf-8?B?ZDVXRFdHaTJEOWcxVDNzblE4ZW95Yllwd0prQVdTZ1JtMWFodjJLR2tUaW9y?=
+ =?utf-8?B?blFaaWtVVjF4V20wTm1OWWpxcWpGRFhVSXdnaGtjVDZaNjkzWDdFU2xGelgy?=
+ =?utf-8?B?eEpJTmxzZ0lpdWlmcFpjSVdrb2h6M09IK3o1ckQ5MFB5VXEzRWJNK2R3a01N?=
+ =?utf-8?B?WXFZODZvSVkzRGpDcmNTRFBkYWJkTUZNdDlweE92YTZvV3QzY2ZVaXM3aDlH?=
+ =?utf-8?B?RGRldVFiaDlpOE1IdkI2WXlvNTYyYXZDejFHcGU2VXFYOGZzY2JKRmVCLzB6?=
+ =?utf-8?B?dnZYN2ZnOWxXKzBoUURDbWNCNk52TTFadmlnUnVuRlJMdm5qVXNIQzhLMnJJ?=
+ =?utf-8?B?K29BS2pwWWpUMmJkcDlGMERMWHpVeGlVc0lDZFQwN2tnWmJlWmlJWlg5M1FY?=
+ =?utf-8?B?dldRWFlwU1VBQ1BWNW5SbDdYY1g4NGdxU1Z2U1FKcm1XQng4Q2Z1OVhqVEFI?=
+ =?utf-8?B?TldIc2U3WDlqRGhzSEg4ZWpUem1DalA0VUNaZklYLytWZVVhU1ZScm0wYnpO?=
+ =?utf-8?B?eEg1N2FhYmxqd3ZpcFpqRHV0YnJ6UXk1VDRrUHBGOU1pd2g0bWIzU2tHR3pa?=
+ =?utf-8?B?b3JMME9zV2pjWTJOMUZSeFVqeDhiZGdNTnkzMWU3RW9pR2czWXlTdUNmZndl?=
+ =?utf-8?B?MlErcUlNbDRlbUpDTlFjUmY3c1JHejhhMG56SFgycURLZ2ZKY3RiYS9WUEht?=
+ =?utf-8?B?MmlWT25ZSVAxUkJvVHlHc3gvblMvd2tlNndCK21qZDRYQW1qR2xicUE1bW9U?=
+ =?utf-8?B?QnFSOUkwWm5YbzhRWVdEMTlCRXR2WnFlN253MEhXVXhaVVBvampIMGNac1pn?=
+ =?utf-8?B?MWhFWkpGM1RYR0VTeExjektoK0VuZ2gwSnZBWjZJVEV6bDEyKzhNanVzeGtr?=
+ =?utf-8?B?VUZmK1kvdHVjRDhkOFFvaFJ3WnZ6K1VKNFJSeEo0L0JaN2RQWGVDdDhaNVMr?=
+ =?utf-8?B?UWtqaVlRMytPSkJxbWtSM1JmOWc1dVJUOUw3cnBRWVV5N3FpelJZRWhJN0VF?=
+ =?utf-8?B?L01pYk5HUC9vclNicTFDM0lnd0N3ZGV2Zm5DODB6aGRBV0xnSnM4NXBRMFUx?=
+ =?utf-8?B?MFlMQ2FWTjh1cHFZL2xwMDNWZFlEaDgydVRFVCsvWWhxSmozU3ZTd3ZMV1Bn?=
+ =?utf-8?B?ZkFQeVRRK0oraUVFRURES25iYm1LcnVBdHRDckNIVkZiQWJyNFZ5YUdZUU03?=
+ =?utf-8?B?Q29IV1JWbCs3Nm1PYWJWRG9zYlNyMzNxNHp4REJEbk9Bdm1yRldNL0lhOW5K?=
+ =?utf-8?B?U1RJZTNTOWtMVmVTcUtScFpQNE1UUDBBdXEyMjdTZkdraEtndjNvc005UlVS?=
+ =?utf-8?B?dnFYYjdlVUgwZjZRclRZTHF5Y3hoeE9iV2VrV3c5aGN3eE5nWjRLdEV3UXdx?=
+ =?utf-8?B?MkJwOWlodUQ5U0RhWjVTdFR3bXRmVTlBd2ZhbzhsTGtMRlQ5K1hqSnRhTHF2?=
+ =?utf-8?B?Z2tabzZ4UDNmN0RnaEk2OVRKblNpWW5NWmZLVFMzcUtNUDNNWncvVmpDWWJN?=
+ =?utf-8?B?N0ZDZytnbTBXV3dML203R3ZxaS96a2pnN3VXb3N0cjBJL3JHVXRIZlluZ1Y4?=
+ =?utf-8?B?cDl1SmpQVjJLbkx0VmprNDBvWm02TWxxNm4zemFvSDJVMlRlSjN1aURYdzdU?=
+ =?utf-8?Q?Jp91xlGCqPZZrqtTC7bBDoMEk?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76f23d1e-fd3b-4c63-4aab-08dcff09cd99
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4270.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 08:54:35.7783
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DY2176j5WWAFcGGyo7bpVgYCCYNKlSwA975HQaoRhZONGx3AsrkOF7CEH+nGaLXPlWUQleo2upwWQH0E+djbxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6836
 
-Hello,
+Hi Matthew,
 
-syzbot found the following issue on:
+On 11/6/2024 12:25 AM, Matthew Wilcox wrote:
+> On Tue, Nov 05, 2024 at 04:45:45PM +0000, Shivank Garg wrote:
+>> This patch series introduces fbind() syscall to support NUMA memory
+>> policies for KVM guest_memfd, allowing VMMs to configure memory placement
+>> for guest memory. This addresses the current limitation where guest_memfd
+>> allocations ignore NUMA policies, potentially impacting performance of
+>> memory-locality-sensitive workloads.
+> 
+> Why does guest_memfd ignore numa policies?  The pagecache doesn't,
+> eg in vma_alloc_folio_noprof().
+guest_memfd doesn't have VMAs and hence can't store policy information in
+VMA and use vma_alloc_folio_noprof() that fetches mpol from VMA.
 
-HEAD commit:    1ffec08567f4 Add linux-next specific files for 20241104
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b23587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfea72efa3e2aef2
-dashboard link: https://syzkaller.appspot.com/bug?extid=44707a660bc78e5dc95c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+The folio allocation path from guest_memfd typically looks like this...
 
-Unfortunately, I don't have any reproducer for this issue yet.
+kvm_gmem_get_folio
+  filemap_grab_folio
+    __filemap_get_folio
+      filemap_alloc_folio
+        __folio_alloc_node_noprof
+          -> goes to the buddy allocator
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3f67fb217f30/disk-1ffec085.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/73c0895ed6c3/vmlinux-1ffec085.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80c6f613afd1/bzImage-1ffec085.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc5-next-20241104-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.3.810/9889 is trying to acquire lock:
-ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
-ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
-
-but task is already holding lock:
-ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
-ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&q->q_usage_counter(io)#17){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
-       __submit_bio+0x2c2/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       submit_bh fs/buffer.c:2819 [inline]
-       block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2446
-       filemap_read_folio+0x14b/0x630 mm/filemap.c:2366
-       do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3826
-       do_read_cache_page+0x30/0x200 mm/filemap.c:3892
-       read_mapping_page include/linux/pagemap.h:1005 [inline]
-       __hfs_bnode_create+0x487/0x770 fs/hfsplus/bnode.c:440
-       hfsplus_bnode_find+0x237/0x10c0 fs/hfsplus/bnode.c:486
-       hfsplus_brec_find+0x183/0x570 fs/hfsplus/bfind.c:172
-       hfsplus_brec_read+0x2b/0x110 fs/hfsplus/bfind.c:211
-       hfsplus_find_cat+0x17f/0x5d0 fs/hfsplus/catalog.c:202
-       hfsplus_iget+0x483/0x680 fs/hfsplus/super.c:83
-       hfsplus_fill_super+0xc4d/0x1be0 fs/hfsplus/super.c:504
-       get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&tree->tree_lock#2){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       hfsplus_find_init+0x14a/0x1c0 fs/hfsplus/bfind.c:28
-       hfsplus_rename_cat+0x157/0x1090 fs/hfsplus/catalog.c:447
-       hfsplus_rename+0x12e/0x1c0 fs/hfsplus/dir.c:552
-       vfs_rename+0xbdb/0xf00 fs/namei.c:5054
-       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
-       __do_sys_rename fs/namei.c:5258 [inline]
-       __se_sys_rename fs/namei.c:5256 [inline]
-       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&sb->s_type->i_mutex_key#23/4){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
-       vfs_rename+0x6a2/0xf00 fs/namei.c:5025
-       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
-       __do_sys_rename fs/namei.c:5258 [inline]
-       __se_sys_rename fs/namei.c:5256 [inline]
-       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:817 [inline]
-       hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
-       __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
-       loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
-       lo_ioctl+0xcbc/0x1f50
-       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sb->s_type->i_mutex_key#23 --> &tree->tree_lock#2 --> &q->q_usage_counter(io)#17
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&q->q_usage_counter(io)#17);
-                               lock(&tree->tree_lock#2);
-                               lock(&q->q_usage_counter(io)#17);
-  lock(&sb->s_type->i_mutex_key#23);
-
- *** DEADLOCK ***
-
-3 locks held by syz.3.810/9889:
- #0: ffff88801efacb60 (&lo->lo_mutex){+.+.}-{4:4}, at: loop_set_status+0x2a/0x8f0 drivers/block/loop.c:1251
- #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
- #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 9889 Comm: syz.3.810 Not tainted 6.12.0-rc5-next-20241104-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:817 [inline]
- hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
- __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
- loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
- lo_ioctl+0xcbc/0x1f50
- blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f89dbd7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f89dcaf0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f89dbf35f80 RCX: 00007f89dbd7e719
-RDX: 0000000020001300 RSI: 0000000000004c04 RDI: 0000000000000004
-RBP: 00007f89dbdf139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f89dbf35f80 R15: 00007ffdb32a6ed8
- </TASK>
+Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Shivank
 
