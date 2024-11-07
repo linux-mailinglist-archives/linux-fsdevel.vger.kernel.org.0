@@ -1,123 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-33872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385A39BFF22
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 08:30:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEBB9C0110
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 10:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BAB283CF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 07:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F461C215B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 09:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3CA1D79B4;
-	Thu,  7 Nov 2024 07:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCAD1DEFCD;
+	Thu,  7 Nov 2024 09:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZztnxDp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o9yhmzlW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZztnxDp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o9yhmzlW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62C193074;
-	Thu,  7 Nov 2024 07:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E701DCB0C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 09:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730964624; cv=none; b=O7rC192rB/ZTuWfWAmmi7n5twfLqLkJoewyQUn+D0r4WugjIuxxYpnpVcznyVVRJDKMvyLMjII6igIw2fPVj5WqW2PAtPq59fK9fmSVa8ST3nKS0HPBeypeC8pFSkZSXIYU30xISjO1aaeyCK8AsWhB9e1wO99gTsB4umQ1mk/s=
+	t=1730971290; cv=none; b=E/VfybE1QzcfDhImgtFp3OzuKRWO27x3BzxAXQk+7I77S9dKAaOY2zy+qgN9mId8ax45BkWXQnOryIOATHyPQfq7B3Ksv1QojLMTr9R2TqZJ9b1KnZApi5/f0cEQO/qmR31tFJYXCBpgckh1PO+hWnLx2oK2OcjK51B4VwXELlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730964624; c=relaxed/simple;
-	bh=tyU/E7IdI0PoI6xnGSKBcD21KiHHsKL6ZTo0hZJt4KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qsblzGc7DHepxz2fV5NH4CjIcLD+pTXS6ghBYZWzu+s95waOV1wjejTrEQ+/c7vzdyMsJEoyD1TdxgFxFVCIr7/VJl8wqt3CqLahrkCQ7XyaU1tBG2BWrCtqYDuH0gLQrLqMnFpzuYwromyl/QpfhbajwlQI4T4V5ObDO5DHojw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkYcd1cx7z4f3mJ4;
-	Thu,  7 Nov 2024 15:29:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1CEC61A018D;
-	Thu,  7 Nov 2024 15:30:12 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP1 (Coremail) with SMTP id cCh0CgB3Ha+BbCxnnlhABA--.55387S7;
-	Thu, 07 Nov 2024 15:30:11 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1730971290; c=relaxed/simple;
+	bh=5EPXVNHN4CXlVNZJUesPr2QPYDPaJSlggEeL3j6SUy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7qZltFrAZ4aFVgMYDDUJgL9MjJGgKTi6FtPk5LzWJuDmqlF1IvC1e6I+hCgnY7XZS5s1J6IxzdMi5edbhLb80h+Tj4d+vhjXzxiS4RkzmyVvdJbvGFkv1Y/iXP8P46i+ZHDDXLp/Go5QpwKzbUlbUHmhAvR+scnZizVUlhLW0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZztnxDp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o9yhmzlW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZztnxDp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o9yhmzlW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5E2D421B91;
+	Thu,  7 Nov 2024 09:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730971281; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVxFif4uBW4/0sQS5ygnxojzEubRjKEJYObrh5RLC+A=;
+	b=TZztnxDpfeb+SSuX6oHkM5Ei7ulFMYyVKw+tqZZy3ThomQimOVMtA0vEAmrtHUOl+3Wm8T
+	RXqp7MUnnjrm1VsETOiRAWXx3OB9K8F8ULFV4EZhc4ec4UB2RK+Cd0bNOx3vmofdCslzqH
+	T8QvqFZnRPrAgVswbdRd98urQCIZG20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730971281;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVxFif4uBW4/0sQS5ygnxojzEubRjKEJYObrh5RLC+A=;
+	b=o9yhmzlWFjo00nV8wOrbug4TP1UcSa2fK/ophdFKqGCELkYRckPwdU55wFVdVcFz6ywsNn
+	MQON1z94W68AlbDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730971281; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVxFif4uBW4/0sQS5ygnxojzEubRjKEJYObrh5RLC+A=;
+	b=TZztnxDpfeb+SSuX6oHkM5Ei7ulFMYyVKw+tqZZy3ThomQimOVMtA0vEAmrtHUOl+3Wm8T
+	RXqp7MUnnjrm1VsETOiRAWXx3OB9K8F8ULFV4EZhc4ec4UB2RK+Cd0bNOx3vmofdCslzqH
+	T8QvqFZnRPrAgVswbdRd98urQCIZG20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730971281;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVxFif4uBW4/0sQS5ygnxojzEubRjKEJYObrh5RLC+A=;
+	b=o9yhmzlWFjo00nV8wOrbug4TP1UcSa2fK/ophdFKqGCELkYRckPwdU55wFVdVcFz6ywsNn
+	MQON1z94W68AlbDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55829139B3;
+	Thu,  7 Nov 2024 09:21:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vSzYFJGGLGd1cgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 09:21:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 04023A0AF4; Thu,  7 Nov 2024 10:21:12 +0100 (CET)
+Date: Thu, 7 Nov 2024 10:21:12 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 5/5] Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
-Date: Fri,  8 Nov 2024 00:29:20 +0800
-Message-Id: <20241107162920.208796-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241107162920.208796-1-shikemeng@huaweicloud.com>
-References: <20241107162920.208796-1-shikemeng@huaweicloud.com>
+Subject: Re: [PATCH 1/2] writeback: add a __releases annoation to
+ wbc_attach_and_unlock_inode
+Message-ID: <20241107092112.w4qgmwo7fchl3imz@quack3>
+References: <20241107072632.672795-1-hch@lst.de>
+ <20241107072632.672795-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgB3Ha+BbCxnnlhABA--.55387S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UuF13JryrGFWxCFyfWFg_yoW8GrWkpF
-	97C3s8Ka1xA3WUKrnFvan7t345Ja1kK3yjyr4xGwnayFZ8Gr1Yqay7tryjqFnxGFy8ZFy3
-	Cr1Fg3y5Wa1UZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3XTQUUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107072632.672795-2-hch@lst.de>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Besides xas_squash_marks(), all functions use xa_mark_t type to iterate
-all possible marks. Use xa_mark_t in xas_squash_marks() to keep code
-consistent.
+On Thu 07-11-24 07:26:18, Christoph Hellwig wrote:
+> This shuts up a sparse lock context tracking warning.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- lib/xarray.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+Thanks! Looks good. Feel free to add:
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 4231af284bd8..a74795911f1c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -125,16 +125,20 @@ static inline void node_mark_all(struct xa_node *node, xa_mark_t mark)
-  */
- static void xas_squash_marks(const struct xa_state *xas)
- {
--	unsigned int mark = 0;
-+	xa_mark_t mark = 0;
- 	unsigned int limit = xas->xa_offset + xas->xa_sibs + 1;
- 
--	do {
--		unsigned long *marks = xas->xa_node->marks[mark];
--		if (find_next_bit(marks, limit, xas->xa_offset + 1) == limit)
--			continue;
--		__set_bit(xas->xa_offset, marks);
--		bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
--	} while (mark++ != (__force unsigned)XA_MARK_MAX);
-+	for (;;) {
-+		unsigned long *marks = node_marks(xas->xa_node, mark);
-+
-+		if (find_next_bit(marks, limit, xas->xa_offset + 1) != limit) {
-+			__set_bit(xas->xa_offset, marks);
-+			bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
-+		}
-+		if (mark == XA_MARK_MAX)
-+			break;
-+		mark_inc(mark);
-+	}
- }
- 
- /* extracts the offset within this node from the index */
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/fs-writeback.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index d8bec3c1bb1f..3fb115ae44b1 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -733,6 +733,7 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+>   */
+>  void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
+>  				 struct inode *inode)
+> +	__releases(&inode->i_lock)
+>  {
+>  	if (!inode_cgwb_enabled(inode)) {
+>  		spin_unlock(&inode->i_lock);
+> -- 
+> 2.45.2
+> 
 -- 
-2.30.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
