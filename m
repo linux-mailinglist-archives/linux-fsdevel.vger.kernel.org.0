@@ -1,226 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-33858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787E39BFB29
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 02:09:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA8B9BFB54
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 02:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096BF1F22590
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 01:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976A8B223BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 01:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5608F5E;
-	Thu,  7 Nov 2024 01:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="motJX4ER"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E576D268;
+	Thu,  7 Nov 2024 01:22:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA928746E;
-	Thu,  7 Nov 2024 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74B2119;
+	Thu,  7 Nov 2024 01:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730941781; cv=none; b=ksB0PWlUVR3famCRZx4IMhNZuJ468l71c8RvxQv+BizbBv04y75B0cLUH3Z3A0+qs3RzIzjisgtcj/y5X8vdRC8Al0asTaofak2WqvfVktad1fhLjvf1LtdttsQR2CnI9CkbRlDjJpa36dDkPJsyxw6V3m46vizhmIkqXtGcAlE=
+	t=1730942540; cv=none; b=fEAnGAVweeerrp+xzCAHA9savYBWDamN10mODFXX8kXhuKUWdScCIdQm7epw8Kw4JbGheOXuEl0I/YtHvan42U3L1021/tFnNgb15ZPfMvLmC4fslTIRroepX5B/PwG7YjgPSD1KsIGfRHnf6KoLT2NVxN/Pf7wZiwNgOYqhDxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730941781; c=relaxed/simple;
-	bh=pReaUPlwK5OiDeEdMbnij9Cd4msANnQrUGFQxRPOnJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ku1sbgq2M6T6Rw9+/6BU0PyTQ2cXvYfPnBbF0K7K38IJrqUF/ZYyIpILP6/cXyQOTg+q2NkLo8RTCeZqwcA6/imYiZOcNG4Gj6rff/1rvVq12ZexMzhf6Y66Z+/EA+iKp7DeXURtawFbEhLAUpR461zXvmOyFjCoAizFjzPsPb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=motJX4ER; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso5118115e9.0;
-        Wed, 06 Nov 2024 17:09:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730941778; x=1731546578; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eo4yRoNM1Vx5ijUBk6k0eOjAZcKvZu50tKHaCrVK/sU=;
-        b=motJX4ERx4WBRYuSUm/ZBEtCe243AGOQSqdmkO4CTTNjmAH0WcyaCx6iNo9p4pTuSV
-         ZYHxa0Gw69gNw4SOD9y81EeGTDsoewUUvWbXbpR4gmNCxFMVE4pEjnJ4tYU67UiiQWCR
-         17UWLs2K9lZlvXgSLX1Nfis1u71E6U6Yzyhw2DJdHGKXZT0m12VWHMfyeHYx7aY0Usqo
-         82HfFo5BzdZ7hPZHH6JWeOOrpVaZZ1d4DEcyA9ORKry4CwNoVqpk16YrqAP5fXtXCPEJ
-         zPOdJ4OabxYfbHeN5ibcgQAeV1F2MRSYP6XrijMqrGmdXQPYcgx0Yy+Dc7vQ/yY2aK0A
-         /fuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730941778; x=1731546578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eo4yRoNM1Vx5ijUBk6k0eOjAZcKvZu50tKHaCrVK/sU=;
-        b=H4OFO/EhikVvw2fv/AJq8N3mfqMhBclt2uqZOjiHMyuEbmr5OhmoOvL/hPuINNxYau
-         gzPbRFYaIVC09huVCoRblVgIP3dWSLXOM/jSYQ3eE/TZIt9o9Fi0eOiGYde99pxDDBXJ
-         FOGdCTpqOo16o+l/4hpvdTce4DsqrzAAJf13GzSU7j1pRTZ4xx7ttgXS0EIGyXl6Ci0A
-         h3vuXz15KVkWqzAJmWSNxANK5msv38xg1hKxc03JtEfpV7IgFVP5HFvwhiosR1kMgX/z
-         hKjs/c0Avy1NYlyMBmsQQ1q25GzMifSrgJswHSAsUGe4QKvEtZaoF2g3mw0DiYbETiBz
-         7ZsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNDbJBih/Kr+kXf2uO4dDPwCWuDBO12s+iUnEV1oyqKrSYTEnjogLz580t2nJjdJRTKtROrU0KjFZKhACTiA==@vger.kernel.org, AJvYcCUtEyIhLs9dLEMrMHV+HApNsDPiqQMWn09Hdsdb/ZwlKUYhYb4FqvyWkKJEiTnBMojbEzE=@vger.kernel.org, AJvYcCW3fMmArNf6wP8kpr6hHSLnOGZMlFZknH7ta0TgE73cqZ3eG53X+DcdzpdBSPa/33i3r5xmz1chqJiDZp7o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/+UtNCNUI/ZuWHHqSNv9oAkirEuMWOncNJcI9AJPg7kx38Mvn
-	PrAov0uORNrDffUKAIvMSGUQUc+sFsM93B8oA0Dn4RxlA/6IyDMO6SRGkcKvf6AFI8rIZMUQr3W
-	PUsEqSxJIJiUOgc7vafbdZkDaqBU=
-X-Google-Smtp-Source: AGHT+IEdZxJWJ2m1kuSw2wOu6sPdb35TFmGP/VXfdYQ2WMlEF0Vf+3hK3Ugh4oaF+oLcK1iaeJWL7X3+E83iNOPKqfg=
-X-Received: by 2002:a05:600c:358b:b0:431:5533:8f0d with SMTP id
- 5b1f17b1804b1-43283294bb6mr236043285e9.30.1730941777774; Wed, 06 Nov 2024
- 17:09:37 -0800 (PST)
+	s=arc-20240116; t=1730942540; c=relaxed/simple;
+	bh=yzUTunPGacOP0P5ML0vQADsd0Woqg4nvGKIEC5mNjWE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cbL4EvzGdLkZ9J0b/RxcS+cYWGFVY5HffZNwtAGEBjUTBz4X5xR32IYV1O4rXgC9Gc2rVhiatwpAcEJTU+2ETkJkhmhSLOjfB66snKpNTcvht1NsF3CaNrbVxsAi80FLmmae9rtDEIdDIlBzNQKVfOEJ40RTUA2QrDCRFxZEfpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkPS74Y0hz4f3kKt;
+	Thu,  7 Nov 2024 09:21:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7E5491A018C;
+	Thu,  7 Nov 2024 09:22:12 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4dBFixn_B1EBA--.54545S3;
+	Thu, 07 Nov 2024 09:22:11 +0800 (CST)
+Subject: Re: [PATCH 6.6 28/28] maple_tree: correct tree corruption on spanning
+ store
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org,
+ harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+ alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, daniel@ffwll.ch, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ hughd@google.com, willy@infradead.org, sashal@kernel.org,
+ srinivasan.shanmugam@amd.com, chiahsuan.chung@amd.com, mingo@kernel.org,
+ mgorman@techsingularity.net, chengming.zhou@linux.dev,
+ zhangpeng.00@bytedance.com, chuck.lever@oracle.com,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ maple-tree@lists.infradead.org, linux-mm@kvack.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <20241024132225.2271667-1-yukuai1@huaweicloud.com>
+ <20241024132225.2271667-13-yukuai1@huaweicloud.com>
+ <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <b677017c-81fb-0f3d-22b6-34d93c59942a@huaweicloud.com>
+Date: Thu, 7 Nov 2024 09:22:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com> <AM6PR03MB58482B34E2470CA2126A490899532@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB58482B34E2470CA2126A490899532@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 6 Nov 2024 17:09:26 -0800
-Message-ID: <CAADnVQ+Mn0KEJEiL79RXm2-1XCihqd+H61xxTqju9q6iANF4zA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded
- iterator kfuncs
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXc4dBFixn_B1EBA--.54545S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFWUAw4kuF1kGw1kXFW8JFb_yoW5Krykpa
+	yDGFWakr4DtF1xuF1vk3y0vas0y3s5tFWrJry5Kw10yF98tF9IqF9Y9w1YvFZ8uw4UGr1I
+	vFWYvanrCanayFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Nov 6, 2024 at 2:31=E2=80=AFPM Juntong Deng <juntong.deng@outlook.c=
-om> wrote:
->
-> On 2024/11/6 21:31, Alexei Starovoitov wrote:
-> > On Wed, Nov 6, 2024 at 11:39=E2=80=AFAM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> This patch adds the open-coded iterator style process file iterator
-> >> kfuncs bpf_iter_task_file_{new,next,destroy} that iterates over all
-> >> files opened by the specified process.
-> >
-> > This is ok.
-> >
-> >> In addition, this patch adds bpf_iter_task_file_get_fd() getter to get
-> >> the file descriptor corresponding to the file in the current iteration=
-.
-> >
-> > Unnecessary. Use CORE to read iter internal fields.
-> >
-> >> The reference to struct file acquired by the previous
-> >> bpf_iter_task_file_next() is released in the next
-> >> bpf_iter_task_file_next(), and the last reference is released in the
-> >> last bpf_iter_task_file_next() that returns NULL.
-> >>
-> >> In the bpf_iter_task_file_destroy(), if the iterator does not iterate =
-to
-> >> the end, then the last struct file reference is released at this time.
-> >>
-> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> >> ---
-> >>   kernel/bpf/helpers.c   |  4 ++
-> >>   kernel/bpf/task_iter.c | 96 ++++++++++++++++++++++++++++++++++++++++=
-++
-> >>   2 files changed, 100 insertions(+)
-> >>
-> >> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> >> index 395221e53832..1f0f7ca1c47a 100644
-> >> --- a/kernel/bpf/helpers.c
-> >> +++ b/kernel/bpf/helpers.c
-> >> @@ -3096,6 +3096,10 @@ BTF_ID_FLAGS(func, bpf_iter_css_destroy, KF_ITE=
-R_DESTROY)
-> >>   BTF_ID_FLAGS(func, bpf_iter_task_new, KF_ITER_NEW | KF_TRUSTED_ARGS =
-| KF_RCU_PROTECTED)
-> >>   BTF_ID_FLAGS(func, bpf_iter_task_next, KF_ITER_NEXT | KF_RET_NULL)
-> >>   BTF_ID_FLAGS(func, bpf_iter_task_destroy, KF_ITER_DESTROY)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_new, KF_ITER_NEW | KF_TRUSTED_A=
-RGS)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NEXT | KF_RET_NUL=
-L)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
-> >>   BTF_ID_FLAGS(func, bpf_dynptr_adjust)
-> >>   BTF_ID_FLAGS(func, bpf_dynptr_is_null)
-> >>   BTF_ID_FLAGS(func, bpf_dynptr_is_rdonly)
-> >> diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
-> >> index 5af9e130e500..32e15403a5a6 100644
-> >> --- a/kernel/bpf/task_iter.c
-> >> +++ b/kernel/bpf/task_iter.c
-> >> @@ -1031,6 +1031,102 @@ __bpf_kfunc void bpf_iter_task_destroy(struct =
-bpf_iter_task *it)
-> >>   {
-> >>   }
-> >>
-> >> +struct bpf_iter_task_file {
-> >> +       __u64 __opaque[3];
-> >> +} __aligned(8);
-> >> +
-> >> +struct bpf_iter_task_file_kern {
-> >> +       struct task_struct *task;
-> >> +       struct file *file;
-> >> +       int fd;
-> >> +} __aligned(8);
-> >> +
-> >> +/**
-> >> + * bpf_iter_task_file_new() - Initialize a new task file iterator for=
- a task,
-> >> + * used to iterate over all files opened by a specified task
-> >> + *
-> >> + * @it: the new bpf_iter_task_file to be created
-> >> + * @task: a pointer pointing to a task to be iterated over
-> >> + */
-> >> +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it,
-> >> +               struct task_struct *task)
-> >> +{
-> >> +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> >> +
-> >> +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(s=
-truct bpf_iter_task_file));
-> >> +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=3D
-> >> +                    __alignof__(struct bpf_iter_task_file));
-> >> +
-> >> +       kit->task =3D task;
-> >
-> > This is broken, since task refcnt can drop while iter is running.
-> >
-> > Before doing any of that I'd like to see a long term path for crib.
-> > All these small additions are ok if they're generic and useful elsewher=
-e.
-> > I'm afraid there is no path forward for crib itself though.
-> >
-> > pw-bot: cr
->
-> Thanks for your reply.
->
-> The long-term path of CRIB is consistent with the initial goal, adding
-> kfuncs to help the bpf program obtain process-related information.
->
-> I think most of the CRIB kfuncs are generic, such as process file
-> iterator, skb iterator, bpf_fget_task() that gets struct file based on
-> file descriptor, etc.
->
-> This is because obtaining process-related information is not a
-> requirement specific to checkpoint/restore scenarios, but is
-> required in other scenarios as well.
->
-> Here I would like to quote your vision on LPC 2022 [0] [1].
+Hi,
 
-:)
+ÔÚ 2024/11/06 23:02, Lorenzo Stoakes Ð´µÀ:
+> On Thu, Oct 24, 2024 at 09:22:25PM +0800, Yu Kuai wrote:
+> 
+>> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+>> index 5328e08723d7..c57b6fc4db2e 100644
+>> --- a/lib/maple_tree.c
+>> +++ b/lib/maple_tree.c
+>> @@ -2239,6 +2239,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
+>>
+>>   /*
+>>    * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
+>> + *                      If @mas->index cannot be found within the containing
+>> + *                      node, we traverse to the last entry in the node.
+>>    * @wr_mas: The maple write state
+>>    *
+>>    * Uses mas_slot_locked() and does not need to worry about dead nodes.
+>> @@ -3655,7 +3657,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+>>   	return true;
+>>   }
+>>
+>> -static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>> +static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>>   {
+>>   	struct ma_state *mas = wr_mas->mas;
+>>
+>> @@ -3664,11 +3666,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>>   		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+>>   						  mas->offset);
+>>   		if (ma_is_leaf(wr_mas->type))
+>> -			return true;
+>> +			return;
+>>   		mas_wr_walk_traverse(wr_mas);
+>> -
+>>   	}
+>> -	return true;
+>>   }
+>>   /*
+>>    * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
+>> @@ -3899,8 +3899,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+>>   	memset(&b_node, 0, sizeof(struct maple_big_node));
+>>   	/* Copy l_mas and store the value in b_node. */
+>>   	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+>> -	/* Copy r_mas into b_node. */
+>> -	if (r_mas.offset <= r_mas.end)
+>> +	/* Copy r_mas into b_node if there is anything to copy. */
+>> +	if (r_mas.max > r_mas.last)
+>>   		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+>>   			   &b_node, b_node.b_end + 1);
+>>   	else
+>> --
+>> 2.39.2
+>>
+> 
+> This is a good example of where you've gone horribly wrong, this relies on
+> 31c532a8af57 ("maple_tree: add end of node tracking to the maple state") which
+> is not in 6.6.
+> 
+> You reverted (!!) my backported patch for this that _does not require this_
+> only to pull in 31c532a8af57 in order to apply the upstream version of my
+> fix over that.
+> 
+> This is totally unnecessary and I can't see why _on earth_ you would need
+> 31c532a8af57.
+> 
+> You need to correctly identify what patches need to be backported and _fix
+> merge conflicts_ accordingly, like I did with the patch that you decided to
+> revert.
+> 
+> In the kernel it is absolutely unacceptable to arbitrarily backport huge
+> amounts of patches you don't understand in order to avoid merge conflicts,
+> you may be breaking all kinds of things without realising.
+> 
+> You have to find the _minimal_ change and _fix merge conflicts_.
 
-The reading part via iterators and access to kernel internals is fine,
-but to complete CRIB idea the restore side is necessary and
-for that bit I haven't heard a complete story that would be
-acceptable upstream. At LPC the proposal was to add kfuncs
-that will write into kernel data structures.
-That part won't fly, since I don't see how one can make such
-writing kfuncs safe. Restoring a socket, tcp connection, etc
-is not a trivial process.
-Just building a set of generic abstractions for reading is ok-ish,
-since they're generic and reusable, but the end to end story
-is necessary before we proceed.
+Thanks for the suggestions, I do understand, however, I'll just give up
+this because I'm not confident to fix confilcts for maple tree. Other
+folks will have to this if they care about this cve for v6.6.
+> 
+> Stable is not a playground, it's what millions (billions?) of kernels rely
+> upon.
+> 
+> In any case, I think Liam's reply suggests that we should be looking at
+> maybe 1 thing to backport? If we even need to?
+
+Keep using xarray for patch 27 is wrong, I think. xarray is 32-bit and
+if the offset overflow, readdir will found nothing, this is more severe
+than the orignal cve.
+> 
+> Please in future be more cautious, and if you are unsure how to proceed,
+> cc- the relevant maintainers (+ all authors of patches you intend to
+> backport/revert) in an RFC. Thanks.
+
+Of course.
+
+Thanks,
+Kuai
+
+> 
+> .
+> 
+
 
