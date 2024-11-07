@@ -1,132 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-33861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA40F9BFC68
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 03:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BC79BFDC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 06:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFC281BB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 02:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C052844C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 05:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175E911713;
-	Thu,  7 Nov 2024 02:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD8710F9;
+	Thu,  7 Nov 2024 05:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="o37u+N6W"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="tUvtg6WO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2746617D355
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 02:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3474192B62
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 05:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730945398; cv=none; b=bkCPYtBJhd1qhZKRitn+VtRAYfOnuPNeDKocG92CVa403SSEa0hwVCP0h/g4Yk5/6WMgJNv6ptaxREbmO06iCbcPdrXfWD+bB7UzIAsuafg86wFG2I/mr4wQ0llW6M3QbSEenZZ9YrKXbxdD5C6iDZfPpqGV7z90H3b8K5Q83tg=
+	t=1730958216; cv=none; b=CZUbj3IKcKFcJ8TP8aE5sk94uOCope1AUP/0QyfC1okOdQR/K7ib96yk+AYzKWrnmNKxFR1Q1zTZQ8TNsT7r+H/UJT6Nl2gO5x2OyMStJEbB03rM2NQvK3emyOetJ7yf0FAPgAxvJKKLm9vPmdwBtBYeyOqUNg1WTHC0JpBL8Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730945398; c=relaxed/simple;
-	bh=U9UwNAev20LVjIzoelIDNy9digyaRx9q0qybyVFRXUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZzsTt2eekqVe+QT4RqTaeWqCbzJLxb/FnAUsDOfDD8PYI4xZ6NeLusbi5ni1GffHVHPdolxGi4YpvK3VfIF4TheD/7QmDAHB1jcvZdfoVkQs/5uSGwIxyouvj46dfTekBtjuyyeO2P5wL67B47hh7hO+fgmhpEaewR/d5nHgbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=o37u+N6W; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-72041ff06a0so331927b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Nov 2024 18:09:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730945395; x=1731550195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M5VEXH/UjVZxKSBS42OsN1z+40kpn9n52otycPhBNjg=;
-        b=o37u+N6W5u5b2gtR/PZami0YGkuUQpsCQQQEwzHS9f3Axo8vf06/YD7OxwHceCDcni
-         GgUsy1fNvkpaQ5+7HkNf3OqCq8s7KjrvfGh56TLOVTGqyE3SaMrT5tqhCm5ZK4BrekFX
-         el08KYfIIqcbYQpO2RCRXxj9CImDomBNJGsYFmPN4OexxtmDCf4YYQlYAtBWGlraC+TX
-         erQxB8PN6CjVZhmoIpI7pZetZDkqnZr94yF2VIB4CVOqHnvIZamELJG950Rv9C2pmf0a
-         GxOh6J65yKCwRohGmy+SJWTFG7/63TIfZUcnzJUT1ihbvl3zq3ajUPqAjGXiAQo4AGNp
-         f/dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730945395; x=1731550195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5VEXH/UjVZxKSBS42OsN1z+40kpn9n52otycPhBNjg=;
-        b=rzqtZQqhxn8RMlxA91tx74qrLjtvXcHZJjXLoAncAyni5Eg/OktETiL2CwuNBiA/fO
-         Y4jbt/6I5IwRYcFhkmSyt8zYvjj+vg0x+nvvuhNL1KSez7PBp5n0KWm/kiHSyDJnQ+RF
-         0ft2RYUjtcEZkM6XT3722ddTA3DfueNdbZvC0fFDJY2fZUpK0Vittn9YlYqSdIr53sI1
-         gVYOc6XhkRINMdoc8RuL28UoVMF334H/WFZwm3XvA0E4BL/otbQRA1Fbegit3TfI7kbJ
-         8dsW7mGyz8pDz7D6SrXEf/hxaGbBQxmwSEkBWHMQqYIHQsJkwmSNpStafilB8stL+nB5
-         xvqw==
-X-Gm-Message-State: AOJu0YzvY+ChkLM0bCV8pjXRc9AwO62djg1wIHRWXTnJd7Uss2U3d3dZ
-	CsI8MEhnqoGAky4ROdGcFqgmxZlWlE15EkVnGmbYBICE3Oe3Czb+v2Ou42iTERo=
-X-Google-Smtp-Source: AGHT+IE4FdVcCFM7JfMcQ3SKmd1UC6mzCGq6q6jfwTYIDNNfVDV6mTuEsMVwx/N+IlnX034mAbpOSg==
-X-Received: by 2002:a05:6a00:170d:b0:71e:1314:899a with SMTP id d2e1a72fcca58-720c998d8b9mr30360940b3a.20.1730945395467;
-        Wed, 06 Nov 2024 18:09:55 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a50512sm256626b3a.173.2024.11.06.18.09.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 18:09:54 -0800 (PST)
-Message-ID: <e757bfa0-0c21-41d6-a072-ce85f4ea8a04@kernel.dk>
-Date: Wed, 6 Nov 2024 19:09:53 -0700
+	s=arc-20240116; t=1730958216; c=relaxed/simple;
+	bh=Ptur6xTqEPFKjemovZfKznriku/WUbGYA6MXIbA56rU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cn93NanPkqJuA8ilb47lm8yB+E6BbdFTw1HLVef0/mGYxo5u2heEzEmO2/dKy3a61/z5jjDhV9N49Uf17lOC+pAaRzMpSOleKy9sU9/POxoL8BTNymqG9HzNGgQcUuzOdrC4iwffvUIzSYihP9G0eBGJ9PLg4C/9BHI7CoB1Iik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=tUvtg6WO; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:339a:0:640:a002:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 035D260E1D;
+	Thu,  7 Nov 2024 08:43:24 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MhaifHCPlW20-q791fCj9;
+	Thu, 07 Nov 2024 08:43:23 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1730958203; bh=L2fQdkvs5a/umPRjZls07uUvU2Csch2YyyP8Br7H+IA=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=tUvtg6WOVPJwBC9R4+4ih86J1xAPL9X5M7Veiz5kRZYQi67BWYQ81uEtAcsqE7Nnk
+	 vZpyBOINyHeJVZ4i9KOdON1v2iCM7Gu6npoA39PJeXmHVea1pOqzoxqjLzd4MsgUEi
+	 bDewp8ahClR0hzCQMRlDhcdm9PVjbOvdpZIvKQmk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
+Subject: [PATCH] jfs: reject on-disk inodes of an unsupported type
+Date: Thu,  7 Nov 2024 08:42:28 +0300
+Message-ID: <20241107054228.26540-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 6/9] io_uring: enable per-io hinting capability
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
- javier.gonz@samsung.com, bvanassche@acm.org,
- Nitesh Shetty <nj.shetty@samsung.com>, Keith Busch <kbusch@kernel.org>
-References: <20241029151922.459139-1-kbusch@meta.com>
- <20241029151922.459139-7-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241029151922.459139-7-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/29/24 9:19 AM, Keith Busch wrote:
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 0247452837830..6e1985d3b306c 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -92,6 +92,10 @@ struct io_uring_sqe {
->  			__u16	addr_len;
->  			__u16	__pad3[1];
->  		};
-> +		struct {
-> +			__u16	write_hint;
-> +			__u16	__pad4[1];
-> +		};
+Syzbot has reported the following BUG:
 
-Might make more sense to have this overlap further down, with the
-passthrough command. That'd put it solidly out of anything that isn't
-passthrough or needs addr3.
+kernel BUG at fs/inode.c:668!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 3 UID: 0 PID: 139 Comm: jfsCommit Not tainted 6.12.0-rc4-syzkaller-00085-g4e46774408d9 #0
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+RIP: 0010:clear_inode+0x168/0x190
+Code: 4c 89 f7 e8 ba fe e5 ff e9 61 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 7c c1 4c 89 f7 e8 90 ff e5 ff eb b7
+ 0b e8 01 5d 7f ff 90 0f 0b e8 f9 5c 7f ff 90 0f 0b e8 f1 5c 7f
+RSP: 0018:ffffc900027dfae8 EFLAGS: 00010093
+RAX: ffffffff82157a87 RBX: 0000000000000001 RCX: ffff888104d4b980
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900027dfc90 R08: ffffffff82157977 R09: fffff520004fbf38
+R10: dffffc0000000000 R11: fffff520004fbf38 R12: dffffc0000000000
+R13: ffff88811315bc00 R14: ffff88811315bda8 R15: ffff88811315bb80
+FS:  0000000000000000(0000) GS:ffff888135f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005565222e0578 CR3: 0000000026ef0000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? __die_body+0x5f/0xb0
+ ? die+0x9e/0xc0
+ ? do_trap+0x15a/0x3a0
+ ? clear_inode+0x168/0x190
+ ? do_error_trap+0x1dc/0x2c0
+ ? clear_inode+0x168/0x190
+ ? __pfx_do_error_trap+0x10/0x10
+ ? report_bug+0x3cd/0x500
+ ? handle_invalid_op+0x34/0x40
+ ? clear_inode+0x168/0x190
+ ? exc_invalid_op+0x38/0x50
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? clear_inode+0x57/0x190
+ ? clear_inode+0x167/0x190
+ ? clear_inode+0x168/0x190
+ ? clear_inode+0x167/0x190
+ jfs_evict_inode+0xb5/0x440
+ ? __pfx_jfs_evict_inode+0x10/0x10
+ evict+0x4ea/0x9b0
+ ? __pfx_evict+0x10/0x10
+ ? iput+0x713/0xa50
+ txUpdateMap+0x931/0xb10
+ ? __pfx_txUpdateMap+0x10/0x10
+ jfs_lazycommit+0x49a/0xb80
+ ? _raw_spin_unlock_irqrestore+0x8f/0x140
+ ? lockdep_hardirqs_on+0x99/0x150
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_default_wake_function+0x10/0x10
+ ? __kthread_parkme+0x169/0x1d0
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ kthread+0x2f2/0x390
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x4d/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index 7ce1cbc048faf..b5dea58356d93 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -279,7 +279,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
->  		rw->kiocb.ki_ioprio = get_current_ioprio();
->  	}
->  	rw->kiocb.dio_complete = NULL;
-> -
-> +	if (ddir == ITER_SOURCE)
-> +		rw->kiocb.ki_write_hint = READ_ONCE(sqe->write_hint);
->  	rw->addr = READ_ONCE(sqe->addr);
->  	rw->len = READ_ONCE(sqe->len);
->  	rw->flags = READ_ONCE(sqe->rw_flags);
+This happens when 'clear_inode()' makes an attempt to finalize an underlying
+JFS inode of unknown type. According to JFS layout description from
+https://jfs.sourceforge.net/project/pub/jfslayout.pdf, inode types from 5 to
+15 are reserved for future extensions and should not be encountered on a valid
+filesystem. So add an extra check for valid inode type in 'copy_from_dinode()'
+and fix 'jfs_lookup()' to handle possible -EINVAL.
 
-Can't we just read it unconditionally? I know it's a write hint, hence
-why checking for ITER_SOURCE, but if we can just set it regardless, then
-we don't need to branch around that.
+Reported-by: syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ac2116e48989e84a2893
+Fixes: 79ac5a46c5c1 ("jfs_lookup(): don't bother with . or ..")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/jfs/jfs_imap.c | 13 +++++++++++--
+ fs/jfs/namei.c    | 10 ++++++++--
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index a360b24ed320..debfc1389cb3 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -3029,14 +3029,23 @@ static void duplicateIXtree(struct super_block *sb, s64 blkno,
+  *
+  * RETURN VALUES:
+  *	0	- success
+- *	-ENOMEM	- insufficient memory
++ *	-EINVAL	- unexpected inode type
+  */
+ static int copy_from_dinode(struct dinode * dip, struct inode *ip)
+ {
+ 	struct jfs_inode_info *jfs_ip = JFS_IP(ip);
+ 	struct jfs_sb_info *sbi = JFS_SBI(ip->i_sb);
++	int fileset = le32_to_cpu(dip->di_fileset);
++
++	switch (fileset) {
++	case AGGR_RESERVED_I: case AGGREGATE_I: case BMAP_I:
++	case LOG_I: case BADBLOCK_I: case FILESYSTEM_I:
++		break;
++	default:
++		return -EINVAL;
++	}
+ 
+-	jfs_ip->fileset = le32_to_cpu(dip->di_fileset);
++	jfs_ip->fileset = fileset;
+ 	jfs_ip->mode2 = le32_to_cpu(dip->di_mode);
+ 	jfs_set_inode_flags(ip);
+ 
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index d68a4e6ac345..845abc598334 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -1467,8 +1467,14 @@ static struct dentry *jfs_lookup(struct inode *dip, struct dentry *dentry, unsig
+ 		ip = ERR_PTR(rc);
+ 	} else {
+ 		ip = jfs_iget(dip->i_sb, inum);
+-		if (IS_ERR(ip))
+-			jfs_err("jfs_lookup: iget failed on inum %d", (uint)inum);
++		if (IS_ERR(ip)) {
++			long err = PTR_ERR(ip);
++
++			jfs_err("%s: iget failed on inum %d with error"
++				" %ld, consider running 'jfs_fsck -f /dev/%s'",
++				__func__, (uint)inum, err, dip->i_sb->s_id);
++			return ERR_PTR(err);
++		}
+ 	}
+ 
+ 	return d_splice_alias(ip, dentry);
 -- 
-Jens Axboe
+2.47.0
+
 
