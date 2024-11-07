@@ -1,170 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-33903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341159C0580
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 13:19:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08829C06F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 14:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD081C2271F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 12:19:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70D71F217BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 13:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A818202F7A;
-	Thu,  7 Nov 2024 12:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584BA20FAB0;
+	Thu,  7 Nov 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RiQ7orMg"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="qdVUQqi2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F031CC8BD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 12:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4034120EA3B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 13:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730981939; cv=none; b=tNIQX7ITTpVpRN/aIfPuEd9+QzlVa3kNhKbssblvdPP7U2xZ73wM4B6IlJHfnjklYxCcrA7X4pkzpWm7fghPtkaM/ihqumDxlQKBmlKr3u0ENE4gK+v/eBcAQ4iRaUmFxltyucEam4bLogqdJfLbavJkOoeKb4IqVyDjG1KpGmM=
+	t=1730984961; cv=none; b=Oi4RYZfr6OA49lgV+f3d48lmfzsAJdXen7cgnpLFHVd7b8TMwnTMu3vq9b1vwIGUp2Eawdt3hpOKT80KZjo3d5Fj4rQ4MpoPkfW5fk/cd5Y7LsjKHb8Lw0ez6B6TlARkGES2peHH/A3RBgLqT5p48HHIVrh1GQWqhHAm0YE+n0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730981939; c=relaxed/simple;
-	bh=QF2oNzITxX0gOBS8zn5XFRN+IaelJLPihLi4DtBISKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HusVzXO7VA46PZBE5UNsgZJbO45KtUzeL8K0u+89nBTe5iJAFFuz2j4ghWMbLzFVklOi0/h9SElAhVnv3QQe1rV4fdxkRvsbGRajgk3Vi6MDSbs0c33FDPtWdmakBjJQd59eAfYwIxc8jgeK9yfUWjHrzlPPtOxerws5CVe6KeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RiQ7orMg; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46094b68e30so5475961cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 04:18:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730981937; x=1731586737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GegbHPmHJ/jq3f0zR1yfgP7svIbKhdwG6vm6VMTRCyY=;
-        b=RiQ7orMgWx0MtKU51MFrAbW86BoCcRIAuebcE+m/c4c21NYNQcCl6CF1XYY2MVWa/X
-         GC6KuN06qkahp/cnexstUmp0dBOKeuGtn9X8CwIQwDXaBZTOBIKzWd/w4pabLFVpruZ9
-         3q8DrXkBythsQnXl0x85vY0XSg7jCYmYqaj2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730981937; x=1731586737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GegbHPmHJ/jq3f0zR1yfgP7svIbKhdwG6vm6VMTRCyY=;
-        b=W8VhkSTBM5hUthzl6ZTwWML6Dah/d3p9L5wJVT4BFXqFJ7vFX1xzx9NmhSViNwLxnk
-         qtnNj0CFTktJWQXmWWXPbKepC+P0rsIv5aLh/vMHMgag2J66AUTu7DTM4TIZmx2O+F94
-         n7XPQ12Y4iRpb4QJUdNciDQyW211kSAs3ziKmNyJiG9z0dU9/eR5Zb+T9ykCT3bEG267
-         3uDNMA/taa4FQN5Hsvhd2BUONzAvkk/4ifIGCjy0kxzPqGuunfXbV8ISV889jgqi/eHG
-         aDwPjrtlZOlnu/VMhJEMEOr3zitOZYVGhqXQfx0i7VHN2skn2yT/P/5FM6xlwGUKkQRN
-         IuWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXySAAYHzox5UJnrnEhPqhJmkZAgOYCorZ5A8PWKv1RoSiQmHQp5BLbvt1exWod45uu9oNYmhFMS7ybOoTZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJeGzrWz/lPWzxlTIQ3me+8Y59dWx+DO2cUZ25cQO9hzOf0qwl
-	jvA2FSf03WCsCJwG53lim3l7HopXfcYcQkXr3m+PjERl6io6QJibF3QlrMzHa+qSY8RONzzKhcJ
-	OjY3p4FP1xKgVCe+898FxlN+b/3L02dIkcCZlXg==
-X-Google-Smtp-Source: AGHT+IFtv+GKUc4iD29o482ZbZY0XQcQSZGjqKz3tbmzgRu+YI6K2L6XRRlAB3NCQn9LUZKr4SQIt4pCMC+npRWgFFg=
-X-Received: by 2002:a05:622a:4814:b0:463:16e:c5d2 with SMTP id
- d75a77b69052e-463016ed03amr18210951cf.11.1730981937210; Thu, 07 Nov 2024
- 04:18:57 -0800 (PST)
+	s=arc-20240116; t=1730984961; c=relaxed/simple;
+	bh=dhtxfJh1FLPzvT4jT0S+jmUarJJ1hUeU8sCCjAP29B0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kt5BA8BB3QHU48t6rdq3z7RHemAiQlhkmuYJIxkghceW/Pn2zNnNCnsEgIm0CWzQ5Plmjjs/WBIx1squpHnyDFoxrpsJ2HkgKLZtWfhp+WVgdO7lFOamjh5UvSpthxkfBP4n5tGXfU3TgBVWMnjkrBHyBB1QjlZ2rzb0wrPLGsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=qdVUQqi2; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=dhtxfJh1FLPzvT4jT0S+jmUarJJ1hUeU8sCCjAP29B0=;
+	t=1730984960; x=1732194560; b=qdVUQqi23Eda4aO8sxCkqcpwWNtuVRJ8qQkqdGo3P+W0OZH
+	h9QWQvCpMpK9LJzKtjs/gRFbbLmOxUufr86ZaqfPDd67C76WDtueC0mWexutO1fkgxPlACD/NTsHL
+	f62fg3iJoCI7sXS86xMGD/GlJTcUmdqZ3XEVDIAhSAuHKCxk8K05+HChJ6QnuYAets6QLMf5xAD3f
+	jX6ZqnU++AmbxvQZ1VExIqeaEmfxv++/ndopLzR6jdFIzr8bIjO476I0u0kYpe2gHqek9U6hbNCMw
+	ZR4A/50mYBXQsbkGLi4pb9N+c26tTKmNTCikZy2P7+KFdcXLgm1s9NkT5uP/FmSA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t92GA-0000000GQ5w-1n2O;
+	Thu, 07 Nov 2024 14:09:14 +0100
+Message-ID: <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+Subject: Re: UML mount failure with Linux 6.11
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hongbo Li <lihongbo22@huawei.com>, rrs@debian.org, Benjamin Berg
+	 <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org, Christian
+ Brauner <brauner@kernel.org>
+Date: Thu, 07 Nov 2024 14:09:13 +0100
+In-Reply-To: <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+References: <857ff79f52ed50b4de8bbeec59c9820be4968183.camel@debian.org>
+	 <2ea3c5c4a1ecaa60414e3ed6485057ea65ca1a6e.camel@sipsolutions.net>
+	 <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
+	 <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
+	 <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024164726.77485-1-hreitz@redhat.com> <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
- <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com>
-In-Reply-To: <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 7 Nov 2024 13:18:46 +0100
-Message-ID: <CAJfpegvfYhL4-U-4=sSkcne3MSNZk3P3jqBAPYWp5b5o4Ryk6w@mail.gmail.com>
-Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
-To: Hanna Czenczek <hreitz@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>, 
-	German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Thu, 7 Nov 2024 at 11:00, Hanna Czenczek <hreitz@redhat.com> wrote:
-> It isn=E2=80=99t much, but I believe it=E2=80=99s most of fuse_fill_super=
-_common()
-> (without restructuring the code so flags returned by INIT are put into a
-> separate structure and then re-joined into sb and fc later).
+Hi,
 
-Probably not worth it.
+So took me a while to grok the context, and to understand why it was
+working for me, and broken on another machine...
 
-> fuse_send_init() reads sb->s_bdi->ra_pages, process_init_reply() writes
-> it and sb->s_time_gran, ->s_flags, ->s_stack_depth, ->s_export_op, and
-> ->s_iflags.  In addition, process_init_reply() depends on several flags
-> and objects in fc being set up (among those are fc->dax and
-> fc->default_permissions), which is done by fuse_fill_super_common().
 
-Okay, got it.
+> I have read the context in [1]. It seems your tool has already used new=
+=20
+> mount api to mount the hostfs.
 
-> So I think what we need from fuse_fill_super_common() is:
-> - fuse_sb_defaults() (so these values can then be overwritten by
-> process_init_reply()),
-> - fuse_dax_conn_alloc(),
-> - fuse_bdi_init(),
-> - fc->default_permissions at least, but I=E2=80=99d just take the fc->[fl=
-ag]
-> setting block as a whole then.
->
-> I assume we=E2=80=99ll also want the SB_MANDLOCK check then, and
-> rcu_assign_pointer().  Then we might as well also set the block sizes
-> and the subtype.
->
-> The problem is that I don=E2=80=99t know the order things in
-> fuse_fill_super_common() need to be in, and fuse_dev_alloc_install() is
-> called before fuse_bdi_init(), so I didn=E2=80=99t want to move that.
->
-> So what I understand is that calling fuse_dev_alloc_install() there
-> isn=E2=80=99t necessary?  I=E2=80=99m happy to move that to part 2, as yo=
-u suggest, but
+Yes, however, that's a default that's entirely transparent to the user.
+This is why I wasn't seeing the errors, depending on the machine I'm
+running this on, because the 'mount' tool either uses the old or new
+style and the user can never know.
 
-Hmm, fuse_dev_install() chains the fud onto fc->devices.  This is used
-by fuse_resend() and fuse_abort_conn().  Resending isn't really
-interesting at this point, but aborting should work from the start, so
-this should not be moved after sending requests.
+> It now rejects unknown mount options as=20
+> many other filesystems do regardless of its earlier behavior (which=20
+> treats any option as the root directory in hostfs).
 
-> I=E2=80=99m not sure we can really omit much from part 1 without changing=
- how
-> process_init_reply() operates.  We could in theory delay
-> process_init_reply() until after GETATTR (and thus after setting
-> s_root), but that seems kind of wrong, and would still require setting
-> up BDI and DAX for fuse_send_init().
+And that's clearly the root cause of this regression.
 
-Agree, let's keep the split as is, but store the fud temporarily in
-fuse_fs_context and leave setting *ctx->fudptr to part2.
+You can't even argue it's not a regression, because before cd140ce9f611
+("hostfs: convert hostfs to use the new mount API") it still worked with
+the new fsconfig() API, but with the old mount options...
 
-> >> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submo=
-unt)) {
-> > How could fm->submount be set if sb->s_root isn't?
->
-> fuse_get_tree_submount(), specifically fuse_fill_super_submount() whose
-> error path leads to deactivate_locked_super(), can fail before
-> sb->s_root is set.
+> I'm not sure it is reasonable in this way. If we accept unknown option=
+=20
+> in the hostfs, it will be treated as root directory. But which one=20
+> should be used (like mount -t hostfs -o unknown,/root/directory none=20
+> /mnt). So in the conversion, we introduce the `hostfs` key to mark the=
+=20
+> root directory. May be we need more discussion about use case.
 
-Right.
+There's only one option anyway, so I'd think we just need to fix this
+and not require the hostfs=3D key. Perhaps if and only if it starts with
+hostfs=3D we can treat it as a key, otherwise treat it all as a dir? But I
+guess the API wouldn't make that easy.
 
-> Still, the idea was rather to make it clear that this condition (INIT
-> sent but s_root not set) is unique to non-submounts, so as not to mess
-> with the submount code unintentionally.
->
-> > Or sb->s_root set
-> > and fc->initialized isn't?
->
-> That would be the non-virtio-fs non-submount case (fuse_fill_super()),
-> where s_root is set first and INIT sent after.
+Anyway, I dunno, but it seems like a regression to me and we should try
+to find a way to fix it.
 
-But this is virtiofs specific code.
-
-Regardless, something smells here: fuse_mount_remove() is only called
-if sb->s_root is set (both plain fuse and virtiofs).  The top level
-fuse_mount is added to fc->mounts in fuse_conn_init(), way before
-sb->s_root is set...
-
-Will look into this.
-
-Thanks,
-Miklos
+johannes
 
