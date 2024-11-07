@@ -1,187 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-33970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09AD9C1098
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:08:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCA99C10DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 22:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A134B1C223E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:08:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78E04B219A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 21:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22922802E;
-	Thu,  7 Nov 2024 21:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDFC194C92;
+	Thu,  7 Nov 2024 21:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5NtMwQT"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QhUyF43n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E9F227BBB;
-	Thu,  7 Nov 2024 21:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731013220; cv=none; b=sQEoiQb4MQQmMN4nbA1inO22LclhzHvQPpvODUx/IkWRJ7gEFIj9CX5eusULV70GiO6U9a3tqeLklYD2uisUtBCIAwqmnFzijm+wGk9E7Egu5XghWiUtlyU2XciA1LITrGyvlgGQWz1jRXQP2DfuoJHiibYQLFOsJR397fDIHZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731013220; c=relaxed/simple;
-	bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G9KAgxPAN8BnoZqGQYzDHVdS1qHFltHXQb+aTwmm4r4iFqKiTsxtxguNL6UWBHpLBRMyBgcjSfZI8KY/YDbOoO2zcEx7v2W6rtIXhaFF8FqXuBLKHJXnNYuBoxbFwTrbknP3dATGmKFH+NYxbTQb6q6GjvjR4Vvioq+6QQGuBQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5NtMwQT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A1CC4CED4;
-	Thu,  7 Nov 2024 21:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731013219;
-	bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=h5NtMwQTMeVw5jnN0sF52dxAw6Ljx9QJaB0RsshTORI3o1FJABNSajKu3IxtHfbp7
-	 cjZWuhHi7NCdYYu7DK39ZAMii3Xr4x9+Cgjq0uOlh8XgBXGuh+Bio8m72Bc21ErZ7H
-	 aIBft6Sy5L4F+lPA36WGsjVvefA0dSdmmLePE7VpYbLi7VDykKNBjNddzFMublFKKo
-	 acwuaDJBS/G8wbmkodc0rKkoyOwXJAdFhm8GMSJD4TXB/g5uy2o4v4w6ypPRayd4zJ
-	 XA31nxQj713gFVk4Le9vlE9jZFPEAFiGjW2vsjVGLyKL1E7C0/3p/YhwBXbHVSeggk
-	 S5iAhosq2PamA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 07 Nov 2024 16:00:07 -0500
-Subject: [PATCH v3 2/2] fs: add the ability for statmount() to report the
- mnt_devname
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFA021791D;
+	Thu,  7 Nov 2024 21:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731014539; cv=fail; b=HGfRZiWBXk053bv+zPslX76JEifuCI/CB9RrTm+8D3NFfA0oRmuXcbYNAmaMcYodFDjKb2GE0twH/arSQAXPXmbtNcVLoLOIQEtyWkrDGMx0H2JVDA/xVz5A2c2kXUkow04MF6jtH7DJsZKmsHLwbEAvvhkIblE+76SAK1poY0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731014539; c=relaxed/simple;
+	bh=dXduTX0TpBHSHfMOqVmePEnHvSEERM4F/TON4MzmW/U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PgKLaVVSi9V6dVjf4zWjWEsyD/bexfy4WUOfBifLwd0NZZSuy+iKq5Or/KLaaias4WOeBvEMiWZvyeopvuCvO3r/Bt4A9wg6ogmNuixpuF5ucJduCCvMLiUYzNuWZKFOUj+cEMDB4ibvK8W01X/Cpeyj63erTdhPy64TUId8VjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QhUyF43n; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731014539; x=1762550539;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=dXduTX0TpBHSHfMOqVmePEnHvSEERM4F/TON4MzmW/U=;
+  b=QhUyF43ncGu+QN8Rqm0ge/NBmV+6kVs+a5XraMHIeDyd2zYRjoxRMKOJ
+   34AnU4rLh+iHQ3/Oa3jP9S5hQkr0Uocwq28lqC0UzqFKRvMYUfz/aJNNg
+   ibl4xNLMd+UbjyLzjWdxV34d8VfvoG24Im2VZgjZwQNihxZny2sqtZay3
+   A19WZJwEv/AEiVgDbSek/93HmVFAez6kOl+1Gzgrlc8SlbQBSF2dT5AJe
+   Qf3ERbKpWNTAS7P3I5CJww8BdM4S4fnH/h/CwE17ma5JyAy3ii4OrD0gR
+   20ACbQpnxHpfBEC1I2NtqQnWApzavccfh0ap76YdEOLyhx+H9cw4L7mZG
+   Q==;
+X-CSE-ConnectionGUID: jx1Tk3+QRYik1tMtBojDYA==
+X-CSE-MsgGUID: pAAs3hegQPS9+7qTaf8nzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30839749"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30839749"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 13:22:18 -0800
+X-CSE-ConnectionGUID: pK8lutH0Scu6jEqVkv/JfA==
+X-CSE-MsgGUID: oc1P5kZQShOcaDjgwTEfPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="89785406"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2024 13:22:17 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 7 Nov 2024 13:22:16 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 7 Nov 2024 13:22:16 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 7 Nov 2024 13:22:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vEHnEOLjgHy5VdKDpNYo7q8Jk5ws5RLDpki2Eqx65IM4UJNzsXO0cILzui3DcdtmqUcnNaFvuroSrXTlkEsqjH7oRdMI4A7Oir/lkySq0dA8BHuaBpF8ksQuXyLu+l6h2VEYQOgV0EDAr+sqRRxwp+ojN7gMwEoF8zzf44/NwnVmKBOZqOuPnnEOisD2xHAQPJjkKPQIxu7/dq086/rhZqNdjgecIXeYNgVdtZ0evK/t0pQK7ExzafNGr0pDO8tZ5Iv/Xbh090GUpfcA7xru51XW5J4TcUfetMaNSGzTWOHYHNWrR/PW+RQTtlhWbnxc78ixcx9/XpohoLW7UzdTWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZqUXU94u8793TLBlssLoUfgnfevWV6lfXnFetx3kBRQ=;
+ b=DRJff8KPMaaEifIKoQmcDk943wOuGWhNpDj0pkGf3s5Ha5BKn3PPylzYWHVMFeb/pFfWksmzvEY0KIUYqTwDBEtVIJ9McmFjP62VB7zznnXPhsMxLqnjUIkFaMqvHH58guJiY39D2QQbQuvF4K5No+xKVB6qDquwyOiyzPTJxU345KcdrZgbaA+Bxv1x3FUlD9mNzSbcsEBdFMctvewn35Rqbn3CkTzysCBE9H4taItDz3Lb+rqBh4CpIFXSLie9Hy0UV1XHL74qElwO4r0BPeD+b9f61uu1CNZ6Zwwbu3aCsPXzDqmzqKGcM1WOqLiDwKYmlNky8yl1YB1eWP5HnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by DS7PR11MB7740.namprd11.prod.outlook.com (2603:10b6:8:e0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Thu, 7 Nov
+ 2024 21:22:14 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
+ 21:22:14 +0000
+Date: Thu, 7 Nov 2024 13:22:11 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>
+CC: Jan Kara <jack@suse.cz>, Asahi Lina <lina@asahilina.net>, Dave Chinner
+	<david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Sergio
+ Lopez Pascual" <slp@redhat.com>, <linux-fsdevel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<asahi@lists.linux.dev>
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+Message-ID: <672d2f839e4b8_10bc6294b1@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+ <20241107100105.tktkxs5qhkjwkckg@quack3>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241107100105.tktkxs5qhkjwkckg@quack3>
+X-ClientProxiedBy: MW4PR04CA0311.namprd04.prod.outlook.com
+ (2603:10b6:303:82::16) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
-In-Reply-To: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, 
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3899; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=fFV4+prDlDx7/xm+7DYBnLH7Y9242fu/tFlQKE+ZzNg=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnLSpgu+dQtyWXLsC8tfCTuaArcNvBOte92SNN6
- qtC/2NUO3eJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZy0qYAAKCRAADmhBGVaC
- FXysD/97HnQ/uSr74GpOmLPZQPEwa3xrTdqIkL/H+zMzpaGQlZl7iahTdelIxungZ6Khni9mcSs
- X7tifNInv7M+NeYrC6BJ1WkPXfH5IgHrQ+K7oadsRWWc0aJ+k7kjqW4BZGw3Rgp2wFsid/C7pQ5
- ER5NtUQ+H6kPcqZi05fyvki4U+iTCz9MIRXpT9TCeRnad91XEvjRepBX3w8LYGoL94umHyf66dz
- 9pXSkrSw3fM4VUhNkO9wA/OgfsDAnIYHw/Q90fTtMI/IFQS1YX8ejs4wNS3hehUzT5vJeaSlSOL
- 8AHMn/x2nBKnUcbQaD5SUSFBAj2r80nF4gCpV1vaYqWRwISgjOwqfZ6L4Aas3N+BOMvTysaeXOH
- /xc6ixRRXGO59PwJz9YAYFrDhti9heuAts6ZpGrbBtKNPS6dHiQHD0ZrVf4yT7yH/k8EZAxEyAJ
- +ino2zDVxQixPlyf+pUlLYnj7qZXxcvM9W3uXIF3tzFRP4fy9WNgCO/1La7A8nZ7N5C4BigJOBt
- K+nmFuzJSQb0oIaf6pxWBuXA+IgKwzgy54P50ZTjwiQF8mOYvj1KyZjJWFEcFLCUxwbuI18lLHK
- 0LezOK2YtG8Jzs16iPKFB4cqLMuiqPR0AeIlfHPCjQHQdk7OMhIg/rC0kcnO9Vz9aAcYQ/iNZsT
- mORw5Nw/kIbsP/Q==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DS7PR11MB7740:EE_
+X-MS-Office365-Filtering-Correlation-Id: a046f7fc-0dd1-4281-f4cf-08dcff723fc7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?H8YgpG3PiEI9L6tzm+nqWciOjN2LYMhvfx1c7/a3am5Uq8rksnXocDzmp4ad?=
+ =?us-ascii?Q?9BJHme+Jj0fHn8xExMUDukxFet46dc1lWhOQQRb5P1+MlTcCvnlz4l/0v75U?=
+ =?us-ascii?Q?CU8KMeX8MUcMIBcJ1jGLgZKisrf4sUxZjhk8fl6DXCWIijKgAYl2MtVKmQDp?=
+ =?us-ascii?Q?KORVWAMi6XSj2AeWZEpscsnAuXHLQsEJLgMntpZ61LwnS1vQdgjFUe3J+ebx?=
+ =?us-ascii?Q?5my6LQMesGLtuVzLdYUQaqFLQ6QEvX3+8/Cl+LK1TnwCrZn9fQiQe/NSEBlm?=
+ =?us-ascii?Q?s1kfa1IeFK8OZBva/oCnO4Mxpf4jXC11GH+5jWfcvAuvfKcTIJQqOZd/kQGq?=
+ =?us-ascii?Q?92UBMLoDE3GTkhnPB3I3HQeYoKj7X9FefY6NRLkUt3IXbSm6xnbuTIxe9GEn?=
+ =?us-ascii?Q?j5y1OM9hIpZNZn8MEcpIz+Apts3K739FcCwCEzXE2oBRFvPZuOPH73JPCqRT?=
+ =?us-ascii?Q?+4VzejfHYGpil02JT2hOgxORkndgL0JoKjWzddTkTYEVfCbRzQV41sjXsrTq?=
+ =?us-ascii?Q?i+IdtwbZrLJ9Vx61yRIUCbC+WMnrJBMzBBCazSk9bMwjHRJWYflArl+w65Xb?=
+ =?us-ascii?Q?j2/cPqKl57XiauYcr1iLG2sL+aiI+7jCwdCyp0sRM6poTnYxry5hafR9z8ax?=
+ =?us-ascii?Q?Z6t1LMK4Nzq92VJWyUDEfqTLJVsorUdchUGmayQvr2KZXQlV+823M+McUsik?=
+ =?us-ascii?Q?8MQj6aKvlPExkCOAscz+MqOsibaFyMm1XgbVCKXdNbiegSpWVbldvjDZ1+Ca?=
+ =?us-ascii?Q?USW7XNdwmXWUVWTak5fqKNlP7Q4VsdnY53+C+bopiFyy4CpDsUM4Rapz9FGm?=
+ =?us-ascii?Q?+C/CyMlch1ZIsavmPUEfEGMZl3YWLPL57jmXernUC/uo9t88avdAw+55dcp1?=
+ =?us-ascii?Q?JMGSGI87OB0O2EcUyWE0u3AYTQehNEQDIF0RFh9upt/XqqPTy+pZXADWcvPB?=
+ =?us-ascii?Q?ziV4vmLCT9E2AzI730Gp3Q6+7ygomJbTzOSkGAS6F9+/g9n/DvAg7AbgB8W/?=
+ =?us-ascii?Q?2Be9IP+VbgFUQg+Qb2zc6YwVIURIRlz/L5Fdm+qwtjuiIXyFgPtXUotDIK+j?=
+ =?us-ascii?Q?ffl6iGTuf9VKXKuU+3asAZUTUdB21GkExSAjrIF6N+lfdvKxcvcx7E10WgpH?=
+ =?us-ascii?Q?uXuQoNr/KXIPW0UZvK5Wklz56+YafPWWQ/cIPfEYH6JWLUEMsQjCinyKKAIc?=
+ =?us-ascii?Q?tkaoKKJC3X7iEQ5Chz/0oFximiJUoEV6KU47ONvMcXYH0aCxvVLkgUythecO?=
+ =?us-ascii?Q?4OloLW8j4LMZkrN+JhyG07WB9FLHjilmD/12CWIOchQxfjM7SiA1oTR6hhJm?=
+ =?us-ascii?Q?vP7qkboyf19B4EoN1ryI7crZ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7ULY74OROe62icBfYGkbl7vTW74fsJhkeWNGEINIJBXWCswXEX0ErWfTxjAI?=
+ =?us-ascii?Q?Urwk0wyv6zsPNFE+CKXpraM8kwu320NFURMAkpmzQD7KfX/YKZk5n/utk1/G?=
+ =?us-ascii?Q?GcE3xXrP+70MPe5MrnHGQmlttpFQXJ0sqr/8UAyGezaR+4GXbTGplYT4dJFI?=
+ =?us-ascii?Q?ZiFiCAzmhuQF19uc1XYJwH0rfEXIqPh0DOHHUgnAJLZC7KZaDFWGlZaFN2Nv?=
+ =?us-ascii?Q?puKNDznIoNJOl10MX8sMLj2duUJF4lK8XaOJxv9AEHuV6sGBty9wSNP+sF6d?=
+ =?us-ascii?Q?ENARfWkgKsm3uKT9HISUIRXOT7vEfYPD4PDXs+8r5JLwQcjG6S/8LW03U0O1?=
+ =?us-ascii?Q?pJnNp1AAEYw1a5g6MF8V8YTtVRglYfMdRQ19fTuBXEleBsZw+KHOFlemU4Pe?=
+ =?us-ascii?Q?9qgtICcDMI7jI8/hHZ+IerncZdJyRY8nYsyZvktW2fjwoTmRCQjlbmti56FZ?=
+ =?us-ascii?Q?KAJ0YNep6J8mbKbsfFewX9obcT3Pb52h6Xsq0/a8ogYKEop3OaSDCBQXVEnh?=
+ =?us-ascii?Q?newGQDWcEVGDxqKvHqlkRoL4XgwxaMDlgCbL3qZZ68EZ1fxWCxCXSA0ppZ6z?=
+ =?us-ascii?Q?UD+gVobz44isWlfQH86Ibihm2jfl/w1wukgCToAPIb700GIkvoZxjb6fDYox?=
+ =?us-ascii?Q?PR4Zdv0k/pnHkcdvXvD8P2u/PxzADNEfjAa9EzmhlQvFCS/C3iypJeiANd2w?=
+ =?us-ascii?Q?MUZzMbnbmWQo8hrj0ZGANhwgSmPkjITfj0X2PTgCzLDbD5oUsNAO83NobNdk?=
+ =?us-ascii?Q?gZxEkHgYb5kXuk7De3I+bgVwNDPsVaJ0AP6fgCy5W/f0+qlS4zWLYSpA4F0X?=
+ =?us-ascii?Q?Z4Qla7fUJHKCLyPe1EurLG05Eiwvy72Potm26qH9jnp0Rh8okamTl7NmyhNv?=
+ =?us-ascii?Q?YiGpwabflOAxKvejw41wZ1/I+XgT9LF8f3ZEPs4+7mjvdtnbCqIRSbMGAdXx?=
+ =?us-ascii?Q?QWPTVP/RsZHgdYtQr6oZVfPdQ2eCChliJCDZ+z95yCdRHs3XT5Hhdu44y8Y0?=
+ =?us-ascii?Q?3yfbNRfFKQin2iQfLZVUDMGyYP9O2L9MTW9sedirDg0jchATPxdK7VOWW7wA?=
+ =?us-ascii?Q?I/JnphsbkqNEMziyRR/ZY8ZMxdeGXiuB5Ps3ZsJSpMHkGY1NLRPzoBnnUBaP?=
+ =?us-ascii?Q?UCQw3a6c5lFWQlpHHApEm+A29hEl+VEnxTnnHcql5yxlyL9DhX4mtMiiW4YV?=
+ =?us-ascii?Q?sOzmSU2fiH9s8alvBVzEA0ACmXRKKVSug0mo1apxd7KV//+AcnbYzJ2LvsZx?=
+ =?us-ascii?Q?LRlJJ9EHKatGUApOi1MGVlijfsIFY1N4WzaMcwsghplSfyU/Ao0tg37CFkgM?=
+ =?us-ascii?Q?YTY3gzCRKyhN2I3CWi8phEKLT/FOIjSy9ZgmHzzLneZGq7a6WhJ8u7YUN97d?=
+ =?us-ascii?Q?NviPuSjtoR1kh0iAE9tdX6uv9DZxjudaO4ISzMd4HFDcgq2FbMVJsl/m7/HV?=
+ =?us-ascii?Q?iW6PAK6Y+p5CbXq3zt3cYM2hxCgypQvc7n4hnQ409OdrQoYxveX8dCeZipjp?=
+ =?us-ascii?Q?q90lgsBEKdo0y00Ei9R2ej9NFlI/gDRivHzfKUQ4RWE4/fwXMT4SN+x1Ujzp?=
+ =?us-ascii?Q?OpRAO93z/ZqgfJaW5zAdvpbXnTPiECIsquFnjeS8TeEft4C7oVGvPiopwdxz?=
+ =?us-ascii?Q?9w=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a046f7fc-0dd1-4281-f4cf-08dcff723fc7
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 21:22:14.2766
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vxKG3G3QH+OxFhld7dtzwz9Kdn3Y0fqlxL/z2FyGF9x49VII0Zv1H5Ik89xtfFe8w5jYH5g3tnJ+wZ1V0thLQ0UtRKT8A562BrCbtURQPGo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7740
+X-OriginatorOrg: intel.com
 
-/proc/self/mountinfo displays the devicename for the mount, but
-statmount() doesn't yet have a way to return it. Add a new
-STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
-offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
-the return mask if there is a device string.
+Jan Kara wrote:
+> On Wed 06-11-24 11:59:44, Dan Williams wrote:
+> > Jan Kara wrote:
+> > [..]
+> > > > This WARN still feels like the wrong thing, though. Right now it is the
+> > > > only thing in DAX code complaining on a page size/block size mismatch
+> > > > (at least for virtiofs). If this is so important, I feel like there
+> > > > should be a higher level check elsewhere, like something happening at
+> > > > mount time or on file open. It should actually cause the operations to
+> > > > fail cleanly.
+> > > 
+> > > That's a fair point. Currently filesystems supporting DAX check for this in
+> > > their mount code because there isn't really a DAX code that would get
+> > > called during mount and would have enough information to perform the check.
+> > > I'm not sure adding a new call just for this check makes a lot of sense.
+> > > But if you have some good place in mind, please tell me.
+> > 
+> > Is not the reason that dax_writeback_mapping_range() the only thing
+> > checking ->i_blkbits because 'struct writeback_control' does writeback
+> > in terms of page-index ranges?
+> 
+> To be fair, I don't remember why we've put the assertion specifically into
+> dax_writeback_mapping_range(). But as Dave explained there's much more to
+> this blocksize == pagesize limitation in DAX than just doing writeback in
+> terms of page-index ranges. The whole DAX entry tracking in xarray would
+> have to be modified to properly support other entry sizes than just PTE &
+> PMD sizes because otherwise the entry locking just doesn't provide the
+> guarantees that are expected from filesystems (e.g. you could have parallel
+> modifications happening to a single fs block in pagesize < blocksize case).
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/namespace.c             | 36 +++++++++++++++++++++++++++++++++++-
- include/uapi/linux/mount.h |  3 ++-
- 2 files changed, 37 insertions(+), 2 deletions(-)
+Oh, yes, agree with that, was just observing that if "i_blkbits !=
+PAGE_SHIFT" then at a mininum the range_start and range_end values from
+writeback_control would need to be checked for alignment to the block
+boundary.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index fc4f81891d544305caf863904c0a6e16562fab49..56750fcc890271e22b3b722dc0b4af445686bb86 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5014,6 +5014,32 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
- 		seq_puts(seq, sb->s_subtype);
- }
- 
-+static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
-+{
-+	struct super_block *sb = s->mnt->mnt_sb;
-+	struct mount *r = real_mount(s->mnt);
-+
-+	if (sb->s_op->show_devname) {
-+		size_t start = seq->count;
-+		int ret;
-+
-+		ret = sb->s_op->show_devname(seq, s->mnt->mnt_root);
-+		if (ret)
-+			return ret;
-+
-+		if (unlikely(seq_has_overflowed(seq)))
-+			return -EAGAIN;
-+
-+		/* Unescape the result */
-+		seq->buf[seq->count] = '\0';
-+		seq->count = start;
-+		seq_commit(seq, string_unescape_inplace(seq->buf + start, UNESCAPE_OCTAL));
-+	} else if (r->mnt_devname) {
-+		seq_puts(seq, r->mnt_devname);
-+	}
-+	return 0;
-+}
-+
- static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
- {
- 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
-@@ -5077,6 +5103,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
- 		sm->fs_subtype = start;
- 		statmount_fs_subtype(s, seq);
- 		break;
-+	case STATMOUNT_MNT_DEVNAME:
-+		sm->mnt_devname = seq->count;
-+		ret = statmount_mnt_devname(s, seq);
-+		break;
- 	default:
- 		WARN_ON_ONCE(true);
- 		return -EINVAL;
-@@ -5225,6 +5255,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
- 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
- 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
- 
-+	if (!err && s->mask & STATMOUNT_MNT_DEVNAME)
-+		err = statmount_string(s, STATMOUNT_MNT_DEVNAME);
-+
- 	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
- 		statmount_mnt_ns_id(s, ns);
- 
-@@ -5246,7 +5279,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
- }
- 
- #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
--			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
-+			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
-+			      STATMOUNT_FS_SUBTYPE | STATMOUNT_MNT_DEVNAME)
- 
- static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
- 			      struct statmount __user *buf, size_t bufsize,
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -174,7 +174,7 @@ struct statmount {
- 	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
- 	__u64 mnt_ns_id;	/* ID of the mount namespace */
- 	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
--	__u32 __spare1[1];
-+	__u32 mnt_devname;	/* [str] Device string for the mount */
- 	__u64 __spare2[48];
- 	char str[];		/* Variable size part containing strings */
- };
-@@ -210,6 +210,7 @@ struct mnt_id_req {
- #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
- #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
- #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-+#define STATMOUNT_MNT_DEVNAME		0x00000200U	/* Want/got mnt_devname */
- 
- /*
-  * Special @mnt_id values that can be passed to listmount
+> > All other dax entry points are filesystem controlled that know the
+> > block-to-pfn-to-mapping relationship.
+> > 
+> > Recall that dax_writeback_mapping_range() is historically for pmem
+> > persistence guarantees to make sure that applications write through CPU
+> > cache to media.
+> 
+> Correct.
+> 
+> > Presumably there are no cache coherency concerns with fuse and dax
+> > writes from the guest side are not a risk of being stranded in CPU
+> > cache. Host side filesystem writeback will take care of them when / if
+> > the guest triggers a storage device cache flush, not a guest page cache
+> > writeback.
+> 
+> I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
+> should provide persistency guarantees on the file contents even in case of
+> *host* power failure.
 
--- 
-2.47.0
+It should, yes, but not necessarily through
+dax_writeback_mapping_range().
 
+> So if the guest is directly mapping host's page cache pages through
+> virtiofs, filemap_fdatawrite() call in the guest must result in
+> fsync(2) on the host to persist those pages. And as far as I vaguely
+> remember that happens by KVM catching the arch_wb_cache_pmem() calls
+> and issuing fsync(2) on the host. But I could be totally wrong here.
+
+While I imagine you could invent some scheme to trap
+dax_flush()/arch_wb_cache_pmem() as the signal to trigger page writeback
+on the host, my expectation is that should be handled by the
+REQ_{PREFLUSH,FUA} to the backing device that follows a page-cache
+writeback event. This is the approach taken by virtio_pmem.
+
+Now, if virtio_fs does not have a block_device to receive those requests
+then I can see why trapping arch_wb_cache_pmem() is attempted, but a
+backing device signal to flush the host conceptually makes more sense to
+me because dax, on the guest side, explicitly means there are no
+software buffers to write-back. The host just needs a coarse signal that
+if it is buffering any pages on behalf of the guest, it now needs to
+flush them.
 
