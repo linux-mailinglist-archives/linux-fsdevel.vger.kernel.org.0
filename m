@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-33949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89CC9C0EBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 20:17:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F6D9C0EBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 20:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E62C1F28084
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 19:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9871C253EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 19:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD0718FDBC;
-	Thu,  7 Nov 2024 19:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104E721732B;
+	Thu,  7 Nov 2024 19:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcNRjv1q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bh4qo4Qb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A77194AD6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 19:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98C5186E58
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2024 19:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007046; cv=none; b=FzyYYrMV99R4QTKhUxqAxLpuGiTK5vqCdSiR2Gw5Qb/Uvz9mTQLHiAJuXFYltNTq5T3NUguO83e/MpMnMvtrKIg992EGX8aMkZu4VcbVRTkEpgZQ1phhRZPV9aAFj5iJcF9gCSh/Q2tkm/Q0ZL9U9o+KOcEPYpWBIRWfNq6JUhw=
+	t=1731007047; cv=none; b=srNlJRVCFV5lvoPbUfmz6SBH153aM/lgvqA5IRfixnhoKX6Q2rzxYExpJfYYbyg+KKWIbEzS/7EXYCRvH0hLK6o5ZJ4S74mBxjkqqSIbtYAyrSJn+QLkX1Mbeg2uLUJNY5Wegxte3basuNATh4k7M3oaZFfh2nTS67BkN7PNtiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007046; c=relaxed/simple;
-	bh=pARaSFmLsoPSKNsrfH3+9P8D7C7sCUc7TrWkYNvCKqA=;
+	s=arc-20240116; t=1731007047; c=relaxed/simple;
+	bh=TNpy65gaPB+tGczJKWkCHgIevd+Hc74bVMSwhGgGHDk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nAdC3jd9TdHywlncH7vSh5TGy9zDQ7CFxjDf1GNgWZaTZi9Sg7st735hjMZNq6ZwxvNCBmwn4rUz3T4VJ1i/WOOE/LVW92wjUPJLu+x+227lT7M0twgJP8KXWiD+fwz8qV7WI3oFlDl7uJ2nR7ZRjPzjCb32ydPBDOEsoMK+wHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcNRjv1q; arc=none smtp.client-ip=209.85.128.174
+	 MIME-Version; b=fjy17oG5ohRGfn73BxaOZ2Ec7O1/BI0/CXl0RGl+jgCrxR08twsJuVE34Fl4H3fxLzox+kE5wCW/RehomfpUVN94d1awyXn6wFtkK1Er59XE83gAxvWbnZQ4SbmuULnSwzbpqBLHrE7eHNJgZdtW4nprCXPzMoZeNUWoKaO6tyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bh4qo4Qb; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e3cdbc25a0so14516787b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 11:17:24 -0800 (PST)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ea5f68e17aso14392457b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2024 11:17:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731007043; x=1731611843; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731007045; x=1731611845; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ikpYM/WWgMZzee5LK9ccNIkwppCcSDNp4r5PwHAnOS0=;
-        b=bcNRjv1qO6xBmMigO2iAQ8oZDrvlIbsdokMCnm7Va91oQYPHfMZ7EYdPaM45m72zrB
-         UGfHLXwfU1v2ePuZqBjSqctetnO+ma6sxKXuMnvmHoLOfmFJiumEIbQzHDAtTPpbpix7
-         YeMItXEJgNQtyI5c+OdXlTXFV0mNMARv/Pr9LhYfLCblXfEvIQiyLlNLIMGxJIwiBQOj
-         euuKvOOs5l/ezR2Ln+KFXfz/P2KUNeOeQkTkuQ/rZogdIU29ob9+dUvDLeBNMPEqbTen
-         zOY6fE/ROR3z9pvdhk3fLfd+PEzVBfI1oICBV/UN9yG2RSkE3Hx2s+AEqTd/Bv35R9nK
-         8now==
+        bh=kGp398/OGKFadKTdBHGJCLRTWw479TJgb4XjwbwuJpk=;
+        b=Bh4qo4QbhFM8tjbGYTgWWIbBm6Al/CQivl9dUzUXQvKttcA00rCsDMrDBn/tVQxshx
+         SfwPr+ttZjAnCzhwWeKx9rXq//PxAc5/s3ieK43DUHZsGNM/LM0aJw7GPUvMKuppfHvz
+         xlosk3F6JeFvY0EnbInFshvVaLXxu79zGkZBwRGw8WhacNw76FS3oTol7Vd+k/jXMJ+l
+         do+++WDiDLw6gCPniZx3LF8bJ6ZH/4dFdMdSdxDUS7vVMWq1IVfnmnrrHh+6+hxM8MF1
+         i3ndqsBVrQfQUw0eOB0gT8heRGyc9n3yvtOLO+mdGV+oQW1V3kZVhCI0Q9C7aSqpt2A4
+         Q4bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731007043; x=1731611843;
+        d=1e100.net; s=20230601; t=1731007045; x=1731611845;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ikpYM/WWgMZzee5LK9ccNIkwppCcSDNp4r5PwHAnOS0=;
-        b=Y4Bh+McSWazivRAhUkZTl/dow9LYSRIDsF7TdQALsMC9pSw7fPcaDyLzJB2WivFmBy
-         jPwvzjeFfxtJD2aatuFtaDoejMIr4Q/fKDF0un2yZRPflHHhmMAB80pyI2M+s4/YYJmd
-         hF5TqnKMMA1nVqKoWZHyNzVphUjzT73rgsR9ZfrRyVGjlSOyQKPaO8BBO/TGFRPIaJ+H
-         KIfSZzBEl/yB8uV2oRMUYM+pwc5dk7ajTUSkKPWq+vi/09s++SH8GsaaeL3TkvtI38QW
-         y2pLn3InqZfiIqs4XxovyTeVj/RYTCdgBD2hbXg0FCs98sLCgyHu+cNrtXqnWJoMugzr
-         mfJg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3wsZqIpGmz6tYsS+TWfqpNgTCkaeRmREOua7VMasr+y50njqshooEiiFdgZXJclsZEl9QCR2jZUxUDiOx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3J2I8B0RpiMjATXZtkDlnMwc0BoBZ0f48z83rIIV/3/tSwHhp
-	HWRsHE/1FSkrxSgv9XPAVqjj+uWvPA03BN+jBIEH0v6qZe5IM74e
-X-Google-Smtp-Source: AGHT+IFHssVnIsuRtflrMUnmonDOpNMTsU28VnY3e7vVVJcpvOBurpk0sydP4Cx4Ik3eP3kEc+Ijgw==
-X-Received: by 2002:a05:690c:67c8:b0:6e3:323f:d8fb with SMTP id 00721157ae682-6eaddd994d5mr929977b3.14.1731007043403;
-        Thu, 07 Nov 2024 11:17:23 -0800 (PST)
-Received: from localhost (fwdproxy-nha-114.fbsv.net. [2a03:2880:25ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8efa7esm4148957b3.40.2024.11.07.11.17.23
+        bh=kGp398/OGKFadKTdBHGJCLRTWw479TJgb4XjwbwuJpk=;
+        b=Zo3SLXCT1eNCqg+uLIRFfiIaaGLripce+CmzGErvZXXddGPIq9ZP+kVNAhV7SI0tqE
+         Wr52MfWPvCMPxD22kYAFi9OQycc73+YnMhvsji8uat6fcJGTqCWwTPX85QSTkTxJiiyu
+         pW4YiE+EyeEwObIX3gfvJgXp51hOoksCnecw656QaClqNm9Mc141QmheF3T6MmlJQSQn
+         l14nIInFRHoZo4XtOQnSV0gEZMC340NGsYeIElWFQ3xOXNsHraAMTjzoq6O0/IdUiYa1
+         iNwoQUqqrrhctECJD2W6O3xL45eMqdqlwYevKL3LEhTS0vgAlUlp3NiqD0haQwhc7oY6
+         mk+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQulQbOKsoQyfBIMVI+/ZoxVimgODVsOq1Hr/aSzrKm7s8Tm0jnI/icTk5yDRfy3xNYiwTXxwpIrOuL23e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+xTudojPHyat3j9KVwRvf0chNxWVYzf6+OZFGPcHZhQOwND/0
+	I2Y5YvrIntb7raRrOHrkzc0qTOyMrQiUtPhf0Dz3v5i1rtgxBLH5
+X-Google-Smtp-Source: AGHT+IH7Um593vs1SsckKVS39lYFZVnOlvrS2bG7U8disolXAeCbKEgSktqlpWFYBAXGxiiFp/wc6A==
+X-Received: by 2002:a05:690c:c96:b0:6ea:85ee:b5d4 with SMTP id 00721157ae682-6eaddd86d12mr1008527b3.6.1731007044813;
+        Thu, 07 Nov 2024 11:17:24 -0800 (PST)
+Received: from localhost (fwdproxy-nha-112.fbsv.net. [2a03:2880:25ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb65d6csm4034397b3.72.2024.11.07.11.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 11:17:23 -0800 (PST)
+        Thu, 07 Nov 2024 11:17:24 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -76,9 +76,9 @@ Cc: shakeel.butt@linux.dev,
 	linux-mm@kvack.org,
 	bernd.schubert@fastmail.fm,
 	kernel-team@meta.com
-Subject: [PATCH v3 1/6] mm: add AS_WRITEBACK_MAY_BLOCK mapping flag
-Date: Thu,  7 Nov 2024 11:16:12 -0800
-Message-ID: <20241107191618.2011146-2-joannelkoong@gmail.com>
+Subject: [PATCH v3 2/6] mm: skip reclaiming folios in legacy memcg writeback contexts that may block
+Date: Thu,  7 Nov 2024 11:16:13 -0800
+Message-ID: <20241107191618.2011146-3-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241107191618.2011146-1-joannelkoong@gmail.com>
 References: <20241107191618.2011146-1-joannelkoong@gmail.com>
@@ -90,45 +90,91 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new mapping flag AS_WRITEBACK_MAY_BLOCK which filesystems may set
-to indicate that writeback operations may block or take an indeterminate
-amount of time to complete. Extra caution should be taken when waiting
-on writeback for folios belonging to mappings where this flag is set.
+Currently in shrink_folio_list(), reclaim for folios under writeback
+falls into 3 different cases:
+1) Reclaim is encountering an excessive number of folios under
+   writeback and this folio has both the writeback and reclaim flags
+   set
+2) Dirty throttling is enabled (this happens if reclaim through cgroup
+   is not enabled, if reclaim through cgroupv2 memcg is enabled, or
+   if reclaim is on the root cgroup), or if the folio is not marked for
+   immediate reclaim, or if the caller does not have __GFP_FS (or
+   __GFP_IO if it's going to swap) set
+3) Legacy cgroupv1 encounters a folio that already has the reclaim flag
+   set and the caller did not have __GFP_FS (or __GFP_IO if swap) set
+
+In cases 1) and 2), we activate the folio and skip reclaiming it while
+in case 3), we wait for writeback to finish on the folio and then try
+to reclaim the folio again. In case 3, we wait on writeback because
+cgroupv1 does not have dirty folio throttling, as such this is a
+mitigation against the case where there are too many folios in writeback
+with nothing else to reclaim.
+
+The issue is that for filesystems where writeback may block, sub-optimal
+workarounds may need to be put in place to avoid a potential deadlock
+that may arise from reclaim waiting on writeback. (Even though case 3
+above is rare given that legacy cgroupv1 is on its way to being
+deprecated, this case still needs to be accounted for). For example, for
+FUSE filesystems, a temp page gets allocated per dirty page and the
+contents of the dirty page are copied over to the temp page so that
+writeback can be immediately cleared on the dirty page in order to avoid
+the following deadlock:
+* single-threaded FUSE server is in the middle of handling a request that
+  needs a memory allocation
+* memory allocation triggers direct reclaim
+* direct reclaim waits on a folio under writeback (eg falls into case 3
+  above) that needs to be written back to the FUSE server
+* the FUSE server can't write back the folio since it's stuck in direct
+  reclaim
+
+In this commit, if legacy memcg encounters a folio with the reclaim flag
+set (eg case 3) and the folio belongs to a mapping that has the
+AS_WRITEBACK_MAY_BLOCK flag set, the folio will be activated and skip
+reclaim (eg default to behavior in case 2) instead.
+
+This allows for the suboptimal workarounds added to address the
+"reclaim wait on writeback" deadlock scenario to be removed.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- include/linux/pagemap.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ mm/vmscan.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 68a5f1ff3301..eb5a7837e142 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -210,6 +210,7 @@ enum mapping_flags {
- 	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
- 				   folio contents */
- 	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
-+	AS_WRITEBACK_MAY_BLOCK = 9, /* Use caution when waiting on writeback */
- 	/* Bits 16-25 are used for FOLIO_ORDER */
- 	AS_FOLIO_ORDER_BITS = 5,
- 	AS_FOLIO_ORDER_MIN = 16,
-@@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct address_space *mapping)
- 	return test_bit(AS_INACCESSIBLE, &mapping->flags);
- }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 749cdc110c74..e9755cb7211b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1110,6 +1110,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		if (writeback && folio_test_reclaim(folio))
+ 			stat->nr_congested += nr_pages;
  
-+static inline void mapping_set_writeback_may_block(struct address_space *mapping)
-+{
-+	set_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-+}
++		mapping = folio_mapping(folio);
 +
-+static inline bool mapping_writeback_may_block(struct address_space *mapping)
-+{
-+	return test_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-+}
-+
- static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
- {
- 	return mapping->gfp_mask;
+ 		/*
+ 		 * If a folio at the tail of the LRU is under writeback, there
+ 		 * are three cases to consider.
+@@ -1129,8 +1131,9 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 * 2) Global or new memcg reclaim encounters a folio that is
+ 		 *    not marked for immediate reclaim, or the caller does not
+ 		 *    have __GFP_FS (or __GFP_IO if it's simply going to swap,
+-		 *    not to fs). In this case mark the folio for immediate
+-		 *    reclaim and continue scanning.
++		 *    not to fs), or writebacks in the mapping may block.
++		 *    In this case mark the folio for immediate reclaim and
++		 *    continue scanning.
+ 		 *
+ 		 *    Require may_enter_fs() because we would wait on fs, which
+ 		 *    may not have submitted I/O yet. And the loop driver might
+@@ -1165,7 +1168,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 			/* Case 2 above */
+ 			} else if (writeback_throttling_sane(sc) ||
+ 			    !folio_test_reclaim(folio) ||
+-			    !may_enter_fs(folio, sc->gfp_mask)) {
++			    !may_enter_fs(folio, sc->gfp_mask) ||
++			    (mapping && mapping_writeback_may_block(mapping))) {
+ 				/*
+ 				 * This is slightly racy -
+ 				 * folio_end_writeback() might have
 -- 
 2.43.5
 
