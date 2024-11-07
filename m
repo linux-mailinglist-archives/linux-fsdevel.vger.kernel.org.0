@@ -1,147 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-33856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-33852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FDF9BFB13
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 01:58:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DCE9BFB06
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 01:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C18F28307D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 00:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BDB1F24183
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2024 00:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF4C38385;
-	Thu,  7 Nov 2024 00:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WDik/j1G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFB679F5;
+	Thu,  7 Nov 2024 00:57:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C736514F70;
-	Thu,  7 Nov 2024 00:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4019D79D0;
+	Thu,  7 Nov 2024 00:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730941068; cv=none; b=ohenuRwp/dQjSmf+A5FzGUGW+jdigIHky2fUbmbERpDM42arL0Ard+/Ugk2xgG7+JZ9OXWQwxxLDaV/w8eEWHCHb1n2lr4fYe55NY6tN0KvJKsF4SFr8jKb1ZwX3XuKG+unPlIMyKsT0phHFIOjrfFHZP5cTEjt14/q5O4ZBfXE=
+	t=1730941056; cv=none; b=PuFrtVEylRHtYQahoGi9ZzNAFxRx9lKQGYm0nt6/VqQjGISPeTSi4TDpO8ZObWZG3kzK9fKM8pCBixPeToaJtiZSnkhEeogEyoMix68oCRuS+R3KGkxy4sYlecrNb9xLjFOjHUmix9HDDBbmFNQfrlkukCYfjD45gfk892d0WTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730941068; c=relaxed/simple;
-	bh=lvczs+KGO/SNLRad/bgNhITn0FjIxg1/VkTgbqju/bE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y6L8nT6BJpVu6ffp19c3PDnl8f/RSL1DWvHrwg8wC1/x61fCwFyht+ogKvWo+0insTuHTtkFMoYDLua5GYt1zuPFdP2Kb48GXpDWLqlEykSAQrHsBhpIhZkbgDigsNgDTXAz1CwXWbeuwF5JXpcE4kvPLZg+JRF4To75kLi1D8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WDik/j1G; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730941067; x=1762477067;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lvczs+KGO/SNLRad/bgNhITn0FjIxg1/VkTgbqju/bE=;
-  b=WDik/j1GmQ2wwfIFCn0oSDu7l/4Xh4+kRuzuisHTlNJIyIio9RoUkD2k
-   g+yOvSUqh2NeUCB+OyOUbCaxey8RMxVYP8xygHBIdjnxe+4UcGHMjmhey
-   g2kgxZpEUZNXEwGUCxRfnCllP5etIeQdwPJ1sQcAxrVOENS6hU+2Bqgt2
-   iVXhJEUxdjo5x4MC+qnxGqcq2980Lb78z+eXDZSUha+CdmphEL6NinzSZ
-   3/e7uU2jTzlYn8X587YXTfY9Nq7iQhzJ+X08JJV/qYaM3LsQpgg/Dr9ra
-   nD+54nt3FEG84p5jTLgsl5mjegEFYFDy0XyEpL9hrHfKMTEHu+GQCXEzh
-   A==;
-X-CSE-ConnectionGUID: by8ZH7PURNWxjzj3sQZovQ==
-X-CSE-MsgGUID: OnfS1c9jRgeuYWmG9sPRMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41320198"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41320198"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 16:57:43 -0800
-X-CSE-ConnectionGUID: FRrcaGJJRKq/UQ8rYpTXzA==
-X-CSE-MsgGUID: 5/a1YUR9RROdsKTCNAWlHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="85193449"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO vcostago-mobl3.lan) ([10.124.222.105])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 16:57:43 -0800
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: brauner@kernel.org,
-	amir73il@gmail.com,
-	hu1.chen@intel.com
-Cc: miklos@szeredi.hu,
-	malini.bhandaru@intel.com,
-	tim.c.chen@intel.com,
-	mikko.ylinen@intel.com,
-	linux-unionfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: [PATCH v4 4/4] ovl: Optimize override/revert creds
-Date: Wed,  6 Nov 2024 16:57:20 -0800
-Message-ID: <20241107005720.901335-5-vinicius.gomes@intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241107005720.901335-1-vinicius.gomes@intel.com>
-References: <20241107005720.901335-1-vinicius.gomes@intel.com>
+	s=arc-20240116; t=1730941056; c=relaxed/simple;
+	bh=ArEGzs21LgB4PFU5jHdCGFhDjiQ12PvoV2JHv3V3voM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rJTKcgBH/pT0gnE5ySumZ3t+WIY5R4bia8ZR4UNIWU833IqOgIv3fKp9hVIJNbdbBlgGZAvhb8U89ZPJ6T4zKBHjMLfqY7AGRgy1ONJjSPuD8GGNhTfNDmxUkqViWMaJpR+aj3wXUXskcXeVJQfqGVVeQdJ02G8vUs5qsH4sAxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkNvb1TwZz4f3kJt;
+	Thu,  7 Nov 2024 08:57:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1916F1A0568;
+	Thu,  7 Nov 2024 08:57:28 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoZzECxnGnRCBA--.54616S3;
+	Thu, 07 Nov 2024 08:57:25 +0800 (CST)
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <2024110625-earwig-deport-d050@gregkh>
+ <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
+Date: Thu, 7 Nov 2024 08:57:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYoZzECxnGnRCBA--.54616S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy8CryxXw1UtrWkXFWxCrg_yoW8tF4Upa
+	yfJ3Z8Kr47ur18Gws7tayjvay0kan5X345urn5K345ZF1Y9FySgrWI9F15uF97GrsxCr17
+	KF1aqwn7J3WUJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Use override_creds_light() in ovl_override_creds() and
-revert_creds_light() in ovl_revert_creds_light().
+Hi,
 
-The _light() functions do not change the 'usage' of the credentials in
-question, as they refer to the credentials associated with the
-mounter, which have a longer lifetime.
+在 2024/11/06 23:19, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> Fix patch is patch 27, relied patches are from:
+> 
+> I assume patch 27 is:
+> 
+> libfs: fix infinite directory reads for offset dir
+> 
+> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+> 
+> I don't think the Maple tree patches are a hard
+> requirement for this fix. And note that libfs did
+> not use Maple tree originally because I was told
+> at that time that Maple tree was not yet mature.
+> 
+> So, a better approach might be to fit the fix
+> onto linux-6.6.y while sticking with xarray.
 
-In ovl_setup_cred_for_create(), do not need to modify the mounter
-credentials (returned by override_creds()) 'usage' counter. Add a
-warning to verify that we are indeed working with the mounter
-credentials (stored in the superblock). Failure in this assumption
-means that creds may leak.
+The painful part is that using xarray is not acceptable, the offet
+is just 32 bit and if it overflows, readdir will read nothing. That's
+why maple_tree has to be used.
 
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
----
- fs/overlayfs/dir.c  | 7 ++++++-
- fs/overlayfs/util.c | 4 ++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
+Thanks,
+Kuai
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 09db5eb19242..136a2c7fb9e5 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry *dentry, struct inode *inode,
- 		put_cred(override_cred);
- 		return err;
- 	}
--	put_cred(override_creds(override_cred));
-+
-+	/*
-+	 * We must be called with creator creds already, otherwise we risk
-+	 * leaking creds.
-+	 */
-+	WARN_ON_ONCE(override_creds(override_cred) != ovl_creds(dentry->d_sb));
- 	put_cred(override_cred);
- 
- 	return 0;
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 9408046f4f41..3bb107471fb4 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -65,12 +65,12 @@ const struct cred *ovl_override_creds(struct super_block *sb)
- {
- 	struct ovl_fs *ofs = OVL_FS(sb);
- 
--	return override_creds(ofs->creator_cred);
-+	return override_creds_light(ofs->creator_cred);
- }
- 
- void ovl_revert_creds(const struct cred *old_cred)
- {
--	revert_creds(old_cred);
-+	revert_creds_light(old_cred);
- }
- 
- /*
--- 
-2.47.0
+> 
+> This is the first I've heard of this CVE. It
+> would help if the patch authors got some
+> notification when these are filed.
+> 
+> 
+>>> - patches from set [1] to add helpers to maple_tree, the last patch to
+>>> improve fork() performance is not backported;
+>>
+>> So things slowed down?
+>>
+>>> - patches from set [2] to change maple_tree, and follow up fixes;
+>>> - patches from set [3] to convert offset_ctx from xarray to maple_tree;
+>>>
+>>> Please notice that I'm not an expert in this area, and I'm afraid to
+>>> make manual changes. That's why patch 16 revert the commit that is
+>>> different from mainline and will cause conflict backporting new patches.
+>>> patch 28 pick the original mainline patch again.
+>>>
+>>> (And this is what we did to fix the CVE in downstream kernels).
+>>>
+>>> [1] https://lore.kernel.org/all/20231027033845.90608-1-zhangpeng.00@bytedance.com/
+>>> [2] https://lore.kernel.org/all/20231101171629.3612299-2-Liam.Howlett@oracle.com/T/
+>>> [3] https://lore.kernel.org/all/170820083431.6328.16233178852085891453.stgit@91.116.238.104.host.secureserver.net/
+>>
+>> This series looks rough.  I want to have the maintainers of these
+>> files/subsystems to ack this before being able to take them.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
