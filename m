@@ -1,251 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-34028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246BD9C22D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 18:23:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BABE9C22FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 18:32:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E87283B14
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 17:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8E31C22D44
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 17:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1F31F582B;
-	Fri,  8 Nov 2024 17:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52000191F8E;
+	Fri,  8 Nov 2024 17:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z8wDfX/h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdQ1Ap0w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51891E3772
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 17:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6FB18DF86
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 17:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086608; cv=none; b=MbiFgNCK5VW88kjL1K6P5pLwbFIj6IIRdV8BMElRVDyETpmppcz+Z7zC4HSpFaTFsp8b9xH1txQMP/q7VaxYtUZbMY9cyxVuD1ijJ0Ud569vlKNda9UvFrchsHmmrWXLUB9E0be7gnb4BczjxYYzxee5r2U+btU4OsMJ/7pUc38=
+	t=1731087115; cv=none; b=qBfi1bUryIqNofUlvWzivbFIPx8vFzCjDJjHljsuw86uK8In6ygmwDwVu/E8TejSSXzFmWWEVm7BSuhC/zyb8l9EGk/otP211XV94T26/cVChzHjwnThFMV1UOErddFaidzbRBUuUlP1JqL4DWQinGLt3U/I8F7IW1Bl+hPZYjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086608; c=relaxed/simple;
-	bh=LTt43wtm7VPIECMUWRe3OxilrdANCva8RQo02rYBc5k=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=uqpIdFNg4bJYSxUadMhlRyRBQZsYs2VlFX5ALlbqCkHzYgaowCBFE5XxGHXoDCD7T7rLhQsEOlpd4DE425pEzZb2kcT/eErP/RBG7mUscBj7ALaFoOoWPy+A12Ga2v7sKieeImikYT0UoAzKVDEo/gsHDOYpC1BT10oXZKkMA0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z8wDfX/h; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1731087115; c=relaxed/simple;
+	bh=NJuiGu3PlwZ+2Oktvoo+Y3RvZx0dhbgHrcUsyVpM6Mw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDNwcwNDt9VtnOMt+5vZ+S8ALMOMlIQMr97tEcqof51/YCbITejzcNx2MFaXNNHXzJTn40jzJ661XCkL79+1u4bdXoR6F1c3+u7x2RN+q4KX+ghXhLuvzphjZOsgJrVeeoczM8uKfU5QRROoAeTACN4ihGictVUL+4bAiEAuv1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KdQ1Ap0w; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731086605;
+	s=mimecast20190719; t=1731087113;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XwJwM3+z7apLKFV/fpUBCprrM/E8Cp6F04ODxbzFqfw=;
-	b=Z8wDfX/hSjQLBqRJO2nIgUGO0vXPhqQImoUIB9cNXnjeErW22DhgSz/cwa/kAdC61oUi3K
-	S/zO1QSLVAupfzArbVJbkeR0HSUegriBRY7+JVVjJyOxPS4giWNKyxUlAVsSgv7nD1n9p1
-	jqYhTyCKziaGcrnkxPFF790BAjO46E8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-jwRKCGCpNXimF2m3kjGVAg-1; Fri,
- 08 Nov 2024 12:23:21 -0500
-X-MC-Unique: jwRKCGCpNXimF2m3kjGVAg-1
-X-Mimecast-MFC-AGG-ID: jwRKCGCpNXimF2m3kjGVAg
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E948D195F198;
-	Fri,  8 Nov 2024 17:23:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64CE21953882;
-	Fri,  8 Nov 2024 17:23:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20241106123559.724888-24-dhowells@redhat.com>
-References: <20241106123559.724888-24-dhowells@redhat.com> <20241106123559.724888-1-dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 23/33] afs: Use netfslib for directories
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yd4O8mZKu4eBAZvLdoHZhgPng6vXj2+Z+n0AqkWNQHs=;
+	b=KdQ1Ap0wTZDuHmfnqJGuyvyWt6zYMYFX0jTMSkINJTOcG0hu34e75yXVHMk/YViyxVp6zQ
+	HBnJ7nFy2x66VoexUy0SEbpVyiAwqd7ww0qa30abkJ1Jghm9XikXJIKWaSD7RlYwQr03mH
+	NxJfKfOE4N2h3oRg+Cs+TYCnSVh/TMw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-vL8cBYuuPc2_pCgpwUSSJQ-1; Fri, 08 Nov 2024 12:31:52 -0500
+X-MC-Unique: vL8cBYuuPc2_pCgpwUSSJQ-1
+X-Mimecast-MFC-AGG-ID: vL8cBYuuPc2_pCgpwUSSJQ
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d563a1af4so1169485f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 09:31:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731087111; x=1731691911;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yd4O8mZKu4eBAZvLdoHZhgPng6vXj2+Z+n0AqkWNQHs=;
+        b=PRcm2+4feWEys82Pxx0zIjAkFhU1JKSLP4I5QeoIxOnRmuZlHha02RNXMwzVKwTnIL
+         uPaBumxZMlrVxt2NNOTEbaaF4HqpcGupRjrKfNS9sqFA5+YauOQBX4nLf+s+S6VCvUPz
+         qozWOHg5shifKt2SgwoELduDTQWyxnkvxeW24i7sttufgxy5eH2+4GKOADlKmdU0wOER
+         Y29tXjkI8usXxo7yh8TBOG5o+Y2tP1aiNwhOLYTwL1iP+FxXcdg9V+3HHRLdhSwz6jfx
+         QKB2o95eOadIgv20K8lOeZsOcBkAnwGaJbXErS6FtLVrUuoR3YVSQAyeyXRD/JRin/6C
+         ibag==
+X-Forwarded-Encrypted: i=1; AJvYcCUWM9Fx4210M55KiKV9dbYSkoZ4pF4OEKl2TmOg05C3rqn6LKWO1Z2y2U5rXcwLElryIRQ4Lfr4l5zJNcTI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmGzSQadcyrqHkDMO3pKrhJYVht4BCfZZUzwDRo4kjkTBc+s1M
+	xyogs5qdQaQm5sBs1uyZbWwmVLrZ6/Xwn/1xeQKDlobRUBLdk+fWMywcviGz/BKW7QzGiskLRPP
+	OhGC3ZcmENvb3mQyJN5mOYfjoy0ww/V1CCh4eAwBzQPy7RoPvDWY1gPRC8dNWAsQ=
+X-Received: by 2002:a5d:6d8a:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-381f186d184mr3065636f8f.34.1731087110758;
+        Fri, 08 Nov 2024 09:31:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3QWFDdRozO+PK2MbzpOgYsv6Dill3GhRB3QqEZymzjtGl7Y3z7IR1KySm+lULn51+VPdYsA==
+X-Received: by 2002:a5d:6d8a:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-381f186d184mr3065582f8f.34.1731087110333;
+        Fri, 08 Nov 2024 09:31:50 -0800 (PST)
+Received: from [192.168.10.47] ([151.49.84.243])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed998e6esm5551930f8f.55.2024.11.08.09.31.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 09:31:49 -0800 (PST)
+Message-ID: <10ffac79-0dba-4c30-991e-f3ca2b5ff639@redhat.com>
+Date: Fri, 8 Nov 2024 18:31:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1360666.1731086590.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 08 Nov 2024 17:23:10 +0000
-Message-ID: <1360667.1731086590@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
+ guest_memfd
+To: Matthew Wilcox <willy@infradead.org>, Shivank Garg <shivankg@amd.com>
+Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, kvm@vger.kernel.org,
+ chao.gao@intel.com, pgonda@google.com, thomas.lendacky@amd.com,
+ seanjc@google.com, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, arnd@arndb.de, kees@kernel.org,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ Neeraj.Upadhyay@amd.com, linux-coco@lists.linux.dev,
+ Linux API <linux-api@vger.kernel.org>
+References: <20241105164549.154700-1-shivankg@amd.com>
+ <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+ <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+ <ZyzYUOX_r3uWin5f@casper.infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <ZyzYUOX_r3uWin5f@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The attached fix needs folding in across this patch (23), patch 24, patch
-29 and patch 31.
+On 11/7/24 16:10, Matthew Wilcox wrote:
+> On Thu, Nov 07, 2024 at 02:24:20PM +0530, Shivank Garg wrote:
+>> The folio allocation path from guest_memfd typically looks like this...
+>>
+>> kvm_gmem_get_folio
+>>    filemap_grab_folio
+>>      __filemap_get_folio
+>>        filemap_alloc_folio
+>>          __folio_alloc_node_noprof
+>>            -> goes to the buddy allocator
+>>
+>> Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
+> 
+> It only takes that path if cpuset_do_page_mem_spread() is true.  Is the
+> real problem that you're trying to solve that cpusets are being used
+> incorrectly?
 
-David
----
-commit 9d4429bc7bb3f2b518d6decd1ca0e99e4d80d58e
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Nov 7 23:46:48 2024 +0000
+If it's false it's not very different, it goes to alloc_pages_noprof(). 
+Then it respects the process's policy, but the policy is not 
+customizable without mucking with state that is global to the process.
 
-    afs: Fix handling of signals during readdir
-    =
+Taking a step back: the problem is that a VM can be configured to have 
+multiple guest-side NUMA nodes, each of which will pick memory from the 
+right NUMA node in the host.  Without a per-file operation it's not 
+possible to do this on guest_memfd.  The discussion was whether to use 
+ioctl() or a new system call.  The discussion ended with the idea of 
+posting a *proposal* asking for *comments* as to whether the system call 
+would be useful in general beyond KVM.
 
-    When a directory is being read, whether or not the dvnode->directory b=
-uffer
-    pointer is NULL is used to track whether we've checked fscache yet.
-    However, if a signal occurs after the buffer being allocated but whils=
-t
-    we're doing the read, we may end up in an invalid state with ->directo=
-ry
-    set but no data in the buffer.
-    =
+Commenting on the system call itself I am not sure I like the 
+file_operations entry, though I understand that it's the simplest way to 
+implement this in an RFC series.  It's a bit surprising that fbind() is 
+a total no-op for everything except KVM's guest_memfd.
 
-    In this state, afs_readdir(), afs_lookup() and afs_d_revalidate() see
-    corrupt directory contents leading to a variety of malfunctions.
-    =
+Maybe whatever you pass to fbind() could be stored in the struct file *, 
+and used as the default when creating VMAs; as if every mmap() was 
+followed by an mbind(), except that it also does the right thing with 
+MAP_POPULATE for example.  Or maybe that's a horrible idea?
 
-    Fix this by providing a specific flag to record whether or not we've
-    performed a read yet - and, incidentally, sampled fscache - rather tha=
-n
-    using the value in ->directory instead.
-    =
+Adding linux-api to get input; original thread is at
+https://lore.kernel.org/kvm/20241105164549.154700-1-shivankg@amd.com/.
 
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Marc Dionne <marc.dionne@auristor.com>
-    cc: linux-afs@lists.infradead.org
+Paolo
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 663a212964d8..b6a202fd9926 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -323,7 +323,7 @@ ssize_t afs_read_dir(struct afs_vnode *dvnode, struct =
-file *file)
- 	 * haven't read it yet.
- 	 */
- 	if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags) &&
--	    dvnode->directory) {
-+	    test_bit(AFS_VNODE_DIR_READ, &dvnode->flags)) {
- 		ret =3D i_size;
- 		goto valid;
- 	}
-@@ -336,7 +336,7 @@ ssize_t afs_read_dir(struct afs_vnode *dvnode, struct =
-file *file)
- 		afs_invalidate_cache(dvnode, 0);
- =
-
- 	if (!test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags) ||
--	    !dvnode->directory) {
-+	    !test_bit(AFS_VNODE_DIR_READ, &dvnode->flags)) {
- 		trace_afs_reload_dir(dvnode);
- 		ret =3D afs_read_single(dvnode, file);
- 		if (ret < 0)
-@@ -345,6 +345,7 @@ ssize_t afs_read_dir(struct afs_vnode *dvnode, struct =
-file *file)
- 		// TODO: Trim excess pages
- =
-
- 		set_bit(AFS_VNODE_DIR_VALID, &dvnode->flags);
-+		set_bit(AFS_VNODE_DIR_READ, &dvnode->flags);
- 	} else {
- 		ret =3D i_size;
- 	}
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index f6f4b1adc8dc..60a549f1d9c5 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -644,4 +644,5 @@ void afs_mkdir_init_dir(struct afs_vnode *dvnode, stru=
-ct afs_vnode *parent_dvnod
- =
-
- 	netfs_single_mark_inode_dirty(&dvnode->netfs.inode);
- 	set_bit(AFS_VNODE_DIR_VALID, &dvnode->flags);
-+	set_bit(AFS_VNODE_DIR_READ, &dvnode->flags);
- }
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index f5618564b3fc..e9538e91f848 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -39,6 +39,7 @@ void afs_init_new_symlink(struct afs_vnode *vnode, struc=
-t afs_operation *op)
- 	p =3D kmap_local_folio(folioq_folio(vnode->directory, 0), 0);
- 	memcpy(p, op->create.symlink, size);
- 	kunmap_local(p);
-+	set_bit(AFS_VNODE_DIR_READ, &vnode->flags);
- 	netfs_single_mark_inode_dirty(&vnode->netfs.inode);
- }
- =
-
-@@ -60,12 +61,12 @@ const char *afs_get_link(struct dentry *dentry, struct=
- inode *inode,
- =
-
- 	if (!dentry) {
- 		/* RCU pathwalk. */
--		if (!vnode->directory || !afs_check_validity(vnode))
-+		if (!test_bit(AFS_VNODE_DIR_READ, &vnode->flags) || !afs_check_validity=
-(vnode))
- 			return ERR_PTR(-ECHILD);
- 		goto good;
- 	}
- =
-
--	if (!vnode->directory)
-+	if (test_bit(AFS_VNODE_DIR_READ, &vnode->flags))
- 		goto fetch;
- =
-
- 	ret =3D afs_validate(vnode, NULL);
-@@ -73,13 +74,14 @@ const char *afs_get_link(struct dentry *dentry, struct=
- inode *inode,
- 		return ERR_PTR(ret);
- =
-
- 	if (!test_and_clear_bit(AFS_VNODE_ZAP_DATA, &vnode->flags) &&
--	    vnode->directory)
-+	    test_bit(AFS_VNODE_DIR_READ, &vnode->flags))
- 		goto good;
- =
-
- fetch:
- 	ret =3D afs_read_single(vnode, NULL);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
-+	set_bit(AFS_VNODE_DIR_READ, &vnode->flags);
- =
-
- good:
- 	folio =3D folioq_folio(vnode->directory, 0);
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index a5da0dd8e9cc..90f407774a9a 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -705,6 +705,7 @@ struct afs_vnode {
- #define AFS_VNODE_NEW_CONTENT	8		/* Set if file has new content (create/t=
-runc-0) */
- #define AFS_VNODE_SILLY_DELETED	9		/* Set if file has been silly-deleted =
-*/
- #define AFS_VNODE_MODIFYING	10		/* Set if we're performing a modification=
- op */
-+#define AFS_VNODE_DIR_READ	11		/* Set if we've read a dir's contents */
- =
-
- 	struct folio_queue	*directory;	/* Directory contents */
- 	struct list_head	wb_keys;	/* List of keys available for writeback */
+> Backing up, it seems like you want to make a change to the page cache,
+> you've had a long discussion with people who aren't the page cache
+> maintainer, and you all understand the pros and cons of everything,
+> and here you are dumping a solution on me without talking to me, even
+> though I was at Plumbers, you didn't find me to tell me I needed to go
+> to your talk.
+> 
+> So you haven't explained a damned thing to me, and I'm annoyed at you.
+> Do better.  Starting with your cover letter.
+> 
 
 
