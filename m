@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-34087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6FE9C2530
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 19:56:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AE89C2541
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 20:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9051F23D2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 18:56:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 397C0B23DE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 19:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A671A9B4C;
-	Fri,  8 Nov 2024 18:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E951A9B20;
+	Fri,  8 Nov 2024 19:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DE48Isl7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gIAaBkgX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CEB233D96
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 18:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B9A1AA1DE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 19:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731092189; cv=none; b=lb8x+aNPJdfIww6dBl4KMRWSFwMuSxlkR2wQiEf8QgDswgiU7m72tyDYbxTNcYNf5ANSFEnUgnRYpsl7Rs4HKMMMELk+ESR/AAJnV/eplZfReCJvFRM4F11DK9RdrJgnflS88Fv+u1wnvGEcJUopOBq3Va4/19TxDSLwu25rE6o=
+	t=1731092441; cv=none; b=ClKgq7IbzH8z35dbahjxBFcqvB+Tlu3leCtOjDgea8eswmz+dLguMncWuYdElJCqpU8trTE6FpyWzN/GlMCce74yhVaBa4/VbbxKHvipQMAhvX1lD8QPAkoqCQlg0V7yjQsRYyKOSZuIh+q0J76Eo1DHOpzLXp6USaKENLHPoqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731092189; c=relaxed/simple;
-	bh=crffLENpXBp7rOKAeIHZsYF1KIfcUa5qg6j6Hh7W/qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drJo8XKXgPpKmbkEq6MzhOqj49sYDilCe2qlT2hxIo7ZaFpEtxdUpWTC+u0qd7BYov6SIOLUYPfen5sPdjdFoa561q4PdgfiQSpZlTwhIj4+apKpT8WvFdSjCCQfLEdrbieW6LQaMxzc+m5VObLMPc9tyLas7B0c/t2g8I3c8/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DE48Isl7; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1731092441; c=relaxed/simple;
+	bh=QCru+aHVwwXC94jTXaW93fHJFWCO0FMvE3AvZcc0SyE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KlBF1MEp5JLo3siommZy9Vs9Nw1I7/a0KjlPl0XRgJRFySaLStgxAYIugKmvAvP7p+WvDudk1WXqxoyXKjzvwaqbcy75U188VgRg0bUPfTkwb7Sz81j7UF/PuxS8rl59Oomfe1PdGPhTdkkrLKV3teOZyVlXmFVCLVc1Tz4Q0rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gIAaBkgX; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731092185;
+	s=mimecast20190719; t=1731092431;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=J+I+5BFvbPCfW1HdQwPZPMhISIQ+GkdJt2xQbEb1CqM=;
-	b=DE48Isl7K8++Hv7ulUtEhQclGn6a1w5ElKpvkMIrst925gkFrnJtjWzFp9qj0CoElhouW8
-	yui/YrW5CV+Tx4mL7cbRKqN/aXQV8Py3dh7mNTKYwEhvkBLoqcdV4fpVw9wuoDngvfg1o5
-	yAUC7iXklJfbj6dd6nfAJe6r+gf3fqw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=O0N0dqt2AOiHgJyVj6USAh4K7FpOzpZNcsmO3xiEHCk=;
+	b=gIAaBkgXE+TJuBeL2C1VHiKgR+boXNRRXqqNSkoV9FtzWJjfKCby9ccJilXMEi8LFF1gWy
+	pFba0Qx45oz8JkabGQPVIGt9LB7/QD6DW7y0INC6OEhYPPALq0c7WmJaw6gWWUWfU97uV7
+	nvZ0zggVaK1R8jgmkBhgt5X5OE9BRTA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-221-LZ0MKlf9NQqbS8DPnOO7cA-1; Fri, 08 Nov 2024 13:56:23 -0500
-X-MC-Unique: LZ0MKlf9NQqbS8DPnOO7cA-1
-X-Mimecast-MFC-AGG-ID: LZ0MKlf9NQqbS8DPnOO7cA
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d462b64e3so1250551f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 10:56:23 -0800 (PST)
+ us-mta-104-Txg_j9zJPuyKY4eed45mKA-1; Fri, 08 Nov 2024 14:00:30 -0500
+X-MC-Unique: Txg_j9zJPuyKY4eed45mKA-1
+X-Mimecast-MFC-AGG-ID: Txg_j9zJPuyKY4eed45mKA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431518ae047so18846575e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 11:00:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731092182; x=1731696982;
+        d=1e100.net; s=20230601; t=1731092429; x=1731697229;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+         :content-language:references:cc:to:from:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=J+I+5BFvbPCfW1HdQwPZPMhISIQ+GkdJt2xQbEb1CqM=;
-        b=Un8p9HiL7AgfYtrVSV90SmtbfQfRwb8e+jhFVVNgY/5b0bzu+blFtCna8O5Et+npPk
-         q5xI3QuOQAqTjCOt7i0zq+G28hmfIA6vVyCAe1HextAXfoCW/C1rwZVmItIqOZYGlLFY
-         H90wd4g3I9zhTKfnG3Do9n69i3sp5uS5dz11gaFOcpSfX/t8JC1VAbpWtDIv82J/0gtt
-         04FTQPUYCnf3QVNYlSNpNiOWUbgwax0m6u4yEJc9ucNFM7aJGP+EMiOrSxSOWjMETzxB
-         nT5iS8ZTCtxQp55wfmvpyvFiYglIlkM2Ro6Ljuy/L6gaBAMJZ4+1uzrDJ9fSc7H2N4Ui
-         5RtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRjJAFGeYfuBCZG/aFglSA1HiHNmmHe5Blri+Yz9T5NNhU2ujnp5L6nEu/8E+YWZtCmK2gdMziWgvAwwBw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi3iD1xtJS8B5TJ9HOgW2EEyY3c5+D+5e0jVYPHea+Q5yZlzzI
-	EAmPpKOX6f+9Ao4m3dNv79tTEDUsI2Ibk6T61bwEXJE82TsOrTPmXjninBSDiIuxhOFY9WXToI9
-	Xk8dLnVGGhVWQaiyDf4cZ9xbpuQgmlzql13yB6wAssCYeeSIBCjGmUkWZ5LPLHvY=
-X-Received: by 2002:a5d:47ac:0:b0:37d:5134:fe1 with SMTP id ffacd0b85a97d-381f1866a6fmr3368497f8f.17.1731092182638;
-        Fri, 08 Nov 2024 10:56:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFAkYj6A739MwOXmyy4DiGBziQqRa5Lpca7nQqTSnnT5e1mZHOuOPwVv/xiuNor5sootscIeg==
-X-Received: by 2002:a5d:47ac:0:b0:37d:5134:fe1 with SMTP id ffacd0b85a97d-381f1866a6fmr3368472f8f.17.1731092182317;
-        Fri, 08 Nov 2024 10:56:22 -0800 (PST)
+        bh=O0N0dqt2AOiHgJyVj6USAh4K7FpOzpZNcsmO3xiEHCk=;
+        b=vRY4IIj9kNGAceAiUtTB5pcqsN00hQH9ac2nsrf+inFs77Xta0GSgTGSJaj68m9rrN
+         mcNZd4ODqbueT2Af0uWebrIsCDR8Jf9/dZ3qX6FrOPp7Lfig5myBl/RvkjSTnKaWKfn5
+         2pXHRGNIJ1IiIsMi+/AI3AmfPDzUga7FoNNiiEGOtNm3UvVy5OB77dUZwzDIUvJ+rzGH
+         XEzBEl1XWwDMIX9asYRXqA5RkikwIPd8Q0Ue7SIXKLan4jNrpZREV9ff49OWoWGUpX30
+         sGDu0U1YOBB0tL/h1W6oHXX7lCC13XvQuiP3Pon/k16mxB3ewsCRB9eZmgBs4OPKswK0
+         +1+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXjJJOxfgo6vyorOTL0A7rBhgCzsALNXbFOB+j6DCEAVwdrNE/MGDJZitrUMA0/6xYWnekVW0oHF5YwOqF2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWUqXFDrt601uxn8PXCmvbnAYc0JAmrT4ZokJdIabC2dyirmAV
+	exj0OzTcRyo1/qIEMwBWiry6MvG37M18UvyzWqC0M2U5FM/BETDct5Pk+RtjJs/3UQeni71cJZF
+	j4J89QN4DxlQkScc80KolojropB8cWbnMLFmUyv9VYxy8xDIPudqvfJMeqCQwwnI=
+X-Received: by 2002:a05:6000:402c:b0:374:c1ea:2d40 with SMTP id ffacd0b85a97d-381f0f40d9cmr3953642f8f.1.1731092429029;
+        Fri, 08 Nov 2024 11:00:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF8NXteKUBnfajTNiTy8pGXq2AJ7BRCVrspkKpZbYGMnfSQehiOah1tafen33BoWgw1mQ+Lzg==
+X-Received: by 2002:a05:6000:402c:b0:374:c1ea:2d40 with SMTP id ffacd0b85a97d-381f0f40d9cmr3953606f8f.1.1731092428616;
+        Fri, 08 Nov 2024 11:00:28 -0800 (PST)
 Received: from ?IPV6:2003:d8:2f3a:cb00:3f4e:6894:3a3b:36b5? (p200300d82f3acb003f4e68943a3b36b5.dip0.t-ipconnect.de. [2003:d8:2f3a:cb00:3f4e:6894:3a3b:36b5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5e4sm5836870f8f.77.2024.11.08.10.56.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea4f6sm5697729f8f.64.2024.11.08.11.00.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 10:56:21 -0800 (PST)
-Message-ID: <04020bb7-5567-4b91-a424-62c46f136e2a@redhat.com>
-Date: Fri, 8 Nov 2024 19:56:20 +0100
+        Fri, 08 Nov 2024 11:00:27 -0800 (PST)
+Message-ID: <4d2062bd-3cf3-4488-8dfc-b0aa672ee786@redhat.com>
+Date: Fri, 8 Nov 2024 20:00:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,12 +86,13 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 4/6] mm/memory-hotplug: add finite retries in
  offline_pages() if migration fails
+From: David Hildenbrand <david@redhat.com>
 To: SeongJae Park <sj@kernel.org>, Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
  jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org,
  bernd.schubert@fastmail.fm, kernel-team@meta.com
 References: <20241108173309.71619-1-sj@kernel.org>
-From: David Hildenbrand <david@redhat.com>
+ <04020bb7-5567-4b91-a424-62c46f136e2a@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -138,28 +139,32 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20241108173309.71619-1-sj@kernel.org>
+In-Reply-To: <04020bb7-5567-4b91-a424-62c46f136e2a@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08.11.24 18:33, SeongJae Park wrote:
-> + David Hildenbrand
+On 08.11.24 19:56, David Hildenbrand wrote:
+> On 08.11.24 18:33, SeongJae Park wrote:
+>> + David Hildenbrand
+>>
+>> On Thu, 7 Nov 2024 15:56:12 -0800 Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>>> In offline_pages(), do_migrate_range() may potentially retry forever if
+>>> the migration fails. Add a return value for do_migrate_range(), and
+>>> allow offline_page() to try migrating pages 5 times before erroring
+>>> out, similar to how migration failures in __alloc_contig_migrate_range()
+>>> is handled.
+>>
+>> I'm curious if this could cause unexpected behavioral differences to memory
+>> hotplugging users, and how '5' is chosen.  Could you please enlighten me?
+>>
 > 
-> On Thu, 7 Nov 2024 15:56:12 -0800 Joanne Koong <joannelkoong@gmail.com> wrote:
-> 
->> In offline_pages(), do_migrate_range() may potentially retry forever if
->> the migration fails. Add a return value for do_migrate_range(), and
->> allow offline_page() to try migrating pages 5 times before erroring
->> out, similar to how migration failures in __alloc_contig_migrate_range()
->> is handled.
-> 
-> I'm curious if this could cause unexpected behavioral differences to memory
-> hotplugging users, and how '5' is chosen.  Could you please enlighten me?
-> 
+> I'm wondering how much more often I'll have to nack such a patch. :)
 
-I'm wondering how much more often I'll have to nack such a patch. :)
+A more recent discussion: 
+https://lore.kernel.org/linux-mm/52161997-15aa-4093-a573-3bfd8da14ff1@fujitsu.com/T/#mdda39b2956a11c46f8da8796f9612ac007edbdab
 
-On a related note: MAINTAINERS file exists for a reason.
+Long story short: this is expected and documented
 
 -- 
 Cheers,
