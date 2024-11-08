@@ -1,138 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-34098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53239C2661
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 21:18:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F86F9C26B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 21:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 323A3B2357C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 20:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB71DB22E01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 20:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E3C1D014C;
-	Fri,  8 Nov 2024 20:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD11F26EB;
+	Fri,  8 Nov 2024 20:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AO+UuGmH"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="OJzQk97V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [178.154.239.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5255B199FBF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 20:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3247B1C1F39;
+	Fri,  8 Nov 2024 20:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731097126; cv=none; b=fMknfx5gLbSyCmZNfxiyYD4b9HS4JHpKrFXZkPEN69mLsJgA/gJF26EU+ZWMfXQo2m5KEdkWdBKtvtMPzzFgnbdY6i/U04YLcLXVqgS/1SmgOZqQCJJwLScjGgLtq2ZRuoRObS8H13yJNngwa7tLQpG/kURpg5fBQX8hdbltG5I=
+	t=1731098478; cv=none; b=X1HIKQ0PX1SKIFFJCZKM4xVqlSROSJpJFydbXZAjoopDD+cFUOhgTvrjx9+Q2ejF1dyo1BceoVL4sKACbMb3Udo+dKOOrRjtpeoBoK6JXLuLPrEzrZbI4mPbceVE/zB9jCoFYoNkH2QHeEGwtnGOq68i6kNwXOllpMmcd13NVgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731097126; c=relaxed/simple;
-	bh=Gl6J4i8m7k23jpRJx5ocIZWz4UUaLEBXFJm1vMKFu+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0WB8V0PAXteP0SU9w69WSpOdxL1ilaRadAZfCRVVcaHOrDaKyuyWKsyC1osVGzsTyaw0p26cVVGRti8Szlcr2adIExhp0tuaZk+VLMtihYyz5+Rg5OtFDeyhjPIouZ6EWc9kb2K1D6qSAEvZl6Y+DcbknDtcTX1Hs4b/WyNjA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AO+UuGmH; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso1899534b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 12:18:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731097121; x=1731701921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ButruIjsp+N12e25KkiSE9SJF/4i/qG/vJeDN9gjSEQ=;
-        b=AO+UuGmHCTCI22l7xpB6UTTSD2HSRdj91zu64h8SZoZYb9PdAVwviJq0ljeUQujz3/
-         hZpykRjBMgAsA/we0j/E/qn+J3Y4+NH/qiJpAKQ7t9ckJY7jbB7ZXB9eMWwuRc4j5Fws
-         QqdZG6RdGMpCWMzd53GlPh8ho8nXVUkS3GNBWvZofcenhAeYjZJGkcf5lnmOCxXED20x
-         XNI//AgEjg2A8yYl3ai8aLKq30cSFhbsM4WW82FN9PdBs0hzpT/Ix0IZNPEwL39VT2ov
-         HebjP+mmnp90lBTtfQ49LfVThDg6VrxJlNpWy2pkqXUfvAFov1xTpSJQ8BnGc21hvnKA
-         4BgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731097121; x=1731701921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ButruIjsp+N12e25KkiSE9SJF/4i/qG/vJeDN9gjSEQ=;
-        b=xU/NLtsW+nr+O3c5mCxNGxnvAyaAiGH9KQ4JDdEwJySbb0Xzzt+hwqK+CbObxg3lgf
-         QG4z556KKZVjd2R+jDlbQwnAaXxG91OzhsiMQCobf5VNUHm+6wr7aU1+VZhJc9T7H80/
-         VIIkdiHOg5+xQDygnJjgZh19btoJqpGPlcUt88wrBalcKaPgVo7cgWlT7UR7mX/VjaSm
-         CfjVmGRWUTiGjuEEvxZediZu2eLsezr+/WwsU9xgPFW3sJSwO4yjzTWtlpZBnd0aqPFu
-         iL8ETTM7nqZufi1SoUal8yJEFyxGT6L5iZBGO8bLGz6dh34Gc6T+3cqr44UHz6q60Ilm
-         pfuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm5cGJpsX0WD3R9bPzwfy2ruyDFJFsH+jmDeAdzvJg5RaBuZzZYCgcP4J+2hGkcdGTv1GBRzfmoeQOlH86@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx24Hwla7MU+9MtgAe/Fuy2kLJhrAyFBqsKxpg6YY++V5GHh7P
-	OMB4xhU7EgNlikIKlLNTcnYNYvlSUiEA2ZItS5KoQtvWZdhoi0P9Zs0eBD0jsqotOZTfD4btMB3
-	Bwgo=
-X-Google-Smtp-Source: AGHT+IFLmWi9D/02ZHOGsiKNUZIejllZA3TE1dM/x2+sf2uL7j+2l7Scl+cOm+alMwnqVVLvVvizEQ==
-X-Received: by 2002:a05:6a21:32a1:b0:1db:f087:5b1d with SMTP id adf61e73a8af0-1dc22b94a7cmr5051588637.37.1731097121568;
-        Fri, 08 Nov 2024 12:18:41 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f52d4csm4023444a91.7.2024.11.08.12.18.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 12:18:41 -0800 (PST)
-Message-ID: <00b97317-610a-4ae3-8d97-f5871972a401@kernel.dk>
-Date: Fri, 8 Nov 2024 13:18:40 -0700
+	s=arc-20240116; t=1731098478; c=relaxed/simple;
+	bh=f/pYYg3ktwZwJK9oynqfKm6WiedXx1F8YKvBYJac23Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rsbzAeFOsZokTxb3DWPWUcsCln4dNEk8grpPZ2/QsM9ytQ/Pafhz/gpCN03S9w+TlqkY6WUn+WwA3MT8grBVBE4xm8iaEreaEod71nYag/kFPhoBWlF8G3J1Gj8eWxjmeqOXix5THtBO+/llwIugZvhd4pn4aK+a77HUHtHDWsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=OJzQk97V; arc=none smtp.client-ip=178.154.239.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:694e:0:640:b187:0])
+	by forward101d.mail.yandex.net (Yandex) with ESMTPS id E70F5609B9;
+	Fri,  8 Nov 2024 23:41:06 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 3fq42PTi7Gk0-IXQIp3bx;
+	Fri, 08 Nov 2024 23:41:05 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731098465; bh=S4IVmV5ZbMyqz4PwuioPGK5dCJG1EXmSe/shi3r+XtY=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=OJzQk97Vgo/JUS0YCg+KinnCgtPsNKDUnUIhjR9xQysBwjbIIgRZX/FX9eFGYiDSt
+	 M23zoR+PMSTHnAlOOtC6wlweCQ81yk/UWW9XFBQZH0osbWAP9lWZIFw8SZWHlWvGBa
+	 VaxkadO1kzDvWmBxbpxSAkwxWBqXpblVQ8vNs3do=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Stas Sergeev <stsp2@yandex.ru>
+To: linux-kernel@vger.kernel.org
+Cc: Stas Sergeev <stsp2@yandex.ru>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Felix Moessbauer <felix.moessbauer@siemens.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Oleg Nesterov <oleg@redhat.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/2] implement PROCFS_SET_GROUPS ioctl
+Date: Fri,  8 Nov 2024 23:41:00 +0300
+Message-ID: <20241108204102.1752206-1-stsp2@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] iomap: make buffered writes work with RWF_UNCACHED
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-12-axboe@kernel.dk>
- <Zy5cmQyCE8AgjPbQ@casper.infradead.org>
- <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
- <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
- <Zy5vi-L6Vsn-seRZ@casper.infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Zy5vi-L6Vsn-seRZ@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/8/24 1:07 PM, Matthew Wilcox wrote:
-> On Fri, Nov 08, 2024 at 12:49:58PM -0700, Jens Axboe wrote:
->> On 11/8/24 12:26 PM, Jens Axboe wrote:
->>> On 11/8/24 11:46 AM, Matthew Wilcox wrote:
->>>> On Fri, Nov 08, 2024 at 10:43:34AM -0700, Jens Axboe wrote:
->>>>> +++ b/fs/iomap/buffered-io.c
->>>>> @@ -959,6 +959,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
->>>>>  		}
->>>>>  		if (iter->iomap.flags & IOMAP_F_STALE)
->>>>>  			break;
->>>>> +		if (iter->flags & IOMAP_UNCACHED)
->>>>> +			folio_set_uncached(folio);
->>>>
->>>> This seems like it'd convert an existing page cache folio into being
->>>> uncached?  Is this just leftover from a previous version or is that a
->>>> design decision you made?
->>>
->>> I'll see if we can improve that. Currently both the read and write side
->>> do drop whatever it touches. We could feasibly just have it drop
->>> newly instantiated pages - iow, uncached just won't create new persistent
->>> folios, but it'll happily use the ones that are there already.
->>
->> Well that was nonsense on the read side, it deliberately only prunes
->> entries that has uncached set. For the write side, this is a bit
->> trickier. We'd essentially need to know if the folio populated by
->> write_begin was found in the page cache, or create from new. Any way we
->> can do that? One way is to change ->write_begin() so it takes a kiocb
->> rather than a file, but that's an amount of churn I'd rather avoid!
->> Maybe there's a way I'm just not seeing?
-> 
-> Umm.  We can solve it for iomap with a new FGP_UNCACHED flag and
-> checking IOMAP_UNCACHED in iomap_get_folio().  Not sure how we solve it
-> for other filesystems though.  Any filesystem which uses FGP_NOWAIT has
-> _a_ solution, but eg btrfs will need to plumb through a third boolean
-> flag (or, more efficiently, just start passing FGP flags to
-> prepare_one_folio()).
+Changes in v3: NULLify private data arg of single_open() calls
+  as suggested by Kees Cook <kees@kernel.org>
+Changes in v2: define set_current_groups() for !CONFIG_MULTIUSER
+  addressing a test robot-reported failure.
 
-Yeah that's true, forgot we already have the IOMAP_UNCACHED flag there
-and it's available in creation. Thanks, I'll start with that.
+This patch set implements the PROCFS_SET_GROUPS ioctl that allows
+to set the group list from the fd referring to /proc/<pid>/status.
+It consists of 2 patches: a small preparatory patch and an implementation
+itself. The very detailed explanation of usage, security considerations
+and implementation details are documented in the commit log of the
+second patch. Brief summary below.
+
+The problem:
+If you use suid/sgid bits to switch to a less-privileged (home-less)
+user, then the group list can't be changed, effectively nullifying
+any supposed restrictions. As such, suid/sgid to non-root creds is
+currently practically useless.
+
+Previous solutions:
+https://www.spinics.net/lists/kernel/msg5383847.html
+This solution allows to restrict the groups from group list.
+It failed to get any attention for probably being too ad-hoc.
+https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@xxxxxxxxxxxxxxxx/
+This solution from Josh Tripplett was considered insecure.
+
+New proposal:
+Given that /proc/<pid>/status file carries the cred info including the
+group list, it seems natural to use that file to transfer and apply the
+group list within. The trusted entity should permit such operation and
+send the needed group info to client via SCM_RIGHTS. Client can check
+the received info by reading from fd. If he is satisfied, he can use
+the new ioctl to try to set the group list from the received status file.
+Kernel does all the needed security and sanity checks, and either returns
+an error or applies the group list. For more details and security
+considerations please refer to the commit message of the second patch.
+As the result, given that the process did the suid/sgid-assisted switch,
+it can obtain the correct group info that matches his new credentials.
+None of the previous proposals allowed to get the right group info:
+it was either cleared or "restricted" but never correct. This proposal
+aims to amend all of the previous short-comings with the hope to make
+the suid/sgid-assisted switches useful for dropping access rights.
+
+Usage example:
+I put the user-space usage example here:
+https://github.com/stsp/cred_test
+`tst.sh` script sets the needed permissions and runs server and client.
+Client does the suid/sgid-assisted identity switch and asks the server
+for the new group info. Server grants the needed group info based on
+client's credentials (using SO_PEERCRED) and client executes `id`
+command to show the result.
+
+Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+
+CC: Eric Biederman <ebiederm@xmission.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Aleksa Sarai <cyphar@cyphar.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>
+CC: Jan Kara <jack@suse.cz>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Jeff Layton <jlayton@kernel.org>
+CC: John Johansen <john.johansen@canonical.com>
+CC: Chengming Zhou <chengming.zhou@linux.dev>
+CC: Casey Schaufler <casey@schaufler-ca.com>
+CC: Adrian Ratiu <adrian.ratiu@collabora.com>
+CC: Felix Moessbauer <felix.moessbauer@siemens.com>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Oleg Nesterov <oleg@redhat.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Kees Cook <kees@kernel.org>
+CC: linux-kernel@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+
+Stas Sergeev (2):
+  procfs: avoid some usages of seq_file private data
+  procfs: implement PROCFS_SET_GROUPS ioctl
+
+ fs/proc/base.c          | 148 +++++++++++++++++++++++++++++++++++++---
+ include/linux/cred.h    |   4 ++
+ include/uapi/linux/fs.h |   2 +
+ 3 files changed, 146 insertions(+), 8 deletions(-)
 
 -- 
-Jens Axboe
+2.47.0
+
 
