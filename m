@@ -1,113 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-34009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CCC9C1CBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 13:17:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC16E9C1CCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 13:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C06B234FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 12:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 055A1B23EF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 12:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4852C1E7C03;
-	Fri,  8 Nov 2024 12:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB8A1E765D;
+	Fri,  8 Nov 2024 12:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S9mL2cEJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wwpsiSV/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S9mL2cEJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wwpsiSV/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1vbpz20R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqXaYKXq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1vbpz20R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqXaYKXq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B391E47C9;
-	Fri,  8 Nov 2024 12:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103DA1E47CC;
+	Fri,  8 Nov 2024 12:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731068209; cv=none; b=l6G0xhDIQ2XVnFX7uibTke3oUAGG2uL5le5Ziv2KRyAJkrw1MpIV2bHdLWE+iEosD9oRK18X9dB1NFDZbE0N7Q00b+yjGwAb/YeKHft/coJsxBduq6/Y6P+AtqOzWPQHQfu7ATdEIJRuKnvAACHwM9IEtDkgBU+FPCcViFcHfQI=
+	t=1731068377; cv=none; b=bkaK4ZrGJf1iuWFrfdhe/Y3O5bTZTCzOfBzV3VYcUbTTkkw2i5eTgNfhY9aEo5sXjDwPLYSXhZcu+OMYCN/gm7gpzCH1uAOUWYakHtM8nIglRBtsOx2DJJwxBYVNBidlathi7FS69xmp6Dw0oX/Rx4IWrRFK8SC1lrWjr4moWNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731068209; c=relaxed/simple;
-	bh=gjsTU5zrQ2zDUzbpfpsWBcPtapZeAHmaHA/k5xZZjSU=;
+	s=arc-20240116; t=1731068377; c=relaxed/simple;
+	bh=gHx4tR0MwDHCyzkkwKN9uNUatqqrwQXZXAQfjOsWzrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QGXVZrSAK1ojaA8dM0KKqJnRRPs402rltqHgnKXoObdVoE+4J0gVoMtvF3518KYB0HVJi+od4x/VOletLsdWExpLL6Ecz2aFRz1S4S3JtcqtZacg99fyEXdmHJoep1NqFwBIY5NAfKeMAEMDBvQL4PZNgqFH6BNdHNLPKXDmHB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S9mL2cEJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wwpsiSV/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S9mL2cEJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wwpsiSV/; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=qYki7wQuRaVEmsdwejdGBkNQDIbNGTkdBTJm0qK33m24jbq/inZTEPsVDYMabpGO5BcJwKDmrgJMm2eQEPfyv+OarKHcspPmKKMz4apwPPfGI1uDf6vtiuPTw2z8aSoAIQLYWwt0+a2Uk+hl1SFCy9uaKmV33DklJAIDC6me9fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1vbpz20R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqXaYKXq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1vbpz20R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqXaYKXq; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 17D231F785;
-	Fri,  8 Nov 2024 12:16:46 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 171171F7C0;
+	Fri,  8 Nov 2024 12:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1731068373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=S9mL2cEJkNNnEiEL3O/eZ6Okc6Qel2vQTfa+01vkf4+7o3HV1du/VFgWSRPT0oPGZJbVm5
-	DkPPAw7dLEHflqyYphZWQrzp+K3Cp1JIPqVpEuquamBSZla3dVMvnH7Zkllt1NsAbZ4pUE
-	UPV52CdFzy6LO7NsgUYdlKniZcYg/Z0=
+	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
+	b=1vbpz20RiTMnkrUttWhIaa0BFR11gEFrrUWUvd7H4Tyw8OBmtuEiyjUbBtYEaAYLp6OuBq
+	JAQ8udWgLtWp2DwyANZ/rgwAgzlya/JLvHlpFYd+SjYVQHdO20CTDZuGPmfUIHe5QiGA1O
+	NbNNpU/H0+C/HkxGQFItbmsjW1rX1jc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068206;
+	s=susede2_ed25519; t=1731068373;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=wwpsiSV/GCAAjs5bqw4PVE0jVqEt4SHhQ3b6USWoIo0uUUYYPVXhXItBPSGP4Je9q/Gjcx
-	4rtO1oYqSMga3EDA==
+	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
+	b=rqXaYKXqN4PseocRsK8OSuQyCuFe7dFvff93rCfo2YQBpDhrOWzZCT1obdGtnoGuCTgO2T
+	OWJ/RL/OzBs4xVAQ==
 Authentication-Results: smtp-out2.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1vbpz20R;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rqXaYKXq
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1731068373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=S9mL2cEJkNNnEiEL3O/eZ6Okc6Qel2vQTfa+01vkf4+7o3HV1du/VFgWSRPT0oPGZJbVm5
-	DkPPAw7dLEHflqyYphZWQrzp+K3Cp1JIPqVpEuquamBSZla3dVMvnH7Zkllt1NsAbZ4pUE
-	UPV52CdFzy6LO7NsgUYdlKniZcYg/Z0=
+	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
+	b=1vbpz20RiTMnkrUttWhIaa0BFR11gEFrrUWUvd7H4Tyw8OBmtuEiyjUbBtYEaAYLp6OuBq
+	JAQ8udWgLtWp2DwyANZ/rgwAgzlya/JLvHlpFYd+SjYVQHdO20CTDZuGPmfUIHe5QiGA1O
+	NbNNpU/H0+C/HkxGQFItbmsjW1rX1jc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068206;
+	s=susede2_ed25519; t=1731068373;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=wwpsiSV/GCAAjs5bqw4PVE0jVqEt4SHhQ3b6USWoIo0uUUYYPVXhXItBPSGP4Je9q/Gjcx
-	4rtO1oYqSMga3EDA==
+	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
+	b=rqXaYKXqN4PseocRsK8OSuQyCuFe7dFvff93rCfo2YQBpDhrOWzZCT1obdGtnoGuCTgO2T
+	OWJ/RL/OzBs4xVAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 032E313967;
-	Fri,  8 Nov 2024 12:16:46 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0143613967;
+	Fri,  8 Nov 2024 12:19:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3MVbAC4BLmdLWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 08 Nov 2024 12:16:45 +0000
+	id rHpIANUBLmccWgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 08 Nov 2024 12:19:33 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B018EA0AF4; Fri,  8 Nov 2024 13:16:41 +0100 (CET)
-Date: Fri, 8 Nov 2024 13:16:41 +0100
+	id B201FA0AF4; Fri,  8 Nov 2024 13:19:32 +0100 (CET)
+Date: Fri, 8 Nov 2024 13:19:32 +0100
 From: Jan Kara <jack@suse.cz>
-To: Asahi Lina <lina@asahilina.net>
-Cc: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sergio Lopez Pascual <slp@redhat.com>,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <20241108121641.jz3qdk2qez262zw2@quack3>
-References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
- <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
- <20241107100105.tktkxs5qhkjwkckg@quack3>
- <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] fs: add the ability for statmount() to report the
+ mnt_devname
+Message-ID: <20241108121932.mbtyofqtkbxao7vc@quack3>
+References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
+ <20241107-statmount-v3-2-da5b9744c121@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -116,116 +108,149 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
+In-Reply-To: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+X-Rspamd-Queue-Id: 171171F7C0
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
+	MX_GOOD(-0.01)[];
 	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[]
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-On Fri 08-11-24 01:09:54, Asahi Lina wrote:
-> On 11/7/24 7:01 PM, Jan Kara wrote:
-> > On Wed 06-11-24 11:59:44, Dan Williams wrote:
-> >> Jan Kara wrote:
-> >> [..]
-> >>>> This WARN still feels like the wrong thing, though. Right now it is the
-> >>>> only thing in DAX code complaining on a page size/block size mismatch
-> >>>> (at least for virtiofs). If this is so important, I feel like there
-> >>>> should be a higher level check elsewhere, like something happening at
-> >>>> mount time or on file open. It should actually cause the operations to
-> >>>> fail cleanly.
-> >>>
-> >>> That's a fair point. Currently filesystems supporting DAX check for this in
-> >>> their mount code because there isn't really a DAX code that would get
-> >>> called during mount and would have enough information to perform the check.
-> >>> I'm not sure adding a new call just for this check makes a lot of sense.
-> >>> But if you have some good place in mind, please tell me.
-> >>
-> >> Is not the reason that dax_writeback_mapping_range() the only thing
-> >> checking ->i_blkbits because 'struct writeback_control' does writeback
-> >> in terms of page-index ranges?
-> > 
-> > To be fair, I don't remember why we've put the assertion specifically into
-> > dax_writeback_mapping_range(). But as Dave explained there's much more to
-> > this blocksize == pagesize limitation in DAX than just doing writeback in
-> > terms of page-index ranges. The whole DAX entry tracking in xarray would
-> > have to be modified to properly support other entry sizes than just PTE &
-> > PMD sizes because otherwise the entry locking just doesn't provide the
-> > guarantees that are expected from filesystems (e.g. you could have parallel
-> > modifications happening to a single fs block in pagesize < blocksize case).
-> > 
-> >> All other dax entry points are filesystem controlled that know the
-> >> block-to-pfn-to-mapping relationship.
-> >>
-> >> Recall that dax_writeback_mapping_range() is historically for pmem
-> >> persistence guarantees to make sure that applications write through CPU
-> >> cache to media.
-> > 
-> > Correct.
-> > 
-> >> Presumably there are no cache coherency concerns with fuse and dax
-> >> writes from the guest side are not a risk of being stranded in CPU
-> >> cache. Host side filesystem writeback will take care of them when / if
-> >> the guest triggers a storage device cache flush, not a guest page cache
-> >> writeback.
-> > 
-> > I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
-> > should provide persistency guarantees on the file contents even in case of
-> > *host* power failure. So if the guest is directly mapping host's page cache
-> > pages through virtiofs, filemap_fdatawrite() call in the guest must result
-> > in fsync(2) on the host to persist those pages. And as far as I vaguely
-> > remember that happens by KVM catching the arch_wb_cache_pmem() calls and
-> > issuing fsync(2) on the host. But I could be totally wrong here.
+On Thu 07-11-24 16:00:07, Jeff Layton wrote:
+> /proc/self/mountinfo displays the devicename for the mount, but
+> statmount() doesn't yet have a way to return it. Add a new
+> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
+> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
+> the return mask if there is a device string.
 > 
-> I don't think that's how it actually works, at least on arm64.
-> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
-> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
-> 
-> There was some discussion of this here:
-> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-I see. Thanks for correcting me.
+Looks good to me. Feel free to add:
 
-> But I'm not sure that all really made sense then.
-> 
-> msync() and fsync() should already provide persistence. Those end up
-> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
-> (or fdatasyncs) the whole file. What I'm not so sure is whether there
-> are any other codepaths that also need to provide those guarantees which
-> *don't* end up calling fsync on the VFS. For example, the manpages kind
-> of imply munmap() syncs, though as far as I can tell that's not actually
-> the case. If there are missing sync paths, then I think those might just
-> be broken right now...
-
-munmap(2) is not an issue because that has no persistency guarantees in
-case of power failure attached to it. Thinking about it some more I agree
-that just dropping dax_writeback_mapping_range() from virtiofs should be
-safe. The modifications are going to be persisted by the host eventually
-(so writeback as such isn't needed) and all crash-safe guarantees are
-revolving around calls like fsync(2), sync(2), sync_fs(2) which get passed
-by fuse and hopefully acted upon on the host. I'm quite confident with this
-because even standard filesystems such as ext4 flush disk caches only in
-response to operations like these (plus some in journalling code but that's
-a separate story).
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/namespace.c             | 36 +++++++++++++++++++++++++++++++++++-
+>  include/uapi/linux/mount.h |  3 ++-
+>  2 files changed, 37 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index fc4f81891d544305caf863904c0a6e16562fab49..56750fcc890271e22b3b722dc0b4af445686bb86 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5014,6 +5014,32 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
+>  		seq_puts(seq, sb->s_subtype);
+>  }
+>  
+> +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +	struct super_block *sb = s->mnt->mnt_sb;
+> +	struct mount *r = real_mount(s->mnt);
+> +
+> +	if (sb->s_op->show_devname) {
+> +		size_t start = seq->count;
+> +		int ret;
+> +
+> +		ret = sb->s_op->show_devname(seq, s->mnt->mnt_root);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (unlikely(seq_has_overflowed(seq)))
+> +			return -EAGAIN;
+> +
+> +		/* Unescape the result */
+> +		seq->buf[seq->count] = '\0';
+> +		seq->count = start;
+> +		seq_commit(seq, string_unescape_inplace(seq->buf + start, UNESCAPE_OCTAL));
+> +	} else if (r->mnt_devname) {
+> +		seq_puts(seq, r->mnt_devname);
+> +	}
+> +	return 0;
+> +}
+> +
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+>  {
+>  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> @@ -5077,6 +5103,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		sm->fs_subtype = start;
+>  		statmount_fs_subtype(s, seq);
+>  		break;
+> +	case STATMOUNT_MNT_DEVNAME:
+> +		sm->mnt_devname = seq->count;
+> +		ret = statmount_mnt_devname(s, seq);
+> +		break;
+>  	default:
+>  		WARN_ON_ONCE(true);
+>  		return -EINVAL;
+> @@ -5225,6 +5255,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+>  	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
+>  		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
+>  
+> +	if (!err && s->mask & STATMOUNT_MNT_DEVNAME)
+> +		err = statmount_string(s, STATMOUNT_MNT_DEVNAME);
+> +
+>  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+>  		statmount_mnt_ns_id(s, ns);
+>  
+> @@ -5246,7 +5279,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
+>  }
+>  
+>  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
+> -			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
+> +			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
+> +			      STATMOUNT_FS_SUBTYPE | STATMOUNT_MNT_DEVNAME)
+>  
+>  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+>  			      struct statmount __user *buf, size_t bufsize,
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -174,7 +174,7 @@ struct statmount {
+>  	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+>  	__u64 mnt_ns_id;	/* ID of the mount namespace */
+>  	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
+> -	__u32 __spare1[1];
+> +	__u32 mnt_devname;	/* [str] Device string for the mount */
+>  	__u64 __spare2[48];
+>  	char str[];		/* Variable size part containing strings */
+>  };
+> @@ -210,6 +210,7 @@ struct mnt_id_req {
+>  #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
+>  #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
+>  #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+> +#define STATMOUNT_MNT_DEVNAME		0x00000200U	/* Want/got mnt_devname */
+>  
+>  /*
+>   * Special @mnt_id values that can be passed to listmount
+> 
+> -- 
+> 2.47.0
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
