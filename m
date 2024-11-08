@@ -1,122 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-34093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7E59C2588
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 20:26:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AECB9C2583
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 20:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC64B22043
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 19:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841481C21ABF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2024 19:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76851C1F21;
-	Fri,  8 Nov 2024 19:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58A61AA1EA;
+	Fri,  8 Nov 2024 19:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Lnh7ig1x";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DlkbYAIq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qKZ2Tar+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E271A9B54;
-	Fri,  8 Nov 2024 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE73F1A9B4A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Nov 2024 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731093940; cv=none; b=O3WcInA5hswDFu8ncEaENzBxQ3dvlTqd8B+nDRb12U109F5O/Lc3N6ZCafHXp5haNq5WWcgrF2Y4xeqQLONKQW0LCPAvAOB/OeNiWJxL3Lmkq/k4bdKIYvYbv5FdQgdDNt2dijPZlR4vCPDJccSoFvytzSsKlpu3SfBjg/GQeDA=
+	t=1731093939; cv=none; b=SEYkbE9SplGVbfkgXiivCHlP3qacd7IPq9KHs07dsRNUMCJ3zPN0qzV77RkWKSafDG37WwFHFjW4Qp1vMAWQoXbTJjWe8n7RskFvPUrB/zzcmmdKWTbpWnVZqUy1yIAN4q2NTqtk6Tj4RC51jXaEcp50tlgmN2H4THrJGjoNTq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731093940; c=relaxed/simple;
-	bh=mvQKueWlpefaVNvoNbW94RqK5Dxblon3eu/LzPGEKDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mHQ1fpn7apOQYq6dnnk67NzgiXs/HNRC9il/FJUsJHGIGW1ANDsmwNvH3lDDRG7GfCRvvDgYh1yNcFweLUU0S1wroLu5LRUbD+4jmyeuYJl3oplD/S2w6DMH0ZuCsPeWQzkfJcwdWUPyAEjDHiSJBjTsiSYW4tFaAd3aqEbAU38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Lnh7ig1x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DlkbYAIq; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DDD3B25400F2;
-	Fri,  8 Nov 2024 14:25:36 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 08 Nov 2024 14:25:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1731093936; x=
-	1731180336; bh=Gwc623npqkQAxgOfn1Mt+u27tSynXETPHJcw58J6KR4=; b=L
-	nh7ig1xMTM8fuGFJz8frj2HNK5I1TiuSJXGgBJM/wYuVso8gjWxr12u3+Ozr4X53
-	2V3/OsHjazOARvd2asN3nXSa/jpfICYZkvGOWbzllO7AEbPSKFSJLjZo9na3PAFy
-	PcHZ+SuYCoAvqqfCQ0Tmw4z/vjW6VpSUOy5izSb4/ZgnKAmqCgtuXmrz1TLBf94V
-	dNQl9+tm2QKM17Tr8zMOKpHvfeKVx2MOoXofWPt/rPC5Jm8T/U+EhRFRdH2CyaIy
-	Gcz0ar3mas8JkLOyntR6Ir3kpmGd2hZnWPJHEkfGj+GjddorE5qwU8qGbyrOZNyq
-	WUVR4bC1/PUTx9rd8m+ug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731093936; x=1731180336; bh=Gwc623npqkQAxgOfn1Mt+u27tSynXETPHJc
-	w58J6KR4=; b=DlkbYAIq5k74q9kBOV5K+u2t1nPA0g9Do3IWxW0iDSeIy7assjx
-	toxqgDMIjSr5A2C+PuqIjVGk+m8qm9+Ymhm2n+2IEireVDVyn1qOFLM+6t0+CPL/
-	3ns+8UCU0fTTTSxSEfAt8RVTmFRtg93wU9gaTHiuPGRuIfX/E64DamQyrHHy62m7
-	OfH7BBq+QzWXPy3L/38BZOzqH9YdYeMs+Bzd9pzpXE8BvwSLGfDmg2ejJYmA9Jvn
-	30yyCw64LuWIylTtUWbsFVopDRcmSwdwsWuRexVnhuD0Gbt68dPhECDFIf7Odbul
-	5kc5GvgstKDlnUjGIF/Ei5yfv0JB7N/DVIw==
-X-ME-Sender: <xms:sGUuZ8qzzfHXLSeBFovIADzmO0tY0Co5R_Vbd55l9_LEFT5schAdpA>
-    <xme:sGUuZyolS_YQ3UnZNndGcy1L9Qncp3cjmiZ5POjZDJaW6Aaf2h-fKlsi2tMZXEuSy
-    dezA-efxHxPrpqF_1M>
-X-ME-Received: <xmr:sGUuZxPnegcmUb7H4UOl8H46z8rtA_Ku7RjfSWGFuYVOe3tvWaDdwbvmiGHPREmeAYvdmw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhmmhes
-    khhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdho
-    rhhgpdhrtghpthhtoheptghlmhesmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:sGUuZz7hVl8oZlvI8bIstoIrF-Ust1PkX2PuzvuUtmahtDFmPs6iAA>
-    <xmx:sGUuZ75fx0twImD9cymo25eqQpnXfvc5HQOKqbGFEbwzZN-cMticCw>
-    <xmx:sGUuZzgU9-uaUeluO32UB2qXl852ctSTqdZA8Lf4hjTXbP9ZnElHYA>
-    <xmx:sGUuZ159mxp954rg7WpHXeq0-p6sxkHrHLC7lz4NONdZUPBMF-gXxg>
-    <xmx:sGUuZ4ufl-M96MvxInHIFn6neZE7yAdiA1gquiiC0FwKodU49OYl9p0X>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Nov 2024 14:25:33 -0500 (EST)
-Date: Fri, 8 Nov 2024 21:25:30 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/13] mm: add PG_uncached page flag
-Message-ID: <u5ug67m23arro2zlpr4c6sy3xivqpuvxosflfsdhed4ssjui3x@4br4puj5ckjs>
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-4-axboe@kernel.dk>
+	s=arc-20240116; t=1731093939; c=relaxed/simple;
+	bh=MyD+tWxXFPgtNeJfGDjD4UfEb6QCKSOtoP60UxHsfTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBVNn9qU4VtaaF22QmqZNxTuR6Hn3AynCAw4UBtyvb5l/WzB109P87nT5w6mSrRV9JuRH3Na99TYQRxgiCbFhtAMDXsGuqOFLk7AkzRIoe7T5g5NrWMiuEr15Sp8xwvKFMAed/wLXMtjuMmRAyraWN4rFVfUySV2G2JMNfDF5uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qKZ2Tar+; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso1868207b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 11:25:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731093937; x=1731698737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dnt+jRFiZc1qVM1+yhnD5tvt36dLhBCo8c5G+kNMovs=;
+        b=qKZ2Tar+HZbSxKSvP6Ocq1viEx5ncpolmaf7/vQNd9zFd3WAoSXlj/d03fmtdDzJXV
+         NVcV6UW8tT7NTeBTgtDbRX2oMNw+XC7EhxRioi5jFczblSYVkiY8uinG0Wz9an9L7RQH
+         BWU+kZSNLxlES8NNhiKvJOjYwmtizhDcj+M9cA12O5iI6s9xj3gsl2ZJSn4mxUPsbBL/
+         Jy7EYGUmMnZpEc6/9cytdueOOG9by3yLfTJuGBJ607MohKaziphQlK1AMd6MYHcNQkhn
+         6UCJ6rSsyEGafM41HBuSxoN2Wn8WsA9NdqDHfmhBhDLNO4oQ6KFjxnSRplx3vaZOLGVP
+         m/0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731093937; x=1731698737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dnt+jRFiZc1qVM1+yhnD5tvt36dLhBCo8c5G+kNMovs=;
+        b=cNAnADj4teGVs8VStLw4cGWKyMlIV9rUazKReL4rBvVX4bb7AEhuEgwzh4uG3sEMw1
+         a20Fr5CA8FdI7ZINJaInRA2qf6fWeC2t7ADwtJKP1r2pSRP/u+Om9nbjdtYwyJwBGQkA
+         QbcSf2LeUhGdRO0uuf2fxt9d9p1OcmRmabIe4ct6b6p90EwqQMe2XbXJhTKeEOtSkT9w
+         22zDgrSBr5ybmGAHMisUh5mhsrTgC3hkw+wH8noHr1LMDX+a4M2xRX7Wj70e0OI8Wdhl
+         IdLQRr9cHqI4bx09Z2mHPn13Ff/R6dwyApoh/NvptqIK5svfRvFq/S9VG+rYSKeghj0R
+         A0eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPOS18abNYM+xtm/LXKGmO3w8yPaMOeWVVKvbytKyhAmDKSVaCO7olWO3zwCBLW0rwPfRAY7gPriBZKJLR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+40tY8wdP5+TdmHnev/sMFNTHSNcBG2CooWO4/ZYNt5ek1XAg
+	wkS2bnCOR7am/nzMosvv3tDNQK2cFJ0UqGs6SA2hW5jclFIgseWVkVNJZwBm4dI=
+X-Google-Smtp-Source: AGHT+IELEroo6SHxpKCnpbZ7JYNo7XRYyZE04sY+1b30p170Yv7UDZgTSZ5/8jsynrXJsUDAnW5RlQ==
+X-Received: by 2002:a05:6a00:3a07:b0:71e:7b8a:5953 with SMTP id d2e1a72fcca58-7241338bdecmr5664070b3a.24.1731093936935;
+        Fri, 08 Nov 2024 11:25:36 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860a97sm4286553b3a.27.2024.11.08.11.25.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 11:25:36 -0800 (PST)
+Message-ID: <07a6549a-6bbf-4e09-9e3b-128e779882a1@kernel.dk>
+Date: Fri, 8 Nov 2024 12:25:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108174505.1214230-4-axboe@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/13] fs: add read support for RWF_UNCACHED
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-9-axboe@kernel.dk>
+ <Zy5Zb8Twe7QBkHMh@casper.infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Zy5Zb8Twe7QBkHMh@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 10:43:26AM -0700, Jens Axboe wrote:
-> Add a page flag that file IO can use to indicate that the IO being done
-> is uncached, as in it should not persist in the page cache after the IO
-> has been completed.
+On 11/8/24 11:33 AM, Matthew Wilcox wrote:
+> On Fri, Nov 08, 2024 at 10:43:31AM -0700, Jens Axboe wrote:
+>> +++ b/mm/swap.c
+>> @@ -472,6 +472,8 @@ static void folio_inc_refs(struct folio *folio)
+>>   */
+>>  void folio_mark_accessed(struct folio *folio)
+>>  {
+>> +	if (folio_test_uncached(folio))
+>> +		return;
+>>  	if (lru_gen_enabled()) {
+> 
+> This feels like it might be a problem.  If, eg, process A is doing
+> uncached IO and process B comes along and, say, mmap()s it, I think
+> we'll need to clear the uncached flag in order to have things work
+> correctly.  It's a performance problem, not a correctness problem.
 
-Flag bits are precious resource. It would be nice to re-use an existing
-bit if possible.
-
-PG_reclaim description looks suspiciously close to what you want.
-I wounder if it would be valid to re-define PG_reclaim behaviour to drop
-the page after writeback instead of moving to the tail of inactive list.
+I'll take a look, should be fine to just unconditionally clear it
+here. uncached is a hint after all. We'll try our best to honor it,
+but there will be cases where inline reclaim will fail and you'll
+get cached contents, particularly if you mix uncached and buffered,
+or uncached and mmap.
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Jens Axboe
+
 
