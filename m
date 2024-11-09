@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70029C28B3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:14:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A5A9C28B4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:14:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E636B22066
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B43282851
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37C7C2FD;
-	Sat,  9 Nov 2024 00:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47326C8FF;
+	Sat,  9 Nov 2024 00:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ip/nMdir"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PajL1n4K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B15C2F2
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A6D442C
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731111234; cv=none; b=MHckUC4nP5Bi7OAvPhHQ0BFwk87DI3YSepxE+d7Pr+01CTJKuTLpLm+fY6aYC9o1mIkJ6p+yKXSIlRhYEcHOu+RZkvxK/peGwCst0a4pv2UTLfe+nPNNUYr0ig/DgkeHu+48g0OjSSD/mOaozW09fEt+Q70+mJ/J7dnH25OSGTg=
+	t=1731111235; cv=none; b=a1TuuAPzWqhvE6UArcNVpbYAqnu1R0VZKLOP9MZWR5LCChSq3owSU2BLRFJv89eTi++ms0n1w1rddaHfvTJrXAZj1vDxUoriu7ewcM/z+HfaMD6OeACDGy6marx9m5ZHap1lzWMZqC5z8y94XnjVDnc+9oikNAFiENYhU4SNNX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731111234; c=relaxed/simple;
-	bh=+u6MlWqVIUPGucDDZ11gt1GWLiWVmel7l/A5JwwHaN4=;
+	s=arc-20240116; t=1731111235; c=relaxed/simple;
+	bh=yYgzzzXpqzFKcmjR/AGOQoB7MN1LkrcU0MPdqJxLRX0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nm7m1FkuYT8jplig1BrONDgmDtta6ny/2aI3g2oI7yhgTAwME5oXqcE1itXZFehaieVGZRk4yc2TljVzHni+HcuwVRYM4lHM0MajWlVnYjUIpu80Vq2vOteQr8HjC/fGMGcFpspm6Snv8BEnfdCDHW3FYHiMDN6xdRmptB/XLds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ip/nMdir; arc=none smtp.client-ip=209.85.219.174
+	 MIME-Version; b=DHBk+egNqWHmlrb2qWOWfGB3Vdj92oE9IUSMNvRpuyzcUc907WC0wFav8nJr1F7/0XBKXTgvrfefmyZNdU5wjMIakFfZXVSdx7KitcF5OJXdpZJOqWrSumUTAsnGha3qt0Ka+YZ8RBiWR/mbqQ3kYyQEiEWUfRXlv29djjzHzoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PajL1n4K; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e2e2baf1087so2701658276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 16:13:52 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e390d9ad1dso23976967b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 16:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731111231; x=1731716031; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731111233; x=1731716033; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xW1L6GLqIuWp0+LGyHyVAr9DCx7A/ZKZoCxcAOHkb3U=;
-        b=Ip/nMdirpAIrtu+hr7lJjDGIoSnC5js6WxsaK9PeIhwui9LN7xpNb2Zlo1mA0AioDv
-         GvSrjPuIs1sWXb5vSUyVZ4/iZnypFbgykC6iI0Z9i0CUxz7c3XCGYuMeESGPzi5QcqiN
-         ALgomd6DXtWDVZOUXzPWkg06zppH7hE9ASeUUq9Z7hAp+sXisA3tqVeOOcMdWQGoLs8s
-         dXdalKCBrlTs0DwUrlmLOh1WOI4gd7M5EKcuKId47QIsV/84R436DB1Z+iNwmAaEfm1q
-         AHvuzBXGsNB6ZUCMP3XLUob/sBtT2jq9a6RZ7WJpoTRJJTmIcxVkB0PLrJqYz+I+/RaB
-         26FA==
+        bh=TuKCwsFn40jERjPqjTeJCxFnlNE/D2gBXzbxhi0+6u8=;
+        b=PajL1n4KCJ8nsaUrZ1jb/H5GJ1Js9ajWI3cNwNCHXvydII3kbWQxl8WIj7JrXU3O96
+         S9zlL5CaTBq2nkwtbzmZ0pHFq+euFPJQvNfa3Tld+wQnON+2wBePfhh5C0euJkDY1Mgt
+         slPACOmYCR6Qj2C08u7plb1cIMJUtk/jyTxqo5PJ5tFWta5YB2ikrEZuGISxs6HtH8s8
+         mgYL1iqxDgYO52/TNpQq7u4kSn1PmJak/30B/zBqI3hLq214782hXNRZpAfgFIhx8gwM
+         dQfkXBRBBvjCgcGq1QFIbv28i4tfpZun5md4NPDlwX1S0hXZNe3ZqyxAqx1VYhyvCbsN
+         bbPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731111231; x=1731716031;
+        d=1e100.net; s=20230601; t=1731111233; x=1731716033;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xW1L6GLqIuWp0+LGyHyVAr9DCx7A/ZKZoCxcAOHkb3U=;
-        b=rJad33+IrCOIt6LPGUoIbwjKrwAGI/S4sMxbxgO81rthxHGS0pXkUaw0nWdTpaJPvk
-         RC/vMKE9V2+y4OhXE4nmSFn8CfIW8e4vFZUKLzIPOralpWceyoGS8JjXP1ZNjzycj/2r
-         M9xDD1CoKMov/QIgYZXMUN5kwDuhZBYVi2Y6NBVO/clF8GK1GIv9ySBjFXc3BSDYtCNt
-         aO7SBaoafi7zfZtAs8F87Ajip18hYsY5ocEU5SVlJ4KqWLp0orgt5udXFJ/AEup5ZK30
-         NM4VpfhJuwS6RH6GFjg92o99ycLXlhJCG4PaRU1kpju0bdDXtO6sn5YXe0BD6y6tVEAw
-         Jt5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBb5hSHuMteYWA+LcAAWwX80LrFkISoRn7pqzeYbYpdo+6auZlhAKvB7VGswzTmnk/ldM1TWeZLhoEmgT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhWTucKJaW8mZNXFflxcIyIue5V3hhYPb+N8WOrbvaInl58g5+
-	5MOL9XSVWwrFITEEI45QgjrX1T7b6qGx6PaaujytZh5Iu3cIhHt/
-X-Google-Smtp-Source: AGHT+IFWVPaUg7nYCfwX+mF7CK2zrGz5GmxwEdW/sCpW9NxzDBSXytK2YCdIHVxrRfZ+2XtT7dA7cw==
-X-Received: by 2002:a05:690c:3609:b0:6e3:26dd:1bf5 with SMTP id 00721157ae682-6eadddac491mr57914787b3.20.1731111231686;
-        Fri, 08 Nov 2024 16:13:51 -0800 (PST)
-Received: from localhost (fwdproxy-nha-006.fbsv.net. [2a03:2880:25ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8d77e6sm9403887b3.17.2024.11.08.16.13.51
+        bh=TuKCwsFn40jERjPqjTeJCxFnlNE/D2gBXzbxhi0+6u8=;
+        b=sgiNAWs18TjembFS3sb1l6agsDjD/r1ZX4uvYznsoNM+Cj7YuTurLT1TRXFUJjxrT4
+         UjuccW4A9OGADys4Xr+WpCzDZD61emaoEx2AM4CmhzftiAq6kspkzT2vglt8/6PWKg9w
+         jk5u5PMG633YPHc8tALoM531Xr0wXRaVzJ8fk3giP94CSlvjIDDhCY3r0+mTjvz7qSQ8
+         nSDSYqU4o+0W2ZTlkahCpPMSZjt+z2PLmpn4Wr1vK38mNzVQzsmRMvRJg9//eeErDGMW
+         KaDLpJ3cKH4barp9p2/IskfHOUKMRMf3oA361hYxKimFkA8gIZOl2R7I+OJL4KtjLjGg
+         zxrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDOye+513hgrOADo0SKWcg0+7UEPKQg0oIXSXfiLJD3e2h6igNBRvkDvARwgU/pq/uXxWmDVdVhj+VyPSq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp/qsD8AxceqOcvAeIeNxFbL8cullGQZyyD8a9ysOUuPf+Q6xl
+	0E9vZLrxujmKGp7Vzhuevz1QtcvcZxVaBUG0EF6GEEQ/KNL9ZYtg
+X-Google-Smtp-Source: AGHT+IE8dzLu7KbTLyVlkvUlD7CNZzDY6LR351WiRa04wyW+7gAVY4WYDTkuSn+eQ+09sVXoyzn+Ew==
+X-Received: by 2002:a0d:c304:0:b0:6ea:ef9d:fcba with SMTP id 00721157ae682-6eaef9dfe5cmr9885817b3.6.1731111233097;
+        Fri, 08 Nov 2024 16:13:53 -0800 (PST)
+Received: from localhost (fwdproxy-nha-115.fbsv.net. [2a03:2880:25ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaef0b5033sm1676997b3.43.2024.11.08.16.13.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 16:13:51 -0800 (PST)
+        Fri, 08 Nov 2024 16:13:52 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -76,9 +76,9 @@ Cc: josef@toxicpanda.com,
 	willy@infradead.org,
 	shakeel.butt@linux.dev,
 	kernel-team@meta.com
-Subject: [PATCH 09/12] fuse: support large folios for readahead
-Date: Fri,  8 Nov 2024 16:12:55 -0800
-Message-ID: <20241109001258.2216604-10-joannelkoong@gmail.com>
+Subject: [PATCH 10/12] fuse: support large folios for direct io
+Date: Fri,  8 Nov 2024 16:12:56 -0800
+Message-ID: <20241109001258.2216604-11-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241109001258.2216604-1-joannelkoong@gmail.com>
 References: <20241109001258.2216604-1-joannelkoong@gmail.com>
@@ -90,81 +90,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for folios larger than one page size for readahead.
+Add support for folios larger than one page size for direct io.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/file.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ fs/fuse/file.c | 34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 44a65bdfe8fb..255c7f2f2ed4 100644
+index 255c7f2f2ed4..54e2b58df82f 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -885,14 +885,13 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
- 	fuse_io_free(ia);
- }
+@@ -1484,7 +1484,8 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 		return -ENOMEM;
  
--static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
-+static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file,
-+				unsigned int count)
- {
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_mount *fm = ff->fm;
- 	struct fuse_args_pages *ap = &ia->ap;
- 	loff_t pos = folio_pos(ap->folios[0]);
--	/* Currently, all folios in FUSE are one page */
--	size_t count = ap->num_folios << PAGE_SHIFT;
- 	ssize_t res;
- 	int err;
+ 	while (nbytes < *nbytesp && nr_pages < max_pages) {
+-		unsigned nfolios, i;
++		unsigned npages;
++		unsigned i = 0;
+ 		size_t start;
  
-@@ -929,6 +928,7 @@ static void fuse_readahead(struct readahead_control *rac)
- 	unsigned int max_pages, nr_pages;
- 	loff_t first = readahead_pos(rac);
- 	loff_t last = first + readahead_length(rac) - 1;
-+	struct folio *folio = NULL;
+ 		ret = iov_iter_extract_pages(ii, &pages,
+@@ -1496,19 +1497,28 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
  
- 	if (fuse_is_bad(inode))
- 		return;
-@@ -952,8 +952,8 @@ static void fuse_readahead(struct readahead_control *rac)
- 	while (nr_pages) {
- 		struct fuse_io_args *ia;
- 		struct fuse_args_pages *ap;
--		struct folio *folio;
- 		unsigned cur_pages = min(max_pages, nr_pages);
-+		unsigned int pages = 0;
+ 		nbytes += ret;
  
- 		if (fc->num_background >= fc->congestion_threshold &&
- 		    rac->ra->async_size >= readahead_count(rac))
-@@ -968,14 +968,24 @@ static void fuse_readahead(struct readahead_control *rac)
- 			return;
- 		ap = &ia->ap;
+-		ret += start;
+-		/* Currently, all folios in FUSE are one page */
+-		nfolios = DIV_ROUND_UP(ret, PAGE_SIZE);
++		npages = DIV_ROUND_UP(ret + start, PAGE_SIZE);
  
--		while (ap->num_folios < cur_pages) {
--			folio = readahead_folio(rac);
-+		while (pages < cur_pages) {
-+			unsigned int folio_pages;
+-		ap->descs[ap->num_folios].offset = start;
+-		fuse_folio_descs_length_init(ap->descs, ap->num_folios, nfolios);
+-		for (i = 0; i < nfolios; i++)
+-			ap->folios[i + ap->num_folios] = page_folio(pages[i]);
++		while (ret && i < npages) {
++			struct folio *folio;
++			unsigned int folio_offset;
++			unsigned int len;
+ 
+-		ap->num_folios += nfolios;
+-		ap->descs[ap->num_folios - 1].length -=
+-			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+-		nr_pages += nfolios;
++			folio = page_folio(pages[i]);
++			folio_offset = ((size_t)folio_page_idx(folio, pages[i]) <<
++				       PAGE_SHIFT) + start;
++			len = min_t(ssize_t, ret, folio_size(folio) - folio_offset);
 +
-+			if (!folio)
-+				folio = readahead_folio(rac);
++			ap->folios[ap->num_folios] = folio;
++			ap->descs[ap->num_folios].offset = folio_offset;
++			ap->descs[ap->num_folios].length = len;
++			ap->num_folios++;
 +
-+			folio_pages = folio_nr_pages(folio);
-+			if (folio_pages > cur_pages - pages)
-+				break;
-+
- 			ap->folios[ap->num_folios] = folio;
--			ap->descs[ap->num_folios].length = folio_size(folio);
-+			ap->descs[ap->num_folios].length = folio_pages << PAGE_SHIFT;
- 			ap->num_folios++;
-+			pages += folio_pages;
-+			folio = NULL;
- 		}
--		fuse_send_readpages(ia, rac->file);
--		nr_pages -= cur_pages;
-+		fuse_send_readpages(ia, rac->file, pages << PAGE_SHIFT);
-+		nr_pages -= pages;
++			ret -= len;
++			i += DIV_ROUND_UP(start + len, PAGE_SIZE);
++			start = 0;
++		}
++		nr_pages += npages;
  	}
- }
+ 	kfree(pages);
  
 -- 
 2.43.5
