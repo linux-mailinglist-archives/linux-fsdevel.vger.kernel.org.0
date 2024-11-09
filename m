@@ -1,121 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-34125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFCB9C28CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A60F9C28DA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88BB283587
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEE02838F9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D58BE5;
-	Sat,  9 Nov 2024 00:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE0D79CF;
+	Sat,  9 Nov 2024 00:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbsxxWlz"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="QLIdSrbX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YNQzAs5U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFAC23A9;
-	Sat,  9 Nov 2024 00:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C53D33FD
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731111988; cv=none; b=JAv6cw29l72p6UhoO2RegB3EWnlDkRLl+GoDxVVlsLijsgSDnuDMRfrK1oflZwnEjoIMec7buSZ0Jg3ymJFhr1hHiQSXYqt+qmPqSX0AIUsUfCfOon3aZVOnvexJ8RKWmo7ehwU2xBLvAcY37a1LgBNbT/JnCYH2syej/p1qXKc=
+	t=1731112382; cv=none; b=jQVNUCiPEQM1NTeOkhv+EMU+mEgrYY5rJ2VQctFaaK7NQEmf8tBxQVQaTfnbk7M89Zu/48VJD+lTcz/34InW5PjcTRQ4eIgq0M3msobWLAewy6OQsZu20i09cfHQg0CSeyb9lZ/27+Rh44+1SufXflKlCm0Qi/hJAjbWIBBmIb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731111988; c=relaxed/simple;
-	bh=ZmXu0HwvoenLIZbkHNIAg7KS/uJlYe3PcAhRHRcH9dU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2YOTqD5VJMraj3PdO7mxwB3adF5lwMa/OlXxUynrEsfFtuqxfsZlrM4iwwQfXhF+NMVZ4AusSwmYfShCMDE1fa3YiaHudbsHxmhRnUqitm8zExTHD02gKCM2dBjB69zEj28UFsL842QE72TOs0CNpFQ91Gg13rS8t+dX0s+cWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbsxxWlz; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731111986; x=1762647986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZmXu0HwvoenLIZbkHNIAg7KS/uJlYe3PcAhRHRcH9dU=;
-  b=kbsxxWlzI3h/2duJvl5xTNGffaRFmaKmgfGHBM3aTIWgzOGkgUWUP1d5
-   m7afRmvYf1Xzew0o2/GSy+unhR4yVbIWnyiBYT6fFSTR6B1RESINjaCGt
-   4OxaSNV92oMOuWbpjqkHVj4hX0PlU0F/GNlHzvPWC1WO//yI/QX7iRklT
-   3eaIwJ4GszfPieGN3A5z+xvCnKWJ1DpgDeu3Jo4+NU7EWqrAEpXkTE+uh
-   h21I4GJ8ffGX2zGE9wHM2Zy/Q7APLE8S3yGRxg8NXPR/PWPPWacRMHORd
-   T9eoFVQA5H/QFrIurM6UGSiy8kTClYm+S2KbdUy8AdaHrbOZ3fVZciR+Z
-   A==;
-X-CSE-ConnectionGUID: 6lx2BvEFQqGP3YrJRBaVOw==
-X-CSE-MsgGUID: GcJyGIawTUydBTWMQJv/tg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30892537"
-X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="30892537"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 16:26:26 -0800
-X-CSE-ConnectionGUID: IT7/5PGAT5eZlurXLmRbrg==
-X-CSE-MsgGUID: L8OH6U2LTeiBgRJMO6oP5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="86060092"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 08 Nov 2024 16:26:24 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9ZIz-000ruo-2f;
-	Sat, 09 Nov 2024 00:26:21 +0000
-Date: Sat, 9 Nov 2024 08:25:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	David Disseldorp <ddiss@suse.de>
-Subject: Re: [PATCH v3 2/9] initramfs_test: kunit tests for initramfs
- unpacking
-Message-ID: <202411090808.exzPhnlj-lkp@intel.com>
-References: <20241107002044.16477-3-ddiss@suse.de>
+	s=arc-20240116; t=1731112382; c=relaxed/simple;
+	bh=3KfHMnig3R7dC5eXjMwyLYxCzfzE19yqfWKlrIK/88M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s5g4f+8LsvUhX9guPKOn1ZuMm311GOuK3+YeMBHJwRS4TrRc9CwF/NkQGijP+mkeGm4/KbeNhLb+G/XrSZrVchbB73G3Jun/o6bTEZXffiU2Bw3vTu67LrEPz5k4PQLaqJtwusAfPVJe+Y+fso6ntrJg0du8k3H3bRj0ypRGeGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=QLIdSrbX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YNQzAs5U; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 18CFE11400AB;
+	Fri,  8 Nov 2024 19:32:58 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Fri, 08 Nov 2024 19:32:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731112378;
+	 x=1731198778; bh=sKErXZ0cZ5MqAJ62XmeQIsulSXyFMX+VUzA9LA05WII=; b=
+	QLIdSrbXXFyo3PvDWT/QJuiJUG+H9yUZTJV2Wbyar0I2UuoKzKUMzG3SiqWTW/Nf
+	UiUTTeAui1OC7nAD7GTUYmLypjFchpB8PbM9dHD8oqPdoB0AM/i79YrAhi7xae/N
+	sEsGZd3+vIJCNcGXLKLLjkd1esfRmRHLajjDVam25WT7wppE+rAhiflHameCzH8K
+	q0FOtA4QLPcLkBzruUozS9zwrc4xh4G+3c2cjFoYuNII+E93cEeuk3p1esSCmAoD
+	Tvpi6rwmf1+C3foKmN2awY9Bd1yIbPO3yUrjmSRnavdvnkRh2opQqWhW4AVp7vi3
+	c7vbcP35XqbDMRRRnWae8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731112378; x=
+	1731198778; bh=sKErXZ0cZ5MqAJ62XmeQIsulSXyFMX+VUzA9LA05WII=; b=Y
+	NQzAs5UPDxkz4enA5YI7B8d5/Nkcg13wjwY9jWTOjwvYpHAtPD66ovxy2Jfuno3a
+	MTnKJzSuYqE3klPjDZPhRDTAyofJ1B7vfHGbu9TieDuRmxnhUlkYwrKB3/853pLG
+	2YWzek221ZqITQRMsUb5BsSWCLZHKwr7Q5Sp3s+RbMSDJjV5cTiNMt7RshkRR6b6
+	69jLEEa4LBByhqxV/PNFhmbE4uPP21wBNgBHt7+Ptq3ZuejDE5SiBoav4XGzdj/U
+	evYXrdyCRyglSdgC2Oa7bP/8Ya4eo1AysTY0E50yosLdu/GMC+jDvaa4K62AB64D
+	+Ja5mxIxnjCoBDP6nPxNA==
+X-ME-Sender: <xms:uK0uZ48Z0Mj9akvpshYCSycIG9ApgqLZ2mZbzJIUevOthB4SLlqudA>
+    <xme:uK0uZwt4W1EbpaprWqbsP2MiI9yXTONv-bjN8o46Zk99YIzCq96g9rOj3Y8DhqeIp
+    6nr-vq1upxkBrP7>
+X-ME-Received: <xmr:uK0uZ-BWUP2ZBiOJUW1JD6wJuc8CuerjBkD2p2qhWOFTmVvRXqKa8hHWySz50zfWIiUdy39VdJXM7LAw9I0WETQCVQCOmaV0ua5HTzfZ2HkFeYOAXUcY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdejgddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeeutdekieelgeehudek
+    gffhtdduvddugfehleejjeegleeuffeukeehfeehffevleenucffohhmrghinhepghhith
+    hhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsggprh
+    gtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjohgrnhhnvghl
+    khhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvg
+    guihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomh
+    dprhgtphhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomhdp
+    rhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsh
+    hhrghkvggvlhdrsghuthhtsehlihhnuhigrdguvghvpdhrtghpthhtohepkhgvrhhnvghl
+    qdhtvggrmhesmhgvthgrrdgtohhm
+X-ME-Proxy: <xmx:uK0uZ4eppaTxZ1FWxfF-c0mDYiSyOD49CyatbfPkw7jSNEPAC3_Ntw>
+    <xmx:uK0uZ9M8kIfhNyFNtYF59FtNoDBkR80TJ7CkkC6QKaF2og-T5s_Eqw>
+    <xmx:uK0uZykUetws1HY7WJnUNLK8ts8Gk9pnw2FOHfrvRFXChfegHzKJuA>
+    <xmx:uK0uZ_v8gCSnJzf8aKBnoM1kH7P1bWn9WUg-oUbdOMXreyyt4GTBrA>
+    <xmx:uq0uZ2i3QocFipiisJXFpDVFmabIDFXmVDr2eMUfpSp5vbqj47mi930C>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Nov 2024 19:32:55 -0500 (EST)
+Message-ID: <9f8310d3-882f-4710-ad48-9a7b96fd6bf7@fastmail.fm>
+Date: Sat, 9 Nov 2024 01:32:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107002044.16477-3-ddiss@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/12] fuse: support large folios
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, jefflexu@linux.alibaba.com, willy@infradead.org,
+ shakeel.butt@linux.dev, kernel-team@meta.com
+References: <20241109001258.2216604-1-joannelkoong@gmail.com>
+ <CAJnrk1ZhK6kAvPzjnzZYFg7XyytBKR=6d4ED9=dTDVwuskosxg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1ZhK6kAvPzjnzZYFg7XyytBKR=6d4ED9=dTDVwuskosxg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Hi Joanne,
 
-kernel test robot noticed the following build warnings:
+thanks a lot for working on this!
 
-[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
-[also build test WARNING on brauner-vfs/vfs.all linus/master v6.12-rc6 next-20241108]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 11/9/24 01:22, Joanne Koong wrote:
+> On Fri, Nov 8, 2024 at 4:13 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>> This patchset adds support for folios larger than one page size in FUSE.
+>>
+>> This patchset is rebased on top of the (unmerged) patchset that removes temp
+>> folios in writeback [1]. (There is also a version of this patchset that is
+>> independent from that change, but that version has two additional patches
+>> needed to account for temp folios and temp folio copying, which may require
+>> some debate to get the API right for as these two patches add generic
+>> (non-FUSE) helpers. For simplicity's sake for now, I sent out this patchset
+>> version rebased on top of the patchset that removes temp pages)
+>>
+>> This patchset was tested by running it through fstests on passthrough_hp.
+> 
+> Will be updating this thread with some fio benchmark results early next week.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Disseldorp/init-add-initramfs_internal-h/20241107-083002
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20241107002044.16477-3-ddiss%40suse.de
-patch subject: [PATCH v3 2/9] initramfs_test: kunit tests for initramfs unpacking
-config: sh-randconfig-r122-20241108 (https://download.01.org/0day-ci/archive/20241109/202411090808.exzPhnlj-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241109/202411090808.exzPhnlj-lkp@intel.com/reproduce)
+I will try to find some time over the weekend to improve this patch 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411090808.exzPhnlj-lkp@intel.com/
+https://github.com/libfuse/libfuse/pull/807/commits/e83789cc6e83ca42ccc9899c4f7f8c69f31cbff9
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+It basically should give you the fuse interface speed, without being IO bound.
 
->> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> set_reset_devices (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x1c (section: .data) -> set_reset_devices (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x38 (section: .data) -> set_reset_devices (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x54 (section: .data) -> set_reset_devices (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x70 (section: .data) -> set_reset_devices (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x8c (section: .data) -> set_reset_devices (section: .init.text)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Best,
+Bernd
 
