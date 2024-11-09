@@ -1,125 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-34122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819E59C28B6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:14:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3539C28BC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472CE2828B9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:14:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92607B22209
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34FD156CF;
-	Sat,  9 Nov 2024 00:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96434A18;
+	Sat,  9 Nov 2024 00:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eu2IFWls"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uYov01vI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A1E11C83
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561C910E0
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731111238; cv=none; b=QX7jrO+hAfSKMd89IVuvXnW0S1923XfjlRjtswuZPQjDpIHNz1OF3X+jwsxXJ/inQR9xkkLrNp+bbYJ41Cjey2Aec29utSUiJ7/LKFWYNn67G+x5chZQR1Epjn856RhmroQGvX8xnjBqrRM9PVPGi8HjAFDkwV8A5vwJF8KXUuI=
+	t=1731111395; cv=none; b=qrzf5JzDyPrK5YfjWqSOT7NUvj/QpDeZBh7eRukVbfQO5l0EQlcuTee67QoFb1c4i7YNJRYDWDQ4csx8v9GmrqbLQI+KZXoft23goQpxEcLAT7pps3XDoMAl5P4kk9fVWv8uBoBcqHBMztbKMVejWLOinAHADE8HarOpCsbRG3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731111238; c=relaxed/simple;
-	bh=n0wTy08gTNDcTPVncomZCV+JItLqn+6vP1ed+UPceNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FxmBPH/OfeNJolYXHaRvHoT6bf/GWxzWu35l7eIyzCCV544D7/RdX4DjaEQ5rzgFrmpHRU7fYXHBjD5A/1NWKHPwhQ3mFdtnUrL+GAbyBQBsu6aKKqTHB57/0hbNiUHMGKpFcAnZB98XtQMaSsGoWK5cGIFvUkKzvzBRehQZ798=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eu2IFWls; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e38fa1f82fso22042407b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 16:13:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731111236; x=1731716036; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0cXyCKYyxPU+j24IjLjAHeILBfQqTehQhtOnNEc9Tsc=;
-        b=eu2IFWlsQlVW5Q18PoBLYh2rY1YHc/Cc2vG5YxRSioem+GGdmEgqP2VPhA5VDLEY1a
-         XUKNmO99eJw29i4/baRatCbUGV1hsNIu5a9aGyzvoHXNxLfbizMp6nA8LQSViQoIQX9u
-         Ka5HaRoSPMiXXCODrd6fBWeIBKqqLOp0zNLnVX7/RCTBvyYrBg36MsA6UNSnFYa/kEFT
-         milhUiFhuUF5wqlUiqIxvkZGmE9uhWZ7xwAT+7q634a/q3IhB5ab0RNwt5fvSrJum50K
-         fmcccfcwcRRl5fLtEEJ4zGSltpF/qsM6z3sopz2m0yeMB2J1yqpLGQVykqVtZ3OJPuGY
-         ymWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731111236; x=1731716036;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0cXyCKYyxPU+j24IjLjAHeILBfQqTehQhtOnNEc9Tsc=;
-        b=jXdfxgU+byaT8ql1UJa76kPkEonu8b7tMdhmpNoHMTSzfjQxWguTguv3pcen3bwi7V
-         JiXgEGZwcXujzSyd8WK7A/mLSa14oz3rlLiKNvBKtENB/lSGkdsH98CoBWJnTrxirxzQ
-         sKuQEk+OgP3lHJaBfkdClguvpUhEay1KO2bXFJZqy+nWii9G0gQfjY3dFhWl5rPzuSYO
-         VljAWmI53XWSoXhXrTnqjeR6RAPpQdd2GEKbc0XChDXA6sUugLWV96qDJoitXPIdu78e
-         YKLI0zU8awVgm+Rq5CEQIkLYjsWohxZmxJU2V5JJ38hKA3+3I/WMd1PfXsS0WGGQXP/U
-         mUSA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8segOgHodan8gS3EVddEfU5Lkn9dIQe9Kp2dtpjEqHfsK1v/y2ow8WNe7nggN6WeycJ97XShmCIdN2bfY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSGscLU9sFyI/5pxNu1K5toE2VIkVAw9V8vQ9/uP5XkmFxVsfU
-	sk+TzSEAYfM2nHoieimrT/4I1QX89GwnccZDOAO3GaE9vBAz3x/k
-X-Google-Smtp-Source: AGHT+IH2qlGPjKHETbOw6e2NjWmPSNSapYh0y7aaToGuXoa4CS99SiFpF5hcWXNMicIn655fRs0Yhg==
-X-Received: by 2002:a05:690c:7083:b0:6ea:95f5:2608 with SMTP id 00721157ae682-6eaddd8a695mr60643507b3.7.1731111235787;
-        Fri, 08 Nov 2024 16:13:55 -0800 (PST)
-Received: from localhost (fwdproxy-nha-114.fbsv.net. [2a03:2880:25ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8ef3ebsm9417937b3.34.2024.11.08.16.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 16:13:55 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	willy@infradead.org,
-	shakeel.butt@linux.dev,
-	kernel-team@meta.com
-Subject: [PATCH 12/12] fuse: enable large folios
-Date: Fri,  8 Nov 2024 16:12:58 -0800
-Message-ID: <20241109001258.2216604-13-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241109001258.2216604-1-joannelkoong@gmail.com>
-References: <20241109001258.2216604-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1731111395; c=relaxed/simple;
+	bh=NHaA1F7/WDEnoijJHEuyS21SRYtjbOGcJArc2PsE9A0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzVEnY/7lLzcEf9lPiZn2PnPFiP/aaR2RqwN3dAyN23RTTcawYSuwsRa35dnZkPqGDrunjOxGyLPXcBbEUhCuTwUwkoa4TNs2YyoljQNZCdASFWDwstfMMKbopVWutAtQfF0ZKelGmeBgLsYCXWB/9pV33PQ71FTlkCNdijRz24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uYov01vI; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 8 Nov 2024 16:16:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731111390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A839SDJM87IOrSNeKyC99w1i2Ui1CJ5PhN/T3xM/Kqk=;
+	b=uYov01vIAWR+sG5rjBY+oTmqvVpROBs1ulB7AQn82jepVM13jQYl8q+XrK3rMb56cMdSpL
+	fRkGlK7c6f3SPzxxmkl6gidSNov6IfVJERjD/wz4zj6cD6qsJggWbLEoVxP9MrWu+95V7i
+	d9b8xPxYIupYdcNyqxfC6uICyRwb0s0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Subject: Re: [PATCH v4 2/6] mm: skip reclaiming folios in legacy memcg
+ writeback contexts that may block
+Message-ID: <tlwkh4pxerhijg5uz2556d4jwswctfyftpxvfjgb3tw64mewek@fy4cto4t5nmj>
+References: <20241107235614.3637221-1-joannelkoong@gmail.com>
+ <20241107235614.3637221-3-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107235614.3637221-3-joannelkoong@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Enable folios larger than one page size.
+On Thu, Nov 07, 2024 at 03:56:10PM -0800, Joanne Koong wrote:
+> Currently in shrink_folio_list(), reclaim for folios under writeback
+> falls into 3 different cases:
+> 1) Reclaim is encountering an excessive number of folios under
+>    writeback and this folio has both the writeback and reclaim flags
+>    set
+> 2) Dirty throttling is enabled (this happens if reclaim through cgroup
+>    is not enabled, if reclaim through cgroupv2 memcg is enabled, or
+>    if reclaim is on the root cgroup), or if the folio is not marked for
+>    immediate reclaim, or if the caller does not have __GFP_FS (or
+>    __GFP_IO if it's going to swap) set
+> 3) Legacy cgroupv1 encounters a folio that already has the reclaim flag
+>    set and the caller did not have __GFP_FS (or __GFP_IO if swap) set
+> 
+> In cases 1) and 2), we activate the folio and skip reclaiming it while
+> in case 3), we wait for writeback to finish on the folio and then try
+> to reclaim the folio again. In case 3, we wait on writeback because
+> cgroupv1 does not have dirty folio throttling, as such this is a
+> mitigation against the case where there are too many folios in writeback
+> with nothing else to reclaim.
+> 
+> The issue is that for filesystems where writeback may block, sub-optimal
+> workarounds may need to be put in place to avoid a potential deadlock
+> that may arise from reclaim waiting on writeback. (Even though case 3
+> above is rare given that legacy cgroupv1 is on its way to being
+> deprecated, this case still needs to be accounted for). For example, for
+> FUSE filesystems, a temp page gets allocated per dirty page and the
+> contents of the dirty page are copied over to the temp page so that
+> writeback can be immediately cleared on the dirty page in order to avoid
+> the following deadlock:
+> * single-threaded FUSE server is in the middle of handling a request that
+>   needs a memory allocation
+> * memory allocation triggers direct reclaim
+> * direct reclaim waits on a folio under writeback (eg falls into case 3
+>   above) that needs to be written back to the FUSE server
+> * the FUSE server can't write back the folio since it's stuck in direct
+>   reclaim
+> 
+> In this commit, if legacy memcg encounters a folio with the reclaim flag
+> set (eg case 3) and the folio belongs to a mapping that has the
+> AS_WRITEBACK_MAY_BLOCK flag set, the folio will be activated and skip
+> reclaim (eg default to behavior in case 2) instead.
+> 
+> This allows for the suboptimal workarounds added to address the
+> "reclaim wait on writeback" deadlock scenario to be removed.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/fuse/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This looks good just one nit below.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index a542f16d5a69..20fe3dff8904 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3166,12 +3166,17 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	unsigned int max_pages, max_order;
- 
- 	inode->i_fop = &fuse_file_operations;
- 	inode->i_data.a_ops = &fuse_file_aops;
- 	if (fc->writeback_cache)
- 		mapping_set_writeback_may_block(&inode->i_data);
- 
-+	max_pages = min(fc->max_write >> PAGE_SHIFT, fc->max_pages);
-+	max_order = ilog2(max_pages);
-+	mapping_set_folio_order_range(inode->i_mapping, 0, max_order);
-+
- 	INIT_LIST_HEAD(&fi->write_files);
- 	INIT_LIST_HEAD(&fi->queued_writes);
- 	fi->writectr = 0;
--- 
-2.43.5
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
+> ---
+>  mm/vmscan.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 749cdc110c74..e9755cb7211b 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1110,6 +1110,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>  		if (writeback && folio_test_reclaim(folio))
+>  			stat->nr_congested += nr_pages;
+>  
+> +		mapping = folio_mapping(folio);
+
+Move the above line within folio_test_writeback() check block.
+
+> +
+>  		/*
+>  		 * If a folio at the tail of the LRU is under writeback, there
+>  		 * are three cases to consider.
+> @@ -1129,8 +1131,9 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>  		 * 2) Global or new memcg reclaim encounters a folio that is
+>  		 *    not marked for immediate reclaim, or the caller does not
+>  		 *    have __GFP_FS (or __GFP_IO if it's simply going to swap,
+> -		 *    not to fs). In this case mark the folio for immediate
+> -		 *    reclaim and continue scanning.
+> +		 *    not to fs), or writebacks in the mapping may block.
+> +		 *    In this case mark the folio for immediate reclaim and
+> +		 *    continue scanning.
+>  		 *
+>  		 *    Require may_enter_fs() because we would wait on fs, which
+>  		 *    may not have submitted I/O yet. And the loop driver might
+> @@ -1165,7 +1168,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>  			/* Case 2 above */
+>  			} else if (writeback_throttling_sane(sc) ||
+>  			    !folio_test_reclaim(folio) ||
+> -			    !may_enter_fs(folio, sc->gfp_mask)) {
+> +			    !may_enter_fs(folio, sc->gfp_mask) ||
+> +			    (mapping && mapping_writeback_may_block(mapping))) {
+>  				/*
+>  				 * This is slightly racy -
+>  				 * folio_end_writeback() might have
+> -- 
+> 2.43.5
+> 
 
