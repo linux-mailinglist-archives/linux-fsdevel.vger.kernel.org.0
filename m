@@ -1,135 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-34124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D27F9C28C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:22:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFCB9C28CD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 01:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 977801C21342
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88BB283587
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2024 00:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9453A7;
-	Sat,  9 Nov 2024 00:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D58BE5;
+	Sat,  9 Nov 2024 00:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWyWtIP8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbsxxWlz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960FA81E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Nov 2024 00:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFAC23A9;
+	Sat,  9 Nov 2024 00:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731111746; cv=none; b=YGvFsynoOp/PwC3m1VlOPUCctt8BgGZ3UOxr4Et289bZ1K2r9O0K1f77PG0TO+Rz1xn1Hd2lKbBoUDpBrAocsSlz9UnXGJZ59NWRwEnwaaqnH/XHf2hNPjq2kjOEQGc8r9yl26yrsCVnTZsv8B4D00zwBLOBcpZ5EF6hf+Psjfk=
+	t=1731111988; cv=none; b=JAv6cw29l72p6UhoO2RegB3EWnlDkRLl+GoDxVVlsLijsgSDnuDMRfrK1oflZwnEjoIMec7buSZ0Jg3ymJFhr1hHiQSXYqt+qmPqSX0AIUsUfCfOon3aZVOnvexJ8RKWmo7ehwU2xBLvAcY37a1LgBNbT/JnCYH2syej/p1qXKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731111746; c=relaxed/simple;
-	bh=wjRNSCxtkGJZXlCWeOBAsLyJsahGorDXrNpC9RkKHl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GpVZgXMRmFZShNqnVX+S7TFqvVac/GptQPC9CrRDHN3Q/0ofr5XePUD3n2MukaNqyBxlP2J0XZL6IB+N7CcDkuoJFpQA/uaHKX7HbzVRMq/AkVbOFTqNTrIFTQHpgf6Ma2cG5jk+P+yysc2UN/PPyCjzx/cyPnxFF3m5qrrCYQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWyWtIP8; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b155cca097so232411085a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2024 16:22:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731111743; x=1731716543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZBd+oAh5dNaRfRGbRZeXnaegt8mnkVkCHw4kgzh4lsI=;
-        b=CWyWtIP8kcpN1zmAHu/848Vt3NMPxltUlj15F1vvhT0zJLcspoQg1WWEHogmK43Slb
-         1MkV6wtzNUbXzyoWEf7H1rT/EC56Yz9Iv72XhaQngVqi9fOMtX+2rSsauwulOx5UUyWA
-         SYTUwLzqeUr+yo0Ehf1b5yH5nyberIXw7qm/kPhQvJV4lyC7QQCE1PNo7MrDNyOKBRvu
-         yB83q4a9/lh1yPZjaWMJNcXQ268onbhqZa1bwS+JTc1v1BrNlXSE/MRrhlRoB6+V8vzs
-         CQqSbEG0gDQXpBTbSTE9/6EbJ5uEcbqIIbHsrRGT/Y0ceOoOW9WpfOMdW9cKwYgE8HmH
-         xPYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731111743; x=1731716543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZBd+oAh5dNaRfRGbRZeXnaegt8mnkVkCHw4kgzh4lsI=;
-        b=pWY8QQXS0Lrvg1ZHcp5cKOnF3V6TegVQIRst3PtvhuyQplgBQcxNRxh+UHw8hYp3SZ
-         EAStbdWKaUzIeOylpyMmoJWfGht0cIaaVlJP2CY1VMnym5PitTKQmrUU44pBOJjcRhcA
-         Ned3rOSs8lSfVG/HLyWFYB70rkT4BkDPjt9Y0ybvC9o/TcfPErOZ1iX9tLn3BU3vaZaa
-         TQiee1+ZEfPoEIKawz7trDxHwJkmBrRBAliHJBiGYIjtPv4WDWP/5TJw7O7sDYQpyy/4
-         GFjgpVbz9mDL99vjINlofwWWfRaOmv8PzY9csN3LpAdOykmJcZ5H1+tJlZqfZ5CJ3sgM
-         43Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvVp2yLeY9Ux1xTjntqjCrfAoMPz88H7QY7qn30jJY5qrj6ZVNaZzKOcJxxzDERfCpkEVjWibEJYWJdVTk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcl6CQkYCYP7P9lm59nBKrqGhmApPMHp2rTNfvt6KFMBlm+1Nc
-	q2NKllEycQd9tKmoqYISKS3F/zl9z+PkHyDTqnQnThYfKqawPUE1YjPXrmSbOMc6kGkF286mBq8
-	0G/nBlxb/IHaAYxNcGd7e7qQO1uX1BKDM
-X-Google-Smtp-Source: AGHT+IEtG1hxPVbIqj3BTPexvZZpxB5v2yhTfu6L8w8AQHcYKAof0l3lMm37tklitxR435ipzFgsENrT4KO7SXqBLbc=
-X-Received: by 2002:a05:620a:28ca:b0:7a9:abdf:f517 with SMTP id
- af79cd13be357-7b33192edfbmr956202885a.25.1731111743483; Fri, 08 Nov 2024
- 16:22:23 -0800 (PST)
+	s=arc-20240116; t=1731111988; c=relaxed/simple;
+	bh=ZmXu0HwvoenLIZbkHNIAg7KS/uJlYe3PcAhRHRcH9dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2YOTqD5VJMraj3PdO7mxwB3adF5lwMa/OlXxUynrEsfFtuqxfsZlrM4iwwQfXhF+NMVZ4AusSwmYfShCMDE1fa3YiaHudbsHxmhRnUqitm8zExTHD02gKCM2dBjB69zEj28UFsL842QE72TOs0CNpFQ91Gg13rS8t+dX0s+cWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbsxxWlz; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731111986; x=1762647986;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZmXu0HwvoenLIZbkHNIAg7KS/uJlYe3PcAhRHRcH9dU=;
+  b=kbsxxWlzI3h/2duJvl5xTNGffaRFmaKmgfGHBM3aTIWgzOGkgUWUP1d5
+   m7afRmvYf1Xzew0o2/GSy+unhR4yVbIWnyiBYT6fFSTR6B1RESINjaCGt
+   4OxaSNV92oMOuWbpjqkHVj4hX0PlU0F/GNlHzvPWC1WO//yI/QX7iRklT
+   3eaIwJ4GszfPieGN3A5z+xvCnKWJ1DpgDeu3Jo4+NU7EWqrAEpXkTE+uh
+   h21I4GJ8ffGX2zGE9wHM2Zy/Q7APLE8S3yGRxg8NXPR/PWPPWacRMHORd
+   T9eoFVQA5H/QFrIurM6UGSiy8kTClYm+S2KbdUy8AdaHrbOZ3fVZciR+Z
+   A==;
+X-CSE-ConnectionGUID: 6lx2BvEFQqGP3YrJRBaVOw==
+X-CSE-MsgGUID: GcJyGIawTUydBTWMQJv/tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30892537"
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="30892537"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 16:26:26 -0800
+X-CSE-ConnectionGUID: IT7/5PGAT5eZlurXLmRbrg==
+X-CSE-MsgGUID: L8OH6U2LTeiBgRJMO6oP5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="86060092"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 08 Nov 2024 16:26:24 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9ZIz-000ruo-2f;
+	Sat, 09 Nov 2024 00:26:21 +0000
+Date: Sat, 9 Nov 2024 08:25:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kselftest@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	David Disseldorp <ddiss@suse.de>
+Subject: Re: [PATCH v3 2/9] initramfs_test: kunit tests for initramfs
+ unpacking
+Message-ID: <202411090808.exzPhnlj-lkp@intel.com>
+References: <20241107002044.16477-3-ddiss@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109001258.2216604-1-joannelkoong@gmail.com>
-In-Reply-To: <20241109001258.2216604-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 8 Nov 2024 16:22:12 -0800
-Message-ID: <CAJnrk1ZhK6kAvPzjnzZYFg7XyytBKR=6d4ED9=dTDVwuskosxg@mail.gmail.com>
-Subject: Re: [PATCH 00/12] fuse: support large folios
-To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
-	jefflexu@linux.alibaba.com, willy@infradead.org, shakeel.butt@linux.dev, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107002044.16477-3-ddiss@suse.de>
 
-On Fri, Nov 8, 2024 at 4:13=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> This patchset adds support for folios larger than one page size in FUSE.
->
-> This patchset is rebased on top of the (unmerged) patchset that removes t=
-emp
-> folios in writeback [1]. (There is also a version of this patchset that i=
-s
-> independent from that change, but that version has two additional patches
-> needed to account for temp folios and temp folio copying, which may requi=
-re
-> some debate to get the API right for as these two patches add generic
-> (non-FUSE) helpers. For simplicity's sake for now, I sent out this patchs=
-et
-> version rebased on top of the patchset that removes temp pages)
->
-> This patchset was tested by running it through fstests on passthrough_hp.
+Hi David,
 
-Will be updating this thread with some fio benchmark results early next wee=
-k.
+kernel test robot noticed the following build warnings:
 
->
-> [1] https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joanne=
-lkoong@gmail.com/
->
-> Joanne Koong (12):
->   fuse: support copying large folios
->   fuse: support large folios for retrieves
->   fuse: refactor fuse_fill_write_pages()
->   fuse: support large folios for non-writeback writes
->   fuse: support large folios for folio reads
->   fuse: support large folios for symlinks
->   fuse: support large folios for stores
->   fuse: support large folios for queued writes
->   fuse: support large folios for readahead
->   fuse: support large folios for direct io
->   fuse: support large folios for writeback
->   fuse: enable large folios
->
->  fs/fuse/dev.c  | 131 +++++++++++++++++++++++-----------------------
->  fs/fuse/dir.c  |   8 +--
->  fs/fuse/file.c | 138 +++++++++++++++++++++++++++++++------------------
->  3 files changed, 159 insertions(+), 118 deletions(-)
->
-> --
-> 2.43.5
->
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on brauner-vfs/vfs.all linus/master v6.12-rc6 next-20241108]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Disseldorp/init-add-initramfs_internal-h/20241107-083002
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20241107002044.16477-3-ddiss%40suse.de
+patch subject: [PATCH v3 2/9] initramfs_test: kunit tests for initramfs unpacking
+config: sh-randconfig-r122-20241108 (https://download.01.org/0day-ci/archive/20241109/202411090808.exzPhnlj-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241109/202411090808.exzPhnlj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411090808.exzPhnlj-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+>> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> set_reset_devices (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x1c (section: .data) -> set_reset_devices (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x38 (section: .data) -> set_reset_devices (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x54 (section: .data) -> set_reset_devices (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x70 (section: .data) -> set_reset_devices (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x8c (section: .data) -> set_reset_devices (section: .init.text)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
