@@ -1,73 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9663A9C332D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2024 16:30:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD779C332E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2024 16:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269BB1F2142B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2024 15:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAFF8280C04
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2024 15:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAA2155C9E;
-	Sun, 10 Nov 2024 15:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF85156C52;
+	Sun, 10 Nov 2024 15:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZfYZoDf+"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ITqFiO9j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7BB13C8F3
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2024 15:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAEC12F375
+	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2024 15:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731252564; cv=none; b=l4LIOYVew3cXPqhVyqeESBbRj0aB4V7Gbvz4J1i6973Y8jwCDqwZH/+2wBpWuUNCgUTwlnW4rh4ns34NgM6hbEMny9zvn6hMzwj3pC5bnOKhL3+FidVEA15TrTuPP4LJt0avtgB1Lva6tNoLbWAbJQ0Fzx0UBiTcqGRQ26aY6SE=
+	t=1731252565; cv=none; b=ru6/groeQ1xrm141Pa/79ON+/CiN56PftJ8Xtl4jtaZfw6GRFFiItYGjuOXsAVWxp1epcQB4DeZb/b5FRs8NWmYPIi0hk8apyrA63jzzVH6UZpio/3SlY0Vy+GAjVbU8a53ZNQdzZriKPbZ+PbAOAIk3yAESUT/1KHCLVFWcE1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731252564; c=relaxed/simple;
-	bh=aEnrAJGEshe44zlb6XbbKSp/FXpeH0RZvF9K0y5SLj4=;
+	s=arc-20240116; t=1731252565; c=relaxed/simple;
+	bh=QqsnT+PFB0stp1XOLxW6GR03t+Q+Rw9k/OtfDS+hMd8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dzjN/hL0ozaLM/hUPLD4mRgNNVvOQ49CMSmyjg8VpribhbMJp45ZACH+sSA+KxiGn/pqeKp4UJEaTcytqwpt83M6j2yjXxUTGDr1stypszp19ZCHrmDa7HlxN3mjfbHp97gknslIBo8KWG54FNCaKSi4/YQd7pRZDAJqzDeHV2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZfYZoDf+; arc=none smtp.client-ip=209.85.215.169
+	 MIME-Version; b=gjc57iwA7sOyQDU4AugqjIBp8NxLKms9JE6P4Vh4VslYPorfY9TKa6lZHVjMu8IFmzfM4F4vTxyOk43N6u/hoBGeDFzAsy0Y5S6mJHivX5aIdaSRs718mGEH9tIPKt5gFgGpQsNxFIsSUGhrGxpjXCLVG2mT9yb/OJiAjW77ikA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ITqFiO9j; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7f3da2c2cb5so2733162a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2024 07:29:22 -0800 (PST)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7f3da2c2cb5so2733165a12.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2024 07:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731252562; x=1731857362; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731252564; x=1731857364; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SJBisbj/rGvidSFxNEf05dxDvPbQrKvqbgVXmZ2uTrI=;
-        b=ZfYZoDf+c7eHi5RDHnl2c3+aGOxYMh/suv0VAX/EdlySskaQd/kZLeqqhvnLCvEofX
-         c0YWuNqg/JguAUt09caneDLVxGTZujlvsqfOu/vK+01pgqFvp4YrHOvooGMDCfSXp0nQ
-         tUuhFDrkr5BRwMPIYZwVD2GtMn/g3yTZCOCK/N6zHI+7rBaps2s7kqqm+HjbsWW4WJI+
-         c+eedGZy5PrI+Kk3WzBak8rf300HSTYVdPfuZvNPmRvM/pklP8IqE/CIWJGEjjYb7qBU
-         yrXnlnuNudylAeDbLPKeI3pn3R47UgLsQc5WTyy7srFK+oQCrEOlL7Tos+6gWGX4vlw/
-         woQA==
+        bh=BpaeGG8sCxZf4JRh/p7NGjZl2gbHvBRPjf0TUvSvRrE=;
+        b=ITqFiO9jdn5hfePmhO3CDfJ4/Dmi47iutuGrtDiahBPQhv0vuNt8DvJBOLO3Vxbm3j
+         csJv0r53dA3Iw5r4Oyz+o8HNT+AnndUKoaQQv8Plso7XHK9X5ztaaObQL/PX9x5+v3AK
+         svwxzNw08U3xQl9ftcmwmXj8N0SH1rhpCyajbwU9uOHps8jGHylvxgWT6cEhoORiWMSc
+         DfWarKen3KehFQL5V0oQ4lXV4hOKfHYjbrxiU1wH/GwCNC9ZtZ/ylBhYS2sSgy4LlVIA
+         7iYkVAJkiGiVf6foE4lxi3B77XWykVOy6Ww0w2X40CY/7+KkhxAXQ/vRX8B39Zjr/M4y
+         by3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731252562; x=1731857362;
+        d=1e100.net; s=20230601; t=1731252564; x=1731857364;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SJBisbj/rGvidSFxNEf05dxDvPbQrKvqbgVXmZ2uTrI=;
-        b=V35WD4Jwm/4FXvalIlbgRQ1PGjrcRXdZntjhY960EtoGavcbnIt0QR+QgYY3BbcvIi
-         LvPMHxr1sMs9gurjyRYh2BmyeJRgA/i4JoCln8/Fzs1kng3+BX7yLZIWtJDcoaxGItIt
-         anewVgdU2sXAtKi/0/KPbum83Ocaj0QdbK6fI4F9JJzuXLdMPgbw8fUhckP1327THwG4
-         Vn5vXPYeGY00h7xBOuqGcUqSY53iXLHPO7wzFuJYy4uZOyrLQH/5zrLNyDD+BA+YLEsg
-         72kBsYK6TytlZSUpChVsmVvdf4f2upqM87G1ROHCspJyq1R7HLCs287XAI/K+H6lplIx
-         4Ucg==
-X-Forwarded-Encrypted: i=1; AJvYcCXK1TSP1uThIBXv9sCvGQZbe77Dvfa17x7B+LJEQmva4pXvWpPAoAkgBWHqNDJhiVR6d3cWyPf5MsN57Mdp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2OeGuO9XI4UYqGyiZZ9NVTiOIuhF/llw5fgrNjISx0yT9MFT
-	vWHRKsfPRsyd8txajFF70/R3Cxa0EWW+Q7zBPu4KUfMqSZHDZDWQoSDjDL2g1s56m3S8m0rqUyw
-	tSyc=
-X-Google-Smtp-Source: AGHT+IEztLXy7pfG6RYnicaB5W8MU9mXcvU3VePtiJO2A6vGFaDJWmS6lrttgNl/g5B6W7Nsuo57hw==
-X-Received: by 2002:a17:90b:224f:b0:2e2:da6e:8807 with SMTP id 98e67ed59e1d1-2e9b177fc52mr13814904a91.26.1731252562169;
-        Sun, 10 Nov 2024 07:29:22 -0800 (PST)
+        bh=BpaeGG8sCxZf4JRh/p7NGjZl2gbHvBRPjf0TUvSvRrE=;
+        b=N04fRwybkVOTDUAOl42XDoayXNEG51sjKXvZvV4a5Imk3/xn+8usDTLsulEFx22YS8
+         v/xVDw2D0AFDE8O1gvBgrKtpPCMSRBse9A5jJ9IPEMhncPb/gQEKVhKQkeyjebe0wzUV
+         zTNPxqbyRjy8TJraSR9YhmEsQ/FQ3KW2Gk4+g+0xAu4QfAwJFtxDgLu3HHPBrFewKhls
+         /TSnfCAbFyM86uFxbItizmCvyrq7oiq5FYsJByE38oZ+IZ2bu3nLhi/ML7U8cHGUtde1
+         66pbpjuGfBII3aBEGv19sv2efd+ei5p0O16W/jcnygMx6bJccyTTGhQANGCyXqvOBlea
+         PVlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUYwAVuwOq/Ud+Xfj7vXNGDTZxmas2FIZgnsfFKs+PTwUpQEATBrUzZiqrE/2h48KHRbnOyIqEF5KGcc+w@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBAnA4nQtPVeSEgbioBwEVjWw5fmhjslhiGimwhL+XmAISuiZU
+	0Z9YvkkfRKSqZ4/mc8+UdXNSxLo6VLdhr0FJN2tjnUVVF+njMLyuKx7QA4FdDLY=
+X-Google-Smtp-Source: AGHT+IGs3z/1IuRBhhgcQrQmIVWwPr43n/jctzILt+apLswhddJAGBym568yRqijFSP667Ww7gbDZA==
+X-Received: by 2002:a17:90b:1f8e:b0:2e0:d957:1b9d with SMTP id 98e67ed59e1d1-2e9b17163cbmr13877494a91.13.1731252563753;
+        Sun, 10 Nov 2024 07:29:23 -0800 (PST)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f935dsm9940973a91.35.2024.11.10.07.29.20
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f935dsm9940973a91.35.2024.11.10.07.29.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 07:29:21 -0800 (PST)
+        Sun, 10 Nov 2024 07:29:23 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -76,9 +75,9 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	willy@infradead.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 06/15] mm/truncate: make invalidate_complete_folio2() public
-Date: Sun, 10 Nov 2024 08:27:58 -0700
-Message-ID: <20241110152906.1747545-7-axboe@kernel.dk>
+Subject: [PATCH 07/15] fs: add RWF_UNCACHED iocb and FOP_UNCACHED file_operations flag
+Date: Sun, 10 Nov 2024 08:27:59 -0700
+Message-ID: <20241110152906.1747545-8-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241110152906.1747545-1-axboe@kernel.dk>
 References: <20241110152906.1747545-1-axboe@kernel.dk>
@@ -90,60 +89,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make invalidate_complete_folio2() be publicly available, and have it
-take a gfp_t mask as well rather than hardcode GFP_KERNEL. The only
-caller just passes in GFP_KERNEL, no functional changes in this patch.
+If a file system supports uncached buffered IO, it may set FOP_UNCACHED
+and enable RWF_UNCACHED. If RWF_UNCACHED is attempted without the file
+system supporting it, it'll get errored with -EOPNOTSUPP.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/pagemap.h | 2 ++
- mm/truncate.c           | 9 +++++----
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ include/linux/fs.h      | 10 +++++++++-
+ include/uapi/linux/fs.h |  6 +++++-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 8afacb7520d4..0122b3fbe2ac 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -34,6 +34,8 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count);
- void kiocb_invalidate_post_direct_write(struct kiocb *iocb, size_t count);
- int filemap_invalidate_pages(struct address_space *mapping,
- 			     loff_t pos, loff_t end, bool nowait);
-+int invalidate_complete_folio2(struct address_space *mapping,
-+				struct folio *folio, gfp_t gfp_mask);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3559446279c1..5abc53991cd0 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -320,6 +320,7 @@ struct readahead_control;
+ #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
+ #define IOCB_APPEND		(__force int) RWF_APPEND
+ #define IOCB_ATOMIC		(__force int) RWF_ATOMIC
++#define IOCB_UNCACHED		(__force int) RWF_UNCACHED
  
- int write_inode_now(struct inode *, int sync);
- int filemap_fdatawrite(struct address_space *);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 0668cd340a46..e084f7aa9370 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -546,13 +546,13 @@ EXPORT_SYMBOL(invalidate_mapping_pages);
-  * shrink_folio_list() has a temp ref on them, or because they're transiently
-  * sitting in the folio_add_lru() caches.
-  */
--static int invalidate_complete_folio2(struct address_space *mapping,
--					struct folio *folio)
-+int invalidate_complete_folio2(struct address_space *mapping,
-+				struct folio *folio, gfp_t gfp_mask)
- {
- 	if (folio->mapping != mapping)
- 		return 0;
+ /* non-RWF related bits - start at 16 */
+ #define IOCB_EVENTFD		(1 << 16)
+@@ -354,7 +355,8 @@ struct readahead_control;
+ 	{ IOCB_SYNC,		"SYNC" }, \
+ 	{ IOCB_NOWAIT,		"NOWAIT" }, \
+ 	{ IOCB_APPEND,		"APPEND" }, \
+-	{ IOCB_ATOMIC,		"ATOMIC"}, \
++	{ IOCB_ATOMIC,		"ATOMIC" }, \
++	{ IOCB_UNCACHED,	"UNCACHED" }, \
+ 	{ IOCB_EVENTFD,		"EVENTFD"}, \
+ 	{ IOCB_DIRECT,		"DIRECT" }, \
+ 	{ IOCB_WRITE,		"WRITE" }, \
+@@ -2116,6 +2118,8 @@ struct file_operations {
+ #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
+ /* Treat loff_t as unsigned (e.g., /dev/mem) */
+ #define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
++/* File system supports uncached read/write buffered IO */
++#define FOP_UNCACHED		((__force fop_flags_t)(1 << 6))
  
--	if (!filemap_release_folio(folio, GFP_KERNEL))
-+	if (!filemap_release_folio(folio, gfp_mask))
- 		return 0;
+ /* Wrap a directory iterator that needs exclusive inode access */
+ int wrap_directory_iterator(struct file *, struct dir_context *,
+@@ -3532,6 +3536,10 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+ 		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
+ 			return -EOPNOTSUPP;
+ 	}
++	if (flags & RWF_UNCACHED) {
++		if (!(ki->ki_filp->f_op->fop_flags & FOP_UNCACHED))
++			return -EOPNOTSUPP;
++	}
+ 	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
+ 	if (flags & RWF_SYNC)
+ 		kiocb_flags |= IOCB_DSYNC;
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 753971770733..dc77cd8ae1a3 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -332,9 +332,13 @@ typedef int __bitwise __kernel_rwf_t;
+ /* Atomic Write */
+ #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
  
- 	spin_lock(&mapping->host->i_lock);
-@@ -650,7 +650,8 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
++/* buffered IO that drops the cache after reading or writing data */
++#define RWF_UNCACHED	((__force __kernel_rwf_t)0x00000080)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+-			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
++			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
++			 RWF_UNCACHED)
  
- 			ret2 = folio_launder(mapping, folio);
- 			if (ret2 == 0) {
--				if (!invalidate_complete_folio2(mapping, folio))
-+				if (!invalidate_complete_folio2(mapping, folio,
-+								GFP_KERNEL))
- 					ret2 = -EBUSY;
- 			}
- 			if (ret2 < 0)
+ #define PROCFS_IOCTL_MAGIC 'f'
+ 
 -- 
 2.45.2
 
