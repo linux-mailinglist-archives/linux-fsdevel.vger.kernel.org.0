@@ -1,91 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-34220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2179C3E3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E08B9C3E6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB605B2339B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 12:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC23B20BA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 12:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EE119CC04;
-	Mon, 11 Nov 2024 12:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A548189BBB;
+	Mon, 11 Nov 2024 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UFTiOrI5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTzWEyIU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ADC19C56D;
-	Mon, 11 Nov 2024 12:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF955C29;
+	Mon, 11 Nov 2024 12:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731327227; cv=none; b=FuJ2tuDNwkDRJTEdXt3+xUO69lFE3TJJ0Xhf1o5qn6kzQ/Zo6fKl20hNbNFtL7tM7CUHZRI5SPXRLJKtmpnCj+OkzFbGrnIqoEuIOUlJcbcFRPuilCnnTZlZcvGl84PtLyzhXMcWpDKsb6O7R10STUASYc+Srv//jy/+drbAU+I=
+	t=1731328256; cv=none; b=HZJJZEQ8jqV133FwBKuvDRowUV3LhBxZKWGgrCe/l4U2zKtLICbg0gKtYXCLTR/uBO7PXVcJQEChfBPLvppDum7PUy8TPo9qh5MI/NfBKRozyxN5YbZ7dZMEiKG2bovQcU7xDrfrA+oT5hq1e56CDySW88LrvRWfsTAbvG+E+48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731327227; c=relaxed/simple;
-	bh=gBQVEUfuGWGDr5d4kA8rz0t0KWrkq1mOGEvyfZsnzaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NfO9aXHUQjEeh+c9NA7q9r154W6m4pS+THHUx8iXhrBTomyRscggHOb1NJnA9xSYYfC/l0g95abCnCYdMG68RLGZnVbDG/k5nBpoqjURx+Qe4ZsijYPs/I9oCQ5zdPkX/KK86gr6csJIjzN3qEa1FwTJbqdvzFsCbeBpW7UX7Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UFTiOrI5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=3+AEn+zfjevbB39dEhh/UvtraX2Que2xQcTnsUzqyzA=; b=UFTiOrI5EumtXb8vf0W0uLLr6B
-	0+DFxfc1l6rDQPSxNk+BnUlXkJshaX/Lab4P6WMC7/mCJ31UXiH0N3Ei0O82sPX+TRotItn2msn/i
-	2U30tO9B99UFRCvuMWyhQuZ3okCrDymEnOfLlACxBjGHNMbJqgua4GuQQkcEAo9sEbr9hLqNgA7oR
-	8P2VPGWrdMgpdHwetIqcL7IwPWm1AHtUf32iZawDdJi0olW5V/ImL5/2o4xWTYkcFOADJMVsE8sdt
-	6VjvaVXIzX70EtygKPzoK0LI/SOwdpD2PDWxst1utBZV0sohBH4oPGL9GiSNPpKhBbnwlCve2Bfox
-	djRRhTmA==;
-Received: from 2a02-8389-2341-5b80-87d4-3858-08b4-a7a1.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:87d4:3858:8b4:a7a1] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tATId-0000000HYng-41Js;
-	Mon, 11 Nov 2024 12:13:44 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: brauner@kernel.org
-Cc: djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] iomap: drop an obsolete comment in iomap_dio_bio_iter
-Date: Mon, 11 Nov 2024 13:13:40 +0100
-Message-ID: <20241111121340.1390540-1-hch@lst.de>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731328256; c=relaxed/simple;
+	bh=ihQcDuzRhqrkWuxg9HooJoiJ3EJAF6SrEZPYiQkmmGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVjtPlgXE069tcYc/gfdMOnPQN3HY0x8pZ000DZVdS4xX9vrl310Mtsk51m5tydFP323W4PJBxVQBXS81NgQzuDTaUfM3/vx9w8sinrthykkfRIk6Ti4nQjsbB8qOtZ7t3ok1ysjlvmPwjPRpV6ZwPzLILYhv9iPWdOOauyUfKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTzWEyIU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE78AC4CECF;
+	Mon, 11 Nov 2024 12:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731328255;
+	bh=ihQcDuzRhqrkWuxg9HooJoiJ3EJAF6SrEZPYiQkmmGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uTzWEyIUD21jD6UTLoEvBNCsEh1YOMEfo2ya346GcvkSQygAFdaLMdxoK8lSm1qcL
+	 9BWatNEetQhXwRBkuZQgWtuoLC0/e5oSb2j/ArIMdfe4gX/v07Qhj9HaSFqj7fm7P3
+	 cfpEADdnZ59KV347aP5XX+AVLmkgEkUyAzKlV2SszJwpWYt9F8byXpH63gV7JVIDkS
+	 6tafS2xdK1xVQqCGPXMylLxFuRKNL5S0LC09WsvHkE1DMQ2euywv02GSS3VSWf73DO
+	 kxa4o7RQJewH2pKjc3ikkaXoNz+GehOG7kjNEDAorAncK/FeW+ZCYN6owU4yG9Bucn
+	 hJwhHXiv+KtSw==
+Date: Mon, 11 Nov 2024 13:30:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Eric Sandeen <sandeen@sandeen.net>, Zorro Lang <zlang@redhat.com>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Ian Kent <raven@themaw.net>
+Subject: Re: lots of fstests cases fail on overlay with util-linux 2.40.2
+ (new mount APIs)
+Message-ID: <20241111-erbschaft-unruhen-d42cefd92f46@brauner>
+References: <20241026180741.cfqm6oqp3frvasfm@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <20241028-eigelb-quintessenz-2adca4670ee8@brauner>
+ <9f489a85-a2b5-4bd0-98ea-38e1f35fed47@sandeen.net>
+ <20241031-ausdehnen-zensur-c7978b7da9a6@brauner>
+ <CAJfpegtyMVX0Rzgd6Mqg=9OxqJzrGufqOK4iBU2TSSDrt36-PQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtyMVX0Rzgd6Mqg=9OxqJzrGufqOK4iBU2TSSDrt36-PQ@mail.gmail.com>
 
-No more zone append special casing in iomap for quite a while.
+On Mon, Nov 04, 2024 at 05:41:18PM +0100, Miklos Szeredi wrote:
+> On Thu, 31 Oct 2024 at 11:30, Christian Brauner <brauner@kernel.org> wrote:
+> 
+> > One option would be to add a fsconfig() flag that enforces strict
+> > remount behavior if the filesystem supports it. So it's would become an
+> > opt-in thing.
+> 
+> From what mount(8) does it seems the expected behavior of filesystems
+> is to reset the configuration state before parsing options in
+> reconfigure.   But it's not what mount(8) expects on the command line.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/direct-io.c | 5 -----
- 1 file changed, 5 deletions(-)
+I'm not sure that's the case but I might misremember what mount(8) does.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index ed4764e3b8f0..b521eb15759e 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -383,11 +383,6 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
- 			goto out;
- 	}
- 
--	/*
--	 * Set the operation flags early so that bio_iov_iter_get_pages
--	 * can set up the page vector appropriately for a ZONE_APPEND
--	 * operation.
--	 */
- 	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
- 
- 	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
--- 
-2.45.2
+As best as I remember it the mount(2) system call has different behavior
+for VFS generic options, and filesystem specific mount options.
 
+The difficulty is once again that both are mixed together in the
+mount(2) system call which hides the behavioral differences. I'll try to
+summarize what I remember below. 
+
+> I.e. "mount -oremount,ro" will result in all previous options being
+> added to the list of options (except rw).  There's a big disconnect
+> between the two interfaces.
+
+So for VFS generic mount options the behavior of mount(2) is that if one
+has a filesystem mounted with nodev,nosuid,ro such as:
+
+	mount(NULL, "/mnt", "tmpfs", 0, "nodev,nosuid");
+
+and one now remounts (proper remount, not MS_BIND | MS_REMOUNT) as "ro":
+
+	mount(NULL, "/mnt", "", MS_REMOUNT, "ro");
+
+then mount(2) will not display additive behavior for the generic VFS
+mount options. Instead, it will treat it as a "reset". So "ro" gets
+added and "nosuid" and "nodev" get stripped.
+
+That non-additive behavior has actually caused quite some security
+issues. So mount(8) works around this, by translating a:
+
+	mount -o remount,ro /mnt
+
+internally into:
+
+	mount(NULL, "/mnt", "", MS_REMOUNT, "ro,nodev,nosuid");
+
+But afair, this reset behavior only applies to generic VFS options (ro,
+nosuid, nodev, noexec) but not filesystem specific options during
+remount.
+
+In contrast, the problem with filesystem specific mount options during
+remount, is that quite a few filesystems ignore unknown mount options or
+mount options that cannot be changed on remount.
+
+This is effecitvely what overlayfs does when the remount request comes
+from the old mount(2) api. It will just consume anything and ignore even
+nonsensical/nonexistent mount options.
+
+This causes other problems where users that want to really ensure that a
+mount property gets changed during remount cannot be sure because
+anything will succeed.
+
+So initially I had thought we could change that behavior by
+differentiating between a request coming from the old or new mount api.
+If the request comes from the new mount api we would return errors for
+unknown- or mount options that cannot be changed on remount.
+
+However, this seems to break some tools such as mount(8) because it
+reassembles all mount options during remount to emulate additive
+behavior but then fails because a remount request from the new mount api
+rejects mount options that can't be changed during a remount.
+
+But there's definitely use-cases where userspace wants to know whether a
+mount option was actually change{d,able} during a remount.
+
+To accomodate the old and new behavior my idea had been to let the
+filesystem choose whether to ignore unknown mount options or whether it
+will error out if unknown mount options are specified or when mount
+options are specified that cannot be changed on remount.
+
+A filesystem that allows for strict mount option parsing could raise a
+flag in fs_flags and then a new uapi extension for fsopen() gets added,
+e.g., Something like:
+
+        fsopen("overlayfs", FSOPEN_REMOUNT_STRICT);
+
+(Fwiw, mount_setattr() is additive/subtractive, i.e., it does the
+right thing and only clears or sets the options that are explicitly
+specified, leaving other options alone.)
+
+> 
+> I guess your suggestion is to allow filesystem to process only the
+> options that are changed, right?
+> 
+> I think that makes perfect sense and would allow to slowly get rid of
+> the above disconnect.
 
