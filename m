@@ -1,130 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-34360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790D89C4A41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 01:01:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5E99C4A5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 01:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F69282D83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B331B33A50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7C61CB329;
-	Mon, 11 Nov 2024 23:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8D01C3F1D;
+	Tue, 12 Nov 2024 00:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NlbZuJ5O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OueZ1Yqn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF8C1CB31F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 23:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECE91586CB;
+	Mon, 11 Nov 2024 23:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731369269; cv=none; b=GW6KgLOhZH1guVLp10eRruMpEY4fBsPI8sDs95dxjMcY0mbDFck5T5+gTqgAJy65LBSiZCqrMX5EBv7Xwhv359PhvTtEaoCdBK+yISaIynRSRnnj7xj+vjuoiRypHx70mqx6tDmGpIMmM/eFbWKMc4NPIj1byJUCeRe3EHwJePU=
+	t=1731369600; cv=none; b=IAtTZfni0ii4xKmHuLBIFcu6RXD/gi3ZeLZHRGBuPFqH41niiqJgEnRu2bsZn3z5slfmxPZkBXeKW0fiCQRoOtkPVtL3uGBsTmcY9ogBO+qBDQzYJMD41wZ8/oIweXrN8JxXzfdVwfaIU9gQySaPvdUnpFr4iIPxcAhJT7WuLOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731369269; c=relaxed/simple;
-	bh=oc2i14cbHlPjUptML9llrR9GZXQV67FXBAhNSclAL5U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CwUbSElYYN8HeGfbhD1bzjUyCOVETIll++RgE3thCWtnsCkaiYxxkXr7xZApehk230IjUWU/04sBkG6mWRruH66kXz4Ps3cDLWJSaNSm+091EQTINqSWwdpgIIsR1zqVp9rZOKrGMXSLbJLJe6aVUays+4QyL8CmJdFZI/yaeKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NlbZuJ5O; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720e94d36c8so5158992b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 15:54:28 -0800 (PST)
+	s=arc-20240116; t=1731369600; c=relaxed/simple;
+	bh=DBeXyiPoEk4jq3UvI4MGD72KO9awpusbXnD6ozAC/YM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Woq3L2L7M9EOESYNzhwZntMMs7MGvwEejupLle9iafZsrDlB2mKBOzgl6o7qlzVqQ73RBFraJ9iyX8peTemQ+B52yq7PlMZv0AvqRyuhI2LCiuuoBSQyNImdfWIMGmm0AzqYskb5MACFKZpZx/xTznTYbmTKe4lmCS39H0ZxIIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OueZ1Yqn; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so7020078a12.0;
+        Mon, 11 Nov 2024 15:59:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731369267; x=1731974067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bLMZyOFHlxekHdlP1p7zVoropnof1NcDjaHS2jWrWec=;
-        b=NlbZuJ5OSLyKTPc2ZfjUik465S0k7RcWGR/rzAFEV7krbYJPe688iiFc8AHM5tl8UX
-         B8KSaDUyv8oT2p1OO6KZLpjhqoT+UiNVOoygs0dHAbdcpvG2EzjHCaPszARrpIplhA7l
-         ydpA9zSrDg2+WhKOyiSCrCxMQDL0YN8GoMtkK6zTQDXObp5q9wYSSeeRAUJCt2C2kd0E
-         NTX+6Fg/LwggTJVoI+5NCN8KegILhaUYvxNxT++q78Ww2QooqQniqFisDdRE8KwOgkf+
-         0GRXIkQtVBl1sXxNkJ+zwV8WgV06aUXezrtaSwN5h4hHBITNPWx7HZFRjSvropTkfF8j
-         iDIQ==
+        d=gmail.com; s=20230601; t=1731369597; x=1731974397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qeb/sGQBQbggfnIh8ADSPE4+Kba4+lOc0hxRhJ4OMyo=;
+        b=OueZ1Yqnv5jZcJE31dC2hAdSvQUxwi1Z2Cklyvl4RyDE5Nil/Ahj/rwIETLNYtP3v9
+         2dEBjEph/oE6fa8xTWfiSIj77aY/+ONJaGintvdw4w1Nwson6BOoAYZjkSEx/VhsDn0M
+         dZvNMbXSCTR2sqSAfV1i2pdi3yGvyfmZ5bjYMBmOyAGW5KxiFReJJuiTKo8kU7lvLdiz
+         DG1UO38QXrp2PkppHJYEnL1R5IiUkR475DZ4Hip0X2zkHz9kWOq6n4zynE1K7+WBzrj8
+         ngbMzTlhfqAJPa5KPGk7P306kBcF/vOjrZIsmkUkWbNGvV3XPJzKtK79s5ovFB0BHUcO
+         OAQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731369267; x=1731974067;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bLMZyOFHlxekHdlP1p7zVoropnof1NcDjaHS2jWrWec=;
-        b=F7UpysnHRwd24JponpEBvjs6rvtresh+ozzYeJ9KKgbxXm5Ma5Ul0m7AzE827ABix0
-         Haykn+MuQ3mjhAM/AZt4ho90uacA2SEjDHG2A+4mGPfkZhwamU32WiDQKJSC3SYBJkWy
-         3HIXrngM0ghKUfJdqnuDq3Tadb0T53l/0IagI03eOsG/aw2WO9RPTW/DcIfzfUGJZOoD
-         /nCN8tO3efkKkyZYngXCvdWim9LZRadM7VAfUwZZ7W+Ju5rnWnDzvEyb1kLftL/7QKuO
-         IqBIJ+5bgUKmu2Py1j6Gd3kNbRfuz3iGHVWEyAwIzcGcPBDXzJMWR03CSWbGYYm63+Sh
-         ztsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpfBZjDQdQQvZnlFxg0h1yRPkYkJPa5Qt95FQHvJx3zZhHFct7FuZImnToURf0qiglEd72/O8V+wnRqPTa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLskmyp7VsyI7wYpNSskDjKpu5LqzhqTeZMI13nbhKwKGY32ur
-	qdye4CLCwtAjldxsC+BuM+snC42n9ptHtualSj5ZlaD0y1wocal6mD/ss1u74og=
-X-Google-Smtp-Source: AGHT+IGSnKMa6ka5pGSYL/mBuk3Wz5Gb7lASbW1uGNq3aUIUquaCO5kb+R042BsY8/svwsYky7FbCA==
-X-Received: by 2002:a05:6a20:7491:b0:1d9:dc8:b80d with SMTP id adf61e73a8af0-1dc234fd966mr23052302637.20.1731369267319;
-        Mon, 11 Nov 2024 15:54:27 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa8fasm9775141b3a.97.2024.11.11.15.54.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 15:54:26 -0800 (PST)
-Message-ID: <f7a48046-30b9-4656-812a-f0579234eb5c@kernel.dk>
-Date: Mon, 11 Nov 2024 16:54:25 -0700
+        d=1e100.net; s=20230601; t=1731369597; x=1731974397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qeb/sGQBQbggfnIh8ADSPE4+Kba4+lOc0hxRhJ4OMyo=;
+        b=oAFb4G6chtDJdhS8gDfoZxUYVAJNSySaNMFQQoott8gQ7dGJ0qIPd4fxcSwfo8YnLM
+         fBNHLAmW5S9f78vAsiRCHfCfAEQC4kTBdKGbscoIcJP7HKA4AKfJNhsD4XJLRoaLQJpa
+         bqLRbOPKbpUcIZ4LpGRCiicNFNUi+8PjRuJFNqwjeUFjTTLMDqQb59Ve/gEtdg7jG/uA
+         7hDMTKcq3JzyRrUDLbKj38p5Xj2dXlhlIF51BZn1IBnT9YfqCGQNAatr4FAdhqIMPH+7
+         S9GZJhUu19zE6lmA7x8qJuz1X8WTTewggweiC92/+Lv+TPkfi1WQ54+LAcd6W6zK6ieo
+         05jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU05jm4uJlt7ZnWJgCNuyr6IpeWb5/YvvGZV9VPI1bzb0+hRe5g7OnSJL4Chtb2McWmuozXls0wCrbnFA==@vger.kernel.org, AJvYcCVDwosZte4aft4mJB3CJmnlws0Bp57BHvE3TZJFlW/HSakwlmHRdT/iEyEYkYBgfDsp3lpo1muz24ic@vger.kernel.org, AJvYcCVdJNchje5AxulmwxvogYjgZMPCAah3RlRkHveYiw7kOoLgGPpYtfnT9R7I14KPe1RRlm88Qz9Gt/dYmg==@vger.kernel.org, AJvYcCWOM4+R5QaN+dJKNGWTcRCZj/yS5FGrcM+PJ+UM9q4ZvLua2wXFmI1dlIRlKC55aNWm7IS/Wjyy8DWtxBopbw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo7MJWo7ucOWGdCpqzpUdscVce4orc5UrwZpsxtFqb6d4bY1dm
+	R1KUADGjT1XjTSwcCsmZDUJCNkubQKIemHxnoyb9kpZg1RYYHZVvp6fHGC2nPg6Usetb5TL0F0h
+	SqAfSu9lmDxnohUAdZwX5ewRSaPQ=
+X-Google-Smtp-Source: AGHT+IHHwxY/TJOQ7Nuz4nknIlqtFJHiuYgNFoMDUB8JaLJfrMkEmhf3QjspysraBHI4CEeJBsEvdbsAjRJvE47Uc7Q=
+X-Received: by 2002:a17:906:6a19:b0:a99:d6cf:a1df with SMTP id
+ a640c23a62f3a-a9eeffee0e2mr1462283866b.46.1731369596890; Mon, 11 Nov 2024
+ 15:59:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4] Uncached buffered IO
-From: Jens Axboe <axboe@kernel.dk>
-To: Stefan Metzmacher <metze@samba.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
- <00c51f80-7033-44a0-b007-ca36842e35a5@kernel.dk>
- <76edefe6-fb20-4169-8cbe-d8b864b04c7a@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <76edefe6-fb20-4169-8cbe-d8b864b04c7a@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1731355931.git.josef@toxicpanda.com> <b509ec78c045d67d4d7e31976eba4b708b238b66.1731355931.git.josef@toxicpanda.com>
+ <CAHk-=wh4BEjbfaO93hiZs3YXoNmV=YkWT4=OOhuxM3vD2S-1iA@mail.gmail.com>
+ <CAEzrpqdtSAoS+p4i0EzWFr0Nrpw1Q2hphatV7Sk4VM49=L3kGw@mail.gmail.com> <CAHk-=wj8L=mtcRTi=NECHMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com>
+In-Reply-To: <CAHk-=wj8L=mtcRTi=NECHMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 12 Nov 2024 00:59:43 +0100
+Message-ID: <CAOQ4uxgxtQhe_3mj5SwH9568xEFsxtNqexLfw9Wx_53LPmyD=Q@mail.gmail.com>
+Subject: Re: [PATCH v6 06/17] fsnotify: generate pre-content permission event
+ on open
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz, brauner@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/24 8:05 AM, Jens Axboe wrote:
-> On 11/11/24 7:08 AM, Jens Axboe wrote:
->> On 11/11/24 5:55 AM, Stefan Metzmacher wrote:
->>> Hi Jens,
->>>
->>> I'm wondering about the impact on memory mapped files.
->>>
->>> Let's say one (or more) process(es) called mmap on a file in order to
->>> use the content of the file as persistent shared memory.
->>> As far as I understand pages from the page cache are used for this.
->>>
->>> Now another process uses RWF_UNCACHED for a read of the same file.
->>> What happens if the pages are removed from the page cache?
->>> Or is the removal deferred based on some refcount?
->>
->> For mmap, if a given page isn't in page cache, it'll get faulted in.
->> Should be fine to have mmap and uncached IO co-exist. If an uncached
->> read IO instantiates a page, it'll get reaped when the data has been
->> copied. If an uncached IO hits an already existing page (eg mmap faulted
->> it in), then it won't get touched. Same thing happens with mixing
->> buffered and uncached IO. The latter will only reap parts it
->> instantiated to satisfy the operation. That doesn't matter in terms of
->> data integrity, only in terms of the policy of uncached leaving things
->> alone it didn't create to satisfy the operation.
->>
->> This is really no different than say using mmap and evicting pages, they
->> will just get faulted in if needed.
-> 
-> Turns out that was nonsense, as per Kiril's comments on the other thread.
-> For pages that are actually mapped, we'll have to skip the invalidation
-> as it's not safe to do so.
+On Tue, Nov 12, 2024 at 12:22=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, 11 Nov 2024 at 14:46, Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > Did you see the patch that added the
+> > fsnotify_file_has_pre_content_watches() thing?
+>
+> No, because I had gotten to patch 6/11, and it added this open thing,
+> and there was no such thing in any of the patches before it.
+>
+> It looks like you added FSNOTIFY_PRE_CONTENT_EVENTS in 11/17.
+>
+> However, at no point does it look like you actually test it at open
+> time, so none of this seems to matter.
+>
+> As far as I can see, even at the end of the series, you will call the
+> fsnotify hook at open time even if there are no content watches on the
+> file.
+>
+> So apparently the fsnotify_file_has_pre_content_watches() is not
+> called when it should be, and when it *is* called, it's also doing
+> completely the wrong thing.
+>
+> Look, for basic operations THAT DON'T CARE, you now added a function
+> call to fsnotify_file_has_pre_content_watches(), that function call
+> looks at inode->i_sb->s_iflags (doing two D$ accesses that shouldn't
+> be done!), and then after that looks at the i_fsnotify_mask.
+>
+> THIS IS EXACTLY THE KIND OF GARBAGE I'M TALKING ABOUT.
+>
+> This code has been written by somebody who NEVER EVER looked at
+> profiles. You're following chains of pointers when you never should.
+>
+> Look, here's a very basic example of the kind of complete mis-design
+> I'm talking about:
+>
+>  - we're doing a basic read() on a file that isn't being watched.
+>
+>  - we want to maybe do read-ahead
+>
+>  - the code does
+>
+>         if (fsnotify_file_has_pre_content_watches(file))
+>                 return fpin;
+>
+>    to say that "don't do read-ahead".
+>
+> Fine, I understand the concept. But keep in mind that the common case
+> is presumably that there are no content watches.
+>
+> And even ignoring the "common case" issue, that's the one you want to
+> OPTIMIZE for. That's the case that matters for performance, because
+> clearly if there are content watches, you're going to go into "Go
+> Slow" mode anyway and not do pre-fetching. So even if content watches
+> are common on some load, they are clearly not the case you should do
+> performance optimization for.
+>
+> With me so far?
+>
+> So if THAT is the case that matters, then dammit, we shouldn't be
+> calling a function at all.
+>
+> And when calling the function, we shouldn't start out with this
+> completely broken logic:
+>
+>         struct inode *inode =3D file_inode(file);
+>         __u32 mnt_mask =3D real_mount(file->f_path.mnt)->mnt_fsnotify_mas=
+k;
+>
+>         if (!(inode->i_sb->s_iflags & SB_I_ALLOW_HSM))
+>                 return false;
+>
+> that does random crap and looks up some "mount mask" and looks up the
+> superblock flags.
+>
+> Why shouldn't we do this?
+>
+> BECAUSE NONE OF THIS MATTERS IF THE FILE HASN'T EVEN BEEN MARKED FOR
+> CONTENT MATCHES!
+>
+> See why I'm shouting? You're doing insane things, and you're doing
+> them for all the cases that DO NOT MATTER. You're doing all of this
+> for the common case that doesn't want to see that kind of mindless
+> overhead.
+>
+> You literally check for the "do I even care" *last*, when you finally
+> do that fsnotify_object_watched() check that looks at the inode. But
+> by then you have already wasted all that time and effort, and
+> fsnotify_object_watched() is broken anyway, because it's stupidly
+> designed to require that mnt_mask that isn't needed if you have
+> properly marked each object individually.
+>
+> So what *should* you have?
+>
+> You should have had a per-file flag saying "Do I need to even call
+> this crud at all", and have it in a location where you don't need to
+> look at anything else.
+>
+> And fsnotify already basically has that flag, except it's mis-designed
+> too. We have FMODE_NONOTIFY, which is the wrong way around (saying
+> "don't notify", when that should just be the *default*), and the
+> fsnotify layer uses it only to mark its own internal files so that it
+> doesn't get called recursively. So that flag that *looks* sane and is
+> in the right location is actually doing the wrong thing, because it's
+> dealing with a rare special case, not the important cases that
+> actually matter.
+>
+> So all of this readahead logic - and all of the read and write hooks -
+> should be behind a simple "oh, this file doesn't have any notification
+> stuff, so don't bother calling any fsnotify functions".
+>
+> So I think the pattern should be
+>
+>     static inline bool fsnotify_file_has_pre_content_watches(struct file =
+*file)
+>     {
+>         if (unlikely(file->f_mode & FMODE_NOTIFY))
+>                 return out_of_line_crud(file);
+>         return false;
+>     }
+>
 
-...and now v3 (just posted) actually does work like I described, it'll
-co-exist with mmap.
+I think that's a good idea for pre-content events, because it's fine
+to say that if the sb/mount was not watched by a pre-content event listener
+at the time of file open, then we do not care.
 
--- 
-Jens Axboe
+The problem is that legacy inotify/fanotify watches can be added after
+file is open,
+so that is allegedly why this optimization was not done for fsnotify
+hooks in the past.
+
+Thanks,
+Amir.
 
