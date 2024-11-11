@@ -1,112 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-34335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8B39C4898
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:56:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BE89C48FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 23:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96731F2172E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B36B2DCB3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C0F1BC07A;
-	Mon, 11 Nov 2024 21:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38721BC9FF;
+	Mon, 11 Nov 2024 22:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TI/eJjQY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0bj9OHT4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9541BB6B3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 21:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906C5150990
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 22:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731362155; cv=none; b=ocXlDdgpnYpMhX0nIG4OLRTFxzKqzZ72DFQ1lmjh5H6iCrBbehwjS5Ae7jeCXsn2lJ0rdp4PhUtNMc/P+OU3fA2LH9Y8bBPsZJWM3wGzlKp8JWwaegdqM3V1wo1ClRSTGPuR9zdX7qxsOeNT8aVV48kgTYojT8hA9J8RZdyOcLU=
+	t=1731362883; cv=none; b=Uw29UYE7c0fN05HpIMmwxeHdBw/WPmErZiK2bnGfVcWbfinXhH4DfCOTx9nZX2pwqbxaBmElCjVvVX9AOQOF/KlZ14xhw3fn5aoYcfdMWujbBbndml7APVD9sily6li2UukZ5P2U5DppIP031j7I7MwdnlR/Zwl0D043gR8pqiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731362155; c=relaxed/simple;
-	bh=SZIQDa8NLYM1ipFkY+LfWhNba2RshbH0DPtK6JH9h1M=;
+	s=arc-20240116; t=1731362883; c=relaxed/simple;
+	bh=Vkw9aiH8d9WZpxuAadKWoblhX0idLaFADugfMPK2FbE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p94i63tYkz5Gsmt4MzO1nyeNu7s3LI6vdW1PjsOfbh/NxulwjaF0gdI/sOip++Y6OC7S/8YWeFCOPpXdmTnHCdBwIl5qD+r6XySutv3TI1TP38ehDq5Q6ayB8zShuobTpx8FZ7+aRiD3gb2oxxs0zmDNKkybB5wKDiOXQZMKP1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TI/eJjQY; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so6923384a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:55:53 -0800 (PST)
+	 To:Cc:Content-Type; b=nQJlJ9SDxMaiX0kZXhS8VbJOamd55PTLkTjnVFKriQsk592rsdko9NJyYxceq7rSylg87th5lbQprglYCLhfYhSsYA6hNuv9eIDK8WA3S/So6fMhPVS5IOuiUh0MfBsvSOFk3Kjr1AehjloRTj0EtK1ecUk12pYMxhtfs9cz5pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0bj9OHT4; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84fdb038aaaso1631237241.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 14:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731362151; x=1731966951; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yUAbMKFGFD+r6n6bBm/WiyB3YmOPXFQ3bg8vJC1p2Q=;
-        b=TI/eJjQY5n2/fQZ+6DoN02J4woFPIMbfzepQLualFan0DIqJvbYUew91nP+OLv7o//
-         wBR4vPUvB8vRcSBirxL+GfPWQ/5PKKWcYhxy1nVmcc4uo2pF4A+G9ogbN5S9WFwBaOaM
-         7ubNNrv9DwD/ClPeLpLmbxuNw4brv9+owu34c=
+        d=google.com; s=20230601; t=1731362880; x=1731967680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vkw9aiH8d9WZpxuAadKWoblhX0idLaFADugfMPK2FbE=;
+        b=0bj9OHT4NDD762ZwKsKRkpOlf3fMbGnSYP0Q0IjgkuCX4mzA+3xmTbzvS/+98aJmbC
+         x9Cdhrxu9PDDSvBSsQ0ev0LgPTYPPeP4U0658R6shr34d7nOaG5fJ8lRc/LmncGbhgPi
+         wkCvrcxe43qhp+TAehCzPCTnoAYuhpytBK/frxZo+oRvKFmgy8u2ajjnCF+u8R3XUYSl
+         QuU9uygEaM3mVjxEaVLqXlopoL0vernuSifEIfbXJlI0TMuXoONkxtLT6uBA270BU8Jm
+         0TPbCznueXlvGESjuUukuk6d9vuy54+nPsFKX/QsJMy+vAuBqMbnfbAqSw/PFbVJ+rX0
+         0jHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731362151; x=1731966951;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1yUAbMKFGFD+r6n6bBm/WiyB3YmOPXFQ3bg8vJC1p2Q=;
-        b=Ud7k18lGnU2GzLSUE4bgELBoqFtM6efxRyQyNnfV56+J5T4p+c43nHr7b5X2s3VDb7
-         HAARsb+hWt+15ot7TzrWwibVR+Wq0zEljsR3lVRQpV+P3f0+wJF0fwybIJTGb4DiBWti
-         T23b3EpCk7SXa8S+Aw/ZMvqjP958ROQyhJXVLUEIvU++CiHoEtslr3GI+oAGPrfexRrO
-         3XNZiownG/GSNerV6yxngR/rgSIXVGji94fU3S6bQqisDoLmlQXp7ODN/ERknpEtVhQx
-         j7iW2SWNe18nTK1RnzM5JEGR2O/4PkwB2MttZElaxqmfS2a/omOXEuIMSIKySzjq02Y4
-         K6pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHlOBc3O1JzLIS2q+XRiH4M4ie6pf5S99SAfYd46PHftqZS9mpa2CchHnVXgVVeZ8KyPoR7dpSmsabCygF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBOtQosysPGO1b1/KsIdXztvOTNbsgUQf7rNl9dlu2N3e4m8NM
-	pTkxYfZKUlg+h3phTkQmRB7YvQAF6KlqdTkS2rXi+D+ScTtx+QuqCjaBmFkMv+zhyxezMS/sQnQ
-	vsfI=
-X-Google-Smtp-Source: AGHT+IGTk0IT3bnDz4DvZTYSEcGl5wXYA3SEZfFTv9lLZtSVnqh/unra4yW8wZQ3C1zy3otcIOZEig==
-X-Received: by 2002:a05:6402:35cd:b0:5cb:6729:feaf with SMTP id 4fb4d7f45d1cf-5cf0a3245ecmr11703386a12.16.1731362151503;
-        Mon, 11 Nov 2024 13:55:51 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b5d787sm5322405a12.2.2024.11.11.13.55.49
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 13:55:49 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ed7d8d4e0so768103366b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:55:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXjPPkSO5tf4S/ZTEnBXuqgj3g7wTTAucsTjjGIPMvKeYhU4DOAgRogEp+iaUOS7am9Kj4cHjjUTKDBkHUE@vger.kernel.org
-X-Received: by 2002:a17:907:eac:b0:a99:379b:6b2c with SMTP id
- a640c23a62f3a-a9eeffeee33mr1449197766b.42.1731362149380; Mon, 11 Nov 2024
- 13:55:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731362880; x=1731967680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vkw9aiH8d9WZpxuAadKWoblhX0idLaFADugfMPK2FbE=;
+        b=ssV+GQQ+3XSTQPTe80Uj6vVl1YkjAP3G4WyHMaMpNrAIuQlZkeGm3Sw58+IwSw1fg4
+         g9KTyKMAUmOCEcT+9JqiR3t+EgW9wbtJ2dhWzqLwginPMTuFezcwPfJwrRDIKrn+B7IT
+         Svc3azasiSw0J6C+pw4xeN5N7/i6gCVUUuHVXgUjCIQ8i07vYJcPYusJfuoSLzKZ9sm6
+         MxxbzeoNtj060hYx4PzgGFaxC+YbxS8wadEUkV02NfOOLbrDQeB3xF8DbpUUQkR3RLUZ
+         hVsDVMwlxzb932q8TmYuR/KHTBCLHAKx4iDEWpO1UUtJ+kAt5w/b9vvJ/B8vudfcBmd9
+         yJVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7TjMOHioQ7kHI1QpXU63CDk5ZZhoCDjtN1wjQ3jY5Yq9kdiIRQbIgqdZ4F2wQVNTO5/rhS9dctO4lY9O9@vger.kernel.org
+X-Gm-Message-State: AOJu0YykDlTCwAEXL7E7J3WmNfkTbH3tG92rCZn9M20d74PwoXK9b2gP
+	9B2Hwl0BjYvKnEeQuPHBzxmH/qYbs9F8B6znuhvE0orc+sTIwK3D/y4qj3ZpVNq39lntNoUeKf9
+	brqSuROME6J7i5P8mUwgeyBS53geTrqM2zXz+
+X-Google-Smtp-Source: AGHT+IE+mJ8YJxgETrhDpFyAtuqtDnXfdwAd4OrI/XYP3rp++8cJXIhZ4Rh+GEw10wPDdRd2IdP9vdmQ22jlVDEDcUA=
+X-Received: by 2002:a05:6102:fa9:b0:4a3:dd83:c0ac with SMTP id
+ ada2fe7eead31-4aae1634755mr13500294137.20.1731362880431; Mon, 11 Nov 2024
+ 14:08:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731355931.git.josef@toxicpanda.com>
-In-Reply-To: <cover.1731355931.git.josef@toxicpanda.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 11 Nov 2024 13:55:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjUDNooQeU36ybRnecT5mJm_RE_7wU4Cpuu7vea-Tgiag@mail.gmail.com>
-Message-ID: <CAHk-=wjUDNooQeU36ybRnecT5mJm_RE_7wU4Cpuu7vea-Tgiag@mail.gmail.com>
-Subject: Re: [PATCH v6 00/17] fanotify: add pre-content hooks
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
+References: <20241110152906.1747545-1-axboe@kernel.dk> <ZzI97bky3Rwzw18C@casper.infradead.org>
+ <CAOUHufZX=fxTiKj20cft_Cq+6Q2Wo6tfq0HWucqsA3wCizteTg@mail.gmail.com> <ZzJ7obt4cLfFU-i2@casper.infradead.org>
+In-Reply-To: <ZzJ7obt4cLfFU-i2@casper.infradead.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 11 Nov 2024 15:07:23 -0700
+Message-ID: <CAOUHufadwDtw8rL76yay9m=KowPJQv67kx3hpEQ-KEYhxpdagw@mail.gmail.com>
+Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 11 Nov 2024 at 12:19, Josef Bacik <josef@toxicpanda.com> wrote:
+On Mon, Nov 11, 2024 at 2:48=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> - Linus had problems with this and rejected Jan's PR
->   (https://lore.kernel.org/linux-fsdevel/20240923110348.tbwihs42dxxltabc@quack3/),
->   so I'm respinning this series to address his concerns.  Hopefully this is more
->   acceptable.
+> On Mon, Nov 11, 2024 at 02:24:54PM -0700, Yu Zhao wrote:
+> > Just to clarify that NOREUSE is NOT a noop since commit 17e8102 ("mm:
+>
+> maybe you should send a patch to the manpage?
 
-I'm still rejecting this. I spent some time trying to avoid overhead
-in the really basic permission code the last couple of weeks, and I
-look at this and go "this is adding more overhead".
+I was under the impression that our engineers took care of that. But
+apparently it's still pending:
+https://lore.kernel.org/linux-man/20230320222057.1976956-1-talumbau@google.=
+com/
 
-It all seems to be completely broken too. Doing some permission check
-at open() time *aftert* the O_TRUNC has already truncated the file?
-No. That's just beyond stupid. That's just terminally broken sh*t.
-
-And that's just the stuff I noticed until I got so fed up that I
-stopped reading the patches.
-
-             Linus
+Will find someone else to follow up on that.
 
