@@ -1,140 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-34241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506D39C406F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:12:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487C39C40F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:31:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1368B2198E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:12:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8DE0B21D56
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D1119F118;
-	Mon, 11 Nov 2024 14:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623541A072A;
+	Mon, 11 Nov 2024 14:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MsjPSJoV"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e4lRltPZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A9E19DFB5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 14:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05821E4A4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 14:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334361; cv=none; b=SybavocW0Ve3MVMNIhyAkZ3XZ/dRylSY87QkJviLx8wme2YKT+lvgjLjit0RY4fVeoPQ1k61z1cmwC9pUh3spBCYZVQjArgyEOz20NIU0KZkOTz6vM59516p3mYv8u5xRxe8PsgH4I8amNqS+5b+VfE3KNRm7LBYSBa0HlgNUEM=
+	t=1731335476; cv=none; b=Rh+OG41uNxokK4FKY6o2tRfo8oJiM7KA3a3BmAhTuPObHcFaZBxIXXQxMfnKyG++SbWDMlsl8yd3jFpXgcNgSjxtS5dr4ANcSTDMb9LrGyLtDVLykAdBqtnH90Vig2HIZaeToM8O84A6avU9MpDzyXwVvKbcVyqaiJtTV65Pe2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334361; c=relaxed/simple;
-	bh=y6v1Vwuu9NHE+26R0D2cweNBEfu1yKI914fpXfcyO8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQJZtWTpK7bYpM2cyxNCtfvG/V+SDZQs4TYGAQRBubrRDfPFEU0M9JGRDSqdZnsQMuUkNVU+V2EqO7MzfFm/jlxQkrMANDFWh4qlrgRRVsrYJn+h0wW36zU2A+NxjufDqGzFmYRlkypddhZ1W+0SZIPi1abqSEILgbcUzOll5PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MsjPSJoV; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288d74b3a91so2888203fac.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 06:12:39 -0800 (PST)
+	s=arc-20240116; t=1731335476; c=relaxed/simple;
+	bh=XG5CRUkTbt5WTQ85dK7AB2Vi2VrUURBKyYaPqbFSJsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezI+Gw17CxGOXsnxNURRGA08XAK+i0lNnuZ0a/wWEmTQ9GkmtzcQuavW8/2BiLfyNo2tspvD9VpD1nWbZqzHER1q4SyYWbiUQnCcVvD3rKzEVy6P0dtgKJq2mujP57ocT4G0r1SABHkEUdDqAenxHtBBStayUKd7U9TxVJDFr+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e4lRltPZ; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460e6d331d6so28438071cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 06:31:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731334358; x=1731939158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=66uLGc0gYWY6pl4vJKWVk60NF3N9pYxdiSnhiB0bZ+0=;
-        b=MsjPSJoVwuhF1WW5SDMaDgeQ5JqU1coxJVfH+ybEFTggL1ldPexTOL03JW51I8WTdQ
-         YmzlyIS2QZGcgLHaoR29v9C2EtWEgGgLdwpa+17XwdIFB/XEXK/COvmWfYpwokL3cyKn
-         NtH47dvKcb0gYzk4uUnXaMn10RQ7/c5TyKlzsbr+6L33Gz487Nv/AjPnw1+15ZnTr3aH
-         sThIWjCWqM7iYAyeUQwB0zMupzLf9M5iS73o3A3Clov5RXZZ+X/QkNU3X1DujJWnZ6BT
-         am/CGsYEitUi1bCTzLuaAmmcieGGKumtt/U2/cExA4ZIfehIrojGTb77JfgVHn//Pdkf
-         dk0A==
+        d=szeredi.hu; s=google; t=1731335473; x=1731940273; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjQEvgWBp2B3femAyiEE2sDZdOd4LPyc39EnesXrraI=;
+        b=e4lRltPZTRMcRopYCSZ5K4E5GjNBPRaQYkQeb5myivIgE6hPKRiWritJKsHWqUekba
+         qRFfs3qLroyjcT7G5AA4PKkylisQUiqu3uQ9GvgRbl/wfQh+XY8Gytj5cAytC7bInR6S
+         BpXM8/UjE+R1rrbM7ktRkO7nc9/p/JYoWYwwI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731334358; x=1731939158;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=66uLGc0gYWY6pl4vJKWVk60NF3N9pYxdiSnhiB0bZ+0=;
-        b=eeM1SHoI/+ooU5+27CDVNwkRa5vpbmjc83WuTDVaQupZb0GYoYBX2zZP1e3sI4GzRW
-         VvFoHLQRYowOC7HClof72h46Z2phGdnqcCREcbsPLg11Sh353TJv+c52WLFmt4i0OxX8
-         WJ+lrQIIuyh+MZTDPXB6lkTSWeeIln4DUPCIlXKpAT1lwBjhllWU2lnfU5kaGfq551hV
-         +2TrRKuuIJl/fHt2U0a2XH2rp4tZmA99CdPZs42UgrRSpCZvmgrYmsWuP5DavVG0Ry0G
-         YCZbef89vsDCEJqRfLpG3GzherYDkgE5Wl6l99T8TtAkers/7A/lMvrXwOsd6oYlrOtX
-         UvZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIlrh2F/KG2/91yz+ZQDGe/ASkThU2mMfVjPEfR2G4cLgBv63arrOjxNaJjLkB8stI81X2IaT/+aFlsfHN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwciufKdtgfEDcw63busuHL30vC/ALZ/0eAHaGj+tJGmM/3FnEN
-	55s8sWl0FaN+msA3VEpud8F9MHHmQf71r7Z0YL3TbA45OyaB6ZoeQpKRCXyXkPk=
-X-Google-Smtp-Source: AGHT+IHWv0kv6W+zOTjySZdLHaaUykzq/EEMfTz+FtiPzYyUcdtRJI2JmM+5cYpADP+e2ShIZZv6SA==
-X-Received: by 2002:a05:6870:d8cd:b0:277:d9f6:26f6 with SMTP id 586e51a60fabf-29560063fa6mr11114760fac.12.1731334357158;
-        Mon, 11 Nov 2024 06:12:37 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546f4ff2fsm2787996fac.51.2024.11.11.06.12.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 06:12:36 -0800 (PST)
-Message-ID: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
-Date: Mon, 11 Nov 2024 07:12:35 -0700
+        d=1e100.net; s=20230601; t=1731335473; x=1731940273;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bjQEvgWBp2B3femAyiEE2sDZdOd4LPyc39EnesXrraI=;
+        b=Wh30vMwEVHUdmNsbv+wVX+RtVNjWBQgW+pIDfxJ8ooT/6zQqItIxM1xL9D17T4UqrZ
+         rR8FsX7ds4Qw9M4V54il4xrix4c7u1u5hEzVQh6rkSrW/1OkW+Uo3gNv+RV/qHIn05lW
+         cP4qTcIu5YzBX6yP60J+IDN7N7yYXjb3xvHq3m8+AXWwp6MIPrW3xolMvXerLMNm9QQd
+         T4icotoUpDRS6pZVR9Qd2afFNmGOt+HY65+6S4hjFuDZ3WVKDZbQqaYKklS4t9vwbSBf
+         dD2YeMFmn5M2BKk6rMb9WiasiKEo9l+cf0P4Xzysa6aanc9erh81OEXvY0y+/9Kas5c2
+         v/iA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgPV1JhHLwNKFCDVMHLT4vmxh8AS0OfyCkHxqcZpq8kFAARmbQVtPvYm0FXs/JDqrKnjQ8W3z+s5DXbstC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyppT8dZ9j8bYIZRHGv0OHM212r2FX0amn8MO4yuwBopjhx3c9y
+	L5BV18nt9Rm8t5MMWoH0VRlOZ06UkzdhagcY9JdnEfb9qKj8U0nuZ8AURYZO4BKJLhDn79PUTIy
+	T58xcf3oQBYE3iZQxGbyhkX5gTDXKHN6Gh7VVzg==
+X-Google-Smtp-Source: AGHT+IFwjfVAdGvSWbVD01pjbiSg9CpPS5Fc1yt3FmFrR38tF8H5FoVF5ez+II/L5JrvR2ee4KQG3Qf9gFrr1WpImC4=
+X-Received: by 2002:a05:622a:4e85:b0:45f:8ee:1859 with SMTP id
+ d75a77b69052e-46309209d1cmr172053631cf.0.1731335472760; Mon, 11 Nov 2024
+ 06:31:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241107-statmount-v3-0-da5b9744c121@kernel.org> <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+In-Reply-To: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 11 Nov 2024 15:31:02 +0100
+Message-ID: <CAJfpegs9ntOf-nZchBgx3DnxY-gYzBM0atOBQuXQse-9pinLSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fs: add the ability for statmount() to report the mnt_devname
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
->> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
->>  			}
->>  		}
->>  put_folios:
->> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
->> -			folio_put(fbatch.folios[i]);
->> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
->> +			struct folio *folio = fbatch.folios[i];
->> +
->> +			if (folio_test_uncached(folio)) {
->> +				folio_lock(folio);
->> +				invalidate_complete_folio2(mapping, folio, 0);
->> +				folio_unlock(folio);
-> 
-> I am not sure it is safe. What happens if it races with page fault?
-> 
-> The only current caller of invalidate_complete_folio2() unmaps the folio
-> explicitly before calling it. And folio lock prevents re-faulting.
-> 
-> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
-> also mark the page accessed.
+On Thu, 7 Nov 2024 at 22:00, Jeff Layton <jlayton@kernel.org> wrote:
 
-Ok thanks, let me take a look at that and create a test case that
-exercises that explicitly.
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -174,7 +174,7 @@ struct statmount {
+>         __u32 mnt_point;        /* [str] Mountpoint relative to current root */
+>         __u64 mnt_ns_id;        /* ID of the mount namespace */
+>         __u32 fs_subtype;       /* [str] Subtype of fs_type (if any) */
+> -       __u32 __spare1[1];
+> +       __u32 mnt_devname;      /* [str] Device string for the mount */
 
->> diff --git a/mm/swap.c b/mm/swap.c
->> index 835bdf324b76..f2457acae383 100644
->> --- a/mm/swap.c
->> +++ b/mm/swap.c
->> @@ -472,6 +472,8 @@ static void folio_inc_refs(struct folio *folio)
->>   */
->>  void folio_mark_accessed(struct folio *folio)
->>  {
->> +	if (folio_test_uncached(folio))
->> +		return;
-> 
-> 	if (folio_test_uncached(folio)) {
-> 		if (folio_mapped(folio))
-> 			folio_clear_uncached(folio);
-> 		else
-> 			return;
-> 	}
+One more point:  this is called source in both the old mount(2) API
+and in new the fsconfig(2) API, where it's handled just like a plain
+option (i.e. "-osource=/dev/foo").
 
-Noted, thanks!
+Also this is a sb property, not a mount property, so the naming is confusing.
 
--- 
-Jens Axboe
+So I'd call this "sb_source" for consistency.
+
+Thanks,
+Miklos
 
