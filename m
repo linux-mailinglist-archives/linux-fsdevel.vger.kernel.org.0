@@ -1,234 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-34174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0649C35A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 01:54:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C229C35AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 01:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E129F1F224B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 00:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A061C217AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 00:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7111494BB;
-	Mon, 11 Nov 2024 00:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SS71cagn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C32B168DA;
+	Mon, 11 Nov 2024 00:57:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D43D1474CC;
-	Mon, 11 Nov 2024 00:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4FC4683;
+	Mon, 11 Nov 2024 00:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731286401; cv=none; b=jwLQ99ogL+/90XTNrhp/U09/FA73I4JxxYknCgPdtgt9+q5bxyMqWaPJiqmqVKjdIuFfoUz50PAmRubJaQWvfXrCzHIB5UUcRWytJdMEUhgry4dZOwrMYFS501XqVAJB7RwpYj3yEi0QX+ahWTa54Zb/aS3tNhtWnXkZkmoU5cI=
+	t=1731286628; cv=none; b=BHm/+h7Ud4UhaVDra86WY1APXygZHgbCgoqULISZZ30OkLglcF5SXyi2A4CZcGUodNMQLxUgt9F/EYjm6HdO2ZfF6A4BemirWqfwYDI1enQr6wgJ8RXW4RRbItCxJOBljDRxgCS0Rk/R6ismlLgg/2i1vq2wdpGwoOUvIBq6w4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731286401; c=relaxed/simple;
-	bh=FdkkHjJkV4S0+kVcTYwQw7JAo4gJep4aQ3vPEJrklpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cPJ3ccxisQEa4P2zlDNJiO5ApXYiWx/G/WoZzjBL/UeIa65J5uqCqPfyg+KjbauW9FQPoeSrEUeC/BZClflXJo/dHvf/XJT9ZHPGiZwrK+eDkK5MoKaR1TWuARdQRaJjLM1LwIJXduHV6K/RMhWXfAOK9n54BgiQtFZL+lGM2XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SS71cagn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381A7C4CEDF;
-	Mon, 11 Nov 2024 00:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731286400;
-	bh=FdkkHjJkV4S0+kVcTYwQw7JAo4gJep4aQ3vPEJrklpk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SS71cagn0Y7k0khmPTRSNE2WIHD+UznGHwyeGjN6di6DA1sirkflrguuVTZfxJuMc
-	 /G9xzd1SKB6D9RdV9mg/kKdTh3Fb8Uw0YfA3G5UjeH1P9ZO52x1CzgadU77Vyy7HgZ
-	 FnPM9QJ6/Fd2xvc9b3aTmANUab2ekRv5H7VCSTVNS+VumwqsVLVOWs39LyhE+bh+4h
-	 e1ygJE+h9xbhHDwrinkdWVXPXG1QA19rUN38dxI6I8sqZEE74fYpYwrkIBq7TR74w7
-	 Rn6PjpDnyEgXK2ddOoeB3QHYdnXmUkLTtda17feUFfBEaG5aHTbfsQgcZVzOpWvud7
-	 +nuLxfO5dEEMg==
-From: cel@kernel.org
-To: <stable@vger.kernel.org>
-Cc: yukuai1@huaweicloud.com,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	hughd@google.com,
-	willy@infradead.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	srinivasan.shanmugam@amd.com,
-	chiahsuan.chung@amd.com,
-	mingo@kernel.org,
-	mgorman@techsingularity.net,
-	yukuai3@huawei.com,
-	chengming.zhou@linux.dev,
-	zhangpeng.00@bytedance.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	<linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for offset dir
-Date: Sun, 10 Nov 2024 19:52:42 -0500
-Message-ID: <20241111005242.34654-7-cel@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241111005242.34654-1-cel@kernel.org>
-References: <20241111005242.34654-1-cel@kernel.org>
+	s=arc-20240116; t=1731286628; c=relaxed/simple;
+	bh=YiwAxheJeXuTTs5LgyTbWIwSD/voYYc0qeEeT8u6KIo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CbLt6dQxVlFn34o0QJwjqU+miiYCTGdQTrTkWxBZDjvoXCTGPitqatZYMBLKAV2Va/1BK88VaZTBKU/HFzGdfocAokN26SzSbD31px6hC7ZjxU3Wxc/WEgkM97ibJXSISpxH4JYfjHxbnnRll/s4KAqUGgPPtHhd9Oyz+1mGTH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xmrj031bGz4f3nJc;
+	Mon, 11 Nov 2024 08:56:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D1331A0568;
+	Mon, 11 Nov 2024 08:56:55 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgBHIoZSVjFnd7PCBQ--.2481S3;
+	Mon, 11 Nov 2024 08:56:52 +0800 (CST)
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <2024110625-earwig-deport-d050@gregkh>
+ <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+ <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
+ <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
+ <4db0a28b-8587-e999-b7a1-1d54fac4e19c@huaweicloud.com>
+ <D2A4C13B-3B50-4BA7-A5CC-C16E98944D55@oracle.com>
+ <a223b1dd-9699-5f6c-2b71-98e9cd377007@huaweicloud.com>
+ <976C0DD5-4337-4C7D-92C6-A38C2EC335A4@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <48bb5f01-b82b-79a7-dbc6-6ec91bcaab67@huaweicloud.com>
+Date: Mon, 11 Nov 2024 08:56:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <976C0DD5-4337-4C7D-92C6-A38C2EC335A4@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHIoZSVjFnd7PCBQ--.2481S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ar18GF17ZrWDJF47Xw45Awb_yoW7AF1kpr
+	Z5t3Wjkr4DJr12kwnFvw1jvFyFyw45Gry5Xrn8WryUCas09r1fKF47Gr4Y9a4DGws3Cw1j
+	qr4ava4xZF1UJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: yangerkun <yangerkun@huawei.com>
+Hi,
 
-[ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
+在 2024/11/10 0:58, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 8, 2024, at 8:30 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/11/08 21:23, Chuck Lever III 写道:
+>>>> On Nov 7, 2024, at 8:19 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> 在 2024/11/07 22:41, Chuck Lever 写道:
+>>>>> On Thu, Nov 07, 2024 at 08:57:23AM +0800, Yu Kuai wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> 在 2024/11/06 23:19, Chuck Lever III 写道:
+>>>>>>>
+>>>>>>>
+>>>>>>>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>>>>>>
+>>>>>>>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
+>>>>>>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>>>>>>
+>>>>>>>>> Fix patch is patch 27, relied patches are from:
+>>>>>>>
+>>>>>>> I assume patch 27 is:
+>>>>>>>
+>>>>>>> libfs: fix infinite directory reads for offset dir
+>>>>>>>
+>>>>>>> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+>>>>>>>
+>>>>>>> I don't think the Maple tree patches are a hard
+>>>>>>> requirement for this fix. And note that libfs did
+>>>>>>> not use Maple tree originally because I was told
+>>>>>>> at that time that Maple tree was not yet mature.
+>>>>>>>
+>>>>>>> So, a better approach might be to fit the fix
+>>>>>>> onto linux-6.6.y while sticking with xarray.
+>>>>>>
+>>>>>> The painful part is that using xarray is not acceptable, the offet
+>>>>>> is just 32 bit and if it overflows, readdir will read nothing. That's
+>>>>>> why maple_tree has to be used.
+>>>>> A 32-bit range should be entirely adequate for this usage.
+>>>>>   - The offset allocator wraps when it reaches the maximum, it
+>>>>>     doesn't overflow unless there are actually billions of extant
+>>>>>     entries in the directory, which IMO is not likely.
+>>>>
+>>>> Yes, it's not likely, but it's possible, and not hard to trigger for
+>>>> test.
+>>> I question whether such a test reflects any real-world
+>>> workload.
+>>> Besides, there are a number of other limits that will impact
+>>> the ability to create that many entries in one directory.
+>>> The number of inodes in one tmpfs instance is limited, for
+>>> instance.
+>>>> And please notice that the offset will increase for each new file,
+>>>> and file can be removed, while offset stays the same.
+>>
+>> Did you see the above explanation? files can be removed, you don't have
+>> to store that much files to trigger the offset to overflow.
+>>>>>   - The offset values are dense, so the directory can use all 2- or
+>>>>>     4- billion in the 32-bit integer range before wrapping.
+>>>>
+>>>> A simple math, if user create and remove 1 file in each seconds, it will
+>>>> cost about 130 years to overflow. And if user create and remove 1000
+>>>> files in each second, it will cost about 1 month to overflow.
+> 
+>> The problem is that if the next_offset overflows to 0, then after patch
+>> 27, offset_dir_open() will record the 0, and later offset_readdir will
+>> return directly, while there can be many files.
+> 
+> 
+> Let me revisit this for a moment. The xa_alloc_cyclic() call
+> in simple_offset_add() has a range limit argument of 2 - U32_MAX.
+> 
+> So I'm not clear how an overflow (or, more precisely, the
+> reuse of an offset value) would result in a "0" offset being
+> recorded. The range limit prevents the use of 0 and 1.
+> 
+> A "0" offset value would be a bug, I agree, but I don't see
+> how that can happen.
+> 
+> 
+>>> The question is what happens when there are no more offset
+>>> values available. xa_alloc_cyclic should fail, and file
+>>> creation is supposed to fail at that point. If it doesn't,
+>>> that's a bug that is outside of the use of xarray or Maple.
+>>
+>> Can you show me the code that xa_alloc_cyclic should fail? At least
+>> according to the commets, it will return 1 if the allocation succeeded
+>> after wrapping.
+>>
+>> * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+>> * the @gfp flags permit.
+>> * Return: 0 if the allocation succeeded without wrapping.  1 if the
+>> * allocation succeeded after wrapping, -ENOMEM if memory could not be
+>> * allocated or -EBUSY if there are no free entries in @limit.
+>> */
+>> static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+>> struct xa_limit limit, u32 *next, gfp_t gfp)
+> 
+> I recall (dimly) that directory entry offset value re-use
+> is acceptable and preferred, so I think ignoring a "1"
+> return value from xa_alloc_cyclic() is OK. If there are
+> no unused offset values available, it will return -EBUSY,
+> and file creation will fail.
+> 
+> Perhaps Christian or Al can chime in here on whether
+> directory entry offset value re-use is indeed expected
+> to be acceptable.
 
-After we switch tmpfs dir operations from simple_dir_operations to
-simple_offset_dir_operations, every rename happened will fill new dentry
-to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
-key starting with octx->newx_offset, and then set newx_offset equals to
-free key + 1. This will lead to infinite readdir combine with rename
-happened at the same time, which fail generic/736 in xfstests(detail show
-as below).
+This can't be acceptable in this case, the reason is straightforward,
+it will mess readdir, and this is mucth more serious than the cve
+itself.
 
-1. create 5000 files(1 2 3...) under one dir
-2. call readdir(man 3 readdir) once, and get one entry
-3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
-4. loop 2~3, until readdir return nothing or we loop too many
-   times(tmpfs break test with the second condition)
+Thanks,
+Kuai
 
-We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
-directory reads") to fix it, record the last_index when we open dir, and
-do not emit the entry which index >= last_index. The file->private_data
-now used in offset dir can use directly to do this, and we also update
-the last_index when we llseek the dir file.
-
-Fixes: a2e459555c5f ("shmem: stable directory offsets")
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-[brauner: only update last_index after seek when offset is zero like Jan suggested]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
-[ cel: adjusted to apply to origin/linux-6.6.y ]
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c | 37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index a87005c89534..b59ff0dfea1f 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
- 	xa_destroy(&octx->xa);
- }
- 
-+static int offset_dir_open(struct inode *inode, struct file *file)
-+{
-+	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-+
-+	file->private_data = (void *)ctx->next_offset;
-+	return 0;
-+}
-+
- /**
-  * offset_dir_llseek - Advance the read position of a directory descriptor
-  * @file: an open directory whose position is to be updated
-@@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
-  */
- static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- {
-+	struct inode *inode = file->f_inode;
-+	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-+
- 	switch (whence) {
- 	case SEEK_CUR:
- 		offset += file->f_pos;
-@@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	}
- 
- 	/* In this case, ->private_data is protected by f_pos_lock */
--	file->private_data = NULL;
--	return vfs_setpos(file, offset, U32_MAX);
-+	if (!offset)
-+		file->private_data = (void *)ctx->next_offset;
-+	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
- static struct dentry *offset_find_next(struct xa_state *xas)
-@@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
- {
- 	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
- 	XA_STATE(xas, &so_ctx->xa, ctx->pos);
-@@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 	while (true) {
- 		dentry = offset_find_next(&xas);
- 		if (!dentry)
--			return ERR_PTR(-ENOENT);
-+			return;
-+
-+		if (dentry2offset(dentry) >= last_index) {
-+			dput(dentry);
-+			return;
-+		}
- 
- 		if (!offset_dir_emit(ctx, dentry)) {
- 			dput(dentry);
--			break;
-+			return;
- 		}
- 
- 		dput(dentry);
- 		ctx->pos = xas.xa_index + 1;
- 	}
--	return NULL;
- }
- 
- /**
-@@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- static int offset_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct dentry *dir = file->f_path.dentry;
-+	long last_index = (long)file->private_data;
- 
- 	lockdep_assert_held(&d_inode(dir)->i_rwsem);
- 
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 
--	/* In this case, ->private_data is protected by f_pos_lock */
--	if (ctx->pos == DIR_OFFSET_MIN)
--		file->private_data = NULL;
--	else if (file->private_data == ERR_PTR(-ENOENT))
--		return 0;
--	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
-+	offset_iterate_dir(d_inode(dir), ctx, last_index);
- 	return 0;
- }
- 
- const struct file_operations simple_offset_dir_operations = {
-+	.open		= offset_dir_open,
- 	.llseek		= offset_dir_llseek,
- 	.iterate_shared	= offset_readdir,
- 	.read		= generic_read_dir,
--- 
-2.47.0
+> 
+> Further, my understanding is that:
+> 
+> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+> 
+> fixes a rename issue that results in an infinite loop,
+> and that's the (only) issue that underlies CVE-2024-46701.
+> 
+> You are suggesting that there are other overflow problems
+> with the xarray-based simple_offset implementation. If I
+> can confirm them, then I can get these fixed in v6.6. But
+> so far, I'm not sure I completely understand these other
+> failure modes.
+> 
+> Are you suggesting that the above fix /introduces/ the
+> 0 offset problem?
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
