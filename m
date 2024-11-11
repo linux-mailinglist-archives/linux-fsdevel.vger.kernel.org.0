@@ -1,149 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-34197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E47C9C39AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 09:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF099C3A15
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 09:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360591F2213E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 08:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8FA1F221D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 08:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A536158853;
-	Mon, 11 Nov 2024 08:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1471616F0D0;
+	Mon, 11 Nov 2024 08:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ed3uhBSy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIHqUfSt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B442A8A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 08:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672B216A930;
+	Mon, 11 Nov 2024 08:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731313959; cv=none; b=HGwULs4sbRLuQMc18F1ldoRSFzOQHdhB7X8QpEUTCI3eCG5PaktTAg7IYPBJvEMMJ+e/s0Oh91MNxMd8EtCzcDKtDLf5dJCG+Ht0/qIJjk9iu3png9W1eUGfnWfzelJnMt+pqkIa168Bdy4xJSJd6UqSe4C9P1fUjTRoA1m0Ecs=
+	t=1731315132; cv=none; b=u80ZW13/F1eLJc/LyrEzBrHu0Jc1wiuOdO08P4qMKIeFq1Sj2W1eCf1ppy4l9zNGWpbFUnarIgGHhY5EV8YHwcIqf9aR2Na+FpHaSiiFlpmM8gdvpesn1MYJAY1VF4+11p3sZpH1t+I7lcpEVlmkAXU8BHCAKblGe9inCp3Pcu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731313959; c=relaxed/simple;
-	bh=LEMyKTB9HKFyfTLJiDz/fGA5Wcumtq1CY4cRoHm3QM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SgOIHBt1McEv3SQEgIb6jcvh0V3ESnAdFw03HzyMZecxtjvld21EG1zy1ZPplg8yqkJyrmpo0/3fB+YjZvIgPB7ApkRUSDqkRvEi+pshrQa+7FnNs2Hvu54eT0vLcnLwUCV8LMSOgjPaFd1mWvxGh93p0m8pqMtkTdwxzXtHCTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ed3uhBSy; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731313943; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=WZAMxPae5+8nJ4E38SLlG5upXOWFiLLeZBjopoTsqEk=;
-	b=Ed3uhBSyfilWjZovTxEn4eQ0BQxp4GH//S4KwoS1NIRpdTfwlDKHuviRrzaQGJg6Gp8dV/Zbf2iLwwLitddD3r9zQIgoU0jA1DuF2++EJ78jS7BGeJ3h+YO4LmEthM2nMpM/6OnYf/kU7UM+hyUoBCjgJT4DeTWyIgcZrG5OKxQ=
-Received: from 30.221.145.166(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WJ7teQf_1731313941 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 11 Nov 2024 16:32:22 +0800
-Message-ID: <9c0dbdac-0aed-467c-86c7-5b9a9f96d89d@linux.alibaba.com>
-Date: Mon, 11 Nov 2024 16:32:20 +0800
+	s=arc-20240116; t=1731315132; c=relaxed/simple;
+	bh=oE70LvyPHTDoCPA/I9zQ1cQFKLRDfcjfwSpcP91s2gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIpj81EiLb9BZkZFOLj2iQ+b7N9IBThHhfeOrv9jajGVy1C0loEocAD4dXxdFQPMQIOnKwzadK0WIjg1Ymqrvhl1Ubw/XQwrCNnmXYKrI1y6c3wiUTiTQXMxvJ8Pa36mgDmsQFb7V73zb6kHnOuM/LR85JubyoGRLqfZUZ+LwK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIHqUfSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC8EC4CED4;
+	Mon, 11 Nov 2024 08:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731315132;
+	bh=oE70LvyPHTDoCPA/I9zQ1cQFKLRDfcjfwSpcP91s2gE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iIHqUfStn5kznNiwYjxx7ffPyEpIrUJG9+I3XgiEOzTrHljkcZ4g7IKQzYpLoeU2J
+	 ma3cWEynJ9/iZ3TLl/pGc2Ny4CujSyO9vHwiy1f4XZ6c/AohS0V2EenmXlx0XRks0A
+	 fHrCNghvbkxDGbr+nKAv2zBB+ncf0I24otDeOi9GKZcjCBSsClZTWO3q20hg4tuULn
+	 /3nB5peen2pQSxpj44TM51Ih+TwdizeJ1JddaJGJrL75C86oKRe9vOa+Zgk+TJDZ1a
+	 1rkrtV+Wg8L3WVizyBS9DGNhjfR08yqaDarX8BcuRc9TDmjdewLNQzTWzwlujqexh8
+	 NF820q5pD8CMA==
+Date: Mon, 11 Nov 2024 09:52:07 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>, 
+	fstests@vger.kernel.org, stable@vger.kernel.org, Leah Rumancik <leah.rumancik@gmail.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: generic/645 failing on ext4, xfs (probably others) on all LTS
+ kernels
+Message-ID: <20241111-tragik-busfahren-483825df1c00@brauner>
+References: <20241110180533.GA200429@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: shakeel.butt@linux.dev, josef@toxicpanda.com, linux-mm@kvack.org,
- bernd.schubert@fastmail.fm, kernel-team@meta.com
-References: <20241107235614.3637221-1-joannelkoong@gmail.com>
- <20241107235614.3637221-7-joannelkoong@gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20241107235614.3637221-7-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241110180533.GA200429@mit.edu>
 
-Hi, Joanne and Miklos,
-
-On 11/8/24 7:56 AM, Joanne Koong wrote:
-> Currently, we allocate and copy data to a temporary folio when
-> handling writeback in order to mitigate the following deadlock scenario
-> that may arise if reclaim waits on writeback to complete:
-> * single-threaded FUSE server is in the middle of handling a request
->   that needs a memory allocation
-> * memory allocation triggers direct reclaim
-> * direct reclaim waits on a folio under writeback
-> * the FUSE server can't write back the folio since it's stuck in
->   direct reclaim
+On Sun, Nov 10, 2024 at 01:05:33PM -0500, Theodore Ts'o wrote:
+> The test generic/645 is failing on (at least) 6.6, 6.1, 5.15 LTS
+> kernels.
 > 
-> To work around this, we allocate a temporary folio and copy over the
-> original folio to the temporary folio so that writeback can be
-> immediately cleared on the original folio. This additionally requires us
-> to maintain an internal rb tree to keep track of writeback state on the
-> temporary folios.
+> This fix is apparently commit dacfd001eaf2 ("fs/mnt_idmapping.c:
+> Return -EINVAL when no map is written"), but in order to take this
+> patch, it looks like we need to backport the 4 patch series
+> "mnt_idmapping: decouple from namespaces"[1] (and possibly others; I
+> haven't tried yet).
 > 
-> A recent change prevents reclaim logic from waiting on writeback for
-> folios whose mappings have the AS_WRITEBACK_MAY_BLOCK flag set in it.
-> This commit sets AS_WRITEBACK_MAY_BLOCK on FUSE inode mappings (which
-> will prevent FUSE folios from running into the reclaim deadlock described
-> above) and removes the temporary folio + extra copying and the internal
-> rb tree.
+> [1] https://lore.kernel.org/all/20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org/
 > 
-> fio benchmarks --
-> (using averages observed from 10 runs, throwing away outliers)
+> This looks fairly involved so the questions I have are:
 > 
-> Setup:
-> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
->  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
+> (1) Should we request this patch series plus commit dacfd001eaf2 into
+> the stable kernels --- or should I just add a versioned excludes[2]
+> and just skip generic/645 from all kernels older than Linux 6.9 if we
+> think it's too involved and/or risky to backport these id mapping
+> changes?
 > 
-> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
-> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
-> 
->         bs =  1k          4k            1M
-> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
-> After   341 MiB/s     2246 MiB/s     2685 MiB/s
-> % diff        -3%          23%         45%
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> (2) How much do we care that generic/645 is failing on LTS kernels?
+> Are user/applications going to notice or care?
 
+No userspace used an empty idmapping and it was unclear whether the
+behavior would be well-specified so the patch changed that quite some
+time ago.
 
-IIUC this patch seems to break commit
-8b284dc47291daf72fe300e1138a2e7ed56f38ab ("fuse: writepages: handle same
-page rewrites").
+Backporting this to older LTS kernels isn't difficult. We just need
+custom patches for the LTS kernels but they should all be very simple.
 
-> -	/*
-> -	 * Being under writeback is unlikely but possible.  For example direct
-> -	 * read to an mmaped fuse file will set the page dirty twice; once when
-> -	 * the pages are faulted with get_user_pages(), and then after the read
-> -	 * completed.
-> -	 */
-
-In short, the target scenario is like:
-
-```
-# open a fuse file and mmap
-fd1 = open("fuse-file-path", ...)
-uaddr = mmap(fd1, ...)
-
-# DIRECT read to the mmaped fuse file
-fd2 = open("ext4-file-path", O_DIRECT, ...)
-read(fd2, uaddr, ...)
-    # get_user_pages() of uaddr, and triggers faultin
-    # a_ops->dirty_folio() <--- mark PG_dirty
-
-    # when DIRECT IO completed:
-    # a_ops->dirty_folio() <--- mark PG_dirty
-```
-
-The auxiliary write request list was introduced to fix this.
-
-I'm not sure if there's an alternative other than the auxiliary list to
-fix it, e.g. calling folio_wait_writeback() in a_ops->dirty_folio() so
-that the same folio won't get dirtied when the writeback has not
-completed yet?
-
-
-
--- 
-Thanks,
-Jingbo
+Alternatively, you can just ignore the test on older kernels.
 
