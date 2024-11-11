@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-34322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177F39C479B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:06:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608A39C47A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F821F21704
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC282822E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E651E285B;
-	Mon, 11 Nov 2024 20:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A551E6325;
+	Mon, 11 Nov 2024 20:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Oohz/73x"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XbL4crMS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1751E25E6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 20:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF6F1E3DC9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 20:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358504; cv=none; b=CCXV4vAOPTA/MSeRjN5z9f3aC1qEL4Tpb3A4H0nD+1Y4Mk4WafVGjxD9RsoM3YUMK9z3+rcY+rcD74cbcvQzRvrH5n75pRsjmGtUv6yGW2ZKV41AGQzPF6kt7UpRj8eW7quErsWwemVxMX/BrdhwOC/F/3zNVGCVnGMtozSguEI=
+	t=1731358507; cv=none; b=QrwXgaVBOTVT8qmjWlCxa2ddhd6Sgk1+Hco2M1EqbgRZ51u/m1bvOHhj3FVX5ZoT5erJmLbIXIpGFvwKoSCmpPrVd4wm9Pf8V6vnltuAaLAn0GkfWgWojr0rJA9fMM3YjvR286HK2ud2PHF5bgxoOlTlma+5agHqYZecZFS+DrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358504; c=relaxed/simple;
-	bh=C2e0qcdc5PaNPYSlHWVjFzNo4JFQL2cVOGLaECCTRx8=;
+	s=arc-20240116; t=1731358507; c=relaxed/simple;
+	bh=5EJK+m/wGPqdefZn2t55PTF5xGbYrN1JuaX+BqVJWMA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lZ4KdtHr7EanwZWjZcxR2i8DWA6u0ooln3OJdCpAhvWwFZdEzorGjqhPaHwOOtBEqvu7HtJmjLEroNlx2Ay9AiJhHxxFMh5GlBgjsYmNtgnp9lK/u9qGKmkJKHSqHYdRkGjXERcVV+CNLpMhm1vZ1Jm7p4P0UUEsymnxkRoE2IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Oohz/73x; arc=none smtp.client-ip=209.85.216.48
+	 In-Reply-To:To:Cc; b=eaD+kqhDmXs8ZmLshV5plFVWmZBZbEotKKRpUq5Gl7QBl2PMcE7uMqgJEDfErPr2V7sZsnIbHlkwSZeaxJxD4qBVvxg6s+oEutz+X1SyTZGgDFM3mLkWELDVk1jAyBZaRNfersZHfxy+eLU2Ym/w2+frFNMgnmxAmO3z/81eZtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XbL4crMS; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso4010056a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 12:55:03 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso3585491a91.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 12:55:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358503; x=1731963303; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358506; x=1731963306; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v87E2FN7teOOU1wWTBhK9gVAN0VjVVh/KdbYNd+fh68=;
-        b=Oohz/73xCwOTmNpPf7ljnGldlXieHokB+fNkE2Y6zPmlccW2ZAXgnPheUZVHlOvxio
-         HWAD96OSPXwRlecdyfZUM3QhmOn5lMIm87Lg9yK4zyjEccVDKAl6+0nzremahRSGgcrm
-         6s4xJPvwXJdM7d5wehDotwhF8pnPi+pbwixDn69rC9TFxO83FdT9C6DNUGcKn/wdWRjx
-         7QZoaGhNssitAfRt/47ZlpBKjC0gUIal1C1Tzjq/gXk53sWNUXQe0H9MRxNI42/Bd9pt
-         ctsa5BxYDQE34WXKQ44KhCElcT5xuzVwEuATKRLYJ4uQO0Yuq7646h2wi9LOwJwI+34/
-         DpPA==
+        bh=sEpSBMtfQIdn0VsL6AOSyBd/7ZO5cM9GZrrfF6sqPzw=;
+        b=XbL4crMSL83W9I+2KJbi4OTTdjbdsPRzyBv9KNprJ8sH2qYvoX0SUx7U3SPnXtTMXz
+         07cFwrQJmSaT7aG5yyGCZyu0q/1ZLQw1BsXEvjygIvup/461gjSTQDXVFcdiA7KHhl37
+         uobcSKa42kR5HT36ysm0/Rhd2DlSiBPv4lQwoRlzNB8NZjx7IFqeneqntM5dWpPZXbDS
+         fERyjzcGdbr6CF//SMsImu+1N+mCRY0HVXXUAgycDSwSYFZKkRufGF1bKzzhmUdQOlva
+         6N55Zx5dfoXV/x/m1J360AViQMN4P4DbcQBvKHV3LLjdhntb4WmMmQav9qbUR4V7Krjp
+         gGkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358503; x=1731963303;
+        d=1e100.net; s=20230601; t=1731358506; x=1731963306;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v87E2FN7teOOU1wWTBhK9gVAN0VjVVh/KdbYNd+fh68=;
-        b=BLVLqn+OggZiJ+fjRdwcV7oLa1G+8nZCADRZidF4u1cpplXI0qemaSs4cGtV+8sjVA
-         3py/8oe83Q2YDCwG/06O5lchIlhpjyBYHwVz7vFke6uWuqqwDYOY489qWw9lZhmngNfD
-         tO8FzvVklHZAdZkyUDAPQaG8KmY9VOHNt+8BYKepR0pEH4eVTPqaJHTfP5TgUxUOSsgp
-         nZXBC0kU2vrjIP5z9G/6QGL/Y6tRtj++JNRduD8N09pbXluQzF7XwEGe/hG2mA05If+t
-         y6qMctAYSjZJz2FkMbdHOo8VnlJYmdJUAZnJWM3DHmTvf0+d10vgZE+K7Z0tF2HRS67T
-         k4Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXg/fxNHeic9CcOCxleXYyJKyeSf3w0B74gWcM8Z8XfiokGpdWB7377+sjdzgsrVaMNxjECo3Br4aJGO76i@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm7Tim/lrYegL1X2mZT4J5qOvTm0Ib2jRSk3MdnVfmNdiR9xH/
-	LsdDtncobpEibAQcScR7GinHO2W3f2cezj9Plgf8ZSOj8EBYClc2mjksrQ5+jHA=
-X-Google-Smtp-Source: AGHT+IE6pHU7K0D6Kovlo0iT4mPH8p4N2kcP8nKM47bgfKvZsvt7nFC76OWezD1by9y3vt8KBs+5Mg==
-X-Received: by 2002:a17:90b:1a92:b0:2e2:cd22:b092 with SMTP id 98e67ed59e1d1-2e9b171f93amr20303584a91.16.1731358503151;
-        Mon, 11 Nov 2024 12:55:03 -0800 (PST)
+        bh=sEpSBMtfQIdn0VsL6AOSyBd/7ZO5cM9GZrrfF6sqPzw=;
+        b=T2UUmBy24mmfPcqrwmKByByQtDs7E5Pj6IMrFQNp4PGwArddd8s2sWDa7bzMnAQyXm
+         7dckGRU2hBhNozDHbTvDw10ASceaUm4fPqKupcdgq0ZKaPHn5RCTJc628eGJD98XHePc
+         wd7Gn8fvf0S3zLDFsAhiK7J7KQX5P/pWlW1Bx7hQQKKq4wVdP7Hqx/NTBb7jD008yZmS
+         X9KoghRQeSsTbQdo4XRi7yWVHSu4RS4kA9s9P5EBCyU8GS7avmDj4ACx53Qz7hItImrQ
+         e8rVZtR2Iatd78wC3gmv12a2B3nw8cW9ebv1eki960vpraHavOm4nuGArUAcOlG9/tbU
+         VuFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXApfcw0MnXAka/uc61j+WCmZYtLsK8r8nRxY1TyyZSIiOoYXXpe/5bd7e+/lxxyy+sXU7N6E8IZgUbu9TT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCezssuR6IiFNdlmHhl8eRRhPi8YiDFsUmQ8prx9IF/PSCVKfB
+	+GAMEs+pXdDwPNen9fC4em/uGNhD+CsN4HsSFkN8b5BSiGLHofgG/fvj+3IOHFg=
+X-Google-Smtp-Source: AGHT+IFzBuraYyYmpM+mIAMFI16Yg/jetlEaju2rqc5UFMlTYdZs+XaMbAKQKjfpaEa7usCG1NdnaQ==
+X-Received: by 2002:a17:90b:4d11:b0:2e2:b922:48a with SMTP id 98e67ed59e1d1-2e9b173aff9mr21100247a91.18.1731358505869;
+        Mon, 11 Nov 2024 12:55:05 -0800 (PST)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.55.00
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.55.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 12:55:02 -0800 (PST)
+        Mon, 11 Nov 2024 12:55:05 -0800 (PST)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 11 Nov 2024 12:54:10 -0800
-Subject: [PATCH v8 25/29] riscv: kernel command line option to opt out of
- user cfi
+Date: Mon, 11 Nov 2024 12:54:11 -0800
+Subject: [PATCH v8 26/29] riscv: create a config for shadow stack and
+ landing pad instr support
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-v5_user_cfi_series-v8-25-dce14aa30207@rivosinc.com>
+Message-Id: <20241111-v5_user_cfi_series-v8-26-dce14aa30207@rivosinc.com>
 References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
 In-Reply-To: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -108,63 +108,51 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.14.0
 
-This commit adds a kernel command line option using which user cfi can be
-disabled.
+This patch creates a config for shadow stack support and landing pad instr
+support. Shadow stack support and landing instr support can be enabled by
+selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wires
+up path to enumerate CPU support and if cpu support exists, kernel will
+support cpu assisted user mode cfi.
+
+If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
+`ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
 
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- arch/riscv/kernel/usercfi.c | 20 ++++++++++++++++++++
+ arch/riscv/Kconfig | 20 ++++++++++++++++++++
  1 file changed, 20 insertions(+)
 
-diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
-index 04b0305943b1..223dfa482deb 100644
---- a/arch/riscv/kernel/usercfi.c
-+++ b/arch/riscv/kernel/usercfi.c
-@@ -17,6 +17,8 @@
- #include <asm/csr.h>
- #include <asm/usercfi.h>
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 5bdda86ada37..0887a9ae0c20 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -246,6 +246,26 @@ config ARCH_HAS_BROKEN_DWARF5
+ 	# https://github.com/llvm/llvm-project/commit/7ffabb61a5569444b5ac9322e22e5471cc5e4a77
+ 	depends on LD_IS_LLD && LLD_VERSION < 180000
  
-+bool disable_riscv_usercfi;
++config RISCV_USER_CFI
++	def_bool y
++	bool "riscv userspace control flow integrity"
++	depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfiss)
++	depends on RISCV_ALTERNATIVE
++	select ARCH_HAS_USER_SHADOW_STACK
++	select ARCH_USES_HIGH_VMA_FLAGS
++	select DYNAMIC_SIGFRAME
++	help
++	  Provides CPU assisted control flow integrity to userspace tasks.
++	  Control flow integrity is provided by implementing shadow stack for
++	  backward edge and indirect branch tracking for forward edge in program.
++	  Shadow stack protection is a hardware feature that detects function
++	  return address corruption. This helps mitigate ROP attacks.
++	  Indirect branch tracking enforces that all indirect branches must land
++	  on a landing pad instruction else CPU will fault. This mitigates against
++	  JOP / COP attacks. Applications must be enabled to use it, and old user-
++	  space does not get protection "for free".
++	  default y
 +
- #define SHSTK_ENTRY_SIZE sizeof(void *)
- 
- bool is_shstk_enabled(struct task_struct *task)
-@@ -393,6 +395,9 @@ int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status)
- 	unsigned long size = 0, addr = 0;
- 	bool enable_shstk = false;
- 
-+	if (disable_riscv_usercfi)
-+		return 0;
-+
- 	if (!cpu_supports_shadow_stack())
- 		return -EINVAL;
- 
-@@ -472,6 +477,9 @@ int arch_set_indir_br_lp_status(struct task_struct *t, unsigned long status)
- {
- 	bool enable_indir_lp = false;
- 
-+	if (disable_riscv_usercfi)
-+		return 0;
-+
- 	if (!cpu_supports_indirect_br_lp_instr())
- 		return -EINVAL;
- 
-@@ -504,3 +512,15 @@ int arch_lock_indir_br_lp_status(struct task_struct *task,
- 
- 	return 0;
- }
-+
-+static int __init setup_global_riscv_enable(char *str)
-+{
-+	if (strcmp(str, "true") == 0)
-+		disable_riscv_usercfi = true;
-+
-+	pr_info("Setting riscv usercfi to be %s\n", (disable_riscv_usercfi ? "disabled" : "enabled"));
-+
-+	return 1;
-+}
-+
-+__setup("disable_riscv_usercfi=", setup_global_riscv_enable);
+ config ARCH_MMAP_RND_BITS_MIN
+ 	default 18 if 64BIT
+ 	default 8
 
 -- 
 2.45.0
