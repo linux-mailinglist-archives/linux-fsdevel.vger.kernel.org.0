@@ -1,169 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-34320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EA09C481F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 874CA9C48B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 23:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03FFCB21C23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A42FDB3B50B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6D61E0B96;
-	Mon, 11 Nov 2024 20:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F0A1BC07B;
+	Mon, 11 Nov 2024 21:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NGPyZW9p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCj5aATx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CB81D63F2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 20:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04712AEE0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 21:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358499; cv=none; b=EUt49KOKpnAGu8Yc14yKcoj+rcpwpn/SmUPet30kmzQQQNzd/uWbWBTUr1TL+yRIzG7VJNtspBWyiyRlTlB786iHC8go29pb7yyG19+Z6kwuOCoBp7O3ee2m7OCBL8YK/Mm6ZoWr+yYLUe0RyJ24J0VBdpd8hmwppY8Hdfc7nvI=
+	t=1731359508; cv=none; b=A3gCIsUvxOjgx5cCl8tY88HrD9yId5eKecuMNHvUF9XpVuTzm5OvY2BBmFIcnaN6SDVEnB/4yw3LpO6iPIdHI9XFzTaXDwjCx7Wt1+mlo4tYtVfP7pCEz7RMLyuZTJVLq42fwWWM1oLityUihT7DH1JwAxSrmxKuTZ668iqpfs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358499; c=relaxed/simple;
-	bh=wYCEI7wvSMLui8WMRpDFv0a+NDWckEqPGqXUbhFxHHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LwOwdCf4W3As5QvsxXGGI8DmwaMWd7eDljlVf8D9W3pb3cV4WmjE1unl/IC0C292E1mYogDl8cGSE10JKXKWSBKQ049zlUru4IW57pBt0aC/F8R8RAfdwUZtFzwifAF4tiK2noYTiSgT2LUV5BMR47g+cYFZyqAtTorU6x0urds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NGPyZW9p; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2e23f2931so3969660a91.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 12:54:57 -0800 (PST)
+	s=arc-20240116; t=1731359508; c=relaxed/simple;
+	bh=NLMZb4sPLhu7DhAP2XtUtSQV82QzeMptwhoTkj0X91w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sGBoz1U9mrbkMje6OH1mirhDE4+6Puy90kOb2Sc4Xx7hFUA4PCafr1JA6Y853lOONQVDQI9NHHb549gBSxtdtdNtPXYSveyYDZotJ/b+++ru4US4DyHiR/4G1I3Df/pXHegqSJlXY4VeqmSdX/FCflzanjdOY1iocTg5GhTkwNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCj5aATx; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46098928354so37962041cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:11:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358497; x=1731963297; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hq3DaQ4YpzTwJN9yZW6Sl3gPyL1m035+b/05XFtk9T8=;
-        b=NGPyZW9pLPhC9nXjvoY7+iCDi7hEEe7Aq4Q1nnrUeilw8TGv/tUAoXjNfpMjejLsFU
-         rXwibYB2aPGCSbhjOFtGcyIzSPw8KpaZp7MaIFpIsnG83mCS7FgWWKnXDvKvISuwy+xF
-         MSAreHKMqyBbzXP6NLnjNwf8VMMkHbgFyUvtOc2ZuNX8wrMDx90l3114cIV2S1iyb8bR
-         pO99P4WTmS/rhknkCCg/CtDnD1uKMpn6ddlASHZyI1IpA3olgS8hbbcPbBjpWo1sMG8/
-         bgrvwH6+8zfRnXewf0+PEHPJHbOIdpFohrZdBcGjgWvCWvkhVc8YSyurqllWi2SDD+Ee
-         BbvQ==
+        d=gmail.com; s=20230601; t=1731359506; x=1731964306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qOuGggVzA+8zaGETY+eOMb+uIgke6CbhFZrDQWG+q10=;
+        b=BCj5aATxzezHdxmnxr8zu/Ypa8ZVZtRCs+wpQQsl9N8WJ6X5fDdb3HX8PK6VFniRoE
+         uELuUyyN3ZHHSxEKIIaFdKNGR7NFFVoluLHZkDu0BxYoxXawDqsfutjgVIUtRvJ+ma6n
+         LBsWTWOLEfkhy7mDIQXFID8ahRppIUVCEUxKF62FrLL/xcQadOF8Kxfhe7ttCQUCgrzW
+         TqsK0b14riw8kRjgzlxt2Y782UTW02DQk1SEiH1KrLYYJ3AxpdD0M0EpCsJWV5ZvsErV
+         BmGVbpWsiwFlVtSk/+54t1lyCd7Y1a3/t34Ad39ad3UrcgijcTSUWIWXcaYfQxrEsVFb
+         riUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358497; x=1731963297;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731359506; x=1731964306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hq3DaQ4YpzTwJN9yZW6Sl3gPyL1m035+b/05XFtk9T8=;
-        b=xB95M4YvtmonqOBAfA3zPElwUw661JUWxdwfY+p8GXW0oczlO63mQkvy1OTqah+1dz
-         gwce9g6GMeiWJRqXSDZ3PuuVVcastI/g92kM5Mra2+8f8Ovb04K/01J3eWSsq92XyKQe
-         +YQ1lpBoZfqhXycnGTwn7HWPW7GSKX6vsgq+jmHTLo6+vvt0xC3rYh08QA0pfUVKSxU1
-         SQcAZnO2HC2pXXms3Co5R1SK+6ioV+aTd09KPvYzQL9vfuxaqyieEv+4tP5ZqyI8e7eX
-         XxzpqUVwbGBoGGnL5rVZDVcCqPhvAbbfWR3YpWEmkXGb+RolFPgRqTU6knydpQOhBi0Z
-         ozFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaqpNrmllmdUGvWfHwUvN1Tdzbp2/98ZElS/TdlZlr4KBTYfLt+EMPhwnI3JVzYKdjDgvmfwb2LQcaZlAE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8C4QCjpqok2zuLJeiSQcCLEIT1pO7SE6fmFuryzboTW7J4sfd
-	8+SEDYE7tCqi8jl+bMtuphrDmaz3i5QAc4Mjo/o+BOT4fgz+crhusjOnnR0mU84=
-X-Google-Smtp-Source: AGHT+IEEKaEBcK4MgBqd/tJtgjOiUzsMic6zpl+RlG/WSuE/W94Zyl8KoJt+g6fHJT4sQqdqWl8Dag==
-X-Received: by 2002:a17:90a:d88d:b0:2cb:5aaf:c12e with SMTP id 98e67ed59e1d1-2e9b1788b6amr17044135a91.37.1731358497234;
-        Mon, 11 Nov 2024 12:54:57 -0800 (PST)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 12:54:56 -0800 (PST)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 11 Nov 2024 12:54:08 -0800
-Subject: [PATCH v8 23/29] riscv: Add Firmware Feature SBI extensions
- definitions
+        bh=qOuGggVzA+8zaGETY+eOMb+uIgke6CbhFZrDQWG+q10=;
+        b=IFKg8ifcdpIeR3NaqlBYH1cuJ9pJIzeM+XmAps7UyfGronAjDM8WobI5PXApO0K+wU
+         jVuvKdzSTXccBTkxeioIIdNd/1vI83rNYNQtA/3SA9fj0CXRRRO23sOhxpCyDfEtLhen
+         uolsjOUyLqKsZBoMvHgCPlt+Y12qZiW7zwfMt9RW/vYELPpihAxZliYIhkiZIqFoXbUy
+         HkOCAWKo5gkfb2tfcMR3T2gMSz2BD5dwdBzibcHbdSt81tnW5JmQaJemFIOKCa4cGp/h
+         4tbnBOUKKMsfM0ikU5okagZQszLgANghfUHki+7xESNPay12c4Fk8IjjLi71GYWViMSB
+         eZPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCIu5OcN6xkcssyJAwYnQcVzkC7lzzB7U1+y3LUC/icsFgFILKwTeyMosA+yycOkO70g0HIKIHePFkHan8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAWG1mbuFeGqvuPcKe4OOuz2lD15Jn2oJMr1HRU2LkBuqwiI/P
+	JoeB/5AX2iJKKkUlCAVH7qajWJfZXhHFRmUxAS5a38wQ7Fva6sR+8ao8KZb3K+/xYgUGKz2J24b
+	+vQv5b6jwkm66VMHutuCZ3L9O+lw=
+X-Google-Smtp-Source: AGHT+IGN9ZO/+N+r0n0P+Zj63FMITfOdmxQ/lqEoV5Fi5gl96VhVmitjdYWqxbhfMtAW0FfCDRlFyjDmoZ8Cbxt3Ixo=
+X-Received: by 2002:a05:622a:1990:b0:458:4bf1:1f46 with SMTP id
+ d75a77b69052e-4630942ad76mr235936441cf.53.1731359505782; Mon, 11 Nov 2024
+ 13:11:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241111-v5_user_cfi_series-v8-23-dce14aa30207@rivosinc.com>
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
-In-Reply-To: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com
-X-Mailer: b4 0.14.0
+References: <20241107235614.3637221-1-joannelkoong@gmail.com>
+ <20241107235614.3637221-2-joannelkoong@gmail.com> <lbwgnktuip4jf5yqqgkgopddibulf5we6clmitt5mg3vff53zq@feyj77bk7pdt>
+In-Reply-To: <lbwgnktuip4jf5yqqgkgopddibulf5we6clmitt5mg3vff53zq@feyj77bk7pdt>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 11 Nov 2024 13:11:35 -0800
+Message-ID: <CAJnrk1ZOc3xwCk7bVTKBSAh7sf-_szoSW-brEVx8e09icYiDDQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] mm: add AS_WRITEBACK_MAY_BLOCK mapping flag
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Clément Léger <cleger@rivosinc.com>
+On Fri, Nov 8, 2024 at 4:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
+> wrote:
+>
+> On Thu, Nov 07, 2024 at 03:56:09PM -0800, Joanne Koong wrote:
+> > Add a new mapping flag AS_WRITEBACK_MAY_BLOCK which filesystems may set
+> > to indicate that writeback operations may block or take an indeterminat=
+e
+> > amount of time to complete. Extra caution should be taken when waiting
+> > on writeback for folios belonging to mappings where this flag is set.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  include/linux/pagemap.h | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> > index 68a5f1ff3301..eb5a7837e142 100644
+> > --- a/include/linux/pagemap.h
+> > +++ b/include/linux/pagemap.h
+> > @@ -210,6 +210,7 @@ enum mapping_flags {
+> >       AS_STABLE_WRITES =3D 7,   /* must wait for writeback before modif=
+ying
+> >                                  folio contents */
+> >       AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access to =
+the mapping */
+> > +     AS_WRITEBACK_MAY_BLOCK =3D 9, /* Use caution when waiting on writ=
+eback */
+>
+> To me 'may block' does not feel right. For example in reclaim code,
+> folio_wait_writeback() can get blocked and that is fine. However with
+> non-privileged fuse involved, there are security concerns. Somehow 'may
+> block' does not convey that. Anyways, I am not really pushing back but
+> I think there is a need for better name here.
 
-Add necessary SBI definitions to use the FWFT extension.
+Ahh I see where this naming causes confusion - the "MAY_BLOCK" part
+could be interpreted in two ways: a) may block as in it's possible for
+the writeback to block and b) may block as in it's permissible/ok for
+the writeback to block. I intended "may block" to signify a) but
+you're right, it could be easily interpreted as b).
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
----
- arch/riscv/include/asm/sbi.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+I'll change this to AS_WRITEBACK_BLOCKING.
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 98f631b051db..754e5cdabf46 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -34,6 +34,7 @@ enum sbi_ext_id {
- 	SBI_EXT_PMU = 0x504D55,
- 	SBI_EXT_DBCN = 0x4442434E,
- 	SBI_EXT_STA = 0x535441,
-+	SBI_EXT_FWFT = 0x46574654,
- 
- 	/* Experimentals extensions must lie within this range */
- 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
-@@ -281,6 +282,32 @@ struct sbi_sta_struct {
- 
- #define SBI_SHMEM_DISABLE		-1
- 
-+/* SBI function IDs for FW feature extension */
-+#define SBI_EXT_FWFT_SET		0x0
-+#define SBI_EXT_FWFT_GET		0x1
-+
-+enum sbi_fwft_feature_t {
-+	SBI_FWFT_MISALIGNED_EXC_DELEG		= 0x0,
-+	SBI_FWFT_LANDING_PAD			= 0x1,
-+	SBI_FWFT_SHADOW_STACK			= 0x2,
-+	SBI_FWFT_DOUBLE_TRAP			= 0x3,
-+	SBI_FWFT_PTE_AD_HW_UPDATING		= 0x4,
-+	SBI_FWFT_LOCAL_RESERVED_START		= 0x5,
-+	SBI_FWFT_LOCAL_RESERVED_END		= 0x3fffffff,
-+	SBI_FWFT_LOCAL_PLATFORM_START		= 0x40000000,
-+	SBI_FWFT_LOCAL_PLATFORM_END		= 0x7fffffff,
-+
-+	SBI_FWFT_GLOBAL_RESERVED_START		= 0x80000000,
-+	SBI_FWFT_GLOBAL_RESERVED_END		= 0xbfffffff,
-+	SBI_FWFT_GLOBAL_PLATFORM_START		= 0xc0000000,
-+	SBI_FWFT_GLOBAL_PLATFORM_END		= 0xffffffff,
-+};
-+
-+#define SBI_FWFT_GLOBAL_FEATURE_BIT		(1 << 31)
-+#define SBI_FWFT_PLATFORM_FEATURE_BIT		(1 << 30)
-+
-+#define SBI_FWFT_SET_FLAG_LOCK			(1 << 0)
-+
- /* SBI spec version fields */
- #define SBI_SPEC_VERSION_DEFAULT	0x1
- #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
+Thanks,
+Joanne
 
--- 
-2.45.0
-
+>
+> >       /* Bits 16-25 are used for FOLIO_ORDER */
+> >       AS_FOLIO_ORDER_BITS =3D 5,
+> >       AS_FOLIO_ORDER_MIN =3D 16,
+> > @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct add=
+ress_space *mapping)
+> >       return test_bit(AS_INACCESSIBLE, &mapping->flags);
+> >  }
+> >
+> > +static inline void mapping_set_writeback_may_block(struct address_spac=
+e *mapping)
+> > +{
+> > +     set_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
+> > +}
+> > +
+> > +static inline bool mapping_writeback_may_block(struct address_space *m=
+apping)
+> > +{
+> > +     return test_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
+> > +}
+> > +
+> >  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+> >  {
+> >       return mapping->gfp_mask;
+> > --
+> > 2.43.5
+> >
 
