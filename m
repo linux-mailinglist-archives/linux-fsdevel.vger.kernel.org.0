@@ -1,314 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-34252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428B59C41C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:20:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 936AC9C41C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59731F21983
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5491F23196
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5D91A01DD;
-	Mon, 11 Nov 2024 15:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371CF1A0715;
+	Mon, 11 Nov 2024 15:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="QjtZcKRo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XQUTh0U6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7271BC58;
-	Mon, 11 Nov 2024 15:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5415D19E83D;
+	Mon, 11 Nov 2024 15:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338432; cv=none; b=LAH6GZky2wP++ddGpdxkOLpansrOo9R7FOg+TO1tfrdeOfn8FIdkjRFQfWAOMagTWlepQtlzkCAch/l/d1trmnMr5pkeZwdGIE/LgKpLRa3S5hFOxmrQy2W4FD1xl2eskwBPpeyu5FJaxuuQHwE+MgeXPK0nuE22c4wUIAFiktI=
+	t=1731338730; cv=none; b=J9/ECqTiQ19qap5BlSnuEaPVvOQBvmYkwG3FCF3ef7PwK5SoU9MZL2lWOBp/KW3CoCG4kfMw9RKTgjYsrPLTIg7sRCidLJOmpSnbE+1UtM31qOhK1SBgyJhCtgwSJlPc8Qa/+BO3T8LYsQyLeZ5Y4oEhuhMuYZWVPJBrftgY0CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338432; c=relaxed/simple;
-	bh=cnqbt/Xh8UvrMdtmDUPR9+kGBZQFXIwEQu6Z9OrYXr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gx+ZdOnLpcINQAtgylyNHe08kxeqs5ONTDI5HQ3R/MscJuHbhCmrS81ORTLinglK65+NO9Y6HvqXXG2LxIWVLNzHDwjp9DiRaW126X2U9qXO0A38AX9PJ0N7BrNEsiWXnCUrYGepI0HfHug7r7wzLqmpjV3/jkr+Sao9g5rQ/sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XnCsL26CRz4f3jsX;
-	Mon, 11 Nov 2024 23:20:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 712481A0194;
-	Mon, 11 Nov 2024 23:20:24 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgB3U4exIDJn3+D7BQ--.18810S3;
-	Mon, 11 Nov 2024 23:20:19 +0800 (CST)
-Message-ID: <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
-Date: Mon, 11 Nov 2024 23:20:17 +0800
+	s=arc-20240116; t=1731338730; c=relaxed/simple;
+	bh=9dAavv9p0sYccDojVJZ4cl0x/ONLpn4wEDpC1dF2Yek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4J5sXccMCa3ggVOhBe2b0GfMIYZQDm5mwI/UY6LjwluRO4AOOgvLZub/fhviK7aghnKfOU5zrkus9oCH6XaHhOCipl555Xp7kEvlC0qX2W6ZXiQg+Y399ZalIywKrU3meVzKE1faFo+4JuEEyBzvUExyBwSsawYlRzI6f/O2O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=QjtZcKRo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XQUTh0U6; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3E9AB114019E;
+	Mon, 11 Nov 2024 10:25:26 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Mon, 11 Nov 2024 10:25:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731338726; x=
+	1731425126; bh=glOUfK74CVhSoPgVs5u0b45fN1MMozNH166QZjbcnEQ=; b=Q
+	jtZcKRo+2VpN4sUOq6yeXY6iXnPAJ8V+hUOO/Z8SlYs+Uv51jxnGIZ45NGbB5zyS
+	GEcpRhOQp5oscadc/X5/OnmqJwLOBVr7XUeJjkET6sUO1YnTRQyXac6slT3AZE3m
+	BCiNuT1agTMW0HEf9dXNWmvybpW+75VefSJZvJBkQU+OpMYMZtLfGFpxZI4mdiZG
+	yV5UETeicoGCp3BoHxLaIDqMNikoP0fhPntLGBc0TkNx5CAP0wRC4ZxKMJjxOLQ0
+	7g6Y8XGio6BktXBqjDbDY0X9px+8x2lln7Md8FZ2BQ7BINSZMBG4rgpVSDVLwPNU
+	FmK78jJCJi9BdslcOOOgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731338726; x=1731425126; bh=glOUfK74CVhSoPgVs5u0b45fN1MMozNH166
+	QZjbcnEQ=; b=XQUTh0U65YU2xIul68Mzm28z75M4sE+fjHFJ8UNRfpBWlWvgqzA
+	3x6uVQYywpgL3TfLp9mT8mjgRuJCt2XL4beqKgwLMnFuP4cDHI8LYmbH+oVkqisO
+	D+FPiYEk6rhnpIhI73Bg/Errrr9pgxod2nUa7zr9Q95Bxms+zuTzCgt34vgPDvvq
+	/Q5/OPzAz6QVm7XLX/xO/EQuy5e/4EB376PP0OQwqV6/uWnMfIg4AiUM7ZcNU55j
+	aIr5GI6U5MmJ0GjYxUw5gF2NhHD5yHG1ShJrLn67m9GcVCTOsCjt9bYxpddED2eM
+	s82B/IPmesoQuMUl4Vgrs3w91TweJOpBmZw==
+X-ME-Sender: <xms:5SEyZytzf-awNTUQA_fsk4AuajFFJRhPKI7PvqxT_J1ASWRoxXSScg>
+    <xme:5SEyZ3fHVmOW5htonIOpaLjH9XuEIw7aU-vexuxnHja11iCfGRZMhzMzGdB9PQl-W
+    YASTyNgwkNjyrDj0kU>
+X-ME-Received: <xmr:5SEyZ9wvPE6MvQ7yw55g4gIQXjowvB8My5olGKUQ880MgK-JO2eSJq2z_vJ3HIMC3PJ2EQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdejhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
+    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
+    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
+    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
+    sehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:5SEyZ9N0U44CUqbSqv3zKoRsSHgyzuhPF1AghXGUFt0Q2h2c9Fhwvw>
+    <xmx:5SEyZy8URn0WCx4h6gEaXWcLoDMOT6RI-FNdVb9Dw1unc62pceiViw>
+    <xmx:5SEyZ1VuMyusLWPGkuwiH5f2F6aqngqdVLbWyrMg3IlJd-FszAAm4w>
+    <xmx:5SEyZ7fp_3jaPLwm0viNLfSITIG_KEV_J0eX3EOBzrrz_gAZbDIRfg>
+    <xmx:5iEyZ3Md7drl-dsVDO8u2-_oW9d20OToy6R9KBhxt5WPFXDuLU_tL6xZ>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 10:25:23 -0500 (EST)
+Date: Mon, 11 Nov 2024 17:25:19 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
- offset dir
-To: Chuck Lever III <chuck.lever@oracle.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Chuck Lever <cel@kernel.org>, linux-stable <stable@vger.kernel.org>,
- "harry.wentland@amd.com" <harry.wentland@amd.com>,
- "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
- "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
- "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
- "christian.koenig@amd.com" <christian.koenig@amd.com>,
- "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
- "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Liam Howlett <liam.howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
- "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
- "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
- "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
- linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241111005242.34654-1-cel@kernel.org>
- <20241111005242.34654-7-cel@kernel.org>
- <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
- <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3U4exIDJn3+D7BQ--.18810S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw48Ar4xCFW5tF45Wr48JFb_yoW3JF17pF
-	Z8Gan8Krs7X34UGr4vv3WDZFyS93Z7Kr45XrZ5W34UJr9Fqr43KF1Iyr4Y9a4UArs3Cr12
-	qF45K343Zw45CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
 
+On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
+> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
+> >> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+> >>  			}
+> >>  		}
+> >>  put_folios:
+> >> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
+> >> -			folio_put(fbatch.folios[i]);
+> >> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+> >> +			struct folio *folio = fbatch.folios[i];
+> >> +
+> >> +			if (folio_test_uncached(folio)) {
+> >> +				folio_lock(folio);
+> >> +				invalidate_complete_folio2(mapping, folio, 0);
+> >> +				folio_unlock(folio);
+> > 
+> > I am not sure it is safe. What happens if it races with page fault?
+> > 
+> > The only current caller of invalidate_complete_folio2() unmaps the folio
+> > explicitly before calling it. And folio lock prevents re-faulting.
+> > 
+> > I think we need to give up PG_uncached if we see folio_mapped(). And maybe
+> > also mark the page accessed.
+> 
+> Ok thanks, let me take a look at that and create a test case that
+> exercises that explicitly.
 
+It might be worth generalizing it to clearing PG_uncached for any page cache
+lookups that don't come from RWF_UNCACHED.
 
-在 2024/11/11 22:39, Chuck Lever III 写道:
-> 
-> 
->> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/11/11 8:52, cel@kernel.org 写道:
->>> From: yangerkun <yangerkun@huawei.com>
->>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
->>> After we switch tmpfs dir operations from simple_dir_operations to
->>> simple_offset_dir_operations, every rename happened will fill new dentry
->>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
->>> key starting with octx->newx_offset, and then set newx_offset equals to
->>> free key + 1. This will lead to infinite readdir combine with rename
->>> happened at the same time, which fail generic/736 in xfstests(detail show
->>> as below).
->>> 1. create 5000 files(1 2 3...) under one dir
->>> 2. call readdir(man 3 readdir) once, and get one entry
->>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
->>> 4. loop 2~3, until readdir return nothing or we loop too many
->>>     times(tmpfs break test with the second condition)
->>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
->>> directory reads") to fix it, record the last_index when we open dir, and
->>> do not emit the entry which index >= last_index. The file->private_data
->>
->> Please notice this requires last_index should never overflow, otherwise
->> readdir will be messed up.
-> 
-> It would help your cause if you could be more specific
-> than "messed up".
-> 
-> 
->>> now used in offset dir can use directly to do this, and we also update
->>> the last_index when we llseek the dir file.
->>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
->>> Signed-off-by: yangerkun <yangerkun@huawei.com>
->>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
->>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
->>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
->>> Signed-off-by: Christian Brauner <brauner@kernel.org>
->>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
->>> [ cel: adjusted to apply to origin/linux-6.6.y ]
->>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>> ---
->>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
->>>   1 file changed, 25 insertions(+), 12 deletions(-)
->>> diff --git a/fs/libfs.c b/fs/libfs.c
->>> index a87005c89534..b59ff0dfea1f 100644
->>> --- a/fs/libfs.c
->>> +++ b/fs/libfs.c
->>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>    xa_destroy(&octx->xa);
->>>   }
->>>   +static int offset_dir_open(struct inode *inode, struct file *file)
->>> +{
->>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>> +
->>> + file->private_data = (void *)ctx->next_offset;
->>> + return 0;
->>> +}
->>
->> Looks like xarray is still used.
-> 
-> That's not going to change, as several folks have already
-> explained.
-> 
-> 
->> I'm in the cc list ,so I assume you saw my set, then I don't know why
->> you're ignoring my concerns.
-> 
->> 1) next_offset is 32-bit and can overflow in a long-time running
->> machine.
->> 2) Once next_offset overflows, readdir will skip the files that offset
->> is bigger.
-> 
-
-I'm sorry, I'm a little busy these days, so I haven't responded to this
-series of emails.
-
-> In that case, that entry won't be visible via getdents(3)
-> until the directory is re-opened or the process does an
-> lseek(fd, 0, SEEK_SET).
-
-Yes.
-
-> 
-> That is the proper and expected behavior. I suspect you
-> will see exactly that behavior with ext4 and 32-bit
-> directory offsets, for example.
-
-Emm...
-
-For this case like this:
-
-1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
-2. open /tmp/dir with fd1
-3. readdir and get /tmp/dir/file1
-4. rm /tmp/dir/file2
-5. touch /tmp/dir/file2
-4. loop 4~5 for 2^32 times
-5. readdir /tmp/dir with fd1
-
-For tmpfs now, we may see no /tmp/dir/file2, since the offset has been 
-overflow, for ext4 it is ok... So we think this will be a problem.
-
-> 
-> Does that not directly address your concern? Or do you
-> mean that Erkun's patch introduces a new issue?
-
-Yes, to be honest, my personal feeling is a problem. But for 64bit, it 
-may never been trigger.
-
-> 
-> If there is a problem here, please construct a reproducer
-> against this patch set and post it.
-> 
-> 
->> Thanks,
->> Kuai
->>
->>> +
->>>   /**
->>>    * offset_dir_llseek - Advance the read position of a directory descriptor
->>>    * @file: an open directory whose position is to be updated
->>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>    */
->>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>   {
->>> + struct inode *inode = file->f_inode;
->>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>> +
->>>    switch (whence) {
->>>    case SEEK_CUR:
->>>    offset += file->f_pos;
->>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>    }
->>>      /* In this case, ->private_data is protected by f_pos_lock */
->>> - file->private_data = NULL;
->>> - return vfs_setpos(file, offset, U32_MAX);
->>> + if (!offset)
->>> + file->private_data = (void *)ctx->next_offset;
->>> + return vfs_setpos(file, offset, LONG_MAX);
->>>   }
->>>     static struct dentry *offset_find_next(struct xa_state *xas)
->>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
->>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
->>>   }
->>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
->>>   {
->>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
->>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
->>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>    while (true) {
->>>    dentry = offset_find_next(&xas);
->>>    if (!dentry)
->>> - return ERR_PTR(-ENOENT);
->>> + return;
->>> +
->>> + if (dentry2offset(dentry) >= last_index) {
->>> + dput(dentry);
->>> + return;
->>> + }
->>>      if (!offset_dir_emit(ctx, dentry)) {
->>>    dput(dentry);
->>> - break;
->>> + return;
->>>    }
->>>      dput(dentry);
->>>    ctx->pos = xas.xa_index + 1;
->>>    }
->>> - return NULL;
->>>   }
->>>     /**
->>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
->>>   {
->>>    struct dentry *dir = file->f_path.dentry;
->>> + long last_index = (long)file->private_data;
->>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
->>>      if (!dir_emit_dots(file, ctx))
->>>    return 0;
->>>   - /* In this case, ->private_data is protected by f_pos_lock */
->>> - if (ctx->pos == DIR_OFFSET_MIN)
->>> - file->private_data = NULL;
->>> - else if (file->private_data == ERR_PTR(-ENOENT))
->>> - return 0;
->>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
->>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
->>>    return 0;
->>>   }
->>>     const struct file_operations simple_offset_dir_operations = {
->>> + .open = offset_dir_open,
->>>    .llseek = offset_dir_llseek,
->>>    .iterate_shared = offset_readdir,
->>>    .read = generic_read_dir,
-> 
-> 
-> --
-> Chuck Lever
-> 
-> 
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
