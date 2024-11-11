@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-34245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330149C4191
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:10:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C8E9C4194
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:10:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0643B228E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EFF1F2226B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB901A08C1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD961A2541;
 	Mon, 11 Nov 2024 15:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzY/QDRM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="St0tImYN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654B425777;
-	Mon, 11 Nov 2024 15:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5086E1A0AF1;
+	Mon, 11 Nov 2024 15:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731337821; cv=none; b=g3BO3ApUek8khk+ceBiTF3ffEZAlAz+CaugsLvgLu1aU38Z3EomXh6fqubKVGxRCwsC1Ko53JVFQuyRANBB5BY92Fik5tl9hVzA1GvRjlCf9Nh5o/cr5EftvIiZ1s9EwRzTrHL9VvpyzQyw/rX+IxxRk8ZEeW2EXy2e1lfMXTCk=
+	t=1731337822; cv=none; b=IpiQBWp05nfSU9lquqPyS391uiHWnhW1RuMFVGxDmfgF406gervzn4tDwR5/fB7SM6pl5n7rlOFl3+7Dma+SdlQXNL5eicKAwQ5By87RBhYz5RWlnGXpcQMWbrK5Bs0UYISDGioXf1zTqt4N1NbManc9iW0qX+eh1YeXoAiM2vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731337821; c=relaxed/simple;
-	bh=eKdkZjo8ki0dpL5Pnyzp1K0d6j7dtfBALTBVl9rnJ6A=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=drNviPw2QgW2ALIjFf43Yuib2VR2jwJpF/yGsrLWTPlFla2FpkSqcQK5vJqsMqF0pCsul9bwwugNPE3H3jDzatWRsU47uj1Us/cnGPshRWtv0LBVPr2XMvQxwdGsENFtOkj5/EKlSLAfTCmwOnGHcW1/Nmu/JK0R/Rax/IZHYCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzY/QDRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3206EC4CECF;
-	Mon, 11 Nov 2024 15:10:20 +0000 (UTC)
+	s=arc-20240116; t=1731337822; c=relaxed/simple;
+	bh=X9Af+k53SC3pvggsk6PSnlpJHVzsDieYt3NpVr0tWwA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=L/YS3WZSb5CBL44A37RJkJg1BNiC9YDbYdY6NZ7laaubs1ng6xgm8/sl8PqIqApGRTGbCis1v9sHsZC6YyWv+sksel4dCDoZStMUPbXOiSZpnZlqA74Acn4GZKXDeJrRsRKfmdfwQMEksEU520wUpS8STBhJwOzQK4Dxt+gbVbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=St0tImYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AD2C4CED5;
+	Mon, 11 Nov 2024 15:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1731337821;
-	bh=eKdkZjo8ki0dpL5Pnyzp1K0d6j7dtfBALTBVl9rnJ6A=;
-	h=From:Subject:Date:To:Cc:From;
-	b=GzY/QDRMv14TDZ9+NcF7MAnOgIUfU7Rmc3Wbfj5QpVHEquQZuIrB+PgDmSB3SA77g
-	 +XbuLe3PY/54eRsLRA4y4SCRw1FINT9dTeUg8Dj548KvnXcO/DMmjsRwCZuNa/WrQf
-	 INuJnW0Bu+xya2cjwYA6Oq6lMD6wVJzZ3uKg54N79xWlVR9+6ARV+ZRJJZmZ/tt3dH
-	 uLJDxEMyf7rO6LqhzmBz1UYYPXwMnPMCm0dxI3PCoU7cFRFcYtNKKeweAqUk38UL9Z
-	 OcxHbkUZfFJ71IGdCIOb0bmUvTKJiIy11WxjivDXyPRggxuPBryvWZdd6Goam0pNyk
-	 SY0d1aOBeqx1Q==
+	bh=X9Af+k53SC3pvggsk6PSnlpJHVzsDieYt3NpVr0tWwA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=St0tImYNtLAGmFvdFBA5ALrWoHLKF9hTyIplyzGB3tR7/PjUcP1GZQs9IMIwTAInA
+	 rYq/jrsp3Hm1bLREVBBzHdtDL3nA7DrAa39r2Sy75GbEVJAL8cFEZVxeO/5KY1RFrk
+	 fvVp1trh4NXhwlM61npJrepJW/+sKVVxLA0EeAlwUYdLIIWmSz3sDHTc+BTIs1+1JU
+	 qOE6mm2+kN4KoUxipZF7QJXaotjJQok9W5/Fm+PpsNIBp4V6pKdZY2Ax72TgbXPvdv
+	 vYIIJsQBbWyCdprfj54hppPVXark7OKIF17hejnlK9VRUtk+xIYcfgv1khvJJPPc53
+	 u1rFPZ+ibo/+g==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Date: Mon, 11 Nov 2024 10:09:54 -0500
-Message-Id: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+Date: Mon, 11 Nov 2024 10:09:55 -0500
+Subject: [PATCH v4 1/3] fs: don't let statmount return empty strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,72 +52,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEIeMmcC/3WNzQ7CIBAGX8VwFtMFWsST72E80AItUcEAEk3Td
- 5f21PhznC87syOKOlgd0WEzoqCzjda7Amy7Qd0gXa+xVYURqQgDqBock0w3/3AJUyNAcq14bSQ
- q9/egjX0urdO58GBj8uG1pDPM669KBgy4FbSVRgneEDhedHD6uvOhR3Mmk78qwRWeTSKlonv1r
- dK1ytcqLaqSdSs4Yx18fJ2m6Q3+pYF9GQEAAA==
-X-Change-ID: 20241106-statmount-3f91a7ed75fa
+Message-Id: <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+In-Reply-To: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, 
  Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1507; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=eKdkZjo8ki0dpL5Pnyzp1K0d6j7dtfBALTBVl9rnJ6A=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnMh5RpuFxxGV4rbm0dHCE7Qg7aaytxzym+Bho1
- mGOarjkCyyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzIeUQAKCRAADmhBGVaC
- FX2IEADEkkq08ufD/9LByz4u2RFy8FaaPfxMlgd/DL8oHklsYAR+sswCJ/O9HxAm1PPMFFQHBir
- 0Ye8gM9gfeMZTEnspOOAP9OWa/bgHnmqjVUDeykePaFanLY6xuoSblUPWC+lvcSqp0++xfA4uNH
- ez/w5POp7h9N4O1QAquYtsCcl31xj1aW4w4mJ66PMVZodUZSfePZyMmVJhi40QsBcodvJRyiSUs
- wU9elXkKlJXted5W3zGnum8GkHwkgrS/lVW/XQTSdpIINjPWDVxxoYfK78UIdtrXRCd6r/0PnbH
- BWO5j9YCXFezC0ImAQTLhnf5Mg/GygQWV8Cz36D2irk+CJ4M+Pm520KUynrJ3FEPESdltfA3zBQ
- 7OtW+WOEMcIFZmOQgvb1QoE+UAjIfxupBep5nH9QyxHUnUC8JKaAI8sUmltab3XkM+84B7XHWV3
- 32N/za98vmsT58NHb6sM5to1mBeEgd4bm0ri8fnSIKeGjSkDRJPC6VzX7AgB4eJ5jtx7j0gm5sO
- Ju5t7Do1uVu9nmVu3GUx2i+H/Ki9BK5GbC7O9tVlvi1AoC7TFJBMxgEZJBaxRKi8aVsLFzC9MPQ
- O9XIn53ZWECtYwvbIReI+jXlsGq95o7lCMqLXpsXZTHUqDm7SGTOJcfysSZTuAlh/XqPcc31eYf
- 7tu0ltyH2rsu7dQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1937; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=X9Af+k53SC3pvggsk6PSnlpJHVzsDieYt3NpVr0tWwA=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnMh5bgI0HS4izak8RGZ4OBcDOOn9z7xZmmT8Hs
+ Gn1JqWyH5WJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzIeWwAKCRAADmhBGVaC
+ FUw2D/9Z3AuWcVoFp3Y03tOJUH7+0Ozn6zpDoO/+HnaiqzcRKLxszJHhbcwzSYUGObVthrNykXd
+ sREgrNmdOfnOZaC27VAmTjQSuHyCnxNOHM0unqcDnjquyMemWyoqkgbYY0tRYj9extHQLnoMlAn
+ QeDl318Rx8wrQG185gHM2uM2K+7C0Q5im+KgE8MvHKYHTXQTzlfy/9QEhwxpBW6SaJfvKQ5vPJD
+ wvEFIQiJG6xGlBIcxfA/VCSfvKof61wA1S/A3ZC/n4RA6P3Q77x01VgUZGo6T08FyloTYF1XIgJ
+ yAiXY1ixIoDOyOoDbUCK/PFOc02QgRI3XucG4xBhM+5/qk3oFM27r0q59mubfDswY9jO3zLYhnb
+ XLGwet2zbNvLiIbpgUNCVq/lIuXVPlgPGjgOqwkp0REfzgnPvxYDZggVjFMbe9P4178JW3M3bFD
+ rBzZr3uZzBLFTVObC+jPTof+Ai8I2oUZXr8RBCw6sUgG39GKJ4kmB4ZNFurEd563ON2Nk2RZGyL
+ 8wfP3lCwZandhSo74DmhvbJEtYns1URUIQhddNXvm4KzmhX8/X2wADLmd4ycvZ/RgWyuemPL152
+ PErtA9/EP/cNBUdTuA6MqDMoIeRuIuligjRn2V1zZeYtb70f4AtWo+qzXPpQe+pzCYArXwdAMmW
+ X9/dHGiE27RR7uA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Meta has some internal logging that scrapes /proc/self/mountinfo today.
-I'd like to convert it to use listmount()/statmount(), so we can do a
-better job of monitoring with containers. We're missing some fields
-though. This patchset adds them.
+When one of the statmount_string() handlers doesn't emit anything to
+seq, the kernel currently sets the corresponding flag and emits an empty
+string.
+
+Given that statmount() returns a mask of accessible fields, just leave
+the bit unset in this case, and skip any NULL termination. If nothing
+was emitted to the seq, then the EOVERFLOW and EAGAIN cases aren't
+applicable and the function can just return immediately.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v4:
-- Rename mnt_devname to sb_source
-- Break statmount_string() behavior changes out into separate patch
-- Link to v3: https://lore.kernel.org/r/20241107-statmount-v3-0-da5b9744c121@kernel.org
+ fs/namespace.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Changes in v3:
-- Unescape the result of ->show_devname
-- Move handling of nothing being emitted out of the switch statement
-- Link to v2: https://lore.kernel.org/r/20241106-statmount-v2-0-93ba2aad38d1@kernel.org
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..28ad153b1fb6f49653c0a85d12da457c4650a87e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5046,22 +5046,23 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 	size_t kbufsize;
+ 	struct seq_file *seq = &s->seq;
+ 	struct statmount *sm = &s->sm;
++	u32 start = seq->count;
+ 
+ 	switch (flag) {
+ 	case STATMOUNT_FS_TYPE:
+-		sm->fs_type = seq->count;
++		sm->fs_type = start;
+ 		ret = statmount_fs_type(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_ROOT:
+-		sm->mnt_root = seq->count;
++		sm->mnt_root = start;
+ 		ret = statmount_mnt_root(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_POINT:
+-		sm->mnt_point = seq->count;
++		sm->mnt_point = start;
+ 		ret = statmount_mnt_point(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_OPTS:
+-		sm->mnt_opts = seq->count;
++		sm->mnt_opts = start;
+ 		ret = statmount_mnt_opts(s, seq);
+ 		break;
+ 	default:
+@@ -5069,6 +5070,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * If nothing was emitted, return to avoid setting the flag
++	 * and terminating the buffer.
++	 */
++	if (seq->count == start)
++		return ret;
+ 	if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
+ 		return -EOVERFLOW;
+ 	if (kbufsize >= s->bufsize)
 
-Changes in v2:
-- make statmount_fs_subtype
-- return fast if no subtype is emitted
-- new patch to allow statmount() to return devicename
-- Link to v1: https://lore.kernel.org/r/20241106-statmount-v1-1-b93bafd97621@kernel.org
-
----
-Jeff Layton (3):
-      fs: don't let statmount return empty strings
-      fs: add the ability for statmount() to report the fs_subtype
-      fs: add the ability for statmount() to report the sb_source
-
- fs/namespace.c             | 68 ++++++++++++++++++++++++++++++++++++++++++----
- include/uapi/linux/mount.h |  6 +++-
- 2 files changed, 67 insertions(+), 7 deletions(-)
----
-base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
-change-id: 20241106-statmount-3f91a7ed75fa
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.47.0
 
 
