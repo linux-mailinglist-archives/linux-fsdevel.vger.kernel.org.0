@@ -1,125 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-34225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B98A9C3EF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:59:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C60C9C3F59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22220B23808
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 12:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA87282A7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504F91AB6EB;
-	Mon, 11 Nov 2024 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E7B19CC0F;
+	Mon, 11 Nov 2024 13:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZDw7BRB6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F0719DF7A;
-	Mon, 11 Nov 2024 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC636158558
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329702; cv=none; b=R18QLaHJZQIjeNAsx/9oHIRW7tGk+c45g1EF0dNR69+3TyNBhuvuUbGyZp9h4ooj5HtvtB7qxMbZBTNkOa9rLfiREl64cA4rv+WgcP/rRK1oeJmi0Nxg9SJIWpXR+QUpKK14pTeLs0D7BggF95S9pBxJKFSsm1tjkpWUYiJhgYE=
+	t=1731330750; cv=none; b=VJk/aoI03ocITfrxaS/mQP7lZjVUfWr49VY/yEmKopC/LU2mePYfRGDdliX9Lxxk34u1tZIIMneFQQrApZLmrnWoYscVV+y9bN2JbgzTvqU8FtT5F14DEGo0A7YnqMDlakWY/Eu53Xb94ltOGdA6FcMfq/n/RDHiipNZS92KS2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329702; c=relaxed/simple;
-	bh=tyU/E7IdI0PoI6xnGSKBcD21KiHHsKL6ZTo0hZJt4KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A8/Hx+ww3eTvWDmN9W7dSdRDFsWsVK/RhuTHTsFDUJjcP/gl1odhnS1NYCasMyCMc3k3DgIiubs1VR6c7nOM3w0RFUfrTzofD/hKjOJXihJQUmgwIZrXZ70sB5rgh2uFtDXayW1vgzw3lR1rtlVM3T7zqvGLapR+vlkSsGELEuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xn8dc3l0Wz4f3kpP;
-	Mon, 11 Nov 2024 20:54:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 94E4C1A06D7;
-	Mon, 11 Nov 2024 20:54:57 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4Oe_jFnllryBQ--.36628S7;
-	Mon, 11 Nov 2024 20:54:57 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH RESEND V2 5/5] Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
-Date: Tue, 12 Nov 2024 05:53:59 +0800
-Message-Id: <20241111215359.246937-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241111215359.246937-1-shikemeng@huaweicloud.com>
-References: <20241111215359.246937-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1731330750; c=relaxed/simple;
+	bh=D2sNexp7slJwYSd6hDXRtlFmvoZNaCK79b0+8tZJkbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJB7R4+czUEgnGfAaqIiAvCYw72wpGSIZ65oTh4JoZHWlnm6hnELccZCoKSc/CvycdLxgdzAGAksc8kXQaRYIy1x/G/RX8y8kTAl/KIo3e0FfMAm4U1Mt1crjT3D8UsjEeBGodVjTxYMIw43HRj4L5CrFPj4l/miMX5LmvTp0vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ZDw7BRB6; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460b04e4b1cso34133231cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 05:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731330747; x=1731935547; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4u19Y7FF85sW/U7lX/PlUeuX1S1ok91rVbZj+THWSOA=;
+        b=ZDw7BRB6RnQeBxje8MxJssTfs9Bk9H1u+jWOniwa2nF/JJPeQw1dICUVDIqp2HJfa+
+         n5nkGB1eku1uQNgIigJaPvF+q8RCP2uvPdQOPjYy2s8WBlZoJk9z4EqxbYuzHb+1jSU7
+         kMBtbICntQdVPfZza552eemJPGQSQWpKR88oo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731330747; x=1731935547;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4u19Y7FF85sW/U7lX/PlUeuX1S1ok91rVbZj+THWSOA=;
+        b=D7cgI+/Jy3HuI/EXQAEBz+5654jvOt04cigsPSGt9Z7K1avm/EJkJVX92Tp2/vcUfQ
+         +4WblXhTISsPTfUrJbnLKwY6ziCJ0lM8P1GjV0SM5gdYvtNxwOUIBuM0WAT+Qyvu9I8r
+         VePSI98neVHuntlnNIWhCGIpCKtYWAewke7al9c2mfg6uVJUBA5LtyNEYCarKfb1npF7
+         ey+A1CrOu8a048NHnu2A/HF25m/6U7rvkJPBlj+8gwUgO8EZmZGwW6+wHL5U3NfcQT6z
+         5QDwf08nepEXB3xo0N6nZBJK8RshFmT590V9Q0ihmF271y2K+I003D6YS4g5KOa7z/yY
+         MLlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKvlbJ3j1C3WBCTSs6KBVuETWA0ffXSgFQbdIX7ERsNbI+mf5cuyfp53xMRzOdLyiqSoeRpOAvYxRmWQbv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzccReTLthmqIMjPA5/HsWwM7TD2qpSPSPtf2ExS+yo6PIo0K/
+	SFzC1K9pv0pMu5mj1gctEK8kjafnw6XXysdAFlmHOxbrO6vAOVbke2HKwlJRBllnHvCGfeepMO8
+	dDXEKa8NnRvRwb+V0xkWOZVxZDSd4izWbuDr4bpcJErZHcwKO
+X-Google-Smtp-Source: AGHT+IGUNHvaV62QwimnEqMMwaunpgSfzZUB3avRycGBdXI3ehOhvyXfdT82AypKy2UdNEI7ts6+ruPk1RBV1lcWYgs=
+X-Received: by 2002:a05:622a:2b47:b0:461:646c:b8fc with SMTP id
+ d75a77b69052e-463093837f0mr212626131cf.23.1731330747370; Mon, 11 Nov 2024
+ 05:12:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4Oe_jFnllryBQ--.36628S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UuF13JryrGFWxCFyfWFg_yoW8GrWkpF
-	97C3s8Ka1xA3WUKrnFvan7t345Ja1kK3yjyr4xGwnayFZ8Gr1Yqay7tryjqFnxGFy8ZFy3
-	Cr1Fg3y5Wa1UZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2
-	AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
-	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	s3kuDUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+References: <cover.1719257716.git.josef@toxicpanda.com> <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
+ <20240625130008.GA2945924@perftesting> <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
+ <20240625-beackern-bahnstation-290299dade30@brauner> <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+ <20240625141756.GA2946846@perftesting> <CAJfpegs1zq+wsmhntdFBYGDqQAACWV+ywhAWdZFetdDxcL3Mow@mail.gmail.com>
+In-Reply-To: <CAJfpegs1zq+wsmhntdFBYGDqQAACWV+ywhAWdZFetdDxcL3Mow@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 11 Nov 2024 14:12:16 +0100
+Message-ID: <CAJfpegs=JseHWx1H-3iOmkfav2k0rdFzr03eoVsdiW3rT_2MZg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 
-Besides xas_squash_marks(), all functions use xa_mark_t type to iterate
-all possible marks. Use xa_mark_t in xas_squash_marks() to keep code
-consistent.
+On Wed, 26 Jun 2024 at 14:23, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Tue, 25 Jun 2024 at 16:18, Josef Bacik <josef@toxicpanda.com> wrote:
+>
+> > But that means getting the buffer, and going back through it and replacing every
+> > ',' with a '\0', because I'm sure as hell not going and changing all of our
+> > ->show_options() callbacks to not put in a ','.
+> >
+> > Is this the direction we want to go?
+>
+> IMO yes.  Having a clean interface is much more important than doing
+> slightly less processing on the kernel side (which would likely be
+> done anyway on the user side).
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- lib/xarray.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+So I went for an extended leave, and this interface was merged in the
+meantime with much to be desired.
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 4231af284bd8..a74795911f1c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -125,16 +125,20 @@ static inline void node_mark_all(struct xa_node *node, xa_mark_t mark)
-  */
- static void xas_squash_marks(const struct xa_state *xas)
- {
--	unsigned int mark = 0;
-+	xa_mark_t mark = 0;
- 	unsigned int limit = xas->xa_offset + xas->xa_sibs + 1;
- 
--	do {
--		unsigned long *marks = xas->xa_node->marks[mark];
--		if (find_next_bit(marks, limit, xas->xa_offset + 1) == limit)
--			continue;
--		__set_bit(xas->xa_offset, marks);
--		bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
--	} while (mark++ != (__force unsigned)XA_MARK_MAX);
-+	for (;;) {
-+		unsigned long *marks = node_marks(xas->xa_node, mark);
-+
-+		if (find_next_bit(marks, limit, xas->xa_offset + 1) != limit) {
-+			__set_bit(xas->xa_offset, marks);
-+			bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
-+		}
-+		if (mark == XA_MARK_MAX)
-+			break;
-+		mark_inc(mark);
-+	}
- }
- 
- /* extracts the offset within this node from the index */
--- 
-2.30.0
+The options are presented just the same as in /proc/self/mountinfo
+(just the standard options left out).  And that has all the same
+problems:
 
+ - options can't contain commas (this causes much headache for
+overlayfs which has filenames in its options)
+
+ - to allow the result to be consumed by fsconfig() for example
+options need to be unescaped
+
+ - mnt_opts is confusing, since these are *not* mount options, these
+are super block options.
+
+This patchset was apparently hurried through without much thought and
+review, and what review I did provide was ignored.  So I'm
+frustrated, but not sure what if anything can be done at this point,
+since the interface went live in the last release and changing it
+would probably break things...
+
+Thanks,
+Miklos
 
