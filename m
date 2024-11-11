@@ -1,119 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-34238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14539C4059
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 275DA9C405D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24A51C214E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AADC1C2106C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7FD19E98C;
-	Mon, 11 Nov 2024 14:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41E19E99E;
+	Mon, 11 Nov 2024 14:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q3snAF8R"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ln9fse8M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5NxOqGTg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ln9fse8M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5NxOqGTg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2635F1DA53
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 14:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6455915A85A;
+	Mon, 11 Nov 2024 14:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334119; cv=none; b=llmInEDPwPbliYagwGaMFf87rJPQZReOqgQ/eM2Cilsmv5f1KVzF9zXtXOeBxHRpwUv6Sv9L12otCVY3E1ByNEXgDl5XeiFi2mU7jgVBhjobmfCac0iuNlKsCMmbLZtpyGMjiWX0rDaPs/ARS3OaXraU/Rwmx0hW0l3YgVm0Lyo=
+	t=1731334170; cv=none; b=auJ4Jy+bj6etaLKQsdwNGtVdnlZoyGpCEyg2OSjwWDEKxPHkcwkGs8BP+fqcQsyIHrkaPWsrZYAXTFBiU+36A8o9enIVXZAwMMqKc2zH6slRcXvm5szFLyT3zwmq74cgcbaMgCPbJwAiyg0MlHwKqXBFOgrFCaqsmgKybXiW5+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334119; c=relaxed/simple;
-	bh=E8tHW6Lnm5Agt1nj4Y9Sm2FExVqtqCc30XCaxizWhIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GBhfrdhofp0c277Z8FvTEIIOYOTI/ZK/YqKedhTe3yZbd4ytoVlDNxm25MwXgr0PVh+QyEcM0sYDTaoM5H/cPeic4EL2zZ9yMtEVVWf/o/7MxtLS4PYzPxex9RdFrMA2c+P4zxPBk7Pg+sC0U4GhOagn6rhHlhG2wFM/U4qI/CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q3snAF8R; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-290c69be014so1989091fac.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 06:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731334115; x=1731938915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PmDn4fmT+hcwgS51qhVcBXpxC2DgB/s2ZMPiu9nNnjA=;
-        b=Q3snAF8RqTO3ffAg9BOa+p/PcIuRcWG0ifbTaS56duy7UuQ/j9VBZBy1uGrIBq3aMQ
-         HrvRRHVo9kPD5K5U+H0OCD4x+PC31ExIUZhc0udUsK7rU+iXRO2NboV1UNAYUasgiTZI
-         ubpneZ+yPqcjcyMa4bZEgIWXuyL+FophYu/hj4Hp+E2YAI4TzHNIDKG5tj5ue9pncl0f
-         X6CUukwIOcpq/ddwO88BQJ6/kldtssTSLcuJSo4isiNkE0TkifEBnsdb/yw9IuZslXQs
-         mTKd9jL8WDcuNL6jGOsM2En9O+rXR6446/PF8vN4TeblxUegcomqdhK4Bk2lMNbx2E6w
-         SsWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731334115; x=1731938915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PmDn4fmT+hcwgS51qhVcBXpxC2DgB/s2ZMPiu9nNnjA=;
-        b=Xxtg0EYpm+mLVbqOzvoG6/F8eEedI8RTuWg1y/sa0HMUKPS9wzW8LM7ULfJmwQKvGc
-         D2S9S6o7J2rDNtFOnUGq2jVVGMQSQr2Cjzfyzq0YDHhbLUo+59uBk70j2DrF34A7q009
-         lA1UhuX2L0yOnojqnzCYtdCF7lrRZf2P0x7nGC5serjDIcVwd0L4wLx5hmmkdzkFDtMh
-         fyXZr1KlcbRpBdgpCj3Zc+XwkMQ7FBsZNndIDCzsb4ZyZq1J0v5wy28CJSAjTMcO0zRG
-         gA/XdR5GucmWtEXEtOGODVe4Ay5MalSQ0FgGkFTyBawTLlRpWv9ewagejjTox5ymhMOJ
-         58NA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHrLgjrs+tT1ytxNhx9GffUH/0YLo/nxKpKyHw/PIYVcXjsINymih/whZ+fSDteTAdPfmyy1+MrzBMwtgT@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz0qnrAagrPZFWtJJydhmvJkTRUyXbavp4aN4LEAFret23TcNU
-	owYLyNKsR7eg9Lw0yYy7h7447qkEnqOzg89QmoB3WXRB029SD1BXUbyHwcwadms=
-X-Google-Smtp-Source: AGHT+IGdcCxlTJ6oOmUoz2nOosPJA727x85N6SHkCMBCewWNWdgUVALhVXS8gvGZ6CBRqRCpqZFcAw==
-X-Received: by 2002:a05:6870:e6c6:b0:25d:f0ba:eab7 with SMTP id 586e51a60fabf-295600bf475mr10068218fac.18.1731334114914;
-        Mon, 11 Nov 2024 06:08:34 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546eddb89sm2817619fac.34.2024.11.11.06.08.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 06:08:33 -0800 (PST)
-Message-ID: <00c51f80-7033-44a0-b007-ca36842e35a5@kernel.dk>
-Date: Mon, 11 Nov 2024 07:08:32 -0700
+	s=arc-20240116; t=1731334170; c=relaxed/simple;
+	bh=+Kqj0wUzn8ov779XVt7eb/3ht2dGP3T5U3kcawmJ53o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drQlCTTYSoPnLkqvWptuKr9rTdjVn7/xmWDZHmXrNH4lghXPMD4yMDyB5Meli0N976WT/rUdosoaKz2SORz+GYqJD1irHJWki8aN5x6t5+IJR+HqozL8MZ2GezxEE5i8s4XviF1dXdsY20l40wNdoJcx4ygbFJIS426krRpp+a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ln9fse8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5NxOqGTg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ln9fse8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5NxOqGTg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7CA572197F;
+	Mon, 11 Nov 2024 14:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731334165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
+	b=Ln9fse8MOtn6aKCAzKFL5y9BX2pdajZLwEKjiphBuCvIC3GC8PzFlI89+xLmeAJOLQ+/ev
+	JYr6h6TODHWC1cc4U/mhbeD9smnq+1Ajd4vmO1Ndpim8nebAHU87BCsSFjxm4cjzXHorkT
+	bTA9FMCODOmU+hfQpDvo2enfd6NStXE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731334165;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
+	b=5NxOqGTglxzhTvvAbh0Gw8f9+YPJ9v8AphAFvytsLuCVti0FbYfD+9k2o7jtclQLTTNPf0
+	TSwKjRrncg1DJeAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ln9fse8M;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5NxOqGTg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731334165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
+	b=Ln9fse8MOtn6aKCAzKFL5y9BX2pdajZLwEKjiphBuCvIC3GC8PzFlI89+xLmeAJOLQ+/ev
+	JYr6h6TODHWC1cc4U/mhbeD9smnq+1Ajd4vmO1Ndpim8nebAHU87BCsSFjxm4cjzXHorkT
+	bTA9FMCODOmU+hfQpDvo2enfd6NStXE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731334165;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
+	b=5NxOqGTglxzhTvvAbh0Gw8f9+YPJ9v8AphAFvytsLuCVti0FbYfD+9k2o7jtclQLTTNPf0
+	TSwKjRrncg1DJeAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C6E113301;
+	Mon, 11 Nov 2024 14:09:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PkqDGhUQMmdWYQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 11 Nov 2024 14:09:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1CFC1A0986; Mon, 11 Nov 2024 15:09:25 +0100 (CET)
+Date: Mon, 11 Nov 2024 15:09:25 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <songliubraving@meta.com>
+Cc: Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>,
+	bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"repnop@google.com" <repnop@google.com>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [RFC bpf-next fanotify 1/5] fanotify: Introduce fanotify
+ fastpath handler
+Message-ID: <20241111140925.ykmdp3oywuw2ut5p@quack3>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-2-song@kernel.org>
+ <20241107104821.xpu45m3volgixour@quack3>
+ <AE6EEE9B-B84F-4097-859B-B4509F2B6AF8@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4] Uncached buffered IO
-To: Stefan Metzmacher <metze@samba.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AE6EEE9B-B84F-4097-859B-B4509F2B6AF8@fb.com>
+X-Rspamd-Queue-Id: 7CA572197F
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,kernel.org,vger.kernel.org,meta.com,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,google.com,toxicpanda.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On 11/11/24 5:55 AM, Stefan Metzmacher wrote:
-> Hi Jens,
+On Thu 07-11-24 19:13:23, Song Liu wrote:
+> > On Nov 7, 2024, at 2:48 AM, Jan Kara <jack@suse.cz> wrote:
+> > On Tue 29-10-24 16:12:40, Song Liu wrote:
+> >> fanotify fastpath handler enables handling fanotify events within the
+> >> kernel, and thus saves a trip to the user space. fanotify fastpath handler
+> >> can be useful in many use cases. For example, if a user is only interested
+> >> in events for some files in side a directory, a fastpath handler can be
+> >> used to filter out irrelevant events.
+> >> 
+> >> fanotify fastpath handler is attached to fsnotify_group. At most one
+> >> fastpath handler can be attached to a fsnotify_group. The attach/detach
+> >> of fastpath handlers are controlled by two new ioctls on the fanotify fds:
+> >> FAN_IOC_ADD_FP and FAN_IOC_DEL_FP.
+> >> 
+> >> fanotify fastpath handler is packaged in a kernel module. In the future,
+> >> it is also possible to package fastpath handler in a BPF program. Since
+> >> loading modules requires CAP_SYS_ADMIN, _loading_ fanotify fastpath
+> >> handler in kernel modules is limited to CAP_SYS_ADMIN. However,
+> >> non-SYS_CAP_ADMIN users can _attach_ fastpath handler loaded by sys admin
+> >> to their fanotify fds. To make fanotify fastpath handler more useful
+> >> for non-CAP_SYS_ADMIN users, a fastpath handler can take arguments at
+> >> attach time.
+> > 
+> > Hum, I'm not sure I'd be fine as an sysadmin to allow arbitary users to
+> > attach arbitrary filters to their groups. I might want some filters for
+> > priviledged programs which know what they are doing (e.g. because the
+> > filters are expensive) and other filters may be fine for anybody. But
+> > overall I'd think we'll soon hit requirements for permission control over
+> > who can attach what... Somebody must have created a solution for this
+> > already?
 > 
-> I'm wondering about the impact on memory mapped files.
+> I have "flags" in fanotify_fastpath_ops. In an earlier version of my 
+> local code, I actually have "SYS_ADMIN_ONLY" flag that specifies some
+> filters are only available to users with CAP_SYS_ADMIN. I removed this 
+> flag later before sending the first RFC for simplicity. 
 > 
-> Let's say one (or more) process(es) called mmap on a file in order to
-> use the content of the file as persistent shared memory.
-> As far as I understand pages from the page cache are used for this.
+> The model here (fast path loaded in kernel modules) is similar to 
+> different TCP congestion control algorithms. Regular user can choose 
+> which algorithm to use for each TCP connection. This model is 
+> straightforward because the kernel modules are global. With BPF, we 
+> have the option not to add the fast path to a global list, so that 
+> whoever loads the fast path can attach it to specific group (I didn't
+> include this model in the RFC).
 > 
-> Now another process uses RWF_UNCACHED for a read of the same file.
-> What happens if the pages are removed from the page cache?
-> Or is the removal deferred based on some refcount?
+> For the first version, I think a SYS_ADMIN_ONLY flag would be good
+> enough?
 
-For mmap, if a given page isn't in page cache, it'll get faulted in.
-Should be fine to have mmap and uncached IO co-exist. If an uncached
-read IO instantiates a page, it'll get reaped when the data has been
-copied. If an uncached IO hits an already existing page (eg mmap faulted
-it in), then it won't get touched. Same thing happens with mixing
-buffered and uncached IO. The latter will only reap parts it
-instantiated to satisfy the operation. That doesn't matter in terms of
-data integrity, only in terms of the policy of uncached leaving things
-alone it didn't create to satisfy the operation.
+Yes, initially that should be enough.
 
-This is really no different than say using mmap and evicting pages, they
-will just get faulted in if needed.
-
+								Honza
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
