@@ -1,58 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-34254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D649C41D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:28:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A4F9C41D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:28:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0646A284DDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29D51F2275B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509A6158858;
-	Mon, 11 Nov 2024 15:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745F819995D;
+	Mon, 11 Nov 2024 15:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CCEiEsQa"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Z5YvDeV2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E5153389;
-	Mon, 11 Nov 2024 15:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94A71448C7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 15:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338870; cv=none; b=lx+/xZWXhjEdT92qUA7dfBElJBW8v3ef2fIOaNRPWhGDjiBobcGA8++UrSkoNxdLiHq05ncsW3dvfhtlREvu7DRER5f8WDeO6In/JNhfUN8tLcov4P4jvglePFBoqOhDVbznyB8P9OL+T9dcdXPHoRJ2XGLHHM5md7AsoU3zpKg=
+	t=1731338890; cv=none; b=TydCA+AZeGPyElPzYCOAmkY89rQ3MnlQ6Mqk/rF0D8KXIZBSxAzb22shO1DPYoS+FgJwhgFUidB8RjHrkY+6+GJWvhiqbS0BpBT6i9oeh6sGyUTuZRLXysLAWAKP4QM+vBcdeBl1/sKIMNUe3zDlLNYEgpj/4NodgWk5r0WYaE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338870; c=relaxed/simple;
-	bh=Bh5/CN0FK84EGxcPUYpfMhnMYuOqhXdoNN6je9lAwy4=;
+	s=arc-20240116; t=1731338890; c=relaxed/simple;
+	bh=bVolD790eS8wJRjhwLfYhabvUEkTplDA3rT079vtujo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8hq89o0ZVylhWwCOvTxtCSWDLfqPwyH28g4Wu4MoOkeSm2bYWLn4hHW0ZoWIc9ipOgE67NUUp8WOI7IdM/rDDqrH3DvvlLLYozBloBC0U7E9FQX40B0Tld7zZ7O/Q8IyhxTlHQDoQnHyBSkyOrvqYPaukK6I7ko/nTNdmaUbdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CCEiEsQa; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Bh5/CN0FK84EGxcPUYpfMhnMYuOqhXdoNN6je9lAwy4=; b=CCEiEsQaxZ5IRjfFc2HARHXt0s
-	BqQsN4o30vfmdhKFUQISyLW+zpUcafcUTi9OG4ygIMjDPiIUt7P4lndVHZVQQ/nRWr3PpizTCAAR8
-	IIzlF5tiBFR8VMp78RYG47syfC60NZJC6mRoNXei+UQRQYpQu/91BQiqEusu5PzEqlZJ45EtcOzGy
-	NcYmuAFTYuycZbWRmlNfIGzdD/TWp6AA9h8oFBetnMd1WIXHfzgVoon2ZZ65Z73cv1WBeDHAissTD
-	NMTkyCwdl9OQof6/lg+DLxVYeAUNPVJgZy9O5ZVpu0bpToCcIvZ7p1uip7Fmo28s9GuAwp1stEbtq
-	MT0nGTtg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tAWKS-00000000SMZ-3AGi;
-	Mon, 11 Nov 2024 15:27:48 +0000
-Date: Mon, 11 Nov 2024 07:27:48 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 15/15] xfs: flag as supporting FOP_UNCACHED
-Message-ID: <ZzIidGR2FDChtCAu@infradead.org>
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-16-axboe@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7NSM38aIlBTKa57un84Z7j1BSgoh/fmHzPt75XB1m53izKGJwK+WRXCxuJf2O3P9dyQ1BWSPdihB5Db2GpFipA4GSCCX+FlcsanrElujxjmK7l9fQP58UylIO1qALce/HJa3QfEm1opYGzAKpZc2LwrgyVUnydznbz1QvCUyoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Z5YvDeV2; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e41bd08bso45771657b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 07:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731338887; x=1731943687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DxN8UywOFghZU6AzFTlOcNaT/X7wEZEyobCiZroHA+s=;
+        b=Z5YvDeV2HmWwMZlDaWBoftOMh6kJVR5SAWcFXBGWPmDWjPIhliNlKtibdgrvXoxfLN
+         VratO1QPY6uYs+dzLDzcXpSNwe14iEO19LoKUhjuj6pkZgfUTMvj0b8CmOT2hChTkIbY
+         sisRnTDTnuLH3nF92zMKnE2xU+PpYTjEFaJXmvPmphePaq8b/iPvps2E7yyUb9FOPrRw
+         oY72QpgBcNUmxhI+mvmNTsnTgKdI0XIe6URWfm58LNKJXhopxS/vSjshfelaciaQJE2r
+         RAoD6E3TunfL+82cG4ni8s9OsPwMW2YH05bO/Ky35wZrtcAkws29r38z8Rp+8P6DRQL1
+         Nm/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731338887; x=1731943687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DxN8UywOFghZU6AzFTlOcNaT/X7wEZEyobCiZroHA+s=;
+        b=DZJHD2VDr9ZijxUwH7jAR1y0RWRPVOeC58Q1CE3NNcU3sIuIxXuHr8x/6cwAZoIu1/
+         p83+/VDiuG3FwdbzLMLF6ruGPy2TjT2wtY6ccMtQit0IZl2koxHXSuLlgdp1eZLk4sLd
+         tYSQsauPgozFocnbGxOxXCyyDnbsGGuSQEEsvfgZqs0x4kTldpWYGV6Td7pU1I1BGioB
+         zYQbB0oWwZAkNQccECEJZcLzKuHlY4ygVr2qJevmBM3ZNr+asTR0+I5tYo+txnnKfcsg
+         EOp3YWTapCnpm8fUWtVCNIeXHtqlKC0RhfOF4xtHeA2XBT3YKJ47I6g2gYBLvQrrTrk2
+         vXjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuJtoFylN9bnleoSLIdHyYtq0UaBO2eGRD9B892RlAyvArXL7tOAGH51sX3iRT/j6Bpzlkydw0xmFc/9sd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjsOn5JHjw5yEX6eL7DGB+zJ6ur4KOK0iFH/Wn0SP+JAcTk9DU
+	pSHxl6yqxrdyNlvMv6y1aKVsv5k0F+p66KgTXsvT+AXIlWz6ubNsP9oyzh9GLLU=
+X-Google-Smtp-Source: AGHT+IFDAg6OeLu4MciFcYx3Pmo0m16gZoqmW/uV00p36AIQvOnqRPaF+iYgQ5qxJ2tujGibKd3aeA==
+X-Received: by 2002:a05:690c:6103:b0:6d5:90f:d497 with SMTP id 00721157ae682-6eadddbadb8mr112991027b3.19.1731338887679;
+        Mon, 11 Nov 2024 07:28:07 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb65a75sm20360797b3.97.2024.11.11.07.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 07:28:06 -0800 (PST)
+Date: Mon, 11 Nov 2024 10:28:05 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
+Message-ID: <20241111152805.GA675696@perftesting>
+References: <cover.1719257716.git.josef@toxicpanda.com>
+ <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
+ <20240625130008.GA2945924@perftesting>
+ <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
+ <20240625-beackern-bahnstation-290299dade30@brauner>
+ <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+ <20240625141756.GA2946846@perftesting>
+ <CAJfpegs1zq+wsmhntdFBYGDqQAACWV+ywhAWdZFetdDxcL3Mow@mail.gmail.com>
+ <CAJfpegs=JseHWx1H-3iOmkfav2k0rdFzr03eoVsdiW3rT_2MZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,18 +90,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241110152906.1747545-16-axboe@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAJfpegs=JseHWx1H-3iOmkfav2k0rdFzr03eoVsdiW3rT_2MZg@mail.gmail.com>
 
-On Sun, Nov 10, 2024 at 08:28:07AM -0700, Jens Axboe wrote:
-> Read side was already fully supported, for the write side all that's
-> needed now is calling generic_uncached_write() when uncached writes
-> have been submitted. With that, enable the use of RWF_UNCACHED with XFS
-> by flagging support with FOP_UNCACHED.
+On Mon, Nov 11, 2024 at 02:12:16PM +0100, Miklos Szeredi wrote:
+> On Wed, 26 Jun 2024 at 14:23, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Tue, 25 Jun 2024 at 16:18, Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > > But that means getting the buffer, and going back through it and replacing every
+> > > ',' with a '\0', because I'm sure as hell not going and changing all of our
+> > > ->show_options() callbacks to not put in a ','.
+> > >
+> > > Is this the direction we want to go?
+> >
+> > IMO yes.  Having a clean interface is much more important than doing
+> > slightly less processing on the kernel side (which would likely be
+> > done anyway on the user side).
+> 
+> So I went for an extended leave, and this interface was merged in the
+> meantime with much to be desired.
+> 
+> The options are presented just the same as in /proc/self/mountinfo
+> (just the standard options left out).  And that has all the same
+> problems:
+> 
+>  - options can't contain commas (this causes much headache for
+> overlayfs which has filenames in its options)
+> 
+>  - to allow the result to be consumed by fsconfig() for example
+> options need to be unescaped
+> 
+>  - mnt_opts is confusing, since these are *not* mount options, these
+> are super block options.
+> 
+> This patchset was apparently hurried through without much thought and
+> review, and what review I did provide was ignored.  So I'm
+> frustrated, but not sure what if anything can be done at this point,
+> since the interface went live in the last release and changing it
+> would probably break things...
 
-It also might make sense to default to RWF_UNCACHED for the direct to
-buffered I/O fallback for sub-block size writes to reflink files.
+My apologies Miklos, I value your opinion and your feedback.  Sending my mind
+back to when we were discussing this I think it just got lost in the other
+patchsets I was working on, and then it got merged so it was "ok that's done,
+next thing."  That's my bad, I'll be more careful in the future.  Thanks,
 
-Also for the next round you probably want to add the xfs and ext4
-lists.
+Josef
 
