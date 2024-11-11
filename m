@@ -1,94 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-34204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9619C3AD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 10:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 862859C3AE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 10:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B2E1F21CA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 09:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173631F22952
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 09:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7425F171E7C;
-	Mon, 11 Nov 2024 09:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5649814A60F;
+	Mon, 11 Nov 2024 09:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xne7V0kG"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tlv3mmc3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5FF1714C6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 09:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CD313C3C2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 09:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317188; cv=none; b=VY5wsKrQzM8GkbdgrwM3NKXsZDn3U6QAO47v2ds0kCHMBZ/pYkwCgWni0czzbmjQyFQ+ZErBsNC59mt9y9PdKCY84bzKx4TbGYsHB2qp4qG+WOHLHHD/K+wpfXLeerxAG54Mu2yHn12fvz7SvovDa+6Z75C66L6YZv7indgzVTE=
+	t=1731317450; cv=none; b=fABwZ5IIf7BEn86aXBCLGmaFwyn4YzxzF0+Z29zAOEYD11v9SAZJWG1S8VNo31VvjEsfKTMUP1OQX44HN2x+zlyWXIiR/LjkYDHPs4B64cbOY13imQyG/ILyVTugDH5y1r5wa0TDk0+BM4YIoxW74rwOoyKv7gcL5TmT+dgyHIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317188; c=relaxed/simple;
-	bh=ZzOGhyap/OM/amCmCfANlgzTrLwhFPvminSOpzs5lX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FcCh6PRe0TOHSQ9ZfAHsfHS1UHASrLyJWnisiD0jiwmPT03zmG8BfhOU227GrNPDhoHBzc3IT5R3nNuPD+7Zax1JVbwKYLFbE7mYG1lvZ5N+bGt1Nj3ZMRpKL6nIQ3hEMPwH9LKZ7+mkVzu/7wEWoUSztnHZDi7DhJzSqTTcwWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xne7V0kG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1122AC4CED0;
-	Mon, 11 Nov 2024 09:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731317186;
-	bh=ZzOGhyap/OM/amCmCfANlgzTrLwhFPvminSOpzs5lX8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xne7V0kGKS9q4lPOQ71DPUyqOzgw787c+wiFKhRaguinlatS8kAlPca4HLB+B/Rcr
-	 0KWExzsn8BcEKoReFCRI0DWSVb2aFuvHiolBO3xl+3YIn5BEyjsMslRqtKNAL0XexK
-	 M8IFWgrhBb8zETqA2A+XCpcb2AVb44SO6ojHJgJYO63kl85mbXuFUt4PTwbymkCgHg
-	 mkMHD8SwnXH/kvKzjiHiUmD7ZI89gFlPzcxtdswjUP4I9N9IQqg4YVctgdiIWTa1Oj
-	 HgRTccKn2HuylWPxfI/uW2v0qa0uZVr4Mf9w5vY/FAxtJmyFb28/YTbZdkpjaYvH1V
-	 AD5952rEw7JSg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Seth Forshee <sforshee@kernel.org>
-Subject: Re: [PATCH] hfsplus: don't query the device logical block size multiple times
-Date: Mon, 11 Nov 2024 10:26:18 +0100
-Message-ID: <20241111-petersilie-tropenhelm-71e3e80179d9@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241107114109.839253-1-cascardo@igalia.com>
-References: <20241107114109.839253-1-cascardo@igalia.com>
+	s=arc-20240116; t=1731317450; c=relaxed/simple;
+	bh=8qFC7g/PruNX8DgKcmNnk1HY/uoDuRy/cIn1p1cutbI=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=XT2QdMZSxehtxJXSrQHtJkC+QMcKz7yT8r16V2V8gBpcREvR8WQ4AxNPjbO7+ZxLLEwlAHGHZEqO2DaWKJgLkGjy/G3cnh6GNWN4YSo91zvb4heUf5PuAqteI7Uv5BxdfeVwgoBpln1VCLhZlSHI89STbFxIh5Vx+4yg2EtR5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tlv3mmc3; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241111093041euoutp024928b1fcab7315c2bc5a5f0fbe850e51~G4Ao14yqp1717617176euoutp02v
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 09:30:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241111093041euoutp024928b1fcab7315c2bc5a5f0fbe850e51~G4Ao14yqp1717617176euoutp02v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731317441;
+	bh=I9nCs7tx7WwKl5/GW194EGkK2U+p9XG4IFNN/FpLryE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Tlv3mmc3cxU2iuQtnlBwlJJlrALGbmX66ceG07+8nPhg7WwyltmjALLGhk3sEWKs8
+	 ocYFrgIM2p4grxaGGL+YDms31iFOI+EgKqy9rbKnRBWiAyvkamHfS9rKkC9PqgrFMk
+	 GIGl2tDCFjTfrYzpC5c3eIoeb8GXAkfzF2HGnCzQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241111093040eucas1p1edcd59075ba85c834c686381263e7b88~G4Aolil3H2887628876eucas1p1w;
+	Mon, 11 Nov 2024 09:30:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 30.18.20821.0CEC1376; Mon, 11
+	Nov 2024 09:30:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241111093040eucas1p2b3c0bc3b3bec1a8872f581ee07c8f98a~G4AoPwgBe2570825708eucas1p2e;
+	Mon, 11 Nov 2024 09:30:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241111093040eusmtrp2352fefac658fac5d5a2abe720ad502b6~G4AoPHa1V0777607776eusmtrp2N;
+	Mon, 11 Nov 2024 09:30:40 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-48-6731cec0e17e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 27.7B.19654.0CEC1376; Mon, 11
+	Nov 2024 09:30:40 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241111093040eusmtip23576ab63631268e2382e87c7155de91b~G4AoFk_Ek0392203922eusmtip2F;
+	Mon, 11 Nov 2024 09:30:40 +0000 (GMT)
+Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 11 Nov 2024 09:30:39 +0000
+Date: Mon, 11 Nov 2024 10:30:38 +0100
+From: Javier Gonzalez <javier.gonz@samsung.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+	Keith Busch <kbusch@meta.com>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "joshi.k@samsung.com"
+	<joshi.k@samsung.com>, "bvanassche@acm.org" <bvanassche@acm.org>
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+Message-ID: <20241111093038.zk4e7nhpd7ifl7ap@ArmHalley.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1254; i=brauner@kernel.org; h=from:subject:message-id; bh=ZzOGhyap/OM/amCmCfANlgzTrLwhFPvminSOpzs5lX8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbnt1TIXxNvPWTcbQHu9OO3dyzZL9ffLVCoac789l73 4YrC0J/d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkehojw1Y7qasqERpPbKYZ ZPo6Lj22VVzIRvK95Aor5VDuDO/QTIb/zjPrkr8Udl5i5dm8yaFS9Pusc1YRttnv3VjlJhTODj/ OBgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+In-Reply-To: <20241111065148.GC24107@lst.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djPc7oHzhmmGzxaYmYx7cNPZouVq48y
+	WbxrPcdiMenQNUaLM1cXsljsvaVtsWfvSRaL+cueslt0X9/BZvH7xxw2By6Py1e8PTav0PLY
+	tKqTzWPzknqP3Tcb2DzOXazw+LxJLoA9issmJTUnsyy1SN8ugSvj8Y5rTAUNHBULX29ma2Bc
+	w9bFyMkhIWAiMfXPWuYuRi4OIYEVjBIzJyxnhXC+MEq8WnaVCcL5zCgx98wcRpiW7mlX2SES
+	yxkl7h4+zgZX9XHeP6j+LYwSjR2XmEBaWARUJfr3XwNrZxPQl1i1/RSYLSKgJPH01VlGkAZm
+	gUYWifm7H4KdJSzgLNEz9y5YEa+ArcSf9R/YIGxBiZMzn7CA2MwCVhKdH5qAtnEA2dISy/9x
+	gIQ5BXQkvjz8wwJxqpLE4xdvoc6ulTi15RbYPxICzZwSyxq/MIP0Sgi4SHzpDoSoEZZ4dXwL
+	O4QtI/F/53wmCLtaouHkCajeFkaJ1o6trBC91hJ9Z3Igahwl7r+byAIR5pO48VYQ4ko+iUnb
+	pkNt4pXoaBOCqFaTWH3vDcsERuVZSP6aheSvWQh/LWBkXsUonlpanJueWmyYl1quV5yYW1ya
+	l66XnJ+7iRGYlE7/O/5pB+PcVx/1DjEycTAeYpTgYFYS4dXw108X4k1JrKxKLcqPLyrNSS0+
+	xCjNwaIkzquaIp8qJJCeWJKanZpakFoEk2Xi4JRqYGJ+a9T8yGyrpZ9PZbGyZ/+/sC3RrTO5
+	3WbudxVjUX4b/fKE+/I9zq6S2/WC5kr84/5lbXKVS3JO1oGV11f9bz28xf9bwqSslS+D00Kz
+	ErY8XC/iPE/CSPuOPdfrpVoSD3d+KXF/6SyRdXZ2kt8f1d2lsWduxwkK1P2X3PxWwqSgIGbZ
+	3DQGtioLB4b2yhd81VP3ztPdbX3AfMZRWf6auUFGbzi3Srh4PgnwFH1yb8XG0kv3bGWe7WMU
+	Zp4TWPjhV2gDw+n/LUwTj9yb1TW1z4XvwfNg+b5ud73nzw8n1kiu1nedVrWvOegY85ct2+bN
+	Fm55ds56hcDRR3Z571advXEh5cnWf3v8v11Yd4RdN0eJpTgj0VCLuag4EQAL9INNuQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsVy+t/xe7oHzhmmG/z9Im8x7cNPZouVq48y
+	WbxrPcdiMenQNUaLM1cXsljsvaVtsWfvSRaL+cueslt0X9/BZvH7xxw2By6Py1e8PTav0PLY
+	tKqTzWPzknqP3Tcb2DzOXazw+LxJLoA9Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DY
+	PNbKyFRJ384mJTUnsyy1SN8uQS/j8Y5rTAUNHBULX29ma2Bcw9bFyMkhIWAi0T3tKnsXIxeH
+	kMBSRonLL7vZIRIyEhu/XGWFsIUl/lzrYoMo+sgocevPc1YIZwujxP3Tp8GqWARUJfr3X2ME
+	sdkE9CVWbT8FZosIKEk8fXWWEaSBWaCRRWLjgyVgDcICzhI9c++CFfEK2Er8Wf8BasVkZonP
+	S7tZIBKCEidnPgGzmQUsJGbOPw/UwAFkS0ss/8cBEuYU0JH48vAPC8SpShKPX7xlhLBrJT7/
+	fcY4gVF4FpJJs5BMmoUwaQEj8ypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA+Nx27OeWHYwr
+	X33UO8TIxMF4iFGCg1lJhFfDXz9diDclsbIqtSg/vqg0J7X4EKMpMCwmMkuJJucDE0ReSbyh
+	mYGpoYmZpYGppZmxkjgv25XzaUIC6YklqdmpqQWpRTB9TBycUg1M6S8vebfcNAl6WfFX8V+q
+	ipO/96XtvsqZLmZKk2p/bqgSkY7ZZqG8sM2Caar2pzP1xzL63GYILOY4a2d7ZXdfZWLZx90e
+	N73P5XwJ+nvn3aV6tU9Pcg3t5680rS05JsvYel4x1PNw3a9Va+4uC3Mu+zShmP/vM5336YyF
+	vevbeExEtG98CmZRTmI499BPSWDb3V/MSumZa3sVpt7RW169+eClwLy8liffHbpurO3q6Kwr
+	7NgR80R9Yyjz0ak/Yko+lRxd/lf3gKLmC6ZNOrfa+QQv51eEOZhcVpIX2CuTZ3qm7NO9aa2N
+	chPl9v9M0FTtWfrrnFBviP5a/1R99o9lUWoR11sUlkje0i+YrKXEUpyRaKjFXFScCACTGJqQ
+	WAMAAA==
+X-CMS-MailID: 20241111093040eucas1p2b3c0bc3b3bec1a8872f581ee07c8f98a
+X-Msg-Generator: CA
+X-RootMTR: 20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a
+References: <20241029151922.459139-1-kbusch@meta.com>
+	<20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
+	<20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
+	<CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
+	<Zy5CSgNJtgUgBH3H@casper.infradead.org>
+	<d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+	<20241111065148.GC24107@lst.de>
 
-On Thu, 07 Nov 2024 08:41:09 -0300, Thadeu Lima de Souza Cascardo wrote:
-> Devices block sizes may change. One of these cases is a loop device by
-> using ioctl LOOP_SET_BLOCK_SIZE.
-> 
-> While this may cause other issues like IO being rejected, in the case of
-> hfsplus, it will allocate a block by using that size and potentially write
-> out-of-bounds when hfsplus_read_wrapper calls hfsplus_submit_bio and the
-> latter function reads a different io_size.
-> 
-> [...]
+On 11.11.2024 07:51, Christoph Hellwig wrote:
+>On Fri, Nov 08, 2024 at 05:43:44PM +0000, Javier Gonzalez wrote:
+>> We have been iterating in the patches for years, but it is unfortunately
+>> one of these series that go in circles forever. I don't think it is due
+>> to any specific problem, but mostly due to unaligned requests form
+>> different folks reviewing. Last time I talked to Damien he asked me to
+>> send the patches again; we have not followed through due to bandwidth.
+>
+>A big problem is that it actually lacks a killer use case.  If you'd
+>actually manage to plug it into an in-kernel user and show a real
+>speedup people might actually be interested in it and help optimizing
+>for it.
+>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Agree. Initially it was all about ZNS. Seems ZUFS can use it.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Then we saw good results in offload to target on NVMe-OF, similar to
+copy_file_range, but that does not seem to be enough. You seem to
+indicacte too that XFS can use it for GC.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] hfsplus: don't query the device logical block size multiple times
-      https://git.kernel.org/vfs/vfs/c/b05565a8e3b8
+We can try putting a new series out to see where we are...
 
