@@ -1,109 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-34230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72A29C3F2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:05:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD02B9C3EEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31006B25531
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A28A4284EA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 12:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12319E966;
-	Mon, 11 Nov 2024 13:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="vqnq1dST"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFA71AAE1C;
+	Mon, 11 Nov 2024 12:55:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19C155CB3;
-	Mon, 11 Nov 2024 13:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F3819DF4D;
+	Mon, 11 Nov 2024 12:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330259; cv=none; b=XsvyAi1Dq5VUh+Xuu1/4uZFI5W1on3PFIcZ3zN6nPeULVz968Or7ySPyhd4WUguDrHVedtMTuXnoP8AMgctmoVy6fdxz9jUyWokC/ss2d2vT1qiCKeKzE65eQx1st063PqD3lNqxuMUXE4J+Mp5A4TXZXxqA9P1Js4XyfvJ8enE=
+	t=1731329701; cv=none; b=WsgnuAvb4p5Yi7QKedXacgGHN2rsq/2VF1lH+EwvrOtbY+SSU4Z9tkGK1pGZKSL7gYpklpZ5skFMBEEyJgOUSUGhqui9kWZw5vaT8XMEaNF0KmEygwxPw6F3rS7uC2+PVLJMARHhw8Hl5//CDAiKosrHNGsEW4GsNRvMNwG6shk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330259; c=relaxed/simple;
-	bh=gqC/kUedyrtC5XrbMDdoG/YI6RVhmvKtndWDGNJ5BWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2C8EY58+Qn8xv3CrdZeOGhEFWJ51qTqa/3L+scNaVNpDc05sdAnOrCVazzFx2tesjPSo11Rn3YYpOBtkmJUsw9ZiLY1oxP7a747d7bpdwBMnxNpiLEWCFBB0OXmK13IK8w4xyzCxG9BCIOTnjf850wYGfANGFpjZVsw1Lu6NtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=vqnq1dST; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=2WZioZbMK62yjCWYpF2+yStEVV9m8+tk5g3PAsrD4Hg=; b=vqnq1dSTE4DLsWq7PvwJjagckv
-	wLMdMwbJidH/rwtecbzaIz2T7IbDEUg6OnPrylt8V0L3wVvnFNAGDXQ61BwyOy+h61T2NuALktLmu
-	iNSDm1VdPYTfzuZrO907A2htvGfoaxe1lVLnlZRfHklmydhsCFwuk2daq69tgZlGSziofGNTT3XmU
-	HqxmL3NgCxXUuauvd1HbjaZD/sHRYbmm5PFru4lZpr1QDSiTeIYNCT7UBnBE9hI7Gy9an/35AL+6q
-	DYp5HktoKK8JLYZgXHP7ZFqiKk/4BYoNsiu/ziOnL++sIYLUk52ZXMkcp2IgfWOQZB6kq1DtQukGL
-	p0OHRSzfGUw3U+8q4xqjp7m4P/VKCUxp43gOeziXEbVzneLY9GZQ/wsfWOk+0E7GyxFtoGssiUSPi
-	ytO1o28cWk7KPCmp6FjGkjqmlLkoyKHzJiBCPhS+0c5pkDX2SWqr6GoU/z7Ll/CPGIEjuEBhelgnz
-	3aXhIp2l4bQiDhMbJTH65q6V;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tAU5V-00A3Hc-1B;
-	Mon, 11 Nov 2024 13:04:13 +0000
-Message-ID: <dbcad551-bf66-406b-a6cd-b8047d1cbace@samba.org>
-Date: Mon, 11 Nov 2024 14:04:13 +0100
+	s=arc-20240116; t=1731329701; c=relaxed/simple;
+	bh=9T6kfsDKgMbtkWYG6v9h5udnRIqsmK19/CMNG4eb59c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fIFOsulh1u7UmWa9zPfZxR/hdU1ctaAiYMhT2xUpzoMtEY2Oz0kclrptFZu6j4UQKHr+6zQicRF2PHmwo3crynwWSTXyk8UGNsza2LGCx1DHjQY9D8/zBUZ6HxCNROwOQmXRIVXMFRGlE8p0DqWfgDH7raVf3vZKYJxKHHC8BV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xn8db0MXqz4f3kpP;
+	Mon, 11 Nov 2024 20:54:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 214A61A0568;
+	Mon, 11 Nov 2024 20:54:56 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP4 (Coremail) with SMTP id gCh0CgB3n4Oe_jFnllryBQ--.36628S2;
+	Mon, 11 Nov 2024 20:54:55 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH RESEND V2 0/5] Fixes and cleanups to xarray
+Date: Tue, 12 Nov 2024 05:53:54 +0800
+Message-Id: <20241111215359.246937-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/13] fs: add read support for RWF_UNCACHED
-To: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-9-axboe@kernel.dk>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20241108174505.1214230-9-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3n4Oe_jFnllryBQ--.36628S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr4xur45Cw43AF1kKF4rXwb_yoW3Krg_ua
+	4vkF9rtr4UAFWUJa429Fn8t3yrAr48Gr1jqFyYgr43ZFyUXrZxJr4kCr45XrnrWFyaya4D
+	XrW5ZryFkw17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
+	AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
+	JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
+	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
+	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAa
+	w2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
+	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07
+	jSYL9UUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi Jens,
+resend:
+-also cc linux-mm
 
-> If the same test case is run with RWF_UNCACHED set for the buffered read,
-> the output looks as follows:
-> 
-> Reading bs 65536, uncached 0
->    1s: 153144MB/sec
->    2s: 156760MB/sec
->    3s: 158110MB/sec
->    4s: 158009MB/sec
->    5s: 158043MB/sec
->    6s: 157638MB/sec
->    7s: 157999MB/sec
->    8s: 158024MB/sec
->    9s: 157764MB/sec
->   10s: 157477MB/sec
->   11s: 157417MB/sec
->   12s: 157455MB/sec
->   13s: 157233MB/sec
->   14s: 156692MB/sec
-> 
-> which is just chugging along at ~155GB/sec of read performance. Looking
-> at top, we see:
-> 
->   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-> 7961 root      20   0  267004      0      0 S  3180   0.0   5:37.95 uncached
-> 8024 axboe     20   0   14292   4096      0 R   1.0   0.0   0:00.13 top
-> 
-> where just the test app is using CPU, no reclaim is taking place outside
-> of the main thread. Not only is performance 65% better, it's also using
-> half the CPU to do it.
+v1->v2:
+-Drop patch "Xarray: skip unneeded xas_store() and xas_clear_mark() in
+__xa_alloc()"
 
-Do you have numbers of similar code using O_DIRECT just to
-see the impact of the memcpy from the page cache to the userspace
-buffer...
+This series contains some random fixes and cleanups to xarray. Patch 1-3
+are fixes and patch 4-5 are cleanups. More details can be found in
+respective patches. Thanks!
 
-Thanks!
-metze
+Kemeng Shi (5):
+  Xarray: Do not return sibling entries from xas_find_marked()
+  Xarray: distinguish large entries correctly in xas_split_alloc()
+  Xarray: move forward index correctly in xas_pause()
+  Xarray: remove repeat check in xas_squash_marks()
+  Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
+
+ lib/test_xarray.c                     | 35 +++++++++++++++++++++++++++
+ lib/xarray.c                          | 26 +++++++++++---------
+ tools/testing/radix-tree/multiorder.c |  4 +++
+ 3 files changed, 54 insertions(+), 11 deletions(-)
+
+-- 
+2.30.0
 
 
