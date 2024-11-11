@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-34172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524909C35A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 01:54:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A621F9C35A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 01:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AE031F224D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 00:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C10E2829E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 00:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D6E13C80D;
-	Mon, 11 Nov 2024 00:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1250D145B2E;
+	Mon, 11 Nov 2024 00:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k543p4gD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMIYzEMN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E55E168DA;
-	Mon, 11 Nov 2024 00:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F5913DBBC;
+	Mon, 11 Nov 2024 00:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731286395; cv=none; b=B6JVq7sQvHmWQBL0Ze3PuyxRXO7VDu54rRBxwy7ITO5cR11CXTIp7OtsPDvh6rvrensxBXQUwnC0eLDn1Kw0k9gxP7iPvFXcXCxQsRv9Y5hKNr13Ik+uaxasMtcCrzoVZilB0uDeaGYZd/x7m2IVYdfYGfEcyD95JFBEmkcni8U=
+	t=1731286398; cv=none; b=e7Fkhepbm8KVK3sanRoc+hc8+8jlVMVqPr3I8WSVbsckl64ykm8FkozevhpA3Xjzy3LxDiBxmB2M8IdX7K44FS8RFw1RRE7FBqEUQeFD9mb/EC21BcvToz1H8u0lvCwW6zMhKx8EAelo7NqIjlBx12oUj9gllOdJeLvoNrOkRiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731286395; c=relaxed/simple;
-	bh=cheGtrVFrxMD7UddlqYcWxRXeXiTalHU/TXmpLwYnLE=;
+	s=arc-20240116; t=1731286398; c=relaxed/simple;
+	bh=Eq6hm/AurEpUBcGjs15qnEqlTE8OCuozLkUE85txKaE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fBl02mHl6IVbZvH+K6mxbEe1M1dMrnMxmNiazSTJW5AVUHJxrxjo4FJ/CKL7BzieUD1JcBN9e4YjKWCKPbhiJIR1wxGE0C8vsurWZAj9tvV2yOa96LpYLwpK6z4/Mmm7VwesvoqwUCy6j4M9IDOV3SAyfRXQtkGHFUTqcekD0Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k543p4gD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C69C4CECF;
-	Mon, 11 Nov 2024 00:53:12 +0000 (UTC)
+	 MIME-Version; b=tCZuCUKETyFccb2wevQ+321KF0PSJ1ABprdViBrDmL8f1UbUt5T/ES1yiJsbbzXGrhKJMSO8819qr1fLvEK+mxKkzTgCRRmWtcN9KDjK/EEriqAs0QNOtPL0I+X4243+NlV7nygrdu+yRxq11dV4sG0jz11LNZ3wdiV5WPfWs4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMIYzEMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F69C4CEDA;
+	Mon, 11 Nov 2024 00:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731286395;
-	bh=cheGtrVFrxMD7UddlqYcWxRXeXiTalHU/TXmpLwYnLE=;
+	s=k20201202; t=1731286398;
+	bh=Eq6hm/AurEpUBcGjs15qnEqlTE8OCuozLkUE85txKaE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k543p4gDIbH3NkLzJj34S7bHS+uDbygpE9kcK4a1Xs0xXeZFpl2+fmEcRbCDJjgPI
-	 pyeK/2NKMa0aXKDhYbuVz3JAdY2c8fikvdu2u41e+3O4y8p/P9PWNiEJySxlBUQtLR
-	 z46MtAPrxrvHJ0j79ygGb1jmpzBjXRcKUJ5ij0VAIdyoUEKI4ix6HsSnY8b08x3ddY
-	 3FZ3A6Pl4ZlKJYwSLsQZdeeu7HJikjHV0uhXQYpoWLJGq2xJBzPQUbp+dqiqt7owQ4
-	 kTp65YdpznYFFeUoSAIAWP/dH5jBTMuTH6VGjxyKEhBKkA0emLcsBvajMX5qYhWJJr
-	 bzSDRjvAtsXQg==
+	b=aMIYzEMNY9q4iFf2JUztZP3Jyhw3wEtFmFm9g1gY0/ekzc6Sm1//MNk70I+7KwldA
+	 7/eY37HChonjEeA2109emE/Syd1tdoK4X3vzsxDHeVEc7SN338hQcoXLla/Hz2eq2l
+	 8J5TzUVJosjhO11krG92weLktbMPDx+YF3N0M8SlyDq4JCNWlTP4fWqe1VB8ewQXt+
+	 4QJ0G6CXfvWQBdx+b9eYPSJJ6z/cXyMoRkxcuD3xg3AtkuFrpLKBfyHFGJBClHw5hV
+	 ge+cgqwUijpgvDIodDRso5iDS72XZie2UXIw8VTekxd3mGzAhY21s6Q+AUj2vc3IQB
+	 J8PSNpMRiiqyQ==
 From: cel@kernel.org
 To: <stable@vger.kernel.org>
 Cc: yukuai1@huaweicloud.com,
@@ -76,9 +76,9 @@ Cc: yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [RFC PATCH 4/6 6.6] libfs: Add simple_offset_rename() API
-Date: Sun, 10 Nov 2024 19:52:40 -0500
-Message-ID: <20241111005242.34654-5-cel@kernel.org>
+Subject: [RFC PATCH 5/6 6.6] shmem: Fix shmem_rename2()
+Date: Sun, 10 Nov 2024 19:52:41 -0500
+Message-ID: <20241111005242.34654-6-cel@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241111005242.34654-1-cel@kernel.org>
 References: <20241111005242.34654-1-cel@kernel.org>
@@ -92,80 +92,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit 5a1a25be995e1014abd01600479915683e356f5c ]
+[ Upstream commit ad191eb6d6942bb835a0b20b647f7c53c1d99ca4 ]
 
-I'm about to fix a tmpfs rename bug that requires the use of
-internal simple_offset helpers that are not available in mm/shmem.c
+When renaming onto an existing directory entry, user space expects
+the replacement entry to have the same directory offset as the
+original one.
 
+Link: https://gitlab.alpinelinux.org/alpine/aports/-/issues/15966
+Fixes: a2e459555c5f ("shmem: stable directory offsets")
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Link: https://lore.kernel.org/r/20240415152057.4605-3-cel@kernel.org
+Link: https://lore.kernel.org/r/20240415152057.4605-4-cel@kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-Stable-dep-of: ad191eb6d694 ("shmem: Fix shmem_rename2()")
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/libfs.c         | 21 +++++++++++++++++++++
- include/linux/fs.h |  2 ++
- mm/shmem.c         |  3 +--
- 3 files changed, 24 insertions(+), 2 deletions(-)
+ fs/libfs.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 9fec0113a83f..b2dcb15d993a 100644
+index b2dcb15d993a..a87005c89534 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -356,6 +356,27 @@ int simple_offset_empty(struct dentry *dentry)
- 	return ret;
+@@ -365,6 +365,9 @@ int simple_offset_empty(struct dentry *dentry)
+  *
+  * Caller provides appropriate serialization.
+  *
++ * User space expects the directory offset value of the replaced
++ * (new) directory entry to be unchanged after a rename.
++ *
+  * Returns zero on success, a negative errno value on failure.
+  */
+ int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+@@ -372,8 +375,14 @@ int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+ {
+ 	struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
+ 	struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
++	long new_offset = dentry2offset(new_dentry);
+ 
+ 	simple_offset_remove(old_ctx, old_dentry);
++
++	if (new_offset) {
++		offset_set(new_dentry, 0);
++		return simple_offset_replace(new_ctx, old_dentry, new_offset);
++	}
+ 	return simple_offset_add(new_ctx, old_dentry);
  }
- 
-+/**
-+ * simple_offset_rename - handle directory offsets for rename
-+ * @old_dir: parent directory of source entry
-+ * @old_dentry: dentry of source entry
-+ * @new_dir: parent_directory of destination entry
-+ * @new_dentry: dentry of destination
-+ *
-+ * Caller provides appropriate serialization.
-+ *
-+ * Returns zero on success, a negative errno value on failure.
-+ */
-+int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
-+			 struct inode *new_dir, struct dentry *new_dentry)
-+{
-+	struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
-+	struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
-+
-+	simple_offset_remove(old_ctx, old_dentry);
-+	return simple_offset_add(new_ctx, old_dentry);
-+}
-+
- /**
-  * simple_offset_rename_exchange - exchange rename with directory offsets
-  * @old_dir: parent of dentry being moved
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5104405ce3e6..e4d139fcaad0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3198,6 +3198,8 @@ void simple_offset_init(struct offset_ctx *octx);
- int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
- void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
- int simple_offset_empty(struct dentry *dentry);
-+int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
-+			 struct inode *new_dir, struct dentry *new_dentry);
- int simple_offset_rename_exchange(struct inode *old_dir,
- 				  struct dentry *old_dentry,
- 				  struct inode *new_dir,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e0d014eaaf73..8e8998152a0f 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3439,8 +3439,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 			return error;
- 	}
- 
--	simple_offset_remove(shmem_get_offset_ctx(old_dir), old_dentry);
--	error = simple_offset_add(shmem_get_offset_ctx(new_dir), old_dentry);
-+	error = simple_offset_rename(old_dir, old_dentry, new_dir, new_dentry);
- 	if (error)
- 		return error;
  
 -- 
 2.47.0
