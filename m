@@ -1,255 +1,314 @@
-Return-Path: <linux-fsdevel+bounces-34251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD2B9C41BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 428B59C41C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 16:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789B01F2392A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59731F21983
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 15:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857761A08DF;
-	Mon, 11 Nov 2024 15:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qab+pyMJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5D91A01DD;
+	Mon, 11 Nov 2024 15:20:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E21BC58
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 15:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7271BC58;
+	Mon, 11 Nov 2024 15:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338381; cv=none; b=Fqu9YDgjkgCkhG8ow31U4gwdUu8YUERPgJb2uidgI85yW2wCgFqnE93aVpOLwwFzldHK2esyb0tgBJh+1nXt6HB+yQ2u/TRwUje+gPjF1GmZ//8jgUE6idrxou12Hhd4+X5ikzr7ROEZA8gQ7DlZIVgJ0TDCMNoYOeGTRCaxR3s=
+	t=1731338432; cv=none; b=LAH6GZky2wP++ddGpdxkOLpansrOo9R7FOg+TO1tfrdeOfn8FIdkjRFQfWAOMagTWlepQtlzkCAch/l/d1trmnMr5pkeZwdGIE/LgKpLRa3S5hFOxmrQy2W4FD1xl2eskwBPpeyu5FJaxuuQHwE+MgeXPK0nuE22c4wUIAFiktI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338381; c=relaxed/simple;
-	bh=1YsuSbZdhdj+nzOteuEHJKEXq368N1weX0JfmHBo9GE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mCb3qGvvIVoe75sNpudp9rY2qs3se7TFEXQP9zx9tXuMVCCdtq0D6RH3/FIGsgGCAI1qQam9rDy3h6/sU3hoT+uQFKJD4TAofBJvDAb7QcPREG7oSGLDaIZXek/bKIeI3T8z7Ulsh4FFVma2D8sftEjJZnI826paLJ7wdJUElCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qab+pyMJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731338378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XR+uLywBYEsaPwET8kKINJkIHaBnwvoIX1ih5UVS1og=;
-	b=Qab+pyMJ9HJGM1PAfeuB7+po5ugJz8YrswGvjJyXzEP3soODyXPyRXyd891ltcv+E4Xc/k
-	lmO80GMMUmlPEHTW0Ss7cpKWiKAfltXgx23JVC1zOKJJDV5NqsJR2OU08Poz9CTXhTLUDg
-	O6PJ23gWce49iaLefE9f1btzPfJiV0Y=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-sxIid0bFOqyXMsAAXW0f5g-1; Mon, 11 Nov 2024 10:19:35 -0500
-X-MC-Unique: sxIid0bFOqyXMsAAXW0f5g-1
-X-Mimecast-MFC-AGG-ID: sxIid0bFOqyXMsAAXW0f5g
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-431518e6d8fso33222425e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 07:19:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731338374; x=1731943174;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XR+uLywBYEsaPwET8kKINJkIHaBnwvoIX1ih5UVS1og=;
-        b=q5CKRfnrTIJ9VFpjveauzA3K+DPAL6cp4H1TS7dyJrJiakiZCyFGmlIlIMmSlO002q
-         fi6k0kQlpu0ytgr7z8L1W1zVVFurOkcFnGSoc8ACcH+NmGSKwW8qiHpK6N1ZIJ1RUug7
-         vJOuo6NCRQpTacFixiGxUkP3hS3G6vNbIJ6xRKAhN2DrCUcxjgz+9NxGPyekLAXdX4ic
-         HR0U091IQ333wt1H2jfSGxgeLYrmXs+hgSEgnpCUPlBsOTTlG02RPqo+53piwJg4bOWi
-         0cW0u4YUrtLlYLcFKvSQyi4uAROHL1WvA1GhCqXg4o7PMtD3/GBIrlCZoXmuTVEEYcTA
-         pQ/g==
-X-Gm-Message-State: AOJu0YydXtIdjl7Mod5atZIPZN2II7hvFAm2E64MLORKW9HCTrC0K3Vv
-	hWTcQELTKdhbnn+BvQz9HlmKHos6uxDE+vza7Blxk42fheO3CyWNzzEXQ+KmWTiGT1knvhrRq1e
-	VG79EsIW8RjLOkWe0mBW+NJEZIoTyE2skXDqm8GBzlFq/4igeMs2tL8iBn9xJPdQ=
-X-Received: by 2002:a05:600c:4508:b0:431:50cb:2398 with SMTP id 5b1f17b1804b1-432b74fecacmr105970145e9.2.1731338374640;
-        Mon, 11 Nov 2024 07:19:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHh+hmkIOXMCP4yAas6F1+n0X5j9NmS/QYrj3JR8+dkAxkVub/nmTpxMiLZzsi4GwGQHiaClA==
-X-Received: by 2002:a05:600c:4508:b0:431:50cb:2398 with SMTP id 5b1f17b1804b1-432b74fecacmr105969975e9.2.1731338374250;
-        Mon, 11 Nov 2024 07:19:34 -0800 (PST)
-Received: from ?IPV6:2003:cb:c730:4300:18eb:6c63:a196:d3a2? (p200300cbc730430018eb6c63a196d3a2.dip0.t-ipconnect.de. [2003:cb:c730:4300:18eb:6c63:a196:d3a2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa70a1d8sm220764755e9.27.2024.11.11.07.19.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 07:19:33 -0800 (PST)
-Message-ID: <d3600a33-a481-4c4c-bda6-a446f1c965c6@redhat.com>
-Date: Mon, 11 Nov 2024 16:19:31 +0100
+	s=arc-20240116; t=1731338432; c=relaxed/simple;
+	bh=cnqbt/Xh8UvrMdtmDUPR9+kGBZQFXIwEQu6Z9OrYXr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gx+ZdOnLpcINQAtgylyNHe08kxeqs5ONTDI5HQ3R/MscJuHbhCmrS81ORTLinglK65+NO9Y6HvqXXG2LxIWVLNzHDwjp9DiRaW126X2U9qXO0A38AX9PJ0N7BrNEsiWXnCUrYGepI0HfHug7r7wzLqmpjV3/jkr+Sao9g5rQ/sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XnCsL26CRz4f3jsX;
+	Mon, 11 Nov 2024 23:20:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 712481A0194;
+	Mon, 11 Nov 2024 23:20:24 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgB3U4exIDJn3+D7BQ--.18810S3;
+	Mon, 11 Nov 2024 23:20:19 +0800 (CST)
+Message-ID: <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
+Date: Mon, 11 Nov 2024 23:20:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ISSUE] split_folio() and dirty IOMAP folios
-From: David Hildenbrand <david@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- kvm@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
- Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
- <djwong@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Thomas Huth <thuth@redhat.com>
-References: <4febc035-a4ff-4afe-a9a0-d127826852a9@redhat.com>
- <ZyzmUW7rKrkIbQ0X@casper.infradead.org>
- <ada851da-70c2-424e-b396-6153cecf7179@redhat.com>
- <Zy0g8DdnuZxQly3b@casper.infradead.org>
- <6099e202-ef0a-4d21-958c-2c42db43a5bb@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6099e202-ef0a-4d21-958c-2c42db43a5bb@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
+ offset dir
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Chuck Lever <cel@kernel.org>, linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241111005242.34654-1-cel@kernel.org>
+ <20241111005242.34654-7-cel@kernel.org>
+ <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
+ <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3U4exIDJn3+D7BQ--.18810S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw48Ar4xCFW5tF45Wr48JFb_yoW3JF17pF
+	Z8Gan8Krs7X34UGr4vv3WDZFyS93Z7Kr45XrZ5W34UJr9Fqr43KF1Iyr4Y9a4UArs3Cr12
+	qF45K343Zw45CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-On 08.11.24 10:11, David Hildenbrand wrote:
-> On 07.11.24 21:20, Matthew Wilcox wrote:
->> On Thu, Nov 07, 2024 at 05:34:40PM +0100, David Hildenbrand wrote:
->>> On 07.11.24 17:09, Matthew Wilcox wrote:
->>>> On Thu, Nov 07, 2024 at 04:07:08PM +0100, David Hildenbrand wrote:
->>>>> I'm debugging an interesting problem: split_folio() will fail on dirty
->>>>> folios on XFS, and I am not sure who will trigger the writeback in a timely
->>>>> manner so code relying on the split to work at some point (in sane setups
->>>>> where page pinning is not applicable) can make progress.
->>>>
->>>> You could call something like filemap_write_and_wait_range()?
->>>
->>> Thanks, have to look into some details of that.
->>>
->>> Looks like the folio_clear_dirty_for_io() is buried in
->>> folio_prepare_writeback(), so that part is taken care of.
->>>
->>> Guess I have to fo from folio to "mapping,lstart,lend" such that
->>> __filemap_fdatawrite_range() would look up the folio again. Sounds doable.
->>>
->>> (I assume I have to drop the folio lock+reference before calling that)
+
+
+在 2024/11/11 22:39, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
 >>
->> I was thinking you'd do it higher in the callchain than
->> gmap_make_secure().  Presumably userspace says "I want to make this
->> 256MB range secure" and we can start by writing back that entire
->> 256MB chunk of address space.
+>> Hi,
 >>
->> That doesn't prevent anybody from dirtying it in-between, of course,
->> so you can still get -EBUSY and have to loop round again.
+>> 在 2024/11/11 8:52, cel@kernel.org 写道:
+>>> From: yangerkun <yangerkun@huawei.com>
+>>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
+>>> After we switch tmpfs dir operations from simple_dir_operations to
+>>> simple_offset_dir_operations, every rename happened will fill new dentry
+>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+>>> key starting with octx->newx_offset, and then set newx_offset equals to
+>>> free key + 1. This will lead to infinite readdir combine with rename
+>>> happened at the same time, which fail generic/736 in xfstests(detail show
+>>> as below).
+>>> 1. create 5000 files(1 2 3...) under one dir
+>>> 2. call readdir(man 3 readdir) once, and get one entry
+>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+>>> 4. loop 2~3, until readdir return nothing or we loop too many
+>>>     times(tmpfs break test with the second condition)
+>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+>>> directory reads") to fix it, record the last_index when we open dir, and
+>>> do not emit the entry which index >= last_index. The file->private_data
+>>
+>> Please notice this requires last_index should never overflow, otherwise
+>> readdir will be messed up.
 > 
-> I'm afraid that won't really work.
-> 
-> On the one hand, we might be allocating these pages (+disk blocks)
-> during the unpack operation -- where we essentially trigger page faults
-> first using gmap_fault() -- so the pages might not even exist before the
-> gmap_make_secure() during unpack. One work around would be to
-> preallocate+writeback from user space, but it doesn't sound quite right.
-> 
-> But the bigger problem I see is that the initial "unpack" operation is
-> not the only case where we trigger this conversion to "secure" state.
-> Once the VM is running, we can see calls on arbitrary guest memory even
-> during page faults, when gmap_make_secure() is called via
-> gmap_convert_to_secure().
+> It would help your cause if you could be more specific
+> than "messed up".
 > 
 > 
-> I'm still not sure why we see essentially no progress being made, even
-> though we temporarily drop the PTL, mmap lock, folio lock, folio ref ...
-> maybe related to us triggering a write fault that somehow ends up
-> setting the folio dirty :/ Or because writeback is simply too slow /
-> backs off.
+>>> now used in offset dir can use directly to do this, and we also update
+>>> the last_index when we llseek the dir file.
+>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
+>>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
+>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
+>>> [ cel: adjusted to apply to origin/linux-6.6.y ]
+>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>> ---
+>>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
+>>>   1 file changed, 25 insertions(+), 12 deletions(-)
+>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>> index a87005c89534..b59ff0dfea1f 100644
+>>> --- a/fs/libfs.c
+>>> +++ b/fs/libfs.c
+>>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>    xa_destroy(&octx->xa);
+>>>   }
+>>>   +static int offset_dir_open(struct inode *inode, struct file *file)
+>>> +{
+>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>> +
+>>> + file->private_data = (void *)ctx->next_offset;
+>>> + return 0;
+>>> +}
+>>
+>> Looks like xarray is still used.
 > 
-> I'll play with handling -EBUSY from split_folio() differently: if the
-> folio is under writeback, wait on that. If the folio is dirty, trigger
-> writeback. And I'll look into whether we really need a writable PTE, I
-> suspect not, because we are not actually "modifying" page content.
+> That's not going to change, as several folks have already
+> explained.
+> 
+> 
+>> I'm in the cc list ,so I assume you saw my set, then I don't know why
+>> you're ignoring my concerns.
+> 
+>> 1) next_offset is 32-bit and can overflow in a long-time running
+>> machine.
+>> 2) Once next_offset overflows, readdir will skip the files that offset
+>> is bigger.
+> 
 
-The following hack makes it fly:
+I'm sorry, I'm a little busy these days, so I haven't responded to this
+series of emails.
 
-         case -E2BIG:
-                 folio_lock(folio);
-                 rc = split_folio(folio);
-+               if (rc == -EBUSY) {
-+                       if (folio_test_dirty(folio) && !folio_test_anon(folio) &&
-+                           folio->mapping) {
-+                               struct address_space *mapping = folio->mapping;
-+                               loff_t lstart = folio_pos(folio);
-+                               loff_t lend = lstart + folio_size(folio);
-+
-+                               folio_unlock(folio);
-+                               /* Mapping can go away ... */
-+                               filemap_write_and_wait_range(mapping, lstart, lend);
-+                       } else {
-+                               folio_unlock(folio);
-+                       }
-+                       folio_wait_writeback(folio);
-+                       folio_lock(folio);
-+                       split_folio(folio);
-+                       folio_unlock(folio);
-+                       folio_put(folio);
-+                       return -EAGAIN;
-+               }
-                 folio_unlock(folio);
-                 folio_put(folio);
+> In that case, that entry won't be visible via getdents(3)
+> until the directory is re-opened or the process does an
+> lseek(fd, 0, SEEK_SET).
 
+Yes.
 
-I think the reason why we don't make any progress on s390x is that the writeback will
-mark the folio clean and turn the folio read-only in the page tables as well. So when we
-lookup the folio again in the page table, we see that the PTE is not writable and
-trigger a write fault ...
+> 
+> That is the proper and expected behavior. I suspect you
+> will see exactly that behavior with ext4 and 32-bit
+> directory offsets, for example.
 
-... the write fault will mark the folio dirty again, so the split will never succeed.
+Emm...
 
-In above diff, we really must try the split_folio() a second time after waiting, otherwise we
-run into the same endless loop.
+For this case like this:
 
+1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
+2. open /tmp/dir with fd1
+3. readdir and get /tmp/dir/file1
+4. rm /tmp/dir/file2
+5. touch /tmp/dir/file2
+4. loop 4~5 for 2^32 times
+5. readdir /tmp/dir with fd1
 
-I'm still not 100% sure if we need a writable PTE; after all we are not modifying page content.
-But that's just a side effect of not being able to wait for the split_folio() to make progress
-in the writeback case so we can retry the split again.
+For tmpfs now, we may see no /tmp/dir/file2, since the offset has been 
+overflow, for ext4 it is ok... So we think this will be a problem.
 
--- 
-Cheers,
+> 
+> Does that not directly address your concern? Or do you
+> mean that Erkun's patch introduces a new issue?
 
-David / dhildenb
+Yes, to be honest, my personal feeling is a problem. But for 64bit, it 
+may never been trigger.
+
+> 
+> If there is a problem here, please construct a reproducer
+> against this patch set and post it.
+> 
+> 
+>> Thanks,
+>> Kuai
+>>
+>>> +
+>>>   /**
+>>>    * offset_dir_llseek - Advance the read position of a directory descriptor
+>>>    * @file: an open directory whose position is to be updated
+>>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>    */
+>>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>   {
+>>> + struct inode *inode = file->f_inode;
+>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>> +
+>>>    switch (whence) {
+>>>    case SEEK_CUR:
+>>>    offset += file->f_pos;
+>>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>    }
+>>>      /* In this case, ->private_data is protected by f_pos_lock */
+>>> - file->private_data = NULL;
+>>> - return vfs_setpos(file, offset, U32_MAX);
+>>> + if (!offset)
+>>> + file->private_data = (void *)ctx->next_offset;
+>>> + return vfs_setpos(file, offset, LONG_MAX);
+>>>   }
+>>>     static struct dentry *offset_find_next(struct xa_state *xas)
+>>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>   }
+>>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+>>>   {
+>>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+>>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
+>>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>    while (true) {
+>>>    dentry = offset_find_next(&xas);
+>>>    if (!dentry)
+>>> - return ERR_PTR(-ENOENT);
+>>> + return;
+>>> +
+>>> + if (dentry2offset(dentry) >= last_index) {
+>>> + dput(dentry);
+>>> + return;
+>>> + }
+>>>      if (!offset_dir_emit(ctx, dentry)) {
+>>>    dput(dentry);
+>>> - break;
+>>> + return;
+>>>    }
+>>>      dput(dentry);
+>>>    ctx->pos = xas.xa_index + 1;
+>>>    }
+>>> - return NULL;
+>>>   }
+>>>     /**
+>>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
+>>>   {
+>>>    struct dentry *dir = file->f_path.dentry;
+>>> + long last_index = (long)file->private_data;
+>>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
+>>>      if (!dir_emit_dots(file, ctx))
+>>>    return 0;
+>>>   - /* In this case, ->private_data is protected by f_pos_lock */
+>>> - if (ctx->pos == DIR_OFFSET_MIN)
+>>> - file->private_data = NULL;
+>>> - else if (file->private_data == ERR_PTR(-ENOENT))
+>>> - return 0;
+>>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+>>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
+>>>    return 0;
+>>>   }
+>>>     const struct file_operations simple_offset_dir_operations = {
+>>> + .open = offset_dir_open,
+>>>    .llseek = offset_dir_llseek,
+>>>    .iterate_shared = offset_readdir,
+>>>    .read = generic_read_dir,
+> 
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
