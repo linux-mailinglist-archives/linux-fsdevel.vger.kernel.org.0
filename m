@@ -1,234 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-34340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22AC59C49C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:36:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986309C4A2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE129289470
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 23:36:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64003B2A23C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 23:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395261BD9C9;
-	Mon, 11 Nov 2024 23:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08D81BD4EB;
+	Mon, 11 Nov 2024 23:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQ7lMQr/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="o0SGqj8W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A89F38F83;
-	Mon, 11 Nov 2024 23:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2101F1BC9FB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 23:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731368186; cv=none; b=qjD2K+QxnOdB9RyAjzFdyrBYiYbMBx5u7sRTxK+eoLXVaRkTw1m+QCYvuiZZCUyYLEs3EPXd5RcCpyaPel3BoY1AXfuScDI53ZZt/7bDYuzWMEqlHH7subFGRGak96X+5unTHewrG06CqEQyWFz0ezgn46M3zoF7AnDOvo31h5o=
+	t=1731368929; cv=none; b=WNSBKMJBylTjWA6yexnGS24fhFfAtqfNrD9sg7H2mOX9laiYGtyKf61ZNF7IiVrPdvV2Ifq2x0hS6oylQ+sgGdGGShWgubGM6+ZYtBsw1vD3FId1jtTnK4ITVs8+08iZtf4OCCSf81+XFzBli3LJXKqGGZxHzizgGWX9CNCrado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731368186; c=relaxed/simple;
-	bh=khCerP7Ay/PFkDwN9tHyFDanLd3uDgCYYA0oK2BT3Uc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DqACCkLW2dtXWEZ86hnSCpm/gH9vt752pfkuBpw7IdLtPXeu9vPcB1hslHG7+P6SwhPVxTJ73NtLEfmvu4oc9VStrbgCgnx+iJDFCTr4LIOQHTywBHCjtlSU1vgNfghR9TbSUtuDG00HJ61AXKL1dk0n2OtlN7YKlzdnfWyVdhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQ7lMQr/; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5140cddb073so1075132e0c.3;
-        Mon, 11 Nov 2024 15:36:24 -0800 (PST)
+	s=arc-20240116; t=1731368929; c=relaxed/simple;
+	bh=u6zv4laTdZIRcz/cff/UpCCD3gIWZPSpqigelGUNTIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W+6YA5a7JWsc0H4HxwbRv9kFe+R5i54R8PECd2bCawZht/mSxrzwNK+q5/Y3inbS1arkQxAdOPEqcBSOrQ22f7dMIJ28mHBoMD5VCmfYwhemdqSYdbZ09Lx+sU20dmKx8eJQXsh9vh88YlZnf6Od6ngw3tRc7cPROSnyu+IcXoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=o0SGqj8W; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2198021b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 15:48:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731368184; x=1731972984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MB1YZjL/g4WPNa5p6ho7uTDJtxrw637uxbsOjPihoL4=;
-        b=LQ7lMQr/9MyD8sDv3SOViHJHMMw9kmTSbCLikEJSALNfeYgspRKmttsYSfSpv6Nx+w
-         g+tbI8yVXQdRqwUA8yRcLfijmNdFSE9otcbKWbhd+f+ZySApOTtRHAPWbYkLYjn5ef6W
-         8gSYEVXwa5rlHlpBstXTs0jGwz9gnJ8piz8sFecI6z7ilGbQnEVltQst/IdwHHIZwdZZ
-         IZNdIMVnQX+wm3YHrCYykcx9a3LYSl/n7l9OnzmbHDvxpxzKloHccPJomqc1AnhsNY6J
-         i4kRJP5L6wWf+CD6nWPvbMrx2s6YWo9bW5GL1p4eRFSatIjBCYtTmgneGJf7iObCRWY5
-         yYeA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731368926; x=1731973726; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYLsiY4xLzV9Ev2HH0qyOPkbZaBIuVD6O14DicI00XQ=;
+        b=o0SGqj8WK1Xg1DUt8awt99G/RLCuINezweNZARfxHrwnMVwwv2r/YhaYQyn9OiGdDU
+         zLKJjguD14bOa93TJ9Ni2SA0o98OE2F9n8s31Kc49wTOQhkrNd2r+vdfPeYxJFxqPDe0
+         Tz1nNiH8FlQMI9TmAUQ2wDThcRph5st2ybZ6V/Fc+FNZWP6QTPwNUWXVYRDA6syz1F01
+         SRIS3/Qobl3o1SgvX3iigJcOkRtICYD9/AfIJ42kofx0WO7FPPp9FhLWRtJPh4jYqSCU
+         iiamSZKTKlya31yLJ52kBfoSPa6jgTSF639TSOvvW2WWEUd9mFA1weDRg98hWXFYWEqt
+         HU8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731368184; x=1731972984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MB1YZjL/g4WPNa5p6ho7uTDJtxrw637uxbsOjPihoL4=;
-        b=ssG90wyEkWkwybJ3o8WkM2Z9Ybx+Tbka/G08tK24Cmv1lzEzOYxV9C+nOXb328VMXB
-         A4NJku8kB9IUB8Rh3GKvmd2RDQC5vQaUs700g63gDfdF2ciyhS6a5XOXT/2A5HfIKGCX
-         1/yRyHHG6lwiu9H3GsBZ4C93gTphbgpbOnBnSJtYhDl7jvPY+UOKcgOUAREqt6ttcMGZ
-         KzIReg0YYZk5myb4Xllyo3pu63EysEeSkgUPfXhNt/jdk6Zz9VRAwp0gYVFIqMpVvosa
-         IV9ggxqns10hpaiKqJ16yjVCHNPmVPSz3DtqYun5EZ3E4E+PhLfVr3Sc8B18jx4YRWOS
-         pNag==
-X-Forwarded-Encrypted: i=1; AJvYcCUXFCMJESDEgBSwpeOyEa1VaU1LSuucqxGjCBLTojwfeWRfp3zYwU5RpnRmcdXJakulcWCGx51lVgmt1Exm7g==@vger.kernel.org, AJvYcCVTJHi9rCKuNA6v0CahXjnK3i3eH1iXAoLs0rEgia/HRZQsTzGi+GUUKdOvx9jRfSdL5jb0Rai6TlWmkw==@vger.kernel.org, AJvYcCVU7O4XgMEDGccvRn577zugeNmN28oAmar7khS5ZrHnLDmK6Nu0Tw/kVS752+x40/FSaHh8t19SSVQIuA==@vger.kernel.org, AJvYcCXxEe7mI0Fl0v6o/ZQxin7YxySac5Eig1wxgn30UDjUVeAYq3uv9XUuzHye1V+wsz8JPl5WoD96eHCJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0W0LZRDMnn1YeoZfGdUY0QCgSwzIJi5DCZNE2OwXvsCVC1Ffe
-	k28X4UJmpTF8q8TB3+tRcxRG/H0dywPLH8BWE8TCfaqjKrmr4X50R01TVDBtoDi7yDI8pVNb8ko
-	3Q7ilY5UblujdWYMTeBHCW56irDV5o/PrM4Q=
-X-Google-Smtp-Source: AGHT+IHlHqW9AdZyfpZzGtvMz9MbvMwWSRsKkW2rbTmr8IjIKFtuxOJ6ThRYbwePpYz1fu+sC6uCZbkyQIGaylXfmVw=
-X-Received: by 2002:a05:6122:2089:b0:50f:fe39:a508 with SMTP id
- 71dfb90a1353d-51401eb04f6mr12944884e0c.11.1731368183658; Mon, 11 Nov 2024
- 15:36:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731368926; x=1731973726;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YYLsiY4xLzV9Ev2HH0qyOPkbZaBIuVD6O14DicI00XQ=;
+        b=C32ZnRjIXcaQ3NvIl4fXr57xiCPyplBq/IbhAk/6P5r9Za2xoifND1eiGjzYhkKTvr
+         5mYFygAErxhCMH2tkpHBRAAiRs01fNSw2YiK/dniVSKwVGsNtdD6QuVLA//tih4clWYy
+         YSW0vaSF/55CIy1tRhQJggnnn5f1zV4BBlCAAjip9qYZORsV3vZA2OkQBF6zCDiv0TBd
+         VvVWZPi5KGW3qMIJDHYk/+Gs2y9Z2pgp+Cy70Of+uA0KhWAcBxWR3JR+vky/Ij8ZHAcP
+         cL15+cq99RWsiOujdzReBIh1D3LibadmUoHYcSBxhygFXs8bIZhGw3sJ/DAoWBOdTCXI
+         r2ig==
+X-Forwarded-Encrypted: i=1; AJvYcCX7KGtrE+K0yyn4Bn4IUTA3EsHdVxUpfScE2EwAF+EOo1mveV/WJD/IhVT3xwv9wMQyDO3tsVrgMF5FQB+h@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSZlwk8wT/UaaHJw5OFCemmLHSqceTeTDuliSxtefp4Oqe0WMp
+	Q1UJCE1SVy41TedsqGg6ln57hxKE2Gjao7RZL0+i/zalvabbTMPAZsyVZJ6k1uw=
+X-Google-Smtp-Source: AGHT+IEOnqlyg7Q+iX7fiQJ8AI28/+0i7NkDDQxzm0hQvMnhJKygejIvPH0gTjJTu2JTP1X7D+h51g==
+X-Received: by 2002:a05:6a00:b4d:b0:71e:5150:61d6 with SMTP id d2e1a72fcca58-7241336888cmr19984342b3a.21.1731368926283;
+        Mon, 11 Nov 2024 15:48:46 -0800 (PST)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ee9sm10046057b3a.64.2024.11.11.15.48.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 15:48:45 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: hannes@cmpxchg.org,
+	clm@meta.com,
+	linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	kirill@shutemov.name,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: [PATCHSET v3 0/16] Uncached buffered IO
+Date: Mon, 11 Nov 2024 16:37:27 -0700
+Message-ID: <20241111234842.2024180-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731355931.git.josef@toxicpanda.com> <b509ec78c045d67d4d7e31976eba4b708b238b66.1731355931.git.josef@toxicpanda.com>
- <CAHk-=wh4BEjbfaO93hiZs3YXoNmV=YkWT4=OOhuxM3vD2S-1iA@mail.gmail.com>
-In-Reply-To: <CAHk-=wh4BEjbfaO93hiZs3YXoNmV=YkWT4=OOhuxM3vD2S-1iA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Nov 2024 00:36:12 +0100
-Message-ID: <CAOQ4uxg0k4bGz6zOKS+Qt5BjEqDdUhvgG+5pLBPqSCcnQdffig@mail.gmail.com>
-Subject: Re: [PATCH v6 06/17] fsnotify: generate pre-content permission event
- on open
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	jack@suse.cz, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024 at 10:52=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, 11 Nov 2024 at 12:19, Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3782,7 +3782,15 @@ static int do_open(struct nameidata *nd,
-> > +       /*
-> > +        * This permission hook is different than fsnotify_open_perm() =
-hook.
-> > +        * This is a pre-content hook that is called without sb_writers=
- held
-> > +        * and after the file was truncated.
-> > +        */
-> > +       return fsnotify_file_area_perm(file, MAY_OPEN, &file->f_pos, 0)=
-;
-> >  }
->
-> Stop adding sh*t like this to the VFS layer.
->
-> Seriously. I spend time and effort looking at profiles, and then
-> people who do *not* seem to spend the time and effort just willy nilly
-> add fsnotify and security events and show down basic paths.
->
-> I'm going to NAK any new fsnotify and permission hooks unless people
-> show that they don't add any overhead.
->
+Hi,
 
-FWIW we did work to eliminate overhead long before posting the new hooks.
+(A bit of version confusion, but this follows v4 -> v2 -> v3, as v4 was
+ a relic of the 5 year old version. Next will be v5 and we should be
+ consistent again)
 
-This prep work has already been merged back in v6.9:
-https://lore.kernel.org/linux-fsdevel/20240317184154.1200192-1-amir73il@gma=
-il.com/
+5 years ago I posted patches adding support for RWF_UNCACHED, as a way
+to do buffered IO that isn't page cache persistent. The approach back
+then was to have private pages for IO, and then get rid of them once IO
+was done. But that then runs into all the issues that O_DIRECT has, in
+terms of synchronizing with the page cache.
 
-After working closely with Oliver and kernel test robot to eliminate
-the overhead
-of the pre-content hooks and on the way, also reduce overhead of the existi=
-ng
-fanotify permission hooks that were merged back in the day.
+So here's a new approach to the same concent, but using the page cache
+as synchronization. That makes RWF_UNCACHED less special, in that it's
+just page cache IO, except it prunes the ranges once IO is completed.
 
-> Because I'm really really tired of having to wade through various
-> permission hooks in the profiles that I can not fix or optimize,
-> because those hoosk have no sane defined semantics, just "let user
-> space know".
->
-> Yes, right now it's mostly just the security layer. But this really
-> looks to me like now fsnotify will be the same kind of pain.
->
-> And that location is STUPID. Dammit, it is even *documented* to be
-> stupid. It's a "pre-content" hook that happens after the contents have
-> already been truncated. WTF? That's no "pre".
->
+Why do this, you may ask? The tldr is that device speeds are only
+getting faster, while reclaim is not. Doing normal buffered IO can be
+very unpredictable, and suck up a lot of resources on the reclaim side.
+This leads people to use O_DIRECT as a work-around, which has its own
+set of restrictions in terms of size, offset, and length of IO. It's
+also inherently synchronous, and now you need async IO as well. While
+the latter isn't necessarily a big problem as we have good options
+available there, it also should not be a requirement when all you want
+to do is read or write some data without caching.
 
-Yeh, I understand why it seems stupid and it may have been poorly
-documented, but there is actually a good reason for the location of
-this hook.
+Even on desktop type systems, a normal NVMe device can fill the entire
+page cache in seconds. On the big system I used for testing, there's a
+lot more RAM, but also a lot more devices. As can be seen in some of the
+results in the following patches, you can still fill RAM in seconds even
+when there's 1TB of it. Hence this problem isn't solely a "big
+hyperscaler system" issue, it's common across the board.
 
-The problem with the existing fsnotify_open_perm() hook is that
-with O_CREATE, open_last_lookups() takes sb_writers freeze
-protection (regardless if file with really created), so we cannot
-safely use this hook to start writing to file and fill its content.
+Common for both reads and writes with RWF_UNCACHED is that they use the
+page cache for IO. Reads work just like a normal buffered read would,
+with the only exception being that the touched ranges will get pruned
+after data has been copied. For writes, the ranges will get writeback
+kicked off before the syscall returns, and then writeback completion
+will prune the range. Hence writes aren't synchronous, and it's easy to
+pipeline writes using RWF_UNCACHED. Folios that aren't instantiated by
+RWF_UNCACHED IO are left untouched. This means you that uncached IO
+will take advantage of the page cache for uptodate data, but not leave
+anything it instantiated/created in cache.
 
-So the important part of the comment is:
-"This permission hook is different than fsnotify_open_perm() hook.
- This is a pre-content hook that is called without sb_writers held"
+File systems need to support this. The patches add support for the
+generic filemap helpers, and for iomap. Then ext4 and XFS are marked as
+supporting it. The last patch adds support for btrfs as well, lightly
+tested. The read side is already done by filemap, only the write side
+needs a bit of help. The amount of code here is really trivial, and the
+only reason the fs opt-in is necessary is to have an RWF_UNCACHED IO
+return -EOPNOTSUPP just in case the fs doesn't use either the generic
+paths or iomap. Adding "support" to other file systems should be
+trivial, most of the time just a one-liner adding FOP_UNCACHED to the
+fop_flags in the file_operations struct.
 
-The part that follows "and after the file was truncated", simply
-means that in case of O_TRUNC we won't need to fill file content,
-because the file will have zero size anyway.
+Performance results are in patch 8 for reads and patch 10 for writes,
+with the tldr being that I see about a 65% improvement in performance
+for both, with fully predictable IO times. CPU reduction is substantial
+as well, with no kswapd activity at all for reclaim when using uncached
+IO.
 
-And for the record, it is not "pre-open" it is "pre-content-access", so the
-name may be confusing but it is not wrong.
+Using it from applications is trivial - just set RWF_UNCACHED for the
+read or write, using pwritev2(2) or preadv2(2). For io_uring, same
+thing, just set RWF_UNCACHED in sqe->rw_flags for a buffered read/write
+operation. And that's it.
 
-> I tried to follow the deep chain of inlines to see what actually ends
-> up happening, and it looks like if the *whole* filesystem has no
-> notify events at all, the fsnotify_sb_has_watchers() check will make
-> this mostly go away, except for all the D$ accesses needed just to
-> check for it.
->
-> But even *one* entirely unrelated event will now force every single
-> open to typically call __fsnotify_parent() (or possibly "just"
-> fsnotify), because there's no sane "nobody cares about this dentry"
-> kind of thing.
->
-> So effectively this is a new hook that gets called on every single
-> open call that nobody else cares about than you, and that people have
-> lived without for three decades.
->
+Patches 1..7 are just prep patches, and should have no functional
+changes at all. Patch 8 adds support for the filemap path for
+RWF_UNCACHED reads, patch 10 adds support for filemap RWF_UNCACHED
+writes, and patches 12..16 adds ext4, xfs/iomap, and btrfs support.
 
-That's exactly the reason for the commit
-a5e57b4d370c fsnotify: optimize the case of no permission event watchers
+I ran this through xfstests, and it found some of the issue listed as
+fixed below. This posted version passes the whole generic suite of
+xfstests. The xfstests patch is here:
 
-It is supposed to reduce overhead to bare minimum for hooks of
-events from the class "permission" (FSNOTIFY_PRIO_CONTENT), which
-are typically only watched for Anti-malware software, so
-fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_CONTENT)
-is typically false on any given fs.
+https://lore.kernel.org/linux-mm/3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk/
 
-And same for the new hooks for events of class "pre-content".
-fsnotify_sb_has_priority_watchers(sb, FSNOTIFY_PRIO_PRE_CONTENT)
-will only be true for fs of dedicated systems that run an HSM service, wher=
-e
-the overhead of the hooks is not going to be a concern.
+And git tree for the patches is here:
 
-> Stop it, or at least add the code to not do this all completely pointless=
-ly.
->
-> Because otherwise I will not take this kind of stuff any more. I just
-> spent time trying to figure out how to avoid the pointless cache
-> misses we did for every path component traversal.
->
-> So I *really* don't want to see another pointless stupid fsnotify hook
-> in my profiles.
+https://git.kernel.dk/cgit/linux/log/?h=buffered-uncached.6
 
-I understand your frustration from crawling performance regressions, I
-really do.
-I am personally very grateful for the services of Oliver and his
-kernel test robot
-who test my development branches to catch regressions very soon in the
-development
-process.
 
-We may have missed things along the way and you may yet find more issues
-that justify another NAK, or more work, but you should know that a lot of c=
-are
-was taken to try to avoid inflicting pain on the system.
+ fs/btrfs/bio.c                 |   4 +-
+ fs/btrfs/bio.h                 |   2 +
+ fs/btrfs/extent_io.c           |   8 ++-
+ fs/btrfs/file.c                |  10 +++-
+ fs/ext4/ext4.h                 |   1 +
+ fs/ext4/file.c                 |   2 +-
+ fs/ext4/inline.c               |   7 ++-
+ fs/ext4/inode.c                |  18 +++++-
+ fs/ext4/page-io.c              |  28 +++++----
+ fs/iomap/buffered-io.c         |  15 ++++-
+ fs/xfs/xfs_aops.c              |   7 ++-
+ fs/xfs/xfs_file.c              |   4 +-
+ include/linux/fs.h             |  10 +++-
+ include/linux/iomap.h          |   4 +-
+ include/linux/page-flags.h     |   5 ++
+ include/linux/pagemap.h        |  34 +++++++++++
+ include/trace/events/mmflags.h |   3 +-
+ include/uapi/linux/fs.h        |   6 +-
+ mm/filemap.c                   | 101 ++++++++++++++++++++++++++++-----
+ mm/readahead.c                 |  22 +++++--
+ mm/swap.c                      |   2 +
+ mm/truncate.c                  |  33 ++++++-----
+ 22 files changed, 262 insertions(+), 64 deletions(-)
 
-I have been practically doing vfs prep and cleanup work together with
-Josef and Jan and Christian for at least a year before we got to post v1 of=
- the
-pre-content patches.
+Since v2
+- Add patch for btrfs to work on the write side, read side was already
+  covered by the generic filemap changes. Now btrfs is FOP_UNCACHED
+  enabled as well.
+- Add folio_unmap_invalidate() helper, and use that from both the core
+  code and the uncached handling.
+- Add filemap_uncached_read() helper to encapsulate the uncached
+  handling on the read side.
+- Enable handling of invalidation of mapped folios
+- Clear uncached in looked up folio, if FGP_UNCACHED isn't set. For this
+  case, there are competing non-uncached page cache users and the folio
+  should not get invalidated.
+- Various little tweaks or comments.
+- Ran fsstress with read/write uncached support, no issues seen
+- Fixup a commit message
+- Rebase on 6.12-rc7
 
-So all I ask in return is that you consider the possibility that this is no=
-t
-utter garbage and try to work with us to address your concerns.
+-- 
+Jens Axboe
 
-Pre-content hooks (and HSM) is a very powerful feature that many people
-are requesting and I believe that we will be able to deliver this
-feature without
-crapping all over the VFS.
-
-Thanks,
-Amir.
 
