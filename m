@@ -1,289 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-34328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B8C9C4897
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:56:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121379C47FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66E8DB3C1AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBDB0282CF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3A61ACDE3;
-	Mon, 11 Nov 2024 21:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35E61B6555;
+	Mon, 11 Nov 2024 21:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iy30JtE9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1KEnqfe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EBD1EB36;
-	Mon, 11 Nov 2024 21:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F7C165F1D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 21:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731359856; cv=none; b=D8ibYCzi0TuxF6m/Smy0/oyR/kOZ/aRj+6TTO1H507UYdN+1lmf86eANqlG4FAqy/DI9o7jFavOFbJsZ4l+vG6ETRqzw1Em3QBXyb4qI+b3jVzgKI5WFpVTj5pEWzPdOpR+etDGYR222MGAbyqzDbmCVTHn8Kae8ZvTb9hLjSaM=
+	t=1731360334; cv=none; b=dLkwxKEcqPMLJW7NyWkFkLspvkq6dak0SimjHQ2BT/GBMw2fpxhfQXT0dURlpDnyk9SdYxl9djkej0RlWmWKp13rBcKTEsukmJXcsTxs01azPNk2DBBpB3LXgBYOHLGA6lKCMa2CKbY2Pr7O6Ws3roAXIK3eEJs+agUfBbzYth8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731359856; c=relaxed/simple;
-	bh=VOtzLRREwYKogahWnFcgDN0XsOJAWUaQY8DIwqVdt0A=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mSnE1mZc4/cDkqckZprRW6AM5qFkf5kGBzytW4Qjxzg+30AAdMDtGeMQluP32fpHMxberUcFCbDqyTvnFQTec0eKsZV7WVyo2LOanIHtmaE6aTy9glmstbd4u3IvFPjoNk8nCjasHF9mpNxUif/4o/+imJxuI1WxtUK0dWyToB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iy30JtE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42EE2C4CECF;
-	Mon, 11 Nov 2024 21:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731359855;
-	bh=VOtzLRREwYKogahWnFcgDN0XsOJAWUaQY8DIwqVdt0A=;
-	h=Subject:From:To:Date:In-Reply-To:References:From;
-	b=Iy30JtE99PTVfkhAtHCmLVh/LH811GkSLT+KBDrZZ3rRT43EBH3EdGcDpRwKg7DX3
-	 i/7pepNnpYq8lmfM1mbuLMTKeCutYg+kXMExL8avUFJYuQ/f1kNdDOQ3HuRQScNsZo
-	 lWTiWsAem6MgXqtgtwaW1knRoJmtP01PH2MpU0syHoAN2JZEnWzoE+H4d8BLKphz0G
-	 +Y2XRTdDGXRFcAIgGqGW5XGlbltbpLYMycg5Bu5Tn7kZkXR7j2rFVZ9m7G+Fol+T5E
-	 p3PgHJf/gCW5U0ytkERfkjh1qItiO0ljdY0uWTTd/d69UCWjTFNDBGtStoAWYethW9
-	 Fes2r1WRJ3yng==
-Message-ID: <3f85c0a6ed1131f1446cc97fe9ae12cff4cb1850.camel@kernel.org>
-Subject: Re: [PATCH v6 2/2] listmount.2: New page describing the listmount
- syscall
-From: Jeff Layton <jlayton@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>, alx@kernel.org, 
- linux-man@vger.kernel.org, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org,  mszeredi@redhat.com, kernel-team@fb.com
-Date: Mon, 11 Nov 2024 16:17:34 -0500
-In-Reply-To: <2d72a44fa49f47bd7258d7efb931926b26de4004.1720549824.git.josef@toxicpanda.com>
-References: <cover.1720549824.git.josef@toxicpanda.com>
-	 <2d72a44fa49f47bd7258d7efb931926b26de4004.1720549824.git.josef@toxicpanda.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1731360334; c=relaxed/simple;
+	bh=sUypRFuKyDC3ccplI6D+lk94/olM1n6+Cw2OKVnu6eE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kN8Dk5rIL0KeJIPqGQBjiyWq2Pe3Z5zkDgZkpOWcxDL7ZWUYO7RS+DDPs+Qj6Pa7SgRAH7LGuY0qGCGB7z3EXOrnMWp1P0UD64cy5tTXc/sx213vtLplXRMOoiVYyn7H88x0gTO+wrLkJYRmH8Cgj6Mj3iubPY98GmDP44CZo4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O1KEnqfe; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-84fd764f6ddso3845527241.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:25:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731360331; x=1731965131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F/7vDq8uNGhIx2OZW+Hh/oYjDBUjC9lge4OdRMQaeGQ=;
+        b=O1KEnqfevvfewkc2zEr57OI+QfbLUxZy95NWOzFktWoXncHjxqs15j9dWJcEvUCsJ8
+         HhYIPBcRA4VSy9BaFNrzPpgEhu6ncUdJqcpAVeIVXTTCFtGY8RDJP6Tu6WAfAoLM1vU2
+         /XF41Ff5zsIHe8usmfyouR/wouiO+9Kw+vcx8ApFf5Hb3pbCVp+UhrvIgc0To9iq7g7D
+         0o6UlZgY1pYUR/GHiVjaCY2a1Nx3f/bnFFvbAj27QdTNQ8xX9lhBm5S+4bHceJTlkSuy
+         Ak9Gjk7bOeD36KmaDcchPmZ9/a5QvoVA7RQkp5KEh+BC31Gr/zRQj1BiMpeh+pWeXiZr
+         YV3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731360331; x=1731965131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F/7vDq8uNGhIx2OZW+Hh/oYjDBUjC9lge4OdRMQaeGQ=;
+        b=rMCLeCiL8nwcqY5SDVen4I0l0cK+2td1UZY/pqpanJqeKHvJmF5ApsNw+UbWwfKUFj
+         0Aw8/SuCrDK5wS6IAx0yP6RoSk0cXzlo5iDxBpat41iZObqYH4FXBYqntRRbKHXFNX3S
+         mQeqIDmQ0fBGqunUvC53cPEYMrnx4zl4g02cLE1OBRAYud62PFR+Lz0WyK5FJMsANNOg
+         Bwryu+EMfAJ6YALZwVtoDKmJOBW//gXq6W/NV2xApmMg/2x888bjYypJSMff79Mrfd4J
+         UClHqbdV0iK7T6wsyuip4d3Nm1G6EXxfAnYFMbilfu6cx9lPXA7tVRa1/AeZBa/5cYow
+         gBFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxOwPMJikAmCSW/+vc3uvadjnpKk5kCV/yAqz9rFFaDxmAmZrn5rIJgtVefrjUP1uJnsP4SA85t87Da3gn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI+AR7JAqdUHKJFcazpwNsXYSyH5CC9AwcYdLqvOXZN3n5Qzuj
+	loMoTZXX4dq+T9Zkl9W+dWswHSxQIfvzb2e0hq9qnPw77214vSeVz1b5kfLkBFlMivTnft+i6H7
+	RbuwT3u1OxtRu1CnYIHPsjnnjlrmQihZyx4dduyY2yIdIqOJ3WF/0
+X-Google-Smtp-Source: AGHT+IF7AQF9Mar4X4qUFxz/YoINSoZLiVPTxutJwA00vLLJ6hb6ZE8S+bHh9y8FEf0ygejfzW3ddHacI321UaFgOhc=
+X-Received: by 2002:a67:f997:0:b0:4a4:7148:85d9 with SMTP id
+ ada2fe7eead31-4aadfc18b03mr10710213137.0.1731360331278; Mon, 11 Nov 2024
+ 13:25:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241110152906.1747545-1-axboe@kernel.dk> <ZzI97bky3Rwzw18C@casper.infradead.org>
+In-Reply-To: <ZzI97bky3Rwzw18C@casper.infradead.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 11 Nov 2024 14:24:54 -0700
+Message-ID: <CAOUHufZX=fxTiKj20cft_Cq+6Q2Wo6tfq0HWucqsA3wCizteTg@mail.gmail.com>
+Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-07-09 at 14:31 -0400, Josef Bacik wrote:
-> Add some documentation for the new listmount syscall.
->=20
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  man/man2/listmount.2 | 112 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 112 insertions(+)
->  create mode 100644 man/man2/listmount.2
->=20
-> diff --git a/man/man2/listmount.2 b/man/man2/listmount.2
-> new file mode 100644
-> index 000000000..212929fb6
-> --- /dev/null
-> +++ b/man/man2/listmount.2
-> @@ -0,0 +1,112 @@
-> +.\" Copyright (c) 2024 Josef Bacik <josef@toxicpanda.com>
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH listmount 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +listmount \- get a list of mount ID's
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ", " \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <linux/mount.h>" "  /* Definition of struct mnt_id_req con=
-stants */"
-> +.B #include <unistd.h>
-> +.P
-> +.BI "int syscall(SYS_listmount, struct mnt_id_req * " req ,
-> +.BI "            u64 * " mnt_ids ", size_t " nr_mnt_ids ,
-> +.BI "            unsigned long " flags );
-> +.P
-> +.B #include <linux/mount.h>
-> +.P
-> +.B struct mnt_id_req {
-> +.BR "    __u32 size;" "    /* sizeof(struct mnt_id_req) */"
-> +.BR "    __u64 mnt_id;" "  /* The parent mnt_id being searched */"
-> +.BR "    __u64 param;" "   /* The next mnt_id we want to find */"
-> +.B };
-> +.fi
-> +.P
-> +.IR Note :
-> +glibc provides no wrapper for
-> +.BR listmount (),
-> +necessitating the use of
-> +.BR syscall (2).
-> +.SH DESCRIPTION
-> +To access the mounts in your namespace,
-> +you must have CAP_SYS_ADMIN in the user namespace.
+On Mon, Nov 11, 2024 at 10:25=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+>
+> On Sun, Nov 10, 2024 at 08:27:52AM -0700, Jens Axboe wrote:
+> > 5 years ago I posted patches adding support for RWF_UNCACHED, as a way
+> > to do buffered IO that isn't page cache persistent. The approach back
+> > then was to have private pages for IO, and then get rid of them once IO
+> > was done. But that then runs into all the issues that O_DIRECT has, in
+> > terms of synchronizing with the page cache.
+>
+> Today's a holiday, and I suspect you're going to do a v3 before I have
+> a chance to do a proper review of this version of the series.
+>
+> I think "uncached" isn't quite the right word.  Perhaps 'RWF_STREAMING'
+> so that userspace is indicating that this is a streaming I/O and the
+> kernel gets to choose what to do with that information.
+>
+> Also, do we want to fail I/Os to filesystems which don't support
+> it?  I suppose really sophisticated userspace might fall back to
+> madvise(DONTNEED), but isn't most userspace going to just clear the flag
+> and retry the I/O?
+>
+> Um.  Now I've looked, we also have posix_fadvise(POSIX_FADV_NOREUSE),
+> which is currently a noop.
 
-The above does not seem to be correct. I can access the mounts in my
-own namespace just fine. What I can't do is access mounts in other
-namespaces without CAP_SYS_ADMIN, right?
+Just to clarify that NOREUSE is NOT a noop since commit 17e8102 ("mm:
+support POSIX_FADV_NOREUSE"). And it had at least one user (we made
+the userpspace change after the kernel supported it): SVT-AV1 [1]; it
+was also added to FIO for testing purposes.
 
-Maybe this?
+[1] https://gitlab.com/AOMediaCodec/SVT-AV1
 
-"To access mounts outside your own namespace, you must
-have=C2=A0CAP_SYS_ADMIN in the user namespace."
+> But would we be better off honouring
+> POSIX_FADV_NOREUSE than introducing RWF_UNCACHED?  I'll think about this
+> some more while I'm offline.
 
-
-> +.P
-> +This function returns a list of mount IDs under the
-> +.BR req.mnt_id .
-> +This is meant to be used in conjuction with
-> +.BR statmount (2)
-> +in order to provide a way to iterate and discover mounted file systems.
-> +.SS The mnt_id_req structure
-> +.I req.size
-> +is used by the kernel to determine which struct
-> +.I mnt_id_req
-> +is being passed in,
-> +it should always be set to sizeof(struct mnt_id req).
-> +.P
-> +.I req.mnt_id
-> +is the parent mnt_id that we will list from,
-> +which can either be
-> +.B LSMT_ROOT
-> +which means the root mount of the current mount namespace,
-> +or a mount ID obtained from either
-> +.BR statx (2)
-> +using
-> +.B STATX_MNT_ID_UNIQUE
-> +or from
-> +.BR listmount (2) .
-
-The above is a little vague. It's not clear whether the list is just
-immediate child mounts or if you get all mounts below that point. The
-implementation in the kernel is the latter. You get a list of any
-descendent mount of the given mnt_id.
-
-Should we make that more clear?
-
-> +.P
-> +.I req.param
-> +is used to tell the kernel what mount ID to start the list from.
-> +This is useful if multiple calls to
-> +.BR listmount (2)
-> +are required.
-> +This can be set to the last mount ID returned + 1 in order to
-> +resume from a previous spot in the list.
-> +.SH RETURN VALUE
-> +On success, the number of entries filled into
-> +.I mnt_ids
-> +is returned, 0 if there are no more mounts left.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EPERM
-> +Permission is denied for accessing this mount.
-> +.TP
-> +.B EFAULT
-> +.I req
-> +or
-> +.I mnt_ids
-> +points to a location outside the process's accessible
-> +address space.
-> +.TP
-> +.B EINVAL
-> +Invalid flag specified in
-> +.IR flags .
-> +.TP
-> +.B EINVAL
-> +.I req
-> +is of insufficient size to be utilized.
-> +.TP
-> +.B E2BIG
-> +.I req
-> +is too large,
-> +the limit is the architectures page size.
-> +.TP
-> +.B ENOENT
-> +The specified
-> +.I req.mnt_id
-> +doesn't exist.
-> +.TP
-> +.B ENOMEM
-> +Out of memory (i.e., kernel memory).
-> +.SH STANDARDS
-> +Linux.
-> +.SH SEE ALSO
-> +.BR statmount (2),
-> +.BR statx (2)
-
---=20
-Jeff Layton <jlayton@kernel.org>
+But I guess the flag isn't honored the way UNCACHED works?
 
