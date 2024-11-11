@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-34307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CECE9C475C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 21:58:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C2B9C47CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 22:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24E11F21283
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 20:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49500B32F22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 20:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E3A1CB307;
-	Mon, 11 Nov 2024 20:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009A91CB33A;
+	Mon, 11 Nov 2024 20:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="MVYSHO6S"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zZkJAkNj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFF31BBBC1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 20:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05051CB31A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 20:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358463; cv=none; b=JqZEBfTyj39dxE8+7slDQfOczE+oH6tsPFRMpyKt9i2TD29lR1zfDKgGCQtZbQ4VAUJUT2PYrXFo09tEKKkyETWpx4rMmHUx2ZIpdDxhilY44RdpRPQ2zAgng4omDyMBI3rwt9VSs4qCRTW7WmMRqU2vqMMrNOBHQjoswpZdIz0=
+	t=1731358466; cv=none; b=K+1zZbG27hNrsl45gUoviwOs5N2faCqgIx2p6fk6ikaDu+W5av9+vhRmDxT2N6On5d6yBj7yhzIEqw/0QaDCVyave3YquZJ54egdSdKDx3bh+zl4FAnliq3UWRv2C0OwoX5IdOyoCkXJUtUTFgPEPrrDdGG6DiaS4N30Tt6jmSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358463; c=relaxed/simple;
-	bh=vaFWjXy2DRrsSIuTbWduvBr7Hy/qYsbzVGbusd1hcYE=;
+	s=arc-20240116; t=1731358466; c=relaxed/simple;
+	bh=M8UDD/dqlEd/X3kkmt5qQtXayEoz402O/i2ISfsAGQw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j1eBwEQx8VcAixs2l/uf19smYofuPoZjXEMnjlsr9VNqn4E42O0a8KvuNuQJSYBxP6OZA7PbZdG3bNcQXCKlv1q/gbsOHEs2ZOzFes6zsF3FILpJLqn+HOl9k/SeH45NOSxoJisA5daiU71HEUN7TtTsB7OAcC8qM/FIOgUFpH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=MVYSHO6S; arc=none smtp.client-ip=209.85.216.43
+	 In-Reply-To:To:Cc; b=mAG/VKtLnnrR7w5Vv2ulyofRZAL/3tGKaaFOBG+0jqC9VZHGx/cDTlD8H5fLj37hkwljNeC7AdqTNbeE7DA0HixwQaNleODGiXAXREB14DWX1AH1tOeAOWSRLyknHshmAefsAjGYwzcTDqq8W1UnFq1/vutfb6SxbwxFJ0MluYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zZkJAkNj; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so3935862a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 12:54:21 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20ce5e3b116so43978065ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 12:54:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358461; x=1731963261; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358464; x=1731963264; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AMPZIqdzSjfHq7xJb4YaIgEu2GPeUmiCYK4jkAGMc38=;
-        b=MVYSHO6SMurY2DIdwsLsSIPuG54P1l5d2Ka365mzBMpQLjyLXpZx/GSCvGqcjr5hXH
-         Qa6/pO8sA8pDKeSUfI1x4hp5Iv3+RzbfQ9TYjSUPPHZh9Y8Z+rGT90YoyKFOVvy+g+hy
-         Nm/f8+HyzM9xudplRoj0uqrWgYeWJD+LUbCY3nLo/fJTBrvyNoiNv+5IT+W4MEvGXub2
-         WgVmKNHYI9F5qk+cVn6YF8RaOUUDNkyaGI3KE+YM2xPhAZMkhUEFFKPAtQvC3UvVJVK1
-         3HEVNMDe+7Z9DgWS6+B3nMvSJqM630VuOOqCm8k7OShjor7BZWogzGWbZB/Ep+jKj1MC
-         0MxA==
+        bh=WJnRmE7nzvvUdOgcQw+N8m7/qUjw6OBKlSgXkJR7mUo=;
+        b=zZkJAkNj4qE4oqlF7xg8UkjXcjbHTf3p/brf4TMsS25U4VyaOTcou7or7YJbB2rpc0
+         R0XES/0uep1AwZWgZQIWdSf7FEFmQMS4W8DBNbC7XqBMmaY35fk+kzIn9FHXvf46oFGb
+         jnqfhpZA4wCWHFMUKd5x6PwTrD6sHAQlpNgx1JgXxF3X5S+tmL5ea3uIpeiV5yiUHQ9t
+         ayC3EHLGiF3foYP3weVULjwVofV6rCv70nHc/59qvC4k87dHhp969ptMBJ65nooxvFVZ
+         1Ne7g7f17rCVWzbJVLfSijF39EODQUl96R1Mzd3FXYlNEAf+0FowvscEp2KtHLyZkpet
+         RYsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358461; x=1731963261;
+        d=1e100.net; s=20230601; t=1731358464; x=1731963264;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AMPZIqdzSjfHq7xJb4YaIgEu2GPeUmiCYK4jkAGMc38=;
-        b=pXRJaBUOA6fQgNprvsaJLi+QeyzwiU9tz1xGVuReMgxVM9I7bqr4Dj6ezOX/I916Y0
-         WRpwTMeKa0fx0FdDwioH/i02vpq4DPvAuvcCYu0JhHuxh5ZkB4Gbrp320iPTEJRWGB2L
-         aAAaE9MMhdNWByMLJv05BnG4OwFkMKSLHMs0cs6PKpggUty7GwEI/65M0U/LjpytxlGg
-         0rcw6o9/5AeT0TiIpOkgSUBDnrtdbF8dhXyHs+gGHle44SNWGVXj8jqWIt8FzW+xWaC0
-         ofrvNTU9rsOMOs5PT2+ssUd2zSOsRnZXmHnjdaH+x0TfwdwytCU34/urQwK6kTKO5UnT
-         CWTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk2v7yBX9zD8PuHMbEzNqKLP3wSU5VJcgJVDYxSCFiYrjMcolMr2jNhWJkGDwvuvrIFQYM0gACaBOvGXAY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRCw7IiUpFZqslGikFdbWvN2vMIJZHo102yYkenl9qWvU+coh6
-	to6gLBHC8K0OAaNkLEuOZVk0NNK8UFVUBM2+jmQpDBt4v9dwX/PPxf05zq7aHgs=
-X-Google-Smtp-Source: AGHT+IGRLWN5kqeXRNQn8yzpCXFOSvMQOUs+A8CKa7xWJ/vZOijjwVJZJo9LQV0BVahQpTbnhrdFqQ==
-X-Received: by 2002:a17:90b:2b50:b0:2e2:de27:db08 with SMTP id 98e67ed59e1d1-2e9b1770bffmr17545652a91.23.1731358461465;
-        Mon, 11 Nov 2024 12:54:21 -0800 (PST)
+        bh=WJnRmE7nzvvUdOgcQw+N8m7/qUjw6OBKlSgXkJR7mUo=;
+        b=kJGxHVV/0Q/X+6JMwbyMJ+O57FQn4OEqUGrAiOvXb2s50wHhjhg6jrrtrIUTV+rEiq
+         IxT2ATup8h8kh0in/fcuxIJuMqEDhH6emgmJJZEytPYOpeOf0LFhIBbxb8dLRx0joIlH
+         sjHdOcp6MGsgJ1B/MicdGypkeb4E7zOlDVFChePqtNa4IwKoSKJ8jV9oFj4y4UxSubr9
+         C1PgR09lCgHh8gSvrvHZok61CGiYYeh7YyxGkbIT+pRMRmlXI+TbewqqXQl4HC/9TYWG
+         cnFOUaZwYCnChSl1WzYdkwhc5tutavJFODtSt3/DghD4/kKt+3CmpO9R9wmx8Du8jzwf
+         H4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi9AY7sYif0K4TDUGoV2xJaqhnd/8/KNUnp9chQgkJERKLRq5aomls4mn2nZru3KCyP01ww6qmukjhzmal@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ925l/GI69EJh+uJc6K6MN6XTFFAU44f7k/Pw5CCOHnapZKdh
+	CX6F24OfFwA2K3Tw9jwhf5HxtB4jnASbuwgddEXWKHiXirboq/co2U6SNiHGxdw=
+X-Google-Smtp-Source: AGHT+IGBjJ2qmkhI/9KkSAaUQ4/thfZExOudz5gsftSVr6ezuggghKNqKZsYYiLOvkR07Zl8T47kbA==
+X-Received: by 2002:a17:903:2cd:b0:20b:a10c:9be3 with SMTP id d9443c01a7336-21183d4e6d4mr180460215ad.21.1731358464144;
+        Mon, 11 Nov 2024 12:54:24 -0800 (PST)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.54.18
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.54.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 12:54:21 -0800 (PST)
+        Mon, 11 Nov 2024 12:54:23 -0800 (PST)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 11 Nov 2024 12:53:55 -0800
-Subject: [PATCH v8 10/29] riscv mmu: write protect and shadow stack
+Date: Mon, 11 Nov 2024 12:53:56 -0800
+Subject: [PATCH v8 11/29] riscv/mm: Implement map_shadow_stack() syscall
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-v5_user_cfi_series-v8-10-dce14aa30207@rivosinc.com>
+Message-Id: <20241111-v5_user_cfi_series-v8-11-dce14aa30207@rivosinc.com>
 References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
 In-Reply-To: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -107,60 +107,200 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.14.0
 
-`fork` implements copy on write (COW) by making pages readonly in child
-and parent both.
+As discussed extensively in the changelog for the addition of this
+syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+existing mmap() and madvise() syscalls do not map entirely well onto the
+security requirements for shadow stack memory since they lead to windows
+where memory is allocated but not yet protected or stacks which are not
+properly and safely initialised. Instead a new syscall map_shadow_stack()
+has been defined which allocates and initialises a shadow stack page.
 
-ptep_set_wrprotect and pte_wrprotect clears _PAGE_WRITE in PTE.
-Assumption is that page is readable and on fault copy on write happens.
-
-To implement COW on shadow stack pages, clearing up W bit makes them XWR =
-000. This will result in wrong PTE setting which says no perms but V=1 and
-PFN field pointing to final page. Instead desired behavior is to turn it
-into a readable page, take an access (load/store) fault on sspush/sspop
-(shadow stack) and then perform COW on such pages. This way regular reads
-would still be allowed and not lead to COW maintaining current behavior
-of COW on non-shadow stack but writeable memory.
-
-On the other hand it doesn't interfere with existing COW for read-write
-memory. Assumption is always that _PAGE_READ must have been set and thus
-setting _PAGE_READ is harmless.
+This patch implements this syscall for riscv. riscv doesn't require token
+to be setup by kernel because user mode can do that by itself. However to
+provide compatibility and portability with other architectues, user mode
+can specify token set flag.
 
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/riscv/kernel/Makefile      |   2 +
+ arch/riscv/kernel/usercfi.c     | 145 ++++++++++++++++++++++++++++++++++++++++
+ include/uapi/asm-generic/mman.h |   4 ++
+ 3 files changed, 151 insertions(+)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 7963ab11d924..fdab7d74437d 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -411,7 +411,7 @@ static inline int pte_devmap(pte_t pte)
- 
- static inline pte_t pte_wrprotect(pte_t pte)
- {
--	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
-+	return __pte((pte_val(pte) & ~(_PAGE_WRITE)) | (_PAGE_READ));
- }
- 
- /* static inline pte_t pte_mkread(pte_t pte) */
-@@ -612,7 +612,15 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
- static inline void ptep_set_wrprotect(struct mm_struct *mm,
- 				      unsigned long address, pte_t *ptep)
- {
--	atomic_long_and(~(unsigned long)_PAGE_WRITE, (atomic_long_t *)ptep);
-+	pte_t read_pte = READ_ONCE(*ptep);
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index 30db92672ada..3f5a8eafe578 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -118,3 +118,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
+ obj-$(CONFIG_64BIT)		+= pi/
+ obj-$(CONFIG_ACPI)		+= acpi.o
+ obj-$(CONFIG_ACPI_NUMA)	+= acpi_numa.o
++
++obj-$(CONFIG_RISCV_USER_CFI) += usercfi.o
+diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+new file mode 100644
+index 000000000000..96bb324abafb
+--- /dev/null
++++ b/arch/riscv/kernel/usercfi.c
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Rivos, Inc.
++ * Deepak Gupta <debug@rivosinc.com>
++ */
++
++#include <linux/sched.h>
++#include <linux/bitops.h>
++#include <linux/types.h>
++#include <linux/mm.h>
++#include <linux/mman.h>
++#include <linux/uaccess.h>
++#include <linux/sizes.h>
++#include <linux/user.h>
++#include <linux/syscalls.h>
++#include <linux/prctl.h>
++#include <asm/csr.h>
++#include <asm/usercfi.h>
++
++#define SHSTK_ENTRY_SIZE sizeof(void *)
++
++/*
++ * Writes on shadow stack can either be `sspush` or `ssamoswap`. `sspush` can happen
++ * implicitly on current shadow stack pointed to by CSR_SSP. `ssamoswap` takes pointer to
++ * shadow stack. To keep it simple, we plan to use `ssamoswap` to perform writes on shadow
++ * stack.
++ */
++static noinline unsigned long amo_user_shstk(unsigned long *addr, unsigned long val)
++{
 +	/*
-+	 * ptep_set_wrprotect can be called for shadow stack ranges too.
-+	 * shadow stack memory is XWR = 010 and thus clearing _PAGE_WRITE will lead to
-+	 * encoding 000b which is wrong encoding with V = 1. This should lead to page fault
-+	 * but we dont want this wrong configuration to be set in page tables.
++	 * Never expect -1 on shadow stack. Expect return addresses and zero
 +	 */
-+	atomic_long_set((atomic_long_t *)ptep,
-+			((pte_val(read_pte) & ~(unsigned long)_PAGE_WRITE) | _PAGE_READ));
- }
++	unsigned long swap = -1;
++
++	__enable_user_access();
++	asm goto(
++		".option push\n"
++		".option arch, +zicfiss\n"
++		"1: ssamoswap.d %[swap], %[val], %[addr]\n"
++		_ASM_EXTABLE(1b, %l[fault])
++		RISCV_ACQUIRE_BARRIER
++		".option pop\n"
++		: [swap] "=r" (swap), [addr] "+A" (*addr)
++		: [val] "r" (val)
++		: "memory"
++		: fault
++		);
++	__disable_user_access();
++	return swap;
++fault:
++	__disable_user_access();
++	return -1;
++}
++
++/*
++ * Create a restore token on the shadow stack.  A token is always XLEN wide
++ * and aligned to XLEN.
++ */
++static int create_rstor_token(unsigned long ssp, unsigned long *token_addr)
++{
++	unsigned long addr;
++
++	/* Token must be aligned */
++	if (!IS_ALIGNED(ssp, SHSTK_ENTRY_SIZE))
++		return -EINVAL;
++
++	/* On RISC-V we're constructing token to be function of address itself */
++	addr = ssp - SHSTK_ENTRY_SIZE;
++
++	if (amo_user_shstk((unsigned long __user *)addr, (unsigned long) ssp) == -1)
++		return -EFAULT;
++
++	if (token_addr)
++		*token_addr = addr;
++
++	return 0;
++}
++
++static unsigned long allocate_shadow_stack(unsigned long addr, unsigned long size,
++				unsigned long token_offset,
++				bool set_tok)
++{
++	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
++	struct mm_struct *mm = current->mm;
++	unsigned long populate, tok_loc = 0;
++
++	if (addr)
++		flags |= MAP_FIXED_NOREPLACE;
++
++	mmap_write_lock(mm);
++	addr = do_mmap(NULL, addr, size, PROT_READ, flags,
++				VM_SHADOW_STACK | VM_WRITE, 0, &populate, NULL);
++	mmap_write_unlock(mm);
++
++	if (!set_tok || IS_ERR_VALUE(addr))
++		goto out;
++
++	if (create_rstor_token(addr + token_offset, &tok_loc)) {
++		vm_munmap(addr, size);
++		return -EINVAL;
++	}
++
++	addr = tok_loc;
++
++out:
++	return addr;
++}
++
++SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, size, unsigned int, flags)
++{
++	bool set_tok = flags & SHADOW_STACK_SET_TOKEN;
++	unsigned long aligned_size = 0;
++
++	if (!cpu_supports_shadow_stack())
++		return -EOPNOTSUPP;
++
++	/* Anything other than set token should result in invalid param */
++	if (flags & ~SHADOW_STACK_SET_TOKEN)
++		return -EINVAL;
++
++	/*
++	 * Unlike other architectures, on RISC-V, SSP pointer is held in CSR_SSP and is available
++	 * CSR in all modes. CSR accesses are performed using 12bit index programmed in instruction
++	 * itself. This provides static property on register programming and writes to CSR can't
++	 * be unintentional from programmer's perspective. As long as programmer has guarded areas
++	 * which perform writes to CSR_SSP properly, shadow stack pivoting is not possible. Since
++	 * CSR_SSP is writeable by user mode, it itself can setup a shadow stack token subsequent
++	 * to allocation. Although in order to provide portablity with other architecture (because
++	 * `map_shadow_stack` is arch agnostic syscall), RISC-V will follow expectation of a token
++	 * flag in flags and if provided in flags, setup a token at the base.
++	 */
++
++	/* If there isn't space for a token */
++	if (set_tok && size < SHSTK_ENTRY_SIZE)
++		return -ENOSPC;
++
++	if (addr && (addr & (PAGE_SIZE - 1)))
++		return -EINVAL;
++
++	aligned_size = PAGE_ALIGN(size);
++	if (aligned_size < size)
++		return -EOVERFLOW;
++
++	return allocate_shadow_stack(addr, aligned_size, size, set_tok);
++}
+diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
+index 57e8195d0b53..9cfb3c1e337d 100644
+--- a/include/uapi/asm-generic/mman.h
++++ b/include/uapi/asm-generic/mman.h
+@@ -19,4 +19,8 @@
+ #define MCL_FUTURE	2		/* lock all future mappings */
+ #define MCL_ONFAULT	4		/* lock all pages that are faulted in */
  
- #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
++/* Set up a restore token in the shadow stack */
++#define SHADOW_STACK_SET_TOKEN (1ULL << 0)
++/* Set up a top of stack marker in the shadow stack */
++#define SHADOW_STACK_SET_MARKER (1ULL << 1)
+ #endif /* __ASM_GENERIC_MMAN_H */
 
 -- 
 2.45.0
