@@ -1,198 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-34236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC21F9C3FB0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:42:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD06C9C3FCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 14:47:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD011C218F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6A11C21B27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 13:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD11619DF7A;
-	Mon, 11 Nov 2024 13:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AFC19DF61;
+	Mon, 11 Nov 2024 13:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6VNur4k"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="n6UnrEpg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432F9461;
-	Mon, 11 Nov 2024 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEE514F126
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 13:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332549; cv=none; b=kIw1Onc4pW2xNWmbm+uGRJxPPBKOjDkwWF+qxCpf25kwez4ASq6yOKn0rxpjvfLuu8EZK8IqnRZW6a58VduG6//tovTyBQaxlzlT08aXYAsvuHsii7RjEuO5M/5VsErcAkInfN1mIDGS8Hdkm2+hPebgb/vXJBstOYCGsgNGrEE=
+	t=1731332865; cv=none; b=SfcS9QMSrEz+H1rfEphrjZsREMLbFOSf0WsGIGTHkBNnR2fOcTrerv0sRHfbQnPM5Wz5b52LYNfxMjaPw1VE8B4tDIrj72aaRouoaeg07USvxlJKjFk0M00PgZH6uX2wYIbqVADbhNG2LT2N704MsCE4Lspo0govCA4N9ZiDT6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332549; c=relaxed/simple;
-	bh=ut+vvT3FzvCooHNaMg7QDWOjzR3vq3uhUdkRXUwmx+0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dWdkKBtgex+O2mhcLFaqnTqt/RdbOCq0646Y4LxG+d+BvF176th2KhBIrGPd1frXg2WAuXya7DcMv/ERILKC5c7VnLdhdM5/TsIpwg5/5dKOc7/ohjJAFM6+ij/JUVc3LQpuFqwJBYf/AlftJjBOSZ+QmTDxt3soJHZXxmPsfYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6VNur4k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3C9C4CECF;
-	Mon, 11 Nov 2024 13:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731332548;
-	bh=ut+vvT3FzvCooHNaMg7QDWOjzR3vq3uhUdkRXUwmx+0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=g6VNur4kQ6EkUzLt6AbVvaoCA+6OeHOW90r3EdnP6CH8cjCVZw0yleo1OWueao9jZ
-	 Opa6XH0S2qo2xXrri/Ld3QczMIItwzlDGlEs3Qu9/9hfEZXAzMgJ9VmGK+girZOAJD
-	 d8gTGX1sKV/yHkpKmvGvNwWFt0Hm84cvxWgHh0ew+IHEv7R1fnaB0GwBEdFEhSsr+s
-	 f00WFdL7nsqVCZraNeQ8QZIdwUJsMHnsclUlexsjceQUq0ToPmLr/58yv6hrnArwg6
-	 4EcF5oqu3Q0ztUdXekIHlUBVfKmyBfWeri9WTlidVe9rHp1RZROevoKNLRaghdeev/
-	 gtxOD5N10u3LA==
-Message-ID: <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
- devname
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, Josef
- Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>
-Date: Mon, 11 Nov 2024 08:42:26 -0500
-In-Reply-To: <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
-	 <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
+	s=arc-20240116; t=1731332865; c=relaxed/simple;
+	bh=OpR1uy9hZsh00tk5dSc3QDB+ieIkGNqAAI80PQu1zT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aVKe5tDVZ+Xo26QuJ6PpKmQNhJ9LHc5jl4M83yv0F8yURcrrzfBt5Qdj00GvgRVG6KqP28JLbQHHefy6frVl1Zmt6vr4F6JulVSd+S7QvP0iEvNLaT3xuNMscrh6CVPIRe03eErfx7q7GIjucpTk3zK/tN8LpdH3ZfrCoKxYayU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=n6UnrEpg; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460b04e4b1cso34344411cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 05:47:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731332862; x=1731937662; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=97RwJbF3REv6/4w5Vk4X/bZS49+40N6d/CBLx5LRIRY=;
+        b=n6UnrEpgHKDL4rw7onn5a2hTX4ZT3jsHgcdOx78xcx7YOcGRzxydxHfvnU+/4OUzmE
+         2MEJw/sSTU8tOWBHZ+p+McCBHUIdmEPgT0SQPCc8zFXM6jwA3cvgc3Jc+uPws38D/aUy
+         3mxcBW0t4l+Mbi4fB2AI3z6RXPDPMt8mvw9Rs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731332862; x=1731937662;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=97RwJbF3REv6/4w5Vk4X/bZS49+40N6d/CBLx5LRIRY=;
+        b=Uq7niQfN6aKpVtmdDZlWTmDxqWOhQE3VAF7mIt6X/Z5uWXwyPOs72Qh2juhhzYQv7p
+         niDChMzL1LG+DQNbLbMYlZRwJbhPmbbscLYkXnlyYMaI0h8U+FZTGCW5SCu0HFBehd7q
+         19R46IVzC9ZZhXIYek0ZyB6SDaa9eGD3VN43LU+UtyPeEh5hUM+ndfQGRKf+1onJ3Zop
+         mf1tRgljiCxsVK2HylkgDUbrJA6BWClNGqaADTK3sd44kF0b3Y24dsgUG/4Vyt1On8fn
+         uCN8ehOV340Wmbi5bw/iqy3oqAR0r0hK3kj8KUiuig6RJuJbfh+pLkm8uxiF18wxOZC/
+         EkFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdaOoVKmrx4hDMomlhkKgvHte/P5YqdA0FXqXudxRO8dVRSgDIw23L0eh8Qnkmjxv8qQ5zXMK2F5fB2PTJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2uuIceqqJ+UOiE/NJ5vp0syoCBstgDFljCkua4zdhGWqAhL5b
+	noUIJPVcgpycDLJBSkcw9jzn5HDdbqJ6cMUxsR9rYimG5QWHs+Gxm26UZ17d2C98KePBuJNPEa1
+	y4oTI0TMQn2UUzrNa/AXY8FGUUbCxtuIM7LB6JQ==
+X-Google-Smtp-Source: AGHT+IH8VY1Pv0jpeNjDwGLfk6hnswMJmLtmvUWZIbj1N3KjFg3BxHShIyt5iBzuF1E+fKTwiK/XvA5Iqyu33500Lb8=
+X-Received: by 2002:ac8:5e4d:0:b0:45d:82a0:5028 with SMTP id
+ d75a77b69052e-4630931ea9cmr217648991cf.1.1731332862450; Mon, 11 Nov 2024
+ 05:47:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1719257716.git.josef@toxicpanda.com> <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
+ <20240625130008.GA2945924@perftesting> <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
+ <20240625-beackern-bahnstation-290299dade30@brauner> <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+ <20240625141756.GA2946846@perftesting> <CAJfpegs1zq+wsmhntdFBYGDqQAACWV+ywhAWdZFetdDxcL3Mow@mail.gmail.com>
+ <CAJfpegs=JseHWx1H-3iOmkfav2k0rdFzr03eoVsdiW3rT_2MZg@mail.gmail.com> <20241111-tosend-umzug-2a5a4c17b719@brauner>
+In-Reply-To: <20241111-tosend-umzug-2a5a4c17b719@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 11 Nov 2024 14:47:31 +0100
+Message-ID: <CAJfpegsG17+3Zu-LPTjYJaB6_tQTuq6YG14WduxMeHHp_Tinxg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
+To: Christian Brauner <brauner@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2024-11-11 at 10:17 +0100, Christian Brauner wrote:
-> On Thu, 07 Nov 2024 16:00:05 -0500, Jeff Layton wrote:
-> > Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> > I'd like to convert it to use listmount()/statmount(), so we can do a
-> > better job of monitoring with containers. We're missing some fields
-> > though. This patchset adds them.
-> >=20
-> >=20
->=20
-> I know Karel has been wanting this for libmount as well. Thanks for
-> doing this! It would be nice if you could also add some selftests!
->=20
+On Mon, 11 Nov 2024 at 14:29, Christian Brauner <brauner@kernel.org> wrote:
 
-(cc'ing Karel)
+> I understand your frustation but multiple people agreed that the
+> interface as is is fine and Karel as main consumer agreed as well. So
+> ultimately I didn't see a reason to delay the patchset.
 
-Thanks. We may need to tweak this a bit, based on Miklos' comments
-about how empty strings are handled now, but it shouldn't be too big a
-change.
+This was actually in the first versions that I sent out, but then was
+removed per your request.  Then Josef's crufty version added back.
+Yeah, for libmount it's fine, but the de-crufted version would've been
+alright as well.  Oh, well...
 
-I actually have a related question about libmount: glibc doesn't
-currently provide syscall wrappers for statmount() and listmount().
-Would it make sense to have libmount provide those? We could copy the
-wrappers in tools/testing/selftests/filesystems/statmount/statmount.h
-to libmount.h.
+> None of the issues you raised are really things that make the interface
+> uncomsumable and Karel succeeded to port libmount to the new interfaces
+> with success (minus the mnt_devname we're adding now that he requested)
+> and was happy.
 
-It's error-prone and a pain to roll these yourself, and that would make
-things simpler until someone is ready to do something for glibc.
+The problem is with non-libmount users.  They won't implement
+unescaping until they run into trouble.  And that will be too late
+because these cases are rare.
 
-Another idea might be to start a new userland header file that is just
-a collection of static inline wrappers for syscalls that aren't
-packaged in glibc.e.g.  pidfd_open also doesn't have glibc bindings, so
-we could add that there too.
+> If there's genuine behavioral problems that cause substatntial issues
+> for userspace then I would request that you please add a new flag that
+> changes escaping and parsing behavior for statmount().
 
-> ---
->=20
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
->=20
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->=20
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->=20
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->=20
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
->=20
-> [1/2] fs: add the ability for statmount() to report the fs_subtype
->       https://git.kernel.org/vfs/vfs/c/ddfdeccd46bd
-> [2/2] fs: add the ability for statmount() to report the mnt_devname
->       https://git.kernel.org/vfs/vfs/c/6fb42b3c00cd
+Need to take a look at what this now does to overlayfs filenames with
+commas and other special chars in them and see if it can be salvaged.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Miklos
 
