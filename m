@@ -1,155 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-34271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056879C43E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 18:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8C99C43FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 18:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE44281C8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 17:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB61281448
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 17:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9891AAE19;
-	Mon, 11 Nov 2024 17:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9B1AA788;
+	Mon, 11 Nov 2024 17:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GPfhgvbt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QdsIBHcq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AGOXF755";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D6Fok6nx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQCynE9Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B9A1AA788
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 17:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C501454728;
+	Mon, 11 Nov 2024 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346800; cv=none; b=tHEaBdUR20GsWrRTUri3y474MfSHZSuPKK0U2qU2I5JxJvKu6MN3FJ/+4uPqtG/T78PrJguBjwYHfuLWSpQPWNzlM7UObET4tXxmXV9V4pPfqejEJYa7tI4SIfL30nALRhGeVX9hokCbN8Wv5NLzwcxdPAsewurDO5IM/AGr6ic=
+	t=1731347048; cv=none; b=O4mL8y0VqB32WokSjbL9bOF9j6v/avMZRsCG0cSInUSdMEMglzhsP1LUoGLDFnqPUT8alIRF3r9+8vAvJtYi6aiVbtkRtqF+sc4MOYQpLsVN5zCigr3S2qQ48CFdoGszhscLKiGwDru9wLZo8ShDon+caLElPf3tsOyK+zqntJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346800; c=relaxed/simple;
-	bh=tjcL0LbBa9Ai1V/5sOI3hTL3tqmtPymVsDfumEV68Yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcHzEiXgxo0KfKDXuHf1kPHw3ueeXJjqBjrXHIduE+t7ELTlH4acOgSs4mkxNZizNXxRpH2tbWnPcTlnJ1AyvMyMITQHMReoGxmtTOubigee3buv/HT87+vpRbLKxBVs9ZEwrOvPHEAQoqy1bwfeSJEJEABU0fl7VlpC1/Si4J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GPfhgvbt; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-718998df806so2336931a34.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 09:39:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731346797; x=1731951597; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zornXYrQK1q5jDp72wLGbGUMhA7z4OfmXLBGicUzQUM=;
-        b=GPfhgvbtBc+B5UsVQSM7C/73J4V0OxTJrWz6rHm+iefdemKS5ASpssooTO+W+AtVwU
-         xlFMOs0BBVDkdUtib1+yxbj0f0qjOtNdX+Z3XXffgsaBi/xzPoTDRvV7UpZHRsQoi14c
-         BPteC9aSdqpfVcujpj6SEn6+Edcw5oGE2tKw9dTzRebu+qk4vZvABQCe0v16D9GcRhYn
-         fFWizib2VX+o7bhF9y2qfBrEO2gvSH5CXBjUwj/HZSmxdTbuMwvx4Bsdk8lx093MZQsM
-         X+EuPnMapk4SFNRsH+EJPPSSa2NQjnvgOgLptyYjYeqJOwWn1tCrHHEkxSV4e/3zvGOz
-         LDkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731346797; x=1731951597;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zornXYrQK1q5jDp72wLGbGUMhA7z4OfmXLBGicUzQUM=;
-        b=Ju6UUvxsm3AzNSU/r81mcLwoVe60hpMEhkPIhpyq5aqWkXao0sxg/j1lHcTZK4wpc+
-         AOspwO2Xe2yP0QfnvHCCMNcFl4Rq98T3CEP98R5aTD9bI9DBOBde5mPKgFn11wii86Cb
-         VaU0gfotUntnjz/kM/sYi/c7DuxANzuQzMlSkwvEfGEJ5rYgWJnNpuvDwfic51qfdG3z
-         KAogAmgUsF+SzEQaN6asTOhWPB1gjfX86d1nWFEi4eFVQqEtBEOwfsgm3f6kvtDpdEpz
-         YEcrWluIqRXKSxVmxBN24IVAixKvd955w+DnTdkEot79dyrRwPTWCLD+o3ZA31CAUuWH
-         ktlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWf1v8zrVYsjvaDn3bnxcKPm9T8VLIVQNnp+mcWRwlzI/1uuJbadnIJEZ9wnGNdx5r6lNt3LHIKKOsKD/Jd@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbpd1QE4HrL42eQXq0NFav4KztJ2PX8VkaPj0MK5+Bia/TYE0y
-	Ve7quFWdJXZeUArLpZQF7pEbOcc55HTHClpmZKSaEPa7gv6IDk3N1fEzKfsAvq0=
-X-Google-Smtp-Source: AGHT+IG4NBeRv1XZA/CiIhXb6FBtUBNiBbImRao8a/5WPPZ6TVlAlQmjjSke+YET1UaXJNr4aEjOnQ==
-X-Received: by 2002:a9d:7856:0:b0:718:c2e:a186 with SMTP id 46e09a7af769-71a1c2b11fdmr9515988a34.26.1731346797472;
-        Mon, 11 Nov 2024 09:39:57 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a1092c14fsm2308234a34.72.2024.11.11.09.39.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 09:39:56 -0800 (PST)
-Message-ID: <3c904d74-c685-4f8a-bc1d-edc24da59fa5@kernel.dk>
-Date: Mon, 11 Nov 2024 10:39:55 -0700
+	s=arc-20240116; t=1731347048; c=relaxed/simple;
+	bh=8msUvZ35GmffzXX36gtrgCsOR2MwdCn5l2jBjHagB/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ax7Ck5wrPjw1w+HWPBUvgajoGx6WDSdC+tPRj7/BVbfE6w7AxNdqehdlgHZ3rGGsM/5TmXcFkYf/jYaNV+FkTS8rZTN4iLuNx5a5uj3k5yRZYu9HMELm8RDoKxW3ocTaoP3yzt7Lg1Xieg17SBloRjdPoURdc76Jeqm7n8sh1e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QdsIBHcq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AGOXF755; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D6Fok6nx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQCynE9Q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E8CED1F45A;
+	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731347045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=QdsIBHcqz1UtgYzt55dY5coH7df1IGw2RuI33vwE588muPYBnQeQqU4eb+eCTQFxT+K+nW
+	hj65vWMAwQCfSOv2uAjRR01SuF0hH+fsFsZd+bHd4yQDfOQKrp1QZ2TzjxYIiq4UOe+Jbf
+	cVpyA/RJlosJb2FzCBdzr3xjJGC78Vs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731347045;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=AGOXF755K3pf3rbYEqpzHB4zS+swNJtn+giaMji1R2PS+lCTWx28vn4xlITwp+1Qoqyn9v
+	idZ90L1izWjS4JDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=D6Fok6nx;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OQCynE9Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731347043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=D6Fok6nxpOpKcp68zkOS4JNWcGJfXmQ2gI9TpheEBLwdnZ4bGl59gKwpIepR8SeluS0rX4
+	KiPD3B8PewIIgH+zb2kzYw3jlkButydQdA7tk+jSbqwM2RuQ7BO/bVZH/KNPLhTUygKgYF
+	vMjZKSLXINb6BZc+Rv9dPiMY5mT+zoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731347043;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=OQCynE9QDy3C0ucdQ+XYpMrzF7FMO0xI3n/76lw8NEagVPxB/eL/a+ODKWt61sKClfWYuD
+	vAVQIBBMOuAtbiCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEFAC137FB;
+	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ox16MmNCMmfBIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 11 Nov 2024 17:44:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 54766A0986; Mon, 11 Nov 2024 18:44:03 +0100 (CET)
+Date: Mon, 11 Nov 2024 18:44:03 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] fs: don't let statmount return empty strings
+Message-ID: <20241111174403.qm7eqdl5pxwjhb3h@quack3>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <ZzI97bky3Rwzw18C@casper.infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzI97bky3Rwzw18C@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
+X-Rspamd-Queue-Id: E8CED1F45A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On 11/11/24 10:25 AM, Matthew Wilcox wrote:
-> On Sun, Nov 10, 2024 at 08:27:52AM -0700, Jens Axboe wrote:
->> 5 years ago I posted patches adding support for RWF_UNCACHED, as a way
->> to do buffered IO that isn't page cache persistent. The approach back
->> then was to have private pages for IO, and then get rid of them once IO
->> was done. But that then runs into all the issues that O_DIRECT has, in
->> terms of synchronizing with the page cache.
+On Mon 11-11-24 10:09:55, Jeff Layton wrote:
+> When one of the statmount_string() handlers doesn't emit anything to
+> seq, the kernel currently sets the corresponding flag and emits an empty
+> string.
 > 
-> Today's a holiday, and I suspect you're going to do a v3 before I have
-> a chance to do a proper review of this version of the series.
+> Given that statmount() returns a mask of accessible fields, just leave
+> the bit unset in this case, and skip any NULL termination. If nothing
+> was emitted to the seq, then the EOVERFLOW and EAGAIN cases aren't
+> applicable and the function can just return immediately.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Probably, since I've done some fixes since v2 :-). So you can wait for
-v3, I'll post it later today anyway.
+Looks good. Feel free to add:
 
-> I think "uncached" isn't quite the right word.  Perhaps 'RWF_STREAMING'
-> so that userspace is indicating that this is a streaming I/O and the
-> kernel gets to choose what to do with that information.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Yeah not sure, it's the one I used back in the day, and I still haven't
-found a more descriptive word for it. That doesn't mean one doesn't
-exist, certainly taking suggestions. I don't think STREAMING is the
-right one however, you could most certainly be doing random uncached IO.
+								Honza
 
-> Also, do we want to fail I/Os to filesystems which don't support
-> it?  I suppose really sophisticated userspace might fall back to
-> madvise(DONTNEED), but isn't most userspace going to just clear the flag
-> and retry the I/O?
-
-Also something that's a bit undecided, you can make arguments for both
-ways. For just ignoring the flag if not support, the argument would be
-that the application just wants to do IO, uncached if available. For the
-other argument, maybe you have an application that wants to fallback to
-O_DIRECT if uncached isn't available. That application certainly wants
-to know if it works or not.
-
-Which is why I defaulted to return -EOPNOTSUPP if it's not available.
-An applicaton may probe this upfront if it so desires, and just not set
-the flag for IO. That'd keep it out of the hot path.
-
-Seems to me that returning whether it's supported or not is the path of
-least surprises for applications, which is why I went that way.
-
-> Um.  Now I've looked, we also have posix_fadvise(POSIX_FADV_NOREUSE),
-> which is currently a noop.  But would we be better off honouring
-> POSIX_FADV_NOREUSE than introducing RWF_UNCACHED?  I'll think about this
-> some more while I'm offline.
-
-That would certainly work too, for synchronous IO. But per-file hints
-are a bad idea for async IO, for obvious reasons. We really want per-IO
-hints for that, we have a long history of messing that up. That doesn't
-mean that FMODE_NOREUSE couldn't just set RWF_UNCACHED, if it's set.
-That'd be trivial.
-
-Then the next question is if setting POSIX_FADV_NOREUSE should fail of
-file->f_op->fop_flags & FOP_UNCACHED isn't true. Probably not, since
-it'd potentially break applications. So probably best to just set
-f_iocb_flags IFF FOP_UNCACHED is true for that file.
-
-And the bigger question is why on earth do we have this thing in the
-kernel that doesn't do anything... But yeah, now we could make it do
-something.
-
+> ---
+>  fs/namespace.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..28ad153b1fb6f49653c0a85d12da457c4650a87e 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5046,22 +5046,23 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  	size_t kbufsize;
+>  	struct seq_file *seq = &s->seq;
+>  	struct statmount *sm = &s->sm;
+> +	u32 start = seq->count;
+>  
+>  	switch (flag) {
+>  	case STATMOUNT_FS_TYPE:
+> -		sm->fs_type = seq->count;
+> +		sm->fs_type = start;
+>  		ret = statmount_fs_type(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_ROOT:
+> -		sm->mnt_root = seq->count;
+> +		sm->mnt_root = start;
+>  		ret = statmount_mnt_root(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_POINT:
+> -		sm->mnt_point = seq->count;
+> +		sm->mnt_point = start;
+>  		ret = statmount_mnt_point(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_OPTS:
+> -		sm->mnt_opts = seq->count;
+> +		sm->mnt_opts = start;
+>  		ret = statmount_mnt_opts(s, seq);
+>  		break;
+>  	default:
+> @@ -5069,6 +5070,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * If nothing was emitted, return to avoid setting the flag
+> +	 * and terminating the buffer.
+> +	 */
+> +	if (seq->count == start)
+> +		return ret;
+>  	if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
+>  		return -EOVERFLOW;
+>  	if (kbufsize >= s->bufsize)
+> 
+> -- 
+> 2.47.0
+> 
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
