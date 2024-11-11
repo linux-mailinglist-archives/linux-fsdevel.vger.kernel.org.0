@@ -1,82 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-34181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26829C37E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 06:52:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D06D9C37EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 06:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28607B21669
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 05:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9AD1C21704
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2024 05:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1163614F132;
-	Mon, 11 Nov 2024 05:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9771714F9F9;
+	Mon, 11 Nov 2024 05:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fvneTsgv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T1+WSmdM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABF18E1F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 05:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718F518E1F;
+	Mon, 11 Nov 2024 05:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731304314; cv=none; b=AbPLacc9rLZXoMRAb/7mSh0qbOlhl1GytGw1E0/vUe9PnGMKIZMzx2+uSheahjpUI3PICl9wbUUZ8/vBNnS9GBgIEIC7+yV7GcvFKy+UJXFhvNXuQHDe9/6kHceQTEn34tzAHvp1DWHdqNgoK4PQq0B2IAEtHqZynfTcbw0X3kQ=
+	t=1731304333; cv=none; b=N/9ewoG92qVhBdjQRAU9SCy/7hySgYjYF1SB+70f5OTqXoanOshxPBvy68m9eEI5ogvo0/Lw5EkHaNYI/P5Ofl/v4GzbTTFDFFucTs37WR69dGn6M2tlhPb9t2QFeHir8U9s7/tAo1HS4HWk3yhjCV8rTfVzrEoP2wLcJleBuPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731304314; c=relaxed/simple;
-	bh=YEdfaM3Jd4KS472gYqcc4l9HPKkzSqmWnqgKk628khM=;
+	s=arc-20240116; t=1731304333; c=relaxed/simple;
+	bh=EO1QHIM5+jGSfEBNzYbLoWnFYHOurX46zYafIDiSrjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ix4YSoYt1w1aPwCZCKj4toCOO7QQVyNgbrJ4Wp+H9swqa30V/RFOuG9UcuqN6brSOhtrNSrz6ppJLA+ns+MD+rFs72u1zRYx26U+kC2jrxRjyXJklRmhN2f6pwjgCOVyV/rO1QpY5mpLJ0Od7XDbaQcDFwEWZw4D4fsH1eU/J80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fvneTsgv; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720b2d8bcd3so3260742b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2024 21:51:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731304312; x=1731909112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Foh0UsYIXPUZmsrbDQnaRrOZh3M/3AkXvl3AtEjmLXE=;
-        b=fvneTsgvZx2nYMaIPhM7Ncf3+q86NLvyXiDlLtEhYr9ih2KpBInRGvZY+NOnv9RcQE
-         zsmNjn+jy/hMPD0VbHK6derUb8cxZlRNIEdwkjisqVQDgZXlM3H3Yz+sfymmlcjlCmhS
-         xYHjuOgNaq0+D6dKUZRynhoiPIUSgpHdTAF9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731304312; x=1731909112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Foh0UsYIXPUZmsrbDQnaRrOZh3M/3AkXvl3AtEjmLXE=;
-        b=ZIxhfh01+JqbA1B9UMaRBIFeJ0y1kkB/We34/JdK5Hz/BnxiUyGSLtUB839/Udw27+
-         WIiYi4oWEtTW/8goAN7KXxIBRuHBMsC7TZKA4bPVMK+/a4z2e6YFHf3wE7G0964PGpnh
-         xxHkwrvgNK2RoUxjZFySWh1zvai+EF6HElV21L/H+2k1h1iJaXaQyCLmMHnRsY16TxzM
-         /LeLYVwI9UeExh1VsXWzIZXLpZ76JvLBxhoXwpUiJJJ0FI7uEaFV+P9xoKDduRelwUss
-         q25iJISRZSLXEcpfTdKItHBdi3P4j7/VUskdOthxn88m6lulMyzGgNmaOVJJqiSOQ1cS
-         9fZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUby8TeweRfSP85dVUA4Eo9FyVfdwlMYxOkqYTUYBsm5TY1Cb837uAq/pg9GrtycQgm/fgcg9jEikQHlV3f@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPrp2oQCcWkDLZ6RXfMVb6DN+CXxJFeKAVKJ5CWeaESVTnO9XE
-	aGZJYJgPp8QwTYbz20nVBxccrcY/N/4rq4UOag5CWW5WtJqBJ9GBpvGsshqlf2fmY05GFt9fmo0
-	=
-X-Google-Smtp-Source: AGHT+IF/+AvkwmPA2wuy0MVZEKqJsApzJ/i3RyTv4BlbJnKa2Sv5Pc2joVr+5WcVWSGIEu5T64xndw==
-X-Received: by 2002:a05:6a00:3a14:b0:71e:6a13:9bac with SMTP id d2e1a72fcca58-7241312915emr17467219b3a.0.1731304312323;
-        Sun, 10 Nov 2024 21:51:52 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:a43c:b34:8b29:4f8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a4126sm8396292b3a.102.2024.11.10.21.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 21:51:51 -0800 (PST)
-Date: Mon, 11 Nov 2024 14:51:46 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
-	adobriyan@gmail.com, shakeel.butt@linux.dev, hannes@cmpxchg.org,
-	ak@linux.intel.com, osandov@osandov.com, song@kernel.org,
-	jannh@google.com, linux-fsdevel@vger.kernel.org,
-	willy@infradead.org, Eduard Zingerman <eddyz87@gmail.com>
-Subject: Re: [PATCH v7 bpf-next 09/10] bpf: wire up sleepable bpf_get_stack()
- and bpf_get_task_stack() helpers
-Message-ID: <20241111055146.GA1458936@google.com>
-References: <20240829174232.3133883-1-andrii@kernel.org>
- <20240829174232.3133883-10-andrii@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/kvqpkK+fIJ8kJbz5Hqim8xebEYE7japcTQfJCCKIG+AgpSmoCaqj7JpiopE3RfFD3SZefg9F2vDbvJffZsBGh2r0NG1Wg2qV56go9vliNPExMb96Bxi9E1LPhQ0erE09Zg+y+3YQFDLCIVZqWqNIVeo4513LfYK7VDkOYc68U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T1+WSmdM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/tjpwVMdHaeR0AMQS52svXXyIw2bL3kG9DW5H+2u1Gc=; b=T1+WSmdM+UAnQkcVtBJhUIxV99
+	HZRtGy8E2LaE5e/wamHDg0up4A6l2BhNrt3WIO7BEQBaOioByu9e+I2bWAow3I2DSFtKh215bUsRn
+	YmL4nRo+eyiZ5WXFN4LcJNQFL4e45RYk11vuA/bqkGXInnej3UrpTVmONtMR29tM9BG0idHAS2ra2
+	TViCy51WbWJ5IaOPTlW978MvprYcdfeD0xpZjHNTkMU0ir4DCITREv2MOAo73DeXzR+2K5XiN5yJy
+	52ZiVH6rj4xmou6wqZfFO5fdRY1rHdFHPLMGDNaRa7TSVE8eatxJnEFSxJwwFNMe6vDufiYaReIRf
+	FD4a4DOw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tANLO-0000000GQGy-26jq;
+	Mon, 11 Nov 2024 05:52:10 +0000
+Date: Sun, 10 Nov 2024 21:52:10 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: About using on-stack fsdata pointer for write_begin() and
+ write_end() callbacks
+Message-ID: <ZzGbioLSB3m7ozq1@infradead.org>
+References: <561428e6-3f71-48cb-bd73-46cc21789f6f@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,25 +61,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829174232.3133883-10-andrii@kernel.org>
+In-Reply-To: <561428e6-3f71-48cb-bd73-46cc21789f6f@gmx.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi,
+On Mon, Nov 11, 2024 at 02:57:06PM +1030, Qu Wenruo wrote:
+> Hi,
+> 
+> Recently I'm working on migrating btrfs_buffered_write() to utilize
+> write_begin() and write_end() callbacks.
 
-On (24/08/29 10:42), Andrii Nakryiko wrote:
-> Now that build ID related internals in kernel/bpf/stackmap.c can be used
-> both in sleepable and non-sleepable contexts, we need to add additional
-> rcu_read_lock()/rcu_read_unlock() protection around fetching
-> perf_callchain_entry, but with the refactoring in previous commit it's
-> now pretty straightforward. We make sure to do rcu_read_unlock (in
-> sleepable mode only) right before stack_map_get_build_id_offset() call
-> which can sleep. By that time we don't have any more use of
-> perf_callchain_entry.
+Why?  They aren't exactly efficient, and it's just going to create
+more Churn for Goldwyn's iomap work.
 
-Shouldn't this be backported to stable kernels?  It seems that those still
-do suspicious-RCU deference:
+> Currently only the following filesystems really utilizing that pointer:
+> 
+> - bcachefs
+>   Which is a structure of 24 bytes without any extra pointer.
 
-__bpf_get_stack()
-  get_perf_callchain()
-    perf_callchain_user()
-      perf_get_guest_cbs()
+And as pointed out last time willy and I did go through the users of
+write_begin/end this is just dead code that is never called.
+
+> Thus I'm wondering should we make perform_generic_write() to accept a
+> *fsdata pointer, other than making write_begin() to allocate one.
+> So that we only need to allocate the memory (or use the on-stack one)
+> once per write, other than once per folio.
+
+And that scheme was one of my suggestions back then, together with
+removing write_begin/end from address_space_operations because they
+aren't operations called by MM/pagecache code, but just callbacks
+provided by the file system to perform_generic_write.
+
 
