@@ -1,90 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-34553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDBD9C6406
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:08:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899A49C63E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 22:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D13AB33932
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E6283D66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE0321A4C8;
-	Tue, 12 Nov 2024 21:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9A121A4B7;
+	Tue, 12 Nov 2024 21:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QULZpPQM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNJSZxm6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25C720C460;
-	Tue, 12 Nov 2024 21:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E61200C96;
+	Tue, 12 Nov 2024 21:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731447331; cv=none; b=hIjg7Ed2dUugg0BMY9e38fQSU6u152wPBHUSPgTrjm15CHhtAw1+ko22e5sBCYL3aEdhgNDWY4ijefiVzE42Wtn46eW46HiQK0P3GH67h5TjATFAVOdDj4OSnqPgAZuvBwZk5+f3++KYZHVNhhet3ZFYVy6nG/ZI+UaQ3on3Gcg=
+	t=1731448699; cv=none; b=GF8LOPM2ezNmOHFWHO9+PCnQubfiAi1pU7Rs6VXsZIp8c/W5JHPpkNaYGt13V6gtR95ohQ7iNFHSI8MYxShGunBa94OpC4XOWwLVIEUPjTMDZ1CFoouKNSHHetWcP7almtJ3t3Un0FdTAE6jAyFC9RGzMoaWSoBO2qtrLcdoh+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731447331; c=relaxed/simple;
-	bh=T+jMI6+eAbrAo+uy7XLNAisi2jYzNP+6eAI9rthHNJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JWJo15pIGROl8VmtbqBJcpwwLZ1AG5mNIKgg8/csgBtPZxbfMiKFVgwV0GlIJgNvW4wMH4GBbxvwauh5Tord+Zx+zbSLI0nlm8EpxnZnqdw+ydp47fTwa/eTG8xLMR84Jji9kQfFz2GaZ2xbdy/rUUaMIAHYChjL/sgHpqkWet4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QULZpPQM; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=EGYcJKWF9kLJOyRbrp+CVIxufIHX8fsp0Gk+GWXeJ/Q=; b=QULZpPQMQ7NbzSMf2TV+ZsNKz/
-	waWZuAQOFljDua3zuUxEwnAk6E/E8hFBlec04DhOcvc/OiMG6yvqmqs1smY0qm8uI9Fww8UmVlpzN
-	l3Hmx/3j6t+6taA2/rMzxVeJpp81nuJGrg2t4EIsXGf+YhBS75502htQM6Zs9Evokh24XVLuQ1EWX
-	JKrNTsg8/cGrJlD1Uwl23fDSAN94cSTvT0X2IM92gImcS0HbRt/i2qU/2BDLv+ytMsHzjAUK/LcwP
-	twKogIO5ZgabCLtDHiKOtAWUKMyrV/MeK+a2FD95UdGI/FQlg4D0UQ001i/UDlZYwntUxJQ1tyEN9
-	egjwDD1g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tAyXk-0000000EFeP-49mE;
-	Tue, 12 Nov 2024 21:35:25 +0000
-Date: Tue, 12 Nov 2024 21:35:24 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	s=arc-20240116; t=1731448699; c=relaxed/simple;
+	bh=N4mkR2zBBSmHdT6f4fdhVCH/CsMm4CZ2hzcH+plynlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ojI1ytuuubsTLkrG106AFu/nlZHQ0qV+jwZrp0Tqm1ecWlQu4pgES3jyynhDO3WdtUISANI9+2dVzPPu8p3J6357OqT0840elSdn6mxOAl0X+ZGZSFU3pbUE1MYA1W0WDAHMbBF3+Yyd41jJ+ETCVq0bDgSyhgizsMMp7j5YEo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNJSZxm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32AEC4CECD;
+	Tue, 12 Nov 2024 21:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731448698;
+	bh=N4mkR2zBBSmHdT6f4fdhVCH/CsMm4CZ2hzcH+plynlA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nNJSZxm6LAubrVG/XoRm+WvaF+rY343wxxf5I+gjvrnzihEWEPAo1d9ixCXVc9nx3
+	 E3Fu+fJxBRZC0UWm5qTbB7qeDar7uwNIOAVPurTCWKkkIo3NsWZDmQuqhFMtQIQxu0
+	 7z1wnQOjIpXVTd5cljM/MVJWOM9LJMw60bEphjShAMv/lpA4bdFuNWLCk972zB851b
+	 6OUPORUzmPHmyXxK+ZJM1sz+4Jf8O7LLx8TYCAV3wBIsO2dtNc0CFXK8MNPncZ5wD2
+	 P3D5shRFkuQ3yo48QwsNRVJjW0GJME9vy+jH1NHP42gIjw1n+8x0MITM2FYBmt2XQ4
+	 ll7BRwJfwSaHA==
+From: cel@kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Cc: <linux-nfs@vger.kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH] nfsd: get rid of include ../internal.h
-Message-ID: <20241112213524.GB3387508@ZenIV>
+Subject: Re: [PATCH] nfsd: get rid of include ../internal.h
+Date: Tue, 12 Nov 2024 16:58:10 -0500
+Message-ID: <173144863588.162655.6981261964613528856.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241112213524.GB3387508@ZenIV>
+References: <20241112213524.GB3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=655; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=L+9BkY1dGWIhdXeZYfcBMLKg98+nAC9ykyp6ydcbSks=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnM89xsUq5ywG7UyCfyUpYdQSTbW5i9xW2oJan0 +fh5nXFtWyJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZzPPcQAKCRAzarMzb2Z/ l8AAD/0RmBroxq60Xsgl3vIEgzmHvaPuD2fsDUJiiJDMbjFlpFHpl66c+yZq0xd0ACFlKsfvmPo bqdoNmFbeT3MYC8zDT15xqolUCiPDPUaGAeogEg+zAVVDAwd7b4MLQM4yByfjlcEXF5mAxajzAP Ync+0FHIbA4QtJc4FzTXbwzJrAOVlYS34RFPfaNzohlxC3ba7NQQbk7T5pVvvhAIFif+CDFmmGH 0AVKkHseWElmlOsirQk9vuBocNmLmTq2g1OJZA4y23xPC76XwymSSY/ASlHV3/pgnmnkDsdxo+8 sorHM06dac8ulxaaUhg735wpwrS2QjYldRO7nhwE/ku38phvh/2pZHrQ4tpCgLP3Ab3XxSTSpIV t/B2rcv8RNLgRqfQJUcWH5VEInLFqGr2cYxLU/e9Sx61dllKZTDAHoGsd9rcw7vRNxNFcAZ8oOE tWqe20alkSC0TjQQYOghFNWTOpmpqy8ZRKhXOV/FXYnqY6E5nBkVU9pFXxxXjU807W6bVUB/H9e SiU+QpSDwJvvK51+EPFpuBKwMfxQF0jja7AvXo+YVLvfbb78leMho7erDsgnKCZ09/gt112ehNT KTaxIv/gfWG6N+Lqv4vWsOznKvEY5V/LkaK3+8ABvGQExfgilsWg2hFjZQPHlDkXyrTI2L29vJQ 8g44pWX
+ XgWqocRg==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 
-added back in 2015 for the sake of vfs_clone_file_range(),
-which is in linux/fs.h these days
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-[I don't care which tree does that go in - if nfs folks pick it, great,
-if not - viro/vfs.git#work.misc or vfs/vfs.git#vfs.misc would do just
-fine]
- fs/nfsd/vfs.c | 1 -
- 1 file changed, 1 deletion(-)
+On Tue, 12 Nov 2024 21:35:24 +0000, Al Viro wrote:                                              
+> added back in 2015 for the sake of vfs_clone_file_range(),
+> which is in linux/fs.h these days
+> 
+>                                                                         
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 22325b590e17..f59c8ada322b 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -35,7 +35,6 @@
- #include "xdr3.h"
- 
- #ifdef CONFIG_NFSD_V4
--#include "../internal.h"
- #include "acl.h"
- #include "idmap.h"
- #include "xdr4.h"
--- 
-2.39.5
+Applied to nfsd-next for v6.13, thanks!                                                                
+
+[1/1] nfsd: get rid of include ../internal.h
+      commit: 92fbf04c399bbc17047af893c7537c8bd6a00b20                                                                      
+
+--                                                                              
+Chuck Lever
 
 
