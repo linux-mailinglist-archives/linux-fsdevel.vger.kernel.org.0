@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440FA9C5FB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:59:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885169C5FD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F622874F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:59:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D58EBC7B64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54D621894A;
-	Tue, 12 Nov 2024 17:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CDC219C8A;
+	Tue, 12 Nov 2024 17:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="sZUsKOs3"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Byyv2E8Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F789218920
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA39F218944
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434206; cv=none; b=M0LvraleDvoDKSlKD+yzzgfgB49CYa/JU8mD3gwU93Ywz+qj+ephnEA5Q7WxafyGqKEWK6l1ZHtDe8iGZBzWkodGSTlDL8b9F9W5qNMQS57Z+J5wkTUNH0MPL3TqYdIjQvK5w0XH6iUC/2ur8mcXbK9siHaeGq1QX1jS3sZTzQY=
+	t=1731434210; cv=none; b=T38T+4pfNPRJkYW7swJnyfnPO58NeZKB9z4kOlDiai4hjkj658xH6SRhOfvZ1tClKWQvpheBqZSngPvR122sFZIIjtNlywFcVjs0JtyvBbHD4Nkgys/CkPsrF9nxLhJqiRzadQ0ejIxdLVm06O4G4SXeHPDHXFsFAC9w7bSSQC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434206; c=relaxed/simple;
-	bh=hJltYF4gmFnyDAmMK+sNSUnvnpUJ46oj81s4M7TT4i4=;
+	s=arc-20240116; t=1731434210; c=relaxed/simple;
+	bh=5B5wDUCiexWCnhtjvpbGBVK7zLBdlwK0uzIP7IVVbW8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FyVOp0Kc7y4o4iHoxGnH9stuq7HJByz/96PI1zBOXVwpnejjCMtyfy3H+wb+saxp+hSue751VzxwFrY5vFEhxVlGpFLd7Hnpy9c8mqfRl4S0/bj5aD99CPJrrQnmF4y9j1Q5eTcHGPAZAN5E1Dfui9j7Or1mYwSCwF5jw+nTrdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=sZUsKOs3; arc=none smtp.client-ip=209.85.128.169
+	 MIME-Version; b=WhHTk586/HlrgYV3deOVy54zxMWDdrB1hNWeG4K2SqfaLuxYzS62s/HDeI4Kb0uwaHmxr+AvjNWvIrb/wPMGyuyZWlUl7TLIjxbZO0ibL1YYeOvgDpxuLa6FVXXdErvSXCTdpXnwjOvVk5+UwgKdrISTTm6y5xuHSuSbuOOlZWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Byyv2E8Q; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e3c3da5bcdso54116647b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:56:43 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e29047bec8fso4207276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:56:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731434202; x=1732039002; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731434205; x=1732039005; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F1sPenjaPSV3IbCyPSQxlkDnDJhzpgD7KqSaJNnzDjc=;
-        b=sZUsKOs3eXDGrV4Sz4fBqcZS7eECzweO3qhitZZMjni2uONLN5mXno7doP03uJbRzp
-         0++9GQwF9VQ9kEhye4bhXEAKxUV4yLOGcWONV2zqN5gCPyqTOV/paxrF5j/UaYT8JgMf
-         9UstKpxBB1E0BLAt7SwFAQ9SSbxYU+wiI/GaHisSjyL0vxdlfwcAY484IY+SJ/PrDdz2
-         /PUWfekyjHvGOkTzJrGHE1evmfLxMjnuhA6gIBeWOp/C47UwqvdzlJVFri/vcyigavpd
-         RutLs/DngCGuxDv/duV8TgWvoB2ds1lUFXONB/91XXZH4+yT2tSdK58M743iK8LyBP5u
-         biKQ==
+        bh=wpMEZ8etGpHeGwDSCw0SFADsZn6aen0TJzBYBdUeEVI=;
+        b=Byyv2E8QuXz+yoScHHiciIwNxo7g1QV5EPigLtEkzdWDjXA73IFXOWRUjPNMaFNBze
+         lz79fUq1vabDgoYgSnjQ8TocP3h/qL74fS3YzuFuTl3gcM5kTpJwo6M088fxPd/S0lCa
+         y9e+t3ZwfJQEJEP46yTDHkUeJctCN1rBhRE6+D5bKU8BGV2JoT1b1kJJZj14LgFF++EZ
+         r+3hzyloa1BX677H1jRKtnM58fjEdU3TyMfStNrOho1TA/2zkt458xUeYtm9unJjzyWX
+         Xb1tHV4yC54R1MwkG84zm2aoXfB8Y3NRqGTcc4KqLUq3ZG+aOJbqyQkfnqXK9tqsxqpc
+         yBuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731434202; x=1732039002;
+        d=1e100.net; s=20230601; t=1731434205; x=1732039005;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F1sPenjaPSV3IbCyPSQxlkDnDJhzpgD7KqSaJNnzDjc=;
-        b=k8Pjjp9KfI3qWvuMYmpzn1OR5ui2SVIbcEFkZODJyybq/fOrb93/sssXOB8OxxREeb
-         BrpMMleTWI/GtxItBvqVwcPwHkea/1necxoRT+KvuFQEUom2foyACvoxM5bIYINFopdM
-         yEY+STQjPSXExL31xBlOcPp2Qloeth7kT5ZaTJZSwTqaX1nciEcdC1lkPaToiMMsWh5Z
-         BRO6/m4iSDO1hclepoKMJWFhmk3G58/YDkY5E1ACNniVZ2jT2ZAPB2fEHPubF9IDIq9K
-         hWSDkIW2s827rLpXBCxasMBZSN4BDvuWkh5migmZflFWUZcM6J9lWJ2qYqF8E2wtQLyG
-         J0gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqTqy0OaQW1lKkXeNeO5znNpZQ+eiyQ6JhgK+MjWoKGYks3KvvBHUg+0spe6PBRTbGZYgYh0RiUUjQ2mxI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJiZ9qDeIRON7TsW6a5eKL7979RB01hfiGFS1W8edw8cCqbshp
-	f4kei4/HpeBOHP93qKQ7YMcKzY+F6BW7IBZ4lzyHT1LrJUoEcT+y5xI2rqfD0oE=
-X-Google-Smtp-Source: AGHT+IGfl+HQnQ1oPuK9Fv3A9ej7wwMHJ/S0LDz/YIf0NJPMnTA+szi6pHRPPnhRlITEFHjDE4KLTA==
-X-Received: by 2002:a05:690c:7007:b0:6e5:cb46:4641 with SMTP id 00721157ae682-6eca4660862mr42510667b3.13.1731434202410;
-        Tue, 12 Nov 2024 09:56:42 -0800 (PST)
+        bh=wpMEZ8etGpHeGwDSCw0SFADsZn6aen0TJzBYBdUeEVI=;
+        b=rJkYJvHYghc0MwH+dDFJAR/fUm+e/XoDbmG6TY/lxa/8Sv15Z7hfal7z5HPctRc0h0
+         FUBDYI2VispAwMYwNY/40tD56MJDKeTeUPdWgWxo5Acax5q307HKusAOoPLmbwycZVIN
+         xwFOdH6Y7JZlZGaqAlv4ZJMcyFsVt1n/AHgfenFBjxGH1G607bIeAFQmb+mPyvZCYa4t
+         FI16BWMFkKrgJoACcr/68jgv0ZmEFEpL1PHnKrkDdudbL1SLxqWms0iC9KAyqHMA4T6N
+         8aV3YLbQ+bW4GZCh4P8+zYugFOk7t5t6zQn5PCq1qfqyzrtt8giSN/B62nuztPGhK+mJ
+         pWow==
+X-Forwarded-Encrypted: i=1; AJvYcCXNAy8wDpMBqhuIjtcOAkQk3BL9xaSp9k3SgDLBKHcYQQyJPcsqkeqasnCBfmofCkA2Ir8dLZlr02ZShEQh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJj9jytbOpAKZbUkkAaOORps2z0tuvGRHFAOH0a/5EFvWoxttv
+	Jol80bmTq+lX3qzKhX6tN9/Ktvby6wA0zwd5IhfFs/0H29m96l5r3Rldke89Iso=
+X-Google-Smtp-Source: AGHT+IFx6UWdvrNKDaX/OENaRjq87dwE63td/svMIV9HfNIfAMFBzFtM680J2ZNXHuwnb0+bit+2+g==
+X-Received: by 2002:a25:6b06:0:b0:e29:27db:a1ac with SMTP id 3f1490d57ef6-e337e17cdb1mr14809403276.17.1731434205572;
+        Tue, 12 Nov 2024 09:56:45 -0800 (PST)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb0939asm26349277b3.61.2024.11.12.09.56.41
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336ee15578sm2749556276.1.2024.11.12.09.56.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 09:56:41 -0800 (PST)
+        Tue, 12 Nov 2024 09:56:44 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
@@ -78,9 +78,9 @@ To: kernel-team@fb.com,
 	linux-btrfs@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-ext4@vger.kernel.org
-Subject: [PATCH v7 09/18] fanotify: introduce FAN_PRE_ACCESS permission event
-Date: Tue, 12 Nov 2024 12:55:24 -0500
-Message-ID: <8de8e335e07502f31011a18ec91583467dff51eb.1731433903.git.josef@toxicpanda.com>
+Subject: [PATCH v7 11/18] fanotify: allow to set errno in FAN_DENY permission response
+Date: Tue, 12 Nov 2024 12:55:26 -0500
+Message-ID: <6f1748cdfa0b2849361223563ac3c8ee417b230c.1731433903.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1731433903.git.josef@toxicpanda.com>
 References: <cover.1731433903.git.josef@toxicpanda.com>
@@ -94,137 +94,197 @@ Content-Transfer-Encoding: 8bit
 
 From: Amir Goldstein <amir73il@gmail.com>
 
-Similar to FAN_ACCESS_PERM permission event, but it is only allowed with
-class FAN_CLASS_PRE_CONTENT and only allowed on regular files and dirs.
+With FAN_DENY response, user trying to perform the filesystem operation
+gets an error with errno set to EPERM.
 
-Unlike FAN_ACCESS_PERM, it is safe to write to the file being accessed
-in the context of the event handler.
+It is useful for hierarchical storage management (HSM) service to be able
+to deny access for reasons more diverse than EPERM, for example EAGAIN,
+if HSM could retry the operation later.
 
-This pre-content event is meant to be used by hierarchical storage
-managers that want to fill the content of files on first read access.
+Allow fanotify groups with priority FAN_CLASSS_PRE_CONTENT to responsd
+to permission events with the response value FAN_DENY_ERRNO(errno),
+instead of FAN_DENY to return a custom error.
+
+Limit custom error values to errors expected on read(2)/write(2) and
+open(2) of regular files. This list could be extended in the future.
+Userspace can test for legitimate values of FAN_DENY_ERRNO(errno) by
+writing a response to an fanotify group fd with a value of FAN_NOFD in
+the fd field of the response.
+
+The change in fanotify_response is backward compatible, because errno is
+written in the high 8 bits of the 32bit response field and old kernels
+reject respose value with high bits set.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c      |  3 ++-
- fs/notify/fanotify/fanotify_user.c | 22 +++++++++++++++++++---
- include/linux/fanotify.h           | 14 ++++++++++----
- include/uapi/linux/fanotify.h      |  2 ++
- 4 files changed, 33 insertions(+), 8 deletions(-)
+ fs/notify/fanotify/fanotify.c      | 19 +++++++++++----
+ fs/notify/fanotify/fanotify.h      |  5 ++++
+ fs/notify/fanotify/fanotify_user.c | 37 ++++++++++++++++++++++++++----
+ include/linux/fanotify.h           |  5 +++-
+ include/uapi/linux/fanotify.h      |  7 ++++++
+ 5 files changed, 62 insertions(+), 11 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 2e6ba94ec405..da6c3c1c7edf 100644
+index da6c3c1c7edf..e3d04d77caba 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -916,8 +916,9 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
- 	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
- 	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
-+	BUILD_BUG_ON(FAN_PRE_ACCESS != FS_PRE_ACCESS);
+@@ -223,7 +223,8 @@ static int fanotify_get_response(struct fsnotify_group *group,
+ 				 struct fanotify_perm_event *event,
+ 				 struct fsnotify_iter_info *iter_info)
+ {
+-	int ret;
++	int ret, errno;
++	u32 decision;
  
--	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 21);
-+	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 22);
+ 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
  
- 	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
- 					 mask, data, data_type, dir);
+@@ -256,20 +257,28 @@ static int fanotify_get_response(struct fsnotify_group *group,
+ 		goto out;
+ 	}
+ 
++	decision = event->response &
++		(FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS);
+ 	/* userspace responded, convert to something usable */
+-	switch (event->response & FANOTIFY_RESPONSE_ACCESS) {
++	switch (decision & FANOTIFY_RESPONSE_ACCESS) {
+ 	case FAN_ALLOW:
+ 		ret = 0;
+ 		break;
+ 	case FAN_DENY:
++		/* Check custom errno from pre-content events */
++		errno = fanotify_get_response_errno(event->response);
++		if (errno) {
++			ret = -errno;
++			break;
++		}
++		fallthrough;
+ 	default:
+ 		ret = -EPERM;
+ 	}
+ 
+ 	/* Check if the response should be audited */
+-	if (event->response & FAN_AUDIT)
+-		audit_fanotify(event->response & ~FAN_AUDIT,
+-			       &event->audit_rule);
++	if (decision & FAN_AUDIT)
++		audit_fanotify(decision & ~FAN_AUDIT, &event->audit_rule);
+ 
+ 	pr_debug("%s: group=%p event=%p about to return ret=%d\n", __func__,
+ 		 group, event, ret);
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index 7f06355afa1f..9e93aba210c9 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -528,3 +528,8 @@ static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
+ 
+ 	return mflags;
+ }
++
++static inline u32 fanotify_get_response_errno(int res)
++{
++	return res >> FAN_ERRNO_SHIFT;
++}
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9cc4a9ac1515..2ec0cc9c85cf 100644
+index 5ab9ad69915a..b83fefc8aa2d 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1633,11 +1633,23 @@ static int fanotify_events_supported(struct fsnotify_group *group,
- 				     unsigned int flags)
- {
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
-+	bool is_dir = d_is_dir(path->dentry);
- 	/* Strict validation of events in non-dir inode mask with v5.17+ APIs */
- 	bool strict_dir_events = FAN_GROUP_FLAG(group, FAN_REPORT_TARGET_FID) ||
- 				 (mask & FAN_RENAME) ||
- 				 (flags & FAN_MARK_IGNORE);
+@@ -329,11 +329,14 @@ static int process_access_response(struct fsnotify_group *group,
+ 	struct fanotify_perm_event *event;
+ 	int fd = response_struct->fd;
+ 	u32 response = response_struct->response;
++	u32 decision = response &
++		(FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS);
++	int errno = fanotify_get_response_errno(response);
+ 	int ret = info_len;
+ 	struct fanotify_response_info_audit_rule friar;
  
-+	/*
-+	 * Filesystems need to opt-into pre-content evnets (a.k.a HSM)
-+	 * and they are only supported on regular files and directories.
-+	 */
-+	if (mask & FANOTIFY_PRE_CONTENT_EVENTS) {
-+		if (!(path->mnt->mnt_sb->s_iflags & SB_I_ALLOW_HSM))
-+			return -EINVAL;
-+		if (!is_dir && !d_is_reg(path->dentry))
-+			return -EINVAL;
-+	}
-+
+-	pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%zu\n", __func__,
+-		 group, fd, response, info, info_len);
++	pr_debug("%s: group=%p fd=%d response=%x errno=%d buf=%p size=%zu\n",
++		 __func__, group, fd, response, errno, info, info_len);
  	/*
- 	 * Some filesystems such as 'proc' acquire unusual locks when opening
- 	 * files. For them fanotify permission events have high chances of
-@@ -1670,7 +1682,7 @@ static int fanotify_events_supported(struct fsnotify_group *group,
- 	 * but because we always allowed it, error only when using new APIs.
- 	 */
- 	if (strict_dir_events && mark_type == FAN_MARK_INODE &&
--	    !d_is_dir(path->dentry) && (mask & FANOTIFY_DIRONLY_EVENT_BITS))
-+	    !is_dir && (mask & FANOTIFY_DIRONLY_EVENT_BITS))
- 		return -ENOTDIR;
- 
- 	return 0;
-@@ -1771,10 +1783,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		return -EPERM;
- 
- 	/*
--	 * Permission events require minimum priority FAN_CLASS_CONTENT.
-+	 * Permission events are not allowed for FAN_CLASS_NOTIF.
-+	 * Pre-content permission events are not allowed for FAN_CLASS_CONTENT.
- 	 */
- 	if (mask & FANOTIFY_PERM_EVENTS &&
--	    group->priority < FSNOTIFY_PRIO_CONTENT)
-+	    group->priority == FSNOTIFY_PRIO_NORMAL)
-+		return -EINVAL;
-+	else if (mask & FANOTIFY_PRE_CONTENT_EVENTS &&
-+		 group->priority == FSNOTIFY_PRIO_CONTENT)
+ 	 * make sure the response is valid, if invalid we do nothing and either
+ 	 * userspace can send a valid response or we will clean it up after the
+@@ -342,18 +345,42 @@ static int process_access_response(struct fsnotify_group *group,
+ 	if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
  		return -EINVAL;
  
- 	if (mask & FAN_FS_ERROR &&
+-	switch (response & FANOTIFY_RESPONSE_ACCESS) {
++	switch (decision & FANOTIFY_RESPONSE_ACCESS) {
+ 	case FAN_ALLOW:
++		if (errno)
++			return -EINVAL;
++		break;
+ 	case FAN_DENY:
++		/* Custom errno is supported only for pre-content groups */
++		if (errno && group->priority != FSNOTIFY_PRIO_PRE_CONTENT)
++			return -EINVAL;
++
++		/*
++		 * Limit errno to values expected on open(2)/read(2)/write(2)
++		 * of regular files.
++		 */
++		switch (errno) {
++		case 0:
++		case EIO:
++		case EPERM:
++		case EBUSY:
++		case ETXTBSY:
++		case EAGAIN:
++		case ENOSPC:
++		case EDQUOT:
++			break;
++		default:
++			return -EINVAL;
++		}
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+-	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
++	if ((decision & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
+ 		return -EINVAL;
+ 
+-	if (response & FAN_INFO) {
++	if (decision & FAN_INFO) {
+ 		ret = process_access_response_info(info, info_len, &friar);
+ 		if (ret < 0)
+ 			return ret;
 diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 89ff45bd6f01..c747af064d2c 100644
+index c747af064d2c..d9bb48976b53 100644
 --- a/include/linux/fanotify.h
 +++ b/include/linux/fanotify.h
-@@ -89,6 +89,16 @@
- #define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE | \
- 				 FAN_RENAME)
+@@ -132,7 +132,10 @@
+ /* These masks check for invalid bits in permission responses. */
+ #define FANOTIFY_RESPONSE_ACCESS (FAN_ALLOW | FAN_DENY)
+ #define FANOTIFY_RESPONSE_FLAGS (FAN_AUDIT | FAN_INFO)
+-#define FANOTIFY_RESPONSE_VALID_MASK (FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS)
++#define FANOTIFY_RESPONSE_ERRNO	(FAN_ERRNO_MASK << FAN_ERRNO_SHIFT)
++#define FANOTIFY_RESPONSE_VALID_MASK \
++	(FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS | \
++	 FANOTIFY_RESPONSE_ERRNO)
  
-+/* Content events can be used to inspect file content */
-+#define FANOTIFY_CONTENT_PERM_EVENTS (FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM | \
-+				      FAN_ACCESS_PERM)
-+/* Pre-content events can be used to fill file content */
-+#define FANOTIFY_PRE_CONTENT_EVENTS  (FAN_PRE_ACCESS)
-+
-+/* Events that require a permission response from user */
-+#define FANOTIFY_PERM_EVENTS	(FANOTIFY_CONTENT_PERM_EVENTS | \
-+				 FANOTIFY_PRE_CONTENT_EVENTS)
-+
- /* Events that can be reported with event->fd */
- #define FANOTIFY_FD_EVENTS (FANOTIFY_PATH_EVENTS | FANOTIFY_PERM_EVENTS)
- 
-@@ -104,10 +114,6 @@
- 				 FANOTIFY_INODE_EVENTS | \
- 				 FANOTIFY_ERROR_EVENTS)
- 
--/* Events that require a permission response from user */
--#define FANOTIFY_PERM_EVENTS	(FAN_OPEN_PERM | FAN_ACCESS_PERM | \
--				 FAN_OPEN_EXEC_PERM)
--
- /* Extra flags that may be reported with event or control handling of events */
- #define FANOTIFY_EVENT_FLAGS	(FAN_EVENT_ON_CHILD | FAN_ONDIR)
- 
+ /* Do not use these old uapi constants internally */
+ #undef FAN_ALL_CLASS_BITS
 diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 79072b6894f2..7596168c80eb 100644
+index 0636a9c85dd0..bd8167979707 100644
 --- a/include/uapi/linux/fanotify.h
 +++ b/include/uapi/linux/fanotify.h
-@@ -27,6 +27,8 @@
- #define FAN_OPEN_EXEC_PERM	0x00040000	/* File open/exec in perm check */
- /* #define FAN_DIR_MODIFY	0x00080000 */	/* Deprecated (reserved) */
- 
-+#define FAN_PRE_ACCESS		0x00100000	/* Pre-content access hook */
+@@ -235,6 +235,13 @@ struct fanotify_response_info_audit_rule {
+ /* Legit userspace responses to a _PERM event */
+ #define FAN_ALLOW	0x01
+ #define FAN_DENY	0x02
++/* errno other than EPERM can specified in upper byte of deny response */
++#define FAN_ERRNO_BITS	8
++#define FAN_ERRNO_SHIFT (32 - FAN_ERRNO_BITS)
++#define FAN_ERRNO_MASK	((1 << FAN_ERRNO_BITS) - 1)
++#define FAN_DENY_ERRNO(err) \
++	(FAN_DENY | ((((__u32)(err)) & FAN_ERRNO_MASK) << FAN_ERRNO_SHIFT))
 +
- #define FAN_EVENT_ON_CHILD	0x08000000	/* Interested in child events */
+ #define FAN_AUDIT	0x10	/* Bitmask to create audit record for result */
+ #define FAN_INFO	0x20	/* Bitmask to indicate additional information */
  
- #define FAN_RENAME		0x10000000	/* File was renamed */
 -- 
 2.43.0
 
