@@ -1,757 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-34527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775EF9C6154
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:23:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161089C6267
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:18:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CFD1F22301
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2A3B434E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 16:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF35621E114;
-	Tue, 12 Nov 2024 19:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AEC2309BF;
+	Tue, 12 Nov 2024 16:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JAtIVvuO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZonWo7C6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC31721CF92
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 19:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831920694A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 16:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439174; cv=none; b=ouXtnlKHv1LqKtQHkCbnTZzqEfEUCOe6YNFz9RsN6p9C16R0DsD1VrQqQZ5CSzyPxP4AxmjWwcR34IAYbTKTlEsPK+XZ+zBKEpMf//FpKkSRR89wIGYqJ88PPnbItfIxm5gpQi8Bk1jBgyqKhqGxUKvwKoyykYXXB6cKS1AlIGE=
+	t=1731429295; cv=none; b=ODE3S5y9ibfN4o8dnvQJ8+YtTJqJPybMdnRqtOj5HcD5mERN9zaMyc0b/Pfphr439sxHpzMwneIHb7Xfz1ZEtMkswT1g+T/Mo2ZVNImwuTB+6dVrfRy8g9+Mo3tB7fOeqGaON3sLFciOE8/fafVAOiR2h/rD7FxdjUbinE+YwuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439174; c=relaxed/simple;
-	bh=YFD5FN+7YLa8F3GAqEjBx0mr37qvdEJmwA7HiSOzhGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rb0gEzYOTVoy8ICuo+tTWdnqH+GsLt5jbb4RgmbrovoQ7/zwydzJeXypRJ7yeChxcOQ14xN0WNzw39VjgoVs3YCBVP21nu0Rk0c0V0s7rcXpqHZvN2NqfNPThuF8PqCR7P9AoU35j1H6189/jpocCo24aoLmfz7LSj+roAVLiXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JAtIVvuO; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xnx726FxbzGmQ;
-	Tue, 12 Nov 2024 20:19:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731439166;
-	bh=bvTdCc0E+I9qLTspFx/fKqlU6pECXZowjya0LuxzuX8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JAtIVvuOxBUwW5sWpNHARR34tCexPD/ETX9sSo0SAZoG1zMYGu89xiyOxmQ6RE+3N
-	 biPyDE+iPLtCl38lbEUqt2+vf8v0kBiyDXx6AdTvcZIlczfkr+6vL78zCziTGFKmA7
-	 pH5bXVWB4UKs3rvZsiUt0QTzoqc9nSVpD2Wt3q/s=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xnx712BxTztkh;
-	Tue, 12 Nov 2024 20:19:25 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Elliott Hughes <enh@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc" interpreter and 28 tests
-Date: Tue, 12 Nov 2024 20:18:58 +0100
-Message-ID: <20241112191858.162021-7-mic@digikod.net>
-In-Reply-To: <20241112191858.162021-1-mic@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
+	s=arc-20240116; t=1731429295; c=relaxed/simple;
+	bh=maejiSruHV87Y+aXMuzBMKh+5AM/W/xMedlQ3gYipAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovMEgsqhedFaaR76Oijy4iuduVSSQL7eIdxv9NeRxIeBbHKe0Z1bb5xLsS0Cg2x8hJOUmDwYVMmdWb2Wl4cMfuAKDTaZkHvIi8sXjSzaQIKtoMzon9s3xGMC9n7UjqRE1rqCxQIwh96KsxbqB8EmlEbspa6vuEQD1G+NDl2xwqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZonWo7C6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731429293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rKB5Z1lLpeLT0LZ+NAjLFKIK23L71bpb9LtJKKAzd7w=;
+	b=ZonWo7C6h+jUpGYzpH+ZTegK102nQI2Zx/tVlh3/wWm+hvsKx23IFICcZ+PqqqBiJDNOjL
+	6JtFoGZgeJo+Na4gMoGAOTKiKifaJiBCMcsH0vXDh1dXGQugJfggFfXYIaT+lQflhwkAEv
+	em129YKwgetzH+MusIz/79qqMKpBSjI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-gwL-hOU5MVeY31HFqQOAlA-1; Tue,
+ 12 Nov 2024 11:34:47 -0500
+X-MC-Unique: gwL-hOU5MVeY31HFqQOAlA-1
+X-Mimecast-MFC-AGG-ID: gwL-hOU5MVeY31HFqQOAlA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABAB61956096;
+	Tue, 12 Nov 2024 16:34:44 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28C6330000DF;
+	Tue, 12 Nov 2024 16:34:41 +0000 (UTC)
+Date: Tue, 12 Nov 2024 11:36:14 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+Message-ID: <ZzOD_qV5tpv9nbw7@bfoster>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-13-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111234842.2024180-13-axboe@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add a very simple script interpreter called "inc" that can evaluate two
-different commands (one per line):
-- "?" to initialize a counter from user's input;
-- "+" to increment the counter (which is set to 0 by default).
+On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
+> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
+> and hence need the worker punt that ext4 also does for unwritten
+> extents. Add an io_end flag to manage that.
+> 
+> If foliop is set to foliop_uncached in ext4_write_begin(), then set
+> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
+> folios as uncached. That in turn will make writeback completion drop
+> these ranges from the page cache.
+> 
+> Now that ext4 supports both uncached reads and writes, add the fop_flag
+> FOP_UNCACHED to enable it.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/ext4/ext4.h    |  1 +
+>  fs/ext4/file.c    |  2 +-
+>  fs/ext4/inline.c  |  7 ++++++-
+>  fs/ext4/inode.c   | 18 ++++++++++++++++--
+>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
+>  5 files changed, 40 insertions(+), 16 deletions(-)
+> 
+...
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 54bdd4884fe6..afae3ab64c9e 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  	int ret, needed_blocks;
+>  	handle_t *handle;
+>  	int retries = 0;
+> +	fgf_t fgp_flags;
+>  	struct folio *folio;
+>  	pgoff_t index;
+>  	unsigned from, to;
+> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  			return 0;
+>  	}
+>  
+> +	/*
+> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
+> +	 * foliop_uncached. That's how generic_perform_write() informs us
+> +	 * that this is an uncached write.
+> +	 */
+> +	fgp_flags = FGP_WRITEBEGIN;
+> +	if (*foliop == foliop_uncached)
+> +		fgp_flags |= FGP_UNCACHED;
+> +
+>  	/*
+>  	 * __filemap_get_folio() can take a long time if the
+>  	 * system is thrashing due to memory pressure, or if the folio
+> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  	 * the folio (if needed) without using GFP_NOFS.
+>  	 */
+>  retry_grab:
+> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+>  					mapping_gfp_mask(mapping));
+>  	if (IS_ERR(folio))
+>  		return PTR_ERR(folio);
 
-It is enlighten to only interpret executable files according to
-AT_EXECVE_CHECK and the related securebits:
+JFYI, I notice that ext4 cycles the folio lock here in this path and
+thus follows up with a couple checks presumably to accommodate that. One
+is whether i_mapping has changed, which I assume means uncached state
+would have been handled/cleared externally somewhere..? I.e., if an
+uncached folio is somehow truncated/freed without ever having been
+written back?
 
-  # Executing a script with RESTRICT_FILE is only allowed if the script
-  # is executable:
-  ./set-exec -f -- ./inc script-exec.inc # Allowed
-  ./set-exec -f -- ./inc script-noexec.inc # Denied
+The next is a folio_wait_stable() call "in case writeback began ..."
+It's not immediately clear to me if that is possible here, but taking
+that at face value, is it an issue if we were to create an uncached
+folio, drop the folio lock, then have some other task dirty and
+writeback the folio (due to a sync write or something), then have
+writeback completion invalidate the folio before we relock it here?
 
-  # Executing stdin with DENY_INTERACTIVE is only allowed if stdin is an
-  # executable regular file:
-  ./set-exec -i -- ./inc -i < script-exec.inc # Allowed
-  ./set-exec -i -- ./inc -i < script-noexec.inc # Denied
+Brian
 
-  # However, a pipe is not executable and it is then denied:
-  cat script-noexec.inc | ./set-exec -i -- ./inc -i # Denied
-
-  # Executing raw data (e.g. command argument) with DENY_INTERACTIVE is
-  # always denied.
-  ./set-exec -i -- ./inc -c "+" # Denied
-  ./inc -c "$(<script-ask.inc)" # Allowed
-
-  # To directly execute a script, we can update $PATH (used by `env`):
-  PATH="${PATH}:." ./script-exec.inc
-
-  # To execute several commands passed as argument:
-
-Add a complete test suite to check the script interpreter against all
-possible execution cases:
-
-  make TARGETS=exec kselftest-install
-  ./tools/testing/selftests/kselftest_install/run_kselftest.sh
-
-Fix ktap_helpers.sh to gracefully ignore optional argument.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241112191858.162021-7-mic@digikod.net
----
-
-Changes since v20:
-* Rename AT_CHECK to AT_EXECVE_CHECK.
-
-Changes since v19:
-* New patch.
----
- samples/Kconfig                               |   4 +-
- samples/check-exec/.gitignore                 |   1 +
- samples/check-exec/Makefile                   |   1 +
- samples/check-exec/inc.c                      | 205 ++++++++++++++++++
- samples/check-exec/run-script-ask.inc         |   8 +
- samples/check-exec/script-ask.inc             |   4 +
- samples/check-exec/script-exec.inc            |   3 +
- samples/check-exec/script-noexec.inc          |   3 +
- tools/testing/selftests/exec/.gitignore       |   2 +
- tools/testing/selftests/exec/Makefile         |  14 +-
- .../selftests/exec/check-exec-tests.sh        | 205 ++++++++++++++++++
- .../selftests/kselftest/ktap_helpers.sh       |   2 +-
- 12 files changed, 448 insertions(+), 4 deletions(-)
- create mode 100644 samples/check-exec/inc.c
- create mode 100755 samples/check-exec/run-script-ask.inc
- create mode 100755 samples/check-exec/script-ask.inc
- create mode 100755 samples/check-exec/script-exec.inc
- create mode 100644 samples/check-exec/script-noexec.inc
- create mode 100755 tools/testing/selftests/exec/check-exec-tests.sh
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index efa28ceadc42..84a9d4e8d947 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -296,7 +296,9 @@ config SAMPLE_CHECK_EXEC
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
- 	help
- 	  Build a tool to easily configure SECBIT_EXEC_RESTRICT_FILE and
--	  SECBIT_EXEC_DENY_INTERACTIVE.
-+	  SECBIT_EXEC_DENY_INTERACTIVE, and a simple script interpreter to
-+	  demonstrate how they should be used with execveat(2) +
-+	  AT_EXECVE_CHECK.
- 
- source "samples/rust/Kconfig"
- 
-diff --git a/samples/check-exec/.gitignore b/samples/check-exec/.gitignore
-index 3f8119112ccf..cd759a19dacd 100644
---- a/samples/check-exec/.gitignore
-+++ b/samples/check-exec/.gitignore
-@@ -1 +1,2 @@
-+/inc
- /set-exec
-diff --git a/samples/check-exec/Makefile b/samples/check-exec/Makefile
-index d9f976e3ff98..c4f08ad0f8e3 100644
---- a/samples/check-exec/Makefile
-+++ b/samples/check-exec/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- 
- userprogs-always-y := \
-+	inc \
- 	set-exec
- 
- userccflags += -I usr/include
-diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
-new file mode 100644
-index 000000000000..94b87569d2a2
---- /dev/null
-+++ b/samples/check-exec/inc.c
-@@ -0,0 +1,205 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Very simple script interpreter that can evaluate two different commands (one
-+ * per line):
-+ * - "?" to initialize a counter from user's input;
-+ * - "+" to increment the counter (which is set to 0 by default).
-+ *
-+ * See tools/testing/selftests/exec/check-exec-tests.sh and
-+ * Documentation/userspace-api/check_exec.rst
-+ *
-+ * Copyright © 2024 Microsoft Corporation
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/fcntl.h>
-+#include <linux/prctl.h>
-+#include <linux/securebits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_buffer(char *buffer, size_t buffer_size)
-+{
-+	char *line, *saveptr = NULL;
-+	long long number = 0;
-+
-+	/* Each command is the first character of a line. */
-+	saveptr = NULL;
-+	line = strtok_r(buffer, "\n", &saveptr);
-+	while (line) {
-+		if (*line != '#' && strlen(line) != 1) {
-+			fprintf(stderr, "# ERROR: Unknown string\n");
-+			return 1;
-+		}
-+		switch (*line) {
-+		case '#':
-+			/* Skips shebang and comments. */
-+			break;
-+		case '+':
-+			/* Increments and prints the number. */
-+			number++;
-+			printf("%lld\n", number);
-+			break;
-+		case '?':
-+			/* Reads integer from stdin. */
-+			fprintf(stderr, "> Enter new number: \n");
-+			if (scanf("%lld", &number) != 1) {
-+				fprintf(stderr,
-+					"# WARNING: Failed to read number from stdin\n");
-+			}
-+			break;
-+		default:
-+			fprintf(stderr, "# ERROR: Unknown character '%c'\n",
-+				*line);
-+			return 1;
-+		}
-+		line = strtok_r(NULL, "\n", &saveptr);
-+	}
-+	return 0;
-+}
-+
-+/* Returns 1 on error, 0 otherwise. */
-+static int interpret_stream(FILE *script, char *const script_name,
-+			    char *const *const envp, const bool restrict_stream)
-+{
-+	int err;
-+	char *const script_argv[] = { script_name, NULL };
-+	char buf[128] = {};
-+	size_t buf_size = sizeof(buf);
-+
-+	/*
-+	 * We pass a valid argv and envp to the kernel to emulate a native
-+	 * script execution.  We must use the script file descriptor instead of
-+	 * the script path name to avoid race conditions.
-+	 */
-+	err = execveat(fileno(script), "", script_argv, envp,
-+		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-+	if (err && restrict_stream) {
-+		perror("ERROR: Script execution check");
-+		return 1;
-+	}
-+
-+	/* Reads script. */
-+	buf_size = fread(buf, 1, buf_size - 1, script);
-+	return interpret_buffer(buf, buf_size);
-+}
-+
-+static void print_usage(const char *argv0)
-+{
-+	fprintf(stderr, "usage: %s <script.inc> | -i | -c <command>\n\n",
-+		argv0);
-+	fprintf(stderr, "Example:\n");
-+	fprintf(stderr, "  ./set-exec -fi -- ./inc -i < script-exec.inc\n");
-+}
-+
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	int opt;
-+	char *cmd = NULL;
-+	char *script_name = NULL;
-+	bool interpret_stdin = false;
-+	FILE *script_file = NULL;
-+	int secbits;
-+	bool deny_interactive, restrict_file;
-+	size_t arg_nb;
-+
-+	secbits = prctl(PR_GET_SECUREBITS);
-+	if (secbits == -1) {
-+		/*
-+		 * This should never happen, except with a buggy seccomp
-+		 * filter.
-+		 */
-+		perror("ERROR: Failed to get securebits");
-+		return 1;
-+	}
-+
-+	deny_interactive = !!(secbits & SECBIT_EXEC_DENY_INTERACTIVE);
-+	restrict_file = !!(secbits & SECBIT_EXEC_RESTRICT_FILE);
-+
-+	while ((opt = getopt(argc, argv, "c:i")) != -1) {
-+		switch (opt) {
-+		case 'c':
-+			if (cmd) {
-+				fprintf(stderr, "ERROR: Command already set");
-+				return 1;
-+			}
-+			cmd = optarg;
-+			break;
-+		case 'i':
-+			interpret_stdin = true;
-+			break;
-+		default:
-+			print_usage(argv[0]);
-+			return 1;
-+		}
-+	}
-+
-+	/* Checks that only one argument is used, or read stdin. */
-+	arg_nb = !!cmd + !!interpret_stdin;
-+	if (arg_nb == 0 && argc == 2) {
-+		script_name = argv[1];
-+	} else if (arg_nb != 1) {
-+		print_usage(argv[0]);
-+		return 1;
-+	}
-+
-+	if (cmd) {
-+		/*
-+		 * Other kind of interactive interpretations should be denied
-+		 * as well (e.g. CLI arguments passing script snippets,
-+		 * environment variables interpreted as script).  However, any
-+		 * way to pass script files should only be restricted according
-+		 * to restrict_file.
-+		 */
-+		if (deny_interactive) {
-+			fprintf(stderr,
-+				"ERROR: Interactive interpretation denied.\n");
-+			return 1;
-+		}
-+
-+		return interpret_buffer(cmd, strlen(cmd));
-+	}
-+
-+	if (interpret_stdin && !script_name) {
-+		script_file = stdin;
-+		/*
-+		 * As for any execve(2) call, this path may be logged by the
-+		 * kernel.
-+		 */
-+		script_name = "/proc/self/fd/0";
-+		/*
-+		 * When stdin is used, it can point to a regular file or a
-+		 * pipe.  Restrict stdin execution according to
-+		 * SECBIT_EXEC_DENY_INTERACTIVE but always allow executable
-+		 * files (which are not considered as interactive inputs).
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					deny_interactive);
-+	} else if (script_name && !interpret_stdin) {
-+		/*
-+		 * In this sample, we don't pass any argument to scripts, but
-+		 * otherwise we would have to forge an argv with such
-+		 * arguments.
-+		 */
-+		script_file = fopen(script_name, "r");
-+		if (!script_file) {
-+			perror("ERROR: Failed to open script");
-+			return 1;
-+		}
-+		/*
-+		 * Restricts file execution according to
-+		 * SECBIT_EXEC_RESTRICT_FILE.
-+		 */
-+		return interpret_stream(script_file, script_name, envp,
-+					restrict_file);
-+	}
-+
-+	print_usage(argv[0]);
-+	return 1;
-+}
-diff --git a/samples/check-exec/run-script-ask.inc b/samples/check-exec/run-script-ask.inc
-new file mode 100755
-index 000000000000..3ea3e15fbd5a
---- /dev/null
-+++ b/samples/check-exec/run-script-ask.inc
-@@ -0,0 +1,8 @@
-+#!/usr/bin/env sh
-+
-+DIR="$(dirname -- "$0")"
-+
-+PATH="${PATH}:${DIR}"
-+
-+set -x
-+"${DIR}/script-ask.inc"
-diff --git a/samples/check-exec/script-ask.inc b/samples/check-exec/script-ask.inc
-new file mode 100755
-index 000000000000..f48252ab07c1
---- /dev/null
-+++ b/samples/check-exec/script-ask.inc
-@@ -0,0 +1,4 @@
-+#!/usr/bin/env inc
-+
-+?
-++
-diff --git a/samples/check-exec/script-exec.inc b/samples/check-exec/script-exec.inc
-new file mode 100755
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-exec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/samples/check-exec/script-noexec.inc b/samples/check-exec/script-noexec.inc
-new file mode 100644
-index 000000000000..525e958e1c20
---- /dev/null
-+++ b/samples/check-exec/script-noexec.inc
-@@ -0,0 +1,3 @@
-+#!/usr/bin/env inc
-+
-++
-diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
-index a32c63bb4df1..7f3d1ae762ec 100644
---- a/tools/testing/selftests/exec/.gitignore
-+++ b/tools/testing/selftests/exec/.gitignore
-@@ -11,9 +11,11 @@ non-regular
- null-argv
- /check-exec
- /false
-+/inc
- /load_address.*
- !load_address.c
- /recursion-depth
-+/set-exec
- xxxxxxxx*
- pipe
- S_I*.test
-diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-index 8713d1c862ae..45a3cfc435cf 100644
---- a/tools/testing/selftests/exec/Makefile
-+++ b/tools/testing/selftests/exec/Makefile
-@@ -10,9 +10,9 @@ ALIGN_PIES        := $(patsubst %,load_address.%,$(ALIGNS))
- ALIGN_STATIC_PIES := $(patsubst %,load_address.static.%,$(ALIGNS))
- ALIGNMENT_TESTS   := $(ALIGN_PIES) $(ALIGN_STATIC_PIES)
- 
--TEST_PROGS := binfmt_script.py
-+TEST_PROGS := binfmt_script.py check-exec-tests.sh
- TEST_GEN_PROGS := execveat non-regular $(ALIGNMENT_TESTS)
--TEST_GEN_PROGS_EXTENDED := false
-+TEST_GEN_PROGS_EXTENDED := false inc set-exec script-exec.inc script-noexec.inc
- TEST_GEN_FILES := execveat.symlink execveat.denatured script subdir
- # Makefile is a run-time dependency, since it's accessed by the execveat test
- TEST_FILES := Makefile
-@@ -26,6 +26,8 @@ EXTRA_CLEAN := $(OUTPUT)/subdir.moved $(OUTPUT)/execveat.moved $(OUTPUT)/xxxxx*
- 
- include ../lib.mk
- 
-+CHECK_EXEC_SAMPLES := $(top_srcdir)/samples/check-exec
-+
- $(OUTPUT)/subdir:
- 	mkdir -p $@
- $(OUTPUT)/script: Makefile
-@@ -45,3 +47,11 @@ $(OUTPUT)/load_address.static.0x%: load_address.c
- 		-fPIE -static-pie $< -o $@
- $(OUTPUT)/false: false.c
- 	$(CC) $(CFLAGS) $(LDFLAGS) -static $< -o $@
-+$(OUTPUT)/inc: $(CHECK_EXEC_SAMPLES)/inc.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/set-exec: $(CHECK_EXEC_SAMPLES)/set-exec.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+$(OUTPUT)/script-exec.inc: $(CHECK_EXEC_SAMPLES)/script-exec.inc
-+	cp $< $@
-+$(OUTPUT)/script-noexec.inc: $(CHECK_EXEC_SAMPLES)/script-noexec.inc
-+	cp $< $@
-diff --git a/tools/testing/selftests/exec/check-exec-tests.sh b/tools/testing/selftests/exec/check-exec-tests.sh
-new file mode 100755
-index 000000000000..87102906ae3c
---- /dev/null
-+++ b/tools/testing/selftests/exec/check-exec-tests.sh
-@@ -0,0 +1,205 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test the "inc" interpreter.
-+#
-+# See include/uapi/linux/securebits.h, include/uapi/linux/fcntl.h and
-+# samples/check-exec/inc.c
-+#
-+# Copyright © 2024 Microsoft Corporation
-+
-+set -u -e -o pipefail
-+
-+EXPECTED_OUTPUT="1"
-+exec 2>/dev/null
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+source "${DIR}"/../kselftest/ktap_helpers.sh
-+
-+exec_direct() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Updates PATH for `env` to execute the `inc` interpreter.
-+	out="$(PATH="." "$@" "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for direct file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for direct file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_indirect() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Script passed as argument.
-+	out="$("$@" ./inc "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for indirect file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for indirect file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_reg() {
-+	local expect="$1"
-+	local script="$2"
-+	shift 2
-+	local ret=0
-+	local out
-+
-+	# Executing stdin must be allowed if the related file is executable.
-+	out="$("$@" ./inc -i < "${script}")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin regular file execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for stdin regular file execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_stdin_pipe() {
-+	local expect="$1"
-+	shift
-+	local ret=0
-+	local out
-+
-+	# A pipe is not executable.
-+	out="$(cat script-exec.inc | "$@" ./inc -i)" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for stdin pipe execution: ${ret}"
-+		return 1
-+	fi
-+}
-+
-+exec_argument() {
-+	local expect="$1"
-+	local ret=0
-+	shift
-+	local out
-+
-+	# Script not coming from a file must not be executed.
-+	out="$("$@" ./inc -c "$(< script-exec.inc)")" || ret=$?
-+
-+	if [[ ${ret} -ne ${expect} ]]; then
-+		echo "ERROR: Wrong expectation for arbitrary argument execution: ${ret}"
-+		return 1
-+	fi
-+	if [[ ${ret} -eq 0 && "${out}" != "${EXPECTED_OUTPUT}" ]]; then
-+		echo "ERROR: Wrong output for arbitrary argument execution: ${out}"
-+		return 1
-+	fi
-+}
-+
-+exec_interactive() {
-+	exec_stdin_pipe "$@"
-+	exec_argument "$@"
-+}
-+
-+ktap_test() {
-+	ktap_test_result "$*" "$@"
-+}
-+
-+ktap_print_header
-+ktap_set_plan 28
-+
-+# Without secbit configuration, nothing is changed.
-+
-+ktap_print_msg "By default, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc
-+ktap_test exec_indirect 0 script-exec.inc
-+
-+ktap_print_msg "By default, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc
-+
-+ktap_print_msg "By default, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# We get 126 because of direct execution by Bash.
-+ktap_test exec_direct 126 script-noexec.inc
-+ktap_test exec_indirect 0 script-noexec.inc
-+
-+ktap_print_msg "By default, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc
-+
-+ktap_print_msg "By default, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0
-+
-+# With only file restriction: protect non-malicious users from inadvertent errors (e.g. python ~/Downloads/*.py).
-+
-+ktap_print_msg "With -f, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -f --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable scripts are not allowed to be executed nor interpreted."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -f --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, non-executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-noexec.inc ./set-exec -f --
-+
-+ktap_print_msg "With -f, interactive commands are allowed to be interpreted."
-+ktap_test exec_interactive 0 ./set-exec -f --
-+
-+# With only denied interactive commands: check or monitor script content (e.g. with LSM).
-+
-+ktap_print_msg "With -i, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable scripts are allowed to be interpreted, but not directly executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -i --
-+ktap_test exec_indirect 0 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -i --
-+
-+ktap_print_msg "With -i, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -i --
-+
-+# With both file restriction and denied interactive commands: only allow executable scripts.
-+
-+ktap_print_msg "With -fi, executable scripts are allowed to be interpreted and executed."
-+ktap_test exec_direct 0 script-exec.inc ./set-exec -fi --
-+ktap_test exec_indirect 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, executable stdin is allowed to be interpreted."
-+ktap_test exec_stdin_reg 0 script-exec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable scripts are not allowed to be interpreted nor executed."
-+# Direct execution of non-executable script is alwayse denied by the kernel.
-+ktap_test exec_direct 1 script-noexec.inc ./set-exec -fi --
-+ktap_test exec_indirect 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, non-executable stdin is not allowed to be interpreted."
-+ktap_test exec_stdin_reg 1 script-noexec.inc ./set-exec -fi --
-+
-+ktap_print_msg "With -fi, interactive commands are not allowed to be interpreted."
-+ktap_test exec_interactive 1 ./set-exec -fi --
-+
-+ktap_finished
-diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
-index 79a125eb24c2..14e7f3ec3f84 100644
---- a/tools/testing/selftests/kselftest/ktap_helpers.sh
-+++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
-@@ -40,7 +40,7 @@ ktap_skip_all() {
- __ktap_test() {
- 	result="$1"
- 	description="$2"
--	directive="$3" # optional
-+	directive="${3:-}" # optional
- 
- 	local directive_str=
- 	[ ! -z "$directive" ] && directive_str="# $directive"
--- 
-2.47.0
+> @@ -2903,6 +2913,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+>  	struct folio *folio;
+>  	pgoff_t index;
+>  	struct inode *inode = mapping->host;
+> +	fgf_t fgp_flags;
+>  
+>  	if (unlikely(ext4_forced_shutdown(inode->i_sb)))
+>  		return -EIO;
+> @@ -2926,8 +2937,11 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+>  			return 0;
+>  	}
+>  
+> +	fgp_flags = FGP_WRITEBEGIN;
+> +	if (*foliop == foliop_uncached)
+> +		fgp_flags |= FGP_UNCACHED;
+>  retry:
+> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+>  			mapping_gfp_mask(mapping));
+>  	if (IS_ERR(folio))
+>  		return PTR_ERR(folio);
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index ad5543866d21..10447c3c4ff1 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -226,8 +226,6 @@ static void ext4_add_complete_io(ext4_io_end_t *io_end)
+>  	unsigned long flags;
+>  
+>  	/* Only reserved conversions from writeback should enter here */
+> -	WARN_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
+> -	WARN_ON(!io_end->handle && sbi->s_journal);
+>  	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
+>  	wq = sbi->rsv_conversion_wq;
+>  	if (list_empty(&ei->i_rsv_conversion_list))
+> @@ -252,7 +250,7 @@ static int ext4_do_flush_completed_IO(struct inode *inode,
+>  
+>  	while (!list_empty(&unwritten)) {
+>  		io_end = list_entry(unwritten.next, ext4_io_end_t, list);
+> -		BUG_ON(!(io_end->flag & EXT4_IO_END_UNWRITTEN));
+> +		BUG_ON(!(io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)));
+>  		list_del_init(&io_end->list);
+>  
+>  		err = ext4_end_io_end(io_end);
+> @@ -287,14 +285,15 @@ ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
+>  
+>  void ext4_put_io_end_defer(ext4_io_end_t *io_end)
+>  {
+> -	if (refcount_dec_and_test(&io_end->count)) {
+> -		if (!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
+> -				list_empty(&io_end->list_vec)) {
+> -			ext4_release_io_end(io_end);
+> -			return;
+> -		}
+> -		ext4_add_complete_io(io_end);
+> +	if (!refcount_dec_and_test(&io_end->count))
+> +		return;
+> +	if ((!(io_end->flag & EXT4_IO_END_UNWRITTEN) ||
+> +	    list_empty(&io_end->list_vec)) &&
+> +	    !(io_end->flag & EXT4_IO_UNCACHED)) {
+> +		ext4_release_io_end(io_end);
+> +		return;
+>  	}
+> +	ext4_add_complete_io(io_end);
+>  }
+>  
+>  int ext4_put_io_end(ext4_io_end_t *io_end)
+> @@ -348,7 +347,7 @@ static void ext4_end_bio(struct bio *bio)
+>  				blk_status_to_errno(bio->bi_status));
+>  	}
+>  
+> -	if (io_end->flag & EXT4_IO_END_UNWRITTEN) {
+> +	if (io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_UNCACHED)) {
+>  		/*
+>  		 * Link bio into list hanging from io_end. We have to do it
+>  		 * atomically as bio completions can be racing against each
+> @@ -417,8 +416,13 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+>  submit_and_retry:
+>  		ext4_io_submit(io);
+>  	}
+> -	if (io->io_bio == NULL)
+> +	if (io->io_bio == NULL) {
+>  		io_submit_init_bio(io, bh);
+> +		if (folio_test_uncached(folio)) {
+> +			ext4_io_end_t *io_end = io->io_bio->bi_private;
+> +			io_end->flag |= EXT4_IO_UNCACHED;
+> +		}
+> +	}
+>  	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
+>  		goto submit_and_retry;
+>  	wbc_account_cgroup_owner(io->io_wbc, &folio->page, bh->b_size);
+> -- 
+> 2.45.2
+> 
+> 
 
 
