@@ -1,177 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-34485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FF19C5DCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0483B9C5E6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE3E1F2343E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 16:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7771F21886
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1F2141A4;
-	Tue, 12 Nov 2024 16:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604A020EA29;
+	Tue, 12 Nov 2024 17:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kJZO7PgZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dPjPdfu1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DFA209660
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBB221732F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430350; cv=none; b=I2ux2bizIE9oJ5uRE0PxwS9ZLYUuTNxz5x63uJb1d90TjDSCAsdoNm3FhjgIOox+E4vc7Vlja0iq1wxfXP8XtLweQAj3nr/1oAtLv9IrFej8g5LUNtnrY6bS/MH4w17jt9zd6Cjzt+lfLgFL/7L0h3pPxyUhlC9TiEK2FCM9KBM=
+	t=1731431210; cv=none; b=Y+2+XmdmlJeq8WuEpS9SdqK5Rts6ym/4BBwZcp1OFAbt5tsvKasvpm+ySTnS9m0hP65vl6Js5wyHl9xmUALlFzv9+dWrAOl/IzQXjSQNJkjU4sr2tzVlsUMIsMEex+e8q+hr/BBHF/e6s7wtVx3IBeCPFf8Ffu4Ttn4C88zlxEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430350; c=relaxed/simple;
-	bh=p8iI6w9vyQm2br3NsUS0i12ELTjdwLIn3wCbe1CDl8o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sL5ecmOZCtdTOgmH068lkmJqgvvqsI/UjLVk5jt0xmbgZ6Jglu8S12Y9JZlCJDYyWrWdkdlEe7IdAHlvAt3n0rfJcTKH6Ze/ojk5aBj7ci2BQlgg9VCoFYLTc5B3wptxhKWKX755NTVunn4K03eji8feKk7idVrr3LDkRXtMsCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kJZO7PgZ; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e60966297fso2743489b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 08:52:27 -0800 (PST)
+	s=arc-20240116; t=1731431210; c=relaxed/simple;
+	bh=2JX9+Oec6re2y1a4xOhuxeNQc/xPxRA9BwsugQ7a94M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y3k9hQedFdiFu/r0Odbs4XoNqFyQtezlv5/p9b1AcqOKvQKVHLIU/EK/Gp0Y2+DdyMZ3mHH+LLIIKLIZggFk3zFPpwcOxOlPAaPrJpDL0OhQf52x0rnjSI0YqrbEHcn9Gyg6UK2Qg1v4k16qor9mF+NpwRARfnQwuQZ+oLlWIjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dPjPdfu1; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-718078c7f53so2784851a34.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:06:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731430347; x=1732035147; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TOBOL99SRpizY4FPJmEvrpiHHSOq18Nth1K4leBXTMA=;
-        b=kJZO7PgZOszLetiaYcKxlI1MfgyY1xcWvSAeScgXJdWVf83nI1xnjvmEQeHhVE9zF5
-         YgEALsj1h6ChcvRAk5CiYHiRE3OYr5M1whNnNw6zueeozsMKkUZzMJ+KebfV4sehQkD8
-         p7Ape6PJHDi8rXk+OX1pCtPgVD9uZEoa+3MK+Urs3WNWVMakJZz9/zkBaE+KZBBr0uvH
-         xjxVfBiOsJXjDrxEOjIX6l/pYs0Mk4vCyCLqt9G4k6Ruy4bkhfy8k749IMtXiOsKTtaa
-         wN0/jukVwFKnvQ2gM1mJxpaESpFXq3XPjyjunujP67TUw2PcTB7fCvq8qcbMrb/gyEfh
-         QUZg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731431207; x=1732036007; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7gBQdB8LfkLX5TUCZ/pNzgnlsSmd42L4jALhpOoe5nw=;
+        b=dPjPdfu19geTWahmuINPChOSlT0d+4AlIMz5oGOhn3dOn1vfUJ6y7AZSVAjffAYIpI
+         IDbrSEZWUFksZ0mLCzoYekpZ2YQ+fUlz6JvKWHAxyvx1TK+BK9Eu8uXIFJZzXj6DWiGX
+         e942R0ao6+6I3rsSHyxvU1wzwokhFI5z0cpmDEu1987T9OjD4wPUxXpizcPkYksx24q2
+         qAn110tEBls1yZBJYZyrS02wPFTLs8eAZBOZmlsugj2ksoKvx4ta8QckGTuKXCfIEjVN
+         NcZ1JQMLtZYDV5WCbPTgMw8tNe4iaRl9BZ1Kf6MMecgoD+nscJD8YB9S58G6j+Eu/Qhh
+         D4+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731430347; x=1732035147;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TOBOL99SRpizY4FPJmEvrpiHHSOq18Nth1K4leBXTMA=;
-        b=U8m33SwTRpTyfeaoLdy2TPdvqzEf7QpyTJ6cxnOr/qaq5IhVGNP4ApNZU10GNCP2ms
-         6sHkX9zLXAWL5SGD0/US6hqFPiUBirpmcJfWNBb/HfC21dU9qGgrY6gm3I4YLMH1tqk3
-         hQmn+tM/dLM2yyvu4edrBDGgzgG+RK0bnamer0nCnpTTU5IhKm10lUkjj7KsjBgTPJ9t
-         KBImpkQUhbiKOM5ydt4uW+sDKLnIND0Oi60nKTvEx4BIqmWLYpVbUVNA1h/hsBs/lZ1A
-         WRrpPKdQVd7cq/lNpRg3+FdXbGGZjI6UP6SHEDPYXQ/8FTx96jsVMU9wKvWbU6VlWlGr
-         oqrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtmuEDRBqJ4yhsaErppWiAGAdIwPYkaOc9ZCn3XNw7s7Z9PSskb1hnA8MJLOtVOn+Vycq88UvM3dqERX3q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhqfC1pCXDZ/QieEUyWXaPHKkex5xQliwm4QNGV3QRhGPQHb9h
-	vjOjWehztYxWs/CSFqV0pWXif01hpPP051M9zWx9W0AeukhRGS8tpjv8o7td8w==
-X-Google-Smtp-Source: AGHT+IEJSSfaAuSN3BFmokAf11ZpFLAgR2jwLW5J6N+Yaq4VYsgk4I8RkwyB2vbmJgCjW77dbWkNdQ==
-X-Received: by 2002:a05:6808:3a15:b0:3e6:943:63c9 with SMTP id 5614622812f47-3e79470a33cmr15619476b6e.33.1731430347030;
-        Tue, 12 Nov 2024 08:52:27 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cca4fbfsm2632197b6e.24.2024.11.12.08.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:52:25 -0800 (PST)
-Date: Tue, 12 Nov 2024 08:51:04 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-    Hugh Dickins <hughd@google.com>, Christoph Hellwig <hch@lst.de>, 
-    David Howells <dhowells@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-    linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] iov_iter: fix copy_page_from_iter_atomic() for highmem
-In-Reply-To: <20241112-geregelt-hirte-ab810337e3c0@brauner>
-Message-ID: <d2ede383-3f4e-fbe5-efff-dc5f63cead4c@google.com>
-References: <20241112-geregelt-hirte-ab810337e3c0@brauner>
+        d=1e100.net; s=20230601; t=1731431207; x=1732036007;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7gBQdB8LfkLX5TUCZ/pNzgnlsSmd42L4jALhpOoe5nw=;
+        b=AJlr8c85znOt83KGTm85RoElSOXMsVIiXz7MO7VgrCD4X9IIiJalZokrVfSLUkoqqF
+         bGuKx6VolQRvGwYpVrssE7XfOagcVshU202pBXxQ2tdzvacmyOjiCsMGAJlL2/ADxlbm
+         RrjjrM1bkjqev93o0cMWicSLRSN5ykA+25RvMo1//B3x7DmA1TLPOgH87JWIxPNzrCMx
+         tR70ayU2PmMpioABzYxBV0cN0Mvx77EauCHrR3K/YEroUPCCHnCWsaAYEFkuBG3NgUVM
+         qPvWD29bnbpPT3FAnPSqb9utmhaZvrHKMAGr7Cya3YT7P4me4WucQvY1/ZzQyS0dTN6Y
+         Xm7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpOJW94MtbLBwtYj7IfE/poFnfmG6Ji3phWfNat9F4PKnAdLE3t+aM+3aO/2h8HvRcFmC2MWH8y4dY4NxR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYakO2hLt8j6I+wLCB4w7OdxR4o5ijjSIHKlwW5AgcePp79cwl
+	EMpNQGAUdABcMttttf8jfFnWn6ymJZktUWW90xXWeyz8DY5sk/b3K8Xh77p9neA=
+X-Google-Smtp-Source: AGHT+IEFhmr73BlsFmSujeWjETDWW8vIMJ259KHsMl2qTFCMehDdIEol/c6/Y43aheLgyMPMHb+QxQ==
+X-Received: by 2002:a05:6830:6b0b:b0:713:d359:317a with SMTP id 46e09a7af769-71a1b0c73demr12018118a34.15.1731431207695;
+        Tue, 12 Nov 2024 09:06:47 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a107eb5c8sm2785031a34.13.2024.11.12.09.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 09:06:47 -0800 (PST)
+Message-ID: <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+Date: Tue, 12 Nov 2024 10:06:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzOEzX0RddGeMUPc@bfoster>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Nov 2024, Christian Brauner wrote:
-
-> When fixing copy_page_from_iter_atomic() in c749d9b7ebbc ("iov_iter: fix
-> copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP") the check for
-> PageHighMem() got moved out of the loop. If copy_page_from_iter_atomic()
-> crosses page boundaries it will use a stale PageHighMem() check for an
-> earlier page.
+On 11/12/24 9:39 AM, Brian Foster wrote:
+> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+>>>> Here's the slightly cleaned up version, this is the one I ran testing
+>>>> with.
+>>>
+>>> Looks reasonable to me, but you probably get better reviews on the
+>>> fstests lists.
+>>
+>> I'll send it out once this patchset is a bit closer to integration,
+>> there's the usual chicken and egg situation with it. For now, it's quite
+>> handy for my testing, found a few issues with this version. So thanks
+>> for the suggestion, sure beats writing more of your own test cases :-)
+>>
 > 
-> Fixes: 908a1ad89466 ("iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()")
-> Fixes: c749d9b7ebbc ("iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> Hey Linus,
-> 
-> I think the original fix was buggy but then again my knowledge of
-> highmem isn't particularly detailed. Compile tested only. If correct, I
-> would ask you to please apply it directly.
+> fsx support is probably a good idea as well. It's similar in idea to
+> fsstress, but bashes the same file with mixed operations and includes
+> data integrity validation checks as well. It's pretty useful for
+> uncovering subtle corner case issues or bad interactions..
 
-I haven't seen whatever discussion led up to this.  I don't believe
-my commit was buggy (setting uses_kmap once at the top was intentional);
-but I haven't looked at the other Fixee, and I've no objection if you all
-prefer to add this on.
+Indeed, I did that too. Re-running xfstests right now with that too.
 
-I imagine you're worried by the idea of a folio getting passed in, and
-its first struct page is in a lowmem pageblock, but the folio somehow
-spans pageblocks so that a later struct page is in a highmem pageblock.
-
-That does not happen - except perhaps in the case of a hugetlb gigantic
-folio, cobbled together from separate pageblocks.  But the code here,
-before my change and after it and after this mod, does not allow for
-that case anyway - the "page += offset / PAGE_SIZE" is assuming that
-struct pages are contiguous.  If there is a worry here (I assumed not),
-I think it would be that.
-
-Cc'ing Matthew who is much more alert to such issues than I am.
-Dashing out shortly, back in two hours,
-Hugh
-
-> 
-> Thanks!
-> Christian
-> ---
->  lib/iov_iter.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 908e75a28d90..e90a5ababb11 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -457,12 +457,16 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
->  }
->  EXPORT_SYMBOL(iov_iter_zero);
->  
-> +static __always_inline bool iter_atomic_uses_kmap(struct page *page)
-> +{
-> +	return IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
-> +	       PageHighMem(page);
-> +}
-> +
->  size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
->  		size_t bytes, struct iov_iter *i)
->  {
->  	size_t n, copied = 0;
-> -	bool uses_kmap = IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
-> -			 PageHighMem(page);
->  
->  	if (!page_copy_sane(page, offset, bytes))
->  		return 0;
-> @@ -473,7 +477,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
->  		char *p;
->  
->  		n = bytes - copied;
-> -		if (uses_kmap) {
-> +		if (iter_atomic_uses_kmap(page)) {
->  			page += offset / PAGE_SIZE;
->  			offset %= PAGE_SIZE;
->  			n = min_t(size_t, n, PAGE_SIZE - offset);
-> @@ -484,7 +488,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
->  		kunmap_atomic(p);
->  		copied += n;
->  		offset += n;
-> -	} while (uses_kmap && copied != bytes && n > 0);
-> +	} while (iter_atomic_uses_kmap(page) && copied != bytes && n > 0);
->  
->  	return copied;
->  }
-> -- 
-> 2.45.2
+-- 
+Jens Axboe
 
