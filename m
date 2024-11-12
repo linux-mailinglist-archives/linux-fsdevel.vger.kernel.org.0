@@ -1,114 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-34450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FA49C5AE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 252C79C59E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F7EB43DCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC28B39FB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B5215572C;
-	Tue, 12 Nov 2024 13:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0759156C40;
+	Tue, 12 Nov 2024 13:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="Akh/a14E"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dMUhLFCp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF621EF01;
-	Tue, 12 Nov 2024 13:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9825E140E5F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417397; cv=none; b=j77czF0WpGM93xNSpsqSl6pv9UTgxrEUUBuO3q9Tn/S70KxqMIfmbcNMMPmQIqtUFdD1NrOqM2ukVnS14WMnx0mmq0x5X6FezdxvzYSUPUv2xK/j4N3XZNHdct9wj6Kcms1b5ie5zjQBwKPgn75OGty9RmI/CzWMMEsvQdb0FAo=
+	t=1731417996; cv=none; b=jTB0fjlAdQwzmVNfnkEKpO67HEdpXxo/MKxwRq7SEIcKiW3mrJi4/V6vbUqec2gH7JPCY+EHnREGEBpiRRJ6/o8th3qd4qaBkpXRvn3xyipx7yxIsEIOsLdjEsJcUXSodeCkeskktGk3ljxxOJEpvbyN5jeHxUjPmY5mrPmW6FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417397; c=relaxed/simple;
-	bh=n5hyX6yMomOaBzphPxzWAbVrcJaUdxbAmwSzohj0OEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U2Nq8lm4g9RhoCyytVwcXIL9F0FHJDMVzqik04Sm9Rr61kW2+vQhCpBecg9KXjkF6QtF9lZRQrQsvmh4ySZHIYA9HT0p20mwR4Auc0hbzqrPGE68IWjGbvmGrGMbFUY2Hh7XFH/GNEM4wFR6WZdsEa1XLWVan+vJinQEaAuHOUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=Akh/a14E; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7648B4000E;
-	Tue, 12 Nov 2024 13:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1731417393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8TPoafWSqHQ3L6VZWGol10eaPnstQLMyyt96RSAYCQ0=;
-	b=Akh/a14Ejlp4XkaT55YUdmjE5dKDBiMCz2IvoiGUEY5n1OWSUFsY9NR36Bq+gVodhMJdGM
-	jzM5PDG/iI3S4gW6Vr52RbrJYidFuhjevrLG4DDl9nfx3k5IfM8e1G2bnhZe2YnVHLzEFI
-	8pI6Od0E1LQmlJUdgBHug9Efw8WxTgwqBT+skKex9e0q+RSvi+OzjXhve1Ws6dyCUDchCy
-	6utgU7hr2vXZ1CLJ87RosyvG7fWcI17A0u3wgq8IFW58kEyUNlCTrk2M7xLDlAz5T9WMur
-	qhHgeyEAtDmpLz6Ry9cqZLb3Zi09KBD73DbrdUosHTXXXUS0AglaxxxdDXAR2Q==
-From: nicolas.bouchinet@clip-os.org
-To: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: nicolas.bouchinet@clip-os.org,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lin Feng <linf@wangsu.com>,
-	"Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH 3/3] tty: ldsic: fix tty_ldisc_autoload sysctl's proc_handler
-Date: Tue, 12 Nov 2024 14:13:31 +0100
-Message-ID: <20241112131357.49582-4-nicolas.bouchinet@clip-os.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
-References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
+	s=arc-20240116; t=1731417996; c=relaxed/simple;
+	bh=ECcn1Vt7kh7tx9LcDNSDDOJQmeTJi0LIibgBGaHsvXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=aoOjSKUNeyPWrElcY9bMpiRppYl+4hLAEAZCPzbWFyMuvl/3+aUGZ0dDvR5NCM0Pp4c7EWH7ts7kS50PKb9JmuDQyzEBqXVO33s4MEdli+8wwCBJmx1mkW8c9mz6QzZyS2xFobkOoV8nc49MiDnzDlwDcYZLRHWMb9LujwxyIIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dMUhLFCp; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241112132631epoutp03032cf005bcbcaf89faff8348298a4dfe~HO31S_9Ne2304223042epoutp03k
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241112132631epoutp03032cf005bcbcaf89faff8348298a4dfe~HO31S_9Ne2304223042epoutp03k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731417991;
+	bh=n8xVEIDHv5I8gbDECdxLIBU/WpRStbeReffw7f4ORRs=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=dMUhLFCpnXcMHo8g8p5/1+iRhLWVJLPSWE8fCKTIWK+lbZIVB9UsBFg3jz98kd7R8
+	 uKSIcfX9xPDg6IVpPgr0SR/GIVji9xYrJiY9KKKk37IdY/YmrX/n3amm3FfPj908rn
+	 q5loYMXBY6kDsn6XF5h8em04vlWLL/vXaXxhRFSs=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20241112132630epcas5p47257cf43edeff21e5e6a23edd8609e51~HO3070SP90804408044epcas5p4v;
+	Tue, 12 Nov 2024 13:26:30 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XnnHn3DKdz4x9Pw; Tue, 12 Nov
+	2024 13:26:29 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B7.A3.08574.58753376; Tue, 12 Nov 2024 22:26:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241112132628epcas5p33b0b5cbdbb64df77a4305802a3134aa0~HO3zD7y_W0215702157epcas5p30;
+	Tue, 12 Nov 2024 13:26:28 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241112132628epsmtrp260cfa063989f3b867679801d56e9e8ad~HO3zDGNcA2083420834epsmtrp2g;
+	Tue, 12 Nov 2024 13:26:28 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-8c-673357854e30
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	46.12.18937.48753376; Tue, 12 Nov 2024 22:26:28 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241112132626epsmtip1359346d7bbae74d83a7a62ab10e697b9~HO3xXNPF10035500355epsmtip17;
+	Tue, 12 Nov 2024 13:26:26 +0000 (GMT)
+Message-ID: <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+Date: Tue, 12 Nov 2024 18:56:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, axboe@kernel.dk, martin.petersen@oracle.com,
+	asml.silence@gmail.com, javier.gonz@samsung.com, Keith Busch
+	<kbusch@kernel.org>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20241111102914.GA27870@lst.de>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmhm5ruHG6QdscYYs5q7YxWqy+289m
+	sXL1USaLd63nWCwe3/nMbjHp0DVGizNXF7JY7L2lbbFn70kWi/nLnrJbdF/fwWax/Pg/Jgce
+	j52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweZy7WOHx8ektFo++LasYPT5vkgvgjMq2yUhNTEkt
+	UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAG6V0mhLDGnFCgUkFhc
+	rKRvZ1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnXF/eVjBHJ6K
+	XbeXMDUw3uDsYuTkkBAwkZjS95IJxBYS2M0o0fjQq4uRC8j+xCixsO0wK5wz5c1Lli5GDrCO
+	6b3iEPGdjBL9MzczQThvGSXeH1/PAjKKV8BOYs+m+4wgNouAqsSsF49ZIeKCEidnPgGrERWQ
+	l7h/awY7iC0s4CbRcPUuWL2IgKPE1w1LwGxmgdlMEidW8kPY4hK3nsxnAjmCTUBT4sLkUpAw
+	p4COxLWuKcwQJfIS29/OYQa5R0LgBIfE6dVHWSHedJH4vm4pC4QtLPHq+BZ2CFtK4vO7vWwQ
+	drbEg0cPoGpqJHZs7oPqtZdo+HODFWQvM9De9bv0IXbxSfT+fsIECRNeiY42IYhqRYl7k55C
+	dYpLPJyxBMr2kJi1ew4jJKDXMEr03kmdwKgwCylQZiF5chaSb2YhLF7AyLKKUTK1oDg3PTXZ
+	tMAwL7UcHtnJ+bmbGMFJWctlB+ON+f/0DjEycTAeYpTgYFYS4T3lbJwuxJuSWFmVWpQfX1Sa
+	k1p8iNEUGDsTmaVEk/OBeSGvJN7QxNLAxMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+
+	Jg5OqQam+rPPp875si7367xZta07vqQ02/7gF79x1pJJ+NCCm6mqM7dbt551t7Nn+xjAutXs
+	ul2py5/M6wtKjpQmr1j0xrXeRUDjya6nX8tuKzRcWXy9TPfIA3nbU2kMRz4Xy/bN6mi89qNc
+	rC5472rJZ7M6MuZvzmFkMpHWuJQte93tZLjWQ/Mb23TSuT/7zdm/nPmeVrJQWtHa0zd5l1nu
+	tz4SczTnWWRVrNK3vCNRtzwTGGOTf+vpfnOeni7b+3gK29NX3Gf3pm5smXn4zoyVG79/vXaX
+	L5lJWf6yecisHWnH9n5ZnDQ/VdFSjOF28pGidK3VzdfOfuTyN1twwjZQrngZs+geW+nvDxb4
+	x/Jc1ql8q8RSnJFoqMVcVJwIAB1r+zJTBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnG5LuHG6waRTOhZzVm1jtFh9t5/N
+	YuXqo0wW71rPsVg8vvOZ3WLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW36L6+g81i+fF/TA48
+	Hjtn3WX3uHy21GPTqk42j81L6j1232xg8zh3scLj49NbLB59W1YxenzeJBfAGcVlk5Kak1mW
+	WqRvl8CVcX95WMEcnopdt5cwNTDe4Oxi5OCQEDCRmN4r3sXIxSEksJ1RoqdpFWsXIydQXFyi
+	+doPdghbWGLlv+fsEEWvGSW2vdkHluAVsJPYs+k+I4jNIqAqMevFY1aIuKDEyZlPWEBsUQF5
+	ifu3ZoDVCwu4STRcvQtWLyLgKPF1wxJGkKHMArOZJFp2N7JBbFjDKPFvwX6wScxAZ9x6Mp8J
+	5FQ2AU2JC5NLQcKcAjoS17qmMEOUmEl0be1ihLDlJba/ncM8gVFoFpI7ZiGZNAtJyywkLQsY
+	WVYxiqYWFOem5yYXGOoVJ+YWl+al6yXn525iBMefVtAOxmXr/+odYmTiYDzEKMHBrCTCe8rZ
+	OF2INyWxsiq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qBabr/qsvM
+	V7Lv37w6s8WMi8st3clvwyK3dxHdYdO5J3XarzsgnTDVL+CowuGO3bL/yy3ln/09WCD77535
+	rlJWl50cMZskTeVenWF/tLhY+6aD6QYWA7/rN7nD872+FHfuXTZFzntK7wPduqu/W/K3ngja
+	XvHv89l7E39aMIp1My0Rvnol2fXkLR02Q+d4n4MfW2/M+n5NVeXFvn0K4jctJl2w6xFj3Fmk
+	FMrDe196/um3r4+Y3DvB+s3tW4Qqw7Yn6cyLivUPemj/rpplcs7g5sYpf2onBj5X3ZtR7T/n
+	ztz01zdrpWr32XNe0peQvhH68EaB5LOV8lJf3y89Gd1R/W5Nocni3uBli2dc6tp7qVKJpTgj
+	0VCLuag4EQCBFqrVLgMAAA==
+X-CMS-MailID: 20241112132628epcas5p33b0b5cbdbb64df77a4305802a3134aa0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b
+References: <20241108193629.3817619-1-kbusch@meta.com>
+	<CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
+	<20241111102914.GA27870@lst.de>
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+On 11/11/2024 3:59 PM, Christoph Hellwig wrote:
+>   - there is a separate write_stream value now instead of overloading
+>     the write hint.  For now it is an 8-bit field for the internal
+>     data structures so that we don't have to grow the bio, but all the
+>     user interfaces are kept at 16 bits (or in case of statx reduced to
+>     it).  If this becomes now enough because we need to support devices
+>     with multiple reclaim groups we'll have to find some space by using
+>     unions or growing structures
 
-Commit 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of
-ldiscs") introduces the tty_ldisc_autoload sysctl with the wrong
-proc_handler. .extra1 and .extra2 parameters are set to avoid other values
-thant SYSCTL_ZERO or SYSCTL_ONE to be set but proc_dointvec do not uses
-them.
+>   - block/fops.c is the place to map the existing write hints into
+>     the write streams instead of the driver
 
-This commit fixes this by using proc_dointvec_minmax instead of
-proc_dointvec.
 
-Fixes: 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of ldiscs")
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
----
- drivers/tty/tty_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Last time when I attempted this separation between temperature and 
+placement hints, it required adding a new fcntl[*] too because 
+per-inode/file hints continues to be useful even when they are treated 
+as passthrough by FS.
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 407b0d87b7c10..f211154367420 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -3631,7 +3631,7 @@ static struct ctl_table tty_table[] = {
- 		.data		= &tty_ldisc_autoload,
- 		.maxlen		= sizeof(tty_ldisc_autoload),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
--- 
-2.47.0
+Applications are able to use temperature hints to group multiple files 
+on device regardless of the logical placement made by FS.
+The same ability is useful for write-streams/placement-hints too. But 
+these patches reduce the scope to only block device.
 
+IMO, passthrough propagation of hints/streams should continue to remain 
+the default behavior as it applies on multiple filesystems. And more 
+active placement by FS should rather be enabled by some opt in (e.g., 
+mount option). Such opt in will anyway be needed for other reasons (like 
+regression avoidance on a broken device).
+
+[*] 
+https://lore.kernel.org/linux-nvme/20240910150200.6589-4-joshi.k@samsung.com/
 
