@@ -1,88 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-34474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BAE9C5C44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 16:49:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E979C5EBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06EC62830BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB85BA2197
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1D202659;
-	Tue, 12 Nov 2024 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA2A202F92;
+	Tue, 12 Nov 2024 15:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HjnTyT0/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5zBLfn/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F85B2022FD;
-	Tue, 12 Nov 2024 15:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFE1F7068;
+	Tue, 12 Nov 2024 15:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426539; cv=none; b=ZO0084gDjbMsf1reURp31Jb1OF/dwL/NA3yEMNgwHNOlrxAjvgHRg83AR1MsnNekvAVffHSomYCVyEoYebSiCSVKSU6emPr4GTkRhk6ehGYfJ49HKtFA/AvVIQKEBnUN2OtNLJYI/iwgcOiskxpVITZ9FXw5J+JPJWlcaRu8jTs=
+	t=1731426966; cv=none; b=D78e+bfBTti4v+nX7QO6ZK67zQhYp940xCeTEyiyj3xSbFl3joqhLGbFy5NNuQz9NA0uA2Xm5ajAnXQQ5cYdYb/VK593gDYB/FyjBxS0KeZ34uJa+TP6e4BNYSQQ3PIVaS1Fv21lhMGzLwAPZi7S8F1Uqgy1b1jR4gu7dWwzWSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426539; c=relaxed/simple;
-	bh=L0z0F1JNTV4p+QkiVH7/LmBw402G6qG18jLotqdAtSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4ctB6L6kbSY+HvZTQ2mhKCuYhhHKFnkYGjZ06s8p6RA+eLZyUmOS+zGuzK5IQIEhqdqROiKBD3tovHFXvlGvxUtaC4wp1F7szYgJNsYzjMy17pmEGxaOE2SjuCDsCiMqi+dQwUh7l28u6JzNRmcotyGU1Bkbg+NNy78T+W26C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HjnTyT0/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aTK0cEepUZLimABo8nAccUNxBY1Jvh+KAU/SAPsoyn8=; b=HjnTyT0/IV9s5rkgOlqxXQ0fZE
-	lJb2Nl5Ce1w9kI3ysQsAqA8pyltZzpggSahQ/CDYno1CO/HhL0pZNvoZDFNP9PzDIz2Pp2fBEniKv
-	lVSARYlCXWOxWwSxWhQpLbBp3fIjLv6rAGK6FnR/tw9wcHhQiD4iSeCraSiXAJ/iVLihhGoUQu0sy
-	P8ML6Vkpq+JZmBGy9VrjzmSTKXT32YYiHgnFqQWuPJb5mMld8ZCFsy2DMDOCWNyLydWBQBHKQkx4t
-	c1VYK1pdyfex4/wsKjYh2SdJSkPVjgzbEjVy69ibxJz2zmlWlLgKUNoAXS0eQ9pLNa1crQfepGkIH
-	cKtejkQg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tAt8O-0000000Ea84-0B0X;
-	Tue, 12 Nov 2024 15:48:52 +0000
-Date: Tue, 12 Nov 2024 15:48:51 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH RESEND V2 0/5] Fixes and cleanups to xarray
-Message-ID: <ZzN446h5pdMsYfRa@casper.infradead.org>
-References: <20241111215359.246937-1-shikemeng@huaweicloud.com>
- <20241111132816.3dcbb113241353e9a544adab@linux-foundation.org>
- <8667a8e9-8052-4a32-817a-2c4ef97ddfbe@huaweicloud.com>
+	s=arc-20240116; t=1731426966; c=relaxed/simple;
+	bh=FUkY8vBvHpNmPvUODc0GVgjz5hCCodk0jxmUUq4d3j0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qgy7wndBHqvtgT4L4a9d+HgKcZ6TzjMsMIgWSTZ2Vrw+bQZz1QBxG5x27VteWZlg+XON+/qM6yjOS8JOjmMUhbeT8aMTAIcvi2kVDZT2TAeSRXeHL1l212Ih6bP/nhDN428bH/M1CKhoqx0FVRIFzAT/W/n/PmTOVXAi7NtOE0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5zBLfn/; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2892510eaf.2;
+        Tue, 12 Nov 2024 07:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731426963; x=1732031763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
+        b=W5zBLfn/HDsIGhE4clBlpbCE5DCfGDi+QyxDbzcRPY69J+KTyXp6gLPAWa/1GR6iOi
+         tX5g2r0Y2lWCU60Yj0jhaIGhMdCJSACE9Z5v0XQtVxByDs03AHqbxnbuTykWmj/MrlTU
+         Anqdr8T8WMI/QaBvraMaDpGb30LjfbBGiyQMhqRAzMFTvES9yHCxVddbRqkMfxloM7Jh
+         LZk2Hd3Me1+2mUDLm0vDcwxM/HYvQZ36VEi8n8cvcD0nYmctoTTqgAM+XNOrSjSOuSRV
+         DCagbL8BYhl3gCv0eKklptzyef1rtx1CObHvcsvwxb/pSO49sPwI0jx2GR4Hm8KJrg2R
+         MKZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731426963; x=1732031763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
+        b=uIDhtKRvx4p5VDr1dZVvcz4WLzrR+AxdXI/ERZPt07+lP8bTZ+sn4E0sokeQ/0AUKm
+         /HWJGDtspH8IQDWONk9FfoBxAuC/11Kd8OAF+lxtpwmEhB4r07nrJ9RhzK29N6JvsuXp
+         Q6D4pp9c619wC6XIMbabwzU5SgxUa9qmeoQvV7bAV+RZ0NajdvSNso8HQQ96UiwhCIG0
+         9rDQ3lnmTSGOxBjLj7e7NqKprzHuUXNwzoV4kQHL7sBiptb2lX7C8dx28nwFENMO9uhz
+         nNx4igJG5slDvlzJSQuRbhrqDxP6LlZ5NB7jpE3hypp6+tvqxZRurALRlca+lXK0CKHz
+         R8aA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/x0E2nb4YXz4rso7uPBTdCYFIyPl8lEaRPIYjiyG+NU4cmslGKs22HNkxHLnRtDJVXIwotjhZU7x2DbOr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7jFiOBw2kyU+2XN+24h8ni6XXKa2qCD+MNNIrOyN+JUaTr3Q
+	AVJsRgn/J4UkxoJg4zABpTm2BX/xecg4CfwYBrhU4bclsmTWC1TsHLWsevh94t/QyHzAcMo4CmP
+	X8PYe06UTU9czFLZBE4rey87SqvcEUvsZhVA=
+X-Google-Smtp-Source: AGHT+IFezwbgWPN7unZsmswTxXu6sC+1b7SLstIy6sy3nImuLBY2n8J/CIe/ya4BMckZnw191hkIZtJ7537RVfVF1e4=
+X-Received: by 2002:a05:6358:9791:b0:1c3:2411:588f with SMTP id
+ e5c5f4694b2df-1c641ea72e5mr727978055d.9.1731426963523; Tue, 12 Nov 2024
+ 07:56:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8667a8e9-8052-4a32-817a-2c4ef97ddfbe@huaweicloud.com>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-3-erin.shepherd@e43.eu>
+In-Reply-To: <20241101135452.19359-3-erin.shepherd@e43.eu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 12 Nov 2024 16:55:52 +0100
+Message-ID: <CAOQ4uxjTN5rXqAgR-ovfEuo7gSYY6Wig1-4QV6a5BXFkfqge6A@mail.gmail.com>
+Subject: Re: [PATCH 2/4] pidfs: implement file handle export support
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 03:05:51PM +0800, Kemeng Shi wrote:
-> Patch 1 fixes the issue that xas_find_marked() will return a sibling entry
-> to users when there is a race to replace old entry with small range with
-> a new entry with bigger range. The kernel will crash if users use returned
-> sibling entry as a valid entry.
-> For example, find_get_entry() will crash if it gets a sibling entry from
-> xas_find_marked() when trying to search a writeback folios.
+On Fri, Nov 1, 2024 at 2:55=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
+ wrote:
+>
+> On 64-bit platforms, userspace can read the pidfd's inode in order to
+> get a never-repeated PID identifier. On 32-bit platforms this identifier
+> is not exposed, as inodes are limited to 32 bits. Instead expose the
+> identifier via export_fh, which makes it available to userspace via
+> name_to_handle_at
+>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
 
-You _think_ this can happen, or you've observed a crash where it _has_
-happened?  I don't think it can happen due to the various locks we
-have.  I'm not opposed to including this patch, but I don't think it
-can happen today.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> Patch 3 fixes the issue that xas_pause() may skip some entry unepxectedly
-> after xas_load()(may be called in xas_for_each for first entry) loads a
-> large entry with index point at mid of the entry. So we may miss to writeback
-> some dirty page and lost user data.
-
-How do we lose user data?  The inode will still contain dirty pages.
-We might skip some pages we should not have skipped, but they'll be
-caught by a subsequent pass, no?
+> ---
+>  fs/pidfs.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 80675b6bf884..c8e7e9011550 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/anon_inodes.h>
+> +#include <linux/exportfs.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+>  #include <linux/magic.h>
+> @@ -347,6 +348,25 @@ static const struct dentry_operations pidfs_dentry_o=
+perations =3D {
+>         .d_prune        =3D stashed_dentry_prune,
+>  };
+>
+> +static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
+> +                          struct inode *parent)
+> +{
+> +       struct pid *pid =3D inode->i_private;
+> +
+> +       if (*max_len < 2) {
+> +               *max_len =3D 2;
+> +               return FILEID_INVALID;
+> +       }
+> +
+> +       *max_len =3D 2;
+> +       *(u64 *)fh =3D pid->ino;
+> +       return FILEID_KERNFS;
+> +}
+> +
+> +static const struct export_operations pidfs_export_operations =3D {
+> +       .encode_fh =3D pidfs_encode_fh,
+> +};
+> +
+>  static int pidfs_init_inode(struct inode *inode, void *data)
+>  {
+>         inode->i_private =3D data;
+> @@ -382,6 +402,7 @@ static int pidfs_init_fs_context(struct fs_context *f=
+c)
+>                 return -ENOMEM;
+>
+>         ctx->ops =3D &pidfs_sops;
+> +       ctx->eops =3D &pidfs_export_operations;
+>         ctx->dops =3D &pidfs_dentry_operations;
+>         fc->s_fs_info =3D (void *)&pidfs_stashed_ops;
+>         return 0;
+> --
+> 2.46.1
+>
+>
 
