@@ -1,198 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-34391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D7E9C4E63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 06:44:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4B29C4E80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 07:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E743D1F26783
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 05:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED441F24256
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 06:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CADF20A5C7;
-	Tue, 12 Nov 2024 05:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3D209F42;
+	Tue, 12 Nov 2024 06:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gy5uV//K"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="p/OYad5q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBED1A3BDA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 05:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B511A0AF1;
+	Tue, 12 Nov 2024 06:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731390255; cv=none; b=Pzae1leDeCE+FSLYGzJLZb1yRQlsRTH7F3AapoqByy6oDL1bYp65rDP7Y+WiTsSTU+Y5aUXpRPhN69p6KeLy8B1131tbYPFEUVdo6nwvlRakJMHFfBs/ditMQDvPamq5uBnBCWC+xQHF7bQhvvYtCMRrNHqZ1CMXkT9RYkLVVjg=
+	t=1731391451; cv=none; b=eBx/VcyJ17n2NQvBsmFAeRUMbzrwE3tTOMZ5qdzFCfgmZ+AIeZtQh31BnVp94GMsME7w4D5XZqfFh8bdV02dMtWB2TXHi1g5CieAitFmh0aSk5hiZJW/KF/3TxNXnVb7GWHCDCTcsgoAB+wFKBDJHMNWpMP5M3MPzIlvEmijbi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731390255; c=relaxed/simple;
-	bh=BzajZdw0dc5wu6ieeytC+Fzpy7Z5dS+zIyU+UGYWXLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pCDsLzcbGwvS8J65ei3YFidA7WULxSOZAq2ZiJBC2T5BYcgeRZFuvVKE3mqXWIfuS2QxSPjO6GKCj3Xyxr/1LAEwJfoVbbGAeFMlETR7LZAA7o4khaPLJY+JqmV7QTpp3JD2JH4HZql6xS3Hjb9flRrt7Ph1WJbp6sZPD1k2OKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gy5uV//K; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=HjUCUl7Ss/IglFF+ockSljmczaHG7wCrwAO/DZwgkpM=; b=Gy5uV//Ks4p3yyBFt2RdMaNhfl
-	fwXgtP3ORtuWThgrs2RMC4LNOg9dBwt2k7ZkUzt+xXI0itq0Ye0/pFMp/xx7sGkseyaGy6NcCV5he
-	FvsgdJjb4tRobaGky4QAw+1+kSR4lmavHTp7L7emqH2oVshAoFF2zsMPk6MhhwNWWJEZXkWyqXQ3a
-	nPh7O6OEAvtH0CfDfrgO2CI/y37WMvzHd5HhD8VXpSvN84WXfbJvaqsfOlREnkPwdjUaLKeMVvES5
-	e/E20h3zRqPj2cUrM133w9MjGEHIocL6g9oY6vO/3Ng0gF+onrtjli6S6USZFsndE1n3+TjRzF81W
-	b/NTi6Ig==;
-Received: from 2a02-8389-2341-5b80-9a3d-4734-1162-bba0.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:9a3d:4734:1162:bba0] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tAjhF-00000002HQx-1eGF;
-	Tue, 12 Nov 2024 05:44:14 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] writeback: wbc_attach_fdatawrite_inode out of line
-Date: Tue, 12 Nov 2024 06:43:55 +0100
-Message-ID: <20241112054403.1470586-3-hch@lst.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112054403.1470586-1-hch@lst.de>
-References: <20241112054403.1470586-1-hch@lst.de>
+	s=arc-20240116; t=1731391451; c=relaxed/simple;
+	bh=R6wEQP8V3yb6+4kF2i4JRr2MREUqISrEbK0Yb0PmcsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OfLGOsrKrE8GhNB0W/sYR+5kBrgNvKLLQUj4ZraVI1iH+ra82G5pLRppLY4We/aq/7OpRSeUqjyJ6cb5ycW+tXRxMB7PfcN11EqlNpcNt1U97ukWsO9ajRgdzFjkVkIioGcpfrll3MyTAH0Uq/SDuNEWm21kazzgLNtX8TocyRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=p/OYad5q; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1731391439; x=1731996239; i=quwenruo.btrfs@gmx.com;
+	bh=R6wEQP8V3yb6+4kF2i4JRr2MREUqISrEbK0Yb0PmcsM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=p/OYad5qOMkO33DIZFe1aLzkO5DHP1xTHGBznUTym9x7YgUNa2IBXXbYRFOdkmTZ
+	 eDSeNsabPTxj8k7eoeIXJS3JkTXxTowIUvIvC3qjpGy4NpMGUDeK+jbWUfLlRqL9X
+	 YhOALtECUyXtsaoITnAzrzhLKBIBjSHyj+bAK5pL9DkK8Lknlngh+mNIclbR1iG7l
+	 Ocm4ZCU6ZVQVqghnSz+6kNcmTNWJ9MOmFylLFquXvosB5+zdQoI8RMF8Zh8A1B0av
+	 yZp280Qk7jf8SjYfyO/j2WTu7/j7s+Zi0cP9cgzUvtA1c0x/VLIaDRGJoxIe6TpeF
+	 Q0s1b0xGHVYsvhgZLA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mbir8-1tmXGC482I-00bGF4; Tue, 12
+ Nov 2024 07:03:59 +0100
+Message-ID: <03f86d46-0de3-4c7b-901f-1ae16b554186@gmx.com>
+Date: Tue, 12 Nov 2024 16:33:56 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: About using on-stack fsdata pointer for write_begin() and
+ write_end() callbacks
+To: Christoph Hellwig <hch@infradead.org>, Qu Wenruo <wqu@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <561428e6-3f71-48cb-bd73-46cc21789f6f@gmx.com>
+ <ZzGbioLSB3m7ozq1@infradead.org>
+ <d5dca4eb-2294-4d24-9e36-dac8be852622@suse.com>
+ <ZzLiBEA6Sp-P7xoB@infradead.org>
+ <b595203e-c299-46f8-b79a-185276d53d89@suse.com>
+ <ZzLqb5o8JsUdBGUu@infradead.org>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <ZzLqb5o8JsUdBGUu@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GabA2sX7aew1jnKLiU/6N6oQTJpMwUbcJcb9suhRHeNby2LXKtG
+ dGhP1wxh0tIYZ/up8m+Ss3AIBhCK54APyIRFchYF3y/rt7iooI/AtU2FVDBOV7eeMtC6N10
+ Mk+pNEErzEwclv31+mcMT3ZIZJFVFgN72qZtZ6Ok2Gyel39yhJfuUQMA+kSy+1rki7CWFcY
+ qOTE8pD1+EgWGP8pQAcIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HbGF3kAG7dw=;ALPD8L39ISB8CDa4xd9KJygyPVR
+ by+afQs7zDtLbourQr50qwjcBtVHeOm336y9E1dQA+dNWz7Pl9K0HIvF9rTMN2Mmv+/bAKGa8
+ a3Xq1ipMNSv8jC3lJSYHJGTCZSYTzlevtnsy5wTfXM9A8EjK7vajfUv0nA8fFeNZ5ieAn0q1/
+ eZ1WzcLlVv+g7Ug/cfanqeKbV0kPaV2LZ9mY8atOTQTrZqTDEzNveFVNTwz2FThE/bevzVf0i
+ aTn4hdp0SBOParJJsNfTB5Zgb6mWl01ZprXestwoTamEnPE147a85BmdLAJzdCCIA3kxgBCT3
+ dmdzf+mpQZUH9BF4iOLb/6F64TpMbikyfq72KJTVbAdc+wCB0dKqwPCdsspa4X739FzVoWbiY
+ KA2ntbKNY6saP9Ng8y7aEh6/tKQq5UWqtlYbjxMJWM/23naJkH3QDolFYiVjV2gOe4f7ms1tY
+ Of3xy1Hw8tZGVoamXy63BhWw7jyVyUyw9sphUhs8Y8/Lfv4wGLNcmQpKecuOt3CVDhBHExCon
+ 8NGxEUB4S31XkgvzvPcGgC4hij7cajop6cIv0WLIr/VFR6oOGaziuPZV0pHpajDEDKO4OnoTF
+ PpPlMMYFd7HQI6rKTREEiPCdg/GDwvZltG0KQZ9x5YXtfuEe34ZQUTs13lJTEfvxI6VvwwtrN
+ O6OiQ1DuuSZugS4gBt6NILs6TiirYwfW4GjduEcHtJbS45cATASonvat78Kv/ERjXugwTo03o
+ KZgRdZiGbNN6KTracixDWfs+vFUIsZi3S2DRVUDHELpGiAsU9YwsILI9yiixcZYPRgVopiHFt
+ OJHWrg8mkraYIWB6meFMb+Nu3nGkT2AJxJuReQTPBx10I0PQVua8YqyclbeSHxgw/ONVaeMO9
+ 8M5lAKVxkZ9irIh34Q8HOZhxrtfRx+NmeeV1RvM1uqgcW5tu1HwwM4das
 
-This allows exporting this high-level interface only while keeping
-wbc_attach_and_unlock_inode private in fs-writeback.c and unexporting
-__inode_attach_wb.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/fs-writeback.c         | 31 +++++++++++++++++++++++++++----
- include/linux/writeback.h | 28 ++--------------------------
- 2 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 3fb115ae44b1..77db1f10023e 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -290,7 +290,6 @@ void __inode_attach_wb(struct inode *inode, struct folio *folio)
- 	if (unlikely(cmpxchg(&inode->i_wb, NULL, wb)))
- 		wb_put(wb);
- }
--EXPORT_SYMBOL_GPL(__inode_attach_wb);
- 
- /**
-  * inode_cgwb_move_to_attached - put the inode onto wb->b_attached list
-@@ -731,8 +730,8 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
-  * writeback completion, wbc_detach_inode() should be called.  This is used
-  * to track the cgroup writeback context.
-  */
--void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
--				 struct inode *inode)
-+static void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
-+		struct inode *inode)
- 	__releases(&inode->i_lock)
- {
- 	if (!inode_cgwb_enabled(inode)) {
-@@ -763,7 +762,24 @@ void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
- 	if (unlikely(wb_dying(wbc->wb) && !css_is_dying(wbc->wb->memcg_css)))
- 		inode_switch_wbs(inode, wbc->wb_id);
- }
--EXPORT_SYMBOL_GPL(wbc_attach_and_unlock_inode);
-+
-+/**
-+ * wbc_attach_fdatawrite_inode - associate wbc and inode for fdatawrite
-+ * @wbc: writeback_control of interest
-+ * @inode: target inode
-+ *
-+ * This function is to be used by __filemap_fdatawrite_range(), which is an
-+ * alternative entry point into writeback code, and first ensures @inode is
-+ * associated with a bdi_writeback and attaches it to @wbc.
-+ */
-+void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
-+		struct inode *inode)
-+{
-+	spin_lock(&inode->i_lock);
-+	inode_attach_wb(inode, NULL);
-+	wbc_attach_and_unlock_inode(wbc, inode);
-+}
-+EXPORT_SYMBOL_GPL(wbc_attach_fdatawrite_inode);
- 
- /**
-  * wbc_detach_inode - disassociate wbc from inode and perform foreign detection
-@@ -1228,6 +1244,13 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
- 	}
- }
- 
-+static inline void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
-+					       struct inode *inode)
-+	__releases(&inode->i_lock)
-+{
-+	spin_unlock(&inode->i_lock);
-+}
-+
- #endif	/* CONFIG_CGROUP_WRITEBACK */
- 
- /*
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index d6db822e4bb3..aee3e1b4c50f 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -213,9 +213,6 @@ static inline void wait_on_inode(struct inode *inode)
- #include <linux/bio.h>
- 
- void __inode_attach_wb(struct inode *inode, struct folio *folio);
--void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
--				 struct inode *inode)
--	__releases(&inode->i_lock);
- void wbc_detach_inode(struct writeback_control *wbc);
- void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
- 			      size_t bytes);
-@@ -254,22 +251,8 @@ static inline void inode_detach_wb(struct inode *inode)
- 	}
- }
- 
--/**
-- * wbc_attach_fdatawrite_inode - associate wbc and inode for fdatawrite
-- * @wbc: writeback_control of interest
-- * @inode: target inode
-- *
-- * This function is to be used by __filemap_fdatawrite_range(), which is an
-- * alternative entry point into writeback code, and first ensures @inode is
-- * associated with a bdi_writeback and attaches it to @wbc.
-- */
--static inline void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
--					       struct inode *inode)
--{
--	spin_lock(&inode->i_lock);
--	inode_attach_wb(inode, NULL);
--	wbc_attach_and_unlock_inode(wbc, inode);
--}
-+void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
-+		struct inode *inode);
- 
- /**
-  * wbc_init_bio - writeback specific initializtion of bio
-@@ -303,13 +286,6 @@ static inline void inode_detach_wb(struct inode *inode)
- {
- }
- 
--static inline void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
--					       struct inode *inode)
--	__releases(&inode->i_lock)
--{
--	spin_unlock(&inode->i_lock);
--}
--
- static inline void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
- 					       struct inode *inode)
- {
--- 
-2.45.2
+=E5=9C=A8 2024/11/12 16:11, Christoph Hellwig =E5=86=99=E9=81=93:
+> On Tue, Nov 12, 2024 at 04:01:42PM +1030, Qu Wenruo wrote:
+>> Although I'm still struggling on the out-of-band dirty folio (someone m=
+arked
+>> a folio dirty without notifying the fs) handling.
+>
+> No one is allowed to mark pages dirty without file system involvement.
+
+Then iomap should go the ext4 way, warning and error out.
+(the ext4_warning_inode() inside mpage_prepare_extent_to_map())
+
+But it's not.
+
+IIRC it's related to the get_user_page() shenanigans but not 100% sure.
+
+>
+>> The iomap writepages implementation will just mark all the folio range =
+dirty
+>> and start mapping.
+>
+> iomap writepages (just like any other writepages) never marks folios
+> dirty, it clears the dirty bit.
+>
+
+I'm talking about the iomap_set_range_dirty() call inside
+iomap_writepage_map(), for the "if (i_blocks_per_folio() > 1)" branch.
+
+If every dirty page is going through the fs interfaces, we should not
+have a dirty folio without that iomap_folio_state attached.
+
+But iomap just ignores such case and try writeback the whole folio
+range. In that case, it can cause problems like the range doesn't have
+space properly reserved.
+
+Thanks,
+Qu
 
 
