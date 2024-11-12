@@ -1,206 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-34532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D009C618D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:34:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC5A9C61A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A1A285D81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588CA1F2185A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B4021A4CE;
-	Tue, 12 Nov 2024 19:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EEA2194A5;
+	Tue, 12 Nov 2024 19:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IgYotECi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KvxROJCl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30C2219C8D;
-	Tue, 12 Nov 2024 19:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439968; cv=fail; b=jNjSsWV7U7zyEZkFunAF8UX6LrHW28oBFFUy0SFVOViVR4PTsQNGHfUCRwu8W7vQ9wTa13CQqWm6IJQ9rpi2OEPmyWEFR3X7OyxpMS0jPmsHPe52KsCPWAorltLTR3kFWULP4lmIDF4KRwWDJHYOdblXDLWoLR5uzpsTWiz3Mc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439968; c=relaxed/simple;
-	bh=An0nUhTwo1SlhtLRSG7bZIpb7VXDqe8XZYY1EIxJ7sc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HfyrvpLK8O6cRn8XnTa368Id1DmzHDEb3KsReI4IoMa0wtSC0KbFTL3hXTRZg+6MDiY9WZgRCzrDls0kzVeY8qNakiQOLyyt8SmmLPXdYBirQXCr5v4uNQcDBFyDBt00mPwY8reA0l0A+puai0ER85r7d2M5J4cWjBoh3Z2H0E0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IgYotECi; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731439966; x=1762975966;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=An0nUhTwo1SlhtLRSG7bZIpb7VXDqe8XZYY1EIxJ7sc=;
-  b=IgYotECivIPSSEWYjHjrV6/8ntIXm8IUQgA9XsygYyE2K5RonyN3piZm
-   LJ0DFSc7Bo7ZkZSrX+udTCAanuDBV9DZN1tzrNUV27oHBDSdsz9GCoEt+
-   gyyCbuEO5ijEbFz55+ptvnWg/VDnfpxgeAUa0BHir61I+TYDly7pNeT7w
-   7J4gUGjE+YAbemzjLb2zGoymiqjKt2BuIp7wiZwqbwsQB5OOAp/LaK/uX
-   KwpGD8X9bbMD3btD01smMOmZSC+4bP+8k0n6UcaRPY9rfs3hPjRN2MXC8
-   +OBe4X/W57aiP4ZeK7IRSzXZp9RjRaYOp2tkFexe1CWr5e9ylUK1idnW7
-   Q==;
-X-CSE-ConnectionGUID: Bi4g6WYuQySyxsMf6Ilaww==
-X-CSE-MsgGUID: Pj1RN2BoRw+KgGRXB7s43Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53853065"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53853065"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 11:32:45 -0800
-X-CSE-ConnectionGUID: Vr7Kjq15TAe2/qP/3SpOOA==
-X-CSE-MsgGUID: tVjcFDSwTKuFwLs4wfsGYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="87532779"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 11:32:44 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 12 Nov 2024 11:32:43 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 11:32:43 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.175)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 12 Nov 2024 11:32:42 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wPpST534Gj4l0nCMNrtbeARIWZPf5Tb9PxkEaNyQTq/o0sYVLPrQNVv25LbWvRuHBjEp24mpR1BjvVqy4l0tBGq7YG51/E8vSYQFfOZvorgQXI29qlMEcihX6KmmH6RtFxuEYsVmJDwJVo9KPWvJFiHSdNnePtp+kqCVupo2ly5zHz90HqmwsILTVtN6r0MSi4ppopqK4SQEe5lAkB3MVIKckpmV5Xf2Rd0xEDztKRJ/d6BC52uwI9N7wyU/f6/a/YbnAQ10io0CMWsGOvwLCQKIb9os3+wGUFddS0LMoJuUMBStXIX+sxrDIQGcp66TwDQoKCCyRPVoSWPy9gkyrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hzSrY5bbSBMYOrN9uexB0QJKB4yXeNpdvrppivoMj3A=;
- b=Ap6HkWSrHZD+HBPA8NhRUz6+xNz4aJ8JXnuPnkEokNaU175B8qR0YvZONzdT7fzJBCQt04C0iHkWltJmQuhtJCedAyhC/kAQrWLLHBbQo5Nx6Cvbvtflfc/mabjLSot727KseppEv7FqPlGQjKFljT064AAJUXGQTKu+TAAz5D0DrpwIlfQTGViyqEDrWSaPhwpWbzvPGQVu5NN8YMxffR1PCFIIXBn051btHNGKeoECPf3gZxAs91wWqe8y/FP68McSnkJYPAKJpcDAqSlim0anpnYV29EZh0TWn/BKG4iPG9c1FWVg3KIwwhE3ExfX2NLgc7rZGzuBRXaVTUOa9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SA1PR11MB8427.namprd11.prod.outlook.com (2603:10b6:806:373::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
- 2024 19:32:39 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 19:32:39 +0000
-Date: Tue, 12 Nov 2024 11:32:36 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Jan Kara <jack@suse.cz>, Asahi Lina <lina@asahilina.net>
-CC: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>, "Dave
- Chinner" <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Sergio Lopez Pascual <slp@redhat.com>,
-	<linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <6733ad54b70ed_10bb7294b2@dwillia2-xfh.jf.intel.com.notmuch>
-References: <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
- <20241107100105.tktkxs5qhkjwkckg@quack3>
- <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
- <20241108121641.jz3qdk2qez262zw2@quack3>
- <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
- <20241112143436.c2irwddrwopusqad@quack3>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241112143436.c2irwddrwopusqad@quack3>
-X-ClientProxiedBy: MW4PR04CA0373.namprd04.prod.outlook.com
- (2603:10b6:303:81::18) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FF6218305
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 19:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731440292; cv=none; b=fGrPUwBQOk5SWEMeDsI4TN3FB/UtQn2DplOhLFPsNWy5j2nPqNmB8hYfgq1l1hhbWolD4CO9uspGui1JohiBOa41P/EgVi0FEPpicCH5PUWrTtATDTgZc5sTr3kRB5Kx7aRUnObEWda3WluOEht5w7Y2iuEFW9qSFEwoEhI0NmA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731440292; c=relaxed/simple;
+	bh=uPGX03XvvV+XtqpiDWYPrHffFCLZCQeL5FDfGiGpSGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbTUXZee+5nJ8uA4wOnxs5c3s2UXGG5Z/OPvl3R1ut41wMZ55NnQ6HrBr/yU0RXgXncZR3Cqbd4/A0IVdQIgCAvSTsRqoSlBFtIxYWgb5uWuUJQA3BciYdWAvqyw9T8Pms8YDQNk61xWXZmyB6Pcym0jaDFPACq3ZhLinMmVOf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KvxROJCl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731440289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pEWGwDV42qZ605Ox/qRGT5wCc1jBMka21/Df9UKjYs=;
+	b=KvxROJClKL8QpZ5ML6NK/9J40kMqbjNh9U4xVtEbgWRvNRZy00zAy/jUtqcgYaNp3IjpTq
+	Lz8F8MExvVeI+wfr3yLoSsME3vu042L53MUNFHX0XrhQanvmmsq3iiMX7kpywsIfOrYeKh
+	YtSgSusDJf+Fq6pngdZBbJ6pRnH1f/s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-sQXeUOb5NqWfBZxRfASG6Q-1; Tue,
+ 12 Nov 2024 14:38:04 -0500
+X-MC-Unique: sQXeUOb5NqWfBZxRfASG6Q-1
+X-Mimecast-MFC-AGG-ID: sQXeUOb5NqWfBZxRfASG6Q
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64D541955F2C;
+	Tue, 12 Nov 2024 19:38:02 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E80D19560A3;
+	Tue, 12 Nov 2024 19:37:59 +0000 (UTC)
+Date: Tue, 12 Nov 2024 14:39:32 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <ZzOu9G3whgonO8Ae@bfoster>
+References: <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
+ <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+ <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
+ <ZzOiC5-tCNiJylSx@bfoster>
+ <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA1PR11MB8427:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a867ea5-882b-4f69-c735-08dd0350c4fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7ClaD9lrIHeLAC1zhuxCISjrAUYah7z8f3Nq9uFdMvtrQXCDUVp2CT2qjqAJ?=
- =?us-ascii?Q?Sw+KFBJJguAI1DXj63SbJC4CwPchA4grBgWWaKbJF8bmSumdcArC7My/pGJl?=
- =?us-ascii?Q?8nAI5hIdplEzdkfAUGHOsmT+t4nz1B8wHApGSR5f/UzDa9wbdtm4zDdciaZh?=
- =?us-ascii?Q?XVu5ODv3fqX/T0JQb1Jdq9qYoNtTDILHjScxaECxMJpnYL7664UV4FDC3AqO?=
- =?us-ascii?Q?NUGrVUfcwgyPMgpyWVqkXm9xiwU6QQL46elw43FDKa4GhrDEVmn9zYfZLjfS?=
- =?us-ascii?Q?nt+VtyjBOssNv/g9leCVJlPUCheaDGlusy0qW96wqiKCyvgFdm4eMp5TRCiE?=
- =?us-ascii?Q?v8EpDsKMO5i/HSjG+V9dvZuRTssCtT1A4O4RTXlV+oa0sWK/xbdRmXmh4jzB?=
- =?us-ascii?Q?39fvbhTK7YMebBEos/0j9XQRKWdX/nExsAD1VU9MldEALq4ThRyjTeG++7/G?=
- =?us-ascii?Q?Xp9gb1QUD3U8x5dGRFgQzO4GuUbd3ejj7hUPg7Dih6UQ8jwcGBWeFTaYSq76?=
- =?us-ascii?Q?8BlEha7GxttQnF1JBwYlvRQjEN2AnbPvvP7TKGQVwqy6NT1Jitt/k29h6Q51?=
- =?us-ascii?Q?Zv+f0o1LvcOtThTwJ5vSZ51GCohaTtsaV8LiAMXSMOvlG7selk++3QUSYvf9?=
- =?us-ascii?Q?q6zIscousk2lxfIp6QDquwygILhunZ18UsI+NPR6UZYbjANXkb4PpoanH1E4?=
- =?us-ascii?Q?u8uqm5Zi7uMQpkNjNBxr0zZAw2Yue5kwDiT/BDFIytM+hP5n7bA7psPXmURV?=
- =?us-ascii?Q?xFjqbRgaRTxr2L/SXsCJT2RMAEdQjrOru7sCDgl0MIaZt8h5LRIPKuRz//kG?=
- =?us-ascii?Q?mS7WD/94hbSjXfBMNolyWQ6W+l9ogDJCxNdQ4G2cGJaPKSZhZH7q5eRfujkT?=
- =?us-ascii?Q?8DSdPvCZIatdKgKswAOMzb5orF+kMUh9UlKaHrJfF5+OcwarqDBFI93c33tr?=
- =?us-ascii?Q?ZOSp37BUUrlOCg9CkEQcLE/zXYnB4EsbDP/YSQRVQ74pmEmecvU30svw1gbm?=
- =?us-ascii?Q?JqMKkv8sZfRKRnsfUlWsAz4eusSVAQhHxf8ZLLEqZDd2IAp62jB2gFuzVtCd?=
- =?us-ascii?Q?DyxFTTlWmpSEcMAWSFHrnTdHmR/V4A1RRoHnc+E4QDjZ6rtmFk9TAE+obA0V?=
- =?us-ascii?Q?GVQ9UM9YYs3AgWj6SEJp8tcCK48/x7vluCKSN2afmcBzflFQCRpgwaxmnPsV?=
- =?us-ascii?Q?jk96Ffw4QKnxmkJxgkDyvsO0Bl0stM463r8/pCBk5p6jrLe9L70TOGbIur/x?=
- =?us-ascii?Q?lKtG8/IImKBKA4yTYElzb3NSlS3FNBBimcIHQjusTBlINUxFEAifM5Og6fzA?=
- =?us-ascii?Q?bGqOZWgPu+6gjqb/US2PGpu+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6zXmtwwqBjTBHYgidGB8fN179j8rhIz4LuzBwW9cjE30iPcKV2gno0Y7mHwm?=
- =?us-ascii?Q?lMLCKTJshFIG5xecbFO80sLb/xADPPRbNQ9h0RbE64IAb5KgX24GWbh1k4L9?=
- =?us-ascii?Q?aXHC56F3php6B2L6wgLXyrSNydEy+6OxrkEw+VtL/o0mDexP4kVg52wMzNLE?=
- =?us-ascii?Q?DrdX8ECfTWdNZnmKWVrfxBqOVig8quadfu3Ig8wDEbeygErxsKZoPTFsRIEl?=
- =?us-ascii?Q?yvR+wBnBhs8y2rPG77QwFGGaI4tjiqefaMz319mnQgm3Y07rRhYWmu4+TcLr?=
- =?us-ascii?Q?zhGBr8NSpmTZoApgZoCnsjsuzrSeYPl6TSCvVZ3dhhhl9c4WUP7oov+ON8k4?=
- =?us-ascii?Q?u7yb01yp2sS6yd6EBNtZOzSsN7NqBi6tcKkQYvr546njqgRfQN1F4yR+dvsb?=
- =?us-ascii?Q?QOPFqqrgfPBXUpuoCIu/bvsLfH7YLt+3XaDQEi/wmOT91MGuK2N0u66foQXz?=
- =?us-ascii?Q?21AnJlQOIdc92v34QIwSZWXmWpBxLub8JhNX/GpQxaKl52bpiAeODQp5HIX8?=
- =?us-ascii?Q?eqwMWTAfnQcZ13ONqFkHgc5fjc6u4ZNCUuWRDdmWRKfV6CnBFTP3CgI5d6nV?=
- =?us-ascii?Q?8ELq8JGFXCqWcCaL1zHEfaFMQEUmM/Hcv8sJY4ZkSDyAsMJhXqIMWyO8Cs+L?=
- =?us-ascii?Q?8qIkM1LNJybWXXNl9yHtD/aPSQSm9mK0s9c2o8Wsw+/qmZs1wNHprV3m+ePK?=
- =?us-ascii?Q?877cdDoi/SDGX3rAEQmq7Lz5r7tzdsFvAucRmDadhoZ7RAUUWUjQQuqKPjEd?=
- =?us-ascii?Q?zrgpmB6xULGQUjtLvaH5gskOyjjKn4NIIOdkKDR5a7pw9htkzt2IKkQ0RVLQ?=
- =?us-ascii?Q?z+SSBdqUMTGECHJ4Q14y7ZWw6GJXZqaXth1eO4GZh3ep+ftIoN2Lp3ULm1G9?=
- =?us-ascii?Q?6C5YRO+s5iUCEdqcxoDK0kac7ZEkdWgRWZDQOyab9S8tQkUVALvefGl+7KvZ?=
- =?us-ascii?Q?aCPd14Cdaht9jSm0h0Nta1a3skdK85U7EAebWfK7+O4HUZVYx1nr/rpEcN0y?=
- =?us-ascii?Q?9tGyph7lZkwb6m5lBBLSrFv3eiIho9nJ2V3y/f9RFqDpvHnnEzF3bsddOsKF?=
- =?us-ascii?Q?tByvy0ej0zmKYkT5IoNwtdlGxJMrkifNc4Ntf2Pb8g7mvJBruK+ySsiKxVdj?=
- =?us-ascii?Q?Pn6IN1qTFempqWlQWXxY0MQHLER2hv+hZg6jKkuCSsexgAOqehSOq/uNqwdF?=
- =?us-ascii?Q?FMm8/IMeOb4mockJOv+jbF3W4ZYmLKuvmpUhCzl3HVpFCaPzy+oHnC+kITtH?=
- =?us-ascii?Q?VVCcq8kJmGKqpHSmUrP/0BEVPr6s9Zxd1lzcvdeI3VIMDKJNuo5Fp+CkikrB?=
- =?us-ascii?Q?MDRtXX+AOpypZkDELZNEfZGQBtHW/yG127LgNqABcCPJZVJBQmjY8+VGt0l9?=
- =?us-ascii?Q?QK18xB36SclSqBxCTEUuOiMnyO8XenR9VFJaKkMVXptWxw+Z8/zJRBZMcd2U?=
- =?us-ascii?Q?dgLt2Y7BBNTu+qIjdYnFyrLtDLCV8fVbjdj0aMAjfQevP3+4i7BfmZCfFwAw?=
- =?us-ascii?Q?QwLbB8HEahCI5YWtyE/HIlNp+hwpFIOwmMPGG0bcMQqttb8aOy6OndfT7/2m?=
- =?us-ascii?Q?La+JAnFsizHdLaoeqRWtJRm+62K+AEb/0BryLRqHevT9u8xE0lX31s1U8qPO?=
- =?us-ascii?Q?AA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a867ea5-882b-4f69-c735-08dd0350c4fc
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 19:32:39.5443
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PLUgSyJoUZJYP+B6lwVCFowRu3crG8haj0B1TL/bA2gK/f0bzr93Dc3sdHAh1FSYBAc/mCSDDGTdvObfku6N5mt2rkW9xZiA5qXY8fn2CCg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8427
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Jan Kara wrote:
-[..]
-> > I think we should go with that then. Should I send it as Suggested-by:
-> > Dan or do you want to send it?
+On Tue, Nov 12, 2024 at 12:08:45PM -0700, Jens Axboe wrote:
+> On 11/12/24 11:44 AM, Brian Foster wrote:
+> > On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
+> >> On 11/12/24 10:06 AM, Jens Axboe wrote:
+> >>> On 11/12/24 9:39 AM, Brian Foster wrote:
+> >>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+> >>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+> >>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+> >>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+> >>>>>>> with.
+> >>>>>>
+> >>>>>> Looks reasonable to me, but you probably get better reviews on the
+> >>>>>> fstests lists.
+> >>>>>
+> >>>>> I'll send it out once this patchset is a bit closer to integration,
+> >>>>> there's the usual chicken and egg situation with it. For now, it's quite
+> >>>>> handy for my testing, found a few issues with this version. So thanks
+> >>>>> for the suggestion, sure beats writing more of your own test cases :-)
+> >>>>>
+> >>>>
+> >>>> fsx support is probably a good idea as well. It's similar in idea to
+> >>>> fsstress, but bashes the same file with mixed operations and includes
+> >>>> data integrity validation checks as well. It's pretty useful for
+> >>>> uncovering subtle corner case issues or bad interactions..
+> >>>
+> >>> Indeed, I did that too. Re-running xfstests right now with that too.
+> >>
+> >> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+> >> for both the sync read/write and io_uring paths.
+> >>
+> > 
+> > Nice, thanks. Looks reasonable to me at first glance. A few randomish
+> > comments inlined below.
+> > 
+> > BTW, I should have also mentioned that fsx is also useful for longer
+> > soak testing. I.e., fstests will provide a decent amount of coverage as
+> > is via the various preexisting tests, but I'll occasionally run fsx
+> > directly and let it run overnight or something to get the op count at
+> > least up in the 100 millions or so to have a little more confidence
+> > there isn't some rare/subtle bug lurking. That might be helpful with
+> > something like this. JFYI.
 > 
-> I say go ahead and send it with Dan's suggested-by :)
+> Good suggestion, I can leave it running overnight here as well. Since
+> I'm not super familiar with it, what would be a good set of parameters
+> to run it with?
+> 
 
-Yeah, no concerns from me, and I can ack it when it comes out.
+Most things are on by default, so I'd probably just go with that. -p is
+useful to get occasional status output on how many operations have
+completed and you could consider increasing the max file size with -l,
+but usually I don't use more than a few MB or so if I increase it at
+all.
+
+Random other thought: I also wonder if uncached I/O should be an
+exclusive mode more similar to like how O_DIRECT or AIO is implemented.
+But I dunno, maybe it doesn't matter that much (or maybe others will
+have opinions on the fstests list).
+
+Brian
+
+> >>  #define READ 0
+> >>  #define WRITE 1
+> >> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
+> >> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
+> >> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
+> >> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
+> >>  
+> > 
+> > My pattern recognition brain wants to see an 'e' here. ;)
+> 
+> This is a "check if reviewer has actually looked at it" check ;-)
+> 
+> >> @@ -266,7 +273,9 @@ prterr(const char *prefix)
+> >>  
+> >>  static const char *op_names[] = {
+> >>  	[OP_READ] = "read",
+> >> +	[OP_READ_UNCACHED] = "read_uncached",
+> >>  	[OP_WRITE] = "write",
+> >> +	[OP_WRITE_UNCACHED] = "write_uncached",
+> >>  	[OP_MAPREAD] = "mapread",
+> >>  	[OP_MAPWRITE] = "mapwrite",
+> >>  	[OP_TRUNCATE] = "truncate",
+> >> @@ -393,12 +402,14 @@ logdump(void)
+> >>  				prt("\t******WWWW");
+> >>  			break;
+> >>  		case OP_READ:
+> >> +		case OP_READ_UNCACHED:
+> >>  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
+> >>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> >>  			    lp->args[1]);
+> >>  			if (overlap)
+> >>  				prt("\t***RRRR***");
+> >>  			break;
+> >> +		case OP_WRITE_UNCACHED:
+> >>  		case OP_WRITE:
+> >>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+> >>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> >> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
+> >>  }
+> >>  
+> >>  void
+> >> -doread(unsigned offset, unsigned size)
+> >> +__doread(unsigned offset, unsigned size, int flags)
+> >>  {
+> >> -	off_t ret;
+> >>  	unsigned iret;
+> >>  
+> >>  	offset -= offset % readbdy;
+> >> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
+> >>  			(monitorend == -1 || offset <= monitorend))))))
+> >>  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+> >>  		    offset, offset + size - 1, size);
+> >> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
+> >> -	if (ret == (off_t)-1) {
+> >> -		prterr("doread: lseek");
+> >> -		report_failure(140);
+> >> -	}
+> >> -	iret = fsxread(fd, temp_buf, size, offset);
+> >> +	iret = fsxread(fd, temp_buf, size, offset, flags);
+> >>  	if (iret != size) {
+> >> -		if (iret == -1)
+> >> -			prterr("doread: read");
+> >> -		else
+> >> +		if (iret == -1) {
+> >> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
+> >> +				rwf_uncached = 1;
+> > 
+> > I assume you meant rwf_uncached = 0 here?
+> 
+> Indeed, good catch. Haven't tested this on a kernel without RWF_UNCACHED
+> yet...
+> 
+> > If so, check out test_fallocate() and friends to see how various
+> > operations are tested for support before the test starts. Following that
+> > might clean things up a bit.
+> 
+> Sure, I can do something like that instead. fsx looks pretty old school
+> in its design, was not expecting a static (and single) fd. But since we
+> have that, we can do the probe and check. Just a basic read would be
+> enough, with RWF_UNCACHED set.
+> 
+> > Also it's useful to have a CLI option to enable/disable individual
+> > features. That tends to be helpful to narrow things down when it does
+> > happen to explode and you want to narrow down the cause.
+> 
+> I can add a -U for "do not use uncached".
+> 
+> -- 
+> Jens Axboe
+> 
+
 
