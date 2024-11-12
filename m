@@ -1,92 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-34375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC669C4D3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:23:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7229C4D60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1046028239F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23CFD1F22E8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55166207A1B;
-	Tue, 12 Nov 2024 03:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7F220A5D6;
+	Tue, 12 Nov 2024 03:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fax1j6SJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86684206042
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 03:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC81209666
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 03:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731381789; cv=none; b=pvizz/7tlm387QVxn9g3k802fhqH3yqsLfNY955IbNITNGAZPTRPdyp9Sa/IKvLx+pT2tr6f36Uv2bWDAgEszR82zKlTpNOfE4QMJzEUXP4LgnCe1q7FQcYuqFk1pz317fHCn1S+3yoVq+1/TCg4JP9rJUttDYpHw9g5DvBcQy8=
+	t=1731382558; cv=none; b=thzQ1GtOQmm+d9Z9YGdda81ZOZ+XNIi+mh20b0c5/CJRLG8YJoWzo4Bo3NiTok2k+bPX5yO2g4oaXdW3w6HpBNlLHhQfzbiswmSr4Y1sTPV4l/sWMYCDK3ldlzRGQNms3dQstCaOLh2uYhYsD8yolbIdUXL629T+FGs7p9Hk0k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731381789; c=relaxed/simple;
-	bh=c59rq/7n3PHZV+Suo9gZ6Sof0WvUW1q/ji67zSE35eg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gZk6dSM4nKc0AqjJ3eJqMR+40nGnAByFdqk0RI8cwEwedYRBNBs7lpLgPaKUrZRqkpxKTRVvBaenDcUfJfQ37ARuSFL8xUJ7bUjCX+XEuuT7KvXOJpGLeI3lRIytH6sriYqqwhFw0UcfipQqEAGe3tpGEgZTRSiByHKs6bU7xK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so70500375ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 19:23:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731381787; x=1731986587;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmAGIQngpXa/1+2VC6uEAt5s/OZNY5/G7HFFw9+3pkI=;
-        b=cSW22RJjdGQ2ARi7/izbWJ3yMBmSsuppelSp1Gbdnph90AD6n35l+cA3/2Ktz6x7uN
-         clkcGFds61lP1P/N/o7IjpEloLCCFtEm4dHe6V9/xRrq5cCLFmf/u8WwbpiAoJR0/ZAo
-         ee7MSgMvRuA0+tCT9XvvM1zXyRqnwq24WJX1j2Xi3nTz54OuMhFbWx0sOhPxU2doxO6T
-         597eGjuriXf72NZX2QXcBciDwZPKrctm6OD3eyxMVUxJXfaleIDK6+D0ttAiiWMBBCqi
-         atTKBnIkOc2EKfsJzKS8xXrafFp1JYHyYh7eugRmIsCgmiKPUsM/hCklXjoG3UTFAp2l
-         0jyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXq2sPgKo48v1jG/NIycXGjqVciRwKDcuwzzcsSV8V4j2KHfcoXoMfq/u7wjaNXOFPa7zqkGKE5A9uADQtx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl+uEBz46GVZjGXzyD9t8aEHIjS8gG8QWmbzVtwMEf5EwTHy7C
-	hyrQKaGjkk6w7oatm02kTB1WVMbrFSo08AGiU1lveCtAKXfPbnf6ZwT9PmJAtwzTKIqdCjMwyJ/
-	+zGdLZIG0WPkgHtT1Djeh0bGbp4j786oTa5Loqr69qBKI4oHLilb0UdA=
-X-Google-Smtp-Source: AGHT+IFnZynlEK9QhImG9NWvPseVWbTnlWM+8+8PwejoxDtnQc2IgH3PqxrpxZ8IU6RvIxJs5G11NXwh3DX79PwcdetZgOD4vPjM
+	s=arc-20240116; t=1731382558; c=relaxed/simple;
+	bh=rMKVb2jYqK4+2nWP2Qbm3ywRPZNJXPBb6FTHkg8yT/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCkunkynyvQrfutdXD2JsZdCwqhnhq4L0KCpgqBi54nleW/3TGZ+wYpq69q+AuVlH+DJpEt2kT1f3kiyGoWCXnRLt+DDB8RTtI0ME2L6o8QthIwrKZs4hOepxhAGr+FKCjwRtLSctO6IGjmFgc68qRjICRGX1YPqf6HLbbEf0eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fax1j6SJ; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731382549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8bQ4oXcfUZgRe4pWvThGLlk+ybo3RbZlCSpCy3qXQsU=;
+	b=fax1j6SJTNACLXkQBpb3O6g42X0wRkDzI0TOecd89p6RGzitDPK1BnLbevoeBAnVZshQno
+	lYq/aiWcoW0Uvtvn1/CDc9ngdVsnQPgYljCKAy2unXxCS3hdM2CNCojoWAMMb2pRVukRW7
+	Cf4WXt66xZEP1Z3aoqH8LyvS+8CCSJ0=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	brauner@kernel.org,
+	sforshee@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: [PATCH 0/3] io path options + reflink (mild security implications)
+Date: Mon, 11 Nov 2024 22:35:32 -0500
+Message-ID: <20241112033539.105989-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348c:b0:3a5:e5cf:c5b6 with SMTP id
- e9e14a558f8ab-3a6f19e2641mr168214415ab.10.1731381786682; Mon, 11 Nov 2024
- 19:23:06 -0800 (PST)
-Date: Mon, 11 Nov 2024 19:23:06 -0800
-In-Reply-To: <000000000000307a8e0615918f2b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732ca1a.050a0220.1fb99c.0162.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in attr_data_get_block (4)
-From: syzbot <syzbot+8e034d7422d389827720@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mail@seo-local.net, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+so, I've been fleshing out various things at the intersection of io path
+options + rebalance + reflink, and this is the last little bit
 
-commit 1fd21919de6de245b63066b8ee3cfba92e36f0e9
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Thu Aug 22 11:43:32 2024 +0000
+background: bcachefs has io path options that can be set filesystem
+wide, or per inode, and when changed rebalance automatically picks them
+up and does the right thing
 
-    fs/ntfs3: Stale inode instead of bad
+reflink adds a wrinkle, which is that we'd like e.g. recursively setting
+the foreground/background targets on some files to move them to the
+appropriate device (or nr_replicas etc.), like other data - but if a
+user did a reflink copy of some other user's data and then set
+nr_replicas=1, that would be bad.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d5b8c0580000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e034d7422d389827720
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171bf3a9180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1084f189180000
+so this series adds a flag to reflink pointers for "may propagate option
+changes", which can then be set at remap_file_range() time based on
+vfs level permission checks.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+so, question for everyone: is write access to the source file what we
+want? or should it be stricter, i.e. ownership matches?
 
-#syz fix: fs/ntfs3: Stale inode instead of bad
+then, we're currently missing mnt_idmap plumbing to remap_file_range()
+to do said permissions checks - do we want to do that? or is there an
+easier way?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Kent Overstreet (3):
+  bcachefs: BCH_SB_VERSION_INCOMPAT
+  bcachefs: bcachefs_metadata_version_reflink_p_may_update_opts
+  bcachefs: Option changes now get propagated to reflinked data
+
+ fs/bcachefs/bcachefs.h        |  2 ++
+ fs/bcachefs/bcachefs_format.h | 28 +++++++++++--------
+ fs/bcachefs/fs-io.c           |  9 ++++++-
+ fs/bcachefs/move.c            | 51 ++++++++++++++++++++++++++++++-----
+ fs/bcachefs/recovery.c        | 27 ++++++++++++++++---
+ fs/bcachefs/reflink.c         | 18 ++++++++++---
+ fs/bcachefs/reflink.h         |  3 ++-
+ fs/bcachefs/reflink_format.h  |  2 ++
+ fs/bcachefs/super-io.c        | 48 ++++++++++++++++++++++++++++++---
+ fs/bcachefs/super-io.h        | 18 ++++++++++---
+ 10 files changed, 172 insertions(+), 34 deletions(-)
+
+-- 
+2.45.2
+
 
