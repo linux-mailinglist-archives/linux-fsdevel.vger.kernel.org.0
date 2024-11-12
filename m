@@ -1,78 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-34413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD31B9C5189
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 10:11:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2642D9C5192
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 10:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B032B24595
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35D51F22A91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1A920BB39;
-	Tue, 12 Nov 2024 08:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F03C20DD53;
+	Tue, 12 Nov 2024 09:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R0v3DeVK"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="buAfCkEp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XsDobdut"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D0820B808
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 08:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E64209F4A;
+	Tue, 12 Nov 2024 09:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401670; cv=none; b=DEtncG00OJ7nQ2NJx9ahf1/woW4PGbF/1tJ0DNaZhBCPUpBcmb6vTvR+nY06i8ipKxzqP1uPmo/l6w4ZImII42a6pij3/zE5RVgj8OEGJ5c2MQvRU6nJJQ9cL9Oasa4B0N3GjLMVauoPuve5NF9cMUlnj3gH77fuFX5c853iPyw=
+	t=1731402746; cv=none; b=oSplU/HCj0G425WPwwaurYye8CybOaeKHIuJ+5uTxvhJMasY3L2wKvLI3xcI5Is9anBtg6ZxxxOAx15+tMHGajx0lUUNeAq1TK5H3EWQ8QKRZssKye2XdPKlgCpa9KGY2ng88qJPkcG6esiP+mAQCCK9ZPcM9iazsmcm3YtWNbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401670; c=relaxed/simple;
-	bh=D+OR7DXqW7oJhBvoNSK+FItozipqU3FWMHtDLNKzmnQ=;
+	s=arc-20240116; t=1731402746; c=relaxed/simple;
+	bh=6JtaLLQ/v3VECtHaMsXqeUBPZz842Chv6jk9Tfb+EaY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6hCFBunULD80fTcdOsBJo8XozCD2SFUtvadUDaGMlpgrbraSMt3FoY+UmKwVlC5jzRASLNxdMLAhsGZQJBbQ61Yfs8v0jmrnIKaq0U+eDNKKjbTOkho3yMMsg3aeTDwzX2ndsswKeFT/QbMF6RSBRFzbTr+UvPBO9d5PO1En4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R0v3DeVK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731401668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7WcrqPI4E4/sq7ozAJvCWrUqHcInLoL+KPoKReN8VBc=;
-	b=R0v3DeVKqRUhYrzHTV7Ru0W0KDF9q3BMDGcvUkydPxlrEiP1ARus8gqupif1JaPRcdRVtX
-	M83UhCVHSitlzHfhXwoAS5kVhZlGiaNgsUt85EcXsIFRLaMJSJbZEPsHW4+y/Y7JDu3Lhv
-	rm08/1Lyzt1QPf19pXFJDu1i21oouqA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-x-uaRYhGO0mcW2Mi1M1b_A-1; Tue,
- 12 Nov 2024 03:54:22 -0500
-X-MC-Unique: x-uaRYhGO0mcW2Mi1M1b_A-1
-X-Mimecast-MFC-AGG-ID: x-uaRYhGO0mcW2Mi1M1b_A
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0945B1955F41;
-	Tue, 12 Nov 2024 08:54:21 +0000 (UTC)
-Received: from ws.net.home (unknown [10.45.225.223])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5086919560A3;
-	Tue, 12 Nov 2024 08:54:18 +0000 (UTC)
-Date: Tue, 12 Nov 2024 09:54:15 +0100
-From: Karel Zak <kzak@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
-Message-ID: <abkoq7b4vwzrllqveyqdupwal64uhu72lkmt24e7q4ge24tiye@2xxmrl6gek3a>
-References: <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
- <20240625130008.GA2945924@perftesting>
- <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
- <20240625-beackern-bahnstation-290299dade30@brauner>
- <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
- <20240625141756.GA2946846@perftesting>
- <CAJfpegs1zq+wsmhntdFBYGDqQAACWV+ywhAWdZFetdDxcL3Mow@mail.gmail.com>
- <CAJfpegs=JseHWx1H-3iOmkfav2k0rdFzr03eoVsdiW3rT_2MZg@mail.gmail.com>
- <20241111152805.GA675696@perftesting>
- <CAJfpegtxcoUBWC46439+Dw_2z4RoKwahGtDNoKQRHHexMpP0LQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9m4rroJNU9YLkw9UmkSGuXsRsA1+2y7SdbjqAtBm/NbZpuJQGWFySbOsICv5I9hiP6+f/2QkRqMdnKEEZ5+M2J/HNGOK5uZhkebHVXmXHVTDd/8ubGcw9Y/AzWYFbpKTagvO604HzE5sa4l6KmBZdO3rNeITh1lgkvDXv8je4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=buAfCkEp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XsDobdut; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 286331140182;
+	Tue, 12 Nov 2024 04:12:23 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 12 Nov 2024 04:12:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731402743; x=
+	1731489143; bh=LviMUWp4Is8Fy/dVsm0aEbYiR7YOyd/oz5oNPRf4lTg=; b=b
+	uAfCkEpImy5cjaoLEU5eFxh7p2wxjkFDdmQeReof5SL3TVEn6WausxBEwpiCioBo
+	9jLsc83YaFd6ouBNhr6dG2qtVHuHM9P83YnVoqwFX+M77bReKCHcCnhS5I9P60fV
+	bnSllq+u7p0s8XWiwQpIxFvr1BNFKnnSxZeUhEXsH2iFm53RTPm+AkZFu9ZAqJv6
+	F+8WJm0kjoPip4QRqHA9fNJ5jjV4r1QRNxQdwKXuUnwoVKx9AycrtbKrGB10lSqi
+	BGVWJFWm3dhJwQ2jpQC9MSuzvaS1d0NUqyhaNGwhvbv8hkcir6TQsyG01fP0FKXg
+	P5GeCF6IShcnpG9tOyX0g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731402743; x=1731489143; bh=LviMUWp4Is8Fy/dVsm0aEbYiR7YOyd/oz5o
+	NPRf4lTg=; b=XsDobdutrRH1T1/TltivI79Y3Cb8DNBZBUZcxIIGJJWZaElkO4Y
+	FCcDgGwaQPZUanAndjuGtWBOXjJjRobSmBB2vUkVccr0woNlj3uEWKNqmUBx/CdC
+	E3cLbAPQ53KooZIhHEX/xZeBLDgbiJR/Tuq1oauzkvXAXhXpgZBUKQVKVAZ/9Kub
+	qdrzYGZV31kDUp4zEKITuDodbvF+QBMmlHlBxeXMn5b/QWJG5UEBIlBXqhobFLPI
+	VpXJGICsuF+J6IkaNCsvE/AcQzNOZPY2zRHUIy6soIugOElMdTH2eJ6k7mEzdOHl
+	t1kyF8v5OgvV0l9fOfdaR4OTv716fPGJQuA==
+X-ME-Sender: <xms:9hszZ9AXcvesEPT2Ac1yYleRPxob8aOMB3S6M58G-1oRTl1sWkvqZw>
+    <xme:9hszZ7gfr3hv9PsiOsH2LMFjqHSxgcSp4YaDnEPMxW8GeOPEubdrLiMP7APTcwkx0
+    j7d3fYcS7z5eZIx5m0>
+X-ME-Received: <xmr:9hszZ4kpEH7hl8qKrI1nRGP3bBT53kApJN2n7HjRvUo6j7_YZ-IBpI4YqRLLZp887jh-_Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudefgdduvdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhm
+    sehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdr
+    ohhrghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuh
+    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhl
+    lhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqsghtrhhfsh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgvgihtgees
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:9hszZ3wxYo-EonlUCaSna0xEvY9Ye-it7EF5_DeUkCfk-vTYmJbA-g>
+    <xmx:9hszZyQ-2Kf278mXEJiFImXvd0sRH-vBI_GlHrNCBIOd_xBb7YPqbA>
+    <xmx:9hszZ6Zp_cC09g1441JPyU_dulG9M_TVwhc7SlgbsLh91Mkw_TN7ig>
+    <xmx:9hszZzSxdqRUEs-SSCOGHa9YOoY3BM7n51A20v7kTETCDNpl5s7IcA>
+    <xmx:9xszZ3KhGoeFXQWiZqiR5dKy_gf-bAqGpjBDmvrCYSz0CEgR3yJVMfw2>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Nov 2024 04:12:18 -0500 (EST)
+Date: Tue, 12 Nov 2024 11:12:15 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 03/16] mm: add PG_uncached page flag
+Message-ID: <lponnb7dxjx3htksbggjoasvby6sa2a4ayrkcykdnxvypwy4pp@ci2fnmcyrke7>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-4-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,26 +107,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtxcoUBWC46439+Dw_2z4RoKwahGtDNoKQRHHexMpP0LQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20241111234842.2024180-4-axboe@kernel.dk>
 
-On Mon, Nov 11, 2024 at 05:02:10PM GMT, Miklos Szeredi wrote:
-> As Christian said, we can add a new flag for the un-escaped variant, if needed.
-> 
-> I'll make a patch, because I think it would be better if there was a
-> variant that non-libmount users could use without having to bother
-> with unescaping the options.  Maybe having two variants isn't such a
-> bad thing, as the current version is still useful for getting a single
-> printable string.
+On Mon, Nov 11, 2024 at 04:37:30PM -0700, Jens Axboe wrote:
+> Add a page flag that file IO can use to indicate that the IO being done
+> is uncached, as in it should not persist in the page cache after the IO
+> has been completed.
 
-I believe the ideal solution would be to support both variants. The
-comma-separated variant is not a mistake, in my opinion. It is a very
-common formatting style that has been used for decades.
+I have not found a way to avoid using a new bit. I am unsure if we have
+enough bits on 32-bit systems with all possible features enabled.
 
-    Karel
+In the worst-case scenario, we may need to make the feature 64-bit only.
+I believe it should be acceptable as long as userspace is prepared for the
+possibility that RWF_UNCACHED may fail. It is not going to be supported by
+all filesystems anyway.
 
 -- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
