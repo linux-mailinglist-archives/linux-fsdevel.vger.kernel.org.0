@@ -1,84 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-34445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCB59C58AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:12:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5789C58BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EBC2812CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451332823D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA35D13F435;
-	Tue, 12 Nov 2024 13:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4040143C4C;
+	Tue, 12 Nov 2024 13:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZlhlzTw"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="aUKmRdWq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36237136358;
-	Tue, 12 Nov 2024 13:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A381DFF7;
+	Tue, 12 Nov 2024 13:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417127; cv=none; b=shVaVw6wLAOyxofZCrbEJU91J5IJBKGlrD2RaPMA9p13qPu6ZgaTKgsYsoLyvBby0wF2hTUS0cN9T/lxu4bdRL8PVL6aA+EWoFymCPeD9tTDsIwWyaNzTRenIJclVlZbEzNhYYX4uIiJ1dbJzHFsQgk2+c6pNsM9PbeGqfrLN/s=
+	t=1731417363; cv=none; b=cww9JO9SaTdCD8dAiilvxecLVb+Mm0qNcSpel/yHmInAl4bag0aOG0us4MqmRZtWqwZdODj0Q8XeOff1lCQwXi4+Z5eFkjsmpHEFzKylpiaRvEwGVItFC1zNQCcaZ8XXdIguSGHsJGD9cWDttH+bLTc1emuHzIXvM3X4JAXhoQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417127; c=relaxed/simple;
-	bh=6fuAdoWePiWW119uoihPQFWCRSJej2BXfkodlTvw0jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+GdLbXOKzEsCgdNFNpnr5tS1uZxlwLCHVfKAmqoPBFJcreLrZQf1MKtXope20zhKCghswIF518xxMWUvZOUGdWKtvVujyl4+G/T/JT8zkXn7W5GfmBDwn7KACklKQeioVNQzHF9dr7Wq2qWAFe25nbDINB2OJqnQaCK7WGY/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZlhlzTw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54C60C4CECD;
-	Tue, 12 Nov 2024 13:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731417126;
-	bh=6fuAdoWePiWW119uoihPQFWCRSJej2BXfkodlTvw0jg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZlhlzTwMlsuqSYRUFs9RCfYB2z9J4Nc5KQBj3Sy5huJc4zwLia02RDw+R/9LCWOr
-	 JgyqJ1cJ3OOvL+HYWlaMM3MQYTubDRddOE5DWk1BJZr2PSDNINvr6MiBu8+O3weV9X
-	 JKEpuE+trs0NnmzK01GgxaAsFuCsI62vLxMDhZTnm+uvoke3dMsUJ51sEeCVUzNomx
-	 616lDdIXp4eTbBmm0tOfpCEjE6VcsMvLi3MuyBZ7YTTtpDnsp67LRbtXBR+CxKQzp0
-	 Skr2/fTkOjck5fuQkuoHx86P/pwD0gDi8R3RodDW+LzDROY0GaijYH5fy1iVW0hW2f
-	 O44EQxcHyep8g==
-Date: Tue, 12 Nov 2024 14:12:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
- devname
-Message-ID: <20241112-muskel-furios-7a25e5794b0c@brauner>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
- <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
- <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
- <20241112-vielzahl-grasen-51280e378f23@brauner>
- <CAJfpegs5t_ea5yEOAEbeq07i--VeoN6ZnvFyM=Tyxss7gtTZig@mail.gmail.com>
+	s=arc-20240116; t=1731417363; c=relaxed/simple;
+	bh=qfOxXZl3i+Y1oYo8sGRDtKZMnRF7XlS1req/aH6k6aU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sjVwdPXCqdcSFxSc9w/cVv/Jf7yQpxwBi9ShS5ztfXZyataZh/t4JX8dbXZO67VAF+Wi78JcNC83QwJdFqOYOPSWaUofEwomISVHTbFClsbAmturTYMrYoY6bhhlWy6IVeUYnHDir+YazUGxLA4IjMnnQA0axJqKvpz76iC4Vd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=aUKmRdWq; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1274540009;
+	Tue, 12 Nov 2024 13:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1731417358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q32Mu1dm6Jq7pbi1U+EvpEksk9Tb+6KgFIz94SMpnwA=;
+	b=aUKmRdWq8Mi5vXx2PojitY93MZJ+cElBXrTD0ft9KyK9YACwU/IDVOWZv9ah9uv569g3su
+	l1NVQw1nO9HwagKTJuAyBsWzoaK/FhjbDvt7fY9gdaYSlhHLcqtrPG0l4lWRk5teTPKBv2
+	IGXWbuSmYd9Mexk1hdAaz4DTytFF0kKMLjZ1Qi5JjfamTcuHcFkwYZ5PqZNudtZ1zTKLBl
+	HMxjIqwFiuPnflFvVVzbdFuIZVsXyQzz7M5ClcuQ6dl4/T5qqix4+kCuntWzo1mE803dy1
+	SlzOugn5G5D//KxHZg0M7eXPkixQeXSSLC6WiSw874IqRyORA5CZherxmcN0Kg==
+From: nicolas.bouchinet@clip-os.org
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: nicolas.bouchinet@clip-os.org,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	Lin Feng <linf@wangsu.com>,
+	"Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH 1/3] coredump: Fixes core_pipe_limit sysctl proc_handler
+Date: Tue, 12 Nov 2024 14:13:29 +0100
+Message-ID: <20241112131357.49582-2-nicolas.bouchinet@clip-os.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
+References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegs5t_ea5yEOAEbeq07i--VeoN6ZnvFyM=Tyxss7gtTZig@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-On Tue, Nov 12, 2024 at 11:24:45AM +0100, Miklos Szeredi wrote:
-> On Tue, 12 Nov 2024 at 10:42, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Mon, Nov 11, 2024 at 08:42:26AM -0500, Jeff Layton wrote:
-> 
-> > > It's error-prone and a pain to roll these yourself, and that would make
-> >
-> > As with most system calls.
-> 
-> Also couldn't the kernel tree have a man2 directory, where all the
-> syscall man pages could be maintained?   I think it would very much
-> make sense to update the man page together with the kernel API change.
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-I keep saying that over and over as well. IMHO, we should integrate the
-system call manpages into the kernel tree. So fully agreed.
+proc_dointvec converts a string to a vector of signed int, which is
+stored in the unsigned int .data core_pipe_limit.
+It was thus authorized to write a negative value to core_pipe_limit
+sysctl which once stored in core_pipe_limit, leads to the signed int
+dump_count check against core_pipe_limit never be true. The same can be
+achieved with core_pipe_limit set to INT_MAX.
+
+Any negative write or >= to INT_MAX in core_pipe_limit sysctl would
+hypothetically allow a user to create very high load on the system by
+running processes that produces a coredump in case the core_pattern
+sysctl is configured to pipe core files to user space helper.
+Memory or PID exhaustion should happen before but it anyway breaks the
+core_pipe_limit semantic
+
+This commit fixes this by changing core_pipe_limit sysctl's proc_handler
+to proc_dointvec_minmax and bound checking between SYSCTL_ZERO and
+SYSCTL_INT_MAX.
+
+Fixes: a293980c2e26 ("exec: let do_coredump() limit the number of concurrent dumps to pipes")
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+---
+ fs/coredump.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 7f12ff6ad1d3e..8ea5896e518dd 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -616,7 +616,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		cprm.limit = RLIM_INFINITY;
+ 
+ 		dump_count = atomic_inc_return(&core_dump_count);
+-		if (core_pipe_limit && (core_pipe_limit < dump_count)) {
++		if ((core_pipe_limit && (core_pipe_limit < dump_count)) ||
++		    (core_pipe_limit && dump_count == INT_MAX)) {
+ 			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
+ 			       task_tgid_vnr(current), current->comm);
+ 			printk(KERN_WARNING "Skipping core dump\n");
+@@ -1024,7 +1025,9 @@ static struct ctl_table coredump_sysctls[] = {
+ 		.data		= &core_pipe_limit,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_INT_MAX,
+ 	},
+ 	{
+ 		.procname       = "core_file_note_size_limit",
+-- 
+2.47.0
+
 
