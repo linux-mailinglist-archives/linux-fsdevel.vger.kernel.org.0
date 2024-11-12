@@ -1,103 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-34446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F099C58B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:14:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E91F9C5934
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE2B1F2251D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F5D284BE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EBE70830;
-	Tue, 12 Nov 2024 13:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSEglA3B"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5B114A60D;
+	Tue, 12 Nov 2024 13:34:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2A5433C0;
-	Tue, 12 Nov 2024 13:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0405570838;
+	Tue, 12 Nov 2024 13:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417231; cv=none; b=Enj8IMDEtGGZv3R3b+4O2pI1MBr2XJfQsU5DdmcKoGw7QF00+IRTJ0eZnfTmW4FTvjYZOeMz/+NV4l0+JsfIUHf5BfyY6D7uNaFGArue2J8mstbc+74RVASwpwEsCkZSd72mTTxhWZw+5Vf50CkelU9pXS2OGEF3vcC0TUulLQk=
+	t=1731418492; cv=none; b=XJ2/Sv7hG1pX8tWQeNiGSENNldwyjp1/nClB2lGLZi3/nECSOHSLS451kHotpHlWwyU3SiWarot+2e0ld13slcJRIfYsE5WDaHkXrZW73FKI4VRWF3Rc2Kk9gyr/ZiaHf3eE3CcGtuweds+DRrNfoikQnOw0WD+SgqK0nKQ0RtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417231; c=relaxed/simple;
-	bh=MeBBvy90U/UVGE9TEeR16NKENnT4xKX2C/U++xYC8gk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AvExsr2mKBWiBJLjh5+p8NvD1E4LhTFzMHRuKBAlC1JNuS6e6FhiraMkdL3lvynABPq+/Jpd8K2xAfI14JJUb+IXdK8414fuxU5NRKw0Norn8swDiSkjGZYzCt/zFirIqhp3y88TT1Y8RwigFsXoIg76fXTJaKU6dYS32hlMPiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSEglA3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED85C4CECD;
-	Tue, 12 Nov 2024 13:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731417230;
-	bh=MeBBvy90U/UVGE9TEeR16NKENnT4xKX2C/U++xYC8gk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NSEglA3BC0UVFL/G+J9yVw2FYKs1Wd2eAxbGr1qHKMCOppCsbdN3z7DVzdRFnPPlM
-	 TgVn05WjdY0Vk4yWaVrF4F6cQGJUsgogJ8TwLfikF0efMrYIfEaKhR/VhCLVuOF7XM
-	 qoJiph6LnK556RHCvNRSvTiTq5NE0DQlD4o9zyvs1noqdwZhItn5oiLQq2MnF0CSDC
-	 PAl0RPYYTRHZqhv+L50AZU+PW9aC7Z4FN+q0NhFTywu3TV+XTFEdtQP10vcnqfZKM/
-	 feVkQ32xvFRKoGQFA8SAYxBxHcw4h86TmyZOV55YckIOngZE0SRX0+JYRzoHsf13Y/
-	 3/h3bCY7fRypQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jmoyer@redhat.com,
-	bcrl@kvack.org,
-	jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org
-Subject: Re: [PATCH] fs:aio: Remove TODO comment suggesting hash or array usage in io_cancel()
-Date: Tue, 12 Nov 2024 14:13:39 +0100
-Message-ID: <20241112-begierde-skepsis-34f013abaa1f@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
-References: <20241112113906.15825-1-pvmohammedanees2003@gmail.com>
+	s=arc-20240116; t=1731418492; c=relaxed/simple;
+	bh=IohhMWm0GLaqgM1mNYiMqChrCU01LrwRWo24VMDS5z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZbQxniu8qScSPdreN7reORpXxXnHaq5D3IwvBBwM9auk+cRF+M04B/NnyGQjVx0jkH6yh2c58d7+OGSBtcruHKmme39D5PDrh0tePF8ooiYD7tpYLTeQAil5HqbuYKB1WYaoBumN4PiKHsEYJm5F8XCrvKhvYeg32ll4v9ds/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3CDC268D0A; Tue, 12 Nov 2024 14:34:39 +0100 (CET)
+Date: Tue, 12 Nov 2024 14:34:39 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, axboe@kernel.dk,
+	martin.petersen@oracle.com, asml.silence@gmail.com,
+	javier.gonz@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
+Message-ID: <20241112133439.GA4164@lst.de>
+References: <20241108193629.3817619-1-kbusch@meta.com> <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com> <20241111102914.GA27870@lst.de> <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1406; i=brauner@kernel.org; h=from:subject:message-id; bh=MeBBvy90U/UVGE9TEeR16NKENnT4xKX2C/U++xYC8gk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbh7RM8/L5a8q+8mdHbWnMquv7q4yW1E9bb7P6R0Cs9 MyXr9Zu6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIdFlGhhUn1ZPYt0RHi6cH hG9/WtuR/0PY1s38zN0Ws13BnVcXFzMy/Kibs/jvgR2ck3muiKQk+733Kzzq8N/jVxSTytlZh2b t4QMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, 12 Nov 2024 17:08:34 +0530, Mohammed Anees wrote:
-> The comment suggests a hash or array approach to
-> store the active requests. Currently it iterates
-> through all the active requests and when found
-> deletes the requested request, in the linked list.
-> However io_cancel() isn’t a frequently used operation,
-> and optimizing it wouldn’t bring a substantial benefit
-> to real users and the increased complexity of maintaining
-> a hashtable for this would be significant and will slow
-> down other operation. Therefore remove this TODO
-> to avoid people spending time improving this.
-> 
-> [...]
+On Tue, Nov 12, 2024 at 06:56:25PM +0530, Kanchan Joshi wrote:
+> IMO, passthrough propagation of hints/streams should continue to remain 
+> the default behavior as it applies on multiple filesystems. And more 
+> active placement by FS should rather be enabled by some opt in (e.g., 
+> mount option). Such opt in will anyway be needed for other reasons (like 
+> regression avoidance on a broken device).
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+I feel like banging my head against the wall.  No, passing through write
+streams is simply not acceptable without the file system being in
+control.  I've said and explained this in detail about a dozend times
+and the file system actually needing to do data separation for it's own
+purpose doesn't go away by ignoring it.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs:aio: Remove TODO comment suggesting hash or array usage in io_cancel()
-      https://git.kernel.org/vfs/vfs/c/27e4f4fa65c2
 
