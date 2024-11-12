@@ -1,181 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-34507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01749C61D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:51:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED5D9C62ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD291BC60B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28C9EBA6754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495C42194BD;
-	Tue, 12 Nov 2024 17:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E3A215C4F;
+	Tue, 12 Nov 2024 18:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="X7M9bpLw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2F1VRLl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91020219C82
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513BB20721E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 18:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434211; cv=none; b=nSaLxWEKBGVyBSq+bDW4Hq3wT0UOsos3T3ZzJV6tptehtbZ+dQ3x00nqhODHxg6v0kUleZ1R+ViC/K/jGjbI1KK/6AWnhXUN1OY08TWPkvL3n5py5yK/JoEuBGcaWwEaPvJol9EJpI9jWjE4NF3pP03rmuil6raSK4TMUwRWw2o=
+	t=1731435031; cv=none; b=IWcwEFIu32Z4Vg69SAe6kU77jlqi07CBd7tMvdTcKmX0fLDxYZrWGMr4xS9QeJ6uGeCn5K794MUKmKTfZnp5lPPZqsFtdsbXBerWrsk3lzzWKUZAC0/9ACGzNxdD3e1d82cnBEy5mhSB+452ELg3K5x8akpdtb7f8j05XuZ/6zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434211; c=relaxed/simple;
-	bh=nEHBpFohXdPFfKZTP2r5oPAoCPK79vU6B8kkFKUWAqs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S5AYJ0jJ82DqWvL6fvXLEU2UMLREFahcpl1/i1lCPWH0uK593A2XvKenAe6gw1Nn9vPdB6fYBESwnYBwgU7mXEGHDLoLlR+BgSQLO7n+xvz8zmcshDkJfn+p+wvKFVGDcjXHfiX2VIYSUMn1wjlXw02zryfWOyDbE8MnXNSpXY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=X7M9bpLw; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e35bf59cf6so43927b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:56:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731434209; x=1732039009; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DKrH1r2LzuvlRLkIW99g50GCI+7PqnnQMlTA3Xoxniw=;
-        b=X7M9bpLwKlcHfwdwZ9XMGaLTxSfeBZAH2ImNoUK8oJ230t/fVhMM6yJlzjG+DMyOfa
-         77xXDbM82n52tE/mqdwX965sJ1zgJs+MKWsRHnGlWPeEOksFRkA9barSVvr9x4QLtAwh
-         ur6gOFEsK2Zyiyn4Ef9KWlnHhSOhW2MZijD2QGPk6bFIiGibR9HZ1HKRz4OLBP8QTrUv
-         5Qa+OVWc3RJUKKMTirKiXgNfNFcB2Ol5PXChLH1AHGSSB4pdKlvR8Z94392x7x2Kyx9q
-         ZdZSIzW2NGamKBoj6BjLzFtp2+EoGDv8Zne/9X9RGt++pIjuVJH/f1GNUma5yDzc3/iU
-         oVFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731434209; x=1732039009;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DKrH1r2LzuvlRLkIW99g50GCI+7PqnnQMlTA3Xoxniw=;
-        b=MpgDtoiN1/kAlxkfSwR1c3lq25rBqySmDGkU0vCLO5EKtIEyxK0yg6x0mJH2yGsN5g
-         tjzWIcLzxYfyubBjGphH3m0al4M1Ie9WeBh/PGiX03DcitUnq+AkN1B2amX50x7lnX0B
-         RPRI/sg8L0gcnwZ/WQwdVFd0ZtQELLSIeY7DX3e6J3au+wxkMarTZb86G3GO38JUkeVM
-         SDCbhE3q7SFbtw355zAyO/fa9/v02KsZInYZsQl2nXZ+Cliwx2kPYVMYRYq04zHqF6Vg
-         0whVartYc77hJTu+8Tbc7Y6dKq/vjRrW8IbVmCPiXQ2lUUl9ineCeIVl747fXOT+VjVN
-         Nxpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYJ5bNxNOgXWuf5iwvUqewDDdtAD5gKVbgAL1HqOvnkh0BfsBRGDfQBxFwa4I9fEf/zxCeqAiQKuMC71So@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Dz/nKcxzo6ZJjR0D1WWYMcVIonr8xMeyCVEO1/8oU22WOte2
-	zB1g8JnRWU+UzXiE+KgI3V7v5ulj+PjAin41YaTLD5P8+7TJh1kFWYCru9aIJK274HBoeqqQuIH
-	v
-X-Google-Smtp-Source: AGHT+IFJc2RNjc1G/OBWSTi5fyS4IghkV6OUbtpYdZWmaUR5D0i4/YYlt6JaXitbsIbc6IfGCQnj9g==
-X-Received: by 2002:a05:690c:3510:b0:6e3:c92c:1d57 with SMTP id 00721157ae682-6eadc0a271emr140258467b3.2.1731434208685;
-        Tue, 12 Nov 2024 09:56:48 -0800 (PST)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb65a75sm26238187b3.97.2024.11.12.09.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 09:56:48 -0800 (PST)
-From: Josef Bacik <josef@toxicpanda.com>
-To: kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	amir73il@gmail.com,
-	brauner@kernel.org,
-	torvalds@linux-foundation.org,
-	linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH v7 13/18] fanotify: disable readahead if we have pre-content watches
-Date: Tue, 12 Nov 2024 12:55:28 -0500
-Message-ID: <23edd657a315f2e5ed648f8dba6d34898b4af85b.1731433903.git.josef@toxicpanda.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1731433903.git.josef@toxicpanda.com>
-References: <cover.1731433903.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1731435031; c=relaxed/simple;
+	bh=auejVTsiysPFBoG1D6SaMyEY/YijY3VjNx6zUFhFCKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKid91nDux2bTnhs9BS5DoC6m7XGxZV3BMMnzxHMfa/ihRkZnUA5kYPN4RNyN3nyvBi5ZEPljyk+573BplK/NAIy38m6DFxn676F9L5fTssirS91cl2GDqQSbUbfaILuEb08s10AoMAp+YiJ538h+BFY692KS72mCjZssUJsfSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2F1VRLl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731435028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qSj0SdB8QSc7Mjd9L/4LWSQMYeFV5iHP2hv8TZtArto=;
+	b=A2F1VRLl707lPY90NgwgL5pjdJjLmazJ8s+uY3kWGjn94fAh1u0y9xfbyQDmxVPqEKynRA
+	nsvosuBDb15aVUUT2n6ph6c2zmPAgRqXJQhwANXkyU46hePZVkwbuE1shOhcvOe32ChDy1
+	YbyAvv3ekZdxbhkjJ/Pswpw2xHvenxE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-266--KDSIWVmPMGLF4ReAom0aQ-1; Tue,
+ 12 Nov 2024 13:10:24 -0500
+X-MC-Unique: -KDSIWVmPMGLF4ReAom0aQ-1
+X-Mimecast-MFC-AGG-ID: -KDSIWVmPMGLF4ReAom0aQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 042A91955BCF;
+	Tue, 12 Nov 2024 18:10:22 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84FA61955F40;
+	Tue, 12 Nov 2024 18:10:19 +0000 (UTC)
+Date: Tue, 12 Nov 2024 13:11:52 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+Message-ID: <ZzOaaInUHOmlAL-o@bfoster>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-13-axboe@kernel.dk>
+ <ZzOD_qV5tpv9nbw7@bfoster>
+ <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-With page faults we can trigger readahead on the file, and then
-subsequent faults can find these pages and insert them into the file
-without emitting an fanotify event.  To avoid this case, disable
-readahead if we have pre-content watches on the file.  This way we are
-guaranteed to get an event for every range we attempt to access on a
-pre-content watched file.
+On Tue, Nov 12, 2024 at 10:13:12AM -0700, Jens Axboe wrote:
+> On 11/12/24 9:36 AM, Brian Foster wrote:
+> > On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
+> >> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
+> >> and hence need the worker punt that ext4 also does for unwritten
+> >> extents. Add an io_end flag to manage that.
+> >>
+> >> If foliop is set to foliop_uncached in ext4_write_begin(), then set
+> >> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
+> >> folios as uncached. That in turn will make writeback completion drop
+> >> these ranges from the page cache.
+> >>
+> >> Now that ext4 supports both uncached reads and writes, add the fop_flag
+> >> FOP_UNCACHED to enable it.
+> >>
+> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >> ---
+> >>  fs/ext4/ext4.h    |  1 +
+> >>  fs/ext4/file.c    |  2 +-
+> >>  fs/ext4/inline.c  |  7 ++++++-
+> >>  fs/ext4/inode.c   | 18 ++++++++++++++++--
+> >>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
+> >>  5 files changed, 40 insertions(+), 16 deletions(-)
+> >>
+> > ...
+> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> >> index 54bdd4884fe6..afae3ab64c9e 100644
+> >> --- a/fs/ext4/inode.c
+> >> +++ b/fs/ext4/inode.c
+> >> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  	int ret, needed_blocks;
+> >>  	handle_t *handle;
+> >>  	int retries = 0;
+> >> +	fgf_t fgp_flags;
+> >>  	struct folio *folio;
+> >>  	pgoff_t index;
+> >>  	unsigned from, to;
+> >> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  			return 0;
+> >>  	}
+> >>  
+> >> +	/*
+> >> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
+> >> +	 * foliop_uncached. That's how generic_perform_write() informs us
+> >> +	 * that this is an uncached write.
+> >> +	 */
+> >> +	fgp_flags = FGP_WRITEBEGIN;
+> >> +	if (*foliop == foliop_uncached)
+> >> +		fgp_flags |= FGP_UNCACHED;
+> >> +
+> >>  	/*
+> >>  	 * __filemap_get_folio() can take a long time if the
+> >>  	 * system is thrashing due to memory pressure, or if the folio
+> >> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+> >>  	 * the folio (if needed) without using GFP_NOFS.
+> >>  	 */
+> >>  retry_grab:
+> >> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+> >> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+> >>  					mapping_gfp_mask(mapping));
+> >>  	if (IS_ERR(folio))
+> >>  		return PTR_ERR(folio);
+> > 
+> > JFYI, I notice that ext4 cycles the folio lock here in this path and
+> > thus follows up with a couple checks presumably to accommodate that. One
+> > is whether i_mapping has changed, which I assume means uncached state
+> > would have been handled/cleared externally somewhere..? I.e., if an
+> > uncached folio is somehow truncated/freed without ever having been
+> > written back?
+> > 
+> > The next is a folio_wait_stable() call "in case writeback began ..."
+> > It's not immediately clear to me if that is possible here, but taking
+> > that at face value, is it an issue if we were to create an uncached
+> > folio, drop the folio lock, then have some other task dirty and
+> > writeback the folio (due to a sync write or something), then have
+> > writeback completion invalidate the folio before we relock it here?
+> 
+> I don't either of those are an issue. The UNCACHED flag will only be set
+> on a newly created folio, it does not get inherited for folios that
+> already exist.
+> 
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- mm/filemap.c   | 12 ++++++++++++
- mm/readahead.c | 13 +++++++++++++
- 2 files changed, 25 insertions(+)
+Right.. but what I was wondering for that latter case is if the folio is
+created here by ext4, so uncached is set before it is unlocked.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 196779e8e396..68ea596f6905 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3151,6 +3151,14 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 	unsigned long vm_flags = vmf->vma->vm_flags;
- 	unsigned int mmap_miss;
- 
-+	/*
-+	 * If we have pre-content watches we need to disable readahead to make
-+	 * sure that we don't populate our mapping with 0 filled pages that we
-+	 * never emitted an event for.
-+	 */
-+	if (fsnotify_file_has_pre_content_watches(file))
-+		return fpin;
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	/* Use the readahead code, even if readahead is disabled */
- 	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
-@@ -3219,6 +3227,10 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- 	struct file *fpin = NULL;
- 	unsigned int mmap_miss;
- 
-+	/* See comment in do_sync_mmap_readahead. */
-+	if (fsnotify_file_has_pre_content_watches(file))
-+		return fpin;
-+
- 	/* If we don't want any read-ahead, don't bother */
- 	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
- 		return fpin;
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 9a807727d809..277c2061fc82 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -128,6 +128,7 @@
- #include <linux/blk-cgroup.h>
- #include <linux/fadvise.h>
- #include <linux/sched/mm.h>
-+#include <linux/fsnotify.h>
- 
- #include "internal.h"
- 
-@@ -544,6 +545,14 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	unsigned long max_pages, contig_count;
- 	pgoff_t prev_index, miss;
- 
-+	/*
-+	 * If we have pre-content watches we need to disable readahead to make
-+	 * sure that we don't find 0 filled pages in cache that we never emitted
-+	 * events for.
-+	 */
-+	if (ractl->file && fsnotify_file_has_pre_content_watches(ractl->file))
-+		return;
-+
- 	/*
- 	 * Even if readahead is disabled, issue this request as readahead
- 	 * as we'll need it to satisfy the requested range. The forced
-@@ -622,6 +631,10 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	if (!ra->ra_pages)
- 		return;
- 
-+	/* See the comment in page_cache_sync_ra. */
-+	if (ractl->file && fsnotify_file_has_pre_content_watches(ractl->file))
-+		return;
-+
- 	/*
- 	 * Same bit is used for PG_readahead and PG_reclaim.
- 	 */
--- 
-2.43.0
+On second look I guess the uncached completion invalidation should clear
+mapping and thus trigger the retry logic here. That seems reasonable
+enough, but is it still possible to race with writeback?
+
+Maybe this is a better way to ask.. what happens if a write completes to
+an uncached folio that is already under writeback? For example, uncached
+write 1 completes, submits for writeback and returns to userspace. Then
+write 2 begins and redirties the same folio before the uncached
+writeback completes.
+
+If I follow correctly, if write 2 is also uncached, it eventually blocks
+in writeback submission (folio_prepare_writeback() ->
+folio_wait_writeback()). It looks like folio lock is held there, so
+presumably that would bypass the completion time invalidation in
+folio_end_uncached(). But what if write 2 was not uncached or perhaps
+writeback completion won the race for folio lock vs. the write side
+(between locking the folio for dirtying and later for writeback
+submission)? Does anything prevent invalidation of the folio before the
+second write is submitted for writeback?
+
+IOW, I'm wondering if the uncached completion time invalidation also
+needs a folio dirty check..?
+
+Brian
+
+> -- 
+> Jens Axboe
+> 
 
 
