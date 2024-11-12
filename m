@@ -1,81 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-34559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524859C644F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:33:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4302C9C650B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:22:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096641F22705
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 22:33:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC9B3AFB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 22:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B00421A6EE;
-	Tue, 12 Nov 2024 22:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAABE21B453;
+	Tue, 12 Nov 2024 22:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3/S7KMm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954AA1FEFD9;
-	Tue, 12 Nov 2024 22:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC1721745E;
+	Tue, 12 Nov 2024 22:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731450795; cv=none; b=O+64ZC7hdo8D8wnPRigw4lk3XobhC2nKYx8GvDi14rpXnnyCKeXpRd1vdn1XJDX6jZ1WRXrQE4FhL0bkwM8Zn3qJwrzhkIg/C0eLt9fH5yIzgmzNqnzgvS5exwedw59PUz7HK28VdGXtrQqXzr8Rp4G5kEhN/a1gNaN5WpvB/co=
+	t=1731451057; cv=none; b=WcLf241bycYHHyFZDdZ+zuo6LDALOR1Dl5Wn7ODUTAkf55lwi2OoeQyL0iKWVV/bKXen7oEDxTFSR3bF/sI7E/jjDy3MF8dVj64ch/mJmnYttZTyRJjywA6P+rB3AbD3j4ozgNUnezZ0Rqwjy/jgbDBbz+W33Yd+MKDv6DDg05Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731450795; c=relaxed/simple;
-	bh=63RdlxJYEkmrjo66jbLlNsxb4Km11jUZ5M00MeIMh+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A54TgGfr2RBMhPz+z8hhmaT0zY78HiQ4SAXh7KzqmRc7A1hX0KBpFrubsju5YDaz2+mygwHf/3+HwY/fHZQD1hPuHJS6J7cPJEj84+Rm/ufNc5qzzZJAGZUrUu2kprOeBftDtu3G574r7Rtsk1MrYk0Hk3N8V+Xcxmw1wtoa++U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE8DC4CECD;
-	Tue, 12 Nov 2024 22:33:14 +0000 (UTC)
-Date: Tue, 12 Nov 2024 17:33:31 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yun Zhou <yun.zhou@windriver.com>
-Cc: <mcgrof@kernel.org>, <kees@kernel.org>, <joel.granados@kernel.org>,
- <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
-Message-ID: <20241112173331.407a5be0@gandalf.local.home>
-In-Reply-To: <20241105031024.3866383-1-yun.zhou@windriver.com>
-References: <20241105031024.3866383-1-yun.zhou@windriver.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731451057; c=relaxed/simple;
+	bh=2Xgye9kLSVVbThxJiOuv4J9XrHzW3k7ZdKbuDsZUfQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sPl2MeoBlXuQfg9jljcTgE9F/uWohrLsbNLxERkhBUHccHnaFf7UUcd7DlX/asn0y9BPqZev1F09PSiHjILgXzYIjzTySYf0FwY2Nb734TvdA9jjMAQVC/2FoK8PhxPhjlP56XfjITuVI775yb66CFGede9FMu/iNvgaGK+a6hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3/S7KMm; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460ab1bc2aeso41740581cf.3;
+        Tue, 12 Nov 2024 14:37:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731451054; x=1732055854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JsJ4qi0tKyd0z6dgveSDFEC/C40H7WEHG7mL/4zFsfM=;
+        b=Y3/S7KMmcXifxWWFnm6pb4z91esJ78yDboGLiFHhkNaw1EyvP7PcKjmru5Bl+FPXWT
+         /muGP73W25PQQnar+CIZUz69poDWzfIvkCpe6EmIWw990djrFdOEiXM9unaGxKzRaXjD
+         i02Z+uSNgfk2oJQ/I2mm7rDannqPci00QTkSZlhFFdZyr72hSjcfNibYCYQ+Sa73ISZG
+         x6Ii0Ku/e8ZhFSqvXiz83Lwr/IV9r7rd48b85wyjpRersB0hyvSJ7CcNfv6Sk6Ny8IUh
+         Sb1JC6IPDyF/g6cJlhAfUrNBzLQD+HUatUC905R7w44JwZT2dtuAv34tgwcZwZEHxDJ6
+         SngA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731451054; x=1732055854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JsJ4qi0tKyd0z6dgveSDFEC/C40H7WEHG7mL/4zFsfM=;
+        b=o9L4Bu1zD1C8sbgBAoONgDosWmJxsn6r7DABPY3g/zzyuUGloZc/KgCcRoZzKG0y15
+         00U/1ddXY5Ka4vzwtnEYYFhzJ+6BXElP//TnIR0D79VodOND8Vbplxy5hZqNJP+3Y3Wn
+         r1Y7iBw9tCWGnW1sHoycUG4ERadJ6+7EXZo5bkjAUqyqWyZ7i3YdHHDDBh02UCL/8gmE
+         oaUoJ3z/PpiuCO71Erz1KOOPPxMphsIpvBkjCBDM1nmNE8viV1aLDpbpH0DLoEz7IsMp
+         ScvNsAixlwdSf/I+nyw16KqZ2mRFi+yYSOaD2Uyq6wS+zFIE+b3JAD5QR2sMjB8qT+NV
+         ROag==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Kd5q6aRIgGG78AsfbXpJRyKkkQV9l6uHiM9iRX8xj1h1w2kGkod4XWEb2Cz087SyDekiS8tm7jBL/Q==@vger.kernel.org, AJvYcCVEoGhCm6uzrwupYQ0IZ0U7l4/CSL9KHK4z6j7V6jCcHLapWbeoOZ5UZjTP6+IDbKhvI6CalUPHTqC0cIwB3w==@vger.kernel.org, AJvYcCWA6Lf8YLuGLXe3X5FIh6WkqUDnvc0gAIU4O76CfJ4ZXc+RThmq48NDwTDQt0J2SBiFrqy2WGH5o6kY@vger.kernel.org, AJvYcCX5mV5xrbfSXGgxmPvVUi6jbHKYXutTedothY/YPB50OphDFlKfHY7HckNvlEo5oEWHwG9+Hp1Y9NVpRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPVO2SlzO4MJ5rNUBy8R+FsZXVJIx+zxQjHulK9XekClQaJMcF
+	4ljbT0qL+KMBWv+n3OYiFUfwMCKxTdfVc1I0Ov+kVnpAGtKM2OVMqi348EwZIiclXVlTOBJGy86
+	OSRfwAK/yvAxROp2yKMrFqickFh2EjCt+NUU=
+X-Google-Smtp-Source: AGHT+IET/tFAIWy1NMuNPLTnj95HbAr/sGehV2uRf9hScSchtuK/dDofnhh+PiANipLY45hJp1UT5T5IJchyMZUuD0U=
+X-Received: by 2002:a05:622a:4c08:b0:45f:3b3:49e6 with SMTP id
+ d75a77b69052e-463093ef010mr274250321cf.41.1731451054504; Tue, 12 Nov 2024
+ 14:37:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1731433903.git.josef@toxicpanda.com> <8c8e9452d153a1918470cbe52a8eb6505c675911.1731433903.git.josef@toxicpanda.com>
+ <CAHk-=wjFKgs-to95Op3p19Shy+EqW2ttSOwk2OadVN-e=eV73g@mail.gmail.com>
+In-Reply-To: <CAHk-=wjFKgs-to95Op3p19Shy+EqW2ttSOwk2OadVN-e=eV73g@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 12 Nov 2024 23:37:23 +0100
+Message-ID: <CAOQ4uxjHXmYGH3wUO=w+tM+CiFWBjWvZEZZkSXA5FO8T+VP4mA@mail.gmail.com>
+Subject: Re: [PATCH v7 01/18] fsnotify: opt-in for permission events at
+ file_open_perm() time
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz, brauner@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 5 Nov 2024 11:10:24 +0800
-Yun Zhou <yun.zhou@windriver.com> wrote:
+On Tue, Nov 12, 2024 at 8:46=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 12 Nov 2024 at 09:56, Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > @@ -119,14 +118,37 @@ static inline int fsnotify_file(struct file *file=
+, __u32 mask)
+> >          * handle creation / destruction events and not "real" file eve=
+nts.
+> >          */
+> >         if (file->f_mode & (FMODE_NONOTIFY | FMODE_PATH))
+> > +               return false;
+> > +
+> > +       /* Permission events require that watches are set before FS_OPE=
+N_PERM */
+> > +       if (mask & ALL_FSNOTIFY_PERM_EVENTS & ~FS_OPEN_PERM &&
+> > +           !(file->f_mode & FMODE_NOTIFY_PERM))
+> > +               return false;
+>
+> This still all looks very strange.
+>
+> As far as I can tell, there is exactly one user of FS_OPEN_PERM in
+> 'mask', and that's fsnotify_open_perm(). Which is called in exactly
+> one place: security_file_open(), which is the wrong place to call it
+> anyway and is the only place where fsnotify is called from the
+> security layer.
+>
+> In fact, that looks like an active bug: if you enable FSNOTIFY, but
+> you *don't* enable CONFIG_SECURITY, the whole fsnotify_open_perm()
+> will never be called at all.
+>
+> And I just verified that yes, you can very much generate such a config.
+>
 
-> It is necessary to have a different pid_max in different containers.
-> For example, multiple containers are running on a host, one of which
-> is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
-> it requires the global pid_max <= 65535. This will cause configuration
-> conflicts with other containers and also limit the maximum number of
-> tasks for the entire system.
-> 
-> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+See: 1cda52f1b461 fsnotify, lsm: Decouple fsnotify from lsm
+in linux-next. This patch set is based on the fs-next branch.
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> So the whole FS_OPEN_PERM thing looks like a special case, called from
+> a (broken) special place, and now polluting this "fsnotify_file()"
+> logic for no actual reason and making it all look unnecessarily messy.
+>
+> I'd suggest that the whole fsnotify_open_perm() simply be moved to
+> where it *should* be - in the open path - and not make a bad and
+> broken attempt at hiding inside the security layer, and not use this
+> "fsnotify_file()" logic at all.
+>
+> The open-time logic is different. It shouldn't even attempt - badly -
+> to look like it's the same thing as some regular file access.
+>
 
--- Steve
+OK, we can move setting the FMODE_NOTIFY_PERM to the open path.
+I have considered that it may be better to unhide it, but wasn't sure.
 
-> ---
->  - Remove sentinels from ctl_table arrays.
-> v1 - https://lore.kernel.org/all/20241030052933.1041408-1-yun.zhou@windriver.com/
-> ---
->  include/linux/pid_namespace.h     |  1 +
->  kernel/pid.c                      | 12 +++++------
->  kernel/pid_namespace.c            | 34 ++++++++++++++++++++++++++-----
->  kernel/sysctl.c                   |  9 --------
->  kernel/trace/pid_list.c           |  2 +-
->  kernel/trace/trace.h              |  2 --
->  kernel/trace/trace_sched_switch.c |  2 +-
->  7 files changed, 38 insertions(+), 24 deletions(-)
+Thanks,
+Amir.
 
