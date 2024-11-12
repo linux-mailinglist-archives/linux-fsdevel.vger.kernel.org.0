@@ -1,70 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-34452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E91F9C5934
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:35:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE059C596D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F5D284BE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04087281D9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5B114A60D;
-	Tue, 12 Nov 2024 13:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1861F7543;
+	Tue, 12 Nov 2024 13:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnTggYnu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0405570838;
-	Tue, 12 Nov 2024 13:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577691F708F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418492; cv=none; b=XJ2/Sv7hG1pX8tWQeNiGSENNldwyjp1/nClB2lGLZi3/nECSOHSLS451kHotpHlWwyU3SiWarot+2e0ld13slcJRIfYsE5WDaHkXrZW73FKI4VRWF3Rc2Kk9gyr/ZiaHf3eE3CcGtuweds+DRrNfoikQnOw0WD+SgqK0nKQ0RtY=
+	t=1731419114; cv=none; b=eOzjEonPSY76FXaHEKemYQ7xuwvLVJlswmToaXe7lZ88pyLGX6z71iCE6k/OnWYniaRL9jNzN6HebB3g5wbGXBZii54VIFmAJx0Ec5s/rf8v+dGecp/PqrJ22NgcDvrJ8itXAxkmLe73OZTwNd5K873tulZZuTKRPX8XKjm0SGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418492; c=relaxed/simple;
-	bh=IohhMWm0GLaqgM1mNYiMqChrCU01LrwRWo24VMDS5z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZbQxniu8qScSPdreN7reORpXxXnHaq5D3IwvBBwM9auk+cRF+M04B/NnyGQjVx0jkH6yh2c58d7+OGSBtcruHKmme39D5PDrh0tePF8ooiYD7tpYLTeQAil5HqbuYKB1WYaoBumN4PiKHsEYJm5F8XCrvKhvYeg32ll4v9ds/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3CDC268D0A; Tue, 12 Nov 2024 14:34:39 +0100 (CET)
-Date: Tue, 12 Nov 2024 14:34:39 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	javier.gonz@samsung.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
-Message-ID: <20241112133439.GA4164@lst.de>
-References: <20241108193629.3817619-1-kbusch@meta.com> <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com> <20241111102914.GA27870@lst.de> <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+	s=arc-20240116; t=1731419114; c=relaxed/simple;
+	bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eHJGWummTZHrBP4oT+0hRQdOmQztIWVgsvoZlNmgX9QUxdzf+Re9C+te0vLErVb2KlellAB6OpaJNkFNgGEprDlULeqfn+QrEBXuatrLQYt2F3OWgMA61fOkm4uT5XG1PNBtUUjvL05uj0YMXphNXAw2BpV4A9u4T2rMLh/oVZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnTggYnu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A72C4CECD;
+	Tue, 12 Nov 2024 13:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731419113;
+	bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VnTggYnuO0h4lJ8zGUvEMFgagjozfhDKTVq9qhjMN8JG7xe/1JAPFq26D/YK1Mlxy
+	 wG4Zm1SGTLgedqIq9hWARs3dWTuXN3eodbzgTzY00UYhI2amDy6U0XlAUeDlO8iFJF
+	 GU0eu4P+fb2a5Iz8SLR9wBkX7pAPRXQ8wfWSdFG4ms1ySI5SqZ7iuztUi27MRK3x7P
+	 Frq8ULggIpEZggW+zBEK9KBKUlZs9eMtUHZHeEMQ4Kyi6cQ6Ssgjf5RvVq4CHTGIPX
+	 V8QBunSoAd7pSVXTUcu4QJiakBfHLAHCBH5ChGmISgQqhDk8/I8hYQnXAVkMIe37dV
+	 Mb8Q37yl7yFiQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: two little writeback cleanups v2
+Date: Tue, 12 Nov 2024 14:44:58 +0100
+Message-ID: <20241112-frequentieren-farbfernseher-c6f75d2531ef@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241112054403.1470586-1-hch@lst.de>
+References: <20241112054403.1470586-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1235; i=brauner@kernel.org; h=from:subject:message-id; bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbRz8OKoiVehIQZ2DBd5WLoV2m/Yl/0ealex9pC61TP v7w5/k/HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5MYmRYYNYYOVkv5S4tzP1 rn8UU/zza87BgucJD7bxLxRjFVTNi2RkmLbfwmHdPoVJthFZFWcC9i+zW1HLqrn2MNvD4A+B/3e 94wcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 06:56:25PM +0530, Kanchan Joshi wrote:
-> IMO, passthrough propagation of hints/streams should continue to remain 
-> the default behavior as it applies on multiple filesystems. And more 
-> active placement by FS should rather be enabled by some opt in (e.g., 
-> mount option). Such opt in will anyway be needed for other reasons (like 
-> regression avoidance on a broken device).
+On Tue, 12 Nov 2024 06:43:53 +0100, Christoph Hellwig wrote:
+> this fixes one (of multiple) sparse warnings in fs-writeback.c, and
+> then reshuffles the code a bit that only the proper high level API
+> instead of low-level helpers is exported.
+> 
+> Changes since v1:
+>  - mention the correct function in the patch 2 subject
+> 
+> [...]
 
-I feel like banging my head against the wall.  No, passing through write
-streams is simply not acceptable without the file system being in
-control.  I've said and explained this in detail about a dozend times
-and the file system actually needing to do data separation for it's own
-purpose doesn't go away by ignoring it.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/2] writeback: add a __releases annoation to wbc_attach_and_unlock_inode
+      https://git.kernel.org/vfs/vfs/c/4d7485cff599
+[2/2] writeback: wbc_attach_fdatawrite_inode out of line
+      https://git.kernel.org/vfs/vfs/c/8182a8b39aa2
 
