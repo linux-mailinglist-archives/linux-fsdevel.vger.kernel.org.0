@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-34520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C5A9C60BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:48:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353E09C6108
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A251F232CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EFD2854AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F68217F35;
-	Tue, 12 Nov 2024 18:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B8B2185B2;
+	Tue, 12 Nov 2024 19:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="caSx4oKt"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LwTiiZkt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81547208990
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 18:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A2A207212
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 19:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437284; cv=none; b=shStOv1qzNffKNc5JJUVsovhDB3i6swvH2YskeUvKBXX9J4xfE3yc+JcOlItd48pCkn2DhHFQC1uDM9V6dLvG3+NjqfzrdKNusBBwZvCewT62fG6zLBDStL1UQ0O4/sg8C7HNlsA/tBRGV+n8JKBnAICXtn9b1A6u6ONka7Z1LY=
+	t=1731438531; cv=none; b=goxSMbNqT3f3sdgvZJs175Y6UE6UEmGrU/9eHJ13uMBsrAs3kyL+b2t+p9jVj3Kl8ttQ/fiRJH7pMqTzoli/48KZuwCj/g7Uvp8+2KjrY3xRyByDn30BQ+YUPVLr8HZl7CB67Lh6AOji4iMuLdbF8iR4e9ex8kL7OhskYA7DfrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437284; c=relaxed/simple;
-	bh=AYu6tM5ynIawKqMjM+E4hN+OaSd/oaQv1ZLr8hqDLcw=;
+	s=arc-20240116; t=1731438531; c=relaxed/simple;
+	bh=eBTaB4haV1+fSAnpXlnmJPonxx05FWC9EMFbUs9j2+Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q7aH1S2OREbXa2DdXCAnQhIe/ZgYGweNmONc619GM4WE90pb532wF4rCiWr/E3tRhdZLr8/OkzzgN6LeDzqnESEeOfqhikQv7oWrQp+/MVh80hLjFzBqV/jE3C6q2Ei6uHH5vU1mvauUir5yglLkI7f7lrJQFN4PdIqJlWB/+Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=caSx4oKt; arc=none smtp.client-ip=209.85.167.170
+	 In-Reply-To:Content-Type; b=spqV9BMFE1q6DTeLwyHGODvrW6MQnVTrYq6xq+ZRlATxQS0gK95TQziK8KSjsEOnBlVv9o7yMHquRVQM+WRA7yfyDYiCcfzBV54/vkNd7u4sz/1XGe5UBtpupEZt7VAUlm1JH0I9wTSfY6gMtbHTdYbueWiPIAlc1aHEhr8unjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LwTiiZkt; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e619057165so3457140b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:00 -0800 (PST)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e619057165so3470163b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 11:08:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731437279; x=1732042079; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731438527; x=1732043327; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
-        b=caSx4oKtmrQnPiyw17x0o0KCIcSdXPDLG5uPL1f0G2zGbUKsz71wdhVPXAf+DwOG/4
-         AVfqb6MtbcIxM3YRR/u2DvQ+fbR+FgOLuOh2h9ZibBLeB8r8couIsGtWpqE67aTJrWZ0
-         cuwuKPW/Ks+iiSNBp9P82kI10kVc8uVYTfKLPck84BBte2nT+Yq6L5I6mF8zraChgP/N
-         HiZnHX/bp3rqReJBJg16vs+0XDEiKjoYIIBo0g1gaqO9UW1a8YkIZZhbg8Td+fq9+cHA
-         WhkyNBYK0UyxntaaQ+feaGPvIXlX1zDLuU6AFPh1aXkbt7lwQdUL4YzNhhqPkwDQYu9X
-         vhmQ==
+        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
+        b=LwTiiZkt+VCGzeCcLOD2cfdUkTUxBSeBTSiufKCHowuLFSXh0U7dkvYiaRls+OVChd
+         /IndjGkRrtXwmv+QH0neUcKKBzBKi6qCOKjhmBN7RViQqV0L2XylxL5NnaNfZCDd1QqY
+         lH146t9Ol5f89rLAvrZuxljQdXuAJ4VX45UtJzRTXomKQednR430nM64t/ELvandZU8n
+         24DRgbMjG/YLWid+jNkrLBVjagyFMqunye10eT+HKasiVHx7tq+F4X/bOXlpaeYsdAtC
+         XjVnTunVtbeFwV/uKJ++w8vT432YcwbbkIoMZx5Fuen8Sj04WIWfcooJM7I3P+6fBU3k
+         BDvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731437279; x=1732042079;
+        d=1e100.net; s=20230601; t=1731438527; x=1732043327;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
-        b=Wc+tt9umrK580nmaOxEoY2FDOik32ZV1JEqArKWS3/6sEjjF+wpPFUVCQknq2/1VkY
-         qZ3Irktuvw84vavpLgf9K8BSk32a5Nu8RnUB0C1DCEW3bD/AOiFLs8It5LEDhRacZj+F
-         RHTdbpm8QyJWDJk9tmzT8fUVytH8/2T7xXBHOECVZELBj8/RLHDdqiVVufhPjxmRR9Ie
-         FTIkhhS2X97M8J4V8Sp4hgeHLPo3abHAX7HjAEdrujw9yoFQgIPnMuRgZ0u7sU8L7du2
-         RBp61K78P2BhriYs3jdwFAxDyf0Vd4A47NLfBgcmixOwfdisjnUFk2XHM8xhWSAX5LY9
-         hljA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+R5VD0BZPhnn8R3Yes1tJjcMsqPBRaXaEv0FF7KB5dov/bqmZWsJ5YgsOPWzdjk3zaZvC3AQuMCgzcvxx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQsE1O7xB6zJTMjCMf6SFt5KjfxU5N90fEsRRTzjOmRCRK/Pi3
-	Mu7t8dzzNs6sMBgpAfNwS9uxreVlQEIAeYkyAx0hJgzu+a3m21Ebws6NZyM+4T4=
-X-Google-Smtp-Source: AGHT+IEbUQIAv8rwvNy1b5k48spMrO6qHPjvfMhK8WTkm9KlJBHwjMMwhaZ9S+HNwCgrodi6AerXxg==
-X-Received: by 2002:a05:6870:20a:b0:25a:eca3:6b5e with SMTP id 586e51a60fabf-2956004793fmr13932152fac.9.1731437279605;
-        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
+        bh=D2L7Qc7cWvztIAJNQU15qiNixT/BI8zR+cXMMeIYHYo=;
+        b=en75GYdVIxPD+3J5rjlvRnibXZimXpagEWZ7vGnDeFMlHmEt3HT9zPS3WGd77aOxNm
+         1EWF6J15ZFgfr9RVYgO5sjQlM8UeFqB3FSQ2MNXiVtUtfVkB9LVW6gsDsXUJvSqOB62H
+         VnOJWelKYlA+An62GEhRb2jXaluFd2bSTSQ3rszbEEP4jTj2odQZk/3t/8d4ErlJ+1nZ
+         g5JEpvm/mr1P4JjA9MQzLn5xu8IBSJ4Mi9CiOaJgFL/hRa3q769XZGIQShANvr1A77uc
+         eGvPOivXBSqKSiCLxLEst4IfbhvzchGTd9SUkXfO8oj6eGp7NIhdqEoH1Kree9UXWHf1
+         PQ6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHJjsVp8BwAY2r21c9Av/GrT5S7l0h3L5U1FhRU4p3xpc5/vTEkW2SMNOe2C7OVkiQnG2EQalGf5qGuR1Q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8mPHMGI5uB+pOlYovPQAR9NG9Nut9rlacFc6qcfvZSeGm4ukn
+	CHM6WKUB2nhjrPm2JDSxL1J9Ddv6oqwFpb7o2W7wn94BrSq+qxtHdEpQU3N49xQ=
+X-Google-Smtp-Source: AGHT+IHoD/uu9DK4NnbrmBtV1ufstZJ55RPP5+LQ3aAZ0f5dnSCso4iUv4jnAvRgbKIUMZBidnJMoA==
+X-Received: by 2002:a05:6808:1790:b0:3e6:263b:9108 with SMTP id 5614622812f47-3e7946adb92mr15187907b6e.22.1731438527201;
+        Tue, 12 Nov 2024 11:08:47 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8eb8c53sm14182fac.8.2024.11.12.10.47.58
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7b0955af5sm22182b6e.4.2024.11.12.11.08.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
-Message-ID: <58ebc5a8-941b-4c3d-a3b2-3985d7eeea30@kernel.dk>
-Date: Tue, 12 Nov 2024 11:47:57 -0700
+        Tue, 12 Nov 2024 11:08:46 -0800 (PST)
+Message-ID: <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
+Date: Tue, 12 Nov 2024 12:08:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,133 +76,158 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
 To: Brian Foster <bfoster@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-13-axboe@kernel.dk> <ZzOD_qV5tpv9nbw7@bfoster>
- <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk> <ZzOaaInUHOmlAL-o@bfoster>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+ <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+ <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk> <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+ <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk> <ZzOiC5-tCNiJylSx@bfoster>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOaaInUHOmlAL-o@bfoster>
+In-Reply-To: <ZzOiC5-tCNiJylSx@bfoster>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/12/24 11:11 AM, Brian Foster wrote:
-> On Tue, Nov 12, 2024 at 10:13:12AM -0700, Jens Axboe wrote:
->> On 11/12/24 9:36 AM, Brian Foster wrote:
->>> On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
->>>> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
->>>> and hence need the worker punt that ext4 also does for unwritten
->>>> extents. Add an io_end flag to manage that.
+On 11/12/24 11:44 AM, Brian Foster wrote:
+> On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
+>> On 11/12/24 10:06 AM, Jens Axboe wrote:
+>>> On 11/12/24 9:39 AM, Brian Foster wrote:
+>>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+>>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+>>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+>>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+>>>>>>> with.
+>>>>>>
+>>>>>> Looks reasonable to me, but you probably get better reviews on the
+>>>>>> fstests lists.
+>>>>>
+>>>>> I'll send it out once this patchset is a bit closer to integration,
+>>>>> there's the usual chicken and egg situation with it. For now, it's quite
+>>>>> handy for my testing, found a few issues with this version. So thanks
+>>>>> for the suggestion, sure beats writing more of your own test cases :-)
+>>>>>
 >>>>
->>>> If foliop is set to foliop_uncached in ext4_write_begin(), then set
->>>> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
->>>> folios as uncached. That in turn will make writeback completion drop
->>>> these ranges from the page cache.
->>>>
->>>> Now that ext4 supports both uncached reads and writes, add the fop_flag
->>>> FOP_UNCACHED to enable it.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  fs/ext4/ext4.h    |  1 +
->>>>  fs/ext4/file.c    |  2 +-
->>>>  fs/ext4/inline.c  |  7 ++++++-
->>>>  fs/ext4/inode.c   | 18 ++++++++++++++++--
->>>>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
->>>>  5 files changed, 40 insertions(+), 16 deletions(-)
->>>>
->>> ...
->>>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->>>> index 54bdd4884fe6..afae3ab64c9e 100644
->>>> --- a/fs/ext4/inode.c
->>>> +++ b/fs/ext4/inode.c
->>>> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  	int ret, needed_blocks;
->>>>  	handle_t *handle;
->>>>  	int retries = 0;
->>>> +	fgf_t fgp_flags;
->>>>  	struct folio *folio;
->>>>  	pgoff_t index;
->>>>  	unsigned from, to;
->>>> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  			return 0;
->>>>  	}
->>>>  
->>>> +	/*
->>>> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
->>>> +	 * foliop_uncached. That's how generic_perform_write() informs us
->>>> +	 * that this is an uncached write.
->>>> +	 */
->>>> +	fgp_flags = FGP_WRITEBEGIN;
->>>> +	if (*foliop == foliop_uncached)
->>>> +		fgp_flags |= FGP_UNCACHED;
->>>> +
->>>>  	/*
->>>>  	 * __filemap_get_folio() can take a long time if the
->>>>  	 * system is thrashing due to memory pressure, or if the folio
->>>> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  	 * the folio (if needed) without using GFP_NOFS.
->>>>  	 */
->>>>  retry_grab:
->>>> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
->>>> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
->>>>  					mapping_gfp_mask(mapping));
->>>>  	if (IS_ERR(folio))
->>>>  		return PTR_ERR(folio);
+>>>> fsx support is probably a good idea as well. It's similar in idea to
+>>>> fsstress, but bashes the same file with mixed operations and includes
+>>>> data integrity validation checks as well. It's pretty useful for
+>>>> uncovering subtle corner case issues or bad interactions..
 >>>
->>> JFYI, I notice that ext4 cycles the folio lock here in this path and
->>> thus follows up with a couple checks presumably to accommodate that. One
->>> is whether i_mapping has changed, which I assume means uncached state
->>> would have been handled/cleared externally somewhere..? I.e., if an
->>> uncached folio is somehow truncated/freed without ever having been
->>> written back?
->>>
->>> The next is a folio_wait_stable() call "in case writeback began ..."
->>> It's not immediately clear to me if that is possible here, but taking
->>> that at face value, is it an issue if we were to create an uncached
->>> folio, drop the folio lock, then have some other task dirty and
->>> writeback the folio (due to a sync write or something), then have
->>> writeback completion invalidate the folio before we relock it here?
+>>> Indeed, I did that too. Re-running xfstests right now with that too.
 >>
->> I don't either of those are an issue. The UNCACHED flag will only be set
->> on a newly created folio, it does not get inherited for folios that
->> already exist.
+>> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+>> for both the sync read/write and io_uring paths.
 >>
 > 
-> Right.. but what I was wondering for that latter case is if the folio is
-> created here by ext4, so uncached is set before it is unlocked.
+> Nice, thanks. Looks reasonable to me at first glance. A few randomish
+> comments inlined below.
 > 
-> On second look I guess the uncached completion invalidation should clear
-> mapping and thus trigger the retry logic here. That seems reasonable
-> enough, but is it still possible to race with writeback?
-> 
-> Maybe this is a better way to ask.. what happens if a write completes to
-> an uncached folio that is already under writeback? For example, uncached
-> write 1 completes, submits for writeback and returns to userspace. Then
-> write 2 begins and redirties the same folio before the uncached
-> writeback completes.
-> 
-> If I follow correctly, if write 2 is also uncached, it eventually blocks
-> in writeback submission (folio_prepare_writeback() ->
-> folio_wait_writeback()). It looks like folio lock is held there, so
-> presumably that would bypass the completion time invalidation in
-> folio_end_uncached(). But what if write 2 was not uncached or perhaps
-> writeback completion won the race for folio lock vs. the write side
-> (between locking the folio for dirtying and later for writeback
-> submission)? Does anything prevent invalidation of the folio before the
-> second write is submitted for writeback?
-> 
-> IOW, I'm wondering if the uncached completion time invalidation also
-> needs a folio dirty check..?
+> BTW, I should have also mentioned that fsx is also useful for longer
+> soak testing. I.e., fstests will provide a decent amount of coverage as
+> is via the various preexisting tests, but I'll occasionally run fsx
+> directly and let it run overnight or something to get the op count at
+> least up in the 100 millions or so to have a little more confidence
+> there isn't some rare/subtle bug lurking. That might be helpful with
+> something like this. JFYI.
 
-Ah ok, I see what you mean. If the folio is dirty, the unmapping will
-fail. But I guess with the recent change, we'll actually unmap it first.
-I'll add the folio dirty check, thanks!
+Good suggestion, I can leave it running overnight here as well. Since
+I'm not super familiar with it, what would be a good set of parameters
+to run it with?
+
+>>  #define READ 0
+>>  #define WRITE 1
+>> -#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
+>> -#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
+>> +#define fsxread(a,b,c,d,f)	fsx_rw(READ, a,b,c,d,f)
+>> +#define fsxwrite(a,b,c,d,f)	fsx_rw(WRITE, a,b,c,d,f)
+>>  
+> 
+> My pattern recognition brain wants to see an 'e' here. ;)
+
+This is a "check if reviewer has actually looked at it" check ;-)
+
+>> @@ -266,7 +273,9 @@ prterr(const char *prefix)
+>>  
+>>  static const char *op_names[] = {
+>>  	[OP_READ] = "read",
+>> +	[OP_READ_UNCACHED] = "read_uncached",
+>>  	[OP_WRITE] = "write",
+>> +	[OP_WRITE_UNCACHED] = "write_uncached",
+>>  	[OP_MAPREAD] = "mapread",
+>>  	[OP_MAPWRITE] = "mapwrite",
+>>  	[OP_TRUNCATE] = "truncate",
+>> @@ -393,12 +402,14 @@ logdump(void)
+>>  				prt("\t******WWWW");
+>>  			break;
+>>  		case OP_READ:
+>> +		case OP_READ_UNCACHED:
+>>  			prt("READ     0x%x thru 0x%x\t(0x%x bytes)",
+>>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+>>  			    lp->args[1]);
+>>  			if (overlap)
+>>  				prt("\t***RRRR***");
+>>  			break;
+>> +		case OP_WRITE_UNCACHED:
+>>  		case OP_WRITE:
+>>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+>>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+>> @@ -784,9 +795,8 @@ doflush(unsigned offset, unsigned size)
+>>  }
+>>  
+>>  void
+>> -doread(unsigned offset, unsigned size)
+>> +__doread(unsigned offset, unsigned size, int flags)
+>>  {
+>> -	off_t ret;
+>>  	unsigned iret;
+>>  
+>>  	offset -= offset % readbdy;
+>> @@ -818,23 +828,39 @@ doread(unsigned offset, unsigned size)
+>>  			(monitorend == -1 || offset <= monitorend))))))
+>>  		prt("%lld read\t0x%x thru\t0x%x\t(0x%x bytes)\n", testcalls,
+>>  		    offset, offset + size - 1, size);
+>> -	ret = lseek(fd, (off_t)offset, SEEK_SET);
+>> -	if (ret == (off_t)-1) {
+>> -		prterr("doread: lseek");
+>> -		report_failure(140);
+>> -	}
+>> -	iret = fsxread(fd, temp_buf, size, offset);
+>> +	iret = fsxread(fd, temp_buf, size, offset, flags);
+>>  	if (iret != size) {
+>> -		if (iret == -1)
+>> -			prterr("doread: read");
+>> -		else
+>> +		if (iret == -1) {
+>> +			if (errno == EOPNOTSUPP && flags & RWF_UNCACHED) {
+>> +				rwf_uncached = 1;
+> 
+> I assume you meant rwf_uncached = 0 here?
+
+Indeed, good catch. Haven't tested this on a kernel without RWF_UNCACHED
+yet...
+
+> If so, check out test_fallocate() and friends to see how various
+> operations are tested for support before the test starts. Following that
+> might clean things up a bit.
+
+Sure, I can do something like that instead. fsx looks pretty old school
+in its design, was not expecting a static (and single) fd. But since we
+have that, we can do the probe and check. Just a basic read would be
+enough, with RWF_UNCACHED set.
+
+> Also it's useful to have a CLI option to enable/disable individual
+> features. That tends to be helpful to narrow things down when it does
+> happen to explode and you want to narrow down the cause.
+
+I can add a -U for "do not use uncached".
 
 -- 
 Jens Axboe
