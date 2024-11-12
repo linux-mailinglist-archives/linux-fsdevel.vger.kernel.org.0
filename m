@@ -1,96 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-34455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE059C596D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:45:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DF69C5A45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04087281D9F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD7DB32BF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1861F7543;
-	Tue, 12 Nov 2024 13:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7DA14F114;
+	Tue, 12 Nov 2024 13:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnTggYnu"
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="e9n8VG5o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577691F708F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FE814387B;
+	Tue, 12 Nov 2024 13:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419114; cv=none; b=eOzjEonPSY76FXaHEKemYQ7xuwvLVJlswmToaXe7lZ88pyLGX6z71iCE6k/OnWYniaRL9jNzN6HebB3g5wbGXBZii54VIFmAJx0Ec5s/rf8v+dGecp/PqrJ22NgcDvrJ8itXAxkmLe73OZTwNd5K873tulZZuTKRPX8XKjm0SGQ=
+	t=1731417319; cv=none; b=UbO0vMEsoZOtN7QrB/uo3gdUBBk4wg4zdbSPoAnHHZHSaEzguCgGt0PpJSF/5PyenxcK3uvufCGfaNcn7R90gtmV0Fi6gu9kIqEIr4fCBiFt0XKeuAr1iGvqvSCpj/gWWaCoTP5mGEDGjCypwat7YXkK24s6k04Vi4ERoBn8JYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419114; c=relaxed/simple;
-	bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eHJGWummTZHrBP4oT+0hRQdOmQztIWVgsvoZlNmgX9QUxdzf+Re9C+te0vLErVb2KlellAB6OpaJNkFNgGEprDlULeqfn+QrEBXuatrLQYt2F3OWgMA61fOkm4uT5XG1PNBtUUjvL05uj0YMXphNXAw2BpV4A9u4T2rMLh/oVZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnTggYnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A72C4CECD;
-	Tue, 12 Nov 2024 13:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731419113;
-	bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VnTggYnuO0h4lJ8zGUvEMFgagjozfhDKTVq9qhjMN8JG7xe/1JAPFq26D/YK1Mlxy
-	 wG4Zm1SGTLgedqIq9hWARs3dWTuXN3eodbzgTzY00UYhI2amDy6U0XlAUeDlO8iFJF
-	 GU0eu4P+fb2a5Iz8SLR9wBkX7pAPRXQ8wfWSdFG4ms1ySI5SqZ7iuztUi27MRK3x7P
-	 Frq8ULggIpEZggW+zBEK9KBKUlZs9eMtUHZHeEMQ4Kyi6cQ6Ssgjf5RvVq4CHTGIPX
-	 V8QBunSoAd7pSVXTUcu4QJiakBfHLAHCBH5ChGmISgQqhDk8/I8hYQnXAVkMIe37dV
-	 Mb8Q37yl7yFiQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: two little writeback cleanups v2
-Date: Tue, 12 Nov 2024 14:44:58 +0100
-Message-ID: <20241112-frequentieren-farbfernseher-c6f75d2531ef@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112054403.1470586-1-hch@lst.de>
-References: <20241112054403.1470586-1-hch@lst.de>
+	s=arc-20240116; t=1731417319; c=relaxed/simple;
+	bh=gx2w3bDrETbsUTrM9BzaaKKf4gNeCmSzjIrCsPufNMk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dy6qu9itq317DMVRMdrnD9ROCVoLR8ewX3CeJvSaHLTFdbnt1rEGnhGY5jlXv2aMcVB2GiGvFokp46vqS1YXx4J32rYrYoYXRz21Sv4qsHVhuEIYrJW+ULSr50f/1Mp97hUMR1SOH8sVLkBjt0v4m7HPLNFMxesATUPFt+lqZVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=e9n8VG5o; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6CF0C40007;
+	Tue, 12 Nov 2024 13:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1731417308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zffqBsQL1sFkEx1vliZCfC5+XT4irPn76PQB9/6unyI=;
+	b=e9n8VG5oA2GdKHSoRtSQQM/KVAmgSIcepY6lS2WxLoQn3HeOzYDvkIzw0zQitAqFu9uJ74
+	WrI9WZjSuW4qmQv54Ov3Tcfwgy1hQckCloWhpaL8srukS2XEw1EC8zIbUWHE3/lPwNxsK3
+	hKidjOrbEet2yc+hKWsQgcDFjhxef2+M4Q5guunx6Ab/HFr/F3XuTqHUnducE6jqEctx+g
+	9wCtWfc8T+IRQ1pcnY3Dk52mRt7w6JmqSkogQpTzmqr9wgeS2QGTSEW5eNbNix/k8DpuwR
+	HH5XD/EtTU1WOrWjlIGWqYp3GxgpngngRyREFeCWXYST1IEXxm8L0NAzJm4mzw==
+From: nicolas.bouchinet@clip-os.org
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: nicolas.bouchinet@clip-os.org,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lin Feng <linf@wangsu.com>,
+	"Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH 0/3] Fixes multiple sysctl proc_handler usage error
+Date: Tue, 12 Nov 2024 14:13:28 +0100
+Message-ID: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1235; i=brauner@kernel.org; h=from:subject:message-id; bh=hqirPU8dF9XuvNLaVCuW0ykOjdQdJyevrWzaIpl7TZs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbRz8OKoiVehIQZ2DBd5WLoV2m/Yl/0ealex9pC61TP v7w5/k/HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5MYmRYYNYYOVkv5S4tzP1 rn8UU/zza87BgucJD7bxLxRjFVTNi2RkmLbfwmHdPoVJthFZFWcC9i+zW1HLqrn2MNvD4A+B/3e 94wcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-On Tue, 12 Nov 2024 06:43:53 +0100, Christoph Hellwig wrote:
-> this fixes one (of multiple) sparse warnings in fs-writeback.c, and
-> then reshuffles the code a bit that only the proper high level API
-> instead of low-level helpers is exported.
-> 
-> Changes since v1:
->  - mention the correct function in the patch 2 subject
-> 
-> [...]
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Hi, while reading sysctl code I encountered two sysctl proc_handler
+parameters common errors.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The first one is to declare .data as a different type thant the return of
+the used .proc_handler, i.e. using proch_dointvec, thats convert a char
+string to signed integers, and storing the result in a .data that is backed
+by an unsigned int. User can then write "-1" string, which results in a
+different value stored in the .data variable. This can lead to type
+conversion errors in branches and thus to potential security issues.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+From a quick search using regex and only for proc_dointvec, this seems to
+be a pretty common mistake.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+The second one is to declare .extra1 or .extra2 values with a .proc_handler
+that don't uses them. i.e, declaring .extra1 or .extra2 using proc_dointvec
+in order to declare conversion bounds do not work as do_proc_dointvec don't
+uses those variables if not explicitly asked.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+This patchset corrects three sysctl declaration that are buggy as an
+example and is not exhaustive.
 
-[1/2] writeback: add a __releases annoation to wbc_attach_and_unlock_inode
-      https://git.kernel.org/vfs/vfs/c/4d7485cff599
-[2/2] writeback: wbc_attach_fdatawrite_inode out of line
-      https://git.kernel.org/vfs/vfs/c/8182a8b39aa2
+Nicolas
+
+Nicolas Bouchinet (3):
+  coredump: Fixes core_pipe_limit sysctl proc_handler
+  sysctl: Fix underflow value setting risk in vm_table
+  tty: ldsic: fix tty_ldisc_autoload sysctl's proc_handler
+
+ drivers/tty/tty_io.c | 2 +-
+ fs/coredump.c        | 7 +++++--
+ kernel/sysctl.c      | 2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+-- 
+2.47.0
+
 
