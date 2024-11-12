@@ -1,74 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-34386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE369C4E11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 06:14:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7009C4E3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 06:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD35B22771
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 05:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF845B25FC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 05:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A32209F2C;
-	Tue, 12 Nov 2024 05:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0212038CF;
+	Tue, 12 Nov 2024 05:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IfXri57j"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XHj4s3Hz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E053717333A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 05:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CED3189F37
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 05:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731388449; cv=none; b=jdj4TCEp1dTDQ6NnCG1Y7IWX+RmbWg1IVzZWYQLsf6R78l1bTND1Q5P1GVtbyrunXsDtqfBXNsr6jWltZ9rhUEs4gRxWupFPSZibXaAp+sqs02BtJefa7tt276XFJvlRmOzNyfHFpNClc7V7TOuhPtYAYJ/EhNWd0lA4HC8a4Ns=
+	t=1731389511; cv=none; b=ABIPU7Dpj6dN8bZyxeRmQPJiFSpALXX6OmTsigFxbJO8a8WTopmIYOv21dcdKNlfIouL0sqiUs1EDSNJ2DvO5prUS0tG3mwBQnLmRWVZBIKH5eJJgOSAYnljjtjAA9pCkM/763ALGAGHJzOAxYgB6E4+ihxju4i9ZHeNex31yl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731388449; c=relaxed/simple;
-	bh=UVEZKpcKg9QCj/okJxJAdN+0jfe4PiYu++peCVwSkRo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=pyRKP+o+86QU+GxjGsFsPUxeda9AhEvhLN+lofivRSH14F69OdiHb2guAAfCqsHxh4QgMR+NaYMVixvn0OLPp5C4v/zBYJeE47PAx3zGYHkNfOWLBUv+QszrlOAXyL6K/yOJNMefvd7KXA4/nxOukSZgwkO11hFhfZ11xBZriBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IfXri57j; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1731389511; c=relaxed/simple;
+	bh=GSuUokYARjlvz5HeFwFhYLs7AZM9K7FbQVb/uQOpJFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jf57mRXTfQXDurDaIhdOCrYt4Zfpe5WtWujdC3BSE998sL1wdLsoSplN54QMKpHDksP82OwU5UkSOcGNCLlPCS6lWCh5eU6gBM1JhXRWHOTy7geC4+sN9lPPxrscT39b44HC88A93jbDMM1VNWMAScsNILgw8ObqqlPwmOhj+q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XHj4s3Hz; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso5815142e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 21:14:06 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso43284425e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 21:31:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731388445; x=1731993245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hd0WkmLd9kzYTvtTQK7D8ZgWKJFvfwWeEsC/5QB0mEM=;
-        b=IfXri57j7PCn4XJRK0TeUAGbx1nc/eTMmp28bmvcdfYpU3IRg1DaHgZ6M00ANdRsFh
-         ObMDzPh7lff/3f1nsrRhHlRnvSCAveJF3SDtznbSOR129gbd5//WxYcwmPutrZ/nL3jw
-         R0swb6ErKqOhciYIUSzcpHNql+A/b24GDhxBpt+2m09o/ffymgi5Kld0whJU7UssBjbd
-         rjmFHQKzXMBjbyfNhZJIPOKuXIeO+INYfr7xZM+WzgzHvv2GWWaiZ2hgVZ7OycK1hd1r
-         ysfViOpAQbAozyPgkH2bXIFlR7I2oiqd4mfyohfq5rQQum6tpWltesP4N4YtWRM0/KX/
-         qUqQ==
+        d=suse.com; s=google; t=1731389508; x=1731994308; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z2slWMWOHvSQ3Dv+mOQBJUh3petf0L7x0YTYFKMctTo=;
+        b=XHj4s3HzmvNGmk3HK6bLe0qfLKU5VVbTRPJnENrPR+6zRycuAwJuncIr0/h9J8VRo4
+         YIjt2MIqx/j6+Ehb3WT+Mk6/K0CEZYH3IURd+s5V9Zi0w0bznVhyRYInYFkDpG0QrDoq
+         Ypz0KjFngpevMJZ7q9Hh4KwKaWl+XwlIA3wn+ewyJ8iGR+kJM85Sv63QAA+vOwqL3Edp
+         sCC86R+7Ujmk4nyyXc6No+JyaN6hKZqLcQk/a71HaQzgx9bubR0NDevaUttJEsy0VgWJ
+         np0gxN8W4EXxo+ITfuYBb1fA6UKUwpYtFiQiLzT960Jls9bsJu+nk1mnXs0ohLx50a+6
+         PLfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731388445; x=1731993245;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hd0WkmLd9kzYTvtTQK7D8ZgWKJFvfwWeEsC/5QB0mEM=;
-        b=J1JvgYhgLXeaNsF+Xlz5N5OpYNDJnovEgbHw+aBJ8QVpoT6B355twoWVljt5Fj72qy
-         99+MxWLN0CsQhnGU3AubDKKIRddQ8P9ziR7JzCD/du6CQ+RIVfB063XGWLcmVZlZnchy
-         1f+Wnczld1JOxKKlnoRNXqEQr0bjx/kkjSyMWb0s2vbk8+5xGOmeqdmyVbDqg+VsSgmJ
-         HQ8VGqLfH4KFwVfV5u/pHykXhCWF4j4iAL0HTAFapxoc/6ImREkVSfajr/W88ygo+im1
-         2GpOZzreeFI4drZkPQOalfqdoLYBC+0T5LJ/hOm38hfkyjibr/6NwCvnalfNXEbbJRto
-         Q8mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhtZhrLHUV0hOmK+ROtIJkmQU0T0271QEuWQufWbiNiesL7fSHpyy3s4E3nuht5dGtPIEW4BLoG461FfDe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9jLdllREGLrvYULpRVgmxNlH9KrtkInlm8/zS/RHsecBFHjOr
-	ac4vyZmfSje9Mw5VAJLAl8ZlNn8pWj4dwJCfUMOSGdcJY0qRyag5pTlpF8t2O4I=
-X-Google-Smtp-Source: AGHT+IEXnqHW4+Ek52zimsJLcvepmwzquh+E5iuwO/DWvtCanwp8ZSDOWJIERcxEjPpSZWE6+tVQAQ==
-X-Received: by 2002:a05:6512:b93:b0:539:f689:3c30 with SMTP id 2adb3069b0e04-53d86289e48mr6818187e87.20.1731388444655;
-        Mon, 11 Nov 2024 21:14:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731389508; x=1731994308;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z2slWMWOHvSQ3Dv+mOQBJUh3petf0L7x0YTYFKMctTo=;
+        b=L+2kDKwvkIsHkJnxa/QgOGNlQY/sqXJ8ZRK0kJtLVrHn8zBmH8SbauVn4fF3yQYxFB
+         Wc0XDxrq3kkVqMfuI+3s0Mg9zN8dQO+mZK7cJaFjcLZKCv4KNPtU1E/9L5Q5Q54ep/yN
+         Hzfc6fvoEf08xyB7FL4fSuvC85ioNI6etNffuPuc0R4xRISHrKGMdc3HAUBOaj+f23aH
+         8mg8lTy22XFll7AVjQ1QVLyx6AGmJmJ99VD1Vw8EpscaqCvsDPrLI/EAQyeQqtFIC+2f
+         etJiXr4Qn4EHg8YHwe4GMnouJzQNqvsuF23xJxABCMFM4N3RUe1j2CjMHmR98hCQDzvC
+         afug==
+X-Forwarded-Encrypted: i=1; AJvYcCVxqMmPrUs7kKXFrdD9Sq46JXAXvvDXi+vub8YZmZOHe0J2iLMEMVEayCzYeMAw6WqKkTcfwCUCuVLLpbFR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG9m368MM4RKVjVEMMePkpqxDr2oJizRxuVEfw2pxP+WqhI6EJ
+	sLjmt0NCZcEe2Kk/dhrx4hGzp/+WCC5vusc/jIXfSbDVZKKm3RqhhxIrJxHKyWE=
+X-Google-Smtp-Source: AGHT+IFMECw8pZMzid8H6DKjtkZFipTtaipy83dELXggkrL7U9Dnu9Mb4b2rneLz3yBUTApw9yWfvA==
+X-Received: by 2002:a05:6000:4107:b0:381:f5a7:3e8b with SMTP id ffacd0b85a97d-381f5a73eb5mr8723726f8f.51.1731389507572;
+        Mon, 11 Nov 2024 21:31:47 -0800 (PST)
 Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc835fsm84917375ad.41.2024.11.11.21.14.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a62bfb6sm11725474a91.43.2024.11.11.21.31.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 21:14:04 -0800 (PST)
-Message-ID: <e718febc-a73e-459a-8716-f0d70495eabd@suse.com>
-Date: Tue, 12 Nov 2024 15:43:59 +1030
+        Mon, 11 Nov 2024 21:31:45 -0800 (PST)
+Message-ID: <b595203e-c299-46f8-b79a-185276d53d89@suse.com>
+Date: Tue, 12 Nov 2024 16:01:42 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,12 +77,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ntfs3: remove a_ops->write_begin/end() call backs
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org, almaz.alexandrovich@paragon-software.com,
- ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org
-References: <ec1574d80e4b98726e6005a31f3766d84810ca6a.1731387379.git.wqu@suse.com>
+Subject: Re: About using on-stack fsdata pointer for write_begin() and
+ write_end() callbacks
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, linux-fsdevel@vger.kernel.org,
+ linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <561428e6-3f71-48cb-bd73-46cc21789f6f@gmx.com>
+ <ZzGbioLSB3m7ozq1@infradead.org>
+ <d5dca4eb-2294-4d24-9e36-dac8be852622@suse.com>
+ <ZzLiBEA6Sp-P7xoB@infradead.org>
 Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
 Autocrypt: addr=wqu@suse.com; keydata=
  xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
  8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
@@ -106,68 +112,48 @@ Autocrypt: addr=wqu@suse.com; keydata=
  /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
  o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
  JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <ec1574d80e4b98726e6005a31f3766d84810ca6a.1731387379.git.wqu@suse.com>
+In-Reply-To: <ZzLiBEA6Sp-P7xoB@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-在 2024/11/12 15:28, Qu Wenruo 写道:
-> Currently a_ops->write_begin/end() helpers are only called by the
-> following exported functions:
-> - generic_perform_write()
-> - generic_cont_expand_simple()
-> - cont_write_begin()
-> - page_symlink()
+在 2024/11/12 15:35, Christoph Hellwig 写道:
+> On Mon, Nov 11, 2024 at 06:06:57PM +1030, Qu Wenruo wrote:
+>>> Why?  They aren't exactly efficient, and it's just going to create
+>>> more Churn for Goldwyn's iomap work.
+>>
+>> So it is not recommended to go the write_begin() and write_end() callbacks
+>> at all?
+>> Or just not recommended for btrfs?
+> 
+> They aren't a very efficient model, so I would not recommend to add
+> new users.
 
-Please drop this patch.
+No wonder no one is adding support for IOCB_NOWAIT.
 
-There are two more exported callers:
+> 
+>> I know there are limits like those call backs do not support IOCB_NOWAIT,
+>> and the memory allocation inefficient problem (it should only affect ocfs2),
+>> but shouldn't we encourage to use the more common paths where all other fses
+>> go?
+> 
+> I'd recommend to use iomap.
 
-- __generic_file_write_iter()
-- generic_file_write_iter()
+Definitely the way we will go in the long run.
 
-And ntfs3 utilizes __generic_file_write_iter(), so the write_begin/end() 
-call backs are still required.
+Although I'm still struggling on the out-of-band dirty folio (someone 
+marked a folio dirty without notifying the fs) handling.
+
+The iomap writepages implementation will just mark all the folio range 
+dirty and start mapping.
+
+So I guess there must be some fs specific handling inside the mapping 
+function, let me dig it deeper and check Goldwyn's work for details.
+
+Anyway thanks a lot pointing out that the write_begin() model is already 
+kinda deprecated.
 
 Thanks,
 Qu
-
-> 
-> NTFS3 doesn't utilize any of the above functions, thus there is no need to
-> assign write_begin() nor write_end() call backs in its
-> address_space_operations structure.
-> 
-> The functions ntfs_write_begin() and ntfs_write_end() are directly
-> called inside ntfs_extend_initialized_size() only.
-> 
-> Signed-off-by: Qu Wenruo <wqu@suse.com>
-> ---
->   fs/ntfs3/inode.c | 5 -----
->   1 file changed, 5 deletions(-)
-> 
-> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-> index be04d2845bb7..6b4a11467c65 100644
-> --- a/fs/ntfs3/inode.c
-> +++ b/fs/ntfs3/inode.c
-> @@ -947,9 +947,6 @@ int ntfs_write_begin(struct file *file, struct address_space *mapping,
->   	return err;
->   }
->   
-> -/*
-> - * ntfs_write_end - Address_space_operations::write_end.
-> - */
->   int ntfs_write_end(struct file *file, struct address_space *mapping, loff_t pos,
->   		   u32 len, u32 copied, struct folio *folio, void *fsdata)
->   {
-> @@ -2092,8 +2089,6 @@ const struct address_space_operations ntfs_aops = {
->   	.read_folio	= ntfs_read_folio,
->   	.readahead	= ntfs_readahead,
->   	.writepages	= ntfs_writepages,
-> -	.write_begin	= ntfs_write_begin,
-> -	.write_end	= ntfs_write_end,
->   	.direct_IO	= ntfs_direct_IO,
->   	.bmap		= ntfs_bmap,
->   	.dirty_folio	= block_dirty_folio,
-
 
