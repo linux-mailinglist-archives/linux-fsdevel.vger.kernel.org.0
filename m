@@ -1,161 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-34364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1B39C4B63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 02:00:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1B69C4B58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 01:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32A95B2BBD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404ED281F9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 00:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5272022F3;
-	Tue, 12 Nov 2024 00:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320D520262C;
+	Tue, 12 Nov 2024 00:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggvgGYhH"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Yw/B7jYd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AE41F80CB;
-	Tue, 12 Nov 2024 00:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFA7202628
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 00:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731372832; cv=none; b=mReAXicHeZuDMKPJSvwe32iq6vAY9xtjCbLXnJIKO/XdtEPj9A3AvLgqjyI4hxTvl+hiCEEtto7mjJy7oqLFljowtPn3nyGvO8Lk0eqX0+KUsU5dnJ1j8lJ8/I4BYE0H+O4rUHWmZXnQiOz8EXU10r7PzoicKg/VP3xziptE3Og=
+	t=1731373030; cv=none; b=YwKpcOsO8ae4VLkcqH27DSK67jvM+1O6N818azCanbT/J8kjVr453A1H5yMXoN/CCT+0q+SYu/efofXbrbNPI6pX7QTAo/os73uHAkVM5fIOAb/9y0p0/nKrGOXDA3K5XA7BUPblSs8zxoZdJfbt08UsRwSDbtMjjF6d0i8oOdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731372832; c=relaxed/simple;
-	bh=PQuNSkREgOMtR3zEtJkiQiQTb8dQcMy7wmSmmDZXtWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXQRdCJte53HHWeqGpbafqOSBi8qTunZ/mhpV0hJs0tqkiIYrYH5j/EEuApHBZziU2bL3KBdy8RjI+lgP/JIkv5+VHZbFMXUAdq8EV3twlIQ30j7juEalSuTyuvmPWCZps6rBo6GxQSluwvAvt9YgP5wvfxruG9LHU9Sc1gIUZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggvgGYhH; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so44823705e9.1;
-        Mon, 11 Nov 2024 16:53:50 -0800 (PST)
+	s=arc-20240116; t=1731373030; c=relaxed/simple;
+	bh=YYOImkpUT1Yja9zYCaAJgCtxSCnlayekNMYaprAva7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFml+SkYIcT156Zxdhljc7PI9RTUllBHgRozzyuzgHJbAPksbcNEMZQ1hwFBYtcRXBley2vHvsqJiwmBymcWdyBO6Ywru98jz99Ld/8XqFYKaF6mfd2n0rgxLmcw2068JX+z3L9ENtlMD6Ejwrtchsp7owLS+vBxmDgetDI6Rlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Yw/B7jYd; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20e6981ca77so57993655ad.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 16:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731372829; x=1731977629; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ze3l2pViJF1Ke3GJwQHCrNz3T2sv8K+NO5ktGTWIZ3E=;
-        b=ggvgGYhHpDYTkXQqj3pJ9iuDy89jTvMeKdQN8OvyPvYHglghKTrZzfQpj30LnzGiQ7
-         m+3/USxmM8/UZPZsB+fK5oFdt29/WYV1F+8ak2WJnCVQM5ByMe5Ubvr309ohPQKArDco
-         KpOu60aEaOyk0a6Iqc6q6b+4asq6D72mA7iM7XrP9aYwcI2WRNfUsop+h3pV6gNnJbmH
-         BJeVqaP9KNkq+2utrzq1cqQLqFxUTlCQp5HYnJjaHs+sR3bSyWRzQQOzTkz1YgiqZi91
-         YaFe1oyKA2WxNZa1c9t7olYvwnMDWT/ozbpHayQdxqR62xetpbIOtZyYcVSZ/2IOB/y5
-         00sg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731373027; x=1731977827; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUwyokbteUzniHEENjrKpRRTwbWjJZjJmULNQblWcik=;
+        b=Yw/B7jYd1iTBsqSPt91moD+FDQFLCIDrhCx1LUB35sV9BfXvpGTYPQgsuKBbOp9S0R
+         9r2rAWUIq7wkLrCjwSvR461fDS0japg8ra4cRbIcyXD7VGkBgsjToV05zivO9AjaS6Sl
+         tPMaNxCCCfXI0ZWXPLWuPtZP1rU8xJFVwpcDbuR6Cny9jhvz9+ObLz6HeKmxj2SX/m3J
+         KvUNY3Ih8DthB8OrWFcLKKnBRsrLH+UPjUD2WEVZTE11cHLc0jeTJLAreoRqDG2tLRsH
+         dcm3/0FbGi0p10BYQgtlkrIvoucpT1NWS72Y0WJEvrBcQyTXG3h1XtCa1FbZ52IO0HJ0
+         XsGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731372829; x=1731977629;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ze3l2pViJF1Ke3GJwQHCrNz3T2sv8K+NO5ktGTWIZ3E=;
-        b=S5c1picT6fFTQpPi/dO7zuAP5UVbZQPibmIxjfYmA3GOIOjLPhDt75DHcZdhgZm9rW
-         m7MuejmSQWD2/qLR7+ah/wbwi1/9qn5EU6H3Bp2ms6k1tjCyA2kurwuR6AiZPwHmFpJl
-         up0ARf7KKeFHnT0bB7nlvNL34lESXpB3fK/W62vJA9Hsd2s0qddDpLd0FeMQqydGOsDP
-         wocglC5NhcX5PTWH6VwFjdYI/5FXCbkDKbQyIXoGQk/6c+vZOaE1SbCCqMPXBfYHv3fg
-         pHB8UU+b7V27Np23NgIZUqZTPPKgZIw0FxfkgMWchFmUST5LtXcX9f6EMjUZQWvtDYGp
-         dV7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUh7eRRuaY7HuXbmwJsvgZQRCEXDtntq1pYM0lB7Sdcej1dDjXP56P4Ce9J6MbJ0y6tuRFk0UUBuQ==@vger.kernel.org, AJvYcCWLQ5LzZIm0NB/efqofKT97j+RzcR1U9tLabJvLonKBijU35z1ZBzSGPZDKWLZQAz/VWpOfUDYozkfAJpg=@vger.kernel.org, AJvYcCWyVgQvgCwde5lctyB3oX8kc59R53IIDjYP28hutfuK1GDF5rjy+6JiJyCfzcfQg7wimBdCuwGFodS84iDpPA==@vger.kernel.org, AJvYcCXjLyabPMgE0KyUpvSu+pjjrpsn17WPR6c+g+S9YG5VlFaZ2aQz3+Vuw0hB7Cb/iIpQMoW5UOGdPm9Rpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB6gFp8YSu72rmylG2SYBnoZ3yvXLF4hgdtd8lsJ09S1NYEkJp
-	hoKwrrvdbhan4nGzzXt/YN/3WFGCjViGedWkHcuJfCiKaO7zlnOv
-X-Google-Smtp-Source: AGHT+IHK2R7O39rPlG6hNltnOdR+XHDxAnsH0twtPY40zT6Pf5flUZXqdiOD1gkb9VOabYgYNTuldA==
-X-Received: by 2002:a05:6000:410a:b0:381:f5a7:9baa with SMTP id ffacd0b85a97d-381f5a79bc3mr8812654f8f.0.1731372828800;
-        Mon, 11 Nov 2024 16:53:48 -0800 (PST)
-Received: from [192.168.42.75] ([85.255.234.98])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda0411csm13818107f8f.95.2024.11.11.16.53.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 16:53:48 -0800 (PST)
-Message-ID: <86029316-4c73-46fa-8a02-a34103d6c60b@gmail.com>
-Date: Tue, 12 Nov 2024 00:54:32 +0000
+        d=1e100.net; s=20230601; t=1731373027; x=1731977827;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZUwyokbteUzniHEENjrKpRRTwbWjJZjJmULNQblWcik=;
+        b=Mj4XOD/5g5PYWXFgxevpyz3N1Klw9tD32Xwukuhoz73DSdd/54rM4EHmJRd7+bJz1s
+         trL9rS4AVNmCvUEQckPDQTQ0GQ+Yxbyo2IOFl5DlMqgA3Awcq5CoIC8t51KNs9aBA1FD
+         JDHVyfkHL/Lnu57A8hTsxlAh+j6jrT2UW3AvzyI6PC5PP0/KDgvA7Rdu6meZBHRTJgKG
+         uvMQL8EQ7yro3xKyothkbO395VP0z8hbwKe4dhWl+8pSBxZ2ZvZFpwtkbrIr40VkuRS8
+         DgKJEbIbHM3T6ldEDQGVq2g5HrRsn8zJV0BGsxmL+7SHbpsQPPRav1IZTdn5kzZVRuGa
+         JQhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoC9zreBeRAOJPEzKoPlLpQ+Lo8aB9y6kpK0I9qF4U8pkrGRZ72HrZEoagXjrGc6hTrytcQVsqSfpS6i0d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN/2QAt5hCgLHvNsYOBALMT1qn0s4IVCwEyc51EN5+sx4fPMKD
+	o5ttJrNGhSGixqb0J4sBqQVENClZKbxEAZ138u/zg8cy38qkncfkEW9DrMlH064=
+X-Google-Smtp-Source: AGHT+IG6t7qQXVQ3LjFCpVZCH1u4sMB615TBElvGr3S07x/zbJIq4pbcacpDwlnZyNM4UL5MtKIurg==
+X-Received: by 2002:a17:902:d50c:b0:20b:449c:8978 with SMTP id d9443c01a7336-21183559ba4mr207039635ad.31.1731373027524;
+        Mon, 11 Nov 2024 16:57:07 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a3f4sm81430715ad.234.2024.11.11.16.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 16:57:07 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tAfDM-00DQ0B-1Q;
+	Tue, 12 Nov 2024 11:57:04 +1100
+Date: Tue, 12 Nov 2024 11:57:04 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+Message-ID: <ZzKn4OyHXq5r6eiI@dread.disaster.area>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-11-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
- with read/write
-To: Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
- anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
-References: <20241030180112.4635-1-joshi.k@samsung.com>
- <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
- <20241030180112.4635-7-joshi.k@samsung.com>
- <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
- <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
- <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
- <b11cc81d-08b7-437d-85b4-083b84389ff1@gmail.com>
- <47ce9a55-b6fd-47f8-9707-b530f2ea7df5@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <47ce9a55-b6fd-47f8-9707-b530f2ea7df5@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111234842.2024180-11-axboe@kernel.dk>
 
-On 11/10/24 17:41, Kanchan Joshi wrote:
-> On 11/7/2024 10:53 PM, Pavel Begunkov wrote:
+On Mon, Nov 11, 2024 at 04:37:37PM -0700, Jens Axboe wrote:
+> If RWF_UNCACHED is set for a write, mark new folios being written with
+> uncached. This is done by passing in the fact that it's an uncached write
+> through the folio pointer. We can only get there when IOCB_UNCACHED was
+> allowed, which can only happen if the file system opts in. Opting in means
+> they need to check for the LSB in the folio pointer to know if it's an
+> uncached write or not. If it is, then FGP_UNCACHED should be used if
+> creating new folios is necessary.
 > 
->>>> 1. SQE128 makes it big for all requests, intermixing with requests that
->>>> don't need additional space wastes space. SQE128 is fine to use but at
->>>> the same time we should be mindful about it and try to avoid enabling it
->>>> if feasible.
->>>
->>> Right. And initial versions of this series did not use SQE128. But as we
->>> moved towards passing more comprehensive PI information, first SQE was
->>> not enough. And we thought to make use of SQE128 rather than taking
->>> copy_from_user cost.
->>
->> Do we have any data how expensive it is? I don't think I've ever
->> tried to profile it. And where the overhead comes from? speculation
->> prevention?
+> Uncached writes will drop any folios they create upon writeback
+> completion, but leave folios that may exist in that range alone. Since
+> ->write_begin() doesn't currently take any flags, and to avoid needing
+> to change the callback kernel wide, use the foliop being passed in to
+> ->write_begin() to signal if this is an uncached write or not. File
+> systems can then use that to mark newly created folios as uncached.
 > 
-> We did measure this for nvme passthru commands in past (and that was the
-> motivation for building SQE128). Perf profile showed about 3% overhead
-> for copy [*].
+> Add a helper, generic_uncached_write(), that generic_file_write_iter()
+> calls upon successful completion of an uncached write.
 
-Interesting. Sounds like the 3% is not accounting spec barriers,
-and then I'm a bit curious how much of it comes from the generic
-memcpy what could've been several 64 bit reads. But regardless
-let's assume it is expensive.
+This doesn't implement an "uncached" write operation. This
+implements a cache write-through operation.
 
->> If it's indeed costly, we can add sth to io_uring like pre-mapping
->> memory to optimise it, which would be useful in other places as
->> well.
-> 
-> But why to operate as if SQE128 does not exist?
-> Reads/Writes, at this point, are clearly not using aboud 20b in first
-> SQE and entire second SQE. Not using second SQE at all does not seem
-> like the best way to protect it from being used by future users.
+We've actually been talking about this for some time as a desirable
+general buffered write trait on fast SSDs. Excessive write-behind
+caching is a real problem in general, especially when doing
+streaming sequential writes to pcie 4 and 5 nvme SSDs that can do
+more than 7GB/s to disk. When the page cache fills up, we see all
+the same problems you are trying to work around in this series
+with "uncached" writes.
 
-You missed the point, if you take another look at the rest of my
-reply I even mentioned that SQE128 could be used as an optimisation
-and the only mode for this patchset, but the API has to be nicely
-extendable with more attributes in the future.
+IOWS, what we really want is page cache write-through as an
+automatic feature for buffered writes.
 
-You can't fit everything into SQE128. Even if we grow the SQE size
-further, it's one size for all requests, mixing requests would mean
-initilising entire SQE256/512/... for all requests, even for those
-that don't need it. It might be reasonable for some applications
-but not for a generic case.
 
-I know you care about having that particular integrity feature,
-but it'd be bad for io_uring to lock into a suboptimal API and
-special-casing PI implementation. Let's shift a discussion about
-details to the other sub-thread.
+> @@ -70,6 +71,34 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
+>  	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
+>  }
+>  
+> +/*
+> + * generic_uncached_write - start uncached writeback
+> + * @iocb: the iocb that was written
+> + * @written: the amount of bytes written
+> + *
+> + * When writeback has been handled by write_iter, this helper should be called
+> + * if the file system supports uncached writes. If %IOCB_UNCACHED is set, it
+> + * will kick off writeback for the specified range.
+> + */
+> +static inline void generic_uncached_write(struct kiocb *iocb, ssize_t written)
+> +{
+> +	if (iocb->ki_flags & IOCB_UNCACHED) {
+> +		struct address_space *mapping = iocb->ki_filp->f_mapping;
+> +
+> +		/* kick off uncached writeback */
+> +		__filemap_fdatawrite_range(mapping, iocb->ki_pos,
+> +					   iocb->ki_pos + written, WB_SYNC_NONE);
+> +	}
+> +}
 
-> Pre-mapping maybe better for opcodes for which copy_for_user has already
-> been done. For something new (like this), why to start in a suboptimal
-> way, and later, put the burden of taking hoops on userspace to get to
-> the same level where it can get by simply passing a flag at the time of
-> ring setup.
+Yup, this is basically write-through.
 
+> +
+> +/*
+> + * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
+> + * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
+> + * must check for this and pass FGP_UNCACHED for folio creation.
+> + */
+> +#define foliop_uncached			((struct folio *) 0xfee1c001)
+> +#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
+> +
+>  /**
+>   * filemap_set_wb_err - set a writeback error on an address_space
+>   * @mapping: mapping in which to set writeback error
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 40debe742abe..0d312de4e20c 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -430,6 +430,7 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
+>  
+>  	return filemap_fdatawrite_wbc(mapping, &wbc);
+>  }
+> +EXPORT_SYMBOL_GPL(__filemap_fdatawrite_range);
+>  
+>  static inline int __filemap_fdatawrite(struct address_space *mapping,
+>  	int sync_mode)
+> @@ -4076,7 +4077,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+>  	ssize_t written = 0;
+>  
+>  	do {
+> -		struct folio *folio;
+> +		struct folio *folio = NULL;
+>  		size_t offset;		/* Offset into folio */
+>  		size_t bytes;		/* Bytes to write to folio */
+>  		size_t copied;		/* Bytes copied from user */
+> @@ -4104,6 +4105,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+>  			break;
+>  		}
+>  
+> +		/*
+> +		 * If IOCB_UNCACHED is set here, we now the file system
+> +		 * supports it. And hence it'll know to check folip for being
+> +		 * set to this magic value. If so, it's an uncached write.
+> +		 * Whenever ->write_begin() changes prototypes again, this
+> +		 * can go away and just pass iocb or iocb flags.
+> +		 */
+> +		if (iocb->ki_flags & IOCB_UNCACHED)
+> +			folio = foliop_uncached;
+> +
+>  		status = a_ops->write_begin(file, mapping, pos, bytes,
+>  						&folio, &fsdata);
+>  		if (unlikely(status < 0))
+> @@ -4234,8 +4245,10 @@ ssize_t generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		ret = __generic_file_write_iter(iocb, from);
+>  	inode_unlock(inode);
+>  
+> -	if (ret > 0)
+> +	if (ret > 0) {
+> +		generic_uncached_write(iocb, ret);
+>  		ret = generic_write_sync(iocb, ret);
+
+Why isn't the writethrough check inside generic_write_sync()?
+Having to add it to every filesystem that supports write-through is
+unwieldy. If the IO is DSYNC or SYNC, we're going to run WB_SYNC_ALL
+writeback through the generic_write_sync() path already, so the only time we
+actually want to run WB_SYNC_NONE write-through here is if the iocb
+is not marked as dsync.
+
+Hence I think this write-through check should be done conditionally
+inside generic_write_sync(), not in addition to the writeback
+generic_write_sync() might need to do...
+
+That also gives us a common place for adding cache write-through
+trigger logic (think writebehind trigger logic similar to readahead)
+and this is also a place where we could automatically tag mapping
+ranges for reclaim on writeback completion....
+
+-Dave.
 -- 
-Pavel Begunkov
+Dave Chinner
+david@fromorbit.com
 
