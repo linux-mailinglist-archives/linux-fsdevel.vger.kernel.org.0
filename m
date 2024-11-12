@@ -1,133 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-34537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012119C61E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F219C621B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872251F24940
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A041F2321F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D4219C8C;
-	Tue, 12 Nov 2024 19:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38607219C94;
+	Tue, 12 Nov 2024 20:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="CvjabDkU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lxkmQPOx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733B20898E;
-	Tue, 12 Nov 2024 19:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D6C212D05;
+	Tue, 12 Nov 2024 20:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441348; cv=none; b=jdNk8zqzyQ9oc7PSv23JPZ5awWuumjTP4yndSi8aIaA5gvW47/2nzQyE9j0tRCObm7Ddazps8Pli99R1Qa5j7Zi1NJt8mlW/zOBRFov4SPw3JeHUph+/Jt+kuud8ylAYmIwMVlzabCL5YibFgoNiIOQpZ3AHtbXouL0GZU18/rM=
+	t=1731441929; cv=none; b=pWEfUEWLxdUXi/EC/yZccSBenX8BV4pprHmQBaTDhwNpE6rMXGEXDaYee5+O3BS80sjKwFX3vEV8AwGaIzTh48zZ07ZzmdyrzwzBB3SZ4hLbsQ55RFFtMopeJMSOeyiskmp9SxlbA1gD4JNy6PERFvSoAQG+8RaeGKMFJkjO3Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441348; c=relaxed/simple;
-	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXvLcUx++nHWX661IHTRZ3BksKvQZtqwapdt1LdohmOk2Zayu2QTUyq/VZUIg/GHLkMKG7509Mg0Zxlz7wl072NXdRwvdE9X3dLJyc29ZUy+aLP7a1DZyuAv2a7S7Cv+/q4icY9iCUaz+aKSywQoqn+4ya05wKP1vnu5Q9wt8gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=CvjabDkU; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 03D693FA6A;
-	Tue, 12 Nov 2024 19:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1731441334;
-	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
-	h=From:Date:Subject:To:Cc;
-	b=CvjabDkUJUSSXOJExrmb9n9jBWbldd3zbnbE9fOlnTjyQwUZCmqg0TUWhnljH/jH5
-	 CcPFuMlQTtrFxrcpE6B/sP5SsTJXWIaKQWLYknOW3VBEXE+ES6/Z6nugx+eK8q15J7
-	 K0LiHQZFuXYs635KqwUosvSHPxw/lcwFZrWLln45qW+hxK232vdZOFUcrp/QQrYxhQ
-	 VJeqgt36Ge5gSb6vYokcL9Q9bPcNj9mYvjhhx82H8NldKKR/X8Gj21XI7sGBBtSJ8o
-	 hmhEr4yzK73oc6tpjRpFH1XuPjKwyZxNG0r+Vsbr29YmWbLZbqKzIXFugT1CRrt1rb
-	 cYRj70mJJn26A==
-From: Asahi Lina <lina@asahilina.net>
-Date: Wed, 13 Nov 2024 04:55:32 +0900
-Subject: [PATCH] fuse: dax: No-op writepages callback
+	s=arc-20240116; t=1731441929; c=relaxed/simple;
+	bh=aKiEV+jPfRQz3/UPWDaLFzJD8dFBjc5HUjXksgGPKLs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UlMYCw8U8ggKXjv4Cv4RIJHMPjrNFBY6y7P5kpa75ynZRHC0mE7wt3mXx1wqwizHh6e6POd1qr4eQHzaQcTWfZM/SnxU0zIKP7Ym2t5BK27M3i1yJvemI+j05W54QvrfJuBPkK0F20CF9EyqZKWpxLZFX6W544Rw16pE0CH8QJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lxkmQPOx; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731441929; x=1762977929;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aKiEV+jPfRQz3/UPWDaLFzJD8dFBjc5HUjXksgGPKLs=;
+  b=lxkmQPOxRpdZ3QR3B1mpFPfXizkHtfH7IcfrnYYAW+sn/EGiV1ZNj7WW
+   N2vJytGJSsBAGmKjnvQwbd9Q6emjNZjMj/l/PH5P3F3LEhr7HDSs16ifR
+   ebIZIeT0VigvF/+he5+DGF+Ow71zXyRpu5WUzW+HPNEfqyr0EL9/6Hkgj
+   E4klsmSqgfsy5WyHl72QJ1REUnm4m3QdR0X0nRZx65+nw3cweFl4ehowK
+   G20vMOA039MJDJV3LcA46/Y/wxHoUQI48/B9W0I2cJLHrzfSlTaQaOaay
+   FUgl3TZGQEFPzSGZOYgg6UAPe4f+e60l+SVkiHjcMKyVjnkjNfj6XhXTa
+   Q==;
+X-CSE-ConnectionGUID: 6wnYenn1QGK2XyhvOPs7WA==
+X-CSE-MsgGUID: wP59/F7/Rly6KMoFUWFy9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31394336"
+X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
+   d="scan'208";a="31394336"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:28 -0800
+X-CSE-ConnectionGUID: bKkRxV3gTQGTixoxY33i7w==
+X-CSE-MsgGUID: SwfoqNkJTe+phUgbyVRLkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
+   d="scan'208";a="92710347"
+Received: from mwajdecz-mobl.ger.corp.intel.com ([10.245.85.128])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:26 -0800
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+To: intel-xe@lists.freedesktop.org
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/4] Add iomem helpers for use from debugfs
+Date: Tue, 12 Nov 2024 21:04:50 +0100
+Message-Id: <20241112200454.2211-1-michal.wajdeczko@intel.com>
+X-Mailer: git-send-email 2.21.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-dax-no-writeback-v1-1-ee2c3a8d9f84@asahilina.net>
-X-B4-Tracking: v=1; b=H4sIALOyM2cC/x3MQQqAIBBA0avErBtoUqS6SrRQm2oILDQqiO6et
- HyL/x9IHIUTdMUDkU9JsoUMKgvwiw0zo4zZUFe1JiKFo70xbHhFOdhZv6ImNs4p0zbOQ872yJP
- c/7If3vcDv70xw2IAAAA=
-X-Change-ID: 20241113-dax-no-writeback-41e6bb3698bc
-To: Miklos Szeredi <miklos@szeredi.hu>, 
- Dan Williams <dan.j.williams@intel.com>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, 
- Matthew Wilcox <willy@infradead.org>, Sergio Lopez Pascual <slp@redhat.com>, 
- asahi@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731441333; l=2006;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
- b=RITMZ3OffyOGQq+meVQPdwN87olVlNUBbNxkxDcqPQQ/ROTA+RYl1EH63EH5poTnKOMEOUEBi
- mvNOmc+uGmjD2yAbLq0Or+s4ebqCvcJ14c21zu/Ww52zWMgLazBtDyC
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
+Content-Transfer-Encoding: 8bit
 
-When using FUSE DAX with virtiofs, cache coherency is managed by the
-host. Disk persistence is handled via fsync() and friends, which are
-passed directly via the FUSE layer to the host. Therefore, there's no
-need to do dax_writeback_mapping_range(). All that ends up doing is a
-cache flush operation, which is not caught by KVM and doesn't do much,
-since the host and guest are already cache-coherent.
+This series attempts to promote helpers used by Xe [1] to libfs.
+Earlier attempt [2] with similar helper was unnoticed.
 
-Since dax_writeback_mapping_range() checks that the inode block size is
-equal to PAGE_SIZE, this fixes a spurious WARN when virtiofs is used
-with a mismatched guest PAGE_SIZE and virtiofs backing FS block size
-(this happens, for example, when it's a tmpfs and the host and guest
-have a different PAGE_SIZE). FUSE DAX does not require any particular FS
-block size, since it always performs DAX mappings in aligned 2MiB
-blocks.
+[1] https://patchwork.freedesktop.org/series/140848/#rev1
+[2] https://patchwork.freedesktop.org/series/133507/#rev1
 
-See discussion in [1].
+v1: https://patchwork.freedesktop.org/series/141060/#rev1
+v2: use iterate_and_advance to treat user_iter separately (Matthew)
 
-[1] https://lore.kernel.org/lkml/20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net/T/#u
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- fs/fuse/dax.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Michal Wajdeczko (4):
+  iov_iter: Provide copy_iomem_to|from_iter()
+  libfs: Provide simple_read_from|write_to_iomem()
+  drm/xe: Add read/write debugfs helpers for GGTT node
+  drm/xe/pf: Expose access to the VF GGTT PTEs over debugfs
 
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 12ef91d170bb3091ac35a33d2b9dc38330b00948..15cf7bb20b5ebf15451190dac2fcc2e841148e6c 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -777,11 +777,8 @@ ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- static int fuse_dax_writepages(struct address_space *mapping,
- 			       struct writeback_control *wbc)
- {
--
--	struct inode *inode = mapping->host;
--	struct fuse_conn *fc = get_fuse_conn(inode);
--
--	return dax_writeback_mapping_range(mapping, fc->dax->dev, wbc);
-+	/* nothing to flush, fuse cache coherency is managed by the host */
-+	return 0;
- }
- 
- static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf, unsigned int order,
+ drivers/gpu/drm/xe/xe_ggtt.c                | 52 ++++++++++++++
+ drivers/gpu/drm/xe/xe_ggtt.h                |  7 ++
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c | 62 ++++++++++++++++
+ fs/libfs.c                                  | 78 +++++++++++++++++++++
+ include/linux/fs.h                          |  5 ++
+ include/linux/uio.h                         |  3 +
+ lib/iov_iter.c                              | 66 +++++++++++++++++
+ 7 files changed, 273 insertions(+)
 
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241113-dax-no-writeback-41e6bb3698bc
-
-Cheers,
-~~ Lina
+-- 
+2.43.0
 
 
