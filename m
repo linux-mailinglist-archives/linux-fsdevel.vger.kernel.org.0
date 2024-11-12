@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-34404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3632D9C5094
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:28:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06EBB9C50AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B07282943
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:28:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB0F1B27235
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFE420E306;
-	Tue, 12 Nov 2024 08:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED15F20EA23;
+	Tue, 12 Nov 2024 08:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOfXLL+d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5gHShOX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAEE20C01C;
-	Tue, 12 Nov 2024 08:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCC20C01C;
+	Tue, 12 Nov 2024 08:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400018; cv=none; b=ltcnzLwYhJPhGMxGkLsaHLAhoD1NzcZYrCvx9DMgn5m8nl0jk60mf3J4xxsw+00K6dDD8we6aNe7Gfq7H1AtwqCL5RCuYQUdB0Sg1qjI5zG+BUCccLSFXXDn4ejPySGp1Xi60PZLRWwnLv2UA3aAzCsCVxGj7QenEdmG/TV5avc=
+	t=1731400025; cv=none; b=iuACoofth6agngYz0Yi6x2JNgY0HTcInuZ5kNXyb7hPZPArGsjAN3NdP4mUZH336t8CsFoSVVcfhAaKZHQ+l1L+W4Rd4SOXssz2jkq5wFYfuJ8RLnxiOeSQVqcMW4QNKWNIrGvnAKLB8i2RIHV5QTaIzqk9UXve34QHmdOy59ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400018; c=relaxed/simple;
-	bh=h4/pxwZqbYL0YDJ6s/BsT2Km5NWKmXNu7R1WBTg/gjw=;
+	s=arc-20240116; t=1731400025; c=relaxed/simple;
+	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+UDYlTjjIjtarM8EfRRbNuK8/AXnZB8oHcfJVzIi2H9wBt8UZfVURHaQaT62Rp0p4C/L4m922TTUqonVxhqP459OQtqaKSHw0WnVKEQyT35eI0QwrOhkxmhv/kwarmEYHVA9x8O9VuPQWFF0jCcXWbrHCGpM2lR2399+v7t5gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOfXLL+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D2F1C4CED7;
-	Tue, 12 Nov 2024 08:26:54 +0000 (UTC)
+	 MIME-Version; b=cjiIhSi3HfNU1ljDTHpD8TBBXk1C5xdoRNP0Bn/44VDXyefcMv9s1WGsVII4ryi8DOfcL/Nfx5I63+Tj48Q0JwTk7XFObAGM+rSe7h19wHe5F6ABVjd5fzjHkIxlMNeGIa9AEdQH8IqXNwv/PMfjcdiQqybNoIko7eiKCX0ZMWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5gHShOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC85CC4CECD;
+	Tue, 12 Nov 2024 08:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731400017;
-	bh=h4/pxwZqbYL0YDJ6s/BsT2Km5NWKmXNu7R1WBTg/gjw=;
+	s=k20201202; t=1731400024;
+	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IOfXLL+dHM1DjsnCIe8PuLDQi5NBdJeMbiMKUjI9udDVHGnieO6R2MKYlRJIGJiP1
-	 6Nto+hblkhXXqe6ecJpGkJPiOTmNpKOWyhUyQGy4al9Jzj0+3NEeM4L3f+eYwznymd
-	 aXea7LH9T1t1Z2kjjM4Ljt/KLkcIXJ2N9mLSRWulud39sHn6mgHd/AUgMtS9ifvs/c
-	 HmhYXq4pK6b0rCTL3uPsKRnleYwRQK1TTcdGUQ0Qv8iIR90CXb3Qv482vmb45WWRbI
-	 6upjVu1xiIqk9CfVFfsN0HDyqTMVHSR1VpnCgUcxzqMLSSfUpcnDIqKpMGBxzG+oAW
-	 QdGc/n9p9KFCQ==
+	b=N5gHShOXD/p6HLBG9i2FWZ2kOmGzzEtuKdoBl8pUrlg6suqNLLfT7KmMAotVTEy+y
+	 /sl0AzajPOy2BbJS85DRA2fl0mr1d6cjbeZ563c6Uy4zFK16ZHH0MyLPagZtlJt8pR
+	 YkDsFcCagSFzV+trDp6FbJ3Kyv5Q4QYEYMgpREPFf6EX0xn6KGwOMEY/OGZcofNipi
+	 396mCvApPcrA8ooNA7aupOssX6BDiMFBOjbMPfKdF14WqvVgFoXLAqbVjMsB4RN/Sj
+	 CvFMn0ZFSxJG/x9RvI+WwNcb3RfZpz4QGXK5ztS0J+AuCcBOflR6X2+u5xPwWdFN7z
+	 Fs9YKoOdr2NQQ==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kernel-team@meta.com,
 	mic@digikod.net,
 	gnoack@google.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 4/4] selftest/bpf: Add test for inode local storage recursion
-Date: Tue, 12 Nov 2024 00:25:59 -0800
-Message-ID: <20241112082600.298035-6-song@kernel.org>
+Subject: [PATCH bpf-next 4/4] selftest/bpf: Test inode local storage recursion prevention
+Date: Tue, 12 Nov 2024 00:26:00 -0800
+Message-ID: <20241112082600.298035-7-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241112082600.298035-1-song@kernel.org>
 References: <20241112082600.298035-1-song@kernel.org>
@@ -78,13 +78,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add selftest to cover recursion of bpf local storage functions.
+Add selftest for recursion prevention logic of bpf local storage.
 
 When inode local storage function is traced, helpers that access inode
 local storage should return -EBUSY.
 
 The recurring program is attached to inode_storage_lookup(). This is not
-an ideal target for recurrsion tests. However, given that the target
+an ideal target for recursion tests. However, given that the target
 function have to take "struct inode *" argument, there isn't a better
 target function for the tests.
 
@@ -94,9 +94,9 @@ Work around this by adding this test to DENYLIST.s390x.
 Signed-off-by: Song Liu <song@kernel.org>
 ---
  tools/testing/selftests/bpf/DENYLIST.s390x    |  1 +
- .../bpf/prog_tests/inode_local_storage.c      | 70 +++++++++++++++
+ .../bpf/prog_tests/inode_local_storage.c      | 72 +++++++++++++++
  .../bpf/progs/inode_storage_recursion.c       | 90 +++++++++++++++++++
- 3 files changed, 161 insertions(+)
+ 3 files changed, 163 insertions(+)
  create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
  create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
 
@@ -113,10 +113,10 @@ index 3ebd77206f98..6b8c9c9ec754 100644
  verifier_iterating_callbacks
 diff --git a/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
 new file mode 100644
-index 000000000000..8dc44ebb8431
+index 000000000000..a9d9f77216f4
 --- /dev/null
 +++ b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,72 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
 +
@@ -161,6 +161,8 @@ index 000000000000..8dc44ebb8431
 +	map_fd = bpf_map__fd(skel->maps.inode_map);
 +	err = bpf_map_lookup_elem(map_fd, &inode_fd, &value);
 +	ASSERT_OK(err, "lookup inode_map");
++
++	/* Check trace_inode_mkdir for the reason that value == 201 */
 +	ASSERT_EQ(value, 201, "inode_map value");
 +	ASSERT_EQ(skel->bss->nr_del_errs, 1, "bpf_task_storage_delete busy");
 +
@@ -189,7 +191,7 @@ index 000000000000..8dc44ebb8431
 +}
 diff --git a/tools/testing/selftests/bpf/progs/inode_storage_recursion.c b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
 new file mode 100644
-index 000000000000..18db141f8235
+index 000000000000..0ad36f8c6e04
 --- /dev/null
 +++ b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
 @@ -0,0 +1,90 @@
@@ -223,8 +225,6 @@ index 000000000000..18db141f8235
 + * pointer with BTF, for inode local storage, we need the get the inode
 + * pointer from function arguments. Other functions, such as,
 + * bpf_local_storage_get() does not take inode as input.
-+ *
-+ * As a compromise, we may need to skip this test for some architectures.
 + */
 +SEC("fentry/inode_storage_lookup")
 +int BPF_PROG(trace_inode_storage_lookup, struct inode *inode)
@@ -269,13 +269,15 @@ index 000000000000..18db141f8235
 +	ptr = bpf_inode_storage_get(&inode_map, dir, 0,
 +				    BPF_LOCAL_STORAGE_GET_F_CREATE);
 +
-+	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0 */
++	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0.
++	 * Set ptr to 200.
++	 */
 +	if (ptr && !*ptr)
 +		*ptr = 200;
 +
-+	/* Trigger trace_inode_storage_lookup, the first time.
++	/* Trigger trace_inode_storage_lookup, the second time.
 +	 * trace_inode_storage_lookup can now get ptr and increase the
-+	 * value.
++	 * value. Now the value is 201.
 +	 */
 +	bpf_inode_storage_get(&inode_map, dir, 0,
 +			      BPF_LOCAL_STORAGE_GET_F_CREATE);
