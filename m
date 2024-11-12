@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DDB9C5FA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:58:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB969C5FA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE940286C50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A473E1F244FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 17:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF9B2170B8;
-	Tue, 12 Nov 2024 17:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948D42185AB;
+	Tue, 12 Nov 2024 17:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="VEZ6JEl9"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="TiqP3RUy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F42215012
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55735217F47
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 17:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434200; cv=none; b=XOc+GEHhCWBg6LJCbvl2cw6qGqo20wwGPbJqnh5BvzoJmxT769llQICpVX9cYHS7tSfYrYRsY3z2JyLFRKnYRntHLZcYSgrv4ZLfWDmvPbKMhFxUQj1No/uo3psdnoqfBNuaK4IfrciJLbaCwTlnxHzkQjEMvI04G8VMFiCebvY=
+	t=1731434201; cv=none; b=ulSYqlIleP20rLQLIp4dRY6vwtiNASMotAdbuRQUVPYf//1qwfZjz2cC5qxihLlhN7cGYpJ/5Jrm60fG1xaMjjvzGv0rHwZHnCONiJeuQFbNnCD72ngPvGw4J6WbJ6wzdP4/RYj9iFKf1/UJr3tL88DC91l5bMRozg2n8OqK4W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434200; c=relaxed/simple;
-	bh=hCVqg1hYUhJw3sbARLBfUedgysh+nS0Ev5LGrGr4wQQ=;
+	s=arc-20240116; t=1731434201; c=relaxed/simple;
+	bh=64cnq185QNR6dzOyatVzX6ysDD8I9dUVc8gWhEVGl4M=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a7Cb3reS8lbdAifZN9HMF0Ne9Bwj+ywkPiQGwyn84GyaQ1LhN5AcJMr1nMieze0YtnY8kvtIaRki+NgmJmebcFJkxWrmVPiEpct/+PAW2Wj3bm9GSBmDvXBVIFOgLz7/1AVk8le6BHwV2Rn/HMeZVnyCka+2Mn+xnTdTLBEI4Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=VEZ6JEl9; arc=none smtp.client-ip=209.85.128.182
+	 MIME-Version; b=NiwWdQKjuJogUDPE9iy9K4B2mLwfINjUXWTLZEXF9Z/jCzLYIy3BFCnFLZ8i3zn+6EdBY1QpW2hMS7GTKUxM+cIAFkaCZEKOLyPIKqzPo5r0O4SJqDzDagXLYl+nLxAEFoDevQLnPCnL9ZMmdf0HooMTr54/SM8JG1afoh7gVIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=TiqP3RUy; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e5cec98cceso46848447b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:56:38 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e9ed5e57a7so48557777b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 09:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731434198; x=1732038998; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731434199; x=1732038999; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9qmzKtSqQfrhv9mwfplhMG+Dc91SaSr6kT90grfFzXE=;
-        b=VEZ6JEl9Cu/Isz4seo0E411OBTyTv6TEk4kv3ORCmQlXroCr+ZsB69A/SK/KwaO0EN
-         zPCm7TBI4GMvFQkMU4BSgL8o9Hrv4lnqgktZPI5sGjKDYNbv44Dnk1sFXf85v76SnnfD
-         lnD1llo+ZFlOQy5Vn96ApASiMjvv6muUdUY7OOKtDTNMsXcSWLbpEI/Sjqbm8N6q8FsI
-         LW69MrmsGZx2Hvz1DXN9e+0CydfsIewbFJ1VfbO7fw5tsdWRQtL4oHgcHBnwJdfpI1Hl
-         A9FSj6yyrkjL0DhpKPKvTuDW75NETgMdvO7gB1l+vc265C74DKECvnIoqdOFTlc0RfL4
-         XLgA==
+        bh=f/zk511lAvWJc9DDqLFXDlls0KrGnQ6iorjj31bM1x8=;
+        b=TiqP3RUywJbAy1kPokHMhca+SF0rkF32q8t2qs8tsECnuYHdBjgGetgIXhipYA0Tgj
+         dSjJxaO/0azpq6t5H5fnQhvFmJcjvtO0qq+6q4CJyttgUNFLAsSrDGGHqPmvrsiFKkGN
+         9+mtRjeS/dT4IV7J+SRTPV1bhcrwd81JSsg48IjMKr1JgTBqpMebC5iJRXkdLyP9aiuq
+         v76xRWQfXqL0c2IyeSLLuc/QFYZhMUvCnztKPebsPLmVZHsSB4l1hZHkVltjfHPL4SFJ
+         CKvjhq1zARR/d6kp6g3VR59X4lrYOYje6wcsRW62oa7Jo7jRE1l8T23CIqeYyMx7jNAn
+         JmIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731434198; x=1732038998;
+        d=1e100.net; s=20230601; t=1731434199; x=1732038999;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9qmzKtSqQfrhv9mwfplhMG+Dc91SaSr6kT90grfFzXE=;
-        b=ue8Kp2dbcxvA1IgzimOZkOc0D95wl4ko3/QyCUMJJK9VjIGPfi9YZLqEjcsqQvhGtn
-         j1c8f4DGLPqCPtWJzx/rPNHyvpyS2rxINBl5fbTkKd5WA8Mx+nEq+/Y1ZsDqrRjJJNoN
-         mK6JoiwvRZs6SNLn/9NWflTot1ondS5f3K9X1OiTfyhEPy9YjVWZAQtfmPh1I+g17sJD
-         jdRW8gc5sWJsS4Ka4oyRMmOZM8WYmuwn9F7eg0cqqhqY0sZxlVvfVGryX399tUQRgtM5
-         OsFA5u4IbTcCw+TmaBdwCf7GthApwzvQmt25sU3nGazCnrGAWToCcxzxZ/LixKB5K718
-         ursg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVyB3fxVfLO74JfBWhQGR2CBsL+tQhkfxImurYmpI/vkNggv0H6mJhOmXlTRDr6ULlC5goBv/xKXks6LHp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9WkhohIqj/f5q+k5IByi8TtFh3mdynmpSgPJ7w62k6OHY2sHo
-	zYrwFpnrYZT3Q3DPt9JNOtn5NBHgAT4AJSDUoixA7GIWhjdNrFWdWLbl9jSb0Dg=
-X-Google-Smtp-Source: AGHT+IHyY6QTMjull+z1rPYeXNfxhgVBLW70xt2rGV+KFU983vos+ZL89drz2YsnyEbkmVx23Jm32A==
-X-Received: by 2002:a05:690c:6885:b0:6ea:7afd:d901 with SMTP id 00721157ae682-6eaddd98734mr177756967b3.18.1731434197704;
-        Tue, 12 Nov 2024 09:56:37 -0800 (PST)
+        bh=f/zk511lAvWJc9DDqLFXDlls0KrGnQ6iorjj31bM1x8=;
+        b=q0GpPjcoBe8UUlg6JH/YnyN2yozpAa/9j4CYDjizjFwQGO875kL3Yz45nxT8DTYdwp
+         1OIFfu7p2Bms5VyfhayQRqm9TSPGAbbt0ebQ3RyReHOYCCG0H66AydCZEC64Xcce5QUO
+         tCBzfVfc3vL41ZZVJKXMpcbM0MLZyBro47hS1Hj5F6SBfbFTxiTmBpL76d8arX11SUBa
+         +5kXAEn9R65yAjv+k/tkGvMuy0XAzonEj9Zi7Uown51sYftzFdgN8JU/dgC0Z/AjNG8v
+         DjRdfiiG/ghBtzR5bUBRfarhCYuxbKFIcujz8CJsR9uz3xbsrU0p0ZJsFi9VcmaBJBAX
+         eKJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFNOfhgVtCoU8T6YkBO2IbEelPdRXwmTXIj9BXiVX/2iznoxC3nyD6i93wjPUaXO6A42lN82JLb1YDYFlh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY8WUzBE0EJ2tSvypO15tv1BYvI4/lJDKtZyG1Os2mNyHarfXD
+	060M28/+Dclmfb0ZZdDyW82TxwxcEWPhEkXpnOBpwT+m7roeFHLF/PsHP6TXcXo=
+X-Google-Smtp-Source: AGHT+IF3UHQJ040IIKGHttfPGwPkHcoNpKCF3umoPrbhTPK8Z7j1Ql7aKyWKk9X3oelY5giKEXNyJQ==
+X-Received: by 2002:a05:690c:314:b0:6e5:bca9:cb8f with SMTP id 00721157ae682-6eaddfa3b62mr164950927b3.38.1731434199260;
+        Tue, 12 Nov 2024 09:56:39 -0800 (PST)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb65a9csm26511117b3.92.2024.11.12.09.56.36
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8d5133sm26365837b3.12.2024.11.12.09.56.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 09:56:37 -0800 (PST)
+        Tue, 12 Nov 2024 09:56:38 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
@@ -78,9 +78,9 @@ To: kernel-team@fb.com,
 	linux-btrfs@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-ext4@vger.kernel.org
-Subject: [PATCH v7 06/18] fsnotify: pass optional file access range in pre-content event
-Date: Tue, 12 Nov 2024 12:55:21 -0500
-Message-ID: <715ea468f03513b1b1a8e478f7096acc69a227fe.1731433903.git.josef@toxicpanda.com>
+Subject: [PATCH v7 07/18] fsnotify: generate pre-content permission event on open
+Date: Tue, 12 Nov 2024 12:55:22 -0500
+Message-ID: <60a2309da948dc81e4c66b9e5fe3f1e2faa2010e.1731433903.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1731433903.git.josef@toxicpanda.com>
 References: <cover.1731433903.git.josef@toxicpanda.com>
@@ -94,220 +94,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Amir Goldstein <amir73il@gmail.com>
 
-We would like to add file range information to pre-content events.
+Generate pre-content event on open in addition to FS_OPEN_PERM,
+but without sb_writers held and after file was truncated
+in case file was opened with O_CREAT and/or O_TRUNC.
 
-Pass a struct file_range with offset and length to event handler
-along with pre-content permission event.
-
-The offset and length are aligned to page size, but we may need to
-align them to minimum folio size for filesystems with large block size.
+The event will have a range info of [0..0] to provide an opportunity
+to fill entire file content on open.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c    | 11 +++++++++--
- fs/notify/fanotify/fanotify.h    |  2 ++
- include/linux/fsnotify.h         | 28 ++++++++++++++++++++++++----
- include/linux/fsnotify_backend.h | 32 ++++++++++++++++++++++++++++++++
- 4 files changed, 67 insertions(+), 6 deletions(-)
+ fs/namei.c               | 10 +++++++++-
+ include/linux/fsnotify.h |  4 +++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 24c7c5df4998..2e6ba94ec405 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -548,9 +548,13 @@ static struct fanotify_event *fanotify_alloc_path_event(const struct path *path,
- 	return &pevent->fae;
+diff --git a/fs/namei.c b/fs/namei.c
+index 9d30c7aa9aa6..a1a5b10893f6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3836,7 +3836,15 @@ static int do_open(struct nameidata *nd,
+ 	}
+ 	if (do_truncate)
+ 		mnt_drop_write(nd->path.mnt);
+-	return error;
++	if (error)
++		return error;
++
++	/*
++	 * This permission hook is different than fsnotify_open_perm() hook.
++	 * This is a pre-content hook that is called without sb_writers held
++	 * and after the file was truncated.
++	 */
++	return fsnotify_file_area_perm(file, MAY_OPEN, &file->f_pos, 0);
  }
  
--static struct fanotify_event *fanotify_alloc_perm_event(const struct path *path,
-+static struct fanotify_event *fanotify_alloc_perm_event(const void *data,
-+							int data_type,
- 							gfp_t gfp)
- {
-+	const struct path *path = fsnotify_data_path(data, data_type);
-+	const struct file_range *range =
-+			    fsnotify_data_file_range(data, data_type);
- 	struct fanotify_perm_event *pevent;
- 
- 	pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
-@@ -564,6 +568,9 @@ static struct fanotify_event *fanotify_alloc_perm_event(const struct path *path,
- 	pevent->hdr.len = 0;
- 	pevent->state = FAN_EVENT_INIT;
- 	pevent->path = *path;
-+	/* NULL ppos means no range info */
-+	pevent->ppos = range ? &range->pos : NULL;
-+	pevent->count = range ? range->count : 0;
- 	path_get(path);
- 
- 	return &pevent->fae;
-@@ -801,7 +808,7 @@ static struct fanotify_event *fanotify_alloc_event(
- 	old_memcg = set_active_memcg(group->memcg);
- 
- 	if (fanotify_is_perm_event(mask)) {
--		event = fanotify_alloc_perm_event(path, gfp);
-+		event = fanotify_alloc_perm_event(data, data_type, gfp);
- 	} else if (fanotify_is_error_event(mask)) {
- 		event = fanotify_alloc_error_event(group, fsid, data,
- 						   data_type, &hash);
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index e5ab33cae6a7..93598b7d5952 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -425,6 +425,8 @@ FANOTIFY_PE(struct fanotify_event *event)
- struct fanotify_perm_event {
- 	struct fanotify_event fae;
- 	struct path path;
-+	const loff_t *ppos;		/* optional file range info */
-+	size_t count;
- 	u32 response;			/* userspace answer to the event */
- 	unsigned short state;		/* state of the event */
- 	int fd;		/* fd we passed to userspace for this event */
+ /**
 diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 0f44cd60ac9a..7110bc2f5aa7 100644
+index 7110bc2f5aa7..2d1c13df112c 100644
 --- a/include/linux/fsnotify.h
 +++ b/include/linux/fsnotify.h
-@@ -154,9 +154,16 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
- }
- 
- #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
--static inline int fsnotify_pre_content(struct file *file)
-+static inline int fsnotify_pre_content(const struct file *file,
-+				       const loff_t *ppos, size_t count)
- {
- 	struct inode *inode = file_inode(file);
-+	struct file_range range;
-+	const void *data;
-+	int data_type;
-+
-+	if (!fsnotify_file_watchable(file, FS_PRE_ACCESS))
-+		return 0;
- 
- 	/*
- 	 * Pre-content events are only reported for regular files and dirs
-@@ -168,7 +175,20 @@ static inline int fsnotify_pre_content(struct file *file)
- 					       FSNOTIFY_PRIO_PRE_CONTENT))
- 		return 0;
- 
--	return fsnotify_file(file, FS_PRE_ACCESS);
-+	/* Report page aligned range only when pos is known */
-+	if (ppos) {
-+		range.path = &file->f_path;
-+		range.pos = PAGE_ALIGN_DOWN(*ppos);
-+		range.count = PAGE_ALIGN(*ppos + count) - range.pos;
-+		data = &range;
-+		data_type = FSNOTIFY_EVENT_FILE_RANGE;
-+	} else {
-+		data = &file->f_path;
-+		data_type = FSNOTIFY_EVENT_PATH;
-+	}
-+
-+	return fsnotify_parent(file->f_path.dentry, FS_PRE_ACCESS,
-+			       data, data_type);
- }
+@@ -193,6 +193,8 @@ static inline int fsnotify_pre_content(const struct file *file,
  
  /*
-@@ -188,7 +208,7 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+  * fsnotify_file_area_perm - permission hook before access of file range
++ *
++ * Called post open with access range [0..0].
+  */
+ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 					  const loff_t *ppos, size_t count)
+@@ -207,7 +209,7 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 	/*
  	 * read()/write and other types of access generate pre-content events.
  	 */
- 	if (perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS)) {
--		int ret = fsnotify_pre_content(file);
-+		int ret = fsnotify_pre_content(file, ppos, count);
+-	if (perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS)) {
++	if (perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS | MAY_OPEN)) {
+ 		int ret = fsnotify_pre_content(file, ppos, count);
  
  		if (ret)
- 			return ret;
-@@ -205,7 +225,7 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
- }
- 
- /*
-- * fsnotify_file_perm - permission hook before file access
-+ * fsnotify_file_perm - permission hook before file access (unknown range)
-  */
- static inline int fsnotify_file_perm(struct file *file, int perm_mask)
- {
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 9bda354b5538..abd292edb48c 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -294,6 +294,7 @@ static inline void fsnotify_group_assert_locked(struct fsnotify_group *group)
- /* When calling fsnotify tell it if the data is a path or inode */
- enum fsnotify_data_type {
- 	FSNOTIFY_EVENT_NONE,
-+	FSNOTIFY_EVENT_FILE_RANGE,
- 	FSNOTIFY_EVENT_PATH,
- 	FSNOTIFY_EVENT_INODE,
- 	FSNOTIFY_EVENT_DENTRY,
-@@ -306,6 +307,17 @@ struct fs_error_report {
- 	struct super_block *sb;
- };
- 
-+struct file_range {
-+	const struct path *path;
-+	loff_t pos;
-+	size_t count;
-+};
-+
-+static inline const struct path *file_range_path(const struct file_range *range)
-+{
-+	return range->path;
-+}
-+
- static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
- {
- 	switch (data_type) {
-@@ -315,6 +327,8 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
- 		return d_inode(data);
- 	case FSNOTIFY_EVENT_PATH:
- 		return d_inode(((const struct path *)data)->dentry);
-+	case FSNOTIFY_EVENT_FILE_RANGE:
-+		return d_inode(file_range_path(data)->dentry);
- 	case FSNOTIFY_EVENT_ERROR:
- 		return ((struct fs_error_report *)data)->inode;
- 	default:
-@@ -330,6 +344,8 @@ static inline struct dentry *fsnotify_data_dentry(const void *data, int data_typ
- 		return (struct dentry *)data;
- 	case FSNOTIFY_EVENT_PATH:
- 		return ((const struct path *)data)->dentry;
-+	case FSNOTIFY_EVENT_FILE_RANGE:
-+		return file_range_path(data)->dentry;
- 	default:
- 		return NULL;
- 	}
-@@ -341,6 +357,8 @@ static inline const struct path *fsnotify_data_path(const void *data,
- 	switch (data_type) {
- 	case FSNOTIFY_EVENT_PATH:
- 		return data;
-+	case FSNOTIFY_EVENT_FILE_RANGE:
-+		return file_range_path(data);
- 	default:
- 		return NULL;
- 	}
-@@ -356,6 +374,8 @@ static inline struct super_block *fsnotify_data_sb(const void *data,
- 		return ((struct dentry *)data)->d_sb;
- 	case FSNOTIFY_EVENT_PATH:
- 		return ((const struct path *)data)->dentry->d_sb;
-+	case FSNOTIFY_EVENT_FILE_RANGE:
-+		return file_range_path(data)->dentry->d_sb;
- 	case FSNOTIFY_EVENT_ERROR:
- 		return ((struct fs_error_report *) data)->sb;
- 	default:
-@@ -375,6 +395,18 @@ static inline struct fs_error_report *fsnotify_data_error_report(
- 	}
- }
- 
-+static inline const struct file_range *fsnotify_data_file_range(
-+							const void *data,
-+							int data_type)
-+{
-+	switch (data_type) {
-+	case FSNOTIFY_EVENT_FILE_RANGE:
-+		return (struct file_range *)data;
-+	default:
-+		return NULL;
-+	}
-+}
-+
- /*
-  * Index to merged marks iterator array that correlates to a type of watch.
-  * The type of watched object can be deduced from the iterator type, but not
 -- 
 2.43.0
 
