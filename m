@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-34403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5824E9C5090
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:28:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3632D9C5094
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBEB1F22A91
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B07282943
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C8220DD78;
-	Tue, 12 Nov 2024 08:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFE420E306;
+	Tue, 12 Nov 2024 08:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B8ed25FC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOfXLL+d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8853820C00D;
-	Tue, 12 Nov 2024 08:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAEE20C01C;
+	Tue, 12 Nov 2024 08:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400010; cv=none; b=DydLTfEzq31giMb7yDh0In0HVijUJxLIBFWS4bdOgphrGPhukhoVhtZB1p4COeOTK5sSHfXhlCm/vbN//pcgteNcid0K6L0USsEVlD7hCoJKm3RefMGH5FqacTSooY7YRfw1ky7cN6pIOCVJaceX3LA2IQFpON5TC4DLzSL4o4M=
+	t=1731400018; cv=none; b=ltcnzLwYhJPhGMxGkLsaHLAhoD1NzcZYrCvx9DMgn5m8nl0jk60mf3J4xxsw+00K6dDD8we6aNe7Gfq7H1AtwqCL5RCuYQUdB0Sg1qjI5zG+BUCccLSFXXDn4ejPySGp1Xi60PZLRWwnLv2UA3aAzCsCVxGj7QenEdmG/TV5avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400010; c=relaxed/simple;
-	bh=7qHU74+MNYBGP8sYVtRKKuwogTmc+20yK7a+Qh3ESSo=;
+	s=arc-20240116; t=1731400018; c=relaxed/simple;
+	bh=h4/pxwZqbYL0YDJ6s/BsT2Km5NWKmXNu7R1WBTg/gjw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XQClILazOdcD6eSeb3KWFn+B7Xzh9Tkyg58iDN62n2QBqLonXGjRv0K9Hjhz+U4n+sNZjc3ks8AGtzvYBvL+FilnaEQ/a35ts+/TcTvD0TYTleS+IVJgVXeLgCcynFXLy2BhAnX10aKNr2yllw7AMh8JT66n4Li2MkuGDv9m75Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B8ed25FC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E29C4CED8;
-	Tue, 12 Nov 2024 08:26:46 +0000 (UTC)
+	 MIME-Version; b=s+UDYlTjjIjtarM8EfRRbNuK8/AXnZB8oHcfJVzIi2H9wBt8UZfVURHaQaT62Rp0p4C/L4m922TTUqonVxhqP459OQtqaKSHw0WnVKEQyT35eI0QwrOhkxmhv/kwarmEYHVA9x8O9VuPQWFF0jCcXWbrHCGpM2lR2399+v7t5gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOfXLL+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D2F1C4CED7;
+	Tue, 12 Nov 2024 08:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731400010;
-	bh=7qHU74+MNYBGP8sYVtRKKuwogTmc+20yK7a+Qh3ESSo=;
+	s=k20201202; t=1731400017;
+	bh=h4/pxwZqbYL0YDJ6s/BsT2Km5NWKmXNu7R1WBTg/gjw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B8ed25FClXgu791DD+ZGgYuEBCzyoajTIpB5l4ArNLQspUs8RNRlCydqggVip86XN
-	 RwZp+9Dxlgakv3rUiMaVHApBWmNjbI6bShN4uIPXPyKMoidnuFaTRYEQHY/x+y5L6K
-	 r2JQbDv3caGqYEX2DEpwLtZ+GkDdox+DbU54iQaw266lChqJk1zjtKJLgwEVcmyBwH
-	 UXEP2HV4OJ0VGtczx9JNyQvn/hVvL1/y6a2hvo2vD+tdlgmR19NMFWKtvISquUf251
-	 5eh+LKrLwtkUZHnywdc8iIKZaD0JqjIDHdVun4J+hc9lRSKFxA+nR7gKCywCJFy16D
-	 OD7X24Zews+8A==
+	b=IOfXLL+dHM1DjsnCIe8PuLDQi5NBdJeMbiMKUjI9udDVHGnieO6R2MKYlRJIGJiP1
+	 6Nto+hblkhXXqe6ecJpGkJPiOTmNpKOWyhUyQGy4al9Jzj0+3NEeM4L3f+eYwznymd
+	 aXea7LH9T1t1Z2kjjM4Ljt/KLkcIXJ2N9mLSRWulud39sHn6mgHd/AUgMtS9ifvs/c
+	 HmhYXq4pK6b0rCTL3uPsKRnleYwRQK1TTcdGUQ0Qv8iIR90CXb3Qv482vmb45WWRbI
+	 6upjVu1xiIqk9CfVFfsN0HDyqTMVHSR1VpnCgUcxzqMLSSfUpcnDIqKpMGBxzG+oAW
+	 QdGc/n9p9KFCQ==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kernel-team@meta.com,
 	mic@digikod.net,
 	gnoack@google.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 3/4] bpf: Add recursion prevention logic for inode storage
-Date: Tue, 12 Nov 2024 00:25:58 -0800
-Message-ID: <20241112082600.298035-5-song@kernel.org>
+Subject: [PATCH bpf-next 4/4] selftest/bpf: Add test for inode local storage recursion
+Date: Tue, 12 Nov 2024 00:25:59 -0800
+Message-ID: <20241112082600.298035-6-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241112082600.298035-1-song@kernel.org>
 References: <20241112082600.298035-1-song@kernel.org>
@@ -78,282 +78,211 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This logic is similar to the recursion prevention logic for task local
-storage: bpf programs on LSM hooks lock bpf_inode_storage_busy; bpf
-tracing program will try to lock bpf_inode_storage_busy, and may return
--EBUSY if something else already lock bpf_inode_storage_busy on the same
-CPU.
+Add selftest to cover recursion of bpf local storage functions.
+
+When inode local storage function is traced, helpers that access inode
+local storage should return -EBUSY.
+
+The recurring program is attached to inode_storage_lookup(). This is not
+an ideal target for recurrsion tests. However, given that the target
+function have to take "struct inode *" argument, there isn't a better
+target function for the tests.
+
+Test results showed that inode_storage_lookup() is inlined in s390x.
+Work around this by adding this test to DENYLIST.s390x.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- kernel/bpf/bpf_inode_storage.c | 153 +++++++++++++++++++++++++++------
- kernel/trace/bpf_trace.c       |   4 +
- 2 files changed, 133 insertions(+), 24 deletions(-)
+ tools/testing/selftests/bpf/DENYLIST.s390x    |  1 +
+ .../bpf/prog_tests/inode_local_storage.c      | 70 +++++++++++++++
+ .../bpf/progs/inode_storage_recursion.c       | 90 +++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
 
-diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
-index 8d5a9bfe6643..3a94a38e24f0 100644
---- a/kernel/bpf/bpf_inode_storage.c
-+++ b/kernel/bpf/bpf_inode_storage.c
-@@ -21,6 +21,31 @@
- 
- DEFINE_BPF_STORAGE_CACHE(inode_cache);
- 
-+static DEFINE_PER_CPU(int, bpf_inode_storage_busy);
+diff --git a/tools/testing/selftests/bpf/DENYLIST.s390x b/tools/testing/selftests/bpf/DENYLIST.s390x
+index 3ebd77206f98..6b8c9c9ec754 100644
+--- a/tools/testing/selftests/bpf/DENYLIST.s390x
++++ b/tools/testing/selftests/bpf/DENYLIST.s390x
+@@ -1,5 +1,6 @@
+ # TEMPORARY
+ # Alphabetical order
+ get_stack_raw_tp                         # user_stack corrupted user stack                                             (no backchain userspace)
++inode_localstorage/recursion             # target function (inode_storage_lookup) is inlined on s390)
+ stacktrace_build_id                      # compare_map_keys stackid_hmap vs. stackmap err -2 errno 2                   (?)
+ verifier_iterating_callbacks
+diff --git a/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
+new file mode 100644
+index 000000000000..8dc44ebb8431
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
 +
-+static void bpf_inode_storage_lock(void)
++#include <stdio.h>
++#include <sys/stat.h>
++#include <test_progs.h>
++#include "inode_storage_recursion.skel.h"
++
++#define TDIR "/tmp/inode_local_storage"
++#define TDIR_PARENT "/tmp"
++
++static void test_recursion(void)
 +{
-+	migrate_disable();
-+	this_cpu_inc(bpf_inode_storage_busy);
++	struct inode_storage_recursion *skel;
++	struct bpf_prog_info info;
++	__u32 info_len = sizeof(info);
++	int err, prog_fd, map_fd, inode_fd = -1;
++	long value;
++
++	skel = inode_storage_recursion__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
++		return;
++
++	skel->bss->test_pid = getpid();
++
++	err = inode_storage_recursion__attach(skel);
++	if (!ASSERT_OK(err, "skel_attach"))
++		goto out;
++
++	err = mkdir(TDIR, 0755);
++	if (!ASSERT_OK(err, "mkdir " TDIR))
++		goto out;
++
++	inode_fd = open(TDIR_PARENT, O_RDONLY | O_CLOEXEC);
++	if (!ASSERT_OK_FD(inode_fd, "open inode_fd"))
++		goto out;
++
++	/* Detach so that the following lookup won't trigger
++	 * trace_inode_storage_lookup and further change the values.
++	 */
++	inode_storage_recursion__detach(skel);
++	map_fd = bpf_map__fd(skel->maps.inode_map);
++	err = bpf_map_lookup_elem(map_fd, &inode_fd, &value);
++	ASSERT_OK(err, "lookup inode_map");
++	ASSERT_EQ(value, 201, "inode_map value");
++	ASSERT_EQ(skel->bss->nr_del_errs, 1, "bpf_task_storage_delete busy");
++
++	prog_fd = bpf_program__fd(skel->progs.trace_inode_mkdir);
++	memset(&info, 0, sizeof(info));
++	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
++	ASSERT_OK(err, "get prog info");
++	ASSERT_EQ(info.recursion_misses, 0, "trace_inode_mkdir prog recursion");
++
++	prog_fd = bpf_program__fd(skel->progs.trace_inode_storage_lookup);
++	memset(&info, 0, sizeof(info));
++	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
++	ASSERT_OK(err, "get prog info");
++	ASSERT_EQ(info.recursion_misses, 3, "trace_inode_storage_lookup prog recursion");
++
++out:
++	rmdir(TDIR);
++	close(inode_fd);
++	inode_storage_recursion__destroy(skel);
 +}
 +
-+static void bpf_inode_storage_unlock(void)
++void test_inode_localstorage(void)
 +{
-+	this_cpu_dec(bpf_inode_storage_busy);
-+	migrate_enable();
++	if (test__start_subtest("recursion"))
++		test_recursion();
 +}
+diff --git a/tools/testing/selftests/bpf/progs/inode_storage_recursion.c b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
+new file mode 100644
+index 000000000000..18db141f8235
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
 +
-+static bool bpf_inode_storage_trylock(void)
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++#ifndef EBUSY
++#define EBUSY 16
++#endif
++
++char _license[] SEC("license") = "GPL";
++int nr_del_errs;
++int test_pid;
++
++struct {
++	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
++	__uint(map_flags, BPF_F_NO_PREALLOC);
++	__type(key, int);
++	__type(value, long);
++} inode_map SEC(".maps");
++
++/* inode_storage_lookup is not an ideal hook for recursion tests, as it
++ * is static and more likely to get inlined. However, there isn't a
++ * better function for the test. This is because we need to call
++ * bpf_inode_storage_* helpers with an inode intput. Unlike task local
++ * storage, for which we can use bpf_get_current_task_btf() to get task
++ * pointer with BTF, for inode local storage, we need the get the inode
++ * pointer from function arguments. Other functions, such as,
++ * bpf_local_storage_get() does not take inode as input.
++ *
++ * As a compromise, we may need to skip this test for some architectures.
++ */
++SEC("fentry/inode_storage_lookup")
++int BPF_PROG(trace_inode_storage_lookup, struct inode *inode)
 +{
-+	migrate_disable();
-+	if (unlikely(this_cpu_inc_return(bpf_inode_storage_busy) != 1)) {
-+		this_cpu_dec(bpf_inode_storage_busy);
-+		migrate_enable();
-+		return false;
-+	}
-+	return true;
-+}
-+
- static struct bpf_local_storage __rcu **inode_storage_ptr(void *owner)
- {
- 	struct inode *inode = owner;
-@@ -56,7 +81,9 @@ void bpf_inode_storage_free(struct inode *inode)
- 		return;
- 	}
- 
-+	bpf_inode_storage_lock();
- 	bpf_local_storage_destroy(local_storage);
-+	bpf_inode_storage_unlock();
- 	rcu_read_unlock();
- }
- 
-@@ -68,7 +95,9 @@ static void *bpf_fd_inode_storage_lookup_elem(struct bpf_map *map, void *key)
- 	if (fd_empty(f))
- 		return ERR_PTR(-EBADF);
- 
-+	bpf_inode_storage_lock();
- 	sdata = inode_storage_lookup(file_inode(fd_file(f)), map, true);
-+	bpf_inode_storage_unlock();
- 	return sdata ? sdata->data : NULL;
- }
- 
-@@ -81,13 +110,16 @@ static long bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
- 	if (fd_empty(f))
- 		return -EBADF;
- 
-+	bpf_inode_storage_lock();
- 	sdata = bpf_local_storage_update(file_inode(fd_file(f)),
- 					 (struct bpf_local_storage_map *)map,
- 					 value, map_flags, false, GFP_ATOMIC);
-+	bpf_inode_storage_unlock();
- 	return PTR_ERR_OR_ZERO(sdata);
- }
- 
--static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
-+static int inode_storage_delete(struct inode *inode, struct bpf_map *map,
-+				bool nobusy)
- {
- 	struct bpf_local_storage_data *sdata;
- 
-@@ -95,6 +127,9 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
- 	if (!sdata)
- 		return -ENOENT;
- 
-+	if (!nobusy)
-+		return -EBUSY;
-+
- 	bpf_selem_unlink(SELEM(sdata), false);
- 
- 	return 0;
-@@ -102,55 +137,105 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
- 
- static long bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
- {
++	struct task_struct *task = bpf_get_current_task_btf();
++	long *ptr;
 +	int err;
 +
- 	CLASS(fd_raw, f)(*(int *)key);
- 
- 	if (fd_empty(f))
- 		return -EBADF;
--	return inode_storage_delete(file_inode(fd_file(f)), map);
-+	bpf_inode_storage_lock();
-+	err = inode_storage_delete(file_inode(fd_file(f)), map, true);
-+	bpf_inode_storage_unlock();
-+	return err;
- }
- 
--/* *gfp_flags* is a hidden argument provided by the verifier */
--BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
--	   void *, value, u64, flags, gfp_t, gfp_flags)
-+static void *__bpf_inode_storage_get(struct bpf_map *map, struct inode *inode,
-+				     void *value, u64 flags, gfp_t gfp_flags, bool nobusy)
- {
- 	struct bpf_local_storage_data *sdata;
- 
--	WARN_ON_ONCE(!bpf_rcu_lock_held());
--	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
--		return (unsigned long)NULL;
--
-+	/* explicitly check that the inode not NULL */
- 	if (!inode)
--		return (unsigned long)NULL;
-+		return NULL;
- 
- 	sdata = inode_storage_lookup(inode, map, true);
- 	if (sdata)
--		return (unsigned long)sdata->data;
-+		return sdata->data;
- 
--	/* This helper must only called from where the inode is guaranteed
--	 * to have a refcount and cannot be freed.
--	 */
--	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
-+	/* only allocate new storage, when the inode is refcounted */
-+	if (atomic_read(&inode->i_count) &&
-+	    flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
- 		sdata = bpf_local_storage_update(
- 			inode, (struct bpf_local_storage_map *)map, value,
- 			BPF_NOEXIST, false, gfp_flags);
--		return IS_ERR(sdata) ? (unsigned long)NULL :
--					     (unsigned long)sdata->data;
-+		return IS_ERR(sdata) ? NULL : sdata->data;
- 	}
- 
--	return (unsigned long)NULL;
-+	return NULL;
++	if (!test_pid || task->pid != test_pid)
++		return 0;
++
++	/* This doesn't have BPF_LOCAL_STORAGE_GET_F_CREATE, so it will
++	 * not trigger on the first call of bpf_inode_storage_get() below.
++	 *
++	 * This is called twice, recursion_misses += 2.
++	 */
++	ptr = bpf_inode_storage_get(&inode_map, inode, 0, 0);
++	if (ptr) {
++		*ptr += 1;
++
++		/* This is called once, recursion_misses += 1. */
++		err = bpf_inode_storage_delete(&inode_map, inode);
++		if (err == -EBUSY)
++			nr_del_errs++;
++	}
++
++	return 0;
 +}
 +
-+/* *gfp_flags* is a hidden argument provided by the verifier */
-+BPF_CALL_5(bpf_inode_storage_get_recur, struct bpf_map *, map, struct inode *, inode,
-+	   void *, value, u64, flags, gfp_t, gfp_flags)
++SEC("fentry/security_inode_mkdir")
++int BPF_PROG(trace_inode_mkdir, struct inode *dir,
++	     struct dentry *dentry,
++	     int mode)
 +{
-+	bool nobusy;
-+	void *data;
++	struct task_struct *task = bpf_get_current_task_btf();
++	long *ptr;
 +
-+	WARN_ON_ONCE(!bpf_rcu_lock_held());
-+	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
-+		return (unsigned long)NULL;
++	if (!test_pid || task->pid != test_pid)
++		return 0;
 +
-+	nobusy = bpf_inode_storage_trylock();
-+	data = __bpf_inode_storage_get(map, inode, value, flags, gfp_flags, nobusy);
-+	if (nobusy)
-+		bpf_inode_storage_unlock();
-+	return (unsigned long)data;
++	/* Trigger trace_inode_storage_lookup, the first time */
++	ptr = bpf_inode_storage_get(&inode_map, dir, 0,
++				    BPF_LOCAL_STORAGE_GET_F_CREATE);
++
++	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0 */
++	if (ptr && !*ptr)
++		*ptr = 200;
++
++	/* Trigger trace_inode_storage_lookup, the first time.
++	 * trace_inode_storage_lookup can now get ptr and increase the
++	 * value.
++	 */
++	bpf_inode_storage_get(&inode_map, dir, 0,
++			      BPF_LOCAL_STORAGE_GET_F_CREATE);
++
++	return 0;
++
 +}
-+
-+/* *gfp_flags* is a hidden argument provided by the verifier */
-+BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
-+	   void *, value, u64, flags, gfp_t, gfp_flags)
-+{
-+	void *data;
-+
-+	WARN_ON_ONCE(!bpf_rcu_lock_held());
-+	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
-+		return (unsigned long)NULL;
-+
-+	bpf_inode_storage_lock();
-+	data = __bpf_inode_storage_get(map, inode, value, flags, gfp_flags, true);
-+	bpf_inode_storage_unlock();
-+	return (unsigned long)data;
-+}
-+
-+BPF_CALL_2(bpf_inode_storage_delete_recur, struct bpf_map *, map, struct inode *, inode)
-+{
-+	bool nobusy;
-+	int ret;
-+
-+	WARN_ON_ONCE(!bpf_rcu_lock_held());
-+	if (!inode)
-+		return -EINVAL;
-+
-+	nobusy = bpf_inode_storage_trylock();
-+	ret = inode_storage_delete(inode, map, nobusy);
-+	if (nobusy)
-+		bpf_inode_storage_unlock();
-+	return ret;
- }
- 
--BPF_CALL_2(bpf_inode_storage_delete,
--	   struct bpf_map *, map, struct inode *, inode)
-+BPF_CALL_2(bpf_inode_storage_delete, struct bpf_map *, map, struct inode *, inode)
- {
-+	int ret;
-+
- 	WARN_ON_ONCE(!bpf_rcu_lock_held());
- 	if (!inode)
- 		return -EINVAL;
- 
--	/* This helper must only called from where the inode is guaranteed
--	 * to have a refcount and cannot be freed.
--	 */
--	return inode_storage_delete(inode, map);
-+	bpf_inode_storage_lock();
-+	ret = inode_storage_delete(inode, map, true);
-+	bpf_inode_storage_unlock();
-+	return ret;
- }
- 
- static int notsupp_get_next_key(struct bpf_map *map, void *key,
-@@ -186,6 +271,17 @@ const struct bpf_map_ops inode_storage_map_ops = {
- 
- BTF_ID_LIST_SINGLE(bpf_inode_storage_btf_ids, struct, inode)
- 
-+const struct bpf_func_proto bpf_inode_storage_get_recur_proto = {
-+	.func		= bpf_inode_storage_get_recur,
-+	.gpl_only	= false,
-+	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
-+	.arg1_type	= ARG_CONST_MAP_PTR,
-+	.arg2_type	= ARG_PTR_TO_BTF_ID_OR_NULL,
-+	.arg2_btf_id	= &bpf_inode_storage_btf_ids[0],
-+	.arg3_type	= ARG_PTR_TO_MAP_VALUE_OR_NULL,
-+	.arg4_type	= ARG_ANYTHING,
-+};
-+
- const struct bpf_func_proto bpf_inode_storage_get_proto = {
- 	.func		= bpf_inode_storage_get,
- 	.gpl_only	= false,
-@@ -197,6 +293,15 @@ const struct bpf_func_proto bpf_inode_storage_get_proto = {
- 	.arg4_type	= ARG_ANYTHING,
- };
- 
-+const struct bpf_func_proto bpf_inode_storage_delete_recur_proto = {
-+	.func		= bpf_inode_storage_delete_recur,
-+	.gpl_only	= false,
-+	.ret_type	= RET_INTEGER,
-+	.arg1_type	= ARG_CONST_MAP_PTR,
-+	.arg2_type	= ARG_PTR_TO_BTF_ID_OR_NULL,
-+	.arg2_btf_id	= &bpf_inode_storage_btf_ids[0],
-+};
-+
- const struct bpf_func_proto bpf_inode_storage_delete_proto = {
- 	.func		= bpf_inode_storage_delete,
- 	.gpl_only	= false,
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 262bd101ea0b..4616f5430a5e 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1554,8 +1554,12 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 			return &bpf_task_storage_delete_recur_proto;
- 		return &bpf_task_storage_delete_proto;
- 	case BPF_FUNC_inode_storage_get:
-+		if (bpf_prog_check_recur(prog))
-+			return &bpf_inode_storage_get_recur_proto;
- 		return &bpf_inode_storage_get_proto;
- 	case BPF_FUNC_inode_storage_delete:
-+		if (bpf_prog_check_recur(prog))
-+			return &bpf_inode_storage_delete_recur_proto;
- 		return &bpf_inode_storage_delete_proto;
- 	case BPF_FUNC_for_each_map_elem:
- 		return &bpf_for_each_map_elem_proto;
 -- 
 2.43.5
 
