@@ -1,210 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-34540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C16F9C6220
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:06:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077359C6241
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956CC28374E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C075828415D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4C21A4B7;
-	Tue, 12 Nov 2024 20:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32DB219CA1;
+	Tue, 12 Nov 2024 20:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TMSCUEiW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NSWQztis"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF6219E4B;
-	Tue, 12 Nov 2024 20:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B92A209F2C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 20:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441935; cv=none; b=i6cfxHe+b6tS5QnT4erZfM/4/tHRF1L2UnLYBzPFgZYw4DXnJpURgezOip7zduZcetZdP2+LTakCeN8XuJ2E5jDbErd8CL0KkpbDjPMtXyKtRfUr1Fd8ZXLvKuwEPg+VZTrxIZKzaD/vwq6U7NZ2V5XdNaXJ0jpnQdCe3e8cu8g=
+	t=1731442231; cv=none; b=lCRZbOn3D0z6uGcKl3TD8VEnNFEPXaQDC8kqUPKdpiHvos7x3JgVCI7PNnxr14EeMY1plMfin5JxuM4NKjeRMW6Bhn0jsXQvJHf6BlgdBeL9GT+v8R+tHIIQg+QlqdEUD5tXqZNftAEZHdSkbRN1T+n24pXFYeQMvZj81PZiax4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441935; c=relaxed/simple;
-	bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rVa0MRwvCHaTOHy1sZSiE/ZW3GKH2KTs05nAx3EQJskLBoRXRxhXiL81s3OUVOzyqTZRvm+AMFQ1goF/vUCUcFLlBtuBseqbuoCxaNPt5SlOejnA4GZ/cUmghH8yZQE6S5yZDmIsJ9Dgtjx35aZ2pUEIu7uHURjLcEqwPJ5C+hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TMSCUEiW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731441934; x=1762977934;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
-  b=TMSCUEiWQd+2HVDxvELFwr7JXyXCgLolep2+k1sM0ohcxn+v9FCDaSQ2
-   AcWqNLnjEL1ztxIHs/22zxu6ag6sXXxebgne9lBynMbOlPQsC2VXTUN9y
-   QZ5D2UrpIkmNjXrDg/GR93HbNYaZXjV8vtxUbD90KlRkrZlHnvQJxwF4g
-   j9WTO8CWVEdpSCVqrxqNgZQ++VOTwOfm8nmnFH0fN5Zo7W4H2JQCOmQvy
-   EeOfn+SszO7vvlp4ZJ6reR5ZeURfbxMn604A8USCtCo3H3x9MxziVJCeb
-   oXHEQYWyC684PwfvFMotav/yz5QRynVXHPs/G5SMewuw47ZLU9KkRBwJ6
-   w==;
-X-CSE-ConnectionGUID: aaa6oFb+Rhuz2BD8Y0xDQw==
-X-CSE-MsgGUID: qgKd7vnhR5W06w4/aRdmXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31394369"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="31394369"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:34 -0800
-X-CSE-ConnectionGUID: tkAXR3AtRW2GiaCljlymiw==
-X-CSE-MsgGUID: DV3NjrWhSc+v7VHCkgAOiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="92710367"
-Received: from mwajdecz-mobl.ger.corp.intel.com ([10.245.85.128])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:31 -0800
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] libfs: Provide simple_read_from|write_to_iomem()
-Date: Tue, 12 Nov 2024 21:04:52 +0100
-Message-Id: <20241112200454.2211-3-michal.wajdeczko@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20241112200454.2211-1-michal.wajdeczko@intel.com>
-References: <20241112200454.2211-1-michal.wajdeczko@intel.com>
+	s=arc-20240116; t=1731442231; c=relaxed/simple;
+	bh=lm2fWQdu2sVVztY4FJ5Hif/D7O5Ww+qRDoeXttY829s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+uGxflY7QgskZ9BatJlpt3D1VvSR1mYgK3HkUXhaqo+eGVlJY587chPk6C8D57tsAnitAclSLHVsAUVzQb46thnyvewdBHaKd5chhUyx9dWpU0N9nSMR0fM+cLmv21PbIRVAkD1huJ+pR1CD71bgBYB2cD4Ja03oB9/WBxqp5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NSWQztis; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731442228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lQvCSgq64T+wf/TPNFDiNWUiao198TlsvJUEDfd6IKY=;
+	b=NSWQztisbZ0LIJoaD9ezFzlx46g8WnrSlnbHgq+pgzKGan8o5ER0DWFplhJlLhQpmwKPaw
+	c+nTgu7T+NqRLWzphpy08KJgBBcbQvRP96GhUZ47+2EG9NsfskVBpm4wdmSd9ioAymQ3AM
+	UxZrIvfG7OjaVMOpfzT/WaLAvpej1ec=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-9wYFJSKuOy2Ip-OBMrooKw-1; Tue,
+ 12 Nov 2024 15:10:23 -0500
+X-MC-Unique: 9wYFJSKuOy2Ip-OBMrooKw-1
+X-Mimecast-MFC-AGG-ID: 9wYFJSKuOy2Ip-OBMrooKw
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA06119560AF;
+	Tue, 12 Nov 2024 20:10:21 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.225.223])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5554F1956086;
+	Tue, 12 Nov 2024 20:10:18 +0000 (UTC)
+Date: Tue, 12 Nov 2024 21:10:15 +0100
+From: Karel Zak <kzak@redhat.com>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>, 
+	Johannes Berg <johannes@sipsolutions.net>, rrs@debian.org
+Subject: Re: UML mount failure with Linux 6.11
+Message-ID: <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+References: <857ff79f52ed50b4de8bbeec59c9820be4968183.camel@debian.org>
+ <2ea3c5c4a1ecaa60414e3ed6485057ea65ca1a6e.camel@sipsolutions.net>
+ <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
+ <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
+ <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+ <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+ <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+ <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+ <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-New functions are similar to simple_read_from|write_to_buffer()
-but work on the I/O memory instead. Will allow wider code reuse.
 
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
----
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Matthew Brost <matthew.brost@intel.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/libfs.c         | 78 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  5 +++
- 2 files changed, 83 insertions(+)
+ Hi,
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 46966fd8bcf9..1c7343f1147f 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1095,6 +1095,84 @@ void simple_release_fs(struct vfsmount **mount, int *count)
- }
- EXPORT_SYMBOL(simple_release_fs);
- 
-+/**
-+ * simple_read_from_iomem() - copy data from the I/O memory to user space
-+ * @to: the user space buffer to read to
-+ * @count: the maximum number of bytes to read
-+ * @ppos: the current position in the buffer
-+ * @from: the I/O memory to read from
-+ * @available: the size of the iomem memory
-+ *
-+ * The simple_read_from_iomem() function reads up to @count bytes from the
-+ * I/O memory @from at offset @ppos into the user space address starting at @to.
-+ *
-+ * Return: On success, the number of bytes read is returned and the offset
-+ * @ppos is advanced by this number, or negative value is returned on error.
-+ */
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const void __iomem *from, size_t available)
-+{
-+	struct iov_iter iter;
-+	loff_t pos = *ppos;
-+	size_t copied;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available || !count)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	if (import_ubuf(ITER_DEST, to, count, &iter))
-+		return -EFAULT;
-+
-+	copied = copy_iomem_to_iter(from + pos, count, &iter);
-+	if (!copied)
-+		return -EFAULT;
-+
-+	*ppos = pos + copied;
-+	return copied;
-+}
-+EXPORT_SYMBOL(simple_read_from_iomem);
-+
-+/**
-+ * simple_write_to_iomem() - copy data from user space to the I/O memory
-+ * @to: the I/O memory to write to
-+ * @available: the size of the I/O memory
-+ * @ppos: the current position in the buffer
-+ * @from: the user space buffer to read from
-+ * @count: the maximum number of bytes to read
-+ *
-+ * The simple_write_to_iomem() function reads up to @count bytes from the user
-+ * space address starting at @from into the I/O memory @to at offset @ppos.
-+ *
-+ * Return: On success, the number of bytes written is returned and the offset
-+ * @ppos is advanced by this number, or negative value is returned on error.
-+ */
-+ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
-+			      const void __user *from, size_t count)
-+{
-+	struct iov_iter iter;
-+	loff_t pos = *ppos;
-+	size_t copied;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available || !count)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	if (import_ubuf(ITER_SOURCE, (void __user *)from, count, &iter))
-+		return -EFAULT;
-+
-+	copied = copy_iomem_from_iter(to + pos, count, &iter);
-+	if (!copied)
-+		return -EFAULT;
-+
-+	*ppos = pos + copied;
-+	return copied;
-+}
-+EXPORT_SYMBOL(simple_write_to_iomem);
-+
- /**
-  * simple_read_from_buffer - copy data from the buffer to user space
-  * @to: the user space buffer to read to
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3559446279c1..2cc73c5961b0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3426,6 +3426,11 @@ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
- 		const void __user *from, size_t count);
- 
-+ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
-+			       const void __iomem *from, size_t available);
-+ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
-+			      const void __user *from, size_t count);
-+
- struct offset_ctx {
- 	struct maple_tree	mt;
- 	unsigned long		next_offset;
+On Mon, Nov 11, 2024 at 09:16:18AM GMT, Hongbo Li wrote:
+> We are discussing about the hostfs mount with new mount API in [1]. And may
+> need your help.
+> 
+> After finishing the conversion to the new mount API for hostfs, it
+> encountered a situation where the old version supported only one mount
+> option, and the whole mount option was used as the root path (it is also
+> valid for the path to contain commas). But when switching to the new mount
+> API, the option part will be split using commas (if I'm not mistaken, this
+> step would be done in libmount), which could potentially split a complete
+> path into multiple parts, and the call fsconfig syscall to set the mount
+> options for underline filesystems. This is different from the original
+> intention of hostfs. And this kind of situation is not common in other
+> filesystems.
+
+The options has been always parsed by mount(8) and it's very fragile
+to assume that kernel get as in the original order (etc.). 
+
+For decades, commas have been supported in mount options. For example,
+SeLinux uses them frequently in context settings. All you need to do
+is use quotes, but be careful because the shell will strip them off.
+Therefore, double quoting is required.
+
+   mount -o 'rw,bbb="this,is,value",ccc'
+
+It's also supported in fstab, just use name="v,a,l,u,e"
+
+You can try it:
+
+ # strace -e fsconfig mount -t tmpfs -o 'rw,bbb="this,is,value",ccc' tmpfs /dontexist
+
+ fsconfig(3, FSCONFIG_SET_STRING, "source", "tmpfs", 0) = 0
+ fsconfig(3, FSCONFIG_SET_FLAG, "rw", NULL, 0) = 0
+ fsconfig(3, FSCONFIG_SET_STRING, "bbb", "this,is,value", 0) = -1 EINVAL 
+
+You can see the expected result when using fsconfig().
+
+ Karel
+
+
 -- 
-2.43.0
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
 
