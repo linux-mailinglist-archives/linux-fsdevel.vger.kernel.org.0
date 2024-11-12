@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-34539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B889C621C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:05:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C16F9C6220
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 21:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A392831CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956CC28374E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762F6219E3B;
-	Tue, 12 Nov 2024 20:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4C21A4B7;
+	Tue, 12 Nov 2024 20:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9MltX4L"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TMSCUEiW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8F4219CAE;
-	Tue, 12 Nov 2024 20:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF6219E4B;
+	Tue, 12 Nov 2024 20:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441932; cv=none; b=Q+NvDm4dv1IuiH4cCrHYl//T1is2pz5ugrJRXjunJ1OtUa6vbf2snGJ9oHzGVEN7p+Ch0eXNL6W6reRMI+zwfoRqxBs828cD+/rrW3/xrCVXRXh4rZOUETwuD8Tel4fpxu3VmvtRzUYCPcldmiZPZv80vwJFePJgCTIqk56lbPc=
+	t=1731441935; cv=none; b=i6cfxHe+b6tS5QnT4erZfM/4/tHRF1L2UnLYBzPFgZYw4DXnJpURgezOip7zduZcetZdP2+LTakCeN8XuJ2E5jDbErd8CL0KkpbDjPMtXyKtRfUr1Fd8ZXLvKuwEPg+VZTrxIZKzaD/vwq6U7NZ2V5XdNaXJ0jpnQdCe3e8cu8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441932; c=relaxed/simple;
-	bh=0lG15kvrwthhBgUnnIY8645WTCslO9IzgIe86UWIETQ=;
+	s=arc-20240116; t=1731441935; c=relaxed/simple;
+	bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pwj3gCsI0iZcb6pnQ+I1xGgUOQwAtN0sU2iqpGO18PWpEQ4KudtTf6Oi+qgzqljGca5uv+so0X+KTHIYotpP4oWcOzNy98kSJTtqRl/BP7ESOZyU8eISWpzZ0Ak8NHNIBSdG23IQ8yrtjKu6FuGxOtOdHoGVuIHBm2PBhn25YGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9MltX4L; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=rVa0MRwvCHaTOHy1sZSiE/ZW3GKH2KTs05nAx3EQJskLBoRXRxhXiL81s3OUVOzyqTZRvm+AMFQ1goF/vUCUcFLlBtuBseqbuoCxaNPt5SlOejnA4GZ/cUmghH8yZQE6S5yZDmIsJ9Dgtjx35aZ2pUEIu7uHURjLcEqwPJ5C+hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TMSCUEiW; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731441931; x=1762977931;
+  t=1731441934; x=1762977934;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0lG15kvrwthhBgUnnIY8645WTCslO9IzgIe86UWIETQ=;
-  b=M9MltX4LVo2UuZEksnw6XvIq93qhWWcKzLeDsOptokwvsiSmi4+qQPV4
-   g3BBZzTeB9PPzCy37sDm9CyrI89A122/jo4FuyRxV0SyHHDyzo0UD4iES
-   He11o7gw291YWjavH0hSlhUeFtzrLxxxYpq9/g+ZzXW0tIr9omu5hOet0
-   t3O65vMVPVkRSgCMtch1rDf6DbGYk1x0X90LvDUIKUWX/47HBPH4/UKD4
-   oPLaBghIXnruOUcbQpJMRP8jrzx5/w5ckK84qk61eNu/sEyI0FMyyiTiX
-   KbGraZys7HtwysebFcfJVNep6pg8gJVa1gC9imi4rImR/jZhrMU8inNqU
-   g==;
-X-CSE-ConnectionGUID: nukfab22Rs2jdGPNrljm1w==
-X-CSE-MsgGUID: o+hYxEQlQP6SUBLV74YSBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31394355"
+  bh=Cq+CudWUdl20P1UptTJIpNh3ZMbsdBx5USN5K16iLqw=;
+  b=TMSCUEiWQd+2HVDxvELFwr7JXyXCgLolep2+k1sM0ohcxn+v9FCDaSQ2
+   AcWqNLnjEL1ztxIHs/22zxu6ag6sXXxebgne9lBynMbOlPQsC2VXTUN9y
+   QZ5D2UrpIkmNjXrDg/GR93HbNYaZXjV8vtxUbD90KlRkrZlHnvQJxwF4g
+   j9WTO8CWVEdpSCVqrxqNgZQ++VOTwOfm8nmnFH0fN5Zo7W4H2JQCOmQvy
+   EeOfn+SszO7vvlp4ZJ6reR5ZeURfbxMn604A8USCtCo3H3x9MxziVJCeb
+   oXHEQYWyC684PwfvFMotav/yz5QRynVXHPs/G5SMewuw47ZLU9KkRBwJ6
+   w==;
+X-CSE-ConnectionGUID: aaa6oFb+Rhuz2BD8Y0xDQw==
+X-CSE-MsgGUID: qgKd7vnhR5W06w4/aRdmXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31394369"
 X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="31394355"
+   d="scan'208";a="31394369"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:31 -0800
-X-CSE-ConnectionGUID: nPyVFpwyRWm4tRsipLTDgw==
-X-CSE-MsgGUID: QgKPdQDJRvunV8YY/sA4Xw==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:34 -0800
+X-CSE-ConnectionGUID: tkAXR3AtRW2GiaCljlymiw==
+X-CSE-MsgGUID: DV3NjrWhSc+v7VHCkgAOiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="92710354"
+   d="scan'208";a="92710367"
 Received: from mwajdecz-mobl.ger.corp.intel.com ([10.245.85.128])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:28 -0800
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 12:05:31 -0800
 From: Michal Wajdeczko <michal.wajdeczko@intel.com>
 To: intel-xe@lists.freedesktop.org
 Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
 	Matthew Brost <matthew.brost@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 1/4] iov_iter: Provide copy_iomem_to|from_iter()
-Date: Tue, 12 Nov 2024 21:04:51 +0100
-Message-Id: <20241112200454.2211-2-michal.wajdeczko@intel.com>
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/4] libfs: Provide simple_read_from|write_to_iomem()
+Date: Tue, 12 Nov 2024 21:04:52 +0100
+Message-Id: <20241112200454.2211-3-michal.wajdeczko@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20241112200454.2211-1-michal.wajdeczko@intel.com>
 References: <20241112200454.2211-1-michal.wajdeczko@intel.com>
@@ -82,116 +82,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Define simple copy helpers that work on I/O memory. This will
-allow reuse of existing framework functions in new use cases.
+New functions are similar to simple_read_from|write_to_buffer()
+but work on the I/O memory instead. Will allow wider code reuse.
 
 Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
 ---
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
 Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: Matthew Brost <matthew.brost@intel.com>
-Cc: linux-kernel@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-v2: use iterate_and_advance to treat user_iter separately (Matthew)
----
- include/linux/uio.h |  3 +++
- lib/iov_iter.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
+ fs/libfs.c         | 78 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  5 +++
+ 2 files changed, 83 insertions(+)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 853f9de5aa05..354a6b2d1e94 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -183,6 +183,9 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
- size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i);
- size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 46966fd8bcf9..1c7343f1147f 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1095,6 +1095,84 @@ void simple_release_fs(struct vfsmount **mount, int *count)
+ }
+ EXPORT_SYMBOL(simple_release_fs);
  
-+size_t copy_iomem_to_iter(const void __iomem *from, size_t bytes, struct iov_iter *i);
-+size_t copy_iomem_from_iter(void __iomem *to, size_t bytes, struct iov_iter *i);
++/**
++ * simple_read_from_iomem() - copy data from the I/O memory to user space
++ * @to: the user space buffer to read to
++ * @count: the maximum number of bytes to read
++ * @ppos: the current position in the buffer
++ * @from: the I/O memory to read from
++ * @available: the size of the iomem memory
++ *
++ * The simple_read_from_iomem() function reads up to @count bytes from the
++ * I/O memory @from at offset @ppos into the user space address starting at @to.
++ *
++ * Return: On success, the number of bytes read is returned and the offset
++ * @ppos is advanced by this number, or negative value is returned on error.
++ */
++ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
++			       const void __iomem *from, size_t available)
++{
++	struct iov_iter iter;
++	loff_t pos = *ppos;
++	size_t copied;
 +
- static inline size_t copy_folio_to_iter(struct folio *folio, size_t offset,
- 		size_t bytes, struct iov_iter *i)
- {
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 908e75a28d90..80feff9c8875 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -323,6 +323,72 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
- EXPORT_SYMBOL_GPL(_copy_from_iter_flushcache);
- #endif
++	if (pos < 0)
++		return -EINVAL;
++	if (pos >= available || !count)
++		return 0;
++	if (count > available - pos)
++		count = available - pos;
++	if (import_ubuf(ITER_DEST, to, count, &iter))
++		return -EFAULT;
++
++	copied = copy_iomem_to_iter(from + pos, count, &iter);
++	if (!copied)
++		return -EFAULT;
++
++	*ppos = pos + copied;
++	return copied;
++}
++EXPORT_SYMBOL(simple_read_from_iomem);
++
++/**
++ * simple_write_to_iomem() - copy data from user space to the I/O memory
++ * @to: the I/O memory to write to
++ * @available: the size of the I/O memory
++ * @ppos: the current position in the buffer
++ * @from: the user space buffer to read from
++ * @count: the maximum number of bytes to read
++ *
++ * The simple_write_to_iomem() function reads up to @count bytes from the user
++ * space address starting at @from into the I/O memory @to at offset @ppos.
++ *
++ * Return: On success, the number of bytes written is returned and the offset
++ * @ppos is advanced by this number, or negative value is returned on error.
++ */
++ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
++			      const void __user *from, size_t count)
++{
++	struct iov_iter iter;
++	loff_t pos = *ppos;
++	size_t copied;
++
++	if (pos < 0)
++		return -EINVAL;
++	if (pos >= available || !count)
++		return 0;
++	if (count > available - pos)
++		count = available - pos;
++	if (import_ubuf(ITER_SOURCE, (void __user *)from, count, &iter))
++		return -EFAULT;
++
++	copied = copy_iomem_from_iter(to + pos, count, &iter);
++	if (!copied)
++		return -EFAULT;
++
++	*ppos = pos + copied;
++	return copied;
++}
++EXPORT_SYMBOL(simple_write_to_iomem);
++
+ /**
+  * simple_read_from_buffer - copy data from the buffer to user space
+  * @to: the user space buffer to read to
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3559446279c1..2cc73c5961b0 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3426,6 +3426,11 @@ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
+ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ 		const void __user *from, size_t count);
  
-+static __always_inline
-+size_t memcpy_iomem_to_iter(void *iter_to, size_t progress, size_t len,
-+			    void *from, void *priv2)
-+{
-+	memcpy_fromio(iter_to, from + progress, len);
-+	return 0;
-+}
++ssize_t simple_read_from_iomem(void __user *to, size_t count, loff_t *ppos,
++			       const void __iomem *from, size_t available);
++ssize_t simple_write_to_iomem(void __iomem *to, size_t available, loff_t *ppos,
++			      const void __user *from, size_t count);
 +
-+static __always_inline
-+size_t memcpy_iomem_from_iter(void *iter_from, size_t progress, size_t len,
-+			      void *to, void *priv2)
-+{
-+	memcpy_toio(to + progress, iter_from, len);
-+	return 0;
-+}
-+
-+static __always_inline
-+size_t copy_iomem_to_user_iter(void __user *iter_to, size_t progress,
-+			       size_t len, void *from, void *priv2)
-+{
-+	unsigned char buf[SMP_CACHE_BYTES];
-+	size_t chunk = min(len, sizeof(buf));
-+
-+	memcpy_fromio(buf, from + progress, chunk);
-+	chunk -= copy_to_user_iter(iter_to, progress, chunk, buf, priv2);
-+	return len - chunk;
-+}
-+
-+static __always_inline
-+size_t copy_iomem_from_user_iter(void __user *iter_from, size_t progress,
-+				 size_t len, void *to, void *priv2)
-+{
-+	unsigned char buf[SMP_CACHE_BYTES];
-+	size_t chunk = min(len, sizeof(buf));
-+
-+	chunk -= copy_from_user_iter(iter_from, progress, chunk, buf, priv2);
-+	memcpy_toio(to, buf, chunk);
-+	return len - chunk;
-+}
-+
-+size_t copy_iomem_to_iter(const void __iomem *from, size_t bytes, struct iov_iter *i)
-+{
-+	if (WARN_ON_ONCE(i->data_source))
-+		return 0;
-+	if (user_backed_iter(i))
-+		might_fault();
-+
-+	return iterate_and_advance(i, bytes, (void *)from,
-+				   copy_iomem_to_user_iter,
-+				   memcpy_iomem_to_iter);
-+}
-+EXPORT_SYMBOL(copy_iomem_to_iter);
-+
-+size_t copy_iomem_from_iter(void __iomem *to, size_t bytes, struct iov_iter *i)
-+{
-+	if (WARN_ON_ONCE(!i->data_source))
-+		return 0;
-+	if (user_backed_iter(i))
-+		might_fault();
-+
-+	return iterate_and_advance(i, bytes, (void *)to,
-+				   copy_iomem_from_user_iter,
-+				   memcpy_iomem_from_iter);
-+}
-+EXPORT_SYMBOL(copy_iomem_from_iter);
-+
- static inline bool page_copy_sane(struct page *page, size_t offset, size_t n)
- {
- 	struct page *head;
+ struct offset_ctx {
+ 	struct maple_tree	mt;
+ 	unsigned long		next_offset;
 -- 
 2.43.0
 
