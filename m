@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-34475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E979C5EBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 18:21:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D8D9C5C8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 16:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB85BA2197
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F35A1F237AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA2A202F92;
-	Tue, 12 Nov 2024 15:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11272038B6;
+	Tue, 12 Nov 2024 15:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5zBLfn/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clL0Xkn+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFE1F7068;
-	Tue, 12 Nov 2024 15:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B202003D5;
+	Tue, 12 Nov 2024 15:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426966; cv=none; b=D78e+bfBTti4v+nX7QO6ZK67zQhYp940xCeTEyiyj3xSbFl3joqhLGbFy5NNuQz9NA0uA2Xm5ajAnXQQ5cYdYb/VK593gDYB/FyjBxS0KeZ34uJa+TP6e4BNYSQQ3PIVaS1Fv21lhMGzLwAPZi7S8F1Uqgy1b1jR4gu7dWwzWSw=
+	t=1731426995; cv=none; b=DQHUzYwKGS+rtykiUfAcmxZ+THSpAohbCLwVvu4JiRgqrVrBGmEusKkh7MH+zxh/usXzSijdG+leK1V4O8G5w3qSkWBqaZPxRICHzjZD8c8hK4thlovozRmrxfVwRt2FjDuPvaWloM6JMz0XXm3QfP50yRzoBu22mbwv5a9qdHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426966; c=relaxed/simple;
-	bh=FUkY8vBvHpNmPvUODc0GVgjz5hCCodk0jxmUUq4d3j0=;
+	s=arc-20240116; t=1731426995; c=relaxed/simple;
+	bh=89Cz8hDnIDcexn3u1F3fL0Sas85eVLi4uuuYUJ9dnJw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qgy7wndBHqvtgT4L4a9d+HgKcZ6TzjMsMIgWSTZ2Vrw+bQZz1QBxG5x27VteWZlg+XON+/qM6yjOS8JOjmMUhbeT8aMTAIcvi2kVDZT2TAeSRXeHL1l212Ih6bP/nhDN428bH/M1CKhoqx0FVRIFzAT/W/n/PmTOVXAi7NtOE0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5zBLfn/; arc=none smtp.client-ip=209.85.161.48
+	 To:Cc:Content-Type; b=jujw4llwNqm5uaLXOjksCBCHUzirMeBWjhUne6cxiwZui9Rhbi51HOAbXJAhAuQWizYVM3nM4zTiHd+skqkSG79qMQe2q0arGlQX71rW4PYNmPMFUNBHowHCGIkbqUiK5hvIk1x5THjbKPJclbq907g5LRUuRkWka3fr3hLSVdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clL0Xkn+; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2892510eaf.2;
-        Tue, 12 Nov 2024 07:56:04 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460a23ad00eso57239361cf.0;
+        Tue, 12 Nov 2024 07:56:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731426963; x=1732031763; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731426992; x=1732031792; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
-        b=W5zBLfn/HDsIGhE4clBlpbCE5DCfGDi+QyxDbzcRPY69J+KTyXp6gLPAWa/1GR6iOi
-         tX5g2r0Y2lWCU60Yj0jhaIGhMdCJSACE9Z5v0XQtVxByDs03AHqbxnbuTykWmj/MrlTU
-         Anqdr8T8WMI/QaBvraMaDpGb30LjfbBGiyQMhqRAzMFTvES9yHCxVddbRqkMfxloM7Jh
-         LZk2Hd3Me1+2mUDLm0vDcwxM/HYvQZ36VEi8n8cvcD0nYmctoTTqgAM+XNOrSjSOuSRV
-         DCagbL8BYhl3gCv0eKklptzyef1rtx1CObHvcsvwxb/pSO49sPwI0jx2GR4Hm8KJrg2R
-         MKZQ==
+        bh=4c6Jzp6I8iJr+q2ssZkuQOaV1YsODxTk+KgFq2+saP8=;
+        b=clL0Xkn+cuLXoPWV0ox8UQjl+iVbu/TZyIqlZtl0vCOtXVPOwa9nYtL8FdKgAImo9H
+         wLadxmVNx5p6n9fWowchbv9bIXgBoH+lYVcJGqTx2lzZcReVsrYxEr+CoN/SkM0Z/DDk
+         H5rFgUPKuiV+ZlvJ2joNBW+Bm86wG+/TwNFLQ+8visHJxuEuCKQ99WJfwtGS/6oibhK/
+         BhFxl7C7a/BNTGnp364A1SHveW66YRKXhXVPA1uiEXF+D0DsCukz7QJMl0UDP86x73sm
+         qGnvFBjwLlEckWSopyLgbwfdNL+iTjcu4ysHKijPnfQeMdeKb17g38mG1p+ZppSIvYLI
+         QyyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731426963; x=1732031763;
+        d=1e100.net; s=20230601; t=1731426992; x=1732031792;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZYmSNlu/VUJDhCWFzgw6Pwurlvm+R+J0mmXptnSbNrU=;
-        b=uIDhtKRvx4p5VDr1dZVvcz4WLzrR+AxdXI/ERZPt07+lP8bTZ+sn4E0sokeQ/0AUKm
-         /HWJGDtspH8IQDWONk9FfoBxAuC/11Kd8OAF+lxtpwmEhB4r07nrJ9RhzK29N6JvsuXp
-         Q6D4pp9c619wC6XIMbabwzU5SgxUa9qmeoQvV7bAV+RZ0NajdvSNso8HQQ96UiwhCIG0
-         9rDQ3lnmTSGOxBjLj7e7NqKprzHuUXNwzoV4kQHL7sBiptb2lX7C8dx28nwFENMO9uhz
-         nNx4igJG5slDvlzJSQuRbhrqDxP6LlZ5NB7jpE3hypp6+tvqxZRurALRlca+lXK0CKHz
-         R8aA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/x0E2nb4YXz4rso7uPBTdCYFIyPl8lEaRPIYjiyG+NU4cmslGKs22HNkxHLnRtDJVXIwotjhZU7x2DbOr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA7jFiOBw2kyU+2XN+24h8ni6XXKa2qCD+MNNIrOyN+JUaTr3Q
-	AVJsRgn/J4UkxoJg4zABpTm2BX/xecg4CfwYBrhU4bclsmTWC1TsHLWsevh94t/QyHzAcMo4CmP
-	X8PYe06UTU9czFLZBE4rey87SqvcEUvsZhVA=
-X-Google-Smtp-Source: AGHT+IFezwbgWPN7unZsmswTxXu6sC+1b7SLstIy6sy3nImuLBY2n8J/CIe/ya4BMckZnw191hkIZtJ7537RVfVF1e4=
-X-Received: by 2002:a05:6358:9791:b0:1c3:2411:588f with SMTP id
- e5c5f4694b2df-1c641ea72e5mr727978055d.9.1731426963523; Tue, 12 Nov 2024
- 07:56:03 -0800 (PST)
+        bh=4c6Jzp6I8iJr+q2ssZkuQOaV1YsODxTk+KgFq2+saP8=;
+        b=FYYiNPE4LU7AS1/HnxFj7HlWf7D7oI+XRvwotmOUr8XR1aAH07mlwj4qfTUPjFPlwP
+         jQ+ETtQS0Op+rjdXcJFvYXaqSq4EUMXKQ6ZN/I+jzvGFVg9WSlRmcO4aPy7ukm00L0a/
+         UWGdXX7XzM2XUA/Gq/Mtyv0S55VF7lLlXWhPD+MitT86eJhRV7UvnNIqw0vF7O/lckUn
+         GvZNy0QXI1ib9TY0UGSCuZB6aWQrxWmtmND/qXYe2JN9RdUzGf5OYXntKgW8rKMwEWku
+         J7jryT7s5dmTM0q5oZbsdBzvcpy/5/aOchD9w1SNA+F4etr0B1HnUJ+4DnJ5iEuOwxSE
+         mRzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoKmj4c1trYOpjpPtSKVFMtItBsTmHnkAOEGOsegCFU5C4ZHHe/MMP7OPybKhRiBTTqIcU90W3FN1tVnM5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDiA4XRU4ToEwasEXozDIGnegMKgKmFl9oMsZesC+/POU6Dg+/
+	wE+cmRPDoEEvPiU2uKP7NTVJ0cwQzcpUHdEl3gM3IYEl22URqPTpIiiSVbhZShXozvj49xW5fSf
+	SnZOhtT/dJ295g+I+Y1AaHbvVmI0=
+X-Google-Smtp-Source: AGHT+IENfGvbIkArwXHI4JqBeWhQis6oDVSKsu36X37iI8nb9GDSHg/lzYvBrN0QkrhAvA1pzyy7neruVd3QIb1+0LA=
+X-Received: by 2002:ac8:690e:0:b0:461:1679:9062 with SMTP id
+ d75a77b69052e-46309a6de7emr347673041cf.9.1731426992493; Tue, 12 Nov 2024
+ 07:56:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-3-erin.shepherd@e43.eu>
-In-Reply-To: <20241101135452.19359-3-erin.shepherd@e43.eu>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu> <20241101135452.19359-2-erin.shepherd@e43.eu>
+In-Reply-To: <20241101135452.19359-2-erin.shepherd@e43.eu>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Nov 2024 16:55:52 +0100
-Message-ID: <CAOQ4uxjTN5rXqAgR-ovfEuo7gSYY6Wig1-4QV6a5BXFkfqge6A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] pidfs: implement file handle export support
+Date: Tue, 12 Nov 2024 16:56:20 +0100
+Message-ID: <CAOQ4uxjrR9is3E4RqMa3u=Gd-1NMZuBjv+GVJ-eMQiP-Mer9GA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pseudofs: add support for export_ops
 To: Erin Shepherd <erin.shepherd@e43.eu>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	christian@brauner.io, paul@paul-moore.com, bluca@debian.org
@@ -86,67 +86,44 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Nov 1, 2024 at 2:55=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu>=
  wrote:
 >
-> On 64-bit platforms, userspace can read the pidfd's inode in order to
-> get a never-repeated PID identifier. On 32-bit platforms this identifier
-> is not exposed, as inodes are limited to 32 bits. Instead expose the
-> identifier via export_fh, which makes it available to userspace via
-> name_to_handle_at
+> Pseudo-filesystems might reasonably wish to implement the export ops
+> (particularly for name_to_handle_at/open_by_handle_at); plumb this
+> through pseudo_fs_context
 >
 > Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
->  fs/pidfs.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+>  fs/libfs.c                | 1 +
+>  include/linux/pseudo_fs.h | 1 +
+>  2 files changed, 2 insertions(+)
 >
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 80675b6bf884..c8e7e9011550 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/anon_inodes.h>
-> +#include <linux/exportfs.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
->  #include <linux/magic.h>
-> @@ -347,6 +348,25 @@ static const struct dentry_operations pidfs_dentry_o=
-perations =3D {
->         .d_prune        =3D stashed_dentry_prune,
->  };
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 46966fd8bcf9..698a2ddfd0cb 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -669,6 +669,7 @@ static int pseudo_fs_fill_super(struct super_block *s=
+, struct fs_context *fc)
+>         s->s_blocksize_bits =3D PAGE_SHIFT;
+>         s->s_magic =3D ctx->magic;
+>         s->s_op =3D ctx->ops ?: &simple_super_operations;
+> +       s->s_export_op =3D ctx->eops;
+>         s->s_xattr =3D ctx->xattr;
+>         s->s_time_gran =3D 1;
+>         root =3D new_inode(s);
+> diff --git a/include/linux/pseudo_fs.h b/include/linux/pseudo_fs.h
+> index 730f77381d55..2503f7625d65 100644
+> --- a/include/linux/pseudo_fs.h
+> +++ b/include/linux/pseudo_fs.h
+> @@ -5,6 +5,7 @@
 >
-> +static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
-> +                          struct inode *parent)
-> +{
-> +       struct pid *pid =3D inode->i_private;
-> +
-> +       if (*max_len < 2) {
-> +               *max_len =3D 2;
-> +               return FILEID_INVALID;
-> +       }
-> +
-> +       *max_len =3D 2;
-> +       *(u64 *)fh =3D pid->ino;
-> +       return FILEID_KERNFS;
-> +}
-> +
-> +static const struct export_operations pidfs_export_operations =3D {
-> +       .encode_fh =3D pidfs_encode_fh,
-> +};
-> +
->  static int pidfs_init_inode(struct inode *inode, void *data)
->  {
->         inode->i_private =3D data;
-> @@ -382,6 +402,7 @@ static int pidfs_init_fs_context(struct fs_context *f=
-c)
->                 return -ENOMEM;
->
->         ctx->ops =3D &pidfs_sops;
-> +       ctx->eops =3D &pidfs_export_operations;
->         ctx->dops =3D &pidfs_dentry_operations;
->         fc->s_fs_info =3D (void *)&pidfs_stashed_ops;
->         return 0;
+>  struct pseudo_fs_context {
+>         const struct super_operations *ops;
+> +       const struct export_operations *eops;
+>         const struct xattr_handler * const *xattr;
+>         const struct dentry_operations *dops;
+>         unsigned long magic;
 > --
 > 2.46.1
 >
