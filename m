@@ -1,243 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-34373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD059C4C9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:31:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04AF9C4CF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08591F21E85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 02:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757F228A2B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF91D20493F;
-	Tue, 12 Nov 2024 02:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C32205E37;
+	Tue, 12 Nov 2024 03:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qHyOK1wC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfG2EWvN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39507433BE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 02:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C7E574;
+	Tue, 12 Nov 2024 03:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731378712; cv=none; b=Gmxau7kX77iyb23eZT9RC0RRH3xoBUHTnDAmn01wmjbQVzphHEpPtF8MPO9duBQRLDo7ztm51gU7FERrKW9sXGcMxqUEvPZGSowvjzpn8tOnWVb/zQFerCfNAJhfDa2G/oemdfkSX5nlVI+SLWRtNDFw9wpXSTPpcOO7Fc+sS1Q=
+	t=1731380423; cv=none; b=XXukFjrp0MJXcY2pgNinDlMhof8bDDdgLgE9PDg7Vruln4xlU8WOu16Zhv9K6BJ267hNTVDtXAGNmvULOWvZ3P09EF1eR3Jyx7CL9PsfIh1wE8nd6VRlGyqwlvg0oR3I3pA4Xzq5kgF3LmNumB8SCHefV8vBCdz8uNTtgcMC6WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731378712; c=relaxed/simple;
-	bh=/O47mt/detEydwJb6wECj65EpKVTBZ4aqWv7K7C5I+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WolqWCgDxg0ZFDZFHm8U+VaEIEO6tvSNDgnZ/vXJFOfEAxgdrJONMdl6s0jEcd/gFZOLVriKGwSOJ/N7f+YLEKTC3AxdNPWNCLflOyMUTEgp5IRVMD5Cs+PCXqjA68Cmruic/M2ZE7rPSyQbk1tNEGy5ZZbikcF3PG8swILnG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qHyOK1wC; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731378706; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5E/yqWznFqIBCSOfrFucrEVO6/G4cCny4JPSermzaNk=;
-	b=qHyOK1wCjNwYSL/h7G9Pk464VDJtDTyowzB1YQNCSgykmxR2llDx4Y7LQYvG35WNDyHmTskKUObcO85vGegaBpbSfWJNos/TtZQ4ktOz7fZ23OdlDT4CRbuypWFP0LkMpfc15iDIc9dpJjVZJQFYDXYVVJvuFjSBpa8m5wkwV6M=
-Received: from 30.221.148.118(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WJFJuD2_1731378705 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Nov 2024 10:31:46 +0800
-Message-ID: <0f585a7c-678b-492a-9492-358f21e57291@linux.alibaba.com>
-Date: Tue, 12 Nov 2024 10:31:43 +0800
+	s=arc-20240116; t=1731380423; c=relaxed/simple;
+	bh=5wk4mK60EoHVsMCvX1Li3jR8LsNWik4rErnD/bTn/LU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Fw65HqTs5NoLcbrxug0Va0oXtthMAH36tPV5uzUaQ228OfFuEDq1R7+UgAbvtohRbHZtxT3pRrTaVOvqM0+O7b0mmUCPy/M90klbj0cr2nCtwcKbSlxTL4fMXnGpGcAb8bJYB3wYL/P4Sq0C7s8tSiWOXZ9e3pm97RcWPP4/PpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfG2EWvN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5ADFC4CECF;
+	Tue, 12 Nov 2024 03:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731380422;
+	bh=5wk4mK60EoHVsMCvX1Li3jR8LsNWik4rErnD/bTn/LU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YfG2EWvNsFWWKrvzuehWMvYVI5NSsA9yfl9Mmw1poL3yT1T5Z98T/1UsZAvy88Q87
+	 mgmweCLkvt/0tZLID1W4dZgyH+F8qxriU+QyzTMAH/4dJmOG7+12zuWLPd6OuL56vV
+	 TaMP3XYWjwh3gRTQQnBqIqz5MvceYGUAOIUZ25ZxQ1h31GkR7+LejDQNZvl5hQZFlS
+	 Xd/mXG1lMIa9fVZRu3grLBYy+GbB/SLa/dkHAf2bLWhJTe/VBJCvoWbXFh08kC/qqe
+	 2BH/5qk0diSp/Qj6tUdjEl8UTui+udO52HKcUDVFMZx6ZFeH5aGBueoj7vN2PFshnn
+	 yt1zAzaPPFMsQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE563809A80;
+	Tue, 12 Nov 2024 03:00:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
- josef@toxicpanda.com, linux-mm@kvack.org, bernd.schubert@fastmail.fm,
- kernel-team@meta.com
-References: <20241107235614.3637221-1-joannelkoong@gmail.com>
- <20241107235614.3637221-7-joannelkoong@gmail.com>
- <9c0dbdac-0aed-467c-86c7-5b9a9f96d89d@linux.alibaba.com>
- <CAJnrk1YUPZhCUhGqu+bBngzrG-yCCRLZc7fiOfXQZ0dxCHJV8Q@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1YUPZhCUhGqu+bBngzrG-yCCRLZc7fiOfXQZ0dxCHJV8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v9 0/6] Suspend IRQs during application busy periods
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173138043276.62607.2860647577086593902.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Nov 2024 03:00:32 +0000
+References: <20241109050245.191288-1-jdamato@fastly.com>
+In-Reply-To: <20241109050245.191288-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, corbet@lwn.net, hdanton@sina.com,
+ bagasdotme@gmail.com, pabeni@redhat.com, namangulati@google.com,
+ edumazet@google.com, amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+ sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+ bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+ willemdebruijn.kernel@gmail.com, skhawaja@google.com, kuba@kernel.org,
+ aleksander.lobakin@intel.com, viro@zeniv.linux.org.uk, andrew+netdev@lunn.ch,
+ bpf@vger.kernel.org, brauner@kernel.org, danielj@nvidia.com,
+ dsahern@kernel.org, davem@davemloft.net, donald.hunter@gmail.com,
+ jack@suse.cz, hawk@kernel.org, jiri@resnulli.us, johannes.berg@intel.com,
+ linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ lorenzo@kernel.org, mkarsten@uwaterloo.ca, almasrymina@google.com,
+ bigeasy@linutronix.de, shuah@kernel.org, horms@kernel.org,
+ xuanzhuo@linux.alibaba.com
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 11/12/24 5:30 AM, Joanne Koong wrote:
-> On Mon, Nov 11, 2024 at 12:32 AM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->> Hi, Joanne and Miklos,
->>
->> On 11/8/24 7:56 AM, Joanne Koong wrote:
->>> Currently, we allocate and copy data to a temporary folio when
->>> handling writeback in order to mitigate the following deadlock scenario
->>> that may arise if reclaim waits on writeback to complete:
->>> * single-threaded FUSE server is in the middle of handling a request
->>>   that needs a memory allocation
->>> * memory allocation triggers direct reclaim
->>> * direct reclaim waits on a folio under writeback
->>> * the FUSE server can't write back the folio since it's stuck in
->>>   direct reclaim
->>>
->>> To work around this, we allocate a temporary folio and copy over the
->>> original folio to the temporary folio so that writeback can be
->>> immediately cleared on the original folio. This additionally requires us
->>> to maintain an internal rb tree to keep track of writeback state on the
->>> temporary folios.
->>>
->>> A recent change prevents reclaim logic from waiting on writeback for
->>> folios whose mappings have the AS_WRITEBACK_MAY_BLOCK flag set in it.
->>> This commit sets AS_WRITEBACK_MAY_BLOCK on FUSE inode mappings (which
->>> will prevent FUSE folios from running into the reclaim deadlock described
->>> above) and removes the temporary folio + extra copying and the internal
->>> rb tree.
->>>
->>> fio benchmarks --
->>> (using averages observed from 10 runs, throwing away outliers)
->>>
->>> Setup:
->>> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
->>>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
->>>
->>> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
->>> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
->>>
->>>         bs =  1k          4k            1M
->>> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
->>> After   341 MiB/s     2246 MiB/s     2685 MiB/s
->>> % diff        -3%          23%         45%
->>>
->>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>
->>
->> IIUC this patch seems to break commit
->> 8b284dc47291daf72fe300e1138a2e7ed56f38ab ("fuse: writepages: handle same
->> page rewrites").
->>
+On Sat,  9 Nov 2024 05:02:30 +0000 you wrote:
+> Greetings:
 > 
-> Interesting!  My understanding was that we only needed that commit
-> because we were clearing writeback on the original folio before
-> writeback had actually finished.
+> Welcome to v9, see changelog below.
 > 
-> Now that folio writeback state is accounted for normally (eg through
-> writeback being set/cleared on the original folio), does the
-> folio_wait_writeback() call we do in fuse_page_mkwrite() not mitigate
-> this?
-
-Yes, after inspecting the writeback logic more, it seems that the second
-writeback won't be initiated if the first one has not completed yet, see
-
-```
-a_ops->writepages
-  write_cache_pages
-    writeback_iter
-      writeback_get_folio
-	folio_prepare_writeback
-	  if folio_test_writeback(folio):
-	    folio_wait_writeback(folio)
-```
-
-and thus it won't be an issue to remove the auxiliary list ;)
-
+> This revision addresses feedback Willem gave on the selftests. No
+> functional or code changes to the implementation were made and
+> performance tests were not re-run.
 > 
->>> -     /*
->>> -      * Being under writeback is unlikely but possible.  For example direct
->>> -      * read to an mmaped fuse file will set the page dirty twice; once when
->>> -      * the pages are faulted with get_user_pages(), and then after the read
->>> -      * completed.
->>> -      */
->>
->> In short, the target scenario is like:
->>
->> ```
->> # open a fuse file and mmap
->> fd1 = open("fuse-file-path", ...)
->> uaddr = mmap(fd1, ...)
->>
->> # DIRECT read to the mmaped fuse file
->> fd2 = open("ext4-file-path", O_DIRECT, ...)
->> read(fd2, uaddr, ...)
->>     # get_user_pages() of uaddr, and triggers faultin
->>     # a_ops->dirty_folio() <--- mark PG_dirty
->>
->>     # when DIRECT IO completed:
->>     # a_ops->dirty_folio() <--- mark PG_dirty
-> 
-> If you have the direct io function call stack at hand, could you point
-> me to the function where the direct io completion marks this folio as
-> dirty?
+> [...]
 
+Here is the summary with links:
+  - [net-next,v9,1/6] net: Add napi_struct parameter irq_suspend_timeout
+    https://git.kernel.org/netdev/net-next/c/5dc51ec86df6
+  - [net-next,v9,2/6] net: Add control functions for irq suspension
+    https://git.kernel.org/netdev/net-next/c/3fcbecbdeb04
+  - [net-next,v9,3/6] eventpoll: Trigger napi_busy_loop, if prefer_busy_poll is set
+    https://git.kernel.org/netdev/net-next/c/ab5b28b007a7
+  - [net-next,v9,4/6] eventpoll: Control irq suspension for prefer_busy_poll
+    https://git.kernel.org/netdev/net-next/c/8a6de2627fd3
+  - [net-next,v9,5/6] selftests: net: Add busy_poll_test
+    (no matching commit)
+  - [net-next,v9,6/6] docs: networking: Describe irq suspension
+    https://git.kernel.org/netdev/net-next/c/a90a91e24b48
 
-FYI The full call stack is like:
-
-```
-# DIRECT read(2) to the mmaped fuse file
-read(fd2, uaddr1, ...)
-  f_ops->read_iter()
-    (iomap-based ) iomap_dio_rw
-      # for READ && user_backed_iter(iter):
-        dio->flags |= IOMAP_DIO_DIRTY
-      iomap_dio_iter
-        iomap_dio_bio_iter
-          # add user or kernel pages to a bio
-          bio_iov_iter_get_pages
-            ...
-            pin_user_pages_fast(..., FOLL_WRITE, ...)
-              # find corresponding vma of dest buffer (fuse page cache)
-              # search page table (pet) to find corresponding page
-              # if not fault yet, trigger explicit faultin:
-                faultin_page(..., FOLL_WRITE, ...)
-                  handle_mm_fault(..., FAULT_FLAG_WRITE)
-                    handle_pte_fault
-                      do_wp_page
-                        (vma->vm_flags & VM_SHARED) wp_page_shared
-			  ...
-			  fault_dirty_shared_page
-                            folio_mark_dirty
-                              a_ops->dirty_folio(), i.e.,
-filemap_dirty_folio()
-				# set PG_dirty
-				folio_test_set_dirty(folio)
-				# set PAGECACHE_TAG_DIRTY
-				__folio_mark_dirty
-
-
-          # if dio->flags & IOMAP_DIO_DIRTY:
-          bio_set_pages_dirty
-            (for each dest page) folio_mark_dirty
-               a_ops->dirty_folio(), i.e., filemap_dirty_folio()
-                 # set PG_dirty
-		 folio_test_set_dirty(folio)
-                 # set PAGECACHE_TAG_DIRTY
-		 __folio_mark_dirty
-```
-
-
-> 
->> ```
->>
->> The auxiliary write request list was introduced to fix this.
->>
->> I'm not sure if there's an alternative other than the auxiliary list to
->> fix it, e.g. calling folio_wait_writeback() in a_ops->dirty_folio() so
->> that the same folio won't get dirtied when the writeback has not
->> completed yet?
->>
-> 
-> I'm curious how other filesystems solve for this - this seems like a
-> generic situation other filesystems would run into as well.
-> 
-
-As mentioned above, the writeback path will prevent the duplicate
-writeback request on the same page when the first writeback IO has not
-completed yet.
-
-Sorry for the noise...
-
+You are awesome, thank you!
 -- 
-Thanks,
-Jingbo
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
