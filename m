@@ -1,272 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-34468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C24A9C5ABC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1299C5AE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85C528A3CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9755628404A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D801FF7BF;
-	Tue, 12 Nov 2024 14:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7661FF5F9;
+	Tue, 12 Nov 2024 14:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdJotj/u"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MMWaQqzU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB151FF034;
-	Tue, 12 Nov 2024 14:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F991FF034
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 14:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422588; cv=none; b=cOlSUBDvubXQIbD6oNwn/DBd88jET7rOwRoFe2M1f+ehDmNXpkzITbAjxRUbKxd2z212ndi0tZtS89+5RxOblAR/k1YbUGt7oFhNdAntsyO6L7rEfM5sn49cWdD5wn23qCG6aEZwo0gsZfo9XkH6RCBTKLxCvOVxcs0MSPit/DI=
+	t=1731423086; cv=none; b=eerOIP/oF3psMQ0PhY3HTxXR/35dm3iAqLxrJvGxheTOA5gTytR3C0CcTu5i9BjVrFt08D88hUPk1gk86Ngw0KQHl2Moc7KkmLUufef1DROuMcSwn/vJXe3iD3/iWLn6r8QSBhKCU9DiHq/wWIMWXIMLBoYuee/9hJc4gvbTAOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422588; c=relaxed/simple;
-	bh=H7ySh2TXkX33QhtlaMClLoqvD9TtVhHSZgSzQrVzRTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kyl/9byTVVxd8SJ4rhjCxwVNULVt2k0AG1U57d97a2GFUClqI3uw28S8R2atYrVlDpG2aPo0eQiSG4Pz4zj6TP8rExJjWAZBnNCPOv5mZf8NkaFQhfDQ1/YmmOZjdztr0zF7A23YghrZ4EYvOvYtCdLTkzzbgqsVrdbXUkAe4IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdJotj/u; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cbf0769512so38767336d6.3;
-        Tue, 12 Nov 2024 06:43:06 -0800 (PST)
+	s=arc-20240116; t=1731423086; c=relaxed/simple;
+	bh=mqQhsAaxwWysPBIhvxpmHkNJDSNibPBlWN5Kv3bKH+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JLvdlpBLF0fhEIGy0LAh0y/QMSIlnjidNkEEkKTT33i6CAWX3b2xwW93aGvIHC9Ec8kFbrdYCQ4BN9du8oSJrjlv9/3NWpjEAQAUtxmFCD9urJrBRx4/IlEyTZx/uBEyscL99S3jBimO0P6lTMBVW2b2FLWq9O9NWWlB8I0VuUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MMWaQqzU; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-715716974baso3557027a34.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 06:51:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731422586; x=1732027386; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJitszLJDg3VwSrulTOUYyc6BMdqCAbB6MWmGHGc2b0=;
-        b=VdJotj/uTs9EJl2h2nDC1avNu5STfHGA9+MQy1yfFmANN4yLaxCjmJMO66TuUfo8fc
-         Nltg49ueQJ75EVVqNqrDFIWlXQmyJkVh3alJYeYCeIfoesTBRxfkjS8jXtlZeIQ6spMh
-         M4CsMagFTiO10aoavOTg7uznXPCmnsZYyp2c6bodlpNEu0aVx5l7V6qSf67egYcbbqL4
-         Xg8Gex6CPsI+j8IK28SEQGmXj6zCgpoektfWux+Z+cz7rihetfDt+dJBfhGwMlDmpFDe
-         UeyHyN3IIJjtCIJNBV5GFfLU75GA3T5FP3Rud5yeeByadbwIr6bGYG8Yvxz1lmSRgwQD
-         CGpA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731423083; x=1732027883; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gvE32TaYAXjgECParzeSgw6HkypztPHssnr8m+v8i78=;
+        b=MMWaQqzUDQDT1sfOfxiY65TAT9MMPmlRKLKvFdLPP9pl0T2umtwURHkpfFLHRNLmE9
+         7Io/SDzMfM+TIjkbKoYHts7giQXM3zhPvoh40kX35s+fR6leqO2JoxMskuIDVSQ9TT35
+         cYX1rXUdLYaBsw5hKJhFJPAnf7ZQXiA91bKRLYr5AhN5oWQd+MEetGjPyquQW+GlOMPu
+         xAQwUpy5NF/CwOvvWtipGB99muWOWB4/pLa4Z+O/YnjYf9fi1jq6jNHtARZ6pVfwCxfH
+         F5e2KmWCPHnQzFUZWHH5JR+8/yatUNWuKdmermCkmnUBCV+EMOkrfKrhhRhbNL/LD+07
+         G08A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731422586; x=1732027386;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pJitszLJDg3VwSrulTOUYyc6BMdqCAbB6MWmGHGc2b0=;
-        b=IDLnhtbQd67JfTy2vY7PoPxq95ceR+MCxqqx+VLLiOldbN6k8f57B5xpRv4ryDVdUK
-         83DXkZIA/n8twt0bqx+jb0VLgDnlhP+hAqSSZ7v6471XATk2uGU0ydk0N2wXQAcgpRui
-         684MbKUFbYqIEB+PpQEjrDgKFDNSh4xwSuNWbJOw3gPB8fRr385NUEHXIs2eIgbD65Lk
-         IvUT0O7CbXZHuDEW9mm2X3A+6aj+v530wEh7idnPW+he5WwGEv7F3B/XJ7MJKKd+jMn3
-         8QEPJq2UE+N5qW+kOfr1W7yMDOJLXjZS35FlaMtxvriiSPXd0x7E0MxgWW6eXPzNFOIy
-         lBIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7eSymWFA2ImE7Pk6H9rJveDQoqCbTnrGfRFG5/LpLZ9Lnf+bNBgmyuKP6kV4ccT4wJfdrNNXqyedv8w==@vger.kernel.org, AJvYcCVSSY9ocrsgf6ym1E7QzEDxXYr8aPIXzjGdhGenup+4RKT7oQXvHnOIW0h1y4F7QlOmV947JgphsgJB@vger.kernel.org, AJvYcCW7rz8rlgssdQzSSEY9bl1O6kMZ8sc5LKHdQDRWCEAgz39gPK4pSA0U1I0zdZeRCSEcsAxzHCtyo+DRHsvp1A==@vger.kernel.org, AJvYcCXAhlh09rFTpFmVR2DqaC/C2gjIVinmFp1a4OYT7s4Ez2ZICcim8asHiXQrGmERrTA6IZQJyNiTytrUlg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEpAnD8dIm8PQWPeHpdWOBeJTu+kE6st/9TGvy1gSvgoW2+rm
-	WP6LN92CFRoTVo+CXOfoYlar2NyfDDI8FFUPtAR+Z6E5OkwLnTysjRHB4CHwM57q+hp0shWtROG
-	95RlSsR4GiFCDq9XWJ0rJWSQdms8=
-X-Google-Smtp-Source: AGHT+IHsEbdNRX2EeabFHLNPiKKT4tbxGfpFRPEv0WvCJKomF8HYSNpQhaRbhjSeBcbJAKgMvEpxWFBpgcQI7gZI5is=
-X-Received: by 2002:a0c:f413:0:b0:6cb:fbb1:d1ba with SMTP id
- 6a1803df08f44-6d39e107822mr203778346d6.9.1731422585638; Tue, 12 Nov 2024
- 06:43:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731423083; x=1732027883;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gvE32TaYAXjgECParzeSgw6HkypztPHssnr8m+v8i78=;
+        b=N56vcgRhd7oqpmyCzICHtHC/3Aj/ECepYtjX74UNdzoTgGLx4yjg23b4bwPqmEOUBM
+         Sxt/Dglf8v6QfKGNyped2VxunS3mL0r2Y1QZl3TEUGKSlT9bmBb6S7iEzGGrzMv7/tGm
+         WM2ReOfzZFG7AWxQbCSxaJA8xTtN7T4oLBzD/3G8tj4Rag5snd3obQGcC2oiEcjk0QiL
+         6s3+Dq2+sS6ebYei1FFbC4RyoAICBgqr6YbbACSFR/DbZQK5jWWwy/z5L+OZDwu1tVHz
+         5He7qkokzieqJzfmb5Nru7+Xp0IryH0FpdcBg/bAJR1mf8S/cFwzDZb98KyRwRSRCcdf
+         8k+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXVbAx2xxJDcJtBmRldIp+ygrz9pQm/OaAIu7CPHF7J4COJChqa1o9gU6JcPjfxQF99oV0UTUix9we4lP9k@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxikaehzA27JKHYWqCm2o3uX2WDaA2zT9YvChwZYUWbyH/JR1Q
+	Ndw1pd3sR7u32wnNBO9EBpipxEjyp0AjV8cRAjXv0wzcuJBYJ4ucizpC8E9IcUk=
+X-Google-Smtp-Source: AGHT+IH7Ryn2K78a+7vMPHSR7u3Kh0PU/404i9EkCLLhxngvy6O/IjGB1rfvrkuz3xsVwrzASt/5mA==
+X-Received: by 2002:a05:6830:6d86:b0:710:f1cd:b237 with SMTP id 46e09a7af769-71a1c2860eemr14833704a34.20.1731423083214;
+        Tue, 12 Nov 2024 06:51:23 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a10833f05sm2722374a34.31.2024.11.12.06.51.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 06:51:22 -0800 (PST)
+Message-ID: <20b661ee-a7aa-4116-a0ec-96da9343af61@kernel.dk>
+Date: Tue, 12 Nov 2024 07:51:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731355931.git.josef@toxicpanda.com> <b509ec78c045d67d4d7e31976eba4b708b238b66.1731355931.git.josef@toxicpanda.com>
- <CAHk-=wh4BEjbfaO93hiZs3YXoNmV=YkWT4=OOhuxM3vD2S-1iA@mail.gmail.com>
- <CAEzrpqdtSAoS+p4i0EzWFr0Nrpw1Q2hphatV7Sk4VM49=L3kGw@mail.gmail.com>
- <CAHk-=wj8L=mtcRTi=NECHMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com>
- <CAOQ4uxgxtQhe_3mj5SwH9568xEFsxtNqexLfw9Wx_53LPmyD=Q@mail.gmail.com>
- <CAHk-=wgUV27XF8g23=aWNJecRbn8fCDDW2=10y9yJ122+d8JrA@mail.gmail.com>
- <CAOQ4uxh7aT+EvWYMa9v=SyRjfdh4Je_FmS0+TNqonHE5Z+_TPw@mail.gmail.com> <20241112135457.zxzhtoe537gapkmu@quack3>
-In-Reply-To: <20241112135457.zxzhtoe537gapkmu@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Nov 2024 15:42:54 +0100
-Message-ID: <CAOQ4uxihtPaKT02CSS37DW0JXTPFFnfaRrH781oKHzbpuBC8vw@mail.gmail.com>
-Subject: Re: [PATCH v6 06/17] fsnotify: generate pre-content permission event
- on open
-To: Jan Kara <jack@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-ext4@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: multipart/mixed; boundary="0000000000002c97f80626b83cf0"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-11-axboe@kernel.dk>
+ <ZzKn4OyHXq5r6eiI@dread.disaster.area>
+ <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
+ <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---0000000000002c97f80626b83cf0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 11/12/24 1:02 AM, Dave Chinner wrote:
+> On Mon, Nov 11, 2024 at 06:27:46PM -0700, Jens Axboe wrote:
+>> On 11/11/24 5:57 PM, Dave Chinner wrote:
+>>> On Mon, Nov 11, 2024 at 04:37:37PM -0700, Jens Axboe wrote:
+>>>> If RWF_UNCACHED is set for a write, mark new folios being written with
+>>>> uncached. This is done by passing in the fact that it's an uncached write
+>>>> through the folio pointer. We can only get there when IOCB_UNCACHED was
+>>>> allowed, which can only happen if the file system opts in. Opting in means
+>>>> they need to check for the LSB in the folio pointer to know if it's an
+>>>> uncached write or not. If it is, then FGP_UNCACHED should be used if
+>>>> creating new folios is necessary.
+>>>>
+>>>> Uncached writes will drop any folios they create upon writeback
+>>>> completion, but leave folios that may exist in that range alone. Since
+>>>> ->write_begin() doesn't currently take any flags, and to avoid needing
+>>>> to change the callback kernel wide, use the foliop being passed in to
+>>>> ->write_begin() to signal if this is an uncached write or not. File
+>>>> systems can then use that to mark newly created folios as uncached.
+>>>>
+>>>> Add a helper, generic_uncached_write(), that generic_file_write_iter()
+>>>> calls upon successful completion of an uncached write.
+>>>
+>>> This doesn't implement an "uncached" write operation. This
+>>> implements a cache write-through operation.
+>>
+>> It's uncached in the sense that the range gets pruned on writeback
+>> completion.
+> 
+> That's not the definition of "uncached". Direct IO is, by
+> definition, "uncached" because it bypasses the cache and is not
+> coherent with the contents of the cache.
 
-On Tue, Nov 12, 2024 at 2:55=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 12-11-24 09:11:32, Amir Goldstein wrote:
-> > On Tue, Nov 12, 2024 at 1:37=E2=80=AFAM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > > On Mon, 11 Nov 2024 at 16:00, Amir Goldstein <amir73il@gmail.com> wro=
-te:
-> > > >
-> > > > I think that's a good idea for pre-content events, because it's fin=
-e
-> > > > to say that if the sb/mount was not watched by a pre-content event =
-listener
-> > > > at the time of file open, then we do not care.
-> > >
-> > > Right.
-> > >
-> > > > The problem is that legacy inotify/fanotify watches can be added af=
-ter
-> > > > file is open, so that is allegedly why this optimization was not do=
-ne for
-> > > > fsnotify hooks in the past.
-> > >
-> > > So honestly, even if the legacy fsnotify hooks can't look at the file
-> > > flag, they could damn well look at an inode flag.
-> >
-> > Legacy fanotify has a mount watch (FAN_MARK_MOUNT),
-> > which is the common way for Anti-malware to set watches on
-> > filesystems, so I am not sure what you are saying.
-> >
-> > > And I'm not even convinced that we couldn't fix them to just look at =
-a
-> > > file flag, and say "tough luck, somebody opened that file before you
-> > > started watching, you don't get to see what they did".
-> >
-> > That would specifically break tail -f (for inotify) and probably many o=
-ther
-> > tools, but as long as we also look at the inode flags (i_fsnotify_mask)
-> > and the dentry flags (DCACHE_FSNOTIFY_PARENT_WATCHED),
-> > then I think we may be able to get away with changing the semantics
-> > for open files on a fanotify mount watch.
->
-> Yes, I agree we cannot afford to generate FS_MODIFY event only if the mar=
-k
-> was placed after file open. There's too much stuff in userspace depending
-> on this since this behavior dates back to inotify interface sometime in
-> 2010 or so.
->
-> > Specifically, I would really like to eliminate completely the cost of
-> > FAN_ACCESS_PERM event, which could be gated on file flag, because
-> > this is only for security/Anti-malware and I don't think this event is
-> > practically
-> > useful and it sure does not need to guarantee permission events to moun=
-t
-> > watchers on already open files.
->
-> For traditional fanotify permission events I agree generating them only i=
-f
-> the mark was placed before open is likely fine but we'll have to try and
-> see whether something breaks. For the new pre-content events I like the
-> per-file flag as Linus suggested. That should indeed save us some cache
-> misses in some fast paths.
+I grant you it's not the best word in the world to describe it, but it
+is uncached in the sense that it's not persistent in cache. It does very
+much use the page cache as the synchronization point, exactly to avoid
+the pitfalls of the giant mess that is O_DIRECT. But it's not persistent
+in cache, whereas write-through very much traditionally is. Hence I
+think uncached is a much better word than write-through, though as
+mentioned I'll be happy to take other suggestions. Write-through isn't
+it though, as the uncached concept is as much about reads as it is about
+writes.
 
-FWIW, attached a patch that implements FMODE_NOTIFY_PERM
-I have asked Oliver to run his performance tests to see if we can
-observe an improvement with existing workloads, but is sure is going
-to be useful for pre-content events.
+> This IO, however, is moving the data coherently through the cache
+> (both on read and write).  The cached folios are transient - i.e.
+> -temporarily resident- in the cache whilst the IO is in progress -
+> but this behaviour does not make it "uncached IO".
+> 
+> Calling it "uncached IO " is simply wrong from any direction I look
+> at it....
 
-For example, here is what the pre content helper looks like after
-I adapted Josef's patches to use the flag:
+As mentioned, better words welcome :-)
 
-static inline bool fsnotify_file_has_pre_content_watches(struct file *file)
-{
-        if (!(file->f_mode & FMODE_NOTIFY_PERM))
-                return false;
+>> For write-through, I'd consider that just the fact that it
+>> gets kicked off once dirtied rather than wait for writeback to get
+>> kicked at some point.
+>>
+>> So I'd say write-through is a subset of that.
+> 
+> I think the post-IO invalidation that these IOs do is largely
+> irrelevant to how the page cache processes the write. Indeed,
+> from userspace, the functionality in this patchset would be
+> implemented like this:
+> 
+> oneshot_data_write(fd, buf, len, off)
+> {
+> 	/* write into page cache */
+> 	pwrite(fd, buf, len, off);
+> 
+> 	/* force the write through the page cache */
+> 	sync_file_range(fd, off, len, SYNC_FILE_RANGE_WRITE | SYNC_FILE_RANGE_WAIT_AFTER);
+> 
+> 	/* Invalidate the single use data in the cache now it is on disk */
+> 	posix_fadvise(fd, off, len, POSIX_FADV_DONTNEED);
+> }
 
-        if (!(file_inode(file)->i_sb->s_iflags & SB_I_ALLOW_HSM))
-                return false;
+Right, you could do that, it'd obviously just be much slower as you lose
+the pipelining of the writes. This is the reason for the patch, after
+all.
 
-        return fsnotify_file_object_watched(file, FSNOTIFY_PRE_CONTENT_EVEN=
-TS);
-}
+> Allowing the application to control writeback and invalidation
+> granularity is a much more flexible solution to the problem here;
+> when IO is sequential, delayed allocation will be allowed to ensure
+> large contiguous extents are created and that will greatly reduce
+> file fragmentation on XFS, btrfs, bcachefs and ext4. For random
+> writes, it'll submit async IOs in batches...
+> 
+> Given that io_uring already supports sync_file_range() and
+> posix_fadvise(), I'm wondering why we need an new IO API to perform
+> this specific write-through behaviour in a way that is less flexible
+> than what applications can already implement through existing
+> APIs....
 
-Thanks,
-Amir.
+Just to make it available generically, it's just a read/write flag after
+all. And yes, you can very much do this already with io_uring, just by
+linking the ops. But the way I see it, it's a generic solution to a
+generic problem.
 
---0000000000002c97f80626b83cf0
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-fsnotify-opt-in-for-permission-events-at-file_open_p.patch"
-Content-Disposition: attachment; 
-	filename="0001-fsnotify-opt-in-for-permission-events-at-file_open_p.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3ek7wxp0>
-X-Attachment-Id: f_m3ek7wxp0
+>>> That also gives us a common place for adding cache write-through
+>>> trigger logic (think writebehind trigger logic similar to readahead)
+>>> and this is also a place where we could automatically tag mapping
+>>> ranges for reclaim on writeback completion....
+>>
+>> I appreciate that you seemingly like the concept, but not that you are
+>> also seemingly trying to commandeer this to be something else. Unless
+>> you like the automatic reclaiming as well, it's not clear to me.
+> 
+> I'm not trying to commandeer anything.
 
-RnJvbSA4YzhlOTQ1MmQxNTNhMTkxODQ3MGNiZTUyYThlYjY1MDVjNjc1OTExIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
-YXRlOiBUdWUsIDEyIE5vdiAyMDI0IDEzOjQ2OjA4ICswMTAwClN1YmplY3Q6IFtQQVRDSF0gZnNu
-b3RpZnk6IG9wdC1pbiBmb3IgcGVybWlzc2lvbiBldmVudHMgYXQgZmlsZV9vcGVuX3Blcm0oKQog
-dGltZQoKTGVnYWN5IGlub3RpZnkvZmFub3RpZnkgbGlzdGVuZXJzIGNhbiBhZGQgd2F0Y2hlcyBm
-b3IgZXZlbnRzIG9uIGlub2RlLApwYXJlbnQgb3IgbW91bnQgYW5kIGV4cGVjdCB0byBnZXQgZXZl
-bnRzIChlLmcuIEZTX01PRElGWSkgb24gZmlsZXMgdGhhdAp3ZXJlIGFscmVhZHkgb3BlbiBhdCB0
-aGUgdGltZSBvZiBzZXR0aW5nIHVwIHRoZSB3YXRjaGVzLgoKZmFub3RpZnkgcGVybWlzc2lvbiBl
-dmVudHMgYXJlIHR5cGljYWxseSB1c2VkIGJ5IEFudGktbWFsd2FyZSBzb2Z3YXJlLAp0aGF0IGlz
-IHdhdGNoaW5nIHRoZSBlbnRpcmUgbW91bnQgYW5kIGl0IGlzIG5vdCBjb21tb24gdG8gaGF2ZSBt
-b3JlIHRoYXQKb25lIEFudGktbWFsd2FyZSBlbmdpbmUgaW5zdGFsbGVkIG9uIGEgc3lzdGVtLgoK
-VG8gcmVkdWNlIHRoZSBvdmVyaGVhZCBvZiB0aGUgZnNub3RpZnlfZmlsZV9wZXJtKCkgaG9va3Mg
-b24gZXZlcnkgZmlsZQphY2Nlc3MsIHJlbGF4IHRoZSBzZW1hbnRpY3Mgb2YgdGhlIGxlZ2FjeSBG
-QU5fT1BFTl9QRVJNIGV2ZW50IHRvIGdlbmVyYXRlCmV2ZW50cyBvbmx5IGlmIHRoZXJlIHdlcmUg
-KmFueSogcGVybWlzc2lvbiBldmVudCBsaXN0ZW5lcnMgb24gdGhlCmZpbGVzeXN0ZW0gYXQgdGhl
-IHRpbWUgdGhhdCB0aGUgZmlsZSB3YXMgb3Blbi4KClRoZSBuZXcgc2VtYW50aWNzLCBpbXBsZW1l
-bnRlZCB3aXRoIHRoZSBvcHQtaW4gRk1PREVfTk9USUZZX1BFUk0gZmxhZwphcmUgYWxzbyBnb2lu
-ZyB0byBhcHBseSB0byB0aGUgbmV3IGZhbm90aWZ5IHByZS1jb250ZW50IGV2ZW50IGluIG9yZGVy
-CnRvIHJlZHVjZSB0aGUgY29zdCBvZiB0aGUgcHJlLWNvbnRlbnQgZXZlbnQgdmZzIGhvb2tzLgoK
-U3VnZ2VzdGVkLWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRhdGlvbi5v
-cmc+Ckxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWZzZGV2ZWwvQ0FIay09d2o4
-TD1tdGNSVGk9TkVDSE1HZlpRZ1hPcF91aXgxWVZoMDRmRW1yS2FNblhBQG1haWwuZ21haWwuY29t
-LwpTaWduZWQtb2ZmLWJ5OiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgotLS0K
-IGluY2x1ZGUvbGludXgvZnMuaCAgICAgICB8ICAzICsrLQogaW5jbHVkZS9saW51eC9mc25vdGlm
-eS5oIHwgNDcgKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLQogMiBmaWxl
-cyBjaGFuZ2VkLCAzNSBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9pbmNsdWRlL2xpbnV4L2ZzLmggYi9pbmNsdWRlL2xpbnV4L2ZzLmgKaW5kZXggOWMxMzIyMjM2
-MmY1Li45YjU4ZTk4ODdlNGIgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZnMuaAorKysgYi9p
-bmNsdWRlL2xpbnV4L2ZzLmgKQEAgLTE3Myw3ICsxNzMsOCBAQCB0eXBlZGVmIGludCAoZGlvX2lv
-ZG9uZV90KShzdHJ1Y3Qga2lvY2IgKmlvY2IsIGxvZmZfdCBvZmZzZXQsCiAKICNkZWZpbmUJRk1P
-REVfTk9SRVVTRQkJKChfX2ZvcmNlIGZtb2RlX3QpKDEgPDwgMjMpKQogCi0vKiBGTU9ERV8qIGJp
-dCAyNCAqLworLyogRmlsZSBtYXkgZ2VuZXJhdGUgZmFub3RpZnkgYWNjZXNzIHBlcm1pc3Npb24g
-ZXZlbnRzICovCisjZGVmaW5lIEZNT0RFX05PVElGWV9QRVJNCSgoX19mb3JjZSBmbW9kZV90KSgx
-IDw8IDI0KSkKIAogLyogRmlsZSBpcyBlbWJlZGRlZCBpbiBiYWNraW5nX2ZpbGUgb2JqZWN0ICov
-CiAjZGVmaW5lIEZNT0RFX0JBQ0tJTkcJCSgoX19mb3JjZSBmbW9kZV90KSgxIDw8IDI1KSkKZGlm
-ZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZnNub3RpZnkuaCBiL2luY2x1ZGUvbGludXgvZnNub3Rp
-ZnkuaAppbmRleCAyNzg2MjBlMDYzYWIuLmYwZmQzZGNhZTY1NCAxMDA2NDQKLS0tIGEvaW5jbHVk
-ZS9saW51eC9mc25vdGlmeS5oCisrKyBiL2luY2x1ZGUvbGludXgvZnNub3RpZnkuaApAQCAtMTA4
-LDEwICsxMDgsOSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZnNub3RpZnlfZGVudHJ5KHN0cnVjdCBk
-ZW50cnkgKmRlbnRyeSwgX191MzIgbWFzaykKIAlmc25vdGlmeV9wYXJlbnQoZGVudHJ5LCBtYXNr
-LCBkZW50cnksIEZTTk9USUZZX0VWRU5UX0RFTlRSWSk7CiB9CiAKLXN0YXRpYyBpbmxpbmUgaW50
-IGZzbm90aWZ5X2ZpbGUoc3RydWN0IGZpbGUgKmZpbGUsIF9fdTMyIG1hc2spCisvKiBTaG91bGQg
-ZXZlbnRzIGJlIGdlbmVyYXRlZCBvbiB0aGlzIG9wZW4gZmlsZSByZWdhcmRsZXNzIG9mIHdhdGNo
-ZXM/ICovCitzdGF0aWMgaW5saW5lIGJvb2wgZnNub3RpZnlfZmlsZV93YXRjaGFibGUoc3RydWN0
-IGZpbGUgKmZpbGUsIF9fdTMyIG1hc2spCiB7Ci0JY29uc3Qgc3RydWN0IHBhdGggKnBhdGg7Ci0K
-IAkvKgogCSAqIEZNT0RFX05PTk9USUZZIGFyZSBmZHMgZ2VuZXJhdGVkIGJ5IGZhbm90aWZ5IGl0
-c2VsZiB3aGljaCBzaG91bGQgbm90CiAJICogZ2VuZXJhdGUgbmV3IGV2ZW50cy4gV2UgYWxzbyBk
-b24ndCB3YW50IHRvIGdlbmVyYXRlIGV2ZW50cyBmb3IKQEAgLTExOSwxNCArMTE4LDM3IEBAIHN0
-YXRpYyBpbmxpbmUgaW50IGZzbm90aWZ5X2ZpbGUoc3RydWN0IGZpbGUgKmZpbGUsIF9fdTMyIG1h
-c2spCiAJICogaGFuZGxlIGNyZWF0aW9uIC8gZGVzdHJ1Y3Rpb24gZXZlbnRzIGFuZCBub3QgInJl
-YWwiIGZpbGUgZXZlbnRzLgogCSAqLwogCWlmIChmaWxlLT5mX21vZGUgJiAoRk1PREVfTk9OT1RJ
-RlkgfCBGTU9ERV9QQVRIKSkKKwkJcmV0dXJuIGZhbHNlOworCisJLyogUGVybWlzc2lvbiBldmVu
-dHMgcmVxdWlyZSB0aGF0IHdhdGNoZXMgYXJlIHNldCBiZWZvcmUgRlNfT1BFTl9QRVJNICovCisJ
-aWYgKG1hc2sgJiBBTExfRlNOT1RJRllfUEVSTV9FVkVOVFMgJiB+RlNfT1BFTl9QRVJNICYmCisJ
-ICAgICEoZmlsZS0+Zl9tb2RlICYgRk1PREVfTk9USUZZX1BFUk0pKQorCQlyZXR1cm4gZmFsc2U7
-CisKKwlyZXR1cm4gdHJ1ZTsKK30KKworc3RhdGljIGlubGluZSBpbnQgZnNub3RpZnlfZmlsZShz
-dHJ1Y3QgZmlsZSAqZmlsZSwgX191MzIgbWFzaykKK3sKKwljb25zdCBzdHJ1Y3QgcGF0aCAqcGF0
-aDsKKworCWlmICghZnNub3RpZnlfZmlsZV93YXRjaGFibGUoZmlsZSwgbWFzaykpCiAJCXJldHVy
-biAwOwogCiAJcGF0aCA9ICZmaWxlLT5mX3BhdGg7Ci0JLyogUGVybWlzc2lvbiBldmVudHMgcmVx
-dWlyZSBncm91cCBwcmlvID49IEZTTk9USUZZX1BSSU9fQ09OVEVOVCAqLwotCWlmIChtYXNrICYg
-QUxMX0ZTTk9USUZZX1BFUk1fRVZFTlRTICYmCi0JICAgICFmc25vdGlmeV9zYl9oYXNfcHJpb3Jp
-dHlfd2F0Y2hlcnMocGF0aC0+ZGVudHJ5LT5kX3NiLAotCQkJCQkgICAgICAgRlNOT1RJRllfUFJJ
-T19DT05URU5UKSkKLQkJcmV0dXJuIDA7CisJLyoKKwkgKiBQZXJtaXNzaW9uIGV2ZW50cyByZXF1
-aXJlIGdyb3VwIHByaW8gPj0gRlNOT1RJRllfUFJJT19DT05URU5ULgorCSAqIFVubGVzcyBwZXJt
-aXNzaW9uIGV2ZW50IHdhdGNoZXJzIGV4aXN0IGF0IEZTX09QRU5fUEVSTSB0aW1lLAorCSAqIG9w
-ZXJhdGlvbnMgb24gZmlsZSB3aWxsIG5vdCBiZSBnZW5lcmF0aW5nIGFueSBwZXJtaXNzaW9uIGV2
-ZW50cy4KKwkgKi8KKwlpZiAobWFzayAmIEFMTF9GU05PVElGWV9QRVJNX0VWRU5UUykgeworCQlp
-ZiAoIWZzbm90aWZ5X3NiX2hhc19wcmlvcml0eV93YXRjaGVycyhwYXRoLT5kZW50cnktPmRfc2Is
-CisJCQkJCQkgICAgICAgRlNOT1RJRllfUFJJT19DT05URU5UKSkKKwkJCXJldHVybiAwOworCisJ
-CWlmIChtYXNrICYgRlNfT1BFTl9QRVJNKQorCQkJZmlsZS0+Zl9tb2RlIHw9IEZNT0RFX05PVElG
-WV9QRVJNOworCX0KIAogCXJldHVybiBmc25vdGlmeV9wYXJlbnQocGF0aC0+ZGVudHJ5LCBtYXNr
-LCBwYXRoLCBGU05PVElGWV9FVkVOVF9QQVRIKTsKIH0KQEAgLTE2NiwxNSArMTg4LDEyIEBAIHN0
-YXRpYyBpbmxpbmUgaW50IGZzbm90aWZ5X2ZpbGVfcGVybShzdHJ1Y3QgZmlsZSAqZmlsZSwgaW50
-IHBlcm1fbWFzaykKICAqLwogc3RhdGljIGlubGluZSBpbnQgZnNub3RpZnlfb3Blbl9wZXJtKHN0
-cnVjdCBmaWxlICpmaWxlKQogewotCWludCByZXQ7CisJaW50IHJldCA9IGZzbm90aWZ5X2ZpbGUo
-ZmlsZSwgRlNfT1BFTl9QRVJNKTsKIAotCWlmIChmaWxlLT5mX2ZsYWdzICYgX19GTU9ERV9FWEVD
-KSB7CisJaWYgKCFyZXQgJiYgZmlsZS0+Zl9mbGFncyAmIF9fRk1PREVfRVhFQykKIAkJcmV0ID0g
-ZnNub3RpZnlfZmlsZShmaWxlLCBGU19PUEVOX0VYRUNfUEVSTSk7Ci0JCWlmIChyZXQpCi0JCQly
-ZXR1cm4gcmV0OwotCX0KIAotCXJldHVybiBmc25vdGlmeV9maWxlKGZpbGUsIEZTX09QRU5fUEVS
-TSk7CisJcmV0dXJuIHJldDsKIH0KIAogI2Vsc2UKLS0gCjIuMzQuMQoK
---0000000000002c97f80626b83cf0--
+No? You're very much trying to steer it in a direction that you find
+better. There's a difference between making suggestions, or speaking
+like you are sitting on the ultimate truth.
+
+> Having thought about it more, I think this new API is unneccesary
+> for custom written applications to perform fine grained control of
+> page cache residency of one-shot data. We already have APIs that
+> allow applications to do exactly what this patchset is doing. rather
+> than choosing to modify whatever benchmark being used to use
+> existing APIs, a choice was made to modify both the applicaiton and
+> the kernel to implement a whole new API....
+> 
+> I think that was the -wrong choice-.
+> 
+> I think this partially because the kernel modifications are don't
+> really help further us towards the goal of transparent mode
+> switching in the page cache.
+> 
+> Read-through should be a mode that the readahead control activates,
+> not be something triggered by a special read() syscall flag. We
+> already have access patterns and fadvise modes guiding this.
+> Write-through should be controlled in a similar way.
+> 
+> And making the data being read and written behave as transient page
+> caceh objects should be done via an existing fadvise mode, too,
+> because the model you have implemented here exactly matches the 
+> definition of FADV_NOREUSE:
+> 
+> 	POSIX_FADV_NOREUSE
+>               The specified data will be accessed only once.
+> 
+> Having a new per-IO flag that effectively collides existing
+> control functionality into a single inflexible API bit doesn't
+> really make a whole lot of sense to me.
+> 
+> IOWs, I'm not questioning whether we need rw-through modes and/or
+> IO-transient residency for page cache based IO - it's been on our
+> radar for a while. I'm more concerned that the chosen API in this
+> patchset is a poor one as it cannot replace any of the existing
+> controls we already have for these sorts of application directed
+> page cache manipulations...
+
+We'll just have to disagree, then. Per-file settings is fine for sync
+IO, for anything async per-io is the way to go. It's why we have things
+like RWF_NOWAIT as well, where O_NONBLOCK exists too. I'd argue that
+RWF_NOWAIT should always have been a thing, and O_NONBLOCK is a mistake.
+That's why RWF_UNCACHED exists. And yes, the FADV_NOREUSE was already
+discussed with Willy and Yu, and I already did a poc patch to just
+unconditionally set RWF_UNCACHED for FADV_NOREUSE enabled files. While
+it's not exactly the same concept, I think the overlap is large enough
+that it makes sense to do that. Especially since, historically,
+FADV_NOREUSE has been largely a no-op and even know it doesn't have well
+defined semantics.
+
+-- 
+Jens Axboe
 
