@@ -1,74 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-34529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074AD9C6470
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:45:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAACC9C6489
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D29CBB62B0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A0D8B36771
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A1221948B;
-	Tue, 12 Nov 2024 19:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93D221A4B3;
+	Tue, 12 Nov 2024 19:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIXDw/f0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcZjzfz7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C128A218D7B;
-	Tue, 12 Nov 2024 19:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B82185A9;
+	Tue, 12 Nov 2024 19:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731439548; cv=none; b=krI7tQJm7u2fEeF6030K5y7NFUfA4C8y69sur3gXqLtZD/fvWUAit11SJppducFAoT3clz4jocXAWdBuoPc/0wkgH3GagHHXaJkmpk/c9ZVkDBtyoK4V2utGeSHoMyfyeFUtNU1RKWriKLs2eXPf76Eu5ALOE9Plj4yH50WQVro=
+	t=1731439549; cv=none; b=jnmLevgznLZpXDAIdiG0uBE9JwIVbhZWDXoimo743V71CDOWL+dQYHScDT1Uyec/588/ziKnJ5HkPNJ89BRckwi9xqNTgGcoaMJRQR4Yk003q0DJWqbH4sXJT9mLcI6rrqn6klvMjsGr3+xc+BT7OfulYmF7H5GEzx91Q5Ta+QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731439548; c=relaxed/simple;
-	bh=qgKutzNu4CE+HFlPUmtW2SxT4kOeImo/BSnUuZYkoTc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZOiz/iihqZE7D4z0jyM6mwdJG5cd+OaHj2yn7/4CEjiSElXdfZcLq5dT8Yi8s7xJ39MjTGS9Ir+uMy7VRUTIr/BVMmqulOvRR2kgY0i4UlYpuWdJx7Y1pC8re0cA+n6gWONzvf87/QdTJ/1KqGYRJnuWl8XSpGZDvKiiRvkU+mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIXDw/f0; arc=none smtp.client-ip=209.85.160.172
+	s=arc-20240116; t=1731439549; c=relaxed/simple;
+	bh=uC3ScEW1U+O2Wc2A9bSGiVmy+OUmm1kGk/1ZnabR03U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Dcc6DTfHkyPUgs17+ojxHz/O2DcIeSt62NdhsG73hhsy6AGHolGfx5badWwCFEKfvPQwO/61H6ldHvZXDdwLVTHGLvYIw1ahJy9Z6pBu0LWTurEe/bb6m7AQsMeWj/mbYDDvyqQ3A4z7tgMExElcuzFBiTNH0s4H5MH6AZzRB7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcZjzfz7; arc=none smtp.client-ip=209.85.161.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4609beb631aso47861751cf.2;
-        Tue, 12 Nov 2024 11:25:46 -0800 (PST)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ebc1af8f10so2588598eaf.2;
+        Tue, 12 Nov 2024 11:25:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731439545; x=1732044345; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/BQa33967CJui7gGVWn1/nvmGci6WcK8oCxA2wwMlUo=;
-        b=nIXDw/f0rechdai/rOABx1dVUpOSv+cclPWd6Yhm4DxEHSHaMyWMwzjN/qMJE4MS24
-         szK/qc0Il5fyPHZageQUu4jTu92ZRhpCJe+WuVY9pEbZVPsNEHugOWOBLPkJgBHWg5zK
-         gGjNT59iLlkgXfGin+x7O+e2KDTxbOMfv+Aqni5zAYYhgdbMA1mucT5JmMbdCWy/DOGz
-         eR5PfgCZBVTP5A4f+UCh9e0oJDP77ilDeK841KVR9WbUdyXW7EqVL9R3oc9jwNLyceSR
-         jyzxZQmgErJ7NfZtSziSv5TcGVRaUTz4SPx3kIchIUs5Xw+MAOzQvsF8f0XlgyPapQk1
-         OXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731439545; x=1732044345;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1731439547; x=1732044347; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/BQa33967CJui7gGVWn1/nvmGci6WcK8oCxA2wwMlUo=;
-        b=FZLWEuvzOM8fnwDGEXMf59Wo97J5hnl/61bMXjcdp4OKPtRJRZ16XZekR/SYolTavp
-         UshqCIi9eprm1Tcyi0KiD5tlZ9CRqOpj60IMtinKahcffxdqhXSV3yltQL+ojPs9ZJlV
-         9/bPLSzhUwis2ihlNo8m4nCgPdBgA8C2RDmTbAo202NcMZznIMUwlOQ0rTKdgDD5T5en
-         wpOddz5yyLUNaYUodFd1GriR8m5p8MYmpi97MCJ4FQkAT8r/lYbS8Os8Z0BMoX5O/svs
-         1rfXiNJ1j9rvqINjsp6TajvtNyliVRDzeTU4GPdpwetwXTaAHHCGLNcxzIvYrKvTZeUr
-         DX1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXLMeFO3U8NXsSjza9GutKo5fDxLI4TaJ5c69F/2hv2ulmyvAb+8AN+z/sqdriAkMcyh8RlPZ7Fsn7rO04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEM2zfTGY1wxtoK7hh6tQFWNTAln1TD1oNgVRvj3nEZK67WAa
-	llKSr6C3orGY2SGJNFdvUqQHSCh12fUHbksAo2R18uQ4EGILwEDS
-X-Google-Smtp-Source: AGHT+IFa4scHKQw0vxqFfbsFP6SZgS67FdUsmV8xlXJjW92bTgRhnfaD7t2mhmb2DAt4UWJukfrg4A==
-X-Received: by 2002:ac8:7fc3:0:b0:462:d75a:e2f0 with SMTP id d75a77b69052e-46309319448mr199818891cf.7.1731439545603;
-        Tue, 12 Nov 2024 11:25:45 -0800 (PST)
+        bh=HpVYJlDWFg+wqwWY/7YvJ4k8chIUuFrMv+OyIyUOhHI=;
+        b=IcZjzfz7QpQyEmERajh7sHdCf+ypO/RuP7kqF80gXqzFY0snThBryubLnvKQ19N1nD
+         UKgIUQr5IcQ42D8/z7Uj41U4zpVa+vGsC0lb/bFxXXEmafnZOx/peJjGot1K0KF2u7VI
+         yRAaPFMgLve4tRjctmGYa7eF+B/PA1YPi58AeRkWeCU/MzG3h00hVmo0AeneQaZgUnOs
+         HYBNaz4xFS1mFnJSZ57eUCl+/GQYHtZ79fmcv8Q9G5AHYintBqTr7VKkF0lTcOxd8c8j
+         GS1Q7+BzTmTf9ovyS0FyOxxeNoKyw+Cg0qqtKLP0k/P088Op0ss+0LRSPVIiDbr5YmTT
+         /FpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731439547; x=1732044347;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HpVYJlDWFg+wqwWY/7YvJ4k8chIUuFrMv+OyIyUOhHI=;
+        b=tR689Zo2l2t20ambwqLt2NyTCvlETnEOcT1tO+xG/o8uXbLmBWj8K2hf65Fu500yfq
+         KEc/noTbjrCFQ1lcjh2Td8kjEwfnqhz4BKP6Oci/N5ZeVxkKp4czF/LEHI3xkLMMAErz
+         Lmo8CZv+Aa/vYdIa6Wt6Zaw8rVUrSYGOaNUrSTnE8DxFtkyE4xZkaHZt4R4DE5pus8+9
+         Wx68p9H9qi6sXOHhnCzL7OJ3QzTgkqcY96Aj9+Wk8dVxV67hyzrqq6JwYByPtCO5Ns34
+         +4zxcGQV6X1o+rOUj0BO21Ld1Qk1CBj1JNYHH0+vUtK4AzYRaYXXlUzLuqGxEBjxI4vM
+         5xNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtDSmVEp4zA+qysZvVJpZZMkbxPzFbu0pcOQIeD6EjU2GagL90ofMfHocZmOYjAYxoNNh39Ocs0nRNMEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSg6VgwxrelRuUJyRWTYpDEHAdd2IxvzCAyzODgqeNvh3mjoFq
+	DCpfeCum4vO+7eqKIMu4ajTnpauKD9agM/jDg+2uJCsoUD8WeMlA
+X-Google-Smtp-Source: AGHT+IFFRV2Y+4sab1Il1y9pJ2Hlo0TmUnKS43V28HLFId8FwN6LDig0N+eoxL2bSpQakMV/GzGL0A==
+X-Received: by 2002:a05:6218:280a:b0:1c3:89d4:e888 with SMTP id e5c5f4694b2df-1c641f40665mr871574455d.20.1731439546671;
+        Tue, 12 Nov 2024 11:25:46 -0800 (PST)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:2ba5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff5e14f9sm78395581cf.86.2024.11.12.11.25.43
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff5e14f9sm78395581cf.86.2024.11.12.11.25.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 11:25:44 -0800 (PST)
+        Tue, 12 Nov 2024 11:25:46 -0800 (PST)
 From: Tamir Duberstein <tamird@gmail.com>
-Subject: [PATCH 0/2] xarray: extract __xa_cmpxchg_raw
-Date: Tue, 12 Nov 2024 14:25:35 -0500
-Message-Id: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
+Date: Tue, 12 Nov 2024 14:25:36 -0500
+Subject: [PATCH 1/2] xarray: extract xa_zero_to_null
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,10 +78,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAK+rM2cC/x3MQQqEMAxA0atI1gbaOip4FXERYkazsEoqUhHvP
- mWWf/H+A0lMJcFQPWByadI9lvB1BbxSXAR1Lg3BhY93ocFMZnSjxgJP5O3IvC7Yur7rPM3EnqH
- Yw+Sr+f8dp/f9AXhhkdFnAAAA
-X-Change-ID: 20241023-xarray-insert-cmpxchg-507661adac1c
+Message-Id: <20241112-xarray-insert-cmpxchg-v1-1-dc2bdd8c4136@gmail.com>
+References: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
+In-Reply-To: <20241112-xarray-insert-cmpxchg-v1-0-dc2bdd8c4136@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>, 
  Matthew Wilcox <willy@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -88,28 +88,80 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
 
-This series reduces duplication between __xa_cmpxchg and __xa_insert by
-extracting a new function that does not coerce zero entries to null on
-the return path.
+Reduce code duplication by extracting a static inline function that
+returns its argument if it is non-zero and NULL otherwise.
 
-The new function may be used by the upcoming Rust xarray abstraction in
-its reservation API where it is useful to tell the difference between
-zero entries and null slots.
+This changes xas_result to check for errors before checking for zero but
+this cannot change the behavior of existing callers:
+- __xa_erase: passes the result of xas_store(_, NULL) which cannot fail.
+- __xa_store: passes the result of xas_store(_, entry) which may fail.
+  xas_store calls xas_create when entry is not NULL which returns NULL
+  on error, which is immediately checked. This should not change
+  observable behavior.
+- __xa_cmpxchg: passes the result of xas_load(_) which might be zero.
+  This would previously return NULL regardless of the outcome of
+  xas_store but xas_store cannot fail if xas_load returns zero
+  because there is no need to allocate memory.
+- xa_store_range: same as __xa_erase.
 
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
-Tamir Duberstein (2):
-      xarray: extract xa_zero_to_null
-      xarray: extract helper from __xa_{insert,cmpxchg}
+ lib/xarray.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
- lib/xarray.c | 50 +++++++++++++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
----
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-change-id: 20241023-xarray-insert-cmpxchg-507661adac1c
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 32d4bac8c94ca13e11f350c6bcfcacc2040d0359..1b8305bffbff07adb80334fc83b5dc8e40ba2f50 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -435,6 +435,11 @@ static unsigned long max_index(void *entry)
+ 	return (XA_CHUNK_SIZE << xa_to_node(entry)->shift) - 1;
+ }
+ 
++static inline void *xa_zero_to_null(void *entry)
++{
++	return xa_is_zero(entry) ? NULL : entry;
++}
++
+ static void xas_shrink(struct xa_state *xas)
+ {
+ 	struct xarray *xa = xas->xa;
+@@ -451,8 +456,8 @@ static void xas_shrink(struct xa_state *xas)
+ 			break;
+ 		if (!xa_is_node(entry) && node->shift)
+ 			break;
+-		if (xa_is_zero(entry) && xa_zero_busy(xa))
+-			entry = NULL;
++		if (xa_zero_busy(xa))
++			entry = xa_zero_to_null(entry);
+ 		xas->xa_node = XAS_BOUNDS;
+ 
+ 		RCU_INIT_POINTER(xa->xa_head, entry);
+@@ -1474,9 +1479,7 @@ void *xa_load(struct xarray *xa, unsigned long index)
+ 
+ 	rcu_read_lock();
+ 	do {
+-		entry = xas_load(&xas);
+-		if (xa_is_zero(entry))
+-			entry = NULL;
++		entry = xa_zero_to_null(xas_load(&xas));
+ 	} while (xas_retry(&xas, entry));
+ 	rcu_read_unlock();
+ 
+@@ -1486,11 +1489,9 @@ EXPORT_SYMBOL(xa_load);
+ 
+ static void *xas_result(struct xa_state *xas, void *curr)
+ {
+-	if (xa_is_zero(curr))
+-		return NULL;
+ 	if (xas_error(xas))
+ 		curr = xas->xa_node;
+-	return curr;
++	return xa_zero_to_null(curr);
+ }
+ 
+ /**
 
-Best regards,
 -- 
-Tamir Duberstein <tamird@gmail.com>
+2.47.0
 
 
