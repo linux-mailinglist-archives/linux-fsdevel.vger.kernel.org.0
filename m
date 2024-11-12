@@ -1,291 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-34411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8819C5148
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BD79C5115
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 09:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC20B2C80B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996041F21F6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 08:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8DD213159;
-	Tue, 12 Nov 2024 08:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BF020B7FC;
+	Tue, 12 Nov 2024 08:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgJomKfY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjspjfIe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293BC20E037;
-	Tue, 12 Nov 2024 08:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4AF1AA788;
+	Tue, 12 Nov 2024 08:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400662; cv=none; b=u7ZIz07w0t5NGvyHwl2bsGyYkZynaMGkoskgD833iHw57o9h0EmUFDff/KnhPhX1jC1msNaYJQie39xYrcZGPjsWk3V8SavsVBm/DmkL9/MhdTb+PKcvRlaxwfhTQMFFcjP+b1odgCzapBCYhQNBGor/smst2ZeQSU9ZKXmZTZk=
+	t=1731401146; cv=none; b=KpB58swrNmyL8866Cx6Cr2hlg5sGUanzj4fvhuN3n3AnrQ2V1j4P7ExVN1kq6b53aKjRDsHlpt3XcSU034GMSU6n53Akvx+M5ziriIPeVhACliGcv0JTXNFgQLb6rwSoqJNfjpkeZYbtENrYE3hVbmja2ZuIOJh09NDaqAI0Gyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400662; c=relaxed/simple;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fWv6PRULYCzzdJsa6uxs+O5oxMMeeXlwmf9ekLGhiuHpSPnkM1y8DpX0Lx+j5Ku7AFw0nirUIU46h0MBXhrCkUQR+Q8ml4VRxjwMRQyUcThsVu7Y0fURkgpuveWkuehfxMdGIHX3eeBwadGA6cDMnQ+vlQEkG2/pE34uoF8gwK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgJomKfY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65949C4CECD;
-	Tue, 12 Nov 2024 08:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731400661;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KgJomKfY1M/clGWIldKgie6WiUJKvPQKYIt3trliGbZClmuleMbaVEG7VOiiShFcG
-	 VEQf9GSvURM8/Y0riDsThFBmry4YzI30Dw00Kal7J0QO4vmwLZLZ01yh+b30RpEi6w
-	 Q0fLBOkANsi6wRpyZwdnbO+Gk7/ZACJjXUYZSiIhSOnWyrjqIFAou+6UMiiyxrqnyQ
-	 T0Dj28WPVMimqTf9dc/ltBxkoUH0z7lyTSbXPPJBVQJMwP5xwGp5nyPRqZab8a3EC8
-	 Bz9+ZnKB5qFm/YKhc7obU9hFIiQSS9H9ZD9IRt85xZ/jauCknWfGeq2uRaXumxbmgl
-	 H24AXPL8ZOeUg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
+	s=arc-20240116; t=1731401146; c=relaxed/simple;
+	bh=Pj0QzxQ7ODfh7/HrYJ9yLIVM92RhdQGUOPxeusozQTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U9D6IlPgxOhnywlbY7kfIiA5sBsD6H9pY+EadiYvSE66ilimy8/BL7xw//Ot6vpHcCikRRqWFBJpvlJGbhXsla9t/Z6aDT87yKsEeek5vinv7RSPPIzLlBHCadpo2hlPYG58N4idWT+5CRCiTmH3nVkp6OC0WJOzxyPK0qZBtd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjspjfIe; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2118dfe6042so21440185ad.2;
+        Tue, 12 Nov 2024 00:45:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731401144; x=1732005944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SrT6bEUv9tRHMW8wYiNkeYHJqAClE8kFBlBgkdpORpM=;
+        b=cjspjfIe1mFvSxDgR+axhfE1v7YsNgg/zDMDnYc9frNgEK2xyWtsQf/nfxflLCb0yt
+         HTxzIObteSTm5xIOUENSIvyU755x/sTgcQ5Pb9sNYnyUPNvi+tH4QjEDoRM7Tg/tfWdC
+         J5gwHiwPEzWFjN6gPLMxnpdbV1r6rSwyw36vNqTJlbkXse5pcUE7tMdDpUjWuWL2+4Wt
+         WKc30P8aN5bDw1r6zCHrzvcJSLPxqvXHGhjsfVDDQeboD8CaAbdcywpbmrmSTeWlmpmd
+         RczpLo+e1Q6NXS3b+x1xDstikcnZiIxo9v3KmTDATg9WlzZcUXh2J/5PAVyc4TqbAy+Y
+         fg5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731401144; x=1732005944;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrT6bEUv9tRHMW8wYiNkeYHJqAClE8kFBlBgkdpORpM=;
+        b=bqYS56WQ83WoZofHjNNAUehgaPj8TkSQ2zEcUHIxf0xGGZJ315ZxJpKid3shIZBQLR
+         puevzM0im/kF8Ul1ZKfdJKJTPCReVBImgjtnnUQ1DyEQoKfomFLjzs+F69MbgKUd3BTj
+         BwBTsCFriZjSTtaHTy0fYKX/d7n5bcJrVLMSHw67kWYCCVBylciHXsSCGwAf2aAUCIp0
+         MHzmTga3BOJHFTzmcpX+qIVojAX/4gtx8grwzOr/PkdFU//Gcbzz33hzD6MrzqqqqGN/
+         13UaEKTUHXDPO8lpTfZCxMW1NdC4rLsebwyQMzucMUgSSs4AqJr7/b+di4shr0x0A/Wc
+         iPTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFxVX+GdwLnqnLQo7hIUW4yYkqSOH5VmVtvy0yzzAdrRj/cI+9aFFDIb5Ujh5V+8vGpinI8b1E7/eA06Qq@vger.kernel.org, AJvYcCUtkoIYR9F3cM7ahf7zyh/j2yjvqG/J3BOQE0X9TbHrfFg8+1dR8S7MKFyGoZTcgQWYsQqP3+IdAgMVElpX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3GbnVvNlo0/CyM2vQpmuGcMGrKXCYuTqCgiZCU5hEfKf6w291
+	y7dc4QzFnt6x3KLHunHdWgjd1l5hH+hviIYAfem+lfZpWRle2gTe
+X-Google-Smtp-Source: AGHT+IGmlb5e7j0vU8rSA9tjuwhueLznhTs8RfmcM3t8vqUuD3i56XzMImlSugBikE9WV2jX0LlEEA==
+X-Received: by 2002:a17:903:228b:b0:20c:5533:36da with SMTP id d9443c01a7336-211ab9ccf30mr23782535ad.42.1731401143640;
+        Tue, 12 Nov 2024 00:45:43 -0800 (PST)
+Received: from localhost.localdomain ([43.154.34.99])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a62bd39sm11906542a91.48.2024.11.12.00.45.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:45:43 -0800 (PST)
+From: Jim Zhao <jimzhao.ai@gmail.com>
+To: jack@suse.cz
+Cc: akpm@linux-foundation.org,
+	jimzhao.ai@gmail.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v2 bpf-next 4/4] selftest/bpf: Test inode local storage recursion prevention
-Date: Tue, 12 Nov 2024 00:37:00 -0800
-Message-ID: <20241112083700.356299-5-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241112083700.356299-1-song@kernel.org>
-References: <20241112083700.356299-1-song@kernel.org>
+	linux-mm@kvack.org,
+	willy@infradead.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
+Date: Tue, 12 Nov 2024 16:45:39 +0800
+Message-Id: <20241112084539.702485-1-jimzhao.ai@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241108220215.s27rziym6mn5nzv4@quack3>
+References: <20241108220215.s27rziym6mn5nzv4@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add selftest for recursion prevention logic of bpf local storage.
+> On Fri 08-11-24 11:19:49, Jim Zhao wrote:
+> > > On Wed 23-10-24 18:00:32, Jim Zhao wrote:
+> > > > With the strictlimit flag, wb_thresh acts as a hard limit in
+> > > > balance_dirty_pages() and wb_position_ratio(). When device write
+> > > > operations are inactive, wb_thresh can drop to 0, causing writes to
+> > > > be blocked. The issue occasionally occurs in fuse fs, particularly
+> > > > with network backends, the write thread is blocked frequently during
+> > > > a period. To address it, this patch raises the minimum wb_thresh to a
+> > > > controllable level, similar to the non-strictlimit case.
+> > > >
+> > > > Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
+> > >
+> > > ...
+> > >
+> > > > +       /*
+> > > > +        * With strictlimit flag, the wb_thresh is treated as
+> > > > +        * a hard limit in balance_dirty_pages() and wb_position_ratio().
+> > > > +        * It's possible that wb_thresh is close to zero, not because
+> > > > +        * the device is slow, but because it has been inactive.
+> > > > +        * To prevent occasional writes from being blocked, we raise wb_thresh.
+> > > > +        */
+> > > > +       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+> > > > +               unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
+> > > > +               u64 wb_scale_thresh = 0;
+> > > > +
+> > > > +               if (limit > dtc->dirty)
+> > > > +                       wb_scale_thresh = (limit - dtc->dirty) / 100;
+> > > > +               wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh / 4));
+> > > > +       }
+> > >
+> > > What you propose makes sense in principle although I'd say this is mostly a
+> > > userspace setup issue - with strictlimit enabled, you're kind of expected
+> > > to set min_ratio exactly if you want to avoid these startup issues. But I
+> > > tend to agree that we can provide a bit of a slack for a bdi without
+> > > min_ratio configured to ramp up.
+> > >
+> > > But I'd rather pick the logic like:
+> > >
+> > >   /*
+> > >    * If bdi does not have min_ratio configured and it was inactive,
+> > >    * bump its min_ratio to 0.1% to provide it some room to ramp up.
+> > >    */
+> > >   if (!wb_min_ratio && !numerator)
+> > >           wb_min_ratio = min(BDI_RATIO_SCALE / 10, wb_max_ratio / 2);
+> > >
+> > > That would seem like a bit more systematic way than the formula you propose
+> > > above...
+> >
+> > Thanks for the advice.
+> > Here's the explanation of the formula:
+> > 1. when writes are small and intermittent，wb_thresh can approach 0, not
+> > just 0, making the numerator value difficult to verify.
+>
+> I see, ok.
+>
+> > 2. The ramp-up margin, whether 0.1% or another value, needs
+> > consideration.
+> > I based this on the logic of wb_position_ratio in the non-strictlimit
+> > scenario: wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8); It seems
+> > provides more room and ensures ramping up within a controllable range.
+>
+> I see, thanks for explanation. So I was thinking how to make the code more
+> consistent instead of adding another special constant and workaround. What
+> I'd suggest is:
+>
+> 1) There's already code that's supposed to handle ramping up with
+> strictlimit in wb_update_dirty_ratelimit():
+>
+>         /*
+>          * For strictlimit case, calculations above were based on wb counters
+>          * and limits (starting from pos_ratio = wb_position_ratio() and up to
+>          * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
+>          * Hence, to calculate "step" properly, we have to use wb_dirty as
+>          * "dirty" and wb_setpoint as "setpoint".
+>          *
+>          * We rampup dirty_ratelimit forcibly if wb_dirty is low because
+>          * it's possible that wb_thresh is close to zero due to inactivity
+>          * of backing device.
+>          */
+>         if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>                 dirty = dtc->wb_dirty;
+>                 if (dtc->wb_dirty < 8)
+>                         setpoint = dtc->wb_dirty + 1;
+>                 else
+>                         setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+>         }
+>
+> Now I agree that increasing wb_thresh directly is more understandable and
+> transparent so I'd just drop this special case.
 
-When inode local storage function is traced, helpers that access inode
-local storage should return -EBUSY.
+yes, I agree.
 
-The recurring program is attached to inode_storage_lookup(). This is not
-an ideal target for recursion tests. However, given that the target
-function have to take "struct inode *" argument, there isn't a better
-target function for the tests.
+> 2) I'd just handle all the bumping of wb_thresh in a single place instead
+> of having is spread over multiple places. So __wb_calc_thresh() could have
+> a code like:
+>
+>         wb_thresh = (thresh * (100 * BDI_RATIO_SCALE - bdi_min_ratio)) / (100 * BDI_RATIO_SCALE)
+>         wb_thresh *= numerator;
+>         wb_thresh = div64_ul(wb_thresh, denominator);
+>
+>         wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
+>
+>         wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
+>       limit = hard_dirty_limit(dtc_dom(dtc), dtc->thresh);
+>         /*
+>          * It's very possible that wb_thresh is close to 0 not because the
+>          * device is slow, but that it has remained inactive for long time.
+>          * Honour such devices a reasonable good (hopefully IO efficient)
+>          * threshold, so that the occasional writes won't be blocked and active
+>          * writes can rampup the threshold quickly.
+>          */
+>       if (limit > dtc->dirty)
+>               wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
+>       if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
+>               wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+>
+> and we can drop the bumping from wb_position)_ratio(). This way have the
+> wb_thresh bumping in a single logical place. Since we still limit wb_tresh
+> with max_ratio, untrusted bdis for which max_ratio should be configured
+> (otherwise they can grow amount of dirty pages upto global treshold anyway)
+> are still under control.
+>
+> If we really wanted, we could introduce a different bumping in case of
+> strictlimit, but at this point I don't think it is warranted so I'd leave
+> that as an option if someone comes with a situation where this bumping
+> proves to be too aggressive.
 
-Test results showed that inode_storage_lookup() is inlined in s390x.
-Work around this by adding this test to DENYLIST.s390x.
+Thank you, this is very helpful. And I have 2 concerns:
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- tools/testing/selftests/bpf/DENYLIST.s390x    |  1 +
- .../bpf/prog_tests/inode_local_storage.c      | 72 +++++++++++++++
- .../bpf/progs/inode_storage_recursion.c       | 90 +++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
+1.
+In the current non-strictlimit logic, wb_thresh is only bumped within wb_position_ratio() for calculating pos_ratio, and this bump isn’t restricted by max_ratio. 
+I’m unsure if moving this adjustment to __wb_calc_thresh() would effect existing behavior. 
+Would it be possible to keep the current logic for non-strictlimit case?
 
-diff --git a/tools/testing/selftests/bpf/DENYLIST.s390x b/tools/testing/selftests/bpf/DENYLIST.s390x
-index 3ebd77206f98..6b8c9c9ec754 100644
---- a/tools/testing/selftests/bpf/DENYLIST.s390x
-+++ b/tools/testing/selftests/bpf/DENYLIST.s390x
-@@ -1,5 +1,6 @@
- # TEMPORARY
- # Alphabetical order
- get_stack_raw_tp                         # user_stack corrupted user stack                                             (no backchain userspace)
-+inode_localstorage/recursion             # target function (inode_storage_lookup) is inlined on s390)
- stacktrace_build_id                      # compare_map_keys stackid_hmap vs. stackmap err -2 errno 2                   (?)
- verifier_iterating_callbacks
-diff --git a/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-new file mode 100644
-index 000000000000..a9d9f77216f4
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include <stdio.h>
-+#include <sys/stat.h>
-+#include <test_progs.h>
-+#include "inode_storage_recursion.skel.h"
-+
-+#define TDIR "/tmp/inode_local_storage"
-+#define TDIR_PARENT "/tmp"
-+
-+static void test_recursion(void)
-+{
-+	struct inode_storage_recursion *skel;
-+	struct bpf_prog_info info;
-+	__u32 info_len = sizeof(info);
-+	int err, prog_fd, map_fd, inode_fd = -1;
-+	long value;
-+
-+	skel = inode_storage_recursion__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
-+		return;
-+
-+	skel->bss->test_pid = getpid();
-+
-+	err = inode_storage_recursion__attach(skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	err = mkdir(TDIR, 0755);
-+	if (!ASSERT_OK(err, "mkdir " TDIR))
-+		goto out;
-+
-+	inode_fd = open(TDIR_PARENT, O_RDONLY | O_CLOEXEC);
-+	if (!ASSERT_OK_FD(inode_fd, "open inode_fd"))
-+		goto out;
-+
-+	/* Detach so that the following lookup won't trigger
-+	 * trace_inode_storage_lookup and further change the values.
-+	 */
-+	inode_storage_recursion__detach(skel);
-+	map_fd = bpf_map__fd(skel->maps.inode_map);
-+	err = bpf_map_lookup_elem(map_fd, &inode_fd, &value);
-+	ASSERT_OK(err, "lookup inode_map");
-+
-+	/* Check trace_inode_mkdir for the reason that value == 201 */
-+	ASSERT_EQ(value, 201, "inode_map value");
-+	ASSERT_EQ(skel->bss->nr_del_errs, 1, "bpf_task_storage_delete busy");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_mkdir);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 0, "trace_inode_mkdir prog recursion");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_storage_lookup);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 3, "trace_inode_storage_lookup prog recursion");
-+
-+out:
-+	rmdir(TDIR);
-+	close(inode_fd);
-+	inode_storage_recursion__destroy(skel);
-+}
-+
-+void test_inode_localstorage(void)
-+{
-+	if (test__start_subtest("recursion"))
-+		test_recursion();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/inode_storage_recursion.c b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-new file mode 100644
-index 000000000000..0ad36f8c6e04
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#ifndef EBUSY
-+#define EBUSY 16
-+#endif
-+
-+char _license[] SEC("license") = "GPL";
-+int nr_del_errs;
-+int test_pid;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, long);
-+} inode_map SEC(".maps");
-+
-+/* inode_storage_lookup is not an ideal hook for recursion tests, as it
-+ * is static and more likely to get inlined. However, there isn't a
-+ * better function for the test. This is because we need to call
-+ * bpf_inode_storage_* helpers with an inode intput. Unlike task local
-+ * storage, for which we can use bpf_get_current_task_btf() to get task
-+ * pointer with BTF, for inode local storage, we need the get the inode
-+ * pointer from function arguments. Other functions, such as,
-+ * bpf_local_storage_get() does not take inode as input.
-+ */
-+SEC("fentry/inode_storage_lookup")
-+int BPF_PROG(trace_inode_storage_lookup, struct inode *inode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+	int err;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* This doesn't have BPF_LOCAL_STORAGE_GET_F_CREATE, so it will
-+	 * not trigger on the first call of bpf_inode_storage_get() below.
-+	 *
-+	 * This is called twice, recursion_misses += 2.
-+	 */
-+	ptr = bpf_inode_storage_get(&inode_map, inode, 0, 0);
-+	if (ptr) {
-+		*ptr += 1;
-+
-+		/* This is called once, recursion_misses += 1. */
-+		err = bpf_inode_storage_delete(&inode_map, inode);
-+		if (err == -EBUSY)
-+			nr_del_errs++;
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("fentry/security_inode_mkdir")
-+int BPF_PROG(trace_inode_mkdir, struct inode *dir,
-+	     struct dentry *dentry,
-+	     int mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* Trigger trace_inode_storage_lookup, the first time */
-+	ptr = bpf_inode_storage_get(&inode_map, dir, 0,
-+				    BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0.
-+	 * Set ptr to 200.
-+	 */
-+	if (ptr && !*ptr)
-+		*ptr = 200;
-+
-+	/* Trigger trace_inode_storage_lookup, the second time.
-+	 * trace_inode_storage_lookup can now get ptr and increase the
-+	 * value. Now the value is 201.
-+	 */
-+	bpf_inode_storage_get(&inode_map, dir, 0,
-+			      BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	return 0;
-+
-+}
--- 
-2.43.5
+2. Regarding the formula:
+wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
 
+Consider a case: 
+With 100 fuse devices(with high max_ratio) experiencing high writeback delays, the pages being written back are accounted in NR_WRITEBACK_TEMP, not dtc->dirty. 
+As a result, the bumped wb_thresh may remain high. While individual devices are under control, the total could exceed expectations.
+
+Although lowering the max_ratio can avoid this issue, how about reducing the bumped wb_thresh?
+
+The formula in my patch:
+wb_scale_thresh = (limit - dtc->dirty) / 100;
+The intention is to use the default fuse max_ratio(1%) as the multiplier.
+
+
+Thanks
+Jim Zhao
 
