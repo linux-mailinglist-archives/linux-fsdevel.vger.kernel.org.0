@@ -1,115 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-34374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04AF9C4CF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:00:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC669C4D3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757F228A2B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1046028239F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C32205E37;
-	Tue, 12 Nov 2024 03:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfG2EWvN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55166207A1B;
+	Tue, 12 Nov 2024 03:23:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C7E574;
-	Tue, 12 Nov 2024 03:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86684206042
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 03:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731380423; cv=none; b=XXukFjrp0MJXcY2pgNinDlMhof8bDDdgLgE9PDg7Vruln4xlU8WOu16Zhv9K6BJ267hNTVDtXAGNmvULOWvZ3P09EF1eR3Jyx7CL9PsfIh1wE8nd6VRlGyqwlvg0oR3I3pA4Xzq5kgF3LmNumB8SCHefV8vBCdz8uNTtgcMC6WM=
+	t=1731381789; cv=none; b=pvizz/7tlm387QVxn9g3k802fhqH3yqsLfNY955IbNITNGAZPTRPdyp9Sa/IKvLx+pT2tr6f36Uv2bWDAgEszR82zKlTpNOfE4QMJzEUXP4LgnCe1q7FQcYuqFk1pz317fHCn1S+3yoVq+1/TCg4JP9rJUttDYpHw9g5DvBcQy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731380423; c=relaxed/simple;
-	bh=5wk4mK60EoHVsMCvX1Li3jR8LsNWik4rErnD/bTn/LU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Fw65HqTs5NoLcbrxug0Va0oXtthMAH36tPV5uzUaQ228OfFuEDq1R7+UgAbvtohRbHZtxT3pRrTaVOvqM0+O7b0mmUCPy/M90klbj0cr2nCtwcKbSlxTL4fMXnGpGcAb8bJYB3wYL/P4Sq0C7s8tSiWOXZ9e3pm97RcWPP4/PpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfG2EWvN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5ADFC4CECF;
-	Tue, 12 Nov 2024 03:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731380422;
-	bh=5wk4mK60EoHVsMCvX1Li3jR8LsNWik4rErnD/bTn/LU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YfG2EWvNsFWWKrvzuehWMvYVI5NSsA9yfl9Mmw1poL3yT1T5Z98T/1UsZAvy88Q87
-	 mgmweCLkvt/0tZLID1W4dZgyH+F8qxriU+QyzTMAH/4dJmOG7+12zuWLPd6OuL56vV
-	 TaMP3XYWjwh3gRTQQnBqIqz5MvceYGUAOIUZ25ZxQ1h31GkR7+LejDQNZvl5hQZFlS
-	 Xd/mXG1lMIa9fVZRu3grLBYy+GbB/SLa/dkHAf2bLWhJTe/VBJCvoWbXFh08kC/qqe
-	 2BH/5qk0diSp/Qj6tUdjEl8UTui+udO52HKcUDVFMZx6ZFeH5aGBueoj7vN2PFshnn
-	 yt1zAzaPPFMsQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE563809A80;
-	Tue, 12 Nov 2024 03:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731381789; c=relaxed/simple;
+	bh=c59rq/7n3PHZV+Suo9gZ6Sof0WvUW1q/ji67zSE35eg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gZk6dSM4nKc0AqjJ3eJqMR+40nGnAByFdqk0RI8cwEwedYRBNBs7lpLgPaKUrZRqkpxKTRVvBaenDcUfJfQ37ARuSFL8xUJ7bUjCX+XEuuT7KvXOJpGLeI3lRIytH6sriYqqwhFw0UcfipQqEAGe3tpGEgZTRSiByHKs6bU7xK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so70500375ab.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2024 19:23:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731381787; x=1731986587;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmAGIQngpXa/1+2VC6uEAt5s/OZNY5/G7HFFw9+3pkI=;
+        b=cSW22RJjdGQ2ARi7/izbWJ3yMBmSsuppelSp1Gbdnph90AD6n35l+cA3/2Ktz6x7uN
+         clkcGFds61lP1P/N/o7IjpEloLCCFtEm4dHe6V9/xRrq5cCLFmf/u8WwbpiAoJR0/ZAo
+         ee7MSgMvRuA0+tCT9XvvM1zXyRqnwq24WJX1j2Xi3nTz54OuMhFbWx0sOhPxU2doxO6T
+         597eGjuriXf72NZX2QXcBciDwZPKrctm6OD3eyxMVUxJXfaleIDK6+D0ttAiiWMBBCqi
+         atTKBnIkOc2EKfsJzKS8xXrafFp1JYHyYh7eugRmIsCgmiKPUsM/hCklXjoG3UTFAp2l
+         0jyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq2sPgKo48v1jG/NIycXGjqVciRwKDcuwzzcsSV8V4j2KHfcoXoMfq/u7wjaNXOFPa7zqkGKE5A9uADQtx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl+uEBz46GVZjGXzyD9t8aEHIjS8gG8QWmbzVtwMEf5EwTHy7C
+	hyrQKaGjkk6w7oatm02kTB1WVMbrFSo08AGiU1lveCtAKXfPbnf6ZwT9PmJAtwzTKIqdCjMwyJ/
+	+zGdLZIG0WPkgHtT1Djeh0bGbp4j786oTa5Loqr69qBKI4oHLilb0UdA=
+X-Google-Smtp-Source: AGHT+IFnZynlEK9QhImG9NWvPseVWbTnlWM+8+8PwejoxDtnQc2IgH3PqxrpxZ8IU6RvIxJs5G11NXwh3DX79PwcdetZgOD4vPjM
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v9 0/6] Suspend IRQs during application busy periods
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173138043276.62607.2860647577086593902.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Nov 2024 03:00:32 +0000
-References: <20241109050245.191288-1-jdamato@fastly.com>
-In-Reply-To: <20241109050245.191288-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, corbet@lwn.net, hdanton@sina.com,
- bagasdotme@gmail.com, pabeni@redhat.com, namangulati@google.com,
- edumazet@google.com, amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
- sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
- bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
- willemdebruijn.kernel@gmail.com, skhawaja@google.com, kuba@kernel.org,
- aleksander.lobakin@intel.com, viro@zeniv.linux.org.uk, andrew+netdev@lunn.ch,
- bpf@vger.kernel.org, brauner@kernel.org, danielj@nvidia.com,
- dsahern@kernel.org, davem@davemloft.net, donald.hunter@gmail.com,
- jack@suse.cz, hawk@kernel.org, jiri@resnulli.us, johannes.berg@intel.com,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- lorenzo@kernel.org, mkarsten@uwaterloo.ca, almasrymina@google.com,
- bigeasy@linutronix.de, shuah@kernel.org, horms@kernel.org,
- xuanzhuo@linux.alibaba.com
+X-Received: by 2002:a05:6e02:348c:b0:3a5:e5cf:c5b6 with SMTP id
+ e9e14a558f8ab-3a6f19e2641mr168214415ab.10.1731381786682; Mon, 11 Nov 2024
+ 19:23:06 -0800 (PST)
+Date: Mon, 11 Nov 2024 19:23:06 -0800
+In-Reply-To: <000000000000307a8e0615918f2b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6732ca1a.050a0220.1fb99c.0162.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in attr_data_get_block (4)
+From: syzbot <syzbot+8e034d7422d389827720@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mail@seo-local.net, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+syzbot suspects this issue was fixed by commit:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+commit 1fd21919de6de245b63066b8ee3cfba92e36f0e9
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Thu Aug 22 11:43:32 2024 +0000
 
-On Sat,  9 Nov 2024 05:02:30 +0000 you wrote:
-> Greetings:
-> 
-> Welcome to v9, see changelog below.
-> 
-> This revision addresses feedback Willem gave on the selftests. No
-> functional or code changes to the implementation were made and
-> performance tests were not re-run.
-> 
-> [...]
+    fs/ntfs3: Stale inode instead of bad
 
-Here is the summary with links:
-  - [net-next,v9,1/6] net: Add napi_struct parameter irq_suspend_timeout
-    https://git.kernel.org/netdev/net-next/c/5dc51ec86df6
-  - [net-next,v9,2/6] net: Add control functions for irq suspension
-    https://git.kernel.org/netdev/net-next/c/3fcbecbdeb04
-  - [net-next,v9,3/6] eventpoll: Trigger napi_busy_loop, if prefer_busy_poll is set
-    https://git.kernel.org/netdev/net-next/c/ab5b28b007a7
-  - [net-next,v9,4/6] eventpoll: Control irq suspension for prefer_busy_poll
-    https://git.kernel.org/netdev/net-next/c/8a6de2627fd3
-  - [net-next,v9,5/6] selftests: net: Add busy_poll_test
-    (no matching commit)
-  - [net-next,v9,6/6] docs: networking: Describe irq suspension
-    https://git.kernel.org/netdev/net-next/c/a90a91e24b48
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d5b8c0580000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
+dashboard link: https://syzkaller.appspot.com/bug?extid=8e034d7422d389827720
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171bf3a9180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1084f189180000
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+If the result looks correct, please mark the issue as fixed by replying with:
 
+#syz fix: fs/ntfs3: Stale inode instead of bad
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
