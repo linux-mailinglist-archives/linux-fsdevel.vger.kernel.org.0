@@ -1,167 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-34451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252C79C59E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:05:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F809C5AE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC28B39FB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCACDB2E608
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 13:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0759156C40;
-	Tue, 12 Nov 2024 13:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265401531C4;
+	Tue, 12 Nov 2024 13:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dMUhLFCp"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="TrJAdfMO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9825E140E5F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C035C143736
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731417996; cv=none; b=jTB0fjlAdQwzmVNfnkEKpO67HEdpXxo/MKxwRq7SEIcKiW3mrJi4/V6vbUqec2gH7JPCY+EHnREGEBpiRRJ6/o8th3qd4qaBkpXRvn3xyipx7yxIsEIOsLdjEsJcUXSodeCkeskktGk3ljxxOJEpvbyN5jeHxUjPmY5mrPmW6FA=
+	t=1731418585; cv=none; b=f+XNrMEmO60x+sLV3ORnJ+G7MTZsPov1Bf3tBNDVadqB5pZVtD07Hm0WZHwMQEnc1lAnKp9o88pq+pjJqhE+FvTUQfHTJv5Jolv3AjF6Xmx4ssv/q0auJHDwjrlWFGa2M/9NOFVYsuI9tBwL0/ETO597Z4XbDNnOJU40W05tBmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731417996; c=relaxed/simple;
-	bh=ECcn1Vt7kh7tx9LcDNSDDOJQmeTJi0LIibgBGaHsvXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=aoOjSKUNeyPWrElcY9bMpiRppYl+4hLAEAZCPzbWFyMuvl/3+aUGZ0dDvR5NCM0Pp4c7EWH7ts7kS50PKb9JmuDQyzEBqXVO33s4MEdli+8wwCBJmx1mkW8c9mz6QzZyS2xFobkOoV8nc49MiDnzDlwDcYZLRHWMb9LujwxyIIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dMUhLFCp; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241112132631epoutp03032cf005bcbcaf89faff8348298a4dfe~HO31S_9Ne2304223042epoutp03k
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241112132631epoutp03032cf005bcbcaf89faff8348298a4dfe~HO31S_9Ne2304223042epoutp03k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731417991;
-	bh=n8xVEIDHv5I8gbDECdxLIBU/WpRStbeReffw7f4ORRs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=dMUhLFCpnXcMHo8g8p5/1+iRhLWVJLPSWE8fCKTIWK+lbZIVB9UsBFg3jz98kd7R8
-	 uKSIcfX9xPDg6IVpPgr0SR/GIVji9xYrJiY9KKKk37IdY/YmrX/n3amm3FfPj908rn
-	 q5loYMXBY6kDsn6XF5h8em04vlWLL/vXaXxhRFSs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241112132630epcas5p47257cf43edeff21e5e6a23edd8609e51~HO3070SP90804408044epcas5p4v;
-	Tue, 12 Nov 2024 13:26:30 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XnnHn3DKdz4x9Pw; Tue, 12 Nov
-	2024 13:26:29 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B7.A3.08574.58753376; Tue, 12 Nov 2024 22:26:29 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241112132628epcas5p33b0b5cbdbb64df77a4305802a3134aa0~HO3zD7y_W0215702157epcas5p30;
-	Tue, 12 Nov 2024 13:26:28 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241112132628epsmtrp260cfa063989f3b867679801d56e9e8ad~HO3zDGNcA2083420834epsmtrp2g;
-	Tue, 12 Nov 2024 13:26:28 +0000 (GMT)
-X-AuditID: b6c32a44-6dbff7000000217e-8c-673357854e30
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	46.12.18937.48753376; Tue, 12 Nov 2024 22:26:28 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241112132626epsmtip1359346d7bbae74d83a7a62ab10e697b9~HO3xXNPF10035500355epsmtip17;
-	Tue, 12 Nov 2024 13:26:26 +0000 (GMT)
-Message-ID: <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
-Date: Tue, 12 Nov 2024 18:56:25 +0530
+	s=arc-20240116; t=1731418585; c=relaxed/simple;
+	bh=UYMynpzb2neHmOqjVl3+/I9ELWYwbSrCsGyBvOAQhe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OeD+I+7pkWUMIZNCnU1ju1ctxoB8s7L+Ls6yt64hfAoay3B4o8okjd2R/FasQp/SU9k0tFD14v7d4rIOsLqbR2LkAK8h5rhQK4d3ntodKhn3dqy2JrigTCiZSMmbOlES13ue5GTudTLid6pb1h4AmINhrYZqDGxogMmDENJrBVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=TrJAdfMO; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso4600967a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 05:36:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731418583; x=1732023383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t6Oh4OX2Jyzis83TRylUMhyFscGtnBD3LHLbc+6KIU8=;
+        b=TrJAdfMOlI9mBVmk6TvKipxIGwo9pyW6N3t/wyGzr1NOh0/DQLxDE4hg2G1Cg15cqD
+         yWx3T2CT12EtjUuPNvJJe6C/cyQ0U/V7RAcwLzq0x4dKfshuzyJZT8d1LK91p5cqjAVP
+         vcj1vWpwFIpanq9Z3QDvcMCRkk8RZgd9W9X5RFKFJmJDkB7d8u1YaDqkSgtrD+2uSSLd
+         2GSQwhjGB3WCGM3YgKsmhGRAd1apeL8robDH5UhRrojaq6SKklOrpbsMKXI+v6wtUX2V
+         gvGItBmpz0WRMxOn8xK9jMXKilXi8HVjsk21eNZxYfUfZ0wwaQ1Dciy+DCoSH9NbJNum
+         w4vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731418583; x=1732023383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t6Oh4OX2Jyzis83TRylUMhyFscGtnBD3LHLbc+6KIU8=;
+        b=HOqBVRSsdtqgyGkjxf2/0uDAbDDKlM1vylCmuwTuqb9HVUkrxd6LUgD6YBtjYBLn2F
+         hoR6AVXMH6SVwL6zb6SJjVApE/HRETOvk7xCHCk4RXeZLSdBXv+EA3bepy1g1FdC7iBc
+         Bb/UIi0V1uJA5HXlIFB7FiNitRmi9xey7uqpAQl7qZhzlvcgSLEqz02cTECXT3HIAwfz
+         RziNYhksaWi3tWQRLDMUCPxO6zvdPyt1fcOu2XfIceB9mevDSpLWG72Fmjoq5fPQebxi
+         NNr8B77RwBtfdeqLQiRJnCuHwiwkiQxkYEWQuMa2e0wkk6S1KjmdYE0QUWpMkFjpbvaw
+         UYgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6nqzh9Byk5xZJkaScJQCnDGjpo9xhqXmNSXvP77bZzK9LrFrHZf0r+fcH700zNZq3hq8E7kv0DBB+JuvY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNwBXix33vU3F62KJJTe9MSypGHRBXa3BXKuFL1xaKDIqQakdK
+	2708zZnyhS88AgN0/jyX0KDu/GZ81qNAYfIQ3kJAxFI0R7E9BrHM5NrTtW6P8NY=
+X-Google-Smtp-Source: AGHT+IFIqnnMyIxMivt2cPh+q7ifEJlIf3ezR4cfEqcYFyOgxpQyOhRuCX6EGtaMImreoqHFw37fdQ==
+X-Received: by 2002:a17:90b:5484:b0:2e2:bb32:73eb with SMTP id 98e67ed59e1d1-2e9b178ea9emr22376758a91.31.1731418582953;
+        Tue, 12 Nov 2024 05:36:22 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9e8148d9dsm645777a91.2.2024.11.12.05.36.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 05:36:22 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tAr46-00DelY-1w;
+	Wed, 13 Nov 2024 00:36:18 +1100
+Date: Wed, 13 Nov 2024 00:36:18 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 10/16] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+Message-ID: <ZzNZ0iqx8EMlGVf0@dread.disaster.area>
+References: <20241111234842.2024180-1-axboe@kernel.dk>
+ <20241111234842.2024180-11-axboe@kernel.dk>
+ <ZzKn4OyHXq5r6eiI@dread.disaster.area>
+ <0487b852-6e2b-4879-adf1-88ba75bdecc0@kernel.dk>
+ <ZzMLmYNQFzw9Xywv@dread.disaster.area>
+ <2sjhov4poma4o4efvwe2xk474iorxwvf4ifqa5oee74744ke2e@lipjana3f5ti>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
-To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk, martin.petersen@oracle.com,
-	asml.silence@gmail.com, javier.gonz@samsung.com, Keith Busch
-	<kbusch@kernel.org>
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241111102914.GA27870@lst.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmhm5ruHG6QdscYYs5q7YxWqy+289m
-	sXL1USaLd63nWCwe3/nMbjHp0DVGizNXF7JY7L2lbbFn70kWi/nLnrJbdF/fwWax/Pg/Jgce
-	j52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweZy7WOHx8ektFo++LasYPT5vkgvgjMq2yUhNTEkt
-	UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAG6V0mhLDGnFCgUkFhc
-	rKRvZ1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnXF/eVjBHJ6K
-	XbeXMDUw3uDsYuTkkBAwkZjS95IJxBYS2M0o0fjQq4uRC8j+xCixsO0wK5wz5c1Lli5GDrCO
-	6b3iEPGdjBL9MzczQThvGSXeH1/PAjKKV8BOYs+m+4wgNouAqsSsF49ZIeKCEidnPgGrERWQ
-	l7h/awY7iC0s4CbRcPUuWL2IgKPE1w1LwGxmgdlMEidW8kPY4hK3nsxnAjmCTUBT4sLkUpAw
-	p4COxLWuKcwQJfIS29/OYQa5R0LgBIfE6dVHWSHedJH4vm4pC4QtLPHq+BZ2CFtK4vO7vWwQ
-	drbEg0cPoGpqJHZs7oPqtZdo+HODFWQvM9De9bv0IXbxSfT+fsIECRNeiY42IYhqRYl7k55C
-	dYpLPJyxBMr2kJi1ew4jJKDXMEr03kmdwKgwCylQZiF5chaSb2YhLF7AyLKKUTK1oDg3PTXZ
-	tMAwL7UcHtnJ+bmbGMFJWctlB+ON+f/0DjEycTAeYpTgYFYS4T3lbJwuxJuSWFmVWpQfX1Sa
-	k1p8iNEUGDsTmaVEk/OBeSGvJN7QxNLAxMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+
-	Jg5OqQam+rPPp875si7367xZta07vqQ02/7gF79x1pJJ+NCCm6mqM7dbt551t7Nn+xjAutXs
-	ul2py5/M6wtKjpQmr1j0xrXeRUDjya6nX8tuKzRcWXy9TPfIA3nbU2kMRz4Xy/bN6mi89qNc
-	rC5472rJZ7M6MuZvzmFkMpHWuJQte93tZLjWQ/Mb23TSuT/7zdm/nPmeVrJQWtHa0zd5l1nu
-	tz4SczTnWWRVrNK3vCNRtzwTGGOTf+vpfnOeni7b+3gK29NX3Gf3pm5smXn4zoyVG79/vXaX
-	L5lJWf6yecisHWnH9n5ZnDQ/VdFSjOF28pGidK3VzdfOfuTyN1twwjZQrngZs+geW+nvDxb4
-	x/Jc1ql8q8RSnJFoqMVcVJwIAB1r+zJTBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnG5LuHG6waRTOhZzVm1jtFh9t5/N
-	YuXqo0wW71rPsVg8vvOZ3WLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW36L6+g81i+fF/TA48
-	Hjtn3WX3uHy21GPTqk42j81L6j1232xg8zh3scLj49NbLB59W1YxenzeJBfAGcVlk5Kak1mW
-	WqRvl8CVcX95WMEcnopdt5cwNTDe4Oxi5OCQEDCRmN4r3sXIxSEksJ1RoqdpFWsXIydQXFyi
-	+doPdghbWGLlv+fsEEWvGSW2vdkHluAVsJPYs+k+I4jNIqAqMevFY1aIuKDEyZlPWEBsUQF5
-	ifu3ZoDVCwu4STRcvQtWLyLgKPF1wxJGkKHMArOZJFp2N7JBbFjDKPFvwX6wScxAZ9x6Mp8J
-	5FQ2AU2JC5NLQcKcAjoS17qmMEOUmEl0be1ihLDlJba/ncM8gVFoFpI7ZiGZNAtJyywkLQsY
-	WVYxiqYWFOem5yYXGOoVJ+YWl+al6yXn525iBMefVtAOxmXr/+odYmTiYDzEKMHBrCTCe8rZ
-	OF2INyWxsiq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qBabr/qsvM
-	V7Lv37w6s8WMi8st3clvwyK3dxHdYdO5J3XarzsgnTDVL+CowuGO3bL/yy3ln/09WCD77535
-	rlJWl50cMZskTeVenWF/tLhY+6aD6QYWA7/rN7nD872+FHfuXTZFzntK7wPduqu/W/K3ngja
-	XvHv89l7E39aMIp1My0Rvnol2fXkLR02Q+d4n4MfW2/M+n5NVeXFvn0K4jctJl2w6xFj3Fmk
-	FMrDe196/um3r4+Y3DvB+s3tW4Qqw7Yn6cyLivUPemj/rpplcs7g5sYpf2onBj5X3ZtR7T/n
-	ztz01zdrpWr32XNe0peQvhH68EaB5LOV8lJf3y89Gd1R/W5Nocni3uBli2dc6tp7qVKJpTgj
-	0VCLuag4EQCBFqrVLgMAAA==
-X-CMS-MailID: 20241112132628epcas5p33b0b5cbdbb64df77a4305802a3134aa0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b
-References: <20241108193629.3817619-1-kbusch@meta.com>
-	<CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
-	<20241111102914.GA27870@lst.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2sjhov4poma4o4efvwe2xk474iorxwvf4ifqa5oee74744ke2e@lipjana3f5ti>
 
-On 11/11/2024 3:59 PM, Christoph Hellwig wrote:
->   - there is a separate write_stream value now instead of overloading
->     the write hint.  For now it is an 8-bit field for the internal
->     data structures so that we don't have to grow the bio, but all the
->     user interfaces are kept at 16 bits (or in case of statx reduced to
->     it).  If this becomes now enough because we need to support devices
->     with multiple reclaim groups we'll have to find some space by using
->     unions or growing structures
+On Tue, Nov 12, 2024 at 11:50:46AM +0200, Kirill A. Shutemov wrote:
+> On Tue, Nov 12, 2024 at 07:02:33PM +1100, Dave Chinner wrote:
+> > I think the post-IO invalidation that these IOs do is largely
+> > irrelevant to how the page cache processes the write. Indeed,
+> > from userspace, the functionality in this patchset would be
+> > implemented like this:
+> > 
+> > oneshot_data_write(fd, buf, len, off)
+> > {
+> > 	/* write into page cache */
+> > 	pwrite(fd, buf, len, off);
+> > 
+> > 	/* force the write through the page cache */
+> > 	sync_file_range(fd, off, len, SYNC_FILE_RANGE_WRITE | SYNC_FILE_RANGE_WAIT_AFTER);
+> > 
+> > 	/* Invalidate the single use data in the cache now it is on disk */
+> > 	posix_fadvise(fd, off, len, POSIX_FADV_DONTNEED);
+> > }
+> > 
+> > Allowing the application to control writeback and invalidation
+> > granularity is a much more flexible solution to the problem here;
+> > when IO is sequential, delayed allocation will be allowed to ensure
+> > large contiguous extents are created and that will greatly reduce
+> > file fragmentation on XFS, btrfs, bcachefs and ext4. For random
+> > writes, it'll submit async IOs in batches...
+> > 
+> > Given that io_uring already supports sync_file_range() and
+> > posix_fadvise(), I'm wondering why we need an new IO API to perform
+> > this specific write-through behaviour in a way that is less flexible
+> > than what applications can already implement through existing
+> > APIs....
+> 
+> Attaching the hint to the IO operation allows kernel to keep the data in
+> page cache if it is there for other reason. You cannot do it with a
+> separate syscall.
 
->   - block/fops.c is the place to map the existing write hints into
->     the write streams instead of the driver
+Sure we can. FADV_NOREUSE is attached to the struct file - that's
+available to every IO that is done on that file. Hence we know
+before we start every IO on that file if we only need to preserve
+existing page cache or all data we access.
 
+Having a file marked like this doesn't affect any other application
+that is accessing the same inode. It just means that the specific
+fd opened by a specific process will not perturb the long term
+residency of the page cache on that inode.
 
-Last time when I attempted this separation between temperature and 
-placement hints, it required adding a new fcntl[*] too because 
-per-inode/file hints continues to be useful even when they are treated 
-as passthrough by FS.
+> Consider a scenario of a nightly backup of the data. The same data is in
+> cache because the actual workload needs it. You don't want backup task to
+> invalidate the data from cache. Your snippet would do that.
 
-Applications are able to use temperature hints to group multiple files 
-on device regardless of the logical placement made by FS.
-The same ability is useful for write-streams/placement-hints too. But 
-these patches reduce the scope to only block device.
+The code I presented was essentially just a demonstration of what
+"uncached IO" was doing. That it is actually cached IO, and that it
+can be done from userspace right now. Yes, it's not exactly the same
+cache invalidation semantics, but that's not the point.
 
-IMO, passthrough propagation of hints/streams should continue to remain 
-the default behavior as it applies on multiple filesystems. And more 
-active placement by FS should rather be enabled by some opt in (e.g., 
-mount option). Such opt in will anyway be needed for other reasons (like 
-regression avoidance on a broken device).
+The point was that the existing APIs are *much more flexible* than
+this proposal, and we don't actually need new kernel functionality
+for applications to see the same benchmark results as Jens has
+presented. All they need to do is be modified to use existing APIs.
 
-[*] 
-https://lore.kernel.org/linux-nvme/20240910150200.6589-4-joshi.k@samsung.com/
+The additional point to that end is that FADV_NOREUSE should be
+hooke dup to the conditional cache invalidation mechanism Jens added
+to the page cache IO paths. Then we have all the functionality of
+this patch set individually selectable by userspace applications
+without needing a new IO API to be rolled out. i.e. the snippet
+then bcomes:
+
+	/* don't cache after IO */
+	fadvise(fd, FADV_NORESUSE)
+	....
+	write(fd, buf, len, off);
+	/* write through */
+	sync_file_range(fd, off, len, SYNC_FILE_RANGE);
+
+Note how this doesn't need to block in sync_file_range() before
+doing the invalidation anymore? We've separated the cache control
+behaviour from the writeback behaviour. We can now do both write
+back and write through buffered writes that clean up the page cache
+after IO completion has occurred - write-through is not restricted
+to uncached writes, nor is the cache purge after writeback
+completion.
+
+IOWs, we can do:
+
+	/* don't cache after IO */
+	fadvise(fd, FADV_NORESUSE)
+	....
+	off = pos;
+	count = 4096;
+	while (off < pos + len) {
+		ret = write(fd, buf, count, off);
+		/* get more data and put it in buf */
+		off += ret;
+	}
+	/* write through */
+	sync_file_range(fd, pos, len, SYNC_FILE_RANGE);
+
+And now we only do one set of writeback on the file range, instead
+of one per IO. And we still get the page cache being released on
+writeback Io completion.
+
+This is a *much* better API for IO and page cache control. It is not
+constrained to individual IOs, so applications can allow the page
+cache to write-combine data from multiple syscalls into a single
+physical extent allocation and writeback IO.
+
+This is much more efficient for modern filesytsems - the "writeback
+per IO" model forces filesystms like XFS and ext4 to work like ext3
+did, and defeats buffered write IO optimisations like dealyed
+allocation. If we are going to do small "allocation and write IO"
+patterns, we may as well be using direct IO as it is optimised for
+that sort of behaviour.
+
+So let's conside the backup application example. IMO, backup
+applications  really don't want to use this new uncached IO
+mechanism for either reading or writing data.
+
+Backup programs do sequential data read IO as they walk the backup set -
+if they are doing buffered IO then we -really- want readahead to be
+active.
+
+However, uncached IO turns off readahead, which is the equivalent of
+the backup application doing:
+
+	fadvise(fd, FADV_RANDOM);
+	while (len > 0) {
+		ret = read(fd, buf, len, off);
+		fadvise(fd, FADV_DONTNEED, off, len);
+
+		/* do stuff with buf */
+
+		off += ret;
+		len -= ret;
+	}
+
+Sequential buffered read IO after setting FADV_RANDOM absolutely
+*sucks* from a performance perspective.
+
+This is when FADV_NOREUSE is useful. We can leave readahead turned
+on, and when we do the first read from the page cache after
+readahead completes, we can then apply the NOREUSE policy. i.e. if
+the data we are reading has not been accessed, then turf it after
+reading if NOREUSE is set. If the data was already resident in
+cache, then leave it there as per a normal read.
+
+IOWs, if we separate the cache control from the read IO itself,
+there is no need to turn off readahead to implement "drop cache
+on-read" semantics. We just need to know if the folio has been
+accessed or not to determine what to do with it.
+
+Let's also consider the backup data file - that is written
+sequentially.  It's going to be large and we don't know it's size
+ahead of time. If we are using buffered writes we want delayed
+allocation to optimise the file layout and hence writeback IO
+throughput.  We also want to drop the page cache when writeback
+eventually happens, but we really don't want writeback to happen on
+every write.
+
+IOWs, backup programs can take advantage of "drop cache when clean"
+semantics, but can't really take any significant advantage from
+per-IO write-through semantics. IOWs, backup applications really
+want per-file NOREUSE write semantics that are seperately controlled
+w.r.t. cache write-through behaviour.
+
+One of the points I tried to make was that the uncached IO proposal
+smashes multiple disparate semantics into a single per-IO control
+bit. The backup application example above shows exactly how that API
+isn't actually very good for the applications that could benefit
+from the functionality this patchset adds to the page cache to
+support that single control bit...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
