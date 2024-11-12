@@ -1,213 +1,333 @@
-Return-Path: <linux-fsdevel+bounces-34378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8007F9C4D66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:40:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADF19C4D77
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 04:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C2D1B2BF7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF861F22D94
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 03:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527F209F3E;
-	Tue, 12 Nov 2024 03:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C1v6cZ6g"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D28208208;
+	Tue, 12 Nov 2024 03:44:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580220820C;
-	Tue, 12 Nov 2024 03:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467519CC29;
+	Tue, 12 Nov 2024 03:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731382557; cv=none; b=FXHz+ZfvQsJtTW9swr+hdFzaxVLPFZ7FB0FnOWyoh+cTtDFaEMu1BPKpzFSzcDl+CcgxfuPdZXModShSholsOg2i1javWPYfFaWi2uAJnp0oRz1QhmjOIDR9X+XpyL3qnSI9v0bm2lvZtTjEtiUbTZzlr4bJ4C4KgJN5mEB8XAQ=
+	t=1731383048; cv=none; b=jzu9PLIi0zs2sc3GRRmQzEuK79yrzGXpgvh70IAFwDHFPfJ2SrxhxDzdy6VMBTJaQRiNVI+5wT00OPXPSei4hc3mqVWx3ab8GBm9L4BthJw8WZI5QOAT5A0SAb/PZF59JlCLeg9RK7CEM+b2hQSoCvZn60wsNL2A9h9fEe8P8bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731382557; c=relaxed/simple;
-	bh=zHmwQulg1MvbJYGzS449ik058moQ+ZYOiWbt3WPw6ts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TurjNmKu6MSmmOVn8CIPwnSzj7ZTTdVYrVBdLBUvmgDTaCcv2uuDnMuLb/gxTDVF3N2qxwaxGpsuA2hqZzj9K4uDBCSuQISu7HoB0fH1BsCamLE+bcDKghjOslOiykaKB2j7l8GG1XV1DMbiZF3hrnKFNJIMy/O+nPJB0IqxLsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C1v6cZ6g; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731382553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bCticokvXt7/tOdCxkHfyP03KxKjjn7PUqvu3AUUC1A=;
-	b=C1v6cZ6gwawECS1GePw3eZYcphj5A24LO4Ps/OcfCCXoRbqGRjtbmM5XjOwhm5NYqyuzOh
-	9shW4ucLLrICIW0BHPJA3ryk2AtARRzs508XC/gfdhZPT8QryOZRhA6eZhSpxWUtxfuvFD
-	hYBTD8VjdbfpHTY1Rj0cV7ai5PiaA0Q=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	brauner@kernel.org,
-	sforshee@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: [PATCH 3/3] bcachefs: Option changes now get propagated to reflinked data
-Date: Mon, 11 Nov 2024 22:35:35 -0500
-Message-ID: <20241112033539.105989-4-kent.overstreet@linux.dev>
-In-Reply-To: <20241112033539.105989-1-kent.overstreet@linux.dev>
-References: <20241112033539.105989-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1731383048; c=relaxed/simple;
+	bh=ruY/EJqxhlXRsPF9HXdZIc+Z0H3EP9D6qVw/aLKKdhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2v1YDVscoYxxyHyS19Ze9CjcQOMUTqs2YMUsMC/Qz5MxIu4P6pxNgd9Exhlwd9R4mgMO2XLNsjfBs8/cDJnuU0I1tlkgtJGPDJlNctPlAGVvnNivAMqCDrWFV732LY5Y8N9tgGZS8nyqrs9wq3aw0THPxnPaShZhZVgEu+PsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XnXMK2VYnz4f3lY5;
+	Tue, 12 Nov 2024 11:43:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 703091A0197;
+	Tue, 12 Nov 2024 11:43:54 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgDHo4f1zjJnFXosBg--.43366S3;
+	Tue, 12 Nov 2024 11:43:51 +0800 (CST)
+Message-ID: <dd6bd7f5-cf2e-3123-3017-c209d81ab290@huaweicloud.com>
+Date: Tue, 12 Nov 2024 11:43:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
+ offset dir
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, Chuck Lever <cel@kernel.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241111005242.34654-1-cel@kernel.org>
+ <20241111005242.34654-7-cel@kernel.org>
+ <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
+ <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
+ <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
+ <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <09F40EA2-9537-4C7A-A221-AA403ED3FF64@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:gCh0CgDHo4f1zjJnFXosBg--.43366S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ar15WFykJF4xXw48KFWUCFg_yoW3KFW7pr
+	W5Jan0krs7Xw1UGr4vq3WDZrySv3Z7Kr18Xrn5W34UJryqvr13KF1xAr1Y9a48Ar1kCr12
+	qF45t343ur1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-Now that bch2_move_get_io_opts() re-propagates changed inode io options
-to bch_extent_rebalance, we can properly suport changing IO path options
-for reflinked data.
 
-Changing a per-file IO path option, either via the xattr interface or
-via the BCHFS_IOC_REINHERIT_ATTRS ioctl, will now trigger a scan (the
-inode number is marked as needing a scan, via
-bch2_set_rebalance_needs_scan()), and rebalance will use
-bch2_move_data(), which will walk the inode number and pick up the new
-options.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/bcachefs/move.c | 51 +++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 44 insertions(+), 7 deletions(-)
+在 2024/11/11 23:34, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 11, 2024, at 10:20 AM, yangerkun <yangerkun@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> 在 2024/11/11 22:39, Chuck Lever III 写道:
+>>>> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> 在 2024/11/11 8:52, cel@kernel.org 写道:
+>>>>> From: yangerkun <yangerkun@huawei.com>
+>>>>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
+>>>>> After we switch tmpfs dir operations from simple_dir_operations to
+>>>>> simple_offset_dir_operations, every rename happened will fill new dentry
+>>>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+>>>>> key starting with octx->newx_offset, and then set newx_offset equals to
+>>>>> free key + 1. This will lead to infinite readdir combine with rename
+>>>>> happened at the same time, which fail generic/736 in xfstests(detail show
+>>>>> as below).
+>>>>> 1. create 5000 files(1 2 3...) under one dir
+>>>>> 2. call readdir(man 3 readdir) once, and get one entry
+>>>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+>>>>> 4. loop 2~3, until readdir return nothing or we loop too many
+>>>>>     times(tmpfs break test with the second condition)
+>>>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+>>>>> directory reads") to fix it, record the last_index when we open dir, and
+>>>>> do not emit the entry which index >= last_index. The file->private_data
+>>>>
+>>>> Please notice this requires last_index should never overflow, otherwise
+>>>> readdir will be messed up.
+>>> It would help your cause if you could be more specific
+>>> than "messed up".
+>>>>> now used in offset dir can use directly to do this, and we also update
+>>>>> the last_index when we llseek the dir file.
+>>>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+>>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>>>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
+>>>>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
+>>>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>>>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
+>>>>> [ cel: adjusted to apply to origin/linux-6.6.y ]
+>>>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>> ---
+>>>>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
+>>>>>   1 file changed, 25 insertions(+), 12 deletions(-)
+>>>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>>>> index a87005c89534..b59ff0dfea1f 100644
+>>>>> --- a/fs/libfs.c
+>>>>> +++ b/fs/libfs.c
+>>>>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>>    xa_destroy(&octx->xa);
+>>>>>   }
+>>>>>   +static int offset_dir_open(struct inode *inode, struct file *file)
+>>>>> +{
+>>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>>> +
+>>>>> + file->private_data = (void *)ctx->next_offset;
+>>>>> + return 0;
+>>>>> +}
+>>>>
+>>>> Looks like xarray is still used.
+>>> That's not going to change, as several folks have already
+>>> explained.
+>>>> I'm in the cc list ,so I assume you saw my set, then I don't know why
+>>>> you're ignoring my concerns.
+>>>> 1) next_offset is 32-bit and can overflow in a long-time running
+>>>> machine.
+>>>> 2) Once next_offset overflows, readdir will skip the files that offset
+>>>> is bigger.
+>>
+>> I'm sorry, I'm a little busy these days, so I haven't responded to this
+>> series of emails.
+>>
+>>> In that case, that entry won't be visible via getdents(3)
+>>> until the directory is re-opened or the process does an
+>>> lseek(fd, 0, SEEK_SET).
+>>
+>> Yes.
+>>
+>>> That is the proper and expected behavior. I suspect you
+>>> will see exactly that behavior with ext4 and 32-bit
+>>> directory offsets, for example.
+>>
+>> Emm...
+>>
+>> For this case like this:
+>>
+>> 1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
+>> 2. open /tmp/dir with fd1
+>> 3. readdir and get /tmp/dir/file1
+>> 4. rm /tmp/dir/file2
+>> 5. touch /tmp/dir/file2
+>> 4. loop 4~5 for 2^32 times
+>> 5. readdir /tmp/dir with fd1
+>>
+>> For tmpfs now, we may see no /tmp/dir/file2, since the offset has been overflow, for ext4 it is ok... So we think this will be a problem.
+>>
+>>> Does that not directly address your concern? Or do you
+>>> mean that Erkun's patch introduces a new issue?
+>>
+>> Yes, to be honest, my personal feeling is a problem. But for 64bit, it may never been trigger.
+> 
+> Thanks for confirming.
+> 
+> In that case, the preferred way to handle it is to fix
+> the issue in upstream, and then backport that fix to LTS.
+> Dependence on 64-bit offsets to avoid a failure case
+> should be considered a workaround, not a real fix, IMHO.
 
-diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
-index a6b503278519..27f885cf998a 100644
---- a/fs/bcachefs/move.c
-+++ b/fs/bcachefs/move.c
-@@ -22,6 +22,7 @@
- #include "keylist.h"
- #include "move.h"
- #include "rebalance.h"
-+#include "reflink.h"
- #include "replicas.h"
- #include "snapshot.h"
- #include "super-io.h"
-@@ -389,6 +390,7 @@ int bch2_move_extent(struct moving_context *ctxt,
- 
- static struct bch_io_opts *bch2_move_get_io_opts(struct btree_trans *trans,
- 			  struct per_snapshot_io_opts *io_opts,
-+			  struct bpos extent_pos, /* extent_iter, extent_k may be in reflink btree */
- 			  struct btree_iter *extent_iter,
- 			  struct bkey_s_c extent_k)
- {
-@@ -400,12 +402,12 @@ static struct bch_io_opts *bch2_move_get_io_opts(struct btree_trans *trans,
- 	if (extent_k.k->type == KEY_TYPE_reflink_v)
- 		goto out;
- 
--	if (io_opts->cur_inum != extent_k.k->p.inode) {
-+	if (io_opts->cur_inum != extent_pos.inode) {
- 		io_opts->d.nr = 0;
- 
--		ret = for_each_btree_key(trans, iter, BTREE_ID_inodes, POS(0, extent_k.k->p.inode),
-+		ret = for_each_btree_key(trans, iter, BTREE_ID_inodes, POS(0, extent_pos.inode),
- 					 BTREE_ITER_all_snapshots, k, ({
--			if (k.k->p.offset != extent_k.k->p.inode)
-+			if (k.k->p.offset != extent_pos.inode)
- 				break;
- 
- 			if (!bkey_is_inode(k.k))
-@@ -419,7 +421,7 @@ static struct bch_io_opts *bch2_move_get_io_opts(struct btree_trans *trans,
- 
- 			darray_push(&io_opts->d, e);
- 		}));
--		io_opts->cur_inum = extent_k.k->p.inode;
-+		io_opts->cur_inum = extent_pos.inode;
- 	}
- 
- 	ret = ret ?: trans_was_restarted(trans, restart_count);
-@@ -525,9 +527,15 @@ static int bch2_move_data_btree(struct moving_context *ctxt,
- 	struct per_snapshot_io_opts snapshot_io_opts;
- 	struct bch_io_opts *io_opts;
- 	struct bkey_buf sk;
--	struct btree_iter iter;
-+	struct btree_iter iter, reflink_iter = {};
- 	struct bkey_s_c k;
- 	struct data_update_opts data_opts;
-+	/*
-+	 * If we're moving a single file, also process reflinked data it points
-+	 * to (this includes propagating changed io_opts from the inode to the
-+	 * extent):
-+	 */
-+	bool walk_indirect = start.inode == end.inode;
- 	int ret = 0, ret2;
- 
- 	per_snapshot_io_opts_init(&snapshot_io_opts, c);
-@@ -547,6 +555,8 @@ static int bch2_move_data_btree(struct moving_context *ctxt,
- 		bch2_ratelimit_reset(ctxt->rate);
- 
- 	while (!bch2_move_ratelimit(ctxt)) {
-+		struct btree_iter *extent_iter = &iter;
-+
- 		bch2_trans_begin(trans);
- 
- 		k = bch2_btree_iter_peek(&iter);
-@@ -565,10 +575,36 @@ static int bch2_move_data_btree(struct moving_context *ctxt,
- 		if (ctxt->stats)
- 			ctxt->stats->pos = BBPOS(iter.btree_id, iter.pos);
- 
-+		if (walk_indirect &&
-+		    k.k->type == KEY_TYPE_reflink_p &&
-+		    REFLINK_P_MAY_UPDATE_OPTIONS(bkey_s_c_to_reflink_p(k).v)) {
-+			struct bkey_s_c_reflink_p p = bkey_s_c_to_reflink_p(k);
-+			s64 offset_into_extent	= iter.pos.offset - bkey_start_offset(k.k);
-+
-+			bch2_trans_iter_exit(trans, &reflink_iter);
-+			k = bch2_lookup_indirect_extent(trans, &reflink_iter, &offset_into_extent, p, true, 0);
-+			ret = bkey_err(k);
-+			if (bch2_err_matches(ret, BCH_ERR_transaction_restart))
-+				continue;
-+			if (ret)
-+				break;
-+
-+			if (bkey_deleted(k.k))
-+				goto next_nondata;
-+
-+			/*
-+			 * XXX: reflink pointers may point to multiple indirect
-+			 * extents, so don't advance past the entire reflink
-+			 * pointer - need to fixup iter->k
-+			 */
-+			extent_iter = &reflink_iter;
-+		}
-+
- 		if (!bkey_extent_is_direct_data(k.k))
- 			goto next_nondata;
- 
--		io_opts = bch2_move_get_io_opts(trans, &snapshot_io_opts, &iter, k);
-+		io_opts = bch2_move_get_io_opts(trans, &snapshot_io_opts,
-+						iter.pos, extent_iter, k);
- 		ret = PTR_ERR_OR_ZERO(io_opts);
- 		if (ret)
- 			continue;
-@@ -584,7 +620,7 @@ static int bch2_move_data_btree(struct moving_context *ctxt,
- 		bch2_bkey_buf_reassemble(&sk, c, k);
- 		k = bkey_i_to_s_c(sk.k);
- 
--		ret2 = bch2_move_extent(ctxt, NULL, &iter, k, *io_opts, data_opts);
-+		ret2 = bch2_move_extent(ctxt, NULL, extent_iter, k, *io_opts, data_opts);
- 		if (ret2) {
- 			if (bch2_err_matches(ret2, BCH_ERR_transaction_restart))
- 				continue;
-@@ -605,6 +641,7 @@ static int bch2_move_data_btree(struct moving_context *ctxt,
- 		bch2_btree_iter_advance(&iter);
- 	}
- 
-+	bch2_trans_iter_exit(trans, &reflink_iter);
- 	bch2_trans_iter_exit(trans, &iter);
- 	bch2_bkey_buf_exit(&sk, c);
- 	per_snapshot_io_opts_exit(&snapshot_io_opts);
--- 
-2.45.2
+Yes.
+
+> 
+> Do you have a few moments to address it, or if not I
+> will see to it.
+
+You can try to do this, for the reason I am quite busy now until end of 
+this month... Sorry.
+
+> 
+> I think reducing the xa_limit in simple_offset_add() to,
+> say, 2..16 would make the reproducer fire almost
+> immediately.
+
+Yes.
+
+> 
+> 
+>>> If there is a problem here, please construct a reproducer
+>>> against this patch set and post it.
+>>>> Thanks,
+>>>> Kuai
+>>>>
+>>>>> +
+>>>>>   /**
+>>>>>    * offset_dir_llseek - Advance the read position of a directory descriptor
+>>>>>    * @file: an open directory whose position is to be updated
+>>>>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>>    */
+>>>>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>>   {
+>>>>> + struct inode *inode = file->f_inode;
+>>>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>>> +
+>>>>>    switch (whence) {
+>>>>>    case SEEK_CUR:
+>>>>>    offset += file->f_pos;
+>>>>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>>    }
+>>>>>      /* In this case, ->private_data is protected by f_pos_lock */
+>>>>> - file->private_data = NULL;
+>>>>> - return vfs_setpos(file, offset, U32_MAX);
+>>>>> + if (!offset)
+>>>>> + file->private_data = (void *)ctx->next_offset;
+>>>>> + return vfs_setpos(file, offset, LONG_MAX);
+>>>>>   }
+>>>>>     static struct dentry *offset_find_next(struct xa_state *xas)
+>>>>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>>>>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>>>   }
+>>>>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+>>>>>   {
+>>>>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+>>>>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
+>>>>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>>    while (true) {
+>>>>>    dentry = offset_find_next(&xas);
+>>>>>    if (!dentry)
+>>>>> - return ERR_PTR(-ENOENT);
+>>>>> + return;
+>>>>> +
+>>>>> + if (dentry2offset(dentry) >= last_index) {
+>>>>> + dput(dentry);
+>>>>> + return;
+>>>>> + }
+>>>>>      if (!offset_dir_emit(ctx, dentry)) {
+>>>>>    dput(dentry);
+>>>>> - break;
+>>>>> + return;
+>>>>>    }
+>>>>>      dput(dentry);
+>>>>>    ctx->pos = xas.xa_index + 1;
+>>>>>    }
+>>>>> - return NULL;
+>>>>>   }
+>>>>>     /**
+>>>>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
+>>>>>   {
+>>>>>    struct dentry *dir = file->f_path.dentry;
+>>>>> + long last_index = (long)file->private_data;
+>>>>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
+>>>>>      if (!dir_emit_dots(file, ctx))
+>>>>>    return 0;
+>>>>>   - /* In this case, ->private_data is protected by f_pos_lock */
+>>>>> - if (ctx->pos == DIR_OFFSET_MIN)
+>>>>> - file->private_data = NULL;
+>>>>> - else if (file->private_data == ERR_PTR(-ENOENT))
+>>>>> - return 0;
+>>>>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+>>>>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
+>>>>>    return 0;
+>>>>>   }
+>>>>>     const struct file_operations simple_offset_dir_operations = {
+>>>>> + .open = offset_dir_open,
+>>>>>    .llseek = offset_dir_llseek,
+>>>>>    .iterate_shared = offset_readdir,
+>>>>>    .read = generic_read_dir,
+>>> --
+>>> Chuck Lever
+> 
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
