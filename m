@@ -1,129 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-34565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE4D9C64EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:10:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6D39C6523
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4878285E45
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED591F254BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 23:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA021C168;
-	Tue, 12 Nov 2024 23:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC7021CF9A;
+	Tue, 12 Nov 2024 23:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnHJGbz6"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fIFZlYOh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC421A6EC;
-	Tue, 12 Nov 2024 23:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F2E21A4BA;
+	Tue, 12 Nov 2024 23:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453016; cv=none; b=pOBvKb3OSSHD487Y4EPcOnCoOD5Xxy6MQv4+kqElYP1QdFDTzdTvjnl7D+D7clXM+9XL56+G0zmTUJlGpAVHvaAzxZvgeJW7cOOxXg4ESKxgXnWPOqQgToPkPd4QHHkcIX/HvAgNnrWKTc/HeK+CL2hbM98A+af7pGT4Tixgo84=
+	t=1731454015; cv=none; b=CcCGJ5QBMyfvx7pxHlGS7JSc5fL6d2N0x7m5d5Vsi3rVIoV+6otP1gBojhblc3NvGsVwJIzZJ6HRPEQM13X4Lo+5cOMPq+XVr+7QzRchqX/U6VmzElgtW8AXJR0WZHZinliB0rD7JV0zqUvFaYPEn/yVODjH01NRf0FYsW+Gwu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453016; c=relaxed/simple;
-	bh=+/GVDHlhcxMMbbyhM88+h7i00DClk7wy+rPYrTySRB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=quQpmYGCIBEPiiorWswfrq/sykYoWZXs7E0ZGOXKzNoCGharhsxFLoB4ylnbUujXFXkp8dv9iYeQL15lDBWqoVC22MSLugIoix8em1s4aN6rpFg9kDaTJ3TZYsRjf8ZAcp8+7Th4O2U6L9su8bRHN8JK6awIgQSmhGJ4dMji/YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnHJGbz6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11487C4AF0C;
-	Tue, 12 Nov 2024 23:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731453016;
-	bh=+/GVDHlhcxMMbbyhM88+h7i00DClk7wy+rPYrTySRB0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NnHJGbz6uGLEcym4/th6ycGiqotcUpQbA6RiHYEYFMeg7eVH0zCCEEqQUJh8G2gOv
-	 U1eseakEvTh5Dn1SaRAjkQtDbugdiXFPniSuZoJnZzeyxqbfsGZeKdtz74ETACbh28
-	 IADSB6ns4f6h1nl+wWBrjtYsuYoCoiIV7NZbf0ZKGeetR4/BaLrXX8k16m8nDwAhWj
-	 4Bc32NySndzg1IuZlhqELOcFQO/lA7k2at1mu90MhfZAE23X6E+HGSR7JvgccJmaFy
-	 3jZQIAiwLGQnTXP3JTFQk+0S4dzTTfTrZorcmQDz2qqa21AMja273/Yg5yA4tTEQiP
-	 tbs/XqP0CDR7w==
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3a5cd2a3bso26577655ab.3;
-        Tue, 12 Nov 2024 15:10:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU6S0SMQ/YnypMBySRdkQM8QmUsSiCaGIun9rOdGObyk2qwRguAQMn/VI1r66+cIhuQrVUVp2+H/EUCANrGMAdN7PZWBlkz@vger.kernel.org, AJvYcCUPURv+4qdedeIeRbRJP+nx1BxHMKpSJfDA3nfOnAA2KHCONNE8kwQp9lVZ6/g76Ns/UEKyKkWYivBNcGKn@vger.kernel.org, AJvYcCV8O9MKWgiMNE5J1Nc2DBwSoTgL6kEXbdWnDg3EZLWLVnQOYNx0hUtEVKmSR9Js34Lr/2iCbINrwJ+56aGV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR6UPCmPI/S64loWU01HrQ1qAu+0q9unl4g4Gqg2Hm3wzcTBVY
-	c+7CuiciiGTGX+o4bmJhkM9K30WZcmzvMWw3B7WoFC5L3Vci0BZe0/NWRDBpUvgkjTLduWJaRRE
-	EtknOE2A7JDG5gaLOcsMADFFLUHw=
-X-Google-Smtp-Source: AGHT+IEXmhz1rxonQxVF9WnrvL5ssfbjegUNS/LxNPZajWMp4pzlmmyDv6Gn+IormVUzECKOO/t/JZ3mNxf/pFz86cs=
-X-Received: by 2002:a05:6e02:1a43:b0:3a6:b258:fcd with SMTP id
- e9e14a558f8ab-3a6f19a01c1mr198967205ab.1.1731453015412; Tue, 12 Nov 2024
- 15:10:15 -0800 (PST)
+	s=arc-20240116; t=1731454015; c=relaxed/simple;
+	bh=8kMaQixG7RxCy4KI4oHAOvzbh9jRezSBR49xHjKZYbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDsb50b5/La1/bi38NqdyKz7e+iOw44TOo8y7xLBMu/CMOd1HcNiZFWepojPfgYUwev37Rbh3IdzPVJaRt22BcOhCt/EWk/N9pfFGFlyHiyr12rIu6116Gxd6TudhAQKztsL/dxuSwrffv3cLA7CvekcZ5OlPgYAmmJvmKt/xbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fIFZlYOh; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c2239508-6d00-4176-b0d6-3e07e06a367f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731454012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2S8Z8cF1RQIyQ6StHC2v3AQfecASJCXdndvixzbj32M=;
+	b=fIFZlYOhSL9R8UhiJvythCYpiTEQLGqSsgbJ39dznH74qaXM4yVllETK51FLpKWYHnnhlA
+	kH3pJTP7wTAwJ41LHtYdD/O2W7OdtkslYnXaUXALZ+o+0J171G+UebRSjg+0Xm2R/IK/wT
+	OEjAg+OnhMderQoxShHiJRuGqpuBoAM=
+Date: Tue, 12 Nov 2024 15:26:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112083700.356299-1-song@kernel.org> <20241112083700.356299-3-song@kernel.org>
- <2cb0cd4f-5d78-4b7f-b280-2a3377ffbc21@linux.dev>
-In-Reply-To: <2cb0cd4f-5d78-4b7f-b280-2a3377ffbc21@linux.dev>
-From: Song Liu <song@kernel.org>
-Date: Tue, 12 Nov 2024 15:10:04 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW4xEOhpU87kGvO45TBW0aLwCKvFi9hRfJ90FgGUq8OAcA@mail.gmail.com>
-Message-ID: <CAPhsuW4xEOhpU87kGvO45TBW0aLwCKvFi9hRfJ90FgGUq8OAcA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Add recursion prevention logic for
+ inode storage
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+ amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+ josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+References: <20241112083700.356299-1-song@kernel.org>
+ <20241112083700.356299-4-song@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20241112083700.356299-4-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 12, 2024 at 3:00=E2=80=AFPM Martin KaFai Lau <martin.lau@linux.=
-dev> wrote:
->
-> On 11/12/24 12:36 AM, Song Liu wrote:
-> >   void __destroy_inode(struct inode *inode)
-> >   {
-> >       BUG_ON(inode_has_buffers(inode));
-> > +     bpf_inode_storage_free(inode);
->
-> Not sure if this is done in the rcu callback (i.e. after the rcu gp). Ple=
-ase check.
->
-> >       inode_detach_wb(inode);
-> >       security_inode_free(inode);
-> >       fsnotify_inode_delete(inode);
->
-> [ ... ]
->
-> > @@ -136,12 +119,7 @@ BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *=
-, map, struct inode *, inode,
-> >       if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
-> >               return (unsigned long)NULL;
-> >
-> > -     /* explicitly check that the inode_storage_ptr is not
-> > -      * NULL as inode_storage_lookup returns NULL in this case and
-> > -      * bpf_local_storage_update expects the owner to have a
-> > -      * valid storage pointer.
-> > -      */
-> > -     if (!inode || !inode_storage_ptr(inode))
-> > +     if (!inode)
-> >               return (unsigned long)NULL;
->
-> There is an atomic_read in this function:
->
->         /* only allocate new storage, when the inode is refcounted */
->         if (atomic_read(&inode->i_count) &&
->             flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
->
-> If the bpf_inode_storage_free is not done after rcu gp, this will need a
-> inc_not_zero like how the sk storage does. I think moving the storage_fre=
-e to
-> the inode rcu call back may be easier if it is not the case now.
+On 11/12/24 12:36 AM, Song Liu wrote:
+> +static void *__bpf_inode_storage_get(struct bpf_map *map, struct inode *inode,
+> +				     void *value, u64 flags, gfp_t gfp_flags, bool nobusy)
+>   {
+>   	struct bpf_local_storage_data *sdata;
+>   
+> -	WARN_ON_ONCE(!bpf_rcu_lock_held());
+> -	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+> -		return (unsigned long)NULL;
+> -
+> +	/* explicitly check that the inode not NULL */
+>   	if (!inode)
+> -		return (unsigned long)NULL;
+> +		return NULL;
+>   
+>   	sdata = inode_storage_lookup(inode, map, true);
 
-This is a great catch!
+s/true/nobusy/
 
-I will move bpf_inode_storage_free to i_callback().
+>   	if (sdata)
+> -		return (unsigned long)sdata->data;
+> +		return sdata->data;
+>   
+> -	/* This helper must only called from where the inode is guaranteed
+> -	 * to have a refcount and cannot be freed.
+> -	 */
+> -	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
+> +	/* only allocate new storage, when the inode is refcounted */
+> +	if (atomic_read(&inode->i_count) &&
+> +	    flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
 
-Thanks,
-Song
+	    (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) && nobusy) {
+
+>   		sdata = bpf_local_storage_update(
+>   			inode, (struct bpf_local_storage_map *)map, value,
+>   			BPF_NOEXIST, false, gfp_flags);
+> -		return IS_ERR(sdata) ? (unsigned long)NULL :
+> -					     (unsigned long)sdata->data;
+> +		return IS_ERR(sdata) ? NULL : sdata->data;
+>   	}
+>   
+> -	return (unsigned long)NULL;
+> +	return NULL;
+> +}
 
