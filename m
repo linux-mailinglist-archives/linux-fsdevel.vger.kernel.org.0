@@ -1,62 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-34465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D08D9C5A4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:30:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2DF9C5A67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 15:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60E4282492
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:30:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F00DB450C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 14:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570E31FF616;
-	Tue, 12 Nov 2024 14:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28113200120;
+	Tue, 12 Nov 2024 14:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePHLU2/h"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PxhF9k8I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ci1Vbl6T";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2DBeAcV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6y0PPdox"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77901FEFD1;
-	Tue, 12 Nov 2024 14:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F091FCC42;
+	Tue, 12 Nov 2024 14:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421549; cv=none; b=CYRQvBEVzMAIfAZcljuCUeotflOQplXWh+kNpwvfVB9midSTlfQ1HrKUWKh5JKcoykt9MKf666BsiByv+IkE3PA3BMlyFz1PMV9QfOUDsHv8ima3WZxuBs4Zgh1Ejoare1dL3UVaEGIArFFyTRjsZ/7MPEShdb2EoOtiFLlBqU0=
+	t=1731421697; cv=none; b=LSYmoDLb4+1jK0YzXu7Iut9S4YhY3TbnuIYGVOiXjFHK5NOsh62FTN+WSzV2ZUZrnDzR0qSoCk1Hq7cUQp3tzV1sRxVmDLCjwa72zw6/coZkZ9BmJ4/n0nydZo8CPcWoUrxOH2ZQIOxCD5n3N7Q9gRdV64xBj7AImdKmp4oV7h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421549; c=relaxed/simple;
-	bh=FqK6AvBbok3agYaXcwWnCFMmVIqq7T/f8WTFeYDo4R8=;
+	s=arc-20240116; t=1731421697; c=relaxed/simple;
+	bh=b2thYqmsbuJTYOCIo+Qi5hzIAEoojswSxtz+p4LvJ/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAawZicFCVQXj8rIgLRzwIfHAUyJ74mdomKRw7rz2nRSZQfs/NYPw1YyLZhh3OQQjUsyMQIxx2ji8a9GMtr15/cpzseBAQlpSlhpCHvY66pmEKUgheWKZzRoqL1n3mkH73gWLX+LFMl8mdia0CdmKsgovljYKgrq1RClHH0qdp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePHLU2/h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F4AC4CECD;
-	Tue, 12 Nov 2024 14:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731421549;
-	bh=FqK6AvBbok3agYaXcwWnCFMmVIqq7T/f8WTFeYDo4R8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePHLU2/hD6U7PnMMH7nbItnFIAQtapvtYXrLfgEyRh4w1ARIGASKPWGmKV1vKvybR
-	 1EKZvr1QfDBPgUlscNmxhahhmpFrR3vrFkx6aHUnAlH8kwxALSJmqUYcE+nu8SOmbI
-	 0iG1helEUWOdLRfC5PTBSCRxJyBvCiTLDIMgCSMjafxj4k9HZkfNZsC0Vv3ljeJ9bB
-	 WnjjK5n7Lf5wK1OKCGlRUM3O72GrzsH/kTenZhQlJRdHDLPKxdHKLVsR8CdDgENc8k
-	 1C8WcFReORB9mUGjtybP4t6kITOXEr2pwCHcyHlb11/JfLm4+za1LevRJd/DT/tMpN
-	 1I5gvWqlJLpBg==
-Date: Tue, 12 Nov 2024 07:25:45 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	javier.gonz@samsung.com
-Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
-Message-ID: <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241108193629.3817619-1-kbusch@meta.com>
- <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
- <20241111102914.GA27870@lst.de>
- <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
- <20241112133439.GA4164@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OTf/G3IMJ7KyXOe31C+O2JCQutGY5D77VUM6HmSJXTSsKw/QnMPkQzplCpoG69idWVtnow1hXDpaNOCIFJSJvjouh1JVHFnFOwlEarpljpNs9aqgulG2Jfqr0QrzPZnVZs4hOK1NCfabptFAJ994GSYOlCWKuZk2/b5ArjeyVDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PxhF9k8I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ci1Vbl6T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2DBeAcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6y0PPdox; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 71DFE21275;
+	Tue, 12 Nov 2024 14:28:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731421693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClyVBEltyYujlDz24jO9ypnOQpbboViAYoIODTZM/lw=;
+	b=PxhF9k8IkeMhUwKvndc/9URZlbD0AYtO4ZjKFDU1nr2CCKah9R96iGDFRg6LUlXx6YKC9Z
+	V2+xWYZV7Gg4uUXjwRHr/RvIlPyuxLzWrP4A/6647U9iTJEry7fS5Y3VVs6W9ayo0SZm99
+	woDtwu44zNI3HAtHSLn2ngHU2bLFeO0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731421693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClyVBEltyYujlDz24jO9ypnOQpbboViAYoIODTZM/lw=;
+	b=Ci1Vbl6TgfKD9ClavZ7Q7QuGsHIJj/bYlZoXcKvhLsd254xsstCfqkoph4by+CfU/Ek/Ec
+	IWWOXLp/SV5TfpCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731421692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClyVBEltyYujlDz24jO9ypnOQpbboViAYoIODTZM/lw=;
+	b=a2DBeAcVrN9MAM1HhLmGD0W8BnqzSiQmc9yAKEJcQ83IeHu8gWgqWVbca72yn8VILMK4jW
+	zd31FhmV8ZECi+l/aIw3MRWHSFczSEW35FaStLSgM80WSNg0rUm6cEA2JXRaeIAkmKZXRF
+	0oPJ3Z1xnykCfRZRbonBGylyW4LPQkA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731421692;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClyVBEltyYujlDz24jO9ypnOQpbboViAYoIODTZM/lw=;
+	b=6y0PPdoxrn1WdBgQzkDGOUh21uXthXUHmM6s5ILlLv9bgMYHSprTwMAfZVFmgNDxb7F95W
+	x/ijrAkQmYOUemCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65A0813301;
+	Tue, 12 Nov 2024 14:28:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CQnLGPxlM2cXfAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 12 Nov 2024 14:28:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 15AC9A08D0; Tue, 12 Nov 2024 15:28:12 +0100 (CET)
+Date: Tue, 12 Nov 2024 15:28:12 +0100
+From: Jan Kara <jack@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	brauner@kernel.org, linux-xfs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 06/17] fsnotify: generate pre-content permission event
+ on open
+Message-ID: <20241112142812.37e3hyar3zqoqo5a@quack3>
+References: <cover.1731355931.git.josef@toxicpanda.com>
+ <b509ec78c045d67d4d7e31976eba4b708b238b66.1731355931.git.josef@toxicpanda.com>
+ <CAHk-=wh4BEjbfaO93hiZs3YXoNmV=YkWT4=OOhuxM3vD2S-1iA@mail.gmail.com>
+ <CAEzrpqdtSAoS+p4i0EzWFr0Nrpw1Q2hphatV7Sk4VM49=L3kGw@mail.gmail.com>
+ <CAHk-=wj8L=mtcRTi=NECHMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com>
+ <CAOQ4uxgxtQhe_3mj5SwH9568xEFsxtNqexLfw9Wx_53LPmyD=Q@mail.gmail.com>
+ <CAHk-=wgUV27XF8g23=aWNJecRbn8fCDDW2=10y9yJ122+d8JrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,25 +112,96 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112133439.GA4164@lst.de>
+In-Reply-To: <CAHk-=wgUV27XF8g23=aWNJecRbn8fCDDW2=10y9yJ122+d8JrA@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,toxicpanda.com,fb.com,vger.kernel.org,suse.cz,kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Nov 12, 2024 at 02:34:39PM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 12, 2024 at 06:56:25PM +0530, Kanchan Joshi wrote:
-> > IMO, passthrough propagation of hints/streams should continue to remain 
-> > the default behavior as it applies on multiple filesystems. And more 
-> > active placement by FS should rather be enabled by some opt in (e.g., 
-> > mount option). Such opt in will anyway be needed for other reasons (like 
-> > regression avoidance on a broken device).
+On Mon 11-11-24 16:37:30, Linus Torvalds wrote:
+> On Mon, 11 Nov 2024 at 16:00, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > I think that's a good idea for pre-content events, because it's fine
+> > to say that if the sb/mount was not watched by a pre-content event listener
+> > at the time of file open, then we do not care.
 > 
-> I feel like banging my head against the wall.  No, passing through write
-> streams is simply not acceptable without the file system being in
-> control.  I've said and explained this in detail about a dozend times
-> and the file system actually needing to do data separation for it's own
-> purpose doesn't go away by ignoring it.
+> Right.
+> 
+> > The problem is that legacy inotify/fanotify watches can be added after
+> > file is open, so that is allegedly why this optimization was not done for
+> > fsnotify hooks in the past.
+> 
+> So honestly, even if the legacy fsnotify hooks can't look at the file
+> flag, they could damn well look at an inode flag.
+> 
+> And I'm not even convinced that we couldn't fix them to just look at a
+> file flag, and say "tough luck, somebody opened that file before you
+> started watching, you don't get to see what they did".
+> 
+> So even if we don't look at a file->f_mode flag, the lergacy cases
+> should look at i_fsnotify_mask, and do that *first*.
+> 
+> IOW, not do it like fsnotify_object_watched() does now, which is just
+> broken. Again, it looks at inode->i_sb->s_fsnotify_mask completely
+> pointlessly, but it also does it much too late - it gets called after
+> we've already called into the fsnotify() code and have messed up the
+> I$ etc.
+> 
+> The "linode->i_sb->s_fsnotify_mask" is not only an extra indirection,
+> it should be very *literally* pointless. If some bit isn't set in
+> i_sb->s_fsnotify_mask, then there should be no way to set that bit in
+> inode->i_fsnotify_mask. So the only time we should access
+> i_sb->s_fsnotify_mask is when i_notify_mask gets *modified*, not when
+> it gets tested.
 
-But that's just an ideological decision that doesn't jive with how
-people use these. The applications know how they use their data better
-than the filesystem, so putting the filesystem in the way to force
-streams look like zones is just a unnecessary layer of indirection
-getting in the way.
+Thanks for explanation but what you write here and below seems to me as if
+you are not aware of some features fanotify API provides (for many years).
+With fanotify you can place a mark not only on a file / directory but you
+can place it also on a mount point or a superblock. In that case any
+operation of appropriate type happening through that mount point or on that
+superblock should deliver the event to the notification group that placed
+the mark. So for example we check inode->i_sb->s_fsnotify_mask on open to
+be able to decide whether somebody asked to get notifications about *all*
+opens on that superblock and generate appropriate events. These features
+are there since day 1 of fanotify (at least for mountpoints, superblocks
+were added later) and quite some userspace depends on them for doing
+filesystem-wide event monitoring.
+
+We could somehow cache the fact that someone placed a mark on the
+superblock in the inode / struct file but I don't see how to keep such
+cache consistent with marks that are attached to the superblock without
+incurring the very same cache misses we are trying to avoid.
+
+I do like your idea of caching whether somebody wants the notification in
+struct file as that way we can avoid the cache misses for the
+new pre-content hooks and possibly in hooks for the traditional fanotify
+permission events. But I don't see how we could possibly avoid these cache
+misses for the classical notification events like FAN_OPEN, FAN_ACCESS,
+FAN_MODIFY, ...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
