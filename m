@@ -1,140 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-34536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577919C6349
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 22:21:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012119C61E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 20:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6319B3BA3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872251F24940
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2024 19:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F1E20B218;
-	Tue, 12 Nov 2024 19:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D4219C8C;
+	Tue, 12 Nov 2024 19:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hu5pVYR0"
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="CvjabDkU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAF9217F47
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 19:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733B20898E;
+	Tue, 12 Nov 2024 19:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731441279; cv=none; b=fQI6H4jnZeD+IlipctWSmubD5RJxFvCu2N8ilWb+GeXlFbMzNoIen5LRbnrMjqo7Y+Fb8D+v6s49I3arw8vMpEDmg3MNl4StnbTmZbHIVzizlszLO3f8hGpvvHbUILVtXUUPxU7KCrSP1xEAn9/Y0Ieg6KVJZEI5rvKCv7Uhg8I=
+	t=1731441348; cv=none; b=jdNk8zqzyQ9oc7PSv23JPZ5awWuumjTP4yndSi8aIaA5gvW47/2nzQyE9j0tRCObm7Ddazps8Pli99R1Qa5j7Zi1NJt8mlW/zOBRFov4SPw3JeHUph+/Jt+kuud8ylAYmIwMVlzabCL5YibFgoNiIOQpZ3AHtbXouL0GZU18/rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731441279; c=relaxed/simple;
-	bh=w5M4DdbV0JDQqGXDCjJMEXFd24rwLm/qJCT5r02ClmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ay7V/kt8bfB0ewj/p9wPNnb7zxwWRlhpflPizxzrvoq2rvQTGeJlrqvyRQMK4m3QlQlZfpwzvqk3ymzzWMxhm4jiyq9mBaqSdSQCaEbkqIVk9X1cpklYY6wIbllA5tOBzIM1TZPzVF6uQk/bMbAk9xAfEXu/TegIZ8jnfxZpdAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hu5pVYR0; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cefa22e9d5so6850407a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 11:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731441275; x=1732046075; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5b0rySYUL4FjfsS4jGUX3HJrYE8uK75+UecupTqejZA=;
-        b=hu5pVYR0mz1FJoA4GR9DYhAkDz0lBba3sZ2VH2T1/cnRy9T4/TFP6K2mburFcsFm0x
-         VDwWRVjsidGKgAp6MG2gBS4eNRGHG+E+0qonvyPFM8q3nTioyhZQOfLnZhxZIwVBROqA
-         zRDZN0N68mWHAwuU4i7qGCU6mmoamB4dTM+8E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731441275; x=1732046075;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5b0rySYUL4FjfsS4jGUX3HJrYE8uK75+UecupTqejZA=;
-        b=YaNsKNrQtRCh9z/RPGk4nYir7mwKU2FEiClOrQ1WM0NNsyKUoZym/xEcT/TyYMfSxN
-         52PwiNTIpdNshUudQWbLgOIdBxY4FzcFcuVcHM2Lw5/hjZbfMBqMA+i6Gm5QwFST0Hew
-         S249fsftZZOotclRFCq4MC+ecCQVQojbzXpXwFzIKsk72W6PdL3Tgc6aKtcSG0k/HPCo
-         rpoJKLTE3L9JsPlR4QWSLKawMaV0ASbU9y/GJYsQhUxgGROpbtP55qtJJbomvzLJD9uy
-         WOLzhozYI85NBm94jjxdnE2n5dIEsAeaSF7NbLmLpX49b0VJ2vkqYj/dd541arzcfE03
-         6R2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSKgbOkp8nc3vLS15yDh1telT2gIQu05HKeuz1YKcD8FlT6i+WRcW7Z+UeRybhvqZnCXB6r0qKeNdlPfR3@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgjk0jJTFjDdZjlceK98AaKiLoBI98R3+d7/ebXo0D0i6OfKS0
-	1o6dOH+7a6IKPpxpknQIfZ0/wkBOxzXpH9saIqkLRTnYTZLfP1TWUF3jzUGtYyeT5Ovf0O1CySP
-	T9UriGQ==
-X-Google-Smtp-Source: AGHT+IGwYGVlvHbM6cJhLLwhLl88j2XWSjgxyxVzE+tBellmAGQZoTH+LGBWyiEAHVzCld+w0VelcA==
-X-Received: by 2002:aa7:da53:0:b0:5ce:dfee:7926 with SMTP id 4fb4d7f45d1cf-5cf0a446f8amr11260477a12.24.1731441275149;
-        Tue, 12 Nov 2024 11:54:35 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03a26cffsm6395007a12.0.2024.11.12.11.54.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 11:54:34 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9aa8895facso1118660366b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 11:54:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV5NpezhPHUMrFrJ8qkSNPPjdZX5ZqrgkcjPcw32qMAovcgqqJzneJ+OryggwUdWGimAsS37o1K9H07J9kX@vger.kernel.org
-X-Received: by 2002:a17:907:1b21:b0:a99:ff70:3abd with SMTP id
- a640c23a62f3a-a9eeff25d17mr1761977066b.31.1731441272860; Tue, 12 Nov 2024
- 11:54:32 -0800 (PST)
+	s=arc-20240116; t=1731441348; c=relaxed/simple;
+	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UXvLcUx++nHWX661IHTRZ3BksKvQZtqwapdt1LdohmOk2Zayu2QTUyq/VZUIg/GHLkMKG7509Mg0Zxlz7wl072NXdRwvdE9X3dLJyc29ZUy+aLP7a1DZyuAv2a7S7Cv+/q4icY9iCUaz+aKSywQoqn+4ya05wKP1vnu5Q9wt8gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=CvjabDkU; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sendonly@marcansoft.com)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 03D693FA6A;
+	Tue, 12 Nov 2024 19:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1731441334;
+	bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+	h=From:Date:Subject:To:Cc;
+	b=CvjabDkUJUSSXOJExrmb9n9jBWbldd3zbnbE9fOlnTjyQwUZCmqg0TUWhnljH/jH5
+	 CcPFuMlQTtrFxrcpE6B/sP5SsTJXWIaKQWLYknOW3VBEXE+ES6/Z6nugx+eK8q15J7
+	 K0LiHQZFuXYs635KqwUosvSHPxw/lcwFZrWLln45qW+hxK232vdZOFUcrp/QQrYxhQ
+	 VJeqgt36Ge5gSb6vYokcL9Q9bPcNj9mYvjhhx82H8NldKKR/X8Gj21XI7sGBBtSJ8o
+	 hmhEr4yzK73oc6tpjRpFH1XuPjKwyZxNG0r+Vsbr29YmWbLZbqKzIXFugT1CRrt1rb
+	 cYRj70mJJn26A==
+From: Asahi Lina <lina@asahilina.net>
+Date: Wed, 13 Nov 2024 04:55:32 +0900
+Subject: [PATCH] fuse: dax: No-op writepages callback
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731433903.git.josef@toxicpanda.com> <60a2309da948dc81e4c66b9e5fe3f1e2faa2010e.1731433903.git.josef@toxicpanda.com>
-In-Reply-To: <60a2309da948dc81e4c66b9e5fe3f1e2faa2010e.1731433903.git.josef@toxicpanda.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 12 Nov 2024 11:54:16 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgNFNYinkWCUvT2UnH2E2K_qPexEPgrm-xgr68YXnEQ_g@mail.gmail.com>
-Message-ID: <CAHk-=wgNFNYinkWCUvT2UnH2E2K_qPexEPgrm-xgr68YXnEQ_g@mail.gmail.com>
-Subject: Re: [PATCH v7 07/18] fsnotify: generate pre-content permission event
- on open
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-dax-no-writeback-v1-1-ee2c3a8d9f84@asahilina.net>
+X-B4-Tracking: v=1; b=H4sIALOyM2cC/x3MQQqAIBBA0avErBtoUqS6SrRQm2oILDQqiO6et
+ HyL/x9IHIUTdMUDkU9JsoUMKgvwiw0zo4zZUFe1JiKFo70xbHhFOdhZv6ImNs4p0zbOQ872yJP
+ c/7If3vcDv70xw2IAAAA=
+X-Change-ID: 20241113-dax-no-writeback-41e6bb3698bc
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Matthew Wilcox <willy@infradead.org>, Sergio Lopez Pascual <slp@redhat.com>, 
+ asahi@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Asahi Lina <lina@asahilina.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731441333; l=2006;
+ i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
+ bh=c94xZUz5BVRzxe1+uUbcC3auFTeo4NkaFnXe7tuvETA=;
+ b=RITMZ3OffyOGQq+meVQPdwN87olVlNUBbNxkxDcqPQQ/ROTA+RYl1EH63EH5poTnKOMEOUEBi
+ mvNOmc+uGmjD2yAbLq0Or+s4ebqCvcJ14c21zu/Ww52zWMgLazBtDyC
+X-Developer-Key: i=lina@asahilina.net; a=ed25519;
+ pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
 
-On Tue, 12 Nov 2024 at 09:56, Josef Bacik <josef@toxicpanda.com> wrote:
->
-> +       /*
-> +        * This permission hook is different than fsnotify_open_perm() hook.
-> +        * This is a pre-content hook that is called without sb_writers held
-> +        * and after the file was truncated.
-> +        */
-> +       return fsnotify_file_area_perm(file, MAY_OPEN, &file->f_pos, 0);
->  }
+When using FUSE DAX with virtiofs, cache coherency is managed by the
+host. Disk persistence is handled via fsync() and friends, which are
+passed directly via the FUSE layer to the host. Therefore, there's no
+need to do dax_writeback_mapping_range(). All that ends up doing is a
+cache flush operation, which is not caught by KVM and doesn't do much,
+since the host and guest are already cache-coherent.
 
-I still object to this all.
+Since dax_writeback_mapping_range() checks that the inode block size is
+equal to PAGE_SIZE, this fixes a spurious WARN when virtiofs is used
+with a mismatched guest PAGE_SIZE and virtiofs backing FS block size
+(this happens, for example, when it's a tmpfs and the host and guest
+have a different PAGE_SIZE). FUSE DAX does not require any particular FS
+block size, since it always performs DAX mappings in aligned 2MiB
+blocks.
 
-You can't say "permission denied" after you've already truncated the
-file. It's not a sane model. I complained about that earlier, it seems
-that complaint was missed in the other complaints.
+See discussion in [1].
 
-Also, this whole "This permission hook is different than
-fsnotify_open_perm() hook" statement is purely because
-fsnotify_open_perm() itself was broken and called from the wrong place
-as mentioned in the other email.
+[1] https://lore.kernel.org/lkml/20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net/T/#u
 
-Fix *THAT* first, then unify the two places that should *not* be
-different into one single "this is the fsnotify_open" code. And that
-place explicitly sets that FMODE_NOTIFY_PERM bit, and makes sure that
-it does *not* set it for FMODE_NONOTIFY or FMODE_PATH cases.
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+---
+ fs/fuse/dax.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-And then please work on making sure that that isn't called unless
-actually required.
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 12ef91d170bb3091ac35a33d2b9dc38330b00948..15cf7bb20b5ebf15451190dac2fcc2e841148e6c 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -777,11 +777,8 @@ ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ static int fuse_dax_writepages(struct address_space *mapping,
+ 			       struct writeback_control *wbc)
+ {
+-
+-	struct inode *inode = mapping->host;
+-	struct fuse_conn *fc = get_fuse_conn(inode);
+-
+-	return dax_writeback_mapping_range(mapping, fc->dax->dev, wbc);
++	/* nothing to flush, fuse cache coherency is managed by the host */
++	return 0;
+ }
+ 
+ static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf, unsigned int order,
 
-The actual real "pre-content permission events" should then ONLY test
-the FMODE_NOTIFY_PERM bit. Nothing else. None of this "re-use the
-existing fsnotify_file() logic" stuff. Noe extra tests, no extra
-logic.
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241113-dax-no-writeback-41e6bb3698bc
 
-Don't make me jump through filve layers of inline functions that all
-test different 'mask' bits, just to verify that the open / read /
-write paths don't do something stupid.
+Cheers,
+~~ Lina
 
-IOW, make it straightforward and obvious what you are doing, and make
-it very clear that you're not pointlessly testing things like
-FMODE_NONOTIFY when the *ONLY* thing that should be tested is whether
-FMODE_NOTIFY_PERM is set.
-
-Please.
-
-              Linus
 
