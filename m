@@ -1,182 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-34693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499D79C7BC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 19:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F68F9C7BCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 20:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB5D21F2231B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 18:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FCC1F21D75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 19:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DB1204095;
-	Wed, 13 Nov 2024 18:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE117205AC3;
+	Wed, 13 Nov 2024 19:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PT1wn2Oa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/khNZcr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1965202630
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 18:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EED1FDF92;
+	Wed, 13 Nov 2024 19:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731524296; cv=none; b=OYgu+B5w3LK3DvsALX3Yq3m9J2ar18IEo6REsMiH9ajw78I0jfUiZZwC1JOVIsHrTiyCKRO5RZc+N+f9zT5/jhsVf6N34jgs4Ct70tSssHnwrX5VMP5WfsW5Q9ZDlcqj+DHJOnYHOiZ7DPO9Zg9j2RRSb5bqGoKcDKunEllSuUg=
+	t=1731524440; cv=none; b=X4EsNWpFIV0AkcfzAnV6Ln/ifx3JlOpF2NHYg2B1jXdq0uKe+4IgyHdkRdF/MOUdprEcc2fM5Y4HaFxoPd8wHNjfEc8zfJ7ixxW5v+RqW7q3WjmUbOESNzTbBcA9FIzNSiyVzpGzTeG/x00t1kyEvxYJEzJuUW7XZ//rWTZij40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731524296; c=relaxed/simple;
-	bh=YMHtNMy28iMH414UngK1yCbOpeC9ibRqcbcxjOmyZYE=;
+	s=arc-20240116; t=1731524440; c=relaxed/simple;
+	bh=b1+puPHkT0AChTOt3uIcKmaN6uEKmh5MR8MaKY6CHS8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uTBnP0U//gdG8EqM7yrWqX5sDxh+LLnRRRtumAs2m4zD0/uDII+/rwLEWa9Q4zmxZsr73paTztJLer7SvuFUF6+FA/RWsvipp2iz+G+VtyVaNLtpsdQN33kZzXsT6IHzG5ORydC+mmcjz57UJwyd15AkVxvia3ZeeVCfbOZHiow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PT1wn2Oa; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4608e389407so91240521cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 10:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731524294; x=1732129094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hxT/h0gfD5YmPGu+ijQfJ1yxx/zW+VdERa6eL5u2oBg=;
-        b=PT1wn2OaGinZoBxEAKs2KHCXz++B6Q5S6nQYXGmSJeSTIwSM2TUvE/7ApEuYXs+inE
-         KbsH25O86deO5BRsQEVvHEfQJlQqHdi1Lx1RiKa6D3K6WvltHWhZuFYqbhSv0c2CghBS
-         4hBzqYnlbjLqJhbJd5KX3pSq9Wvk0JANII28e4OUqKL6/MzpDeRZScp1GYnVIvO7jLf+
-         PDBAUrAsAo5vXp55H6l+wOFjudZUZFdAc2UcYNuVNVmOmY77t8WqOB1kX0Zo126SxX+k
-         VdEX33FNBQ7MR1rT8+ZgXCQZnlEh3YWGorBjGuQeMwJgDFLpbao3Kw6mLPBvT2ZrYbeF
-         G0GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731524294; x=1732129094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hxT/h0gfD5YmPGu+ijQfJ1yxx/zW+VdERa6eL5u2oBg=;
-        b=f8DR8i76Xpx4QDrU6BXSB51uCjOWoNH199PU+/8IlLhWYQaGtlmyNsq0gkKv9QC3Oj
-         +VY4g6mVD76wFqFVTBdhejy/Ya3gZu/v9R60grZ2OTT2MG6dUntrbVcDDakuBfnrlMgK
-         OwwI2YYfLTFWRIdeDl62vJb9pRFVhbX12cZUQFugt5onuhIp7nGf+xXK1SdRB2zZ4+2N
-         iBH0Q6EUswcFQiyZ+F/l1NR4uwJtU31KU03ELcsfVq9stmwKsBL4hWvKzl8z3jmt0ywK
-         r/sB3OvmSyBoK7yOFT/JzQ49db1Esbg+K5Ub+j9Itt955KCWytqs1jIhn8b76Ngdhpuf
-         aGsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUturEx4uEJLPCNe62q2ZRYpFh4J8YuK4y1FoUknRcxejImWfIPPJZKbGl0ZRJdWfGChjgCaw+U3hRITcUZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPxkJs1l64PzOM9y5oonRQIs/b9A/BM2KT98CrlF7eAeQRcUF0
-	oD995ACYQUGHg7xPnqUznW0ycMduIZgxz08YXunt9BjRTZWh8IDdiYuCLanPjw8xmnsw3BM6MbQ
-	8dCIc48tCQooN7bVEunu3aCT0mFs=
-X-Google-Smtp-Source: AGHT+IEwcm1brWUSJautJ2Xbjfeaz2S/ap38Z2Z84fbvFkA1JfBK6noUcXagz+WN09A6sJBH7OvFjm/m+9KGelLXIHw=
-X-Received: by 2002:ac8:7d56:0:b0:461:22f0:4f83 with SMTP id
- d75a77b69052e-463093fe4ddmr262917001cf.43.1731524293547; Wed, 13 Nov 2024
- 10:58:13 -0800 (PST)
+	 To:Cc:Content-Type; b=YogB0Di9QWn/m7jHxHiOMkvgv9ULeFQX9C+hg+f6FHlyPBxd1VXA4g1amq+xXzFET2Sq4LM0MatL70g6Q4aAovmijXlwrQHewpRmDgyQoW6LaPvUeFa0GqU7t2G8OscPtcdNNAv9+Pt2vC6qEN2skLNDGq4rKrsA07flsY2Gb5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/khNZcr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168F5C4CED8;
+	Wed, 13 Nov 2024 19:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731524440;
+	bh=b1+puPHkT0AChTOt3uIcKmaN6uEKmh5MR8MaKY6CHS8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E/khNZcr3MVhPJiokpkNO7CDyueC9rlLJz0h56TzEmpBXyeKnyr7PDhxZw1Vle/PX
+	 WzTOlqBBqb4bdf6J1s8l8PHyxElvppox9lXvIFs+eZ8OIGuWtp/CoHvUnyuX0vw+2O
+	 ji7gXW8j61MvZ1513c4BRvxzlBG7YT5nNMg8T0l49msSmfEWBJLyGK2vyJPU3tssU3
+	 vDKWBntGkeGusY2x4yHXm+EtKxOCEbx1Cd9qGvtMPDb8xtEpOvrLiSzIG/+OQFl0YV
+	 pG63Ar+mrNVxLmOk8hcHeXFU1ajis/0TswmKAsXGCVx3ZR/dF2Xakyjpmvddxk6xq1
+	 j8tjLxOywSoCw==
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a3a5cd2a3bso30137805ab.3;
+        Wed, 13 Nov 2024 11:00:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUO8fqCfBxpkode80aDkVZArfdr+zxKFWHzGpgBMZH1V/tLpdLOcYpUrwmWpMSGzTrYh0RpL2bYM5Zi1DsnZy3DCUb0c/ds@vger.kernel.org, AJvYcCVUtAv9ZJ5iUAwrBZ9Zi+aDnLGh4KPfvqy8uNYgsdbdM4wf8WyROc3HLabYQLVzo0nTZznFr7Pxyl/WGXZg@vger.kernel.org, AJvYcCWE1xs1uBNURKoxyQEE5R1EtIKvoquubdZayh/hwI1zi2bwm/KWw7Uzy4Mft93oOZpZzu9sRv5v8W4yZWuFig==@vger.kernel.org, AJvYcCXnXLG+4Y6KG77fvLUUwlwZklEaRVBrjnKJQzWPl70k9Bik8kkL02WmdN2PdI64HLCGUHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/QtE03SkUlHswVanNFmbgerBZwgljUpmHf6WqjhnJiKIjXA30
+	KROzW3e98CYMvSt7INm+fYuiNxQ3lZJcveSAt1uvHThl5xaSplmb5r1tG9yCQ3UK0ArHFcu2xv8
+	abmcTItBnSkkYjyBYbk9CCw9kGHs=
+X-Google-Smtp-Source: AGHT+IEyD1JNQ2N50AJWPofbvsRndiOlwf81eJD4grNn0AHa4+5VXXwYIQS3OOwAKbwT3MgMY5uMnZFAEfkl4lyIFfo=
+X-Received: by 2002:a05:6e02:17cb:b0:3a6:c493:7396 with SMTP id
+ e9e14a558f8ab-3a6f19a00bbmr232369695ab.3.1731524439437; Wed, 13 Nov 2024
+ 11:00:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109001258.2216604-1-joannelkoong@gmail.com> <CAJnrk1ZhK6kAvPzjnzZYFg7XyytBKR=6d4ED9=dTDVwuskosxg@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZhK6kAvPzjnzZYFg7XyytBKR=6d4ED9=dTDVwuskosxg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 13 Nov 2024 10:58:02 -0800
-Message-ID: <CAJnrk1awYqMeRGG5x13tS2S4=PqurUa88yS=MAKwa6_LA6RzUQ@mail.gmail.com>
-Subject: Re: [PATCH 00/12] fuse: support large folios
-To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
-	jefflexu@linux.alibaba.com, willy@infradead.org, shakeel.butt@linux.dev, 
-	kernel-team@meta.com
+References: <20241112082600.298035-1-song@kernel.org> <20241112082600.298035-3-song@kernel.org>
+ <20241113-sensation-morgen-852f49484fd8@brauner> <2621E9B1-D3F7-47D5-A185-7EA47AF750B3@fb.com>
+ <1cd17944-8c1f-4b13-9ac5-912086fbead6@schaufler-ca.com>
+In-Reply-To: <1cd17944-8c1f-4b13-9ac5-912086fbead6@schaufler-ca.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 13 Nov 2024 11:00:28 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4xt3fMtE_uQ8mzDt1yatZwhkj4LVu0zCoOqoyD2cxs9g@mail.gmail.com>
+Message-ID: <CAPhsuW4xt3fMtE_uQ8mzDt1yatZwhkj4LVu0zCoOqoyD2cxs9g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <songliubraving@meta.com>, Christian Brauner <brauner@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 4:22=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
+On Wed, Nov 13, 2024 at 10:30=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
 >
-> On Fri, Nov 8, 2024 at 4:13=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
+> On 11/13/2024 6:15 AM, Song Liu wrote:
+> > Hi Christian,
 > >
-> > This patchset adds support for folios larger than one page size in FUSE=
-.
+> > Thanks for your review.
 > >
-> > This patchset is rebased on top of the (unmerged) patchset that removes=
- temp
-> > folios in writeback [1]. (There is also a version of this patchset that=
- is
-> > independent from that change, but that version has two additional patch=
-es
-> > needed to account for temp folios and temp folio copying, which may req=
-uire
-> > some debate to get the API right for as these two patches add generic
-> > (non-FUSE) helpers. For simplicity's sake for now, I sent out this patc=
-hset
-> > version rebased on top of the patchset that removes temp pages)
+> >> On Nov 13, 2024, at 2:19=E2=80=AFAM, Christian Brauner <brauner@kernel=
+.org> wrote:
+> > [...]
 > >
-> > This patchset was tested by running it through fstests on passthrough_h=
-p.
+> >>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> >>> index 3559446279c1..479097e4dd5b 100644
+> >>> --- a/include/linux/fs.h
+> >>> +++ b/include/linux/fs.h
+> >>> @@ -79,6 +79,7 @@ struct fs_context;
+> >>> struct fs_parameter_spec;
+> >>> struct fileattr;
+> >>> struct iomap_ops;
+> >>> +struct bpf_local_storage;
+> >>>
+> >>> extern void __init inode_init(void);
+> >>> extern void __init inode_init_early(void);
+> >>> @@ -648,6 +649,9 @@ struct inode {
+> >>> #ifdef CONFIG_SECURITY
+> >>> void *i_security;
+> >>> #endif
+> >>> +#ifdef CONFIG_BPF_SYSCALL
+> >>> + struct bpf_local_storage __rcu *i_bpf_storage;
+> >>> +#endif
+> >> Sorry, we're not growing struct inode for this. It just keeps getting
+> >> bigger. Last cycle we freed up 8 bytes to shrink it and we're not goin=
+g
+> >> to waste them on special-purpose stuff. We already NAKed someone else'=
+s
+> >> pet field here.
+> > Would it be acceptable if we union i_bpf_storage with i_security?
 >
-> Will be updating this thread with some fio benchmark results early next w=
-eek.
+> No!
 >
-
-For reads I'm seeing about a ~45% increase in throughput.
-
-This is the setup I used:
-
--- Set up server --
- ./libfuse/build/example/passthrough_hp --bypass-rw=3D1 ~/libfuse
-~/mounts/fuse/ --nopassthrough
-(using libfuse patched with Bernd's passthrough_hp benchmark pr
-https://github.com/libfuse/libfuse/pull/807)
-
--- Run fio --
- fio --name=3Dread --ioengine=3Dsync --rw=3Dread --bs=3D1M --size=3D1G
---numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
---directory=3Dmounts/fuse/
-
-I tested on 2 machines and saw the following:
-Machine 1:
-    No large folios:     ~4400 MiB/s
-    Large folios:         ~7100 MiB/s
-
-Machine 2:
-    No large folios:     ~3700 MiB/s
-    Large folios:         ~6400 MiB/s
-
-I also did see variability (on both ends) between runs and threw away outli=
-ers.
-
-
-For writes, we're still sending out one page folios (see thread on the
-4th patch in this series [1]), so there is no difference. Benchmarks
-showed that trying to get the largest folios possible from
-__filemap_get_folio() is an over-optimization and ends up being
-significantly more expensive. I think it'd probably be an improvement
-if we set some reasonably sized order to the __filemap_get_folio()
-call (order 2?), but that can be optimized in the future in another
-patchset.
-
-[1] https://lore.kernel.org/linux-fsdevel/CAJnrk1aPVwNmv2uxYLwtdwGqe=3DQURO=
-UXmZc8BiLAV=3DuqrnCrrw@mail.gmail.com/
-
+> > IOW, if CONFIG_SECURITY is enabled, we will use existing logic.
+> > If CONFIG_SECURITY is not enabled, we will use i_bpf_storage.
+> > Given majority of default configs have CONFIG_SECURITY=3Dy, this
+> > will not grow inode for most users. OTOH, users with
+> > CONFIG_SECURITY=3Dn && CONFIG_BPF_SYSCALL=3Dy combination can still
+> > use inode local storage in the tracing BPF programs.
 > >
-> > [1] https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joan=
-nelkoong@gmail.com/
-> >
-> > Joanne Koong (12):
-> >   fuse: support copying large folios
-> >   fuse: support large folios for retrieves
-> >   fuse: refactor fuse_fill_write_pages()
-> >   fuse: support large folios for non-writeback writes
-> >   fuse: support large folios for folio reads
-> >   fuse: support large folios for symlinks
-> >   fuse: support large folios for stores
-> >   fuse: support large folios for queued writes
-> >   fuse: support large folios for readahead
-> >   fuse: support large folios for direct io
-> >   fuse: support large folios for writeback
-> >   fuse: enable large folios
-> >
-> >  fs/fuse/dev.c  | 131 +++++++++++++++++++++++-----------------------
-> >  fs/fuse/dir.c  |   8 +--
-> >  fs/fuse/file.c | 138 +++++++++++++++++++++++++++++++------------------
-> >  3 files changed, 159 insertions(+), 118 deletions(-)
-> >
-> > --
-> > 2.43.5
-> >
+> > Does this make sense?
+>
+> All it would take is one BPF programmer assuming that CONFIG_SECURITY=3Dn
+> is the norm for this to blow up spectacularly.
+
+I seriously don't understand what would blow up and how. Can you be
+more specific?
+
+Thanks,
+Song
 
