@@ -1,199 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-34679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEB49C79A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 18:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FD99C7A62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 18:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819D91F246FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 17:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EFBB1F27330
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 17:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EFE200BBE;
-	Wed, 13 Nov 2024 17:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B99203715;
+	Wed, 13 Nov 2024 17:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2wSOY+c"
+	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="iLeSKBRZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OJs47M14"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033F741746;
-	Wed, 13 Nov 2024 17:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824AA202631;
+	Wed, 13 Nov 2024 17:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731517945; cv=none; b=O8v7B+Qg8IcFEv/oJXPelAz79+mur2rqiVOlKzs3NAKvwi5I85lpBMebmNk28q3LC3RnYHjOjQPPnwruzC0hKBwtJ1EblbvBg6ZRQInGrPeKNiy1rR6CjbNGie6i/M261NOcV3YHQ5e9pI7wS59ByHvkg737Dekr5AemPqcwlgM=
+	t=1731520530; cv=none; b=HlgnuVeoDaxKgMrb0hbxuIYpPAGIVnsWc8sowzJ64PELDM5Xpzv9YyuFs7jP9RkV8KOmNO22sEYDjppc3bV1sgm1f4SsAz6rzlRew+adlQKpEWThzwcvzX7PXNe0elOzsbGN5OWd4VoRYGFiA0h9kI4IXE/3RWn2D6zFBsXTf0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731517945; c=relaxed/simple;
-	bh=VwE+MeY7JRMUKdk4HBDD5tkWp2hVRpmLUYMk3o90x0Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uY9PWMvYrmBBmEKBlNVsHw3scVSIy+AlC9o3E2CZ0DkpMYX2CebIl6HV3CsKmhl98nBAHeb8KIflFZHLXxcwMPI/lfB5uduIV9UG28UpGRYTmrgWaonMz7mT08ClisTNUmo1sO7f08/X0s8u2s8g6dB/9VD4a5DF4Oxqz1QOPpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2wSOY+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A0DC4CEC3;
-	Wed, 13 Nov 2024 17:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731517944;
-	bh=VwE+MeY7JRMUKdk4HBDD5tkWp2hVRpmLUYMk3o90x0Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=V2wSOY+c4z6+7VIYVuxaCsmrGxDMvSVW7wpupv8pyFiRoCMmHTDKbQbxs376AvEjx
-	 hoJU2TXO8vvXuFbGUHLdtg1eaXJBBfDjNAsazxk0a7fI2uqm8tO5oa8NTPieUU2qU+
-	 PEoOe8+C+uYz0/zGOFfHzQVsEYwaw09lbuFtAiHhpHxMgdNba/GiDvoSMuMZD/XBow
-	 dByzSJK2Jy6PKn1E2PM2Q7O0SsUyqYLJhFVvXMEK73HUTWaMklUv1boTzYpbS2mHnZ
-	 GS/9nLIIR2I9pkKhzzjsuPU1ClCM/fFLuskQWNBB3SDSR8sZKfb+ZABkI/ipMq3I0y
-	 15/Ef4MrVpj3g==
-Message-ID: <74e518a304101cc5ee076b183b651b9cf100d3f9.camel@kernel.org>
-Subject: Re: [PATCH manpages] listmount.2: fix verbiage about continuing the
- iteration
-From: Jeff Layton <jlayton@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date: Wed, 13 Nov 2024 12:12:22 -0500
-In-Reply-To: <ofoedlcmowbhd6asd6yhp6jhetv2n5s6xsmzmu2qf2nnh2o22b@5nozhjvjbpvm>
-References: <20241113-main-v1-1-a6b738d56e55@kernel.org>
-	 <ofoedlcmowbhd6asd6yhp6jhetv2n5s6xsmzmu2qf2nnh2o22b@5nozhjvjbpvm>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1731520530; c=relaxed/simple;
+	bh=XLCgkugxoZSSyiBJBlWzTJCyuPH0w0UrxYD4l3kLGZo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 In-Reply-To:References:To:Cc; b=tYfiFdvdQ2hXbhePi1Y4tSw6H3dBC9O+7ZEa7pYPZ4H6UpGFFPScXaJNUiQDjZ8HtGhybuh2fWJl+6UUJCrs6GfPUMfyV3jgefBs+4g75qTKbneALF0e0T+DtGdhhCQdsWSwq9mmAH/hJTBnL9qFmCC3+bF2pYy/Zj/UDGzKt7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=iLeSKBRZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OJs47M14; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 3A7F725401E8;
+	Wed, 13 Nov 2024 12:55:27 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Wed, 13 Nov 2024 12:55:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1731520527;
+	 x=1731606927; bh=5+pcf0JiyUAkdw2ovA0fIXiVm1vdTpSQXam3QUG2Avo=; b=
+	iLeSKBRZqddEUqE8+XbqrcoGRX0RwiVEunts4skahKl3xPJXBKWv9bpwmWgMNdNI
+	HV+oPgOMcN2xfhxH4rXD/8bElhLhsHSV2zca+Sgu/9HH/Q4Qbk45tpveEng+wv8f
+	1UnKBauBbTZWFqIsYHrYSxWGA2f+f9dWwQl6g25KnQ0SoQbkNqTnXFZGTZxERkHR
+	P6eweX8TYTKbM7KSZtplIn6GuSAO+dUkhfPg9r3chQti72Wq4ggvt3407dV00fDy
+	FP/HO94hIFvv/ZEZnDLHf9ruh8T3ajf1BxYTFNOlnkuFKIciYrRw5GE7KTQLpLbq
+	827snyEJJsnzs+6QyBOOiA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731520527; x=
+	1731606927; bh=5+pcf0JiyUAkdw2ovA0fIXiVm1vdTpSQXam3QUG2Avo=; b=O
+	Js47M14hd7wjKTWfLlwQqhPuFONqYAu7EVMm57OMdArmQCLwTRlt2e29nzrV/xfV
+	5aiuJjiRuekUoPw2AqXyn0oEjLyxTYm4gEFANQOOLbtk15gIk84i7TPgkvL9VHFh
+	sWNQTUcJABMmm9C13XXC2gloKekHFqHJjgUYdX+BMvuNQ6ubNJjgIZPa/rRDGRWx
+	nkQrO8Z/DJpqUKA5LqIKnsivaXzy6ZpKalsFSpeOSdIfDSH5AzX1JGxhPPhDGLaG
+	HYH7RRbp5phc0Ut9gfnFze7PItrRlNRc1PnbAe/EeCu1zpm7/glUNm6bfLGVggmx
+	yA/edcLZyqzzkpThU+C3Q==
+X-ME-Sender: <xms:Dug0Z60LAV3Ejgf-ubArjJLRwnlb4B9SC97JB6VbpMdOTwVBWCYVig>
+    <xme:Dug0Z9GCYZsTtxrqrzGQP_E9s_dokjVAF0ydQobhuEVsDhgGdPihueizZPC_J4qDE
+    XTpIac0_eqqdNRYMgY>
+X-ME-Received: <xmr:Dug0Zy7RGJJGz_rGBA0CZD2e1J9ycmJkDcx0Nq_83cHqmfyirLLsA1xX7K5FbXuwKeXZGb942Qft6vh9mzDAnA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgddutdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffufffkgggtgfgjfhfvvefosehtjeertdertdej
+    necuhfhrohhmpefgrhhinhcuufhhvghphhgvrhguuceovghrihhnrdhshhgvphhhvghrug
+    esvgegfedrvghuqeenucggtffrrghtthgvrhhnpeekvdeigeehfefhgedthfelteelleeh
+    vdetgefgteekfedtfffgfeelueeffeeigeenucffohhmrghinhepkhgvrhhnvghlrdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepvghr
+    ihhnrdhshhgvphhhvghrugesvgegfedrvghupdhnsggprhgtphhtthhopedutddpmhhoug
+    gvpehsmhhtphhouhhtpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    tghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhr
+    ohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepvghrihhnrdhshh
+    gvphhhvghrugesvgegfedrvghupdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgvrdgtii
+X-ME-Proxy: <xmx:Dug0Z73Qy39-k1r4QLL6OcFvl783H2RGjOmiyxURfVYN13P7JttflQ>
+    <xmx:Dug0Z9Fy0RdzQf9oCwGNs-D40QWcZf-2S3V1eKpquZdjk9D5yJp8hw>
+    <xmx:Dug0Z09F6OipMPPFBw29Hajwsh5KIE-DtcLzTv5lcjctbqLVtcf-YA>
+    <xmx:Dug0ZykOnLIIIUVH5tb0pzVzfMg5bTpkt7B-68inj66nKjF7xxfiRw>
+    <xmx:D-g0Z19bLqbUCXpmqauBCacoSWnz2cI7EOeMw6bk2uWcYTJKpNZDh5ac>
+Feedback-ID: i313944f9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Nov 2024 12:55:26 -0500 (EST)
+From: Erin Shepherd <erin.shepherd@e43.eu>
+Subject: [PATCH v2 0/3] pidfs: implement file handle support
+Date: Wed, 13 Nov 2024 17:55:22 +0000
+Message-Id: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAroNGcC/x3Myw6CQAyF4VchXTtmWipeVr6HIaYDHekGyYwSD
+ eHdHVl+Jyf/AlmTaYZLtUDS2bI9xwLaVdANMj7UWV8M5IkRkdxkfcz3OLgYgueA/iQUoNynpNE
+ +W+rWFg+WX8/03coz/lcgkTMfsXYdkjiumZ3woXPiMVKj2Ijvr8r1Xt/Qruv6A7yLI+eeAAAA
+X-Change-ID: 20241112-pidfs_fh-fbb04b108a2b
+In-Reply-To: <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu>
+References: <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu>
+To: Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+ linux-nfs@vger.kernel.org, Erin Shepherd <erin.shepherd@e43.eu>
+X-Mailer: b4 0.14.2
 
-On Wed, 2024-11-13 at 16:59 +0100, Alejandro Colomar wrote:
-> Hi Jeff,
->=20
-> On Wed, Nov 13, 2024 at 09:49:02AM GMT, Jeff Layton wrote:
-> > The "+1" is wrong, since the kernel already increments the last_id. Fix
-> > the manpage verbiage.
->=20
-> If it's not too difficult, could you show a small example program that
-> shows this?  Thanks!
->=20
-> Have a lovely day!
-> Alex
->=20
+Since the introduction of pidfs, we have had 64-bit process identifiers
+that will not be reused for the entire uptime of the system. This greatly
+facilitates process tracking in userspace.
 
-It's not too small, but I proposed this program as a sample for the
-kernel:
+There are two limitations at present:
 
-    https://lore.kernel.org/linux-fsdevel/20241112-statmount-v1-1-d98090c4c=
-8be@kernel.org/
+ * These identifiers are currently only exposed to processes on 64-bit
+   systems. On 32-bit systems, inode space is also limited to 32 bits and
+   therefore is subject to the same reuse issues.
+ * There is no way to go from one of these unique identifiers to a pid or
+   pidfd.
 
-It has a bug though that Miklos pointed out, since I followed the
-manpage. I'll be fixing that soon.
+This patch implements fh_export and fh_to_dentry which enables userspace to
+convert PIDs to and from PID file handles. A process can convert a pidfd into
+a file handle using name_to_handle_at, store it (in memory, on disk, or 
+elsewhere) and then convert it back into a pidfd suing open_by_handle_at.
 
-> >=20
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  man/man2/listmount.2 | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/man/man2/listmount.2 b/man/man2/listmount.2
-> > index 717581b85e12dc172b7c478b4608665e9da74933..00ac6a60c0cfead5c462fca=
-c44e61647d841ffe5 100644
-> > --- a/man/man2/listmount.2
-> > +++ b/man/man2/listmount.2
-> > @@ -67,7 +67,7 @@ is used to tell the kernel what mount ID to start the=
- list from.
-> >  This is useful if multiple calls to
-> >  .BR listmount (2)
-> >  are required.
-> > -This can be set to the last mount ID returned + 1 in order to
-> > +This can be set to the last mount ID returned in order to
-> >  resume from a previous spot in the list.
-> >  .SH RETURN VALUE
-> >  On success, the number of entries filled into
-> >=20
-> > ---
-> > base-commit: df69651a5c1abb61bd0d7ba0791f65f427923f75
-> > change-id: 20241113-main-192abec3348e
-> >=20
-> > Best regards,
-> > --=20
-> > Jeff Layton <jlayton@kernel.org>
-> >=20
-> >=20
->=20
+To support us going from a file handle to a pidfd, we have to store a pid
+inside the file handle. To ensure file handles are invariant and can move
+between pid namespaces, we stash a pid from the initial namespace inside
+the file handle.
+	
+  (There has been some discussion as to whether or not it is OK to include
+  the PID in the initial pid namespace, but so far there hasn't been any
+  conclusive reason given as to why this would be a bad idea)	
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+---
+Changes in v2:
+- Permit filesystems to opt out of CAP_DAC_READ_SEARCH
+- Inline find_pid_ns/get_pid logic; remove unnecessary put_pid
+- Squash fh_export & fh_to_dentry into one commit
+- Link to v1: https://lore.kernel.org/r/2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu
+
+Remaining: To address the PIDFD_THREAD question
+ - Do we want to stash it in file handles (IMO no but there may be merits to
+   doing so)
+ - If not do we want PIDFD_THREAD/O_EXCL to open_by_handle_at to work or do we
+   do something else?
+
+   (Perhaps we could just add an ioctl which lets an app change the PIDFD_THREAD flag?)
+
+If PIDFD_SELF lands <https://lore.kernel.org/r/cover.1727644404.git.lorenzo.stoakes@oracle.com>:
+ - Support for PIDFD_SELF(_THREAD) as reference fd in open_by_handle_at?
+   (We can even detect that special case early there and bypass most of the file handle logic)
+
+---
+Erin Shepherd (3):
+      pseudofs: add support for export_ops
+      exportfs: allow fs to disable CAP_DAC_READ_SEARCH check
+      pidfs: implement file handle support
+
+ fs/fhandle.c              | 36 +++++++++++++++------------
+ fs/libfs.c                |  1 +
+ fs/pidfs.c                | 62 ++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/exportfs.h  |  3 +++
+ include/linux/pseudo_fs.h |  1 +
+ 5 files changed, 87 insertions(+), 16 deletions(-)
+---
+base-commit: 14b6320953a3f856a3f93bf9a0e423395baa593d
+change-id: 20241112-pidfs_fh-fbb04b108a2b
+
+Best regards,
+-- 
+Erin Shepherd <erin.shepherd@e43.eu>
+
 
