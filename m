@@ -1,138 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-34601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429C89C6B36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:08:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CE89C6BDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE8E1F25213
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 09:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2301F2345C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 09:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1F61BDAA1;
-	Wed, 13 Nov 2024 09:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAED21F9414;
+	Wed, 13 Nov 2024 09:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naUquatE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="snFQ0Z5P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582A81BD519;
-	Wed, 13 Nov 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467118A951;
+	Wed, 13 Nov 2024 09:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731488929; cv=none; b=DwYmmKUA3xh/X2Zs1pzbEQUh+Y9lrfhUW3blCCrDTiJyiHp2iVD/SmAvrQJBHRTzv8hFes5WREQYGAPwmF2SXGv+6IX3QlG48LhvK2+u/uUYybGw5hjdFoHvORDh4E9qit8bjybCgNAmROHeKCDilxgWZiB3EfDpKHwgkhG99mc=
+	t=1731491256; cv=none; b=L7w8tPRe81sJ1knP2PHMvGvKd8W7Obw5Qk60TumPMb92wMvzWTmqP08I57rrRhWDfgVVAVWUvcUQIzjkJZsMEV6ObA+223kNvZxZ13ybhRFpIFSMCYVjysXfpR15lAoGeCrGT3Rn+EfRDczhsXNS/H9OUH2QWVGXwsVMf+mPLg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731488929; c=relaxed/simple;
-	bh=hAlOVw3Y2srLBF3nP8gky9MN8oK474twFFhXp8hKWA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktwhRpLl8zoqr3SeJcqc1sKAc4GVEHx90b34RoaYh/PqvnSYHlVDqzDpg3VLaaUtv3sCF3Vw/69dp55PDpIkSiFl1MPnW6WCh9f4OCNtVkegMuG90IJMsxi7fwV8o7L5EjZGyQOxamy6Urww9gYSV8Mwajivjbu7e9KgDyXN68E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naUquatE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D26C4CECD;
-	Wed, 13 Nov 2024 09:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731488928;
-	bh=hAlOVw3Y2srLBF3nP8gky9MN8oK474twFFhXp8hKWA8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=naUquatEiLc7gqhY9P/5jypq4jPHX2oKtX/SFk8+QwDnW5A0aqOMw+GIw+Nk8MbYH
-	 GKko+rPhfmRyz/eKrg6TAS1JJU9FYH8GgRk7oHhtou+4lMFsgVQdTnOP8ZjoJ8kxkx
-	 TFkne9dvsBQyBaXx8X+GHInupOVZSt2UYQ6CO/KNdEOMCAdiKqDIex1lxksryPaX1v
-	 +Ty4To6WMzjT2QkzboDoWAxL/1MEfEs7W2cwBBEXbv8l3wwtu8610baP+wHn+lrRhn
-	 2SMhML2uQRfNSaqE5VCr8IET2pIjGLPtu76Reocw/M+ngAZcIomlXVgs8f1cuuYn5z
-	 GwbNBG0mVe64w==
-Message-ID: <9bb4de26-9053-4abd-a319-3e4361784ecb@kernel.org>
-Date: Wed, 13 Nov 2024 10:08:43 +0100
+	s=arc-20240116; t=1731491256; c=relaxed/simple;
+	bh=UzCj71djHnVlmhrgagbZpakgyKKeaOyqPK2azzUEczc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pp4NvZVyM+Ji/6dInbV3V4nRef2teni6oA1uw5RMOll8Uc2oig8N98Oe3LY1j4AJHyTOXNi/8ghuGJGd8dNxHi6bj2+W6nyieltpAvQnwovZLoLTK3xkcnRsq2C2PRXPjjBs5Oi7c/yKlGSV7YWlCG6ukH+LMf6z3Vh3/De68GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=snFQ0Z5P; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=NogMAPzoSN85DvPt0N/0Cgk6QQiG18HIcIcgH/liG3k=; b=snFQ0Z5PJlY9VkqMDtEFeSYgtD
+	yMAPbpE4RgPcakyuL+8kKQyVKgjQ4rrp1V3uqsOWk6Nl53SQ3BZMdGLPQwiYA3iPjoR6fCmd7DaMb
+	vamzErL4wJKX3d3LT5lvxfltNLq1g3j8gqFKiMbGhqsZV1s/RpohfYHIxH+luNGY7yMz0c1bs6kRe
+	cpNKeilWuyF4a2Q8OQEy+FsWwCnS6M4Ld4IzUL7OEpDir3YxTWYoqW4nXJYfFTC/kwanqtuOiPgNJ
+	zXhY/HPqdplSCnzxWhplwraESdUvvGzBj62+DaxWaV60NodWOsXDi7/YCaZ0XAkj1UoAlh/v+xh5N
+	KLakTrOw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tB9yC-00000006Hcw-32MC;
+	Wed, 13 Nov 2024 09:47:28 +0000
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: willy@infradead.org,
+	hch@lst.de,
+	hare@suse.de,
+	david@fromorbit.com,
+	djwong@kernel.org
+Cc: john.g.garry@oracle.com,
+	ritesh.list@gmail.com,
+	kbusch@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-block@vger.kernel.org,
+	gost.dev@samsung.com,
+	p.raghav@samsung.com,
+	da.gomez@samsung.com,
+	kernel@pankajraghav.com,
+	mcgrof@kernel.org
+Subject: [RFC 0/8] enable bs > ps for block devices
+Date: Wed, 13 Nov 2024 01:47:19 -0800
+Message-ID: <20241113094727.1497722-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tty: ldsic: fix tty_ldisc_autoload sysctl's
- proc_handler
-To: nicolas.bouchinet@clip-os.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
- Joel Granados <j.granados@samsung.com>, Neil Horman <nhorman@tuxdriver.com>,
- Andrew Morton <akpm@linux-foundation.org>, Lin Feng <linf@wangsu.com>,
- Theodore Ts'o <tytso@mit.edu>
-References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
- <20241112131357.49582-4-nicolas.bouchinet@clip-os.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20241112131357.49582-4-nicolas.bouchinet@clip-os.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On 12. 11. 24, 14:13, nicolas.bouchinet@clip-os.org wrote:
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> 
-> Commit 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of
-> ldiscs") introduces the tty_ldisc_autoload sysctl with the wrong
-> proc_handler. .extra1 and .extra2 parameters are set to avoid other values
-> thant SYSCTL_ZERO or SYSCTL_ONE to be set but proc_dointvec do not uses
-> them.
-> 
-> This commit fixes this by using proc_dointvec_minmax instead of
-> proc_dointvec.
-> 
-> Fixes: 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of ldiscs")
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+The last time this was addressed was at LFSMM this year in May [0] and
+before LBS was on its way upstream. LBS is now on v6.12 and so the delta
+required is much smaller now.
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+Before the turkey massacre slows part of the world down, here's a refresh.
 
-I hope noone managed to store 2+ to that sysctl yet...
+Although Hannes' patches were in PATCH form, testing showed quickly that
+it wasn't quite ready yet. I've only done cursory testing so far but have
+also incorporated all of the fixes and feedback we could accumulate over
+time. And so I'm sticking to RFC to reflect that this still needs thorough
+testing. It at least does not crash for me yet and its a major rebase
+onto v6.12-rc7.
 
-thanks,
+The biggest changes now are these last patches:
+
+  - block/bdev: lift block size restrictions and use common definition
+  - nvme: remove superfluous block size check
+  - bdev: use bdev_io_min() for statx block size
+
+The buffer-head pathces I think should be ready.
+
+If the consolidation of the max block size is good, perhaps we just also use it
+for the iomap max zero page too. Note that in theory we should be able to get
+up to a block size of 1 << (PAGE_SHIFT + MAX_PAGECACHE_ORDER), in practice
+testing that shows we need much more love [1] although prospects indeed show
+we should be able to get up to 2 MiB on x86_64. And so I think we should first
+reduce scope up to 64k for now, test all this, and then embark on the next
+64k --> 2 MiB journey next.
+
+Thoughts?
+
+If you want this in a tree you can get this from the kdevops branch
+large-block-buffer-heads-for-next [2]
+
+[0] https://lore.kernel.org/all/20240514173900.62207-1-hare@kernel.org/
+[1] https://github.com/linux-kdevops/linux/commit/266f2c700be55bdb5626d521230597673c83c91d#diff-79b436371fdb3ddf0e7ad9bd4c9afe05160f7953438e650a77519b882904c56bL272
+[2] https://github.com/linux-kdevops/linux/tree/large-block-buffer-heads-for-next
+
+Hannes Reinecke (4):
+  fs/mpage: use blocks_per_folio instead of blocks_per_page
+  fs/mpage: avoid negative shift for large blocksize
+  fs/buffer: restart block_read_full_folio() to avoid array overflow
+  block/bdev: enable large folio support for large logical block sizes
+
+Luis Chamberlain (4):
+  fs/buffer fs/mpage: remove large folio restriction
+  block/bdev: lift block size restrictions and use common definition
+  nvme: remove superfluous block size check
+  bdev: use bdev_io_min() for statx block size
+
+ block/bdev.c             |  9 +++++---
+ drivers/nvme/host/core.c | 10 ---------
+ fs/buffer.c              | 21 ++++++++++++++----
+ fs/mpage.c               | 47 +++++++++++++++++++---------------------
+ fs/stat.c                |  2 +-
+ include/linux/blkdev.h   |  6 ++++-
+ 6 files changed, 51 insertions(+), 44 deletions(-)
+
 -- 
-js
-suse labs
+2.43.0
+
 
