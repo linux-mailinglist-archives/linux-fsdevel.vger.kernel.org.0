@@ -1,98 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-34650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAC29C72E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:10:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A481D9C74F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EAC286121
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62D0B2717E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1142B20127F;
-	Wed, 13 Nov 2024 14:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09747200B84;
+	Wed, 13 Nov 2024 14:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="v7h69eml"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DZCbfABc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653C38DE9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 14:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169AB7081F;
+	Wed, 13 Nov 2024 14:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506871; cv=none; b=XOJBeXDwYzURMe+oqD1ClAENGijoc9wrZdJZuqFKijCJS5BcXEnGKfKSokgWZjL4p8foQiMR8OpU0l9G6ib/xMxhyAsybHYs9LZSl8yBp/WR+2Mk8al4A88nzCJjbhQjEuEwswEZAJUBgjnLccbl9OQ0RbzSVedDx+QQyJ2eNS4=
+	t=1731507272; cv=none; b=YGo70+SBy333r58McYGTGRAE0kiQZyypGmqtVFlyCOJN7JFHHG7+2b5Lw82Ik3fULaW/ahU0chbDDWnLst/s7cb2s+HsTpt71q2IBUF7kn08FB4E6GV1CRUPs1mkd8ITWLDKMExU5SvRCsHPeuzXO2gJyfZt8TGLfCCgz5rO48Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506871; c=relaxed/simple;
-	bh=LF/v2APQUH1XNOf6nW5RuGpUkrh2C2KCHmydIhInUF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7gnC/zeBSI1D70HHzeynkR+DAbT4C6a7+IuouuobkRCyog3XnGi0w2C5+iDCKXcQwGKJSEw4wF6i2/x1HoHGdvNc/q/MYfHTvmiqVTVbQ6L1BZrkLDIcelNiq1paklqSvVwBWAisf2iXVJ+IE1Uj/S61sSRvWG1PK/VLk5eVrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=v7h69eml; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-290d8d5332cso3293841fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 06:07:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731506869; x=1732111669; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kpdiAit/JMF1gHPpQc8Fla49evuVYP+pTUnVRIxMK3o=;
-        b=v7h69eml6Jnb5nQMa+KFHYO2D4/5k4rT6wxVuBH/81dcsAmBMWGjz0XJHKwNoB/8NA
-         s6S8RgqD5M2/uHouHrQvuRHSHGZzKifDfxSFr9poxw2tlWKwtVem7AMdxoZDrIwPFmQa
-         su4WSFx9Zh4CRpc4b/pAAq37noZKjFiNdeoSaMROHn9Y0ejNkRKw4lyhNLPLDTabU1x6
-         RPjnwORiVNDXIr98a1m7gVVfbxR+9f2yK9siE0q96QXWoj6J9JwI4hFqK7JUS2MXS+49
-         YL+yMQX8mvY8U0gF8tOV3HhlsBX3Tg52+RADreZ2gmSnO8M4cKadJWP5BhXEteeQFaKN
-         61bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731506869; x=1732111669;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kpdiAit/JMF1gHPpQc8Fla49evuVYP+pTUnVRIxMK3o=;
-        b=Pmct1q/AUSW9C3JP26JBaj8uUkkleIBlkG/yrnOkuP+jGaRkikYNwh4vKqiFMWELJI
-         746nlNQ6VlyEF05uYk17S/1yxQw1EtagOASqjUHSP4LG6LW4noRxFdGHyql15NhaVerC
-         DdV5wmBHO/3rNC1GNKNRDgRbx7H20gMHoJM7jP/D+tfle5Nv2y37/2Q8v2s/aBuXQb0w
-         FyNh6r5W9HA1297GoXi5ne88mDH4QR3Ms7dJanN8VNJfDaNuOSmFTKksfOaH/wqAl8kq
-         fHZx8G3/dMDTWhwtgvGWVqCeyiT1WswuP7X6Ro78oomv2PR4+G/MySLcYp2a+aNv0K9n
-         rJcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVE0lfBkIFzaQXnzdhYsUmWbxvFsxvmwSoMmuRWE3LfCE7IGqcwU1fYjPrIu+2raHdSYFwIEoPHL4BPZr0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH9/t8IxUVeNgkZyhvgq2rRTnIXIgFVLlTN33Zb6aXUnqEN+mO
-	U6yq39y7MARJ99JkSNYqJXOAgyJNMjLD7t9wV63hU2HzPJTqlffLoVj0ookSWxQISU24lUpsN8K
-	l20k=
-X-Google-Smtp-Source: AGHT+IGEfZjJzvmYB5T7HmihIrZcBbzdyhAHtDcVoiQlMJqhmTC27u0FrzbpiAWxDQgEe32pakZQbg==
-X-Received: by 2002:a05:6870:b254:b0:288:47f8:925c with SMTP id 586e51a60fabf-295600a29d9mr15655747fac.1.1731506868958;
-        Wed, 13 Nov 2024 06:07:48 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8fe5c61sm710128fac.23.2024.11.13.06.07.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 06:07:48 -0800 (PST)
-Message-ID: <3ee7c9d6-78ac-42fd-b121-7f6694723e4e@kernel.dk>
-Date: Wed, 13 Nov 2024 07:07:47 -0700
+	s=arc-20240116; t=1731507272; c=relaxed/simple;
+	bh=S5b4aciOWt/GJ0H+qOz8BrCo6s/jXpzkZyTjxzDG6JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afZAdedexURtPCSWC90eW9RhpU928dhMJa5MkIc3j9Hdk4Wu2kilvehJgbUnOM7YvAx02R+KTYWN0V3kvf5Tq2aASN6yoPkdG+vtR2TkzX3Wx6YAa8zDPHw/Ka+1ZfBNsYooInj1MQ5qhVXIdFh23LVcYGX0O+F5jiEdp4JKkZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DZCbfABc; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dR/eQNA/p7Fur9CKjeVK9QBEm5x5S0TSUaRl4x8UFpc=; b=DZCbfABcQtHDJbiDvoeMwVGczs
+	Sdfgmp+E7gvWbM+wVFIDlB4ap2qzpv8TrlEq9TGYSxAVXstVh5WU7Qr3MDJjy1M37P62CA/38in+S
+	x+E5Lc9gUgtYs3Ts/2+pANp8+AS0lOaJNMkjVJLMVqPiCZ6uuCESSYIwynahmIthmbcJq/+LzuQFX
+	o7NkPICis8K0MtPcNpn5AGHAbOCpCkcVUQS2XnjgLbCanY30AXavYObzS+xlhdvWKntqnRntVb9Vd
+	+zIMwQX3sktOgnJW4QtDcoUjqAL+vLExX3P18AQrNFRSvljijDGgPre6CHoZFYE0BN/PTRDGv0JMw
+	lgkZAIcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBE8Y-0000000GRdw-2jHd;
+	Wed, 13 Nov 2024 14:14:26 +0000
+Date: Wed, 13 Nov 2024 14:14:26 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: hch@lst.de, hare@suse.de, david@fromorbit.com, djwong@kernel.org,
+	john.g.garry@oracle.com, ritesh.list@gmail.com, kbusch@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
+	kernel@pankajraghav.com
+Subject: Re: [RFC 6/8] block/bdev: lift block size restrictions and use
+ common definition
+Message-ID: <ZzS0QjUpTND9mgF-@casper.infradead.org>
+References: <20241113094727.1497722-1-mcgrof@kernel.org>
+ <20241113094727.1497722-7-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] io_statx_prep(): use getname_uflags()
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20241112202118.GA3387508@ZenIV>
- <20241112202552.3393751-1-viro@zeniv.linux.org.uk>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241112202552.3393751-1-viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113094727.1497722-7-mcgrof@kernel.org>
 
-Looks fine to me:
+On Wed, Nov 13, 2024 at 01:47:25AM -0800, Luis Chamberlain wrote:
+> @@ -185,7 +184,7 @@ int sb_set_blocksize(struct super_block *sb, int size)
+>  	if (set_blocksize(sb->s_bdev_file, size))
+>  		return 0;
+>  	/* If we get here, we know size is power of two
+> -	 * and it's value is between 512 and PAGE_SIZE */
+> +	 * and it's value is larger than 512 */
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+If you're changing this line, please delete the incorrect apostrophe.
 
--- 
-Jens Axboe
+>  	sb->s_blocksize = size;
+>  	sb->s_blocksize_bits = blksize_bits(size);
+>  	return sb->s_blocksize;
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 50c3b959da28..cc9fca1fceaa 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -25,6 +25,7 @@
+>  #include <linux/uuid.h>
+>  #include <linux/xarray.h>
+>  #include <linux/file.h>
+> +#include <linux/pagemap.h>
+
+Why do we need to add this include?
+
+> @@ -268,10 +269,13 @@ static inline dev_t disk_devt(struct gendisk *disk)
+>  	return MKDEV(disk->major, disk->first_minor);
+>  }
+>  
+> +/* We should strive for 1 << (PAGE_SHIFT + MAX_PAGECACHE_ORDER) */
+> +#define BLK_MAX_BLOCK_SIZE      (SZ_64K)
+
+I think we need CONFIG_TRANSPARENT_HUGEPAGE to go over PAGE_SIZE.
 
 
