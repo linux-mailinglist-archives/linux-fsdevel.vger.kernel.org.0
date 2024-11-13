@@ -1,212 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-34668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1BD9C7775
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:41:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B809C77DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:54:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44FE1F22498
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5B001F224A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE77C15AAC1;
-	Wed, 13 Nov 2024 15:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F71E1037;
+	Wed, 13 Nov 2024 15:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILA8DqJd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kX+d7cie"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8874370833
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 15:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518A7080E;
+	Wed, 13 Nov 2024 15:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731512323; cv=none; b=FCJhxOeGUm0dT1tDnsNTHYkZR+hllpGZ/AJh4b5Z94dfnSNU8nNbFONuXpSdEk//0Ne/GeSUcEPDSS+RG8j4Oaq5lvTelDdu9IepPklrvfeZy4qMkYdMG+B5BWCe2uman+kCU4RrZ+sRB34u2zL9mPHCHDOUF85JNtJnX+Oe+h4=
+	t=1731513073; cv=none; b=E9GCofebkHYEQcnVRu8znt/N+uH4gsxWWlB4BE4WnHN8Ia2nW9UnZy10a6vfFqdE8RV7mcZBmt30cvO4WJIOBt67CLIscM3DoWxkCgGJ3AQ6o3a+B5HsCQQUzYZKlD7IZezTZ32x8WZGaNET3zOaUW3FUcOBiIW8xL5RJ8IjGmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731512323; c=relaxed/simple;
-	bh=XOzTSlvM4wXHZ/UK/y4h8NEpKM6weYAyxOmJOvgpRL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FROjicgYay34wnA7ngPMLpzNQ7KGsfZan9HzA/hEiLjUd+jgW3vZX3SJMMCzVphlW7C6BId8P+CqAHHbWXdvDFfMpEkP+xItiLOhEnp6cMMDJEcsXqaQU6fS79EJ3QMcAR2rmTRgcAXuk9x9u0kSIM/USPdxWydQTQGxvGd7E80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILA8DqJd; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1731513073; c=relaxed/simple;
+	bh=8MGRA9hYboxLOztL3f5vUvdAhpsnT/UqBLVIl7abfp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBo7+He2rOEmm4zaaAI9JOioHR/Frf6Ahnl1lBrU7jRnLuhG17dVRRn7lyiwX9eI77wVj4jI17VXqc2N5kTRYFY40E1epgdoRH14BtjeUyASJq9vDNEksPuAVIKtoyUonnOY0GuZFywOD+kNcabIXiA+t80WqQTt//R/4DmCiJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kX+d7cie; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460c2418e37so52393821cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 07:38:40 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so1573852a12.1;
+        Wed, 13 Nov 2024 07:51:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731512319; x=1732117119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O4L5+ZzcMx3DEJUn7tEnafWLWnYgIeesNAYVFfjjHC0=;
-        b=ILA8DqJdRTOa8O+Kq3pMgmXOWXZQwbiKKvbRN7INlP03l5+vbU9d9z12a86C8dpADI
-         EidvmAMtC25oK7ppHZNReEBLJZNEi+q48LZQQGtJDLjAV/CI3AUS5m7Wg7iVwSKHglP1
-         73E+F59aIJaUyF1+U7fX45PTMRDkRqLdBGOsiddq8oX9eAh3MIesoowqxhABpzfv3mB3
-         i1GJNAFZp95IH25xYwbPq8K+mPfhnUZRCHT5owyEImNMQql5QIsARQogOdxxwyCeEXNy
-         m/cAFy3yDioO2L8vlfzXoX/1ODuXg55rQC9eFH9VyN3L9UL54mXFByOVWX6sdAWuTBs3
-         kSBA==
+        d=gmail.com; s=20230601; t=1731513070; x=1732117870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fte30riwc6FZQaQYC+IHZsQJ9uRg1npBzhDUb8Cdi9Q=;
+        b=kX+d7cieJIdHwXcbZlby6QRLhojQzQKYdqobxmKbB0APFq7tjkOPnQGT1zcPHobXv4
+         WcY5IwEcZSWA527J1u4XEVgZ4j7baUS4pB69uyiKIBpg9ITjFY/BI/ckh6pLYN0SsHbz
+         2b6OOVjePOach0Fp0uaFXoQaFJE54CoyhSTxjCDF0YawHZQKKgv228KPPMLLakTaVSgb
+         2jYy8/ZB4X8Vc6DaxzqCqiKinZEOAe/4PIpjLWl01AVFSH5jYc1gXIVPIgUiO1RYCe8p
+         P55Mj+Yxa9tsCEhHwwkLvEh+/3TjVlH+Cg5g2ttt2FrowGt726W7jEAW9xRfusd8vyLr
+         t/0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731512319; x=1732117119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O4L5+ZzcMx3DEJUn7tEnafWLWnYgIeesNAYVFfjjHC0=;
-        b=PEZjWjQ5T99byxL3rNHnTiwKAfQ2u/sMhEFJgTmOIiEH2MqP+b82bGJlIEVJP3QEu1
-         soSuTpwpxUlM9A1Be+avwBtqlT/OrTJI0Th3X7AmEclyT2eUqg9KDXy+V4g9JyzMZRGn
-         yj336LGJDMaO9GvHwDOVNkZsKTP7TJNuGjBM+7JzkDCr6lKdtjtD9X0KPrZ4f46BAmnn
-         K4Re9O1DsE2GnyKDwCBG4LRc9RFNEfMVt9mX08VSmEfNXR7mbUDPt8kJAEJWWlI7lvJX
-         Ia51eZeTRgsYw6gGDvzjKl/dbFs0SgonAtdZ5RUbJkDJSSFBhKg8Qrv8gXgbLjxjxfvF
-         nAYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfpwHFQA49pvDP1ghnjrkmH+Injr3YfU9bSqYtx7XLOqsQWKK+wwTPmYVD5va+sO5vT95JYS201/WfamXW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5iUu6ticL2DjO5cbGrAkzUm//t/mP3+n/JxFQfBdKVlTbphV5
-	SxcOnnqeWv7MBj2Yf/b9sHUn8l2dEaxJ9q3ONpDX0eqzPxnYz/GySDQFixjM5m+uIwBePUqdiJG
-	imFzlcA1MV0vl0ltsIS/uiTpB7lA3u7Ex
-X-Google-Smtp-Source: AGHT+IGXgzvJ9bxJmXY+Sai6GC7E4j1x/OOIZ5YUMwislu38XW0KrXfBfYVBa5KxZ/qRadh2Y6q45EjKClfDBEcqcgM=
-X-Received: by 2002:a05:622a:1b8f:b0:461:169e:d2de with SMTP id
- d75a77b69052e-4634b55c48bmr47567781cf.48.1731512319261; Wed, 13 Nov 2024
- 07:38:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731513070; x=1732117870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fte30riwc6FZQaQYC+IHZsQJ9uRg1npBzhDUb8Cdi9Q=;
+        b=WK1ks4Rq2zDFwBMF7yUWhdrxEDTgxMFMeHA8qDIs8sgUTS6I0mTJ95faSlOUOrw9Ju
+         SjCaVnNsX5tq+84Mt9MaU5isZaywsL/XUNUcRenLYsg53ZY+xUQCfMoWZXfOWzJN3uJF
+         4UyMCmnrf55cg3IbG6oodSiTxC/GW3NBg2BX0OantjecvEjNYTHKWXyYXnzMXs6x/86p
+         poCeYEwQF+GdAueEIVw7n2GmOHszEy9AhqN6du/t5C5diElZ0MWuyrNYBVDY7WEW1/np
+         pn/jIhOVFmWFmbTtOOrBxBrMXU8rl/s2t9Hwpmn2hW+M9BvKUKuhdNGe6DvutBuLVeLt
+         ZTRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWj4cFKXY0LhZSFEQQWcMoYp1aDgCWtOglqlLrk/1LP4iNfj85xr7wGjiNcjnap2IAjijbMaQdYIWup0LJ2@vger.kernel.org, AJvYcCXM9u1mcsX+scTGx7s5btyV23iR00CWQ22Ggo0lDZBo9hDIhUG0HUpH4/+7zQLxSIa6szucnRlZDP8CnglF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgpieUYZpJlc0f2NKhMACYXT+qoB61fUQKa60fr0zu3t5i4cJL
+	6kqknB9cxE9MkJmbMYFlX+l/6Px1NvvRg4kLNBtXtOvFTudjWLR5
+X-Google-Smtp-Source: AGHT+IGLUsmT8SMc3S6YYRSR3jyq+4a98D/t15JXLYsWaLn4hF2PrHMkm956BrvfHAnLOUQeTa3GhA==
+X-Received: by 2002:a17:907:3e88:b0:a9a:662f:ff4a with SMTP id a640c23a62f3a-a9eec5823a8mr2165476466b.0.1731513069797;
+        Wed, 13 Nov 2024 07:51:09 -0800 (PST)
+Received: from f.. (cst-prg-85-239.cust.vodafone.cz. [46.135.85.239])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2ec75sm886572866b.188.2024.11.13.07.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 07:51:09 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: make evict() use smp_mb__after_spinlock instead of smp_mb
+Date: Wed, 13 Nov 2024 16:51:03 +0100
+Message-ID: <20241113155103.4194099-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111201101.177412-1-amir73il@gmail.com> <20241113134258.524nduvn3piqqkco@quack3>
- <CAOQ4uxhswHmgJ0fxVp2PKvkYuVO0uX9rzoGs8HZt2mVBDcfQTA@mail.gmail.com> <20241113153605.bezoibnq236gliyo@quack3>
-In-Reply-To: <20241113153605.bezoibnq236gliyo@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Nov 2024 16:38:27 +0100
-Message-ID: <CAOQ4uxj_C1xnXFnmC=GqnyHmq_gmC1j_Ur6DurHZYPk-9TXwBw@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify: fix sending inotify event with unexpected filename
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 4:36=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 13-11-24 15:22:50, Amir Goldstein wrote:
-> > On Wed, Nov 13, 2024 at 2:43=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Mon 11-11-24 21:11:01, Amir Goldstein wrote:
-> > > > We got a report that adding a fanotify filsystem watch prevents tai=
-l -f
-> > > > from receiving events.
-> > > >
-> > > > Reproducer:
-> > > >
-> > > > 1. Create 3 windows / login sessions. Become root in each session.
-> > > > 2. Choose a mounted filesystem that is pretty quiet; I picked /boot=
-.
-> > > > 3. In the first window, run: fsnotifywait -S -m /boot
-> > > > 4. In the second window, run: echo data >> /boot/foo
-> > > > 5. In the third window, run: tail -f /boot/foo
-> > > > 6. Go back to the second window and run: echo more data >> /boot/fo=
-o
-> > > > 7. Observe that the tail command doesn't show the new data.
-> > > > 8. In the first window, hit control-C to interrupt fsnotifywait.
-> > > > 9. In the second window, run: echo still more data >> /boot/foo
-> > > > 10. Observe that the tail command in the third window has now print=
-ed
-> > > > the missing data.
-> > > >
-> > > > When stracing tail, we observed that when fanotify filesystem mark =
-is
-> > > > set, tail does get the inotify event, but the event is receieved wi=
-th
-> > > > the filename:
-> > > >
-> > > > read(4, "\1\0\0\0\2\0\0\0\0\0\0\0\20\0\0\0foo\0\0\0\0\0\0\0\0\0\0\0=
-\0\0",
-> > > > 50) =3D 32
-> > > >
-> > > > This is unexpected, because tail is watching the file itself and no=
-t its
-> > > > parent and is inconsistent with the inotify event received by tail =
-when
-> > > > fanotify filesystem mark is not set:
-> > > >
-> > > > read(4, "\1\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0", 50) =3D 16
-> > > >
-> > > > The inteference between different fsnotify groups was caused by the=
- fact
-> > > > that the mark on the sb requires the filename, so the filename is p=
-assed
-> > > > to fsnotify().  Later on, fsnotify_handle_event() tries to take car=
-e of
-> > > > not passing the filename to groups (such as inotify) that are inter=
-ested
-> > > > in the filename only when the parent is watching.
-> > > >
-> > > > But the logic was incorrect for the case that no group is watching =
-the
-> > > > parent, some groups are watching the sb and some watching the inode=
-.
-> > > >
-> > > > Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-> > > > Fixes: 7372e79c9eb9 ("fanotify: fix logic of reporting name info wi=
-th watched parent")
-> > > > Cc: stable@vger.kernel.org # 5.10+
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > Thanks for analysis, Amir!
-> > >
-> > > > @@ -333,12 +333,14 @@ static int fsnotify_handle_event(struct fsnot=
-ify_group *group, __u32 mask,
-> > > >       if (!inode_mark)
-> > > >               return 0;
-> > > >
-> > > > -     if (mask & FS_EVENT_ON_CHILD) {
-> > > > +     if (mask & FS_EVENTS_POSS_ON_CHILD) {
-> > >
-> > > So this is going to work but as far as I'm reading the code in
-> > > fsnotify_handle_event() I would be maybe calmer if we instead wrote t=
-he
-> > > condition as:
-> > >
-> > >         if (!(mask & ALL_FSNOTIFY_DIRENT_EVENTS))
-> >
-> > The problem is that the comment below
-> > "Some events can be sent on both parent dir and child marks..."
-> > is relevant in the context of FS_EVENTS_POSS_ON_CHILD
-> > and FS_EVENT_ON_CHILD, meaning those are exactly the set of
-> > events that could be sent to parent with FS_EVENT_ON_CHILD
-> > and to child without it.
-> >
-> > The comment makes no sense in the context of the
-> > ALL_FSNOTIFY_DIRENT_EVENTS check,
-> > Unless we add a comment saying the dirent events set has
-> > zero intersection with events possible on child.
->
-> Good point and what I *actually* wanted to do is:
->
->         /*
->          * Some events can be sent on both parent dir and child marks (e.=
-g.
->          * FS_ATTRIB).  If both parent dir and child are watching, report=
- the
->          * event once to parent dir with name (if interested) and once to=
- child
->          * without name (if interested).
->          *
->          * In any case regardless whether the parent is watching or not, =
-the
->          * child watcher is expecting an event without the FS_EVENT_ON_CH=
-ILD
->          * flag. The file name is expected if and only if this is a direc=
-tory
->          * event.
->          */
->         mask &=3D ~FS_EVENT_ON_CHILD;
->         if (!(mask & ALL_FSNOTIFY_DIRENT_EVENTS)) {
->                 dir =3D NULL;
->                 name =3D NULL;
->         }
->
-> Hmm?
+It literally directly follows a spin_lock() call.
 
-Ok, that works for me :)
+This whacks an explicit barrier on x86-64.
 
-Thanks,
-Amir.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+This plausibly can go away altogether, but I could not be arsed to
+convince myself that's correct. Individuals willing to put in time are
+welcome :)
+
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index e5a60084a7a9..b3db1234737f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -817,7 +817,7 @@ static void evict(struct inode *inode)
+ 	 * ___wait_var_event() either sees the bit cleared or
+ 	 * waitqueue_active() check in wake_up_var() sees the waiter.
+ 	 */
+-	smp_mb();
++	smp_mb__after_spinlock();
+ 	inode_wake_up_bit(inode, __I_NEW);
+ 	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+ 	spin_unlock(&inode->i_lock);
+-- 
+2.43.0
+
 
