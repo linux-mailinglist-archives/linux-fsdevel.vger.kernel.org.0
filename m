@@ -1,223 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-34696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A7F9C7C2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 20:31:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CDA9C7C25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 20:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7520FB2E802
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 19:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215491F22CBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 19:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D577B205ABD;
-	Wed, 13 Nov 2024 19:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B2A205AD0;
+	Wed, 13 Nov 2024 19:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2ADR705"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NNREe3i1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8673416DEB4;
-	Wed, 13 Nov 2024 19:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C71FF605;
+	Wed, 13 Nov 2024 19:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731525118; cv=none; b=Pmz/A7ZpNIUS6i/J+j9gMgLbNLRCEZ4CvBBfck8jedF2qyvp7uhoQwV2m1b2lU5k7UJfu0SRM9pkqX+aI7MbHRG0skdeaFS2mopesrWfoBrJKqYpIPoNqK4bykD1sTwn/c37YqmHoZ70QhVTpqdZ/yiLUm67ixockPPHHXkczTM=
+	t=1731526209; cv=none; b=BWR1P5l2N+Q44/4tmp9+b2AWXoQ/5AuirFvaZnDr1VnkDLcBlSqvlyK1wCpaZ5VkQ2CNc7yXrB2ThOI+6Z/6EeJZFSNaxBB1H4iJxN/IVNxoGUujrs621dImCB8ZB+aqABssDOF9Z88Pza7mKyJPe/ovEtxj7LJfnvPI5koldO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731525118; c=relaxed/simple;
-	bh=HlfbFcV5sJcpj5zqs1ySc/VnU7ycIKL2nKgQXNS9MFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfO9NNhXIWkmUHBwvNAMXu/eqvD2xL8ktQT51r/r3IEFGbIpd1ppHqFICu1ycyJC8C3VoTkjaJdt15zIRablxJ50GPdF0pmFOlpF2GWNsgHVJHJkqNtQCnOxFA3d87b3DYhoIRL53cVdJ+yGt9K7OYVL5P7eGXjhRC0dWgQVxyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2ADR705; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa1f73966a5so248262166b.2;
-        Wed, 13 Nov 2024 11:11:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731525115; x=1732129915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Q+8FNc2ytDg7RieFT9goBSoHoyxH/PoPvWuBdU9IS4=;
-        b=S2ADR705P/WwKnilB4kq9tYAWgOtjg4GkOnQx6+iTn+bWBcsKKpNNRr233o80rjJJI
-         sNA+s1SdeYTRbxdP886YlL4UZ5CRB9uCiQ6iVzcEJqaRTRBmwj/oAeQv6dap9dbB9j6f
-         458eCQ9bxeaxFQKr0cfNWpDu0KcheOGKG9UWHI5EmftRlDs7ypBSeQ/vbHxpvzsxQHvZ
-         W4s/dr7xANDqVWOfQGXiPZ8s7bgMQC1c103RkQK4XxLh0fOWPOl+UHjwIDLZKy74Alec
-         nmp/Y23HoyDPcSZQBRCIj/HKt4UBljdU2VQzpQF6jnuLSogi7usL2JjXWTGYcuQ2onxN
-         1aqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731525115; x=1732129915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Q+8FNc2ytDg7RieFT9goBSoHoyxH/PoPvWuBdU9IS4=;
-        b=ia8nyISWRetVuFkUcv6gmEIL4ala+1fMEleW8QxMB/ivW0zY68/SrQQPOxKzw8PiDW
-         AptHEDtoBEjjRac8H4GVG8z+7q6157uXX4IK2TBoHY9AZnf/K0OgDG74F/6mVTMCaUS/
-         N1HyHSIc4pKxouIsUtBRzt3J+5O02YZrZdVeDIOy7X836gKG8Ujfes8Ee++lhjMdo4SV
-         QiTomgB1vGiiYVV4f19o8nZxb68j/bHtq7xeDy9koYN0TY9v/no9DvLVUB/m3lWG8+2y
-         lpIDMOTdFDJte2AMvKuQKTk7O6quOvWFY4N3gn7W4NhBsSUZI6SHr7dVFCIDH/fCWwxP
-         maUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbkA0GoYNDAEAl7tCSSRq5fEnjpQ9waEKoJZfmDXcrPM6a8qJPG7vdejsRrSKRMSTqZrwiQLNIENo3DA==@vger.kernel.org, AJvYcCVUutivNnGtxF3BqQN11/oxAYqQEQMbeK6zJ3EjAf0eSEF+fUJd2REbtXmGi/hikQnVQv+uxINC15A+DQ==@vger.kernel.org, AJvYcCWYyuTcq7eUiOtli29I+No+BevXTCO7qKDfP3WAUDJr3VG+0qOlXM9viNFax5q6WG7TeU/RRUExkPWS+8cOzw==@vger.kernel.org, AJvYcCXuI0n8cF6erFC/jdhbp5WD3M6ewDoSUM6ddy0ZMUrmWxS5s21DqKadTG+F++8C4fZ+ycHwUZnpyXzC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW0682tTKkIhlvS5mSOfrrzLnzvw9sQeEToLrSGLD4LPy+Ix0t
-	jxISgRIpHLJUVWIkbaOTDrxwYra8e5FV7BavBQ4udsA5LOrei6UOGZCXTaOsKmjgUuHt6tlcgYo
-	3rKKI1A3NfmT1F9/b6Ty5jDnQIQ4=
-X-Google-Smtp-Source: AGHT+IFjcv0P8IIDO97PcCN5S7SxQV9ik2hLtub35kKA7vznAH6u+jV8u+K37Im4T2XozTvcOCmVqkexlWfmeUKgKM4=
-X-Received: by 2002:a17:907:3f8a:b0:a9e:c954:6afb with SMTP id
- a640c23a62f3a-a9ef0018b25mr2166360666b.51.1731525113311; Wed, 13 Nov 2024
- 11:11:53 -0800 (PST)
+	s=arc-20240116; t=1731526209; c=relaxed/simple;
+	bh=REzJ/8eBcWZbPXa8/oIiWueasRT0yrE++fHYGSWs8iU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=su+yCfBFqvSDi/bOBbi1EgDluQncXQ/WbqQzLSBH1Dnad3iPENX/FOrZqTcXDtvafsX90KNI4S1kqNthbEm90aTWusqmAipjH+rH+W5xg5HdPHqDtOteKmXpoYJ8krTgg8ImPZ5kAju3lC7T5Z4xQSkuF8/4aw05+KF1rmHd4W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NNREe3i1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731526207; x=1763062207;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=REzJ/8eBcWZbPXa8/oIiWueasRT0yrE++fHYGSWs8iU=;
+  b=NNREe3i1qW5+xX1kgpjzQWizwmHccxzRq+ImAQSKT+CJHJzdhcGLzAMw
+   89KjiMZaxCTnHV3/o6t4mXO5nlsyGUjNBvMXAfZWfo3zgpKdSfj0pMUqA
+   21gjZDaqLhvcRfD1lSropFo29jCLO71VEtbz42c1EdwslOn1fmna9abBC
+   wJheFb5cjw3dpk7yHoRgPp/ENpya93VkHsGjnOiHyLAASgNYwWfJk98oc
+   /C589ZAL0Xmm2/5CdYEdgFi3hxSFO+4UR9QYlNeNmP9Fu0vN+jWThbwq0
+   ZI1+Qub0Com6ay0HSZjR88YpffIbnEUhBJ8pFccRppuiNeUbOvyI8vQfK
+   Q==;
+X-CSE-ConnectionGUID: gzBPEwL3TkyFNQHdIiQ+0Q==
+X-CSE-MsgGUID: v3X/EGlVSlGHKF6FcddQdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="35366612"
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="35366612"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:30:04 -0800
+X-CSE-ConnectionGUID: yywvZqwJRGeoFVwR09mL3A==
+X-CSE-MsgGUID: HVkGbFr7QtCm89g/fHVLwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="92442738"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.220.223])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:30:04 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>, brauner@kernel.org, miklos@szeredi.hu
+Cc: hu1.chen@intel.com, malini.bhandaru@intel.com, tim.c.chen@intel.com,
+ mikko.ylinen@intel.com, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
+In-Reply-To: <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
+References: <20241107005720.901335-1-vinicius.gomes@intel.com>
+ <20241107005720.901335-5-vinicius.gomes@intel.com>
+ <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
+Date: Wed, 13 Nov 2024 11:30:03 -0800
+Message-ID: <87ldxnrkxw.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731433903.git.josef@toxicpanda.com> <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
- <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Nov 2024 20:11:39 +0100
-Message-ID: <CAOQ4uxjQHh=fUnBw=KwuchjRt_4JbaZAqrkDd93E2_mrqv_Pkw@mail.gmail.com>
-Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission events
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	jack@suse.cz, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 9:12=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 12 Nov 2024 at 09:56, Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> >  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
-> > +static inline int fsnotify_pre_content(struct file *file)
-> > +{
-> > +       struct inode *inode =3D file_inode(file);
-> > +
-> > +       /*
-> > +        * Pre-content events are only reported for regular files and d=
-irs
-> > +        * if there are any pre-content event watchers on this sb.
-> > +        */
-> > +       if ((!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode)) ||
-> > +           !(inode->i_sb->s_iflags & SB_I_ALLOW_HSM) ||
-> > +           !fsnotify_sb_has_priority_watchers(inode->i_sb,
-> > +                                              FSNOTIFY_PRIO_PRE_CONTEN=
-T))
-> > +               return 0;
-> > +
-> > +       return fsnotify_file(file, FS_PRE_ACCESS);
-> > +}
->
-> Yeah, no.
->
-> None of this should check inode->i_sb->s_iflags at any point.
->
-> The "is there a pre-content" thing should check one thing, and one
-> thing only: that "is this file watched" flag.
->
-> The whole indecipherable mess of inline functions that do random
-> things in <linux/fsnotify.h> needs to be cleaned up, not made even
-> more indecipherable.
->
-> I'm NAKing this whole series until this is all sane and cleaned up,
-> and I don't want to see a new hacky version being sent out tomorrow
-> with just another layer of new hacks, with random new inline functions
-> that call other inline functions and have complex odd conditionals
-> that make no sense.
->
-> Really. If the new hooks don't have that *SINGLE* bit test, they will
-> not get merged.
->
-> And that *SINGLE* bit test had better not be hidden under multiple
-> layers of odd inline functions.
->
-> You DO NOT get to use the same old broken complex function for the new
-> hooks that then mix these odd helpers.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-Up to here I understand.
+> On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+
+[...]
 
 >
-> This whole "add another crazy inline function using another crazy
-> helper needs to STOP. Later on in the patch series you do
+> Vinicius,
 >
-
-The patch that I sent did add another convenience helper
-fsnotify_path(), but as long as it is not hiding crazy tests,
-and does not expand to huge inlined code, I don't see the problem.
-
-Those convenience helpers help me to maintain readability and code
-reuse. I do agree that the new hooks that can use the new open-time
-check semantics should not expand to huge inlined code.
-
-> +/*
-> + * fsnotify_truncate_perm - permission hook before file truncate
-> + */
-> +static inline int fsnotify_truncate_perm(const struct path *path,
-> loff_t length)
-> +{
-> +       return fsnotify_pre_content(path, &length, 0);
-> +}
+> While testing fanotify with LTP tests (some are using overlayfs),
+> kmemleak consistently reports the problems below.
 >
+> Can you see the bug, because I don't see it.
+> Maybe it is a false positive...
 
-This example that you pointed at, I do not understand.
-truncate() does not happen on an open file, so I cannot use the
-FMODE_NONOTIFY_ test.
+Hm, if the leak wasn't there before and we didn't touch anything related to
+prepare_creds(), I think that points to the leak being real.
 
-This is what I have in my WIP branch:
+But I see your point, still not seeing it.
 
-static inline int fsnotify_file_range(const struct path *path,
-                                      const loff_t *ppos, size_t count)
-{
-        struct file_range range;
-        const void *data;
-        int data_type;
+This code should be equivalent to the code we have now (just boot
+tested):
 
-        /* Report page aligned range only when pos is known */
-        if (ppos) {
-                range.path =3D path;
-                range.pos =3D PAGE_ALIGN_DOWN(*ppos);
-                range.count =3D PAGE_ALIGN(*ppos + count) - range.pos;
-                data =3D &range;
-                data_type =3D FSNOTIFY_EVENT_FILE_RANGE;
-        } else {
-                data =3D path;
-                data_type =3D FSNOTIFY_EVENT_PATH;
-        }
-
-        return fsnotify_parent(path->dentry, FS_PRE_ACCESS, data, data_type=
-);
-}
-
-/*
- * fsnotify_truncate_perm - permission hook before file truncate
- */
-static inline int fsnotify_truncate_perm(const struct path *path, loff_t le=
-ngth)
-{
-        struct inode *inode =3D d_inode(path->dentry);
-
-        /*
-         * Pre-content events are only reported for regular files and dirs
-         * if there are any pre-content event watchers on this sb.
+----
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 136a2c7fb9e5..7ebc2fd3097a 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry *den=
+try, struct inode *inode,
+         * We must be called with creator creds already, otherwise we risk
+         * leaking creds.
          */
-        if ((!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode)) ||
-            !(inode->i_sb->s_iflags & SB_I_ALLOW_HSM) ||
-            !unlikely(fsnotify_sb_has_priority_watchers(inode->i_sb,
-                                               FSNOTIFY_PRIO_PRE_CONTENT)))
-                return 0;
+-       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry->d=
+_sb));
+-       put_cred(override_cred);
++       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_creds(den=
+try->d_sb));
 
-        return fsnotify_file_range(path, &length, 0);
-}
+        return 0;
+ }
+----
 
-fsnotify_file_range() does not need to be inlined, but I do want
-to reuse the code of fsnotify_file_range() which is also called for
-the common file pre-access hook.
+Does it change anything? (I wouldn't think so, just to try something)
 
-So did you mean that the unlikely stuff (i.e. fsnotify_file_range())
-should be an indirect call? or something else?
+>
+> Christian, Miklos,
+>
+> Can you see a problem?
+>
+> Thanks,
+> Amir.
+>
+>
+> unreferenced object 0xffff888008ad8240 (size 192):
+>   comm "fanotify06", pid 1803, jiffies 4294890084
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc ee6a93ea):
+>     [<00000000ab4340a4>] __create_object+0x22/0x83
+>     [<0000000053dcaf3b>] kmem_cache_alloc_noprof+0x156/0x1e6
+>     [<00000000b4a08c1d>] prepare_creds+0x1d/0xf9
+>     [<00000000c55dfb6c>] ovl_setup_cred_for_create+0x27/0x93
+>     [<00000000f82af4ee>] ovl_create_or_link+0x73/0x1bd
+>     [<0000000040a439db>] ovl_create_object+0xda/0x11d
+>     [<00000000fbbadf17>] lookup_open.isra.0+0x3a0/0x3ff
+>     [<0000000007a2faf0>] open_last_lookups+0x160/0x223
+>     [<00000000e7d8243a>] path_openat+0x136/0x1b5
+>     [<0000000004e51585>] do_filp_open+0x57/0xb8
+>     [<0000000053871b92>] do_sys_openat2+0x6f/0xc0
+>     [<000000004d76b8b7>] do_sys_open+0x3f/0x60
+>     [<000000009b0be238>] do_syscall_64+0x96/0xf8
+>     [<000000006ff466ad>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Thanks,
-Amir.
+
+Cheers,
+--=20
+Vinicius
 
