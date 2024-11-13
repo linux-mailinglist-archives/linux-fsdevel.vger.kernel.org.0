@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-34608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADE79C6BDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:48:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2659C6BDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B8A285B38
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 09:48:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D3FB27CAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 09:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94ADB1F8F1B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0371F9405;
 	Wed, 13 Nov 2024 09:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z+/DD2ks"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1H770m6u"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637FE1F80CF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D021F80CC;
 	Wed, 13 Nov 2024 09:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491255; cv=none; b=D7EXTtVRTsIhsdR3u/00rN41isKTdF40/hZjOm7SYw4DOrH38etMvw5gu597FS+yVeb9aIOGjcyZ8Hmd+y0E+k2slaDqNEeJi7pvIS8+5SsYL25zrVqXBidYpG4yd+zME0W+Njb/lUM7v+vZN0vHjultyOL8WYYlJszzKNlWwy0=
+	t=1731491256; cv=none; b=T9PhiPSduxMHM5x8hoeUxNP4xLABr5069Si6kbWfhZF4GyXpBJryMneXMRJ3DaVgbP6xTIQK5ZuGOSn9cpM4F31J/qMlnAFTwe0t9H2Hw5aTjvQT+JjEJA7JV2EbszffhWFUY5a0ggIVleKzL4S0apGncHDw/fZsjOWvt10qSIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491255; c=relaxed/simple;
-	bh=LuoRYrsA1zw/6T9PAg+pZUF80hnr641Lz7m1ROM3Co4=;
+	s=arc-20240116; t=1731491256; c=relaxed/simple;
+	bh=qSg4jt+PdvsngxRtEBRGA/FD6TRSDQUzeRkB8v2LbIc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nWUtqS8m5iRI9QzY5RlaGaFMF8YczZyTwfOP2SpgreFzJ4Y1d9tCk5ebJtQgkbdT5UsLjPOHdVgXvz8I3mkKHjMxUAYeVQY4ASUr48d1wmIVPsR7syU99sCoZxk02yoBsUa3IX1ymB6TPorIy1As4/K8dz/csfDZRHaVdnxPQ38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=z+/DD2ks; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=uUANPRsr4GE4H8dvxRom/6e3Oo9R2EEwwzFMbLJkagKIJTzqhgpYZKwumlR2SNQ4odoRtoO7p2mj5saJnLLRoOryiW50qFPFSeODc17JEzIP3oqPbx7i9Erja0tuL4/g8RoKOQJSgAC1Sct5gBKns7kpe/9JYCcXl2k0hkpHCjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1H770m6u; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=mZYiYHdxBbyR/19PnV0dX82l4+th0pXaG9WcUHT6G/o=; b=z+/DD2ksIIMD99dpwbTEHn8k4O
-	pHg7uHS7eT094skjM9TFMiJ1EniWkjT9HGAw2UunxTT+sN5NEc0TVmCFons1UrnsgzgUrFtgdMgAA
-	zpf3glrmYXKcRmnb6yD71kaZaua4QRrNfvPkOWhj9eWg8lFK/pcT+kIGHV5CWnC6rY4K05AxlyQGQ
-	MNVmgP7cOXDVgnvxewh+FESw9UIPM4X8JwlqSq1KDpZfJCJvo87OGEDT+Mg+bP2H8xuptX9LBOIk/
-	/hFwEUAGV3O/VZjpRAj6p50xbFOpUl2RhdqH8S/bLLJ6RBn47IsUnnziFAeqODl4eodR/DLjxEOJc
-	juHAjElA==;
+	bh=Rvjs84UgO5xSGvxl4iuvzBP8tFGehN7pbV06CfLjg3U=; b=1H770m6uZYJRsNLnGwzs/TYE7f
+	gf32SzSFjC1OTx+9oTWzt/eb3OBbFZPEnS9eIjfXxWb2HTKI5997hOMEui1NLkZv1f7ZdY6YplmdP
+	Mn9yTxEs2W9zqrnuQ8d4vAi1CPHtUnxkWedaQYIDf6+IKguB19CZMmWo1EcTap6ncmUpff2BHGbls
+	OLQBDRaZJ95iTWnESxDGpKVS5HBnmtTigRawlaWu+fwrooEVxq4Xo3C74IjethFWPkCoB6Shaj5wN
+	f6u7NAfglv4r8Ldg9UVQvGW7LJMsZ4vtDoE7mP2PiT4MycJMnp0V90SMINbjT9496Ta+2gaUqvIUc
+	c5nUp2MQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tB9yD-00000006HdQ-3YUj;
-	Wed, 13 Nov 2024 09:47:29 +0000
+	id 1tB9yF-00000006He1-03jf;
+	Wed, 13 Nov 2024 09:47:31 +0000
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: willy@infradead.org,
 	hch@lst.de,
@@ -62,9 +62,9 @@ Cc: john.g.garry@oracle.com,
 	da.gomez@samsung.com,
 	kernel@pankajraghav.com,
 	mcgrof@kernel.org
-Subject: [RFC 7/8] nvme: remove superfluous block size check
-Date: Wed, 13 Nov 2024 01:47:26 -0800
-Message-ID: <20241113094727.1497722-8-mcgrof@kernel.org>
+Subject: [RFC 8/8] bdev: use bdev_io_min() for statx block size
+Date: Wed, 13 Nov 2024 01:47:27 -0800
+Message-ID: <20241113094727.1497722-9-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241113094727.1497722-1-mcgrof@kernel.org>
 References: <20241113094727.1497722-1-mcgrof@kernel.org>
@@ -77,36 +77,111 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-The block layer already validates proper block sizes with
-blk_validate_block_size() for us so we can remove this now
-superfluous check.
+You can use lsblk to query for a block device block device block size:
+
+lsblk -o MIN-IO /dev/nvme0n1
+MIN-IO
+ 4096
+
+The min-io is the minimum IO the block device prefers for optimal
+performance. In turn we map this to the block device block size.
+The current block size exposed even for block devices with an
+LBA format of 16k is 4k. Likewise devices which support 4k LBA format
+but have a larger Indirection Unit of 16k have an exposed block size
+of 4k.
+
+This incurs read-modify-writes on direct IO against devices with a
+min-io larger than the page size. To fix this, use the block device
+min io, which is the minimal optimal IO the device prefers.
+
+With this we now get:
+
+lsblk -o MIN-IO /dev/nvme0n1
+MIN-IO
+ 16384
+
+And so userspace gets the appropriate information it needs for optimal
+performance. This is verified with blkalgn against mkfs against a
+device with LBA format of 4k but an NPWG of 16k (min io size)
+
+mkfs.xfs -f -b size=16k  /dev/nvme3n1
+blkalgn -d nvme3n1 --ops Write
+
+     Block size          : count     distribution
+         0 -> 1          : 0        |                                        |
+         2 -> 3          : 0        |                                        |
+         4 -> 7          : 0        |                                        |
+         8 -> 15         : 0        |                                        |
+        16 -> 31         : 0        |                                        |
+        32 -> 63         : 0        |                                        |
+        64 -> 127        : 0        |                                        |
+       128 -> 255        : 0        |                                        |
+       256 -> 511        : 0        |                                        |
+       512 -> 1023       : 0        |                                        |
+      1024 -> 2047       : 0        |                                        |
+      2048 -> 4095       : 0        |                                        |
+      4096 -> 8191       : 0        |                                        |
+      8192 -> 16383      : 0        |                                        |
+     16384 -> 32767      : 66       |****************************************|
+     32768 -> 65535      : 0        |                                        |
+     65536 -> 131071     : 0        |                                        |
+    131072 -> 262143     : 2        |*                                       |
+Block size: 14 - 66
+Block size: 17 - 2
+
+     Algn size           : count     distribution
+         0 -> 1          : 0        |                                        |
+         2 -> 3          : 0        |                                        |
+         4 -> 7          : 0        |                                        |
+         8 -> 15         : 0        |                                        |
+        16 -> 31         : 0        |                                        |
+        32 -> 63         : 0        |                                        |
+        64 -> 127        : 0        |                                        |
+       128 -> 255        : 0        |                                        |
+       256 -> 511        : 0        |                                        |
+       512 -> 1023       : 0        |                                        |
+      1024 -> 2047       : 0        |                                        |
+      2048 -> 4095       : 0        |                                        |
+      4096 -> 8191       : 0        |                                        |
+      8192 -> 16383      : 0        |                                        |
+     16384 -> 32767      : 66       |****************************************|
+     32768 -> 65535      : 0        |                                        |
+     65536 -> 131071     : 0        |                                        |
+    131072 -> 262143     : 2        |*                                       |
+Algn size: 14 - 66
+Algn size: 17 - 2
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/nvme/host/core.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ block/bdev.c | 1 +
+ fs/stat.c    | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 855b42c92284..86ff872cf6bd 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2022,16 +2022,6 @@ static bool nvme_update_disk_info(struct nvme_ns *ns, struct nvme_id_ns *id,
- 	u32 atomic_bs, phys_bs, io_opt = 0;
- 	bool valid = true;
+diff --git a/block/bdev.c b/block/bdev.c
+index 3a5fd65f6c8e..4dcc501ed953 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -1306,6 +1306,7 @@ void bdev_statx(struct path *path, struct kstat *stat,
+ 			queue_atomic_write_unit_max_bytes(bd_queue));
+ 	}
  
--	/*
--	 * The block layer can't support LBA sizes larger than the page size
--	 * or smaller than a sector size yet, so catch this early and don't
--	 * allow block I/O.
--	 */
--	if (head->lba_shift > PAGE_SHIFT || head->lba_shift < SECTOR_SHIFT) {
--		bs = (1 << 9);
--		valid = false;
--	}
--
- 	atomic_bs = phys_bs = bs;
- 	if (id->nabo == 0) {
- 		/*
++	stat->blksize = (unsigned int) bdev_io_min(bdev);
+ 	blkdev_put_no_open(bdev);
+ }
+ 
+diff --git a/fs/stat.c b/fs/stat.c
+index 41e598376d7e..9b579c0b5153 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -268,7 +268,7 @@ static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
+ 	 * obtained from the bdev backing inode.
+ 	 */
+ 	if (S_ISBLK(stat->mode))
+-		bdev_statx(path, stat, request_mask);
++		bdev_statx(path, stat, request_mask | STATX_DIOALIGN);
+ 
+ 	return error;
+ }
 -- 
 2.43.0
 
