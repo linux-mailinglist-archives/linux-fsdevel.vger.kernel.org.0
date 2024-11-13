@@ -1,261 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-34704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FECD9C7E50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 23:36:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9220C9C7E56
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 23:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFA4FB2701D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 22:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8D0285E30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 22:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1150E18C90F;
-	Wed, 13 Nov 2024 22:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6929218C01B;
+	Wed, 13 Nov 2024 22:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSE8H3D+"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZUtXDAuq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0C815444E;
-	Wed, 13 Nov 2024 22:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D6513959D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 22:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731537331; cv=none; b=MsOeJ7LL0+6T3fwTfE9m1LnFnbcZd1+AFsRxONvaKEQVIwValJugaAT4+tAh/2LC4gCX5OMB6MYUpn5DM12FIjtKFYZNsxD9SxFNsDvyMBPoHS5mmxsliICSgkhvgp/8bc6SD1He65z9Sn1xQt6XxZQkNGMB2UHIIAAkVs6Kzcg=
+	t=1731537587; cv=none; b=d9rT8/0MdKyGGQsa9MLtnlFyUe3/HiYHsAXsLve5wPACVvwzoVmZCscaqqKEW1cqURyxBvfJGr67XYQ8XjiCPN4BRFLxWU/HDU9sAuNe484VR5n16xgBzTcKKsrQPvfRbQJkqg78f/9mj1JD+CXSrO+jy5j+u39HgNosLQ+4vN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731537331; c=relaxed/simple;
-	bh=rjn0KiGgiLv1xsIPwjcqSSHf6SlULfYkhLvvSZTBIqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GrDqpCqt8/sqHRNwnQW0fLrv3ZYIWtJrXHLy/wU7DQF4iyZDe/Y3l2swNlRt70K7s0Wr/AFwNuky79Iw6LFQPWeTzDY68dIS6wHEGhrKHoFHZV1ghJJsT5glXssKDn8DFlpUlXsFRTAgWuDZJOCNNX+vG2T/DyuSp8jhNsVP1pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSE8H3D+; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7180d9d0dcbso3394845a34.3;
-        Wed, 13 Nov 2024 14:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731537329; x=1732142129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KDLg9To/YkPL+lMewcxLGFQQ9zp/mgylVTsqbiOTEQ=;
-        b=mSE8H3D+HoORVw3G11NNbbXushkwbWfc0uBPO/YZ9YzRFgvZoXVAsK3n55sJ1BrThG
-         V87wYhkQq8mZd7SHfMzumVEhsy3VqMY28lf3cvMjbjcVaS+ebHlH9veqp9xcImYHuMU/
-         9m0dT7lpVOAzLWthY9XicU2UC2zHJB6LVPBzGDRoweL6FgZ19ozz120YR+svV8jzB12e
-         EhaXUhoQPJaf0A4Il/wpjaTb9r3nmwlGXAbrrRvJSYlm87J1Xq3rX6vfKSLP1fDMmv+i
-         IoLsXjvOzNlrVc9jZhzDN5q/1I8A7inPjoaR16NYXGLDPSFsYr9n9qww1eVuWiCBoavW
-         uqXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731537329; x=1732142129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KDLg9To/YkPL+lMewcxLGFQQ9zp/mgylVTsqbiOTEQ=;
-        b=b5KlzXiSQWvVlIiWSznbZshSS5e26Q/UAAWO5dkD8AYa8PwyJM4eHS2iMa/Xciyygr
-         Htm48Nj1Ml3qnQjRbArmec7qAClojT18/cQ6lj/AJOiAAZfNk+i5PrJNGeWw95Hs0Pwq
-         5F4NBNDW1FQQmgCMgissS4tTGiE4azXEYSRLvggaPTxF3NSqO3S0bQXtRttEQt2ZTp5c
-         Aq+R4e4JvvDUV2tzPYQDmiKO0qRS219IRf+hgHZn1OyejUtfprc64MxlZjvqIOUn0EaL
-         2TWiwUmoZ25GawDm4coxPUTwZK2kzEqEcRHOuGhiwl7JMBFbTbBguu4lZPLYyj2L6cVN
-         +HXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzAiQgquc4PQcRwW8ijKYku1xNjTlbeRVwxa0m8aGQb8T4CAhUCjz/eYZDvxJbgfwCIWxleTWzxBuWg==@vger.kernel.org, AJvYcCWzHWaCRPWcMLZ1oPgYcIFjil04r/KrN05eWTvy4zyT70o1YKkq+0tHBixokUly5ivHGvOFWEKwjfOzTo2Qxw==@vger.kernel.org, AJvYcCX8J53wR6IFqqHFgWA2cvB5N5iyHg9R3Ha3YQ1IUoz7OiC15KKHmnIE8KjYzymjj96pYUCG+I1R0ewL@vger.kernel.org, AJvYcCXHIsDlzl+5babYj8Hkwdtel5CdxLCVqjK8/Wi82OcHNdaXhTg63GtWIKLaOaCvo0i2Lze2FnKeYctbCg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9mNzmIzwV1dzmEbthioWoJ+XhahSsYhAqCoG0kBgv/Kxb3udb
-	a/W+KfRZ8S9s/6owCNaPRaPf+RR66TA8IJjdCTjy44l9iKqXlqK83N7/kvhYgZJ+vQgxhi8ecNK
-	Z1/GJpIjkvYnXsjue3Q30/Wh52lw=
-X-Google-Smtp-Source: AGHT+IEdZlQxt48o8J8iDRR0Lg99n+z9ualxe1wY20DVHLuL74dL16q0iW+CsMahVNFRcOyIZXBweMNj0cx54B5GAec=
-X-Received: by 2002:a05:6830:2117:b0:718:18d6:a447 with SMTP id
- 46e09a7af769-71a6020c4c3mr4694846a34.24.1731537328656; Wed, 13 Nov 2024
- 14:35:28 -0800 (PST)
+	s=arc-20240116; t=1731537587; c=relaxed/simple;
+	bh=ntXYvb24hd8LDTDLKkvbIR+JdrRF6BWHrPmkA1F1AI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DakwbjVrCz96PbfbPhiMiQvqJ61UlT7SD52kBC4xz1Y/fSJopC71tQO7n13G8NQu7hy/Q9c+JpH/9xwwQ4jPAB1rlmFxp0TnbO38MT0Fdr58LH8agBlpbsvleuxg2jGqTMnAuWRiPXuOY5y18SxZ71JpGp4AleO00EV02T0yfc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZUtXDAuq; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731537586; x=1763073586;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ntXYvb24hd8LDTDLKkvbIR+JdrRF6BWHrPmkA1F1AI4=;
+  b=ZUtXDAuq52zSO4JrNVXru8RoVc3XFtPMWZKiPuFWuqbe9oCTf855HggG
+   wlNt8rVwSdouUZlXskRXz3tcIPbGH327VxSQ7WKHUOen1zRDlnIf4vE7/
+   eLhZcNn39npLJ0om8GOiyvRTNF+gCy0ovEfbVmgbxoZVwBpcYc7LujKZs
+   cud3rvpDcZ24XxI2jFAIkMoU/Ds4pF1rIh4mMD+gR6TlhoCfbfPQmHsom
+   5ECy9PEH5LIeH0/JA3mytezoxLqJyKUszis5HJr30APEvZqoUAXLzaPGp
+   fCyHPgwAMdE9wBA2CmTIF/v4noBEEyAHRICWeVlDI7fvLNLFU9HeQXfCo
+   w==;
+X-CSE-ConnectionGUID: qtmlpF+mR8+GbNlf2MOrEA==
+X-CSE-MsgGUID: kwaCSgmLR+CzzBf4Kc8ARg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="42869945"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="42869945"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 14:39:46 -0800
+X-CSE-ConnectionGUID: hQYo/dZsRQ6Z9Wuqm2XFsQ==
+X-CSE-MsgGUID: ScSe+HB5SQ+Q2dichODPBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="92051712"
+Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 13 Nov 2024 14:39:44 -0800
+Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBM1W-0000nX-0o;
+	Wed, 13 Nov 2024 22:39:42 +0000
+Date: Thu, 14 Nov 2024 06:39:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:next.getname 17/17] ipc/mqueue.c:886:9: error: implicit
+ declaration of function 'audit_inode'
+Message-ID: <202411140656.wyWgEvw4-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731433903.git.josef@toxicpanda.com> <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
- <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
- <CAOQ4uxjQHh=fUnBw=KwuchjRt_4JbaZAqrkDd93E2_mrqv_Pkw@mail.gmail.com> <CAHk-=wirrmNUD9mD5OByfJ3XFb7rgept4kARNQuA+xCHTSDhyw@mail.gmail.com>
-In-Reply-To: <CAHk-=wirrmNUD9mD5OByfJ3XFb7rgept4kARNQuA+xCHTSDhyw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Nov 2024 23:35:16 +0100
-Message-ID: <CAOQ4uxgFJX+AJbswKwQP3oFE273JDOO3UAvtxHz4r8+tVkHJnQ@mail.gmail.com>
-Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission events
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	jack@suse.cz, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Nov 13, 2024 at 10:22=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, 13 Nov 2024 at 11:11, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > >
-> > > This whole "add another crazy inline function using another crazy
-> > > helper needs to STOP. Later on in the patch series you do
-> > >
-> >
-> > The patch that I sent did add another convenience helper
-> > fsnotify_path(), but as long as it is not hiding crazy tests,
-> > and does not expand to huge inlined code, I don't see the problem.
->
-> So I don't mind adding a new inline function for convenience.
->
-> But I do mind the whole "multiple levels of inline functions" model,
-> and the thing I _particularly_ hate is the "mask is usually constant
-> so that the effect of the inline function is practically two different
-> things" as exemplified by "fsnotify_file()" and friends.
->
-> At that point, the inline function isn't a helper any more, it's a
-> hindrance to understanding what the heck is going on.
->
-> Basically, as an example: fsnotify_file() is actually two very
-> different things depending on the "mask" argument, an that argument is
-> *typically* a constant.
->
-> In fact, in fsnotify_file_area_perm() is very much is a constant, but
-> to make it extra non-obvious, it's a *hidden* constant, using
->
->         __u32 fsnotify_mask =3D FS_ACCESS_PERM;
->
-> to hide the fact that it's actually calling fsnotify_file() with that
-> constant argument.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git next.getname
+head:   25ea033155f4d083b5a20417d53754b11a39c3bb
+commit: 25ea033155f4d083b5a20417d53754b11a39c3bb [17/17] RIP filename::uptr
+config: alpha-defconfig (https://download.01.org/0day-ci/archive/20241114/202411140656.wyWgEvw4-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140656.wyWgEvw4-lkp@intel.com/reproduce)
 
-Yeh, that specific "obfuscation" is a leftover from history.
-It is already gone in the patches that we sent.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411140656.wyWgEvw4-lkp@intel.com/
 
->
-> And in fsnotify_open() it's not exactly a constant, but it's kind of
-> one: when you actually look at fsnotify_file(), it has that "I do a
-> different filtering event based on mask", and the two different
-> constants fsnotify_open() uses are actually the same for that mask.
->
-> In other words, that whole "mask" test part of fsnotify_file()
->
->         /* Permission events require group prio >=3D FSNOTIFY_PRIO_CONTEN=
-T */
->         if (mask & ALL_FSNOTIFY_PERM_EVENTS &&
->             !fsnotify_sb_has_priority_watchers(path->dentry->d_sb,
->                                                FSNOTIFY_PRIO_CONTENT))
->                 return 0;
->
-> mess is actually STATICALLY TRUE OR FALSE, but it's made out to be
-> somehow an "arghumenty" to the function, and it's really obfuscated.
->
+All errors (new ones prefixed by >>):
 
-Yeh. I see that problem absolutely.
-This is already gone in the patch that I send you today:
-- All the old hooks call fsnotify_file() that only checks FMODE_NONOTIFY
-  and calls fsnotify_path()
-- The permission hooks now check FMODE_NONOTIFY_PERM
-  and call fsnotify_path()
+   ipc/mqueue.c: In function 'prepare_open':
+>> ipc/mqueue.c:886:9: error: implicit declaration of function 'audit_inode' [-Wimplicit-function-declaration]
+     886 |         audit_inode(name, dentry, 0);
+         |         ^~~~~~~~~~~
 
-> That is the kind of "helper inline" that I don't want to see in the
-> new paths. Making that conditional more complicated was part of what I
-> objected to in one of the patches.
->
-> > Those convenience helpers help me to maintain readability and code
-> > reuse.
->
-> ABSOLUTELY NOT.
->
-> That "convenience helkper" does exactly the opposite. It explicitly
-> and actively obfuscates when the actual
-> fsnotify_sb_has_priority_watchers() filtering is done.
->
-> That helper is evil.
->
-> Just go and look at the actual uses, let's take
-> fsnotify_file_area_perm() as an example. As mentioned, as an extra
-> level of obfuscation, that horrid "helper" function tries to hide how
-> "mask" is constant by doing
->
->         __u32 fsnotify_mask =3D FS_ACCESS_PERM;
->
-> and then never modifying it, and then doing
->
->         return fsnotify_file(file, fsnotify_mask);
->
-> but if you walk through the logic, you now see that ok, that means
-> that the "mask" conditional fsnotify_file() is actually just
->
->     FS_ACCESS_PERM & ALL_FSNOTIFY_PERM_EVENTS
->
-> which is always true, so it means that fsnotify_file_area_perm()
-> unconditionally does that
->
->     fsnotify_sb_has_priority_watchers(..)
->
-> filitering.
->
-> And dammit, you shouldn't have to walk through that pointless "helper"
-> variable, and that pointless "helper" inline function to see that. It
-> shouldn't be the case that fsnotify_file() does two completely
-> different things based on a constant argument.
->
 
-ok. that's going to be history soon.
-I will send this cleanup patch regardless of the pre-content series.
+vim +/audit_inode +886 ipc/mqueue.c
 
-> It would have literally been much clearer to just have two explicitly
-> different versions of that function, *WITHOUT* some kind of
-> pseudo-conditional that isn't actually a conditional, and just have
-> fsnotify_file_area_perm() be very explicit about the fact that it uses
-> the fsnotify_sb_has_priority_watchers() logic.
->
-> IOW, that conditional only makes it harder to see what the actual
-> rules are. For no good reason.
->
-> Look, magically for some reason fsnotify_name() could do the same
-> thing without this kind of silly obfuscation. It just unconditonally
-> calls fsnotify_sb_has_watchers() to filter the events. No silly games
-> with doing two entirely different things based on a random constant
-> argument.
->
-> So this is why I say that any new fsnotify events will be NAK'ed and
-> not merged by me unless it's all obvious, and unless it all obviously
-> DOES NOT USE these inline garbage "helper" functions.
->
-> The new logic had better be very obviously *only* using the
-> file->f_mode bits, and just calling out-of-line to do the work. If I
-> have to walk through several layers of inline functions, and look at
-> what magic arguments those inline functions get just to see what the
-> hell they actually do, I'm not going to merge it.
+^1da177e4c3f41 Linus Torvalds    2005-04-16  867  
+066cc813e94a34 Al Viro           2017-12-01  868  static int prepare_open(struct dentry *dentry, int oflag, int ro,
+066cc813e94a34 Al Viro           2017-12-01  869  			umode_t mode, struct filename *name,
+614b84cf4e4a92 Serge Hallyn      2009-04-06  870  			struct mq_attr *attr)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  871  {
+745ca2475a6ac5 David Howells     2008-11-14  872  	static const int oflag2acc[O_ACCMODE] = { MAY_READ, MAY_WRITE,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  873  						  MAY_READ | MAY_WRITE };
+765927b2d50871 Al Viro           2012-06-26  874  	int acc;
+066cc813e94a34 Al Viro           2017-12-01  875  
+9b20d7fc5250f5 Al Viro           2017-12-01  876  	if (d_really_is_negative(dentry)) {
+9b20d7fc5250f5 Al Viro           2017-12-01  877  		if (!(oflag & O_CREAT))
+9b20d7fc5250f5 Al Viro           2017-12-01  878  			return -ENOENT;
+066cc813e94a34 Al Viro           2017-12-01  879  		if (ro)
+066cc813e94a34 Al Viro           2017-12-01  880  			return ro;
+066cc813e94a34 Al Viro           2017-12-01  881  		audit_inode_parent_hidden(name, dentry->d_parent);
+066cc813e94a34 Al Viro           2017-12-01  882  		return vfs_mkobj(dentry, mode & ~current_umask(),
+066cc813e94a34 Al Viro           2017-12-01  883  				  mqueue_create_attr, attr);
+066cc813e94a34 Al Viro           2017-12-01  884  	}
+9b20d7fc5250f5 Al Viro           2017-12-01  885  	/* it already existed */
+066cc813e94a34 Al Viro           2017-12-01 @886  	audit_inode(name, dentry, 0);
+9b20d7fc5250f5 Al Viro           2017-12-01  887  	if ((oflag & (O_CREAT|O_EXCL)) == (O_CREAT|O_EXCL))
+9b20d7fc5250f5 Al Viro           2017-12-01  888  		return -EEXIST;
+765927b2d50871 Al Viro           2012-06-26  889  	if ((oflag & O_ACCMODE) == (O_RDWR | O_WRONLY))
+af4a5372e4166e Al Viro           2017-12-01  890  		return -EINVAL;
+765927b2d50871 Al Viro           2012-06-26  891  	acc = oflag2acc[oflag & O_ACCMODE];
+4609e1f18e19c3 Christian Brauner 2023-01-13  892  	return inode_permission(&nop_mnt_idmap, d_inode(dentry), acc);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  893  }
+^1da177e4c3f41 Linus Torvalds    2005-04-16  894  
 
-Sure for new hooks with new check-on-open semantics that is
-going to be easy to do. The historic reason for the heavy inlining
-is trying to optimize out indirect calls when we do not have the
-luxury of using the check-on-open semantics.
+:::::: The code at line 886 was first introduced by commit
+:::::: 066cc813e94a344ae4482af310d324739955c3b5 do_mq_open(): move all work prior to dentry_open() into a helper
 
->
-> Because I'm really tired of actively obfuscated VFS hooks that use
-> inline functions to hide what the hell they are doing and whether they
-> are expensive or not.
->
-> Your fsnotify_file_range() uses fsnotify_parent(), which is another of
-> those "it does two different things" functions that either call
-> fsnotify() on the dentry, or call __fsnotify_parent() on it if it's an
-> inode, which means that it's another case of "what does this actually
-> do" which is pointlessly hard to follow, since clearly for a truncate
-> event it can't be a directory.
->
-> And to make matters worse, fsnotify_truncate_perm() actually checks
-> truncate events for directories and regular files, when truncates
-> can't actually happen for anything but regular files in the first
-> place. So  your helper function does a nonsensical cray-cray test that
-> shouldn't exist.
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
 
-Ha, right, that's a stupid copy&paste braino.
-Easy to fix.
-
-The simplest thing to do for the new hooks I think is to make
-fsnotify_file_range() extern and then you won't need to look beyond it,
-because it already comes after the unlikley FMODE_NONOTIFY_ bits check.
-
-Will work on the rest of the series following those guidelines.
-Let me know if the patch I sent you has taken a wrong direction.
-
-Thanks,
-Amir.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
