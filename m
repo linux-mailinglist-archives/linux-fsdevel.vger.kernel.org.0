@@ -1,102 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-34646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCBE9C7470
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:35:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43989C72AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC85B2B507
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA7D28294D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5088200B98;
-	Wed, 13 Nov 2024 14:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCB92038D3;
+	Wed, 13 Nov 2024 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AM7F/WHH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qUDP9Ff+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AM7F/WHH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qUDP9Ff+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="inGQxMTw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551ED2003B3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C3020262B;
+	Wed, 13 Nov 2024 14:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731506694; cv=none; b=pF+UP/3xDOaR6ybY93Mz71eNOIbxvDLP3mHejhfnjq1b05HFjbn029fBGipfmm45TkHNTUg0oRi0TAA68gQoKIICBrG5kCcz8/JpIPEnzqCcTmK1tDF7xHetjL/yt/KOS8KdNLfbbVKiScgRLJS7pMud4t7XB2kzGQc0zg0Vw8E=
+	t=1731506826; cv=none; b=ZKFFY9RuN7mkVVnUtU4ODFjx6SDgEuMdSBU4hVQ2V31iC1AfpQKjGFEWmXBLOcX0BfX60ZUGmIW/hC0wQUPF6RqTSKcH5+fN6GL5u52LMkXLwKWnZHfYdQnFYI5E55H44kPYWxK9HIYIdjpWADX9Qa5FyKy1ESd3HLJLlxsECeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731506694; c=relaxed/simple;
-	bh=qDx7ZyOFWMK4bIt2JVEIjVDiOtbdmh6kf9F5SKHnFb0=;
+	s=arc-20240116; t=1731506826; c=relaxed/simple;
+	bh=hvrsf78D8NDDYEOvAPxQVc4YqoPVqijYme2H01oDTdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frYYWvCSkyUAtcAx2aV7vQkDTf4G3P0hDDEBlOK74jsRzxkbWgBVcT9zWJT4RRkO6VvSYTiunvvXlSIZEbQ4MNUztNOT8QmqxRbWlQ8PkqNH5QReNoKpAzOIR11PnfGNCYICa+nzYZvfwbzcRwnCCScrOUzpNVPTyoHC5pBLHac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AM7F/WHH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qUDP9Ff+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AM7F/WHH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qUDP9Ff+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5D19B211A5;
-	Wed, 13 Nov 2024 14:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731506690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swY7n1EhmzyWXGjekJZDeyIL5xedigIdnKVoy+7Ee4c=;
-	b=AM7F/WHHuuUjDkI3otrCjGwLTuB4zLBXlf2RCYJcfS3bH6jDiztdjj8U6PcADGzoADMuaL
-	5Xzhw3Qs/4gpGEEc2kGXVRIpZg7+6SiCwWVOuchukiuYI68ODYQLYi/0zwJ32z9bK78690
-	eMtcw+Hydu3EbonXnlfgjUpi+FlrtJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731506690;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swY7n1EhmzyWXGjekJZDeyIL5xedigIdnKVoy+7Ee4c=;
-	b=qUDP9Ff+OxFCFnb6EeetD84sqDe3Bia/VV6yhOjEUByxptTA4aPmYmSbTpAq4mg9ug1uSn
-	ZwWCiBeOTCmYqjAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="AM7F/WHH";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qUDP9Ff+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731506690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swY7n1EhmzyWXGjekJZDeyIL5xedigIdnKVoy+7Ee4c=;
-	b=AM7F/WHHuuUjDkI3otrCjGwLTuB4zLBXlf2RCYJcfS3bH6jDiztdjj8U6PcADGzoADMuaL
-	5Xzhw3Qs/4gpGEEc2kGXVRIpZg7+6SiCwWVOuchukiuYI68ODYQLYi/0zwJ32z9bK78690
-	eMtcw+Hydu3EbonXnlfgjUpi+FlrtJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731506690;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swY7n1EhmzyWXGjekJZDeyIL5xedigIdnKVoy+7Ee4c=;
-	b=qUDP9Ff+OxFCFnb6EeetD84sqDe3Bia/VV6yhOjEUByxptTA4aPmYmSbTpAq4mg9ug1uSn
-	ZwWCiBeOTCmYqjAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52DE313A6E;
-	Wed, 13 Nov 2024 14:04:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YkwzFAKyNGeHaAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 14:04:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E6A14A08D0; Wed, 13 Nov 2024 15:04:49 +0100 (CET)
-Date: Wed, 13 Nov 2024 15:04:49 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fsnotify: fix sending inotify event with unexpected
- filename
-Message-ID: <20241113140449.h6alr7opnzcjvjez@quack3>
-References: <20241111201101.177412-1-amir73il@gmail.com>
- <20241113134258.524nduvn3piqqkco@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3b163qeQKrXmW3w+Imskm2JmDAB3eD5to+rurr0HJ8iFk6Bf3M+WK7bok6shMPfnpJIMwDs1pum0TpjjtS+VDhg7SwiL7y3//kcZAsV74LnOkXsplE6OyYzRmoKjmSBzu1QlqF2XD6lFTChWMeUz5fIecGsaY2En1NNCQ/ltkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=inGQxMTw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KJXNvaen1Bz/rhEZ0wYr3yvxXXNeIsAd3hY4qgJzB/M=; b=inGQxMTwLPZKyqpgIPyzxCSSm6
+	bLCxt2bPzP7//fGxa1Rbqys8CPMTp/GYxKU+oA17V9AdpIfXRuq22xedRJS4TsaPdad/Q6C/d4+fy
+	S07P45BSBklhLxAE5DYtOXrp1wfrAAmUpPCA3zOnljEqgNdpJoQuUDUo2t5myQ/dWxnT5cbB/vpwN
+	MgdBXDNpr3W8hozvV5d1tFsSIGoGWhx1FDCcspDR9ZBz2ZQMHhlyTJ9YxkU4raQ9NKDYL0l1oO/XV
+	fWPpM9Tsal3SHug4dR0UtihyzJouDViAWvGdzL/yqVrmO/CLmaj0VmrNDJtAKfnoFgwH2a2QqwHBX
+	s1eWsa7A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBE1K-0000000GRES-1KUI;
+	Wed, 13 Nov 2024 14:06:58 +0000
+Date: Wed, 13 Nov 2024 14:06:58 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: hch@lst.de, hare@suse.de, david@fromorbit.com, djwong@kernel.org,
+	john.g.garry@oracle.com, ritesh.list@gmail.com, kbusch@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
+	kernel@pankajraghav.com, Hannes Reinecke <hare@kernel.org>
+Subject: Re: [RFC 2/8] fs/mpage: avoid negative shift for large blocksize
+Message-ID: <ZzSygjfVvyrV1jy6@casper.infradead.org>
+References: <20241113094727.1497722-1-mcgrof@kernel.org>
+ <20241113094727.1497722-3-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,113 +65,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113134258.524nduvn3piqqkco@quack3>
-X-Rspamd-Queue-Id: 5D19B211A5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,szeredi.hu:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+In-Reply-To: <20241113094727.1497722-3-mcgrof@kernel.org>
 
-On Wed 13-11-24 14:42:58, Jan Kara wrote:
-> On Mon 11-11-24 21:11:01, Amir Goldstein wrote:
-> > We got a report that adding a fanotify filsystem watch prevents tail -f
-> > from receiving events.
-> > 
-> > Reproducer:
-> > 
-> > 1. Create 3 windows / login sessions. Become root in each session.
-> > 2. Choose a mounted filesystem that is pretty quiet; I picked /boot.
-> > 3. In the first window, run: fsnotifywait -S -m /boot
-> > 4. In the second window, run: echo data >> /boot/foo
-> > 5. In the third window, run: tail -f /boot/foo
-> > 6. Go back to the second window and run: echo more data >> /boot/foo
-> > 7. Observe that the tail command doesn't show the new data.
-> > 8. In the first window, hit control-C to interrupt fsnotifywait.
-> > 9. In the second window, run: echo still more data >> /boot/foo
-> > 10. Observe that the tail command in the third window has now printed
-> > the missing data.
-> > 
-> > When stracing tail, we observed that when fanotify filesystem mark is
-> > set, tail does get the inotify event, but the event is receieved with
-> > the filename:
-> > 
-> > read(4, "\1\0\0\0\2\0\0\0\0\0\0\0\20\0\0\0foo\0\0\0\0\0\0\0\0\0\0\0\0\0",
-> > 50) = 32
-> > 
-> > This is unexpected, because tail is watching the file itself and not its
-> > parent and is inconsistent with the inotify event received by tail when
-> > fanotify filesystem mark is not set:
-> > 
-> > read(4, "\1\0\0\0\2\0\0\0\0\0\0\0\0\0\0\0", 50) = 16
-> > 
-> > The inteference between different fsnotify groups was caused by the fact
-> > that the mark on the sb requires the filename, so the filename is passed
-> > to fsnotify().  Later on, fsnotify_handle_event() tries to take care of
-> > not passing the filename to groups (such as inotify) that are interested
-> > in the filename only when the parent is watching.
-> > 
-> > But the logic was incorrect for the case that no group is watching the
-> > parent, some groups are watching the sb and some watching the inode.
-> > 
-> > Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-> > Fixes: 7372e79c9eb9 ("fanotify: fix logic of reporting name info with watched parent")
-> > Cc: stable@vger.kernel.org # 5.10+
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> Thanks for analysis, Amir!
-> 
-> > @@ -333,12 +333,14 @@ static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
-> >  	if (!inode_mark)
-> >  		return 0;
-> >  
-> > -	if (mask & FS_EVENT_ON_CHILD) {
-> > +	if (mask & FS_EVENTS_POSS_ON_CHILD) {
-> 
-> So this is going to work but as far as I'm reading the code in
-> fsnotify_handle_event() I would be maybe calmer if we instead wrote the
-> condition as:
-> 
-> 	if (!(mask & ALL_FSNOTIFY_DIRENT_EVENTS))
-> 
-> I.e., if the event on the inode is not expecting name & dir, clear them.
-> Instead of your variant which I understand as: "if we could have added name
-> & dir only for parent, clear it now". The bitwise difference between these
-> two checks is: FS_DELETE_SELF | FS_MOVE_SELF | FS_UNMOUNT | FS_Q_OVERFLOW |
-> FS_IN_IGNORED | FS_ERROR, none of which should matter. Maybe I'm paranoid
-> but we already had too many subtle bugs in this code so I'm striving for
-> maximum robustness :). What do you think?
+On Wed, Nov 13, 2024 at 01:47:21AM -0800, Luis Chamberlain wrote:
+> +++ b/fs/mpage.c
+> @@ -181,7 +181,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+>  	if (folio_buffers(folio))
+>  		goto confused;
+>  
+> -	block_in_file = (sector_t)folio->index << (PAGE_SHIFT - blkbits);
+> +	block_in_file = (sector_t)(((loff_t)folio->index << PAGE_SHIFT) >> blkbits);
 
-BTW, I can just massage the patch on commit since you're now busy with HSM
-stuff but I wanted to check what's your opinion on the change.
+	block_in_file = folio_pos(folio) >> blkbits;
+?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> @@ -527,7 +527,7 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
+>  	 * The page has no buffers: map it to disk
+>  	 */
+>  	BUG_ON(!folio_test_uptodate(folio));
+> -	block_in_file = (sector_t)folio->index << (PAGE_SHIFT - blkbits);
+> +	block_in_file = (sector_t)(((loff_t)folio->index << PAGE_SHIFT) >> blkbits);
+
+Likewise.
 
