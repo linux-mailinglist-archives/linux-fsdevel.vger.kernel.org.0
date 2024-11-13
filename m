@@ -1,175 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-34576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5EC9C6628
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:41:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F26E9C6642
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA6AB299CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BE72835A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E044B665;
-	Wed, 13 Nov 2024 00:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9CD12E4A;
+	Wed, 13 Nov 2024 00:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMSpZlf1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4CtvmwB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994F02594;
-	Wed, 13 Nov 2024 00:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245892C9A;
+	Wed, 13 Nov 2024 00:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731458412; cv=none; b=bu/G87uLuCYSm0Qwk0Hl52IH0iN7AgNOM6j3lF4CLsbw0igY1WtjO+VySIn/R7CHG1cg/08O552psSShjlzBs5pVprMlrzITSOaMuAjFSCrAJoQYl7VoZOgPy2DxMYnGy0RYMz/cOKX+cl4vlvGkPmbgu3Jts91wVOQSZKzKvl0=
+	t=1731459255; cv=none; b=qX4mLJ3CN9+bidX9fL+CDhnw3psfwFBp3H6VmPHg4dhZHLLsmxdXI6Ah1F9PsiyUfaCxLJRpkdPjMRjnOFzA9oBXDqM6CWD8dJF4EFHW5qxnN4A98oWGOlHNHzfoIvyXt7omWl1nxftGHppm/JDDiiCPLcf8Y3RKYdKJTBpPqAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731458412; c=relaxed/simple;
-	bh=1HpdaHws7Dvsc5CJpVpfvuv7uAODMFdVxG82OJNxjUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wyf19VnvhV3kCNRkKYRqblVonyhU6zaWfETVrseZSJA0AMuMf9T/d35S68RWx1wcE/axPP57y/IcOySgrpfP7LlZIcjwDv4/l+AAo7m+hU0JxIxYKQdz1GLd8e7fLCpDaqPFA8cHFwZbTIeZNx/anPb+QahJfRsadCM34rvSyZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMSpZlf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2364AC4CECD;
-	Wed, 13 Nov 2024 00:40:12 +0000 (UTC)
+	s=arc-20240116; t=1731459255; c=relaxed/simple;
+	bh=2/BzEDLl8uZtmkZu3QBWi0fXXCGMuB/3jo/IFlR+2dk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gd9YuzRkaIpqiZgE9GzJsv+mPkwBNdua6q/R1V9MphxioCdgmqytXP4bVJBP/B50Yyp0nX1YsvuMlrdRM0H0nv7/Rn+30Pi/UeCL6kEX2joNCWXfBuNdE6zIEErwV6wRxzDPaAzvH2pRGhwjjXlI3r5+VUREOxV1JoLqBsCEZ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4CtvmwB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF79C4CECD;
+	Wed, 13 Nov 2024 00:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731458412;
-	bh=1HpdaHws7Dvsc5CJpVpfvuv7uAODMFdVxG82OJNxjUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JMSpZlf16u+YRlsKM9DvsQ/m53BLIB9aDEibiUboTCqKnTQkg6ybdo2XmXMePg09/
-	 K8PrbUpkBJptPuezsRn1yq2RikhAaUngrjhSLuxEnNLU9NPXXpshlfsvKDwlePR62P
-	 DkkBujLvDZR8wsYEjvNVLZ1uS5Yu2qqUue5l0q9MKBWwrBfWdKsWMo+zF0zwIh2smr
-	 +nWqGkSCDg9yb8QSf9zM4A+MjwhR/j+oWkmzBkro8WHc4r4SB3Sl2aWaklsNifffLZ
-	 zGlJuGXHjFeV2bDQaJHzPBLWrk1+M0NCLz8qhbJZ+ii4HuT+p8UNTdjjyHGiDgo3W7
-	 wDy/0ejn8kL2A==
-Date: Tue, 12 Nov 2024 16:40:11 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, christian@brauner.io,
-	paul@paul-moore.com, bluca@debian.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH 0/4] pidfs: implement file handle support
-Message-ID: <20241113004011.GG9421@frogsfrogsfrogs>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241112-banknoten-ehebett-211d59cb101e@brauner>
- <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
+	s=k20201202; t=1731459254;
+	bh=2/BzEDLl8uZtmkZu3QBWi0fXXCGMuB/3jo/IFlR+2dk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=i4CtvmwB6H1T4GSXb+N5S5Sy3BCj1XG8ooAYTXbE2wDnKGStibmR+0saHieYvfCg2
+	 wcrJDJPoa28mpVADlkpuk4f8exZ4chOcwJuhdHbYNt4runPcz2Qbn7/bcNmBsIj3y0
+	 vshFHN66eWfEY/DMv8vVrxEIXxNSNTMsDXhKdiPDzphm3ximVagbjCnsW/7HgLOHOn
+	 jsRm+PJutXpf3Lqxjbd1OcfcNA6UlJpaUY2pRkSlywscoZToiYiimOE3J2TS+Uai07
+	 4pbXDL4CTCnQeyb1r6kDxy6vYORD1oIAlz2lc0NK/tAv83oljKFjtZUEA/qhgDyx39
+	 DhlWtFIFb4QWA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v3 bpf-next 0/4] Make inode storage available to tracing prog
+Date: Tue, 12 Nov 2024 16:53:47 -0800
+Message-ID: <20241113005351.2197340-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
 
-On Wed, Nov 13, 2024 at 12:03:08AM +0100, Erin Shepherd wrote:
-> 
-> On 12/11/2024 14:10, Christian Brauner wrote:
-> > Sorry for the delayed reply (I'm recovering from a lengthy illness.).
-> No worries on my part, and I hope you're feeling better!
-> > I like the idea in general. I think this is really useful. A few of my
-> > thoughts but I need input from Amir and Jeff:
-> >
-> > * In the last patch of the series you already implement decoding of
-> >   pidfd file handles by adding a .fh_to_dentry export_operations method.
-> >
-> >   There are a few things to consider because of how open_by_handle_at()
-> >   works.
-> >
-> >   - open_by_handle_at() needs to be restricted so it only creates pidfds
-> >     from pidfs file handles that resolve to a struct pid that is
-> >     reachable in the caller's pid namespace. In other words, it should
-> >     mirror pidfd_open().
-> >
-> >     Put another way, open_by_handle_at() must not be usable to open
-> >     arbitrary pids to prevent a container from constructing a pidfd file
-> >     handle for a process that lives outside it's pid namespace
-> >     hierarchy.
-> >
-> >     With this restriction in place open_by_handle_at() can be available
-> >     to let unprivileged processes open pidfd file handles.
-> >
-> >     Related to that, I don't think we need to make open_by_handle_at()
-> >     open arbitrary pidfd file handles via CAP_DAC_READ_SEARCH. Simply
-> >     because any process in the initial pid namespace can open any other
-> >     process via pidfd_open() anyway because pid namespaces are
-> >     hierarchical.
-> >
-> >     IOW, CAP_DAC_READ_SEARCH must not override the restriction that the
-> >     provided pidfs file handle must be reachable from the caller's pid
-> >     namespace.
-> 
-> The pid_vnr(pid) == 0 check catches this case -- we return an error to the
-> caller if there isn't a pid mapping in the caller's namespace
-> 
-> Perhaps I should have called this out explicitly.
-> 
-> >   - open_by_handle_at() uses may_decode_fh() to determine whether it's
-> >     possible to decode a file handle as an unprivileged user. The
-> >     current checks don't make sense for pidfs. Conceptually, I think
-> >     there don't need to place any restrictions based on global
-> >     CAP_DAC_READ_SEARCH, owning user namespace of the superblock or
-> >     mount on pidfs file handles.
-> >
-> >     The only restriction that matters is that the requested pidfs file
-> >     handle is reachable from the caller's pid namespace.
-> 
-> I wonder if this could be handled through an addition to export_operations'
-> flags member?
-> 
-> >   - A pidfd always has exactly a single inode and a single dentry.
-> >     There's no aliases.
-> >
-> >   - Generally, in my naive opinion, I think that decoding pidfs file
-> >     handles should be a lot simpler than decoding regular path based
-> >     file handles. Because there should be no need to verify any
-> >     ancestors, or reconnect paths. Pidfs also doesn't have directory
-> >     inodes, only regular inodes. In other words, any dentry is
-> >     acceptable.
-> >
-> >     Essentially, the only thing we need is for exportfs_decode_fh_raw()
-> >     to verify that the provided pidfs file handle is resolvable in the
-> >     caller's pid namespace. If so we're done. The challenge is how to
-> >     nicely plumb this into the code without it sticking out like a sore
-> >     thumb.
-> 
-> Theoretically you should be able to use PIDFD_SELF as well (assuming that
-> makes its way into mainline this release :-)) but I am a bit concerned about
-> potentially polluting the open_by_handle_at logic with pidfd specificities.
-> 
-> >   - Pidfs should not be exportable via NFS. It doesn't make sense.
-> 
-> Hmm, I guess I might have made that possible, though I'm certainly not
-> familiar enough with the internals of nfsd to be able to test if I've done
-> so.
+bpf inode local storage can be useful beyond LSM programs. For example,
+bcc/libbpf-tools file* can use inode local storage to simplify the logic.
+This set makes inode local storage available to tracing program.
 
-AFAIK check_export() in fs/nfsd/export.c spells this it out:
+1/4 is missing change for bpf task local storage. 2/4 move inode local
+storage from security blob to inode.
 
-	/* There are two requirements on a filesystem to be exportable.
-	 * 1:  We must be able to identify the filesystem from a number.
-	 *       either a device number (so FS_REQUIRES_DEV needed)
-	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
-	 * 2:  We must be able to find an inode from a filehandle.
-	 *       This means that s_export_op must be set.
-	 * 3: We must not currently be on an idmapped mount.
-	 */
+Similar to task local storage in tracing program, it is necessary to add
+recursion prevention logic for inode local storage. Patch 3/4 adds such
+logic, and 4/4 add a test for the recursion prevention logic.
 
-Granted I've been wrong on account of stale docs before. :$
+Changes v2 => v3:
+1. Move bpf_inode_storage_free to i_callback(). (Martin)
+2. Fix __bpf_inode_storage_get(). (Martin)
 
-Though it would be kinda funny if you *could* mess with another
-machine's processes over NFS.
+Changes v1 => v2:
+1. Rebase.
+2. Fix send-email mistake.
 
---D
+Song Liu (4):
+  bpf: lsm: Remove hook to bpf_task_storage_free
+  bpf: Make bpf inode storage available to tracing program
+  bpf: Add recursion prevention logic for inode storage
+  selftest/bpf: Test inode local storage recursion prevention
 
-> I guess probably this case calls for another export_ops flag? Not like we're
-> short on them
-> 
-> Thanks,
->     - Erin
-> 
-> 
+ fs/inode.c                                    |   2 +
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_lsm.h                       |  29 ---
+ include/linux/fs.h                            |   4 +
+ kernel/bpf/Makefile                           |   3 +-
+ kernel/bpf/bpf_inode_storage.c                | 185 +++++++++++++-----
+ kernel/bpf/bpf_lsm.c                          |   4 -
+ kernel/trace/bpf_trace.c                      |   8 +
+ security/bpf/hooks.c                          |   7 -
+ tools/testing/selftests/bpf/DENYLIST.s390x    |   1 +
+ .../bpf/prog_tests/inode_local_storage.c      |  72 +++++++
+ .../bpf/progs/inode_storage_recursion.c       |  90 +++++++++
+ 12 files changed, 321 insertions(+), 93 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
+
+--
+2.43.5
 
