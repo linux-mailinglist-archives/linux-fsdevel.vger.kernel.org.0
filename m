@@ -1,198 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-34708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870109C7ED2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 00:33:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD68F9C7EF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 00:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD3F0B23847
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 23:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF55B24448
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 23:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5918D621;
-	Wed, 13 Nov 2024 23:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A5C18D637;
+	Wed, 13 Nov 2024 23:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAIpascb"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="kYJ/tV+b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D05B17C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 23:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8DC18A6A0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 23:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731540768; cv=none; b=RWqmf4cV7TVC82QM4ylLBx7N903s8pC8s2lPyXsvAtfyYP1EV3JDxBpNp9QDyk2BMzR2Xs63vYj4A72mO/Pjl5fPnJdoLpMGPlxg9dLxYUiiDSJUB0YmP0jCJSPlq0C9xg8i+DSCLh7ZuijAaecHLMCvkSJZgIe7ddfuaL2bcNE=
+	t=1731541876; cv=none; b=Ie8/Va5jnsnY740NCPOgrkQaMEBhO0u4OzgOdtT1zZyibzUcdtEeme4nLGhRpFnZo80jqfACa3EZyobvu5hkVrzK0QpLCCO7NPZn2yJVa9scO4GCmqygvTqzdp9ie/7kQsp16KAlFOfd43NMCGHdW6FMQxwcKnJfTK2YKo/K3+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731540768; c=relaxed/simple;
-	bh=5v0z0RZ7azwCJh7knNyb53D+Rr38paL4Cqfyky5M3r8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ae+GRc6vWsuJxVqn5y+LiOZZkalDgVSYd1T9vqq+xsDpcVA5ViTIwd8QnmyIe718YX2eZJPy7JYe6HIBxkCCn1XIZv6fTc2rXLLEHlgWh4JTHjGDHKNEr7EdYXv5TWgK2+egBCE3s2ZtneXLrqd37fUWdn3ajorPeGMo6O1XYK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAIpascb; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20ca388d242so79782745ad.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 15:32:46 -0800 (PST)
+	s=arc-20240116; t=1731541876; c=relaxed/simple;
+	bh=iqbHEEkvtBJUUD2xvY1+B9NYMn7DnHXcWD0gw8D90/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIfmpSw18sKTuyJq8zwcOveiQOI7RwIpytYZba8qfwu2XlGC+VQp4uCydlG50q7q59TdfuvOfUR1rsGU6gEzr9+f+UCGSQVuh/QvryQvaWE21tXXE5zxkp6kG8etscKt4Wy0MOTu5AkMRR5W6ELXmYrqhhpT13DaXNlhs1u1KN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=kYJ/tV+b; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f8b01bd40dso6772a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 15:51:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731540765; x=1732145565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uTdUAECq+CtjKVt4lgB+veHtw+zGn6+CLgEFY+NSyi4=;
-        b=gAIpascbg6gh9ozx2zSaGKrvvDkfHNYZ7xQMxOy8A5nSnYzUYytmRrhNSj8qanQGct
-         W91WI5GLa/x5o0AFSyNhijNh4SVEr12olw2BcV/TbloamlcRSQEewJ1gKbpOG0DcrQ+6
-         /V1XrHWMckafoSfZiepAoo8bGO/xKbZwZh6NubLSuMJKeFD8LCeZcRFajAqtfFo7Sz52
-         rLx09sxHAJicwFNpoiXUujKXwiyU+g0/Eu/SlQP38Mt2PMcD6w+Zv+dz19B8qReNPXGh
-         VXLiE13qUHBCg8eZq0tjvJhn/VGfQkRr0uBE6iEQpvn4fGC6zChOwdAnLX2+G4/plYxf
-         LkkA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731541874; x=1732146674; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
+        b=kYJ/tV+bLpzvktreUGRYY8zED3aHQaYpWC7s6NK93e7ztXAoWJsGc1+qdS69GX8noX
+         TE4xWrzeA3IdxxbZR2FEyY0wkpG9Q51FnUwHHO/Q0MsGzdG+9jPY9MzXGGTVFIJ5xGlV
+         DDHo7vtiNYFsCXz6h9QoygWHddJnb5MeikoqaeR4J4fceKWpxU5f+WbqDVAbjaE1+fga
+         9aswDDxDcu64TvrBkH72g6hltrzjZe2dovW1mhKDQa6zjn+l3YeYddhY0Nmej7itdWhY
+         8mvKzX2+GrwoZ3cJWOckFXkdMUHXcvJ+2+mEm9BFEN2fFXSO+/OwDBf/GjgUPrVA9kFG
+         ajXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731540765; x=1732145565;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uTdUAECq+CtjKVt4lgB+veHtw+zGn6+CLgEFY+NSyi4=;
-        b=m1W6+97TuIhIorEWwnNrJQRc6sfUKL80wXp7/e4lIoj0bca1QPfcIXTjCklwdbJYH0
-         yQm6ZLukBWMYQyTgNQM1Lu353nJtvdjttXBTGltsgA+RbXLrgh0FhuRNoPVZP4hO5Qdq
-         LL0OK0BdbIEjjpq9nzqt9TEbaKGS0v3MKRWg16PttkKXKQ90o6GKc/EKQJS/I3hEQZuS
-         6gh7MYXvyr++3rqA5JCoXU4ytvWTn8T5FDUyBuw6+781rkECV/SX4+GtZr7ypMMQp+qU
-         vLW0B27lwnxO9YjY+Nby/tprGSboQuF5G7vHWUofNiAdTKpxVZWu9gved08IjodkQ0hb
-         2fHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJTf+OHsPz1x5MhMwmtuFV9WFn+y44EWft+ylIM61jFhgTf7p9hBFF2VY5zob/xz/heQvhMxX88bEL69aX@vger.kernel.org
-X-Gm-Message-State: AOJu0YydyAhwVY9Sf1nJIpYOCMcHbVxptMgiAZBKuD6+O5/62VVMicPC
-	9wPPmjwR55SRRgDxv7P8T6EiZt4vPGvI/O+/JbhzEeyOuXNKNWqbG4mtHasp
-X-Google-Smtp-Source: AGHT+IFFzcICfb9N8gQggQGq1jmiucB7Uy4NC6ZmyZfMRs4qLXEYndGg+8KwFkASWQtQEkxSu0IRgQ==
-X-Received: by 2002:a17:902:e807:b0:20b:a9f3:796d with SMTP id d9443c01a7336-211c5090429mr1784615ad.44.1731540765394;
-        Wed, 13 Nov 2024 15:32:45 -0800 (PST)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc3f3asm115824435ad.3.2024.11.13.15.32.41
+        d=1e100.net; s=20230601; t=1731541874; x=1732146674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
+        b=JrNwwK2gglfL/G3sLoTqOpszXbuNhbNxZLn6PJALd2L02gfGM9NmqBg82xO0kS7Zgw
+         u6bwmO97+JSlsdBqVrDvQ1e8kcQXmjHVYrtAJUT91NYbIu+3dfv9kUnO5EB6YcV+z75M
+         nQGo0sc2jFtQNGj0Tn87/G6f0FNPJC7xYzCscfnAa6ISMwsfsJOfWPbTFvy+qWLbpLID
+         yaSSTDetxyvUWbT64/lv8NBLRGVFEMYl+J+l205AOc32Z7LCGlzh+iAn413BINRnLseN
+         9upNq6KaKYSZ+e9et2uPmA2+jcgSwDvOKJkt748MVgW13pF/ctmcGIPWNo08xxH0Vxk+
+         H8wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOkVDGR6OJ+oPSH4JLL/AWR8nQb7Svy2E3qGg2E4TIpOtyHLpMzd9UkA94xiI/Iczt23zYEyNB8f50m3wi@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIDXup2Mxcyd5sRznk+KrE8QnitAmsV2NnA+jRC6MqAlBked7L
+	kwcx9N0VXcGR2+jIZ26nQut753fu6CqKTodrYEw4u4qk2Imcp+Zx3pMSXI9Vxkg=
+X-Google-Smtp-Source: AGHT+IGnJMdOUCMCs6jEMGK8slkeJs2lCzIM0b+P01P83BSSB16iV+QAJQtoT6rroZ1RFQlD0VyEEQ==
+X-Received: by 2002:a17:90b:1f89:b0:2e2:ada8:2986 with SMTP id 98e67ed59e1d1-2e9fe6640c3mr1819128a91.16.1731541873837;
+        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02481b8dsm134060a91.9.2024.11.13.15.51.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 15:32:44 -0800 (PST)
-Date: Thu, 14 Nov 2024 08:32:40 +0900
-Message-ID: <m2msi2g15z.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: geert@linux-m68k.org
-Cc: johannes@sipsolutions.net,
-	linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	ebiederm@xmission.com,
-	kees@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	gerg@linux-m68k.org,
-	dalias@libc.org
-Subject: Re: [RFC PATCH v2 02/13] x86/um: nommu: elf loader for fdpic
-In-Reply-To: <CAMuHMdXKAz0bxBGrbbHD6haeCbhYh=pCb4stox1fOifCvyCwpw@mail.gmail.com>
-References: <cover.1731290567.git.thehajime@gmail.com>
-	<ea2a3fb86915664d54ba174e043046f684e7cf8c.1731290567.git.thehajime@gmail.com>
-	<CAMuHMdU+Lyj3C-P3kQMd6WfyjBY+YXZSx3Vv6C2y9k__pK45vg@mail.gmail.com>
-	<m2pln0f6mm.wl-thehajime@gmail.com>
-	<CAMuHMdXC0BbiOjWsiN1Mg8Jkm03_H6_-fERSnFEB2pkW_VWmaA@mail.gmail.com>
-	<8bbfe73f7f1ef9f1a4674d963d1c4e8181f33341.camel@sipsolutions.net>
-	<f262fb8364037899322b63906b525b13dc4546c2.camel@sipsolutions.net>
-	<CAMuHMdVRB46fyFKjZn3Zw2bb8_mqZasqh-J7vse-GQkA3_OQDg@mail.gmail.com>
-	<m2o72jff2a.wl-thehajime@gmail.com>
-	<CAMuHMdXKAz0bxBGrbbHD6haeCbhYh=pCb4stox1fOifCvyCwpw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/26.3 Mule/6.0
+        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tBN8f-00EIWG-34;
+	Thu, 14 Nov 2024 10:51:09 +1100
+Date: Thu, 14 Nov 2024 10:51:09 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Pierre Labat <plabat@micron.com>, Keith Busch <kbusch@kernel.org>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <ZzU7bZokkTN2s8qr@dread.disaster.area>
+References: <20241108193629.3817619-1-kbusch@meta.com>
+ <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
+ <20241111102914.GA27870@lst.de>
+ <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+ <20241112133439.GA4164@lst.de>
+ <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
+ <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
+ <20241113044736.GA20212@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113044736.GA20212@lst.de>
 
+On Wed, Nov 13, 2024 at 05:47:36AM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 12, 2024 at 06:18:21PM +0000, Pierre Labat wrote:
+> > About 2)
+> > Provide a simple way to the user to decide which layer generate write hints.
+> > As an example, as some of you pointed out, what if the filesystem wants to generate write hints to optimize its [own] data handling by the storage, and at the same time the application using the FS understand the storage and also wants to optimize using write hints.
+> > Both use cases are legit, I think.
+> > To handle that in a simple way, why not have a filesystem mount parameter enabling/disabling the use of write hints by the FS?
+> 
+> The file system is, and always has been, the entity in charge of
+> resource allocation of the underlying device.  Bypassing it will get
+> you in trouble, and a simple mount option isn't really changing that
+> (it's also not exactly a scalable interface).
+> 
+> If an application wants to micro-manage placement decisions it should not
+> use a file system, or at least not a normal one with Posix semantics.
+> That being said we'd demonstrated that applications using proper grouping
+> of data by file and the simple temperature hints can get very good result
+> from file systems that can interpret them, without a lot of work in the
+> file system.  I suspect for most applications that actually want files
+> that is actually going to give better results than trying to do the
+> micro-management that tries to bypass the file system.
 
-On Wed, 13 Nov 2024 22:55:02 +0900,
-Geert Uytterhoeven wrote:
-> On Wed, Nov 13, 2024 at 2:17=E2=80=AFPM Hajime Tazaki <thehajime@gmail.co=
-m> wrote:
-> > On Wed, 13 Nov 2024 19:27:08 +0900,
-> > Geert Uytterhoeven wrote:
-> > > On Wed, Nov 13, 2024 at 9:37=E2=80=AFAM Johannes Berg <johannes@sipso=
-lutions.net> wrote:
-> > > > On Wed, 2024-11-13 at 09:36 +0100, Johannes Berg wrote:
-> > > > > On Wed, 2024-11-13 at 09:19 +0100, Geert Uytterhoeven wrote:
-> > > > > >
-> > > > > > > > > -       depends on ARM || ((M68K || RISCV || SUPERH || XT=
-ENSA) && !MMU)
-> > > > > > > > > +       depends on ARM || ((M68K || RISCV || SUPERH || UM=
-L || XTENSA) && !MMU)
-> > > > > > > >
-> > > > > > > > s/UML/X86/?
-> > > > > > >
-> > > > > > > I guess the fdpic loader can be used to X86, but this patchse=
-t only
-> > > > > > > adds UML to be able to select it.  I intended to add UML into=
- nommu
-> > > > > > > family.
-> > > > > >
-> > > > > > While currently x86-nommu is supported for UML only, this is re=
-ally
-> > > > > > x86-specific. I still hope UML will get support for other archi=
-tectures
-> > > > > > one day, at which point a dependency on UML here will become wr=
-ong...
-> > > > > >
-> > > > >
-> > > > > X86 isn't set for UML, X64_32 and X64_64 are though.
-> > > > >
-> > > > > Given that the no-MMU UM support even is 64-bit only, that probab=
-ly
-> > > > > should then really be (UML && X86_64).
-> > > > >
-> > > > > But it already has !MMU, so can't be selected otherwise, and it s=
-eems
-> > > > > that non-X86 UML
-> > > >
-> > > > ... would require far more changes in all kinds of places, so not s=
-ure
-> > > > I'd be too concerned about it here.
-> > >
-> > > OK, up to you...
-> >
-> > Indeed, this particular patch [02/13] intends to support the fdpic
-> > loader under the condition 1) x86_64 ELF binaries (w/ PIE), 2) on UML,
-> > 3) and with) !MMU configured.  Given that situation, the strict check
-> > should be like:
-> >
-> >    depends on ARM || ((M68K || RISCV || SUPERH || (UML && X86_64) || XT=
-ENSA) && !MMU)
-> >
-> > (as Johannes mentioned).
-> >
-> > on the other hand, the fdpic loader works (afaik) on MMU environment so,
-> >
-> >    depends on ARM || (UML && X86_64) || ((M68K || RISCV || SUPERH || XT=
-ENSA) && !MMU)
-> >
-> > should also works, but this might be too broad for this patchset (and
-> > not sure if this makes a new use case).
->=20
-> AFAIK that depends on the architecture's MMU context structure, cfr.
-> the comment in commit 782f4c5c44e7d99d ("m68knommu: allow elf_fdpic
-> loader to be selected"), which restricts it to nommu on m68k.  If it
-> does work on X86_64, you can drop the dependency on UML, and we're
-> (almost) back to my initial comment ;-)
+This.
 
-I checked and it doesn't work as-is with (UML_X86_64 && MMU).
-restricting nommu with UML might be a good to for this patch.
+The most important thing that filesystems do behind the scenes is
+manage -data locality-. XFS has thousands of lines of code to manage
+and control data locality - the allocation policy API itself has a
+*dozens* control parameters. We have 2 separate allocation
+architectures (one btree based, one bitmap based) and multiple
+locality policy algorithms. These juggled physical alignment, size
+granularity, size limits, data type being allocated for, desired
+locality targets, different search algorithms (e.g. first fit, best
+fit, exact fit by size or location, etc), multiple fallback
+strategies when the initial target cannot be met, etc.
 
-even if it works, I would like to focus on UML && !MMU for this patch
-series since I wish to make the (initial) patchset as small as
-possible.  If we would like to make it broadly available on x86, that
-would be a different patch.
+Allocation policy management is the core of every block based
+filesystem that has ever been written.
 
-> > anyway, thank you for the comment.
-> > # I really wanted to have comments from nommu folks.
->=20
-> I've added some in CC...
+Specifically to this "stream hint" discussion: go look at the XFS
+filestreams allocator.
 
-Thanks,
+SGI wrote an entirely new allocator for XFS whose only purpose in
+life is to automatically separate individual streams of user data
+into physically separate regions of LBA space.
 
--- Hajime
+This was written to optimise realtime ingest and playback of
+multiple uncompressed 4k and 8k video data streams from big
+isochronous SAN storage arrays back in ~2005.  Each stream could be
+up to 1.2GB/s of data. If the data for each IO was not exactly
+placed in alignment with the storage array stripe cache granularity
+(2MB, IIRC), then a cache miss would occur and the IO latency would
+be too high and frames of data would be missed/dropped.
+
+IOWs, we have an allocator in XFS that specifically designed to
+separate indepedent streams of data to independent regions of the
+filesystem LBA space to effcient support data IO rates in the order
+of tens of GB/s.
+
+What are we talking about now? Storage hardware that might be able
+to do 10-15GB/s of IO that needs stream separation for efficient
+management of the internal storage resources.
+
+The fact we have previously solved this class of stream separation
+problem at the filesystem level *without needing a user-controlled
+API at all* is probably the most relevant fact missing from this
+discussion.
+
+As to the concern about stream/temp/hint translation consistency
+across different hardware: the filesystem is the perfect place to
+provide this abstraction to users. The block device can expose what
+it supports, the user API can be fixed, and the filesystem can
+provide the mapping between the two that won't change for the life
+of the filesystem...
+
+Long story short: Christoph is right.
+
+The OS hints/streams API needs to be aligned to the capabilities
+that filesystems already provide *as a primary design goal*. What
+the new hardware might support is a secondary concern. i.e. hardware
+driven software design is almost always a mistake: define the user
+API and abstractions first, then the OS can reduce it sanely down to
+what the specific hardware present is capable of supporting.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
