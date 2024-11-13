@@ -1,103 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-34583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F749C668E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 02:20:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EDE9C66A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 02:24:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FB8AB275C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:20:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEAE1B28542
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658A31C69D;
-	Wed, 13 Nov 2024 01:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NWnQS4xv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BD917BD9;
+	Wed, 13 Nov 2024 01:23:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D832309AC;
-	Wed, 13 Nov 2024 01:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC245382
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 01:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460801; cv=none; b=qQLalPp3+K0KMN+AtTxd5kWc8eRyo7rVy7eTKZGmzHF0qTRKJoZHB/3jLURmcZKClUggEkgpfDMTQmTckWhCoq2klPMlJ1mLgxbI6+ri8zoZu83sq7l8RQokm8tteL3lZlivOmduQzphqcWI5yLCIGemSG7QtvfLYeExekGwuIo=
+	t=1731461033; cv=none; b=rcGudBK/zakNEegvedf9zDbnYA4S7af3+mNdxlEdv3FiXUetxgH/FLxECjKX22emXY0GwK9j3gKMoopcYFQEsqODYPlc5oDLSU7UOulFisnuH4+dHk7Hx65mrEvAB/CAxmeAYINoDfkwOHl6ZU3sbraUQNdX0GwvgvgHMtN966I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460801; c=relaxed/simple;
-	bh=EEW2fQlOgw7/LdLNgEFcmqde26RG5RGhFq5cl9pKORY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdizncf6YWY/ICzPb8k70YEGnuU9uT91l335/YpjVoEC3bj2gg7Kg3dSn8SQxQJi7np8gJNCjrcxIhmcPGTjd59XIM8pGAr6QI2PwisG+k97eibiFGYFhHppQMlQ9E4Nef5M39F4q76uUlSLt5q5+KK9WssbOK52fW+TDHNYOTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NWnQS4xv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+xBD1LG1LcD2WvJWHLClpL4CkoduBy/hMixH+3L2C0k=; b=NWnQS4xver1owBO+dn2OG3m35m
-	YqYGw2WubUWRGvoj6Nj/I0yVjQQcIshCS5hh7T6H6svbkoLqNtVuFjUB6lmVEGiItwgK6KwVHP24w
-	249wjP8HAnySe2tiW15dmU9Uco4QR5sjxt/u9ffiwypdBNYN1uhFwXXejD2H6698UzgMHy4AafB12
-	noJhUGXPkJjMlejOr9GPIsgaRcCFPvZ6px03xHvhivHqv+Ei3lp9e0ZtFCY1u5aerpBN+jrgq1G5E
-	gOe27ozCV21rRcIkZI5ePTtJ5sgUfkPdiou88Fr9qkqoyxHzsVsJUjrR0Bq2zx/K0t+ut4sXOvs9h
-	ibbU2D6g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tB230-0000000EJRo-3OnO;
-	Wed, 13 Nov 2024 01:19:54 +0000
-Date: Wed, 13 Nov 2024 01:19:54 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	brauner@kernel.org, linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission
- events
-Message-ID: <20241113011954.GG3387508@ZenIV>
-References: <cover.1731433903.git.josef@toxicpanda.com>
- <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
- <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
- <CAOQ4uxiiFsu-cG89i_PA+kqUp8ycmewhuD9xJBgpuBy5AahG5Q@mail.gmail.com>
- <CAHk-=wijFZtUxsunOVN5G+FMBJ+8A-+p5TOURv2h=rbtO44egw@mail.gmail.com>
- <20241113001251.GF3387508@ZenIV>
- <CAHk-=wg02AubUBZ5DxLra7b5w2+hxawdipPqEHemg=Lf8b1TDA@mail.gmail.com>
- <CAHk-=wgVzOQDNASK8tU3JoZHUgp7BMTmuo2Njmqh4NvEMYTrCw@mail.gmail.com>
+	s=arc-20240116; t=1731461033; c=relaxed/simple;
+	bh=WXTS22Gi8E3G86TOGsUW6pD4W8Uw3SDLxlF5+ZmX4bw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c4TpAvYl5Rxm1HTxdRDJlPRmxafzyo6O+1qgNpTM+cEcdpZQlsfP7UioyvPFZqc0Ug6TpG6gWTDHnlBQoQEz5t0cxJtfs3lH3uu8gAiAjQa0Z92wTDiSBh1qmto8rlUL/WaFPVR1GbJ4G2lhpGPauF6S0Dr5fuoYJC7tF9FwlS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Xp59J5KBtz1SGMp;
+	Wed, 13 Nov 2024 09:21:56 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id D2C71180042;
+	Wed, 13 Nov 2024 09:23:46 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 13 Nov 2024 09:23:46 +0800
+Message-ID: <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
+Date: Wed, 13 Nov 2024 09:23:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgVzOQDNASK8tU3JoZHUgp7BMTmuo2Njmqh4NvEMYTrCw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: UML mount failure with Linux 6.11
+To: Karel Zak <kzak@redhat.com>
+CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>, Christian
+ Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>,
+	Johannes Berg <johannes@sipsolutions.net>, <rrs@debian.org>
+References: <857ff79f52ed50b4de8bbeec59c9820be4968183.camel@debian.org>
+ <2ea3c5c4a1ecaa60414e3ed6485057ea65ca1a6e.camel@sipsolutions.net>
+ <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
+ <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
+ <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+ <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+ <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+ <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+ <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+ <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Tue, Nov 12, 2024 at 04:38:42PM -0800, Linus Torvalds wrote:
-> Looking at that locking code in fadvise() just for the f_mode use does
-> make me think this would be a really good cleanup.
+
+
+On 2024/11/13 4:10, Karel Zak wrote:
 > 
-> I note that our fcntl code seems buggy as-is, because while it does
-> use f_lock for assignments (good), it clearly does *not* use them for
-> reading.
+>   Hi,
 > 
-> So it looks like you can actually read inconsistent values.
+> On Mon, Nov 11, 2024 at 09:16:18AM GMT, Hongbo Li wrote:
+>> We are discussing about the hostfs mount with new mount API in [1]. And may
+>> need your help.
+>>
+>> After finishing the conversion to the new mount API for hostfs, it
+>> encountered a situation where the old version supported only one mount
+>> option, and the whole mount option was used as the root path (it is also
+>> valid for the path to contain commas). But when switching to the new mount
+>> API, the option part will be split using commas (if I'm not mistaken, this
+>> step would be done in libmount), which could potentially split a complete
+>> path into multiple parts, and the call fsconfig syscall to set the mount
+>> options for underline filesystems. This is different from the original
+>> intention of hostfs. And this kind of situation is not common in other
+>> filesystems.
 > 
-> I get the feeling that f_flags would want WRITE_ONCE/READ_ONCE in
-> _addition_ to the f_lock use it has.
+> The options has been always parsed by mount(8) and it's very fragile
+> to assume that kernel get as in the original order (etc.).
+> 
+> For decades, commas have been supported in mount options. For example,
+> SeLinux uses them frequently in context settings. All you need to do
+> is use quotes, but be careful because the shell will strip them off.
+> Therefore, double quoting is required.
+>
 
-AFAICS, fasync logics is the fishy part - the rest should be sane.
+Thanks for your reply!
 
-> The f_mode thing with fadvise() smells like the same bug. Just because
-> the modifications are serialized wrt each other doesn't mean that
-> readers are then automatically ok.
+If I'm not mistaken, we should add double quoting explicitly if we need 
+commas in mount options. However, it seems different for hostfs. For 
+example, with hostfs, if we use "mount -t hostfs none -o 
+/home/hostfs,dir /mnt" in the older interface, which can successfully 
+mount the host directory `/home/hostfs,dir`, then we should use "mount 
+-t hostfs none -o '"/home/hostfs,dir"' /mnt" in the new interface. If 
+that is the case, we should change the mount command which is hardcoded 
+in the original project.
 
-Reads are also under ->f_lock in there, AFAICS...
+Thanks,
+Hongbo
 
-Another thing in the vicinity is ->f_mode modifications after the calls
-of anon_inode_getfile() in several callers - probably ought to switch
-those to anon_inode_getfile_fmode().  That had been discussed back in
-April when the function got merged, but "convert to using it" followup
-series hadn't materialized...
+>     mount -o 'rw,bbb="this,is,value",ccc'
+> 
+> It's also supported in fstab, just use name="v,a,l,u,e"
+> 
+> You can try it:
+> 
+>   # strace -e fsconfig mount -t tmpfs -o 'rw,bbb="this,is,value",ccc' tmpfs /dontexist
+> 
+>   fsconfig(3, FSCONFIG_SET_STRING, "source", "tmpfs", 0) = 0
+>   fsconfig(3, FSCONFIG_SET_FLAG, "rw", NULL, 0) = 0
+>   fsconfig(3, FSCONFIG_SET_STRING, "bbb", "this,is,value", 0) = -1 EINVAL
+> 
+> You can see the expected result when using fsconfig().
+> 
+>   Karel
+> 
+> 
 
