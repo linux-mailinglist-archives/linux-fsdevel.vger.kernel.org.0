@@ -1,184 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-34674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FB09C7870
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 17:14:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F7C9C78FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 17:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B781F25A23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:14:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D341B2A28F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A01632DB;
-	Wed, 13 Nov 2024 16:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7247E16088F;
+	Wed, 13 Nov 2024 16:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jCyVMMJR"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xfD8D5xz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwNOIYIW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xfD8D5xz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwNOIYIW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEA8158219
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 16:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225301C32;
+	Wed, 13 Nov 2024 16:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514433; cv=none; b=YgUQH4/vvBfZKhxgEO0HSj1gU0eh3W2hs6jiBuoz9E/dsOwLJZo97Q1xLYDA6MtNlHGzBsba07LmtnxTOIzow/uwmBAIWkRjgfyMbBNdNt98hwY8s+VItwQ6Uzxfu4ppTo53/iHgxdoEALQBfQw6R5+y2mjISjYlx0UI/vVueAE=
+	t=1731514677; cv=none; b=Zc5nCDi1qC81Kdm6KbFMXnF4D3urEiLsaW4VQqgWrKREIcjsbjczWB5EE7MAO8OIY9VHW4i1NmIBWy059v4dJUYfh4IDzL+aPs1FoXPTAxMRjX1A5x6wm+Tq8ovFs46EyLCoKeQ6lfjOZPAjVkh+DfRLlXtLe3b1jdzdNJQDUQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514433; c=relaxed/simple;
-	bh=7HWQ/VqZgyhSHZd91HoF8yCdwP+of9WeF4Yh1KQV7BE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rs5eCZyGJjSVY92oCAyGRD9jGvJ/Y6i3W3tEZjSLGEYiNeLGKduWX/KFFqUW2BAUu44wKRutRbvWV7n4B8IiLhvHavt8jQfzC6bXMEOfRNv/LqgVFSEf9Z6Stii/fVP+/myDIy8oplSIihoQiLztdUfvvZvf5dLlK22bt1fQdQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=jCyVMMJR; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ee53b30470so2850853eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 08:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1731514429; x=1732119229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
-        b=jCyVMMJRZOft92rmgjFsP3jK3JLbWqZcaGXyMz40qYrjgttc8yEJhY7jqrB/gqK/+y
-         D+SOZId9qjrrJnGW6X/8heTjD372K9LsGgC4UEfHPQxjal+LF2O538+U6Hv0vntjjMl3
-         80hXhVeRNixVT6HGJ1HWhZVBwNbQFtgcFFRtKo12KNHP0baM+vriLZDpTpaPCIU/Ftld
-         G0uD/fq4As/pD77wGfseFLWCBZGm7lAhe3sen+uAvRSVbGMOXUJMG5Am/9W1TFZ0cv+I
-         dOmfpvAumQU6rqEv6oKwookaF4hT5Mde01ublxW8YgpR+5DjCfj7CSff+k+Vh1fLL0Qu
-         0R+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731514429; x=1732119229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
-        b=ZzYsNfIfCanKA2XOpsD6Oj84/StiM5bd+OzNbjhpCmnKPrAQpPND5RDNxxtterwoPw
-         nq2RDt5mvE4Y1S5phPgUhOJ0rjrWfO4r/ILTCYfOqlg0tRh7XFsQYXGO1UpuNNR4mX7Y
-         ZNLQQLN8jRAzHPxw44eUDe48kXb/9k/CF+FMPWN+wVzh/HoW5et7HQR+SviKe0qKufqn
-         UOE4De9JN/UMVAj7QU8BJM50+DafTzKKx1Y/nGqRP65GihbpDgS+EbbgArPQnUq00XKB
-         YA6Dk/BEaFOYdKsCjVqAlEHzuKIUHsOjZcbEi1izqeuh9YMplTZebt+p5KRFpM0gT7HY
-         vc0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1WSb5C7vUOOhdlC5ByawTrYkvodREpnWeNQ0zegzvqXgh9PGv7Ka9BToYjadiWmaNRLTfMMadYXRa/Zyy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzQXquzBUrebNdExCnKQhLxvhC9MmiqHXGXciqq5ds7dh/tjbQ
-	i03WzEUsU+t+otQpDnqtFaFIu+lf9sLZ/Po6PdOhHyfB0Nlqa4GfArgtCnF9JqgF6fwxu5KPCmY
-	psUZ5y5DQOQKyXHUoxN4xGydWjM/Wr1OBvNVNAg==
-X-Google-Smtp-Source: AGHT+IGDFpRJff+OKPz21HLMWXvGQyDkqQzC8F4K0hofednOGXa7SW/5Crlgs/h6Bl5IR8Aw+zrRHhGFgVmxSg02ZdY=
-X-Received: by 2002:a05:6820:1805:b0:5eb:c72e:e29c with SMTP id
- 006d021491bc7-5ee86a500a2mr5293321eaf.8.1731514429462; Wed, 13 Nov 2024
- 08:13:49 -0800 (PST)
+	s=arc-20240116; t=1731514677; c=relaxed/simple;
+	bh=q0VQ9X+/obSpsOK/bRPN3dRqDNFVoYyuzZk0bMVicU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+nzUtzDJvEd/PlNRdyg9H3NPUmiJ58c6rf6kk8U7f9smzkxmI98DlQkzX/EBozERoOtE/YH+15Nl9Wph2SDTxnOzmoK+xSb+8hqmiVLF1ukgizHfl+avVTlKqEtJOO1VmJ4RM8XWohI0KvgCi91GfeNbwUkOlIqqTPkwBGVM5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xfD8D5xz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwNOIYIW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xfD8D5xz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwNOIYIW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B5991F391;
+	Wed, 13 Nov 2024 16:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731514674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
+	b=xfD8D5xzlbk0LEzwpk6Hrb5G2q0u7V9lRSr6WVkdW0qCg8haPtrpuE8afGMtaQ4uNw8LQl
+	fv8seFOTQ5h2fw+3M59bfoox+XN+lLt+rG0V40+JSbgT3YMBENqLHFQ/OTwzJcoMCAYEma
+	7BOa1INxuDCbAp/q/CGh7X8+3yQh4sA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731514674;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
+	b=cwNOIYIWH1ujuV6THi76n+vYoHmYm439yjgw5FniEBz3Xv9DO1POer6CMM2uRTCRWQPdU+
+	WD4O0Vhv9gOicdDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xfD8D5xz;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cwNOIYIW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731514674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
+	b=xfD8D5xzlbk0LEzwpk6Hrb5G2q0u7V9lRSr6WVkdW0qCg8haPtrpuE8afGMtaQ4uNw8LQl
+	fv8seFOTQ5h2fw+3M59bfoox+XN+lLt+rG0V40+JSbgT3YMBENqLHFQ/OTwzJcoMCAYEma
+	7BOa1INxuDCbAp/q/CGh7X8+3yQh4sA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731514674;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
+	b=cwNOIYIWH1ujuV6THi76n+vYoHmYm439yjgw5FniEBz3Xv9DO1POer6CMM2uRTCRWQPdU+
+	WD4O0Vhv9gOicdDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DCDD13A6E;
+	Wed, 13 Nov 2024 16:17:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2bjrCjLRNGfHMAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 16:17:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C0016A08D0; Wed, 13 Nov 2024 17:17:53 +0100 (CET)
+Date: Wed, 13 Nov 2024 17:17:53 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	jlayton@kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: make evict() use smp_mb__after_spinlock instead of
+ smp_mb
+Message-ID: <20241113161753.2rtsxuwzgvenwvu4@quack3>
+References: <20241113155103.4194099-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com> <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
-In-Reply-To: <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 14 Nov 2024 00:13:38 +0800
-Message-ID: <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
-Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113155103.4194099-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: 3B5991F391
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Deepak
+On Wed 13-11-24 16:51:03, Mateusz Guzik wrote:
+> It literally directly follows a spin_lock() call.
+> 
+> This whacks an explicit barrier on x86-64.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-On Tue, Nov 12, 2024 at 5:08=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
-rote:
->
-> Kernel will have to perform shadow stack operations on user shadow stack.
-> Like during signal delivery and sigreturn, shadow stack token must be
-> created and validated respectively. Thus shadow stack access for kernel
-> must be enabled.
->
-> In future when kernel shadow stacks are enabled for linux kernel, it must
-> be enabled as early as possible for better coverage and prevent imbalance
-> between regular stack and shadow stack. After `relocate_enable_mmu` has
-> been done, this is as early as possible it can enabled.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/kernel/asm-offsets.c |  4 ++++
->  arch/riscv/kernel/head.S        | 12 ++++++++++++
->  2 files changed, 16 insertions(+)
->
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index 766bd33f10cb..a22ab8a41672 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -517,4 +517,8 @@ void asm_offsets(void)
->         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
->         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
->  #endif
-> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
-> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
-> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
-> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
->  }
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 356d5397b2a2..6244408ca917 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -164,6 +164,12 @@ secondary_start_sbi:
->         call relocate_enable_mmu
->  #endif
->         call .Lsetup_trap_vector
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->         call smp_callin
->  #endif /* CONFIG_SMP */
-> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
->         la tp, init_task
->         la sp, init_thread_union + THREAD_SIZE
->         addi sp, sp, -PT_SIZE_ON_STACK
-> +       li a7, SBI_EXT_FWFT
-> +       li a6, SBI_EXT_FWFT_SET
-> +       li a0, SBI_FWFT_SHADOW_STACK
-> +       li a1, 1 /* enable supervisor to access shadow stack access */
-> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> +       ecall
->         scs_load_current
->
->  #ifdef CONFIG_KASAN
->
-> --
-> 2.45.0
->
-Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
-otherwise the menvcfg.sse won't be set by the fwft set sbi call when
-the hotplug cpu back to kernel?
+Looks good. Feel free to add:
 
-Regards,
-Nick
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+> This plausibly can go away altogether, but I could not be arsed to
+> convince myself that's correct. Individuals willing to put in time are
+> welcome :)
+
+AFAICS there's nothing else really guaranteeing the last store to
+inode->i_state cannot be reordered up to after the wake up so I think the
+barrier should be there.
+
+								Honza
+> 
+>  fs/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index e5a60084a7a9..b3db1234737f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -817,7 +817,7 @@ static void evict(struct inode *inode)
+>  	 * ___wait_var_event() either sees the bit cleared or
+>  	 * waitqueue_active() check in wake_up_var() sees the waiter.
+>  	 */
+> -	smp_mb();
+> +	smp_mb__after_spinlock();
+>  	inode_wake_up_bit(inode, __I_NEW);
+>  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+>  	spin_unlock(&inode->i_lock);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
