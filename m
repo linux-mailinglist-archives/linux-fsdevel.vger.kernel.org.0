@@ -1,321 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-34659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D249C7482
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:38:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC0D9C7487
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58275281C65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53E81F28C86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B442A200B89;
-	Wed, 13 Nov 2024 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE7202F6B;
+	Wed, 13 Nov 2024 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XydvH+7x"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KUCIX847";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwFFRyOU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KUCIX847";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwFFRyOU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477DD1FF7A4;
-	Wed, 13 Nov 2024 14:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD00C1FF7A4;
+	Wed, 13 Nov 2024 14:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508607; cv=none; b=uPdJWT9TliJux3Pg2OGFYGadVddaIlsvnNy4ecn7PwP6jqTb/vKuz+2kjJqnSBckN4eM7ZFDspeOg7exfkveXkGc2/UyIDJIMH2jY1+XO8w1DOg+fD3Bat6tPm4XNLQJaX5agSNHOcRU1z+PfnEEWfpVhlak4rsaGS1CxrXURuI=
+	t=1731508613; cv=none; b=Am1ii7w8BEjpOZ9kGvhe+XFojvTHoSpH1uQFlXOZ+5eO7hFysLThDi49RBf6t7QccN4ToJuqHuNklE1mannaI9aWBYD6b5/Nl83yR/rFSCBRZyuhlLkEaObcgSmWmfxuQJU5fAl8SrZjTuVi1zrGfQKbi920qT2G6Gx/Fi/RNKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508607; c=relaxed/simple;
-	bh=4ZOYAY9l9J0p+/pagouIG7S5TCj2naHI1ZJy9Dt8YLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ep2eMU0WFd+MF6+EJGCEqs5uHi5zI1sZVIVNMlstxp7ZGlL7IVPIKh32GVCCCr7ukbkHBIqm3yWp7bMgMQjCrf4D5Nv20i6/aBb2eVK71nreb8hpfxPPSyIEjtY+fKrjX/e6AHgNApK8UD3sv0Pe6BL7y4p6HVvccf8Nw/i9+Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XydvH+7x; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cc1b20ce54so47718526d6.0;
-        Wed, 13 Nov 2024 06:36:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731508604; x=1732113404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TpO1rEDli92wfsqt+A461mrFCCbHcRm9Ir9kcXs4JU=;
-        b=XydvH+7xyHsDmu2URrGPRxYFtb/LrDn4o5vsr5PlpoG71TNinbSyczAgN8A2chjdiG
-         7Phje9nlfdnp6oTjW+XY7Iv6guQFViTX6cYMUxFjqSHaPsCaFLtU/LSF0TEtd7PCQRSd
-         iG3pDSW0SSF5wJzI+Rz9XTxaHbBxm05g5cJXUuQ1OMAfYqwX/AJspwxMO0pEY7jG3zDr
-         wkcJlRlrDW49Hp1aFXdIdKghASHl+UpBvHMRlsS2go0ICBAEJ7193nAd4NVGsTFGsYzA
-         yhnSzbe+zXtmPSduazYR0xNepKckAIpaisbz1kn3kJfuZjkwbNnJlMJUEq5gXPR3NyuC
-         mvMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731508604; x=1732113404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TpO1rEDli92wfsqt+A461mrFCCbHcRm9Ir9kcXs4JU=;
-        b=UbFqrtaKo80BBBIXB2bhvhdB7vHDjZwdziZzgCgRrjfcNf1uMN2Y9GiN7IBK2qk76l
-         U1gGVz+7SYHmEQ3Fjx52jbZCixWkL9frYv6ITnCP4RRJ76BcSsFVQkJoCTBnu9jDzX93
-         00H+V5ZFB5ZwPQJ214pBPLtTgqN7quPrOlEqbgAXZw/cU4ksffuhhRQwPbjq25ekmmMy
-         BYTSDTAJuiFz9ckkJ9o7W3Z5/dm5wp2eajocbmDdF1m6nRe39SLEJHj8n/fr2Lacidyb
-         ceW5l3mPFgNcbZ8e2lyNXu4Jg6aq3UIxhWPkl75VujPwIJAn+eDbg3IniAPoO0mvENcy
-         Jj/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNllex5CjnX4LL0+AN9k7KO4iI1VQpsrrv2uHCbnc1NZ1MACaDeA4RLNpJP7e7zd5hOY+4pzQRWt0szg==@vger.kernel.org, AJvYcCW2afoO0DNq/4VXpXzc0jjV1cjYOEunPNuxVx10H2lEyHF83oAo3QmeSHWRxjAherPn/C8pBl2j26jf2A==@vger.kernel.org, AJvYcCWoTYjrzMAwc/QLuH4Jier2eANN+5ysjvFLj2R3kS/WIAbWewT9YvXPDzQDgptyfoo81CA5epwgvhC11d5ZWQ==@vger.kernel.org, AJvYcCWxRkntwicpMMhN7Jv4877Gl+M7+yTjPW09BThuG1srbqrm1ChJ21+NcCpLvCgPdC+yudlKWib4ZvC0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA33UVzvMYzPAjcPpFutpsoXdGbma5EtW9X9k1Rnu8wmneo9Gt
-	EOSKUwaIkNXdqSiXeDIriHN+/WR65Lhq6xkoVDyaiGt3md1VuwyNokpmSdwo9b7HF82znUc7usq
-	V4UCtLynZ6NmDgEEg0/D3pAnGC/k=
-X-Google-Smtp-Source: AGHT+IHDM6yIlJ+rbWXJBsM1kdPByZi+pkkssJXLfoBLa9nCWP4173NtLKc4WYnD4Kt86lm779n87BvsYqF4dqhC3AQ=
-X-Received: by 2002:a05:6214:4589:b0:6d3:9359:26ef with SMTP id
- 6a1803df08f44-6d39e0f6663mr268917446d6.6.1731508604035; Wed, 13 Nov 2024
- 06:36:44 -0800 (PST)
+	s=arc-20240116; t=1731508613; c=relaxed/simple;
+	bh=Ws6Qc4ADw/3aDOrzbSyVVczBRIe+7o/PF5lH4I7hlNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Owzfw8nDr1kBsVeagMiY31nCLuPDv66LF3h5qbIr4jsTdL8jThXc5DHnof8RrX0/TGU3DZrSxZHIwdkBuX2xKA8DqNGpC6KWHEc7E0Rf/izlNLjpwly0vCRl23OdItu8lCjbuIL1b+i7TeZsoqGvry7jZh3s49LbInMixltq2Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KUCIX847; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwFFRyOU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KUCIX847; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwFFRyOU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D8EC61F7B8;
+	Wed, 13 Nov 2024 14:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731508609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
+	b=KUCIX847MVA8UNvP7sVf+dfsehKOz8cK7o+xgM/USQSpICBlOBEP4UIqDoDmFY/R9tkynq
+	mrBKve7VIrPLlNCjSxeaEgeRfOr1ID/gqAGaJEz+1+lbGhcPaHUVGtzdkkxT+Jon3jrtAy
+	7y84OK9nYyS7yznmyMH6fU7Pht3vbGQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731508609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
+	b=lwFFRyOUTLBtLHTqGQ4hVwZMAnd8J0/bwzZf9rkUVAOiKM6x+Ldlp5dCja4JcBSStR7oQx
+	Ae2t/kAEswrYB5BA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731508609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
+	b=KUCIX847MVA8UNvP7sVf+dfsehKOz8cK7o+xgM/USQSpICBlOBEP4UIqDoDmFY/R9tkynq
+	mrBKve7VIrPLlNCjSxeaEgeRfOr1ID/gqAGaJEz+1+lbGhcPaHUVGtzdkkxT+Jon3jrtAy
+	7y84OK9nYyS7yznmyMH6fU7Pht3vbGQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731508609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHRfzyO7OCkN7ImdtoMw8oxijZxAWv3a9uKIm7J/ERI=;
+	b=lwFFRyOUTLBtLHTqGQ4hVwZMAnd8J0/bwzZf9rkUVAOiKM6x+Ldlp5dCja4JcBSStR7oQx
+	Ae2t/kAEswrYB5BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C430813A6E;
+	Wed, 13 Nov 2024 14:36:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WFmWL4G5NGepeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 14:36:49 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6F03BA08D0; Wed, 13 Nov 2024 15:36:45 +0100 (CET)
+Date: Wed, 13 Nov 2024 15:36:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Josef Bacik <josef@toxicpanda.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fs: reduce pointer chasing in is_mgtime() test
+Message-ID: <20241113143645.45652s6afeg3kdmt@quack3>
+References: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731433903.git.josef@toxicpanda.com> <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
- <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
- <CAOQ4uxiiFsu-cG89i_PA+kqUp8ycmewhuD9xJBgpuBy5AahG5Q@mail.gmail.com>
- <CAHk-=wijFZtUxsunOVN5G+FMBJ+8A-+p5TOURv2h=rbtO44egw@mail.gmail.com>
- <20241113001251.GF3387508@ZenIV> <CAHk-=wg02AubUBZ5DxLra7b5w2+hxawdipPqEHemg=Lf8b1TDA@mail.gmail.com>
- <CAHk-=wgVzOQDNASK8tU3JoZHUgp7BMTmuo2Njmqh4NvEMYTrCw@mail.gmail.com>
- <20241113011954.GG3387508@ZenIV> <20241113043003.GH3387508@ZenIV>
-In-Reply-To: <20241113043003.GH3387508@ZenIV>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Nov 2024 15:36:33 +0100
-Message-ID: <CAOQ4uxj01mrrPQMyygdyDAGpyA=K=SPH88E2tpY5RuSsqG9iiA@mail.gmail.com>
-Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission events
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Wed, Nov 13, 2024 at 5:30=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Wed, Nov 13, 2024 at 01:19:54AM +0000, Al Viro wrote:
-> > On Tue, Nov 12, 2024 at 04:38:42PM -0800, Linus Torvalds wrote:
-> > > Looking at that locking code in fadvise() just for the f_mode use doe=
-s
-> > > make me think this would be a really good cleanup.
-> > >
-> > > I note that our fcntl code seems buggy as-is, because while it does
-> > > use f_lock for assignments (good), it clearly does *not* use them for
-> > > reading.
-> > >
-> > > So it looks like you can actually read inconsistent values.
-> > >
-> > > I get the feeling that f_flags would want WRITE_ONCE/READ_ONCE in
-> > > _addition_ to the f_lock use it has.
-> >
-> > AFAICS, fasync logics is the fishy part - the rest should be sane.
-> >
-> > > The f_mode thing with fadvise() smells like the same bug. Just becaus=
-e
-> > > the modifications are serialized wrt each other doesn't mean that
-> > > readers are then automatically ok.
-> >
-> > Reads are also under ->f_lock in there, AFAICS...
-> >
-> > Another thing in the vicinity is ->f_mode modifications after the calls
-> > of anon_inode_getfile() in several callers - probably ought to switch
-> > those to anon_inode_getfile_fmode().  That had been discussed back in
-> > April when the function got merged, but "convert to using it" followup
-> > series hadn't materialized...
->
-> While we are at it, there's is a couple of kludges I really hate -
-> mixing __FMODE_NONOTIFY and __FMODE_EXEC with O_... flags.
->
-> E.g. for __FMODE_NONOTIFY all it takes is switching fanotify from
-> anon_inode_getfd() to anon_inode_getfile_fmode() and adding
-> a dentry_open_nonotify() to be used by fanotify on the other path.
-> That's it - no more weird shit in OPEN_FMODE(), etc.
->
-> For __FMODE_EXEC it might get trickier (nfs is the main consumer),
-> but I seriously suspect that something like "have path_openat()
-> check op->acc_mode & MAY_EXEC and set FMODE_EXEC in ->f_mode
-> right after struct file allocation" would make a good starting
-> point; yes, it would affect uselib(2), but... I've no idea whether
-> it wouldn't be the right thing to do; would be hard to test.
->
-> Anyway, untested __FMODE_NONOTIFY side of it:
->
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 22dd9dcce7ec..ebd1c82bfb6b 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -1161,10 +1161,10 @@ static int __init fcntl_init(void)
->          * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
->          * is defined as O_NONBLOCK on some platforms and not on others.
->          */
-> -       BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
-> +       BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
->                 HWEIGHT32(
->                         (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
-> -                       __FMODE_EXEC | __FMODE_NONOTIFY));
-> +                       __FMODE_EXEC));
->
->         fasync_cache =3D kmem_cache_create("fasync_cache",
->                                          sizeof(struct fasync_struct), 0,
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index 9644bc72e457..43fbf29ef03a 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -101,8 +101,7 @@ static void __init fanotify_sysctls_init(void)
->   *
->   * Internal and external open flags are stored together in field f_flags=
- of
->   * struct file. Only external open flags shall be allowed in event_f_fla=
-gs.
-> - * Internal flags like FMODE_NONOTIFY, FMODE_EXEC, FMODE_NOCMTIME shall =
-be
-> - * excluded.
-> + * Internal flags like FMODE_EXEC shall be excluded.
+On Wed 13-11-24 09:17:51, Jeff Layton wrote:
+> The is_mgtime test checks whether the FS_MGTIME flag is set in the
+> fstype. To get there from the inode though, we have to dereference 3
+> pointers.
+> 
+> Add a new IOP_MGTIME flag, and have inode_init_always() set that flag
+> when the fstype flag is set. Then, make is_mgtime test for IOP_MGTIME
+> instead.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+
+I guess this makes sense. I'd say inode->i_sb is likely in cache anyway by
+the time we get to updating inode timestamps but the sb->s_type->fs_flags
+dereferences are likely cache cold. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> I had always had a little concern around the amount of pointer chasing
+> in this helper. Given the discussion around Josef's fsnotify patches, I
+> figured I'd draft up a patch to cut that down.
+> 
+> Sending this as an RFC since we're getting close to the end of the merge
+> window and I haven't done any performance testing with this.  I think
+> it's a reasonable thing to consider doing though, given how hot the
+> write() codepaths can be.
+> ---
+>  fs/inode.c         | 2 ++
+>  include/linux/fs.h | 3 ++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 838be0b49a63bd8d5700db0e6103c47e251793c3..70a2f8c717e063752a0b87c6eb27cde7a18d6879 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -243,6 +243,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
+>  	inode->i_opflags = 0;
+>  	if (sb->s_xattr)
+>  		inode->i_opflags |= IOP_XATTR;
+> +	if (sb->s_type->fs_flags & FS_MGTIME)
+> +		inode->i_opflags |= IOP_MGTIME;
+>  	i_uid_write(inode, 0);
+>  	i_gid_write(inode, 0);
+>  	atomic_set(&inode->i_writecount, 0);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index aa37083436096df9969d2f63f6ec4d1dc8b260d2..d32c6f6298b17c44ff22d922516028da31cec14d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -623,6 +623,7 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_NOFOLLOW	0x0004
+>  #define IOP_XATTR	0x0008
+>  #define IOP_DEFAULT_READLINK	0x0010
+> +#define IOP_MGTIME	0x0020
+>  
+>  /*
+>   * Keep mostly read-only and often accessed (especially for
+> @@ -2581,7 +2582,7 @@ struct file_system_type {
 >   */
->  #define        FANOTIFY_INIT_ALL_EVENT_F_BITS                          (=
- \
->                 O_ACCMODE       | O_APPEND      | O_NONBLOCK    | \
-> @@ -262,8 +261,8 @@ static int create_fd(struct fsnotify_group *group, co=
-nst struct path *path,
->          * we need a new file handle for the userspace program so it can =
-read even if it was
->          * originally opened O_WRONLY.
->          */
-> -       new_file =3D dentry_open(path,
-> -                              group->fanotify_data.f_flags | __FMODE_NON=
-OTIFY,
-> +       new_file =3D dentry_open_nonotify(path,
-> +                              group->fanotify_data.f_flags,
-
-I would make this a bit more generic helper and the comment above
-is truly clueless:
-
-        /*
--        * we need a new file handle for the userspace program so it
-can read even if it was
--        * originally opened O_WRONLY.
-+        * We provide an fd for the userspace program, so it could access t=
-he
-+        * file without generating fanotify events itself.
-         */
--       new_file =3D dentry_open(path,
--                              group->fanotify_data.f_flags | __FMODE_NONOT=
-IFY,
--                              current_cred());
-+       new_file =3D dentry_open_fmode(path, group->fanotify_data.f_flags,
-+                                    FMODE_NONOTIFY, current_cred());
-
-
-
->                                current_cred());
->         if (IS_ERR(new_file)) {
->                 /*
-> @@ -1404,6 +1403,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags,=
- unsigned int, event_f_flags)
->         unsigned int fid_mode =3D flags & FANOTIFY_FID_BITS;
->         unsigned int class =3D flags & FANOTIFY_CLASS_BITS;
->         unsigned int internal_flags =3D 0;
-> +       struct file *file;
->
->         pr_debug("%s: flags=3D%x event_f_flags=3D%x\n",
->                  __func__, flags, event_f_flags);
-> @@ -1472,7 +1472,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags,=
- unsigned int, event_f_flags)
->             (!(fid_mode & FAN_REPORT_NAME) || !(fid_mode & FAN_REPORT_FID=
-)))
->                 return -EINVAL;
->
-> -       f_flags =3D O_RDWR | __FMODE_NONOTIFY;
-> +       f_flags =3D O_RDWR;
->         if (flags & FAN_CLOEXEC)
->                 f_flags |=3D O_CLOEXEC;
->         if (flags & FAN_NONBLOCK)
-> @@ -1550,10 +1550,18 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flag=
-s, unsigned int, event_f_flags)
->                         goto out_destroy_group;
->         }
->
-> -       fd =3D anon_inode_getfd("[fanotify]", &fanotify_fops, group, f_fl=
-ags);
-> +       fd =3D get_unused_fd_flags(flags);
-
-s/flags/f_flags
-
->         if (fd < 0)
->                 goto out_destroy_group;
->
-> +       file =3D anon_inode_getfile_fmode("[fanotify]", &fanotify_fops, g=
-roup,
-> +                                       f_flags, FMODE_NONOTIFY);
-> +       if (IS_ERR(file)) {
-> +               fd =3D PTR_ERR(file);
-> +               put_unused_fd(fd);
-> +               goto out_destroy_group;
-> +       }
-> +       fd_install(fd, file);
->         return fd;
->
->  out_destroy_group:
-> diff --git a/fs/open.c b/fs/open.c
-> index acaeb3e25c88..04cb581528ff 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1118,6 +1118,23 @@ struct file *dentry_open(const struct path *path, =
-int flags,
->  }
->  EXPORT_SYMBOL(dentry_open);
->
-> +struct file *dentry_open_nonotify(const struct path *path, int flags,
-> +                        const struct cred *cred)
-> +{
-> +       struct file *f =3D alloc_empty_file(flags, cred);
-> +       if (!IS_ERR(f)) {
-> +               int error;
-> +
-> +               f->f_mode |=3D FMODE_NONOTIFY;
-> +               error =3D vfs_open(path, f);
-> +               if (error) {
-> +                       fput(f);
-> +                       f =3D ERR_PTR(error);
-> +               }
-> +       }
-> +       return f;
-> +}
-> +
->  /**
->   * dentry_create - Create and open a file
->   * @path: path to create
-> @@ -1215,7 +1232,7 @@ inline struct open_how build_open_how(int flags, um=
-ode_t mode)
->  inline int build_open_flags(const struct open_how *how, struct open_flag=
-s *op)
+>  static inline bool is_mgtime(const struct inode *inode)
 >  {
->         u64 flags =3D how->flags;
-> -       u64 strip =3D __FMODE_NONOTIFY | O_CLOEXEC;
-> +       u64 strip =3D O_CLOEXEC;
->         int lookup_flags =3D 0;
->         int acc_mode =3D ACC_MODE(flags);
->
-
-Get rid of another stale comment:
-
-        /*
--        * Strip flags that either shouldn't be set by userspace like
--        * FMODE_NONOTIFY or that aren't relevant in determining struct
--        * open_flags like O_CLOEXEC.
-+        * Strip flags that aren't relevant in determining struct open_flag=
-s.
-         */
-
-With these changed, you can add:
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-With the f_flags typo fixed, this passed LTP sanity tests, but I am
-going to test the NONOTIFY functionally some more.
-
-Thanks,
-Amir.
+> -	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
+> +	return inode->i_opflags & IOP_MGTIME;
+>  }
+>  
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+> 
+> ---
+> base-commit: 80ce1b3dc72ceab16a967e2aa222c5cc06ad6042
+> change-id: 20241113-mgtime-9aad7b90c64a
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
