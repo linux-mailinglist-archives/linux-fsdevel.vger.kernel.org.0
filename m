@@ -1,59 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-34634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF549C6F21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 13:35:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4089C6F09
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 13:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAD0B33EEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 12:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D458E284AB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 12:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BE9200C9A;
-	Wed, 13 Nov 2024 12:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EB5200CAF;
+	Wed, 13 Nov 2024 12:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="at2e3wS9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chM9bR/g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7B61DF250;
-	Wed, 13 Nov 2024 12:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7D200123;
+	Wed, 13 Nov 2024 12:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731500488; cv=none; b=mSwhfJhy1rAlF9ApjvJFvNTwXpjGT78xVyK2huvBvRT6DBW8ws+hD6OgZ8hwX8/pAzDw3hXb2ZgGf7PyYKabmzhxeNZMjH+rPtLPR8WRNuRshoRswj26ho0glFmUDZ8PE6Yzv/qrsrurKymYQ0d6Gs0qqTQtI5saft9ybqzL+CI=
+	t=1731500832; cv=none; b=oUHK+lpnxW/Heu2aJ/z8Xzrc0Bm64mp8Ex4k7/hJX8hoR2g9Sj20I0NYWThR/gYFIL0lIxxTt9g23IsOCtk1Uhxq6qHHZTzVWqQowFdiCxFxP58J3E/raRla2NySqKHbTxPZghTLahdVuWFVOUQLjVmEAgs2Nw1JtjTUEAYQ2+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731500488; c=relaxed/simple;
-	bh=sRahG0jY7C92Pv2ieJzgaq5OEbOR4ygaH0OgwnC/pAs=;
+	s=arc-20240116; t=1731500832; c=relaxed/simple;
+	bh=m5MXBZVJ/+k0YzDIVjxP0Lqd9tst5miAfSw4YNludbo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKpe/c4oBw5y9O51IIOQfEa28JE7fbcpal2s5gZLFr5aErHiFdOYnHoDryS1Ub55RK3tF7yQjL97nbFCZASC/GKBSJ3ooOKcrcQj3hmEm/YAr9bgZRg9H/FOIgigquqHIn5sfleMIRz2rd/fnWo4gLwKYdsX+ZlpUZSEhJsjVXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=at2e3wS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2861EC4CEE9;
-	Wed, 13 Nov 2024 12:21:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhIooOTNqKD8Q5+8MBrFTcqzK+X3EAIZIcSRFfTx7sTfXAdKHjY+SAYCyIvbcQYEUQM4wOIs43SMe8EYStLI1bBml30G9Gp4rrhW+LTicmIlbN3GMYBKZiW4mZt8Bq8GfE3lbYtgIrJStN4zmvkk3nZTOmcToYleBuHOOEyWgfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chM9bR/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C40C4CECD;
+	Wed, 13 Nov 2024 12:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731500486;
-	bh=sRahG0jY7C92Pv2ieJzgaq5OEbOR4ygaH0OgwnC/pAs=;
+	s=k20201202; t=1731500832;
+	bh=m5MXBZVJ/+k0YzDIVjxP0Lqd9tst5miAfSw4YNludbo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=at2e3wS9jvEH67INqxjutyD9TMxPrEgQhKRiEDuOI1n1lLzMf/ZSWKDsO/HOLAzbh
-	 D8VyKIRQt2rJ7CGeMppcT+v0VzhtZbpkqrzsd1VonDq7DJdY+S9Rop34I19Uk/6Ngb
-	 W3ddbl9O6lCdL7kBzRocf32ZgAItPHox5Ah9jYgFuNpJf7T61zfCbUz2wbtEBe5edH
-	 YcZYfZ2gVYa5saupUfZaABAVKBmjHQo90vCrFwaKHsqBMJnBjTKQurSjW0fiE4mEY8
-	 Jos6gvhEDWdcIxjiuI26QViae/ixvg6jLtP8sxtp8ZGrrWS/MVq00q6uwWHu+Kxvvk
-	 OBV0xwCHWVm1Q==
-Date: Wed, 13 Nov 2024 13:21:21 +0100
+	b=chM9bR/g8aNbd1OfMrpbl4mmaPirsGe6485SZuBU9wRzEbeW7ZIl07+meAKoRPeA8
+	 FNcFwyIBkiK3pZP6I2pJI1SyIDpEeeYi6LJfY86bWkza4/NPu5yuHi9SAiSyHdxQLP
+	 ebw2SD4JoPUYggzbJo4dAjsF8unJ2+wxWOFnQ38P6bgSXYLReVoAhvz5goD1fkV82Y
+	 Ce+gGM5DPNzUHZNfkSaVwYtQz8DCCbveKoxlGAr2brfGBmXYqD1TDnhJ+5DbuU975k
+	 LKMZoy2+L/k/HNm2GPZkw8nG/6X+lrTz4TUdp1aItab4Va3tlvx/8jrClGT9j3ivps
+	 RZGPX40O8SBAw==
+Date: Wed, 13 Nov 2024 13:27:08 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, christian@brauner.io, 
-	paul@paul-moore.com, bluca@debian.org
-Subject: Re: [PATCH 4/4] pidfs: implement fh_to_dentry
-Message-ID: <20241113-glorreiche-abfallen-4ab73565bb60@brauner>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241101135452.19359-5-erin.shepherd@e43.eu>
- <08d15335925b4fa70467546dd7c08c4e23918220.camel@kernel.org>
- <CAOQ4uxg96V3FBpnn0JvPFvqjK8_R=4gHbJjTPVTxDPzyns52hw@mail.gmail.com>
- <ed210bc9-f257-4cbd-afba-b4019baaf71f@e43.eu>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	Karel Zak <kzak@redhat.com>, Christian Brauner <christian@brauner.io>, 
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH] statmount: add flag to retrieve unescaped options
+Message-ID: <20241113-unbeobachtet-unvollendet-36c5443a042d@brauner>
+References: <20241112101006.30715-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,66 +58,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ed210bc9-f257-4cbd-afba-b4019baaf71f@e43.eu>
+In-Reply-To: <20241112101006.30715-1-mszeredi@redhat.com>
 
-On Wed, Nov 13, 2024 at 11:11:47AM +0100, Erin Shepherd wrote:
-> On 13/11/2024 09:01, Amir Goldstein wrote:
+On Tue, Nov 12, 2024 at 11:10:04AM +0100, Miklos Szeredi wrote:
+> Filesystem options can be retrieved with STATMOUNT_MNT_OPTS, which
+> returns a string of comma separated options, where some characters are
+> escaped using the \OOO notation.
 > 
-> > I don't like playing pseudo cryptographic games, we are not
-> > crypto experts so we are bound to lose in this game.
+> Add a new flag, STATMOUNT_OPT_ARRAY, which instead returns the raw
+> option values separated with '\0' charaters.
 > 
-> I agree. It would be one thing to obfusficate things in order to prevent
-> userspace from relying upon something that's not ABI; it would be another
-> to do so with the intent of hiding data. If we wanted to do that, we'd
-> need to actually encrypt the PID (with e.g. AES-CTR(key, iv=inode_nr))
+> Since escaped charaters are rare, this inteface is preferable for
+> non-libmount users which likley don't want to deal with option
+> de-escaping.
 > 
-> > My thinking is the other way around -
-> > - encode FILEID_INO32_GEN with pid_nr + i_generation
-> > - pid_nr is obviously not unique across pidns and reusable
-> >   but that makes it just like i_ino across filesystems
-> > - the resulting file handle is thus usable only in the pidns where
-> >   it was encoded - is that a bad thing?
-> >
-> > Erin,
-> >
-> > You write that "To ensure file handles are invariant and can move
-> > between pid namespaces, we stash a pid from the initial namespace
-> > inside the file handle."
-> >
-> > Why is it a requirement for userspace that pidfs file handles are
-> > invariant to pidns?
+> Example code:
 > 
-> I don't think it's a requirement, but I do think its useful - it is nice if
-
-It kind of is though, no? Because you need a reliable way to decode the
-pidfs file handle to a struct pid. If one encodes pid numbers as seen
-from the encoders pid namespace the decoder has no way of knowing what
-pid namespace to resolve it in as the same pid number can obviously be
-present in multiple pid namespace. So not encoding the global pid number
-would be inherently ambiguous.
-
-> a service inside a pidns can pass you a file handle and you can restore it and
-> things are fine (consider also handles stored on the filesystem, as a better
-> analog for PID files)
+> 	if (st->mask & STATMOUNT_OPT_ARRAY) {
+> 		const char *opt = st->str + st->opt_array;
 > 
-> But I too was uncertain about exposing root namespace PIDs to containers. I
-> have no objections to limiting restore of file handles to the same pid ns -
-> though I think we should defnitely document that such a limitation may be
-> lifted in the future.
+> 		for (unsigned int i = 0; i < st->opt_num; i++) {
+> 			printf("opt_array[%i]: <%s>\n", i, opt);
+> 			opt += strlen(opt) + 1;
+> 		}
+> 	}
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
 
-The point is really just the provided pid needs to be resolvable in the
-pid namespace of the caller. Encoding a global pid number means that
-internally we can always resolve it as we know that we always encode
-pids in the init pid namespace.
-
-In a second step we can then verify that the struct pid we found based
-on the pid number is a member of the pid namespace hierarchy of the
-caller. If that is the case then the caller is allowed to get a pidfd
-from open_by_handle_at() as they would also be able to get a pidfd via
-pidfd_open().
-
-So a container will never be able to a pidfd from a pid number that
-resolves to a struct pid that is outside its pid namespace hierarchy.
-
-Let me know if I misunderstood the concerns.
+I'm likely going to snatch this for v6.13 still. I just need to reflow
+the code as the formatting is broken and maybe rename a few variables
+and need to wrap my head around the parsing. I'm testing this now.
 
