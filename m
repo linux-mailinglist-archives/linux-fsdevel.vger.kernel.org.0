@@ -1,137 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-34575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA9D9C6620
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:39:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5EC9C6628
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 01:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A221F24ECF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA6AB299CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 00:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7EC13AC1;
-	Wed, 13 Nov 2024 00:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E044B665;
+	Wed, 13 Nov 2024 00:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EoE+xZvU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMSpZlf1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4853BB665
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 00:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994F02594;
+	Wed, 13 Nov 2024 00:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731458345; cv=none; b=ZIh45LlX/p8vDhSnv8H0ravO0QkQhPfSTQaGrLZEGRf2Ggj68igIDQplhjiFAdtLaWpFaOSPEi6YGWGJD6gX3lxgzbwue06PvT176n9H/CFQxbxCA36k+NpXFX5ZWAiUvx2qINWAHt1DbzogI7dqdRwJSbi5GuSxAoMLBfTBdTI=
+	t=1731458412; cv=none; b=bu/G87uLuCYSm0Qwk0Hl52IH0iN7AgNOM6j3lF4CLsbw0igY1WtjO+VySIn/R7CHG1cg/08O552psSShjlzBs5pVprMlrzITSOaMuAjFSCrAJoQYl7VoZOgPy2DxMYnGy0RYMz/cOKX+cl4vlvGkPmbgu3Jts91wVOQSZKzKvl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731458345; c=relaxed/simple;
-	bh=YpobwbtA2+vKxtJu8xZ2FUyLg/btakBlHfnLUEUx69o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hcUc34skMSqL3PP24lHXMGzpzaILWPSe/pFHZyMO/fmM2VhfLv8m54v/88/y8MpqNK5k2JAK+DcIaZvr0aKFA364zHaWUo31mNnRYu9qdGT5lF6engqVosgCHEQN8jOMMx254nufUTKPcTNJhVbNFhgNhXicg98ZmMMfmVD3nAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EoE+xZvU; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so1062066066b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 16:39:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731458341; x=1732063141; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HToIlSDY7cOn93fCLokqkKx9Z4UBbjM0FNxhpulJNm8=;
-        b=EoE+xZvU6EDOKXSvsLLNaZJ9RmD6Fffex02A4Q4C3xXlUTc4oliTxpO+AKHeBUY130
-         Od7ENT9349yuehtel68hjw6V06589TZmNnXGldpmdruBp02OUtC0GcAtx3KKQPc+XgOY
-         w/yuR6jLbQux+QGscVnFDgk7Swp6D9d4z3ZL0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731458341; x=1732063141;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HToIlSDY7cOn93fCLokqkKx9Z4UBbjM0FNxhpulJNm8=;
-        b=dGQXpMY1fzUIUCoGRRrEpge4kSdJdCBxCwl1syYuxSWx9Nt6dYkM8mAuM29r3t3oog
-         /AezgVL4ZgQrQmiWRMyVoUOyp5GWy3/gR5gSi9cozoVT3ND9wBhV/d2Da3n77QPHLd6W
-         USdSKzbDq+nXzjshRKg1btF1jX5MMcGUU+vlV1/iVOpOpb5febK0g8f7eYOiNnmjX278
-         pFLoVMVgN+XYgFoSxLEo28gGk1RKs2PX/368+JOx+b4ygPzUPfi65wRqyvx+oZOhBo7S
-         rHfrXu0BxGqsdhc02vHLkDzXu4oYdJlwZPDeYzY4lfMl8R0Os+TLWoVbt0YvpbxfFGd6
-         Na+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7yUXNCBy1grIrYqPoJOrMzAfofzXRfeOYE2xZ+n7t0KQ1u0wLV9SwKbbDJKIJ2BDcgD792b3hzdh+zQIT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4MoHcC73hxKS74Wg0yFYtfkYUGsCW7MkvrrFKUjfbiFW9SvCm
-	gdmfr92Ee9HUcjIJOGMVDZGQMBRyBBEMibcLKNMpIlmPSIpxHm4DCp4ppVq1/iTktvIaihCqfzL
-	0wYBM2w==
-X-Google-Smtp-Source: AGHT+IEgSaw3WroWFZfy0IFQrXfSpIMsiU1Wnz5r/KegT+uiTG2i5UamgTNfaCWfyynqQrlgz01a3w==
-X-Received: by 2002:a17:906:6a25:b0:a9a:3fd8:9c95 with SMTP id a640c23a62f3a-aa1c57ae677mr504997266b.47.1731458341338;
-        Tue, 12 Nov 2024 16:39:01 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc5759sm794555266b.128.2024.11.12.16.38.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 16:38:59 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so1062060266b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2024 16:38:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUD/PUUMziA19Sjrr+3uElTHm2BjXBGPe7P1zcDBNUL4pxJFjhac74x/mKkuTWvQ4dpfgmSxAC7bEftzdkB@vger.kernel.org
-X-Received: by 2002:a17:907:1b0e:b0:a9a:1792:f05 with SMTP id
- a640c23a62f3a-aa1b10a45a5mr487896766b.31.1731458338247; Tue, 12 Nov 2024
- 16:38:58 -0800 (PST)
+	s=arc-20240116; t=1731458412; c=relaxed/simple;
+	bh=1HpdaHws7Dvsc5CJpVpfvuv7uAODMFdVxG82OJNxjUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wyf19VnvhV3kCNRkKYRqblVonyhU6zaWfETVrseZSJA0AMuMf9T/d35S68RWx1wcE/axPP57y/IcOySgrpfP7LlZIcjwDv4/l+AAo7m+hU0JxIxYKQdz1GLd8e7fLCpDaqPFA8cHFwZbTIeZNx/anPb+QahJfRsadCM34rvSyZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMSpZlf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2364AC4CECD;
+	Wed, 13 Nov 2024 00:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731458412;
+	bh=1HpdaHws7Dvsc5CJpVpfvuv7uAODMFdVxG82OJNxjUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JMSpZlf16u+YRlsKM9DvsQ/m53BLIB9aDEibiUboTCqKnTQkg6ybdo2XmXMePg09/
+	 K8PrbUpkBJptPuezsRn1yq2RikhAaUngrjhSLuxEnNLU9NPXXpshlfsvKDwlePR62P
+	 DkkBujLvDZR8wsYEjvNVLZ1uS5Yu2qqUue5l0q9MKBWwrBfWdKsWMo+zF0zwIh2smr
+	 +nWqGkSCDg9yb8QSf9zM4A+MjwhR/j+oWkmzBkro8WHc4r4SB3Sl2aWaklsNifffLZ
+	 zGlJuGXHjFeV2bDQaJHzPBLWrk1+M0NCLz8qhbJZ+ii4HuT+p8UNTdjjyHGiDgo3W7
+	 wDy/0ejn8kL2A==
+Date: Tue, 12 Nov 2024 16:40:11 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, christian@brauner.io,
+	paul@paul-moore.com, bluca@debian.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 0/4] pidfs: implement file handle support
+Message-ID: <20241113004011.GG9421@frogsfrogsfrogs>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+ <20241112-banknoten-ehebett-211d59cb101e@brauner>
+ <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731433903.git.josef@toxicpanda.com> <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
- <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
- <CAOQ4uxiiFsu-cG89i_PA+kqUp8ycmewhuD9xJBgpuBy5AahG5Q@mail.gmail.com>
- <CAHk-=wijFZtUxsunOVN5G+FMBJ+8A-+p5TOURv2h=rbtO44egw@mail.gmail.com>
- <20241113001251.GF3387508@ZenIV> <CAHk-=wg02AubUBZ5DxLra7b5w2+hxawdipPqEHemg=Lf8b1TDA@mail.gmail.com>
-In-Reply-To: <CAHk-=wg02AubUBZ5DxLra7b5w2+hxawdipPqEHemg=Lf8b1TDA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 12 Nov 2024 16:38:42 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgVzOQDNASK8tU3JoZHUgp7BMTmuo2Njmqh4NvEMYTrCw@mail.gmail.com>
-Message-ID: <CAHk-=wgVzOQDNASK8tU3JoZHUgp7BMTmuo2Njmqh4NvEMYTrCw@mail.gmail.com>
-Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission events
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, 
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
 
-On Tue, 12 Nov 2024 at 16:23, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 12 Nov 2024 at 16:12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Wed, Nov 13, 2024 at 12:03:08AM +0100, Erin Shepherd wrote:
+> 
+> On 12/11/2024 14:10, Christian Brauner wrote:
+> > Sorry for the delayed reply (I'm recovering from a lengthy illness.).
+> No worries on my part, and I hope you're feeling better!
+> > I like the idea in general. I think this is really useful. A few of my
+> > thoughts but I need input from Amir and Jeff:
 > >
-> > Ugh...  Actually, I would rather mask that on fcntl side (and possibly
-> > moved FMODE_RANDOM/FMODE_NOREUSE over there as well).
+> > * In the last patch of the series you already implement decoding of
+> >   pidfd file handles by adding a .fh_to_dentry export_operations method.
 > >
-> > Would make for simpler rules for locking - ->f_mode would be never
-> > changed past open, ->f_flags would have all changes under ->f_lock.
->
-> Yeah, sounds sane.
->
-> That said, just looking at which bits are used in f_flags is a major
-> PITA. About half the definitions use octal, with the other half using
-> hex. Lovely.
->
-> So I'd rather not touch that mess until we have to.
+> >   There are a few things to consider because of how open_by_handle_at()
+> >   works.
+> >
+> >   - open_by_handle_at() needs to be restricted so it only creates pidfds
+> >     from pidfs file handles that resolve to a struct pid that is
+> >     reachable in the caller's pid namespace. In other words, it should
+> >     mirror pidfd_open().
+> >
+> >     Put another way, open_by_handle_at() must not be usable to open
+> >     arbitrary pids to prevent a container from constructing a pidfd file
+> >     handle for a process that lives outside it's pid namespace
+> >     hierarchy.
+> >
+> >     With this restriction in place open_by_handle_at() can be available
+> >     to let unprivileged processes open pidfd file handles.
+> >
+> >     Related to that, I don't think we need to make open_by_handle_at()
+> >     open arbitrary pidfd file handles via CAP_DAC_READ_SEARCH. Simply
+> >     because any process in the initial pid namespace can open any other
+> >     process via pidfd_open() anyway because pid namespaces are
+> >     hierarchical.
+> >
+> >     IOW, CAP_DAC_READ_SEARCH must not override the restriction that the
+> >     provided pidfs file handle must be reachable from the caller's pid
+> >     namespace.
+> 
+> The pid_vnr(pid) == 0 check catches this case -- we return an error to the
+> caller if there isn't a pid mapping in the caller's namespace
+> 
+> Perhaps I should have called this out explicitly.
+> 
+> >   - open_by_handle_at() uses may_decode_fh() to determine whether it's
+> >     possible to decode a file handle as an unprivileged user. The
+> >     current checks don't make sense for pidfs. Conceptually, I think
+> >     there don't need to place any restrictions based on global
+> >     CAP_DAC_READ_SEARCH, owning user namespace of the superblock or
+> >     mount on pidfs file handles.
+> >
+> >     The only restriction that matters is that the requested pidfs file
+> >     handle is reachable from the caller's pid namespace.
+> 
+> I wonder if this could be handled through an addition to export_operations'
+> flags member?
+> 
+> >   - A pidfd always has exactly a single inode and a single dentry.
+> >     There's no aliases.
+> >
+> >   - Generally, in my naive opinion, I think that decoding pidfs file
+> >     handles should be a lot simpler than decoding regular path based
+> >     file handles. Because there should be no need to verify any
+> >     ancestors, or reconnect paths. Pidfs also doesn't have directory
+> >     inodes, only regular inodes. In other words, any dentry is
+> >     acceptable.
+> >
+> >     Essentially, the only thing we need is for exportfs_decode_fh_raw()
+> >     to verify that the provided pidfs file handle is resolvable in the
+> >     caller's pid namespace. If so we're done. The challenge is how to
+> >     nicely plumb this into the code without it sticking out like a sore
+> >     thumb.
+> 
+> Theoretically you should be able to use PIDFD_SELF as well (assuming that
+> makes its way into mainline this release :-)) but I am a bit concerned about
+> potentially polluting the open_by_handle_at logic with pidfd specificities.
+> 
+> >   - Pidfs should not be exportable via NFS. It doesn't make sense.
+> 
+> Hmm, I guess I might have made that possible, though I'm certainly not
+> familiar enough with the internals of nfsd to be able to test if I've done
+> so.
 
-Actually, maybe the locking and the octal/hex mess should be
-considered a reason to clean this all up early rather than ignore it.
+AFAIK check_export() in fs/nfsd/export.c spells this it out:
 
-Looking at that locking code in fadvise() just for the f_mode use does
-make me think this would be a really good cleanup.
+	/* There are two requirements on a filesystem to be exportable.
+	 * 1:  We must be able to identify the filesystem from a number.
+	 *       either a device number (so FS_REQUIRES_DEV needed)
+	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
+	 * 2:  We must be able to find an inode from a filehandle.
+	 *       This means that s_export_op must be set.
+	 * 3: We must not currently be on an idmapped mount.
+	 */
 
-I note that our fcntl code seems buggy as-is, because while it does
-use f_lock for assignments (good), it clearly does *not* use them for
-reading.
+Granted I've been wrong on account of stale docs before. :$
 
-So it looks like you can actually read inconsistent values.
+Though it would be kinda funny if you *could* mess with another
+machine's processes over NFS.
 
-I get the feeling that f_flags would want WRITE_ONCE/READ_ONCE in
-_addition_ to the f_lock use it has.
+--D
 
-The f_mode thing with fadvise() smells like the same bug. Just because
-the modifications are serialized wrt each other doesn't mean that
-readers are then automatically ok.
-
-           Linus
+> I guess probably this case calls for another export_ops flag? Not like we're
+> short on them
+> 
+> Thanks,
+>     - Erin
+> 
+> 
 
