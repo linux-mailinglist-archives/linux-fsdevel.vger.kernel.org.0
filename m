@@ -1,185 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-34675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F7C9C78FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 17:36:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25AC9C797D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 18:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D341B2A28F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:18:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9622DB2DD3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 16:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7247E16088F;
-	Wed, 13 Nov 2024 16:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F72165F17;
+	Wed, 13 Nov 2024 16:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xfD8D5xz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwNOIYIW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xfD8D5xz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwNOIYIW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfkQdLjS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225301C32;
-	Wed, 13 Nov 2024 16:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D1070829;
+	Wed, 13 Nov 2024 16:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514677; cv=none; b=Zc5nCDi1qC81Kdm6KbFMXnF4D3urEiLsaW4VQqgWrKREIcjsbjczWB5EE7MAO8OIY9VHW4i1NmIBWy059v4dJUYfh4IDzL+aPs1FoXPTAxMRjX1A5x6wm+Tq8ovFs46EyLCoKeQ6lfjOZPAjVkh+DfRLlXtLe3b1jdzdNJQDUQo=
+	t=1731515362; cv=none; b=atbNc8DGrx7N7fUYrXlI7+nhTkY7/9Dfmh/7YSQKLreBH1FCI813SvmhCdZ/lLXGZKkOocJP4GmQKfczLgKJlUX5fr6sXj3sP8Jw89FLPhQgyPhV/CYL58NcezKABUKtGIpIH/05oiryA4x2tg1bYiXKLqVQtkWwDNboCB9ex1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514677; c=relaxed/simple;
-	bh=q0VQ9X+/obSpsOK/bRPN3dRqDNFVoYyuzZk0bMVicU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+nzUtzDJvEd/PlNRdyg9H3NPUmiJ58c6rf6kk8U7f9smzkxmI98DlQkzX/EBozERoOtE/YH+15Nl9Wph2SDTxnOzmoK+xSb+8hqmiVLF1ukgizHfl+avVTlKqEtJOO1VmJ4RM8XWohI0KvgCi91GfeNbwUkOlIqqTPkwBGVM5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xfD8D5xz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwNOIYIW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xfD8D5xz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwNOIYIW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B5991F391;
-	Wed, 13 Nov 2024 16:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731514674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
-	b=xfD8D5xzlbk0LEzwpk6Hrb5G2q0u7V9lRSr6WVkdW0qCg8haPtrpuE8afGMtaQ4uNw8LQl
-	fv8seFOTQ5h2fw+3M59bfoox+XN+lLt+rG0V40+JSbgT3YMBENqLHFQ/OTwzJcoMCAYEma
-	7BOa1INxuDCbAp/q/CGh7X8+3yQh4sA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731514674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
-	b=cwNOIYIWH1ujuV6THi76n+vYoHmYm439yjgw5FniEBz3Xv9DO1POer6CMM2uRTCRWQPdU+
-	WD4O0Vhv9gOicdDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xfD8D5xz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cwNOIYIW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731514674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
-	b=xfD8D5xzlbk0LEzwpk6Hrb5G2q0u7V9lRSr6WVkdW0qCg8haPtrpuE8afGMtaQ4uNw8LQl
-	fv8seFOTQ5h2fw+3M59bfoox+XN+lLt+rG0V40+JSbgT3YMBENqLHFQ/OTwzJcoMCAYEma
-	7BOa1INxuDCbAp/q/CGh7X8+3yQh4sA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731514674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM4G77+YLlc9ORY9AG3U/Xgzm50WG8iO1k0TaTFiVxE=;
-	b=cwNOIYIWH1ujuV6THi76n+vYoHmYm439yjgw5FniEBz3Xv9DO1POer6CMM2uRTCRWQPdU+
-	WD4O0Vhv9gOicdDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DCDD13A6E;
-	Wed, 13 Nov 2024 16:17:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2bjrCjLRNGfHMAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 13 Nov 2024 16:17:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C0016A08D0; Wed, 13 Nov 2024 17:17:53 +0100 (CET)
-Date: Wed, 13 Nov 2024 17:17:53 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	jlayton@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: make evict() use smp_mb__after_spinlock instead of
- smp_mb
-Message-ID: <20241113161753.2rtsxuwzgvenwvu4@quack3>
-References: <20241113155103.4194099-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1731515362; c=relaxed/simple;
+	bh=tFnn4MPom+IWjU1ADzhqF/rS3qqhgmFfg9sGwrHi7Cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cBCJsXrfotVQZDWSSE8g9M/Cs0ZX7HhP4HLBkepZGqaUAvE43ZlxoT7nSbf8JcRClp+3VhQIDGqSMBjlBa1vBRKOmq6Y5LcVr7TXQ/Y1g8ls6TgdurmnfpLcKn5T98HS3UZzCUHqZLUpWcZVhvUiYpa81wbuVY+pXeO2NShUL7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfkQdLjS; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so56276831fa.3;
+        Wed, 13 Nov 2024 08:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731515359; x=1732120159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usRz3dPuBpi/LeN2CZYAlsEcDzPJkjSfZ89kAYdHUug=;
+        b=HfkQdLjSM1S6eTXeV7tkcZRVQD5QYnbkAwVug1gOYAurlfPoNGJP0JLviKf94TUsd5
+         QVs4StTVfJ/Ev/3U8HvK0ReaVjkvJw/GxQh08LtvTRth/oa+0MhYe8Y+L4AlBkB1LQ/s
+         islJHad80vHCtIeKsNGvzidKqyqZy/jp38Q+uGO+y3lzQ8yWiwmP0iRrnSVZrkC1uMua
+         QYvmex+xrEX5wJYTL51zXAdpswGXldY2SeofExcjL7mJoLcrBqqE1i1vvqcpoHR/gRFx
+         52iHILRSYeJgnRckpfatEtyAbHIUq5uE1cOc7b6F5/JViQF2BsKpwOKf+TIV9Cx1u6d5
+         qQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731515359; x=1732120159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usRz3dPuBpi/LeN2CZYAlsEcDzPJkjSfZ89kAYdHUug=;
+        b=wj+UzFfbLGgjypaqIz68Z0c/c3fSztgMPba41Dvf+kOvQ1bFAu/GJfQJAhoBoyc/wk
+         bpLQTt+6KkNndcuQtq+jlJ+IveKqOa9ys2t5qqBu3LoiH2ZLNU0MV3uZxdiioLKR7ktQ
+         0ulvIvEuWSWa7uv9TMrWfDuwNbdslynvFCxidlSOkNTq9zDOGzKHdsJY/f+CIHJ+5kIS
+         mL1g7owAWax/zqzKCAUSjCIx/lY3268BWP6meBzToLHsyfg7aKCug3ep5y0tt3O6e30+
+         s6YiSGEKgsnHQ1JD08OMcnqlkRRaL5f5f8B5Sf6RNPbKMTehcbwESUSXSTCwD4SDGDQB
+         hM6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+fUW9JN5GfV9BCuhKi4I2MGmkX2Ta4xKUHngshQ69ULxQP3I8qlbHyD+TWWZyv23cCPhrsnWIsw9lmfAj@vger.kernel.org, AJvYcCX1jYmWTdOJo36WcmVdM6VbCWBvdlQWQjo2oAJ/ofrvqMYcUmeZ3qwMCWWB3gWOm3O2LiJpt68S0IA3iw0K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw/a2niuagmQiLH5If8vJaDBlsALhd839mFp/p11Lo4O1qVsog
+	jbS2vkVUjLCPU7zOKJ0MEPBqkjxsDJGa0KExcFqSi/fzJkRx9BhCEiA7Qdjgm6Ny7ka5L4jnLal
+	wVv3HxZPJAJs0KWilAhIVFoHVaK4UI7Xv
+X-Google-Smtp-Source: AGHT+IFERpYqnlnnH93mQU8lIdV4FBPphbvJOJFd7lo1GHrsp/C9vkMePi0BmLAPJE8CeRUOZmzjxMIciuVxG8YTGvA=
+X-Received: by 2002:a05:651c:2228:b0:2fb:6394:d6bd with SMTP id
+ 38308e7fff4ca-2ff4c5bf80dmr17808541fa.12.1731515358986; Wed, 13 Nov 2024
+ 08:29:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113155103.4194099-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 3B5991F391
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241113155103.4194099-1-mjguzik@gmail.com> <20241113161753.2rtsxuwzgvenwvu4@quack3>
+In-Reply-To: <20241113161753.2rtsxuwzgvenwvu4@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 13 Nov 2024 17:29:07 +0100
+Message-ID: <CAGudoHFrg_HexzEvT9M88nFG_ZXn6DuRDC-rSCdZQQUZ-Dgr-A@mail.gmail.com>
+Subject: Re: [PATCH] vfs: make evict() use smp_mb__after_spinlock instead of smp_mb
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jlayton@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 13-11-24 16:51:03, Mateusz Guzik wrote:
-> It literally directly follows a spin_lock() call.
-> 
-> This whacks an explicit barrier on x86-64.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Wed, Nov 13, 2024 at 5:17=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 13-11-24 16:51:03, Mateusz Guzik wrote:
+> > It literally directly follows a spin_lock() call.
+> >
+> > This whacks an explicit barrier on x86-64.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> Looks good. Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
 
-Looks good. Feel free to add:
+thanks
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> > This plausibly can go away altogether, but I could not be arsed to
+> > convince myself that's correct. Individuals willing to put in time are
+> > welcome :)
+>
+> AFAICS there's nothing else really guaranteeing the last store to
+> inode->i_state cannot be reordered up to after the wake up so I think the
+> barrier should be there.
+>
 
-> This plausibly can go away altogether, but I could not be arsed to
-> convince myself that's correct. Individuals willing to put in time are
-> welcome :)
+There is a bunch of lock round trips in this routine alone, including
+on i_lock itself, but that aside:
 
-AFAICS there's nothing else really guaranteeing the last store to
-inode->i_state cannot be reordered up to after the wake up so I think the
-barrier should be there.
+I *suspect* something like spin_wait_unlocked(&inode->i_state)
+shipping with a full fence at the beginning of the routine would
+correctly allow to check all the possible waiter et al flags without
+acquiring the lock anymore, shaving off at least 2 lock trips in the
+common case.
 
-								Honza
-> 
->  fs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index e5a60084a7a9..b3db1234737f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -817,7 +817,7 @@ static void evict(struct inode *inode)
->  	 * ___wait_var_event() either sees the bit cleared or
->  	 * waitqueue_active() check in wake_up_var() sees the waiter.
->  	 */
-> -	smp_mb();
-> +	smp_mb__after_spinlock();
->  	inode_wake_up_bit(inode, __I_NEW);
->  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
->  	spin_unlock(&inode->i_lock);
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+However, I don't see such a routine as is and I'm definitely not going
+to flame about adding it for the time being.
+
+>                                                                 Honza
+> >
+> >  fs/inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index e5a60084a7a9..b3db1234737f 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -817,7 +817,7 @@ static void evict(struct inode *inode)
+> >        * ___wait_var_event() either sees the bit cleared or
+> >        * waitqueue_active() check in wake_up_var() sees the waiter.
+> >        */
+> > -     smp_mb();
+> > +     smp_mb__after_spinlock();
+> >       inode_wake_up_bit(inode, __I_NEW);
+> >       BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
+> >       spin_unlock(&inode->i_lock);
+> > --
+> > 2.43.0
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
