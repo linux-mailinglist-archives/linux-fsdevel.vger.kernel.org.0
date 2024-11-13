@@ -1,153 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-34620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752F29C6CA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 11:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 900169C6CB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 11:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A911F22877
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9731F220AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 10:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA191FBC8D;
-	Wed, 13 Nov 2024 10:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FD4290F;
+	Wed, 13 Nov 2024 10:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="mRGLQjB8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WJFt5y70"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/yZkrUW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536941FBC84;
-	Wed, 13 Nov 2024 10:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C12AE90;
+	Wed, 13 Nov 2024 10:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731493037; cv=none; b=PsEIeZ4OA8Y5KSXrPeGZ0e2YXLVXuT5DoyF4kUasIXagRl9VOX9F0EFaVpcABwQc+cFXj1DNr7iEpkMKV8Yk+YWrZthKopiDNyjlPifTmPG7xBW4ow16jYeDcyvTVziRpV9WVlr8kxznAYTBBWaqzQRAnXchEGJLbbnJI3kwRTw=
+	t=1731493170; cv=none; b=ZPWVtRUdXaBjJxODlhUbEagQiTzg09tKhdZF7FeG6n8UaMcTiBeUUzL0Z61go4XjFEy9l0YIKrAaKqwa9OfzyILnSo0YnXeGHVguGRIDfbviiXk5nQxSZ3ka28tAV1YmJUra9rdU0rzjBpJZze7FN5AAoh4YkiZeqUvHA2ofSCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731493037; c=relaxed/simple;
-	bh=iHOlgh6dYvG+vTJnoFeYpg9i4OEzRqgfFZG2M8zNKfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=INOpifg/PT0njjV58V1IlAfTGlAbQRowZgDgE/Q04QtUP+ZERZr2P6HJA8StWVsldC8T4Of4Hdv3/xvUVEz41wTEiDNq8cm/ocYxNaC004G7TOsSFNFb0NuF2MVezWzsdGGYDVx0jOlAkx32x1OTZG4cU6XfbLSC9lLsHzyR3dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=mRGLQjB8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WJFt5y70; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 2506125401AE;
-	Wed, 13 Nov 2024 05:17:14 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Wed, 13 Nov 2024 05:17:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731493033;
-	 x=1731579433; bh=9ZHnygEc+6vK0dp9uuxLfgMjR5J8Nzn2HU8phrSKTMM=; b=
-	mRGLQjB8igKQpaHEtDFGqbub67EraOm/UX9Qk0dYYWuL+fRtOlW9GlHzEgGfchqO
-	OUf3T7NCjXGhssAD2Y1oFZt7jVPJ8eOqq/ZEFgWW7dBMLYXc/GyZJSDKomA3utPm
-	HGgrKZTCFoWryPMM+I2kKkIkGZNI37Vg6yoict7GYMCQHs9JuRM3DaouTKg6MnqC
-	4U0P8CVJvIDVKV2KdUa4QGvY8tSW8jbUkvUN9e9xrwdiVOQgzdM5yQ41/3lZFAve
-	P48GCB5k2ITvmGKevqaZ/yVRwAGhTEbSQQV53njL0qDddLDh6IzceXv/xcygbtaW
-	mtiGDPer+5RfLKAobnPTRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731493033; x=
-	1731579433; bh=9ZHnygEc+6vK0dp9uuxLfgMjR5J8Nzn2HU8phrSKTMM=; b=W
-	JFt5y70KqyknEjur9/DIkTLWRV5bP1Xs/x7ivD2OrEQMju4odsjBfWFx8dGM80wc
-	K7saiH9272w+51mL144XuLRLOdO1xZ6Q/eytnpd0xflmz/QyQMbdfKmnLG7d/l9W
-	O3hL94f6Td5No6C+G8Q8pOG1aU3c/eunkKyexRKog46061MmCwz7u3H3XEkiFLt/
-	NiqmJJN2dHaGc7Wn3FR4ydB874TtyQG+mKvdRvEOGo84P2z5lrDOGhmB8UppdtEW
-	MDeYGRwC5a4HNRdXocAPECVSr/PjdKp4bE/XiWUauUBy5xoCmVoxnp8ZAPFoHvQ5
-	O/zGLsmq46I4F+003nTgQ==
-X-ME-Sender: <xms:qXw0Zx8zNHIYM4Ei0RJg5-b2TekLhn6T5IdDIx2DD6zeqoS1FiM9aw>
-    <xme:qXw0Z1u6sdB9sfoUPuLXGpBMFmS3efy60NXWdIQHIjZwRTeCIgxCxE1ssGcLRxO2c
-    Gh9siST7_2gX4gq2Uo>
-X-ME-Received: <xmr:qXw0Z_ByXjZjbvdXgW3NqFQSuF1VYpXCfKo2rPZC4eKj8w_R6efQjC58zthAKpB0NKgBD1RS5AWWL_3A9sKrOVJnyUJ2>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepjeeftdelheduueetjeehvdefhfefvddv
-    ieekleejfeevffdtheduheejledvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughjfi
-    honhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghh
-    rhhishhtihgrnhessghrrghunhgvrhdrihhopdhrtghpthhtohepphgruhhlsehprghulh
-    dqmhhoohhrvgdrtghomhdprhgtphhtthhopegslhhutggrseguvggsihgrnhdrohhrgh
-X-ME-Proxy: <xmx:qXw0Z1f8nVu9vvQpajk4HLnRfTeiI06wcndsCi4we9S6SIRoEmVJ1g>
-    <xmx:qXw0Z2NfckF_do8zYMLZ-tK-LxyaburUeE11t6q-WgwY4Bzbft9Yow>
-    <xmx:qXw0Z3krkOlS3qmbzbTUBB6WSrHJazBkHZTBlzq5BQ1KzQdvseYjwA>
-    <xmx:qXw0ZwvKmm3kJrwPPMcfnMh_x7Q_ed_PYG1v1Li7bMG3cQkHIqnvqA>
-    <xmx:qXw0Z3GQC2wtaUAETBMNuOPXTW9kzLtkfiQu-ZuquM7sWUC4DCtYfiRm>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Nov 2024 05:17:11 -0500 (EST)
-Message-ID: <e280163e-357e-400c-81e1-0149fa5bfc89@e43.eu>
-Date: Wed, 13 Nov 2024 11:17:10 +0100
+	s=arc-20240116; t=1731493170; c=relaxed/simple;
+	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV4sQbXiQ0PUi+h6Ekng87MHXqWhUg5XVmxFpxVR0XbG8hNN308bA4W/mkI1IziCJlK/1A/2KmC7/775z0PBkqqDJNXrs1XUX/wkEjKdcIp3tv5AY3Qzt7G3qP44BJ1SKYpPE6rU5/SWKl/isws+0y/S+GeERC5H83jb0CzQQd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/yZkrUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35D8C4CECD;
+	Wed, 13 Nov 2024 10:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731493169;
+	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R/yZkrUWUvToi2+LtTxf2a/fPltRPGO+/ty4021M9ZAtKNdlaNa9Vp7vJJ9geLzZB
+	 9m0/squq+pWy8pCIqOr9Uo06uoFUNAoAQbkCElGhB15bgTIDioSNMpx6+PSYYu3jbr
+	 RDMJRZkHJRdBusYp6s8a7RNzU/Gb4gg/FjMEjzAonbSxNdSo+smBBtBN734t6tWvAD
+	 hSEt0Po4oAQGGQJcMRWdOkvF+ab8rfz8yamb2matfsD78hV0tKPAKmJXQRQ8+Tu5ga
+	 WCMLJiJa3zOlXtuzkcU48roxDhuSEEzp0cEBIAOHeeXNe57s0PritQVqFEw2S8g2ok
+	 8/xZIBD5dysRg==
+Date: Wed, 13 Nov 2024 11:19:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+Message-ID: <20241113-sensation-morgen-852f49484fd8@brauner>
+References: <20241112082600.298035-1-song@kernel.org>
+ <20241112082600.298035-3-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] pidfs: implement file handle support
-Content-Language: en-GB
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, christian@brauner.io, paul@paul-moore.com,
- bluca@debian.org, Chuck Lever <chuck.lever@oracle.com>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241112-banknoten-ehebett-211d59cb101e@brauner>
- <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
- <20241113004011.GG9421@frogsfrogsfrogs>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <20241113004011.GG9421@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241112082600.298035-3-song@kernel.org>
 
-On 13/11/2024 01:40, Darrick J. Wong wrote:
->> Hmm, I guess I might have made that possible, though I'm certainly not
->> familiar enough with the internals of nfsd to be able to test if I've done
->> so.
-> AFAIK check_export() in fs/nfsd/export.c spells this it out:
->
-> 	/* There are two requirements on a filesystem to be exportable.
-> 	 * 1:  We must be able to identify the filesystem from a number.
-> 	 *       either a device number (so FS_REQUIRES_DEV needed)
-> 	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
-> 	 * 2:  We must be able to find an inode from a filehandle.
-> 	 *       This means that s_export_op must be set.
-> 	 * 3: We must not currently be on an idmapped mount.
-> 	 */
->
-> Granted I've been wrong on account of stale docs before. :$
->
-> Though it would be kinda funny if you *could* mess with another
-> machine's processes over NFS.
->
-> --D
+On Tue, Nov 12, 2024 at 12:25:56AM -0800, Song Liu wrote:
+> inode storage can be useful for non-LSM program. For example, file* tools
+> from bcc/libbpf-tools can use inode storage instead of hash map; fanotify
+> fastpath [1] can also use inode storage to store useful data.
+> 
+> Make inode storage available for tracing program. Move bpf inode storage
+> from a security blob to inode->i_bpf_storage, and adjust related code
+> accordingly.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20241029231244.2834368-1-song@kernel.org/
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/inode.c                     |  1 +
+>  include/linux/bpf.h            |  9 +++++++++
+>  include/linux/bpf_lsm.h        | 29 -----------------------------
+>  include/linux/fs.h             |  4 ++++
+>  kernel/bpf/Makefile            |  3 +--
+>  kernel/bpf/bpf_inode_storage.c | 32 +++++---------------------------
+>  kernel/bpf/bpf_lsm.c           |  4 ----
+>  kernel/trace/bpf_trace.c       |  4 ++++
+>  security/bpf/hooks.c           |  6 ------
+>  9 files changed, 24 insertions(+), 68 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 8dabb224f941..3c679578169f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -286,6 +286,7 @@ static struct inode *alloc_inode(struct super_block *sb)
+>  void __destroy_inode(struct inode *inode)
+>  {
+>  	BUG_ON(inode_has_buffers(inode));
+> +	bpf_inode_storage_free(inode);
+>  	inode_detach_wb(inode);
+>  	security_inode_free(inode);
+>  	fsnotify_inode_delete(inode);
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 1b84613b10ac..0b31d2e74df6 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2672,6 +2672,7 @@ struct bpf_link *bpf_link_by_id(u32 id);
+>  const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
+>  						 const struct bpf_prog *prog);
+>  void bpf_task_storage_free(struct task_struct *task);
+> +void bpf_inode_storage_free(struct inode *inode);
+>  void bpf_cgrp_storage_free(struct cgroup *cgroup);
+>  bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
+>  const struct btf_func_model *
+> @@ -2942,6 +2943,10 @@ static inline void bpf_task_storage_free(struct task_struct *task)
+>  {
+>  }
+>  
+> +static inline void bpf_inode_storage_free(struct inode *inode)
+> +{
+> +}
+> +
+>  static inline bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog)
+>  {
+>  	return false;
+> @@ -3305,6 +3310,10 @@ extern const struct bpf_func_proto bpf_task_storage_get_recur_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_get_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_delete_recur_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_delete_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_get_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_get_recur_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_delete_recur_proto;
+>  extern const struct bpf_func_proto bpf_for_each_map_elem_proto;
+>  extern const struct bpf_func_proto bpf_btf_find_by_name_kind_proto;
+>  extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index aefcd6564251..a819c2f0a062 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -19,31 +19,12 @@
+>  #include <linux/lsm_hook_defs.h>
+>  #undef LSM_HOOK
+>  
+> -struct bpf_storage_blob {
+> -	struct bpf_local_storage __rcu *storage;
+> -};
+> -
+> -extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
+> -
+>  int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>  			const struct bpf_prog *prog);
+>  
+>  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+>  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
+>  
+> -static inline struct bpf_storage_blob *bpf_inode(
+> -	const struct inode *inode)
+> -{
+> -	if (unlikely(!inode->i_security))
+> -		return NULL;
+> -
+> -	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
+> -}
+> -
+> -extern const struct bpf_func_proto bpf_inode_storage_get_proto;
+> -extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
+> -void bpf_inode_storage_free(struct inode *inode);
+> -
+>  void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func);
+>  
+>  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
+> @@ -66,16 +47,6 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline struct bpf_storage_blob *bpf_inode(
+> -	const struct inode *inode)
+> -{
+> -	return NULL;
+> -}
+> -
+> -static inline void bpf_inode_storage_free(struct inode *inode)
+> -{
+> -}
+> -
+>  static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
+>  					   bpf_func_t *bpf_func)
+>  {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3559446279c1..479097e4dd5b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -79,6 +79,7 @@ struct fs_context;
+>  struct fs_parameter_spec;
+>  struct fileattr;
+>  struct iomap_ops;
+> +struct bpf_local_storage;
+>  
+>  extern void __init inode_init(void);
+>  extern void __init inode_init_early(void);
+> @@ -648,6 +649,9 @@ struct inode {
+>  #ifdef CONFIG_SECURITY
+>  	void			*i_security;
+>  #endif
+> +#ifdef CONFIG_BPF_SYSCALL
+> +	struct bpf_local_storage __rcu *i_bpf_storage;
+> +#endif
 
-To be clear I'm not familiar enough with the workings of nfsd to tell if
-pidfs fails those requirements and therefore wouldn't become exportable as
-a result of this patch, though I gather from you're message that we're in the
-clear?
-
-Regardless I think my question is: do we think either those requirements could
-change in the future, or the properties of pidfs could change in the future,
-in ways that could accidentally make the filesystem exportable?
-
-I guess though that the same concern would apply to cgroupfs and it hasn't posed
-an issue so far.
-
-- Erin
-
+Sorry, we're not growing struct inode for this. It just keeps getting
+bigger. Last cycle we freed up 8 bytes to shrink it and we're not going
+to waste them on special-purpose stuff. We already NAKed someone else's
+pet field here.
 
