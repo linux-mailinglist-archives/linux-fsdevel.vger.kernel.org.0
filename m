@@ -1,159 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-34654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDE19C7344
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 504F99C7356
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 15:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95B061F22836
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FE01F22B61
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 14:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34BC1FF7BD;
-	Wed, 13 Nov 2024 14:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2FC136326;
+	Wed, 13 Nov 2024 14:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="EAHfmF6+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGlIaTQv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5DF282ED;
-	Wed, 13 Nov 2024 14:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01596487B0;
+	Wed, 13 Nov 2024 14:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731507337; cv=none; b=oBf/xWukP///0uYnhOAnZVp7ycLxmMQzbb6oBEkXJ+29SXl8qAzYTR0BqA9X3vIyHxTixlGpeDpwg+YQhK8Obhmva5sXwk0SFOhMSnyCexwWo8q5fyP1nFzpp3ZkZhNwULYk3L+1W79yaQ2ni68FKPxGr6pqYj70HlmUH4pzKNg=
+	t=1731507475; cv=none; b=XhZA3hvts80OfSly2UB9tX6BcLBWeKSWtSlEmLi5dYuRVo2QBoIP3UpiWJAqKTMibhWxzgx76kSsYcG7ZgkEFmk7URPpkK8xcgM4uOxkIYlzeu/FDJYB/eFBvNH/f6gf0ATgnfX5bR0GnaDeRKMLB0e1/4LIZFDgQiuN8lVP67Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731507337; c=relaxed/simple;
-	bh=7bz1ZkCIXCTeCZ66UcbnuOpr52mVq/zPBK//duEynWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6xac8XK4Ko6x75yAudmQDZDcdhKtay5H9iRmPs3ooBV0WfAtiCeW0WQQQSjuxIB+eFLQii1rrITIC+bq2eyCCzda8VmMZA8kZT40HvvtDepVOIn4J5YesJ+BXD44wzJY5LT7faaPKBTzvyQ/JD4TYMxovl06R5a4PfXWTjq6pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=EAHfmF6+; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B9FF31BF20D;
-	Wed, 13 Nov 2024 14:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1731507332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WAq2o06namGsLDTq7nlV6jW6jaGMlKlDc8EB/0EBouM=;
-	b=EAHfmF6+QLYqonprBmJRtq/92+JLr1DYUYQtuMmN67gNCWEqadnqK5D0PVljjN3PVUSGRc
-	rtF/95MzineQ2WV1wkDnLMpQ9w0q/VRn4cy4FP3Epx10W2iipi5hvzIeffU1M7Swd02EJB
-	2REHIvaJke6s3OtT4e1RtkUqOk8LKL1gE8CtuKB+5noeRkN4E0+8gibl/cuqgCJVpRIwW0
-	F8k2Eq9n5VOs1rgvh4GMoPSA30iRnqTgu8PmoKV6mNWeLB+egPqTBK+UjV6g+4nRIlstnx
-	q7zUC3+b+xc3akxPQrPCIJ9kqV3mTfp+h8i0rhWOH/4DMDQpF4w/5XzzY+5PBA==
-Message-ID: <f616c1aa-65e7-44e8-90ac-5be8e3f88927@clip-os.org>
-Date: Wed, 13 Nov 2024 15:15:29 +0100
+	s=arc-20240116; t=1731507475; c=relaxed/simple;
+	bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R3nfdcj+dnHLbvnm+FTxaRE+sAH2olLI6E6lVYnOH4r6qnH2fAgN9eoj9pPlWhOcJaeW3MnEXqej93JspbBvyb2G642ZZzYG3QNokE+1+qHwkiBSh+8/7lp4JmXhwSAU6ToMYu9LHbrmykL1itcEwuKp8siOKfgVfDk+VK0LMF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGlIaTQv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B598C4CEC3;
+	Wed, 13 Nov 2024 14:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731507474;
+	bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SGlIaTQvBtx/sXF8rirQQzavj+a1j39or/S3RaoqAPgFByJrQIHddN+rLr6ZL8WiD
+	 FJMNDmaYMnD1gRn9PS/QKXtRGazlTX52fjGOFuxBOTCbH9bw2brpg0PbSBr9ue9cRS
+	 B8fFbpa/oUIchI8MXLhGAbQbYjhz326TIkkCZUgiQKpjBsbPy3Mw0xjTSR47MQt7Es
+	 fVthHlV8AbMi4DH+yHpeapmleM9NIvHthoOnrQWjrxg9wUyhVsFQ58vCK+nRflD/YB
+	 ua3oZHvqDlyc82fiyHK4WgihEEqZQ43omYfamOsxVpnVshqI/vYSRvO0e+MQtdGQeD
+	 eBxdxC+mbrjkg==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 13 Nov 2024 09:17:51 -0500
+Subject: [PATCH RFC] fs: reduce pointer chasing in is_mgtime() test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] coredump: Fixes core_pipe_limit sysctl proc_handler
-To: Lin Feng <linf@wangsu.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
- Joel Granados <j.granados@samsung.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Neil Horman <nhorman@tuxdriver.com>, Theodore Ts'o <tytso@mit.edu>
-References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
- <20241112131357.49582-2-nicolas.bouchinet@clip-os.org>
- <af2a2a7e-1604-4e24-bee6-f31498e0b25d@wangsu.com>
-Content-Language: en-US
-From: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-In-Reply-To: <af2a2a7e-1604-4e24-bee6-f31498e0b25d@wangsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+Message-Id: <20241113-mgtime-v1-1-84e256980e11@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAA61NGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0Nj3dz0kszcVF3LxMQU8yRLg2Qzk0QloOKCotS0zAqwQdFKQW7OSrG
+ 1tQB5RMU+XQAAAA==
+X-Change-ID: 20241113-mgtime-9aad7b90c64a
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2333; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=MjNKBxoaSsUUHCGD7dGsak+NKtkylFsf5hAYv3N+K4g=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnNLURd1z1nUZvlsJfsz43G6htbQO90/KX3Pj7y
+ yCMjzN7YpiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzS1EQAKCRAADmhBGVaC
+ FcD+D/kByHQBdD8iSL30VR00S+ZLJTEWmE6nb/TA5jNm56V23ww8umdiE4kpaRUYHirCdgGndw2
+ svYU6Axl3hU3Ty49VDk+518XMeIgyjvMy9L+I6AZJLiDYDmJSAnQfp+SaK2iLi0ZSYuB1nXXUz+
+ jRTkQAvUvDF/FjTKs9oTz5DPhazcFhI2dLX4xOYs+su4X/NFqmsS+Esg1Z0280HttNiMB05vPOj
+ 0b88xotYYCBVEd8JdulkmodSpJadiXOZ1LSwyT2Wmnk4WhAujy9TP6Yk1T+CDEv35p+YiiRcjC9
+ DrX7AiuBB0H6Z8278APThbCuzMsgX5RA2G20+fwFkr2MmF1IYeE/GGMBzKMTTjjUY4NUB0BMXxo
+ N/+ohOWTIuc3Xoo+1KUQrRebeh9CJIwIOi0UjtKQSzZrsQCFnHTDxk+XCE8V7KrExoAxLabWni4
+ YuzDkhOEGGXKpz485mwQzNX0fAMssjKGVUZ8cdKmjNCD1C9NQC5dTIkVlQ12nvMybuovY582BtD
+ /6LBxbKRwf5TnbPne8vkZW93dmIEu8cOX0wQPWLJ6jM9DurbOHzItfdTzbnq/3xIcaCszsUvxN8
+ LJSwIzPPicPxzowJ5yzyHn9FzaaFtcrmZTiOm2TiQp0qLUhh7n/h1Kp44XF/i2FzZw2Hh2xEiIs
+ yu/dmx1zzORGEUA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Hi Lin,
+The is_mgtime test checks whether the FS_MGTIME flag is set in the
+fstype. To get there from the inode though, we have to dereference 3
+pointers.
 
-Thanks for your review.
+Add a new IOP_MGTIME flag, and have inode_init_always() set that flag
+when the fstype flag is set. Then, make is_mgtime test for IOP_MGTIME
+instead.
 
-On 11/13/24 03:35, Lin Feng wrote:
-> Hi,
->
-> see comments below please.
->
-> On 11/12/24 21:13, nicolas.bouchinet@clip-os.org wrote:
->> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
->>
->> proc_dointvec converts a string to a vector of signed int, which is
->> stored in the unsigned int .data core_pipe_limit.
->> It was thus authorized to write a negative value to core_pipe_limit
->> sysctl which once stored in core_pipe_limit, leads to the signed int
->> dump_count check against core_pipe_limit never be true. The same can be
->> achieved with core_pipe_limit set to INT_MAX.
->>
->> Any negative write or >= to INT_MAX in core_pipe_limit sysctl would
->> hypothetically allow a user to create very high load on the system by
->> running processes that produces a coredump in case the core_pattern
->> sysctl is configured to pipe core files to user space helper.
->> Memory or PID exhaustion should happen before but it anyway breaks the
->> core_pipe_limit semantic
->>
->> This commit fixes this by changing core_pipe_limit sysctl's proc_handler
->> to proc_dointvec_minmax and bound checking between SYSCTL_ZERO and
->> SYSCTL_INT_MAX.
->>
->> Fixes: a293980c2e26 ("exec: let do_coredump() limit the number of concurrent dumps to pipes")
->> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
->> ---
->>   fs/coredump.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index 7f12ff6ad1d3e..8ea5896e518dd 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -616,7 +616,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>   		cprm.limit = RLIM_INFINITY;
->>   
->>   		dump_count = atomic_inc_return(&core_dump_count);
->> -		if (core_pipe_limit && (core_pipe_limit < dump_count)) {
->> +		if ((core_pipe_limit && (core_pipe_limit < dump_count)) ||
->> +		    (core_pipe_limit && dump_count == INT_MAX)) {
-> While comparing between 'unsigned int' and 'signed int', C deems them both
-> to 'unsigned int', so as an insane user sets core_pipe_limit to INT_MAX,
-> and dump_count(signed int) does overflow INT_MAX, checking for
-> 'core_pipe_limit < dump_count' is passed, thus codes skips core dump.
->
-> So IMO it's enough after changing proc_handler to proc_dointvec_minmax.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I had always had a little concern around the amount of pointer chasing
+in this helper. Given the discussion around Josef's fsnotify patches, I
+figured I'd draft up a patch to cut that down.
 
-Indeed, but the dump_count == INT_MAX is not here to catch overflow but 
-if both dump_count
-and core_pipe_limit are equal to INT_MAX. core_pipe_limit will not be 
-inferior to dump_count.
-Or maybe I am missing something ?
+Sending this as an RFC since we're getting close to the end of the merge
+window and I haven't done any performance testing with this.  I think
+it's a reasonable thing to consider doing though, given how hot the
+write() codepaths can be.
+---
+ fs/inode.c         | 2 ++
+ include/linux/fs.h | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-I should factorize the test though, this is kind of ugly.
+diff --git a/fs/inode.c b/fs/inode.c
+index 838be0b49a63bd8d5700db0e6103c47e251793c3..70a2f8c717e063752a0b87c6eb27cde7a18d6879 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -243,6 +243,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
+ 	inode->i_opflags = 0;
+ 	if (sb->s_xattr)
+ 		inode->i_opflags |= IOP_XATTR;
++	if (sb->s_type->fs_flags & FS_MGTIME)
++		inode->i_opflags |= IOP_MGTIME;
+ 	i_uid_write(inode, 0);
+ 	i_gid_write(inode, 0);
+ 	atomic_set(&inode->i_writecount, 0);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index aa37083436096df9969d2f63f6ec4d1dc8b260d2..d32c6f6298b17c44ff22d922516028da31cec14d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -623,6 +623,7 @@ is_uncached_acl(struct posix_acl *acl)
+ #define IOP_NOFOLLOW	0x0004
+ #define IOP_XATTR	0x0008
+ #define IOP_DEFAULT_READLINK	0x0010
++#define IOP_MGTIME	0x0020
+ 
+ /*
+  * Keep mostly read-only and often accessed (especially for
+@@ -2581,7 +2582,7 @@ struct file_system_type {
+  */
+ static inline bool is_mgtime(const struct inode *inode)
+ {
+-	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
++	return inode->i_opflags & IOP_MGTIME;
+ }
+ 
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
 
->
-> Others in this patch:
-> Reviewed-by: Lin Feng <linf@wangsu.com>
->
->>   			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
->>   			       task_tgid_vnr(current), current->comm);
->>   			printk(KERN_WARNING "Skipping core dump\n");
->> @@ -1024,7 +1025,9 @@ static struct ctl_table coredump_sysctls[] = {
->>   		.data		= &core_pipe_limit,
->>   		.maxlen		= sizeof(unsigned int),
->>   		.mode		= 0644,
->> -		.proc_handler	= proc_dointvec,
->> +		.proc_handler	= proc_dointvec_minmax,
->> +		.extra1		= SYSCTL_ZERO,
->> +		.extra2		= SYSCTL_INT_MAX,
->>   	},
->>   	{
->>   		.procname       = "core_file_note_size_limit",
->
+---
+base-commit: 80ce1b3dc72ceab16a967e2aa222c5cc06ad6042
+change-id: 20241113-mgtime-9aad7b90c64a
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
