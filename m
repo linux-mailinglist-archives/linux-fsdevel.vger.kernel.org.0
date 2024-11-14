@@ -1,428 +1,324 @@
-Return-Path: <linux-fsdevel+bounces-34829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210369C9114
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 18:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCDF9C9143
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 18:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21193B37001
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 586C9B3CE0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F3C18595B;
-	Thu, 14 Nov 2024 16:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC5718B499;
+	Thu, 14 Nov 2024 17:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN1NXCIg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJMRhPzX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F267DA6D;
-	Thu, 14 Nov 2024 16:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2950F6F2F3;
+	Thu, 14 Nov 2024 17:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731602374; cv=none; b=L6sF162VoNTRmmFAaYNvd+IQMgd5thRrIdvtpdC+R9xDm2cjw1II3Pv/NNfeskOF6zWKPa8ZUAV4JcS9adzUivJdbeFHQVrWVWaCdnGJSYsIDU7weRFQq/j9qJd9+WFcvLcNCl4On59GHhTAWXZ+cQnEJBnnXH8Uuy0ZFfLTi8g=
+	t=1731604959; cv=none; b=Ln4wId8SV2jRdVSGB1NJD9345+s4g1VMgTNw8ncZ6Hd9xKIMfUp5ByfLOwByXsehG3e2f0tWhzz+OZBGqEYTznLWOrQS8++tQT5XlikyoiLhYp55W3yRRhEg8mgcYn/Lrmv7SOIMOMf82cyY41MSUeNvMJTXbDe0Ima5McQ8huY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731602374; c=relaxed/simple;
-	bh=SUgKw9P+o1HnS6FND7Lta07yLNLbdsT2InWIXPbLQT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjyjCgY+xFvxwzofj1UifN2foVv5PqoWQEQSAZscMVX5LHwnB9xhhmuh4DbGJoQbRafZ8IMjPl7ONtDToy8uuArNwDEX9dibhpXzREjAIOC2NAPQPL/MgUvhM+jsWQRZzpPAWwqT32lWGh9J+cn5C4QNUCSPfa8GjzKmhB2sr/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN1NXCIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF3DC4CED0;
-	Thu, 14 Nov 2024 16:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731602374;
-	bh=SUgKw9P+o1HnS6FND7Lta07yLNLbdsT2InWIXPbLQT8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nN1NXCIgrxJ4wk4bcHMhmOuYrCKibErARAw+zOQjDHHFuOK18Brb1h1CQ5hmnTp8V
-	 KAyuHnkpDtG87QBRy9XwJlthDqNWBY202bxVt1qqw99Wzobz5thZ096hR0glKhIjII
-	 /ZA3UnhDf+X4rBLnCVp0MRl2Leq42RY0Kcie0wqnm4FzsG4U61FM3ZRq+0+x7gknv3
-	 FzZKNTgibcdo9cf0/5GAfT8k1ONMZ9XozEApa5Sh4ftMjfeOgROuZcus0jAnRg5D/A
-	 kaXLd5qcq5VRrPOpsLSKYA5EOUNKK0ercajIivXck4U0VWWp1wDJfnDoM1SgBdANjJ
-	 cZ6W8T227w59w==
-Date: Thu, 14 Nov 2024 09:39:31 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 28/33] netfs: Change the read result collector to only
- use one work item
-Message-ID: <20241114163931.GA1928968@thelio-3990X>
-References: <20241108173236.1382366-1-dhowells@redhat.com>
- <20241108173236.1382366-29-dhowells@redhat.com>
+	s=arc-20240116; t=1731604959; c=relaxed/simple;
+	bh=coBv7kOMWr4FUkylnULciwEVU/uk2ko3fjjBkmaG4ic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhGNKJKD73gkjk3jXloxEzay6N//7FvE4EeVb1cTXVdnzpvahDykgFncHaXDAUlkBA0sHF/MStkEA3sUFWgu+pOHdWqzznUMeV6qrg/K6I45IwpQRED5wCR4BsI9zomwXuFj1nwIVgxhF7tywnVQZNDGAiPNcDE/xZ/zC7T1dfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJMRhPzX; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b18da94ba9so72589185a.0;
+        Thu, 14 Nov 2024 09:22:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731604957; x=1732209757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OeFJjr3sAvxDHgXGKvBlBBH/HNXVr6YZMX5uUHaIfVg=;
+        b=LJMRhPzX4Z5H/E7IZAd45/5CNNvpFk1cfOJvSkUtyK2uPEzwDMY9QvGXNpPhmU/iWb
+         TyRszd7nj7Orv64xYzEi1NpwGG1NbbmhHguT42t32Td0yXdxBklYtWl+6TlM6s54RYfN
+         hRdkT6NEJrl4pck8VjtuG6vrYWJT702bOBuajgOaACd26cKMYwLOF+S79cvJJxUMOJ01
+         45OOWti4pQEHygzaVWXsQmTHccJ9T8XEc+6yfgkYF30RhT4EdvA0FIAaADhbghqiDsrf
+         r8rT1Eh3QMhq25/c9c5Us8F10Ip/azrzi2liyVlVEMUzuceno4dGUQdBn9I+HKOAVwUZ
+         Do/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731604957; x=1732209757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OeFJjr3sAvxDHgXGKvBlBBH/HNXVr6YZMX5uUHaIfVg=;
+        b=p3pcroDvtiIrKTg4unCugvnIuIl6IpWoLsX7WTJVJJY3dX7rKwBeYdNl8QOH88VeRz
+         cp6vW/vlqD2IP23F4rDEsLnGCLZ3TAJuRsiHHA/+uLEmI+Ikp2C3a9Fycf5bR5cuXj3B
+         MFQrwu7OU4MtWcizRpTiaGSMFSr8cegEHeB+fbpqMoYfv4IOR6SJarr21Nxc6nRh9uSo
+         ObqhiL4yyNQNajsnyFSgZ+jeE/VJdOYvvdGDUxz3dt96SEpy268y6IT4dRyCtsp1zrp3
+         nP8My1SjRIeye+UKeVU3p0LfWh/MeOONmAuzq6c2WIi+sdQHVlLXH8Uv0ygIJFHI1KwJ
+         F7/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUo6BQ+FKpnR2DF+IND+bTcRqc32CY6PFV4UL9D+O/MNOatUH3YdgGJ5/IPvnOoxaHpyVWcsJyUctFy@vger.kernel.org, AJvYcCUzMghRXj9BhyFhHU7KF/bYsqfwlLtkE6TpB/YYpIO32hT8b86IgQDzAm3D5svFEfP7frk712lSp2t7X4bLng==@vger.kernel.org, AJvYcCWfZra3sszKrUF135SHzpXaufdGHbrb4UJI35mQKkbvEONHfE8cpC4gNFncU/F0P9HHC5regbwebsWvgA==@vger.kernel.org, AJvYcCXju8F9gT/0NpSoRBa+7M1jNVdszZwUjaJhqae3bstuK898sBvlu7gj+tYpEm8kR8HbY/vXvcqcuohSnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyjgy9wj0+QwXL48kBl3xbt7Jz0CucaxJxMewdB2lzgQwOlNBN
+	KLYejlRm6xx2eJZjcfZdnc6jIzYqhlaCiM3jUWsEAhSsK25fkVCssInXaUfAjiP3KrpCEENEFd2
+	CIu/DY+eMq4Zrbsx22pE1HFqabTE=
+X-Google-Smtp-Source: AGHT+IGWy+vxnndz1151nIk1OoEYSziwAZ6Hll6nVis3K2RK0WbhxR9+FRkzy7ldvbq1Mbv1M4ojoumTX5Yaw3ABvqg=
+X-Received: by 2002:a05:620a:2894:b0:7a9:abdf:f517 with SMTP id
+ af79cd13be357-7b35a545fc5mr637868285a.25.1731604956930; Thu, 14 Nov 2024
+ 09:22:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108173236.1382366-29-dhowells@redhat.com>
+References: <cover.1731433903.git.josef@toxicpanda.com> <141e2cc2dfac8b2f49c1c8d219dd7c20925b2cef.1731433903.git.josef@toxicpanda.com>
+ <CAHk-=wjkBEch_Z9EMbup2bHtbtt7aoj-o5V6Nara+VxeUtckGw@mail.gmail.com>
+ <CAOQ4uxiiFsu-cG89i_PA+kqUp8ycmewhuD9xJBgpuBy5AahG5Q@mail.gmail.com>
+ <CAHk-=wijFZtUxsunOVN5G+FMBJ+8A-+p5TOURv2h=rbtO44egw@mail.gmail.com>
+ <CAOQ4uxjob2qKk4MRqPeNtbhfdSfP0VO-R5VWw0txMCGLwJ-Z1g@mail.gmail.com>
+ <CAHk-=wigQ0ew96Yv29tJUrUKBZRC-x=fDjCTQ7gc4yPys2Ngrw@mail.gmail.com>
+ <CAOQ4uxjeWrJtcgsC0YEmjdMPBOOpfz=zQ9VuG=z-Sc6WYNJOjQ@mail.gmail.com> <20241114150127.clibtrycjd3ke5ld@quack3>
+In-Reply-To: <20241114150127.clibtrycjd3ke5ld@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Nov 2024 18:22:25 +0100
+Message-ID: <CAOQ4uxgNoDUcgSjo=oK6QmzCuEdgauDs2H6WGbD=RuzkZX115Q@mail.gmail.com>
+Subject: Re: [PATCH v7 05/18] fsnotify: introduce pre-content permission events
+To: Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Thu, Nov 14, 2024 at 4:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 13-11-24 19:49:31, Amir Goldstein wrote:
+> > From 7a2cd74654a53684d545b96c57c9091e420b3add Mon Sep 17 00:00:00 2001
+> > From: Amir Goldstein <amir73il@gmail.com>
+> > Date: Tue, 12 Nov 2024 13:46:08 +0100
+> > Subject: [PATCH] fsnotify: opt-in for permission events at file open ti=
+me
+> >
+> > Legacy inotify/fanotify listeners can add watches for events on inode,
+> > parent or mount and expect to get events (e.g. FS_MODIFY) on files that
+> > were already open at the time of setting up the watches.
+> >
+> > fanotify permission events are typically used by Anti-malware sofware,
+> > that is watching the entire mount and it is not common to have more tha=
+t
+> > one Anti-malware engine installed on a system.
+> >
+> > To reduce the overhead of the fsnotify_file_perm() hooks on every file
+> > access, relax the semantics of the legacy FAN_ACCESS_PERM event to gene=
+rate
+> > events only if there were *any* permission event listeners on the
+> > filesystem at the time that the file was opened.
+> >
+> > The new semantic is implemented by extending the FMODE_NONOTIFY bit int=
+o
+> > two FMODE_NONOTIFY_* bits, that are used to store a mode for which of t=
+he
+> > events types to report.
+> >
+> > This is going to apply to the new fanotify pre-content events in order
+> > to reduce the cost of the new pre-content event vfs hooks.
+> >
+> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Link: https://lore.kernel.org/linux-fsdevel/CAHk-=3Dwj8L=3DmtcRTi=3DNEC=
+HMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com/
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> Couple of notes below.
+>
+> > diff --git a/fs/open.c b/fs/open.c
+> > index 226aca8c7909..194c2c8d8cd4 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -901,7 +901,7 @@ static int do_dentry_open(struct file *f,
+> >       f->f_sb_err =3D file_sample_sb_err(f);
+> >
+> >       if (unlikely(f->f_flags & O_PATH)) {
+> > -             f->f_mode =3D FMODE_PATH | FMODE_OPENED;
+> > +             f->f_mode =3D FMODE_PATH | FMODE_OPENED | FMODE_NONOTIFY;
+> >               f->f_op =3D &empty_fops;
+> >               return 0;
+> >       }
+> > @@ -929,6 +929,12 @@ static int do_dentry_open(struct file *f,
+> >       if (error)
+> >               goto cleanup_all;
+> >
+> > +     /*
+> > +      * Set FMODE_NONOTIFY_* bits according to existing permission wat=
+ches.
+> > +      * If FMODE_NONOTIFY was already set for an fanotify fd, this doe=
+sn't
+> > +      * change anything.
+> > +      */
+> > +     f->f_mode |=3D fsnotify_file_mode(f);
+>
+> Maybe it would be obvious to do this like:
+>
+>         file_set_fsnotify_mode(f);
+>
+> Because currently this depends on the details of how exactly FMODE_NONOTI=
+FY
+> is encoded.
+>
 
-On Fri, Nov 08, 2024 at 05:32:29PM +0000, David Howells wrote:
+ok. makes sense.
+
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 70359dd669ff..dd583ce7dba8 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -173,13 +173,14 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, lo=
+ff_t offset,
+> >
+> >  #define      FMODE_NOREUSE           ((__force fmode_t)(1 << 23))
+> >
+> > -/* FMODE_* bit 24 */
+> > -
+> >  /* File is embedded in backing_file object */
+> > -#define FMODE_BACKING                ((__force fmode_t)(1 << 25))
+> > +#define FMODE_BACKING                ((__force fmode_t)(1 << 24))
+> > +
+> > +/* File shouldn't generate fanotify pre-content events */
+> > +#define FMODE_NONOTIFY_HSM   ((__force fmode_t)(1 << 25))
+> >
+> > -/* File was opened by fanotify and shouldn't generate fanotify events =
+*/
+> > -#define FMODE_NONOTIFY               ((__force fmode_t)(1 << 26))
+> > +/* File shouldn't generate fanotify permission events */
+> > +#define FMODE_NONOTIFY_PERM  ((__force fmode_t)(1 << 26))
+> >
+> >  /* File is capable of returning -EAGAIN if I/O will block */
+> >  #define FMODE_NOWAIT         ((__force fmode_t)(1 << 27))
+> > @@ -190,6 +191,21 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, lof=
+f_t offset,
+> >  /* File does not contribute to nr_files count */
+> >  #define FMODE_NOACCOUNT              ((__force fmode_t)(1 << 29))
+> >
+> > +/*
+> > + * The two FMODE_NONOTIFY_ bits used together have a special meaning o=
+f
+> > + * not reporting any events at all including non-permission events.
+> > + * These are the possible values of FMODE_NOTIFY(f->f_mode) and their =
+meaning:
+> > + *
+> > + * FMODE_NONOTIFY_HSM - suppress only pre-content events.
+> > + * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) event=
+s.
+> > + * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
+> > + */
+> > +#define FMODE_NONOTIFY_MASK \
+> > +     (FMODE_NONOTIFY_HSM | FMODE_NONOTIFY_PERM)
+> > +#define FMODE_NONOTIFY FMODE_NONOTIFY_MASK
+> > +#define FMODE_NOTIFY(mode) \
+> > +     ((mode) & FMODE_NONOTIFY_MASK)
+>
+> This looks a bit error-prone to me (FMODE_NONOTIFY looks like another FMO=
+DE
+> flag but in fact it is not which is an invitation for subtle bugs) and th=
+e
+> tests below which are sometimes done as (FMODE_NOTIFY(mode) =3D=3D xxx) a=
+nd
+> sometimes as (file->f_mode & xxx) are inconsistent and confusing (unless =
+you
+> understand what's happening under the hood).
+>
+> So how about defining macros like FMODE_FSNOTIFY_NORMAL(),
+> FMODE_FSNOTIFY_CONTENT() and FMODE_FSNOTIFY_PRE_CONTENT() which evaluate =
+to
+> true if we should be sending normal/content/pre-content events to the fil=
+e.
+> With appropriate comments this should make things more obvious.
+>
+
+ok, maybe something like this:
+
+#define FMODE_FSNOTIFY_NONE(mode) \
+        (FMODE_FSNOTIFY(mode) =3D=3D FMODE_NONOTIFY)
+#define FMODE_FSNOTIFY_NORMAL(mode) \
+        (FMODE_FSNOTIFY(mode) =3D=3D FMODE_NONOTIFY_PERM)
+#define FMODE_FSNOTIFY_PERM(mode) \
+        (!((mode) & FMODE_NONOTIFY_PERM))
+#define FMODE_FSNOTIFY_HSM(mode) \
+        (FMODE_FSNOTIFY(mode) =3D=3D 0)
+
+At least keeping the double negatives contained in one place.
+
+And then we have these users in the final code:
+
+static inline bool fsnotify_file_has_pre_content_watches(struct file *file)
+{
+        return file && unlikely(FMODE_FSNOTIFY_HSM(file->f_mode));
+}
+
+static inline int fsnotify_open_perm(struct file *file)
+{
+        int ret;
+
+        if (likely(!FMODE_FSNOTIFY_PERM(file->f_mode)))
+                return 0;
 ...
-> diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-> index 264f3cb6a7dc..8ca0558570c1 100644
-> --- a/fs/netfs/read_retry.c
-> +++ b/fs/netfs/read_retry.c
-> @@ -12,15 +12,8 @@
->  static void netfs_reissue_read(struct netfs_io_request *rreq,
->  			       struct netfs_io_subrequest *subreq)
->  {
-> -	struct iov_iter *io_iter = &subreq->io_iter;
-> -
-> -	if (iov_iter_is_folioq(io_iter)) {
-> -		subreq->curr_folioq = (struct folio_queue *)io_iter->folioq;
-> -		subreq->curr_folioq_slot = io_iter->folioq_slot;
-> -		subreq->curr_folio_order = subreq->curr_folioq->orders[subreq->curr_folioq_slot];
-> -	}
-> -
-> -	atomic_inc(&rreq->nr_outstanding);
-> +	__clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
-> +	__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
->  	__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
->  	netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
->  	subreq->rreq->netfs_ops->issue_read(subreq);
-> @@ -33,13 +26,12 @@ static void netfs_reissue_read(struct netfs_io_request *rreq,
->  static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->  {
->  	struct netfs_io_subrequest *subreq;
-> -	struct netfs_io_stream *stream0 = &rreq->io_streams[0];
-> -	LIST_HEAD(sublist);
-> -	LIST_HEAD(queue);
-> +	struct netfs_io_stream *stream = &rreq->io_streams[0];
-> +	struct list_head *next;
->  
->  	_enter("R=%x", rreq->debug_id);
->  
-> -	if (list_empty(&rreq->subrequests))
-> +	if (list_empty(&stream->subrequests))
->  		return;
->  
->  	if (rreq->netfs_ops->retry_request)
-> @@ -52,7 +44,7 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->  	    !test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags)) {
->  		struct netfs_io_subrequest *subreq;
->  
-> -		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
-> +		list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
->  			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
->  				break;
->  			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
-> @@ -73,48 +65,44 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->  	 * populating with smaller subrequests.  In the event that the subreq
->  	 * we just launched finishes before we insert the next subreq, it'll
->  	 * fill in rreq->prev_donated instead.
-> -
-> +	 *
->  	 * Note: Alternatively, we could split the tail subrequest right before
->  	 * we reissue it and fix up the donations under lock.
->  	 */
-> -	list_splice_init(&rreq->subrequests, &queue);
-> +	next = stream->subrequests.next;
->  
->  	do {
-> -		struct netfs_io_subrequest *from;
-> +		struct netfs_io_subrequest *subreq = NULL, *from, *to, *tmp;
->  		struct iov_iter source;
->  		unsigned long long start, len;
-> -		size_t part, deferred_next_donated = 0;
-> +		size_t part;
->  		bool boundary = false;
->  
->  		/* Go through the subreqs and find the next span of contiguous
->  		 * buffer that we then rejig (cifs, for example, needs the
->  		 * rsize renegotiating) and reissue.
->  		 */
-> -		from = list_first_entry(&queue, struct netfs_io_subrequest, rreq_link);
-> -		list_move_tail(&from->rreq_link, &sublist);
-> +		from = list_entry(next, struct netfs_io_subrequest, rreq_link);
-> +		to = from;
->  		start = from->start + from->transferred;
->  		len   = from->len   - from->transferred;
->  
-> -		_debug("from R=%08x[%x] s=%llx ctl=%zx/%zx/%zx",
-> +		_debug("from R=%08x[%x] s=%llx ctl=%zx/%zx",
->  		       rreq->debug_id, from->debug_index,
-> -		       from->start, from->consumed, from->transferred, from->len);
-> +		       from->start, from->transferred, from->len);
->  
->  		if (test_bit(NETFS_SREQ_FAILED, &from->flags) ||
->  		    !test_bit(NETFS_SREQ_NEED_RETRY, &from->flags))
->  			goto abandon;
->  
-> -		deferred_next_donated = from->next_donated;
-> -		while ((subreq = list_first_entry_or_null(
-> -				&queue, struct netfs_io_subrequest, rreq_link))) {
-> -			if (subreq->start != start + len ||
-> -			    subreq->transferred > 0 ||
-> +		list_for_each_continue(next, &stream->subrequests) {
-> +			subreq = list_entry(next, struct netfs_io_subrequest, rreq_link);
-> +			if (subreq->start + subreq->transferred != start + len ||
-> +			    test_bit(NETFS_SREQ_BOUNDARY, &subreq->flags) ||
->  			    !test_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags))
->  				break;
-> -			list_move_tail(&subreq->rreq_link, &sublist);
-> -			len += subreq->len;
-> -			deferred_next_donated = subreq->next_donated;
-> -			if (test_bit(NETFS_SREQ_BOUNDARY, &subreq->flags))
-> -				break;
-> +			to = subreq;
-> +			len += to->len;
->  		}
->  
->  		_debug(" - range: %llx-%llx %llx", start, start + len - 1, len);
-> @@ -127,36 +115,28 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->  		source.count = len;
->  
->  		/* Work through the sublist. */
-> -		while ((subreq = list_first_entry_or_null(
-> -				&sublist, struct netfs_io_subrequest, rreq_link))) {
-> -			list_del(&subreq->rreq_link);
-> -
-> +		subreq = from;
-> +		list_for_each_entry_from(subreq, &stream->subrequests, rreq_link) {
-> +			if (!len)
-> +				break;
->  			subreq->source	= NETFS_DOWNLOAD_FROM_SERVER;
->  			subreq->start	= start - subreq->transferred;
->  			subreq->len	= len   + subreq->transferred;
-> -			stream0->sreq_max_len = subreq->len;
-> -
->  			__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
->  			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
-> -
-> -			spin_lock(&rreq->lock);
-> -			list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-> -			subreq->prev_donated += rreq->prev_donated;
-> -			rreq->prev_donated = 0;
->  			trace_netfs_sreq(subreq, netfs_sreq_trace_retry);
-> -			spin_unlock(&rreq->lock);
-> -
-> -			BUG_ON(!len);
->  
->  			/* Renegotiate max_len (rsize) */
-> +			stream->sreq_max_len = subreq->len;
->  			if (rreq->netfs_ops->prepare_read(subreq) < 0) {
->  				trace_netfs_sreq(subreq, netfs_sreq_trace_reprep_failed);
->  				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
-> +				goto abandon;
->  			}
->  
-> -			part = umin(len, stream0->sreq_max_len);
-> -			if (unlikely(rreq->io_streams[0].sreq_max_segs))
-> -				part = netfs_limit_iter(&source, 0, part, stream0->sreq_max_segs);
-> +			part = umin(len, stream->sreq_max_len);
-> +			if (unlikely(stream->sreq_max_segs))
-> +				part = netfs_limit_iter(&source, 0, part, stream->sreq_max_segs);
->  			subreq->len = subreq->transferred + part;
->  			subreq->io_iter = source;
->  			iov_iter_truncate(&subreq->io_iter, part);
-> @@ -166,58 +146,106 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->  			if (!len) {
->  				if (boundary)
->  					__set_bit(NETFS_SREQ_BOUNDARY, &subreq->flags);
-> -				subreq->next_donated = deferred_next_donated;
->  			} else {
->  				__clear_bit(NETFS_SREQ_BOUNDARY, &subreq->flags);
-> -				subreq->next_donated = 0;
->  			}
->  
-> +			netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
->  			netfs_reissue_read(rreq, subreq);
-> -			if (!len)
-> +			if (subreq == to)
->  				break;
-> -
-> -			/* If we ran out of subrequests, allocate another. */
-> -			if (list_empty(&sublist)) {
-> -				subreq = netfs_alloc_subrequest(rreq);
-> -				if (!subreq)
-> -					goto abandon;
-> -				subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
-> -				subreq->start = start;
-> -
-> -				/* We get two refs, but need just one. */
-> -				netfs_put_subrequest(subreq, false, netfs_sreq_trace_new);
-> -				trace_netfs_sreq(subreq, netfs_sreq_trace_split);
-> -				list_add_tail(&subreq->rreq_link, &sublist);
-> -			}
->  		}
->  
->  		/* If we managed to use fewer subreqs, we can discard the
-> -		 * excess.
-> +		 * excess; if we used the same number, then we're done.
->  		 */
-> -		while ((subreq = list_first_entry_or_null(
-> -				&sublist, struct netfs_io_subrequest, rreq_link))) {
-> -			trace_netfs_sreq(subreq, netfs_sreq_trace_discard);
-> -			list_del(&subreq->rreq_link);
-> -			netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_done);
-> +		if (!len) {
-> +			if (subreq == to)
-> +				continue;
-> +			list_for_each_entry_safe_from(subreq, tmp,
-> +						      &stream->subrequests, rreq_link) {
-> +				trace_netfs_sreq(subreq, netfs_sreq_trace_discard);
-> +				list_del(&subreq->rreq_link);
-> +				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_done);
-> +				if (subreq == to)
-> +					break;
-> +			}
-> +			continue;
->  		}
->  
-> -	} while (!list_empty(&queue));
-> +		/* We ran out of subrequests, so we need to allocate some more
-> +		 * and insert them after.
-> +		 */
-> +		do {
-> +			subreq = netfs_alloc_subrequest(rreq);
-> +			if (!subreq) {
-> +				subreq = to;
-> +				goto abandon_after;
-> +			}
-> +			subreq->source		= NETFS_DOWNLOAD_FROM_SERVER;
-> +			subreq->start		= start;
-> +			subreq->len		= len;
-> +			subreq->debug_index	= atomic_inc_return(&rreq->subreq_counter);
-> +			subreq->stream_nr	= stream->stream_nr;
-> +			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
-> +
-> +			trace_netfs_sreq_ref(rreq->debug_id, subreq->debug_index,
-> +					     refcount_read(&subreq->ref),
-> +					     netfs_sreq_trace_new);
-> +			netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
-> +
-> +			list_add(&subreq->rreq_link, &to->rreq_link);
-> +			to = list_next_entry(to, rreq_link);
-> +			trace_netfs_sreq(subreq, netfs_sreq_trace_retry);
-> +
-> +			stream->sreq_max_len	= umin(len, rreq->rsize);
-> +			stream->sreq_max_segs	= 0;
-> +			if (unlikely(stream->sreq_max_segs))
-> +				part = netfs_limit_iter(&source, 0, part, stream->sreq_max_segs);
-> +
-> +			netfs_stat(&netfs_n_rh_download);
-> +			if (rreq->netfs_ops->prepare_read(subreq) < 0) {
-> +				trace_netfs_sreq(subreq, netfs_sreq_trace_reprep_failed);
-> +				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
-> +				goto abandon;
-> +			}
-> +
-> +			part = umin(len, stream->sreq_max_len);
-> +			subreq->len = subreq->transferred + part;
-> +			subreq->io_iter = source;
-> +			iov_iter_truncate(&subreq->io_iter, part);
-> +			iov_iter_advance(&source, part);
-> +
-> +			len -= part;
-> +			start += part;
-> +			if (!len && boundary) {
-> +				__set_bit(NETFS_SREQ_BOUNDARY, &to->flags);
-> +				boundary = false;
-> +			}
-> +
-> +			netfs_reissue_read(rreq, subreq);
-> +		} while (len);
-> +
-> +	} while (!list_is_head(next, &stream->subrequests));
->  
->  	return;
->  
-> -	/* If we hit ENOMEM, fail all remaining subrequests */
-> +	/* If we hit an error, fail all remaining incomplete subrequests */
-> +abandon_after:
-> +	if (list_is_last(&subreq->rreq_link, &stream->subrequests))
-> +		return;
 
-This change as commit 1bd9011ee163 ("netfs: Change the read result
-collector to only use one work item") in next-20241114 causes a clang
-warning:
+static inline int fsnotify_file(struct file *file, __u32 mask)
+{
+        if (FMODE_FSNOTIFY_NONE(file->f_mode))
+                return 0;
+...
 
-  fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialized when used here [-Werror,-Wuninitialized]
-    235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequests))
-        |                           ^~~~~~
-  fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to silence this warning
-     28 |         struct netfs_io_subrequest *subreq;
-        |                                           ^
-        |                                            = NULL
+BTW, I prefer using PERM,HSM instead of the FSNOTIFY_PRIO_
+names for brevity, but also because at the moment of this patch
+FMODE_NONOTIFY_PERM means "suppress permission events
+if there are no listeners with priority >=3D FSNOTIFY_PRIO_CONTENT
+at all on any objects of the filesystem".
 
-May be a shadowing issue, as adding KCFLAGS=-Wshadow shows:
+It does NOT mean that there ARE permission events watchers on the file's
+sb/mnt/inode or parent, but what the users of the flag care about really is
+whether the specific file is being watched for permission events.
 
-  fs/netfs/read_retry.c:75:31: error: declaration shadows a local variable [-Werror,-Wshadow]
-     75 |                 struct netfs_io_subrequest *subreq = NULL, *from, *to, *tmp;
-        |                                             ^
-  fs/netfs/read_retry.c:28:30: note: previous declaration is here
-     28 |         struct netfs_io_subrequest *subreq;
-        |                                     ^
+I was contemplating if we should add the following check at open time
+as following patches add for pre-content watchers also for
+permission watchers on the specific file:
 
-Cheers,
-Nathan
+        /*
+         * Permission events is a super set of pre-content events, so if th=
+ere
+         * are no permission event watchers, there are also no pre-content =
+event
+         * watchers and this is implied from the single FMODE_NONOTIFY_PERM=
+ bit.
+         */
+        if (likely(!fsnotify_sb_has_priority_watchers(sb,
+                                                FSNOTIFY_PRIO_CONTENT)))
+                return FMODE_NONOTIFY_PERM;
 
-> +	subreq = list_next_entry(subreq, rreq_link);
->  abandon:
-> -	list_splice_init(&sublist, &queue);
-> -	list_for_each_entry(subreq, &queue, rreq_link) {
-> -		if (!subreq->error)
-> -			subreq->error = -ENOMEM;
-> -		__clear_bit(NETFS_SREQ_FAILED, &subreq->flags);
-> +	list_for_each_entry_from(subreq, &stream->subrequests, rreq_link) {
-> +		if (!subreq->error &&
-> +		    !test_bit(NETFS_SREQ_FAILED, &subreq->flags) &&
-> +		    !test_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags))
-> +			continue;
-> +		subreq->error = -ENOMEM;
-> +		__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
->  		__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
->  		__clear_bit(NETFS_SREQ_RETRYING, &subreq->flags);
->  	}
-> -	spin_lock(&rreq->lock);
-> -	list_splice_tail_init(&queue, &rreq->subrequests);
-> -	spin_unlock(&rreq->lock);
->  }
->  
->  /*
-> @@ -225,14 +253,19 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
->   */
->  void netfs_retry_reads(struct netfs_io_request *rreq)
->  {
-> -	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
-> +	struct netfs_io_subrequest *subreq;
-> +	struct netfs_io_stream *stream = &rreq->io_streams[0];
->  
-> -	atomic_inc(&rreq->nr_outstanding);
-> +	/* Wait for all outstanding I/O to quiesce before performing retries as
-> +	 * we may need to renegotiate the I/O sizes.
-> +	 */
-> +	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
-> +		wait_on_bit(&subreq->flags, NETFS_SREQ_IN_PROGRESS,
-> +			    TASK_UNINTERRUPTIBLE);
-> +	}
->  
-> +	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
->  	netfs_retry_read_subrequests(rreq);
-> -
-> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
-> -		netfs_rreq_terminated(rreq);
->  }
->  
->  /*
++        /*
++         * There are content watchers in the filesystem, but are there
++         * permission event watchers on this specific file?
++         */
++        if (likely(!fsnotify_file_object_watched(file,
++                                                 ALL_FSNOTIFY_PERM_EVENTS)=
+))
++                return FMODE_NONOTIFY_PERM;
++
+
+I decided not to stretch the behavior change too much and also since
+Anti-malware permission watchers often watch all the mounts of a
+filesystem, there is probably little to gain from this extra check.
+But we can reconsider this in the future.
+
+WDYT?
+
+In any case, IMO the language of FMODE_FSNOTIFY_PERM() matches
+the meaning of the users better and makes the code easier to understand.
+
+FMODE_FSNOTIFY_HSM() is debatable, but at least it is short ;)
+
+Anyway, I will send v2 with your suggestions.
+
+Thanks,
+Amir.
 
