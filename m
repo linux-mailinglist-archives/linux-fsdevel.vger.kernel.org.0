@@ -1,314 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-34823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9059C8F6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2219C8FAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3831F22C7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D43B281036
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F63185B48;
-	Thu, 14 Nov 2024 16:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1147E18DF9C;
+	Thu, 14 Nov 2024 16:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkhOZbPI"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hpZsy98x";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="I61HoWSQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA915DBB3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 16:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600741; cv=none; b=ROsXM6BUA28tau5RhiER3wMAjmpnSeCJxcA4B7B0ncTDZ4yuZVlt/8nv8Wv0JUJHJ530y/b5LAZZ0VX4kLDyLqaYD74wI2Ox8IQaIRKuiNia+WiAFQ3xFXEaUWdQtVriFZDu8OYbjCgemPRySnFmtNkcZDlZjNQaZNNQ826HZRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600741; c=relaxed/simple;
-	bh=EoE+FvktQVqBwR1AdJ28Y9zoM61c4eQX/hKeH9ru3UM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N4dyzd08XrvSFh0YBbf4cEIfBqmzZtPfopQHLPbb8Z+581R3MdcJFb/P+zEBJlU9J2ZV7zizQmdu40A2OiujYqBdWKdJ29/UYMsaYbN4jxb1aS0jOTIViVVIAyBnGM+FCE65IhW+Af0fCpO7htJkPo7hq4QrFX+oGuvJ3JjLWMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkhOZbPI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F35FC4CECD;
-	Thu, 14 Nov 2024 16:12:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731600740;
-	bh=EoE+FvktQVqBwR1AdJ28Y9zoM61c4eQX/hKeH9ru3UM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=hkhOZbPINsqTB3gKfFQfa92hYeq5W4DfF2OLPqLaG90MtVesWufaAklsulrmn5ybP
-	 9hYn74w/7tU1l+qny+LQ1bwPDGx0Yu6dvSUKUwCOjxuMkBWAWZovbTkA/MT5uhvIuV
-	 41+dYJ7JxgHtWZ856olEmC43VQrwlvBsdwUvtnq01fgB05lEX3f/ZkgvxXqzJ6mBWa
-	 8M2RVVHRf7ibllFcmPif57SRvJFt9RA1JqcPo/OBxVWeAEqOmx+duPMCMMzxh38oMz
-	 7rsJjze/viKeUswqaPjt0oNGsNmdIDt8d9GIGbLMer4W2BW3PSQzFfFRSQJgXcWRa/
-	 BCteImieJGutA==
-Message-ID: <e5dea1563865f29dbd9f4fba9e4399e786a76164.camel@kernel.org>
-Subject: Re: [PATCH] statmount: retrieve security mount options
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <miklos@szeredi.hu>,  Josef Bacik <josef@toxicpanda.com>
-Cc: Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org
-Date: Thu, 14 Nov 2024 11:12:19 -0500
-In-Reply-To: <20241114-radtour-ofenrohr-ff34b567b40a@brauner>
-References: <20241114-hammer-reinigen-045808e64b99@brauner>
-	 <20241114-radtour-ofenrohr-ff34b567b40a@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3B817D366;
+	Thu, 14 Nov 2024 16:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731601360; cv=fail; b=uplxuZ/KVy/ExrJ+jwiqnSwiA0+xAC89BA/DcLc3OLE58LgmhNmc6wG1i1LJ0taLBzsSyDdrT2g+5BMn2PDnhCHT+fyFlz4/4aSCfyWXfDfGFiokwHxjVdSW0rdB39bZghETUYuoh3f0jr2VyoKvd+r5EQ/zSI13es+CQQ3VfvQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731601360; c=relaxed/simple;
+	bh=6Lxa31EWs1hJ9oX36oK+VbZ0O/T/EGlDq/2mlGCmx9k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BVYAxel1Kr2XHWYzllKhn2Bi1fUhcTLmwbr9Qb4mfKMhdUfc7NDPTq7tGA/w0BdzOIDIssbPm6EykiXYqzwVSnOzJif+HbZJbdHgurTqIQ8dFGTUpy508x1jTgoz3q3gjLajygHNL1Gap5ww7N5ndLJTACc8W/UKTKKnehEC5EA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hpZsy98x; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=I61HoWSQ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEChXpV018587;
+	Thu, 14 Nov 2024 16:22:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=c2Bfn4GaQHWd3dNbx0WvH5BKNNeqocOeEAfAx32S54g=; b=
+	hpZsy98xAx2q45m9h1JpkJRSL8TACz0sJEIslK/BdrShgw/Kg7/J3/caYIqFByr0
+	1DIz+07HGiPYyPGhfGy6m8QNrC2RsgjInzvREUE5Oof6MLAGB7ZAidvQOXTnZvTm
+	PRv9Uk6tFY2+/BbJgFWMoT5RZmFjp552O2GYEGKqXG648tRdQCrPhiSpLE7nOpsn
+	3kQYLooHCm5ftasfhMIrb/vS/uyJLgUl38TLtato6Qnop15FEjeXLpTk81/vD0et
+	Ed7hMHW91tWafbWts9TRmBvkrKksPLGjXuTcHFdD02pPKnKP2KPb46C4Y5j6zMrN
+	OKWNSlp88WKNxmKkSEoHtA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0kc1qfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 16:22:11 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEFARpe035973;
+	Thu, 14 Nov 2024 16:22:11 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2045.outbound.protection.outlook.com [104.47.58.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42sx6b1ne9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 16:22:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rq4y2uesQ7+jKcik9NGQ+GyOMCsNFA9Dj971BPw8NgYMuYyOkWxWTovaMZV7MxJcXA4Drx2jpv6ue9yE3xig/dyUyVflu0fdIyw5x/qAs8XHKQxmXcz212QIwYnhERKk8O72kDmyzyA7GbKiEwvaRwkXxX1drndjVw4KIlZp0ZwC2yXkieWemoy0osR4dYL1z/ChVovFAJkYZ2EY0Ta2OE6rNcXS7+eAv+5VDU2ZeMacwPKfPpsabM3Z8g7E7ECYvzvejq/eVi7kzpBPewnHCVx5PH+RWlGDqQS2bSf++IPB6B4NQLWUm8nNrjRD4XfQOPBlCffPkUlV1sdvlhAm7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c2Bfn4GaQHWd3dNbx0WvH5BKNNeqocOeEAfAx32S54g=;
+ b=O0vkKGp4fgqlCDy+yzIXKf+u7kbvLd0QQuW1Tdbt8re8iSIqh6IvRgGydVZPG0m243Mm3puBlgy6On4hU4nXSUhZlWyv3H1ox0myPNomAc5A8zMlzb2ynfcQ+QKGjb/3j4A2Z7nQa2PaICmoSlLn9yNkjZLBiinBNk0aYMsbwZ4hem54O8061kicBFkfCCMXQxQhUYmixmGuV04zJxJqT2IhhSvnfJiKTnuOE2uMNhK0YqjxH9iYQOBDvK6Ju/HBjIvMZwbUQRg75X8U8gIwbJhtIXaS9CpcsuuFpZwvqvjF9+hq6dC4CmDIOe1FnnEo3JDe7Zw3++FQ80BrKcPcsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c2Bfn4GaQHWd3dNbx0WvH5BKNNeqocOeEAfAx32S54g=;
+ b=I61HoWSQynljUgUu9nzSnVnD/ODre8w5LtpCDDTp2bDpD+Wxj5AFAqvvLGIcjPSg429ZZnewgExVUsqVHMZIsfYgVcdogwHZZChyVrIBnZEhhKvJaz+SG0cC6tOBITskP44xjPt9BywhiKymBfCquxfonh6kKkJEqUUVeCOl8rk=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS0PR10MB6894.namprd10.prod.outlook.com (2603:10b6:8:134::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
+ 2024 16:22:07 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8158.017; Thu, 14 Nov 2024
+ 16:22:06 +0000
+Message-ID: <94ed563e-5f18-4a80-a137-e35400cd038d@oracle.com>
+Date: Thu, 14 Nov 2024 16:22:01 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+To: Long Li <leo.lilong@huawei.com>, Dave Chinner <david@fromorbit.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+        djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+        martin.petersen@oracle.com
+References: <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
+ <Ztom6uI0L4uEmDjT@dread.disaster.area>
+ <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+ <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
+ <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+ <ZufBMioqpwjSFul+@dread.disaster.area>
+ <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+ <ZuoCafOAVqSN6AIK@dread.disaster.area>
+ <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+ <ZzXxlf6RWeX3e-3x@localhost.localdomain>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0015.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::20) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB6894:EE_
+X-MS-Office365-Filtering-Correlation-Id: 677ce8ae-cdf7-4ff5-c721-08dd04c87b2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWxZNWR4SVVuOStZeU83UW1iZU9NY0gza3h4eXFJUnlSTkc0aStyaGRwSWF2?=
+ =?utf-8?B?TDJHTmprbnpiRGF1RmNTSzdSRnlSTnlORjVmNUlJcjJBRzVjVnlxYUpNMmJS?=
+ =?utf-8?B?K3F5U1dURXlCcXFnSlhJNmlrNnVIL3VQcHhkTVRxVmxDTUhJRWhuNjlSQ3JJ?=
+ =?utf-8?B?dTdTQ2hnVWFwYi9PZUNKMTRqdVFWVndZczdmak91eHFRSmdWZXNJZDk5WVk4?=
+ =?utf-8?B?N0kwK2NwWkV3cmNnTFlrOCtsN3o2WmY0WW1VdENVZDZ4WDlpTVhQaDVGWlI2?=
+ =?utf-8?B?cmhxQUxkZnZjUUVEd3d6WFhiZngvcDVLQUgvWkREVmhPRU1DdG9zWmdLYTZX?=
+ =?utf-8?B?K3hRbHFmZm5rL2pPWDhCZGV2OE8xMFpJTlZXZUljMjNEMDFKY3RRdExTYWlY?=
+ =?utf-8?B?Y1ZBMk1yc0JFcUxQVUdqa25kdldQcW83U3lPaCtaVytoRXNCcWFpS050Wjh6?=
+ =?utf-8?B?MS9rZ1RqNTA0bmVwM0FiVDFQeWh2S1MydmlKV1Z4c1p0MDZ2SzdzUUNidFpK?=
+ =?utf-8?B?RGRVd29uWUl2ckE3OWV3YThFcDVqWXpvMzNpam9oOHVpdi9HUUtDOGVZckQx?=
+ =?utf-8?B?QlR3TUNMSVI1cjRKL09qWEpkMzdmdzlRaG1CQWpFRFpzRHM2RTFtOG03bzNW?=
+ =?utf-8?B?azBmN2hZMm8rSzUxRDcrQjVXaWViVlRZcTdCdE1tMTZuK3hXTzhYbml2dm1V?=
+ =?utf-8?B?Qlp4cVcwWlQ5T1JaZUdmZUxFYWowQXF1K0RRQk9PWXlQVk9WOW9SVUdkVDVT?=
+ =?utf-8?B?Q0twL3FQU3BJUkIrOS9ZQ1dTSmpnS2E2eDdRZ0tGaGRGMFZqOUNBa0h3dnlY?=
+ =?utf-8?B?WndEeUF1bDcrSGlrb1BhS1pqSURlbUJxaW1WVFU1ZnQzRTFtRlZTdDVRVWZT?=
+ =?utf-8?B?RmEzb1ZmSnN4NzVYWlFBemdEdDhCUjQyTHIvU3k0MlpNazZ5MmZYczJIa1lQ?=
+ =?utf-8?B?TGxCOHJ0MWVUNWN1SWZFWUEvdklQQm9KbmpyQ0JRSlJHQnptUm56ZHEyNjFB?=
+ =?utf-8?B?N2hvTFRSMnlvRUJkYUZFNndOeGdITGtoSWtyQUZpbjVkeUlrVGRUWGxBN1Br?=
+ =?utf-8?B?bDBiZWprc0ZYME5MY3dUNDlRYVIyNGVnOVlPampWU3NXU1R2NDBHNVFteUps?=
+ =?utf-8?B?S1FzLzQwZ0V0anVLZHQzVkdNT0p0V1ZGb0NpanAxSE9Ha1FSRGo5dW5jWUtG?=
+ =?utf-8?B?RjNudzNQME5YVjBSNGlCR2pXRW5pL1RibGpUOFFSTUdFUGowRmxUMVNaa0Mx?=
+ =?utf-8?B?dnZqQ2VLUVV2U3J1WjR1TDViY2JKalhwMWZnRitRRkhKNUFkanJBcTRYbkFa?=
+ =?utf-8?B?NlM2U0U1Smo2VzdmS0VkSW4vdjlrb09XZ2dRWHI0M2RFbzRuT2Z0R2d6T3pn?=
+ =?utf-8?B?YWJFVGRua2RtZW56akgxK1RQMjFUNERvRTY2TG4wY2xGejg1T0cxR1h2cC8w?=
+ =?utf-8?B?UXBjdGF3dDR2OTZuQ0Vuci9HdlFUR3FzWGNibGNQNkRsZEtUTFFpcFdpR00x?=
+ =?utf-8?B?ZHdwYU9IdEN3d3o3RlBqVjc1aml3cjJLOHM5cm9YUVZTZlp4MHc0aHdmbm1y?=
+ =?utf-8?B?K1RyMnh5dW4ydmdDRk1lbEMvUkQ4VWQxOHdETnNsdUJZL2V0Y1VYamxUUDBK?=
+ =?utf-8?B?VFpOQVpONDZvaVRVYVFUdS9xV3dvc3QxTzZnTFZxUStPbytQK3REUGU1TzFC?=
+ =?utf-8?B?YTBVb3FzdTZhSVRsWkMrL0pUU0xSamNuRnYzQnFhL1lNUzcvSU1CYW1mbGtv?=
+ =?utf-8?Q?MiXX6H8GkoKiyiSeXN5NT+Xj/z/9QOYggPplFqH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L0NId2tWTU01UEF4SFFUVlhocU44K3ZyeDZMWWsyUmg4SW91dEg0MDB4NVFB?=
+ =?utf-8?B?cVhkQXVNNnRHaGxCNUxzT3N3YThBY0JLODJCOG9Lei9mYUlNMTBZSTFNODRI?=
+ =?utf-8?B?dUkxZHU1elgzWXlqU0Vvajg1MUFlQlk4ZE8wNmJMeHhhcnhpZHlyUkR2Yldj?=
+ =?utf-8?B?VitFNkZ0dDRVK1FVVG9rTTZ3bEx1cWxGSkFJSTcwcGkrN2Eza2kvWnR1dUpY?=
+ =?utf-8?B?VWRGSmtTWXRNcUlzN0k1alZOOWhla2JYbmxmMjZLeFRqYUlTM2pVNnJzK1Zx?=
+ =?utf-8?B?M2M1c01td3VkMDkvbnZINkd5eDRYSVBZY3AwRm1JZVdxRXREVjc1WGpoZXJu?=
+ =?utf-8?B?djJsSGx5RU1PSHhMOXhheXB3UmxGM3l1S2s0dTRaK0JnMXg1bVpvNG83ekVL?=
+ =?utf-8?B?T3pFa0piV2ViaXdLV01GbHFsVXBnbytGTThKOVJueWh0eEsreWxyWk9DcENF?=
+ =?utf-8?B?aFZTdlVsVjZSV0RObGxoV0luaE1DbzFaSENmZnR3VTFTTjZjZ0NpT3J4YW10?=
+ =?utf-8?B?aENCUHd4K3VtODJXdWxLQzhPR3RGWWU0MU8xNzF3YjBLTGlTZDhHSlE5NWE4?=
+ =?utf-8?B?endMY0lPOWVzbnlzMWFQOThQM3ZnVzRCM2hES2FRZVpSRW9IV01ZU3dyL051?=
+ =?utf-8?B?cUt6OEhHdTBVRmdvcHhVMkNBT05RUm04cVMzVUtwZkRJdjJJWTFNdFZPY1ho?=
+ =?utf-8?B?azl5WTVzSXIrR3BkS25YTkpIcExTY00vYWtZNzd2SS8rOFpybXV1dU14VXpJ?=
+ =?utf-8?B?SjI4cndSQXBHeUUxa0ZNTW43UzV2dXM4Wnc4OWVBWTU3WGdpRGZZcDg2Y2ds?=
+ =?utf-8?B?QW16L20yOUlsM1lYN2NZcHNVTVBjOEdtcWpaWVpEQjhxTldQYkdGUVVzVVVz?=
+ =?utf-8?B?dndvQjVBN2REZVJRajVzL0h3VUl4OCtJZ0pMQ3A4cHByMzVQd285dFJCdXVF?=
+ =?utf-8?B?SldOdCtaS3Rqb09QaHdLTWg0ZHQwMkFkd1pXVG1GamF2K28vNFUwQzZ2Q1VX?=
+ =?utf-8?B?OGxXOU1XQ0lPUUhkMGF3UU1YampOS0twb3oyMG4rZW9nUnJZS041WDFyRk1B?=
+ =?utf-8?B?UVBSL2E0MW54c0E0Vzl2TUQ0WjYrZElXb3pvMnF1dXBMc1Y5YkEzN3dXMUlt?=
+ =?utf-8?B?NWU3V1RKMUxzazd6Nnh3NGdTSzlzV3pZaGFoWTdRQ1I4TFpZaU51cmw0aWhZ?=
+ =?utf-8?B?UVM3eEU3VTZ3NGM2ZDdVYmkwL040Z2EzeXFPYUVRc3pQNEpLM1o0ZnYrNTRs?=
+ =?utf-8?B?QlFVVXBQUld3M1M0YzBldDBOUFZGVWplUDk0MGVRVWRUUTk2R2trR0JybU1F?=
+ =?utf-8?B?R2tadHJtRksyV21IWG9pN1h2bnpWRTV3R3hhNUN6RFlYRmh5Zi9sdFhOUkI3?=
+ =?utf-8?B?L1I0dnpQck1nSlZ6WXBxVzFKUzUwS1ljeUVYd25tNGdyMDd1VDJRTGozeFZp?=
+ =?utf-8?B?VGo2NUlwWFZ5UkUrOVBNZnZpTU80Zm1kRnZ2dnkyRHBvVjdmdzAvV3ZMVGsy?=
+ =?utf-8?B?QURtSUJXTUZpMGVOWE5CYkM4NjRTR0hJMERXTFBra2RKYlo0OUxJVzBiYjY5?=
+ =?utf-8?B?QmdFYWpGeXFHU1orNSt2NmhYOE8xL01pZy9FZXJrbkZ0TXFNNWZCNGJsVS9x?=
+ =?utf-8?B?eElvWk05dFZYRHZzRlhVSDh3VFhzbmtuTi9WNXdabEVmY0l2WVgrdDBmMGw1?=
+ =?utf-8?B?SHJ4Rzd0T2lxWFRaT0I3elpMMVEwNGJIVTRyckJKTEt3S2c5TjNEOVBseWJI?=
+ =?utf-8?B?ZGRzNVp1VXBpdldIYmhsS3JDL2JCWmh4MUF2NjdPYThzWmd6enFvblZEcmZX?=
+ =?utf-8?B?cGJxMlJ0bzBJYmFkekphRDJ1THhaNEVHeDdEWTVMUWtVQ2NaRFFnbVlnMVZk?=
+ =?utf-8?B?V2xFN1JxMTJYL1lTaE9ybWpGdjlEeVRyNmtGY1RaUTZRNVFwbzhLN2FaWTk3?=
+ =?utf-8?B?ZkgrOXFveVhVeExMZ1lNR2NacVVEcUtWKy9IWUtPL2JrL2xWdGoxQzEwS2Zx?=
+ =?utf-8?B?d2k1NWJpcXJ6RHc2ejRUcXZob0g1UGdDU1c2S0RKV2tBRlNYY1hwMUpOM1JS?=
+ =?utf-8?B?cE5KNWkwaWNUaEFDbkFLM1ljY1NWbW5SN0R4bW5PcDYyQ1hyN2diaTFKNHZS?=
+ =?utf-8?B?K2N2aExWODN2WW1LTlNSYW1iampHdi9wRGRDMnJiSFdlU0FROWphZ2RNemNm?=
+ =?utf-8?B?K1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5w6MSKzue/KGeURcHRadvbu/LTEvnpt0V7g0wscKsKzN/e46NpIkylwP2Ius6YSl0rhPFrnuPf462vkgSrUVCQUbiNv80vJMUQJkjUS5Tlq0nTJipr6ZQcv6FqxoVEZppivHpD4IL0WoetmGpDRZaKjwObsoRCq6ZVtee4xQf7I2+7iXHtZQG3kaJZcP44DGkYnm/Xcc845DIg+N/67bdcT47E5tp+aCZBvgk/nhjwDiIV2Pxlmflr6kJK1xQaXX5tR/gK6oPXr0mAGkJQcDLwZbW8TXkxz2x+t7BNXzdu22N/57SItENHx0VnvHF8Met9U75iiuR23RkSMBYXm5I2fEB4VWlfLajaDmcPePgsDSIQu10dW4peXL8/juMZdZRsfjqRfJu6WCntjpaNiRIzIYrmWcIkfUMHbOUGBmUv+7C5BwjSebTlJUYyRJztyMoVriHv2n8QyqGQ/BW0oLUDDj4Nq0oKn/RliaAkc1SaiZtCJSdYtsd1quY6TOp+QsVOtuaTkIIwQK3y0FIiaQ/oM1NyVKexm0R2zWy8stSpiwKSC195oxwTqR59kjv7K4v8ywL3dfh4r8/pUJ/hLfD5YNJ4iP+5rI7ONvU1Jw+88=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 677ce8ae-cdf7-4ff5-c721-08dd04c87b2b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 16:22:06.5910
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dyN5ETDic4eea/MRfBGMgiA4SF48LoQlMJYuLDrfCIKTtQG2+wy7EuGF1fVREUsMCg4jEu/jJPPUtl9JIvIAlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6894
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-14_05,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411140127
+X-Proofpoint-GUID: kykisfbIJSYHG-t8Tml31fye2vKGck46
+X-Proofpoint-ORIG-GUID: kykisfbIJSYHG-t8Tml31fye2vKGck46
 
-On Thu, 2024-11-14 at 16:31 +0100, Christian Brauner wrote:
-> Add the ability to retrieve security mount options. Keep them separate
-> from filesystem specific mount options so it's easy to tell them apart.
-> Also allow to retrieve them separate from other mount options as most of
-> the time users won't be interested in security specific mount options.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> How do we feel about including this for v6.13 or should I rather delay it=
-?
+On 14/11/2024 12:48, Long Li wrote:
+> On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
+>> On 17/09/2024 23:27, Dave Chinner wrote:
+>>>> # xfs_bmap -vvp  mnt/file
+>>>> mnt/file:
+>>>> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+>>>>     0: [0..15]:         384..399          0 (384..399)          16 010000
+>>>>     1: [16..31]:        400..415          0 (400..415)          16 000000
+>>>>     2: [32..127]:       416..511          0 (416..511)          96 010000
+>>>>     3: [128..255]:      256..383          0 (256..383)         128 000000
+>>>> FLAG Values:
+>>>>      0010000 Unwritten preallocated extent
+>>>>
+>>>> Here we have unaligned extents wrt extsize.
+>>>>
+>>>> The sub-alloc unit zeroing would solve that - is that what you would still
+>>>> advocate (to solve that issue)?
+>>> Yes, I thought that was already implemented for force-align with the
+>>> DIO code via the extsize zero-around changes in the iomap code. Why
+>>> isn't that zero-around code ensuring the correct extent layout here?
+>> I just have not included the extsize zero-around changes here. They were
+>> just grouped with the atomic writes support, as they were added specifically
+>> for the atomic writes support. Indeed - to me at least - it is strange that
+>> the DIO code changes are required for XFS forcealign implementation. And,
+>> even if we use extsize zero-around changes for DIO path, what about buffered
+>> IO?
+> 
+> I've been reviewing and testing the XFS atomic write patch series. Since
+> there haven't been any new responses to the previous discussions on this
+> issue, I'd like to inquire about the buffered IO problem with force-aligned
+> files, which is a scenario we might encounter.
+> 
+> Consider a case where the file supports force-alignment with a 64K extent size,
+> and the system page size is 4K. Take the following commands as an example:
+> 
+> xfs_io  -c "pwrite 64k 64k" mnt/file
+> xfs_io  -c "pwrite 8k 8k" mnt/file
+> 
+> If unaligned unwritten extents are not permitted, we need to zero out the
+> sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
+> data. 
 
-I say put it in. This is pretty straightforward stuff.
+How does this prevent stale data? Just zeroing will ensure aligned 
+extents. Unless iomap is provided a mapping for the fully aligned extent.
 
-> ---
->  fs/namespace.c             | 74 ++++++++++++++++++++++++++++++--------
->  include/uapi/linux/mount.h |  5 ++-
->  2 files changed, 64 insertions(+), 15 deletions(-)
->=20
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 4f39c4aba85d..a9065a9ab971 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5072,13 +5072,30 @@ static int statmount_mnt_opts(struct kstatmount *=
-s, struct seq_file *seq)
->  	return 0;
->  }
-> =20
-> +static inline int statmount_opt_unescape(struct seq_file *seq, char *buf=
-_start)
-> +{
-> +	char *buf_end, *opt_start, *opt_end;
-> +	int count =3D 0;
-> +
-> +	buf_end =3D seq->buf + seq->count;
-> +	*buf_end =3D '\0';
-> +	for (opt_start =3D buf_start + 1; opt_start < buf_end; opt_start =3D op=
-t_end + 1) {
-> +		opt_end =3D strchrnul(opt_start, ',');
-> +		*opt_end =3D '\0';
-> +		buf_start +=3D string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL=
-) + 1;
-> +		if (WARN_ON_ONCE(++count =3D=3D INT_MAX))
-> +			return -EOVERFLOW;
-> +	}
-> +	seq->count =3D buf_start - 1 - seq->buf;
-> +	return count;
-> +}
-> +
->  static int statmount_opt_array(struct kstatmount *s, struct seq_file *se=
-q)
->  {
->  	struct vfsmount *mnt =3D s->mnt;
->  	struct super_block *sb =3D mnt->mnt_sb;
->  	size_t start =3D seq->count;
-> -	char *buf_start, *buf_end, *opt_start, *opt_end;
-> -	u32 count =3D 0;
-> +	char *buf_start;
->  	int err;
-> =20
->  	if (!sb->s_op->show_options)
-> @@ -5095,17 +5112,39 @@ static int statmount_opt_array(struct kstatmount =
-*s, struct seq_file *seq)
->  	if (seq->count =3D=3D start)
->  		return 0;
-> =20
-> -	buf_end =3D seq->buf + seq->count;
-> -	*buf_end =3D '\0';
-> -	for (opt_start =3D buf_start + 1; opt_start < buf_end; opt_start =3D op=
-t_end + 1) {
-> -		opt_end =3D strchrnul(opt_start, ',');
-> -		*opt_end =3D '\0';
-> -		buf_start +=3D string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL=
-) + 1;
-> -		if (WARN_ON_ONCE(++count =3D=3D 0))
-> -			return -EOVERFLOW;
-> -	}
-> -	seq->count =3D buf_start - 1 - seq->buf;
-> -	s->sm.opt_num =3D count;
-> +	err =3D statmount_opt_unescape(seq, buf_start);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	s->sm.opt_num =3D err;
-> +	return 0;
-> +}
-> +
-> +static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file=
- *seq)
-> +{
-> +	struct vfsmount *mnt =3D s->mnt;
-> +	struct super_block *sb =3D mnt->mnt_sb;
-> +	size_t start =3D seq->count;
-> +	char *buf_start;
-> +	int err;
-> +
-> +	buf_start =3D seq->buf + start;
-> +
-> +	err =3D security_sb_show_options(seq, sb);
-> +	if (!err)
-> +		return err;
-> +
-> +	if (unlikely(seq_has_overflowed(seq)))
-> +		return -EAGAIN;
-> +
-> +	if (seq->count =3D=3D start)
-> +		return 0;
-> +
-> +	err =3D statmount_opt_unescape(seq, buf_start);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	s->sm.opt_sec_num =3D err;
->  	return 0;
->  }
-> =20
-> @@ -5138,6 +5177,10 @@ static int statmount_string(struct kstatmount *s, =
-u64 flag)
->  		sm->opt_array =3D start;
->  		ret =3D statmount_opt_array(s, seq);
->  		break;
-> +	case STATMOUNT_OPT_SEC_ARRAY:
-> +		sm->opt_sec_array =3D start;
-> +		ret =3D statmount_opt_sec_array(s, seq);
-> +		break;
->  	case STATMOUNT_FS_SUBTYPE:
->  		sm->fs_subtype =3D start;
->  		statmount_fs_subtype(s, seq);
-> @@ -5294,6 +5337,9 @@ static int do_statmount(struct kstatmount *s, u64 m=
-nt_id, u64 mnt_ns_id,
->  	if (!err && s->mask & STATMOUNT_OPT_ARRAY)
->  		err =3D statmount_string(s, STATMOUNT_OPT_ARRAY);
-> =20
-> +	if (!err && s->mask & STATMOUNT_OPT_SEC_ARRAY)
-> +		err =3D statmount_string(s, STATMOUNT_OPT_SEC_ARRAY);
-> +
->  	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
->  		err =3D statmount_string(s, STATMOUNT_FS_SUBTYPE);
-> =20
-> @@ -5323,7 +5369,7 @@ static inline bool retry_statmount(const long ret, =
-size_t *seq_size)
->  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT |=
- \
->  			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
->  			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
-> -			      STATMOUNT_OPT_ARRAY)
-> +			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
-> =20
->  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *=
-kreq,
->  			      struct statmount __user *buf, size_t bufsize,
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> index c0fda4604187..c07008816aca 100644
-> --- a/include/uapi/linux/mount.h
-> +++ b/include/uapi/linux/mount.h
-> @@ -177,7 +177,9 @@ struct statmount {
->  	__u32 sb_source;	/* [str] Source string of the mount */
->  	__u32 opt_num;		/* Number of fs options */
->  	__u32 opt_array;	/* [str] Array of nul terminated fs options */
-> -	__u64 __spare2[47];
-> +	__u32 opt_sec_num;	/* Number of security options */
-> +	__u32 opt_sec_array;	/* [str] Array of nul terminated security options =
-*/
-> +	__u64 __spare2[46];
->  	char str[];		/* Variable size part containing strings */
->  };
-> =20
-> @@ -214,6 +216,7 @@ struct mnt_id_req {
->  #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
->  #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
->  #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-> +#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
-> =20
->  /*
->   * Special @mnt_id values that can be passed to listmount
+> While this can be handled relatively easily in direct I/O scenarios,
+> it presents significant challenges in buffered I/O operations. The main
+> difficulty arises because the extent size (64K) is larger than the page
+> size (4K), and our current code base has substantial limitations in handling
+> such cases.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+What is the limitation exactly?
+
+> 
+> Any thoughts on this?
+
+TBH, the buffered IO case has not been considered too much.
+
+The sub-extent zeroing was intended for atomic writes > 1x FSB and we 
+only care about DIO there.
+
+Thanks,
+John
 
