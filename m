@@ -1,97 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-34850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EF49C94E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 22:57:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B19C94FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 23:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DABF31F23CEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 21:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A31285ADE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 22:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B1F1B0F34;
-	Thu, 14 Nov 2024 21:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFA31AF0DD;
+	Thu, 14 Nov 2024 22:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="g6h+vv89";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kSZGizTQ"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="RbLyQJEF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DlOjj9xT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1BD1AF0C4;
-	Thu, 14 Nov 2024 21:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6819CC02;
+	Thu, 14 Nov 2024 22:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731621154; cv=none; b=e2uK9on002Wf2XSpsvUtD0Bwsa/ZxmwtTKMzGfKbKxWs4ONoq3C6X79oylGxsrszo621ugcTAlIy7NyfstfVQHRZKPGM9R+v5bYjHZmJXJj6cwJznjcmBbh7rRMBTkDqA2rXeIocJRi1leaFkp/KPm0lD9F1/Nc8Nro68TBKNWQ=
+	t=1731621985; cv=none; b=QIhy7D31TSKtGWkhijAj2XJ3pfY2NhlDbA0fu7remfw9SI9Li7E3Txv56DIoNhZzQimYJOxlTFRMgLk1C2CQRoACyjnHIgtcydvMD0c7PWpA8eGk90BEAlTNlJF2HEVo1I/cv6fV4k9uqww3DIu2XjE+X0pgUKEhqOfof9eIF5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731621154; c=relaxed/simple;
-	bh=rmTQu8WzdBCz/XQ9uBUiql50LeaKz0AbTMPZF1YSXYQ=;
+	s=arc-20240116; t=1731621985; c=relaxed/simple;
+	bh=dMzuxcpcQP0SXGL/PU1OzogLCyrAVhblRFi0M6FEJQU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vf21AISsyMCirxjViyHZEvvodd1n88UGG/8nuCu3p5oZ6yXydLOTq1XsSSeEeni27lIoqEm55NsZ9CYlaHTtR7IbtOnmaie90keyZR+W6W98sax+oMMznMR1bZBQOZzle1rqC9mSqdDsCn07cZRlpTdYzdvjKhNqcbX15yGfRjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=g6h+vv89; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kSZGizTQ; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C853C254013D;
-	Thu, 14 Nov 2024 16:52:30 -0500 (EST)
+	 In-Reply-To:Content-Type; b=N32Hq9BdTIhcV9FJ2WPb+VlMu9CAFyo0ZeT/RAU0j0N7rHaTuFFcDCXJ5Xarir4dO9BAmCSVTKorp5Go3pOE7r27YwzXfZmri7lqOZEZ5pJz8WmelCsOIEKuuWK7Cpy1+GH2bHFbjOj583GFOWpHuE2N7EQOwhRyvFc1VgPUQ1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=RbLyQJEF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DlOjj9xT; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 281D31140156;
+	Thu, 14 Nov 2024 17:06:22 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 16:52:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731621150;
-	 x=1731707550; bh=rmTQu8WzdBCz/XQ9uBUiql50LeaKz0AbTMPZF1YSXYQ=; b=
-	g6h+vv892W4q6icoOfoZZxoLES5vAeou+9Ydf7FJztvwfHMenx1yJEY+Hhi/RVkl
-	Ao40ztod5upMKd78NHTM5RkAlLq5visfD4ZsrNUZKQiQTKH0lrQd1LJiUnMALE7j
-	8k7fCIvRxy2TyXkHxmPjO6XSlvW4E0Nsreg36CtX3iSHBLrnQ64okrI59CpNYXXS
-	dSrInzjF1kBmECZ5td6f60RF9LEccMq+iGe4ClOf6lM7g6Z6B/GctgQknSka1eoq
-	3ToHKzm8QExnZzDmA8kWsBdQ49DfI6Fu7hgUEFX7vn3rJUCAYyKVYflgldusoD0G
-	shw1uypEtiBrnJ7P/K0n3g==
+  by phl-compute-03.internal (MEProxy); Thu, 14 Nov 2024 17:06:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731621982;
+	 x=1731708382; bh=EWQHMFsxUX4AVUvmTtFUUts/cKVt83b9dkyCpPaTjAo=; b=
+	RbLyQJEFvpIGR4tYdwaGGVrzvWBVWYvpTmMiuLmnNidDZ5/fCkuVqwHgD2phdPTk
+	sLL75olWQDDaxjpBEK0z5sbGziRHt4k/wSsoFrNS1tfeZikUEjklQQq/wTUAEw5X
+	fbG0zj03cGrlxebRUAzVXc7pvXAask/dgBcuQbawv3+Rp82furk6Caw4/p/fZHfW
+	MfOwsgtgkZVYheZ1ABvNFJ4A+BF+W64jEpbE8EHKrj5NDI1/vS8+LgVt2irwPyJb
+	z7ocVV66Plm/wY4ijtwHidZST3i0rdOuLxDk9XmyhyMSO+wrCBoe/S9HtEYtSh70
+	I54WMY7YuoGDcfdAXclGbg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731621150; x=
-	1731707550; bh=rmTQu8WzdBCz/XQ9uBUiql50LeaKz0AbTMPZF1YSXYQ=; b=k
-	SZGizTQrkMTyR2l1Aep92FhMfLjov5ZCiToTRQ0i5q1uQQjhc2XOuSuc8SfPEKmQ
-	z8BtVR9DO5YifT7T4StmMk5+d90otR5JjRkesYAVDrlx/FMlBD5N3uVZfcv1wQ5X
-	Zmzv2klT0MTx2zaqQs8vJIkfaLnJST/jz1rtiwMRMKtjnstqAEznc032I6MoViQ3
-	gfBwaUqsXsr7n1MHZa4403371ReKqNPP7XNGXlEMc+pmosCgpnRKaiBqQ0/1eih+
-	cDpn7MM9o68196SGr1uZT8o5sM1C1+Y1FmBCw8i4VhEHx1PrNde0SUX5vuN+MWs2
-	t9ftdSrgF16pzvrbjG9SQ==
-X-ME-Sender: <xms:HnE2Z2oFfV0igJZ8v0zVkSpLfgk8lprvY--toIW6gXiw3B-UwIkhow>
-    <xme:HnE2Z0qmxlKEwyxzTpO0oAmdiawdG5EnUlc_AuiwjQyb5-T6lA2u2BCUw9AB7FPeL
-    rLEr5MM9hm2almfV9U>
-X-ME-Received: <xmr:HnE2Z7OhkyeD4WHW5ceRJVTpazYGQHlz41FexvJS4gmaQRzRQncIqWbgIbg-QD6zjeMDEC-Hc3C7bf2X0PV1_cjRaO2i>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdduheefucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731621982; x=
+	1731708382; bh=EWQHMFsxUX4AVUvmTtFUUts/cKVt83b9dkyCpPaTjAo=; b=D
+	lOjj9xTDg3mLglmK1qNbPHO1tG4fDPpZUsLxK2jkBtk45zx9Zh10sF7BMvpNF1YS
+	QpUBDkV+8D5YWz9UbmGZs9Yjbp1f8ThfyAjnvlQKjc3jfffuktBkkyzdGEGcfb+4
+	pn4q3B725ApnJ5KWdve8UmBTiRMFsbeYHVTcaS5B6ySuNRGXYtFbBYRmtVHXEdAj
+	ny2N1RAuW15bkchf7bWZYtLNpXq4gnujY0yryQ02e2gHTUzPtByuVAEiNkWdiDcy
+	sEv3gzaX2WrF6OlAJMEvXf3Ntj+1j56R9kgOF1xUUdrr55WCr2Db4oFD9dTR5b8M
+	z3hLDBDq2jkdUe1JwiY4g==
+X-ME-Sender: <xms:XXQ2ZwOYRue7q3bV1c9MFKEDws_xg6-duADs3x2u-BJD4mEgO3pZJg>
+    <xme:XXQ2Z2-HW-rRHsltlF-yNDsMb_-YzxiYKtnn5Q4Zq_WxfMfcUj2l99Q0s9X40FbJ3
+    xMpMG9npk8GKuvW>
+X-ME-Received: <xmr:XXQ2Z3S8Whhg7rUR1En68Bo5UlKGh2Du8RUCQBi7O6W96jhXcai1SkQx5SkfrvPQHHCsx4brAd4qEOfdNKU98-yBTYbaAdfLJfapkqhMlnbxP6f5xUzI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdduheehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpefgrhhinhcuufhhvghphhgvrhguuceovghrihhnrdhshhgvphhhvghrug
-    esvgegfedrvghuqeenucggtffrrghtthgvrhhnpeeggefhjeejgedtgfefhfdthfeuvdej
-    udelfeelhfejteelieekjeeggeeggfegudenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegvrhhinhdrshhhvghphhgvrhgusegvgeefrdgvuhdp
-    nhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrrg
-    hunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhl
-    ihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtph
-    htthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopehl
-    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefih
-    hlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:HnE2Z14XCg2F-7lhsYgDKmDg0aCXgXQZgMcJFgqXHJgQN0MuWWu2XA>
-    <xmx:HnE2Z14rNun-ljF2Mhc9gUptKi1ntY4QzuyDaU5a9LXBq90g43FrjA>
-    <xmx:HnE2Z1iHlfaXLnWVxo5_wm9-JGw8Gd-YXi9DNmaqdKm3yPtYwYPokg>
-    <xmx:HnE2Z_5BAd3pjZB0N1bzkixzO2xclAXVKvRHoOJRW7A8upN_XUY9xw>
-    <xmx:HnE2Z6HLa1cXNHBvV5A7c6HVqRuC5hcuTDrdQEpRWqaMwWtQCU8MG__A>
-Feedback-ID: i313944f9:Fastmail
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
+    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklh
+    hoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgu
+    khdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtph
+    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtoheprghmihhr
+    jeefihhlsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:XXQ2Z4vhxXvfEjSfz8WrkEvhaGcmeJqf0ZIy6hIT6OS1bjoxXrNa6A>
+    <xmx:XXQ2Z4euSy6QrkUjHArvAf2xWQHJTRygdK0R7e_Qk--UYh5EHXO3Pw>
+    <xmx:XXQ2Z801YSxh9jX5Bi4QoP4kbMeqHTm5I0a8MVRh8xD1iwujPBHQZg>
+    <xmx:XXQ2Z8-nUw1PQq0lfAwu4sDQRKC-a0tzDgljI-zD5Nphjxy3lzfe6g>
+    <xmx:XnQ2Z-05BVq95GbagAtAdh4uPrk5hRHcGY7T6B63NxgB_vUmeScaMbBu>
+Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 16:52:28 -0500 (EST)
-Message-ID: <b4353823-16ef-4a14-9222-acbe819fdce8@e43.eu>
-Date: Thu, 14 Nov 2024 22:52:26 +0100
+ 14 Nov 2024 17:06:19 -0500 (EST)
+Message-ID: <7cb814e8-38ec-468c-9bd8-1cc5d0664686@fastmail.fm>
+Date: Thu, 14 Nov 2024 23:06:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,321 +99,170 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
-Content-Language: en-GB
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
- <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner>
- <1128f3cd-38de-43a0-981e-ec1485ec9e3b@e43.eu>
- <20241114-monat-zehnkampf-2b1277d5252d@brauner>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <20241114-monat-zehnkampf-2b1277d5252d@brauner>
+Subject: Re: [PATCH RFC v5 05/16] fuse: make args->in_args[0] to be always the
+ header
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com>
+ <20241107-fuse-uring-for-6-10-rfc4-v5-5-e8660a991499@ddn.com>
+ <CAJnrk1ZsW=EFi2Weh66KPPQTT1TkvsZKMkeSd1JekQKGa0_ZNQ@mail.gmail.com>
+ <cd5c17fd-8127-42f8-bd20-a693ce66bddc@fastmail.fm>
+ <CAJnrk1aBvndZ9o3n9dRbjHxTzJiffWQqYBJRtNgwk=PWO_FW3Q@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1aBvndZ9o3n9dRbjHxTzJiffWQqYBJRtNgwk=PWO_FW3Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/11/2024 15:13, Christian Brauner wrote:
 
-> On Thu, Nov 14, 2024 at 02:13:06PM +0100, Erin Shepherd wrote:
->> These two concerns combined with the special flag make me wonder if pidfs
->> is so much of a special snowflake we should just special case it up front
->> and skip all of the shared handle decode logic?
-> Care to try a patch and see what it looks like?
 
-The following is a completely untested sketch on top of the existing patch series.
-Some notes:
+On 11/14/24 22:29, Joanne Koong wrote:
+> On Thu, Nov 14, 2024 at 1:05 PM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 11/14/24 21:57, Joanne Koong wrote:
+>>> On Thu, Nov 7, 2024 at 9:04 AM Bernd Schubert <bschubert@ddn.com> wrote:
+>>>>
+>>>> This change sets up FUSE operations to have headers in args.in_args[0],
+>>>> even for opcodes without an actual header. We do this to prepare for
+>>>> cleanly separating payload from headers in the future.
+>>>>
+>>>> For opcodes without a header, we use a zero-sized struct as a
+>>>> placeholder. This approach:
+>>>> - Keeps things consistent across all FUSE operations
+>>>> - Will help with payload alignment later
+>>>> - Avoids future issues when header sizes change
+>>>>
+>>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>>>> ---
+>>>>  fs/fuse/dax.c    | 13 ++++++++-----
+>>>>  fs/fuse/dev.c    | 24 ++++++++++++++++++++----
+>>>>  fs/fuse/dir.c    | 41 +++++++++++++++++++++++++++--------------
+>>>>  fs/fuse/fuse_i.h |  7 +++++++
+>>>>  fs/fuse/xattr.c  |  9 ++++++---
+>>>>  5 files changed, 68 insertions(+), 26 deletions(-)
+>>>>
+>>>> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+>>>> index 12ef91d170bb3091ac35a33d2b9dc38330b00948..e459b8134ccb089f971bebf8da1f7fc5199c1271 100644
+>>>> --- a/fs/fuse/dax.c
+>>>> +++ b/fs/fuse/dax.c
+>>>> @@ -237,14 +237,17 @@ static int fuse_send_removemapping(struct inode *inode,
+>>>>         struct fuse_inode *fi = get_fuse_inode(inode);
+>>>>         struct fuse_mount *fm = get_fuse_mount(inode);
+>>>>         FUSE_ARGS(args);
+>>>> +       struct fuse_zero_in zero_arg;
+>>>>
+>>>>         args.opcode = FUSE_REMOVEMAPPING;
+>>>>         args.nodeid = fi->nodeid;
+>>>> -       args.in_numargs = 2;
+>>>> -       args.in_args[0].size = sizeof(*inargp);
+>>>> -       args.in_args[0].value = inargp;
+>>>> -       args.in_args[1].size = inargp->count * sizeof(*remove_one);
+>>>> -       args.in_args[1].value = remove_one;
+>>>> +       args.in_numargs = 3;
+>>>> +       args.in_args[0].size = sizeof(zero_arg);
+>>>> +       args.in_args[0].value = &zero_arg;
+>>>> +       args.in_args[1].size = sizeof(*inargp);
+>>>> +       args.in_args[1].value = inargp;
+>>>> +       args.in_args[2].size = inargp->count * sizeof(*remove_one);
+>>>> +       args.in_args[2].value = remove_one;
+>>>>         return fuse_simple_request(fm, &args);
+>>>>  }
+>>>>
+>>>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>>>> index dbc222f9b0f0e590ce3ef83077e6b4cff03cff65..6effef4073da3dad2f6140761eca98147a41d88d 100644
+>>>> --- a/fs/fuse/dev.c
+>>>> +++ b/fs/fuse/dev.c
+>>>> @@ -1007,6 +1007,19 @@ static int fuse_copy_args(struct fuse_copy_state *cs, unsigned numargs,
+>>>>
+>>>>         for (i = 0; !err && i < numargs; i++)  {
+>>>>                 struct fuse_arg *arg = &args[i];
+>>>> +
+>>>> +               /* zero headers */
+>>>> +               if (arg->size == 0) {
+>>>> +                       if (WARN_ON_ONCE(i != 0)) {
+>>>> +                               if (cs->req)
+>>>> +                                       pr_err_once(
+>>>> +                                               "fuse: zero size header in opcode %d\n",
+>>>> +                                               cs->req->in.h.opcode);
+>>>> +                               return -EINVAL;
+>>>> +                       }
+>>>> +                       continue;
+>>>> +               }
+>>>> +
+>>>>                 if (i == numargs - 1 && argpages)
+>>>>                         err = fuse_copy_pages(cs, arg->size, zeroing);
+>>>>                 else
+>>>> @@ -1662,6 +1675,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+>>>>         size_t args_size = sizeof(*ra);
+>>>>         struct fuse_args_pages *ap;
+>>>>         struct fuse_args *args;
+>>>> +       struct fuse_zero_in zero_arg;
+>>>>
+>>>>         offset = outarg->offset & ~PAGE_MASK;
+>>>>         file_size = i_size_read(inode);
+>>>> @@ -1688,7 +1702,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+>>>>         args = &ap->args;
+>>>>         args->nodeid = outarg->nodeid;
+>>>>         args->opcode = FUSE_NOTIFY_REPLY;
+>>>> -       args->in_numargs = 2;
+>>>> +       args->in_numargs = 3;
+>>>>         args->in_pages = true;
+>>>>         args->end = fuse_retrieve_end;
+>>>>
+>>>> @@ -1715,9 +1729,11 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
+>>>>         }
+>>>>         ra->inarg.offset = outarg->offset;
+>>>>         ra->inarg.size = total_len;
+>>>> -       args->in_args[0].size = sizeof(ra->inarg);
+>>>> -       args->in_args[0].value = &ra->inarg;
+>>>> -       args->in_args[1].size = total_len;
+>>>> +       args->in_args[0].size = sizeof(zero_arg);
+>>>> +       args->in_args[0].value = &zero_arg;
+>>>> +       args->in_args[1].size = sizeof(ra->inarg);
+>>>> +       args->in_args[1].value = &ra->inarg;
+>>>> +       args->in_args[2].size = total_len;
+>>>>
+>>>>         err = fuse_simple_notify_reply(fm, args, outarg->notify_unique);
+>>>>         if (err)
+>>>
+>>> Do we also need to add a zero arg header for FUSE_READLINK,
+>>> FUSE_DESTROY, and FUSE_BATCH_FORGET requests as well?
+>>>
+>>
+>> Thanks for looking at the patch! I should have added to the commit message
+>> that I didn't modify these, as they don't have an in argument at all.
+>>
+> 
+> Thanks for clarifying! (and apologies for the late review. I haven't
+> been keeping up with these patches since RFC v3 but I'm planning to
+> get up to speed and take a deeper look at these tomorrow + next week).
 
-- I made heavy use of the cleanup macros. I'm happy to convert things back to
-  goto out_xx style if preferred - writing things this way just made bashing out
-  the code without dropping resources on the floor easier
-- If you don't implement fh_to_dentry then name_to_handle_at will just return an error
-  unless called with AT_HANDLE_FID. We need to decide what to do about that
-- The GET_PATH_FD_IS_NORMAL/etc constants don't match (what I see as) usual kernel style
-  but I'm not sure how to conventionally express something like that
+No worries at all... I'm also very late with reviewing your patches. 
+I'm close for the next fuse-io-version, just fixing some bg accounting
+issues that had been in all rfc versions so far.
 
-Otherwise, I'm fairly happy with how it came out in the end. Maybe handle_to_path and
-do_handle_to_path could be collapsed into each other at this point.
+> 
+> I think the FUSE_BATCH_FORGET request does use in args, depending on
+> the number of forget requests.
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 056116e58f43..697246085b69 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -11,6 +11,7 @@
- #include <linux/personality.h>
- #include <linux/uaccess.h>
- #include <linux/compat.h>
-+#include <linux/pidfs.h>
- #include "internal.h"
- #include "mount.h"
+Ah right, but it does not use fuse_copy_args and args->in_args[idx] - 
+is very special. And just looking it up again, the header is in the
+right place. Issue would be more for over-io-uring to copy into the
+payload. However, current over-io-uring patches don't handle forgets
+at all - it goes over /dev/fuse. Unless you disagree, I think we can
+do forgets later on over io-uring as optimization.
 
-@@ -130,6 +131,11 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
-     return err;
- }
 
-+enum {
-+    GET_PATH_FD_IS_NORMAL = 0,
-+    GET_PATH_FD_IS_PIDFD  = 1,
-+};
-+
- static int get_path_from_fd(int fd, struct path *root)
- {
-     if (fd == AT_FDCWD) {
-@@ -139,15 +145,16 @@ static int get_path_from_fd(int fd, struct path *root)
-         path_get(root);
-         spin_unlock(&fs->lock);
-     } else {
--        struct fd f = fdget(fd);
-+        CLASS(fd, f)(fd);
-         if (!fd_file(f))
-             return -EBADF;
-+        if (pidfd_pid(fd_file(f)))
-+            return GET_PATH_FD_IS_PIDFD;
-         *root = fd_file(f)->f_path;
-         path_get(root);
--        fdput(f);
-     }
+Thanks,
+Bernd
 
--    return 0;
-+    return GET_PATH_FD_IS_NORMAL;
- }
-
- enum handle_to_path_flags {
-@@ -287,84 +294,94 @@ static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
-     return true;
- }
-
--static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
--           struct path *path, unsigned int o_flags)
-+static int copy_handle_from_user(struct file_handle __user *ufh, struct file_handle **ret)
- {
--    int retval = 0;
--    struct file_handle f_handle;
--    struct file_handle *handle = NULL;
--    struct handle_to_path_ctx ctx = {};
--
--    retval = get_path_from_fd(mountdirfd, &ctx.root);
--    if (retval)
--        goto out_err;
--
--    if (!may_decode_fh(&ctx, o_flags)) {
--        retval = -EPERM;
--        goto out_path;
--    }
--
-+    struct file_handle f_handle, *handle;
-     if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle))) {
--        retval = -EFAULT;
--        goto out_path;
-+        return -EFAULT;
-     }
-     if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
-         (f_handle.handle_bytes == 0)) {
--        retval = -EINVAL;
--        goto out_path;
-+        return -EINVAL;
-     }
-     handle = kmalloc(struct_size(handle, f_handle, f_handle.handle_bytes),
-              GFP_KERNEL);
-     if (!handle) {
--        retval = -ENOMEM;
--        goto out_path;
-+        return -ENOMEM;
-     }
-+
-     /* copy the full handle */
-     *handle = f_handle;
-     if (copy_from_user(&handle->f_handle,
-                &ufh->f_handle,
-                f_handle.handle_bytes)) {
--        retval = -EFAULT;
--        goto out_handle;
-+        kfree(handle);
-+        return -EFAULT;
-     }
-
--    retval = do_handle_to_path(handle, path, &ctx);
-+    *ret = handle;
-+    return 0;
-+}
-
--out_handle:
--    kfree(handle);
--out_path:
--    path_put(&ctx.root);
--out_err:
--    return retval;
-+static int handle_to_path(struct path root, struct file_handle __user *ufh,
-+           struct path *path, unsigned int o_flags)
-+{
-+    struct file_handle *handle = NULL;
-+    struct handle_to_path_ctx ctx = {
-+        .root = root,
-+    };
-+
-+    if (!may_decode_fh(&ctx, o_flags)) {
-+        return -EPERM;
-+    }
-+
-+    return do_handle_to_path(handle, path, &ctx);
- }
-
- static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
-                int open_flag)
- {
-     long retval = 0;
--    struct path path;
--    struct file *file;
--    int fd;
-+    struct file_handle *handle __free(kfree) = NULL;
-+    struct path __free(path_put) root = {};
-+    struct path __free(path_put) path = {};
-+    struct file *file = NULL;
-+    int root_type;
-
--    retval = handle_to_path(mountdirfd, ufh, &path, open_flag);
-+    root_type = get_path_from_fd(mountdirfd, &root);
-+    if (root_type < 0)
-+        return root_type;
-+
-+    retval = copy_handle_from_user(ufh, &handle);
-     if (retval)
-         return retval;
-
--    fd = get_unused_fd_flags(open_flag);
--    if (fd < 0) {
--        path_put(&path);
-+    CLASS(get_unused_fd, fd)(open_flag);
-+    if (fd < 0)
-         return fd;
-+
-+    switch (root_type) {
-+    case GET_PATH_FD_IS_NORMAL:
-+        retval = handle_to_path(root, handle, &path, open_flag);
-+        if (retval)
-+            return retval;
-+        file = file_open_root(&path, "", open_flag, 0);
-+        if (IS_ERR(file)) {
-+            return PTR_ERR(file);
-+        }
-+        break;
-+
-+    case GET_PATH_FD_IS_PIDFD:
-+        file = pidfd_open_by_handle(
-+            handle->f_handle, handle->handle_bytes >> 2, handle->handle_type,
-+            open_flag);
-+        if (IS_ERR(file))
-+            return retval;
-+        break;
-     }
--    file = file_open_root(&path, "", open_flag, 0);
--    if (IS_ERR(file)) {
--        put_unused_fd(fd);
--        retval =  PTR_ERR(file);
--    } else {
--        retval = fd;
--        fd_install(fd, file);
--    }
--    path_put(&path);
--    return retval;
-+
-+    fd_install(fd, file);
-+    return take_fd(fd);
- }
-
- /**
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 0684a9b8fe71..65b72dc05380 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -453,22 +453,53 @@ static struct file_system_type pidfs_type = {
-     .kill_sb        = kill_anon_super,
- };
-
--struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
-+static struct file *__pidfs_alloc_file(struct pid *pid, unsigned int flags)
- {
--
-     struct file *pidfd_file;
-     struct path path;
-     int ret;
-
--    ret = path_from_stashed(&pid->stashed, pidfs_mnt, get_pid(pid), &path);
-+    ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-     if (ret < 0)
-         return ERR_PTR(ret);
-
-     pidfd_file = dentry_open(&path, flags, current_cred());
-+    if (!IS_ERR(pidfd_file))
-+        pidfd_file->f_flags |= (flags & PIDFD_THREAD);
-     path_put(&path);
-     return pidfd_file;
- }
-
-+struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
-+{
-+    return __pidfs_alloc_file(get_pid(pid), flags);
-+}
-+
-+struct file *pidfd_open_by_handle(void *gen_fid, int fh_len, int fh_type,
-+                  unsigned int flags)
-+{
-+    bool thread = flags & PIDFD_THREAD;
-+    struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
-+    struct pid *pid;
-+
-+    if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
-+        return ERR_PTR(-ESTALE);
-+
-+    scoped_guard(rcu) {
-+        pid = find_pid_ns(fid->pid, &init_pid_ns);
-+        if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0)
-+            return ERR_PTR(-ESTALE);
-+        if(!pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
-+            return ERR_PTR(-ESTALE);
-+            /* Something better? EINVAL like pidfd_open wouldn't be
-+               very obvious... */
-+
-+        pid = get_pid(pid);
-+    }
-+
-+    return __pidfs_alloc_file(pid, flags);
-+}
-+
- void __init pidfs_init(void)
- {
-     pidfs_mnt = kern_mount(&pidfs_type);
-diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-index 75bdf9807802..fba2654ae60f 100644
---- a/include/linux/pidfs.h
-+++ b/include/linux/pidfs.h
-@@ -3,6 +3,8 @@
- #define _LINUX_PID_FS_H
-
- struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
-+struct file *pidfd_open_by_handle(void *gen_fid, int fh_len, int fh_type,
-+                  unsigned int flags);
- void __init pidfs_init(void);
-
- #endif /* _LINUX_PID_FS_H */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 22f43721d031..fc47c76e4ff4 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2015,11 +2015,6 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
-         put_unused_fd(pidfd);
-         return PTR_ERR(pidfd_file);
-     }
--    /*
--     * anon_inode_getfile() ignores everything outside of the
--     * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
--     */
--    pidfd_file->f_flags |= (flags & PIDFD_THREAD);
-     *ret = pidfd_file;
-     return pidfd;
- }
 
 
