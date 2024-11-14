@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-34746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266049C8516
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 09:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A24CF9C851A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 09:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC4B1F216B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A9E1F221AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DC91F8EF5;
-	Thu, 14 Nov 2024 08:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FC91F8F17;
+	Thu, 14 Nov 2024 08:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+VV6NpJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI3AJpw4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D5B1F757F;
-	Thu, 14 Nov 2024 08:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F71F76AC;
+	Thu, 14 Nov 2024 08:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573890; cv=none; b=liGVbZyZV8FXLn1V3E5qza1+Z7Qov1ULcdjbxOE5S95WJweQyms1QpxD2ApZgbMLj7AAZqyFXv8AE0DzQoIFS9Afm95zelcHad99g3zfJJ/+c1EWUVEJLKYEouzEkZGpMg2WrEQzyNMRs02jHdT01+hYlMiEzhouQIaiQ39aBWA=
+	t=1731573898; cv=none; b=VYu5q0QVbRObGVkoY4Z+IZ4k7xYBFEla+LS6IDH1/FtY76nWp3JbhvzAaJIYFbM2oT5GPExDqBNl1CdO/5fkxpLyqulbF87xKaJdSqTlHH3a5j0B7XVQUAYz08Qj2VU3JOhqV4OFWR9QL9T0zzA6sZVhyvtcgVOMNEc9J0uTIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573890; c=relaxed/simple;
-	bh=M4IAn4WGrIBdCXICRh4T7eOrsB4F7fqrCuH6SgxNCdo=;
+	s=arc-20240116; t=1731573898; c=relaxed/simple;
+	bh=28xo/GcqXu7Noex43IdCT3nlsYOlGRCmbcULqotFvGU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uPddGnAbhCc9vfatJzZBknCH8T/5TbGYsjFwW8RIWM8RfIXMNOQqmSYOLK6yN8p4zVvDYap+D3ArShu8niU6B739TaoWXWf9pCoyiYfIuiG48ndgIQ+GjYTFptBh8Wl5bcVHWmY5gXRh/ZqGklihXxGI45OGpmA1XP/kdysjpfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+VV6NpJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A498AC4CECD;
-	Thu, 14 Nov 2024 08:44:46 +0000 (UTC)
+	 MIME-Version; b=tRNt5e4MLFRmXzBTqa4AefNEX1ju6U3G22UnDOvntle+32COSBrabD5YnZSsbWf2WOzopBDcDrbk45P+xYoaWc7ae/VMSkLwPtgh6AM6fgzoe5B/rRc+GoLe74Ou41a6rTnR0TSgmsT0CrAJzbFqJAh9kMyC0zoiqhe7XzqYk8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI3AJpw4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C055DC4CECD;
+	Thu, 14 Nov 2024 08:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731573890;
-	bh=M4IAn4WGrIBdCXICRh4T7eOrsB4F7fqrCuH6SgxNCdo=;
+	s=k20201202; t=1731573898;
+	bh=28xo/GcqXu7Noex43IdCT3nlsYOlGRCmbcULqotFvGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l+VV6NpJ+BTuYHnCogP9sQWd9zYhmFh2cCuj+nqxFuqMT2YSRz8fk7kGU9kTRPsWI
-	 i3KpUWdgRKewQekyWMu3PN0KAVnk8ETvoacXtJ8bi9FXUoHMI8NClO7ZXsCvtJ1nsB
-	 rXtHcmJz0eTErRdpFAGGJ6bUaNDLQZu2gHDvVLTuGCY34TF1NUO/wr/y19/Rtbu61i
-	 3uILEgfAnEwm5bcUZd/DcnXGSnnqsn4HQCuDVMhYpMAjDoF5+z9lmlNeoSTGHb/Que
-	 6Pin2DnOjjG72kkp4lppQ8ftWQKutcn3+7nET2EyFUc6mpNL+CuaBJtGrL3Wv4DTYK
-	 mHwrZDkDsx/BA==
+	b=GI3AJpw4RFNXyKxSygIHCED2Kcme73S6J79kzh92/qStihHmAyX4Imu63z8x4UFeC
+	 mE817jtgRr4FjyaOyNHZnna9X69S1QYMsO+zDmaz7myxEQGU+pJwvf1CIRBWbinL8e
+	 yUgqeFZqYtCGphTg8k2s2UM48aW+bU0RCTPUEvo1RgONoVKWRRSok9116miCA5gbVK
+	 cBvGj8cPD8+zvcq5dfA9tojignWFQNzXnrzyOp2GdjKv05ktI/201cnV7QZZ2Vj9ZB
+	 X8WKJTpD/Fp9j+powCd7jhXziX0blEZUZutNng6/zbSpC4WN11HOd2WuvZXlLy6AMk
+	 aGVE8AufzG8yg==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kernel-team@meta.com,
 	mic@digikod.net,
 	gnoack@google.com,
 	Song Liu <song@kernel.org>
-Subject: [RFC/PATCH v2 bpf-next fanotify 6/7] fanotify: Enable bpf based fanotify fastpath handler
-Date: Thu, 14 Nov 2024 00:43:44 -0800
-Message-ID: <20241114084345.1564165-7-song@kernel.org>
+Subject: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for BPF based fanotify fastpath handler
+Date: Thu, 14 Nov 2024 00:43:45 -0800
+Message-ID: <20241114084345.1564165-8-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241114084345.1564165-1-song@kernel.org>
 References: <20241114084345.1564165-1-song@kernel.org>
@@ -78,297 +78,494 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow user to write fanotify fastpath handlers with bpf programs.
+This test shows a simplified logic that monitors a subtree. This is
+simplified as it doesn't handle all the scenarios, such as:
 
-Major changes:
-1. Make kfuncs in fs/bpf_fs_kfuncs.c available to STRUCT_OPS programs.
-2. Add kfunc bpf_fanotify_data_inode, bpf_fanotify_data_dentry.
-e. Add struct_ops bpf_fanotify_fastpath_ops.
+  1) moving a subsubtree into/outof the being monitoring subtree;
+  2) mount point inside the being monitored subtree
 
-TODO:
-1. With current logic, the bpf based fastpath handler is added to the
-   global list, and thus available to all users. This is similar to
-   bpf based tcp congestion algorithms. It is possible to add an API
-   so that the bpf based handler is not added to global list, which is
-   similar to hid-bpf. I plan to add that API later.
+Therefore, this is not to show a way to reliably monitor a subtree.
+Instead, this is to test the functionalities of bpf based fastpath.
+To really monitor a subtree reliably, we will need more complex logic.
+
+Overview of the logic:
+  1. fanotify is created for the whole file system (/tmp).
+  2. dentry of the subtree root is saved in map subtree_root.
+  3. bpf_is_subdir() is used to check whether a fanotify event happens
+     inside the subtree. Only events happened in the subtree are passed
+     to userspace.
+  4. A bpf map (inode_storage_map) is used to cache result from
+     bpf_is_subdir().
+  5. subsubtree moving is not handled. This is because we don't yet have
+     a good way to walk a subtree from BPF (something similar to d_walk).
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- fs/Makefile                            |   2 +-
- fs/bpf_fs_kfuncs.c                     |  10 +-
- fs/notify/fanotify/fanotify_fastpath.c | 172 ++++++++++++++++++++++++-
- kernel/bpf/verifier.c                  |   5 +
- 4 files changed, 183 insertions(+), 6 deletions(-)
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ tools/testing/selftests/bpf/config            |   2 +
+ .../testing/selftests/bpf/prog_tests/fan_fp.c | 264 ++++++++++++++++++
+ tools/testing/selftests/bpf/progs/fan_fp.c    | 154 ++++++++++
+ 4 files changed, 425 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fan_fp.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fan_fp.c
 
-diff --git a/fs/Makefile b/fs/Makefile
-index 61679fd587b7..1043d999262d 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -129,4 +129,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
- obj-$(CONFIG_EROFS_FS)		+= erofs/
- obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
- obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
--obj-$(CONFIG_BPF_LSM)		+= bpf_fs_kfuncs.o
-+obj-$(CONFIG_BPF_SYSCALL)	+= bpf_fs_kfuncs.o
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 03ad3a2faec8..2f7b91f10175 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -207,7 +207,8 @@ BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
- {
- 	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
--	    prog->type == BPF_PROG_TYPE_LSM)
-+	    prog->type == BPF_PROG_TYPE_LSM ||
-+	    prog->type == BPF_PROG_TYPE_STRUCT_OPS)
- 		return 0;
- 	return -EACCES;
- }
-@@ -220,7 +221,12 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
- 
- static int __init bpf_fs_kfuncs_init(void)
- {
--	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
-+	int ret;
+diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+index 2eb3483f2fb0..6ccfef9685e1 100644
+--- a/tools/testing/selftests/bpf/bpf_kfuncs.h
++++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+@@ -87,4 +87,9 @@ struct dentry;
+  */
+ extern int bpf_get_dentry_xattr(struct dentry *dentry, const char *name,
+ 			      struct bpf_dynptr *value_ptr) __ksym __weak;
 +
-+	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &bpf_fs_kfunc_set);
++struct fanotify_fastpath_event;
++extern struct inode *bpf_fanotify_data_inode(struct fanotify_fastpath_event *event) __ksym __weak;
++extern void bpf_iput(struct inode *inode) __ksym __weak;
++extern bool bpf_is_subdir(struct dentry *new_dentry, struct dentry *old_dentry) __ksym __weak;
+ #endif
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index 4ca84c8d9116..505327f53f07 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -24,6 +24,8 @@ CONFIG_DEBUG_INFO_BTF=y
+ CONFIG_DEBUG_INFO_DWARF4=y
+ CONFIG_DUMMY=y
+ CONFIG_DYNAMIC_FTRACE=y
++CONFIG_FANOTIFY=y
++CONFIG_FANOTIFY_FASTPATH=y
+ CONFIG_FPROBE=y
+ CONFIG_FTRACE_SYSCALLS=y
+ CONFIG_FUNCTION_ERROR_INJECTION=y
+diff --git a/tools/testing/selftests/bpf/prog_tests/fan_fp.c b/tools/testing/selftests/bpf/prog_tests/fan_fp.c
+new file mode 100644
+index 000000000000..92929b811282
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/fan_fp.c
+@@ -0,0 +1,264 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
 +
-+	return ret;
- }
- 
- late_initcall(bpf_fs_kfuncs_init);
-diff --git a/fs/notify/fanotify/fanotify_fastpath.c b/fs/notify/fanotify/fanotify_fastpath.c
-index f2aefcf0ca6a..ec7a1143d687 100644
---- a/fs/notify/fanotify/fanotify_fastpath.c
-+++ b/fs/notify/fanotify/fanotify_fastpath.c
-@@ -2,6 +2,7 @@
- #include <linux/fanotify.h>
- #include <linux/kobject.h>
- #include <linux/module.h>
-+#include <linux/bpf.h>
- 
- #include "fanotify.h"
- 
-@@ -197,7 +198,7 @@ int fanotify_fastpath_add(struct fsnotify_group *group,
- 
- 	spin_lock(&fp_list_lock);
- 	fp_ops = fanotify_fastpath_find(args.name);
--	if (!fp_ops || !try_module_get(fp_ops->owner)) {
-+	if (!fp_ops || !bpf_try_module_get(fp_ops, fp_ops->owner)) {
- 		spin_unlock(&fp_list_lock);
- 		ret = -ENOENT;
- 		goto err_free_hook;
-@@ -238,7 +239,7 @@ int fanotify_fastpath_add(struct fsnotify_group *group,
- err_free_args:
- 	kfree(init_args);
- err_module_put:
--	module_put(fp_ops->owner);
-+	bpf_module_put(fp_ops, fp_ops->owner);
- err_free_hook:
- 	kfree(fp_hook);
- 	goto out;
-@@ -249,7 +250,7 @@ void fanotify_fastpath_hook_free(struct fanotify_fastpath_hook *fp_hook)
- 	if (fp_hook->ops->fp_free)
- 		fp_hook->ops->fp_free(fp_hook);
- 
--	module_put(fp_hook->ops->owner);
-+	bpf_module_put(fp_hook->ops, fp_hook->ops->owner);
- 	kfree(fp_hook);
- }
- 
-@@ -280,3 +281,168 @@ static int __init fanotify_fastpath_init(void)
- 	return 0;
- }
- device_initcall(fanotify_fastpath_init);
++#define _GNU_SOURCE
++#include <err.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/fanotify.h>
++#include <unistd.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
 +
-+__bpf_kfunc_start_defs();
++#include <test_progs.h>
 +
-+/**
-+ * bpf_fanotify_data_inode - get inode from fanotify_fastpath_event
-+ *
-+ * @event: fanotify_fastpath_event to get inode from
-+ *
-+ * Get referenced inode from fanotify_fastpath_event.
-+ *
-+ * Return: A refcounted inode or NULL.
-+ *
-+ */
-+__bpf_kfunc struct inode *bpf_fanotify_data_inode(struct fanotify_fastpath_event *event)
++#include "fan_fp.skel.h"
++
++#define TEST_FS "/tmp/"
++#define TEST_DIR "/tmp/fanotify_test/"
++
++static int create_test_subtree(void)
 +{
-+	struct inode *inode = fsnotify_data_inode(event->data, event->data_type);
++	int err;
 +
-+	return inode ? igrab(inode) : NULL;
++	err = mkdir(TEST_DIR, 0777);
++	if (err && errno != EEXIST)
++		return err;
++
++	return open(TEST_DIR, O_RDONLY);
 +}
 +
-+/**
-+ * bpf_fanotify_data_dentry - get dentry from fanotify_fastpath_event
-+ *
-+ * @event: fanotify_fastpath_event to get dentry from
-+ *
-+ * Get referenced dentry from fanotify_fastpath_event.
-+ *
-+ * Return: A refcounted inode or NULL.
-+ *
-+ */
-+__bpf_kfunc struct dentry *bpf_fanotify_data_dentry(struct fanotify_fastpath_event *event)
++static int create_fanotify_fd(void)
 +{
-+	struct dentry *dentry = fsnotify_data_dentry(event->data, event->data_type);
++	int fanotify_fd, err;
 +
-+	return dget(dentry);
-+}
++	fanotify_fd = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR_FID,
++				    O_RDONLY);
 +
-+__bpf_kfunc_end_defs();
++	if (!ASSERT_OK_FD(fanotify_fd, "fanotify_init"))
++		return -1;
 +
-+BTF_KFUNCS_START(bpf_fanotify_kfunc_set_ids)
-+BTF_ID_FLAGS(func, bpf_fanotify_data_inode,
-+	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
-+BTF_ID_FLAGS(func, bpf_fanotify_data_dentry,
-+	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
-+BTF_KFUNCS_END(bpf_fanotify_kfunc_set_ids)
-+
-+static const struct btf_kfunc_id_set bpf_fanotify_kfunc_set = {
-+	.owner = THIS_MODULE,
-+	.set   = &bpf_fanotify_kfunc_set_ids,
-+};
-+
-+static const struct bpf_func_proto *
-+bpf_fanotify_fastpath_get_func_proto(enum bpf_func_id func_id,
-+				     const struct bpf_prog *prog)
-+{
-+	return tracing_prog_func_proto(func_id, prog);
-+}
-+
-+static bool bpf_fanotify_fastpath_is_valid_access(int off, int size,
-+						  enum bpf_access_type type,
-+						  const struct bpf_prog *prog,
-+						  struct bpf_insn_access_aux *info)
-+{
-+	if (!bpf_tracing_btf_ctx_access(off, size, type, prog, info))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int bpf_fanotify_fastpath_btf_struct_access(struct bpf_verifier_log *log,
-+						   const struct bpf_reg_state *reg,
-+						   int off, int size)
-+{
-+	return 0;
-+}
-+
-+static const struct bpf_verifier_ops bpf_fanotify_fastpath_verifier_ops = {
-+	.get_func_proto		= bpf_fanotify_fastpath_get_func_proto,
-+	.is_valid_access	= bpf_fanotify_fastpath_is_valid_access,
-+	.btf_struct_access	= bpf_fanotify_fastpath_btf_struct_access,
-+};
-+
-+static int bpf_fanotify_fastpath_reg(void *kdata, struct bpf_link *link)
-+{
-+	return fanotify_fastpath_register(kdata);
-+}
-+
-+static void bpf_fanotify_fastpath_unreg(void *kdata, struct bpf_link *link)
-+{
-+	fanotify_fastpath_unregister(kdata);
-+}
-+
-+static int bpf_fanotify_fastpath_init(struct btf *btf)
-+{
-+	return 0;
-+}
-+
-+static int bpf_fanotify_fastpath_init_member(const struct btf_type *t,
-+					     const struct btf_member *member,
-+					     void *kdata, const void *udata)
-+{
-+	const struct fanotify_fastpath_ops *uops;
-+	struct fanotify_fastpath_ops *ops;
-+	u32 moff;
-+	int ret;
-+
-+	uops = (const struct fanotify_fastpath_ops *)udata;
-+	ops = (struct fanotify_fastpath_ops *)kdata;
-+
-+	moff = __btf_member_bit_offset(t, member) / 8;
-+	switch (moff) {
-+	case offsetof(struct fanotify_fastpath_ops, name):
-+		ret = bpf_obj_name_cpy(ops->name, uops->name,
-+				       sizeof(ops->name));
-+		if (ret <= 0)
-+			return -EINVAL;
-+		return 1;
++	err = fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM,
++			    FAN_CREATE | FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD,
++			    AT_FDCWD, TEST_FS);
++	if (!ASSERT_OK(err, "fanotify_mark")) {
++		close(fanotify_fd);
++		return -1;
 +	}
 +
++	return fanotify_fd;
++}
++
++static int attach_global_fastpath(int fanotify_fd)
++{
++	struct fanotify_fastpath_args args = {
++		.name = "_tmp_test_sub_tree",
++		.version = 1,
++		.flags = 0,
++	};
++
++	if (ioctl(fanotify_fd, FAN_IOC_ADD_FP, &args))
++		return -1;
++
 +	return 0;
 +}
 +
-+static int __bpf_fan_fp_handler(struct fsnotify_group *group,
-+				struct fanotify_fastpath_hook *fp_hook,
-+				struct fanotify_fastpath_event *fp_event)
-+{
-+	return 0;
-+}
-+
-+static int __bpf_fan_fp_init(struct fanotify_fastpath_hook *hook, void *args)
-+{
-+	return 0;
-+}
-+
-+static void __bpf_fan_fp_free(struct fanotify_fastpath_hook *hook)
-+{
-+}
-+
-+/* For bpf_struct_ops->cfi_stubs */
-+static struct fanotify_fastpath_ops __bpf_fanotify_fastpath_ops = {
-+	.fp_handler = __bpf_fan_fp_handler,
-+	.fp_init = __bpf_fan_fp_init,
-+	.fp_free = __bpf_fan_fp_free,
++#define EVENT_BUFFER_SIZE 4096
++struct file_access_result {
++	char name_prefix[16];
++	bool accessed;
++} access_results[3] = {
++	{"aa", false},
++	{"bb", false},
++	{"cc", false},
 +};
 +
-+static struct bpf_struct_ops bpf_fanotify_fastpath_ops = {
-+	.verifier_ops = &bpf_fanotify_fastpath_verifier_ops,
-+	.reg = bpf_fanotify_fastpath_reg,
-+	.unreg = bpf_fanotify_fastpath_unreg,
-+	.init = bpf_fanotify_fastpath_init,
-+	.init_member = bpf_fanotify_fastpath_init_member,
-+	.name = "fanotify_fastpath_ops",
-+	.cfi_stubs = &__bpf_fanotify_fastpath_ops,
-+	.owner = THIS_MODULE,
++static void update_access_results(char *name)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(access_results); i++) {
++		if (strcmp(name, access_results[i].name_prefix) == 0)
++			access_results[i].accessed = true;
++	}
++}
++
++static void parse_event(char *buffer, int len)
++{
++	struct fanotify_event_metadata *event =
++		(struct fanotify_event_metadata *) buffer;
++	struct fanotify_event_info_header *info;
++	struct fanotify_event_info_fid *fid;
++	struct file_handle *handle;
++	char *name;
++	int off;
++
++	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
++		for (off = sizeof(*event) ; off < event->event_len;
++		     off += info->len) {
++			info = (struct fanotify_event_info_header *)
++				((char *) event + off);
++			switch (info->info_type) {
++			case FAN_EVENT_INFO_TYPE_DFID_NAME:
++				fid = (struct fanotify_event_info_fid *) info;
++				handle = (struct file_handle *)&fid->handle;
++				name = (char *)handle + sizeof(*handle) + handle->handle_bytes;
++				update_access_results(name);
++				break;
++			default:
++				break;
++			}
++		}
++	}
++}
++
++static void touch_file(const char *path)
++{
++	int fd;
++
++	fd = open(path, O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
++	if (!ASSERT_OK_FD(fd, "open"))
++		goto cleanup;
++	close(fd);
++cleanup:
++	unlink(path);
++}
++
++static void generate_and_test_event(int fanotify_fd, struct fan_fp *skel)
++{
++	char buffer[EVENT_BUFFER_SIZE];
++	int len, err, fd;
++
++	/* Open the dir, so initialize_subdir_root can work */
++	fd = open(TEST_DIR, O_RDONLY);
++	close(fd);
++
++	if (!ASSERT_EQ(skel->bss->initialized, true, "initialized"))
++		goto cleanup;
++
++	/* access /tmp/fanotify_test/aa, this will generate event */
++	touch_file(TEST_DIR "aa");
++
++	/* create /tmp/fanotify_test/subdir, this will get tag from the
++	 * parent directory (added in the bpf program on fsnotify_mkdir)
++	 */
++	err = mkdir(TEST_DIR "subdir", 0777);
++	ASSERT_OK(err, "mkdir");
++
++	/* access /tmp/fanotify_test/subdir/bb, this will generate event */
++	touch_file(TEST_DIR "subdir/bb");
++
++	/* access /tmp/cc, this will NOT generate event, as the BPF
++	 * fastpath filtered this event out. (Because /tmp doesn't have
++	 * the tag.)
++	 */
++	touch_file(TEST_FS "cc");
++
++	/* read and parse the events */
++	len = read(fanotify_fd, buffer, EVENT_BUFFER_SIZE);
++	if (!ASSERT_GE(len, 0, "read event"))
++		goto cleanup;
++	parse_event(buffer, len);
++
++	/* verify we generated events for aa and bb, but filtered out the
++	 * event for cc.
++	 */
++	ASSERT_TRUE(access_results[0].accessed, "access aa");
++	ASSERT_TRUE(access_results[1].accessed, "access bb");
++	ASSERT_FALSE(access_results[2].accessed, "access cc");
++
++	/* Each touch_file() generates two events: FAN_CREATE then
++	 * FAN_OPEN. The second event will hit cache.
++	 * open(TEST_DIR) also hit cache, as we updated it cache for
++	 * TEST_DIR from userspace.
++	 * Therefore, we expect 4 cache hits: aa, bb, cc, and TEST_DIR.
++	 */
++	ASSERT_EQ(skel->bss->cache_hit, 4, "cache_hit");
++
++cleanup:
++	rmdir(TEST_DIR "subdir");
++	rmdir(TEST_DIR);
++}
++
++/* This test shows a simplified logic that monitors a subtree. This is
++ * simplified as it doesn't handle all the scenarios, such as:
++ *
++ *  1) moving a subsubtree into/outof the being monitoring subtree;
++ *  2) mount point inside the being monitored subtree
++ *
++ * Therefore, this is not to show a way to reliably monitor a subtree.
++ * Instead, this is to test the functionalities of bpf based fastpath.
++ *
++ * Overview of the logic:
++ * 1. fanotify is created for the whole file system (/tmp);
++ * 2. A bpf map (inode_storage_map) is used to tag directories to
++ *    monitor (starting from /tmp/fanotify_test);
++ * 3. On fsnotify_mkdir, thee tag is propagated to newly created sub
++ *    directories (/tmp/fanotify_test/subdir);
++ * 4. The bpf fastpath checks whether the event happens in a directory
++ *    with the tag. If yes, the event is sent to user space; otherwise,
++ *    the event is dropped.
++ */
++static void test_monitor_subtree(void)
++{
++	struct bpf_link *link;
++	struct fan_fp *skel;
++	int test_root_fd;
++	int zero = 0;
++	int err, fanotify_fd;
++	struct stat st;
++
++	test_root_fd = create_test_subtree();
++
++	if (!ASSERT_OK_FD(test_root_fd, "create_test_subtree"))
++		return;
++
++	err = fstat(test_root_fd, &st);
++	if (!ASSERT_OK(err, "fstat test_root_fd"))
++		goto close_test_root_fd;
++
++	skel = fan_fp__open_and_load();
++
++	if (!ASSERT_OK_PTR(skel, "fan_fp__open_and_load"))
++		goto close_test_root_fd;
++
++	skel->bss->root_ino = st.st_ino;
++
++	/* Add tag to /tmp/fanotify_test/ */
++	err = bpf_map_update_elem(bpf_map__fd(skel->maps.inode_storage_map),
++				  &test_root_fd, &zero, BPF_ANY);
++	if (!ASSERT_OK(err, "bpf_map_update_elem"))
++		goto destroy_skel;
++	link = bpf_map__attach_struct_ops(skel->maps.bpf_fanotify_fastpath_ops);
++	if (!ASSERT_OK_PTR(link, "bpf_map__attach_struct_ops"))
++		goto destroy_skel;
++
++	fanotify_fd = create_fanotify_fd();
++	if (!ASSERT_OK_FD(fanotify_fd, "create_fanotify_fd"))
++		goto destroy_link;
++
++	err = attach_global_fastpath(fanotify_fd);
++	if (!ASSERT_OK(err, "attach_global_fastpath"))
++		goto close_fanotify_fd;
++
++	generate_and_test_event(fanotify_fd, skel);
++
++close_fanotify_fd:
++	close(fanotify_fd);
++
++destroy_link:
++	bpf_link__destroy(link);
++destroy_skel:
++	fan_fp__destroy(skel);
++
++close_test_root_fd:
++	close(test_root_fd);
++	rmdir(TEST_DIR);
++}
++
++void test_bpf_fanotify_fastpath(void)
++{
++	if (test__start_subtest("subtree"))
++		test_monitor_subtree();
++}
+diff --git a/tools/testing/selftests/bpf/progs/fan_fp.c b/tools/testing/selftests/bpf/progs/fan_fp.c
+new file mode 100644
+index 000000000000..97e7d0b9e644
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/fan_fp.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
++
++#include "vmlinux.h"
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_core_read.h>
++#include "bpf_kfuncs.h"
++
++struct __dentry_kptr_value {
++	struct dentry __kptr * dentry;
 +};
 +
-+static int __init bpf_fanotify_fastpath_struct_ops_init(void)
++/* subdir_root map holds a single dentry pointer to the subtree root.
++ * This pointer is used to call bpf_is_subdir().
++ */
++struct {
++	__uint(type, BPF_MAP_TYPE_ARRAY);
++	__type(key, int);
++	__type(value, struct __dentry_kptr_value);
++	__uint(max_entries, 1);
++} subdir_root SEC(".maps");
++
++/* inode_storage_map serves as cache for bpf_is_subdir(). inode local
++ * storage has O(1) access time. So this is preferred over calling
++ * bpf_is_subdir().
++ */
++struct {
++	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
++	__uint(map_flags, BPF_F_NO_PREALLOC);
++	__type(key, int);
++	__type(value, int);
++} inode_storage_map SEC(".maps");
++
++unsigned long root_ino;
++bool initialized;
++
++/* This function initialize map subdir_root. The logic is a bit ungly.
++ * First, user space sets root_ino. Then a fanotify event is triggered.
++ * If the event dentry matches root_ino, we take a reference on the
++ * dentry and save it in subdir_root map. The reference will be freed on
++ * the termination of subdir_root map.
++ */
++static void initialize_subdir_root(struct fanotify_fastpath_event *fp_event)
 +{
++	struct __dentry_kptr_value *v;
++	struct dentry *dentry, *old;
++	int zero = 0;
++
++	if (initialized)
++		return;
++
++	dentry = bpf_fanotify_data_dentry(fp_event);
++	if (!dentry)
++		return;
++
++	if (dentry->d_inode->i_ino != root_ino) {
++		bpf_dput(dentry);
++		return;
++	}
++
++	v = bpf_map_lookup_elem(&subdir_root, &zero);
++	if (!v) {
++		bpf_dput(dentry);
++		return;
++	}
++
++	old = bpf_kptr_xchg(&v->dentry, dentry);
++	if (old)
++		bpf_dput(old);
++	initialized = true;
++}
++
++int cache_hit;
++
++/* bpf_fp_handler is sleepable, as it calls bpf_dput() */
++SEC("struct_ops.s")
++int BPF_PROG(bpf_fp_handler,
++	     struct fsnotify_group *group,
++	     struct fanotify_fastpath_hook *fp_hook,
++	     struct fanotify_fastpath_event *fp_event)
++{
++	struct __dentry_kptr_value *v;
++	struct dentry *dentry;
++	int zero = 0;
++	int *value;
 +	int ret;
 +
-+	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &bpf_fanotify_kfunc_set);
-+	ret = ret ?: register_bpf_struct_ops(&bpf_fanotify_fastpath_ops, fanotify_fastpath_ops);
++	initialize_subdir_root(fp_event);
++
++	/* Before the subdir_root map is initialized, send all events to
++	 * user space.
++	 */
++	if (!initialized)
++		return FAN_FP_RET_SEND_TO_USERSPACE;
++
++	dentry = bpf_fanotify_data_dentry(fp_event);
++	if (!dentry)
++		return FAN_FP_RET_SEND_TO_USERSPACE;
++
++	/* If inode_storage_map has cached value, just return it */
++	value = bpf_inode_storage_get(&inode_storage_map, dentry->d_inode, 0, 0);
++	if (value) {
++		bpf_dput(dentry);
++		cache_hit++;
++		return *value;
++	}
++
++	/* Hold rcu read lock for bpf_is_subdir */
++	bpf_rcu_read_lock();
++	v = bpf_map_lookup_elem(&subdir_root, &zero);
++	if (!v || !v->dentry) {
++		/* This shouldn't happen, but we need this to pass
++		 * the verifier.
++		 */
++		ret = FAN_FP_RET_SEND_TO_USERSPACE;
++		goto out;
++	}
++
++	if (bpf_is_subdir(dentry, v->dentry))
++		ret = FAN_FP_RET_SEND_TO_USERSPACE;
++	else
++		ret = FAN_FP_RET_SKIP_EVENT;
++out:
++	bpf_rcu_read_unlock();
++
++	/* Save current result to the inode_storage_map */
++	value = bpf_inode_storage_get(&inode_storage_map, dentry->d_inode, 0,
++				      BPF_LOCAL_STORAGE_GET_F_CREATE);
++	if (value)
++		*value = ret;
++	bpf_dput(dentry);
 +	return ret;
 +}
-+late_initcall(bpf_fanotify_fastpath_struct_ops_init);
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 65abb2d74ee5..cf7af86118fe 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -6529,6 +6529,10 @@ BTF_TYPE_SAFE_TRUSTED(struct dentry) {
- 	struct inode *d_inode;
- };
- 
-+BTF_TYPE_SAFE_TRUSTED(struct fanotify_fastpath_event) {
-+	struct inode *dir;
++
++SEC("struct_ops")
++int BPF_PROG(bpf_fp_init, struct fanotify_fastpath_hook *hook, const char *args)
++{
++	return 0;
++}
++
++SEC("struct_ops")
++void BPF_PROG(bpf_fp_free, struct fanotify_fastpath_hook *hook)
++{
++}
++
++SEC(".struct_ops.link")
++struct fanotify_fastpath_ops bpf_fanotify_fastpath_ops = {
++	.fp_handler = (void *)bpf_fp_handler,
++	.fp_init = (void *)bpf_fp_init,
++	.fp_free = (void *)bpf_fp_free,
++	.name = "_tmp_test_sub_tree",
 +};
 +
- BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket) {
- 	struct sock *sk;
- };
-@@ -6564,6 +6568,7 @@ static bool type_is_trusted(struct bpf_verifier_env *env,
- 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED(struct linux_binprm));
- 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED(struct file));
- 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED(struct dentry));
-+	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED(struct fanotify_fastpath_event));
- 
- 	return btf_nested_type_is_trusted(&env->log, reg, field_name, btf_id, "__safe_trusted");
- }
++char _license[] SEC("license") = "GPL";
 -- 
 2.43.5
 
