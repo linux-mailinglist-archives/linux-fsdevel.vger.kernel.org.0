@@ -1,155 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-34787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5B99C8B94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 14:14:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D418F9C8B9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 14:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9812E28478A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:14:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5591F249D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665D31FB3F3;
-	Thu, 14 Nov 2024 13:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF11FAF1A;
+	Thu, 14 Nov 2024 13:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="tDnp5pJm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Foivi3xs"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="qRx+3pYM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0555218C32C;
-	Thu, 14 Nov 2024 13:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83178370
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 13:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589992; cv=none; b=YFiliuat1lWpnOm7tiLqK8YAfm9s28J9gBmJLNSRpPphml4GlHUYdhwjufwcik+me9wR6nDABlwF72Mykn+ka4Yfmxu29WNsv17rjeV6hTAUjqNl6NJbJPpKNPsQhbwx1RwcyTvBq8WpdxdYI2Ve+lvJaJnu9XbS0hRQv0wrccY=
+	t=1731590182; cv=none; b=ZW9wWcreafEzg01Ckx4u8ZSu8uBfoR+Ocy+EroZ7FnqDMKul5/k3Fv0zocbhciJunxwBUfjMwbSRA2KqJY/feC7+IuLqqiFRxM8nHK6qxqoHjJXSW6eMOVLiqNWOBEf7iBXaErhTm7dEA2VeW1lfvgY6yyeHrRsvzbkFVzeDnAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589992; c=relaxed/simple;
-	bh=tM7ySo6Kpn7vyWqvzCyes2cnKVrtqHXCS71zGmGW0U0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QXH6ldxnw4DvGfrWztBzzNiu5cPsO58owIlO2lCs8oTD11gLi+dLxrGo0J6hQ/HggB5ciE9CfolmzjI+g7UKP4BUQWiL+VrevTsnVyg8chVDyCCJLYGE6Ndq1T6GLBFUAEnPDBV11keVNm8JyvbNp37d61NHM4Q5eGdr/Wk7gnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=tDnp5pJm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Foivi3xs; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 04C051140175;
-	Thu, 14 Nov 2024 08:13:10 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Thu, 14 Nov 2024 08:13:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731589990;
-	 x=1731676390; bh=7S9abD+K8DEBZg7raKlMOuNnC0tcP4JK5OHXv9HNbfY=; b=
-	tDnp5pJmemKCVICDGl2+a5A6f7VQ8utdFAY6U1xQqRHZhAtLYrU5DIqoKKXWVFwD
-	Z5PhVDD0gnxKiVRh/ArMwlhwJkPq2idvK5/meJVDK1NwF3fjrXXgnWBz/UNKskK+
-	p1keSY1SzDeAbFSPO77xvBEBuyohmMBf3rGkfzRPWWEu7BUTdR0+J5KgsAxven4g
-	MXFBQG1z5QdgA8oO8tsg/bXyhVO43Y9m/NIF3ZtGbM5JjVEouUTA6FXmKIV3GT3g
-	FkL2wi9Rnmzs9ktWxOpoF+/BXlzGPkIJZo8/JzJ+J6qwWyTtxKVECMFABhCwRzRa
-	3DczdMrFjnaR/+iFznrRDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731589990; x=
-	1731676390; bh=7S9abD+K8DEBZg7raKlMOuNnC0tcP4JK5OHXv9HNbfY=; b=F
-	oivi3xsGqB3JEISos9OkQLWiIeipfjzd0whibN5tIF1AefRf6G16XypdWtudyaUN
-	5i5qITwdx7g0ArVGoXyXh97VOnsLrRpBS9YrnbCzEIZdyE5kq7sREY004C+uyq4S
-	8rC8AlHxpWWWeAXG6XWEp7llag1N+etJoxsi03wrNLK9o/qGQQkqrTubpAotK+0H
-	lUavjVV8waypgpF3eoTPoD8DMDVQW1wRaQv24Q7TLInBpVZRTsHPRmr7/2XetXoe
-	gqnfeSjovOmsY13XyvBFN3GvN82G22lweLEVCqR5xwPT+2EUtwSq61zv4kiRBGj3
-	EEdcuKKkMfu9cPcNplMqA==
-X-ME-Sender: <xms:Zfc1Z9kM0SNEAFCB9D8iZ5eg3kIIcJ1afdm9qBE7iNevtMUA_CDktg>
-    <xme:Zfc1Z42Kj1_7tbAEcxNH5UBuDrynAYmKO94SBLPTE1pJUZ7Ay-aKu3Yx-DgvNuUDx
-    QOioYf0ydZTixA_qew>
-X-ME-Received: <xmr:Zfc1ZzoE9Z2hIajZzEENFsPndf44gtlxVjmOaaTroStwdQ10YX5VeivHQnT4ijpDyAeYPOUHfUtwfSWCjMKOf0PpWlmZ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepjeeftdelheduueetjeehvdefhfefvddv
-    ieekleejfeevffdtheduheejledvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruh
-    hnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhi
-    nhhugidrohhrghdruhhkpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpth
-    htoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilh
-    esghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Zfc1Z9lUetkFbml3IrSX00CcS_h5QH7BL7QUBCnSt6UKvzn9tiGx-A>
-    <xmx:Zfc1Z73aoCOn2QcQLazibybt5OSIbRqaS9dHtvbAeY9_puseyGcivA>
-    <xmx:Zfc1Z8uMJb0zvljPT5_d0Pi46wxmPP7gWMtNZbLRu47dOyJepw3YrA>
-    <xmx:Zfc1Z_XlPI0o4aF6a8HxsyFQ4gsLU8pY2KCpCS3vWFVtvusIjo1rTQ>
-    <xmx:Zfc1Z9xdIhx9KhflPZxvPc9UqbGOFSsFaBdOZdBxn3sDwuw1JBtbfENP>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 08:13:07 -0500 (EST)
-Message-ID: <1128f3cd-38de-43a0-981e-ec1485ec9e3b@e43.eu>
-Date: Thu, 14 Nov 2024 14:13:06 +0100
+	s=arc-20240116; t=1731590182; c=relaxed/simple;
+	bh=eH26dx8KLUCKW3OLtuzDQy6K2ox77weOoauZXDs0gIA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bNBnOtXjP+loyITZt+sdskGoXaXhVBCwnjpf6g2SIn1BkjktEJbmaA5ge5Om7C0cxPPhvUBknZ6qiFS2BkUDFU729fFHptO3ndcn7IKHGFJ8OYfCAWKXHL8mEDMaO1j+4pItOg3qwY7+OIsu1/DyvteCxteF/rSjvjtvyYGv2H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=qRx+3pYM; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ee763f9779so276319eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 05:16:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731590177; x=1732194977; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eH26dx8KLUCKW3OLtuzDQy6K2ox77weOoauZXDs0gIA=;
+        b=qRx+3pYMb/6Nz3ApTXHSG2pqPnnr+tnjuTbmAW99f61xAj8YZ5T6f/f1Z/LLb2G5VE
+         oWe+V5Gp1j1dBEDl0A2Z3NQtwQCE3Nf7kli9tzCE1WhYtFOLLn0tcgXBrbTXMJvJqwdI
+         hwXG63tdk845Zus1oIgh7AqDV9odOMswGYoNc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731590177; x=1732194977;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eH26dx8KLUCKW3OLtuzDQy6K2ox77weOoauZXDs0gIA=;
+        b=QykKEH+OprF3Vb2JIvj56TYTnqnxAfXsSvO5KYno/YxbQx7lb5PaYxCGyLdKz1IrYi
+         P34pGTYB7aeXwnZUXyJjZnbDA0Dv74Zze3TPIVxIF7gN3nBHIC9lAv9M5CDOP0sz1mmb
+         mCtZcfQ8Zf8ig+43UqJCy5HUcN+yJxOVi2Uhikf0G47NzzRopBt+cVavpN4sMxn5W1OQ
+         Xrv3K7D8V9EZ9+OWAZHvkI1gdXl8+KXlzPkoqFQhjhGxMsk+r3bqvM8QoykwYKxh0ECm
+         sFGmDz7soJzEoI+tqPkQt7H5IquqzW+T8oxGxBHfTE5MTjBHQUDS+YLt6LxWCMsesu04
+         Y32w==
+X-Forwarded-Encrypted: i=1; AJvYcCXc5JzEfCn/DdH0aAFKfE0n7aAKD6URaZJIEdEs6wYdiugEbihxlJnoHCF6vZTMh6uaijHB1K/HeKYLhnv1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrdlJe+E/zOYAqe/NNaPtiE/yyyjcW5YRZlbfGT1t1LWlFsVtd
+	8zESZ0nFupbJcqUUoDJx1oib7FAYbwJhPJ7IXhJvpAyRIraJVbCj+AMA3P5wJ8QjXJQopOmWvZQ
+	3T286iImAEO4OlatpQ/2ESiq+IOX77ZF+jdQcxA==
+X-Google-Smtp-Source: AGHT+IGOh7o2rK8Z7Xq3ismcY3/JzUtU+Mh/52llN668SNCDj3rlUfRC5K20zJzmxPpR4TWcURWseOJKG15ZWHkwsKc=
+X-Received: by 2002:a05:6358:9791:b0:1c3:2411:588f with SMTP id
+ e5c5f4694b2df-1c641ea72e5mr1261388955d.9.1731590177471; Thu, 14 Nov 2024
+ 05:16:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
-Content-Language: en-GB
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
- <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner> <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241114-umzog-garage-b1c1bb8b80f2@brauner> <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
+In-Reply-To: <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 14 Nov 2024 14:16:05 +0100
+Message-ID: <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and sb_source
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/11/2024 13:52, Christian Brauner wrote:
+On Thu, 14 Nov 2024 at 13:29, Jeff Layton <jlayton@kernel.org> wrote:
 
-> I think you need at least something like the following completely
-> untested draft on top:
+> Ordinarily, I might agree, but we're now growing a new mount option
+> field that has them separated by NULs. Will we need two extra fields
+> for this? One comma-separated, and one NUL separated?
 >
-> - the pidfs_finish_open_by_handle_at() is somewhat of a clutch to handle
->   thread vs thread-group pidfds but it works.
->
-> - In contrast to pidfd_open() that uses dentry_open() to create a pidfd
->   open_by_handle_at() uses file_open_root(). That's overall fine but
->   makes pidfds subject to security hooks which they aren't via
->   pidfd_open(). It also necessitats pidfs_finish_open_by_handle_at().
->   There's probably other solutions I'm not currently seeing.
+> /proc/#/mountinfo and mounts prepend these to the output of
+> ->show_options, so the simple solution would be to just prepend those
+> there instead of adding a new field. FWIW, only SELinux has any extra
+> mount options to show here.
 
-These two concerns combined with the special flag make me wonder if pidfs
-is so much of a special snowflake we should just special case it up front
-and skip all of the shared handle decode logic?
+Compromise: tack them onto the end of the comma separated list, but
+add a new field for the nul separated security options.
 
-> - The exportfs_decode_fh_raw() call that's used to decode the pidfd is
->   passed vfs_dentry_acceptable() as acceptability callback. For pidfds
->   we don't need any of that functionality and we don't need any of the
->   disconnected dentry handling logic. So the easiest way to fix that is
->   to rely on EXPORT_OP_UNRESTRICTED_OPEN to skip everything. That in
->   turns means the only acceptability we have is the nop->fh_to_dentry()
->   callback for pidfs.
+I think this would be logical, since the comma separated list is more
+useful for having a /proc/$$/mountinfo compatible string than for
+actually interpreting what's in there.
 
-With the current logic we go exportfs_decode_fh_raw(...) ->
-find_acceptable_alias(result) -> vfs_dentry_acceptable(context, result).
-
-
-vfs_dentry_acceptable immediately returns 1 if ctx->flags is 0, which will
-always be the case if EXPORT_OP_UNRESTRICTED_OPEN was set, so we immediately
-fall back out of the call tree and return result.
-
-So I'm not 100% sure we actually need this special case but I'm not opposed.
-
-> - This all really needs rigorous selftests before we can even think of
->   merging any of this.
+Thanks,
+Miklos
 
