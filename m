@@ -1,114 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-34828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1149C8FC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:30:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46E69C9084
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 18:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094421F21AFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984AC280E4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7518DF91;
-	Thu, 14 Nov 2024 16:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="WDyLFrSq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F1518BBAA;
+	Thu, 14 Nov 2024 17:06:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F389C18CBEE;
-	Thu, 14 Nov 2024 16:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6C433D2;
+	Thu, 14 Nov 2024 17:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731601666; cv=none; b=IGr+36MRloHodSixqIDg4NZoqX2ZCc+r8fry+v5tBEIx9A4l7U6lgBckBIVwSLTAHMZJCx2U0BC40BbN8Hohebf9zy2IhhPWJFCQyUKG7ZEzrsTgt1L/w+1Fim9UIJAq7NQxNUY4BJaA/OB98OdwpOBsmcDvdnarxexF0gSFs0E=
+	t=1731604007; cv=none; b=Zzd9UcySQu9ttBC8lVAVtVO9BBmNx7mPDj4p4igToCRpYuoHJp/nDpmPWvXtCUplR/4nkiEW6eMJ1vg/T57tehC2ktrpb2u3BRrOMjXsMz1iLbn2h4l/HJa513tdcDKa0P76c7PNPW7hQd8W6vSrjmr066XX4i06QaGeQdFGPog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731601666; c=relaxed/simple;
-	bh=n5hyX6yMomOaBzphPxzWAbVrcJaUdxbAmwSzohj0OEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gcnIh3qphGqvqtrp+1w0Dojw4CcK9HkO47yfqxxHYTtXd4Y28oEWgIVGyyr8cVBOasEPa4/+iFQSWs2NAiIK5khzLt6Z56f43/b83sws+gmwMEKGxDWCFET3MfHpDR+0a5TzOUdfhLsHSEIL+mN6OKxUpce/J22j7csLV7mRI1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=WDyLFrSq; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CDFCB1C0007;
-	Thu, 14 Nov 2024 16:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1731601662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8TPoafWSqHQ3L6VZWGol10eaPnstQLMyyt96RSAYCQ0=;
-	b=WDyLFrSqJmEjmOtTCzCChcWaYROO0VuqcA411o2X0wx2J9FXRoFGB7goiSmWzBFiVEA1g0
-	oXXIU+c1WAgAY9JM43ch9OzSyVFH3u8oH8rI+otcf1WdbdGyN0ZBGxWkHolgpKHlFjcdQ6
-	MwHXRKJxFWh53bD6JZ6y40K6jT/XAKFDVu25rr+OB0BhGLwmRAAd2hanWh4NdoT/IKGqvd
-	qo/6xGkCGP40377itTRTYuLR8xNRFtLlggO3o2InkA8t0QEurKPd6DWOAyyuysA0xiDT92
-	X9gGRoCg4oJ/QMKFdNx9g83FJ5ey4SxtFyY7+3wULcImuQ2OUiKbVIXdjzBwrg==
-From: nicolas.bouchinet@clip-os.org
-To: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: nicolas.bouchinet@clip-os.org,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	Lin Feng <linf@wangsu.com>,
-	"Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH v2 3/3] tty: ldsic: fix tty_ldisc_autoload sysctl's proc_handler
-Date: Thu, 14 Nov 2024 17:25:52 +0100
-Message-ID: <20241114162638.57392-4-nicolas.bouchinet@clip-os.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114162638.57392-1-nicolas.bouchinet@clip-os.org>
-References: <20241114162638.57392-1-nicolas.bouchinet@clip-os.org>
+	s=arc-20240116; t=1731604007; c=relaxed/simple;
+	bh=LBpVriT/45fHDSuwLK7td1akcqS9lpNzp3EEEVmNJIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+0SCZVuXeEelCET4O77YE26dmvjAdaWn3YRIP4Zb2fnS99xwgG6pGRFlGqiT1cFerrB/b20pQHtWgDpwQASAWm2x58Te4Ho+PMPfLsCoCeJtlkJRvDw+erB7FZCF55l56Cb0o3RIFkHdP1EkkOVq3NM2msym+i+GkNAF2Y60vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AEGah9Z009457;
+	Thu, 14 Nov 2024 10:36:43 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AEGafRI009456;
+	Thu, 14 Nov 2024 10:36:41 -0600
+Date: Thu, 14 Nov 2024 10:36:41 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Song Liu <song@kernel.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        Song Liu <songliubraving@meta.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "eddyz87@gmail.com" <eddyz87@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "martin.lau@linux.dev" <martin.lau@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "mattbobrowski@google.com" <mattbobrowski@google.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "repnop@google.com" <repnop@google.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+Message-ID: <20241114163641.GA8697@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com> <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com> <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 14 Nov 2024 10:36:44 -0600 (CST)
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+On Wed, Nov 13, 2024 at 10:57:05AM -0800, Song Liu wrote:
 
-Commit 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of
-ldiscs") introduces the tty_ldisc_autoload sysctl with the wrong
-proc_handler. .extra1 and .extra2 parameters are set to avoid other values
-thant SYSCTL_ZERO or SYSCTL_ONE to be set but proc_dointvec do not uses
-them.
+Good morning, I hope the week is going well for everyone.
 
-This commit fixes this by using proc_dointvec_minmax instead of
-proc_dointvec.
+> On Wed, Nov 13, 2024 at 10:06???AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 11/12/2024 5:37 PM, Song Liu wrote:
+> [...]
+> > > Could you provide more information on the definition of "more
+> > > consistent" LSM infrastructure?
+> >
+> > We're doing several things. The management of security blobs
+> > (e.g. inode->i_security) has been moved out of the individual
+> > modules and into the infrastructure. The use of a u32 secid is
+> > being replaced with a more general lsm_prop structure, except
+> > where networking code won't allow it. A good deal of work has
+> > gone into making the return values of LSM hooks consistent.
+> 
+> Thanks for the information. Unifying per-object memory usage of
+> different LSMs makes sense. However, I don't think we are limiting
+> any LSM to only use memory from the lsm_blobs. The LSMs still
+> have the freedom to use other memory allocators. BPF inode
+> local storage, just like other BPF maps, is a way to manage
+> memory. BPF LSM programs have full access to BPF maps. So
+> I don't think it makes sense to say this BPF map is used by tracing,
+> so we should not allow LSM to use it.
+> 
+> Does this make sense?
 
-Fixes: 7c0cca7c847e ("tty: ldisc: add sysctl to prevent autoloading of ldiscs")
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
----
- drivers/tty/tty_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As involved bystanders, some questions and thoughts that may help
+further the discussion.
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 407b0d87b7c10..f211154367420 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -3631,7 +3631,7 @@ static struct ctl_table tty_table[] = {
- 		.data		= &tty_ldisc_autoload,
- 		.maxlen		= sizeof(tty_ldisc_autoload),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
--- 
-2.47.0
+With respect to inode specific storage, the currently accepted pattern
+in the LSM world is roughly as follows:
 
+The LSM initialization code, at boot, computes the total amount of
+storage needed by all of the LSM's that are requesting inode specific
+storage.  A single pointer to that 'blob' of storage is included in
+the inode structure.
+
+In an include file, an inline function similar to the following is
+declared, whose purpose is to return the location inside of the
+allocated storage or 'LSM inode blob' where a particular LSM's inode
+specific data structure is located:
+
+static inline struct tsem_inode *tsem_inode(struct inode *inode)
+{
+	return inode->i_security + tsem_blob_sizes.lbs_inode;
+}
+
+In an LSM's implementation code, the function gets used in something
+like the following manner:
+
+static int tsem_inode_alloc_security(struct inode *inode)
+{
+	struct tsem_inode *tsip = tsem_inode(inode);
+
+	/* Do something with the structure pointed to by tsip. */
+}
+
+Christian appears to have already chimed in and indicated that there
+is no appetite to add another pointer member to the inode structure.
+
+So, if this were to proceed forward, is it proposed that there will be
+a 'flag day' requirement to have each LSM that uses inode specific
+storage implement a security_inode_alloc() event handler that creates
+an LSM specific BPF map key/value pair for that inode?
+
+Which, in turn, would require that the accessor functions be converted
+to use a bpf key request to return the LSM specific information for
+that inode?
+
+A flag day event is always somewhat of a concern, but the larger
+concern may be the substitution of simple pointer arithmetic for a
+body of more complex code.  One would assume with something like this,
+that there may be a need for a shake-out period to determine what type
+of potential regressions the more complex implementation may generate,
+with regressions in security sensitive code always a concern.
+
+In a larger context.  Given that the current implementation works on
+simple pointer arithmetic over a common block of storage, there is not
+much of a safety guarantee that one LSM couldn't interfere with the
+inode storage of another LSM.  However, using a generic BPF construct
+such as a map, would presumably open the level of influence over LSM
+specific inode storage to a much larger audience, presumably any BPF
+program that would be loaded.
+
+The LSM inode information is obviously security sensitive, which I
+presume would be be the motivation for Casey's concern that a 'mistake
+by a BPF programmer could cause the whole system to blow up', which in
+full disclosure is only a rough approximation of his statement.
+
+We obviously can't speak directly to Casey's concerns.  Casey, any
+specific technical comments on the challenges of using a common inode
+specific storage architecture?
+
+Song, FWIW going forward.  I don't know how closely you follow LSM
+development, but we believe an unbiased observer would conclude that
+there is some degree of reticence about BPF's involvement with the LSM
+infrastructure by some of the core LSM maintainers, that in turn makes
+these types of conversations technically sensitive.
+
+> Song
+
+We will look forward to your thoughts on the above.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
