@@ -1,89 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-34731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042209C82C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 06:52:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB869C82F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 07:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B046F1F23E16
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 05:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C72284D99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 06:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADF51E9074;
-	Thu, 14 Nov 2024 05:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4B51E884C;
+	Thu, 14 Nov 2024 06:07:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF8217C20F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 05:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E23913635B;
+	Thu, 14 Nov 2024 06:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731563526; cv=none; b=iEw/dgoxd/EvmcDouhXKdSkJxlXxv7uRYjnZNu1fE4YXMJewYmP3p5u65Wgsks20GwDfH80uXdZZPtS3/oIch68Rqv94s2uLH1YIUKQDJnV7O8n7rRElTFCMkY+6lbBpoyUkCAL1AUMOhZnL7I05/8+cgmnUiTh4Zd6Y818G+fc=
+	t=1731564437; cv=none; b=Ash7snriTXwgtVsnz5OfmeqzMIF8AM32Sk9vA+LTQ8+jNEnHSAM2YTlxmyXrv6l7it7gM4wU+C1IDKi54W9ABxdGEKtomFKZD6ZT3UuRwhNl3cTjPix1xOQWHL7wGRFJ0G0rKj1jqQpOYyoJ1mEKWxJvnGPATwcqMMQZOP7Gt3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731563526; c=relaxed/simple;
-	bh=7O9gfR0es3iI5P6jHi/Xi408OtxYV5gkwr3x6K1hDhQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EgQjf9OTiPPo5o2XHlXBRajjm0J6dbO0Ud80Ax9McG7SBs05jiBYXnK5MEGQm8lBfsqLDAif/59FDZb095+PF4xd5S6L/AA5nvgi/jgVwTF9MLGZkCUo+P46IkiyHMHWp7teHM1jLaOwNheRHjY8itQ+TZmMynOvzKRJN2AtP2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so3058465ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 21:52:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731563524; x=1732168324;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1IpFZEQgGIj9TjFRbdLUfNjQq3j1EQcFpxBuYCYzFUE=;
-        b=tDllwQ17kpWlu4AHnrIVUk0sRb3xOc10ecVgADc8L5suduGH/z5KJmku5FnKV2khIs
-         EF2m0pzFat+yhZ54BtJD7Z0Xzcuw0qKq2uF73dXY/upAyDBs5UJ0RnjcZTZb4sgDIAkJ
-         ySst5QvNVHoYJP4ExMSIejzJGZmfJcbusFKxaCgaljXvA66JvAJ+jzGTVCtD737Hyga5
-         w4RWX46bsgAxuKbI/7mmrUwYu/BfJnA/7XH1Xu4pJjavJzgg3L7WDsG4EWAoK4QZQkz+
-         cK+iLF3S3nIPaTPyu8LVCTLhdpsEUzS5snJbKcyyQ0LirO4W9G2pA9yods8KRMSXZVEg
-         BErQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtoLQUCQI+zMDx2tokwiU6RE7PsTtLkrgjwmVYS7QhAcIdNnxWbKY+N3fLreTasezrlWGVBryEdwu2NP88@vger.kernel.org
-X-Gm-Message-State: AOJu0YwETdicedp6t/rcXcMAP3Rr2kzEzb1kOLc2ocgBmA0BvIucqont
-	41S2IAAVfdrw13bUbrycbnUQvsQSMV8r2aa8kUNWPrW++8F1faxuBBZ4SnpS1IIla15QwK9NKGM
-	xjw7RyKG5DogEJLPFE9vSLpCSh1Qxa4sha3LwfdlztrYJVChC0NLDsFA=
-X-Google-Smtp-Source: AGHT+IEGC6y1/QUxLcKR4nU9hQrJNc0vXYAJaMCUbS301MOJxa+AGUS1nxL2+ypoL/jmba0RuTagI9xdLG5nigEMdFtsK2PT8Cmf
+	s=arc-20240116; t=1731564437; c=relaxed/simple;
+	bh=7ehHj18QLSUfM1dlngq4SJzlV/nF2C1eTDT+/MCr50s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ia6GubiBvk2R1k0ag65m032C5NfVj+tm010cuHK6i6m1b/LPXhak5AhVCrnvB873U+MjJ+ioeZ05tyTkLoIbZBIJpH+XRkkmFzl7k2NVJLnUye9ag3oXEXfWNOAvNCa0kWQjgtaIktEcU8mtcDCKQYu6KlhzAmv7W93SH9QKfJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2357668C7B; Thu, 14 Nov 2024 07:07:11 +0100 (CET)
+Date: Thu, 14 Nov 2024 07:07:10 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>, Pierre Labat <plabat@micron.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <20241114060710.GA11169@lst.de>
+References: <20241108193629.3817619-1-kbusch@meta.com> <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com> <20241111102914.GA27870@lst.de> <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com> <20241112133439.GA4164@lst.de> <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com> <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com> <20241113044736.GA20212@lst.de> <ZzU7bZokkTN2s8qr@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:388d:b0:3a6:aee2:1696 with SMTP id
- e9e14a558f8ab-3a71578db17mr60186115ab.21.1731563524569; Wed, 13 Nov 2024
- 21:52:04 -0800 (PST)
-Date: Wed, 13 Nov 2024 21:52:04 -0800
-In-Reply-To: <e22f5b69-0462-41c6-b7a9-b3ae10fa6992@linux.alibaba.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67359004.050a0220.2a2fcc.005f.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] general protection fault in fuse_do_readpage
-From: syzbot <syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com>
-To: hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzU7bZokkTN2s8qr@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello,
+On Thu, Nov 14, 2024 at 10:51:09AM +1100, Dave Chinner wrote:
+> Specifically to this "stream hint" discussion: go look at the XFS
+> filestreams allocator.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Those are rally two different things - file streams is about how to
+locate data into a single hardware write streams.  SCSI/NVMe streams
+including streams 2.0 (FDP) that this thread is about is about telling
+the hardware about these streams, and also about allowing the file
+systems (or other user of the storage) to  pack into the actual
+underlying hardware boundaries that matter for deleting/overwriting
+this data.
 
-Reported-by: syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
-Tested-by: syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
+Funnily enough Hans and I were just recently brainstorming on how to
+tie both together for the zoned xfs work.
 
-Tested on:
+> SGI wrote an entirely new allocator for XFS whose only purpose in
+> life is to automatically separate individual streams of user data
+> into physically separate regions of LBA space.
 
-commit:         779014de erofs: fix file-backed mounts over FUSE
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-console output: https://syzkaller.appspot.com/x/log.txt?x=155294c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2effb62852f5a821
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b1279812c46e48bb0c1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+One of the interesting quirks of streams/FDP is that they they operate
+on (semi-)physical data placement that is completely decoupled from LBA
+space.  So if a file system or application really wants to track LBA
+vs physical allocations separately it gives them a way to do that.
+I don't really know what the advantage of having to track both is, but
+people smarted than me might have good uses for it.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
