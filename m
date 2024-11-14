@@ -1,223 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-34820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAE59C8E6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:40:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116449C8FB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947BA1F2828B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 15:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04047B35ABF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 15:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C384418C010;
-	Thu, 14 Nov 2024 15:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543B91B140D;
+	Thu, 14 Nov 2024 15:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4KheDka"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rR9DGWuk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303BD183088
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 15:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770F61AF0C4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 15:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598310; cv=none; b=A3mowKobt/LNbNJB/PsKB77N6JZFMpvZNSUJNq/U6UA6Vj9RYkxOEmk/btNfVzyj0mdnT5YizV2xsjBTLodCbdSyILe/UIKTbTY1wbKdUXoZiuLkBiWSeOpkKDPy1yvp2/i/3214spzy5iaiUZ3V8KHTjuS33kp9tjNSxAXy3nM=
+	t=1731598104; cv=none; b=OI6p9A30EUtIOIyz6O2wFGCL4LXK1ytntlv0hxH2xFsd8wA8EEn2+QOnhF62Un3GwcCps5NCDFMPtxGvR/Xcuo9MGgZgzTeGSiCVdn5lfopbl6N/l6JStMuNCX0RhGQwj+l6gui/Tspn8mYQd7X1ucqxaF4bDSvpBj0oLtJofrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598310; c=relaxed/simple;
-	bh=uUO2EWeEYw6Y+Q7QrTkvbC5WbCnE7mrVoWtsR3EEgN8=;
+	s=arc-20240116; t=1731598104; c=relaxed/simple;
+	bh=4XXew23gq3OoMMOZOjmCtGgMeRxntUp+Fg61kUdG93Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oVL9UEUemPiA1KWYhsHNSELQCK48N8fZ0b9y9bqtQPh2uHHxnI7MyI8Dp3zpyIPH+lRtIlH1K/8HB3l7kvAZmDm1NHwKTGTWFZ7DgJcGzz3dPC0j0HLL9wVpeRh1DoB+BBMqGqprKG9/3K0adg+fwUtr9J0tXLENB5PT0xbsMuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4KheDka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7D8C4CED0;
-	Thu, 14 Nov 2024 15:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731598309;
-	bh=uUO2EWeEYw6Y+Q7QrTkvbC5WbCnE7mrVoWtsR3EEgN8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X4KheDkaEpojHari3R7WClMTv6mNp6YDRbTzEddDG2VzKQrbxC2ZR6H395Ua4TmCV
-	 EElaFo/POBIOcIcHnGH2VCFJ7bBcrevkPlPCuJhtvV2C/FcPmoEIm/9mwETwk9PHoq
-	 Ih38FdMjBEY7qf6ScS4iSo6cxbJduyIQc/4gHhNiOr+tcB4nVmeykihVAKdfiuhYhE
-	 m090pXBgvbY4kD5jhwmy8Ky54qAV98oA+m68oQNfPLCEE8ssE9SabV23qobTzGkMzy
-	 Hy+04RHSfrZhlDUCPZv8GshGxaKqlDOi0JLFp9tBXQa6A25Y8KOU89DetYCtK9HKMj
-	 2biMFH47RynPg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Karel Zak <kzak@redhat.com>,
+	 MIME-Version; b=NFGD3kocaTobHDiD1nFCM+tTH6VGI0b2McX8lCwHzR70vY8tM5peFirRJ2TlB8EtmDjkGXfQKuclNl5rBKqVqS0TqFSX18++TjFZQNfNEKkSrpnwIGW0lK6U7nfoWATgCllMvLlcoI62ly/wHhwLl3y2vD3SWiZ9M9WjApR1aNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rR9DGWuk; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-295cee3a962so418719fac.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 07:28:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731598101; x=1732202901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JnydZ5ahnoTDPrjopxRhuD9AlpgfRxt1ZJ34FZKhxI0=;
+        b=rR9DGWuknEzGNqxGZH8Mcf0el13yrZ8xjZUBdN2I07qYtdGuKwk4Swbs+uU4K5pFuD
+         GDj+muRTfHfnOkFG+a5VLKPByoEelfPv4ch4QaA1TOviM3IXSVId0fAd4+foDltKO9HR
+         v/izHstC3jCHfbc0gbMDAeOBCBaMaXBZ+CD987zHFcNm2f9qJxhXsNYUIizvt+oWGjxC
+         OKiJGwLBqrOfmwAPv9tDY82rPiK1HjH/PPkL45+Wl6MOPvAdxuI/rnnTGVDgtbGT2iov
+         F0fSvTrNi3gfhu44gZrTR4SRFx/a7uwtINZpmAvRau03e8esVC7cXBSPuuAahtXvS0+u
+         DCkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731598101; x=1732202901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JnydZ5ahnoTDPrjopxRhuD9AlpgfRxt1ZJ34FZKhxI0=;
+        b=tj22V2s8FuGhqCQzo7AmyCCu6zYfTyJ/0FS1ctZ9qdzCzn3Kzq0qSMQNFxu0AMRNJQ
+         pBJ/wt2q4CXwlSt9O1y5+VQYiwpXd+u/kNAiHT6suLggQluBkJAkwySnLkysyytI2J2H
+         ri365WeyTIy0xnc2/1E6yooWWSjUVP1bvC96uoQ3ARbO6dFxjbH96s3hW3zB5ik0gNQe
+         51TjxQliNJHt7Ne94vtMDdqyBSYubEYzbcEJqzKzvaUOXsL0U1wa/DYQ4JXZXjvKyu5r
+         h3PXpVyl+Y3XKVw4UBz7QmMEekSI/qO5UxEPQ/MeN6w7XXVh0roSeUBlj7artW7g3D5d
+         DNUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUmyd7Nx8ucfwzW7qkyS6Hhan3FPZCq1HOHgzURgLfoHJ/9yn2aNBBrp0ogQVSAwXfKNqmGfF5ezYm79Jg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx34H1pvbzHh8lDIOW6Fnrs9unGVuNh1tgd0513GD0CouycRohl
+	vxXP8d7M9zFNksH44nCG/S/b6aRbzUFKyo1RO7sETue8GRraOf0bNZUbAXBjYNA=
+X-Google-Smtp-Source: AGHT+IGNabSsCKonQoe8b+3leqigUS1MxYLou4wkGKabmMMQ9sy0zqR8b1138Alaw/M4bLorq8cnFg==
+X-Received: by 2002:a05:6870:e2d5:b0:288:2fb6:a385 with SMTP id 586e51a60fabf-295600dc985mr21855599fac.20.1731598101550;
+        Thu, 14 Nov 2024 07:28:21 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eea026eb41sm368250eaf.39.2024.11.14.07.28.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 07:28:20 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] statmount: retrieve security mount options
-Date: Thu, 14 Nov 2024 16:31:27 +0100
-Message-ID: <20241114-radtour-ofenrohr-ff34b567b40a@brauner>
+Cc: hannes@cmpxchg.org,
+	clm@meta.com,
+	linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	kirill@shutemov.name,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	bfoster@redhat.com,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 14/17] iomap: make buffered writes work with RWF_UNCACHED
+Date: Thu, 14 Nov 2024 08:25:18 -0700
+Message-ID: <20241114152743.2381672-16-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241114-hammer-reinigen-045808e64b99@brauner>
-References: <20241114-hammer-reinigen-045808e64b99@brauner>
+In-Reply-To: <20241114152743.2381672-2-axboe@kernel.dk>
+References: <20241114152743.2381672-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5329; i=brauner@kernel.org; h=from:subject:message-id; bh=uUO2EWeEYw6Y+Q7QrTkvbC5WbCnE7mrVoWtsR3EEgN8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbid/c8XRX44ezhQ8r9m+fdHv6tPx9X594m9y+lV46U 3lH/ASOkI5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ2Akx/FNjCfzv/GdLaoUr 1zXbW9f5l7xxqlHe8MQ6ZMf/lD9H7nAwMnR+3yF44UjAncPt/qeb7zLN2NKV9UVX7W0128nye6z rvrMDAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Add the ability to retrieve security mount options. Keep them separate
-from filesystem specific mount options so it's easy to tell them apart.
-Also allow to retrieve them separate from other mount options as most of
-the time users won't be interested in security specific mount options.
+Add iomap buffered write support for RWF_UNCACHED. If RWF_UNCACHED is
+set for a write, mark the folios being written as uncached. Then
+writeback completion will drop the pages. The write_iter handler simply
+kicks off writeback for the pages, and writeback completion will take
+care of the rest.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-How do we feel about including this for v6.13 or should I rather delay it?
----
- fs/namespace.c             | 74 ++++++++++++++++++++++++++++++--------
- include/uapi/linux/mount.h |  5 ++-
- 2 files changed, 64 insertions(+), 15 deletions(-)
+This still needs the user of the iomap buffered write helpers to call
+iocb_uncached_write() upon successful issue of the writes.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4f39c4aba85d..a9065a9ab971 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5072,13 +5072,30 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 	return 0;
- }
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/iomap/buffered-io.c | 15 +++++++++++++--
+ include/linux/iomap.h  |  8 +++++++-
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index ef0b68bccbb6..2f2a5db04a68 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -603,6 +603,8 @@ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
  
-+static inline int statmount_opt_unescape(struct seq_file *seq, char *buf_start)
-+{
-+	char *buf_end, *opt_start, *opt_end;
-+	int count = 0;
-+
-+	buf_end = seq->buf + seq->count;
-+	*buf_end = '\0';
-+	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
-+		opt_end = strchrnul(opt_start, ',');
-+		*opt_end = '\0';
-+		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
-+		if (WARN_ON_ONCE(++count == INT_MAX))
-+			return -EOVERFLOW;
-+	}
-+	seq->count = buf_start - 1 - seq->buf;
-+	return count;
-+}
-+
- static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
+ 	if (iter->flags & IOMAP_NOWAIT)
+ 		fgp |= FGP_NOWAIT;
++	if (iter->flags & IOMAP_UNCACHED)
++		fgp |= FGP_UNCACHED;
+ 	fgp |= fgf_set_order(len);
+ 
+ 	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+@@ -1023,8 +1025,9 @@ ssize_t
+ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+ 		const struct iomap_ops *ops, void *private)
  {
- 	struct vfsmount *mnt = s->mnt;
- 	struct super_block *sb = mnt->mnt_sb;
- 	size_t start = seq->count;
--	char *buf_start, *buf_end, *opt_start, *opt_end;
--	u32 count = 0;
-+	char *buf_start;
- 	int err;
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	struct iomap_iter iter = {
+-		.inode		= iocb->ki_filp->f_mapping->host,
++		.inode		= mapping->host,
+ 		.pos		= iocb->ki_pos,
+ 		.len		= iov_iter_count(i),
+ 		.flags		= IOMAP_WRITE,
+@@ -1034,9 +1037,14 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
  
- 	if (!sb->s_op->show_options)
-@@ -5095,17 +5112,39 @@ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
- 	if (seq->count == start)
- 		return 0;
+ 	if (iocb->ki_flags & IOCB_NOWAIT)
+ 		iter.flags |= IOMAP_NOWAIT;
++	if (iocb->ki_flags & IOCB_UNCACHED)
++		iter.flags |= IOMAP_UNCACHED;
  
--	buf_end = seq->buf + seq->count;
--	*buf_end = '\0';
--	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
--		opt_end = strchrnul(opt_start, ',');
--		*opt_end = '\0';
--		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
--		if (WARN_ON_ONCE(++count == 0))
--			return -EOVERFLOW;
--	}
--	seq->count = buf_start - 1 - seq->buf;
--	s->sm.opt_num = count;
-+	err = statmount_opt_unescape(seq, buf_start);
-+	if (err < 0)
-+		return err;
-+
-+	s->sm.opt_num = err;
-+	return 0;
-+}
-+
-+static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
-+{
-+	struct vfsmount *mnt = s->mnt;
-+	struct super_block *sb = mnt->mnt_sb;
-+	size_t start = seq->count;
-+	char *buf_start;
-+	int err;
-+
-+	buf_start = seq->buf + start;
-+
-+	err = security_sb_show_options(seq, sb);
-+	if (!err)
-+		return err;
-+
-+	if (unlikely(seq_has_overflowed(seq)))
-+		return -EAGAIN;
-+
-+	if (seq->count == start)
-+		return 0;
-+
-+	err = statmount_opt_unescape(seq, buf_start);
-+	if (err < 0)
-+		return err;
-+
-+	s->sm.opt_sec_num = err;
- 	return 0;
- }
+-	while ((ret = iomap_iter(&iter, ops)) > 0)
++	while ((ret = iomap_iter(&iter, ops)) > 0) {
++		if (iocb->ki_flags & IOCB_UNCACHED)
++			iter.iomap.flags |= IOMAP_F_UNCACHED;
+ 		iter.processed = iomap_write_iter(&iter, i);
++	}
  
-@@ -5138,6 +5177,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
- 		sm->opt_array = start;
- 		ret = statmount_opt_array(s, seq);
- 		break;
-+	case STATMOUNT_OPT_SEC_ARRAY:
-+		sm->opt_sec_array = start;
-+		ret = statmount_opt_sec_array(s, seq);
-+		break;
- 	case STATMOUNT_FS_SUBTYPE:
- 		sm->fs_subtype = start;
- 		statmount_fs_subtype(s, seq);
-@@ -5294,6 +5337,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
- 	if (!err && s->mask & STATMOUNT_OPT_ARRAY)
- 		err = statmount_string(s, STATMOUNT_OPT_ARRAY);
+ 	if (unlikely(iter.pos == iocb->ki_pos))
+ 		return ret;
+@@ -1770,6 +1778,9 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+ 	size_t poff = offset_in_folio(folio, pos);
+ 	int error;
  
-+	if (!err && s->mask & STATMOUNT_OPT_SEC_ARRAY)
-+		err = statmount_string(s, STATMOUNT_OPT_SEC_ARRAY);
++	if (folio_test_uncached(folio))
++		wpc->iomap.flags |= IOMAP_F_UNCACHED;
 +
- 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
- 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
- 
-@@ -5323,7 +5369,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
- #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
- 			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
- 			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
--			      STATMOUNT_OPT_ARRAY)
-+			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
- 
- static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
- 			      struct statmount __user *buf, size_t bufsize,
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index c0fda4604187..c07008816aca 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -177,7 +177,9 @@ struct statmount {
- 	__u32 sb_source;	/* [str] Source string of the mount */
- 	__u32 opt_num;		/* Number of fs options */
- 	__u32 opt_array;	/* [str] Array of nul terminated fs options */
--	__u64 __spare2[47];
-+	__u32 opt_sec_num;	/* Number of security options */
-+	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-+	__u64 __spare2[46];
- 	char str[];		/* Variable size part containing strings */
- };
- 
-@@ -214,6 +216,7 @@ struct mnt_id_req {
- #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
- #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
- #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-+#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+ 	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
+ new_ioend:
+ 		error = iomap_submit_ioend(wpc, 0);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index f61407e3b121..0a88043676f2 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -74,9 +74,14 @@ struct vm_fault;
+  * IOMAP_F_STALE indicates that the iomap is not valid any longer and the file
+  * range it covers needs to be remapped by the high level before the operation
+  * can proceed.
++ *
++ * IOMAP_F_UNCACHED is set to indicate that writes to the page cache (and
++ * hence writeback) will result in folios being evicted as soon as the
++ * updated bytes are written back to the storage.
+  */
+ #define IOMAP_F_SIZE_CHANGED	(1U << 8)
+ #define IOMAP_F_STALE		(1U << 9)
++#define IOMAP_F_UNCACHED	(1U << 10)
  
  /*
-  * Special @mnt_id values that can be passed to listmount
+  * Flags from 0x1000 up are for file system specific usage:
+@@ -173,8 +178,9 @@ struct iomap_folio_ops {
+ #define IOMAP_NOWAIT		(1 << 5) /* do not block */
+ #define IOMAP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
+ #define IOMAP_UNSHARE		(1 << 7) /* unshare_file_range */
++#define IOMAP_UNCACHED		(1 << 8) /* uncached IO */
+ #ifdef CONFIG_FS_DAX
+-#define IOMAP_DAX		(1 << 8) /* DAX mapping */
++#define IOMAP_DAX		(1 << 9) /* DAX mapping */
+ #else
+ #define IOMAP_DAX		0
+ #endif /* CONFIG_FS_DAX */
 -- 
 2.45.2
 
