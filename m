@@ -1,81 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBF89C83D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:13:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524229C84FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 09:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D38528728B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 07:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183A2283A1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9E81EBA0F;
-	Thu, 14 Nov 2024 07:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C2C1F76A8;
+	Thu, 14 Nov 2024 08:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CarnZG7U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxWo43cw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF021EBFE1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 07:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44512E573;
+	Thu, 14 Nov 2024 08:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731568339; cv=none; b=FulLO06DmUugvp18IkgsyLXoDYrWK+lWz33Kdhy70U8yb5LrU90HlW/k0sPhsvJ9/ead38wgdQ11sTH75DktRpFIMSpbeBofh0N7Wq0UbErfH7Ao+ji4P2hF17ynf33poAdso+nVOcgQ0H6C3vhA7zAp86BbOlHq3oRxAgw0gDY=
+	t=1731573842; cv=none; b=GmiA535N1E9gphgh+LZ3mM84paSBia0Pw7/oCB9vKFdDBhmnAxgoQ7LPE8s+GgTlqeTSGPhokfPOcO0R0L/3UB5ZLF3d9bqDITW5ktPVsgtfE87/bW4pXv9CNp6bjK3MwRjWHoORfZbvsV6LdLJBVJ2tNIsXQRsZuZU1wJQjkvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731568339; c=relaxed/simple;
-	bh=8SgpE9YDcrTA012K14vrax0ivdaBXLipaFt0CmFxTIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IXYWmpRt10c6r0+O0ywcQrZbgM7WMEyM/13uGJO/Vy2BhltswLJa5ShsoanZ/j5ki1SzgedH3Stmr0ViZLOWkxiWGcd4Jw1HiJ6fsaxlsNNHGr12Bq5Aqcqku8dZhgw+lrdL2EZOfjEimAbAE1d5PtMlWbW1RzoNdnvStFSmaF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CarnZG7U; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c70abba48so2472065ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 23:12:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1731568336; x=1732173136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B7U/+pm4C7G3MffORaQg9XRo4wU6QnXYyTp4dM+QVVY=;
-        b=CarnZG7UQ2IBBaDkyqWguP7NdB6lv1R9jzdnwSaLvO9l/Vc1mW5ImrT35ziGFQ4Rx0
-         SQKaVsdSzCCmFQRsi823jhkjPU/9fmeIww+cY+OPfFoFunhkHJrVoEJO1zJn7kGiT4fP
-         ZDJfaY3ABJRRQ+zuTc9dnfFUpz06XbaAAj5oC9xFiXkR/WJ2s3bdxd1l/3FrZ+ESnhBh
-         j5gO6OkfGoLW9/Hb+u5SCkFv7SPK5nEy8KvI7tQPaKKVj2nOxy4pTt/kp4M/hW/378ZZ
-         cngM4FP91i/Vt2ToMuIaolJbpp58+vLNWg0eIWvrLgnoPZ9MX3eTx5PTesLDaZfKAXdM
-         oFdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731568336; x=1732173136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B7U/+pm4C7G3MffORaQg9XRo4wU6QnXYyTp4dM+QVVY=;
-        b=NuAv0OptmimUQrqjBbdbLrb7WF1CmLV2SWhvQYW7/Qn1BFIW94X1D2yCmhCvXr3cF+
-         8JwuMtd2ae5gJsr8pStMJWazQnBMYre4H+DbFqhP2DNg30TuRBL3P4W9TD1j39Eq6e2S
-         wOX5O3lhwPRKT/jGa1dvgf0S7EvMaGebLf2xoUYGriFtgXr4o6ohiMDJGUCPZMkCf8dp
-         Wh3J7i3KY2CEtFDp8VAur68aWUUAR5kY1jeKR8oo9ZHOERB9CKy+b6tloP1ij+v16q2l
-         7I4qffq1LhKTtzC8jlxeUecCqnDCt0E6bzvAm+qQxWYWzGkAdMNAxW6kF4RKrNvCVQZ5
-         GdFQ==
-X-Gm-Message-State: AOJu0YyN+uTLjfdJV/4ohwFisypWYn07oS/jyu+MDZy55q59UdqRHHYq
-	Nu0baHslJ+Cz6nocG6DeSrbSfvutDFh7Iefd/usXTk09FZFI5pTp+os99gao2IvIWLVAiiGIWqu
-	4I4s=
-X-Google-Smtp-Source: AGHT+IHeIv6bdFLvavTRALfsdpDSUrwQPBGHk50OYa6tDA1Mw86vDD1G8vHgNwm5gnHH+jBxpoFn8w==
-X-Received: by 2002:a17:903:41ca:b0:205:8275:768 with SMTP id d9443c01a7336-211c4fee470mr11769345ad.21.1731568336411;
-        Wed, 13 Nov 2024 23:12:16 -0800 (PST)
-Received: from tianci-mac.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d01c7dsm4345155ad.192.2024.11.13.23.12.13
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 13 Nov 2024 23:12:15 -0800 (PST)
-From: Zhang Tianci <zhangtianci.1997@bytedance.com>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1731573842; c=relaxed/simple;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0DdGgZLfV/CuciWWntyalgVDlXCCbTCXuWhCIJPLJ9AJy/rUIn/RTXTzYiwRaKwVMg5yeMSgTmJNQ5VjK8QYwG69CpYx0Qvhz/9tjAsUdL7bxHdqwPwW5mPaL3ROSXqjP/3aCg3vgr0DSxgkiGfotW2C5u8Tc0rvaPtQeQPCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxWo43cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C69C4CECD;
+	Thu, 14 Nov 2024 08:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731573841;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rxWo43cwFb5eeMp2KXc2N3dRMTdeL6xpJsO1nhH/4es6mrWCDapd1Th1yhMVFYecr
+	 xjyMz2r+jvTIunUhItNs4QVx7Pd3dvyx7dzJN+7YwyHuDarUNG6DCPqg0GCH8t4wnL
+	 ObvZ5dd0rhi6wT4ygczUDXCTCaXG7F2nv38k3qPm8BttKEuY4CmO6V9zBuKRHk3qSh
+	 nLSb/JAM9AErHCIbR7Hneue+0mU3BCI0PWmPCK+CAfC39SGirkLMj168MP2OA0tPGf
+	 gEIGjG3WagIM1c+FVMCYnzOsSkQ7an8DaXuocsAQYKfFMaCEAKS1Lt+fC+Y+FVnLHQ
+	 fE5453mu2Z7RA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	xieyongji@bytedance.com,
-	Zhang Tianci <zhangtianci.1997@bytedance.com>,
-	Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Subject: [PATCH] fuse: check attributes staleness on fuse_iget()
-Date: Thu, 14 Nov 2024 15:09:05 +0800
-Message-ID: <20241114070905.48901-1-zhangtianci.1997@bytedance.com>
-X-Mailer: git-send-email 2.47.0
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: [RFC/PATCH v2 bpf-next fanotify 0/7] Fanotify fastpath handler
+Date: Thu, 14 Nov 2024 00:43:38 -0800
+Message-ID: <20241114084345.1564165-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,271 +75,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Function fuse_direntplus_link() might call fuse_iget() to initialize a new
-fuse_inode and change its attributes. If fi->attr_version is always
-initialized with 0, even if the attributes returned by the FUSE_READDIR
-request is staled, as the new fi->attr_version is 0, fuse_change_attributes
-will still set the staled attributes to inode. This wrong behaviour may
-cause file size inconsistency even when there is no changes from
-server-side.
+Overview of v2:
 
-To reproduce the issue, consider the following 2 programs (A and B) are
-running concurrently,
+Patch 1/7 adds logic to write fastpath handlers in kernel modules.
+Patch 2/7 adds a sample of a fastpath handler in a kernel module.
+Patch 3/7 to 5/7 are preparation work on BPF side.
+Patch 6/7 adds logic to write fastpath handlers in bpf programs.
+Patch 7/7 is a selftest and example of bpf based fastpath handler.
 
-        A                                               B
-----------------------------------      --------------------------------
-{ /fusemnt/dir/f is a file path in a fuse mount, the size of f is 0. }
+Changes v1 => v2:
+1. Add sysfs entries for fastpath handler.
+2. Rewrite the sample and bpf selftest to handle subtree monitoring.
+   This requires quite some work from BPF side to properly handle
+   inode, dentry, etc.
+3. Add CONFIG_FANOTIFY_FASTPATH.
+4. Add more documents.
 
-readdir(/fusemnt/dir) start
-//Daemon set size 0 to f direntry
-                                        fallocate(f, 1024)
-                                        stat(f) // B see size 1024
-                                        echo 2 > /proc/sys/vm/drop_caches
-readdir(/fusemnt/dir) reply to kernel
-Kernel set 0 to the I_NEW inode
+TODO of v2:
+1. Enable prviate (not added to global list) bpf based fastpath handlers.
+4. Man pages.
 
-                                        stat(f) // B see size 0
+From v1 RFC:
 
-In the above case, only program B is modifying the file size, however, B
-observes file size changing between the 2 'readonly' stat() calls. To fix
-this issue, we should make sure readdirplus still follows the rule of
-attr_version staleness checking even if the fi->attr_version is lost due to
-inode eviction.
+This RFC set introduces in-kernel fastpath handler for fanotify. The
+fastpath handler can be used to handle/filter some events without going
+through userspace.
 
-To identify this situation, the new fc->evict_ctr is used to record whether
-the eviction of inodes occurs during the readdirplus request processing.
-If it does, the result of readdirplus may be inaccurate; otherwise, the
-result of readdirplus can be trusted. Although this may still lead to
-incorrect invalidation, considering the relatively low frequency of
-evict occurrences, it should be acceptable.
+In LPC 2024, multiple talks covered use cases of monitoring a subtree in
+the VFS (fanotify: [1], bpf/lsm: [2]). This work is inspired by these
+discussions. Reliably monitoring of a subtree with low overhead is a hard
+problem. We do not claim this set fully solves problem. But we think this
+work can be a very useful building block of the solution to this problem.
 
-Link: https://lore.kernel.org/lkml/20230711043405.66256-2-zhangjiachen.jaycee@bytedance.com/
+The fastpath handler can be implemented with built-in logic, in a kernel
+module, or a bpf program. The fastpath handler is attached to a fsnotify
+group. With current implementation, the multiple fastpath handlers are
+maintained in a global list. Only users with CAP_SYS_ADMIN can add
+fastpath handlers to the list by loading a kernel module. User without
+CAP_SYS_ADMIN can attach a loaded fastpath handler to fanotify instances.
+During the attach operation, the fastpath handler can take an argument.
+This enables non-CAP_SYSADMIN users to customize/configure the fastpath
+handler, for example, with a specific allowlist/denylist.
 
-Reported-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Zhang Tianci <zhangtianci.1997@bytedance.com>
----
- fs/fuse/dir.c     | 11 +++++++----
- fs/fuse/fuse_i.h  | 11 ++++++++++-
- fs/fuse/inode.c   | 14 +++++++++++---
- fs/fuse/readdir.c | 15 +++++++++------
- 4 files changed, 37 insertions(+), 14 deletions(-)
+As the patchset grows to 1000+ lines (including samples and tests), I
+would like some feedback before pushing it further.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 54104dd48af7c..7d0a0fab69207 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -366,7 +366,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 	struct fuse_mount *fm = get_fuse_mount_super(sb);
- 	FUSE_ARGS(args);
- 	struct fuse_forget_link *forget;
--	u64 attr_version;
-+	u64 attr_version, evict_ctr;
- 	int err;
- 
- 	*inode = NULL;
-@@ -381,6 +381,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 		goto out;
- 
- 	attr_version = fuse_get_attr_version(fm->fc);
-+	evict_ctr = fuse_get_evict_ctr(fm->fc);
- 
- 	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
- 	err = fuse_simple_request(fm, &args);
-@@ -398,7 +399,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 
- 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
- 			   &outarg->attr, ATTR_TIMEOUT(outarg),
--			   attr_version);
-+			   attr_version, evict_ctr);
- 	err = -ENOMEM;
- 	if (!*inode) {
- 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
-@@ -691,7 +692,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
- 	ff->nodeid = outentry.nodeid;
- 	ff->open_flags = outopenp->open_flags;
- 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
--			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
-+			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0,
-+			  fuse_get_evict_ctr(fm->fc));
- 	if (!inode) {
- 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
- 		fuse_sync_release(NULL, ff, flags);
-@@ -822,7 +824,8 @@ static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
- 		goto out_put_forget_req;
- 
- 	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
--			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0);
-+			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0,
-+			  fuse_get_evict_ctr(fm->fc));
- 	if (!inode) {
- 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
- 		return -ENOMEM;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index e6cc3d552b138..f9ff0d0029aba 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -884,6 +884,9 @@ struct fuse_conn {
- 	/** Version counter for attribute changes */
- 	atomic64_t attr_version;
- 
-+	/** Version counter for evict inode */
-+	atomic64_t evict_ctr;
-+
- 	/** Called on final put */
- 	void (*release)(struct fuse_conn *);
- 
-@@ -978,6 +981,11 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
- 	return atomic64_read(&fc->attr_version);
- }
- 
-+static inline u64 fuse_get_evict_ctr(struct fuse_conn *fc)
-+{
-+	return atomic64_read(&fc->evict_ctr);
-+}
-+
- static inline bool fuse_stale_inode(const struct inode *inode, int generation,
- 				    struct fuse_attr *attr)
- {
-@@ -1037,7 +1045,8 @@ extern const struct dentry_operations fuse_root_dentry_operations;
-  */
- struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 			int generation, struct fuse_attr *attr,
--			u64 attr_valid, u64 attr_version);
-+			u64 attr_valid, u64 attr_version,
-+			u64 evict_ctr);
- 
- int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
- 		     struct fuse_entry_out *outarg, struct inode **inode);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index fd3321e29a3e5..872c61dd56618 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -173,6 +173,7 @@ static void fuse_evict_inode(struct inode *inode)
- 			fuse_cleanup_submount_lookup(fc, fi->submount_lookup);
- 			fi->submount_lookup = NULL;
- 		}
-+		atomic64_inc(&fc->evict_ctr);
- 	}
- 	if (S_ISREG(inode->i_mode) && !fuse_is_bad(inode)) {
- 		WARN_ON(fi->iocachectr != 0);
-@@ -426,7 +427,8 @@ static int fuse_inode_set(struct inode *inode, void *_nodeidp)
- 
- struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 			int generation, struct fuse_attr *attr,
--			u64 attr_valid, u64 attr_version)
-+			u64 attr_valid, u64 attr_version,
-+			u64 evict_ctr)
- {
- 	struct inode *inode;
- 	struct fuse_inode *fi;
-@@ -488,6 +490,10 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 	spin_unlock(&fi->lock);
- done:
- 	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
-+	spin_lock(&fi->lock);
-+	if (evict_ctr < fuse_get_evict_ctr(fc))
-+		fuse_invalidate_attr(inode);
-+	spin_unlock(&fi->lock);
- 
- 	return inode;
- }
-@@ -940,6 +946,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
- 	fc->initialized = 0;
- 	fc->connected = 1;
- 	atomic64_set(&fc->attr_version, 1);
-+	atomic64_set(&fc->evict_ctr, 1);
- 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
- 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
- 	fc->user_ns = get_user_ns(user_ns);
-@@ -1001,7 +1008,7 @@ static struct inode *fuse_get_root_inode(struct super_block *sb, unsigned mode)
- 	attr.mode = mode;
- 	attr.ino = FUSE_ROOT_ID;
- 	attr.nlink = 1;
--	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0);
-+	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0, 0);
- }
- 
- struct fuse_inode_handle {
-@@ -1610,7 +1617,8 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 		return -ENOMEM;
- 
- 	fuse_fill_attr_from_inode(&root_attr, parent_fi);
--	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
-+	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0,
-+			 fuse_get_evict_ctr(fm->fc));
- 	/*
- 	 * This inode is just a duplicate, so it is not looked up and
- 	 * its nlookup should not be incremented.  fuse_iget() does
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 0377b6dc24c80..ceb5aefd6012f 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -149,7 +149,7 @@ static int parse_dirfile(char *buf, size_t nbytes, struct file *file,
- 
- static int fuse_direntplus_link(struct file *file,
- 				struct fuse_direntplus *direntplus,
--				u64 attr_version)
-+				u64 attr_version, u64 evict_ctr)
- {
- 	struct fuse_entry_out *o = &direntplus->entry_out;
- 	struct fuse_dirent *dirent = &direntplus->dirent;
-@@ -233,7 +233,7 @@ static int fuse_direntplus_link(struct file *file,
- 	} else {
- 		inode = fuse_iget(dir->i_sb, o->nodeid, o->generation,
- 				  &o->attr, ATTR_TIMEOUT(o),
--				  attr_version);
-+				  attr_version, evict_ctr);
- 		if (!inode)
- 			inode = ERR_PTR(-ENOMEM);
- 
-@@ -284,7 +284,8 @@ static void fuse_force_forget(struct file *file, u64 nodeid)
- }
- 
- static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
--			     struct dir_context *ctx, u64 attr_version)
-+			     struct dir_context *ctx, u64 attr_version,
-+			     u64 evict_ctr)
- {
- 	struct fuse_direntplus *direntplus;
- 	struct fuse_dirent *dirent;
-@@ -319,7 +320,7 @@ static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
- 		buf += reclen;
- 		nbytes -= reclen;
- 
--		ret = fuse_direntplus_link(file, direntplus, attr_version);
-+		ret = fuse_direntplus_link(file, direntplus, attr_version, evict_ctr);
- 		if (ret)
- 			fuse_force_forget(file, direntplus->entry_out.nodeid);
- 	}
-@@ -337,7 +338,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 	struct fuse_io_args ia = {};
- 	struct fuse_args_pages *ap = &ia.ap;
- 	struct fuse_page_desc desc = { .length = PAGE_SIZE };
--	u64 attr_version = 0;
-+	u64 attr_version = 0, evict_ctr = 0;
- 	bool locked;
- 
- 	page = alloc_page(GFP_KERNEL);
-@@ -351,6 +352,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 	ap->descs = &desc;
- 	if (plus) {
- 		attr_version = fuse_get_attr_version(fm->fc);
-+		evict_ctr = fuse_get_evict_ctr(fm->fc);
- 		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
- 				    FUSE_READDIRPLUS);
- 	} else {
-@@ -368,7 +370,8 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 				fuse_readdir_cache_end(file, ctx->pos);
- 		} else if (plus) {
- 			res = parse_dirplusfile(page_address(page), res,
--						file, ctx, attr_version);
-+						file, ctx, attr_version,
-+						evict_ctr);
- 		} else {
- 			res = parse_dirfile(page_address(page), res, file,
- 					    ctx);
--- 
-2.46.0.rc2
+[1] https://lpc.events/event/18/contributions/1717/
+[2] https://lpc.events/event/18/contributions/1940/
 
+
+Song Liu (7):
+  fanotify: Introduce fanotify fastpath handler
+  samples/fanotify: Add a sample fanotify fastpath handler
+  bpf: Make bpf inode storage available to tracing programs
+  bpf: fs: Add three kfuncs
+  bpf: Allow bpf map hold reference on dentry
+  fanotify: Enable bpf based fanotify fastpath handler
+  selftests/bpf: Add test for BPF based fanotify fastpath handler
+
+ MAINTAINERS                                   |   1 +
+ fs/Makefile                                   |   2 +-
+ fs/bpf_fs_kfuncs.c                            |  51 +-
+ fs/inode.c                                    |   2 +
+ fs/notify/fanotify/Kconfig                    |  13 +
+ fs/notify/fanotify/Makefile                   |   1 +
+ fs/notify/fanotify/fanotify.c                 |  29 ++
+ fs/notify/fanotify/fanotify_fastpath.c        | 448 ++++++++++++++++++
+ fs/notify/fanotify/fanotify_user.c            |   7 +
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_lsm.h                       |  29 --
+ include/linux/fanotify.h                      | 131 +++++
+ include/linux/fs.h                            |   4 +
+ include/linux/fsnotify_backend.h              |   4 +
+ include/uapi/linux/fanotify.h                 |  25 +
+ kernel/bpf/Makefile                           |   3 +-
+ kernel/bpf/bpf_inode_storage.c                | 176 +++++--
+ kernel/bpf/bpf_lsm.c                          |   4 -
+ kernel/bpf/helpers.c                          |  14 +-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      |   8 +
+ samples/Kconfig                               |  20 +-
+ samples/Makefile                              |   2 +-
+ samples/fanotify/.gitignore                   |   1 +
+ samples/fanotify/Makefile                     |   5 +-
+ samples/fanotify/fastpath-mod.c               |  82 ++++
+ samples/fanotify/fastpath-user.c              | 111 +++++
+ security/bpf/hooks.c                          |   7 -
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ tools/testing/selftests/bpf/config            |   2 +
+ .../testing/selftests/bpf/prog_tests/fan_fp.c | 264 +++++++++++
+ tools/testing/selftests/bpf/progs/fan_fp.c    | 154 ++++++
+ 32 files changed, 1530 insertions(+), 90 deletions(-)
+ create mode 100644 fs/notify/fanotify/fanotify_fastpath.c
+ create mode 100644 samples/fanotify/fastpath-mod.c
+ create mode 100644 samples/fanotify/fastpath-user.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fan_fp.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fan_fp.c
+
+--
+2.43.5
 
