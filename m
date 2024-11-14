@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F18E9C8E1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0B39C8E1F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543A3283E9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 15:30:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75871286EB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 15:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF34818C933;
-	Thu, 14 Nov 2024 15:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4491A16FF4E;
+	Thu, 14 Nov 2024 15:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="arnRiepF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rYyOesV0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7C188587
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 15:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C9418BBB4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 15:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598090; cv=none; b=kWrDIF+GyEBTrQxR+l64A5LF+dcSLdwYPL5Jq6HbvXU2Ni+7O9LWpTwqByCEEQvnDAT+Sr9mtD6HfVM0va8I7yiGwaSxX0UCj41eajM85C8ReKjiyNKjfzMiyUo5F1kfOJWk7qdxbsTdndQxxafWWgCzNY7ckuUFwET5T8Z+K4o=
+	t=1731598091; cv=none; b=Ap2Gu7voh02mo+vMXEafMFM8c5rjsiBoHKydT2oWbkt7hbcGHQ0aOVhsI4w2bLsUuVeB7MILLeBh8o0mnL8/DapYI42XZMaqfePD3dUPatpwyN5Wf15P4iTrckNrEmob/TQABx/gP2KJ2g0QgjHN7oFOfphn1I+/sFx/tagBjqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598090; c=relaxed/simple;
-	bh=AFLrZl3fH+/hMhwZTjgZ0OWM0ndgzDi220n1zUDQffQ=;
+	s=arc-20240116; t=1731598091; c=relaxed/simple;
+	bh=HNesIF4+NCKJRgMS8RJOzPdBmK2CQSC6p10zaqTN28c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/HmA3rYuZKGzYFz3ND+oSN+N/J1MrYBPUxtbOx7ZmlGq9U6BbhTSRzWxJIazBOTOMEsh2ABn7KLJIrd1FsbDNZ39+4d90uZ0zhVAjz8a884h8A0XHqSv96xSGxNfTDxB1kYOJaoTHBRMWT5A1V4WKkpj0eOS8WEncd1yCv6d3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=arnRiepF; arc=none smtp.client-ip=209.85.161.44
+	 MIME-Version; b=lfhercN8anO47inWcSVVeejXYrrAJ4QcDsdv5UWCswJucGy9HexB52DrVIsLXqDc34jfyQ3VT7pH8NnPXo1vwqle3DTRGTAGUKzgbmqlxjrVJ4WvJ+93cqrN9slNIofbwWR49VxFIKbkDjDQPDuxA7Q/ej54iQTQOfvpd9pNLAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rYyOesV0; arc=none smtp.client-ip=209.85.160.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc5b4190eso366714eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 07:28:07 -0800 (PST)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2951f3af3ceso447800fac.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 07:28:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731598087; x=1732202887; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731598088; x=1732202888; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jvfAlDie45/dO/q2Oa4nMUlSYRbUQddnQckYeJvFoiA=;
-        b=arnRiepFOtCGKagziS6xtO4Vv/Jf+8LAVE0J8ryI70wI6+zLwxYTiedTsJ537HC4a2
-         LNlkH6zA2veKrY6gC1AV/soymGZv4dcjTFrRd401ey51Z2ZRNhbCWz1MrRG2VaHDZzZU
-         CtXa6Q7kxE3rM7/IfGcF6ekYH/Sf/DSYhadei8uNuwK+yUUDnHirrUBAfcWJ607o30su
-         d6FeQ+b3xv7erZkoT8Tz+ZkoIVPCu/Hde48Xczj9XrRav8FokUakSv8Xe5BFKkhjJUpF
-         y0R/VAeybRFMVsO0vmqjYr9OX8GJ++AAgoqqGbbxdip/H442BYrrkZHwQK0MuurJgjD/
-         r0jA==
+        bh=573A7VIJaN7Phef7EPro6/84rHuXaF2Ar2GUBUbETSc=;
+        b=rYyOesV0QfwRWVm1PBYChCs1Y4zCFiNHzH9R1LQaPnj2I8tT1iPTBnN31qKM66drKa
+         ztxK7fRNyFXXLM/ckR1TTL3eSG9kYJpCrCGc51hfexhpkcnHvLwcZutL3r1GsGUzsaOH
+         dv+7AHgPXl1JMdeWYXi1svCXaQ5X6FSFMOiGdy5M0+ymXDb6scAwHTySb9Xr9WUFmcNC
+         BESPCPmyvEuqPgrLOhMtZSKuLRYN0js4dOgSguoXXFLublShL5XNWGbjzgx9Xn58vGUI
+         OI7bAdPajtubR/yBEm6NRIkX7iaRt1+zNKye4zI5q+6N/m2lbdzvOJ4IlOP3mrbR6B5V
+         x/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598087; x=1732202887;
+        d=1e100.net; s=20230601; t=1731598088; x=1732202888;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jvfAlDie45/dO/q2Oa4nMUlSYRbUQddnQckYeJvFoiA=;
-        b=faIjs5h/+nhQvoxnxDDI1Tm1h3e59XqtkSF4o7DEiy6A1navNcqlUTewuQDYBS7NTL
-         qle06/XqGaXlW8uvCH10WFGkyfOneKmJGsYZMd1bJKdlYY9DLfmw2Een2QB7LvQVe/9s
-         K1Mq4w1Tal1tXSfAMFG1wZIrt6oNnN9g53/ocTDrEYk+zarDkDomIg5wCP5groQE0Ila
-         ldDvaoQDRKgCreu7mvOfC6RdI52TmQmcbOeYwPppM4dODu4EFIFrzWXpR9dhiF0NTh9t
-         nwhYS1QOkgpW7uDbrNwKbqiWrHoGbSkm0NKl5ZgIvfc36dBWXclI5uN5ws9oOtAK9HJN
-         HTXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyS9FgwqXTRtcThqPeflR9fGMfTOSZAKZs1JYMtFaeKu3Vdm/UiWZuDPRlJIsJCCTlAYXV7x9/LbrDArtO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRHb39fTIP7VdNjIwHzRE1iW8QAXsdqPgwSATk/cRRESlqGTiB
-	aMNuI02f4JsQhaDT/CPiA5tyuZE9AO4WYhYIfHlAtRFJJ1+W6q1fFvbAXUxRB9U=
-X-Google-Smtp-Source: AGHT+IH7eepGaxoKX7XFVQSCKcZ5tiiQfUtPjwDWCbNdm4JNlvZQy9y+41dOTUM8EVcPpq30RA+88A==
-X-Received: by 2002:a05:6820:278c:b0:5ee:710:83fa with SMTP id 006d021491bc7-5ee922a81aemr6235784eaf.8.1731598087197;
-        Thu, 14 Nov 2024 07:28:07 -0800 (PST)
+        bh=573A7VIJaN7Phef7EPro6/84rHuXaF2Ar2GUBUbETSc=;
+        b=WVgkRX07pA7+hdZdGac76rDRoSoA5HRs9IYYJiRiRaFJ7b9wN6CWk8E452MZOnkRc3
+         IoMDsbZA8WyYqjGxIU1t6It0YAtnYX/5fwq1WidKp6cy2FAThGHVd9h+0S6vDFlPbWuQ
+         ZJbpq6KIO23b9/f4++rP8kBl+EIwVYlVKADr7s/ggNvGUrladYwBDe9h4QqrADOZz/NZ
+         1yvGRI3YO7lbUyklaA3zev6RfeWYq1cySzZAAtVQvwkOgggB2eOLLWraT2+2ck4usNaF
+         wc6pbD46t4fW0FlyTaJmWjflgoCV7hrQ4HTYcGEBE1AmqMGBcA6rXVaeepkZ2xTRbT+d
+         NQEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbjTH9PrhvvJ23ZXFXEktO5do8PN9vG1XRSwBgbPcn4NtYJ36NrWJAgrdAI0zVWgSk40YTuqm9t9Rc5M+Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0EmiV2h+GmTkZO243D2IiiVowaSOM5qP2g7Y7TgEfwEQFyDN+
+	Onmg4rh38QjeQ1DbHz8jNKlvz8ptlUd4SJYyWoBotL//wdbOOJT4hnOAGMHOGCM=
+X-Google-Smtp-Source: AGHT+IGRJhbG3Iz8YyLsc6/0RWtRhZhYbcSZVTwigVtxhi/CGcrJEwq+4Kef8lO3NDoSjpzlANfJNQ==
+X-Received: by 2002:a05:6870:5312:b0:286:f24f:c232 with SMTP id 586e51a60fabf-29610696786mr2665053fac.42.1731598088623;
+        Thu, 14 Nov 2024 07:28:08 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eea026eb41sm368250eaf.39.2024.11.14.07.28.05
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eea026eb41sm368250eaf.39.2024.11.14.07.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 07:28:06 -0800 (PST)
+        Thu, 14 Nov 2024 07:28:08 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -80,9 +80,9 @@ Cc: hannes@cmpxchg.org,
 	linux-xfs@vger.kernel.org,
 	bfoster@redhat.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 04/17] mm/readahead: add readahead_control->uncached member
-Date: Thu, 14 Nov 2024 08:25:08 -0700
-Message-ID: <20241114152743.2381672-6-axboe@kernel.dk>
+Subject: [PATCH 05/17] mm/filemap: use page_cache_sync_ra() to kick off read-ahead
+Date: Thu, 14 Nov 2024 08:25:09 -0700
+Message-ID: <20241114152743.2381672-7-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241114152743.2381672-2-axboe@kernel.dk>
 References: <20241114152743.2381672-2-axboe@kernel.dk>
@@ -94,46 +94,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If ractl->uncached is set to true, then folios created are marked as
-uncached as well.
+Rather than use the page_cache_sync_readahead() helper, define our own
+ractl and use page_cache_sync_ra() directly. In preparation for needing
+to modify ractl inside filemap_get_pages().
+
+No functional changes in this patch.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/pagemap.h | 1 +
- mm/readahead.c          | 8 +++++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ mm/filemap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 68a5f1ff3301..8afacb7520d4 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1350,6 +1350,7 @@ struct readahead_control {
- 	pgoff_t _index;
- 	unsigned int _nr_pages;
- 	unsigned int _batch_count;
-+	bool uncached;
- 	bool _workingset;
- 	unsigned long _pflags;
- };
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 003cfe79880d..8dbeab9bc1f0 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -191,7 +191,13 @@ static void read_pages(struct readahead_control *rac)
- static struct folio *ractl_alloc_folio(struct readahead_control *ractl,
- 				       gfp_t gfp_mask, unsigned int order)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 91974308e9bf..02d9cb585195 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2528,7 +2528,6 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
  {
--	return filemap_alloc_folio(gfp_mask, order);
-+	struct folio *folio;
-+
-+	folio = filemap_alloc_folio(gfp_mask, order);
-+	if (folio && ractl->uncached)
-+		__folio_set_uncached(folio);
-+
-+	return folio;
- }
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+-	struct file_ra_state *ra = &filp->f_ra;
+ 	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
+ 	pgoff_t last_index;
+ 	struct folio *folio;
+@@ -2543,12 +2542,13 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
  
- /**
+ 	filemap_get_read_batch(mapping, index, last_index - 1, fbatch);
+ 	if (!folio_batch_count(fbatch)) {
++		DEFINE_READAHEAD(ractl, filp, &filp->f_ra, mapping, index);
++
+ 		if (iocb->ki_flags & IOCB_NOIO)
+ 			return -EAGAIN;
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			flags = memalloc_noio_save();
+-		page_cache_sync_readahead(mapping, ra, filp, index,
+-				last_index - index);
++		page_cache_sync_ra(&ractl, last_index - index);
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			memalloc_noio_restore(flags);
+ 		filemap_get_read_batch(mapping, index, last_index - 1, fbatch);
 -- 
 2.45.2
 
