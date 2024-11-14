@@ -1,191 +1,428 @@
-Return-Path: <linux-fsdevel+bounces-34830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46E69C9084
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 18:07:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210369C9114
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 18:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984AC280E4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 17:07:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21193B37001
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 16:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F1518BBAA;
-	Thu, 14 Nov 2024 17:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F3C18595B;
+	Thu, 14 Nov 2024 16:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN1NXCIg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6C433D2;
-	Thu, 14 Nov 2024 17:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F267DA6D;
+	Thu, 14 Nov 2024 16:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604007; cv=none; b=Zzd9UcySQu9ttBC8lVAVtVO9BBmNx7mPDj4p4igToCRpYuoHJp/nDpmPWvXtCUplR/4nkiEW6eMJ1vg/T57tehC2ktrpb2u3BRrOMjXsMz1iLbn2h4l/HJa513tdcDKa0P76c7PNPW7hQd8W6vSrjmr066XX4i06QaGeQdFGPog=
+	t=1731602374; cv=none; b=L6sF162VoNTRmmFAaYNvd+IQMgd5thRrIdvtpdC+R9xDm2cjw1II3Pv/NNfeskOF6zWKPa8ZUAV4JcS9adzUivJdbeFHQVrWVWaCdnGJSYsIDU7weRFQq/j9qJd9+WFcvLcNCl4On59GHhTAWXZ+cQnEJBnnXH8Uuy0ZFfLTi8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604007; c=relaxed/simple;
-	bh=LBpVriT/45fHDSuwLK7td1akcqS9lpNzp3EEEVmNJIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+0SCZVuXeEelCET4O77YE26dmvjAdaWn3YRIP4Zb2fnS99xwgG6pGRFlGqiT1cFerrB/b20pQHtWgDpwQASAWm2x58Te4Ho+PMPfLsCoCeJtlkJRvDw+erB7FZCF55l56Cb0o3RIFkHdP1EkkOVq3NM2msym+i+GkNAF2Y60vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AEGah9Z009457;
-	Thu, 14 Nov 2024 10:36:43 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AEGafRI009456;
-	Thu, 14 Nov 2024 10:36:41 -0600
-Date: Thu, 14 Nov 2024 10:36:41 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Song Liu <song@kernel.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
-        Song Liu <songliubraving@meta.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241114163641.GA8697@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com> <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com> <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+	s=arc-20240116; t=1731602374; c=relaxed/simple;
+	bh=SUgKw9P+o1HnS6FND7Lta07yLNLbdsT2InWIXPbLQT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjyjCgY+xFvxwzofj1UifN2foVv5PqoWQEQSAZscMVX5LHwnB9xhhmuh4DbGJoQbRafZ8IMjPl7ONtDToy8uuArNwDEX9dibhpXzREjAIOC2NAPQPL/MgUvhM+jsWQRZzpPAWwqT32lWGh9J+cn5C4QNUCSPfa8GjzKmhB2sr/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN1NXCIg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF3DC4CED0;
+	Thu, 14 Nov 2024 16:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731602374;
+	bh=SUgKw9P+o1HnS6FND7Lta07yLNLbdsT2InWIXPbLQT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nN1NXCIgrxJ4wk4bcHMhmOuYrCKibErARAw+zOQjDHHFuOK18Brb1h1CQ5hmnTp8V
+	 KAyuHnkpDtG87QBRy9XwJlthDqNWBY202bxVt1qqw99Wzobz5thZ096hR0glKhIjII
+	 /ZA3UnhDf+X4rBLnCVp0MRl2Leq42RY0Kcie0wqnm4FzsG4U61FM3ZRq+0+x7gknv3
+	 FzZKNTgibcdo9cf0/5GAfT8k1ONMZ9XozEApa5Sh4ftMjfeOgROuZcus0jAnRg5D/A
+	 kaXLd5qcq5VRrPOpsLSKYA5EOUNKK0ercajIivXck4U0VWWp1wDJfnDoM1SgBdANjJ
+	 cZ6W8T227w59w==
+Date: Thu, 14 Nov 2024 09:39:31 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: David Howells <dhowells@redhat.com>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 28/33] netfs: Change the read result collector to only
+ use one work item
+Message-ID: <20241114163931.GA1928968@thelio-3990X>
+References: <20241108173236.1382366-1-dhowells@redhat.com>
+ <20241108173236.1382366-29-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 14 Nov 2024 10:36:44 -0600 (CST)
+In-Reply-To: <20241108173236.1382366-29-dhowells@redhat.com>
 
-On Wed, Nov 13, 2024 at 10:57:05AM -0800, Song Liu wrote:
+Hi David,
 
-Good morning, I hope the week is going well for everyone.
+On Fri, Nov 08, 2024 at 05:32:29PM +0000, David Howells wrote:
+...
+> diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
+> index 264f3cb6a7dc..8ca0558570c1 100644
+> --- a/fs/netfs/read_retry.c
+> +++ b/fs/netfs/read_retry.c
+> @@ -12,15 +12,8 @@
+>  static void netfs_reissue_read(struct netfs_io_request *rreq,
+>  			       struct netfs_io_subrequest *subreq)
+>  {
+> -	struct iov_iter *io_iter = &subreq->io_iter;
+> -
+> -	if (iov_iter_is_folioq(io_iter)) {
+> -		subreq->curr_folioq = (struct folio_queue *)io_iter->folioq;
+> -		subreq->curr_folioq_slot = io_iter->folioq_slot;
+> -		subreq->curr_folio_order = subreq->curr_folioq->orders[subreq->curr_folioq_slot];
+> -	}
+> -
+> -	atomic_inc(&rreq->nr_outstanding);
+> +	__clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
+> +	__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+>  	__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
+>  	netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+>  	subreq->rreq->netfs_ops->issue_read(subreq);
+> @@ -33,13 +26,12 @@ static void netfs_reissue_read(struct netfs_io_request *rreq,
+>  static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>  {
+>  	struct netfs_io_subrequest *subreq;
+> -	struct netfs_io_stream *stream0 = &rreq->io_streams[0];
+> -	LIST_HEAD(sublist);
+> -	LIST_HEAD(queue);
+> +	struct netfs_io_stream *stream = &rreq->io_streams[0];
+> +	struct list_head *next;
+>  
+>  	_enter("R=%x", rreq->debug_id);
+>  
+> -	if (list_empty(&rreq->subrequests))
+> +	if (list_empty(&stream->subrequests))
+>  		return;
+>  
+>  	if (rreq->netfs_ops->retry_request)
+> @@ -52,7 +44,7 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>  	    !test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags)) {
+>  		struct netfs_io_subrequest *subreq;
+>  
+> -		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+> +		list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
+>  			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
+>  				break;
+>  			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
+> @@ -73,48 +65,44 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>  	 * populating with smaller subrequests.  In the event that the subreq
+>  	 * we just launched finishes before we insert the next subreq, it'll
+>  	 * fill in rreq->prev_donated instead.
+> -
+> +	 *
+>  	 * Note: Alternatively, we could split the tail subrequest right before
+>  	 * we reissue it and fix up the donations under lock.
+>  	 */
+> -	list_splice_init(&rreq->subrequests, &queue);
+> +	next = stream->subrequests.next;
+>  
+>  	do {
+> -		struct netfs_io_subrequest *from;
+> +		struct netfs_io_subrequest *subreq = NULL, *from, *to, *tmp;
+>  		struct iov_iter source;
+>  		unsigned long long start, len;
+> -		size_t part, deferred_next_donated = 0;
+> +		size_t part;
+>  		bool boundary = false;
+>  
+>  		/* Go through the subreqs and find the next span of contiguous
+>  		 * buffer that we then rejig (cifs, for example, needs the
+>  		 * rsize renegotiating) and reissue.
+>  		 */
+> -		from = list_first_entry(&queue, struct netfs_io_subrequest, rreq_link);
+> -		list_move_tail(&from->rreq_link, &sublist);
+> +		from = list_entry(next, struct netfs_io_subrequest, rreq_link);
+> +		to = from;
+>  		start = from->start + from->transferred;
+>  		len   = from->len   - from->transferred;
+>  
+> -		_debug("from R=%08x[%x] s=%llx ctl=%zx/%zx/%zx",
+> +		_debug("from R=%08x[%x] s=%llx ctl=%zx/%zx",
+>  		       rreq->debug_id, from->debug_index,
+> -		       from->start, from->consumed, from->transferred, from->len);
+> +		       from->start, from->transferred, from->len);
+>  
+>  		if (test_bit(NETFS_SREQ_FAILED, &from->flags) ||
+>  		    !test_bit(NETFS_SREQ_NEED_RETRY, &from->flags))
+>  			goto abandon;
+>  
+> -		deferred_next_donated = from->next_donated;
+> -		while ((subreq = list_first_entry_or_null(
+> -				&queue, struct netfs_io_subrequest, rreq_link))) {
+> -			if (subreq->start != start + len ||
+> -			    subreq->transferred > 0 ||
+> +		list_for_each_continue(next, &stream->subrequests) {
+> +			subreq = list_entry(next, struct netfs_io_subrequest, rreq_link);
+> +			if (subreq->start + subreq->transferred != start + len ||
+> +			    test_bit(NETFS_SREQ_BOUNDARY, &subreq->flags) ||
+>  			    !test_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags))
+>  				break;
+> -			list_move_tail(&subreq->rreq_link, &sublist);
+> -			len += subreq->len;
+> -			deferred_next_donated = subreq->next_donated;
+> -			if (test_bit(NETFS_SREQ_BOUNDARY, &subreq->flags))
+> -				break;
+> +			to = subreq;
+> +			len += to->len;
+>  		}
+>  
+>  		_debug(" - range: %llx-%llx %llx", start, start + len - 1, len);
+> @@ -127,36 +115,28 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>  		source.count = len;
+>  
+>  		/* Work through the sublist. */
+> -		while ((subreq = list_first_entry_or_null(
+> -				&sublist, struct netfs_io_subrequest, rreq_link))) {
+> -			list_del(&subreq->rreq_link);
+> -
+> +		subreq = from;
+> +		list_for_each_entry_from(subreq, &stream->subrequests, rreq_link) {
+> +			if (!len)
+> +				break;
+>  			subreq->source	= NETFS_DOWNLOAD_FROM_SERVER;
+>  			subreq->start	= start - subreq->transferred;
+>  			subreq->len	= len   + subreq->transferred;
+> -			stream0->sreq_max_len = subreq->len;
+> -
+>  			__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+>  			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+> -
+> -			spin_lock(&rreq->lock);
+> -			list_add_tail(&subreq->rreq_link, &rreq->subrequests);
+> -			subreq->prev_donated += rreq->prev_donated;
+> -			rreq->prev_donated = 0;
+>  			trace_netfs_sreq(subreq, netfs_sreq_trace_retry);
+> -			spin_unlock(&rreq->lock);
+> -
+> -			BUG_ON(!len);
+>  
+>  			/* Renegotiate max_len (rsize) */
+> +			stream->sreq_max_len = subreq->len;
+>  			if (rreq->netfs_ops->prepare_read(subreq) < 0) {
+>  				trace_netfs_sreq(subreq, netfs_sreq_trace_reprep_failed);
+>  				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+> +				goto abandon;
+>  			}
+>  
+> -			part = umin(len, stream0->sreq_max_len);
+> -			if (unlikely(rreq->io_streams[0].sreq_max_segs))
+> -				part = netfs_limit_iter(&source, 0, part, stream0->sreq_max_segs);
+> +			part = umin(len, stream->sreq_max_len);
+> +			if (unlikely(stream->sreq_max_segs))
+> +				part = netfs_limit_iter(&source, 0, part, stream->sreq_max_segs);
+>  			subreq->len = subreq->transferred + part;
+>  			subreq->io_iter = source;
+>  			iov_iter_truncate(&subreq->io_iter, part);
+> @@ -166,58 +146,106 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>  			if (!len) {
+>  				if (boundary)
+>  					__set_bit(NETFS_SREQ_BOUNDARY, &subreq->flags);
+> -				subreq->next_donated = deferred_next_donated;
+>  			} else {
+>  				__clear_bit(NETFS_SREQ_BOUNDARY, &subreq->flags);
+> -				subreq->next_donated = 0;
+>  			}
+>  
+> +			netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+>  			netfs_reissue_read(rreq, subreq);
+> -			if (!len)
+> +			if (subreq == to)
+>  				break;
+> -
+> -			/* If we ran out of subrequests, allocate another. */
+> -			if (list_empty(&sublist)) {
+> -				subreq = netfs_alloc_subrequest(rreq);
+> -				if (!subreq)
+> -					goto abandon;
+> -				subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
+> -				subreq->start = start;
+> -
+> -				/* We get two refs, but need just one. */
+> -				netfs_put_subrequest(subreq, false, netfs_sreq_trace_new);
+> -				trace_netfs_sreq(subreq, netfs_sreq_trace_split);
+> -				list_add_tail(&subreq->rreq_link, &sublist);
+> -			}
+>  		}
+>  
+>  		/* If we managed to use fewer subreqs, we can discard the
+> -		 * excess.
+> +		 * excess; if we used the same number, then we're done.
+>  		 */
+> -		while ((subreq = list_first_entry_or_null(
+> -				&sublist, struct netfs_io_subrequest, rreq_link))) {
+> -			trace_netfs_sreq(subreq, netfs_sreq_trace_discard);
+> -			list_del(&subreq->rreq_link);
+> -			netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_done);
+> +		if (!len) {
+> +			if (subreq == to)
+> +				continue;
+> +			list_for_each_entry_safe_from(subreq, tmp,
+> +						      &stream->subrequests, rreq_link) {
+> +				trace_netfs_sreq(subreq, netfs_sreq_trace_discard);
+> +				list_del(&subreq->rreq_link);
+> +				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_done);
+> +				if (subreq == to)
+> +					break;
+> +			}
+> +			continue;
+>  		}
+>  
+> -	} while (!list_empty(&queue));
+> +		/* We ran out of subrequests, so we need to allocate some more
+> +		 * and insert them after.
+> +		 */
+> +		do {
+> +			subreq = netfs_alloc_subrequest(rreq);
+> +			if (!subreq) {
+> +				subreq = to;
+> +				goto abandon_after;
+> +			}
+> +			subreq->source		= NETFS_DOWNLOAD_FROM_SERVER;
+> +			subreq->start		= start;
+> +			subreq->len		= len;
+> +			subreq->debug_index	= atomic_inc_return(&rreq->subreq_counter);
+> +			subreq->stream_nr	= stream->stream_nr;
+> +			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+> +
+> +			trace_netfs_sreq_ref(rreq->debug_id, subreq->debug_index,
+> +					     refcount_read(&subreq->ref),
+> +					     netfs_sreq_trace_new);
+> +			netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+> +
+> +			list_add(&subreq->rreq_link, &to->rreq_link);
+> +			to = list_next_entry(to, rreq_link);
+> +			trace_netfs_sreq(subreq, netfs_sreq_trace_retry);
+> +
+> +			stream->sreq_max_len	= umin(len, rreq->rsize);
+> +			stream->sreq_max_segs	= 0;
+> +			if (unlikely(stream->sreq_max_segs))
+> +				part = netfs_limit_iter(&source, 0, part, stream->sreq_max_segs);
+> +
+> +			netfs_stat(&netfs_n_rh_download);
+> +			if (rreq->netfs_ops->prepare_read(subreq) < 0) {
+> +				trace_netfs_sreq(subreq, netfs_sreq_trace_reprep_failed);
+> +				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+> +				goto abandon;
+> +			}
+> +
+> +			part = umin(len, stream->sreq_max_len);
+> +			subreq->len = subreq->transferred + part;
+> +			subreq->io_iter = source;
+> +			iov_iter_truncate(&subreq->io_iter, part);
+> +			iov_iter_advance(&source, part);
+> +
+> +			len -= part;
+> +			start += part;
+> +			if (!len && boundary) {
+> +				__set_bit(NETFS_SREQ_BOUNDARY, &to->flags);
+> +				boundary = false;
+> +			}
+> +
+> +			netfs_reissue_read(rreq, subreq);
+> +		} while (len);
+> +
+> +	} while (!list_is_head(next, &stream->subrequests));
+>  
+>  	return;
+>  
+> -	/* If we hit ENOMEM, fail all remaining subrequests */
+> +	/* If we hit an error, fail all remaining incomplete subrequests */
+> +abandon_after:
+> +	if (list_is_last(&subreq->rreq_link, &stream->subrequests))
+> +		return;
 
-> On Wed, Nov 13, 2024 at 10:06???AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On 11/12/2024 5:37 PM, Song Liu wrote:
-> [...]
-> > > Could you provide more information on the definition of "more
-> > > consistent" LSM infrastructure?
-> >
-> > We're doing several things. The management of security blobs
-> > (e.g. inode->i_security) has been moved out of the individual
-> > modules and into the infrastructure. The use of a u32 secid is
-> > being replaced with a more general lsm_prop structure, except
-> > where networking code won't allow it. A good deal of work has
-> > gone into making the return values of LSM hooks consistent.
-> 
-> Thanks for the information. Unifying per-object memory usage of
-> different LSMs makes sense. However, I don't think we are limiting
-> any LSM to only use memory from the lsm_blobs. The LSMs still
-> have the freedom to use other memory allocators. BPF inode
-> local storage, just like other BPF maps, is a way to manage
-> memory. BPF LSM programs have full access to BPF maps. So
-> I don't think it makes sense to say this BPF map is used by tracing,
-> so we should not allow LSM to use it.
-> 
-> Does this make sense?
+This change as commit 1bd9011ee163 ("netfs: Change the read result
+collector to only use one work item") in next-20241114 causes a clang
+warning:
 
-As involved bystanders, some questions and thoughts that may help
-further the discussion.
+  fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialized when used here [-Werror,-Wuninitialized]
+    235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequests))
+        |                           ^~~~~~
+  fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to silence this warning
+     28 |         struct netfs_io_subrequest *subreq;
+        |                                           ^
+        |                                            = NULL
 
-With respect to inode specific storage, the currently accepted pattern
-in the LSM world is roughly as follows:
+May be a shadowing issue, as adding KCFLAGS=-Wshadow shows:
 
-The LSM initialization code, at boot, computes the total amount of
-storage needed by all of the LSM's that are requesting inode specific
-storage.  A single pointer to that 'blob' of storage is included in
-the inode structure.
+  fs/netfs/read_retry.c:75:31: error: declaration shadows a local variable [-Werror,-Wshadow]
+     75 |                 struct netfs_io_subrequest *subreq = NULL, *from, *to, *tmp;
+        |                                             ^
+  fs/netfs/read_retry.c:28:30: note: previous declaration is here
+     28 |         struct netfs_io_subrequest *subreq;
+        |                                     ^
 
-In an include file, an inline function similar to the following is
-declared, whose purpose is to return the location inside of the
-allocated storage or 'LSM inode blob' where a particular LSM's inode
-specific data structure is located:
+Cheers,
+Nathan
 
-static inline struct tsem_inode *tsem_inode(struct inode *inode)
-{
-	return inode->i_security + tsem_blob_sizes.lbs_inode;
-}
-
-In an LSM's implementation code, the function gets used in something
-like the following manner:
-
-static int tsem_inode_alloc_security(struct inode *inode)
-{
-	struct tsem_inode *tsip = tsem_inode(inode);
-
-	/* Do something with the structure pointed to by tsip. */
-}
-
-Christian appears to have already chimed in and indicated that there
-is no appetite to add another pointer member to the inode structure.
-
-So, if this were to proceed forward, is it proposed that there will be
-a 'flag day' requirement to have each LSM that uses inode specific
-storage implement a security_inode_alloc() event handler that creates
-an LSM specific BPF map key/value pair for that inode?
-
-Which, in turn, would require that the accessor functions be converted
-to use a bpf key request to return the LSM specific information for
-that inode?
-
-A flag day event is always somewhat of a concern, but the larger
-concern may be the substitution of simple pointer arithmetic for a
-body of more complex code.  One would assume with something like this,
-that there may be a need for a shake-out period to determine what type
-of potential regressions the more complex implementation may generate,
-with regressions in security sensitive code always a concern.
-
-In a larger context.  Given that the current implementation works on
-simple pointer arithmetic over a common block of storage, there is not
-much of a safety guarantee that one LSM couldn't interfere with the
-inode storage of another LSM.  However, using a generic BPF construct
-such as a map, would presumably open the level of influence over LSM
-specific inode storage to a much larger audience, presumably any BPF
-program that would be loaded.
-
-The LSM inode information is obviously security sensitive, which I
-presume would be be the motivation for Casey's concern that a 'mistake
-by a BPF programmer could cause the whole system to blow up', which in
-full disclosure is only a rough approximation of his statement.
-
-We obviously can't speak directly to Casey's concerns.  Casey, any
-specific technical comments on the challenges of using a common inode
-specific storage architecture?
-
-Song, FWIW going forward.  I don't know how closely you follow LSM
-development, but we believe an unbiased observer would conclude that
-there is some degree of reticence about BPF's involvement with the LSM
-infrastructure by some of the core LSM maintainers, that in turn makes
-these types of conversations technically sensitive.
-
-> Song
-
-We will look forward to your thoughts on the above.
-
-Have a good week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> +	subreq = list_next_entry(subreq, rreq_link);
+>  abandon:
+> -	list_splice_init(&sublist, &queue);
+> -	list_for_each_entry(subreq, &queue, rreq_link) {
+> -		if (!subreq->error)
+> -			subreq->error = -ENOMEM;
+> -		__clear_bit(NETFS_SREQ_FAILED, &subreq->flags);
+> +	list_for_each_entry_from(subreq, &stream->subrequests, rreq_link) {
+> +		if (!subreq->error &&
+> +		    !test_bit(NETFS_SREQ_FAILED, &subreq->flags) &&
+> +		    !test_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags))
+> +			continue;
+> +		subreq->error = -ENOMEM;
+> +		__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+>  		__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+>  		__clear_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+>  	}
+> -	spin_lock(&rreq->lock);
+> -	list_splice_tail_init(&queue, &rreq->subrequests);
+> -	spin_unlock(&rreq->lock);
+>  }
+>  
+>  /*
+> @@ -225,14 +253,19 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+>   */
+>  void netfs_retry_reads(struct netfs_io_request *rreq)
+>  {
+> -	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
+> +	struct netfs_io_subrequest *subreq;
+> +	struct netfs_io_stream *stream = &rreq->io_streams[0];
+>  
+> -	atomic_inc(&rreq->nr_outstanding);
+> +	/* Wait for all outstanding I/O to quiesce before performing retries as
+> +	 * we may need to renegotiate the I/O sizes.
+> +	 */
+> +	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
+> +		wait_on_bit(&subreq->flags, NETFS_SREQ_IN_PROGRESS,
+> +			    TASK_UNINTERRUPTIBLE);
+> +	}
+>  
+> +	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
+>  	netfs_retry_read_subrequests(rreq);
+> -
+> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
+> -		netfs_rreq_terminated(rreq);
+>  }
+>  
+>  /*
 
