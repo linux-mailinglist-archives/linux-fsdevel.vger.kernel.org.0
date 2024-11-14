@@ -1,83 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-34726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF569C81EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 05:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC39B9C8208
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 05:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C51F23428
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 04:20:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831791F23A15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 04:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F371E8836;
-	Thu, 14 Nov 2024 04:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27A1E9078;
+	Thu, 14 Nov 2024 04:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nFTr+5XP"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xfdi9ziT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177A520E3;
-	Thu, 14 Nov 2024 04:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CAD1386B4;
+	Thu, 14 Nov 2024 04:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731558048; cv=none; b=jI4jofNLcZG3te1HXF8qV53avw3OTbr421j3moCuAxoXywSME8jU7s+3Te3Q7W9HDit44w3H8bGLTOrd29BT0sNnSG6SlGnbLYd0QlzhA5g4ZrhikKsCzl84J2PMTEx/2xxVv5RZF2D3m2bvRdgwcxLOfUv1NNW8Tl4xJT+fu9I=
+	t=1731559078; cv=none; b=lpMZeZ14im4ec64H5WmRvN+QQNHmHVr2pToeby9SFFwXt1dqtNuTdQkTJ+r5t9Mb+ofHdVll2rG23GD4XzMj+74ZNbyoNg/2vsVG60la38oBlLFwELKtpCUFrb+MUwrgjXm4bj3PEqwxikdgmM2wbBso8UuWWs0qwQFNMY21Arw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731558048; c=relaxed/simple;
-	bh=YVIWZls2hfJ7VYSlPL8sAB0nPPFY4ogRaKErX/qfjPU=;
+	s=arc-20240116; t=1731559078; c=relaxed/simple;
+	bh=7ljqjFYMI0iknZu8gispeiqdxGiEPPP1Xd2xKIx+XKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATQkdlUl9eDI/XgCzYVNebqMUatsJbgnqwbJeSzQ+8lI+RnVOmsyWC+/Lzi8+UZ7N1RxTmFIpWYigQ+LxCckRjA40Ximbg2LWcGQAKM0ULYebfeQgeDVVAF+0BlzBc9eEf51euow1QnhqSZhfNABQ19UnWqProu5RS0kgy+/SXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nFTr+5XP; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731558046; x=1763094046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YVIWZls2hfJ7VYSlPL8sAB0nPPFY4ogRaKErX/qfjPU=;
-  b=nFTr+5XPBDHe/20QiXTYhRS1ON9pBxJsHkJXBucRgfTg1ukK50kmI4rX
-   g/q89Kcx5f2lKFyBgn1upiKgNTn0x8szT4NFPU6Uf0LPYrttEZIZA9FfB
-   iNSo2x3TVdkv+Fa04ueQcMCl4AEir/VBArlvI10FkZ4Suh/lH6Hi39jSZ
-   jubp9oXBRM2y8Gin2G0bRimkBXA3UVTEoZZrYnx+V8ONWcW4kqJ0/Dylp
-   qJRJGtBnHeEOU32OhbnvuvrHuWbHyf0n5x3GrysC2XEg3OxAzPuljxCEV
-   WyDA6cMFWr1KUziFwFnYMyUhLj8Cg2wjYZykeEoni+35OiUbrHnL2lW9T
-   w==;
-X-CSE-ConnectionGUID: rziZ30DpQWmttRjKYkUFqw==
-X-CSE-MsgGUID: K2PKI6viT6yxODjssYEU3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="35407490"
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="35407490"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 20:20:45 -0800
-X-CSE-ConnectionGUID: UrnCjMjPTr2ogMm3HDdJkA==
-X-CSE-MsgGUID: B5mR+kraRmOUlR81jExqDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="92875745"
-Received: from lkp-server01.sh.intel.com (HELO b014a344d658) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Nov 2024 20:20:43 -0800
-Received: from kbuild by b014a344d658 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBRLU-00006X-1t;
-	Thu, 14 Nov 2024 04:20:40 +0000
-Date: Thu, 14 Nov 2024 12:20:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	intel-xe@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] iov_iter: Provide copy_iomem_to|from_iter()
-Message-ID: <202411141227.4kDiZIXM-lkp@intel.com>
-References: <20241112200454.2211-2-michal.wajdeczko@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVq2P1s6FectPLFBxbplAU13Vq8Mdy5j7n2i7V3zndk9RU8Pgk+Wb+ZIA2SgpS9i3lJTik5t2TGAuq998bRHeuSb8cgg5c02lUND3/kSrZIX6mysA/uhsCRAbw78UFUctmNr4Frjjsd0qULTk+orwxn17ZFuJbUUr+8M+seWEas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xfdi9ziT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7ljqjFYMI0iknZu8gispeiqdxGiEPPP1Xd2xKIx+XKo=; b=xfdi9ziTwdm8THeikj+z+Z1hdg
+	r7NK41p0aVm9+pf7/A6dLLqqC0s1AEkwRYU4RUNVC3qM8M5mjb2UNcXA7Btsfj/tacBRdbKh5HfPf
+	2yja3l1TecGphV5qn8n+ApFncqtMMvVjU3EIBG/nGD4/g5RvYSRyRa7D2ZoQvkRJ4+mvuMyj9hrYx
+	JFof+CeAHdykOFGJIexQ4X+dl7LganbvCIARhindXRK5gVq5YKy6umtKIA+mOPPKK7w2rnROUrS6x
+	MmRBC3rv6uOSNe2BUeS9+01C9zWo60XE7rspE51tj9aecMa7J/fwuW4/vKgDg51eULnMmtuZ1I857
+	amXsT+sA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBRc9-00000008mVE-19Ni;
+	Thu, 14 Nov 2024 04:37:53 +0000
+Date: Wed, 13 Nov 2024 20:37:53 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
+ check
+Message-ID: <ZzV-oVtytT28gHz2@infradead.org>
+References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
+ <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,84 +65,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112200454.2211-2-michal.wajdeczko@intel.com>
+In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Michal,
+On Wed, Nov 13, 2024 at 05:55:24PM +0000, Erin Shepherd wrote:
+> For pidfs, there is no reason to restrict file handle decoding by
+> CAP_DAC_READ_SEARCH.
 
-kernel test robot noticed the following build warnings:
+Why is there no reason, i.e. why do you think it is safe.
 
-[auto build test WARNING on drm-xe/drm-xe-next]
-[also build test WARNING on brauner-vfs/vfs.all akpm-mm/mm-nonmm-unstable linus/master v6.12-rc7 next-20241113]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>Introduce an export_ops flag that can indicate
+> this
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wajdeczko/iov_iter-Provide-copy_iomem_to-from_iter/20241113-080831
-base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-patch link:    https://lore.kernel.org/r/20241112200454.2211-2-michal.wajdeczko%40intel.com
-patch subject: [PATCH v2 1/4] iov_iter: Provide copy_iomem_to|from_iter()
-config: arm-randconfig-r113-20241113 (https://download.01.org/0day-ci/archive/20241114/202411141227.4kDiZIXM-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce: (https://download.01.org/0day-ci/archive/20241114/202411141227.4kDiZIXM-lkp@intel.com/reproduce)
+Also why is is desirable?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411141227.4kDiZIXM-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   lib/iov_iter.c:373:47: sparse: sparse: cast removes address space '__iomem' of expression
-   lib/iov_iter.c:386:47: sparse: sparse: cast removes address space '__iomem' of expression
->> lib/iov_iter.c:349:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem *from @@     got void * @@
-   lib/iov_iter.c:349:9: sparse:     expected void const volatile [noderef] __iomem *from
-   lib/iov_iter.c:349:9: sparse:     got void *
-   lib/iov_iter.c:330:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem *from @@     got void * @@
-   lib/iov_iter.c:330:9: sparse:     expected void const volatile [noderef] __iomem *from
-   lib/iov_iter.c:330:9: sparse:     got void *
->> lib/iov_iter.c:362:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *to @@     got void *to @@
-   lib/iov_iter.c:362:9: sparse:     expected void volatile [noderef] __iomem *to
-   lib/iov_iter.c:362:9: sparse:     got void *to
->> lib/iov_iter.c:338:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *to @@     got void * @@
-   lib/iov_iter.c:338:9: sparse:     expected void volatile [noderef] __iomem *to
-   lib/iov_iter.c:338:9: sparse:     got void *
-
-vim +349 lib/iov_iter.c
-
-   333	
-   334	static __always_inline
-   335	size_t memcpy_iomem_from_iter(void *iter_from, size_t progress, size_t len,
-   336				      void *to, void *priv2)
-   337	{
- > 338		memcpy_toio(to + progress, iter_from, len);
-   339		return 0;
-   340	}
-   341	
-   342	static __always_inline
-   343	size_t copy_iomem_to_user_iter(void __user *iter_to, size_t progress,
-   344				       size_t len, void *from, void *priv2)
-   345	{
-   346		unsigned char buf[SMP_CACHE_BYTES];
-   347		size_t chunk = min(len, sizeof(buf));
-   348	
- > 349		memcpy_fromio(buf, from + progress, chunk);
-   350		chunk -= copy_to_user_iter(iter_to, progress, chunk, buf, priv2);
-   351		return len - chunk;
-   352	}
-   353	
-   354	static __always_inline
-   355	size_t copy_iomem_from_user_iter(void __user *iter_from, size_t progress,
-   356					 size_t len, void *to, void *priv2)
-   357	{
-   358		unsigned char buf[SMP_CACHE_BYTES];
-   359		size_t chunk = min(len, sizeof(buf));
-   360	
-   361		chunk -= copy_from_user_iter(iter_from, progress, chunk, buf, priv2);
- > 362		memcpy_toio(to, buf, chunk);
-   363		return len - chunk;
-   364	}
-   365	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+To be this looks more than sketchy with the actual exporting hat on,
+but I guess that's now how the cool kids use open by handle these days.
 
