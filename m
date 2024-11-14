@@ -1,213 +1,386 @@
-Return-Path: <linux-fsdevel+bounces-34783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E5D9C8B0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2F9C8B49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 188A5B248B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:50:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDB58B2DE24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE81FAC4A;
-	Thu, 14 Nov 2024 12:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4731FB3F9;
+	Thu, 14 Nov 2024 12:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKO38a7O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993321F8900;
-	Thu, 14 Nov 2024 12:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9F81FB3E0;
+	Thu, 14 Nov 2024 12:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588590; cv=none; b=dSoDI/gzQ74sx3ikktAN6zST6m6a7gbv9Yt9sAox1PSImwFzEmM/8yL/PLyqHR00L5sQvX52cyuOvKC6Ow7Es9xrwwqVif/dyEpyVF2gNP1aEAW6MQ3JQu6A4rVh47YW3dbUtSz6b+6V7LOFFL2GNbr0Wulvcny48ZyRvuOP0sY=
+	t=1731588769; cv=none; b=bPUMVFmt1amFoyK/Pq6pXrXbl0gKe0KTaNCSY469t5P+14kih7PmymDGzVhGAfmNCbcMxu4QFBou5/Zdn09Q0cNCLWa5+GqpdlRF5kXyDs7DvameKFWrj9CgEc50KLqUgHG1ClwRNglRdw/kCLfKXvo9zWvn45PxLQEOtHf/KfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588590; c=relaxed/simple;
-	bh=k3bq9txkWb0lZ8GyLDb0v5XOIzhc50LCc0dXpD/E+Lg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqkCmfmHsMp0VfmOsvUfLa16qqJuh+Q7uXuBo5Ds9+uJqjhZUBRsTg8yA6MPcYwzDa9YGQavb5ZtY+Q0rjgpHhvt+oeqiZb96QnyV/c2OdvUELI4XeC2V4c6IZhnnWlRBj+CdlHkmeRgt04F8ErGLVlS3Ln2yb92X15kBCVgHZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xq0Lt4tbQzQt1b;
-	Thu, 14 Nov 2024 20:48:22 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 98CD9140393;
-	Thu, 14 Nov 2024 20:49:38 +0800 (CST)
-Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
- 2024 20:49:38 +0800
-Date: Thu, 14 Nov 2024 20:48:21 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: John Garry <john.g.garry@oracle.com>, Dave Chinner <david@fromorbit.com>
-CC: Ritesh Harjani <ritesh.list@gmail.com>, <chandan.babu@oracle.com>,
-	<djwong@kernel.org>, <dchinner@redhat.com>, <hch@lst.de>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <catherine.hoang@oracle.com>,
-	<martin.petersen@oracle.com>
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
-References: <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
- <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
- <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
- <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
- <ZufBMioqpwjSFul+@dread.disaster.area>
- <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
- <ZuoCafOAVqSN6AIK@dread.disaster.area>
- <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+	s=arc-20240116; t=1731588769; c=relaxed/simple;
+	bh=UjcT7dBtB7ToYJCfSiyT2447CY82mEpIqgpZ28cgSs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTi5zieR3mA8fUk1nXzL7yaDlAx/nbcqPikUc+bGpX4xuWGYeA3SvlNcYu/ZKZFVZ8+Ij47W97hvLE5ycgT4u/Zp/rw20UodGU9XushYeSpJ36MCk+NM7UuGvmA64FfwzIYNubN/xQUHSCpVetugTHgWNpt3h5cusHx0K6b+IBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKO38a7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74740C4CECD;
+	Thu, 14 Nov 2024 12:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731588768;
+	bh=UjcT7dBtB7ToYJCfSiyT2447CY82mEpIqgpZ28cgSs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nKO38a7OqOO7e5ZKpwzXtnYOSyof+RH4JD8qKIiDTAMmlmWbrgE7RoIMOoi2cMx7F
+	 mnT/a6/rQsiLjAYX0HjxxefiGSZ/fEZjroS+9VDC/iWkS8zL+pXLJ1P2Do+QlHQKle
+	 aJuK8MiTlswOQnyX8MIMZePdpRWY8xYDhKBEBwqWKfzIeBZ4tfzo3tj3N3gzJBfVAI
+	 8dX1GvbCZ3/HgUN1bD25Aj9DGnVXnKjTqaIAVqik+h43XY1cB7jOxNUmX5/VZ6H372
+	 62sCj+suffeftfQgfAuzassoWia25XrdjVuaQycoqnZHK2gP2oVnq33hprq9tyQe+3
+	 bWUvhjJSmCWHA==
+Date: Thu, 14 Nov 2024 13:52:44 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
+Message-ID: <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner>
+References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
+ <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+In-Reply-To: <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
 
-On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
-> On 17/09/2024 23:27, Dave Chinner wrote:
-> > > # xfs_bmap -vvp  mnt/file
-> > > mnt/file:
-> > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> > >    0: [0..15]:         384..399          0 (384..399)          16 010000
-> > >    1: [16..31]:        400..415          0 (400..415)          16 000000
-> > >    2: [32..127]:       416..511          0 (416..511)          96 010000
-> > >    3: [128..255]:      256..383          0 (256..383)         128 000000
-> > > FLAG Values:
-> > >     0010000 Unwritten preallocated extent
-> > > 
-> > > Here we have unaligned extents wrt extsize.
-> > > 
-> > > The sub-alloc unit zeroing would solve that - is that what you would still
-> > > advocate (to solve that issue)?
-> > Yes, I thought that was already implemented for force-align with the
-> > DIO code via the extsize zero-around changes in the iomap code. Why
-> > isn't that zero-around code ensuring the correct extent layout here?
+On Wed, Nov 13, 2024 at 05:55:25PM +0000, Erin Shepherd wrote:
+> On 64-bit platforms, userspace can read the pidfd's inode in order to
+> get a never-repeated PID identifier. On 32-bit platforms this identifier
+> is not exposed, as inodes are limited to 32 bits. Instead expose the
+> identifier via export_fh, which makes it available to userspace via
+> name_to_handle_at
 > 
-> I just have not included the extsize zero-around changes here. They were
-> just grouped with the atomic writes support, as they were added specifically
-> for the atomic writes support. Indeed - to me at least - it is strange that
-> the DIO code changes are required for XFS forcealign implementation. And,
-> even if we use extsize zero-around changes for DIO path, what about buffered
-> IO?
+> In addition we implement fh_to_dentry, which allows userspace to
+> recover a pidfd from a PID file handle.
+> 
+> We stash the process' PID in the root pid namespace inside the handle,
+> and use that to recover the pid (validating that pid->ino matches the
+> value in the handle, i.e. that the pid has not been reused).
+> 
+> We use the root namespace in order to ensure that file handles can be
+> moved across namespaces; however, we validate that the PID exists in
+> the current namespace before returning the inode.
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+> ---
+
+I think you need at least something like the following completely
+untested draft on top:
+
+- the pidfs_finish_open_by_handle_at() is somewhat of a clutch to handle
+  thread vs thread-group pidfds but it works.
+
+- In contrast to pidfd_open() that uses dentry_open() to create a pidfd
+  open_by_handle_at() uses file_open_root(). That's overall fine but
+  makes pidfds subject to security hooks which they aren't via
+  pidfd_open(). It also necessitats pidfs_finish_open_by_handle_at().
+  There's probably other solutions I'm not currently seeing.
+
+- The exportfs_decode_fh_raw() call that's used to decode the pidfd is
+  passed vfs_dentry_acceptable() as acceptability callback. For pidfds
+  we don't need any of that functionality and we don't need any of the
+  disconnected dentry handling logic. So the easiest way to fix that is
+  to rely on EXPORT_OP_UNRESTRICTED_OPEN to skip everything. That in
+  turns means the only acceptability we have is the nop->fh_to_dentry()
+  callback for pidfs.
+
+- This all really needs rigorous selftests before we can even think of
+  merging any of this.
+
+Anway, here's the _completely untested, quickly drafted_ diff on top:
+
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 4f2dd4ab4486..65c93f7132d4 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -450,6 +450,13 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
+ 		goto err_result;
+ 	}
+ 
++	/*
++	 * The filesystem has no acceptance criteria other than those in
++	 * nop->fh_to_dentry().
++	 */
++	if (nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
++		return result;
++
+ 	/*
+ 	 * If no acceptance criteria was specified by caller, a disconnected
+ 	 * dentry is also accepatable. Callers may use this mode to query if
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 056116e58f43..89c2efacc0c3 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -11,6 +11,7 @@
+ #include <linux/personality.h>
+ #include <linux/uaccess.h>
+ #include <linux/compat.h>
++#include <linux/pidfs.h>
+ #include "internal.h"
+ #include "mount.h"
+ 
+@@ -218,20 +219,21 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
+ {
+ 	int handle_dwords;
+ 	struct vfsmount *mnt = ctx->root.mnt;
++	struct dentry *dentry;
+ 
+ 	/* change the handle size to multiple of sizeof(u32) */
+ 	handle_dwords = handle->handle_bytes >> 2;
+-	path->dentry = exportfs_decode_fh_raw(mnt,
+-					  (struct fid *)handle->f_handle,
+-					  handle_dwords, handle->handle_type,
+-					  ctx->fh_flags,
+-					  vfs_dentry_acceptable, ctx);
+-	if (IS_ERR_OR_NULL(path->dentry)) {
+-		if (path->dentry == ERR_PTR(-ENOMEM))
++	dentry = exportfs_decode_fh_raw(mnt, (struct fid *)handle->f_handle,
++					handle_dwords, handle->handle_type,
++					ctx->fh_flags, vfs_dentry_acceptable,
++					ctx);
++	if (IS_ERR_OR_NULL(dentry)) {
++		if (dentry == ERR_PTR(-ENOMEM))
+ 			return -ENOMEM;
+ 		return -ESTALE;
+ 	}
+ 	path->mnt = mntget(mnt);
++	path->dentry = dentry;
+ 	return 0;
+ }
+ 
+@@ -239,7 +241,7 @@ static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
+ 				 unsigned int o_flags)
+ {
+ 	struct path *root = &ctx->root;
+-	struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
++	const struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
+ 
+ 	if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
+ 		return true;
+@@ -342,7 +344,7 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
+ 			   int open_flag)
+ {
+ 	long retval = 0;
+-	struct path path;
++	struct path path __free(path_put) = {};
+ 	struct file *file;
+ 	int fd;
+ 
+@@ -351,19 +353,24 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
+ 		return retval;
+ 
+ 	fd = get_unused_fd_flags(open_flag);
+-	if (fd < 0) {
+-		path_put(&path);
++	if (fd < 0)
+ 		return fd;
+-	}
++
+ 	file = file_open_root(&path, "", open_flag, 0);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(fd);
+-		retval =  PTR_ERR(file);
+-	} else {
+-		retval = fd;
+-		fd_install(fd, file);
++		return PTR_ERR(file);
+ 	}
+-	path_put(&path);
++
++	retval = pidfs_finish_open_by_handle_at(file, open_flag);
++	if (retval) {
++		put_unused_fd(fd);
++		fput(file);
++		return retval;
++	}
++
++	retval = fd;
++	fd_install(fd, file);
+ 	return retval;
+ }
+ 
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 0684a9b8fe71..19948002f395 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -237,6 +237,24 @@ struct pid *pidfd_pid(const struct file *file)
+ 	return file_inode(file)->i_private;
+ }
+ 
++int pidfs_finish_open_by_handle_at(struct file *file, unsigned int oflags)
++{
++	struct pid *pid;
++	bool thread = oflags & PIDFD_THREAD;
++
++	pid = pidfd_pid(file);
++	if (IS_ERR(pid))
++		return 0;
++
++	if (!pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
++		return -EINVAL;
++
++	if (thread)
++		file->f_flags |= PIDFD_THREAD;
++
++	return 0;
++}
++
+ static struct vfsmount *pidfs_mnt __ro_after_init;
+ 
+ #if BITS_PER_LONG == 32
+@@ -377,7 +395,7 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+ 					 int fh_len, int fh_type)
+ {
+ 	int ret;
+-	struct path path;
++	struct path path __free(path_put) = {};
+ 	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
+ 	struct pid *pid;
+ 
+@@ -393,11 +411,12 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+ 	}
+ 
+ 	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+-	if (ret < 0)
++	if (ret < 0) {
++		put_pid(pid);
+ 		return ERR_PTR(ret);
++	}
+ 
+-	mntput(path.mnt);
+-	return path.dentry;
++	return dget(path.dentry);
+ }
+ 
+ static const struct export_operations pidfs_export_operations = {
+diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+index 75bdf9807802..9a4130056e7d 100644
+--- a/include/linux/pidfs.h
++++ b/include/linux/pidfs.h
+@@ -3,6 +3,7 @@
+ #define _LINUX_PID_FS_H
+ 
+ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
++int pidfs_finish_open_by_handle_at(struct file *file, unsigned int oflags);
+ void __init pidfs_init(void);
+ 
+ #endif /* _LINUX_PID_FS_H */
 
 
-I've been reviewing and testing the XFS atomic write patch series. Since
-there haven't been any new responses to the previous discussions on this
-issue, I'd like to inquire about the buffered IO problem with force-aligned
-files, which is a scenario we might encounter.
-
-Consider a case where the file supports force-alignment with a 64K extent size,
-and the system page size is 4K. Take the following commands as an example:
-
-xfs_io  -c "pwrite 64k 64k" mnt/file
-xfs_io  -c "pwrite 8k 8k" mnt/file
-
-If unaligned unwritten extents are not permitted, we need to zero out the
-sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
-data. While this can be handled relatively easily in direct I/O scenarios,
-it presents significant challenges in buffered I/O operations. The main
-difficulty arises because the extent size (64K) is larger than the page
-size (4K), and our current code base has substantial limitations in handling
-such cases.
-
-Any thoughts on this?
-
-Thanks,
-Long Li
-
+>  fs/pidfs.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 61 insertions(+), 1 deletion(-)
 > 
-> BTW, I still have concern with this extsize zero-around change which I was
-> making:
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 80675b6bf88459c22787edaa68db360bdc0d0782..0684a9b8fe71c5205fb153b2714bc9c672045fd5 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/anon_inodes.h>
+> +#include <linux/exportfs.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+>  #include <linux/magic.h>
+> @@ -347,11 +348,69 @@ static const struct dentry_operations pidfs_dentry_operations = {
+>  	.d_prune	= stashed_dentry_prune,
+>  };
+>  
+> +#define PIDFD_FID_LEN 3
+> +
+> +struct pidfd_fid {
+> +	u64 ino;
+> +	s32 pid;
+> +} __packed;
+> +
+> +static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> +			   struct inode *parent)
+> +{
+> +	struct pid *pid = inode->i_private;
+> +	struct pidfd_fid *fid = (struct pidfd_fid *)fh;
+> +
+> +	if (*max_len < PIDFD_FID_LEN) {
+> +		*max_len = PIDFD_FID_LEN;
+> +		return FILEID_INVALID;
+> +	}
+> +
+> +	fid->ino = pid->ino;
+> +	fid->pid = pid_nr(pid);
+> +	*max_len = PIDFD_FID_LEN;
+> +	return FILEID_INO64_GEN;
+> +}
+> +
+> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+> +					 struct fid *gen_fid,
+> +					 int fh_len, int fh_type)
+> +{
+> +	int ret;
+> +	struct path path;
+> +	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
+> +	struct pid *pid;
+> +
+> +	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
+> +		return NULL;
+> +
+> +	scoped_guard(rcu) {
+> +		pid = find_pid_ns(fid->pid, &init_pid_ns);
+> +		if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0)
+> +			return NULL;
+> +
+> +		pid = get_pid(pid);
+> +	}
+> +
+> +	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+> +	if (ret < 0)
+> +		return ERR_PTR(ret);
+> +
+> +	mntput(path.mnt);
+> +	return path.dentry;
+> +}
+> +
+> +static const struct export_operations pidfs_export_operations = {
+> +	.encode_fh = pidfs_encode_fh,
+> +	.fh_to_dentry = pidfs_fh_to_dentry,
+> +	.flags = EXPORT_OP_UNRESTRICTED_OPEN,
+> +};
+> +
+>  static int pidfs_init_inode(struct inode *inode, void *data)
+>  {
+>  	inode->i_private = data;
+>  	inode->i_flags |= S_PRIVATE;
+> -	inode->i_mode |= S_IRWXU;
+> +	inode->i_mode |= S_IRWXU | S_IRWXG | S_IRWXO;
+>  	inode->i_op = &pidfs_inode_operations;
+>  	inode->i_fop = &pidfs_file_operations;
+>  	/*
+> @@ -382,6 +441,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
+>  		return -ENOMEM;
+>  
+>  	ctx->ops = &pidfs_sops;
+> +	ctx->eops = &pidfs_export_operations;
+>  	ctx->dops = &pidfs_dentry_operations;
+>  	fc->s_fs_info = (void *)&pidfs_stashed_ops;
+>  	return 0;
 > 
-> xfs_iomap_write_unwritten()
-> {
-> 	unsigned int rounding;
-> 
-> 	/* when converting anything unwritten, we must be spanning an 	alloc unit,
-> so round up/down */
-> 	if (rounding > 1) {
-> 		offset_fsb = rounddown(rounding);
-> 		count_fsb = roundup(rounding);
-> 	}
-> 
-> 	...
-> 	do {
-> 		xfs_bmapi_write();
-> 		...
-> 		xfs_trans_commit();
-> 	} while ();
-> }
-> 
-> As mentioned elsewhere, it's a bit of a bodge (to do this rounding).
-> 
-> > 
-> > > > FWIW, I also understand things are different if we are doing 128kB
-> > > > atomic writes on 16kB force aligned files. However, in this
-> > > > situation we are treating the 128kB atomic IO as eight individual
-> > > > 16kB atomic IOs that are physically contiguous.
-> > > Yes, if 16kB force aligned, userspace can only issue 16KB atomic writes.
-> > Right, but the eventual goal (given the statx parameters) is to be
-> > able to do 8x16kB sequential atomic writes as a single 128kB IO, yes?
-> 
-> No, if atomic write unit max is 16KB, then userspace can only issue a single
-> 16KB atomic write.
-> 
-> However, some things to consider:
-> a. the block layer may merge those 16KB atomic writes
-> b. userspace may also merge 16KB atomic writes and issue a larger atomic
-> write (if atomic write unit max is > 16KB)
-> 
-> I had been wondering if there is any value in a lib for helping with b.
-> 
-> > 
-> > > > > > Again, this is different to the traditional RT file behaviour - it
-> > > > > > can use unwritten extents for sub-alloc-unit alignment unmaps
-> > > > > > because the RT device can align file offset to any physical offset,
-> > > > > > and issue unaligned sector sized IO without any restrictions. Forced
-> > > > > > alignment does not have this freedom, and when we extend forced
-> > > > > > alignment to RT files, it will not have the freedom to use
-> > > > > > unwritten extents for sub-alloc-unit unmapping, either.
-> > > > > > 
-> > > > > So how do you think that we should actually implement
-> > > > > xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
-> > > > > like:
-> > > > > 
-> > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
-> > > > >                   WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
-> > > > >                   return 0;
-> > > > >           }
-> > > > > +	if (xfs_inode_has_forcealign(ip))
-> > > > > +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
-> > > > > first_unmap_block);
-> > > > >           error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
-> > > > Yes, it would be something like that, except it would have to be
-> > > > done before first_unmap_block is verified.
-> > > > 
-> > > ok, and are you still of the opinion that this does not apply to rtvol?
-> > The rtvol is*not* force-aligned. It -may- have some aligned
-> > allocation requirements that are similar (i.e. sb_rextsize > 1 fsb)
-> > but it does*not* force-align extents, written or unwritten.
-> > 
-> > The moment we add force-align support to RT files (as is the plan),
-> > then the force-aligned inodes on the rtvol will need to behave as
-> > force aligned inodes, not "rtvol" inodes.
-> 
-> ok, fine
-> 
-> Thanks,
-> John
-> 
-> 
+> -- 
+> 2.46.1
 > 
 
