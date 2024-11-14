@@ -1,128 +1,471 @@
-Return-Path: <linux-fsdevel+bounces-34758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFA99C8875
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:09:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD93B9C88A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 867B5B37792
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 10:42:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E539281C06
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 11:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D2218991E;
-	Thu, 14 Nov 2024 10:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AAA1F8F19;
+	Thu, 14 Nov 2024 11:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+CAJaQU"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FUPskEiX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2291F818B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 10:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DE01F8900
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 11:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580907; cv=none; b=FHnWyMIdSgHxae/0EZ0oe9kcGg0KrNo4QdT9ct9qI10JIUU8E+teWn4PSvpxwKQMj2fapp1/25gqtVdxzN2ap4PP39M42YNfRADGIQDYeDT/qIeawGuq+SzJ9zBFHUqRMjH70lby+u5uoLrCizxI+qSeMbaReGzl8vwzYPlre10=
+	t=1731583038; cv=none; b=BtuNQzgS5J0RA3xwbeUHko88aYhCy8cTj/L+cRlf3SIVYKBVJmTZ6sXDZDHOSLd4CkBqK/9/FQi5enzzpm7etmR7nFHQrV/v+eHTMvdOjTuS01iFZZuwGP5SfET5XZJf12afgT8VPx3iBYmfZlXgYUxzbngevYFeQmd0iRATsiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580907; c=relaxed/simple;
-	bh=9R6KqGQWB/QtAMdDlwbVD0gupHiDeJpaVWqmK4mNQgM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iG3gHo7JIs5fUI/0ZYl+3KQsdTzxqUPw864FBNcbRAGzwDX2+dUy4PI/MroXcHFWq5MHXpS2SSibNeHGk/udWgGLeXWM/v/ySuojWVcpyn6B1GyhW1tG3G9vLVrmQPqlLVNwpbQbla2NJwtSxY3A/43MHMfQa2bl+qOt3reIfwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+CAJaQU; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720c286bcd6so355866b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 02:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731580905; x=1732185705; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wcRtZRAtklIfbX452cq3UuL4sVx5Lq8L0ye2jnnDq/U=;
-        b=H+CAJaQUWZdiEqM4PNsz7hmL6+mWflLkJ9Kn5ecsLpVsEIPUd4T8aHf6nsoAJJxT6W
-         E4T4TcLozNZvi1gtLNTX0rZ8vstJQuH/wcV1nGvttkY0F/XqQUnjEepDbEL1vqIliMgw
-         OKJUiHisSllKavwhSejLLR22/PydVPVqzbKhJ4PXk2PnBoWqK2Ss8GMbopkpceTxBEe+
-         j4a3Koy34UhjTdZqvv0Do1wsJQV1vElLJaI1SbZE4HNFB/BCAHALeZDGcE6zKj60+/ua
-         WuXzgfr5r4wdB8v1Zps307TFe8Q9Kg2KwpryZGTjSyHDvnw6MMXHjy3iJWq1F0lPyK8b
-         t0Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580905; x=1732185705;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wcRtZRAtklIfbX452cq3UuL4sVx5Lq8L0ye2jnnDq/U=;
-        b=CeyA2k0JIBvWH4aafcJb6UYgV3vpPOBup/HNeTxq3FaWuPn++W7RwoVFlUZB+UDQ2g
-         teD8Sx2pIBZzPKOAnTm43rkPPlmJQSNEeWEsjEI0S6q3QSAk96mS1DLoQzP85C5Tg7wr
-         z1QJCCWQxtcZdJok4iy+kKSFLhBMhLv0+hTzu/RHVpKRthsAzgsiwp3D6hnaLloiVluF
-         GnBchOv1gP7jgaTRKfOFzAxgoXv7Peoh9y/4euwhoC6BoNBEt9yfHbNtTRN0dylG3IZo
-         7Rz4b6LgWSZPuOudAHizV0waUzoa3Q0Za7Ar9lGDeqdIteYRoctcTRpL8FKycgGM6ofr
-         SW1g==
-X-Forwarded-Encrypted: i=1; AJvYcCURFg4gWcQzzL+6RWyHKsxnsg78uVUP7RKu37+SuzsCmf1mlRaxn+7W5Ow4dgdZPktrwNp0dG1iUIIObftJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOoF4nka3z6jCUxOQYjhwjywcnm5gDlCcnvSsElUgrT/otSzfp
-	KFigMaiO4Ae6pvi5O6Vo/S/ITaMueOlmL2aHyX4PQBOBZ1jJPr/p
-X-Google-Smtp-Source: AGHT+IETO0T5CdPmBixIh/jL5AuC+2KzjP5/EEdAOtq5cp8iWXa+uieiimcZX5nA4JZQrpMEgBBSCg==
-X-Received: by 2002:a17:90b:6c7:b0:2e0:5748:6ea1 with SMTP id 98e67ed59e1d1-2e9b1797ba9mr29895862a91.37.1731580905114;
-        Thu, 14 Nov 2024 02:41:45 -0800 (PST)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06f9c6b1sm885062a91.32.2024.11.14.02.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 02:41:44 -0800 (PST)
-Date: Thu, 14 Nov 2024 19:41:39 +0900
-Message-ID: <m2frnuf670.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: gerg@linux-m68k.org
-Cc: geert@linux-m68k.org,
-	johannes@sipsolutions.net,
-	linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	ebiederm@xmission.com,
-	kees@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	dalias@libc.org
-Subject: Re: [RFC PATCH v2 02/13] x86/um: nommu: elf loader for fdpic
-In-Reply-To: <7290bc34-d398-4ea1-8e52-193f1021e114@linux-m68k.org>
-References: <cover.1731290567.git.thehajime@gmail.com>
-	<ea2a3fb86915664d54ba174e043046f684e7cf8c.1731290567.git.thehajime@gmail.com>
-	<CAMuHMdU+Lyj3C-P3kQMd6WfyjBY+YXZSx3Vv6C2y9k__pK45vg@mail.gmail.com>
-	<m2pln0f6mm.wl-thehajime@gmail.com>
-	<CAMuHMdXC0BbiOjWsiN1Mg8Jkm03_H6_-fERSnFEB2pkW_VWmaA@mail.gmail.com>
-	<8bbfe73f7f1ef9f1a4674d963d1c4e8181f33341.camel@sipsolutions.net>
-	<f262fb8364037899322b63906b525b13dc4546c2.camel@sipsolutions.net>
-	<CAMuHMdVRB46fyFKjZn3Zw2bb8_mqZasqh-J7vse-GQkA3_OQDg@mail.gmail.com>
-	<m2o72jff2a.wl-thehajime@gmail.com>
-	<CAMuHMdXKAz0bxBGrbbHD6haeCbhYh=pCb4stox1fOifCvyCwpw@mail.gmail.com>
-	<m2msi2g15z.wl-thehajime@gmail.com>
-	<7290bc34-d398-4ea1-8e52-193f1021e114@linux-m68k.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/26.3 Mule/6.0
+	s=arc-20240116; t=1731583038; c=relaxed/simple;
+	bh=gaquD2octgV2v7EQv0ib4VIEev89KJv1gvJqH3JUN04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=ZylAvqEEHTIMtU58nwgq+ByWZySQb0/r0JpC+ZaBydSgX5UDBRGpZDzW3vZ2QVAMPEvXcw4F2clMyak46ZTIq3i5rhGhrvaNQFKimq0/RWtADhi29UGxI0ZgqAxJRqB2B12O+SU0hITS9472oFCdgGrCKecG1bclHqetNh/7OCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FUPskEiX; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241114111707epoutp02218edb34cf93dfe759022c0199014286~H0ZbdZJLF0203302033epoutp025
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 11:17:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241114111707epoutp02218edb34cf93dfe759022c0199014286~H0ZbdZJLF0203302033epoutp025
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731583027;
+	bh=3FdKV1Wv4Xsw/+85FgxRrOt0GL+RFqV5XkjSF/+rAdw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=FUPskEiXEuN7zFVfE3zQT1gnSVlHoc/X4EsrvQ/fNKzKdEWkqSj71eOOWjIKeyL9H
+	 +kxHUqAIIdSyCRBwlURPzOWmKnDTjbRm41KTga0O8YF4vDcZYMThAOHwSFa1XbcMyL
+	 1Sv1rT2vMXbVX2/d06Lm4ah2jkPxsfEZT5gwXNDE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241114111706epcas5p223610d9d3b7635ac6890efeabc4e36e0~H0ZamRoH30689906899epcas5p2c;
+	Thu, 14 Nov 2024 11:17:06 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XpyKX70mRz4x9Pt; Thu, 14 Nov
+	2024 11:17:04 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	70.99.09770.03CD5376; Thu, 14 Nov 2024 20:17:04 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241114105326epcas5p103b2c996293fa680092b97c747fdbd59~H0EwCxj3t1325013250epcas5p1m;
+	Thu, 14 Nov 2024 10:53:26 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241114105326epsmtrp2247251f85d6872910a76e29fd18d771b~H0EwA1vWe1919419194epsmtrp2w;
+	Thu, 14 Nov 2024 10:53:26 +0000 (GMT)
+X-AuditID: b6c32a4a-e25fa7000000262a-99-6735dc30ab74
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E8.90.35203.6A6D5376; Thu, 14 Nov 2024 19:53:26 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241114105324epsmtip2d1a18eb15d736183da016a1503504c24~H0EtpfC7-0885508855epsmtip2k;
+	Thu, 14 Nov 2024 10:53:23 +0000 (GMT)
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+	martin.petersen@oracle.com, asml.silence@gmail.com, anuj1072538@gmail.com,
+	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk
+Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+	linux-fsdevel@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>
+Subject: [PATCH v9 00/11] Read/Write with meta/integrity
+Date: Thu, 14 Nov 2024 16:15:06 +0530
+Message-Id: <20241114104517.51726-1-anuj20.g@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmuq7BHdN0g5bfhhYfv/5msWia8JfZ
+	Ys6qbYwWq+/2s1m8PvyJ0eLmgZ1MFitXH2WyeNd6jsVi9vRmJotJh64xWuy9pW2xZ+9JFov5
+	y56yW3Rf38Fmsfz4PyaL83+Ps1qcnzWH3UHQY+esu+wel8+Wemxa1cnmsXlJvcfumw1sHh+f
+	3mLx6NuyitHjzIIj7B6fN8l5bHrylimAKyrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ
+	19DSwlxJIS8xN9VWycUnQNctMwfoHSWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpO
+	gUmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdkbD4dKCC7EVS+Y/Y2xgnOLSxcjJISFgItG2/wwT
+	iC0ksJtRomGqWBcjF5D9iVHi5qv7zBDON0aJ5a+72WE6Nn2cDJXYyyjReLufEcL5zCjxZNdu
+	ZpAqNgF1iSPPW8ESIgJ7GCV6F55mAXGYBV4ySixdtYgFpEpYwEKiadIERhCbRUBVYvamyWDd
+	vAKWEj8ffWOF2CcvMfPSd3aIuKDEyZlPwHqZgeLNW2eD3SEhsIVD4szJ3VAHukj86Wxmg7CF
+	JV4d3wIVl5L4/G4vVDxd4sflp0wQdoFE87F9jBC2vUTrqX6goRxACzQl1u/ShwjLSkw9tY4J
+	Yi+fRO/vJ1CtvBI75sHYShLtK+dA2RISe881QNkeEhd/3WWDhHCsxLmeKywTGOVnIXlnFpJ3
+	ZiFsXsDIvIpRMrWgODc9tdi0wCgvtRwes8n5uZsYwclay2sH48MHH/QOMTJxMB5ilOBgVhLh
+	PeVsnC7Em5JYWZValB9fVJqTWnyI0RQYxhOZpUST84H5Iq8k3tDE0sDEzMzMxNLYzFBJnPd1
+	69wUIYH0xJLU7NTUgtQimD4mDk6pBqaUs968z7xn3VtrHHjIdvqU9l/K7Ck7DGz23bEpP7mL
+	lz/r4mUeLu/UpU9f/5A+fyDl474gA9t4gYNeJx2SuWeW5Cu5Gx2YdkqBZbHbdevv7+viNKJ/
+	J0x8fcViWuCxiq+vWp+t92ONKzm40ppha36z6FTGHSxJCypfJ7Ar1qSe1V1/n3Xuv6mlLYUK
+	pnZPSr5LbpuUK3l07oWY41MlZH3NDRkP/GA+quzP/tVsk2O8UE9beo1vaC3P5viLha3yZxlr
+	9/b9Dlh8Xl/kgr2dT5xOwqINr5/nXAhy2qm3aEMzR/mMLRxBWqcNdcr7mp9WuTZty0gOUnx9
+	Os5fP27yq8bLiv+tF5zSeSKqdoR7pRJLcUaioRZzUXEiAGoj9CpfBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvO6ya6bpBmvvyll8/PqbxaJpwl9m
+	izmrtjFarL7bz2bx+vAnRoubB3YyWaxcfZTJ4l3rORaL2dObmSwmHbrGaLH3lrbFnr0nWSzm
+	L3vKbtF9fQebxfLj/5gszv89zmpxftYcdgdBj52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweXx8
+	eovFo2/LKkaPMwuOsHt83iTnsenJW6YArigum5TUnMyy1CJ9uwSujIbDpQUXYiuWzH/G2MA4
+	xaWLkZNDQsBEYtPHycxdjFwcQgK7GSU+HTjMApGQkDj1chkjhC0ssfLfc3aIoo+MElebWplB
+	EmwC6hJHnreCFYkInGCUmD/RDaSIGaRowpfZYJOEBSwkmiZNACtiEVCVmL1pMlgzr4ClxM9H
+	31ghNshLzLz0nR0iLihxcuYTsF5moHjz1tnMExj5ZiFJzUKSWsDItIpRMrWgODc9t9iwwDAv
+	tVyvODG3uDQvXS85P3cTIzhutDR3MG5f9UHvECMTB+MhRgkOZiUR3lPOxulCvCmJlVWpRfnx
+	RaU5qcWHGKU5WJTEecVf9KYICaQnlqRmp6YWpBbBZJk4OKUamAojbjf+vqm/LblcUKmcV37N
+	3pciL47vYP2lzqBRPilCU84116BG0kxL5m2R9hWDzm9n0qZ9y3mk+c1ZJiX0Xppm3QPW1Zfm
+	bny64pnqlvMaNkt036jdrxNJMp7brL114axNrQdFD/JKN+pH9IZwGG1KXxMaqPNBtGbtW5F/
+	ZvrVGx8eazvZd9zm395XKopSiw+cOm6y1Oesz5cfW3uEpsw5tuEvo7l97oW+3Mtp7m4rPni7
+	c32YPPX305CMqcX7l53d9dFy2syZz9Z39ajONJScz+Icu2Ex948cFgZHkwnrapW2Xp69SGQS
+	28muWQeqwtj0vrKbBR6If5e9m9cq3LHIwbmII9m/dXbPhhlq85RYijMSDbWYi4oTAWBW1UIK
+	AwAA
+X-CMS-MailID: 20241114105326epcas5p103b2c996293fa680092b97c747fdbd59
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241114105326epcas5p103b2c996293fa680092b97c747fdbd59
+References: <CGME20241114105326epcas5p103b2c996293fa680092b97c747fdbd59@epcas5p1.samsung.com>
+
+This adds a new io_uring interface to pass additional attributes with
+read/write. It can be done using two ways.
+
+1. Passing the attribute information via user pointer.
+2. Passing the attribute information inline with SQE/SQE128.
+
+We have had discussions in the past about using the SQE128 space for passing
+PI fields. Still if there are concerns about it, can we please consider
+this patchset for inclusion only with the user pointer approach for now
+(and drop patch 7)?
+
+Example program for using the interface is appended below [1].
+In the program, write is done via inline scheme and read is done via user
+pointer scheme.
+
+The patchset is on top of block/for-next.
+
+Block path (direct IO) , NVMe and SCSI driver are modified to support
+this.
+
+Patch 1 is an enhancement patch.
+Patch 2 is required to make the bounce buffer copy back work correctly.
+Patch 3 to 5 are prep patches.
+Patch 6 and 7 adds the io_uring support.
+Patch 8 gives us unified interface for user and kernel generated
+integrity.
+Patch 9 adds support in SCSI and patch 10 in NVMe.
+Patch 11 adds the support for block direct IO.
+
+Changes since v8:
+https://lore.kernel.org/io-uring/20241106121842.5004-1-anuj20.g@samsung.com/
+
+- add option of the pass the PI information from user space via a
+  pointer (Pavel)
+
+Changes since v7:
+https://lore.kernel.org/io-uring/20241104140601.12239-1-anuj20.g@samsung.com/
+
+- change the sign-off order (hch)
+- add a check for doing metadata completion handling only for async-io
+- change meta_type name to something more meaningful (hch, keith)
+- add detail description in io-uring patch (hch)
+
+Changes since v6:
+https://lore.kernel.org/linux-block/20241030180112.4635-1-joshi.k@samsung.com/
+
+- io_uring changes (bring back meta_type, move PI to the end of SQE128)
+- Fix robot warnings
+
+Changes since v5:
+https://lore.kernel.org/linux-block/20241029162402.21400-1-anuj20.g@samsung.com/
+
+- remove meta_type field from SQE (hch, keith)
+- remove __bitwise annotation (hch)
+- remove BIP_CTRL_NOCHECK from scsi (hch)
+
+Changes since v4:
+https://lore.kernel.org/linux-block/20241016112912.63542-1-anuj20.g@samsung.com/
+
+- better variable names to describe bounce buffer copy back (hch)
+- move defintion of flags in the same patch introducing uio_meta (hch)
+- move uio_meta definition to include/linux/uio.h (hch)
+- bump seed size in uio_meta to 8 bytes (martin)
+- move flags definition to include/uapi/linux/fs.h (hch)
+- s/meta/metadata in commit description of io-uring (hch)
+- rearrange the meta fields in sqe for cleaner layout
+- partial submission case is not applicable as, we are only plumbing for async case
+- s/META_TYPE_INTEGRITY/META_TYPE_PI (hch, martin)
+- remove unlikely branching (hch)
+- Better formatting, misc cleanups, better commit descriptions, reordering commits(hch)
+
+Changes since v3:
+https://lore.kernel.org/linux-block/20240823103811.2421-1-anuj20.g@samsung.com/
+
+- add reftag seed support (Martin)
+- fix incorrect formatting in uio_meta (hch)
+- s/IOCB_HAS_META/IOCB_HAS_METADATA (hch)
+- move integrity check flags to block layer header (hch)
+- add comments for BIP_CHECK_GUARD/REFTAG/APPTAG flags (hch)
+- remove bio_integrity check during completion if IOCB_HAS_METADATA is set (hch)
+- use goto label to get rid of duplicate error handling (hch)
+- add warn_on if trying to do sync io with iocb_has_metadata flag (hch)
+- remove check for disabling reftag remapping (hch)
+- remove BIP_INTEGRITY_USER flag (hch)
+- add comment for app_tag field introduced in bio_integrity_payload (hch)
+- pass request to nvme_set_app_tag function (hch)
+- right indentation at a place in scsi patch (hch)
+- move IOCB_HAS_METADATA to a separate fs patch (hch)
+
+Changes since v2:
+https://lore.kernel.org/linux-block/20240626100700.3629-1-anuj20.g@samsung.com/
+- io_uring error handling styling (Gabriel)
+- add documented helper to get metadata bytes from data iter (hch)
+- during clone specify "what flags to clone" rather than
+"what not to clone" (hch)
+- Move uio_meta defination to bio-integrity.h (hch)
+- Rename apptag field to app_tag (hch)
+- Change datatype of flags field in uio_meta to bitwise (hch)
+- Don't introduce BIP_USER_CHK_FOO flags (hch, martin)
+- Driver should rely on block layer flags instead of seeing if it is
+user-passthrough (hch)
+- update the scsi code for handling user-meta (hch, martin)
+
+Changes since v1:
+https://lore.kernel.org/linux-block/20240425183943.6319-1-joshi.k@samsung.com/
+- Do not use new opcode for meta, and also add the provision to introduce new
+meta types beyond integrity (Pavel)
+- Stuff IOCB_HAS_META check in need_complete_io (Jens)
+- Split meta handling in NVMe into a separate handler (Keith)
+- Add meta handling for __blkdev_direct_IO too (Keith)
+- Don't inherit BIP_COPY_USER flag for cloned bio's (Christoph)
+- Better commit descriptions (Christoph)
+
+Changes since RFC:
+- modify io_uring plumbing based on recent async handling state changes
+- fixes/enhancements to correctly handle the split for meta buffer
+- add flags to specify guard/reftag/apptag checks
+- add support to send apptag
+
+[1]
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <linux/fs.h>
+#include <linux/io_uring.h>
+#include <linux/types.h>
+#include "liburing.h"
+
+/*
+ * write data/meta. read both. compare. send apptag too.
+ * prerequisite:
+ * protected xfer: format namespace with 4KB + 8b, pi_type = 1
+ * For testing reftag remapping on device-mapper, create a
+ * device-mapper and run this program. Device mapper creation:
+ * # echo 0 80 linear /dev/nvme0n1 0 > /tmp/table
+ * # echo 80 160 linear /dev/nvme0n1 200 >> /tmp/table
+ * # dmsetup create two /tmp/table
+ * # ./a.out /dev/dm-0
+ */
+
+#define DATA_LEN 4096
+#define META_LEN 8
+
+struct t10_pi_tuple {
+        __be16  guard;
+        __be16  apptag;
+        __be32  reftag;
+};
+
+int main(int argc, char *argv[])
+{
+         struct io_uring ring;
+         struct io_uring_sqe *sqe = NULL;
+         struct io_uring_cqe *cqe = NULL;
+         void *wdb,*rdb;
+         char wmb[META_LEN], rmb[META_LEN];
+         int fd, ret, blksize;
+         struct stat fstat;
+         unsigned long long offset = DATA_LEN * 10;
+         struct t10_pi_tuple *pi;
+         struct io_uring_sqe_ext *sqe_ext;
+	 struct io_uring_attr_pi pi_attr;
+	 struct io_uring_attr_vec attr_vec;
+
+         if (argc != 2) {
+                 fprintf(stderr, "Usage: %s <block-device>", argv[0]);
+                 return 1;
+         };
+
+         if (stat(argv[1], &fstat) == 0) {
+                 blksize = (int)fstat.st_blksize;
+         } else {
+                 perror("stat");
+                 return 1;
+         }
+
+         if (posix_memalign(&wdb, blksize, DATA_LEN)) {
+                 perror("posix_memalign failed");
+                 return 1;
+         }
+         if (posix_memalign(&rdb, blksize, DATA_LEN)) {
+                 perror("posix_memalign failed");
+                 return 1;
+         }
+
+         memset(wdb, 0, DATA_LEN);
+
+         fd = open(argv[1], O_RDWR | O_DIRECT);
+         if (fd < 0) {
+                 printf("Error in opening device\n");
+                 return 0;
+         }
+
+         ret = io_uring_queue_init(8, &ring, IORING_SETUP_SQE128);
+         if (ret) {
+                 fprintf(stderr, "ring setup failed: %d\n", ret);
+                 return 1;
+         }
+
+         /* write data + meta-buffer to device */
+         sqe = io_uring_get_sqe(&ring);
+         if (!sqe) {
+                 fprintf(stderr, "get sqe failed\n");
+                 return 1;
+         }
+
+         io_uring_prep_write(sqe, fd, wdb, DATA_LEN, offset);
+
+	 sqe->attr_inline_flags = ATTR_FLAG_PI;
+         sqe_ext= (struct io_uring_sqe_ext *) (sqe + 1);
+         sqe_ext->rw_pi.addr = (__u64)wmb;
+         sqe_ext->rw_pi.len = META_LEN;
+         /* flags to ask for guard/reftag/apptag*/
+         sqe_ext->rw_pi.flags = IO_INTEGRITY_CHK_GUARD | IO_INTEGRITY_CHK_REFTAG | IO_INTEGRITY_CHK_APPTAG;
+         sqe_ext->rw_pi.app_tag = 0x1234;
+         sqe_ext->rw_pi.seed = 10;
+
+         pi = (struct t10_pi_tuple *)wmb;
+         pi->guard = 0;
+         pi->reftag = 0x0A000000;
+         pi->apptag = 0x3412;
+
+         ret = io_uring_submit(&ring);
+         if (ret <= 0) {
+                 fprintf(stderr, "sqe submit failed: %d\n", ret);
+                 return 1;
+         }
+
+         ret = io_uring_wait_cqe(&ring, &cqe);
+         if (!cqe) {
+                 fprintf(stderr, "cqe is NULL :%d\n", ret);
+                 return 1;
+         }
+         if (cqe->res < 0) {
+                 fprintf(stderr, "write cqe failure: %d", cqe->res);
+                 return 1;
+         }
+
+         io_uring_cqe_seen(&ring, cqe);
+
+         /* read data + meta-buffer back from device */
+         sqe = io_uring_get_sqe(&ring);
+         if (!sqe) {
+                 fprintf(stderr, "get sqe failed\n");
+                 return 1;
+         }
+
+         io_uring_prep_read(sqe, fd, rdb, DATA_LEN, offset);
+
+         sqe->nr_attr_indirect = 1;
+	 sqe->attr_vec_addr = (__u64)&attr_vec;
+	 attr_vec.type = ATTR_TYPE_PI;
+	 attr_vec.addr = (__u64)&pi_attr;
+         pi_attr.addr = (__u64)rmb;
+         pi_attr.len = META_LEN;
+         pi_attr.flags = IO_INTEGRITY_CHK_GUARD | IO_INTEGRITY_CHK_REFTAG | IO_INTEGRITY_CHK_APPTAG;
+         pi_attr.app_tag = 0x1234;
+         pi_attr.seed = 10;
+
+         ret = io_uring_submit(&ring);
+         if (ret <= 0) {
+                 fprintf(stderr, "sqe submit failed: %d\n", ret);
+                 return 1;
+         }
+
+         ret = io_uring_wait_cqe(&ring, &cqe);
+         if (!cqe) {
+                 fprintf(stderr, "cqe is NULL :%d\n", ret);
+                 return 1;
+         }
+
+         if (cqe->res < 0) {
+                 fprintf(stderr, "read cqe failure: %d", cqe->res);
+                 return 1;
+         }
+
+	 pi = (struct t10_pi_tuple *)rmb;
+	 if (pi->apptag != 0x3412)
+		 printf("Failure: apptag mismatch!\n");
+	 if (pi->reftag != 0x0A000000)
+		 printf("Failure: reftag mismatch!\n");
+
+         io_uring_cqe_seen(&ring, cqe);
+
+         pi = (struct t10_pi_tuple *)rmb;
+
+         if (strncmp(wmb, rmb, META_LEN))
+                 printf("Failure: meta mismatch!, wmb=%s, rmb=%s\n", wmb, rmb);
+
+         if (strncmp(wdb, rdb, DATA_LEN))
+                 printf("Failure: data mismatch!\n");
+
+         io_uring_queue_exit(&ring);
+         free(rdb);
+         free(wdb);
+         return 0;
+}
 
 
-Hello Greg,
+Anuj Gupta (8):
+  block: define set of integrity flags to be inherited by cloned bip
+  block: modify bio_integrity_map_user to accept iov_iter as argument
+  fs, iov_iter: define meta io descriptor
+  fs: introduce IOCB_HAS_METADATA for metadata
+  io_uring: introduce attributes for read/write and PI support
+  io_uring: inline read/write attributes and PI
+  block: introduce BIP_CHECK_GUARD/REFTAG/APPTAG bip_flags
+  scsi: add support for user-meta interface
 
-On Thu, 14 Nov 2024 10:40:03 +0900,
-Greg Ungerer wrote:
+Christoph Hellwig (1):
+  block: copy back bounce buffer to user-space correctly in case of
+    split
 
-> I was only interested in the ability to run ELF based static/PIE binaries
-> when I did 782f4c5c44e7d99d ("m68knommu: allow elf_fdpic loader to be selected").
-> I did the same thing for RISC-V in commit 9549fb354ef1 ("riscv: support the
-> elf-fdpic binfmt loader"), limiting it to !MMU configurations only.
-> 
-> There is no need for binfmt_fdpic in MMU configurations if all you want to
-> do is run ELF PIE binaries. The normal binfmt_elf loader can load and run
-> those already.
+Kanchan Joshi (2):
+  nvme: add support for passing on the application tag
+  block: add support to pass user meta buffer
 
-Yes, my motivation to use this loader is run elf PIE binaries under
-!MMU environment.
+ block/bio-integrity.c         |  84 ++++++++++++++----
+ block/blk-integrity.c         |  10 ++-
+ block/fops.c                  |  45 +++++++---
+ drivers/nvme/host/core.c      |  21 +++--
+ drivers/scsi/sd.c             |   4 +-
+ include/linux/bio-integrity.h |  25 ++++--
+ include/linux/fs.h            |   1 +
+ include/linux/uio.h           |   9 ++
+ include/uapi/linux/fs.h       |   9 ++
+ include/uapi/linux/io_uring.h |  40 +++++++++
+ io_uring/io_uring.c           |   5 ++
+ io_uring/rw.c                 | 160 +++++++++++++++++++++++++++++++++-
+ io_uring/rw.h                 |  14 ++-
+ 13 files changed, 381 insertions(+), 46 deletions(-)
 
--- Hajime
+-- 
+2.25.1
+
 
