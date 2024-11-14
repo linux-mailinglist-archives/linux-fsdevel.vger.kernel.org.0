@@ -1,168 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-34782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21B19C8AAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:48:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E5D9C8B0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE551F24794
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:48:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 188A5B248B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C231FAF01;
-	Thu, 14 Nov 2024 12:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="bWxJs9be";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MvUPbQpD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE81FAC4A;
+	Thu, 14 Nov 2024 12:49:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4669A1F80C5;
-	Thu, 14 Nov 2024 12:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993321F8900;
+	Thu, 14 Nov 2024 12:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588489; cv=none; b=J0CRhNRkDTriHmSJmXBi5Vsp9viJXDCwHkRcljkj+l8YA5vv3yhqGZz6uHD+cCl+LGaBsZMZuAvxd94UkmLOsko2vu8qi6NswJ3UVEOsYneI5Sgb/NjioqtfYywKgSTu22MiWYE66Qd8iC3uxpEaAcYb4gae6tC3kqSvr06MY6E=
+	t=1731588590; cv=none; b=dSoDI/gzQ74sx3ikktAN6zST6m6a7gbv9Yt9sAox1PSImwFzEmM/8yL/PLyqHR00L5sQvX52cyuOvKC6Ow7Es9xrwwqVif/dyEpyVF2gNP1aEAW6MQ3JQu6A4rVh47YW3dbUtSz6b+6V7LOFFL2GNbr0Wulvcny48ZyRvuOP0sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588489; c=relaxed/simple;
-	bh=hmPNzQ6mkHSpddKxzNhwvQICnsCulEoU9irM4BxqQ1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0q8qaVqhUT5m0qlyKsjz24/0GVLGwX8WlcVErYT8F9IzjvykgebAoAETFFWFFljyWkqmP8KLTd+5i5zAiR8HN3wISsTxK0OuvXN9hxsWG1cnjmYR65jO7Bhlz1XSLHvIrMks8pHEMTu85rUj5ceMxDvzfarxdv8WWXO4p0ejns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=bWxJs9be; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MvUPbQpD; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3A26713800EC;
-	Thu, 14 Nov 2024 07:48:05 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 14 Nov 2024 07:48:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731588485;
-	 x=1731674885; bh=o+so2c+rSh0kXkVZiCw7zaQj2VniyJXLYj8M37prr48=; b=
-	bWxJs9bephLfuu7DzVfpXxTzIA5UqEuyW4EeS5yt7zZB8rEc0BtzkS57BWln0drp
-	0noNXS+yq32LK9tjBZjNfHQh/A/S3jzw9Jibaxbw1n+qPPgW0/hASAan/Gh/x1x4
-	Z6wDBcAAMNrMESED3Nms2kbIK7iuVEgoscfpZ9QrXxQQ6OPVgGF0Ck++SNrb8coy
-	hjvN8u3H5W1byJv6fYjTpJYi3HcUMB9QR0KCeAEhF4mfuz/ARNc3XAIHGovp8lsB
-	5B9bIBabGcAYTuXya6zwN015KMsOpXoGK+aCGtT5GBoVhscjsjMOQpSgWVnUHKJs
-	rhFKzxrRdMukhvfaJMzKEw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731588485; x=
-	1731674885; bh=o+so2c+rSh0kXkVZiCw7zaQj2VniyJXLYj8M37prr48=; b=M
-	vUPbQpDN93IsY3mHrAzoWWv26EHJdCT1vb7/soIoFCxQan/HpEF1zUDG6jbHEe0W
-	Ab5G1mUdWSbhuITYddsepGaor1ujUctfIXjFJ+IcVdC4Z1LpeoPCJKAXe54/x1zI
-	6u7+KzfUA0fnPnZUsfLSiS+6DK01YgUFk2eTxQWajKHiUyjqPODLFi/uTAXgvy8p
-	61EItoyCDrwdY8ud1NO8I1oXsxm+iliMJE6NQJA5UZka2zMr4N/7WAWr6oebtx4s
-	/VfA8sMpEVilr7DLMSo8FPmxjO69GwkZaK3v4YTmMS27cRwudaSWLc1mFtLOQm70
-	kNuxY1EIesJLWAkPeAdww==
-X-ME-Sender: <xms:hPE1Z-njXzfjJJzaW8EcoT1zhnRfK6dEio1rPNJe9frCTth10neLYQ>
-    <xme:hPE1Z118WSt4e1ab6H83L3LNZJmPtarxj_SZHS4pP7BBPMqoIkkYxcXFgyMSNRB4Z
-    2qyKY-gJ7r7OT3BY_M>
-X-ME-Received: <xmr:hPE1Z8rZ8R1DsSErgDGo9oZNHLqBK3SpaGTc8RvNpj3jf-KE1U6vYknRbiaE5wWEkStXNPmXpjhKdKiGxaQjTZHKuN8H>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdeggecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepgeeghfejjeegtdfgfefhtdfhuedvjedu
-    leeflefhjeetleeikeejgeeggefggedunecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrmhhirh
-    ejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruh
-    hkpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheptghhuhgtkhdr
-    lhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:hPE1ZymjwEAiW1bU3xC9kS9WOuNbS1xmuoFPE_SoPUlZjmINBpV20g>
-    <xmx:hPE1Z80SrNgo4Ctm370Ndj3ZWtApgQEgX6VSnbRkchkZowtpOgP95w>
-    <xmx:hPE1Z5vLCnbzop9HGfA04DIh6hiEs3P24VQqbFuzOLamm_Slmsjo3A>
-    <xmx:hPE1Z4WEB4VQKK1AUfC2I_SIYIVrcxoKB1XIe-8fpr61e2U5gi7zyA>
-    <xmx:hfE1Zyzg2F1uAweoTuCQnjV0-kTS-L4j_vwdcvg1PdDqaTBhAjV_Zyrj>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 07:48:03 -0500 (EST)
-Message-ID: <431019de-b6c6-474b-bf1f-e0afcdc0ce63@e43.eu>
-Date: Thu, 14 Nov 2024 13:48:02 +0100
+	s=arc-20240116; t=1731588590; c=relaxed/simple;
+	bh=k3bq9txkWb0lZ8GyLDb0v5XOIzhc50LCc0dXpD/E+Lg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JqkCmfmHsMp0VfmOsvUfLa16qqJuh+Q7uXuBo5Ds9+uJqjhZUBRsTg8yA6MPcYwzDa9YGQavb5ZtY+Q0rjgpHhvt+oeqiZb96QnyV/c2OdvUELI4XeC2V4c6IZhnnWlRBj+CdlHkmeRgt04F8ErGLVlS3Ln2yb92X15kBCVgHZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xq0Lt4tbQzQt1b;
+	Thu, 14 Nov 2024 20:48:22 +0800 (CST)
+Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
+	by mail.maildlp.com (Postfix) with ESMTPS id 98CD9140393;
+	Thu, 14 Nov 2024 20:49:38 +0800 (CST)
+Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
+ (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
+ 2024 20:49:38 +0800
+Date: Thu, 14 Nov 2024 20:48:21 +0800
+From: Long Li <leo.lilong@huawei.com>
+To: John Garry <john.g.garry@oracle.com>, Dave Chinner <david@fromorbit.com>
+CC: Ritesh Harjani <ritesh.list@gmail.com>, <chandan.babu@oracle.com>,
+	<djwong@kernel.org>, <dchinner@redhat.com>, <hch@lst.de>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <catherine.hoang@oracle.com>,
+	<martin.petersen@oracle.com>
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
+References: <ZtjrUI+oqqABJL2j@dread.disaster.area>
+ <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
+ <Ztom6uI0L4uEmDjT@dread.disaster.area>
+ <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+ <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
+ <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+ <ZufBMioqpwjSFul+@dread.disaster.area>
+ <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+ <ZuoCafOAVqSN6AIK@dread.disaster.area>
+ <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] pidfs: implement file handle support
-Content-Language: en-GB
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- linux-nfs@vger.kernel.org
-References: <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu>
- <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <CAOQ4uxg4Gu2CWM0O2bs93h_9jS+nm6x=P2yu4fZSL_ahaSqHSQ@mail.gmail.com>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <CAOQ4uxg4Gu2CWM0O2bs93h_9jS+nm6x=P2yu4fZSL_ahaSqHSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf500017.china.huawei.com (7.185.36.126)
 
-   
+On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
+> On 17/09/2024 23:27, Dave Chinner wrote:
+> > > # xfs_bmap -vvp  mnt/file
+> > > mnt/file:
+> > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+> > >    0: [0..15]:         384..399          0 (384..399)          16 010000
+> > >    1: [16..31]:        400..415          0 (400..415)          16 000000
+> > >    2: [32..127]:       416..511          0 (416..511)          96 010000
+> > >    3: [128..255]:      256..383          0 (256..383)         128 000000
+> > > FLAG Values:
+> > >     0010000 Unwritten preallocated extent
+> > > 
+> > > Here we have unaligned extents wrt extsize.
+> > > 
+> > > The sub-alloc unit zeroing would solve that - is that what you would still
+> > > advocate (to solve that issue)?
+> > Yes, I thought that was already implemented for force-align with the
+> > DIO code via the extsize zero-around changes in the iomap code. Why
+> > isn't that zero-around code ensuring the correct extent layout here?
+> 
+> I just have not included the extsize zero-around changes here. They were
+> just grouped with the atomic writes support, as they were added specifically
+> for the atomic writes support. Indeed - to me at least - it is strange that
+> the DIO code changes are required for XFS forcealign implementation. And,
+> even if we use extsize zero-around changes for DIO path, what about buffered
+> IO?
 
-On 14/11/2024 08:02, Amir Goldstein wrote:
-> On Wed, Nov 13, 2024 at 7:01 PM Erin Shepherd <erin.shepherd@e43.eu> wrote:
->> Since the introduction of pidfs, we have had 64-bit process identifiers
->> that will not be reused for the entire uptime of the system. This greatly
->> facilitates process tracking in userspace.
->>
->> There are two limitations at present:
->>
->>  * These identifiers are currently only exposed to processes on 64-bit
->>    systems. On 32-bit systems, inode space is also limited to 32 bits and
->>    therefore is subject to the same reuse issues.
->>  * There is no way to go from one of these unique identifiers to a pid or
->>    pidfd.
->>
->> This patch implements fh_export and fh_to_dentry which enables userspace to
->> convert PIDs to and from PID file handles. A process can convert a pidfd into
->> a file handle using name_to_handle_at, store it (in memory, on disk, or
->> elsewhere) and then convert it back into a pidfd suing open_by_handle_at.
->>
->> To support us going from a file handle to a pidfd, we have to store a pid
->> inside the file handle. To ensure file handles are invariant and can move
->> between pid namespaces, we stash a pid from the initial namespace inside
->> the file handle.
->>
->>   (There has been some discussion as to whether or not it is OK to include
->>   the PID in the initial pid namespace, but so far there hasn't been any
->>   conclusive reason given as to why this would be a bad idea)
-> IIUC, this is already exposed as st_ino on a 64bit arch?
-> If that is the case, then there is certainly no new info leak in this patch.
 
-pid.ino is exposed, but the init-ns pid isn't exposed anywhere to my knowledge.
+I've been reviewing and testing the XFS atomic write patch series. Since
+there haven't been any new responses to the previous discussions on this
+issue, I'd like to inquire about the buffered IO problem with force-aligned
+files, which is a scenario we might encounter.
 
->> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
->> ---
->> Changes in v2:
->> - Permit filesystems to opt out of CAP_DAC_READ_SEARCH
->> - Inline find_pid_ns/get_pid logic; remove unnecessary put_pid
->> - Squash fh_export & fh_to_dentry into one commit
-> Not sure why you did that.
-> It was pretty nice as separate commits if you ask me. Whatever.
+Consider a case where the file supports force-alignment with a 64K extent size,
+and the system page size is 4K. Take the following commands as an example:
 
-I can revert that if you prefer. I squashed them because there was some churn
-when adding the init-ns-pid necessary to restore them, but I am happy to do
-things in two steps.
+xfs_io  -c "pwrite 64k 64k" mnt/file
+xfs_io  -c "pwrite 8k 8k" mnt/file
 
-Do you prefer having the final handle format in the first step, or letting it
-evolve into final form over the series?
+If unaligned unwritten extents are not permitted, we need to zero out the
+sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
+data. While this can be handled relatively easily in direct I/O scenarios,
+it presents significant challenges in buffered I/O operations. The main
+difficulty arises because the extent size (64K) is larger than the page
+size (4K), and our current code base has substantial limitations in handling
+such cases.
 
+Any thoughts on this?
+
+Thanks,
+Long Li
+
+> 
+> BTW, I still have concern with this extsize zero-around change which I was
+> making:
+> 
+> xfs_iomap_write_unwritten()
+> {
+> 	unsigned int rounding;
+> 
+> 	/* when converting anything unwritten, we must be spanning an 	alloc unit,
+> so round up/down */
+> 	if (rounding > 1) {
+> 		offset_fsb = rounddown(rounding);
+> 		count_fsb = roundup(rounding);
+> 	}
+> 
+> 	...
+> 	do {
+> 		xfs_bmapi_write();
+> 		...
+> 		xfs_trans_commit();
+> 	} while ();
+> }
+> 
+> As mentioned elsewhere, it's a bit of a bodge (to do this rounding).
+> 
+> > 
+> > > > FWIW, I also understand things are different if we are doing 128kB
+> > > > atomic writes on 16kB force aligned files. However, in this
+> > > > situation we are treating the 128kB atomic IO as eight individual
+> > > > 16kB atomic IOs that are physically contiguous.
+> > > Yes, if 16kB force aligned, userspace can only issue 16KB atomic writes.
+> > Right, but the eventual goal (given the statx parameters) is to be
+> > able to do 8x16kB sequential atomic writes as a single 128kB IO, yes?
+> 
+> No, if atomic write unit max is 16KB, then userspace can only issue a single
+> 16KB atomic write.
+> 
+> However, some things to consider:
+> a. the block layer may merge those 16KB atomic writes
+> b. userspace may also merge 16KB atomic writes and issue a larger atomic
+> write (if atomic write unit max is > 16KB)
+> 
+> I had been wondering if there is any value in a lib for helping with b.
+> 
+> > 
+> > > > > > Again, this is different to the traditional RT file behaviour - it
+> > > > > > can use unwritten extents for sub-alloc-unit alignment unmaps
+> > > > > > because the RT device can align file offset to any physical offset,
+> > > > > > and issue unaligned sector sized IO without any restrictions. Forced
+> > > > > > alignment does not have this freedom, and when we extend forced
+> > > > > > alignment to RT files, it will not have the freedom to use
+> > > > > > unwritten extents for sub-alloc-unit unmapping, either.
+> > > > > > 
+> > > > > So how do you think that we should actually implement
+> > > > > xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
+> > > > > like:
+> > > > > 
+> > > > > --- a/fs/xfs/xfs_inode.c
+> > > > > +++ b/fs/xfs/xfs_inode.c
+> > > > > @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
+> > > > >                   WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
+> > > > >                   return 0;
+> > > > >           }
+> > > > > +	if (xfs_inode_has_forcealign(ip))
+> > > > > +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
+> > > > > first_unmap_block);
+> > > > >           error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
+> > > > Yes, it would be something like that, except it would have to be
+> > > > done before first_unmap_block is verified.
+> > > > 
+> > > ok, and are you still of the opinion that this does not apply to rtvol?
+> > The rtvol is*not* force-aligned. It -may- have some aligned
+> > allocation requirements that are similar (i.e. sb_rextsize > 1 fsb)
+> > but it does*not* force-align extents, written or unwritten.
+> > 
+> > The moment we add force-align support to RT files (as is the plan),
+> > then the force-aligned inodes on the rtvol will need to behave as
+> > force aligned inodes, not "rtvol" inodes.
+> 
+> ok, fine
+> 
+> Thanks,
+> John
+> 
+> 
+> 
 
