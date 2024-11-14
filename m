@@ -1,195 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-34709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD68F9C7EF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 00:51:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AFE9C7F48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 01:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF55B24448
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2024 23:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AF80B24453
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 00:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A5C18D637;
-	Wed, 13 Nov 2024 23:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4392DB640;
+	Thu, 14 Nov 2024 00:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="kYJ/tV+b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzuyGzah"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8DC18A6A0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 23:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97503C2E0;
+	Thu, 14 Nov 2024 00:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731541876; cv=none; b=Ie8/Va5jnsnY740NCPOgrkQaMEBhO0u4OzgOdtT1zZyibzUcdtEeme4nLGhRpFnZo80jqfACa3EZyobvu5hkVrzK0QpLCCO7NPZn2yJVa9scO4GCmqygvTqzdp9ie/7kQsp16KAlFOfd43NMCGHdW6FMQxwcKnJfTK2YKo/K3+A=
+	t=1731543532; cv=none; b=OxVL+G/TsUkpbJa1kp/GmBuYbk4DIryRCk9EneSuVDss5HSqzm9+cQ9mIEUYcS3YO+9XMgowpftp42e3JICqZTh3t3t4+yd96gRSLtgIN6zbYLOTskbByd33WkLb2XXEKqP+4IhLUAHz2rSNXVV6Gvx193wjXzRPPzsuI7v44n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731541876; c=relaxed/simple;
-	bh=iqbHEEkvtBJUUD2xvY1+B9NYMn7DnHXcWD0gw8D90/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uIfmpSw18sKTuyJq8zwcOveiQOI7RwIpytYZba8qfwu2XlGC+VQp4uCydlG50q7q59TdfuvOfUR1rsGU6gEzr9+f+UCGSQVuh/QvryQvaWE21tXXE5zxkp6kG8etscKt4Wy0MOTu5AkMRR5W6ELXmYrqhhpT13DaXNlhs1u1KN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=kYJ/tV+b; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f8b01bd40dso6772a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 15:51:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731541874; x=1732146674; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
-        b=kYJ/tV+bLpzvktreUGRYY8zED3aHQaYpWC7s6NK93e7ztXAoWJsGc1+qdS69GX8noX
-         TE4xWrzeA3IdxxbZR2FEyY0wkpG9Q51FnUwHHO/Q0MsGzdG+9jPY9MzXGGTVFIJ5xGlV
-         DDHo7vtiNYFsCXz6h9QoygWHddJnb5MeikoqaeR4J4fceKWpxU5f+WbqDVAbjaE1+fga
-         9aswDDxDcu64TvrBkH72g6hltrzjZe2dovW1mhKDQa6zjn+l3YeYddhY0Nmej7itdWhY
-         8mvKzX2+GrwoZ3cJWOckFXkdMUHXcvJ+2+mEm9BFEN2fFXSO+/OwDBf/GjgUPrVA9kFG
-         ajXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731541874; x=1732146674;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
-        b=JrNwwK2gglfL/G3sLoTqOpszXbuNhbNxZLn6PJALd2L02gfGM9NmqBg82xO0kS7Zgw
-         u6bwmO97+JSlsdBqVrDvQ1e8kcQXmjHVYrtAJUT91NYbIu+3dfv9kUnO5EB6YcV+z75M
-         nQGo0sc2jFtQNGj0Tn87/G6f0FNPJC7xYzCscfnAa6ISMwsfsJOfWPbTFvy+qWLbpLID
-         yaSSTDetxyvUWbT64/lv8NBLRGVFEMYl+J+l205AOc32Z7LCGlzh+iAn413BINRnLseN
-         9upNq6KaKYSZ+e9et2uPmA2+jcgSwDvOKJkt748MVgW13pF/ctmcGIPWNo08xxH0Vxk+
-         H8wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOkVDGR6OJ+oPSH4JLL/AWR8nQb7Svy2E3qGg2E4TIpOtyHLpMzd9UkA94xiI/Iczt23zYEyNB8f50m3wi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIDXup2Mxcyd5sRznk+KrE8QnitAmsV2NnA+jRC6MqAlBked7L
-	kwcx9N0VXcGR2+jIZ26nQut753fu6CqKTodrYEw4u4qk2Imcp+Zx3pMSXI9Vxkg=
-X-Google-Smtp-Source: AGHT+IGnJMdOUCMCs6jEMGK8slkeJs2lCzIM0b+P01P83BSSB16iV+QAJQtoT6rroZ1RFQlD0VyEEQ==
-X-Received: by 2002:a17:90b:1f89:b0:2e2:ada8:2986 with SMTP id 98e67ed59e1d1-2e9fe6640c3mr1819128a91.16.1731541873837;
-        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02481b8dsm134060a91.9.2024.11.13.15.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1tBN8f-00EIWG-34;
-	Thu, 14 Nov 2024 10:51:09 +1100
-Date: Thu, 14 Nov 2024 10:51:09 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Pierre Labat <plabat@micron.com>, Keith Busch <kbusch@kernel.org>,
-	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
- streams
-Message-ID: <ZzU7bZokkTN2s8qr@dread.disaster.area>
-References: <20241108193629.3817619-1-kbusch@meta.com>
- <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
- <20241111102914.GA27870@lst.de>
- <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
- <20241112133439.GA4164@lst.de>
- <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
- <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
- <20241113044736.GA20212@lst.de>
+	s=arc-20240116; t=1731543532; c=relaxed/simple;
+	bh=d7FuRY31dqYNYxnener1g+KwXunx/z+tiiRMldLO6Sc=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:In-Reply-To:
+	 References:Content-Type; b=YxhpnOTz+yByGvgkoN29mCtMkpJKlDNhj4ofEkiP5vFX/fj1YI84i+XRb6zMIUOHRChwiGQcwUrEn3P+DHOyQWxIt2d4dyCSiLSFjm5lvk4Adgnd18S8pUhTvJIRLOH0RR46S15x9sJFwVUGnxDNS7QMewWOmcP/310G9ksFG0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzuyGzah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15CCEC4CEC3;
+	Thu, 14 Nov 2024 00:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731543532;
+	bh=d7FuRY31dqYNYxnener1g+KwXunx/z+tiiRMldLO6Sc=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=BzuyGzahCXDKJ96/wvHx2gkLDhWHz2W7NekAuYixhuyWaJMqD5q9Z3SLQJjwnIk3c
+	 YTsdo/FCcsf0pgTr3OsNV9F9vgaNeGMLLjle9JKPjBgbxVoZZLv0ccr6jQeKUPImKl
+	 iwB3iQeCdyO4HkEFtc4PPM/eG4erkwMqAOljyCCVbn9Bb7VZlDJBxsnkVymNVxglS/
+	 oyVPVjqDxxYvqC820e65048jtfygnzP8YTXvCXJkdbssQeaX6P7kPJA1LRU1tV6dcX
+	 +an4jnbVxuWjiHGnklIb6FZMtRRib7lLArDqqZtD8diGOWoUgUmaTkod3uKitiqn/B
+	 zvoOXJw2dCw3g==
+Date: Wed, 13 Nov 2024 16:18:51 -0800
+Subject: [GIT PULL 05/10] xfs: preparation for realtime allocation groups
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: cem@kernel.org, djwong@kernel.org
+Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Message-ID: <173154342285.1140548.1175824791120337171.stg-ugh@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113044736.GA20212@lst.de>
+In-Reply-To: <20241114001637.GL9438@frogsfrogsfrogs>
+References: <20241114001637.GL9438@frogsfrogsfrogs>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 05:47:36AM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 12, 2024 at 06:18:21PM +0000, Pierre Labat wrote:
-> > About 2)
-> > Provide a simple way to the user to decide which layer generate write hints.
-> > As an example, as some of you pointed out, what if the filesystem wants to generate write hints to optimize its [own] data handling by the storage, and at the same time the application using the FS understand the storage and also wants to optimize using write hints.
-> > Both use cases are legit, I think.
-> > To handle that in a simple way, why not have a filesystem mount parameter enabling/disabling the use of write hints by the FS?
-> 
-> The file system is, and always has been, the entity in charge of
-> resource allocation of the underlying device.  Bypassing it will get
-> you in trouble, and a simple mount option isn't really changing that
-> (it's also not exactly a scalable interface).
-> 
-> If an application wants to micro-manage placement decisions it should not
-> use a file system, or at least not a normal one with Posix semantics.
-> That being said we'd demonstrated that applications using proper grouping
-> of data by file and the simple temperature hints can get very good result
-> from file systems that can interpret them, without a lot of work in the
-> file system.  I suspect for most applications that actually want files
-> that is actually going to give better results than trying to do the
-> micro-management that tries to bypass the file system.
+Hi Carlos,
 
-This.
+Please pull this branch with changes for xfs for 6.13-rc1.
 
-The most important thing that filesystems do behind the scenes is
-manage -data locality-. XFS has thousands of lines of code to manage
-and control data locality - the allocation policy API itself has a
-*dozens* control parameters. We have 2 separate allocation
-architectures (one btree based, one bitmap based) and multiple
-locality policy algorithms. These juggled physical alignment, size
-granularity, size limits, data type being allocated for, desired
-locality targets, different search algorithms (e.g. first fit, best
-fit, exact fit by size or location, etc), multiple fallback
-strategies when the initial target cannot be met, etc.
+As usual, I did a test-merge with the main upstream branch as of a few
+minutes ago, and didn't see any conflicts.  Please let me know if you
+encounter any problems.
 
-Allocation policy management is the core of every block based
-filesystem that has ever been written.
+--D
 
-Specifically to this "stream hint" discussion: go look at the XFS
-filestreams allocator.
+The following changes since commit dd2a92877987e615f5b62f872ee0d4f992362994:
 
-SGI wrote an entirely new allocator for XFS whose only purpose in
-life is to automatically separate individual streams of user data
-into physically separate regions of LBA space.
+xfs: make RT extent numbers relative to the rtgroup (2024-11-13 16:05:31 -0800)
 
-This was written to optimise realtime ingest and playback of
-multiple uncompressed 4k and 8k video data streams from big
-isochronous SAN storage arrays back in ~2005.  Each stream could be
-up to 1.2GB/s of data. If the data for each IO was not exactly
-placed in alignment with the storage array stripe cache granularity
-(2MB, IIRC), then a cache miss would occur and the IO latency would
-be too high and frames of data would be missed/dropped.
+are available in the Git repository at:
 
-IOWs, we have an allocator in XFS that specifically designed to
-separate indepedent streams of data to independent regions of the
-filesystem LBA space to effcient support data IO rates in the order
-of tens of GB/s.
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git tags/rtgroups-prep-6.13_2024-11-13
 
-What are we talking about now? Storage hardware that might be able
-to do 10-15GB/s of IO that needs stream separation for efficient
-management of the internal storage resources.
+for you to fetch changes up to 320c28fb42f571064ddc9b769dfaa3a59c105677:
 
-The fact we have previously solved this class of stream separation
-problem at the filesystem level *without needing a user-controlled
-API at all* is probably the most relevant fact missing from this
-discussion.
+iomap: add a merge boundary flag (2024-11-13 16:05:32 -0800)
 
-As to the concern about stream/temp/hint translation consistency
-across different hardware: the filesystem is the perfect place to
-provide this abstraction to users. The block device can expose what
-it supports, the user API can be fixed, and the filesystem can
-provide the mapping between the two that won't change for the life
-of the filesystem...
+----------------------------------------------------------------
+xfs: preparation for realtime allocation groups [v5.6 05/10]
 
-Long story short: Christoph is right.
+Prepare for realtime groups by adding a few bug fixes and generic code
+that will be necessary.
 
-The OS hints/streams API needs to be aligned to the capabilities
-that filesystems already provide *as a primary design goal*. What
-the new hardware might support is a secondary concern. i.e. hardware
-driven software design is almost always a mistake: define the user
-API and abstractions first, then the OS can reduce it sanely down to
-what the specific hardware present is capable of supporting.
+With a bit of luck, this should all go splendidly.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+iomap: add a merge boundary flag
+
+Darrick J. Wong (1):
+xfs: fix rt device offset calculations for FITRIM
+
+fs/iomap/buffered-io.c |  6 ++++++
+fs/xfs/xfs_discard.c   | 19 +++++++++++--------
+include/linux/iomap.h  |  4 ++++
+3 files changed, 21 insertions(+), 8 deletions(-)
+
 
