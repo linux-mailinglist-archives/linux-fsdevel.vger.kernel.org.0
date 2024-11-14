@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-34742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEC59C8504
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 09:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8C89C8508
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 09:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA511F21924
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5AE1F21FCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC991F76B2;
-	Thu, 14 Nov 2024 08:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3185F1F76C5;
+	Thu, 14 Nov 2024 08:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIkqJ0x1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGRjNOqW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D3F1F76A8;
-	Thu, 14 Nov 2024 08:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825D61F76A8;
+	Thu, 14 Nov 2024 08:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573860; cv=none; b=Y/zWrU/1RRerHXOPuJo7lOhNGmuDxh8+32yvMEs+F2QyoCqWWz+bvDh5Z7OTfzHrDRCTcLCrg4OJ+fSyo8iNxLZUPjdwHFmEElp9/e0atqoxYa7oYGpZixcdRyPsSZmZmj8mh4+uuacR1Bpyn6u2Z8WBw3DFC40aB4oEjLYjuwM=
+	t=1731573868; cv=none; b=TN3/OptGyJ4Bsl2sZoR5QLM0akWyDl4cBI4pq4U75BnkRbX55hHIiiViQJ/sH3h5z34m/xdNu6dOIpCWAFJSFnCfp3c98AVcjlxvsZooH/M4E1bIL77J/eULxV/AK0166M5LB4jmIZQdZlGoHmn+4662M5LytlerxUv+AglQPtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573860; c=relaxed/simple;
-	bh=HK4iU8O22NadzfqP2gnHIsvdLo88uc0RAYaz8YOCi1c=;
+	s=arc-20240116; t=1731573868; c=relaxed/simple;
+	bh=S7xDbIph8VcpsMfUCa0ILfHb706b9RjGxs+MZvWRZXA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SWQlEIg8sdad2o+GT2XbicwT9/rVL8uDJGEh/qR5rckYlg/mukh1CY9k5uMP8K+kcrBu428clFm7/Lrj3IAbzGdeqh15bOWwu333Gt9+mBbLShzPFhDotA7vy0kZL/vSiH4klBI2z6ELlKXlcjgMXOMamK9Ku7/kSqjV0u1z3RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIkqJ0x1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CEDC4CECD;
-	Thu, 14 Nov 2024 08:44:14 +0000 (UTC)
+	 MIME-Version; b=S9mA1xFM2cmfSSYytxpu4Z3jTpymjSADeQofDxW1KaXsC2DLJ/zb1hDdUD6VoMMXGZqpB0wVHfJ4cNPnzoHve5wzD6qWZ6yNGZXBgVzxV2adhI4WRxKRvz1SVlgdUIzO/eX3zpTv+XNcr4+3/yY0HNzTxNK5yjTB3i4P8f2o9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGRjNOqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 606C9C4CECD;
+	Thu, 14 Nov 2024 08:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731573857;
-	bh=HK4iU8O22NadzfqP2gnHIsvdLo88uc0RAYaz8YOCi1c=;
+	s=k20201202; t=1731573866;
+	bh=S7xDbIph8VcpsMfUCa0ILfHb706b9RjGxs+MZvWRZXA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VIkqJ0x1Cdhxh2ZeHDRWqKxo6mm5f28jQTlfQKXY+nF1LtB9NRRrPzYUBB+K/rro0
-	 ASgvIB9zTtRwtD7h15vw1Eo2uJ5LytxdNohe6KrS1sIrn2NyhYQja2mR9UWcW29AGA
-	 yPEX7zN41Den97QAS0e8O/hMlk7nj8ZbbHStx4J6fUD85mq9YsLaMfrPoqTmBmNJ2b
-	 jLYDK5XCsZCEVv6g4nes5IErI2R1mL2aIUZZjnagFk53SLUc+mz6rHiGXyY3U5VZGn
-	 ta7bfVBjrBRjVxKjklIWuT5bN5NQXlpJq5JjyrLmD5sBeA2zFT/qz358x/kM8aFPBv
-	 EfHn3eVzXMEFQ==
+	b=bGRjNOqWB9zGl8VzoPYtqpDMNWzk4/it4beKpBtApasjKJ01uQj9/yQCJHAcYPJA7
+	 SX+qk4SPHHCz2Nseu2D6up8m0gsYet/SDcApOjWq87+9f84OUQ+uU2fTm/IIkbk59P
+	 J5wsD1HK/vMcxtTftwJsualVLrELT6yCFWrZfG6LgUOziEKds0mIZEthzITPIjGZQk
+	 a5QDnyxAbw3NoxMEhf+vVx3BWRp8QNOn89+545bqdbDOReFWCdUX86Mdtg/a3JwQU+
+	 xypoz6FzFb7ZnC09MvzQg11hOd1tBVzPS2upZyPiNBmjP+ganjR5tus0jY4XITgUyF
+	 Ewhe5wNn2OXcg==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kernel-team@meta.com,
 	mic@digikod.net,
 	gnoack@google.com,
 	Song Liu <song@kernel.org>
-Subject: [RFC/PATCH v2 bpf-next fanotify 2/7] samples/fanotify: Add a sample fanotify fastpath handler
-Date: Thu, 14 Nov 2024 00:43:40 -0800
-Message-ID: <20241114084345.1564165-3-song@kernel.org>
+Subject: [RFC/PATCH v2 bpf-next fanotify 3/7] bpf: Make bpf inode storage available to tracing programs
+Date: Thu, 14 Nov 2024 00:43:41 -0800
+Message-ID: <20241114084345.1564165-4-song@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241114084345.1564165-1-song@kernel.org>
 References: <20241114084345.1564165-1-song@kernel.org>
@@ -78,322 +78,518 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This fastpath handler monitors a subtree inside a mount point.
-To use it:
-
-[root] insmod ./fastpath-mod.ko
-[root] mkdir -p /tmp/a/b/c/d
-[root] ./fastpath-user /tmp/ /tmp/a/b &
-[root] touch /tmp/xx      # Doesn't generate event
-[root]# touch /tmp/a/xxa  # Doesn't generate event
-[root]# touch /tmp/a/b/xxab      # Generates an event
-Accessing file xxab   # this is the output from fastpath-user
-[root@]# touch /tmp/a/b/c/xxabc  # Generates an event
-Accessing file xxabc  # this is the output from fastpath-user
+Use the same recursion voidance mechanism as task local storage.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- MAINTAINERS                      |   1 +
- samples/Kconfig                  |  20 +++++-
- samples/Makefile                 |   2 +-
- samples/fanotify/.gitignore      |   1 +
- samples/fanotify/Makefile        |   5 +-
- samples/fanotify/fastpath-mod.c  |  82 +++++++++++++++++++++++
- samples/fanotify/fastpath-user.c | 111 +++++++++++++++++++++++++++++++
- 7 files changed, 219 insertions(+), 3 deletions(-)
- create mode 100644 samples/fanotify/fastpath-mod.c
- create mode 100644 samples/fanotify/fastpath-user.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ad507f49324..8939a48b2d99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8658,6 +8658,7 @@ S:	Maintained
- F:	fs/notify/fanotify/
- F:	include/linux/fanotify.h
- F:	include/uapi/linux/fanotify.h
-+F:	samples/fanotify/
- 
- FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
- M:	Linus Walleij <linus.walleij@linaro.org>
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..b0d3dff48bb0 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
- 	  with it.
- 	  See also Documentation/driver-api/connector.rst
- 
-+config SAMPLE_FANOTIFY
-+	bool "Build fanotify monitoring sample"
-+	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	help
-+	  When enabled, this builds samples for fanotify.
-+	  There multiple samples for fanotify. Please see the
-+	  following configs for more details of these
-+	  samples.
+Do not apply this. Another version of this with selftest is submitted
+separately, with proper selftests.
+---
+ fs/inode.c                     |   2 +
+ include/linux/bpf.h            |   9 ++
+ include/linux/bpf_lsm.h        |  29 ------
+ include/linux/fs.h             |   4 +
+ kernel/bpf/Makefile            |   3 +-
+ kernel/bpf/bpf_inode_storage.c | 176 +++++++++++++++++++++++++--------
+ kernel/bpf/bpf_lsm.c           |   4 -
+ kernel/trace/bpf_trace.c       |   8 ++
+ security/bpf/hooks.c           |   7 --
+ 9 files changed, 159 insertions(+), 83 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 8dabb224f941..c196a62bd48f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -250,6 +250,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
+ static void i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
 +
- config SAMPLE_FANOTIFY_ERROR
- 	bool "Build fanotify error monitoring sample"
--	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	depends on SAMPLE_FANOTIFY
- 	help
- 	  When enabled, this builds an example code that uses the
- 	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
- 	  errors.
- 	  See also Documentation/admin-guide/filesystem-monitoring.rst.
++	bpf_inode_storage_free(inode);
+ 	if (inode->free_inode)
+ 		inode->free_inode(inode);
+ 	else
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 19d8ca8ac960..863cb972d1fa 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2630,6 +2630,7 @@ struct bpf_link *bpf_link_by_id(u32 id);
+ const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
+ 						 const struct bpf_prog *prog);
+ void bpf_task_storage_free(struct task_struct *task);
++void bpf_inode_storage_free(struct inode *inode);
+ void bpf_cgrp_storage_free(struct cgroup *cgroup);
+ bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
+ const struct btf_func_model *
+@@ -2900,6 +2901,10 @@ static inline void bpf_task_storage_free(struct task_struct *task)
+ {
+ }
  
-+config SAMPLE_FANOTIFY_FASTPATH
-+	tristate "Build fanotify fastpath sample"
-+	depends on SAMPLE_FANOTIFY && m
-+	help
-+	  When enabled, this builds kernel module that contains a
-+	  fanotify fastpath handler.
-+	  The fastpath handler filters out certain filename
-+	  prefixes for the fanotify user.
-+
- config SAMPLE_HIDRAW
- 	bool "hidraw sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..108360972626 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
- subdir-$(CONFIG_SAMPLE_CGROUP) += cgroup
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
- obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
--obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+= fanotify/
-+obj-$(CONFIG_SAMPLE_FANOTIFY)		+= fanotify/
- subdir-$(CONFIG_SAMPLE_HIDRAW)		+= hidraw
- obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+= hw_breakpoint/
- obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
-diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
-index d74593e8b2de..306e1ddec4e0 100644
---- a/samples/fanotify/.gitignore
-+++ b/samples/fanotify/.gitignore
-@@ -1 +1,2 @@
- fs-monitor
-+fastpath-user
-diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
-index e20db1bdde3b..f5bbd7380104 100644
---- a/samples/fanotify/Makefile
-+++ b/samples/fanotify/Makefile
-@@ -1,5 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
--userprogs-always-y += fs-monitor
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) += fs-monitor
- 
- userccflags += -I usr/include -Wall
- 
-+obj-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) += fastpath-mod.o
-+
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FASTPATH) += fastpath-user
-diff --git a/samples/fanotify/fastpath-mod.c b/samples/fanotify/fastpath-mod.c
-new file mode 100644
-index 000000000000..7e2e1878f8e7
---- /dev/null
-+++ b/samples/fanotify/fastpath-mod.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/fsnotify.h>
-+#include <linux/fanotify.h>
-+#include <linux/module.h>
-+#include <linux/path.h>
-+#include <linux/file.h>
-+
-+static int sample_fp_handler(struct fsnotify_group *group,
-+			     struct fanotify_fastpath_hook *fp_hook,
-+			     struct fanotify_fastpath_event *fp_event)
++static inline void bpf_inode_storage_free(struct inode *inode)
 +{
-+	struct dentry *dentry;
-+	struct path *subtree;
-+
-+	dentry = fsnotify_data_dentry(fp_event->data, fp_event->data_type);
-+	if (!dentry)
-+		return FAN_FP_RET_SEND_TO_USERSPACE;
-+
-+	subtree = fp_hook->data;
-+
-+	if (is_subdir(dentry, subtree->dentry))
-+		return FAN_FP_RET_SEND_TO_USERSPACE;
-+	return FAN_FP_RET_SKIP_EVENT;
 +}
 +
-+static int sample_fp_init(struct fanotify_fastpath_hook *fp_hook, void *args)
+ static inline bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog)
+ {
+ 	return false;
+@@ -3263,6 +3268,10 @@ extern const struct bpf_func_proto bpf_task_storage_get_recur_proto;
+ extern const struct bpf_func_proto bpf_task_storage_get_proto;
+ extern const struct bpf_func_proto bpf_task_storage_delete_recur_proto;
+ extern const struct bpf_func_proto bpf_task_storage_delete_proto;
++extern const struct bpf_func_proto bpf_inode_storage_get_proto;
++extern const struct bpf_func_proto bpf_inode_storage_get_recur_proto;
++extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
++extern const struct bpf_func_proto bpf_inode_storage_delete_recur_proto;
+ extern const struct bpf_func_proto bpf_for_each_map_elem_proto;
+ extern const struct bpf_func_proto bpf_btf_find_by_name_kind_proto;
+ extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+index aefcd6564251..a819c2f0a062 100644
+--- a/include/linux/bpf_lsm.h
++++ b/include/linux/bpf_lsm.h
+@@ -19,31 +19,12 @@
+ #include <linux/lsm_hook_defs.h>
+ #undef LSM_HOOK
+ 
+-struct bpf_storage_blob {
+-	struct bpf_local_storage __rcu *storage;
+-};
+-
+-extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
+-
+ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 			const struct bpf_prog *prog);
+ 
+ bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+ bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
+ 
+-static inline struct bpf_storage_blob *bpf_inode(
+-	const struct inode *inode)
+-{
+-	if (unlikely(!inode->i_security))
+-		return NULL;
+-
+-	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
+-}
+-
+-extern const struct bpf_func_proto bpf_inode_storage_get_proto;
+-extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
+-void bpf_inode_storage_free(struct inode *inode);
+-
+ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func);
+ 
+ int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
+@@ -66,16 +47,6 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline struct bpf_storage_blob *bpf_inode(
+-	const struct inode *inode)
+-{
+-	return NULL;
+-}
+-
+-static inline void bpf_inode_storage_free(struct inode *inode)
+-{
+-}
+-
+ static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
+ 					   bpf_func_t *bpf_func)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3559446279c1..479097e4dd5b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -79,6 +79,7 @@ struct fs_context;
+ struct fs_parameter_spec;
+ struct fileattr;
+ struct iomap_ops;
++struct bpf_local_storage;
+ 
+ extern void __init inode_init(void);
+ extern void __init inode_init_early(void);
+@@ -648,6 +649,9 @@ struct inode {
+ #ifdef CONFIG_SECURITY
+ 	void			*i_security;
+ #endif
++#ifdef CONFIG_BPF_SYSCALL
++	struct bpf_local_storage __rcu *i_bpf_storage;
++#endif
+ 
+ 	/* Stat data, not accessed from path walking */
+ 	unsigned long		i_ino;
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 9b9c151b5c82..a5b7136b4884 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -10,8 +10,7 @@ obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o log.o
+ obj-$(CONFIG_BPF_SYSCALL) += bpf_iter.o map_iter.o task_iter.o prog_iter.o link_iter.o
+ obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o percpu_freelist.o bpf_lru_list.o lpm_trie.o map_in_map.o bloom_filter.o
+ obj-$(CONFIG_BPF_SYSCALL) += local_storage.o queue_stack_maps.o ringbuf.o
+-obj-$(CONFIG_BPF_SYSCALL) += bpf_local_storage.o bpf_task_storage.o
+-obj-${CONFIG_BPF_LSM}	  += bpf_inode_storage.o
++obj-$(CONFIG_BPF_SYSCALL) += bpf_local_storage.o bpf_task_storage.o bpf_inode_storage.o
+ obj-$(CONFIG_BPF_SYSCALL) += disasm.o mprog.o
+ obj-$(CONFIG_BPF_JIT) += trampoline.o
+ obj-$(CONFIG_BPF_SYSCALL) += btf.o memalloc.o
+diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+index 29da6d3838f6..50c082da8dc5 100644
+--- a/kernel/bpf/bpf_inode_storage.c
++++ b/kernel/bpf/bpf_inode_storage.c
+@@ -21,16 +21,36 @@
+ 
+ DEFINE_BPF_STORAGE_CACHE(inode_cache);
+ 
+-static struct bpf_local_storage __rcu **
+-inode_storage_ptr(void *owner)
++static DEFINE_PER_CPU(int, bpf_inode_storage_busy);
++
++static void bpf_inode_storage_lock(void)
 +{
-+	struct path *subtree;
-+	struct file *file;
-+	int fd;
++	migrate_disable();
++	this_cpu_inc(bpf_inode_storage_busy);
++}
 +
-+	fd = *(int *)args;
++static void bpf_inode_storage_unlock(void)
++{
++	this_cpu_dec(bpf_inode_storage_busy);
++	migrate_enable();
++}
 +
-+	file = fget(fd);
-+	if (!file)
-+		return -EBADF;
-+	subtree = kzalloc(sizeof(struct path), GFP_KERNEL);
-+	if (!subtree) {
-+		fput(file);
-+		return -ENOMEM;
++static bool bpf_inode_storage_trylock(void)
++{
++	migrate_disable();
++	if (unlikely(this_cpu_inc_return(bpf_inode_storage_busy) != 1)) {
++		this_cpu_dec(bpf_inode_storage_busy);
++		migrate_enable();
++		return false;
 +	}
-+	path_get(&file->f_path);
-+	*subtree = file->f_path;
-+	fput(file);
-+	fp_hook->data = subtree;
-+	return 0;
++	return true;
 +}
 +
-+static void sample_fp_free(struct fanotify_fastpath_hook *fp_hook)
++static struct bpf_local_storage __rcu **inode_storage_ptr(void *owner)
+ {
+ 	struct inode *inode = owner;
+-	struct bpf_storage_blob *bsb;
+ 
+-	bsb = bpf_inode(inode);
+-	if (!bsb)
+-		return NULL;
+-	return &bsb->storage;
++	return &inode->i_bpf_storage;
+ }
+ 
+ static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
+@@ -39,14 +59,9 @@ static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
+ {
+ 	struct bpf_local_storage *inode_storage;
+ 	struct bpf_local_storage_map *smap;
+-	struct bpf_storage_blob *bsb;
+-
+-	bsb = bpf_inode(inode);
+-	if (!bsb)
+-		return NULL;
+ 
+ 	inode_storage =
+-		rcu_dereference_check(bsb->storage, bpf_rcu_lock_held());
++		rcu_dereference_check(inode->i_bpf_storage, bpf_rcu_lock_held());
+ 	if (!inode_storage)
+ 		return NULL;
+ 
+@@ -57,21 +72,18 @@ static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
+ void bpf_inode_storage_free(struct inode *inode)
+ {
+ 	struct bpf_local_storage *local_storage;
+-	struct bpf_storage_blob *bsb;
+-
+-	bsb = bpf_inode(inode);
+-	if (!bsb)
+-		return;
+ 
+ 	rcu_read_lock();
+ 
+-	local_storage = rcu_dereference(bsb->storage);
++	local_storage = rcu_dereference(inode->i_bpf_storage);
+ 	if (!local_storage) {
+ 		rcu_read_unlock();
+ 		return;
+ 	}
+ 
++	bpf_inode_storage_lock();
+ 	bpf_local_storage_destroy(local_storage);
++	bpf_inode_storage_unlock();
+ 	rcu_read_unlock();
+ }
+ 
+@@ -83,7 +95,9 @@ static void *bpf_fd_inode_storage_lookup_elem(struct bpf_map *map, void *key)
+ 	if (fd_empty(f))
+ 		return ERR_PTR(-EBADF);
+ 
++	bpf_inode_storage_lock();
+ 	sdata = inode_storage_lookup(file_inode(fd_file(f)), map, true);
++	bpf_inode_storage_unlock();
+ 	return sdata ? sdata->data : NULL;
+ }
+ 
+@@ -98,13 +112,16 @@ static long bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
+ 	if (!inode_storage_ptr(file_inode(fd_file(f))))
+ 		return -EBADF;
+ 
++	bpf_inode_storage_lock();
+ 	sdata = bpf_local_storage_update(file_inode(fd_file(f)),
+ 					 (struct bpf_local_storage_map *)map,
+ 					 value, map_flags, GFP_ATOMIC);
++	bpf_inode_storage_unlock();
+ 	return PTR_ERR_OR_ZERO(sdata);
+ }
+ 
+-static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
++static int inode_storage_delete(struct inode *inode, struct bpf_map *map,
++				bool nobusy)
+ {
+ 	struct bpf_local_storage_data *sdata;
+ 
+@@ -112,6 +129,9 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+ 	if (!sdata)
+ 		return -ENOENT;
+ 
++	if (!nobusy)
++		return -EBUSY;
++
+ 	bpf_selem_unlink(SELEM(sdata), false);
+ 
+ 	return 0;
+@@ -119,60 +139,114 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+ 
+ static long bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
+ {
++	int err;
++
+ 	CLASS(fd_raw, f)(*(int *)key);
+ 
+ 	if (fd_empty(f))
+ 		return -EBADF;
+-	return inode_storage_delete(file_inode(fd_file(f)), map);
++	bpf_inode_storage_lock();
++	err = inode_storage_delete(file_inode(fd_file(f)), map, true);
++	bpf_inode_storage_unlock();
++	return err;
+ }
+ 
+-/* *gfp_flags* is a hidden argument provided by the verifier */
+-BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
+-	   void *, value, u64, flags, gfp_t, gfp_flags)
++static void *__bpf_inode_storage_get(struct bpf_map *map, struct inode *inode,
++				     void *value, u64 flags, gfp_t gfp_flags, bool nobusy)
+ {
+ 	struct bpf_local_storage_data *sdata;
+ 
+-	WARN_ON_ONCE(!bpf_rcu_lock_held());
+-	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+-		return (unsigned long)NULL;
+-
+ 	/* explicitly check that the inode_storage_ptr is not
+ 	 * NULL as inode_storage_lookup returns NULL in this case and
+ 	 * bpf_local_storage_update expects the owner to have a
+ 	 * valid storage pointer.
+ 	 */
+ 	if (!inode || !inode_storage_ptr(inode))
+-		return (unsigned long)NULL;
++		return NULL;
+ 
+-	sdata = inode_storage_lookup(inode, map, true);
++	sdata = inode_storage_lookup(inode, map, nobusy);
+ 	if (sdata)
+-		return (unsigned long)sdata->data;
++		return sdata->data;
+ 
+-	/* This helper must only called from where the inode is guaranteed
+-	 * to have a refcount and cannot be freed.
+-	 */
+-	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
++	/* only allocate new storage, when the inode is refcounted */
++	if (atomic_read(&inode->i_count) &&
++	    flags & BPF_LOCAL_STORAGE_GET_F_CREATE && nobusy) {
+ 		sdata = bpf_local_storage_update(
+ 			inode, (struct bpf_local_storage_map *)map, value,
+ 			BPF_NOEXIST, gfp_flags);
+-		return IS_ERR(sdata) ? (unsigned long)NULL :
+-					     (unsigned long)sdata->data;
++		return IS_ERR(sdata) ? NULL : sdata->data;
+ 	}
+ 
+-	return (unsigned long)NULL;
++	return NULL;
+ }
+ 
+-BPF_CALL_2(bpf_inode_storage_delete,
+-	   struct bpf_map *, map, struct inode *, inode)
++/* *gfp_flags* is a hidden argument provided by the verifier */
++BPF_CALL_5(bpf_inode_storage_get_recur, struct bpf_map *, map, struct inode *, inode,
++	   void *, value, u64, flags, gfp_t, gfp_flags)
+ {
++	bool nobusy;
++	void *data;
++
++	WARN_ON_ONCE(!bpf_rcu_lock_held());
++	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
++		return (unsigned long)NULL;
++
++	nobusy = bpf_inode_storage_trylock();
++	data = __bpf_inode_storage_get(map, inode, value, flags, gfp_flags, nobusy);
++	if (nobusy)
++		bpf_inode_storage_unlock();
++	return (unsigned long)data;
++}
++
++/* *gfp_flags* is a hidden argument provided by the verifier */
++BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
++	   void *, value, u64, flags, gfp_t, gfp_flags)
 +{
-+	struct path *subtree = fp_hook->data;
++	void *data;
 +
-+	path_put(subtree);
-+	kfree(subtree);
++	WARN_ON_ONCE(!bpf_rcu_lock_held());
++	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
++		return (unsigned long)NULL;
++
++	bpf_inode_storage_lock();
++	data = __bpf_inode_storage_get(map, inode, value, flags, gfp_flags, true);
++	bpf_inode_storage_unlock();
++	return (unsigned long)data;
 +}
 +
-+static struct fanotify_fastpath_ops fan_fp_ignore_a_ops = {
-+	.fp_handler = sample_fp_handler,
-+	.fp_init = sample_fp_init,
-+	.fp_free = sample_fp_free,
-+	.name = "monitor-subtree",
-+	.owner = THIS_MODULE,
-+	.flags = FAN_FP_F_SYS_ADMIN_ONLY,
-+	.desc = "only emit events under a subtree",
-+	.init_args = "struct {\n\tint subtree_fd;\n};",
++BPF_CALL_2(bpf_inode_storage_delete_recur, struct bpf_map *, map, struct inode *, inode)
++{
++	bool nobusy;
++	int ret;
++
+ 	WARN_ON_ONCE(!bpf_rcu_lock_held());
+ 	if (!inode)
+ 		return -EINVAL;
+ 
++	nobusy = bpf_inode_storage_trylock();
+ 	/* This helper must only called from where the inode is guaranteed
+ 	 * to have a refcount and cannot be freed.
+ 	 */
+-	return inode_storage_delete(inode, map);
++	ret = inode_storage_delete(inode, map, nobusy);
++	bpf_inode_storage_unlock();
++	return ret;
++}
++
++BPF_CALL_2(bpf_inode_storage_delete, struct bpf_map *, map, struct inode *, inode)
++{
++	int ret;
++
++	WARN_ON_ONCE(!bpf_rcu_lock_held());
++	if (!inode)
++		return -EINVAL;
++
++	bpf_inode_storage_lock();
++	/* This helper must only called from where the inode is guaranteed
++	 * to have a refcount and cannot be freed.
++	 */
++	ret = inode_storage_delete(inode, map, true);
++	bpf_inode_storage_unlock();
++	return ret;
+ }
+ 
+ static int notsupp_get_next_key(struct bpf_map *map, void *key,
+@@ -208,6 +282,17 @@ const struct bpf_map_ops inode_storage_map_ops = {
+ 
+ BTF_ID_LIST_SINGLE(bpf_inode_storage_btf_ids, struct, inode)
+ 
++const struct bpf_func_proto bpf_inode_storage_get_recur_proto = {
++	.func		= bpf_inode_storage_get_recur,
++	.gpl_only	= false,
++	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
++	.arg1_type	= ARG_CONST_MAP_PTR,
++	.arg2_type	= ARG_PTR_TO_BTF_ID_OR_NULL,
++	.arg2_btf_id	= &bpf_inode_storage_btf_ids[0],
++	.arg3_type	= ARG_PTR_TO_MAP_VALUE_OR_NULL,
++	.arg4_type	= ARG_ANYTHING,
 +};
 +
-+static int __init fanotify_fastpath_sample_init(void)
-+{
-+	return fanotify_fastpath_register(&fan_fp_ignore_a_ops);
-+}
-+static void __exit fanotify_fastpath_sample_exit(void)
-+{
-+	fanotify_fastpath_unregister(&fan_fp_ignore_a_ops);
-+}
+ const struct bpf_func_proto bpf_inode_storage_get_proto = {
+ 	.func		= bpf_inode_storage_get,
+ 	.gpl_only	= false,
+@@ -219,6 +304,15 @@ const struct bpf_func_proto bpf_inode_storage_get_proto = {
+ 	.arg4_type	= ARG_ANYTHING,
+ };
+ 
++const struct bpf_func_proto bpf_inode_storage_delete_recur_proto = {
++	.func		= bpf_inode_storage_delete_recur,
++	.gpl_only	= false,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_CONST_MAP_PTR,
++	.arg2_type	= ARG_PTR_TO_BTF_ID_OR_NULL,
++	.arg2_btf_id	= &bpf_inode_storage_btf_ids[0],
++};
 +
-+module_init(fanotify_fastpath_sample_init);
-+module_exit(fanotify_fastpath_sample_exit);
-+
-+MODULE_AUTHOR("Song Liu");
-+MODULE_DESCRIPTION("Example fanotify fastpath handler");
-+MODULE_LICENSE("GPL");
-diff --git a/samples/fanotify/fastpath-user.c b/samples/fanotify/fastpath-user.c
-new file mode 100644
-index 000000000000..abe33a6b6b41
---- /dev/null
-+++ b/samples/fanotify/fastpath-user.c
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/fanotify.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+
-+static int total_event_cnt;
-+
-+static void handle_notifications(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *event =
-+		(struct fanotify_event_metadata *) buffer;
-+	struct fanotify_event_info_header *info;
-+	struct fanotify_event_info_fid *fid;
-+	struct file_handle *handle;
-+	char *name;
-+	int off;
-+
-+	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
-+		for (off = sizeof(*event) ; off < event->event_len;
-+		     off += info->len) {
-+			info = (struct fanotify_event_info_header *)
-+				((char *) event + off);
-+			switch (info->info_type) {
-+			case FAN_EVENT_INFO_TYPE_DFID_NAME:
-+				fid = (struct fanotify_event_info_fid *) info;
-+				handle = (struct file_handle *)&fid->handle;
-+				name = (char *)handle + sizeof(*handle) + handle->handle_bytes;
-+
-+				printf("Accessing file %s\n", name);
-+				total_event_cnt++;
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct fanotify_fastpath_args args = {
-+		.name = "monitor-subtree",
-+		.version = 1,
-+		.flags = 0,
-+	};
-+	char buffer[BUFSIZ];
-+	const char *msg;
-+	int fanotify_fd;
-+	int subtree_fd;
-+
-+	if (argc < 3) {
-+		printf("Usage:\n"
-+		       "\t %s <mount point> <subtree to monitor>\n",
-+			argv[0]);
-+		return 1;
-+	}
-+
-+	subtree_fd = open(argv[2], O_RDONLY | O_CLOEXEC);
-+
-+	if (subtree_fd < 0)
-+		errx(1, "open subtree_fd");
-+
-+	args.init_args = (__u64)&subtree_fd;
-+	args.init_args_size = sizeof(int);
-+
-+	fanotify_fd = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR_FID,
-+				    O_RDONLY);
-+	if (fanotify_fd < 0) {
-+		close(subtree_fd);
-+		errx(1, "fanotify_init");
-+	}
-+
-+	if (fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM,
-+			  FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD,
-+			  AT_FDCWD, argv[1])) {
-+		msg = "fanotify_mark";
-+		goto err_out;
-+	}
-+
-+	if (ioctl(fanotify_fd, FAN_IOC_ADD_FP, &args)) {
-+		msg = "ioctl";
-+		goto err_out;
-+	}
-+
-+	while (total_event_cnt < 10) {
-+		int n = read(fanotify_fd, buffer, BUFSIZ);
-+
-+		if (n < 0) {
-+			msg = "read";
-+			goto err_out;
-+		}
-+
-+		handle_notifications(buffer, n);
-+	}
-+
-+	ioctl(fanotify_fd, FAN_IOC_DEL_FP);
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	return 0;
-+
-+err_out:
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	errx(1, msg);
-+	return 0;
-+}
+ const struct bpf_func_proto bpf_inode_storage_delete_proto = {
+ 	.func		= bpf_inode_storage_delete,
+ 	.gpl_only	= false,
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index 6292ac5f9bd1..51e2de17325a 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -231,10 +231,6 @@ bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	}
+ 
+ 	switch (func_id) {
+-	case BPF_FUNC_inode_storage_get:
+-		return &bpf_inode_storage_get_proto;
+-	case BPF_FUNC_inode_storage_delete:
+-		return &bpf_inode_storage_delete_proto;
+ #ifdef CONFIG_NET
+ 	case BPF_FUNC_sk_storage_get:
+ 		return &bpf_sk_storage_get_proto;
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index a582cd25ca87..3ec39e6704e2 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1529,6 +1529,14 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		if (bpf_prog_check_recur(prog))
+ 			return &bpf_task_storage_delete_recur_proto;
+ 		return &bpf_task_storage_delete_proto;
++	case BPF_FUNC_inode_storage_get:
++		if (bpf_prog_check_recur(prog))
++			return &bpf_inode_storage_get_recur_proto;
++		return &bpf_inode_storage_get_proto;
++	case BPF_FUNC_inode_storage_delete:
++		if (bpf_prog_check_recur(prog))
++			return &bpf_inode_storage_delete_recur_proto;
++		return &bpf_inode_storage_delete_proto;
+ 	case BPF_FUNC_for_each_map_elem:
+ 		return &bpf_for_each_map_elem_proto;
+ 	case BPF_FUNC_snprintf:
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+index 3663aec7bcbd..67719a04bb0b 100644
+--- a/security/bpf/hooks.c
++++ b/security/bpf/hooks.c
+@@ -12,8 +12,6 @@ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
+ 	#include <linux/lsm_hook_defs.h>
+ 	#undef LSM_HOOK
+-	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
+-	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
+ };
+ 
+ static const struct lsm_id bpf_lsmid = {
+@@ -29,12 +27,7 @@ static int __init bpf_lsm_init(void)
+ 	return 0;
+ }
+ 
+-struct lsm_blob_sizes bpf_lsm_blob_sizes __ro_after_init = {
+-	.lbs_inode = sizeof(struct bpf_storage_blob),
+-};
+-
+ DEFINE_LSM(bpf) = {
+ 	.name = "bpf",
+ 	.init = bpf_lsm_init,
+-	.blobs = &bpf_lsm_blob_sizes
+ };
 -- 
 2.43.5
 
