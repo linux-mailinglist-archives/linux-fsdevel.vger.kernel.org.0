@@ -1,216 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-34738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319C39C83CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBF89C83D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 08:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEDE286211
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 07:12:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D38528728B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 07:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC7B1F4FC4;
-	Thu, 14 Nov 2024 07:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9E81EBA0F;
+	Thu, 14 Nov 2024 07:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOakZ1//"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CarnZG7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5921EBA1A;
-	Thu, 14 Nov 2024 07:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF021EBFE1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 07:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731568086; cv=none; b=OEtQsPeshrmAKGLmHDinnpCRVzCIsPwYr3F2oR7CTucA9JO9GCHt6xjbVzPf/Lbu5VG2E9baVVdDl7nr0y0xPTNOdzGMshWRtUwXM1EtbxLfsyudJP/MXd1QZw3umC+3KJ5QWOyZ8AaCp1ZKO+BI9Jq8Q/qBBifUBZZ9/q1IwGQ=
+	t=1731568339; cv=none; b=FulLO06DmUugvp18IkgsyLXoDYrWK+lWz33Kdhy70U8yb5LrU90HlW/k0sPhsvJ9/ead38wgdQ11sTH75DktRpFIMSpbeBofh0N7Wq0UbErfH7Ao+ji4P2hF17ynf33poAdso+nVOcgQ0H6C3vhA7zAp86BbOlHq3oRxAgw0gDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731568086; c=relaxed/simple;
-	bh=USaJ9TKLIITQYM06sc442Xnr6FLSqpXvaxlsuiBHCx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W9YNVxPOwT+DEwRKR06RDrqJmwarjyLdQe1tcBtfIi8kJLiXrz4q3Cek6qXuHIQmiCvRGVanO9khD2eZBB7Q9vJnljWCWUrd2vL0r54LhorOQ25Ns3VBNlni1l0KVHWCJ5IhoU+H34I7W/Oc2SNC9i6Fl07PZsEIMsg/6n4xQ8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOakZ1//; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-84ff612ca93so156042241.0;
-        Wed, 13 Nov 2024 23:08:05 -0800 (PST)
+	s=arc-20240116; t=1731568339; c=relaxed/simple;
+	bh=8SgpE9YDcrTA012K14vrax0ivdaBXLipaFt0CmFxTIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IXYWmpRt10c6r0+O0ywcQrZbgM7WMEyM/13uGJO/Vy2BhltswLJa5ShsoanZ/j5ki1SzgedH3Stmr0ViZLOWkxiWGcd4Jw1HiJ6fsaxlsNNHGr12Bq5Aqcqku8dZhgw+lrdL2EZOfjEimAbAE1d5PtMlWbW1RzoNdnvStFSmaF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CarnZG7U; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c70abba48so2472065ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 23:12:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731568084; x=1732172884; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kZP2UtkUiMuuO8ctVNh2CbqEJUiU2189veCM3C4kakw=;
-        b=KOakZ1//f14/icnJ/Cg1K/Blx/1vlnVtA2urlN/tWRM8Fmc3ZQru5Jc+Jg581qTldT
-         RHO80MdfL730sPc0XNTkDI9EFr/xHUfRjNPqx/pj4KNTgn4hq7DbQbI5AziCk/14JSwS
-         5aXXx1I4rC5uE9slxr8RSL6zufqQ/h8tsQBeBDXUUMSnfygWpww3mjYUaeYVU3nQnS7q
-         ksT9BnwsmrNitSo/5JjQEhvGgkxSIBb7Bjv7HA6qBNhzr3Uaf+ON6GUI5dkOuWiVe+eW
-         GP/nhHLJ7aBNRG5iLlbzR1dBqxsLXXHf3P2rxsU2BnfiYDIwtxPYnwgQmu5FIfcvClYh
-         psHA==
+        d=bytedance.com; s=google; t=1731568336; x=1732173136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B7U/+pm4C7G3MffORaQg9XRo4wU6QnXYyTp4dM+QVVY=;
+        b=CarnZG7UQ2IBBaDkyqWguP7NdB6lv1R9jzdnwSaLvO9l/Vc1mW5ImrT35ziGFQ4Rx0
+         SQKaVsdSzCCmFQRsi823jhkjPU/9fmeIww+cY+OPfFoFunhkHJrVoEJO1zJn7kGiT4fP
+         ZDJfaY3ABJRRQ+zuTc9dnfFUpz06XbaAAj5oC9xFiXkR/WJ2s3bdxd1l/3FrZ+ESnhBh
+         j5gO6OkfGoLW9/Hb+u5SCkFv7SPK5nEy8KvI7tQPaKKVj2nOxy4pTt/kp4M/hW/378ZZ
+         cngM4FP91i/Vt2ToMuIaolJbpp58+vLNWg0eIWvrLgnoPZ9MX3eTx5PTesLDaZfKAXdM
+         oFdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731568084; x=1732172884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kZP2UtkUiMuuO8ctVNh2CbqEJUiU2189veCM3C4kakw=;
-        b=xPqkHImjjVsPzjHpAIOIrWpIUWkINyOc1HlgGBZRyRzLk0n9Q6081bza+Oc14nEOqu
-         zrwuVGf9znd2MvrlDSRh1t1PF47A/nxDzSD2JaV4lZB/0nESLlN8kPs1snLZX6iVDd5Y
-         48C+NXtQXtLGnfWDAwAongrE0VlUJzmpp3kaIAz8gChjoXYyGaWx3HdpPlaK2j4QxmOJ
-         EOi0HAkPbIQ7tAZqcCtQFnu7r6xlLTiyVW5b6UkTp07vtLFjKK7DzaFqJ7jE+pz8fIaE
-         8CIVMcZhT9KkQG3++ZqjdZDwYwrLcZ+WNYiRiLiQ3u0bAdmISpQ3b8VJgaEsjDhl2OrR
-         s1JA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyBTjk5/KhCQ1k300p56yYY1jsWpCUJS/ctjkoAEGIwUFXQU2hHnkbJBcnlE29Fkj0WAuhc4vPZ6134GwY@vger.kernel.org, AJvYcCV8LGvZQ48zUc2w3Ndb1mcgzzsN8GKJXse7Z0p46C//m1P4i0B4CPR20wHCfRyA1/BFziMJYUDCcEha@vger.kernel.org, AJvYcCWZ5FfxBMuJb2G8DJVvWP5tczWCb2nSIMLpO/yO5uYYOXUlfrYtdDfkEu7epErvL51y4TN/WYkERVSR8+Er@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8cUN/yFxZt4+dL67qp9Fe0MmS7X2ulYP5vH+Tcu3nNwHUosMs
-	pR0GxjHybRkWLdnZywGDy4SuBQkCwTthqSgmR7PhnEkoAvhcT/LHUR0L7e8sHY2xFGajbZRwzBu
-	HvkoKbmwii4EhXfNrQSnRa+XJSAU=
-X-Google-Smtp-Source: AGHT+IGrcBld05U+5d5DC5hjOPJVXl2Eom2ykIjoK9+tfez3tbRGjLskRKvZhchbOuniV0XARXgJri/fVvLJVkgyG7s=
-X-Received: by 2002:a05:6102:2911:b0:4a5:b3e1:f28b with SMTP id
- ada2fe7eead31-4aae1351d90mr22025827137.1.1731568084106; Wed, 13 Nov 2024
- 23:08:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731568336; x=1732173136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B7U/+pm4C7G3MffORaQg9XRo4wU6QnXYyTp4dM+QVVY=;
+        b=NuAv0OptmimUQrqjBbdbLrb7WF1CmLV2SWhvQYW7/Qn1BFIW94X1D2yCmhCvXr3cF+
+         8JwuMtd2ae5gJsr8pStMJWazQnBMYre4H+DbFqhP2DNg30TuRBL3P4W9TD1j39Eq6e2S
+         wOX5O3lhwPRKT/jGa1dvgf0S7EvMaGebLf2xoUYGriFtgXr4o6ohiMDJGUCPZMkCf8dp
+         Wh3J7i3KY2CEtFDp8VAur68aWUUAR5kY1jeKR8oo9ZHOERB9CKy+b6tloP1ij+v16q2l
+         7I4qffq1LhKTtzC8jlxeUecCqnDCt0E6bzvAm+qQxWYWzGkAdMNAxW6kF4RKrNvCVQZ5
+         GdFQ==
+X-Gm-Message-State: AOJu0YyN+uTLjfdJV/4ohwFisypWYn07oS/jyu+MDZy55q59UdqRHHYq
+	Nu0baHslJ+Cz6nocG6DeSrbSfvutDFh7Iefd/usXTk09FZFI5pTp+os99gao2IvIWLVAiiGIWqu
+	4I4s=
+X-Google-Smtp-Source: AGHT+IHeIv6bdFLvavTRALfsdpDSUrwQPBGHk50OYa6tDA1Mw86vDD1G8vHgNwm5gnHH+jBxpoFn8w==
+X-Received: by 2002:a17:903:41ca:b0:205:8275:768 with SMTP id d9443c01a7336-211c4fee470mr11769345ad.21.1731568336411;
+        Wed, 13 Nov 2024 23:12:16 -0800 (PST)
+Received: from tianci-mac.bytedance.net ([61.213.176.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d01c7dsm4345155ad.192.2024.11.13.23.12.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 13 Nov 2024 23:12:15 -0800 (PST)
+From: Zhang Tianci <zhangtianci.1997@bytedance.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xieyongji@bytedance.com,
+	Zhang Tianci <zhangtianci.1997@bytedance.com>,
+	Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Subject: [PATCH] fuse: check attributes staleness on fuse_iget()
+Date: Thu, 14 Nov 2024 15:09:05 +0800
+Message-ID: <20241114070905.48901-1-zhangtianci.1997@bytedance.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu> <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
-In-Reply-To: <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Nov 2024 08:07:52 +0100
-Message-ID: <CAOQ4uxh2HWkVE_aMeYSTsYRO9_sKMPH7V2uksWFSo3ucWOoJ2g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 7:11=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu=
-> wrote:
->
-> On 64-bit platforms, userspace can read the pidfd's inode in order to
-> get a never-repeated PID identifier. On 32-bit platforms this identifier
-> is not exposed, as inodes are limited to 32 bits. Instead expose the
-> identifier via export_fh, which makes it available to userspace via
-> name_to_handle_at
->
-> In addition we implement fh_to_dentry, which allows userspace to
-> recover a pidfd from a PID file handle.
+Function fuse_direntplus_link() might call fuse_iget() to initialize a new
+fuse_inode and change its attributes. If fi->attr_version is always
+initialized with 0, even if the attributes returned by the FUSE_READDIR
+request is staled, as the new fi->attr_version is 0, fuse_change_attributes
+will still set the staled attributes to inode. This wrong behaviour may
+cause file size inconsistency even when there is no changes from
+server-side.
 
-"In addition" is a good indication that a separate patch was a good idea..
+To reproduce the issue, consider the following 2 programs (A and B) are
+running concurrently,
 
->
-> We stash the process' PID in the root pid namespace inside the handle,
-> and use that to recover the pid (validating that pid->ino matches the
-> value in the handle, i.e. that the pid has not been reused).
->
-> We use the root namespace in order to ensure that file handles can be
-> moved across namespaces; however, we validate that the PID exists in
-> the current namespace before returning the inode.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+        A                                               B
+----------------------------------      --------------------------------
+{ /fusemnt/dir/f is a file path in a fuse mount, the size of f is 0. }
 
-This patch has changed enough that you should not have kept my RVB.
+readdir(/fusemnt/dir) start
+//Daemon set size 0 to f direntry
+                                        fallocate(f, 1024)
+                                        stat(f) // B see size 1024
+                                        echo 2 > /proc/sys/vm/drop_caches
+readdir(/fusemnt/dir) reply to kernel
+Kernel set 0 to the I_NEW inode
 
-BTW, please refrain from using the same subject for the cover letter and
-a single patch. They are not the same thing, so if they get the same
-name, one of them has an inaccurate description.
+                                        stat(f) // B see size 0
 
-> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-> ---
->  fs/pidfs.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 61 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 80675b6bf88459c22787edaa68db360bdc0d0782..0684a9b8fe71c5205fb153b27=
-14bc9c672045fd5 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/anon_inodes.h>
-> +#include <linux/exportfs.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
->  #include <linux/magic.h>
-> @@ -347,11 +348,69 @@ static const struct dentry_operations pidfs_dentry_=
-operations =3D {
->         .d_prune        =3D stashed_dentry_prune,
->  };
->
-> +#define PIDFD_FID_LEN 3
-> +
-> +struct pidfd_fid {
-> +       u64 ino;
-> +       s32 pid;
-> +} __packed;
-> +
-> +static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-> +                          struct inode *parent)
-> +{
-> +       struct pid *pid =3D inode->i_private;
-> +       struct pidfd_fid *fid =3D (struct pidfd_fid *)fh;
-> +
-> +       if (*max_len < PIDFD_FID_LEN) {
-> +               *max_len =3D PIDFD_FID_LEN;
-> +               return FILEID_INVALID;
-> +       }
-> +
-> +       fid->ino =3D pid->ino;
-> +       fid->pid =3D pid_nr(pid);
-> +       *max_len =3D PIDFD_FID_LEN;
-> +       return FILEID_INO64_GEN;
-> +}
-> +
-> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-> +                                        struct fid *gen_fid,
-> +                                        int fh_len, int fh_type)
-> +{
-> +       int ret;
-> +       struct path path;
-> +       struct pidfd_fid *fid =3D (struct pidfd_fid *)gen_fid;
-> +       struct pid *pid;
-> +
-> +       if (fh_type !=3D FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
-> +               return NULL;
-> +
-> +       scoped_guard(rcu) {
-> +               pid =3D find_pid_ns(fid->pid, &init_pid_ns);
-> +               if (!pid || pid->ino !=3D fid->ino || pid_vnr(pid) =3D=3D=
- 0)
-> +                       return NULL;
-> +
-> +               pid =3D get_pid(pid);
-> +       }
-> +
-> +       ret =3D path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-> +       if (ret < 0)
-> +               return ERR_PTR(ret);
+In the above case, only program B is modifying the file size, however, B
+observes file size changing between the 2 'readonly' stat() calls. To fix
+this issue, we should make sure readdirplus still follows the rule of
+attr_version staleness checking even if the fi->attr_version is lost due to
+inode eviction.
 
-How come no need to put_pid() in case of error?
+To identify this situation, the new fc->evict_ctr is used to record whether
+the eviction of inodes occurs during the readdirplus request processing.
+If it does, the result of readdirplus may be inaccurate; otherwise, the
+result of readdirplus can be trusted. Although this may still lead to
+incorrect invalidation, considering the relatively low frequency of
+evict occurrences, it should be acceptable.
 
-> +
-> +       mntput(path.mnt);
-> +       return path.dentry;
-> +}
-> +
-> +static const struct export_operations pidfs_export_operations =3D {
-> +       .encode_fh =3D pidfs_encode_fh,
-> +       .fh_to_dentry =3D pidfs_fh_to_dentry,
-> +       .flags =3D EXPORT_OP_UNRESTRICTED_OPEN,
-> +};
-> +
->  static int pidfs_init_inode(struct inode *inode, void *data)
->  {
->         inode->i_private =3D data;
->         inode->i_flags |=3D S_PRIVATE;
-> -       inode->i_mode |=3D S_IRWXU;
-> +       inode->i_mode |=3D S_IRWXU | S_IRWXG | S_IRWXO;
+Link: https://lore.kernel.org/lkml/20230711043405.66256-2-zhangjiachen.jaycee@bytedance.com/
 
-This change is not explained.
-Why is it here?
+Reported-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Zhang Tianci <zhangtianci.1997@bytedance.com>
+---
+ fs/fuse/dir.c     | 11 +++++++----
+ fs/fuse/fuse_i.h  | 11 ++++++++++-
+ fs/fuse/inode.c   | 14 +++++++++++---
+ fs/fuse/readdir.c | 15 +++++++++------
+ 4 files changed, 37 insertions(+), 14 deletions(-)
 
-Thanks,
-Amir.
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 54104dd48af7c..7d0a0fab69207 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -366,7 +366,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 	struct fuse_mount *fm = get_fuse_mount_super(sb);
+ 	FUSE_ARGS(args);
+ 	struct fuse_forget_link *forget;
+-	u64 attr_version;
++	u64 attr_version, evict_ctr;
+ 	int err;
+ 
+ 	*inode = NULL;
+@@ -381,6 +381,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 		goto out;
+ 
+ 	attr_version = fuse_get_attr_version(fm->fc);
++	evict_ctr = fuse_get_evict_ctr(fm->fc);
+ 
+ 	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
+ 	err = fuse_simple_request(fm, &args);
+@@ -398,7 +399,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 
+ 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
+ 			   &outarg->attr, ATTR_TIMEOUT(outarg),
+-			   attr_version);
++			   attr_version, evict_ctr);
+ 	err = -ENOMEM;
+ 	if (!*inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
+@@ -691,7 +692,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	ff->nodeid = outentry.nodeid;
+ 	ff->open_flags = outopenp->open_flags;
+ 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+-			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
++			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0,
++			  fuse_get_evict_ctr(fm->fc));
+ 	if (!inode) {
+ 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+ 		fuse_sync_release(NULL, ff, flags);
+@@ -822,7 +824,8 @@ static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
+ 		goto out_put_forget_req;
+ 
+ 	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+-			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0);
++			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0,
++			  fuse_get_evict_ctr(fm->fc));
+ 	if (!inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+ 		return -ENOMEM;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index e6cc3d552b138..f9ff0d0029aba 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -884,6 +884,9 @@ struct fuse_conn {
+ 	/** Version counter for attribute changes */
+ 	atomic64_t attr_version;
+ 
++	/** Version counter for evict inode */
++	atomic64_t evict_ctr;
++
+ 	/** Called on final put */
+ 	void (*release)(struct fuse_conn *);
+ 
+@@ -978,6 +981,11 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
+ 	return atomic64_read(&fc->attr_version);
+ }
+ 
++static inline u64 fuse_get_evict_ctr(struct fuse_conn *fc)
++{
++	return atomic64_read(&fc->evict_ctr);
++}
++
+ static inline bool fuse_stale_inode(const struct inode *inode, int generation,
+ 				    struct fuse_attr *attr)
+ {
+@@ -1037,7 +1045,8 @@ extern const struct dentry_operations fuse_root_dentry_operations;
+  */
+ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 			int generation, struct fuse_attr *attr,
+-			u64 attr_valid, u64 attr_version);
++			u64 attr_valid, u64 attr_version,
++			u64 evict_ctr);
+ 
+ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
+ 		     struct fuse_entry_out *outarg, struct inode **inode);
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index fd3321e29a3e5..872c61dd56618 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -173,6 +173,7 @@ static void fuse_evict_inode(struct inode *inode)
+ 			fuse_cleanup_submount_lookup(fc, fi->submount_lookup);
+ 			fi->submount_lookup = NULL;
+ 		}
++		atomic64_inc(&fc->evict_ctr);
+ 	}
+ 	if (S_ISREG(inode->i_mode) && !fuse_is_bad(inode)) {
+ 		WARN_ON(fi->iocachectr != 0);
+@@ -426,7 +427,8 @@ static int fuse_inode_set(struct inode *inode, void *_nodeidp)
+ 
+ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 			int generation, struct fuse_attr *attr,
+-			u64 attr_valid, u64 attr_version)
++			u64 attr_valid, u64 attr_version,
++			u64 evict_ctr)
+ {
+ 	struct inode *inode;
+ 	struct fuse_inode *fi;
+@@ -488,6 +490,10 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 	spin_unlock(&fi->lock);
+ done:
+ 	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
++	spin_lock(&fi->lock);
++	if (evict_ctr < fuse_get_evict_ctr(fc))
++		fuse_invalidate_attr(inode);
++	spin_unlock(&fi->lock);
+ 
+ 	return inode;
+ }
+@@ -940,6 +946,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->initialized = 0;
+ 	fc->connected = 1;
+ 	atomic64_set(&fc->attr_version, 1);
++	atomic64_set(&fc->evict_ctr, 1);
+ 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+ 	fc->user_ns = get_user_ns(user_ns);
+@@ -1001,7 +1008,7 @@ static struct inode *fuse_get_root_inode(struct super_block *sb, unsigned mode)
+ 	attr.mode = mode;
+ 	attr.ino = FUSE_ROOT_ID;
+ 	attr.nlink = 1;
+-	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0);
++	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0, 0);
+ }
+ 
+ struct fuse_inode_handle {
+@@ -1610,7 +1617,8 @@ static int fuse_fill_super_submount(struct super_block *sb,
+ 		return -ENOMEM;
+ 
+ 	fuse_fill_attr_from_inode(&root_attr, parent_fi);
+-	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
++	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0,
++			 fuse_get_evict_ctr(fm->fc));
+ 	/*
+ 	 * This inode is just a duplicate, so it is not looked up and
+ 	 * its nlookup should not be incremented.  fuse_iget() does
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index 0377b6dc24c80..ceb5aefd6012f 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -149,7 +149,7 @@ static int parse_dirfile(char *buf, size_t nbytes, struct file *file,
+ 
+ static int fuse_direntplus_link(struct file *file,
+ 				struct fuse_direntplus *direntplus,
+-				u64 attr_version)
++				u64 attr_version, u64 evict_ctr)
+ {
+ 	struct fuse_entry_out *o = &direntplus->entry_out;
+ 	struct fuse_dirent *dirent = &direntplus->dirent;
+@@ -233,7 +233,7 @@ static int fuse_direntplus_link(struct file *file,
+ 	} else {
+ 		inode = fuse_iget(dir->i_sb, o->nodeid, o->generation,
+ 				  &o->attr, ATTR_TIMEOUT(o),
+-				  attr_version);
++				  attr_version, evict_ctr);
+ 		if (!inode)
+ 			inode = ERR_PTR(-ENOMEM);
+ 
+@@ -284,7 +284,8 @@ static void fuse_force_forget(struct file *file, u64 nodeid)
+ }
+ 
+ static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
+-			     struct dir_context *ctx, u64 attr_version)
++			     struct dir_context *ctx, u64 attr_version,
++			     u64 evict_ctr)
+ {
+ 	struct fuse_direntplus *direntplus;
+ 	struct fuse_dirent *dirent;
+@@ -319,7 +320,7 @@ static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
+ 		buf += reclen;
+ 		nbytes -= reclen;
+ 
+-		ret = fuse_direntplus_link(file, direntplus, attr_version);
++		ret = fuse_direntplus_link(file, direntplus, attr_version, evict_ctr);
+ 		if (ret)
+ 			fuse_force_forget(file, direntplus->entry_out.nodeid);
+ 	}
+@@ -337,7 +338,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	struct fuse_io_args ia = {};
+ 	struct fuse_args_pages *ap = &ia.ap;
+ 	struct fuse_page_desc desc = { .length = PAGE_SIZE };
+-	u64 attr_version = 0;
++	u64 attr_version = 0, evict_ctr = 0;
+ 	bool locked;
+ 
+ 	page = alloc_page(GFP_KERNEL);
+@@ -351,6 +352,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	ap->descs = &desc;
+ 	if (plus) {
+ 		attr_version = fuse_get_attr_version(fm->fc);
++		evict_ctr = fuse_get_evict_ctr(fm->fc);
+ 		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
+ 				    FUSE_READDIRPLUS);
+ 	} else {
+@@ -368,7 +370,8 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 				fuse_readdir_cache_end(file, ctx->pos);
+ 		} else if (plus) {
+ 			res = parse_dirplusfile(page_address(page), res,
+-						file, ctx, attr_version);
++						file, ctx, attr_version,
++						evict_ctr);
+ 		} else {
+ 			res = parse_dirfile(page_address(page), res, file,
+ 					    ctx);
+-- 
+2.46.0.rc2
+
 
