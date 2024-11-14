@@ -1,175 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-34715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793789C7FFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 02:30:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C049C8008
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 02:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3EE11F2277C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 01:30:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62710B23B72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 01:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939121E412A;
-	Thu, 14 Nov 2024 01:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gy9Rn2zx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAD61E3DC9;
+	Thu, 14 Nov 2024 01:34:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E11E3DC4;
-	Thu, 14 Nov 2024 01:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+Received: from wangsu.com (mail.wangsu.com [180.101.34.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49DA2746B;
+	Thu, 14 Nov 2024 01:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.34.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731547797; cv=none; b=oyq5P7LHF9YdRnhxqIYC0yXq7/49toWj+dMDbsUzX/g+UmYzr9YL2OVT89s8k2oyO/HciTGcxbTcICizwM23u3+N27I325PknqsbrB2LqOwPd5GuX0e9Os3kUU0YsTuxXJVSnUcJoHAuUxnYm18+jRl4OR3fRNYGKk4KVf15eoE=
+	t=1731548073; cv=none; b=FfPZVp35kYzpDDIo5bTf24M26G01fnXo76PKdYtZWSm4JSl3GVpop5PAL4XbeDEtoQqzDAyJ69iNH0mimD10ReLASrWYtvnwENymD3RBlOuZgelnGmjQDJGSwdO8pNl9TxEdppRqHuvydmzTmcvz4oxMDIhpc8Piqd4aKppLBWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731547797; c=relaxed/simple;
-	bh=U4LWyp7oJNaY5Yh9s6TiGRN+bfgXwxV0//mlV5BDLk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/z0R/pWgxdUMdVpFLp8/OlBsA2Ok1uq5aH7tGvw02vVV3dFSqENtFbs4TMunCLc2jfqLFU4mmiHXJ9b1xyLxXIkkuVZsKtq9rwUZ9E9HT5ImqwtwYEgdcx2KcmUbtx2NzkeHXFRqAXiufDDn4fLWFOoM2jRW6+PCIrfUtI0/b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gy9Rn2zx; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731547795; x=1763083795;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U4LWyp7oJNaY5Yh9s6TiGRN+bfgXwxV0//mlV5BDLk0=;
-  b=gy9Rn2zxfwqF7IQ5pff/Tw2JCKw/+4TbIicoT67WNCFBsO7cAwgKn+tT
-   gk9RY6Rd3WhycJINfZx8CKOIJqh2SbjW5wQJTrzPV2YPQy0I/05q8jh26
-   D8MSULi5HtGjOVjcFXkXgTdZyroVmlqMv6N86zudZYydSzEFOb2yQlrfX
-   +E9lF5S2i9DwjTaEAEgMU4pYxebe/gnV3mNM6dx5leL0iEN1o69qybCU7
-   YGimFX+LgTQTs8Q968Wy9zYEvtFPIMiQjvO6M/tVxr20bLLHJ4Vtdzo+f
-   +IcC5JcjwPnZ2rvU0A6Sa6r5CNNV7gHj63I7HUVpoys+B71zEF3zHr7qd
-   Q==;
-X-CSE-ConnectionGUID: PqBWzrNORJuXPf5T/VVGCw==
-X-CSE-MsgGUID: iRo0cKFpQCGijGK2vqQqUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31239759"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31239759"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 17:29:54 -0800
-X-CSE-ConnectionGUID: PKFP/Z5wQT2aRHhsDUM/Wg==
-X-CSE-MsgGUID: LxTBu1dyTA22jRE/02sWgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="88468709"
-Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 13 Nov 2024 17:29:52 -0800
-Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBOg9-00012N-2k;
-	Thu, 14 Nov 2024 01:29:49 +0000
-Date: Thu, 14 Nov 2024 09:29:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Erin Shepherd <erin.shepherd@e43.eu>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org,
-	Erin Shepherd <erin.shepherd@e43.eu>
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Message-ID: <202411140905.a0ntnQQG-lkp@intel.com>
-References: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+	s=arc-20240116; t=1731548073; c=relaxed/simple;
+	bh=jcarAB/yWQIChUPLz2l5DjoCp1p9s+1gZ6oTLHGr9uA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=enh2dFCFSOG5YAW63UfCrmqqN8hlM8ytftIs1jB8K2clY6E1HYZGsNYRXrWFgVLAGUR4126N2wrD9DalLI7Vcmtm+aH9mycsHGzsBU0+ekOPu+1OUI1Kss17y08dzxV7eqB5pmm2DxUxbEyEmQcyWTt5fddPoz4YipvQh6KmIMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com; spf=pass smtp.mailfrom=wangsu.com; arc=none smtp.client-ip=180.101.34.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wangsu.com
+Received: from [10.8.162.84] (unknown [59.61.78.234])
+	by app2 (Coremail) with SMTP id SyJltABnb3OSUzVn7Ax+AQ--.297S2;
+	Thu, 14 Nov 2024 09:34:11 +0800 (CST)
+Message-ID: <7454ba19-6c78-4318-8164-21d4b14bee08@wangsu.com>
+Date: Thu, 14 Nov 2024 09:34:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] coredump: Fixes core_pipe_limit sysctl proc_handler
+To: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Joel Granados <j.granados@samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Neil Horman <nhorman@tuxdriver.com>, Theodore Ts'o <tytso@mit.edu>
+References: <20241112131357.49582-1-nicolas.bouchinet@clip-os.org>
+ <20241112131357.49582-2-nicolas.bouchinet@clip-os.org>
+ <af2a2a7e-1604-4e24-bee6-f31498e0b25d@wangsu.com>
+ <f616c1aa-65e7-44e8-90ac-5be8e3f88927@clip-os.org>
+Content-Language: en-US
+From: Lin Feng <linf@wangsu.com>
+In-Reply-To: <f616c1aa-65e7-44e8-90ac-5be8e3f88927@clip-os.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:SyJltABnb3OSUzVn7Ax+AQ--.297S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF15Ar4kAw1UZw1kKryxGrg_yoWrJrW7pr
+	W7KFy7KFW8uF1xAw1xtr42v348urWFkFy3Ww4DGr47ZFn8Wr13ZrnrCryYgFsrKr10k34Y
+	vr4qgasF9FyYyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkmb7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4
+	CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E74AGY7Cv6cx26r48
+	McIj6xkF7I0En7xvr7AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkIecxEwVAFwVWkMxAIw28IcxkI7VAKI48JMxAI
+	w28IcVCjz48v1sIEY20_Gr4l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU6g4SDUUUU
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 
-Hi Erin,
+Hi, 
 
-kernel test robot noticed the following build warnings:
+On 11/13/24 22:15, Nicolas Bouchinet wrote:
+> Hi Lin,
+> 
+> Thanks for your review.
+> 
+> On 11/13/24 03:35, Lin Feng wrote:
+>> Hi,
+>>
+>> see comments below please.
+>>
+>> On 11/12/24 21:13, nicolas.bouchinet@clip-os.org wrote:
+>>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>>
+>>> proc_dointvec converts a string to a vector of signed int, which is
+>>> stored in the unsigned int .data core_pipe_limit.
+>>> It was thus authorized to write a negative value to core_pipe_limit
+>>> sysctl which once stored in core_pipe_limit, leads to the signed int
+>>> dump_count check against core_pipe_limit never be true. The same can be
+>>> achieved with core_pipe_limit set to INT_MAX.
+>>>
+>>> Any negative write or >= to INT_MAX in core_pipe_limit sysctl would
+>>> hypothetically allow a user to create very high load on the system by
+>>> running processes that produces a coredump in case the core_pattern
+>>> sysctl is configured to pipe core files to user space helper.
+>>> Memory or PID exhaustion should happen before but it anyway breaks the
+>>> core_pipe_limit semantic
+>>>
+>>> This commit fixes this by changing core_pipe_limit sysctl's proc_handler
+>>> to proc_dointvec_minmax and bound checking between SYSCTL_ZERO and
+>>> SYSCTL_INT_MAX.
+>>>
+>>> Fixes: a293980c2e26 ("exec: let do_coredump() limit the number of concurrent dumps to pipes")
+>>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>> ---
+>>>   fs/coredump.c | 7 +++++--
+>>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/coredump.c b/fs/coredump.c
+>>> index 7f12ff6ad1d3e..8ea5896e518dd 100644
+>>> --- a/fs/coredump.c
+>>> +++ b/fs/coredump.c
+>>> @@ -616,7 +616,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>>>   		cprm.limit = RLIM_INFINITY;
+>>>   
+>>>   		dump_count = atomic_inc_return(&core_dump_count);
+>>> -		if (core_pipe_limit && (core_pipe_limit < dump_count)) {
+>>> +		if ((core_pipe_limit && (core_pipe_limit < dump_count)) ||
+>>> +		    (core_pipe_limit && dump_count == INT_MAX)) {
+>> While comparing between 'unsigned int' and 'signed int', C deems them both
+>> to 'unsigned int', so as an insane user sets core_pipe_limit to INT_MAX,
+>> and dump_count(signed int) does overflow INT_MAX, checking for
+>> 'core_pipe_limit < dump_count' is passed, thus codes skips core dump.
+>>
+>> So IMO it's enough after changing proc_handler to proc_dointvec_minmax.
+> Indeed, but the dump_count == INT_MAX is not here to catch overflow but 
+> if both dump_count
+> and core_pipe_limit are equal to INT_MAX. core_pipe_limit will not be 
+> inferior to dump_count.
+> Or maybe I am missing something ?
+> 
+Extracted from man core:
+       Since Linux 2.6.32, the /proc/sys/kernel/core_pipe_limit can be used to
+       defend against this possibility.  The value in this  file  defines  how
+       many  concurrent crashing processes may be piped to user-space programs
+       in parallel.  If this value is exceeded, then those crashing  processes
+       above  this  value are noted in the kernel log and their core dumps are
+       skipped.
 
-[auto build test WARNING on 14b6320953a3f856a3f93bf9a0e423395baa593d]
+Since no spinlock protecting us, due to the concurrent running of
+atomic_inc_return(&core_dump_count), even with the changing above
+it's not guaranteed that core_dump_count can't exceed core_pipe_limit).
+As you said, suppose both of them are equal to INT_MAX(0x7fffffff),
+and before any dummping thread drops core_dump_count, one new thread
+comes in then hits atomic_inc_return(&core_dump_count) and now
+(unsigned int)core_dump_count is 0x80000000, but original codes checking
+for core_pipe_limit still works as expected.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Erin-Shepherd/pseudofs-add-support-for-export_ops/20241114-020539
-base:   14b6320953a3f856a3f93bf9a0e423395baa593d
-patch link:    https://lore.kernel.org/r/20241113-pidfs_fh-v2-2-9a4d28155a37%40e43.eu
-patch subject: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH check
-config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20241114/202411140905.a0ntnQQG-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140905.a0ntnQQG-lkp@intel.com/reproduce)
+Please correct me if I'm wrong :)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411140905.a0ntnQQG-lkp@intel.com/
+Thanks,
+linfeng
 
-All warnings (new ones prefixed by >>):
-
-   fs/fhandle.c: In function 'may_decode_fh':
->> fs/fhandle.c:242:41: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     242 |         struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
-         |                                         ^~~~
-
-
-vim +/const +242 fs/fhandle.c
-
-   237	
-   238	static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
-   239					 unsigned int o_flags)
-   240	{
-   241		struct path *root = &ctx->root;
- > 242		struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
-   243	
-   244		if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
-   245			return true;
-   246	
-   247		if (capable(CAP_DAC_READ_SEARCH))
-   248			return true;
-   249	
-   250		/*
-   251		 * Allow relaxed permissions of file handles if the caller has the
-   252		 * ability to mount the filesystem or create a bind-mount of the
-   253		 * provided @mountdirfd.
-   254		 *
-   255		 * In both cases the caller may be able to get an unobstructed way to
-   256		 * the encoded file handle. If the caller is only able to create a
-   257		 * bind-mount we need to verify that there are no locked mounts on top
-   258		 * of it that could prevent us from getting to the encoded file.
-   259		 *
-   260		 * In principle, locked mounts can prevent the caller from mounting the
-   261		 * filesystem but that only applies to procfs and sysfs neither of which
-   262		 * support decoding file handles.
-   263		 *
-   264		 * Restrict to O_DIRECTORY to provide a deterministic API that avoids a
-   265		 * confusing api in the face of disconnected non-dir dentries.
-   266		 *
-   267		 * There's only one dentry for each directory inode (VFS rule)...
-   268		 */
-   269		if (!(o_flags & O_DIRECTORY))
-   270			return false;
-   271	
-   272		if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-   273			ctx->flags = HANDLE_CHECK_PERMS;
-   274		else if (is_mounted(root->mnt) &&
-   275			 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
-   276				    CAP_SYS_ADMIN) &&
-   277			 !has_locked_children(real_mount(root->mnt), root->dentry))
-   278			ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
-   279		else
-   280			return false;
-   281	
-   282		/* Are we able to override DAC permissions? */
-   283		if (!ns_capable(current_user_ns(), CAP_DAC_READ_SEARCH))
-   284			return false;
-   285	
-   286		ctx->fh_flags = EXPORT_FH_DIR_ONLY;
-   287		return true;
-   288	}
-   289	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
