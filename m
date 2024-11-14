@@ -1,275 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-34841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EA29C9250
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 20:19:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454BC9C92EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 21:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17960B2D17E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 19:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48E0B24947
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 20:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1937E1ABECA;
-	Thu, 14 Nov 2024 19:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E550A1AAE28;
+	Thu, 14 Nov 2024 20:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K9TE25O5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MToaNIwH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39B81ABEBB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 19:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C10F1A7240
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 20:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731611637; cv=none; b=GK/Y49hF7KcDlo/gdl/z6FrebrLFtgK6ualaQTeyvkKA5TYEkrWf47ZadhxUG0W3xjpRrjkWb9P571WxCIRuZp0EQZ8DlJDl9N0UpTd/pOj41f/4jXIWKm6do2kzhwD2hSg9Hwnulg7QbWf/bDT0hj08jgIHi7T7rR/VrUZElTU=
+	t=1731614892; cv=none; b=bCt0xcWMZn4hYfx+da96ZkDLzThsvZIdz/zBwuuUSd5ONNl16KiEj8/5xPwg4UPhOuITHGyM5ugOCU6bqWFRZcGPksKUOoGvywi/rdjgxRhemUPGmW/5mHMNOobkBNWvVzNQUNjJHrr6UzxUcQy1mtHaWPpUllbo8hOLnytI3v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731611637; c=relaxed/simple;
-	bh=yGjq2THbmv9V+Y9hO2p8tlo7MFsMcJM2+0aeHs/zKWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FhDyyN8sJoICpc0SIsCWlAdhq0cQuOP1OuQ7IPamCTLfeUksfs+845V2kLOgtES8rdbsvpBKB4IYoF06nXuKd06d2Ifw/I312Datxfv7h0cWjlFhdPRBISJ08lxyurcsGnfyO9Ch52xJukI/5SDaRU8/9F+gBqPm15+Vh1Tvsm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K9TE25O5; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea7c9227bfso11514487b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 11:13:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731611635; x=1732216435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SAQF0WkcxGB4AMW/MmznpwNgMYPbmkZ5lpmeYrrfBhA=;
-        b=K9TE25O5DEyMz5pfePhlFEo8hgvyEoSXfoabyDICyRvELSJA8pMq5Ri51HSruhi8/h
-         kibipoj9DQ/ihUWbXn7dO7PHlOK1gCgRQDYtlC2l2KsRu6evPX/YUldKNgzYyIrm+WX8
-         dgwNgAtEMhb555Lt6tZmXyyAhKNtuaImp/P/9lqM+DdXMVdSD72/2cHbrHx0BKAoLqIk
-         C9xspu0AJr574UlxX2HQEyBX70PYTmcXNwy53SeByg3diiSjv4FSdaJZh1TnerdslVqA
-         E7Zt79zQouOsxRsgUPacPfaGkGtYz43AUw9AeywEUmBTB9dQbN8GbNhVCa8oRtCma2Kd
-         trJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731611635; x=1732216435;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SAQF0WkcxGB4AMW/MmznpwNgMYPbmkZ5lpmeYrrfBhA=;
-        b=ZI+cl6D8fMQPT4Q8ZnRSL+YsItX8tsl2h2TP059788Zx+kwKGTdVsFvSiiuFMQwk5f
-         Qw1t9m2hxvVyiA/JeHVg4acaVp5ocW9NEjN5nIDlA3aU858lBNevAXzqo0fsD9nrDkno
-         KFC56/mMV51OKz+GUJTFTVmyXzfXu7wz7FFwAzkBhcUKDoV+kg2S8olKcMlJVhqOMmlj
-         6oPQ1b+oWtceoXnpF9ecTinMLxjFcjl+GlEq5NK442qBk3pF5Dtlj18gu8uKI4yhgXHW
-         LHCA1iuLVQKLicGMB0uM6/9x+f10Db+/qRAgqnsynK2jkQbsnIKVpW2h9DmDgsHtFqMf
-         IQdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/d+7BhHEZL/vJdyxI2jOpQBHYl1dU4285LPPUuEL6gg977CKTLTF9djFAUb09oKSMvgyHSuO9OvrJkwOz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRf9y0r0IY0R71IKs/1Joo7JU/AbOsKGpPMK8jnaDlbQfEvp0q
-	9TltjQ4K9nFqYlM8/3ZCkdkVpwdJFw8Y4Q64ulcnewPN3Z8fZT/u
-X-Google-Smtp-Source: AGHT+IGiKOemj4DhFvPKGQlPs9pOnNjxhkgQPv56vNm1ewN/4uPArYUPGy8/+kQYNaPZWv8m4qrzUg==
-X-Received: by 2002:a05:690c:6207:b0:6ea:84e9:15fb with SMTP id 00721157ae682-6ee55c263e8mr459787b3.24.1731611634614;
-        Thu, 14 Nov 2024 11:13:54 -0800 (PST)
-Received: from localhost (fwdproxy-nha-014.fbsv.net. [2a03:2880:25ff:e::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee444124e2sm3783077b3.85.2024.11.14.11.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 11:13:54 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com,
-	kernel-team@meta.com,
-	Bernd Schubert <bschubert@ddn.com>
-Subject: [PATCH RESEND v9 3/3] fuse: add default_request_timeout and max_request_timeout sysctls
-Date: Thu, 14 Nov 2024 11:13:32 -0800
-Message-ID: <20241114191332.669127-4-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241114191332.669127-1-joannelkoong@gmail.com>
-References: <20241114191332.669127-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1731614892; c=relaxed/simple;
+	bh=BNP6Erz1GZnIHdSIFkt5kahGRartdA7o1PMQyYbCMa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=btJ+2eJ0LxD31Ta59IYBmwLPZ1SuT1AZ/aoyG6zLGB4K5ulGfNw+q5iuHdgmv7ur54GEB+BZeozUZXEsRf4OzMespDlzLtry8SNg+hOxFOddBQvWlJ8tVS1UtegnO/f2700H6MjgyfSpJN62LnKpAo+HZNHhM6nFxWO+CDAV/YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MToaNIwH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731614889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yOQfcgwhrW1JHcUt1mkxeR2HzNswqmadBnglMvkxsD4=;
+	b=MToaNIwH/ZG6RDKqAdFcQSeVrzge2Z9uZ4EO8pPvKWRviCxSBaHpcozfSTaa1F7BUE6Zfc
+	VVRfE1/ST8fhb6XBh8VFH1UXzjquOrJPnWEwqqo3A9aDjvFXV5b19lKfdBdAjk46jiVhbv
+	g5KJ0+BkKRTj0Cs8y1b5tV+YjKAOwBA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-63-tybY3d_8OZClyCFyv3CyhA-1; Thu,
+ 14 Nov 2024 15:08:06 -0500
+X-MC-Unique: tybY3d_8OZClyCFyv3CyhA-1
+X-Mimecast-MFC-AGG-ID: tybY3d_8OZClyCFyv3CyhA
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3E2119560AB;
+	Thu, 14 Nov 2024 20:08:01 +0000 (UTC)
+Received: from rh (unknown [10.64.138.2])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6BF61955F3E;
+	Thu, 14 Nov 2024 20:08:00 +0000 (UTC)
+Received: from localhost ([::1] helo=rh)
+	by rh with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <dchinner@redhat.com>)
+	id 1tBg8B-00000006in9-2XUs;
+	Fri, 15 Nov 2024 07:07:55 +1100
+Date: Fri, 15 Nov 2024 07:07:53 +1100
+From: Dave Chinner <dchinner@redhat.com>
+To: Long Li <leo.lilong@huawei.com>
+Cc: John Garry <john.g.garry@oracle.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZzZYmTuSsHN-M0Of@rh>
+References: <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
+ <Ztom6uI0L4uEmDjT@dread.disaster.area>
+ <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+ <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
+ <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+ <ZufBMioqpwjSFul+@dread.disaster.area>
+ <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+ <ZuoCafOAVqSN6AIK@dread.disaster.area>
+ <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+ <ZzXxlf6RWeX3e-3x@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Introduce two new sysctls, "default_request_timeout" and
-"max_request_timeout". These control how long (in minutes) a server can
-take to reply to a request. If the server does not reply by the timeout,
-then the connection will be aborted.
+On Thu, Nov 14, 2024 at 08:48:21PM +0800, Long Li wrote:
+> On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
+> > On 17/09/2024 23:27, Dave Chinner wrote:
+> > > > # xfs_bmap -vvp  mnt/file
+> > > > mnt/file:
+> > > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+> > > >    0: [0..15]:         384..399          0 (384..399)          16 010000
+> > > >    1: [16..31]:        400..415          0 (400..415)          16 000000
+> > > >    2: [32..127]:       416..511          0 (416..511)          96 010000
+> > > >    3: [128..255]:      256..383          0 (256..383)         128 000000
+> > > > FLAG Values:
+> > > >     0010000 Unwritten preallocated extent
+> > > > 
+> > > > Here we have unaligned extents wrt extsize.
+> > > > 
+> > > > The sub-alloc unit zeroing would solve that - is that what you would still
+> > > > advocate (to solve that issue)?
+> > > Yes, I thought that was already implemented for force-align with the
+> > > DIO code via the extsize zero-around changes in the iomap code. Why
+> > > isn't that zero-around code ensuring the correct extent layout here?
+> > 
+> > I just have not included the extsize zero-around changes here. They were
+> > just grouped with the atomic writes support, as they were added specifically
+> > for the atomic writes support. Indeed - to me at least - it is strange that
+> > the DIO code changes are required for XFS forcealign implementation. And,
+> > even if we use extsize zero-around changes for DIO path, what about buffered
+> > IO?
+> 
+> 
+> I've been reviewing and testing the XFS atomic write patch series. Since
+> there haven't been any new responses to the previous discussions on this
+> issue, I'd like to inquire about the buffered IO problem with force-aligned
+> files, which is a scenario we might encounter.
+> 
+> Consider a case where the file supports force-alignment with a 64K extent size,
+> and the system page size is 4K. Take the following commands as an example:
+> 
+> xfs_io  -c "pwrite 64k 64k" mnt/file
+> xfs_io  -c "pwrite 8k 8k" mnt/file
+> 
+> If unaligned unwritten extents are not permitted, we need to zero out the
+> sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
+> data. While this can be handled relatively easily in direct I/O scenarios,
+> it presents significant challenges in buffered I/O operations. The main
+> difficulty arises because the extent size (64K) is larger than the page
+> size (4K), and our current code base has substantial limitations in handling
+> such cases.
+> 
+> Any thoughts on this?
 
-"default_request_timeout" sets the default timeout if no timeout is
-specified by the fuse server on mount. 0 (default) indicates no default
-timeout should be enforced. If the server did specify a timeout, then
-default_request_timeout will be ignored.
+Large folios in the page cache solve this problem. i.e. it's the
+same problem that block size > page size support had to solve.
 
-"max_request_timeout" sets the max amount of time the server may take to
-reply to a request. 0 (default) indicates no maximum timeout. If
-max_request_timeout is set and the fuse server attempts to set a
-timeout greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. Similarly, if default_request_timeout
-is greater than max_request_timeout, the system will use
-max_request_timeout as the timeout. If the server does not request a
-timeout and default_request_timeout is set to 0 but max_request_timeout
-is set, then the timeout will be max_request_timeout.
-
-Please note that these timeouts are not 100% precise. The request may
-take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the set max timeout
-due to how it's internally implemented.
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
-
-$ echo 65536 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
-
-$ echo 65535 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-65535
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 65535
-
-$ echo 0 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-0
-
-$ sysctl -a | grep fuse.default_request_timeout
-fs.fuse.default_request_timeout = 0
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
----
- Documentation/admin-guide/sysctl/fs.rst | 27 +++++++++++++++++++++++++
- fs/fuse/fuse_i.h                        | 10 +++++++++
- fs/fuse/inode.c                         | 16 +++++++++++++--
- fs/fuse/sysctl.c                        | 20 ++++++++++++++++++
- 4 files changed, 71 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index fa25d7e718b3..790a34291467 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -342,3 +342,30 @@ filesystems:
- ``/proc/sys/fs/fuse/max_pages_limit`` is a read/write file for
- setting/getting the maximum number of pages that can be used for servicing
- requests in FUSE.
-+
-+``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-+setting/getting the default timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request in the event where the server did not
-+specify a timeout at mount. If the server set a timeout,
-+then default_request_timeout will be ignored.  The default
-+"default_request_timeout" is set to 0. 0 indicates a no-op (eg
-+requests will not have a default request timeout set if no timeout was
-+specified by the server).
-+
-+``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-+setting/getting the maximum timeout (in minutes) for a fuse server to
-+reply to a kernel-issued request. A value greater than 0 automatically opts
-+the server into a timeout that will be at most "max_request_timeout", even if
-+the server did not specify a timeout and default_request_timeout is set to 0.
-+If max_request_timeout is greater than 0 and the server set a timeout greater
-+than max_request_timeout or default_request_timeout is set to a value greater
-+than max_request_timeout, the system will use max_request_timeout as the
-+timeout. 0 indicates a no-op (eg requests will not have an upper bound on the
-+timeout and if the server did not request a timeout and default_request_timeout
-+was not set, there will be no timeout).
-+
-+Please note that for the timeout options, if the server does not respond to
-+the request by the time the timeout elapses, then the connection to the fuse
-+server will be aborted. Please also note that the timeouts are not 100%
-+precise (eg you may set 10 minutes but the timeout may kick in after 11
-+minutes).
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 9092201c4e0b..e82ddff8d752 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -46,6 +46,16 @@
- 
- /** Maximum of max_pages received in init_out */
- extern unsigned int fuse_max_pages_limit;
-+/*
-+ * Default timeout (in minutes) for the server to reply to a request
-+ * before the connection is aborted, if no timeout was specified on mount.
-+ */
-+extern unsigned int fuse_default_req_timeout;
-+/*
-+ * Max timeout (in minutes) for the server to reply to a request before
-+ * the connection is aborted.
-+ */
-+extern unsigned int fuse_max_req_timeout;
- 
- /** List of active connections */
- extern struct list_head fuse_conn_list;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index ee006f09cd04..1e7cc6509e42 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -36,6 +36,9 @@ DEFINE_MUTEX(fuse_mutex);
- static int set_global_limit(const char *val, const struct kernel_param *kp);
- 
- unsigned int fuse_max_pages_limit = 256;
-+/* default is no timeout */
-+unsigned int fuse_default_req_timeout = 0;
-+unsigned int fuse_max_req_timeout = 0;
- 
- unsigned max_user_bgreq;
- module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
-@@ -1701,8 +1704,17 @@ EXPORT_SYMBOL_GPL(fuse_init_fs_context_submount);
- 
- static void fuse_init_fc_timeout(struct fuse_conn *fc, struct fuse_fs_context *ctx)
- {
--	if (ctx->req_timeout) {
--		if (check_mul_overflow(ctx->req_timeout * 60, HZ, &fc->timeout.req_timeout))
-+	unsigned int timeout = ctx->req_timeout ?: fuse_default_req_timeout;
-+
-+	if (fuse_max_req_timeout) {
-+		if (!timeout)
-+			timeout = fuse_max_req_timeout;
-+		else
-+			timeout = min(timeout, fuse_max_req_timeout);
-+	}
-+
-+	if (timeout) {
-+		if (check_mul_overflow(timeout * 60, HZ, &fc->timeout.req_timeout))
- 			fc->timeout.req_timeout = ULONG_MAX;
- 		timer_setup(&fc->timeout.timer, fuse_check_timeout, 0);
- 		mod_timer(&fc->timeout.timer, jiffies + FUSE_TIMEOUT_TIMER_FREQ);
-diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-index b272bb333005..6a9094e17950 100644
---- a/fs/fuse/sysctl.c
-+++ b/fs/fuse/sysctl.c
-@@ -13,6 +13,8 @@ static struct ctl_table_header *fuse_table_header;
- /* Bound by fuse_init_out max_pages, which is a u16 */
- static unsigned int sysctl_fuse_max_pages_limit = 65535;
- 
-+static unsigned int sysctl_fuse_max_req_timeout_limit = U16_MAX;
-+
- static struct ctl_table fuse_sysctl_table[] = {
- 	{
- 		.procname	= "max_pages_limit",
-@@ -23,6 +25,24 @@ static struct ctl_table fuse_sysctl_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= &sysctl_fuse_max_pages_limit,
- 	},
-+	{
-+		.procname	= "default_request_timeout",
-+		.data		= &fuse_default_req_timeout,
-+		.maxlen		= sizeof(fuse_default_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
-+	{
-+		.procname	= "max_request_timeout",
-+		.data		= &fuse_max_req_timeout,
-+		.maxlen		= sizeof(fuse_max_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &sysctl_fuse_max_req_timeout_limit,
-+	},
- };
- 
- int fuse_sysctl_register(void)
+-Dave.
 -- 
-2.43.5
+Dave Chinner
+dchinner@redhat.com
 
 
