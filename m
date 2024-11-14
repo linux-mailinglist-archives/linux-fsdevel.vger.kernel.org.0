@@ -1,84 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-34727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC39B9C8208
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 05:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8CF9C820A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 05:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831791F23A15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 04:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43C01F23A47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 04:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27A1E9078;
-	Thu, 14 Nov 2024 04:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054ED1632F0;
+	Thu, 14 Nov 2024 04:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xfdi9ziT"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="gxRQ2rWX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from forward100d.mail.yandex.net (forward100d.mail.yandex.net [178.154.239.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CAD1386B4;
-	Thu, 14 Nov 2024 04:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739CB1632E7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 04:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731559078; cv=none; b=lpMZeZ14im4ec64H5WmRvN+QQNHmHVr2pToeby9SFFwXt1dqtNuTdQkTJ+r5t9Mb+ofHdVll2rG23GD4XzMj+74ZNbyoNg/2vsVG60la38oBlLFwELKtpCUFrb+MUwrgjXm4bj3PEqwxikdgmM2wbBso8UuWWs0qwQFNMY21Arw=
+	t=1731559155; cv=none; b=geOAAwnIx0hc9ebjh2jfDgZAfQIfVchfpRhPLPLKJp5OnjQhs9i7cTeAwa4SRg3Y2ll+lsPtCFC5JnC7RglaxdOzFg9pgEucSAB6hpvYJ2A/gp3QOSMgjKRKjMv8JONUmjSye4pLk9fioZgxdOq9eNWW0qzdOnwrqqwyj8QPB0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731559078; c=relaxed/simple;
-	bh=7ljqjFYMI0iknZu8gispeiqdxGiEPPP1Xd2xKIx+XKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVq2P1s6FectPLFBxbplAU13Vq8Mdy5j7n2i7V3zndk9RU8Pgk+Wb+ZIA2SgpS9i3lJTik5t2TGAuq998bRHeuSb8cgg5c02lUND3/kSrZIX6mysA/uhsCRAbw78UFUctmNr4Frjjsd0qULTk+orwxn17ZFuJbUUr+8M+seWEas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xfdi9ziT; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7ljqjFYMI0iknZu8gispeiqdxGiEPPP1Xd2xKIx+XKo=; b=xfdi9ziTwdm8THeikj+z+Z1hdg
-	r7NK41p0aVm9+pf7/A6dLLqqC0s1AEkwRYU4RUNVC3qM8M5mjb2UNcXA7Btsfj/tacBRdbKh5HfPf
-	2yja3l1TecGphV5qn8n+ApFncqtMMvVjU3EIBG/nGD4/g5RvYSRyRa7D2ZoQvkRJ4+mvuMyj9hrYx
-	JFof+CeAHdykOFGJIexQ4X+dl7LganbvCIARhindXRK5gVq5YKy6umtKIA+mOPPKK7w2rnROUrS6x
-	MmRBC3rv6uOSNe2BUeS9+01C9zWo60XE7rspE51tj9aecMa7J/fwuW4/vKgDg51eULnMmtuZ1I857
-	amXsT+sA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBRc9-00000008mVE-19Ni;
-	Thu, 14 Nov 2024 04:37:53 +0000
-Date: Wed, 13 Nov 2024 20:37:53 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Message-ID: <ZzV-oVtytT28gHz2@infradead.org>
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
+	s=arc-20240116; t=1731559155; c=relaxed/simple;
+	bh=yF5klxCfMAWZbW/ekeWy+BENsCiSnblO6fJEbf1XnjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LM7U8J420hCVGCa2v7g6DumtUqNEQi/3t6bjlOlPg7vVFtTHXQ5s+Oy8zQcj2vyxKV0z9wZ7d93G4Qnig0U2+X2uwBET4x5E8GYdSa1rUPYDlEijG8yWDVSv4mMvahZPPc9W/DDieZvPtzIp3PSkAlVyYU0RgC+zba0VrKORHbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=gxRQ2rWX; arc=none smtp.client-ip=178.154.239.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:1320:0:640:729a:0])
+	by forward100d.mail.yandex.net (Yandex) with ESMTPS id 71D7C609C2;
+	Thu, 14 Nov 2024 07:39:03 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1dDif1QOr0U0-HhEJDhnw;
+	Thu, 14 Nov 2024 07:39:02 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731559142; bh=B2Pefr84L3Rnlg3nmBNUusAhFtcFDYnLwV7zE1fjd54=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=gxRQ2rWXRNr5DyQV9TCtlst5ThbhGUSY7EsI6usrOaNSXFlYcGMdgaSj0jsrKTS4G
+	 bLg/9IRCUh+Ht0NWsXpf3vA1M7kQESrrXlcJZmAtgM/jbDMVL6NTp5rjiJm1rO3t6G
+	 nA63nZmqqG6M8vF7IIiyU8b+96bIKbLPk0SMGGbY=
+Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: uncache inode which has failed entering the group
+Date: Thu, 14 Nov 2024 07:38:44 +0300
+Message-ID: <20241114043844.111847-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 05:55:24PM +0000, Erin Shepherd wrote:
-> For pidfs, there is no reason to restrict file handle decoding by
-> CAP_DAC_READ_SEARCH.
+Syzbot has reported the following BUG:
 
-Why is there no reason, i.e. why do you think it is safe.
+kernel BUG at fs/ocfs2/uptodate.c:509!
+...
+Call Trace:
+ <TASK>
+ ? __die_body+0x5f/0xb0
+ ? die+0x9e/0xc0
+ ? do_trap+0x15a/0x3a0
+ ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+ ? do_error_trap+0x1dc/0x2c0
+ ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+ ? __pfx_do_error_trap+0x10/0x10
+ ? handle_invalid_op+0x34/0x40
+ ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+ ? exc_invalid_op+0x38/0x50
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? ocfs2_set_new_buffer_uptodate+0x2e/0x160
+ ? ocfs2_set_new_buffer_uptodate+0x144/0x160
+ ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+ ocfs2_group_add+0x39f/0x15a0
+ ? __pfx_ocfs2_group_add+0x10/0x10
+ ? __pfx_lock_acquire+0x10/0x10
+ ? mnt_get_write_access+0x68/0x2b0
+ ? __pfx_lock_release+0x10/0x10
+ ? rcu_read_lock_any_held+0xb7/0x160
+ ? __pfx_rcu_read_lock_any_held+0x10/0x10
+ ? smack_log+0x123/0x540
+ ? mnt_get_write_access+0x68/0x2b0
+ ? mnt_get_write_access+0x68/0x2b0
+ ? mnt_get_write_access+0x226/0x2b0
+ ocfs2_ioctl+0x65e/0x7d0
+ ? __pfx_ocfs2_ioctl+0x10/0x10
+ ? smack_file_ioctl+0x29e/0x3a0
+ ? __pfx_smack_file_ioctl+0x10/0x10
+ ? lockdep_hardirqs_on_prepare+0x43d/0x780
+ ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+ ? __pfx_ocfs2_ioctl+0x10/0x10
+ __se_sys_ioctl+0xfb/0x170
+ do_syscall_64+0xf3/0x230
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+...
+ </TASK>
 
->Introduce an export_ops flag that can indicate
-> this
+When 'ioctl(OCFS2_IOC_GROUP_ADD, ...)' has failed for the particular
+inode in 'ocfs2_verify_group_and_input()', corresponding buffer head
+remains cached and subsequent call to the same 'ioctl()' for the same
+inode issues the BUG() in 'ocfs2_set_new_buffer_uptodate()' (trying
+to cache the same buffer head of that inode). Fix this by uncaching
+the buffer head with 'ocfs2_remove_from_cache()' on error path in
+'ocfs2_group_add()'.
 
-Also why is is desirable?
+Reported-by: syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=453873f1588c2d75b447
+Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/ocfs2/resize.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-To be this looks more than sketchy with the actual exporting hat on,
-but I guess that's now how the cool kids use open by handle these days.
+diff --git a/fs/ocfs2/resize.c b/fs/ocfs2/resize.c
+index c4a4016d3866..b0733c08ed13 100644
+--- a/fs/ocfs2/resize.c
++++ b/fs/ocfs2/resize.c
+@@ -574,6 +574,8 @@ int ocfs2_group_add(struct inode *inode, struct ocfs2_new_group_input *input)
+ 	ocfs2_commit_trans(osb, handle);
+ 
+ out_free_group_bh:
++	if (ret < 0)
++		ocfs2_remove_from_cache(INODE_CACHE(inode), group_bh);
+ 	brelse(group_bh);
+ 
+ out_unlock:
+-- 
+2.47.0
+
 
