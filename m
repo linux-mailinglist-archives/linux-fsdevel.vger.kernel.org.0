@@ -1,97 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-34785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F29C8B46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:58:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB84B9C8B74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 14:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121EB1F24190
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 12:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F600286ECC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 13:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5D61FB750;
-	Thu, 14 Nov 2024 12:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96B41FAEFF;
+	Thu, 14 Nov 2024 13:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="vrMPpY3W";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O7aD1roi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bhlu/LAI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6C1FAC5F;
-	Thu, 14 Nov 2024 12:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F62C383A5;
+	Thu, 14 Nov 2024 13:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589010; cv=none; b=hUgokPIs+J9zcyT6l5FjBNBCRIUPJKTRrXhFb+j7XOff1o7iEiW8yyQL+/6Uy3mdcxbcSlJfq2VavJqp6guPJ/qkVfxO92pFVzKDaGKIXp/YrOUc638JXwLQ7zRVpltdqgYASoZZsapmKovr0/CgXmfWlxsyU9ATkFmgt3Jfdh0=
+	t=1731589738; cv=none; b=mbkr9fiN/Bt21Hv5zxsEBStPBnq4ufRkPuMwsxhexfA8+M96BdCYJHN0WVlHX+6YfPY9EdYhk/n9sYkH5XciK8BXspXvH+G0PiFTm0bUdH6Bpl6KQ9dajJuLHzCTeL8heHsa8HC1NLX0CkF74Ug8Y8NEefjQo/GAhRyQCAq7eWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589010; c=relaxed/simple;
-	bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=;
+	s=arc-20240116; t=1731589738; c=relaxed/simple;
+	bh=WUKBai31hAzwn/m1gNuyFpU6gULUok9qnIuRCm88kKo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AP5IE2wkKWZNlK2RsaA4FF6WXwiLdrlIed+jU6Trv3Y/ho7quCWUQpjRBUxYg+ofy2TPtGZLNfEL3vaCu2XKgcWGWcUURUVxrZGYS583RI7c2xn8gzASEZFqUyjaDbIkvNv2Ibn9IEqjuwYdpSjoXcW7CDgdepjvFwjTYtCy7FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=vrMPpY3W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O7aD1roi; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 330EA11401C4;
-	Thu, 14 Nov 2024 07:56:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Thu, 14 Nov 2024 07:56:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731589008;
-	 x=1731675408; bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=; b=
-	vrMPpY3WfbjUN4RvtQwBVZhzapEn9gpcUyWrLghzLiLsN+tpKv/JoEE5+MyQCkZq
-	BCjQfJl6hNP8vE6mt9vEbDTI5DeB8EyoJ3tnyBI645Qf7+fT8V48S8c4XO8q/o7X
-	9tsPMHZXA+quFRK0a4FHejLDVJZI2dw1boKoUIk9/M4ilWMJQO5rrIwDRoURoHZc
-	eBXxc9DprityaU5ra3yI2N9k09IGwFrYd8xLESq22fGEAqwMQ7cyzNE+d11JtQ3q
-	TBEtcMfoe+XZlaaHsUlzCp8/HDkr4N0wIcjkr0AbgnBOEURdolOvRdaXqjI97i1q
-	HirT2SAWG3S3PdhWIcHs2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731589008; x=
-	1731675408; bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=; b=O
-	7aD1roix7Ga/z2nSKA1S88xjQ+HsufKU1WOCU7mYccMbj9Nh+Dg9T/vQSA1Q2f2m
-	/uj1hWHvZP/MNqcaKiWxFmm1BfqG+In41oIULb33fwDGdE3/dTzVGPLF07k1H8bz
-	chR8qMYaLauYi/mYW14vvTtDZM3/Uuch7uJrNaa7i1b5gV+8rWt4SRbvmng/v8Vu
-	TkfB1iLKYFtYmL2rYK+HJ+IhMf32uUlnymVpeQMPVGcHlwpPLAHlKOcCrsPXjtAw
-	zo1G066kbDPUZz1qJWbCM//Mbua4UUyws/hbd2zxhH5EZ8VoqjdiJOHv7OLzQlMs
-	tjiQqcYXLLV5dFwitImZg==
-X-ME-Sender: <xms:j_M1Z6Vi1SJ2hYyfFlfDZelpfrujAPWuu6bYYX_v32rcZ2S4tpsqrA>
-    <xme:j_M1Z2lajdkW-xYxNUoP2JTjkQqs5WVL3MfnBL78GyMQP2IttFOoizoBj_bTf7QEZ
-    ZNehT6xgdovre3cXNw>
-X-ME-Received: <xmr:j_M1Z-Yslv5Ob0KCoROlYppa1KC0c1h-Nf-iENPeXghYVAK4lBJSvcbmh2ca6JUKU2lszvCG2i7vjKYwMSL6l-T9JCZr>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdeghecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepjeeftdelheduueetjeehvdefhfefvddv
-    ieekleejfeevffdtheduheejledvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthh
-    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruh
-    hkpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheptghhuhgtkhdr
-    lhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtgho
-    mh
-X-ME-Proxy: <xmx:j_M1ZxUuM28GvNPPQK66AvlvVhQOq3Lw_VFrbEXfye3LRzp7rHD16Q>
-    <xmx:j_M1Z0lB0UH6C5XhSG-G9D4eAkQGJBzIkajmkl5XiCP4WnI5lZ-sKQ>
-    <xmx:j_M1Z2f-8gTCV7ESFvJGO9jhH6LCbHZojaac70k46lhtiTsgxQtVNQ>
-    <xmx:j_M1Z2FtmLdRvNT-ixQCYzGvWh8nl4qWq0xUxb31JlWMdiIDk878jQ>
-    <xmx:kPM1Z9e3Ht5NynNLPa1DpoR-ZAjGd2qzDlncHA4P9HP_kzRqdAal42Jv>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 07:56:46 -0500 (EST)
-Message-ID: <bae72e9f-c88c-43ec-a91a-40f217ea2adc@e43.eu>
-Date: Thu, 14 Nov 2024 13:56:45 +0100
+	 In-Reply-To:Content-Type; b=EqwbKWNftD7tGZxWJjmWtTYwCn0CARjWk5kQmnWsyK/ehXoVbiHWpawAt5qG3TkE+NYd4+ctqaDqIGG8DzJUQWMPfDATQ06ms1JqwgvKclvlo7ZlYmmdl942geU/iQz08kLWXkMpACjnPTGTIZwzXIiSxewvB8rv+w2IP0X0EHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bhlu/LAI; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cf7aadc8b7so542792a12.1;
+        Thu, 14 Nov 2024 05:08:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731589735; x=1732194535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iLSvMAcvDMJIHYqWDlKkrua+nGTltpWcxj1L4JSgD7A=;
+        b=Bhlu/LAIBozgcuMLyrTgWYLS+qlVKYhm42qLcBefvho+QMwAmh5WA40kYjw81kSmwE
+         k5HbBXUfwcCZnooNi+qBf9Drzy5Djh3zYo+ofPZMV8+1O36kSlONYw4FuPAHDPFMRSqk
+         u8zAbDozzx/RJYgbDomRqaHT9EjUKwO+b5eH03wYYCLrBvYuxK37huiogVmWALocb5el
+         tx8LyrfTMXm1wjz8IFy4Zeamkv3/HsePCuHoS2Q8Y/bFnhUunzV2Vdg46uwZjq4VJfbS
+         nXBWjmR/C6lUQC+Df8XBuDCgWXA3b7f4QF+1cAuRy1LoBfdAT0+bC++K6AzxDvWNw3Uj
+         a5dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731589735; x=1732194535;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLSvMAcvDMJIHYqWDlKkrua+nGTltpWcxj1L4JSgD7A=;
+        b=V/B2gRSjtISH8aJjDm2+Yx6/X9z8eoL5jDcMl/CyGngp5lkyeYhb1Spb1TNmf911Ez
+         HYb0FWc+7+RGvajxIdKwPe+0LBXLQi+W7/PN0vC88mpug+e9ax3e3qa21k1usNvKPyec
+         4s9UAyRuPoj1s8+C8c6TLaGS9KFJtMYW8GXtCP17tkWNAKy3prQsFiG5yTgUzaDqZ4/8
+         SAD9JEWz0Mbmezb45nRhsa5LWAKOr9zr5LPb2ABrMqGNT8WtgNQdklb3L4tCqKInnLYl
+         ME4r1k2istQ/GPJcdmAyuONe2vK+ngdqUL1lp+BEPm24paanzv1mi4ECeqQAJNRDBsqS
+         UkWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSiIOICyve6Zch3nV0563caVznJYIteyPMaf64v0vCuPMb2l7OseuAE92dq0YBDJMOgttxxrq7B5AR8w==@vger.kernel.org, AJvYcCUy8lrJsRMow/vK3jQSt1jOaAoS6A0z/yiPuOppMzYjGb/Zdmi16wKc0287ecE5pDEjotgRHfSWSg==@vger.kernel.org, AJvYcCWcWxLblQwPe2wQycBtkD8Kjmgd+wbTxRRonfOG2Odx0DRJ1Gk2c0/cD/rL8CbfzFCnHkQ4HuMfpMHrTosh4Q==@vger.kernel.org, AJvYcCXqq5stGN+PmI5JDVIJDfUqdkVgeM0sFwodxAMeqrcZGyHWAQB0+TuJt18gPcDVdNgQhqQxhJWNgdkVRZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEDx45WVfU63vEpHOxReAcimzNXgaHZGLGK+vPeEuWC0F/dUrZ
+	EXGevJPAYHm+pwoWxlloL2lr1jgGG4CFIna6fKRkSA83M62seVj1
+X-Google-Smtp-Source: AGHT+IHYWjN5l6K2Kq+RrDtUeiT+m7+vJWueNPIn3tnYMxsQbh1CD6IGXJhFROExTaUr6np+BDJm2A==
+X-Received: by 2002:a17:907:930e:b0:a9a:67aa:31f5 with SMTP id a640c23a62f3a-aa1f8038e76mr646269466b.10.1731589734544;
+        Thu, 14 Nov 2024 05:08:54 -0800 (PST)
+Received: from [192.168.42.163] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e0812aesm60676366b.176.2024.11.14.05.08.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 05:08:54 -0800 (PST)
+Message-ID: <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com>
+Date: Thu, 14 Nov 2024 13:09:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,41 +76,63 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Content-Language: en-GB
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu> <ZzV-oVtytT28gHz2@infradead.org>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <ZzV-oVtytT28gHz2@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+To: Christoph Hellwig <hch@lst.de>, Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
+ anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
+ viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241114104517.51726-1-anuj20.g@samsung.com>
+ <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+ <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241114121632.GA3382@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 11/14/24 12:16, Christoph Hellwig wrote:
+> On Thu, Nov 14, 2024 at 04:15:12PM +0530, Anuj Gupta wrote:
+>> PI attribute is supported only for direct IO. Also, vectored read/write
+>> operations are not supported with PI currently.
 
-On 14/11/2024 05:37, Christoph Hellwig wrote:
-> On Wed, Nov 13, 2024 at 05:55:24PM +0000, Erin Shepherd wrote:
->> For pidfs, there is no reason to restrict file handle decoding by
->> CAP_DAC_READ_SEARCH.
-> Why is there no reason, i.e. why do you think it is safe.
+And my apologies Anuj, I've been busy, I hope to take a look
+at this series today / tomorrow.
 
-A process can use both open_by_handle_at to open the exact same set of
-pidfds as they can by pidfd_open. i.e. there is no reason to additionally
-restrict access to the former API.
+> Eww.  I know it's frustration for your if maintainers give contradicting
+> guidance, but this is really an awful interface.  Not only the pointless
 
->> Introduce an export_ops flag that can indicate
->> this
-> Also why is is desirable?
->
-> To be this looks more than sketchy with the actual exporting hat on,
-> but I guess that's now how the cool kids use open by handle these days.
-Right - we have a bunch of API file systems where userspace wants stable
-non-reused file references for the same reasons network filesystems do.
-The first example of this was cgroupfs, but the same rationale exists for
-pidfs and process tracking.
+Because once you placed it at a fixed location nothing realistically
+will be able to reuse it. Not everyone will need PI, but the assumption
+that there will be more more additional types of attributes / parameters.
+
+With SQE128 it's also a problem that now all SQEs are 128 bytes regardless
+of whether a particular request needs it or not, and the user will need
+to zero them for each request.
+
+The discussion continued in the v6 thread, here
+
+https://lore.kernel.org/all/20241031065535.GA26299@lst.de/T/#m12beca2ede2bd2017796adb391bedec9c95d85c3
+
+and a little bit more here:
+
+https://lore.kernel.org/all/20241031065535.GA26299@lst.de/T/#mc3f7a95915a64551e061d37b33a643676c5d87b2
+
+> indirection which make the interface hard to use, but limiting it to
+> not support vectored I/O makes it pretty useless.
+
+I'm not sure why that's the case and need to take a look), but I
+don't immediately see how it's relevant to that part of the API. It
+shouldn't really matter where the main PI structure is located, you
+get an iovec pointer and code from there wouldn't be any different.
+
+> I guess I need to do a little read-up on why Pavel wants this, but
+> from the block/fs perspective the previous interface made so much
+> more sense.
+
+-- 
+Pavel Begunkov
 
