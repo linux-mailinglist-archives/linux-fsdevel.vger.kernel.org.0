@@ -1,284 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-34711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB7F9C7F6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 01:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 179E69C7FB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 02:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D627B22CDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 00:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C3BB23D7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2024 01:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4266C2E0;
-	Thu, 14 Nov 2024 00:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7BA1C4A0B;
+	Thu, 14 Nov 2024 01:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue+2OEIU"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nBgRs0+A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25A0A95C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 00:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33851EEDE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2024 01:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731544763; cv=none; b=h9g0sjtwelrcc4APlJpwwyFlUN8dBq8GD5Q12XetyHwh4GV/+XL+XQxY1vr8bZpN6J6myr4NTRKjqjmGtCVVkttCMIPxRphmW4I0PqGRC5vOg1zZy+eORTGrOGJX3+VdIg+AKhVDRYtsBDHucqZQTWYMWNanAYLYsgDCpT2mkG8=
+	t=1731546418; cv=none; b=hKjLMwzs107zpR+BPugumHtsm608XIVz+ysa8485GmGDYVjCaCXCl98KKQpUr5Pby8YqdONfwYAtuhcYaE32/p8uPOLc21wO9mK1vsaWuT4jWQCY1KCMln3pq7aoJ4GuI5LUoHVrr9MhQRnFnMXGzVAmjOnH8irK3AqPUwDYj3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731544763; c=relaxed/simple;
-	bh=L/hvnClXs3zfskqfegsCjY+Gfr0/vXVTOFeXVK+FNlk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CB3y1k/ut2toAOV1x+6fQf69CmBEmB2/wOgpMRoio++sWk7VuE/HXE8JUjZdmLVljT2kWBgIUlYuj3zVkoCjeH95SCSow/t5I7onvzc2sRatkl6kkC8mdVXsEw/Y/Yq1x+sYSyabGFm4/t1B9a0rBRvqnRFpjqq4zhUT8yi3qLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ue+2OEIU; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4608e389407so429941cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 16:39:21 -0800 (PST)
+	s=arc-20240116; t=1731546418; c=relaxed/simple;
+	bh=qBuDfnrWjJVjq7psCPaKKe9MZ9ehfUXbn+HJ87+O3ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/2qFEXOnqJlEbxqvdxsvvoGJ9+zoZNw+8t3RNrpW4gh1rg5OcEejaUKofXJeuITolIoEEDfge1lWm2oSXqnRXuRYUO1AxdLw3QWOCC1GukdLlFhSKUhYTEgodbZnihMzQs+qvX1jd1QLuxcfbIsZgnOoym6bze/TMPFQNnFnII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nBgRs0+A; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso28010b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2024 17:06:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731544760; x=1732149560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ui92GwdJMLYEeuUgce0xtSp+y54z2Swd5voIaLF3cpw=;
-        b=Ue+2OEIU0SU7TKmDuOmUe7C8uIrirN2YNKYsD/vAO6wSHBwVrjzF2F1b+z06z/Qvxp
-         s3b8iS4PWaYEWZ7pOny2tknGeWYovO2onRY3mgf2xgSCezB0reucoQWu6qb3vwKK2vsD
-         spwvfJhaUVu93jWzpOi4i6qbTCyJRA8ynl3cBhsuPO4MjAV8g2T3KSASOXy7zyOpDzes
-         TMcn92ywSgUvzYWq3O9MbgNapi2xYpFPy1k0970WJQ3/+0Gk0/OBloTktwYO3IhuwJOi
-         IdveRXXoRAKY6yWszOOxQrprbsqiH1BxzDerRBbz1t/I0hZ2vq8PlFDIIZvegBVoCjb/
-         5ffw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731546414; x=1732151214; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=V6zYfn0VZRfW6uGvMs5S79Lwbgkv1rCFmk8b72kjuag=;
+        b=nBgRs0+Av2U3Z2uwG1tLbt4cFvuXdSuWpoYnAUtB0yqa53YznjHiKLDJAW3bQdEgtL
+         r8e/7g8R+rv7bKKhvcLHrRyyUSSqyWL7EksujX7DB2tI7NV6tmSPAXmozqaXfgCKyl3s
+         RO0Lhr7OtT9yEbcD7R44FZLuYunb8hMrQkMZKQfTCQ847jxVxietCO6l95NlyZK7Spwe
+         zxeAWGExHnUt9OnLTyKGpj133H9F/X7HTSPOU+hgH4OShDmmKe/rs7KjXbtJeXiMzcgJ
+         xQK0uKDOK4suL7f1bFVRH6EkNhzlbwH+IWj4jZYIP4ozHvnKHL2kyYS6sDFip9D9ecIe
+         W0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731544760; x=1732149560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ui92GwdJMLYEeuUgce0xtSp+y54z2Swd5voIaLF3cpw=;
-        b=njOELaVbHun2DRHFLbrZiGHERoTQJh91SfcPMzR9Iy/wrcVDlYZkjpe5zs/b7PHUSU
-         8SzOBEV5USh24D7PV/MC39ARajgPRvs2z6/IjnDKINvf0RQbKevBlVXwv+SIaoCXQsyI
-         MJd6ojGNyZ1gDDSuVC4l6EehhLoctVlUIf0G1GzlN4vyZ6rpk94nhNRsG8rx6wBvnaPo
-         mKrAgYyOnMGlMe4iE/sehs1H2AlY3JiUP3uxlXwok1HNWUY2CxEErZhChOGrspNwdBfj
-         lMiKIYB3AtxIYk1b3q2XhBXyoFI4Epu9Iy6qhgHMdlMKMyDBJ7oBlfxhc6n2IdCyhoTC
-         D/BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjkJLqNigY1J01q3a+A73eZjrNAubA76uoFyIJIuTR/5h0RlUAorvxosmi50F2oFgE0sFxRhkkiAfc1HYB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7/PoLFhpHHl79UjRF3E8okaYFK6q8RCtvlLzt1K0ugT/xrQ7H
-	ONZ2Y1KtGvaQ4AQ7laMoDzCEWe3BqZUsjENpJUDjKe+TPICpqAM8SycwBZ0eQQLjGbFlFOu8a4C
-	ZzsPZk5A7HrvQ7FoXnZiz20WxaK0=
-X-Google-Smtp-Source: AGHT+IEFBXoeA3UddAD4FhSSfshE8uACpQYHlp1nJYMICNz3NabjlaCML/zHdAQgVLMjzCFG5b61laABmgl8G6dWPuY=
-X-Received: by 2002:a05:622a:18a4:b0:462:f5ca:5b06 with SMTP id
- d75a77b69052e-4630930ed42mr321207931cf.3.1731544760444; Wed, 13 Nov 2024
- 16:39:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731546414; x=1732151214;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V6zYfn0VZRfW6uGvMs5S79Lwbgkv1rCFmk8b72kjuag=;
+        b=iJ6aysM7oPFfVEnqnegSTOovVPpRkm+kYE2ST80iJE75VZpIAwhNfpcjF55uuuFJiL
+         yKC6XewdFnseafhxPxt/5sFwFS1/v3SyYTAcZZjly1+OudlBihwt2ytrMQ0cUebqpADj
+         AHocIAezI2YFEqVyFQtrSVTt5CpVX0aMVHd+GIo4Z1fH/Z++yxNnPny0V+r7KJGuNAaq
+         FeZBM4c6yxUIAdyO5pBvxQi7TyLCVqpXUBWsm62CgM4Asip76ma9Cfj/wOaWqAkXfoX2
+         IiT+xNi5fpwaRJhjfGWDx7IySr9Dbupj5O1LMiw+Skr7Ciy/lXPYiPJ/4mCzNt/7M63/
+         4RcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU142aQ0Y8rlxucDPljnHZ2E2KVS1iKVVaOvxgIudYrhZF7AMpLJ8vgcIUUt7gg7npQUIs9hNc8p2pTJMTo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEzF+TAKZUqWxbfU/UvFrChoXT0lSsbejbALoggApWuQ3jvgie
+	xdGFAPmdJ+guiSquFe6EsTpmuDZv4cdUkaJ5pC7na26Rx1o1FuFSUT3lVj0+Gt0=
+X-Google-Smtp-Source: AGHT+IHKuTOxiGEAgkHaDhIBBJNYiWEQLb5FEseKdlvV0/9ks9/baTVKfCi8JKR7Lgz6EKvk8XnoGA==
+X-Received: by 2002:a05:6a00:23c4:b0:724:603f:1f9c with SMTP id d2e1a72fcca58-724603f20abmr3387327b3a.16.1731546414360;
+        Wed, 13 Nov 2024 17:06:54 -0800 (PST)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7246a6e9cddsm58312b3a.74.2024.11.13.17.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 17:06:53 -0800 (PST)
+Date: Wed, 13 Nov 2024 17:06:50 -0800
+From: Deepak Gupta <debug@rivosinc.com>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+Message-ID: <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com>
+References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
+ <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
+ <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107235614.3637221-1-joannelkoong@gmail.com>
- <20241107235614.3637221-7-joannelkoong@gmail.com> <e85bd643-894e-4eb2-994b-62f0d642b4f1@linux.alibaba.com>
-In-Reply-To: <e85bd643-894e-4eb2-994b-62f0d642b4f1@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 13 Nov 2024 16:39:09 -0800
-Message-ID: <CAJnrk1bS6J9NXae5bXTF+MrKV2VZ-2bi=WqkyY1XY2BggA01TQ@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev, 
-	josef@toxicpanda.com, linux-mm@kvack.org, bernd.schubert@fastmail.fm, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
 
-On Tue, Nov 12, 2024 at 1:25=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
+On Thu, Nov 14, 2024 at 12:13:38AM +0800, Nick Hu wrote:
+>Hi Deepak
 >
-> Hi Joanne,
->
-> On 11/8/24 7:56 AM, Joanne Koong wrote:
-> > Currently, we allocate and copy data to a temporary folio when
-> > handling writeback in order to mitigate the following deadlock scenario
-> > that may arise if reclaim waits on writeback to complete:
-> > * single-threaded FUSE server is in the middle of handling a request
-> >   that needs a memory allocation
-> > * memory allocation triggers direct reclaim
-> > * direct reclaim waits on a folio under writeback
-> > * the FUSE server can't write back the folio since it's stuck in
-> >   direct reclaim
-> >
-> > To work around this, we allocate a temporary folio and copy over the
-> > original folio to the temporary folio so that writeback can be
-> > immediately cleared on the original folio. This additionally requires u=
-s
-> > to maintain an internal rb tree to keep track of writeback state on the
-> > temporary folios.
-> >
-> > A recent change prevents reclaim logic from waiting on writeback for
-> > folios whose mappings have the AS_WRITEBACK_MAY_BLOCK flag set in it.
-> > This commit sets AS_WRITEBACK_MAY_BLOCK on FUSE inode mappings (which
-> > will prevent FUSE folios from running into the reclaim deadlock describ=
-ed
-> > above) and removes the temporary folio + extra copying and the internal
-> > rb tree.
-> >
-> > fio benchmarks --
-> > (using averages observed from 10 runs, throwing away outliers)
-> >
-> > Setup:
-> > sudo mount -t tmpfs -o size=3D30G tmpfs ~/tmp_mount
-> >  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=3D4=
- -o source=3D~/tmp_mount ~/fuse_mount
-> >
-> > fio --name=3Dwriteback --ioengine=3Dsync --rw=3Dwrite --bs=3D{1k,4k,1M}=
- --size=3D2G
-> > --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1 --directory=3D/roo=
-t/fuse_mount
-> >
-> >         bs =3D  1k          4k            1M
-> > Before  351 MiB/s     1818 MiB/s     1851 MiB/s
-> > After   341 MiB/s     2246 MiB/s     2685 MiB/s
-> > % diff        -3%          23%         45%
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->
-> I think there are some places checking or waiting for writeback could be
-> reconsidered if they are still needed or not after we dropping the temp
-> page design.
->
-> As they are inherited from the original implementation, at least they
-> are harmless.  I think they could be remained in this patch, and could
-> be cleaned up later if really needed.
->
+>On Tue, Nov 12, 2024 at 5:08 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> Kernel will have to perform shadow stack operations on user shadow stack.
+>> Like during signal delivery and sigreturn, shadow stack token must be
+>> created and validated respectively. Thus shadow stack access for kernel
+>> must be enabled.
+>>
+>> In future when kernel shadow stacks are enabled for linux kernel, it must
+>> be enabled as early as possible for better coverage and prevent imbalance
+>> between regular stack and shadow stack. After `relocate_enable_mmu` has
+>> been done, this is as early as possible it can enabled.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  arch/riscv/kernel/asm-offsets.c |  4 ++++
+>>  arch/riscv/kernel/head.S        | 12 ++++++++++++
+>>  2 files changed, 16 insertions(+)
+>>
+>> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+>> index 766bd33f10cb..a22ab8a41672 100644
+>> --- a/arch/riscv/kernel/asm-offsets.c
+>> +++ b/arch/riscv/kernel/asm-offsets.c
+>> @@ -517,4 +517,8 @@ void asm_offsets(void)
+>>         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
+>>         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
+>>  #endif
+>> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
+>> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
+>> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
+>> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
+>>  }
+>> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+>> index 356d5397b2a2..6244408ca917 100644
+>> --- a/arch/riscv/kernel/head.S
+>> +++ b/arch/riscv/kernel/head.S
+>> @@ -164,6 +164,12 @@ secondary_start_sbi:
+>>         call relocate_enable_mmu
+>>  #endif
+>>         call .Lsetup_trap_vector
+>> +       li a7, SBI_EXT_FWFT
+>> +       li a6, SBI_EXT_FWFT_SET
+>> +       li a0, SBI_FWFT_SHADOW_STACK
+>> +       li a1, 1 /* enable supervisor to access shadow stack access */
+>> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+>> +       ecall
+>>         scs_load_current
+>>         call smp_callin
+>>  #endif /* CONFIG_SMP */
+>> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>>         la tp, init_task
+>>         la sp, init_thread_union + THREAD_SIZE
+>>         addi sp, sp, -PT_SIZE_ON_STACK
+>> +       li a7, SBI_EXT_FWFT
+>> +       li a6, SBI_EXT_FWFT_SET
+>> +       li a0, SBI_FWFT_SHADOW_STACK
+>> +       li a1, 1 /* enable supervisor to access shadow stack access */
+>> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+>> +       ecall
+>>         scs_load_current
+>>
+>>  #ifdef CONFIG_KASAN
+>>
+>> --
+>> 2.45.0
+>>
+>Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
+>otherwise the menvcfg.sse won't be set by the fwft set sbi call when
+>the hotplug cpu back to kernel?
 
-Thank you for the thorough inspection!
+Hmm...
 
->
-> > @@ -891,7 +813,7 @@ static int fuse_do_readfolio(struct file *file, str=
-uct folio *folio)
-> >        * have writeback that extends beyond the lifetime of the folio. =
- So
-> >        * make sure we read a properly synced folio.
-> >        */
-> > -     fuse_wait_on_folio_writeback(inode, folio);
-> > +     folio_wait_writeback(folio);
->
-> I doubt if wait-on-writeback is needed here, as now page cache won't be
-> freed until the writeback IO completes.
->
-> The routine attempts to free page cache, e.g. invalidate_inode_pages2()
-> (generally called by distributed filesystems when the file content has
-> been modified from remote) or truncate_inode_pages() (called from
-> truncate(2) or inode eviction) will wait for writeback completion (if
-> any) before freeing page.
->
-> Thus I don't think there's any possibility that .read_folio() or
-> .readahead() will be called when the writeback has not completed.
->
+An incoming hotplug CPU has no features setup on it.
+I see that `sbi_cpu_start` will supply `secondary_start_sbi` as start
+up code for incoming CPU. `secondary_start_sbi` is in head.S which converges
+in `.Lsecondary_start_common`. And thus hotplugged CPU should be
+issuing shadow stack set FWFT sbi as well.
 
-Great point. I'll remove this line and the comment above it too.
+Am I missing something ?
 
 >
-> > @@ -1172,7 +1093,7 @@ static ssize_t fuse_send_write_pages(struct fuse_=
-io_args *ia,
-> >       int err;
-> >
-> >       for (i =3D 0; i < ap->num_folios; i++)
-> > -             fuse_wait_on_folio_writeback(inode, ap->folios[i]);
-> > +             folio_wait_writeback(ap->folios[i]);
->
-> Ditto.
->
-
-Why did we need this fuse_wait_on_folio_writeback() even when we had
-the temp pages? If I'm understanding it correctly,
-fuse_send_write_pages() is only called for the writethrough case (by
-fuse_perform_write()), so these folios would never even be under
-writeback, no?
-
->
->
-> >  static void fuse_writepage_args_page_fill(struct fuse_writepage_args *=
-wpa, struct folio *folio,
-> > -                                       struct folio *tmp_folio, uint32=
-_t folio_index)
-> > +                                       uint32_t folio_index)
-> >  {
-> >       struct inode *inode =3D folio->mapping->host;
-> >       struct fuse_args_pages *ap =3D &wpa->ia.ap;
-> >
-> > -     folio_copy(tmp_folio, folio);
-> > -
-> > -     ap->folios[folio_index] =3D tmp_folio;
-> > +     folio_get(folio);
->
-> I still think this folio_get() here is harmless but redundant.
->
-> Ditto page cache won't be freed before writeback completes.
->
-> Besides, other .writepages() implementaions e.g. iomap_writepages() also
-> doen't get the refcount when constructing the writeback IO.
->
-
-Point taken. I'll remove this then, since other .writepages() also
-don't obtain a refcount.
-
->
-> > @@ -2481,7 +2200,7 @@ static int fuse_write_begin(struct file *file, st=
-ruct address_space *mapping,
-> >       if (IS_ERR(folio))
-> >               goto error;
-> >
-> > -     fuse_wait_on_page_writeback(mapping->host, folio->index);
-> > +     folio_wait_writeback(folio);
->
-> I also doubt if wait_on_writeback() is needed here, as now there won't
-> be duplicate writeback IOs for the same page.
-
-What prevents there from being a duplicate writeback write for the
-same page? This is the path I'm looking at:
-
-ksys_write()
-  vfs_write()
-    new_sync_write()
-       op->write_iter()
-          fuse_file_write_iter()
-            fuse_cache_write_iter()
-               generic_file_write_iter()
-                   __generic_file_write_iter()
-                       generic_perform_write()
-                           op->write_begin()
-                               fuse_write_begin()
-
-but I'm not seeing where there's anything that prevents a duplicate
-write from happening.
-
->
->
-> > @@ -2545,13 +2264,11 @@ static int fuse_launder_folio(struct folio *fol=
-io)
-> >  {
-> >       int err =3D 0;
-> >       if (folio_clear_dirty_for_io(folio)) {
-> > -             struct inode *inode =3D folio->mapping->host;
-> > -
-> >               /* Serialize with pending writeback for the same page */
-> > -             fuse_wait_on_page_writeback(inode, folio->index);
-> > +             folio_wait_writeback(folio);
->
-> I think folio_wait_writeback() is unneeded after dropping the temp page
-> copying.  This is introduced in commit
-> 3993382bb3198cc5e263c3519418e716bd57b056 ("fuse: launder page should
-> wait for page writeback") since .launder_page() could be called when the
-> previous writeback of the same page has not completed yet.  Since now we
-> won't clear PG_writeback until the writeback completes, .launder_page()
-> won't be called on the same page when the corresponding writeback IO is
-> still inflight.
->
-
-Nice catch, I'll remove this in v4.
-
-
-Thanks,
-Joanne
-
->
-> --
-> Thanks,
-> Jingbo
+>Regards,
+>Nick
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
