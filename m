@@ -1,199 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-34984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC849CF58F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 21:14:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E466C9CF597
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 21:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A1B9286C22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A924288141
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F901E2304;
-	Fri, 15 Nov 2024 20:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A461D88D7;
+	Fri, 15 Nov 2024 20:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QxGu9sOX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NbRrOMCd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F2B1714C0;
-	Fri, 15 Nov 2024 20:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10EE1DA23
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 20:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731701659; cv=none; b=gT8GAsl4IP5ca4oliSSobuife09n6o7rR4Nc6WtDT1Ts6wi1QqP1juUChvk8/pgRuOVMaikpQ9jfkRDQ+8CB9F7JnkOpErH9F+VEmga1KrRIzw414xWMExvdsxdQmBV00icNX5QRbhv6z+uaQKy8nwI76ox8BgF2zRJqvfmIMBQ=
+	t=1731701836; cv=none; b=O7yS/+/ViglZiC1L/5LPRzn1W/1yFWzAp7NIG3MvjrMPcmhyzTQFTLvARgdsSjL8e9z+CIEg0zmS5OXIsbuY2MuMXEypNa3RoHmoeUsrmS6vNVnIoPUr2R3IDTgb54aiOaH4pBFJVd9s/BGhfGJ3LXcRhvTE/1Tt7yEmEnr7f5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731701659; c=relaxed/simple;
-	bh=mZJ8M9SYhsdIJfeTLGgEYypyiHJEqPM7nuzJIucP1rQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mN4h9gTlgvabR1oZkwvoQbqhbM1ZkIBX+zUVJNZcsWxBHPYE39f/DR5MT63AdOq/t++rY01Rp3yEIJgac1LFY9z6pBR8njqYZMK7/GO3ttrKYCMz0ulDDbRPbMZmUJoZOhsMjRJwlgijFxfiu2774eiMQ+DHUoIoFMVzCo7eyDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QxGu9sOX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFBmldF014249;
-	Fri, 15 Nov 2024 20:14:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1pQWydqckVHECTn8cI0N1o4o
-	6AmIUz9H8m9Aj8yXbao=; b=QxGu9sOXsn7OBHFwFvgBCXCIuubF+i5UQAzqNgA7
-	KE069feTbuiGXtcKMyw0FiRpQVyDCCEW7Z+dSmeQwySaOHd6nqFhWR7uaEkXbwtg
-	s7s+P7SsxhDMGC9CA6dZ0tgWej3vg/WDWJyjkBF6J9Vl/h+vt3JMIoO3W8WY3LBp
-	hA26kV9QXMUw+TAx9+NJo/WK7iYQ0JDulyuSakRPXZ8olWrTgmRFf7d1HUEmACTx
-	hLQAWAjXUJO0EJOk/4k7k1UUG9VIYdlLgnyyZ57ZyR0MRiSHcODoDVLoT36CPkwa
-	oWtkiz2tUWDTaNxYQbe+K5PcODGS8LXCYyDVvkbwilcizA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wwddapu0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 20:14:01 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFKE0gU025430
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 20:14:00 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 15 Nov 2024 12:14:00 -0800
-Date: Fri, 15 Nov 2024 12:13:59 -0800
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: David Hildenbrand <david@redhat.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Fuad
- Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>,
-        Mike
- Rapoport <rppt@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Matthew Wilcox
-	<willy@infradead.org>,
-        James Gowans <jgowans@amazon.com>, <linux-fsdevel@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH RFC v3 1/2] KVM: guest_memfd: Convert .free_folio() to
- .release_folio()
-Message-ID: <20241115121119110-0800.eberman@hu-eberman-lv.qualcomm.com>
-References: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
- <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
- <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
- <d2147b7c-bb2e-4434-aa10-40cacac43d4f@redhat.com>
+	s=arc-20240116; t=1731701836; c=relaxed/simple;
+	bh=FnoQgHkv4aT0MDGGYligilSySN601w/zPbya0C3aYyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h14QhhF8DErFQ8d58OT2aPxZ4C8S7Id2uF2xpf8K4YNhCUdk03b2C5V9dOMfRpli1PDNqrURcK0/k9RcRNivgG4nYHcfUnY3Tgis07XWu0LA3f2btG0IrN6zOz63UiL4WPlCEcRc3UPy5D6bRulJ5ev9mNTkJqFLIn7IhTNg5fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NbRrOMCd; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460ab1bc2aeso52401cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 12:17:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731701834; x=1732306634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qh0I7Vu3/qZRwEeJS0ggWs9HsmxO9itGmPQ36bmBqHs=;
+        b=NbRrOMCdLUZm2VDdE8M1F1o/tuOV9q4DkNXemgwFNst0Gcgtb2YFZjWqU6EeDbBsyD
+         Qwm9HE+Ju0lGycfplBHVj5PKxVsDxwwPksFhxtNhCUrKjFk0KPW3pTF4kmzbmawOwHmz
+         jLWycCI2t5t31ykgqdMvr0rgzNZkMYaYbLddAytLO/AuFoHlmzL7sbnp6RHOeJu0oK8g
+         W52YfTBNjjMgvTTEJsIi7XrHmpyS0kJ/28rxYHQUUK/aPosFuQiy9hX2D8KHSfREP1/0
+         G0qTtjSM1A9OjT8IluTwLv9sAwFtt742VJ+ZLv6cBhHPm5LUvAbA0fzDivbUI187lema
+         6gfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731701834; x=1732306634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qh0I7Vu3/qZRwEeJS0ggWs9HsmxO9itGmPQ36bmBqHs=;
+        b=dxQJhDCCM7mKqUhRdWlahXITR4R3RQytFc1MFIXao9UZ00wVrUVGfAfAxUTypMNC6A
+         dYFAoUDn62PHy9swkBs9jOPfMTtilwMQ9ogIYfk4MSzXDp/sRG+bpRcv50POcJmdq7ot
+         9cs9oN/+LhLIFh45tqDlAQHxNPqY8woN15Hd1urGB6uAjWfNKqEXWTKllXRg6ppsWlbw
+         DblOGqH6yHYupOwtslYnVu3mPueKJJwVC898B+7GKcgkWxtllPBRgct7YMt3fhIRUsFb
+         +ii6zmhK/fxjNTAtQCgx0x83qKPRNAaAZEkoqZUNo6Azf4Epx8FK2YoVdul94HbJ1vGP
+         ac7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFnI1i3JM2wWJXM48lnLzKuTjL1TWCu/8Ic9dC47vJ3xxGHcFqRkbEN93m2WgDVfVVG3RSwVd+DD9IGtCz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFtwt6g5KEnH6oJHaGDopuSB3Qpuij2NAPo4qObl3B3Zjur/fI
+	3RfYRfu+Phn431TwrpqkhoHuTiJ3P2D5tH+7ApMD0YqJMYI1HWxzFjeAXiuMRwRI/BMxbyYj57T
+	uMZ4agJ23VWCJCV9et1Bl2hhfELM=
+X-Google-Smtp-Source: AGHT+IFo9bs/NXX6VgmwCQgjqu7sNaOLsuEMw29hSI02h8Mwvlmx8v9LUjg4r/mt7fhnF07DLJeATG5r/Flm4If81tU=
+X-Received: by 2002:a05:622a:40a:b0:460:9946:56af with SMTP id
+ d75a77b69052e-46363e972b7mr55439681cf.44.1731701833679; Fri, 15 Nov 2024
+ 12:17:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d2147b7c-bb2e-4434-aa10-40cacac43d4f@redhat.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hUh8BuC6vM8H3tLNDCLcMKmEjCfP2ZGr
-X-Proofpoint-ORIG-GUID: hUh8BuC6vM8H3tLNDCLcMKmEjCfP2ZGr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=995 mlxscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 phishscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150169
+References: <20241107235614.3637221-1-joannelkoong@gmail.com>
+ <20241107235614.3637221-2-joannelkoong@gmail.com> <lbwgnktuip4jf5yqqgkgopddibulf5we6clmitt5mg3vff53zq@feyj77bk7pdt>
+ <CAJnrk1ZOc3xwCk7bVTKBSAh7sf-_szoSW-brEVx8e09icYiDDQ@mail.gmail.com> <CAJnrk1YmwRaMFZHzfLiHfXmVHeHdKmyR2027YpwN+_LS91YS6g@mail.gmail.com>
+In-Reply-To: <CAJnrk1YmwRaMFZHzfLiHfXmVHeHdKmyR2027YpwN+_LS91YS6g@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 15 Nov 2024 12:17:02 -0800
+Message-ID: <CAJnrk1bkU4-ydnk8QatJP4=_VYta_wRh3-Z+1U3VxM=BE4h3Mg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] mm: add AS_WRITEBACK_MAY_BLOCK mapping flag
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 11:58:59AM +0100, David Hildenbrand wrote:
-> On 15.11.24 11:58, David Hildenbrand wrote:
-> > On 13.11.24 23:34, Elliot Berman wrote:
-> > > When guest_memfd becomes a library, a callback will need to be made to
-> > > the owner (KVM SEV) to transition pages back to hypervisor-owned/shared
-> > > state. This is currently being done as part of .free_folio() address
-> > > space op, but this callback shouldn't assume that the mapping still
-> > > exists. guest_memfd library will need the mapping to still exist to look
-> > > up its operations table.
-> > 
-> > I assume you mean, that the mapping is no longer set for the folio (it
-> > sure still exists, because we are getting a callback from it :) )?
-> > 
-> > Staring at filemap_remove_folio(), this is exactly what happens:
-> > 
-> > We remember folio->mapping, call __filemap_remove_folio(), and then call
-> > filemap_free_folio() where we zap folio->mapping via page_cache_delete().
-> > 
-> > Maybe it's easier+cleaner to also forward the mapping to the
-> > free_folio() callback, just like we do with filemap_free_folio()? Would
-> > that help?
-> > 
-> > CCing Willy if that would be reasonable extension of the free_folio
-> > callback.
-> > 
+On Fri, Nov 15, 2024 at 11:33=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+>
+> On Mon, Nov 11, 2024 at 1:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > On Fri, Nov 8, 2024 at 4:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux=
+.dev> wrote:
+> > >
+> > > On Thu, Nov 07, 2024 at 03:56:09PM -0800, Joanne Koong wrote:
+> > > > Add a new mapping flag AS_WRITEBACK_MAY_BLOCK which filesystems may=
+ set
+> > > > to indicate that writeback operations may block or take an indeterm=
+inate
+> > > > amount of time to complete. Extra caution should be taken when wait=
+ing
+> > > > on writeback for folios belonging to mappings where this flag is se=
+t.
+> > > >
+> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > ---
+> > > >  include/linux/pagemap.h | 11 +++++++++++
+> > > >  1 file changed, 11 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> > > > index 68a5f1ff3301..eb5a7837e142 100644
+> > > > --- a/include/linux/pagemap.h
+> > > > +++ b/include/linux/pagemap.h
+> > > > @@ -210,6 +210,7 @@ enum mapping_flags {
+> > > >       AS_STABLE_WRITES =3D 7,   /* must wait for writeback before m=
+odifying
+> > > >                                  folio contents */
+> > > >       AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access=
+ to the mapping */
+> > > > +     AS_WRITEBACK_MAY_BLOCK =3D 9, /* Use caution when waiting on =
+writeback */
+> > >
+> > > To me 'may block' does not feel right. For example in reclaim code,
+> > > folio_wait_writeback() can get blocked and that is fine. However with
+> > > non-privileged fuse involved, there are security concerns. Somehow 'm=
+ay
+> > > block' does not convey that. Anyways, I am not really pushing back bu=
+t
+> > > I think there is a need for better name here.
+> >
+> > Ahh I see where this naming causes confusion - the "MAY_BLOCK" part
+> > could be interpreted in two ways: a) may block as in it's possible for
+> > the writeback to block and b) may block as in it's permissible/ok for
+> > the writeback to block. I intended "may block" to signify a) but
+> > you're right, it could be easily interpreted as b).
+> >
+> > I'll change this to AS_WRITEBACK_BLOCKING.
+>
+> Thinking about this some more, I think AS_WRITEBACK_ASYNC would be a
+> better name. (AS_WRITEBACK_BLOCKING might imply that the writeback
+> ->writepages() operation itself is blocking).
 
-I like this approach too. It would avoid the checks we have to do in the
-invalidate_folio() callback and is cleaner.
+Ugh, AS_WRITEBACK_ASYNC probably doesn't work either since NFS is also
+async. Okay, maybe "AS_WRITEBACK_INDETERMINATE" then? We can keep
+riffing on this, for v5 I'll submit it using
+AS_WRITEBACK_INDETERMINATE.
 
-- Elliot
-
-> > > 
-> > > .release_folio() and .invalidate_folio() address space ops can serve the
-> > > same purpose here. The key difference between release_folio() and
-> > > free_folio() is whether the mapping is still valid at time of the
-> > > callback. This approach was discussed in the link in the footer, but not
-> > > taken because free_folio() was easier to implement.
-> > > 
-> > > Link: https://lore.kernel.org/kvm/20231016115028.996656-1-michael.roth@amd.com/
-> > > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> > > ---
-> > >    virt/kvm/guest_memfd.c | 19 ++++++++++++++++---
-> > >    1 file changed, 16 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> > > index 47a9f68f7b247f4cba0c958b4c7cd9458e7c46b4..13f83ad8a4c26ba82aca4f2684f22044abb4bc19 100644
-> > > --- a/virt/kvm/guest_memfd.c
-> > > +++ b/virt/kvm/guest_memfd.c
-> > > @@ -358,22 +358,35 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
-> > >    }
-> > >    #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
-> > > -static void kvm_gmem_free_folio(struct folio *folio)
-> > > +static bool kvm_gmem_release_folio(struct folio *folio, gfp_t gfp)
-> > >    {
-> > >    	struct page *page = folio_page(folio, 0);
-> > >    	kvm_pfn_t pfn = page_to_pfn(page);
-> > >    	int order = folio_order(folio);
-> > >    	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > > +static void kvm_gmem_invalidate_folio(struct folio *folio, size_t offset,
-> > > +				      size_t len)
-> > > +{
-> > > +	WARN_ON_ONCE(offset != 0);
-> > > +	WARN_ON_ONCE(len != folio_size(folio));
-> > > +
-> > > +	if (offset == 0 && len == folio_size(folio))
-> > > +		filemap_release_folio(folio, 0);
-> > >    }
-> > >    #endif
-> > >    static const struct address_space_operations kvm_gmem_aops = {
-> > >    	.dirty_folio = noop_dirty_folio,
-> > > -	.migrate_folio	= kvm_gmem_migrate_folio,
-> > > +	.migrate_folio = kvm_gmem_migrate_folio,
-> > >    	.error_remove_folio = kvm_gmem_error_folio,
-> > >    #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
-> > > -	.free_folio = kvm_gmem_free_folio,
-> > > +	.release_folio = kvm_gmem_release_folio,
-> > > +	.invalidate_folio = kvm_gmem_invalidate_folio,
-> > >    #endif
-> > >    };
-> > > 
-> > 
-> > 
-> 
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+>
+> I'll make this change for v5.
+>
+> Thanks,
+> Joanne
+>
+> >
+> > Thanks,
+> > Joanne
+> >
+> > >
+> > > >       /* Bits 16-25 are used for FOLIO_ORDER */
+> > > >       AS_FOLIO_ORDER_BITS =3D 5,
+> > > >       AS_FOLIO_ORDER_MIN =3D 16,
+> > > > @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct=
+ address_space *mapping)
+> > > >       return test_bit(AS_INACCESSIBLE, &mapping->flags);
+> > > >  }
+> > > >
+> > > > +static inline void mapping_set_writeback_may_block(struct address_=
+space *mapping)
+> > > > +{
+> > > > +     set_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
+> > > > +}
+> > > > +
+> > > > +static inline bool mapping_writeback_may_block(struct address_spac=
+e *mapping)
+> > > > +{
+> > > > +     return test_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
+> > > > +}
+> > > > +
+> > > >  static inline gfp_t mapping_gfp_mask(struct address_space * mappin=
+g)
+> > > >  {
+> > > >       return mapping->gfp_mask;
+> > > > --
+> > > > 2.43.5
+> > > >
 
