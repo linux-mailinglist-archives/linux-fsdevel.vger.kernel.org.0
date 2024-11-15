@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-34949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E105B9CF06A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 408949CF06D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A00F1F2347E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70701F216FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025FD1E25EE;
-	Fri, 15 Nov 2024 15:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662E11E282B;
+	Fri, 15 Nov 2024 15:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzcgDJkp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrOJatHg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6711E2315;
-	Fri, 15 Nov 2024 15:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06A81E261B;
+	Fri, 15 Nov 2024 15:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684964; cv=none; b=Y67EUIVGq+XCZofwwn5C1xM2yGJ1Ulv6RvaDnckvJkYP/r4CgscEPQaqTX1DuD08Nx7ihPKFd7Lp1WFG/V4eJZUlqCmLHxLbv1nZpwAjZA761Kb16q5oj2LvMcBHX94UOCt5EMJYvmrz7gV2qpcBg+DR7PDcAvJU4MT0bX+dcEQ=
+	t=1731684965; cv=none; b=ea2UHIPMFifiWVC+Y23cjxNQclonPfCiZTYmvw4y++G6nWC6gZLp8Oc4rYd2eKoSAqjtEtV6vdKGp79/f9hC4O3ox1VkgoPqjvF/iWRLKTIYWbGEuBbPP5FMB6PQUiaZ5o4jy7hvxXEdA8+Tf9eELgQt01e6eEogFQin0+Vyhmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684964; c=relaxed/simple;
-	bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JHH9ATR6tskf3uw08v2SpHU1f9Cv9+/1FtNbgZZcn8ctdAja2TYTEreLbkmaPdjUM7mUmN2EkuKiOs6Rq4m/f4DVeREJgOMN5C6Ug+wn2odnUCnB6bU9BQfJ5fXHrmj7bLMH+Aq50BL8jSPp8Qptp8uvigZp+aEsEEPKGcek+H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzcgDJkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD37C4AF13;
-	Fri, 15 Nov 2024 15:36:02 +0000 (UTC)
+	s=arc-20240116; t=1731684965; c=relaxed/simple;
+	bh=Nz2g6aX7kYZa3fV4pgIXbRXHWIhB0kmiRiHE/o+ZHCE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AYdDf7T6LNHp5yJB7ekr2p01s/jv1tgGT/Ly9qP9RQBVlSarf9uZo3nvWllhBjPg4Vi/Euv/b7M/HVYtd3/w9fWvYyK2rlpdEL25OPu/rGI7PhKONotLheBDYSA7wk04nks+GPpiPULmaFKioi55tcVbbuf2QBqiFsFkCctzPmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrOJatHg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BA8C4CED6;
+	Fri, 15 Nov 2024 15:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731684963;
-	bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
-	h=From:Subject:Date:To:Cc:From;
-	b=AzcgDJkpUGGd13jctGgjWg3XG2CS/BmohjMqWV53dknmJkI4Ga9ftG5STPdAHyNG2
-	 4wmi5P2uj0LoM0q2h0cQt8Blo/e5+MLBXa8l/AUX1gGqK0Lg6YH6cQLEkLB/Qe5JIA
-	 CaKpznp4PfGFzyvRVgJatx0KXYFOjA/WEeFd3Jzldw6P7TpMZlNpUx5hwpugYNDBz9
-	 cOFQspb9/oaafxuR/Nh0WqYN7lbgs2UcWYeD8ZQ3u5qjrbrP8AdUzwQjwF6kOjYmIF
-	 UAuuWNxswPvMsowEsNch+D+Z8kwqWxzL9L6dO13TZZRSZSn7iQBh8lSCarLsY8oVAS
-	 nH7QhuAI4Y6jA==
+	s=k20201202; t=1731684965;
+	bh=Nz2g6aX7kYZa3fV4pgIXbRXHWIhB0kmiRiHE/o+ZHCE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=UrOJatHg4QKDUXg+rxYShXR2g6j3E/rsFfxJMd3ZG3woilx3x0NlYNQkighSV1k7N
+	 eB1vHnzF+E4LlrkSg8DzS62fO7vf1KyTbIB1sm8lbWF9qB2nR+E1xloy1XrB5ADkJO
+	 kI0aPOpVpUYFiH6VHKlu/muORWAeeo6L/bg7udReQjDPP6WtcrwmQoYK5ROqgDUNqO
+	 QG72GkJJzpvYfubXVOq0nqEBEu8zg+hTkFDozsCe9hqMutUQ1fY5DobgRfzVw7mMtE
+	 WVYv+NvlLCgyoqe9KaPW1mqIJt0PVVKRuCsBcxFITH7m+KBDh1COvry30PczdwGDqr
+	 +M6tyFLlFp/bg==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v2 0/2] fs: listmount()/statmount() fix and sample program
-Date: Fri, 15 Nov 2024 10:35:51 -0500
-Message-Id: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
+Date: Fri, 15 Nov 2024 10:35:52 -0500
+Subject: [PATCH v2 1/2] samples: add a mountinfo program to demonstrate
+ statmount()/listmount()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFdqN2cC/23MQQ6CMBCF4auQWVvTGUkorryHYQFlhEZtybQ2G
- sLdraxd/i8v3wqRxXGEc7WCcHbRBV+CDhXYufcTKzeWBtJUIyKpmPr0DC+fVNMYbQar6aQJyn8
- Rvrn3bl270rOLKchnpzP+1n9KRoVqbI1uta2tGfhyZ/H8OAaZoNu27QuQL0HUowAAAA==
-X-Change-ID: 20241112-statmount-77808bc02302
+Message-Id: <20241115-statmount-v2-1-cd29aeff9cbb@kernel.org>
+References: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
+In-Reply-To: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
@@ -64,63 +64,338 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>,
  Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1657; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnN2piwqq2Biywd/Eutsg9jis2+CgEbToA1krzI
- It2G9Q4HeSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzdqYgAKCRAADmhBGVaC
- FVTtEACHDCyZyM5kBlAmsa8aWHt9aLdMl4L1+xmiM/pN+28GG/GAfzmNlVI8EkBqtiljcHigtPy
- 35zr/r5enhNnOyqLt66QIsTlsWZO8t8P+UodkX/IkWNnRbbfGX8rU9bEeQYEODcB88CqtL5z8Ti
- ckXzY5YcozuUmPPivKLz8NVpwg4TKAjTUv3RVllAPrevI3rM/QGQuJI88s5PrccLwwV95pCVuI3
- hvqdT1Y9Gd6IysBFe4bAhBFKdCwzbZnVkrlLoAewXaMw5SPTVNrXJFyruPd3R1KEn41nx/17S1W
- dBwEUo3Du1CPRXQHWOEnyg5PeNu8cTj44B1sfCE3uscL8xZMKk3yOKqG6Os8D/iD9Z2XxnvGHmS
- 1mkOgJts+X1yCz6AnZzmEmivi6Yhz2R5OIY7ESKvi+aHUCLcTbKMi62p3+9N+cytYw46oLsRKYa
- /1fdssN18hskXwIoIqQYiXRH0cia7r6vGXI1Uis375ftaC306/B3r1CIPhy/dUZeIWjXaLbymXl
- 3VTK5KGwFI1R1TIJZL1N1PBmJ1XgFJJkrILQ/kLmgqNgDFLQ/6tBoxCssmYRRGPQBUHYyvZJwrZ
- F9zpDwk452r6whP1Oh7gGHN0csQA4zjr6MXvONfNXb+2yU/nsJtVP1s7SAn3G/PtPw3VLOOyfUX
- 4q7Odie7CH2Gwew==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8545; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Nz2g6aX7kYZa3fV4pgIXbRXHWIhB0kmiRiHE/o+ZHCE=;
+ b=owEBbAKT/ZANAwAIAQAOaEEZVoIVAcsmYgBnN2piO47W0bewypcjon+glLvkfsamv33yeuqlH
+ NwxQQ6Q2RyJAjIEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzdqYgAKCRAADmhBGVaC
+ FY3TD/USu9O917a6rJF0c5mDPDM85AN5n2Ff8lvrH8V+xnRxICI+kWB3BECP51jg300JniXsxol
+ TQ87eVhtSAwHPNtCjKU3ugnaw6bVrJNVUXizAF53KJpXeJJEgq34w8VJLU1t/d5szutCqN/YTc8
+ vZZn9tvc/QT25Air9kcL+JMBZqOkGrcLbq65bYZaLqNN8FaFauRjvu5n+V/WNoQh1l1gZmNEN/5
+ C6QGdtKIQoiJNFv2++kKGlUmm9+JnCAjWB4deRx7xgxak4Yk4dnjPNiZ8xwCXOoAHBbVpWxQjRd
+ k0DMic4/n/WgwR6YKGEeW7TZ1a+ViU5Npjd8xqfs8aEjufPmYnFkOkRmr29nuzW8zP3ZMzeiCDE
+ Tn9QSsOmGn4JehTa04ghFFKGte/Cx3yiRTTkZmMsQsZF3nr1A8A31DYKWh2gk9vM0yWj2hFfyoc
+ JStXxgtGd/quhf1748ldNKgrjC74t3PA2OXpx72BaBHNoOB3xA6QJEXXXngg8OFFajaLQEflIMF
+ 46EH0JF2fMyOs7sAs4WlCa1PpECZgkMpkn3WQN5bSzXsrT2ZB69wjg3qa0TOU9FLYxXJG7+GBQP
+ 0xizGJALuQ3D74zBRPoxopdcPpc2XJopjT9ivT4cMVE54f84tZ4VpAb6RFeoSCy9nHgtHGjLvlz
+ WsUAtwVoK/ZTY
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-We had some recent queries internally asking how to use the new
-statmount() and listmount() interfaces. I was doing some other work in
-this area, so I whipped up this tool.
+Add a new "mountinfo" sample userland program that demonstrates how to
+use statmount() and listmount() to get at the same info that
+/proc/pid/mountinfo provides.
 
-My hope is that this will represent something of a "rosetta stone" for
-how to translate between mountinfo and statmount(), and an example for
-other people looking to use the new interfaces.
-
-It may also be possible to use this as the basis for a listmount() and
-statmount() testcase. We can call this program, and compare its output
-to the mountinfo file.
-
-The second patch adds security mount options to the existing mnt_opts in
-the statmount() interface, which I think is the final missing piece
-here. The alternative to doing that would be to add a new string field
-for that, but I'm not sure that's worthwhile.
+The output of the program tries to mimic the mountinfo procfile
+contents. With the -p flag, it can be pointed at an arbitrary pid to
+print out info about its mount namespace. With the -r flag it will
+attempt to walk all of the namespaces under the pid's mount namespace
+and dump out mount info from all of them.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v2:
-- fixed off-by-one bug in listmount last_mnt_id handling
-- patch to add the security mount options to statmount()
-- Link to v1: https://lore.kernel.org/r/20241112-statmount-v1-1-d98090c4c8be@kernel.org
-
----
-Jeff Layton (2):
-      samples: add a mountinfo program to demonstrate statmount()/listmount()
-      fs: prepend statmount.mnt_opts string with security_sb_mnt_opts()
-
- fs/namespace.c          |   4 +
  samples/vfs/.gitignore  |   1 +
  samples/vfs/Makefile    |   2 +-
  samples/vfs/mountinfo.c | 271 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 277 insertions(+), 1 deletion(-)
----
-base-commit: 4be4eaeb1a60a7d52e66123f2f52f2da017c9881
-change-id: 20241112-statmount-77808bc02302
+ 3 files changed, 273 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/samples/vfs/.gitignore b/samples/vfs/.gitignore
+index 79212d91285bca72b0ff85f28aaccd2e803ac092..33a03cffe072fe2466c9df30ad47e9c58b0eea7c 100644
+--- a/samples/vfs/.gitignore
++++ b/samples/vfs/.gitignore
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ /test-fsmount
+ /test-statx
++/mountinfo
+diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
+index 6377a678134acf0d682151d751d2f5042dbf5e0a..fb9bb33fdc751556e806aa897f0dbd48f7e3a4d8 100644
+--- a/samples/vfs/Makefile
++++ b/samples/vfs/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-userprogs-always-y += test-fsmount test-statx
++userprogs-always-y += test-fsmount test-statx mountinfo
+ 
+ userccflags += -I usr/include
+diff --git a/samples/vfs/mountinfo.c b/samples/vfs/mountinfo.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..d9f21113a93b7aa7606de2edfce5ad0d5bcf2056
+--- /dev/null
++++ b/samples/vfs/mountinfo.c
+@@ -0,0 +1,271 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++/*
++ * Use pidfds, nsfds, listmount() and statmount() mimic the
++ * contents of /proc/self/mountinfo.
++ */
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <stdint.h>
++#include <sys/ioctl.h>
++#include <sys/syscall.h>
++#include <linux/pidfd.h>
++#include <linux/mount.h>
++#include <linux/nsfs.h>
++#include <unistd.h>
++#include <alloca.h>
++#include <getopt.h>
++#include <stdlib.h>
++#include <stdbool.h>
++#include <errno.h>
++
++/* max mounts per listmount call */
++#define MAXMOUNTS		1024
++
++/* size of struct statmount (including trailing string buffer) */
++#define STATMOUNT_BUFSIZE	4096
++
++static bool ext_format;
++
++/*
++ * There are no bindings in glibc for listmount() and statmount() (yet),
++ * make our own here.
++ */
++static int statmount(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask,
++			    struct statmount *buf, size_t bufsize,
++			    unsigned int flags)
++{
++	struct mnt_id_req req = {
++		.size = MNT_ID_REQ_SIZE_VER0,
++		.mnt_id = mnt_id,
++		.param = mask,
++	};
++
++	if (mnt_ns_id) {
++		req.size = MNT_ID_REQ_SIZE_VER1;
++		req.mnt_ns_id = mnt_ns_id;
++	}
++
++	return syscall(__NR_statmount, &req, buf, bufsize, flags);
++}
++
++static ssize_t listmount(uint64_t mnt_id, uint64_t mnt_ns_id,
++			 uint64_t last_mnt_id, uint64_t list[], size_t num,
++			 unsigned int flags)
++{
++	struct mnt_id_req req = {
++		.size = MNT_ID_REQ_SIZE_VER0,
++		.mnt_id = mnt_id,
++		.param = last_mnt_id,
++	};
++
++	if (mnt_ns_id) {
++		req.size = MNT_ID_REQ_SIZE_VER1;
++		req.mnt_ns_id = mnt_ns_id;
++	}
++
++	return syscall(__NR_listmount, &req, list, num, flags);
++}
++
++static void show_mnt_attrs(uint64_t flags)
++{
++	printf("%s", flags & MOUNT_ATTR_RDONLY ? "ro" : "rw");
++
++	if (flags & MOUNT_ATTR_NOSUID)
++		printf(",nosuid");
++	if (flags & MOUNT_ATTR_NODEV)
++		printf(",nodev");
++	if (flags & MOUNT_ATTR_NOEXEC)
++		printf(",noexec");
++
++	switch (flags & MOUNT_ATTR__ATIME) {
++	case MOUNT_ATTR_RELATIME:
++		printf(",relatime");
++		break;
++	case MOUNT_ATTR_NOATIME:
++		printf(",noatime");
++		break;
++	case MOUNT_ATTR_STRICTATIME:
++		/* print nothing */
++		break;
++	}
++
++	if (flags & MOUNT_ATTR_NOSYMFOLLOW)
++		printf(",nosymfollow");
++	if (flags & MOUNT_ATTR_IDMAP)
++		printf(",idmapped");
++}
++
++static void show_propagation(struct statmount *sm)
++{
++	if (sm->mnt_propagation & MS_SHARED)
++		printf(" shared:%llu", sm->mnt_peer_group);
++	if (sm->mnt_propagation & MS_SLAVE) {
++		printf(" master:%llu", sm->mnt_master);
++		if (sm->mnt_master)
++			printf(" propagate_from:%llu", sm->propagate_from);
++	}
++	if (sm->mnt_propagation & MS_UNBINDABLE)
++		printf(" unbindable");
++}
++
++static void show_sb_flags(uint64_t flags)
++{
++	printf("%s", flags & MS_RDONLY ? "ro" : "rw");
++	if (flags & MS_SYNCHRONOUS)
++		printf(",sync");
++	if (flags & MS_DIRSYNC)
++		printf(",dirsync");
++	if (flags & MS_MANDLOCK)
++		printf(",mand");
++	if (flags & MS_LAZYTIME)
++		printf(",lazytime");
++}
++
++static int dump_mountinfo(uint64_t mnt_id, uint64_t mnt_ns_id)
++{
++	int ret;
++	struct statmount *buf = alloca(STATMOUNT_BUFSIZE);
++	const uint64_t mask = STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC |
++				STATMOUNT_PROPAGATE_FROM | STATMOUNT_FS_TYPE |
++				STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT |
++				STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE |
++				STATMOUNT_SB_SOURCE;
++
++	ret = statmount(mnt_id, mnt_ns_id, mask, buf, STATMOUNT_BUFSIZE, 0);
++	if (ret < 0) {
++		perror("statmount");
++		return 1;
++	}
++
++	if (ext_format)
++		printf("0x%lx 0x%lx 0x%llx ", mnt_ns_id, mnt_id, buf->mnt_parent_id);
++
++	printf("%u %u %u:%u %s %s ", buf->mnt_id_old, buf->mnt_parent_id_old,
++				   buf->sb_dev_major, buf->sb_dev_minor,
++				   &buf->str[buf->mnt_root],
++				   &buf->str[buf->mnt_point]);
++	show_mnt_attrs(buf->mnt_attr);
++	show_propagation(buf);
++
++	printf(" - %s", &buf->str[buf->fs_type]);
++	if (buf->mask & STATMOUNT_FS_SUBTYPE)
++		printf(".%s", &buf->str[buf->fs_subtype]);
++	if (buf->mask & STATMOUNT_SB_SOURCE)
++		printf(" %s ", &buf->str[buf->sb_source]);
++	else
++		printf(" :none ");
++
++	show_sb_flags(buf->sb_flags);
++	if (buf->mask & STATMOUNT_MNT_OPTS)
++		printf(",%s", &buf->str[buf->mnt_opts]);
++	printf("\n");
++	return 0;
++}
++
++static int dump_mounts(uint64_t mnt_ns_id)
++{
++	uint64_t mntid[MAXMOUNTS];
++	uint64_t last_mnt_id = 0;
++	ssize_t count;
++	int i;
++
++	/*
++	 * Get a list of all mntids in mnt_ns_id. If it returns MAXMOUNTS
++	 * mounts, then go again until we get everything.
++	 */
++	do {
++		count = listmount(LSMT_ROOT, mnt_ns_id, last_mnt_id, mntid, MAXMOUNTS, 0);
++		if (count < 0 || count > MAXMOUNTS) {
++			errno = count < 0 ? errno : count;
++			perror("listmount");
++			return 1;
++		}
++
++		/* Walk the returned mntids and print info about each */
++		for (i = 0; i < count; ++i) {
++			int ret = dump_mountinfo(mntid[i], mnt_ns_id);
++
++			if (ret != 0)
++				return ret;
++		}
++		/* Set up last_mnt_id to pick up where we left off */
++		last_mnt_id = mntid[count - 1];
++	} while (count == MAXMOUNTS);
++	return 0;
++}
++
++static void usage(const char * const prog)
++{
++	printf("Usage:\n");
++	printf("%s [-e] [-p pid] [-r] [-h]\n", prog);
++	printf("    -e: extended format\n");
++	printf("    -h: print usage message\n");
++	printf("    -p: get mount namespace from given pid\n");
++	printf("    -r: recursively print all mounts in all child namespaces\n");
++}
++
++int main(int argc, char * const *argv)
++{
++	struct mnt_ns_info mni = { .size = MNT_NS_INFO_SIZE_VER0 };
++	int pidfd, mntns, ret, opt;
++	pid_t pid = getpid();
++	bool recursive = false;
++
++	while ((opt = getopt(argc, argv, "ehp:r")) != -1) {
++		switch (opt) {
++		case 'e':
++			ext_format = true;
++			break;
++		case 'h':
++			usage(argv[0]);
++			return 0;
++		case 'p':
++			pid = atoi(optarg);
++			break;
++		case 'r':
++			recursive = true;
++			break;
++		}
++	}
++
++	/* Get a pidfd for pid */
++	pidfd = syscall(SYS_pidfd_open, pid, 0);
++	if (pidfd < 0) {
++		perror("pidfd_open");
++		return 1;
++	}
++
++	/* Get the mnt namespace for pidfd */
++	mntns = ioctl(pidfd, PIDFD_GET_MNT_NAMESPACE, NULL);
++	if (mntns < 0) {
++		perror("PIDFD_GET_MNT_NAMESPACE");
++		return 1;
++	}
++	close(pidfd);
++
++	/* get info about mntns. In particular, the mnt_ns_id */
++	ret = ioctl(mntns, NS_MNT_GET_INFO, &mni);
++	if (ret < 0) {
++		perror("NS_MNT_GET_INFO");
++		return 1;
++	}
++
++	do {
++		int ret;
++
++		ret = dump_mounts(mni.mnt_ns_id);
++		if (ret)
++			return ret;
++
++		if (!recursive)
++			break;
++
++		/* get the next mntns (and overwrite the old mount ns info) */
++		ret = ioctl(mntns, NS_MNT_GET_NEXT, &mni);
++		close(mntns);
++		mntns = ret;
++	} while (mntns >= 0);
++
++	return 0;
++}
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.47.0
 
 
