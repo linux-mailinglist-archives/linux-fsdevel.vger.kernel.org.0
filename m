@@ -1,109 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-34918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7EA9CE115
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:17:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788BF9CEF41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A1728D560
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:17:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318BEB2B5D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFAB1CEE9A;
-	Fri, 15 Nov 2024 14:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026531D3194;
+	Fri, 15 Nov 2024 14:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfV5XcJK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dl8gbxSr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E7454769;
-	Fri, 15 Nov 2024 14:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D1418F2D8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 14:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731680230; cv=none; b=RrlJdOiiKp+yMJKi9/TooSUk5BtxUvyYzGB81yvop/TINrwyePXf0j+MN0TuqmttWFeyC3aoHUYvDI4HF+eVcLThbPzAGKE9LPRPyNDTDVN0/n4Mkat/NO55Flz29VYiZWWMfrweSaflrCi5YJoD26gtxvjamMpuZeSYPHYK9os=
+	t=1731682307; cv=none; b=EU9a7iA/S96bexulko1UN810hvjqI81QHBkB6LW5Pp67e8kXAcrBbORUg8bElx1HGjFgCttIijuY8IqWj20/a/tSnSjx2jsdqmOETVOkvnCAL8p7mzpsKxzslKc5kqJgIiU7jo1r1MOZ2i3aP4KvVS5R6GxCXHnMoMorX/oMSWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731680230; c=relaxed/simple;
-	bh=HP/LLNxTqSLz65CS/4iA5UL8Oz/x3YGp0q3jfnGXKlI=;
+	s=arc-20240116; t=1731682307; c=relaxed/simple;
+	bh=eGfhWwKGrYB6IF8HdkNw3pY75T1xZSDC+spWNnkWZsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZW61cqMZNyp9xit/fF7yQLQQh4P/tHiq8xWDBqlETYjoQIV2d+wk6s1vVfYbha59ORyw38MOJoLKo9beDtmyVjx4pjbh1Ig8dvWtG9bGlf7ySnLomqLLroWtNRDWIq0QZ2YGU0Jcvm3o2hhn/KKtseiEYXdcKoMFvk7KktyGFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfV5XcJK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B629EC4CECF;
-	Fri, 15 Nov 2024 14:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731680229;
-	bh=HP/LLNxTqSLz65CS/4iA5UL8Oz/x3YGp0q3jfnGXKlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WfV5XcJKDmGWFh4lkZBC8kBelonPUhXL3drsEkc4Jen9fe7iTXgHxDpveUHYEcULs
-	 +fyx5pi3uIWIdnINdrVk01jmjpo4ZRmNkYNW0P8A3g5GgA2oTh48+cTLEChyarf24G
-	 sQAjLCDlkU5KrIf3YvhzdImklaTGx18c5+wWdJ1Ldg+9If5ewdYqixwEOfcwgOvodS
-	 vILDDn0aUFcB5Zbto3S+YDcNJKOCyj9uiLGkUex+N7cX0YZ2NUu8E7H72jQIK8fpZB
-	 brieNpMDEnnjFWFijAIZFnKC3dXmGvIYoxnKYWw5iDlfl5enhHu/F2RAGD6Uc9R8DL
-	 gY/GXDaboGlCg==
-Date: Fri, 15 Nov 2024 14:17:06 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"vbabka@suse.cz" <vbabka@suse.cz>, "arnd@arndb.de" <arnd@arndb.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH RFC/RFT v2 0/2] Converge common flows for cpu assisted
- shadow stack
-Message-ID: <ZzdX4nHHhEXuq_uU@finisterre.sirena.org.uk>
-References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
- <964caf1797be61001901b92e3b71259443d3196f.camel@intel.com>
- <ZzaEnVpBUhZsp7qB@debug.ba.rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=roSLHug/3/+Wp4tjvd6LWupPb0JsZkNri8QeNxXxU8XQ4147ASAGa1ZwUlhbNQvbZXXlgFBL3/fzrWZbv9HX/E/vT0NVY9oWQLK/7XT5isFGm/bx66cVkiVylx//zp9vSdSf18HBTnSB9rAvbgzvZ7YgucMou0/tT7USEfullCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dl8gbxSr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731682304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iy26NCMw5Me2hgy3UM6AwJLMahhCwzvJRkn1Iane3Mo=;
+	b=Dl8gbxSrlnzcIdKIvUoB26J2EWLGdX5pkdBTA6tL3AEm5dUMr+NpHeWLpFCzxe7kfTo/mB
+	bo/riY1yW4594K6OitnFghniJxzUo8fyk7ziPaQhBmlPR8qPIq65iDlKSTY86jChGEbJaB
+	/gph+nKedVJMiLr7Iy4ZytbC3MLAo64=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-384-9pBooNNMPuebWywnMd9MDg-1; Fri,
+ 15 Nov 2024 09:51:43 -0500
+X-MC-Unique: 9pBooNNMPuebWywnMd9MDg-1
+X-Mimecast-MFC-AGG-ID: 9pBooNNMPuebWywnMd9MDg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A6E71944DF4;
+	Fri, 15 Nov 2024 14:51:42 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5D11195DF81;
+	Fri, 15 Nov 2024 14:51:41 +0000 (UTC)
+Date: Fri, 15 Nov 2024 09:53:14 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] iomap: lift zeroed mapping handling into
+ iomap_zero_range()
+Message-ID: <ZzdgWkt1DRCTWfCv@bfoster>
+References: <20241108124246.198489-1-bfoster@redhat.com>
+ <20241108124246.198489-3-bfoster@redhat.com>
+ <ZzGeQGl9zvQLkRfZ@infradead.org>
+ <ZzNfg2E7TyMyo86h@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="L9nCg6ar8vnxAdyu"
-Content-Disposition: inline
-In-Reply-To: <ZzaEnVpBUhZsp7qB@debug.ba.rivosinc.com>
-X-Cookie: Editing is a rewording activity.
-
-
---L9nCg6ar8vnxAdyu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZzNfg2E7TyMyo86h@bfoster>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Nov 14, 2024 at 03:15:41PM -0800, Deepak Gupta wrote:
+On Tue, Nov 12, 2024 at 09:00:35AM -0500, Brian Foster wrote:
+> On Sun, Nov 10, 2024 at 10:03:44PM -0800, Christoph Hellwig wrote:
+> > On Fri, Nov 08, 2024 at 07:42:44AM -0500, Brian Foster wrote:
+> > > In preparation for special handling of subranges, lift the zeroed
+> > > mapping logic from the iterator into the caller.
+> > 
+> > What's that special code?  I don't really see anything added to this
+> > in the new code?  In general I would prefer if all code for the
+> > iteration would be kept in a single function in preparation for
+> > unrolling these loops.  If you want to keep this code separate
+> > from the write zeroes logic (which seems like a good idea) please
+> > just just move the actual real zeroing out of iomap_zero_iter into
+> > a separate helper similar to how we e.g. have multiple different
+> > implementations in the dio iterator.
+> > 
+> 
+> There is no special code... the special treatment is to check the dirty
+> state of a block unaligned start in isolation to decide whether to skip
+> or explicitly zero if dirty. The fallback logic is to check the dirty
+> state of the entire range and if needed, flush the mapping to push all
+> pending (dirty && unwritten) instances out to the fs so the iomap is up
+> to date and we can safely skip iomaps that are inherently zero on disk.
+> 
+> Hmm.. so I see the multiple iter modes for dio, but it looks like that
+> is inherent to the mapping type. That's not quite what I'm doing here,
+> so I'm not totally clear on what you're asking for. FWIW, I swizzled
+> this code around a few times and failed to ultimately find something I'd
+> consider elegant. For example, initial versions would have something
+> like another param to iomap_zero_iter() to skip the optimization logic
+> (i.e. don't skip zeroed extents for this call), which I think is more in
+> the spirit of what you're saying, but I ultimately found it cleaner to
+> open code that part. If you had something else in mind, could you share
+> some pseudocode or something to show the factoring..?
+> 
 
-> Alternatively I can send a v3 with above patch.
+FWIW, I'm concurrently hacking on what I'd consider a longer term fix
+here, based on some of the earlier discussions. The idea is basically
+iomap provides a mechanism for the fs to attach a folio_batch of dirty
+folios to the iomap, which zero range can then use as the source of
+truth for which subranges to zero of an unwritten mapping.
 
-I guess at this point it's probably as well to just rebase onto
-v6.13-rc1 when that appears, that should have the GCS series in it and
-it's probably worth rebasing/resending when that comes out anyway.
+It occurs to me that might lend itself a bit more to what you're looking
+for here by avoiding the need for a new instance of the iter loop (I
+assume there is some outstanding work that is affected by this?). Given
+that this series was kind of a side quest for a band-aid performance fix
+in the meantime, and it's not likely 6.13 material anyways, I think I'm
+going to put it in a holding pattern and keep it in the back pocket in
+favor of trying to move that alternate approach along, at least to where
+I can post an RFC for discussion.
 
---L9nCg6ar8vnxAdyu
-Content-Type: application/pgp-signature; name="signature.asc"
+If that doesn't work out or there proves some critical need for it in
+the meantime, then I'll post v4 for an easy fix. I'll post a v2 of patch
+4 separately since that is an independent fix..
 
------BEGIN PGP SIGNATURE-----
+Brian
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc3V+EACgkQJNaLcl1U
-h9CfVQf+OAgeFa6MBqjV441HPKid5+FQHo6s2BZCyC9biJb+Vtrcr78aFR99jY8E
-atsKuBkZZQrkiuAQFDMRjnwJw+1bKtqjYYZfLLhgqEtSjMBYBK4mjtDrRSwGiMOS
-UqK925Duaw3/fG52vAyfBtj5o0/0rL/rWCXXB17j7wucftzw1WlE3Tg49sxAxorn
-yKKE2afGpRoLFpX4qNoAwOzineO/T2eSenfpL8byDOhlL1F4vxBqUlzXBI9OdXV7
-6c7u21/K6xw4taAKJ4yd0gOANmeWykdPG1m5v1Hffz03DWUPkNp9SEedHcVYoYSD
-/qDN1VT+WxTmnsn9g1shd3a1dGuvzg==
-=PFAo
------END PGP SIGNATURE-----
+> > > +	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> > > +		const struct iomap *s = iomap_iter_srcmap(&iter);
+> > > +
+> > > +		if (s->type == IOMAP_HOLE || s->type == IOMAP_UNWRITTEN) {
+> > > +			loff_t p = iomap_length(&iter);
+> > 
+> > Also please stick to variable names that are readable and preferably
+> > the same as in the surrounding code, e.g. s -> srcmap p -> pos.
+> > 
+> 
+> Sure. I think I did this to avoid long lines, but I can change it.
+> Thanks.
+> 
+> Brian
+> 
+> 
 
---L9nCg6ar8vnxAdyu--
 
