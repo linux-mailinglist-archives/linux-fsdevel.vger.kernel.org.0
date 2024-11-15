@@ -1,50 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-34951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533EF9CF074
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:43:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCD69CF09C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84A11F22429
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629F6291CD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887A31E32C4;
-	Fri, 15 Nov 2024 15:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970ED1D934D;
+	Fri, 15 Nov 2024 15:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCdsVACM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m4820q7J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E376D1E25F4;
-	Fri, 15 Nov 2024 15:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649B31D90BD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684967; cv=none; b=P71/uOb67X9+izQVNQRCM9i2TYoG1lfoH2Fi4wPGLFDZMAoUJeqk+g8JkEVIu75jrpzKIQENqzommsmyeDIDYndf0J3syCcuXhg7LGwLzPD6fYZrnDYeuO4QKjy5txvXwJy3wS6scgTN9zDQE/DH8kOLCJm1vphoAGMW58Kw2ww=
+	t=1731685436; cv=none; b=ruIvNoSXVDTSS0wz+eszDIoNuoBp66DS7j1Mpb5r/gGg60kCyZf9L3sCZnjwT1NT93dTTGly91gmK1skKFiUFo0E7VzikZwX6oT7G4L7uOu27WH+Ci1UHwghCTnRiCfK49fP/2F7bqq9P3E6TaOB+78WtOtvNMrJFCRyDsad1eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684967; c=relaxed/simple;
-	bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rp6MXqDUchh/nAvT0kQkTElx/Fgd/TCgW3GspcKl8W56h/ivN4Gb1NbUZ4djpIoB8H3NNuIvZgSA/voZRG5HFqOpxWMoM2kSmYOLUqiEbN6GapMIc++62l7G3GJHvZhJbv3ZVbIN+r+xnSa86ooJGnj9Kw666V1vR4ZRdtNx5Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCdsVACM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8B8C4CED7;
-	Fri, 15 Nov 2024 15:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731684966;
-	bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WCdsVACMe6DJrja1FEx57gPZ8PiwXkzO19dBgWpPP8K+KQyA3ZSgftTvqZzsdZrkQ
-	 jr8mCyLdjPi95eBuL6IU36d96D9jcc8Dd8EIP0PEDKYjgFpVp4tQaXV0fSr6S3u7zi
-	 Clt8N2vhjdK375iAsKpyvGR8XUWiHK8EBtBN6Ac0qS5SxK6wsai0kXjmuue9WD46ar
-	 QbWeVf6d7Wcq/exp219waJtf9G+ezYqPftTnpqkeWXCNlNAjb0Ef6HOBDqiAdMpKy1
-	 NnwC9fVLjz0ur2D+tgCdF9wXuJf9+SXIDlRAHqqgM6sqkrLVxGdHccdEtkOGnEQViI
-	 SQCyyYWF1hETA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 15 Nov 2024 10:35:53 -0500
-Subject: [PATCH v2 2/2] fs: prepend statmount.mnt_opts string with
- security_sb_mnt_opts()
+	s=arc-20240116; t=1731685436; c=relaxed/simple;
+	bh=2vXnHLGXI1nqsq4g2fvZanDqWRJ0aXZ76QxPPC06v7I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dTr/LrNokn5E2FW6dG9g0/Bn9rfWfc/oBO/KVSA9ghoYOJEppPqUk/hssHyD9tQzLAOmCtjbI6t43RQZwUACdjxC2wEHLuozClEavz/bl28/UQHanwMoNhLFVmYxzoIftVXziXEGfzHwn6wmn98feCPoZASL0xaIppEvxJ2QJr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m4820q7J; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e5f9712991so1008567b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 07:43:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731685433; x=1732290233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u6Q0wdk4ZkvBe0nUUQrCV7YJHywsuhUgJ4bITCNssrc=;
+        b=m4820q7JttycVf4rDZM3hPZWHKgZk4NS1mjtFbnKsj6uBDzJidASvMlCStoAq6korm
+         7gaILqtNWBKJkkYICR0/8+AtI7aJBO2MA1B/5+bg6Rt8om66UVuWDF8IVYZZmV+ViyH2
+         bN00J8rYTdn2dCHfUmQ8OFoCVKNQY/hOsTwtH3J83lAoXF3Rzc2kQNMVlybWb5Q313r1
+         d/4XvjRW2ec6iQQw67j/zcK+fAFQl6K0G4JlojMn3bD1NsdLh1vm3UBDmOq79E/7SDgI
+         639nK9Ed83YCSNB08YSvMJiAjK/ssRKdcWpMsTEK8XYF3DXZ67vER5TkHfSKNHiWeElK
+         ec1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731685433; x=1732290233;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u6Q0wdk4ZkvBe0nUUQrCV7YJHywsuhUgJ4bITCNssrc=;
+        b=fmpTDihY7rwufG0IWUU/bJRHVJK/fw7OfcXvkq8pqfwgbI93+AS5SHJcdt9QhFXBCz
+         Ln+iS42Tx3WA9yKifR1Nh19ZZd6FFvrU0/f8jKUUSMiYyJtYwRypKlgh6p2t0vZ9B+Ig
+         6P37tsR0WuBBUwB5HTJx2tTUaC7nyiNM3r8k8ieU6yRAbXrKY52/nKzbabueLwRoaiGe
+         N/drHifuEcxzEuayoFZygBrl+UCN+EMRF7/EhJuNvp2zNsi72LG6+fMNxdnTKmeTtf/U
+         JxpbZorfPW3m++yvjIm3qfl5LyouiXIBf+c7opflcfM/m53KyKT3D/mNxMsNO0wVwK45
+         XKUw==
+X-Gm-Message-State: AOJu0YxSqEPfInwNF05K9EbUWckIpX7mqOuLdoIA82Gc3lhw+EDBHzQj
+	avjXi08iDyh+Vm6h+aPeUlP1izg7ErayTVuU7Wepcf2gYnW32ojDcdYQMwWFKso=
+X-Google-Smtp-Source: AGHT+IHoKx0DNEOlKpWzoQy2ROeqpBYo8WbCoTYJ6+Hw2EASga/6br7UpMDnvxf+cXpuyIDRatPwSA==
+X-Received: by 2002:a05:6808:1a22:b0:3e6:3a82:f790 with SMTP id 5614622812f47-3e7bc7b0b26mr3470295b6e.6.1731685433461;
+        Fri, 15 Nov 2024 07:43:53 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd82997sm563072b6e.34.2024.11.15.07.43.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 07:43:52 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+In-Reply-To: <20241115034902.GP3387508@ZenIV>
+References: <20241115034902.GP3387508@ZenIV>
+Subject: Re: [PATCH] switch io_msg_ring() to CLASS(fd)
+Message-Id: <173168543269.2491301.6332603954754033870.b4-ty@kernel.dk>
+Date: Fri, 15 Nov 2024 08:43:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,65 +82,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-statmount-v2-2-cd29aeff9cbb@kernel.org>
-References: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
-In-Reply-To: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
- Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
- Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=995; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnN2pikMDGYDnUPJ03jterlj4wqQpSN9W9dlAVS
- 2rVHVLWKIyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzdqYgAKCRAADmhBGVaC
- FclqD/oDGK4LvXLz1x7dv30DbVcb+rcd4wGgnXOIZrOme1EbR3ildGYYsJ1DQiwQGn6UQSQSg0M
- KBRWSxe/rl3zUFWU+Lecc5jqMSTQAuqdkk6JbsT11NQZTrhWa83eBYCGhLxldzx5y8o9KWBk/ri
- StrHYBkM3163pEdY7ByXFWebcvctmdz0IkTZJBqi+yNR2w/4Af1XGUFRf0N0HlUxpFH3pEsnGOb
- uS2wIEXnOpwG6hPzVU166mqAs8doMoB+pkVKFCXMm4gqLiDukwHP9dSq+alGfgkDi+9v9yxZFRB
- QsU/9jg9s4hNoBk0ab6aE+gBsjQIlq5yLl/vr/I+fP85abLNCQcw8WIef7nNqbUToe+EBPVRo1k
- XEITxSPijyR5cVNQn+rhbEMf3kicHSuYZ9NF2x/0eWwGdUIYHlNz+IR8gHsTozLraLSUv0+Ilsx
- NqeUAItLfIWs5eYr3k1dA1V2NX+vokdMljzwXKPQ6kymwvXqhTS2Xggir3VzULvpHX7LlnBi5cY
- /AcrksAP8tYeI5PDR+lhYot9zNIYvglb7/3qnxtRxtcGAcQOcJYKqRstfhUTK4YnxrsNf2+6+/E
- GO3ifWtDUvAnPDzYNr1uffb+JuGyCPdAjS72ib+1kD/Dq/fOGzGROx/Gjg9UEeFhr30hPp7wX3Q
- cWznYW5VlhFIsRg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Currently these mount options aren't accessible via statmount().
 
-The read handler for /proc/#/mountinfo calls security_sb_show_options()
-to emit the security options after emitting superblock flag options, but
-before calling sb->s_op->show_options.
+On Fri, 15 Nov 2024 03:49:02 +0000, Al Viro wrote:
+> 	Trivial conversion, on top of for-6.13/io_uring.
+> No point backmerging and doing that in #work.fd, seeing that
+> it's independent from anything in there...
+> 
+> 
 
-Have statmount_mnt_opts() call security_sb_show_options() before
-calling ->show_options.
+Applied, thanks!
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/namespace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+[1/1] switch io_msg_ring() to CLASS(fd)
+      commit: ffd58b00769a9cfee6a110231eb7d1fa70fe64b9
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 206fc54feeba3e782f49778bcc99774d5a9d50a4..aae04aa10f984c69090bd1017112be17aa709d0c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5055,6 +5055,10 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 	if (sb->s_op->show_options) {
- 		size_t start = seq->count;
- 
-+		err = security_sb_show_options(seq, sb);
-+		if (err)
-+			return err;
-+
- 		err = sb->s_op->show_options(seq, mnt->mnt_root);
- 		if (err)
- 			return err;
-
+Best regards,
 -- 
-2.47.0
+Jens Axboe
+
+
 
 
