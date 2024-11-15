@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-34883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38B69CDBCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:45:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E38E9CDBD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840861F233E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:45:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27798B2109B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9B019048A;
-	Fri, 15 Nov 2024 09:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BC418FC81;
+	Fri, 15 Nov 2024 09:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gZWJ0Mrh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FxIXpwQq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFD5190079
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 09:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5009D14F9D9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 09:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731663907; cv=none; b=Y+9jJthnZd5wCOoIuOukAA+UwGeS2lxcYKVyWfOrMqWonuAX1NzNb1Ch2jcF5usdXS8ZR5rQV0e0VYyl5M/IlHmzevEnwfz3MqApmhMU81lcejpZfYx+/vPrPTnVXpalSE2FaYuUj+tWy+bddfRm2Y8kEKR8qstfz1kHiL76Gl4=
+	t=1731664149; cv=none; b=Ui4qnbuq7Wxx4uYxQQK5hcw1gLu1Z9SaNGCw+6CzT4wrG2JAXvQgN03srwKqgt9pHth7M8HHUzJ42i7KyvoNNAgG7KPHuhJ8oybu7AxTvKj8/nvuBjUXVAz98eDyVn9sPt5dKsNNYcmZoZfsJRVMEMdkcnqqz6KbSjDrgGMt2zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731663907; c=relaxed/simple;
-	bh=6NykYV43uSEP6d0DI+aZRp4Ei25h7RDcSCzybLSvQis=;
+	s=arc-20240116; t=1731664149; c=relaxed/simple;
+	bh=5JV+Q8/uDzvNYDwkc+mCN1HUPeABFq9Hs2oXi52V+FA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcrH8iVhpcVqsT19IxZtoW4J8dJ5oqC6eaKquI6e7fl5CQoE3aKDrALlvDUOiWaXcALhsvJintbL7QnScxZASBi8oDMsyclh8K2t5LYpUBOLEr4d3fko7n+mOFezL8Xv8P7sqPyqkMODduNxAKjRr0/GnI22SYnutNllXA+KEoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gZWJ0Mrh; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=TOoDize/gCWlG1qKUzE2oGHaNYS1o5pbZXz1ov6wOMhRUiO7h2Dya1JF2u9B5B8qZ2toU6bodo0bMaOAVMgJf5AbbvD6QWi63u1tckUf3NinYjKlbsOS74B0usgCBKqEUDet5UXWMuGZ25rLy5yv3rMtVZ18PDASGt28G6R2G0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FxIXpwQq; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731663904;
+	s=mimecast20190719; t=1731664146;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RorhOcPRXQj1dk9BtLyB46Na3zATBZ3YDRHJyzGTzXo=;
-	b=gZWJ0MrhdpFVgTxWL9Z+Vg7oX1X4EjEYqlUXoF+BkEgAzIBXpGYQvul0oHDGvZogkIPAFG
-	qcbWNmyNjzIHx7a1gxQgOAxVz0hrbeihdpdYA+0vEtntOEN2q1zCUDRHkCwpimsHCwVXHu
-	1xpSxPUovS27M1T38KdNo5rT6ETBNiw=
+	bh=e5/Gv1K21sheGKIrlLPLsT5HVFSu0SIwMyx7mgZQnuI=;
+	b=FxIXpwQqjFhsUeXhb39lYHLfWkpTz2ZmEPm5ZGsp5ISTEihusQhedTmIqiFNAoWzNCsWpY
+	5OIO/x0nkoeDwI1ig2IQ/ZJXd/NKyPf/pc136G6FWnHrHtJEaKgklYd47VLgEfpw4wY16t
+	fYvy9UM0Fl/2limzUpf6NXwdzrp/5bg=
 Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-5UXQeT7OMAuOayEhTmaTkQ-1; Fri,
- 15 Nov 2024 04:45:01 -0500
-X-MC-Unique: 5UXQeT7OMAuOayEhTmaTkQ-1
-X-Mimecast-MFC-AGG-ID: 5UXQeT7OMAuOayEhTmaTkQ
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-YdO3XG1bNzqs4Bb4j1wJcg-1; Fri,
+ 15 Nov 2024 04:49:02 -0500
+X-MC-Unique: YdO3XG1bNzqs4Bb4j1wJcg-1
+X-Mimecast-MFC-AGG-ID: YdO3XG1bNzqs4Bb4j1wJcg
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F9CD1956080;
-	Fri, 15 Nov 2024 09:44:57 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE9CB1955E92;
+	Fri, 15 Nov 2024 09:48:59 +0000 (UTC)
 Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4929D3003B71;
-	Fri, 15 Nov 2024 09:44:55 +0000 (UTC)
-Date: Fri, 15 Nov 2024 17:44:49 +0800
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3935D3003B71;
+	Fri, 15 Nov 2024 09:48:58 +0000 (UTC)
+Date: Fri, 15 Nov 2024 17:48:53 +0800
 From: Baoquan He <bhe@redhat.com>
 To: David Hildenbrand <david@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -77,11 +77,12 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Claudio Imbrenda <imbrenda@linux.ibm.com>,
 	Eric Farman <farman@linux.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from
- kcore.h to crash_dump.h
-Message-ID: <ZzcYEQwLuLnGQM1y@MiWiFi-R3L-srv>
+Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
+ s390
+Message-ID: <ZzcZBU0USDP/CHcv@MiWiFi-R3L-srv>
 References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-5-david@redhat.com>
+ <ZzcKY8hap3OMqTjC@MiWiFi-R3L-srv>
+ <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,182 +91,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025151134.1275575-5-david@redhat.com>
+In-Reply-To: <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> These defines are not related to /proc/kcore, move them to crash_dump.h
-> instead. While at it, rename "struct vmcore" to "struct
-> vmcore_mem_node", which is a more fitting name.
-
-Agree it's inappropriate to put the defintions in kcore.h. However for
-'struct vmcore', it's only used in fs/proc/vmcore.c from my code
-serching, do you think if we can put it in fs/proc/vmcore.c directly?
-And 'struct vmcoredd_node' too.
-
-And about the renaming, with my understanding each instance of struct
-vmcore represents one memory region, isn't it a little confusing to be
-called vmcore_mem_node? I understand you probablly want to unify the
-vmcore and vmcoredd's naming. I have to admit I don't know vmcoredd well
-and its naming, while most of people have been knowing vmcore representing
-memory region very well.
-
+On 11/15/24 at 09:55am, David Hildenbrand wrote:
+> On 15.11.24 09:46, Baoquan He wrote:
+> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
+> > > virtio-mem support on s390.
+> > > 
+> > > The only "different than everything else" thing about virtio-mem on s390
+> > > is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
+> > > during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
+> > > crash kernel must detect memory ranges of the crashed/panicked kernel to
+> > > include via PT_LOAD in the vmcore.
+> > > 
+> > > On other architectures, all RAM regions (boot + hotplugged) can easily be
+> > > observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
+> > > the elfcore hdr.
+> > > 
+> > > On s390, information about "ordinary" memory (heh, "storage") can be
+> > > obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
+> > > that information is stored early during boot in the "physmem" memblock
+> > > data structure.
+> > > 
+> > > But virtio-mem memory is always detected by as device driver, which is
+> > > usually build as a module. So in the crash kernel, this memory can only be
+> >                                         ~~~~~~~~~~~
+> >                                         Is it 1st kernel or 2nd kernel?
+> > Usually we call the 1st kernel as panicked kernel, crashed kernel, the
+> > 2nd kernel as kdump kernel.
 > 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  fs/proc/vmcore.c           | 20 ++++++++++----------
->  include/linux/crash_dump.h | 13 +++++++++++++
->  include/linux/kcore.h      | 13 -------------
->  3 files changed, 23 insertions(+), 23 deletions(-)
+> It should have been called "kdump (2nd) kernel" here indeed.
 > 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 6371dbaa21be..47652df95202 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -304,10 +304,10 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
->   */
->  static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
->  {
-> +	struct vmcore_mem_node *m = NULL;
->  	ssize_t acc = 0, tmp;
->  	size_t tsz;
->  	u64 start;
-> -	struct vmcore *m = NULL;
->  
->  	if (!iov_iter_count(iter) || *fpos >= vmcore_size)
->  		return 0;
-> @@ -560,8 +560,8 @@ static int vmcore_remap_oldmem_pfn(struct vm_area_struct *vma,
->  static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
->  {
->  	size_t size = vma->vm_end - vma->vm_start;
-> +	struct vmcore_mem_node *m;
->  	u64 start, end, len, tsz;
-> -	struct vmcore *m;
->  
->  	start = (u64)vma->vm_pgoff << PAGE_SHIFT;
->  	end = start + size;
-> @@ -683,16 +683,16 @@ static const struct proc_ops vmcore_proc_ops = {
->  	.proc_mmap	= mmap_vmcore,
->  };
->  
-> -static struct vmcore* __init get_new_element(void)
-> +static struct vmcore_mem_node * __init get_new_element(void)
->  {
-> -	return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
-> +	return kzalloc(sizeof(struct vmcore_mem_node), GFP_KERNEL);
->  }
->  
->  static u64 get_vmcore_size(size_t elfsz, size_t elfnotesegsz,
->  			   struct list_head *vc_list)
->  {
-> +	struct vmcore_mem_node *m;
->  	u64 size;
-> -	struct vmcore *m;
->  
->  	size = elfsz + elfnotesegsz;
->  	list_for_each_entry(m, vc_list, list) {
-> @@ -1090,11 +1090,11 @@ static int __init process_ptload_program_headers_elf64(char *elfptr,
->  						size_t elfnotes_sz,
->  						struct list_head *vc_list)
->  {
-> +	struct vmcore_mem_node *new;
->  	int i;
->  	Elf64_Ehdr *ehdr_ptr;
->  	Elf64_Phdr *phdr_ptr;
->  	loff_t vmcore_off;
-> -	struct vmcore *new;
->  
->  	ehdr_ptr = (Elf64_Ehdr *)elfptr;
->  	phdr_ptr = (Elf64_Phdr*)(elfptr + sizeof(Elf64_Ehdr)); /* PT_NOTE hdr */
-> @@ -1133,11 +1133,11 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
->  						size_t elfnotes_sz,
->  						struct list_head *vc_list)
->  {
-> +	struct vmcore_mem_node *new;
->  	int i;
->  	Elf32_Ehdr *ehdr_ptr;
->  	Elf32_Phdr *phdr_ptr;
->  	loff_t vmcore_off;
-> -	struct vmcore *new;
->  
->  	ehdr_ptr = (Elf32_Ehdr *)elfptr;
->  	phdr_ptr = (Elf32_Phdr*)(elfptr + sizeof(Elf32_Ehdr)); /* PT_NOTE hdr */
-> @@ -1175,8 +1175,8 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
->  static void set_vmcore_list_offsets(size_t elfsz, size_t elfnotes_sz,
->  				    struct list_head *vc_list)
->  {
-> +	struct vmcore_mem_node *m;
->  	loff_t vmcore_off;
-> -	struct vmcore *m;
->  
->  	/* Skip ELF header, program headers and ELF note segment. */
->  	vmcore_off = elfsz + elfnotes_sz;
-> @@ -1587,9 +1587,9 @@ void vmcore_cleanup(void)
->  
->  	/* clear the vmcore list. */
->  	while (!list_empty(&vmcore_list)) {
-> -		struct vmcore *m;
-> +		struct vmcore_mem_node *m;
->  
-> -		m = list_first_entry(&vmcore_list, struct vmcore, list);
-> +		m = list_first_entry(&vmcore_list, struct vmcore_mem_node, list);
->  		list_del(&m->list);
->  		kfree(m);
->  	}
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index acc55626afdc..5e48ab12c12b 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -114,10 +114,23 @@ struct vmcore_cb {
->  extern void register_vmcore_cb(struct vmcore_cb *cb);
->  extern void unregister_vmcore_cb(struct vmcore_cb *cb);
->  
-> +struct vmcore_mem_node {
-> +	struct list_head list;
-> +	unsigned long long paddr;
-> +	unsigned long long size;
-> +	loff_t offset;
-> +};
-> +
->  #else /* !CONFIG_CRASH_DUMP */
->  static inline bool is_kdump_kernel(void) { return false; }
->  #endif /* CONFIG_CRASH_DUMP */
->  
-> +struct vmcoredd_node {
-> +	struct list_head list;	/* List of dumps */
-> +	void *buf;		/* Buffer containing device's dump */
-> +	unsigned int size;	/* Size of the buffer */
-> +};
-> +
->  /* Device Dump information to be filled by drivers */
->  struct vmcoredd_data {
->  	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 86c0f1d18998..9a2fa013c91d 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -20,19 +20,6 @@ struct kcore_list {
->  	int type;
->  };
->  
-> -struct vmcore {
-> -	struct list_head list;
-> -	unsigned long long paddr;
-> -	unsigned long long size;
-> -	loff_t offset;
-> -};
-> -
-> -struct vmcoredd_node {
-> -	struct list_head list;	/* List of dumps */
-> -	void *buf;		/* Buffer containing device's dump */
-> -	unsigned int size;	/* Size of the buffer */
-> -};
-> -
->  #ifdef CONFIG_PROC_KCORE
->  void __init kclist_add(struct kcore_list *, void *, size_t, int type);
->  
-> -- 
-> 2.46.1
+> > > properly detected once the virtio-mem driver started up.
+> > > 
+> > > The virtio-mem driver already supports the "kdump mode", where it won't
+> > > hotplug any memory but instead queries the device to implement the
+> > > pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
+> > > the vmcore.
+> > > 
+> > > With this series, if the virtio-mem driver is included in the kdump
+> > > initrd -- which dracut already takes care of under Fedora/RHEL -- it will
+> > > now detect the device RAM ranges on s390 once it probes the devices, to add
+> > > them to the vmcore using the same callback mechanism we already have for
+> > > pfn_is_ram().
+> > 
+> > Do you mean on s390 virtio-mem memory region will be detected and added
+> > to vmcore in kdump kernel when virtio-mem driver is initialized? Not
+> > sure if I understand it correctly.
 > 
+> Yes exactly. In the kdump kernel, the driver gets probed and registers the
+> vmcore callbacks. From there, we detect and add the device regions.
+
+I see now, thanks for your confirmation.
 
 
