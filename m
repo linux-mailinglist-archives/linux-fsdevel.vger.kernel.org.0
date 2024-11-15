@@ -1,79 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-34880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940B69CDB37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813219CDB9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58727282FB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398451F233DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26D318F2C1;
-	Fri, 15 Nov 2024 09:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4FA18FDC9;
+	Fri, 15 Nov 2024 09:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5I9e5Co"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvhZklWI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4E318B470
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4F518D620
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 09:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662033; cv=none; b=eSo8imNRNcnDhfM/Hr4y5NxZ3c5nVbqcGmIrT2APJq5NMTLvkvYhCwsHEyNBKGGt4ZRs7/p55rTSWVkAx3ajRj0jOIiWjumRzZaYNpVEhpUiL9a6J20WB5bdMLuyIrV219hWZH8t59h7jav2yDd+BtDsseuKyLfa0Q2j88YKQVo=
+	t=1731663030; cv=none; b=EqG7NgcUS30IURBgvhvhp9+VvDRnF290gAqhgXqEkDkJC7usa/w210NURYRMXt/w2ZTGmViEowchGlhfHGpaNDi9jG6ZA8x0ckSzIMRH+Jy7Klfyzlmp89D1oxleXAutljKqV/wMX4Bh2eka5sjUirKB7H522fEZhZUftqtHu60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662033; c=relaxed/simple;
-	bh=1gpbH+F/EyAt7/qdUtEQNzUhRagbx8xAr7oPVt5RjTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jNZ5J7HCQPYhfyfvLxGy6PkLeOlTXRcfGjqFF3nJ7nK/aDxT+YxIGSM8fELnsLTylopA2E6EPTxNdyHxWMeUuvYWglG/YWiYgIJ8vOqk1YNyDvC5ZumZw2RjjihPstdinE2lVtAzY8jgSrb6AWJfESf/fqsacocn73Zp+/Hc11U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5I9e5Co; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso9698165e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 01:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731662030; x=1732266830; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
-        b=R5I9e5CoPM/aQPgX41XFKdbka73yFh+88oqZ/9hJqCCj+0y9MQRtJIX9f+wRfDaHLv
-         KiVC8C4n77YvLqMopfeX8Lk6JS/QuXvG0llSlpBBZAcqvZkr1fkLFjj+UtGw83XLgpCI
-         Obw0F1/nuX9CdXbq/YplY36vIqKtuDzmtMa8nuNocUaNnqOcBs41UxHVP1b20xoSkZY/
-         t2MOCoWP8/Ff3xRbxSafG0g6mKXekMr5mzPGmns7nljistl59aD3RKjWsR/B0+FZA3mJ
-         514/v9ROijofCtf/w/U0ifxdYgyeh3QXNzXdCPhVfnpvDd3oqbphHkDNfhw0eT/ipqD1
-         QV9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731662030; x=1732266830;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
-        b=shuSoKyNI9VQhG7WOvcSQ4y1idsKHogDIknWWa0blMsy3oISVy2MVH65AOXYu4+q0S
-         x7p+goG89q+8SwdRLLgX11nsXbqk7hr+t2u827pw67+//OdLj7XJIrwq9iuI9BuwoyBp
-         6KFiHn76UoN2XsrEFMoBGkWqXlBCMRtPM7wvcMy8ptEMy7RKSHbf+bwbcGn/KMKvbM4u
-         xtHQJu+BbCQvE2xKPAdcaBgMynavbTAJLSHDVScw5bDF5Jr4P6lpxrv3siTp/5f+k4Wc
-         wCVYka/iyLyHTkQINkucJ7G7eyfSwCIckt6yQPFbGOAUPHwNZO9bkG6BdKOF+wdmHj+A
-         kLkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjNYRWDhqtdXnwjnnFm8SrZTSrYCz0Cbx8JQ6gwxUn7GNEDf84wb8OkW3oxJ3mbrzr5yBPElMu2Rgn9xjt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTFWEJzi73GAOQnu4sgfh7gezyRN0x6pGw0EvbfizotkgrybR5
-	6E43ifQFDVkOhOd0dxCZmk5PnZB64UF/WUhxwMC5/edU534O0nWG7s0n3eOU6Vw=
-X-Google-Smtp-Source: AGHT+IFDwyeF9NdbO3uA8WPZbwIsipDKiK7gl4rjQvHP2ciMl3NTCJLQxQXZjpw4OVLXp1FI70A9Yw==
-X-Received: by 2002:a05:600c:a4c:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-432d95ad53cmr54878725e9.0.1731662029843;
-        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm51915835e9.39.2024.11.15.01.13.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:13:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] netfs: Remove duplicate check in
- netfs_cache_read_terminated()
-Message-ID: <dfc4ac23-88eb-4293-b4dd-e617779ee7ac@stanley.mountain>
+	s=arc-20240116; t=1731663030; c=relaxed/simple;
+	bh=HACz/QQAr11ooTsGg0yA/ndqu5JRoocgtgxYM6gKyDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXYjZn0FNpuMZid8hZiB/at1pUeYRLE+G7N51JWXnOQCVcqjVzJOcBrOJMlPSY0TJmXTciHmBoCPdPG/cx407I/sxvCTSOOfnDAFpCyBVQdTwWfF/EAEBAsRFgroZ8INQSgF+Q/uSMzLXRhzzWgFfnPvHKfCAGk61o/uERccYIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvhZklWI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731663027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nYyixuKVzYBcQTLRFxXlHciXBG+s7v14S0hRbAQwaNI=;
+	b=GvhZklWI02VHm6AuA3mrXnHTmJTyXQMmHd7mECnaKQdN5vUYpo6IQEex+8kNXIJwBuONAw
+	ppxkBklfqsqQq1AWOlJMG8T+u3M/dFnsjRunqdq9miAXm1TZ7Bkr4L5B8oVi6ZzHHv7Pam
+	QRoBMqBU4dg/tDlxjXpUnDPUes4SBKA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-pEcRDYRUN_6afERbkTTXPQ-1; Fri,
+ 15 Nov 2024 04:30:23 -0500
+X-MC-Unique: pEcRDYRUN_6afERbkTTXPQ-1
+X-Mimecast-MFC-AGG-ID: pEcRDYRUN_6afERbkTTXPQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AF361945114;
+	Fri, 15 Nov 2024 09:30:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2783F1956089;
+	Fri, 15 Nov 2024 09:30:17 +0000 (UTC)
+Date: Fri, 15 Nov 2024 17:30:14 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 01/11] fs/proc/vmcore: convert vmcore_cb_lock into
+ vmcore_mutex
+Message-ID: <ZzcUpoDJ2xPc3FzF@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,34 +90,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20241025151134.1275575-2-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-There are two checks for "if (transferred_or_error > 0)".  Delete
-the second check.
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> We want to protect vmcore modifications from concurrent opening of
+> the vmcore, and also serialize vmcore modiciations. Let's convert the
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/netfs/read_collect.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 7f3a3c056c6e..431166d4f103 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -597,10 +597,8 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error, bool
- 
- 	if (transferred_or_error > 0) {
- 		subreq->error = 0;
--		if (transferred_or_error > 0) {
--			subreq->transferred += transferred_or_error;
--			__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
--		}
-+		subreq->transferred += transferred_or_error;
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 	} else {
- 		subreq->error = transferred_or_error;
- 	}
--- 
-2.45.2
+> spinlock into a mutex, because some of the operations we'll be
+> protecting might sleep (e.g., memory allocations) and might take a bit
+> longer.
+
+Could you elaborate this a little further. E.g the concurrent opening of
+vmcore is spot before this patchset or have been seen, and in which place
+the memory allocation is spot. Asking this becasue I'd like to learn and
+make clear if this is a existing issue and need be back ported into our
+old RHEL distros. Thanks in advance.
+
+
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  fs/proc/vmcore.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index b52d85f8ad59..110ce193d20f 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -62,7 +62,8 @@ core_param(novmcoredd, vmcoredd_disabled, bool, 0);
+>  /* Device Dump Size */
+>  static size_t vmcoredd_orig_sz;
+>  
+> -static DEFINE_SPINLOCK(vmcore_cb_lock);
+> +static DEFINE_MUTEX(vmcore_mutex);
+> +
+>  DEFINE_STATIC_SRCU(vmcore_cb_srcu);
+>  /* List of registered vmcore callbacks. */
+>  static LIST_HEAD(vmcore_cb_list);
+> @@ -72,7 +73,7 @@ static bool vmcore_opened;
+>  void register_vmcore_cb(struct vmcore_cb *cb)
+>  {
+>  	INIT_LIST_HEAD(&cb->next);
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	list_add_tail(&cb->next, &vmcore_cb_list);
+>  	/*
+>  	 * Registering a vmcore callback after the vmcore was opened is
+> @@ -80,13 +81,13 @@ void register_vmcore_cb(struct vmcore_cb *cb)
+>  	 */
+>  	if (vmcore_opened)
+>  		pr_warn_once("Unexpected vmcore callback registration\n");
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(register_vmcore_cb);
+>  
+>  void unregister_vmcore_cb(struct vmcore_cb *cb)
+>  {
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	list_del_rcu(&cb->next);
+>  	/*
+>  	 * Unregistering a vmcore callback after the vmcore was opened is
+> @@ -95,7 +96,7 @@ void unregister_vmcore_cb(struct vmcore_cb *cb)
+>  	 */
+>  	if (vmcore_opened)
+>  		pr_warn_once("Unexpected vmcore callback unregistration\n");
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  
+>  	synchronize_srcu(&vmcore_cb_srcu);
+>  }
+> @@ -120,9 +121,9 @@ static bool pfn_is_ram(unsigned long pfn)
+>  
+>  static int open_vmcore(struct inode *inode, struct file *file)
+>  {
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	vmcore_opened = true;
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.46.1
+> 
 
 
