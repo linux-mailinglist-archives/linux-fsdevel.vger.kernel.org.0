@@ -1,139 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-34899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D479CDEB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:53:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E799F9CDF93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4FB2839AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 12:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EC41F230A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC301BD4E4;
-	Fri, 15 Nov 2024 12:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83EB1BD50C;
+	Fri, 15 Nov 2024 13:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JOYCVww6"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CWyYMyPC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11B41BBBFD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 12:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F7D1B6CF9;
+	Fri, 15 Nov 2024 13:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731675228; cv=none; b=t05nRuE44wkxAjkmGteosFMg7JqqRot3SuFf1amPcrMJPpaR5yQZF0VRWERC9DsC1fxJO8/om06MPhxfoFBezGT2ISPWoLGO3rXqRmMErqzSUJfEnv51dIVIvuGvJ3MLoqRQ0OltUibwZdBgqNpWrxaxX2eYapTyjOMg9Uv3hwA=
+	t=1731675984; cv=none; b=D+Kkwa0poWv4HA2sWl/aOTCTE2Mk+bL7tbqEZUzzHo8Tb+mvQT3M4bkKZB/qUffYO/dXIzXp3iQHIv00L4srHXwwL9NZlNz5UY+DZ/CxPdbtsrha/qUB2cD9hNUHRL3M4K6dCLSs/3r6okIebWqDyabkVS2iwyW4Zk06xRDsdrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731675228; c=relaxed/simple;
-	bh=kC5b4Nc50fbhWMMi5vOolJEMARSuns1Kxgz8mfrxf0I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JLLqXwtl3Io78fgchpyngmFy4vBW03eYmKGbVYhKgj5YgZsHre70PS9hmUHtmTiPvSc0dXmnNchTesMOTQ9hG73a7n4cIb2HcyeorVnWNrFUpSBQnNxgQR1eT9O2WYBV2uoUsy87HxxL0+YjNIG9bAcCKI+5QP+YQkwaOjlUPbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JOYCVww6; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5101c527611so806237e0c.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 04:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731675225; x=1732280025; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NEbeDGIYvAwvzpGJm9/Bl8sSZPwTY7aHupGksBQNqK0=;
-        b=JOYCVww6pa0/5KMRFf7IGJ1k+Bx7LGT2/DxU/Oh7MNdjqymjq/o+5p3ba9kuMh9sK/
-         7l4elYOAprk69/Lmefbspw0vxYX9VhssazXRk3pCzS+r+D4GrzConORSUl9UjQy7uhPw
-         lwj7ArJehnwiEWGkBKfMkVHBvZomFHfcS9WiNzkJvCT726uwflO0CSfn5JFUZhj16KDA
-         IfHY7JUeOeDYbJmazpt54Eh1uN+gHcGrvm9mmKQjvuOSkjgB+ONs+XqfPRJYEiRLJL6J
-         Wsk/TlEKWepuq+Usys4p/DwxKcDYNwCt0m3+ql6lrCw/7u/T29IksxV93BxQRCZElXUG
-         sm+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731675225; x=1732280025;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NEbeDGIYvAwvzpGJm9/Bl8sSZPwTY7aHupGksBQNqK0=;
-        b=J2RXAwjdbeM1ZvAgo1JVcreaeL0ZU6f7Qo6bKAyQN0UCR1GqgoewjXyGVYvCPCaqny
-         qgUj7KPEhDtcC+JJdS79GW+wKQlrsSuRaqKJSvbtOMMtse3Z1i2lE0PXoG5EDmOZXfCG
-         f4JxI7LZ9QDDnNRgRKJpL0dmihodT7jVmi7Ud0nZM14JGZSEDSx1yf3lAmB2SVm+vD4g
-         lAnGFP7eVDNGnfE/6RipQ5CNhGfamO2XSr8s7ZyMpG8vGMiZ5K6xQg56ZydsR3Lq/TS/
-         goQcxV399vCXtc33ZZwB5IxmtwOww+6Pu5UIpmsv1rKHgCTAoYT+IwGcua18Fn5o4rAa
-         5Yaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwJ0ifdcb1kjnKV+Ml+xprjGNye9I0z3DhdwXrGLF4VpEW3iZR69XgPVq3zVSgU097DklrcdH+Futi+Qom@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrbXhGP7q76xiLQptVYFxx8lLNJWwkwFLupgkkX0fRWqFKbSRw
-	tSgxGe3u8rGpEX01CQF9jrdCngOLKbTVNG+ZkZFjLJ3lwG0fCjW/6Trsbo9jkr39SlEIYf5up83
-	wIbkX0+aGVPMc2qoKuPbkVfEfCrgK7To3FY1B1g==
-X-Google-Smtp-Source: AGHT+IEtDEtXKpcCidRqx6bebqrisPTC0Px9Xm1sUVNWuLsQVQUre+hBcxnbLyeeXGplNKk47hIC4CRTO6saY/xxXGY=
-X-Received: by 2002:a05:6122:8c22:b0:50c:79a4:c25 with SMTP id
- 71dfb90a1353d-51477f7c9f3mr3308737e0c.8.1731675224854; Fri, 15 Nov 2024
- 04:53:44 -0800 (PST)
+	s=arc-20240116; t=1731675984; c=relaxed/simple;
+	bh=0eF0vOaGssguAoiMP21XSAJfT0Z42HQ/ac9qHzQxDVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FY2qMzO5Z/0L+oISaaqYe+lltn29IK3HUU5UNHhTaSLHcUEHxFiE7ECFlGyS8zQAyzDtrHS28fS3OWinO6AT7MEKOyT1ecoql2qvJxif/pO1LjHX/hQN9tZkVrgUkMBdiJVXo3Z6Fp0Xs5AQp3VnKHm95wrSYB1bnI0nX76Engg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CWyYMyPC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Vv0FLUCJEZyjB6cbqruzLtbW2MikMqFy044j2M/d6aU=; b=CWyYMyPCEcS1TpR6j4uVmAfJYy
+	QGlk1K9V+JCR1c2LCqvwqBq1ybvkxd/fPnXNVFDTJpSj1ZNYZvY0WlMs7I7aaGi7Gj+GjwUgvNOnm
+	r3VeSFom1sT9qJKCP3zDdsbyhcKCy8PiLMypcIqX/9A+BHM7/MGNpKzTPeLusH0Re8WyECUjIUF7g
+	fmPufO1107YjyXiZtkE5UEwtX2gxyQW7VyJYWQnPtDhqIcZKihgs3iKxPdRtQ4wPzrPvXTnnXSccq
+	QIVsK8bvP+w5k2OtEHORSbX5hXAyFKqoe4PbIKDfYvIoGrLBL6hcfcYp4xR4Dq9QnNF1xJqwrKCZv
+	GQf+cTFA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBw1f-0000000FRQP-2Nbs;
+	Fri, 15 Nov 2024 13:06:15 +0000
+Date: Fri, 15 Nov 2024 13:06:15 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
+	almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fs: add check for symlink corrupted
+Message-ID: <20241115130615.GR3387508@ZenIV>
+References: <67363c96.050a0220.1324f8.009e.GAE@google.com>
+ <20241115094908.3783952-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 15 Nov 2024 18:23:33 +0530
-Message-ID: <CA+G9fYtThFpgHJvVwmvp274QJ0QBbrsr+qnYi0b5fWJ5oJL2uw@mail.gmail.com>
-Subject: next-20241114: clang: fs/netfs/read_retry.c:235:20: error: variable
- 'subreq' is uninitialized when used here [-Werror,-Wuninitialized]
-To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, clang-built-linux <llvm@lists.linux.dev>, linux-cachefs@redhat.com, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, David Howells <dhowells@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115094908.3783952-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The following builds failed with clang-19 and clang-nightly on the
-Linux next-20241114 and next-20241115 tags on x86 architecture.
-But the build passed with gcc-13.
+On Fri, Nov 15, 2024 at 05:49:08PM +0800, Lizhi Xu wrote:
+> syzbot reported a null-ptr-deref in pick_link. [1]
+> When symlink's inode is corrupted, the value of the i_link is 2 in this case,
+> it will trigger null pointer deref when accessing *res in pick_link(). 
+> 
+> To avoid this issue, add a check for inode mode, return -EINVAL when it's
+> not symlink.
 
-First seen on Linux next-20241114 tag.
-  Good: next-20241113
-  Bad:  next-20241114
-
-build:
-  * clang-19-lkftconfig
-  * clang-nightly-lkftconfig
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Build log:
----------
-fs/netfs/read_retry.c:235:20: error: variable 'subreq' is
-uninitialized when used here [-Werror,-Wuninitialized]
-  235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequests))
-      |                           ^~~~~~
-fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to
-silence this warning
-   28 |         struct netfs_io_subrequest *subreq;
-      |                                           ^
-      |                                            = NULL
-1 error generated.
-make[5]: *** [scripts/Makefile.build:229: fs/netfs/read_retry.o] Error 1
-
-Build image:
------------
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241114/testrun/25811023/suite/build/test/clang-19-lkftconfig/details/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241114/testrun/25811023/suite/build/test/clang-19-lkftconfig/log
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2opUctayqtTsKWUeLDYKbGaUqa9/
-
-Steps to reproduce:
-------------
-- tuxmake --runtime podman --target-arch x86_64 --toolchain clang-19
---kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2opUctayqtTsKWUeLDYKbGaUqa9/config
-LLVM=1 LLVM_IAS=1
-
-metadata:
-----
-  git describe: next-20241114
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git sha: 37c5695cb37a20403947062be8cb7e00f6bed353
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2opUctayqtTsKWUeLDYKbGaUqa9/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2opUctayqtTsKWUeLDYKbGaUqa9/
-  toolchain: clang-19
-  config: lkftconfig
-  arch: x86_64
-
---
-Linaro LKFT
-https://lkft.linaro.org
+NAK.  Don't paper over filesystem bugs at pathwalk time - it's the wrong
+place for that.  Fix it at in-core inode creation time.
 
