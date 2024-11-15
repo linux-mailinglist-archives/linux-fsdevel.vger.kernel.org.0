@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-34888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EA09CDC20
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 11:05:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C282B9CDC9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 11:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB321F21993
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484CD1F23429
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 10:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31A01B6CE1;
-	Fri, 15 Nov 2024 10:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B891B4F09;
+	Fri, 15 Nov 2024 10:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gITk0XCs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NG2hrCZF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5801B3948
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 10:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAD518FDB4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 10:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731665108; cv=none; b=e3KYOwQv8vhe/gRaAa4BM++Knqr0TBbkPkOq3nVB9xQm8cGkKUsTJad0hMhE1GttzeTao7xdE4RLM/O4gXm46XAXxjpm31Q1/ZC94ZRmM24k9CYruoSugLKzwQ/jsmN2rffiAoDoi8rflerfpJ2gZIzJCfRtN+n0k3+hg2xcVOw=
+	t=1731666688; cv=none; b=SppRnCCo4zK3HoUiFAG/w2mEKTaibs4PAcdzs7xVuc7QpxtaupmRsxKXvhbsGMED5hqlI6fLAGMqp1yZxYFU936QU1hFsZBPWCOz0KhcpU+zB2svinlKMendpHdB33FfHeT3WLrx53f4Pi+/2fkDXtX5sIMTJCyUTHWiuGpsNac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731665108; c=relaxed/simple;
-	bh=UxggTA5vLInAIjYh1n0ydwNp3BO1gkE6PaUWMpgjedk=;
+	s=arc-20240116; t=1731666688; c=relaxed/simple;
+	bh=yvfezaSRQKzXueO363ieESFFIt2B4C9r0Uqrv+vvU08=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HLZMei2GTTM3D7qKcBLi2RChGbfnXcoqU+8DIlFCrPnoxeGdYEkkqzFuPA4BaI8gyJ539vKNFIYNwNCz5zLa+qtclm0td73BtRT0iqR4Qmwi195w6R/UTKq3E9N4q8OrT/q4Ua7fOZ6KgVbGOryR1FYi0vse5HVkBxxPowYqwG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gITk0XCs; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=RHevIwHNXHgLNMhoxI3NYiYzpqu+dAGF539ScByqw1n0MLGNRRMasBY17F3sjmB7pPz3vq1bs7121SEh4gzq3iqj5sKgltQ/GRgIfMVzmvJTz4wbfsJM1SfaStHJGKHiP9R3VqP04F6KC2WiiD312QSARQElecly4jrpzRzOTDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NG2hrCZF; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731665105;
+	s=mimecast20190719; t=1731666685;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g1kAKAvwdmdjiltkVd6qbqhCfl7VUxLedhiq8NASCwc=;
-	b=gITk0XCsZqd0/Vxq26ttdK6L+vFdeKjGBQD2+6JH2H55+dIoP0qoN873NCDdPZU5FheNtN
-	Bh68wfYHJ3cF6zD/w/ZiKEXqFf5oFPsKrEVIxcVsGPc/PgoQX8ZXzFd6OVkQLmf1p8FFVV
-	SBt04pekJ7sDo2+f43x+sySNlR0NHco=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=2QzJEh1uH0p2OuQd5yMwTk7/0LxYqplTeSNY5bJ8Vss=;
+	b=NG2hrCZF/4WCwOijUM4bVD8HlSQRKaINROvgNS2d1+JexwZn6he7lf1afkl72bbjD7syhF
+	Xk1wTr7AF4yVCBwvV0ml+IozEipO3/gvEhDR20pHHuDOL0lO+mjqArv/o5hzg/0Ohajuyk
+	TTvqQ82Dzjj3Y9bAJId7R1SHZcva/jI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-AmozL7-6NaCcEkMAKVPqHw-1; Fri, 15 Nov 2024 05:05:02 -0500
-X-MC-Unique: AmozL7-6NaCcEkMAKVPqHw-1
-X-Mimecast-MFC-AGG-ID: AmozL7-6NaCcEkMAKVPqHw
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so3813075e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 02:05:02 -0800 (PST)
+ us-mta-634-V8HO8tu1Ou2zEFHdH6LlZg-1; Fri, 15 Nov 2024 05:31:23 -0500
+X-MC-Unique: V8HO8tu1Ou2zEFHdH6LlZg-1
+X-Mimecast-MFC-AGG-ID: V8HO8tu1Ou2zEFHdH6LlZg
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43151e4ef43so3968555e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 02:31:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731665101; x=1732269901;
+        d=1e100.net; s=20230601; t=1731666682; x=1732271482;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=g1kAKAvwdmdjiltkVd6qbqhCfl7VUxLedhiq8NASCwc=;
-        b=KpaJvZk7MyFiRKSrP79vdcGOqb1qdj7aZ+l0IjSzjMa1Wi3vtxpzJtdp0xXstLZ2kw
-         R0/Atbpf6rDPKSIlahyOecq+NzR+Q+uAH+2r00lb3SuAQ9rE7+blhENvzOwYf7ESjNWX
-         txLluR5irc4Fz4vEkChcKdkdHn5BgcxR/Plu8DbvchRghv9GZzbUAyvr3tg2daeBDya4
-         OyHTwOWrN03WXQZYAO0QRrxPmi9sZ0+IzgZfbCoMc1CtUJii7y/hxrFszOY0ZqrvA7kL
-         tumTKEvXm7/FXB9gjxeZYAx3kIO6l8gN7uD1VRLiE5RAXwvtjMG5IQHfZprDRNuij9ip
-         iU/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6axZS8b1bTkKMSIpgw1UDBi2oAlZl4EEpmCWBjpT0etBIJZl1HJkGdJKRApWg8pZqYKIphA0TYxzUICJQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmWpm0E78SO1rD33hIHm9IBHm2kW/29IG3fjTE9H86sghZ8s+P
-	8l1vRbcJBeXkqsoVc0MEm12grEVR0cud0vq+TgYHAXv/2YPT9Sy7pNuW6HGwwq27bXzqN4fQEGt
-	I5Laoy97PBEjwMfyum0rHELydIrOMX+RXkC4s/R0+agruw66L4Ht+IsnFqYRW0wY=
-X-Received: by 2002:a05:600c:3b2a:b0:431:6153:a246 with SMTP id 5b1f17b1804b1-432df726227mr16479515e9.13.1731665101477;
-        Fri, 15 Nov 2024 02:05:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEEz5+u3ZRZYo78oPclwnT1nZIiEdnYHBaxqmzIQBER+J7j/3O0koftmeu3voXxmbcw6vb7sQ==
-X-Received: by 2002:a05:600c:3b2a:b0:431:6153:a246 with SMTP id 5b1f17b1804b1-432df726227mr16479215e9.13.1731665101094;
-        Fri, 15 Nov 2024 02:05:01 -0800 (PST)
+        bh=2QzJEh1uH0p2OuQd5yMwTk7/0LxYqplTeSNY5bJ8Vss=;
+        b=YwQrt2z7332I085rZNCeTTbMdqCBBzF1avDgpP2o58irRaMOCC/UcS+9HYwZ6QRixc
+         /+Oxrqo5pAECexH/czz4QXwJ8Sn+FfQDO0Cj3l+H9G239WKCqR/oLDVZyBskNeww6R1r
+         +7n+67jl1EuCbf8u9cI2JPhIZ0Ua/14gnrIyvMFUYalcXBpj/5Dm77XuLZ6HIujRHOh3
+         qAm5zeZmFsDiaY7YgDqRoK74lDC/2i8fTG2B49XqrCQEaws8jTtSn54DMHD6yUFP2pBs
+         2KXoHI/ep2gl0Wu/3jLsvfZkGxXAHWCHWY9bjLQ5lb4HgmnWRwVrF6/FJABeFmDc77wu
+         xb3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrpz3n3ybgPhlIbGviCbRCDbglHkgJZ7m0P3j4YKqB+RyFysBBhH4F0q9yNuELSDbyd4c29xVOdTr5RRjo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEwpQGWSXbrqB3LN3ma8cqQmakp9H2AxIy5GllMG0cghSirGRU
+	CjrwMQUVEkTG/F/AfFyDhgx6oTwvxvaGg3abZVPdq0xoRZHjaBML0RP3TNGE0UKUogehRZudy8u
+	5zW76qDYROsC58sAPqcMjWYbDKSP++iCNNuGUWx7wenlKC3DbKbIxzVtw48SCWyA=
+X-Received: by 2002:a05:600c:1d16:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-432df78dde5mr16800555e9.25.1731666681920;
+        Fri, 15 Nov 2024 02:31:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IERNMi7Q96XKnFK8FdJDpljOOIPF6yY+fTc2OudR307Gv0rqgqERoR3TbPa1yLm7FC9hbRIcA==
+X-Received: by 2002:a05:600c:1d16:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-432df78dde5mr16800295e9.25.1731666681603;
+        Fri, 15 Nov 2024 02:31:21 -0800 (PST)
 Received: from ?IPV6:2003:cb:c721:8100:177e:1983:5478:64ec? (p200300cbc7218100177e1983547864ec.dip0.t-ipconnect.de. [2003:cb:c721:8100:177e:1983:5478:64ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2444e7sm53797785e9.4.2024.11.15.02.04.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80a28sm49483705e9.24.2024.11.15.02.31.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 02:04:59 -0800 (PST)
-Message-ID: <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
-Date: Fri, 15 Nov 2024 11:04:57 +0100
+        Fri, 15 Nov 2024 02:31:20 -0800 (PST)
+Message-ID: <1c524181-5518-44bb-9985-d9d12bb92073@redhat.com>
+Date: Fri, 15 Nov 2024 11:31:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,25 +84,19 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/11] fs/proc/vmcore: replace vmcoredd_mutex by
- vmcore_mutex
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
- <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-3-david@redhat.com> <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
+Subject: Re: [PATCH RFC v3 0/2] mm: Refactor KVM guest_memfd to introduce
+ guestmem library
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: James Gowans <jgowans@amazon.com>, linux-fsdevel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -150,22 +144,32 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
+In-Reply-To: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15.11.24 10:32, Baoquan He wrote:
-> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
->> Let's use our new mutex instead.
+On 13.11.24 23:34, Elliot Berman wrote:
+> In preparation for adding more features to KVM's guest_memfd, refactor
+> and introduce a library which abtracts some of the core-mm decisions
+> about managing folios associated with guest memory. The goal of the
+> refactor serves two purposes:
 > 
-> Is there reason vmcoredd_mutex need be replaced and integrated with the
-> vmcore_mutex? Is it the reason the concurrent opening of vmcore could
-> happen with the old vmcoredd_mutex?
+> 1. Provide an easier way to reason about memory in guest_memfd. KVM
+>     needs to support multiple confidentiality models (TDX, SEV, pKVM, Arm
+>     CCA). These models support different semantics for when the host
+>     can(not) access guest memory. An abstraction for the allocator and
+>     managing the state of pages will make it eaiser to reason about the
+>     state of folios within the guest_memfd.
+> 
+> 2. Provide a common implementation for other users such as Gunyah [1] and
+>     guestmemfs [2].
+> 
+> In this initial series, I'm seeking comments for the line I'm drawing
+> between library and user (KVM). I've not introduced new functionality in
+> this series; the first new feature will probably be Fuad's mappability
+> patches [3].
 
-Yes, see the next patch in this series. But I consider this valuable on 
-its own: there is no need to have two mutexes.
-
-I can make that clearer in the patch description.
+Right, or the dummy mmap + vma->set_policy patches for NUMA handling.
 
 -- 
 Cheers,
