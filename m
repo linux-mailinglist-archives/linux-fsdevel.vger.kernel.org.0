@@ -1,154 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-34973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF31F9CF4D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:30:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D539CF4DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802101F23B00
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DC228A34F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C831E0E03;
-	Fri, 15 Nov 2024 19:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912431D5146;
+	Fri, 15 Nov 2024 19:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lIhIc/KC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYlanRdF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20141CEE97
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 19:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3248165EF8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 19:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731698999; cv=none; b=mn6BY8qzi0+yLtrMd7CBBwpFQjwzC8EtYvJfxvekcSdLb6ARgq5OsnsFW3st2zZ5iCamhDyc20VQqB43cS9Ce9A3bpnzoLlhJTvKFcrUG0rkxJlFpXX5D6QtRZjttOfHXz98AoTXXVcdItY5pragw0R6GwnMgEk2kWapbbOXl7c=
+	t=1731699009; cv=none; b=Qg1kJf+TR45tUBWWunMU9YHVhxe+wTwUYS6MUFyEj9JWyBM5WxyoivrTw3y5sKL9z4t24oDrR/kojuczTdh9MYA7kNas3qY1CxXfPtp/EWAuBg0HByiP6bFqpLsGuLbnQaF9Du8YqnBXihsV4ZjYnkxPwr/7uLLQfrtnIuNwUxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731698999; c=relaxed/simple;
-	bh=1XEUtNvHfg77z1g9UMh9UlUWx/tdrIc8gqmOJJbuZng=;
+	s=arc-20240116; t=1731699009; c=relaxed/simple;
+	bh=evJs0I+OxrzokgLAqg6j1Ahk9pDjfSHyUpLQ6EfZ+0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpxGjTyKbbijwp8Zv1d6jWJj27Ba3EA1FZ+s88S6HYU8fNjkBPDy7pCB+NS5h7tLBkCbClwBEzT8RhxwCwPH/nDw38bzajWhcJr3dFUs8uV4tcf8lAdPv83oRVSgT5kLgZO0Y4us64SOIR0YvT69CGRzTv8LBefhXXNLltFWKiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lIhIc/KC; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-432d86a3085so19266685e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 11:29:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731698996; x=1732303796; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
-        b=lIhIc/KCL41sC8FSnei7bZKiCkrY1UWV58TjqjwDbD2gKUmy+cW1zHOyJBVG3xT0q9
-         Icfo5E7THYogf3bNGlztqqYNDC1VIvO4REopB4ROLktgzHoxigmc4YoikVkCk6FmX9ac
-         mkb5WEBp8mW+JYxjdIJKw8TI26YcadCrAZwsNAYSGL/Y8S0Llp86PEVcy03+xv7vsHcR
-         IS7XwK3HJQOsAffpUbnRXVCY1Imvm9lveBnej6IINMJ6mD7rsf/OJq24+kRTxGYzEBUe
-         Mv0fLB0ECwwNvLXwSiRhLvpv0BQiP21YAzH9SogWnf8gPZSpaZNl/ki7KeBWEUnRiouL
-         u6gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731698996; x=1732303796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
-        b=vCsdM4vESjCGWVRHy9OSnsaOt79PclhOx6f6kdG+sDPt/aaOGk9LyHbB0CObPt9CiO
-         oKh4j3SHdgQR4xUkzv+64FpKzpMnfijULolcVH8Ou7+CaPyWlPYQ5x+Y2SfDpn/2d1vx
-         7M9HIakOinQ2lf15tLhYrcUudiS/5tT6e9vWaEZMWhWutJQxqpStk9dNWCeV2XZb4TD/
-         r9hUj0gI4Eafr6NdCQNe7MAGNomChdzjnTGTqmONuxloYxMEvKus25ak+bLzKkV/ZuSG
-         gLg7LSaqoLHDuAiypHQtOQf4GcxMSRTa+VKNnkl7ecTF7o0d6fAchNTXACMyQrjuNIWb
-         YjyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdb3BdwBr632zv16/6TKUx/D8MwhQGvHfZbNV4QGTBveKZnuRYe+o3GWJRbwcJq5bpvkkQ55aajW7FYLZ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YygJhqOFtAOLP0vaUg2Vuit96iKCm9ewb+hnurYN8ff9osBdVv4
-	8uekIB3PItpe4jqdw/789lG+KEfpuS0SfhOT0zfP6lDZ2eDpxZUyDwkjVxT5NGM=
-X-Google-Smtp-Source: AGHT+IFgDEsfELXvXpNZVepQwwAa4PnvGopmuOtuOA/DhVT4j0RCdFmy14xA8QRUdvZzCjPcHhp82Q==
-X-Received: by 2002:a5d:584f:0:b0:381:e771:dc98 with SMTP id ffacd0b85a97d-38225a10a03mr2749825f8f.33.1731698996088;
-        Fri, 15 Nov 2024 11:29:56 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae3128bsm5050408f8f.102.2024.11.15.11.29.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 11:29:55 -0800 (PST)
-Date: Fri, 15 Nov 2024 22:29:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andrei Vagin <avagin@google.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/task_mmu: prevent integer overflow in
- pagemap_scan_get_args()
-Message-ID: <1b18cec7-3d58-4cdc-b653-fb5790d04879@stanley.mountain>
-References: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
- <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lv7vKiNURMqIrGrKMq1SHzxuD4GjDeAB8yPoCqsSuP78DpNYzDyQYzDX+UNAciWLe38DvMsajFUGnJiG4Icm9c4Z0gtGbAQWzLbVzDD5Ro/wYoJsEvtJwuSPJGKxWOtmf9YGYpu318BLCJ4ZsWsLsEqfvCaG0KFRcpvYv8+hS0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYlanRdF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731699005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EqZOwtrTRPleHHwPaUMA3FtLCJsqvqOx5ow6dvUQn7g=;
+	b=BYlanRdFebBoxJltedewaYf3UZsHnxsaWiahkw8dx/848vcEMqgwKocDl7BD9C115bHFBj
+	F78QfZPLl7+mMFTTAzwRvtvM5v90MasxeOGCSdst3tJfx4iFxkpb6WCxBBfHiUY2OElPCY
+	YIQ+0Cxd+782mdXHdrx+mq9NzPIPt4Y=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-YnXnUYDxOICiuhC9IOBI5A-1; Fri,
+ 15 Nov 2024 14:30:02 -0500
+X-MC-Unique: YnXnUYDxOICiuhC9IOBI5A-1
+X-Mimecast-MFC-AGG-ID: YnXnUYDxOICiuhC9IOBI5A
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 064E419560AB;
+	Fri, 15 Nov 2024 19:30:01 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E93EC1944CC9;
+	Fri, 15 Nov 2024 19:29:59 +0000 (UTC)
+Date: Fri, 15 Nov 2024 14:31:32 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] iomap: lift zeroed mapping handling into
+ iomap_zero_range()
+Message-ID: <ZzehlDTBiBiVkzfC@bfoster>
+References: <20241108124246.198489-1-bfoster@redhat.com>
+ <20241108124246.198489-3-bfoster@redhat.com>
+ <ZzGeQGl9zvQLkRfZ@infradead.org>
+ <ZzNfg2E7TyMyo86h@bfoster>
+ <ZzdgWkt1DRCTWfCv@bfoster>
+ <20241115170247.GH9421@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
+In-Reply-To: <20241115170247.GH9421@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Fri, Nov 15, 2024 at 10:49:44AM -0800, Andrei Vagin wrote:
-> On Thu, Nov 14, 2024 at 12:59 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The "arg->vec_len" variable is a u64 that comes from the user at the
-> > start of the function.  The "arg->vec_len * sizeof(struct page_region))"
-> > multiplication can lead to integer wrapping.  Use size_mul() to avoid
-> > that.
-> >
-> > Also the size_add/mul() functions work on unsigned long so for 32bit
-> > systems we need to ensure that "arg->vec_len" fits in an unsigned long.
-> >
-> > Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Fri, Nov 15, 2024 at 09:02:47AM -0800, Darrick J. Wong wrote:
+> On Fri, Nov 15, 2024 at 09:53:14AM -0500, Brian Foster wrote:
+> > On Tue, Nov 12, 2024 at 09:00:35AM -0500, Brian Foster wrote:
+> > > On Sun, Nov 10, 2024 at 10:03:44PM -0800, Christoph Hellwig wrote:
+> > > > On Fri, Nov 08, 2024 at 07:42:44AM -0500, Brian Foster wrote:
+> > > > > In preparation for special handling of subranges, lift the zeroed
+> > > > > mapping logic from the iterator into the caller.
+> > > > 
+> > > > What's that special code?  I don't really see anything added to this
+> > > > in the new code?  In general I would prefer if all code for the
+> > > > iteration would be kept in a single function in preparation for
+> > > > unrolling these loops.  If you want to keep this code separate
+> > > > from the write zeroes logic (which seems like a good idea) please
+> > > > just just move the actual real zeroing out of iomap_zero_iter into
+> > > > a separate helper similar to how we e.g. have multiple different
+> > > > implementations in the dio iterator.
+> > > > 
+> > > 
+> > > There is no special code... the special treatment is to check the dirty
+> > > state of a block unaligned start in isolation to decide whether to skip
+> > > or explicitly zero if dirty. The fallback logic is to check the dirty
+> > > state of the entire range and if needed, flush the mapping to push all
+> > > pending (dirty && unwritten) instances out to the fs so the iomap is up
+> > > to date and we can safely skip iomaps that are inherently zero on disk.
+> > > 
+> > > Hmm.. so I see the multiple iter modes for dio, but it looks like that
+> > > is inherent to the mapping type. That's not quite what I'm doing here,
+> > > so I'm not totally clear on what you're asking for. FWIW, I swizzled
+> > > this code around a few times and failed to ultimately find something I'd
+> > > consider elegant. For example, initial versions would have something
+> > > like another param to iomap_zero_iter() to skip the optimization logic
+> > > (i.e. don't skip zeroed extents for this call), which I think is more in
+> > > the spirit of what you're saying, but I ultimately found it cleaner to
+> > > open code that part. If you had something else in mind, could you share
+> > > some pseudocode or something to show the factoring..?
+> > > 
+> > 
+> > FWIW, I'm concurrently hacking on what I'd consider a longer term fix
+> > here, based on some of the earlier discussions. The idea is basically
+> > iomap provides a mechanism for the fs to attach a folio_batch of dirty
+> > folios to the iomap, which zero range can then use as the source of
+> > truth for which subranges to zero of an unwritten mapping.
 > 
-> Acked-by: Andrei Vagin <avagin@google.com>
+> That's fun! :)
 > 
-> > ---
-> >  fs/proc/task_mmu.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index f57ea9b308bb..38a5a3e9cba2 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
-> >                 return -EFAULT;
-> >         if (!arg->vec && arg->vec_len)
-> >                 return -EINVAL;
-> > +       if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
+> I wonder, can this mechanism stretch to the generic buffered write path?
+> In which case, can you hang on to the folios long enough to issue
+> writeback on them too, if it's a synchronous write?
 > 
-> nit: arg->vec_len > SIZE_MAX / sizeof(struct page_region)
 
-I don't like open coding integer overflow checks now that we have size_add().
-Historically, we've done a poor job writing them correctly.
+That's an interesting idea. I think it could, but that's several steps
+ahead of where I'm at. My current hope is that obviously this works
+generically for zero range without the need to flush or revalidate
+(unless as a fallback I suppose), and then from there the same thing can
+be used for seek data/hole, which has similar wonkiness wrt unwritten
+mappings. 
 
-Probably the right thing is to add the > SIZE_MAX check to size_add/mul().
+From there, it might be interesting to see if there's value in this sort
+of thing for buffered writes and whatnot. I'll keep that in mind.
 
-#define size_add(a, b) ({							\
-	typeof(a) __a = (a);							\
-	typeof(b) __b = (b);							\
-	unsigned long __res;							\
-	if (__a >= SIZE_MAX || __b >= SIZE_MAX)					\
-		__res = ULONG_MAX;						\
-	else									\
-		__res = __size_add(__a, __b);					\
-	__res;									\
-})
+> > It occurs to me that might lend itself a bit more to what you're looking
+> > for here by avoiding the need for a new instance of the iter loop (I
+> > assume there is some outstanding work that is affected by this?). Given
+> > that this series was kind of a side quest for a band-aid performance fix
+> > in the meantime, and it's not likely 6.13 material anyways, I think I'm
+> > going to put it in a holding pattern and keep it in the back pocket in
+> > favor of trying to move that alternate approach along, at least to where
+> > I can post an RFC for discussion.
+> > 
+> > If that doesn't work out or there proves some critical need for it in
+> > the meantime, then I'll post v4 for an easy fix. I'll post a v2 of patch
+> > 4 separately since that is an independent fix..
+> 
+> I thought the bug robots were complaining about the performance hit,
+> so at least this part should go in sooner than later.
+> 
 
-But I think you'd trigger compiler warnings if a or b were a u32 so probably
-we'd need to use a _Generic() or something.
+Technically, yeah.. I've just been waffling over it because I'd rather
+try to make more progress on that over trying too hard to polish up this
+one. Christoph was grumbling a bit on factoring related to unrolling
+these loops in the future or some such thing, so I'm not really sure
+where he is on that.
 
-regards,
-dan carpenter
+Ok, maybe I'll do this.. I've already fixed the outstanding nits for v4,
+so I might as well just post it. If there's anything critical that needs
+fixing on review then obviously I'll address it, but otherwise I'll
+prioritize working toward an RFC for the batching thing over pure
+factoring/aesthetic changes, because that likely means much of this code
+just goes away anyways.
+
+Brian
+
+> --D
+> 
+> > Brian
+> > 
+> > > > > +	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> > > > > +		const struct iomap *s = iomap_iter_srcmap(&iter);
+> > > > > +
+> > > > > +		if (s->type == IOMAP_HOLE || s->type == IOMAP_UNWRITTEN) {
+> > > > > +			loff_t p = iomap_length(&iter);
+> > > > 
+> > > > Also please stick to variable names that are readable and preferably
+> > > > the same as in the surrounding code, e.g. s -> srcmap p -> pos.
+> > > > 
+> > > 
+> > > Sure. I think I did this to avoid long lines, but I can change it.
+> > > Thanks.
+> > > 
+> > > Brian
+> > > 
+> > > 
+> > 
+> > 
+> 
 
 
