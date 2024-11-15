@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-34965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E3B9CF32F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 18:45:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FA99CF39C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E09283F01
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 17:45:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70C1BB30A28
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DD51D63F7;
-	Fri, 15 Nov 2024 17:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853EF1D79A5;
+	Fri, 15 Nov 2024 16:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vBAo++Yz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aY0zZh6l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BFC1D618E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 17:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F67818E047;
+	Fri, 15 Nov 2024 16:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692703; cv=none; b=etEQY1MCVLcPZBpteb4gKNsemS1O2v0kC+pMx4NA5hsm4AUtgmP/eIvkTNjn8dcSRxraHuKmGUsmnOP04JcYX5YrACJH58J/IpA6iA3X9N8qqeYGgz9HVJpFOzaqzo5UQARd2DknIsERvB6mJ22KqlKpH30zbaOijYZG50u44IY=
+	t=1731688817; cv=none; b=YRaNFIkGJ0+Tk7qsp7ssBnAtUd0yOFdzO9NFSYr2vg6VDpDJ4CbrMSAeVveXj/iG6AT1t50Wmn5a5oKPnUt1P4q8FjV/jfNFgJe4wryZ3LuSyH47vauW3n2lJM/F6W9OSo8t8KsI3P+8g+RxGxWPXCSkMG00KNRufn9RS3TWN5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692703; c=relaxed/simple;
-	bh=xqENlfIbZ6oxYGPT3ENwgUPz7q+WvgG+QMg5G0GrWJg=;
+	s=arc-20240116; t=1731688817; c=relaxed/simple;
+	bh=BmfhvPfduMFTiOJCjUktn+SsqKJieOL4flGGbgausyU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hv+ERfXFYjiLL1VSIoZ+FtkM+xkBsirWuL9KbbLCX7B+QQjs0Z0ZJUS00skXMDjKh98xN04750XSzOztyPebRi6o3P2GaoldD/6WXpgL4ItyLQDu7JEzWSiX1LPNmad3AMgfWQThb+x1HISM0O1EnIEFZgrMotxtk9kZppSUkpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vBAo++Yz; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e5f835c024so1243686b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 09:45:01 -0800 (PST)
+	 In-Reply-To:Content-Type; b=eYvhV51o4UC3rceS1EnHghqpa49db4deWEpWzOX5hbpbgJanRlrXdaQh3+1a23CAJaodTAUiHnVzMwisY+tdsQDfkiray+BHYoErFq5IwQA/wMQOb/bfxwTBj0wIuE30mOO8OgSSY4ASk9VysFq3iaQbgW3uIIOg45N5R6aslRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aY0zZh6l; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431616c23b5so11966535e9.0;
+        Fri, 15 Nov 2024 08:40:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731692700; x=1732297500; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731688813; x=1732293613; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GX5wJ6oLxec3STDa1FVtfsmqMbzKtWScheytSQkT1U8=;
-        b=vBAo++Yzi2hDov/7+u0KWx6DifVjZDKRweV1NSDXXlfOAglgIZwxXj8Rttz1OgbpNH
-         Qwy58xHUTEXJurOnc4tY67CioMNZwfjT5HmY8Hw9ZZVumaUGZBeQuFS+ZP9sA6kGemql
-         OJ15Mn4WEJORwJVSLTSr3vsoxRDw0p1g4tCxTya+pmQ3mqNOD9G25XXad6gcOVyTKNav
-         T0sSk7AvxB3OQb9wjU0ybdXXfTKkwsdY7AD9uFx2Y8wZNwgoH1FJdr74/lBpCDOl2NLu
-         Y9Q5h9pIIq6hzvGgHk992fqL4SeA+QdUUEqxwCQk/IlG2wP0TWAmwSwtdOX8hs/81Jtw
-         qIrA==
+        bh=DU23KB9CDaJ/ylEjpMmh487mXVL8GrqTA9sTg8RR2Yo=;
+        b=aY0zZh6lPzbAP0UfSKpfhQi7JOcpf7+L9xPq1wuHHG0iKyxaW9H+0blBhFd3nbv+3Q
+         n8h3tvYyBFz2149Kq5LPFOEFTytl+q6CN/JNFJVAjsw55RjwIlozZdGbCgZp6YvbhZ2o
+         bAGmSYxrVjFdiTYOGZmlKgLWMAjRkojowQ11ReRifv4qLXfMGyzXVBYb/8cdc6k3DceO
+         yNLOMaBELAtrbXvQBRhHymDz8t5ZSed+x2qdCW6TlY2NBtyvEzzPqCDN8en9hyTe4ZA8
+         2OdQJcv2AgIu3WoX6NxX/wpUkfMNpFa/9AbXiuK+whKbvWAZqWLl2ZfdjchCrAgpGd0n
+         xmlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731692700; x=1732297500;
+        d=1e100.net; s=20230601; t=1731688813; x=1732293613;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GX5wJ6oLxec3STDa1FVtfsmqMbzKtWScheytSQkT1U8=;
-        b=ClRnj99WgwwOi+U/P5yfVtscztSsTl89PeLneShJyOyR4qoKGDpN3Db9WQ9C4AMxaY
-         45h12h4NFEl1s3KXsueg4YKk2MWSgRzuC2/BL3mr7v/4x6AGOLGq754x/K9k1s9gDUKz
-         l6J7Bqe51/rup0a/tfqdfj5GfVWlgJJOGdeJZKKRaCvdeLuEKNtzQpMMRZ2sM7wk+6RU
-         GAuz2f6C0g8mAM7AiQZGrpiw3w/0LE8+s4KemE+knEr92Ig1YIQuuYj/4XWbnwlrwVfr
-         0orbXNSUdLYE2DDHJZ8DVKkwafincEhOOlKJ2TSnYvhhhsor+wCkifw9huIPd1+V1RZq
-         KajA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUfXeP2Y/FwqXOlNre6dNWIqer83/swPvln4uKtWHWTlZvWyh0xyS6Py4iOcsT2CSp8ItTm8HbUpmv5CAJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyKJo4KLQUjWuYahRKDX2udA4hmOYJeh6y/Pz+tThVg+x5Akln
-	Nwo2nWS/hhCDGVmc2qf62VujkXBH+Epar0behGbqtT+rMC/hhD+zafvxTswFBK8=
-X-Google-Smtp-Source: AGHT+IE7u0RxmsRL3LQWgWu6xddXzAE9XDdBJ1jPG6HxqNvh9lsaMK0XyjGjnH4cynjuaCDt1FSOiA==
-X-Received: by 2002:a05:6808:4401:b0:3e7:c366:d17f with SMTP id 5614622812f47-3e7c366d358mr1389370b6e.38.1731692700454;
-        Fri, 15 Nov 2024 09:45:00 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd12fbasm661744b6e.21.2024.11.15.09.44.59
+        bh=DU23KB9CDaJ/ylEjpMmh487mXVL8GrqTA9sTg8RR2Yo=;
+        b=l49oppnxZ1ED6eIYxETTZhD9sPNmOc61D14MWvMMkGbxWelFMEH1UHjeAeDSiwS6r1
+         MkNsTXvEDippXSluosA6sQKu9gBWQgce/yC35ZENEJMwJjHRyssesbnRE2inK/mcDMGu
+         FustgIt2x+NBV2GQjtM7IVq5wCIFUtRLYqyY4IR420U5giKen1HKH+nWhsdGpYxPBcHx
+         c7vOY9kUcj8m+lbvXFburiJQ7t/ZTqpQM4KRxaq2semWnS958MVhBctepn4tnNmoTzYb
+         eqqn/XXFx/34dAkasoa41Y39jsRuW38kdma05QBySG6iA61vmJM/7UPrzFdlvEtdDkaw
+         yhig==
+X-Forwarded-Encrypted: i=1; AJvYcCUTLzMQaTXquosvCovtG8T30UG3t4Js919qA0cp4AcjOGdzcZNibzGEFfB1EvJ5aBFH43TMc4DuS7fLC2U=@vger.kernel.org, AJvYcCUqIwlgdDWq6haN4ejBQfX3k8XvkMDDM4LZSTw5AftcVaOFKILeriNVty81aPSBVv7wM6rsXam3Jul81gqxfg==@vger.kernel.org, AJvYcCVIHU9OzPUhk+2gfEXsz6aMHLXbSb8zccSjrzzUUG3DR/gnbIon7OBrsbonhsj7AX5PhuOwNprSl028Qw==@vger.kernel.org, AJvYcCX7oj9rZCIXw6vm2RfbzMgN1CgILOea5jFVt8eBjpHjL9ssukcXSRFDBtlEtq90KSqcmc6nq0JFIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6VjneEWDSMVy09+5L4wPo+7ovRynjOgx60+3RRK4N/XEGf3Xl
+	RBcxeEmddFc+m77Y2AtBNGw/m7oEgHizGvmudBSsZJQ/fqbzL2O1
+X-Google-Smtp-Source: AGHT+IGYcRrADCDs0VXLudCPmoKNK8uAFXXrZZvU0GlTfdTzpK46osYHhclfaK73bM6gmSYsQl5j7Q==
+X-Received: by 2002:a05:600c:3553:b0:431:405a:f93b with SMTP id 5b1f17b1804b1-432d9762473mr69603745e9.10.1731688813174;
+        Fri, 15 Nov 2024 08:40:13 -0800 (PST)
+Received: from [192.168.42.191] ([148.252.132.111])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265668sm61720245e9.10.2024.11.15.08.40.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:44:59 -0800 (PST)
-Message-ID: <97b3061c-430d-4fc0-9b62-ab830010568e@kernel.dk>
-Date: Fri, 15 Nov 2024 10:44:58 -0700
+        Fri, 15 Nov 2024 08:40:12 -0800 (PST)
+Message-ID: <f945c1fc-2206-45fe-8e83-ebe332a84cb5@gmail.com>
+Date: Fri, 15 Nov 2024 16:40:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,8 +78,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
  and PI support
-To: Christoph Hellwig <hch@lst.de>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, kbusch@kernel.org,
+To: Christoph Hellwig <hch@lst.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
  martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
  jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
  linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
@@ -90,37 +90,67 @@ References: <20241114104517.51726-1-anuj20.g@samsung.com>
  <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de>
  <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com>
  <20241114151921.GA28206@lst.de>
- <f945c1fc-2206-45fe-8e83-ebe332a84cb5@gmail.com>
- <20241115171205.GA23990@lst.de>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241115171205.GA23990@lst.de>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241114151921.GA28206@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/15/24 10:12 AM, Christoph Hellwig wrote:
-> On Fri, Nov 15, 2024 at 04:40:58PM +0000, Pavel Begunkov wrote:
->>> So?  If we have a strong enough requirement for something else we
->>> can triviall add another opcode.  Maybe we should just add different
->>> opcodes for read/write with metadata so that folks don't freak out
->>> about this?
+On 11/14/24 15:19, Christoph Hellwig wrote:
+> On Thu, Nov 14, 2024 at 01:09:44PM +0000, Pavel Begunkov wrote:
+>>> Eww.  I know it's frustration for your if maintainers give contradicting
+>>> guidance, but this is really an awful interface.  Not only the pointless
 >>
->> IMHO, PI is not so special to have a special opcode for it unlike
->> some more generic read/write with meta / attributes, but that one
->> would have same questions.
+>> Because once you placed it at a fixed location nothing realistically
+>> will be able to reuse it. Not everyone will need PI, but the assumption
+>> that there will be more more additional types of attributes / parameters.
 > 
-> Well, apparently is one the hand hand not general enough that you
-> don't want to give it SQE128 space, but you also don't want to give
-> it an opcode.
-> 
-> Maybe we just need make it uring_cmd to get out of these conflicting
-> requirements.
+> So?  If we have a strong enough requirement for something else we
+> can triviall add another opcode.  Maybe we should just add different
+> opcodes for read/write with metadata so that folks don't freak out
+> about this?
 
-Let's please lay off the hyperbole here, uring_cmd would be a terrible
-way to do this. We're working through the flags requirements. Obviously
-this is now missing 6.13, but there's no reason why it's not on track to
-make 6.14 in a saner way.
+IMHO, PI is not so special to have a special opcode for it unlike
+some more generic read/write with meta / attributes, but that one
+would have same questions.
+
+FWIW, the series was steered from the separate opcode approach to avoid
+duplicating things, for example there are 3 different OP_READ* opcodes
+varying by the buffer type, and there is no reason meta reads wouldn't
+want to support all of them as well. I have to admit that the effort is
+a bit unfortunate on that side switching back a forth at least a couple
+of times including attempts from 2+ years ago by some other guy.
+
+>> With SQE128 it's also a problem that now all SQEs are 128 bytes regardless
+>> of whether a particular request needs it or not, and the user will need
+>> to zero them for each request.
+> 
+> The user is not going to create a SQE128 ring unless they need to,
+> so this seem like a bit of an odd objection.
+
+It doesn't bring this overhead to those who don't use meta/PI, that's
+right, but it does add it if you want to mix it with nearly all other
+request types, and that is desirable.
+
+As I mentioned before, it's just one downside but not a deal breaker.
+I'm more concerned that the next type of meta information won't be
+able to fit into the SQE and then we'll need to solve the same problem
+(indirection + optimising copy_from_user with other means) while having
+PI as a special case. And that's more of a problem of the static
+placing from previous version, e.g. it wouldn't be a problem if in the
+long run it becomes sth like:
+
+struct attr attr, *p;
+
+if (flags & META_IN_USE_SQE128)
+	p = sqe + 1;
+else {
+	copy_from_user(&attr);
+	p = &attr;
+}
+
+but that shouldn't be PI specific.
 
 -- 
-Jens Axboe
+Pavel Begunkov
 
