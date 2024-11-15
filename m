@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-34993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE4E9CFAEE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 00:12:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4083E9CFA81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 23:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10A31B373F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 22:47:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84C34B2C586
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 22:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC36B1922F2;
-	Fri, 15 Nov 2024 22:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B11A1925B9;
+	Fri, 15 Nov 2024 22:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cr7yu3oM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhobvgLK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9907018A924
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 22:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09622191F9B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 22:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731710818; cv=none; b=NA8qGn3cloMihQuU0LZLGX4Wd/VdUfXo6H1LiipOQFYlRpU1WZsP/ydovDALxzg7wfqjZisKdR34iIkNgIln89xU/OBvxNEq3yU8gz0uJFruzGQhu5b1DEYydF4lmhKpjv5W6rsZv2NuuE5+XbYitht6iNoz8dQEX8jSqRvlDPU=
+	t=1731710819; cv=none; b=cFfS+Z1zt3QwMjb2qZ+bpv0/K45aWwyPi0U2jf4cLqmHY7Jl3j7MVazKBTFU2rPmaEP+nLvxQkRBPyngwgPzJl0znVmsnNrj3cbXsIQTRucFMj4hymWbiRmpL91p/6wdzLcxkv8cMYea3e0FlUGS5aUL1Rv+RtcG5nWIU5k0pS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731710818; c=relaxed/simple;
-	bh=NiVYfMxiq/4CbrHhh8ZxoChEDx9tW/kNBNx4aRfyXAY=;
+	s=arc-20240116; t=1731710819; c=relaxed/simple;
+	bh=snEhwbjkOQNKji7/3kWdqfeV1eyrezZ9SDDncgYtzj4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gJVz0nMcwiPB4dhQ4rxMDvA0Iu0HzchV42AyVlDIaGCcDGylYz4M+VzVKNRTv1zwZN8d1K8fQcAl3o0ZkaWe/Ruvfya5Co719tu5DcTByW6vwSk/oiw4XwQOW9ytM3TF/u4kG+oLLnva7d7yhH4YClzwyodgcfAClmn7GWwSUUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cr7yu3oM; arc=none smtp.client-ip=209.85.128.182
+	 MIME-Version; b=JsBn6Bexg+zctMT8V8lAO3G+V78RnGrqa2bkjIdm/FqlkSbUaJQ4CoFzN9wdnWLQZjqWec+2tEFcLu6gD6iUiGl/HjOpiorgTA70+fDpq+qU1YED6oKMlBOc176ZTVQ3XDOq0sK0plMX8lujHwjBLs2Nr7F9CqvWf1MAjgr3Jdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhobvgLK; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e9ba45d67fso24794377b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 14:46:56 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e381cbdd03cso88545276.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 14:46:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731710815; x=1732315615; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731710817; x=1732315617; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KaJOCXiq+oAY6E09D60BMxslFUVmtN8uELYvwrLg+b4=;
-        b=Cr7yu3oM41NU+H/4f2zCr1YhhnC546C7tvDxeY5oe+GGz+F7j5g23TIScIBOj0KTb1
-         k2gU0+6TPMxUo8hidTWNeqwCgjHRCA4Vk3lMZTpSnrdrrZ1LhzxbxAJyzJM+aQQ82rHh
-         EAzUlglt8R4XDDNRWON+yELWMLETQBKBcUf9o36COU4qIIF0aJV/xoI00D18V47pTYVT
-         hWswn8RCM2mo5BoxKBu7N10iWbrJfbljH8vSO81LWZpG6+4Nr4sRlE2mfGVP5auI7O/D
-         HDNI1lrxLvQMcuD1ITyvNEaClO1WjM2gweLJ/2GC/i/Pe2s/hm/W8J2KOMo+QAU/nj8L
-         9k4A==
+        bh=hqCGll30CJiyTPfCOluQLlSYspNea277q8s6Em+tUXY=;
+        b=QhobvgLKnR3sth99k5+bOEaXmxwS2+O1kzI2Uz4WTBu0lnSY5gHQ2xyyGx3gNociFr
+         kt/5Ig+3oyNBbStoa37//ys0X3xz+CYqnw1buZM2WxK3LqHWDYAhBj7mJ/gVvvWIxq4Y
+         csHc59U9HKY9VxqvJcE+ZQoiH0LEQWuWzJhAyeKN5HPT7rpDm5c0MtUiWLvYDOxGJWD/
+         DzpFwNQVPyU5iPHBwqJJVhQDmfBY5gRecmAt6TZvy6KvJVCynGTLcKtUUpmf9NWMVlYb
+         hv5JhN+idazEqzwgTpHp86iCWutxWCU3atdWZoc5+VBiBQ5ywynvAiuDhPnZ/90DoDE9
+         nlrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731710815; x=1732315615;
+        d=1e100.net; s=20230601; t=1731710817; x=1732315617;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KaJOCXiq+oAY6E09D60BMxslFUVmtN8uELYvwrLg+b4=;
-        b=fALYqk/JWE0PFOjzMOHBokD/fBxMwwjIYRqITZOo7bEr5en4H7CpKGiM7pqBVm8kUc
-         m7zopXotj0ej1eKSyQEVBmbI6Zm7oXFUZXdcq1YPHumP3GaukcGFvDz719gD5Fyoir3A
-         DcHx1CeA8msh3bBCsivphugcglVGq8NLGP2IKjtGEEmIZwFpoq7vCIhaGwoUyJ3ko9Y8
-         8ZtjZ50GpQnWPpt1ZL1LSyfaQcNpVDaFQhyjgJG5MFyrkmd7suY2dOzcKE8AaJX01wvT
-         8FN/uiBdEASHCHEHIFIjEbjzZi+8O+qZTw+vmdeCeRz4nV4YVPDZ7RCF14E4s1h2t+ZS
-         rxVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5XOH9BFt+MbnJ6Z25ZxHgcJI9Izc+iIbULOhD1bvf3vUvJ1cBngYrnCY/k+p7MWRzfTh66DRiOFLQftIH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49ylCMZC3kYUQSGdnvXJHEcbiLFBWxccFwzDAe8gbc6SbiVBh
-	x31Hdpmo3rVy1ldA/HRnQacnL7Aq4fbSmRK5Ns7Wz3UIvdHUtPDl
-X-Google-Smtp-Source: AGHT+IFmiXgnWZZs1gqt0JF4hZXzFNRdwrn1XSh3VQKDL/elFzc3Ebo+JLJ62nqDeTWVLJwJ3hwfzw==
-X-Received: by 2002:a05:690c:9682:b0:6db:db51:c02d with SMTP id 00721157ae682-6ee55c53b57mr48257857b3.25.1731710815490;
-        Fri, 15 Nov 2024 14:46:55 -0800 (PST)
-Received: from localhost (fwdproxy-nha-011.fbsv.net. [2a03:2880:25ff:b::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee712c2c9fsm857617b3.54.2024.11.15.14.46.55
+        bh=hqCGll30CJiyTPfCOluQLlSYspNea277q8s6Em+tUXY=;
+        b=H804oVesDY0t8isu8eHMbkgc/vY32s5EJQdk9kMY+1CjiDhiw2A4TyymHqIDoHMWqf
+         a71Ta+u7jh6MoCOOUE7DwCy1puX5uyGCOP9mZ6GnIJ2nr8kHpuLQYQ+tSDDnaHiqr88s
+         ly3f7prhftZh/or3jfq+BeB5Nd2CbhcOZ8TcHdH4JMtI+WsMQ7gnmAYcA1dVcPP5BA+h
+         tYh9qoxhP/fNEBGpjDUbwvDNgGYYEa/MJvUM+MSF+0w/qHVPKezUAwoHincHxbetOIXz
+         rIpreTBf1iKLOkw+ylPVzC1OV81QehLv8SmoGskkAE8oNNRXYl7HFS+9ZJu7ScftLWKs
+         OIyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmJvrWx/WHRlUCBqyVM/5o+9Obt+ggOLzo5EpyW/LxWJJ24Zy1wv09h3IISQLvFu9X9BV54KdRUKc60/4A@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTFTNSdmPBZz4f91yMVnmnXSG+uzC+QsB7m+7Q3kz+N/mWsccK
+	+Ls8khk7bM0Zu2OgUgeshOuvWrLKJ0LNxLRY033NdI3owXcm4TGa/DY90A==
+X-Google-Smtp-Source: AGHT+IGSzVy1omnfV54BrGGJewgAW0DzxvxC726Kb7oZp1Mtso6nZFjz9TE4rzvmjlUt+ijR0WPOQw==
+X-Received: by 2002:a05:690c:688a:b0:6ea:7c46:8c23 with SMTP id 00721157ae682-6ee55ef8021mr61486187b3.35.1731710816774;
+        Fri, 15 Nov 2024 14:46:56 -0800 (PST)
+Received: from localhost (fwdproxy-nha-001.fbsv.net. [2a03:2880:25ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee7129dc7esm875747b3.40.2024.11.15.14.46.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 14:46:55 -0800 (PST)
+        Fri, 15 Nov 2024 14:46:56 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -76,9 +76,9 @@ Cc: shakeel.butt@linux.dev,
 	linux-mm@kvack.org,
 	bernd.schubert@fastmail.fm,
 	kernel-team@meta.com
-Subject: [PATCH v5 1/5] mm: add AS_WRITEBACK_INDETERMINATE mapping flag
-Date: Fri, 15 Nov 2024 14:44:55 -0800
-Message-ID: <20241115224459.427610-2-joannelkoong@gmail.com>
+Subject: [PATCH v5 2/5] mm: skip reclaiming folios in legacy memcg writeback indeterminate contexts
+Date: Fri, 15 Nov 2024 14:44:56 -0800
+Message-ID: <20241115224459.427610-3-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241115224459.427610-1-joannelkoong@gmail.com>
 References: <20241115224459.427610-1-joannelkoong@gmail.com>
@@ -90,45 +90,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new mapping flag AS_WRITEBACK_INDETERMINATE which filesystems may
-set to indicate that writing back to disk may take an indeterminate
-amount of time to complete. Extra caution should be taken when waiting
-on writeback for folios belonging to mappings where this flag is set.
+Currently in shrink_folio_list(), reclaim for folios under writeback
+falls into 3 different cases:
+1) Reclaim is encountering an excessive number of folios under
+   writeback and this folio has both the writeback and reclaim flags
+   set
+2) Dirty throttling is enabled (this happens if reclaim through cgroup
+   is not enabled, if reclaim through cgroupv2 memcg is enabled, or
+   if reclaim is on the root cgroup), or if the folio is not marked for
+   immediate reclaim, or if the caller does not have __GFP_FS (or
+   __GFP_IO if it's going to swap) set
+3) Legacy cgroupv1 encounters a folio that already has the reclaim flag
+   set and the caller did not have __GFP_FS (or __GFP_IO if swap) set
+
+In cases 1) and 2), we activate the folio and skip reclaiming it while
+in case 3), we wait for writeback to finish on the folio and then try
+to reclaim the folio again. In case 3, we wait on writeback because
+cgroupv1 does not have dirty folio throttling, as such this is a
+mitigation against the case where there are too many folios in writeback
+with nothing else to reclaim.
+
+For filesystems where writeback may take an indeterminate amount of time
+to write to disk, this has the possibility of stalling reclaim.
+
+In this commit, if legacy memcg encounters a folio with the reclaim flag
+set (eg case 3) and the folio belongs to a mapping that has the
+AS_WRITEBACK_INDETERMINATE flag set, the folio will be activated and skip
+reclaim (eg default to behavior in case 2) instead.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- include/linux/pagemap.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ mm/vmscan.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 68a5f1ff3301..fcf7d4dd7e2b 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -210,6 +210,7 @@ enum mapping_flags {
- 	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
- 				   folio contents */
- 	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
-+	AS_WRITEBACK_INDETERMINATE = 9, /* Use caution when waiting on writeback */
- 	/* Bits 16-25 are used for FOLIO_ORDER */
- 	AS_FOLIO_ORDER_BITS = 5,
- 	AS_FOLIO_ORDER_MIN = 16,
-@@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct address_space *mapping)
- 	return test_bit(AS_INACCESSIBLE, &mapping->flags);
- }
- 
-+static inline void mapping_set_writeback_indeterminate(struct address_space *mapping)
-+{
-+	set_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
-+}
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 749cdc110c74..37ce6b6dac06 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1129,8 +1129,9 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 * 2) Global or new memcg reclaim encounters a folio that is
+ 		 *    not marked for immediate reclaim, or the caller does not
+ 		 *    have __GFP_FS (or __GFP_IO if it's simply going to swap,
+-		 *    not to fs). In this case mark the folio for immediate
+-		 *    reclaim and continue scanning.
++		 *    not to fs), or the writeback may take an indeterminate
++		 *    amount of time to complete. In this case mark the folio
++		 *    for immediate reclaim and continue scanning.
+ 		 *
+ 		 *    Require may_enter_fs() because we would wait on fs, which
+ 		 *    may not have submitted I/O yet. And the loop driver might
+@@ -1155,6 +1156,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 * takes to write them to disk.
+ 		 */
+ 		if (folio_test_writeback(folio)) {
++			mapping = folio_mapping(folio);
 +
-+static inline bool mapping_writeback_indeterminate(struct address_space *mapping)
-+{
-+	return test_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
-+}
-+
- static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
- {
- 	return mapping->gfp_mask;
+ 			/* Case 1 above */
+ 			if (current_is_kswapd() &&
+ 			    folio_test_reclaim(folio) &&
+@@ -1165,7 +1168,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 			/* Case 2 above */
+ 			} else if (writeback_throttling_sane(sc) ||
+ 			    !folio_test_reclaim(folio) ||
+-			    !may_enter_fs(folio, sc->gfp_mask)) {
++			    !may_enter_fs(folio, sc->gfp_mask) ||
++			    (mapping && mapping_writeback_indeterminate(mapping))) {
+ 				/*
+ 				 * This is slightly racy -
+ 				 * folio_end_writeback() might have
 -- 
 2.43.5
 
