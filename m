@@ -1,94 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-34903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B01A9CE022
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:35:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC509CE066
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171C9B2761C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8937D1F28615
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CA61CDA18;
-	Fri, 15 Nov 2024 13:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8F91CDA12;
+	Fri, 15 Nov 2024 13:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="HCXdOAuq"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="boPmHIT2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D600374FF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 13:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CEA18D65E;
+	Fri, 15 Nov 2024 13:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677666; cv=none; b=Zv+FzLZLzpwSKBPnvTTe5Ed7uxPGteCmwmXCrcLqAiADAIeJeXqZyf3BrO0cxzmVtZ1XVVcCzxFpN6UFjhYLjGNm6wVFljsGZidELluaNRval/jj6+MEWNcjVL8RWL5E72hRdEPdv4LWrNpVSsRzmCNe5QLVR/7rLKy0CqA9rZU=
+	t=1731678090; cv=none; b=jD0hBdtNyWTcykUxoq4abv4qjZyn6DuX6BoPqtC4d2og0EcI65UPhzE5Jy6C3JhrFmPMpYDmJ0BKYeJHZ2Tvelf1ZpF9z79NBefZRIJpxTlXJ+Me9qC9L1gRWhnExrvhc6KJd5k3RUu63TMQOWrjq0/mMTJ42NwhK36IjiHshJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677666; c=relaxed/simple;
-	bh=gLbDLLFaCm+pneJ0ecZSsUz4EzSQvHIor0UF/fLR+1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBFD9ZJ9EXld1SV4AGZbtHHMPoawMw+Vly4gA6LidsOFfrdBTW0ng/5V6AKRWRdtf9C/S0JujF0YZqWin5ZwXsMw33YJkh/pux2oH4rMILCc0fDdjksbHvZx35mG/qSM80niwdBo7yrTTX3fkZNFIZa2r4t8F+TCBuBzz4ceSWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=HCXdOAuq; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-119-105.bstnma.fios.verizon.net [173.48.119.105])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AFDY7rU014540
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 08:34:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1731677650; bh=YXeu00rAkkBMx+jCW+Umq2TqKt3Mm3W0qM6ehUOiUGQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=HCXdOAuqIff8JiBA+SBbi/24u8UbEcsuWvhHECXJwMtaea6XMUhQ8BpksgSVVUNQE
-	 +t4yP0l/T+Wd/bWC9xsdiSG+q+njib6F70qvRObkSyD712Noh6FDprtJHFOGY2uSN+
-	 ccagrW96Jv0F6FwCkVeIceLRjkC3U3ZYGHvN8vnyHZMw75gXLw+DP9YpcCyNWJUNwG
-	 JrEBYBqbyN9mev6VkIti12/P5edZh61O8RQHD293ZsJTmRfcK22b4M5oz3j5NCuMFF
-	 o8ba5W1WHo4d8S/rSXmfsdEF1turAm1X/L/lq3PBJwsq71kY9MnacCYFhM3QDd47pt
-	 9X0xI88FotM5A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id CB07215C0317; Fri, 15 Nov 2024 08:34:07 -0500 (EST)
-Date: Fri, 15 Nov 2024 08:34:07 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        fstests@vger.kernel.org, stable@vger.kernel.org,
-        Leah Rumancik <leah.rumancik@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: generic/645 failing on ext4, xfs (probably others) on all LTS
- kernels
-Message-ID: <20241115133407.GB582565@mit.edu>
-References: <20241110180533.GA200429@mit.edu>
- <20241111-tragik-busfahren-483825df1c00@brauner>
+	s=arc-20240116; t=1731678090; c=relaxed/simple;
+	bh=daBuVmuPuGD6Rg2uT8BKL5cILWTFJXkIoaQJDF0280s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GMcG5saR56CxAnBL7hOIv5Ik78JrArBx4Q6hmRGPZOF/h6Ve7OdBm5LDg09homB5zCGxA89AZb5/wvojS2zFZann3F7AaZKl0jY13XsRNre408ezwGYXwk5l8RuE/2D4KAxrfDwZQu2kpTUcCgCK+T9G0qrtvuu+Qg1OFGpqSC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=boPmHIT2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1731678077;
+	bh=CWUey5ewpa0QOwduayBJGtFMN1WGhVsVPHWEh62bV1U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=boPmHIT2e8MSBzjaB3CU3MYrzSHuf+jieypvN7zjgkVmG94kSQhdWt2uc9Fde18Uh
+	 j7RmIdj9gvpawaprZ1iFPb9aj7925BCQ+7yDAYWTwITg90aG8y/JRXU1ABHXBZKIf/
+	 4RCR5aTHx/8BptsQAQmBVqv3qOkJkQKWY8l5aSEudeUYF7xphfP66K0HZoMswRmDww
+	 /DttRaryn1a7gZW2vbitOcGEm4lTwtKjjjBPaQ7VFLnUluX5Ni0u7AAeP9Q++wMOV0
+	 cDuYw1ONvtL5NWR9GVSCpA0+mh95tlWGiW3NWpKZ7A7A+m4A06HXA0vEtgH00qBqXm
+	 OdVbpQS1rI7tA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XqdTT32Lcz4x6k;
+	Sat, 16 Nov 2024 00:41:17 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: brauner@kernel.org
+Cc: sforshee@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	<linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
+Date: Sat, 16 Nov 2024 00:41:14 +1100
+Message-ID: <20241115134114.1219555-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111-tragik-busfahren-483825df1c00@brauner>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024 at 09:52:07AM +0100, Christian Brauner wrote:
+Currently the mount_setattr_test fails on machines with a 64K PAGE_SIZE,
+with errors such as:
 
-> behavior would be well-specified so the patch changed that quite some
-> time ago.
-> 
-> Backporting this to older LTS kernels isn't difficult. We just need
-> custom patches for the LTS kernels but they should all be very simple.
-> 
-> Alternatively, you can just ignore the test on older kernels.
+  #  RUN           mount_setattr_idmapped.invalid_fd_negative ...
+  mkfs.ext4: No space left on device while writing out and closing file system
+  # mount_setattr_test.c:1055:invalid_fd_negative:Expected system("mkfs.ext4 -q /mnt/C/ext4.img") (256) == 0 (0)
+  # invalid_fd_negative: Test terminated by assertion
+  #          FAIL  mount_setattr_idmapped.invalid_fd_negative
+  not ok 12 mount_setattr_idmapped.invalid_fd_negative
 
-Well, what the custom patch to look like wasn't obvious to me, but
-that's because I'm not sufficiently familiar with the id mapping code.
+The code creates a 100,000 byte tmpfs:
 
-So I'll just ignore the test on older kernels.  If someone wants to
-create the custom patch, I'll revert the versioned exclude for
-{kvm,gce}-xfsteests.
+	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
+			"size=100000,mode=700"), 0);
 
-Thanks,
+And then a little later creates a 2MB ext4 filesystem in that tmpfs:
 
-						- Ted
+	ASSERT_EQ(ftruncate(img_fd, 1024 * 2048), 0);
+	ASSERT_EQ(system("mkfs.ext4 -q /mnt/C/ext4.img"), 0);
+
+At first glance it seems like that should never work, after all 2MB is
+larger than 100,000 bytes. However the filesystem image doesn't actually
+occupy 2MB on "disk" (actually RAM, due to tmpfs). On 4K kernels the
+ext4.img uses ~84KB of actual space (according to du), which just fits.
+
+However on 64K PAGE_SIZE kernels the ext4.img takes at least 256KB,
+which is too large to fit in the tmpfs, hence the errors.
+
+It seems fraught to rely on the ext4.img taking less space on disk than
+the allocated size, so instead create the tmpfs with a size of 2MB. With
+that all 21 tests pass on 64K PAGE_SIZE kernels.
+
+Fixes: 01eadc8dd96d ("tests: add mount_setattr() selftests")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index 68801e1a9ec2..70f65eb320a7 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -1026,7 +1026,7 @@ FIXTURE_SETUP(mount_setattr_idmapped)
+ 			"size=100000,mode=700"), 0);
+ 
+ 	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
+-			"size=100000,mode=700"), 0);
++			"size=2m,mode=700"), 0);
+ 
+ 	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
+ 
+-- 
+2.47.0
 
 
