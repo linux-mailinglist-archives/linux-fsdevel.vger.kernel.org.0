@@ -1,225 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-34976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD12B9CF525
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:43:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA959CF528
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D82228C564
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C01B1F2323D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5B1E1C08;
-	Fri, 15 Nov 2024 19:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5182C1E0E0C;
+	Fri, 15 Nov 2024 19:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3Eztt1G"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JVgNv+Vc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE91CEE97;
-	Fri, 15 Nov 2024 19:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083AA1DD0C7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 19:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699711; cv=none; b=Ym3oBIRnkFLaeANFrf+JClyehcYIwiCtjs1XavASd3X5vW9801d/SrFmNqFnQCLWAjCur/SCFXexrYbR7dXl5IMj496LgoS9uptczf5O2/IAlwirMENOyK01AXwpPuGYSxf0aLKcu6oum3h9jr+6NaSwlP0OO+4KvCAZPNw2gNg=
+	t=1731699814; cv=none; b=P8AP3elKD83Nc/Chg+F6m3nCzDCbxzkGVaCX5PtjjGqx3iDonaFPXPncwws+cQNusQQo59w7f4gsKLh0HPNf/CNiObw713tSwgCRgWXUSyMkg/XiKoJc0n4AHdXwlnejzkYhJPu1ew6VxUtYY4OlYTx1HPYSsMfJ6A13GnZnXO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699711; c=relaxed/simple;
-	bh=11+JLjIDjOOyK0Aqas1540GH5ts0hbJToWK8RT6in2Q=;
+	s=arc-20240116; t=1731699814; c=relaxed/simple;
+	bh=SLnDbfpMMNce5rifl/W6C6u1TB8YVSCvtovczmykQNE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RElvCZoHE2hNTmNZ7POSY/n2t0woe1LUByuRA8TTawuMTH7q4JFs5DTyHgUuUvSal6bgZlm3q9f0ALcQbjWJ2nsvMUbilppBKYuuwg5zL/KuIjQeyntnQw20gQYwEsbXo7AxIr0bPGP7qkuhmdlF4pSR9Nb2Ddq+WkMdfCztFpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3Eztt1G; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3821a905dbcso1384467f8f.0;
-        Fri, 15 Nov 2024 11:41:49 -0800 (PST)
+	 To:Cc:Content-Type; b=WjDldJ5PG7kDvxB/NJ5dMvkNanKoHiKU+iPind7R/Iw2dTp0bQ+iQ3hPlf+4JcmHM9GDC7QCTKoacNDL1vjUrmp1YHAAeS59oCiJiaYWM2K72ti0GdIOwqoJ2zHC3ZbbPWiAGdCx+UILqgsuUsR+pNnu1PuSJ232ezRDKLi16gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JVgNv+Vc; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53b34ed38easo2279038e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 11:43:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731699708; x=1732304508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
-        b=V3Eztt1GU5sGkaAu+0hIjjMiWDrFZguJSTyhXACLs+LDVYKqTr2ont3IUaMFRH6IHB
-         0PNzqTwCvdo4EzhFX7Lz9mfj2y1aTTHbcKozAx3AlUz5Bgyeasndcu0IsfIUgwJ4rVeF
-         gRr14a1yZxI9REaRvEVD3wHLrnU+MGlLI1GZR7CKQQxIz8iBTJfsCoegDh0DNK+Eg3Ie
-         D9neFNnThzrKo84HQzT6S2XaKXCQF2DUsbn8pwzMp8R9a1S/5yPrMlVAEgTEMU4d0W3P
-         jl8JIguQPOQKKrhFTIR+DDNvpzqvUKp+0yhShQ65rwf1ijQZ9LIfsBzH0bMdgWKiXOhz
-         AaVQ==
+        d=linux-foundation.org; s=google; t=1731699810; x=1732304610; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8q/u2kGW54Efg3y1/zjzLgFIuit0NCZFXIw/u2X2600=;
+        b=JVgNv+VcPWpsmL/203WeCMzg0haDxsPlTrvHh/QJMd67/Od1UDyL+KZKS/xGmUhmx4
+         Wo0JQB9UCPgic5Uz9UcMRHkUx483S3XN8rGki+7VAAmHbDas/wTrO/ebTZIvHxLT93cy
+         LAM8I46c1NtNDvNfua6kuia8y4Al3I6mzBSx0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731699708; x=1732304508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
-        b=S7xMu3ufqWt4hiL57n8XOYXSlmMZ3aeZ15qsz73jOgDoraosvhT8BMK+zvpogCpkj7
-         wG7yiSgxJjHu3lOkbM0CiDEG2ofX2TDcy1P+vvphlHHBs/2apuVF+Mc4lh+d01dRdVTf
-         c5GMlo0wIV4XE2m9YyMyYYGwR9h9XeDMApPm/BYRm6kUJ2RgJOXq85ftS0/OB45+qAs4
-         WH6Fqp/s05U5wS1Aaz7FWlZWEGs1syBWmjTJ0JGk9BzTI6SIbNatCBgZR7epuL+VNUl7
-         aUZ0I0dTe559D1vpg/WZeTc/pjaWi3dBFQ61ndZoVkQvBF9LdmELBYr//rRYlJgoBlLU
-         crOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUztC56waOTJ0rXottSRHRPXKjVfdDiFu63nu+AlFq06+iA+/93wVLhrf0txRmgDsvcQD8yOvI1AJN6K2SVfMjxFQu6adyG@vger.kernel.org, AJvYcCVNeAykylK1vGcWCDqQ8KoG3VBZXcB8jRgdwYIYn0iRILCzc0cwPKMng8x8q/vnp+11BrMKsB2hflZfTo4w@vger.kernel.org, AJvYcCWE/905eFDJiTAMXkX8zHklyu/zAWICPA/PVqBhlYeGK+DUJV0tMYr4eWWSu7yb9P6eVkcI3r687OUgh08XUw==@vger.kernel.org, AJvYcCXCnI5oKWH5ExIBFIdLWlUUJrZKyxzn+2x93BTQ4rS8u2KqBjDqmpphdBw7gz0Q3N6WNsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZa2//VFSA2l1WVvMBj3PM9RyiQuvSMA0g1XU24oYF6GoUFZ6f
-	gHZyfmEgcqZeg1/YMtJBdtmA79Cq6DxvYxy3JdeDafILduzkAswubPdeOPTD3FD4BhPc+QnbXqU
-	+h4RaPfigFNS+mn7dAUG+czvImuM=
-X-Google-Smtp-Source: AGHT+IGHWSINqizwBrIJZlSoKrrg7DDQwkttX3kAOSa+kF7ZXNbLwGYJTiHnJ0AB6OJJOAogaGxA3sd8WRNWsXBj4wU=
-X-Received: by 2002:a5d:47a4:0:b0:37d:4e74:684 with SMTP id
- ffacd0b85a97d-38225aa59f8mr3079318f8f.52.1731699707797; Fri, 15 Nov 2024
- 11:41:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731699810; x=1732304610;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8q/u2kGW54Efg3y1/zjzLgFIuit0NCZFXIw/u2X2600=;
+        b=cCCjZQ3pEqGQBstVrHdNlxWnDxaDueUswDseeu09Io/91p7ZHAwwQ4CJkkIhXAhEa/
+         WZiWGAmbDh62mtKicGQONrG0jCVSwQlVyxakjDA9OLHsxGP2UQrFXu7Wn3LpomNSQCid
+         n3bOwatf6DQU2v2B1T5TgoBmpr6e11n9LIJu57TaKqlJ3B5BF4oAs77JUMLN+DLx/yRs
+         +WgUkonwDOfFzimKE3oeI1/T9KVWse26/W3j4kxlRDf/l//T2ChiaRCc23e5IPk5gkxe
+         V/InOryJf+NLbIcyU6rK5m3JDCXfrB2Oe3uxwaDR5C8SAE8hZfhbEIIDq4IRvrDFWv+g
+         LTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuQW89YhJRbnJJbeY0yl6bJhWKyAkZgzvwevBQwrQoO7CGb+0Gycd7cMjzqU9EDnxZlwqLZHeumwdhWV1+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfSZGweSqGRRJxuPk112NB1pyNLngtvHXVQwjsjw6Dcd1J7VoT
+	JiOS9Z3Qx+AyaqPcvKpaMHnRFJiFlTB5bvcKxCxrehzcuBAUJiiLalFo2F9jAnxPKegWDPoHscu
+	MxJc=
+X-Google-Smtp-Source: AGHT+IG0JJksq967c8RBSmEP/z4xMsCDTtxRKsgH4WWczNsUYm9rFahYWQPDC+SRQ5P8nCvyxNhdAg==
+X-Received: by 2002:a05:6512:2252:b0:53d:a0f7:26e6 with SMTP id 2adb3069b0e04-53dab2a0753mr1846253e87.15.1731699809850;
+        Fri, 15 Nov 2024 11:43:29 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb59cesm1838950a12.50.2024.11.15.11.43.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 11:43:27 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so371687566b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 11:43:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXzmGGy5iLFlPhvSlFSUaiEA9YkwslbICcICudiRdq7EX1LV5qmAQDRVY/CU2D03GF2IG9ZvEG+oYhaKQx4@vger.kernel.org
+X-Received: by 2002:a17:906:f589:b0:a9a:2a56:91f with SMTP id
+ a640c23a62f3a-aa4833f685cmr343442266b.2.1731699807210; Fri, 15 Nov 2024
+ 11:43:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
- <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
- <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
- <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
-In-Reply-To: <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 15 Nov 2024 11:41:36 -0800
-Message-ID: <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
+References: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+ <Zds8T9O4AYAmdS9d@casper.infradead.org> <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+ <Zduto30LUEqIHg4h@casper.infradead.org> <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
+ <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
+ <Zdv8dujdOg0dD53k@duke.home> <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com> <ZkNQiWpTOZDMp3kS@bombadil.infradead.org>
+In-Reply-To: <ZkNQiWpTOZDMp3kS@bombadil.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 15 Nov 2024 11:43:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgfgdhfe=Dw_Tg=LgSd+FXzsikg3-+cH5uP_LoZGJoU0Q@mail.gmail.com>
+Message-ID: <CAHk-=wgfgdhfe=Dw_Tg=LgSd+FXzsikg3-+cH5uP_LoZGJoU0Q@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Al Viro <viro@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: multipart/mixed; boundary="000000000000de0ba40626f8c7b2"
+
+--000000000000de0ba40626f8c7b2
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 11:01=E2=80=AFPM Song Liu <songliubraving@meta.com>=
- wrote:
+I'm coming back to this ancient discussion, because I've actually been
+running that odd small-reads patch on my machine since February,
+because it's been in my random pile of "local test patches".
+
+I had to rebase the patch because it conflicted with a recent fix, and
+as part of rebasing it I looked at it again.
+
+And I did find that the "do small reads entirely under RCU" didn't
+test for one condition that filemap_get_read_batch() checked for: the
+xa_is_sibling() check.
+
+So...
+
+On Tue, 14 May 2024 at 04:52, Luis Chamberlain <mcgrof@kernel.org> wrote:
 >
-> >
-> > I think bpf-lsm hook fires before fanotify, so bpf-lsm prog
-> > implementing some security policy has to decide right
-> > at the moment what to do with, say, security_file_open().
-> > fanotify with or without bpf fastpath is too late.
+> On Mon, Feb 26, 2024 at 02:46:56PM -0800, Linus Torvalds wrote:
+> > I really haven't tested this AT ALL. I'm much too scared. But I don't
+> > actually hate how the code looks nearly as much as I *thought* I'd
+> > hate it.
 >
-> Actually, fanotify in permission mode can stop a file open.
-
-The proposed patch 1 did:
-
-+/* Return value of fp_handler */
-+enum fanotify_fastpath_return {
-+ /* The event should be sent to user space */
-+ FAN_FP_RET_SEND_TO_USERSPACE =3D 0,
-+ /* The event should NOT be sent to user space */
-+ FAN_FP_RET_SKIP_EVENT =3D 1,
-+};
-
-It looked like a read-only notification to user space
-where bpf prog is merely a filter.
-
-> In current upstream code, fsnotify hook fsnotify_open_perm
-> is actually part of security_file_open(). It will be moved
-> to do_dentry_open(), right after security_file_open(). This
-> move is done by 1cda52f1b461 in linux-next.
-
-Separating fsnotify from LSM makes sense.
-
-> In practice, we are not likely to use BPF LSM and fanotify
-> on the same hook at the same time. Instead, we can use
-> BPF LSM hooks to gather information and use fanotify to
-> make allow/deny decision, or vice versa.
-
-Pick one.
-If the proposal is changing to let fsnotify-bpf prog to deny
-file_open then it's a completely different discussion.
-
-In such a case make it clear upfront that fsnotify will
-rely on CONFIG_FANOTIFY_ACCESS_PERMISSIONS and
-bpf-lsm part of file access will not be used,
-since interaction of two callbacks at file_open makes little sense.
-
-> > In general fanotify is not for security. It's notifying
-> > user space of events that already happened, so I don't see
-> > how these two can be combined.
+> Thanks for this, obviously those interested in this will have to test
+> this and fix the below issues. I've tested for regressions just against
+> xfs on 4k reflink profile and detected only two failures, generic/095
+> fails with a failure rate of about 1/2 or so:
 >
-> fanotify is actually used by AntiVirus softwares. For
-> example, CalmAV (https://www.clamav.net/) uses fanotify
-> for its Linux version (it also supports Window and MacOS).
+>   * generic/095
+>   * generic/741
 
-It's relying on user space to send back FANOTIFY_PERM_EVENTS ?
+Would you mind seeing if that ancient patch with the xa_is_sibling()
+check added, and rebased to be on top of current -git maybe works for
+you now?
 
-fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+I still haven't "really" tested this in any real way, except for
+running all my normal desktop loads on it. Which isn't really saying
+much. I compile kernels, and read email. That's pretty much all I do.
+So no fstests or anything like that.
 
-is a pretty long path to call bpf prog and
-preparing a giant 'struct fanotify_fastpath_event'
-is not going to fast either.
+But it *has* worked in that capacity for 8+ months now. So it's not
+entirely broken, but the fact that it failed fstests for you clearly
+means that *something* was subtly but horribly broken in the original
+version.
 
-If we want to accelerate that with bpf it needs to be done
-sooner with negligible overhead.
+               Linus
 
->
-> I guess I didn't state the motivation clearly. So let me
-> try it now.
->
-> Tracing is a critical part of a security solution. With
-> LSM, blocking an operation is straightforward. However,
-> knowing which operation should be blocked is not always
-> easy. Also, security hooks (LSM or fanotify) sit in the
-> critical path of user requests. It is very important to
-> optimize the latency of a security hook. Ideally, the
-> tracing logic should gather all the information ahead
-> of time, and make the actual hook fast.
->
-> For example, if security_file_open() only needs to read
-> a flag from inode local storage, the overhead is minimal
-> and predictable. If security_file_open() has to walk the
-> dentry tree, or call d_path(), the overhead will be
-> much higher. fanotify_file_perm() provides another
-> level of optimization over security_file_open(). If a
-> file is not being monitored, fanotify will not generate
-> the event.
+--000000000000de0ba40626f8c7b2
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3j5bthr0>
+X-Attachment-Id: f_m3j5bthr0
 
-I agree with motivation, but don't see this in the patches.
-The overhead to call into bpf prog is big.
-Even if prog does nothing it's still going to be slower.
-
-> Security solutions hold higher bars for the tracing logic:
->
-> - It needs to be accurate, as false positives and false
->   negatives can be very annoying and/or harmful.
-> - It needs to be efficient, as security daemons run 24/7.
->
-> Given these requirements of security solutions, I believe
-> it is important to optimize tracing logic as much as
-> possible. And BPF based fanotify fastpath handler can
-> bring non-trivials benefit to BPF based security solutions.
-
-Doing everything in the kernel is certainly faster than
-going back and forth to user space,
-but bpf-lsm should be able to do the same already.
-
-Without patch 1 and only patches 4,5 that add few kfuncs,
-bpf-lsm prog will be able to remember subtree dentry and
-do the same is_subdir() to deny.
-The patch 7 stays pretty much as-is. All in bpf-lsm.
-Close to zero overhead without long chain of fsnotify callbacks.
-
-> fanotify also has a feature that LSM doesn't provide.
-> When a file is accessed, user space daemon can get a
-> fd on this file from fanotify. OTOH, LSM can only send
-> an ino or a path to user space, which is not always
-> reliable.
-
-That sounds useful, but we're mixing too many things.
-If user space cares about fd it will be using the existing
-mechanism with all accompanied overhead. fsnotify-bpf can
-barely accelerate anything, since user space makes
-ultimate decisions.
-If user space is not in the driving seat then existing bpf-lsm
-plus few kfuncs to remember dentry and call is_subdir()
-will do the job and no need for patch 1.
+RnJvbSAyZGFmZDE1Y2ViMDBhNDFiOWY2YjM3YzFkODQ2NjIwMzliYTJkMTQwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+CkRhdGU6IE1vbiwgMjYgRmViIDIwMjQgMTU6MTg6NDQgLTA4MDAKU3ViamVjdDog
+W1BBVENIXSBtbS9maWxlbWFwOiBkbyBzbWFsbCByZWFkcyBpbiBSQ1UtbW9kZSByZWFkIHdpdGhv
+dXQgcmVmY291bnRzCgpIYWNrZXR5IGhhY2sgaGFjayBjb25jZXB0IGZyb20gcmVwb3J0IGJ5IFdp
+bGx5LgoKTW9tbXksIEknbSBzY2FyZWQuCgpMaW5rOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9h
+bGwvWmR1dG8zMExVRXFJSGc0aEBjYXNwZXIuaW5mcmFkZWFkLm9yZy8KTm90LXlldC1zaWduZWQt
+b2ZmLWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRhdGlvbi5vcmc+Ci0t
+LQogbW0vZmlsZW1hcC5jIHwgMTE3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKy0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTA3IGluc2VydGlvbnMo
+KyksIDEwIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL21tL2ZpbGVtYXAuYyBiL21tL2ZpbGVt
+YXAuYwppbmRleCA1NmZhNDMxYzUyYWYuLjkxZGQwOWM0M2FmNSAxMDA2NDQKLS0tIGEvbW0vZmls
+ZW1hcC5jCisrKyBiL21tL2ZpbGVtYXAuYwpAQCAtMjU5NCw2ICsyNTk0LDg1IEBAIHN0YXRpYyBp
+bmxpbmUgYm9vbCBwb3Nfc2FtZV9mb2xpbyhsb2ZmX3QgcG9zMSwgbG9mZl90IHBvczIsIHN0cnVj
+dCBmb2xpbyAqZm9saW8pCiAJcmV0dXJuIChwb3MxID4+IHNoaWZ0ID09IHBvczIgPj4gc2hpZnQp
+OwogfQogCisvKgorICogSSBjYW4ndCBiZSBib3RoZXJlZCB0byBjYXJlIGFib3V0IEhJR0hNRU0g
+Zm9yIHRoZSBmYXN0IHJlYWQgY2FzZQorICovCisjaWZkZWYgQ09ORklHX0hJR0hNRU0KKyNkZWZp
+bmUgZmlsZW1hcF9mYXN0X3JlYWQobWFwcGluZywgcG9zLCBidWZmZXIsIHNpemUpIDAKKyNlbHNl
+CisKKy8qCisgKiBDYWxsZWQgdW5kZXIgUkNVIHdpdGggc2l6ZSBsaW1pdGVkIHRvIHRoZSBmaWxl
+IHNpemUgYW5kIG9uZSBwYWdlCisgKi8KK3N0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBmaWxl
+bWFwX2ZvbGlvX2NvcHlfcmN1KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBsb2ZmX3Qg
+cG9zLCBjaGFyICpidWZmZXIsIHNpemVfdCBzaXplKQoreworCVhBX1NUQVRFKHhhcywgJm1hcHBp
+bmctPmlfcGFnZXMsIHBvcyA+PiBQQUdFX1NISUZUKTsKKwlzdHJ1Y3QgZm9saW8gKmZvbGlvOwor
+CXNpemVfdCBvZmZzZXQ7CisKKwl4YXNfcmVzZXQoJnhhcyk7CisJZm9saW8gPSB4YXNfbG9hZCgm
+eGFzKTsKKwlpZiAoeGFzX3JldHJ5KCZ4YXMsIGZvbGlvKSkKKwkJcmV0dXJuIDA7CisKKwlpZiAo
+IWZvbGlvIHx8IHhhX2lzX3ZhbHVlKGZvbGlvKSB8fCB4YV9pc19zaWJsaW5nKGZvbGlvKSkKKwkJ
+cmV0dXJuIDA7CisKKwlpZiAoIWZvbGlvX3Rlc3RfdXB0b2RhdGUoZm9saW8pKQorCQlyZXR1cm4g
+MDsKKworCS8qIE5vIGZhc3QtY2FzZSBpZiB3ZSBhcmUgc3VwcG9zZWQgdG8gc3RhcnQgcmVhZGFo
+ZWFkICovCisJaWYgKGZvbGlvX3Rlc3RfcmVhZGFoZWFkKGZvbGlvKSkKKwkJcmV0dXJuIDA7CisJ
+LyogLi4gb3IgbWFyayBpdCBhY2Nlc3NlZCAqLworCWlmICghZm9saW9fdGVzdF9yZWZlcmVuY2Vk
+KGZvbGlvKSkKKwkJcmV0dXJuIDA7CisKKwkvKiBEbyB0aGUgZGF0YSBjb3B5ICovCisJb2Zmc2V0
+ID0gcG9zICYgKGZvbGlvX3NpemUoZm9saW8pIC0gMSk7CisJbWVtY3B5KGJ1ZmZlciwgZm9saW9f
+YWRkcmVzcyhmb2xpbykgKyBvZmZzZXQsIHNpemUpOworCisJLyogV2Ugc2hvdWxkIHByb2JhYmx5
+IGRvIHNvbWUgc2lsbHkgbWVtb3J5IGJhcnJpZXIgaGVyZSAqLworCWlmICh1bmxpa2VseShmb2xp
+byAhPSB4YXNfcmVsb2FkKCZ4YXMpKSkKKwkJcmV0dXJuIDA7CisKKwlyZXR1cm4gc2l6ZTsKK30K
+KworLyoKKyAqIElmZiB3ZSBjYW4gY29tcGxldGUgdGhlIHJlYWQgY29tcGxldGVseSBpbiBvbmUg
+YXRvbWljIGdvIHVuZGVyIFJDVSwKKyAqIGRvIHNvIGhlcmUuIE90aGVyd2lzZSByZXR1cm4gMCAo
+bm8gcGFydGlhbCByZWFkcywgcGxlYXNlIC0gdGhpcyBpcworICogcHVyZWx5IGZvciB0aGUgdHJp
+dmlhbCBmYXN0IGNhc2UpLgorICovCitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgZmlsZW1h
+cF9mYXN0X3JlYWQoc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsIGxvZmZfdCBwb3MsIGNo
+YXIgKmJ1ZmZlciwgc2l6ZV90IHNpemUpCit7CisJc3RydWN0IGlub2RlICppbm9kZTsKKwlsb2Zm
+X3QgZmlsZV9zaXplOworCXVuc2lnbmVkIGxvbmcgcGdvZmY7CisKKwkvKiBEb24ndCBldmVuIHRy
+eSBmb3IgcGFnZS1jcm9zc2VycyAqLworCXBnb2ZmID0gcG9zICYgflBBR0VfTUFTSzsKKwlpZiAo
+cGdvZmYgKyBzaXplID4gUEFHRV9TSVpFKQorCQlyZXR1cm4gMDsKKworCS8qIExpbWl0IGl0IHRv
+IHRoZSBmaWxlIHNpemUgKi8KKwlpbm9kZSA9IG1hcHBpbmctPmhvc3Q7CisJZmlsZV9zaXplID0g
+aV9zaXplX3JlYWQoaW5vZGUpOworCWlmICh1bmxpa2VseShwb3MgPj0gZmlsZV9zaXplKSkKKwkJ
+cmV0dXJuIDA7CisJZmlsZV9zaXplIC09IHBvczsKKwlpZiAoZmlsZV9zaXplIDwgc2l6ZSkKKwkJ
+c2l6ZSA9IGZpbGVfc2l6ZTsKKworCS8qIExldCdzIHNlZSBpZiB3ZSBjYW4ganVzdCBkbyB0aGUg
+cmVhZCB1bmRlciBSQ1UgKi8KKwlyY3VfcmVhZF9sb2NrKCk7CisJc2l6ZSA9IGZpbGVtYXBfZm9s
+aW9fY29weV9yY3UobWFwcGluZywgcG9zLCBidWZmZXIsIHNpemUpOworCXJjdV9yZWFkX3VubG9j
+aygpOworCisJcmV0dXJuIHNpemU7Cit9CisjZW5kaWYgLyogIUhJR0hNRU0gKi8KKwogLyoqCiAg
+KiBmaWxlbWFwX3JlYWQgLSBSZWFkIGRhdGEgZnJvbSB0aGUgcGFnZSBjYWNoZS4KICAqIEBpb2Ni
+OiBUaGUgaW9jYiB0byByZWFkLgpAQCAtMjYxNCw3ICsyNjkzLDEwIEBAIHNzaXplX3QgZmlsZW1h
+cF9yZWFkKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICppdGVyLAogCXN0cnVj
+dCBmaWxlX3JhX3N0YXRlICpyYSA9ICZmaWxwLT5mX3JhOwogCXN0cnVjdCBhZGRyZXNzX3NwYWNl
+ICptYXBwaW5nID0gZmlscC0+Zl9tYXBwaW5nOwogCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBtYXBw
+aW5nLT5ob3N0OwotCXN0cnVjdCBmb2xpb19iYXRjaCBmYmF0Y2g7CisJdW5pb24geworCQlzdHJ1
+Y3QgZm9saW9fYmF0Y2ggZmJhdGNoOworCQlfX0RFQ0xBUkVfRkxFWF9BUlJBWShjaGFyLCBidWZm
+ZXIpOworCX0gYXJlYTsKIAlpbnQgaSwgZXJyb3IgPSAwOwogCWJvb2wgd3JpdGFibHlfbWFwcGVk
+OwogCWxvZmZfdCBpc2l6ZSwgZW5kX29mZnNldDsKQEAgLTI2MjYsNyArMjcwOCwyMiBAQCBzc2l6
+ZV90IGZpbGVtYXBfcmVhZChzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqaXRl
+ciwKIAkJcmV0dXJuIDA7CiAKIAlpb3ZfaXRlcl90cnVuY2F0ZShpdGVyLCBpbm9kZS0+aV9zYi0+
+c19tYXhieXRlcyAtIGlvY2ItPmtpX3Bvcyk7Ci0JZm9saW9fYmF0Y2hfaW5pdCgmZmJhdGNoKTsK
+KworCWlmIChpb3ZfaXRlcl9jb3VudChpdGVyKSA8PSBzaXplb2YoYXJlYSkpIHsKKwkJdW5zaWdu
+ZWQgbG9uZyBjb3VudCA9IGlvdl9pdGVyX2NvdW50KGl0ZXIpOworCisJCWNvdW50ID0gZmlsZW1h
+cF9mYXN0X3JlYWQobWFwcGluZywgaW9jYi0+a2lfcG9zLCBhcmVhLmJ1ZmZlciwgY291bnQpOwor
+CQlpZiAoY291bnQpIHsKKwkJCXNpemVfdCBjb3BpZWQgPSBjb3B5X3RvX2l0ZXIoYXJlYS5idWZm
+ZXIsIGNvdW50LCBpdGVyKTsKKwkJCWlmICh1bmxpa2VseSghY29waWVkKSkKKwkJCQlyZXR1cm4g
+YWxyZWFkeV9yZWFkID8gYWxyZWFkeV9yZWFkIDogLUVGQVVMVDsKKwkJCXJhLT5wcmV2X3BvcyA9
+IGlvY2ItPmtpX3BvcyArPSBjb3BpZWQ7CisJCQlmaWxlX2FjY2Vzc2VkKGZpbHApOworCQkJcmV0
+dXJuIGNvcGllZCArIGFscmVhZHlfcmVhZDsKKwkJfQorCX0KKworCWZvbGlvX2JhdGNoX2luaXQo
+JmFyZWEuZmJhdGNoKTsKIAogCWRvIHsKIAkJY29uZF9yZXNjaGVkKCk7CkBAIC0yNjQyLDcgKzI3
+MzksNyBAQCBzc2l6ZV90IGZpbGVtYXBfcmVhZChzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBp
+b3ZfaXRlciAqaXRlciwKIAkJaWYgKHVubGlrZWx5KGlvY2ItPmtpX3BvcyA+PSBpX3NpemVfcmVh
+ZChpbm9kZSkpKQogCQkJYnJlYWs7CiAKLQkJZXJyb3IgPSBmaWxlbWFwX2dldF9wYWdlcyhpb2Ni
+LCBpdGVyLT5jb3VudCwgJmZiYXRjaCwgZmFsc2UpOworCQllcnJvciA9IGZpbGVtYXBfZ2V0X3Bh
+Z2VzKGlvY2IsIGl0ZXItPmNvdW50LCAmYXJlYS5mYmF0Y2gsIGZhbHNlKTsKIAkJaWYgKGVycm9y
+IDwgMCkKIAkJCWJyZWFrOwogCkBAIC0yNjcwLDExICsyNzY3LDExIEBAIHNzaXplX3QgZmlsZW1h
+cF9yZWFkKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICppdGVyLAogCQkgKiBt
+YXJrIGl0IGFzIGFjY2Vzc2VkIHRoZSBmaXJzdCB0aW1lLgogCQkgKi8KIAkJaWYgKCFwb3Nfc2Ft
+ZV9mb2xpbyhpb2NiLT5raV9wb3MsIGxhc3RfcG9zIC0gMSwKLQkJCQkgICAgZmJhdGNoLmZvbGlv
+c1swXSkpCi0JCQlmb2xpb19tYXJrX2FjY2Vzc2VkKGZiYXRjaC5mb2xpb3NbMF0pOworCQkJCSAg
+ICBhcmVhLmZiYXRjaC5mb2xpb3NbMF0pKQorCQkJZm9saW9fbWFya19hY2Nlc3NlZChhcmVhLmZi
+YXRjaC5mb2xpb3NbMF0pOwogCi0JCWZvciAoaSA9IDA7IGkgPCBmb2xpb19iYXRjaF9jb3VudCgm
+ZmJhdGNoKTsgaSsrKSB7Ci0JCQlzdHJ1Y3QgZm9saW8gKmZvbGlvID0gZmJhdGNoLmZvbGlvc1tp
+XTsKKwkJZm9yIChpID0gMDsgaSA8IGZvbGlvX2JhdGNoX2NvdW50KCZhcmVhLmZiYXRjaCk7IGkr
+KykgeworCQkJc3RydWN0IGZvbGlvICpmb2xpbyA9IGFyZWEuZmJhdGNoLmZvbGlvc1tpXTsKIAkJ
+CXNpemVfdCBmc2l6ZSA9IGZvbGlvX3NpemUoZm9saW8pOwogCQkJc2l6ZV90IG9mZnNldCA9IGlv
+Y2ItPmtpX3BvcyAmIChmc2l6ZSAtIDEpOwogCQkJc2l6ZV90IGJ5dGVzID0gbWluX3QobG9mZl90
+LCBlbmRfb2Zmc2V0IC0gaW9jYi0+a2lfcG9zLApAQCAtMjcwNSw5ICsyODAyLDkgQEAgc3NpemVf
+dCBmaWxlbWFwX3JlYWQoc3RydWN0IGtpb2NiICppb2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKml0ZXIs
+CiAJCQl9CiAJCX0KIHB1dF9mb2xpb3M6Ci0JCWZvciAoaSA9IDA7IGkgPCBmb2xpb19iYXRjaF9j
+b3VudCgmZmJhdGNoKTsgaSsrKQotCQkJZm9saW9fcHV0KGZiYXRjaC5mb2xpb3NbaV0pOwotCQlm
+b2xpb19iYXRjaF9pbml0KCZmYmF0Y2gpOworCQlmb3IgKGkgPSAwOyBpIDwgZm9saW9fYmF0Y2hf
+Y291bnQoJmFyZWEuZmJhdGNoKTsgaSsrKQorCQkJZm9saW9fcHV0KGFyZWEuZmJhdGNoLmZvbGlv
+c1tpXSk7CisJCWZvbGlvX2JhdGNoX2luaXQoJmFyZWEuZmJhdGNoKTsKIAl9IHdoaWxlIChpb3Zf
+aXRlcl9jb3VudChpdGVyKSAmJiBpb2NiLT5raV9wb3MgPCBpc2l6ZSAmJiAhZXJyb3IpOwogCiAJ
+ZmlsZV9hY2Nlc3NlZChmaWxwKTsK
+--000000000000de0ba40626f8c7b2--
 
