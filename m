@@ -1,189 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-34985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E466C9CF597
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 21:17:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF559CF625
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 21:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A924288141
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72171F21CC0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A461D88D7;
-	Fri, 15 Nov 2024 20:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E631E22ED;
+	Fri, 15 Nov 2024 20:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NbRrOMCd"
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="QeHMhT4Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10EE1DA23
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 20:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313621B6D1A;
+	Fri, 15 Nov 2024 20:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731701836; cv=none; b=O7yS/+/ViglZiC1L/5LPRzn1W/1yFWzAp7NIG3MvjrMPcmhyzTQFTLvARgdsSjL8e9z+CIEg0zmS5OXIsbuY2MuMXEypNa3RoHmoeUsrmS6vNVnIoPUr2R3IDTgb54aiOaH4pBFJVd9s/BGhfGJ3LXcRhvTE/1Tt7yEmEnr7f5k=
+	t=1731702731; cv=none; b=WW8Bq5ox8XMAvkL8eyHZFm/DGwMVAu9V1PCeTeHzW1/vbAYMKKszeTOTAx8ei7Ok+ha+zWLBEOWFrUK5dt100l9SxBhTMBBcci6gNx0J8ZJGEvX/zqXGr9u8O0njcBNgfdLX/eisEApKcQdTufeAtx0pEmEOYKpP9+L4lgizN7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731701836; c=relaxed/simple;
-	bh=FnoQgHkv4aT0MDGGYligilSySN601w/zPbya0C3aYyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h14QhhF8DErFQ8d58OT2aPxZ4C8S7Id2uF2xpf8K4YNhCUdk03b2C5V9dOMfRpli1PDNqrURcK0/k9RcRNivgG4nYHcfUnY3Tgis07XWu0LA3f2btG0IrN6zOz63UiL4WPlCEcRc3UPy5D6bRulJ5ev9mNTkJqFLIn7IhTNg5fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NbRrOMCd; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460ab1bc2aeso52401cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 12:17:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731701834; x=1732306634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qh0I7Vu3/qZRwEeJS0ggWs9HsmxO9itGmPQ36bmBqHs=;
-        b=NbRrOMCdLUZm2VDdE8M1F1o/tuOV9q4DkNXemgwFNst0Gcgtb2YFZjWqU6EeDbBsyD
-         Qwm9HE+Ju0lGycfplBHVj5PKxVsDxwwPksFhxtNhCUrKjFk0KPW3pTF4kmzbmawOwHmz
-         jLWycCI2t5t31ykgqdMvr0rgzNZkMYaYbLddAytLO/AuFoHlmzL7sbnp6RHOeJu0oK8g
-         W52YfTBNjjMgvTTEJsIi7XrHmpyS0kJ/28rxYHQUUK/aPosFuQiy9hX2D8KHSfREP1/0
-         G0qTtjSM1A9OjT8IluTwLv9sAwFtt742VJ+ZLv6cBhHPm5LUvAbA0fzDivbUI187lema
-         6gfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731701834; x=1732306634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qh0I7Vu3/qZRwEeJS0ggWs9HsmxO9itGmPQ36bmBqHs=;
-        b=dxQJhDCCM7mKqUhRdWlahXITR4R3RQytFc1MFIXao9UZ00wVrUVGfAfAxUTypMNC6A
-         dYFAoUDn62PHy9swkBs9jOPfMTtilwMQ9ogIYfk4MSzXDp/sRG+bpRcv50POcJmdq7ot
-         9cs9oN/+LhLIFh45tqDlAQHxNPqY8woN15Hd1urGB6uAjWfNKqEXWTKllXRg6ppsWlbw
-         DblOGqH6yHYupOwtslYnVu3mPueKJJwVC898B+7GKcgkWxtllPBRgct7YMt3fhIRUsFb
-         +ii6zmhK/fxjNTAtQCgx0x83qKPRNAaAZEkoqZUNo6Azf4Epx8FK2YoVdul94HbJ1vGP
-         ac7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFnI1i3JM2wWJXM48lnLzKuTjL1TWCu/8Ic9dC47vJ3xxGHcFqRkbEN93m2WgDVfVVG3RSwVd+DD9IGtCz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFtwt6g5KEnH6oJHaGDopuSB3Qpuij2NAPo4qObl3B3Zjur/fI
-	3RfYRfu+Phn431TwrpqkhoHuTiJ3P2D5tH+7ApMD0YqJMYI1HWxzFjeAXiuMRwRI/BMxbyYj57T
-	uMZ4agJ23VWCJCV9et1Bl2hhfELM=
-X-Google-Smtp-Source: AGHT+IFo9bs/NXX6VgmwCQgjqu7sNaOLsuEMw29hSI02h8Mwvlmx8v9LUjg4r/mt7fhnF07DLJeATG5r/Flm4If81tU=
-X-Received: by 2002:a05:622a:40a:b0:460:9946:56af with SMTP id
- d75a77b69052e-46363e972b7mr55439681cf.44.1731701833679; Fri, 15 Nov 2024
- 12:17:13 -0800 (PST)
+	s=arc-20240116; t=1731702731; c=relaxed/simple;
+	bh=aW0kZXCjwMJkAvO9eGrMTuU564xR45DjHMlx+V4e670=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hyjlswXoYki45WxyZc8QkAs3T86Qh1/ud60S6pDMGHznzbbOxKnb6uuMHaR5JdYb4kLO6lMJjLUpyKUOGg6JUcwuCQ57I/KYZgM20M0aDI4+BOzS2Fpq6lpM2sMAJTs53CzzEt90yZMXQ4JC2fLrxwaNGF3ST0HIgQNv3CnBfh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=QeHMhT4Z; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1731702725; bh=aW0kZXCjwMJkAvO9eGrMTuU564xR45DjHMlx+V4e670=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QeHMhT4Zs6fgL1xTGbR5gC4hQqUmKKeyRJFxO6CGGf7WsIf7m4fxhFOcKeoK0KrMa
+	 HWuLBlIm2hXivW4vyOHHsZ2R8gfLbGyax+8HF4AMY+G+vp0ly7uX4qMLmxVMNdIfsw
+	 GN3/MV1yHiHGsVhiAly54eawmHiD1EC1TV5rvt3zKe3oSvjRgqbiMGzox+AgYKiICK
+	 p/pa8VsdyE7qHc4SiqawWHBxzK89GtQsK12xNh+Y3ZriJNsJ/LyH3dI9kHt7bau2uJ
+	 VlIJ5dQncKjSE9lG+ShI7oYB7LmpwL1zbScAmtVxtPMd1SQxtKSJ7zUavRnC1kWV+/
+	 j0lhNwUHsLyQKY0k8s/okKEBXRAoP2rr0D09L0WvH+hO+0ERvYy/SWvKzYsPFz8VX8
+	 s/mKq4LASMQ8xdNuxbwaMkuJ12rn8YpFb1iSSd8giG5FP/5jm5c918mouNSkD2/91Q
+	 OcLS182MwxzqpojOVoINTZ5JXbG/tl5qMcKIfPKlvMCAy0myE6EC3Q5FZKzvpXhZyX
+	 i8O8Q47umz52anLbdpycCdz7+f5pd4+Egishgq9vRBTJCK4CKl8BX1nIYlVJh1IYCT
+	 D6tQyiAKznHrv/y2Bjui8nj+WkPgHsSkEyGN7GNJEtc1Z09bFtiJg0VUioI3mV8Eq8
+	 UFg72HmB4pDw9/qKIJBxNRiE=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id D88A216029D;
+	Fri, 15 Nov 2024 21:32:04 +0100 (CET)
+Message-ID: <17eb79fc-ccd9-4c85-bd23-e08380825c41@ijzerbout.nl>
+Date: Fri, 15 Nov 2024 21:32:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107235614.3637221-1-joannelkoong@gmail.com>
- <20241107235614.3637221-2-joannelkoong@gmail.com> <lbwgnktuip4jf5yqqgkgopddibulf5we6clmitt5mg3vff53zq@feyj77bk7pdt>
- <CAJnrk1ZOc3xwCk7bVTKBSAh7sf-_szoSW-brEVx8e09icYiDDQ@mail.gmail.com> <CAJnrk1YmwRaMFZHzfLiHfXmVHeHdKmyR2027YpwN+_LS91YS6g@mail.gmail.com>
-In-Reply-To: <CAJnrk1YmwRaMFZHzfLiHfXmVHeHdKmyR2027YpwN+_LS91YS6g@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 15 Nov 2024 12:17:02 -0800
-Message-ID: <CAJnrk1bkU4-ydnk8QatJP4=_VYta_wRh3-Z+1U3VxM=BE4h3Mg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] mm: add AS_WRITEBACK_MAY_BLOCK mapping flag
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 23/33] afs: Use netfslib for directories
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>, Steve French <smfrench@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Gao Xiang
+ <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241108173236.1382366-1-dhowells@redhat.com>
+ <20241108173236.1382366-24-dhowells@redhat.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241108173236.1382366-24-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 15, 2024 at 11:33=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
+Op 08-11-2024 om 18:32 schreef David Howells:
+> In the AFS ecosystem, directories are just a special type of file that is
+> downloaded and parsed locally.  Download is done by the same mechanism as
+> ordinary files and the data can be cached.  There is one important semantic
+> restriction on directories over files: the client must download the entire
+> directory in one go because, for example, the server could fabricate the
+> contents of the blob on the fly with each download and give a different
+> image each time.
 >
-> On Mon, Nov 11, 2024 at 1:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> >
-> > On Fri, Nov 8, 2024 at 4:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux=
-.dev> wrote:
-> > >
-> > > On Thu, Nov 07, 2024 at 03:56:09PM -0800, Joanne Koong wrote:
-> > > > Add a new mapping flag AS_WRITEBACK_MAY_BLOCK which filesystems may=
- set
-> > > > to indicate that writeback operations may block or take an indeterm=
-inate
-> > > > amount of time to complete. Extra caution should be taken when wait=
-ing
-> > > > on writeback for folios belonging to mappings where this flag is se=
-t.
-> > > >
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > ---
-> > > >  include/linux/pagemap.h | 11 +++++++++++
-> > > >  1 file changed, 11 insertions(+)
-> > > >
-> > > > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> > > > index 68a5f1ff3301..eb5a7837e142 100644
-> > > > --- a/include/linux/pagemap.h
-> > > > +++ b/include/linux/pagemap.h
-> > > > @@ -210,6 +210,7 @@ enum mapping_flags {
-> > > >       AS_STABLE_WRITES =3D 7,   /* must wait for writeback before m=
-odifying
-> > > >                                  folio contents */
-> > > >       AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access=
- to the mapping */
-> > > > +     AS_WRITEBACK_MAY_BLOCK =3D 9, /* Use caution when waiting on =
-writeback */
-> > >
-> > > To me 'may block' does not feel right. For example in reclaim code,
-> > > folio_wait_writeback() can get blocked and that is fine. However with
-> > > non-privileged fuse involved, there are security concerns. Somehow 'm=
-ay
-> > > block' does not convey that. Anyways, I am not really pushing back bu=
-t
-> > > I think there is a need for better name here.
-> >
-> > Ahh I see where this naming causes confusion - the "MAY_BLOCK" part
-> > could be interpreted in two ways: a) may block as in it's possible for
-> > the writeback to block and b) may block as in it's permissible/ok for
-> > the writeback to block. I intended "may block" to signify a) but
-> > you're right, it could be easily interpreted as b).
-> >
-> > I'll change this to AS_WRITEBACK_BLOCKING.
+> So that we can cache the directory download, switch AFS directory support
+> over to using the netfslib single-object API, thereby allowing directory
+> content to be stored in the local cache.
 >
-> Thinking about this some more, I think AS_WRITEBACK_ASYNC would be a
-> better name. (AS_WRITEBACK_BLOCKING might imply that the writeback
-> ->writepages() operation itself is blocking).
-
-Ugh, AS_WRITEBACK_ASYNC probably doesn't work either since NFS is also
-async. Okay, maybe "AS_WRITEBACK_INDETERMINATE" then? We can keep
-riffing on this, for v5 I'll submit it using
-AS_WRITEBACK_INDETERMINATE.
-
+> To make this work, the following changes are made:
 >
-> I'll make this change for v5.
+>   (1) A directory's contents are now stored in a folio_queue chain attached
+>       to the afs_vnode (inode) struct rather than its associated pagecache,
+>       though multipage folios are still used to hold the data.  The folio
+>       queue is discarded when the directory inode is evicted.
 >
-> Thanks,
-> Joanne
+>       This also helps with the phasing out of ITER_XARRAY.
 >
-> >
-> > Thanks,
-> > Joanne
-> >
-> > >
-> > > >       /* Bits 16-25 are used for FOLIO_ORDER */
-> > > >       AS_FOLIO_ORDER_BITS =3D 5,
-> > > >       AS_FOLIO_ORDER_MIN =3D 16,
-> > > > @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct=
- address_space *mapping)
-> > > >       return test_bit(AS_INACCESSIBLE, &mapping->flags);
-> > > >  }
-> > > >
-> > > > +static inline void mapping_set_writeback_may_block(struct address_=
-space *mapping)
-> > > > +{
-> > > > +     set_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-> > > > +}
-> > > > +
-> > > > +static inline bool mapping_writeback_may_block(struct address_spac=
-e *mapping)
-> > > > +{
-> > > > +     return test_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-> > > > +}
-> > > > +
-> > > >  static inline gfp_t mapping_gfp_mask(struct address_space * mappin=
-g)
-> > > >  {
-> > > >       return mapping->gfp_mask;
-> > > > --
-> > > > 2.43.5
-> > > >
+>   (2) Various directory operations are made to use and unuse the cache
+>       cookie.
+>
+>   (3) The content checking, content dumping and content iteration are now
+>       performed with a standard iov_iter iterator over the contents of the
+>       folio queue.
+>
+>   (4) Iteration and modification must be done with the vnode's validate_lock
+>       held.  In conjunction with (1), this means that the iteration can be
+>       done without the need to lock pages or take extra refs on them, unlike
+>       when accessing ->i_pages.
+>
+>   (5) Convert to using netfs_read_single() to read data.
+>
+>   (6) Provide a ->writepages() to call netfs_writeback_single() to save the
+>       data to the cache according to the VM's scheduling whilst holding the
+>       validate_lock read-locked as (4).
+>
+>   (7) Change local directory image editing functions:
+>
+>       (a) Provide a function to get a specific block by number from the
+>       	 folio_queue as we can no longer use the i_pages xarray to locate
+>       	 folios by index.  This uses a cursor to remember the current
+>       	 position as we need to iterate through the directory contents.
+>       	 The block is kmapped before being returned.
+>
+>       (b) Make the function in (a) extend the directory by an extra folio if
+>       	 we run out of space.
+>
+>       (c) Raise the check of the block free space counter, for those blocks
+>       	 that have one, higher in the function to eliminate a call to get a
+>       	 block.
+>
+>       (d) Remove the page unlocking and putting done during the editing
+>       	 loops.  This is no longer necessary as the folio_queue holds the
+>       	 references and the pages are no longer in the pagecache.
+>
+>       (e) Mark the inode dirty and pin the cache usage till writeback at the
+>       	 end of a successful edit.
+>
+>   (8) Don't set the large_folios flag on the inode as we do the allocation
+>       ourselves rather than the VM doing it automatically.
+>
+>   (9) Mark the inode as being a single object that isn't uploaded to the
+>       server.
+>
+> (10) Enable caching on directories.
+>
+> (11) Only set the upload key for writeback for regular files.
+>
+> Notes:
+>
+>   (*) We keep the ->release_folio(), ->invalidate_folio() and
+>       ->migrate_folio() ops as we set the mapping pointer on the folio.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-afs@lists.infradead.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>   fs/afs/dir.c               | 742 +++++++++++++++++++------------------
+>   fs/afs/dir_edit.c          | 183 ++++-----
+>   fs/afs/file.c              |   8 +
+>   fs/afs/inode.c             |  21 +-
+>   fs/afs/internal.h          |  16 +
+>   fs/afs/super.c             |   2 +
+>   fs/afs/write.c             |   4 +-
+>   include/trace/events/afs.h |   6 +-
+>   8 files changed, 512 insertions(+), 470 deletions(-)
+>
+> [...]
+> +/*
+> + * Iterate through the directory folios under RCU conditions.
+> + */
+> +static int afs_dir_iterate_contents(struct inode *dir, struct dir_context *ctx)
+> +{
+> +	struct afs_vnode *dvnode = AFS_FS_I(dir);
+> +	struct iov_iter iter;
+> +	unsigned long long i_size = i_size_read(dir);
+> +	int ret = 0;
+>   
+> -		do {
+> -			dblock = kmap_local_folio(folio, offset);
+> -			ret = afs_dir_iterate_block(dvnode, ctx, dblock,
+> -						    folio_pos(folio) + offset);
+> -			kunmap_local(dblock);
+> -			if (ret != 1)
+> -				goto out;
+> +	/* Round the file position up to the next entry boundary */
+> +	ctx->pos = round_up(ctx->pos, sizeof(union afs_xdr_dirent));
+>   
+> -		} while (offset += sizeof(*dblock), offset < size);
+> +	if (i_size <= 0 || ctx->pos >= i_size)
+> +		return 0;
+>   
+> -		ret = 0;
+> -	}
+> +	iov_iter_folio_queue(&iter, ITER_SOURCE, dvnode->directory, 0, 0, i_size);
+> +	iov_iter_advance(&iter, round_down(ctx->pos, AFS_DIR_BLOCK_SIZE));
+> +
+> +	iterate_folioq(&iter, iov_iter_count(&iter), dvnode, ctx,
+> +		       afs_dir_iterate_step);
+> +
+> +	if (ret == -ESTALE)
+This is dead code because `ret` is set to 0 and never changed.
+> +		afs_invalidate_dir(dvnode, afs_dir_invalid_iter_stale);
+> +	return ret;
+> +}
+> [...]
 
