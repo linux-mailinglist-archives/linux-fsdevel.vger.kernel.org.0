@@ -1,158 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-34972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A4F9CF47C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:03:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF31F9CF4D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9CF281B81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802101F23B00
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6281E0DD7;
-	Fri, 15 Nov 2024 19:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C831E0E03;
+	Fri, 15 Nov 2024 19:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnXL55pb"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lIhIc/KC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FACC1D435C;
-	Fri, 15 Nov 2024 19:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20141CEE97
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 19:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697364; cv=none; b=ekRWIzxIRPXlHyDhbehgUuGjEgzw5tCbf3ih8czl8m3ddsw0+qG6146OeotsJFOi7lXWU4wtgf1FfChyGoXIE9v71KCs0/sYqp8lf01yPBu89PhAQmz4tO+qmjrgWDaoxcxRWt6o79LY7hqNs625GR004Vuu5nj6gnFNU0bIPjg=
+	t=1731698999; cv=none; b=mn6BY8qzi0+yLtrMd7CBBwpFQjwzC8EtYvJfxvekcSdLb6ARgq5OsnsFW3st2zZ5iCamhDyc20VQqB43cS9Ce9A3bpnzoLlhJTvKFcrUG0rkxJlFpXX5D6QtRZjttOfHXz98AoTXXVcdItY5pragw0R6GwnMgEk2kWapbbOXl7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697364; c=relaxed/simple;
-	bh=9vjLfiWYMSCyvWqNdv1hJFPdv5/hvv1FrIS5q3W2qeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVQvCCNMS7oidg2Ujqq3NSq0i22gnM00C/4Dv5GBw+9ndrD0dgsZsxjGpSuOxZksBRf+w7Pe1+GAqYppe8E5TzB7vvmekIzk0GQeI3ZVedsx74bwkFC9NNT5nMNbXEZxFl/VK3JSdTvc469nCMajl1PA5ieVZ3sfPvqUty98WCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnXL55pb; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314b316495so8525685e9.2;
-        Fri, 15 Nov 2024 11:02:43 -0800 (PST)
+	s=arc-20240116; t=1731698999; c=relaxed/simple;
+	bh=1XEUtNvHfg77z1g9UMh9UlUWx/tdrIc8gqmOJJbuZng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpxGjTyKbbijwp8Zv1d6jWJj27Ba3EA1FZ+s88S6HYU8fNjkBPDy7pCB+NS5h7tLBkCbClwBEzT8RhxwCwPH/nDw38bzajWhcJr3dFUs8uV4tcf8lAdPv83oRVSgT5kLgZO0Y4us64SOIR0YvT69CGRzTv8LBefhXXNLltFWKiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lIhIc/KC; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-432d86a3085so19266685e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 11:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731697361; x=1732302161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OJeoXJwB9bUfd+K442tubIgDjv2gaR4dr6OV0PklIw8=;
-        b=RnXL55pbflDHLC5ICsWa8IiTE+Xo1XOc0q1WWBu3/EPsr93Zh0mlmOvtZzvGwxOqBG
-         +0e2ueisLkRuyd8z2YN6BCxLENBxTpNv6elEU5OWbQECHNBwGhDPvNVcRDksLPnw58nQ
-         xtKten84PhRqYZtGLpZfNlBqFTPe28yXNHvioRcooj+1wjAumSqOUqqcXyWLhD90u5f2
-         7TT5ABjP3h4x2rn4pXnt79ABHcKbZtpLgjkr22zKgzAms1V6bGgKlmuZz9ZeGQ3YzDfK
-         zZqYNCxxyrqCKZs0CP2xaS0Dyy5mOeWvDPbhCKYORZWHOvo4M4SbZlUJgnij/v6kir6a
-         NNRA==
+        d=linaro.org; s=google; t=1731698996; x=1732303796; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
+        b=lIhIc/KCL41sC8FSnei7bZKiCkrY1UWV58TjqjwDbD2gKUmy+cW1zHOyJBVG3xT0q9
+         Icfo5E7THYogf3bNGlztqqYNDC1VIvO4REopB4ROLktgzHoxigmc4YoikVkCk6FmX9ac
+         mkb5WEBp8mW+JYxjdIJKw8TI26YcadCrAZwsNAYSGL/Y8S0Llp86PEVcy03+xv7vsHcR
+         IS7XwK3HJQOsAffpUbnRXVCY1Imvm9lveBnej6IINMJ6mD7rsf/OJq24+kRTxGYzEBUe
+         Mv0fLB0ECwwNvLXwSiRhLvpv0BQiP21YAzH9SogWnf8gPZSpaZNl/ki7KeBWEUnRiouL
+         u6gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731697361; x=1732302161;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731698996; x=1732303796;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJeoXJwB9bUfd+K442tubIgDjv2gaR4dr6OV0PklIw8=;
-        b=EvabLHoaOZIPijhWFoPX1AISr9JFx0QPQHk/TAdWnOLJOEgBBzk14ZESkKPhwRU824
-         TrZq7rkpUmR9EzReCa35PN2f/7c0QlkCq/B0H+rqdtQ2y4h3WYIWeKyemrF2NBbu8Z9p
-         P2UVb+US0ZDNx2MuBQjpOkpwNI1Uu5IxXW0vIOf8fIbRUuwmWvn6Uv002bDt13FGNdzW
-         MTOFHtsuQWLxdOQ5IsnRm0EUkrNZX0hlztikcRHgLKenjdUksUmGerzI/X3miftLZ3MR
-         SQEmaeOJVUkpbl70FaDpkVFRfMx1PJntr2nJONs4lS+FNtCwAei9bh8Caqhq6N4JEvWg
-         yGyw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8elI//Esjz7nlcHiFNS38mt8ygsV08ohuxg9wyxDT2yw9Jz7atIvVnDBDvcRQ+RzhmclF2OLAwA==@vger.kernel.org, AJvYcCUqWW6EcnHLCow3J11dAwDgmL+QObag4FwIKROxzn/d81kvdcpSSJZvy1CzaKfTEc8h2UVP7rxeImkO/RQ=@vger.kernel.org, AJvYcCWVoRiqdpRwrf9V+7xkbMsIqAdYFc+qL4aWf9swyQFYgthtzZRnK03B8Wigqc35iW7h2srMsxKb3kwtkg==@vger.kernel.org, AJvYcCWcslVwfHXxhoxTPIWh2NUfVSevMDpuuQ6yGk5i6Q4qxKIDsI5iXVIFA8wy3nIfJpiivxW2tLD7Ir4GMS43Bg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIXKpTLMqp+wSiz1bJNXUbUtwb4Cz3FM3scol7iLvIg4A4C/x8
-	S/e/ZGkOkRid0ZKCadys2f6T4z0SFRmWVRBMK75JTTzLKqn5C4Wd
-X-Google-Smtp-Source: AGHT+IFoafFKHLVT0DJoHOrqKEmggso2/mCTHNRA/BSnSr63wSqW4R2fLvclLi+NGyR0Zkzfqsw8DA==
-X-Received: by 2002:a05:600c:1d9e:b0:431:5ce4:bcf0 with SMTP id 5b1f17b1804b1-432df74d88bmr35454675e9.15.1731697361154;
-        Fri, 15 Nov 2024 11:02:41 -0800 (PST)
-Received: from [192.168.42.191] ([148.252.132.111])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0ae04sm61614265e9.33.2024.11.15.11.02.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 11:02:40 -0800 (PST)
-Message-ID: <397bc8b7-b569-4726-984a-46054d6b5950@gmail.com>
-Date: Fri, 15 Nov 2024 19:03:28 +0000
+        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
+        b=vCsdM4vESjCGWVRHy9OSnsaOt79PclhOx6f6kdG+sDPt/aaOGk9LyHbB0CObPt9CiO
+         oKh4j3SHdgQR4xUkzv+64FpKzpMnfijULolcVH8Ou7+CaPyWlPYQ5x+Y2SfDpn/2d1vx
+         7M9HIakOinQ2lf15tLhYrcUudiS/5tT6e9vWaEZMWhWutJQxqpStk9dNWCeV2XZb4TD/
+         r9hUj0gI4Eafr6NdCQNe7MAGNomChdzjnTGTqmONuxloYxMEvKus25ak+bLzKkV/ZuSG
+         gLg7LSaqoLHDuAiypHQtOQf4GcxMSRTa+VKNnkl7ecTF7o0d6fAchNTXACMyQrjuNIWb
+         YjyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdb3BdwBr632zv16/6TKUx/D8MwhQGvHfZbNV4QGTBveKZnuRYe+o3GWJRbwcJq5bpvkkQ55aajW7FYLZ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YygJhqOFtAOLP0vaUg2Vuit96iKCm9ewb+hnurYN8ff9osBdVv4
+	8uekIB3PItpe4jqdw/789lG+KEfpuS0SfhOT0zfP6lDZ2eDpxZUyDwkjVxT5NGM=
+X-Google-Smtp-Source: AGHT+IFgDEsfELXvXpNZVepQwwAa4PnvGopmuOtuOA/DhVT4j0RCdFmy14xA8QRUdvZzCjPcHhp82Q==
+X-Received: by 2002:a5d:584f:0:b0:381:e771:dc98 with SMTP id ffacd0b85a97d-38225a10a03mr2749825f8f.33.1731698996088;
+        Fri, 15 Nov 2024 11:29:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae3128bsm5050408f8f.102.2024.11.15.11.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 11:29:55 -0800 (PST)
+Date: Fri, 15 Nov 2024 22:29:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrei Vagin <avagin@google.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/task_mmu: prevent integer overflow in
+ pagemap_scan_get_args()
+Message-ID: <1b18cec7-3d58-4cdc-b653-fb5790d04879@stanley.mountain>
+References: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
+ <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-To: Christoph Hellwig <hch@lst.de>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
- martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
- jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
- <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de>
- <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com>
- <20241114151921.GA28206@lst.de>
- <f945c1fc-2206-45fe-8e83-ebe332a84cb5@gmail.com>
- <20241115171205.GA23990@lst.de>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241115171205.GA23990@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
 
-On 11/15/24 17:12, Christoph Hellwig wrote:
-> On Fri, Nov 15, 2024 at 04:40:58PM +0000, Pavel Begunkov wrote:
->>> So?  If we have a strong enough requirement for something else we
->>> can triviall add another opcode.  Maybe we should just add different
->>> opcodes for read/write with metadata so that folks don't freak out
->>> about this?
->>
->> IMHO, PI is not so special to have a special opcode for it unlike
->> some more generic read/write with meta / attributes, but that one
->> would have same questions.
+On Fri, Nov 15, 2024 at 10:49:44AM -0800, Andrei Vagin wrote:
+> On Thu, Nov 14, 2024 at 12:59 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The "arg->vec_len" variable is a u64 that comes from the user at the
+> > start of the function.  The "arg->vec_len * sizeof(struct page_region))"
+> > multiplication can lead to integer wrapping.  Use size_mul() to avoid
+> > that.
+> >
+> > Also the size_add/mul() functions work on unsigned long so for 32bit
+> > systems we need to ensure that "arg->vec_len" fits in an unsigned long.
+> >
+> > Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Well, apparently is one the hand hand not general enough that you
-> don't want to give it SQE128 space, but you also don't want to give
-> it an opcode.
-
-Not like there are no other options. It can be user pointers,
-and now we have infra to optimise it if copy_from_user is
-expensive.
-
-One thing that doesn't feel right is double indirection, i.e.
-a uptr into an array of pointers, at least if IIUC from a quick
-glance. I'll follow up on that.
-
-> Maybe we just need make it uring_cmd to get out of these conflicting
-> requirements.
+> Acked-by: Andrei Vagin <avagin@google.com>
 > 
-> Just to make it clear: I'm not a huge fan of a separate opcode or
-> uring_cmd, but compared to the version in this patch it is much better.
+> > ---
+> >  fs/proc/task_mmu.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index f57ea9b308bb..38a5a3e9cba2 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+> >                 return -EFAULT;
+> >         if (!arg->vec && arg->vec_len)
+> >                 return -EINVAL;
+> > +       if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
 > 
->> PI as a special case. And that's more of a problem of the static
->> placing from previous version, e.g. it wouldn't be a problem if in the
->> long run it becomes sth like:
->>
->> struct attr attr, *p;
->>
->> if (flags & META_IN_USE_SQE128)
->> 	p = sqe + 1;
->> else {
->> 	copy_from_user(&attr);
->> 	p = &attr;
->> }
->>
->> but that shouldn't be PI specific.
-> 
-> Why would anyone not use the SQE128 version?
+> nit: arg->vec_len > SIZE_MAX / sizeof(struct page_region)
 
-!SQE128 with user pointer can easily be faster depending on the
-ratio of requests that use SQE128 and don't. E.g. one PI read
-following with a 100 of send/recv on average. copy_from_user
-is not _that_ expensive and we're talking about zeroing an
-extra never used afterwards cache line.
+I don't like open coding integer overflow checks now that we have size_add().
+Historically, we've done a poor job writing them correctly.
 
-Though the main reason would be when you pass 2+ different
-attributes and there is no space to put them in SQEs.
+Probably the right thing is to add the > SIZE_MAX check to size_add/mul().
 
--- 
-Pavel Begunkov
+#define size_add(a, b) ({							\
+	typeof(a) __a = (a);							\
+	typeof(b) __b = (b);							\
+	unsigned long __res;							\
+	if (__a >= SIZE_MAX || __b >= SIZE_MAX)					\
+		__res = ULONG_MAX;						\
+	else									\
+		__res = __size_add(__a, __b);					\
+	__res;									\
+})
+
+But I think you'd trigger compiler warnings if a or b were a u32 so probably
+we'd need to use a _Generic() or something.
+
+regards,
+dan carpenter
+
 
