@@ -1,162 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-34871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD189CD9E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 08:26:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCF49CDA0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 08:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE011F2241D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 07:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8162833CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 07:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8F0189B91;
-	Fri, 15 Nov 2024 07:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B04118A6BC;
+	Fri, 15 Nov 2024 07:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C01/zWLd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8ACBon8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED3D523A;
-	Fri, 15 Nov 2024 07:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04A21DFFD;
+	Fri, 15 Nov 2024 07:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731655604; cv=none; b=m7357zmzPNfXaY0t0vfnX3jIZzJ9wQgIL4tjJA+F/NRUr2JeRHf9Xd3btthNImO8UXzIeew7R1xTiLE3b/ZnyFFgILb6fAOiQ9nfmYIwpJLi8njikHHNGZhzE4K6ae8psHbtcQFvwJqvAbZf9/EzIPb/QqZnKI9Gablwv/ojm5k=
+	t=1731657045; cv=none; b=h1IStl5weA7fRvKU3N49WEdoCGGBvgMtiwM9W7JwLXfDG/FrWJbbJFr9lRK0mOz6vE+jdSgaV/kWRhGMYRu7IWuJjffowpqm49JFaD905cgFbQ10nQOkpYeQRZuWmMx4hHqj3dT2vS7Q7d1pdc73IbXYtbLVXPH6jK/4zsvtagc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731655604; c=relaxed/simple;
-	bh=H5go3CSHFDvv97STC33zwmw/ZiDdwPPvJhjZM8cCTNo=;
+	s=arc-20240116; t=1731657045; c=relaxed/simple;
+	bh=lklE/h3tDzXVoR6ngV+NqfpBcWmdTi9t9s8wjTuCeGA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OAXgW4OqDDH8eOuKyajOPxYhOt29SXL8SOQrB98x9nTTse+9o6VkVGKr4k5jZmQMhlhp/m8ndB4o2JScTlRkWp/U8Jfb6JEMcpvZwFjrp3rqOakH8Zw8qWfXSCKEewH4LOanUj3xHZuYHoyBkf2NtXb8Vj7MW8AEUgA9yx8zQAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C01/zWLd; arc=none smtp.client-ip=209.85.208.52
+	 To:Cc:Content-Type; b=YozC1Ru4PFacftRlhsk6SYc5ppgOc9/nSubAExt7GCH4QMg1ur0NwLLb9OagJFRpjUG+QEKydz8WLmVpuXXVkEJ+/82byU9iSyeY0S2ft6ggb87iSyy5UoBx++1WT4KYLq95W55qPZvy6omVxyIpNTX00FmueXHvUSZctn2aG7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8ACBon8; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cf8593ca4bso1383743a12.1;
-        Thu, 14 Nov 2024 23:26:42 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ec267b879so76827066b.2;
+        Thu, 14 Nov 2024 23:50:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731655601; x=1732260401; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731657042; x=1732261842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4HJY4DnCd4JaTTdiuzlxUyMGg9/JMjaTBkeusliEvn0=;
-        b=C01/zWLdHyPzq7HdWoZGukZ6/Kl6NnhoYAs8PUBBlUxVJHPjYHhMeHlbaHunzINpzE
-         jPf07kwhXZNQ5J7NkO/xp+U7GUSM/2ysIBfxkZvM1wIi8ROtPyRYFvjGVCRId3+XZBDo
-         20IhnaDfoqsrApk4gsy+lZq+f+BVwbPRTslYv4ZtfYicgNnmGKUKmfjnh1c2YbaNyDiy
-         al4MLuynNfY2uyqFmdg7Cbdqr9nFQyXy3zzI7inqxyJH7affAcSTZxpglsxVfP7liLDH
-         jVgdZhtEPJVmY2jgOSvpdSzbjTaeSCDOLV1lf52t6MWB3q7HnH4toNm4A8fS7C/owR3q
-         yKtw==
+        bh=gSCELLkG6SqRQfxY54OPgk4TIjdd+v1bnFxBYGVAXQA=;
+        b=g8ACBon8WVH5PrCzEK8qdlM0c3x4ryskNaoT09762j5NbyFYtKZG/oPn72tlZ0mUwz
+         ar4vyr07JVjN+qJwY2wfi9KejnsLryuxeqzpmAGlOhjaXfNjIp6rsMxhUbeCV7m2Jn+s
+         LFC+7nsxItwj9zNALqkc1Q2FlKd2ER/1wF1d+GSjnWcu30SChhDf0NmdGe+bdgt+BINI
+         pndYUH5wwsKHkoy6gJxOTqIg+fZmNSiEedVd2ij13A7qTZmDVkprLxU/QhfzhzIykstv
+         v1+lOGvJBP5i0+X1J0aVQ5lK8rB19WESN/3fZ5u7D2yUZ1eHqFHw7AYYIyV7hTk6pvY1
+         R+Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731655601; x=1732260401;
+        d=1e100.net; s=20230601; t=1731657042; x=1732261842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4HJY4DnCd4JaTTdiuzlxUyMGg9/JMjaTBkeusliEvn0=;
-        b=vB6H/WIRGNj6Lopwo9Ab1V8bUSyUxH3Ighu6TdZc3GW8adJfjGdO559CJHMcIqhlYA
-         hyVIeWb4lcvrlhC56cZvWG9oQg3sScwP7qt29zJHHzYSkZR5qfM6/lLkOFW+9OuygI0q
-         +0BjQnRXYM0Hv3aAUb2cOM64xl4qj4WusL7tK97FW63xwZxsvzPzpNPK1yIprnzeCN52
-         7e478CJ0mV+G27IsGwJthCHRaWGbtcAHp0J1DWrrq+xL3TGLlfZIVyLIKsha9kZjR1o5
-         Ouu46A58i75iPj0VlYTuPBoWNp3Frge83MA3OL9Lw3BE+SHXoS5MyTffgNkj+uEy2qdS
-         00Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGWVHLzEQcYcgMnC8N5+xAwKhslWVyV8YD0wcXqzdmtL20fI77O6/rG79ZHEHjHKWzcrVYavlUU4SIQmoZ@vger.kernel.org, AJvYcCVNZnzkxusd5L5iX4X2r2C56cqVm07941UB4SqrdmzsaHCinv8/TTB/CDqkKpXf1tNU0BiR/hhbbAi9IYS6Zh79yqqpqk5o@vger.kernel.org, AJvYcCW2msMKMsCfBxmCtXIdqkPF1C93SVqFL9Q8UdhdzP7huiQuwct6W6sGUOpvfYWBRb2XSTA=@vger.kernel.org, AJvYcCXnnOggJp5LNLZzqYrVfHuqwy8bNIF0zSXTbRmiVtP3lMmRHxiSYk+pDmhE0prUE/6Ty1dGAcCVzcv4bW0lEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9S2ETDGS/OwAPVSg9u/I0OUibBmgDPTS14CKeF2njSgfBW2nU
-	MlVE1uZdJJjO0wemCNCepmZhdPuv2w+UzjEKbqDNMTS/Jviwl2NtTQitrKrItvUDu1b/ytrcgCd
-	xV3vz8PkM25zFYkngqzPYRCTer/M=
-X-Google-Smtp-Source: AGHT+IECnxX84rmDYRbGoACKCtzyjmf9T/Bx+Ja9+VuTlkmw+cp/0WfDRxRiUouh39hBJbR/b14OXUe2YjAz0OT1iE4=
-X-Received: by 2002:a17:906:9c82:b0:aa3:49b6:243 with SMTP id
- a640c23a62f3a-aa4833f66dbmr118929766b.9.1731655599606; Thu, 14 Nov 2024
- 23:26:39 -0800 (PST)
+        bh=gSCELLkG6SqRQfxY54OPgk4TIjdd+v1bnFxBYGVAXQA=;
+        b=KBM5oJUjaMlCNUBow5OwcyVcx3sOxjl0GGlu/JSztBEPeQW23aYtYjLG1h9DEkunqN
+         8/b0oH/o2KOFtLvAavd6d2rwIVqN3tw06zUjvtGOKTshfOJhtBukNq1vC8gy5SaFKwwt
+         rODbKQ2CAePskpyqJUFQVdDI+U+CMV4Or27Jn1u9ifzSKld8FU3L41M/kLrMN3s0Ld6R
+         DkHuSmn/ssbqHyWAYWxV6DFBjhoPFuV+7pWrSXIkJ9Lg/SgLLUhVMGe8+FlaPOl7y5rD
+         vxUgZ/LAvF3Vh+dwsmycaL8xqhkf46S7Wt/EYpX+HZsubh0q2Zc11HS4gh9TX9ba3OTb
+         ZaXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlZOI12p1PHeemHIETkBpTUfm36RpdAKKuc4HVYn9LMyohA3K3Tb2dr1HKbtCRPpOidC59CRJSO68fUk0P@vger.kernel.org, AJvYcCUrAU6ZPOvBBzRWkK8Iumoqm54680doveZzOEn5AJblwBwP7divUbTYYqVPTisCOeIY37JMTvazFxyx@vger.kernel.org, AJvYcCVBxtZ2xLPd4tGBUr1FQ8kHxWiVK/3/kHZJ0cZOgwO4KVEXXaVXwIrNKXGbH2vqmkDgcUCKgFXSpao+jf9h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGywJgrr8OBFKHTYFsqYrSBDlYIUhwW31hN1Lz2YwggMd98Dwp
+	1NohkHgI70gutYGZkXapUll7XX2niMmfeIL7OmYYF4hKADAeOIfLJWQbCPJZgjxeEEdpAiWiP7l
+	kdZ6v689ITk/DPXl9tjitU5OKs8cMYMdmons=
+X-Google-Smtp-Source: AGHT+IEi3bcFpS5EBdh9BX9bznABAMyAWwxnKMRIdw/iNJL8JS0W2vQeO8MtkFnuX9eM8/QDG4g9uAC7+XPhZfXCTMw=
+X-Received: by 2002:a17:906:dc8f:b0:a9e:b0a6:6e13 with SMTP id
+ a640c23a62f3a-aa483469563mr138192866b.30.1731657041921; Thu, 14 Nov 2024
+ 23:50:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
-In-Reply-To: <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
+References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu> <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
+ <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner> <1128f3cd-38de-43a0-981e-ec1485ec9e3b@e43.eu>
+ <20241114-monat-zehnkampf-2b1277d5252d@brauner> <b4353823-16ef-4a14-9222-acbe819fdce8@e43.eu>
+In-Reply-To: <b4353823-16ef-4a14-9222-acbe819fdce8@e43.eu>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Nov 2024 08:26:28 +0100
-Message-ID: <CAOQ4uxhnBRs2Wtr7QsEzxHrkqOtkh9+xxDuNRHxxFY0ih-543g@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, gnoack@google.com
+Date: Fri, 15 Nov 2024 08:50:30 +0100
+Message-ID: <CAOQ4uxhP9_WPinm2wM6uW+L0rH_xwwrw=qAUd_YjzbFCJBf0+g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 9:14=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Thu, Nov 14, 2024 at 11:51=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.e=
+u> wrote:
 >
-> On Thu, Nov 14, 2024 at 12:44=E2=80=AFAM Song Liu <song@kernel.org> wrote=
-:
-> >
-> > +
-> > +       if (bpf_is_subdir(dentry, v->dentry))
-> > +               ret =3D FAN_FP_RET_SEND_TO_USERSPACE;
-> > +       else
-> > +               ret =3D FAN_FP_RET_SKIP_EVENT;
+> On 14/11/2024 15:13, Christian Brauner wrote:
 >
-> It seems to me that all these patches and feature additions
-> to fanotify, new kfuncs, etc are done just to do the above
-> filtering by subdir ?
+> > On Thu, Nov 14, 2024 at 02:13:06PM +0100, Erin Shepherd wrote:
+> >> These two concerns combined with the special flag make me wonder if pi=
+dfs
+> >> is so much of a special snowflake we should just special case it up fr=
+ont
+> >> and skip all of the shared handle decode logic?
+> > Care to try a patch and see what it looks like?
 >
-> If so, just hard code this logic as an extra flag to fanotify ?
-> So it can filter all events by subdir.
-> bpf programmability makes sense when it needs to express
-> user space policy. Here it's just a filter by subdir.
-> bpf hammer doesn't look like the right tool for this use case.
+> The following is a completely untested sketch on top of the existing patc=
+h series.
+> Some notes:
+>
+> - I made heavy use of the cleanup macros. I'm happy to convert things bac=
+k to
+>   goto out_xx style if preferred - writing things this way just made bash=
+ing out
+>   the code without dropping resources on the floor easier
 
-Good question.
+Your cleanup is very welcome, just please! not in the same patch as refacto=
+ring
+and logic changes. Please do these 3 different things in different commits.
+This patch is unreviewable as far as I am concerned.
 
-Speaking as someone who has made several attempts to design
-efficient subtree filtering in fanotify, it is not as easy as it sounds.
+> - If you don't implement fh_to_dentry then name_to_handle_at will just re=
+turn an error
+>   unless called with AT_HANDLE_FID. We need to decide what to do about th=
+at
 
-I recently implemented a method that could be used for "practical"
-subdir filtering in userspace, not before Jan has questioned if we
-should go directly to subtree filtering with bpf [1].
+What's to decide? I did not understand the problem.
 
-This is not the only filter that was proposed for fanotify, where bpf
-filter came as an alternative proposal [2], but subtree filtering is by far
-the most wanted filter.
+> - The GET_PATH_FD_IS_NORMAL/etc constants don't match (what I see as) usu=
+al kernel style
+>   but I'm not sure how to conventionally express something like that
 
-The problem with implementing a naive is_subtree() filter in fanotify
-is the unbounded cost to be paid by every user for every fs access
-when M such filters are installed deep in the fs tree.
+I believe the conventional way to express a custom operation is an
+optional method.
 
-Making this more efficient then becomes a matter of trading of
-memory (inode/path cache size) and performance and depends
-on the size and depth of the watched filesystem.
-This engineering decision *is* the userspace policy that can be
-expressed by a bpf program.
+For example:
 
-As you may know, Linux is lagging behind Win and MacOS w.r.t
-subtree filtering for fs events.
+static int exportfs_get_name(struct vfsmount *mnt, struct dentry *dir,
+                char *name, struct dentry *child)
+{
+        const struct export_operations *nop =3D dir->d_sb->s_export_op;
+        struct path path =3D {.mnt =3D mnt, .dentry =3D dir};
 
-MacOS/FreeBSD took the userspace approach with fseventsd [3].
-If you Google "fseventsd", you will get results with "High CPU and
-Memory Usage" for as far as the browser can scroll.
+        if (nop->get_name)
+                return nop->get_name(dir, name, child);
+        else
+                return get_name(&path, name, child);
+}
 
-I hope the bpf-aided early subtree filtering technology would be
-able to reduce some of this overhead to facilitate a better engineering
-solution, but that remains to be proven...
+There are plenty of optional custom inode, file, sb, dentry
+operations with default fallback. some examples:
+
+        if (dir_inode->i_op->atomic_open) {
+                dentry =3D atomic_open(nd, dentry, file, open_flag, mode);
+
+        if (!splice && file_out->f_op->copy_file_range) {
+                ret =3D file_out->f_op->copy_file_range(file_in, pos_in,
+                                                      file_out, pos_out,
+                                                      len, flags);
+        } else if (!splice && file_in->f_op->remap_file_range && samesb) {
+                ret =3D file_in->f_op->remap_file_range(file_in, pos_in,
+
+So I think the right model for you to follow is a custom optional
+s_export_op->open_by_handle() operation.
 
 Thanks,
 Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20220228140556.ae5rhgqsyzm5djbp@q=
-uack3.lan/
-[2] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse=
-.cz/
-[3] https://developer.apple.com/library/archive/documentation/Darwin/Concep=
-tual/FSEvents_ProgGuide/TechnologyOverview/TechnologyOverview.html#//apple_=
-ref/doc/uid/TP40005289-CH3-SW1
 
