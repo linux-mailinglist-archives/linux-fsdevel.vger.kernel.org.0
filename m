@@ -1,109 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-34902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2945D9CDFF5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:30:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B01A9CE022
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 14:35:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D556F1F21420
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171C9B2761C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 13:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A031C07E4;
-	Fri, 15 Nov 2024 13:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CA61CDA18;
+	Fri, 15 Nov 2024 13:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e10ZpYOG"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="HCXdOAuq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62811C07C5;
-	Fri, 15 Nov 2024 13:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D600374FF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677392; cv=none; b=S/ryoDxIE4tJL2uVQTctc5BOSZbPf6h6XLFnX/FO7bBxnGdZ4HuLVGwK9vKfSUa0M6l0XtbIc5jAQfgVLWIhlYrXQCRNya5BqTjCVDv43cqSyQ9vIDFJ8+i+PjmT99MGoadbXsgPsRyXNOcKkz6tIcfBEouvPk7qKXb7jRzXGPI=
+	t=1731677666; cv=none; b=Zv+FzLZLzpwSKBPnvTTe5Ed7uxPGteCmwmXCrcLqAiADAIeJeXqZyf3BrO0cxzmVtZ1XVVcCzxFpN6UFjhYLjGNm6wVFljsGZidELluaNRval/jj6+MEWNcjVL8RWL5E72hRdEPdv4LWrNpVSsRzmCNe5QLVR/7rLKy0CqA9rZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677392; c=relaxed/simple;
-	bh=J/5ZDP8yvp5xJV8M6LlD9Na/ogk0y+HnBPjWwxvT0Uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISjGHHVFjWrPne++zMA1LiGcEquetTLJgs+YTlxRlLo8KT4VvlDi2GwEgazVX7d13g0IUZXNUqi/2QG2SUXejVgOiPJsP9xfY/0qgHBMMhmfdpukrAEJSx3SxjvfRxCT0LhG4TmTv4d5ndIZyjVJhk8Ao+2pUlL06hpc7b8D3Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e10ZpYOG; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cf9cd111ecso342156a12.3;
-        Fri, 15 Nov 2024 05:29:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731677389; x=1732282189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PXyAxxnKLpgZmGT3ZHAoHzNaVqLioXGnV41IMIjl6Ac=;
-        b=e10ZpYOGXLB0I4FRAn2tWsYwb7Bl/E3d2XZofmgYyOgivasDX7iAEdr4geUjwdxv5/
-         1TGVJv2yTsBlx8qzAxNU0Dbc2UoNDX9bEPZS7olYRXmZ0qpIcgxzwzn7ICRI4XZYlVxi
-         O5wV15dbvXuKfXc5ec4NzgS4nM72ap8U/IhF1FX8H96cMOS+sKoiRGQYN9dnAy5NvB44
-         d37RwDO64ZI6wuu4H0VsqQkHcr7LYC06k5rCxnDeAQwOjHLgqvJ4cGVSQDQCBH+3FBj4
-         vqQ/FUsRm30Juaf81SmOUHe4KB/P862D4TeCI/Z5bboY8K2FXyEvmSdbeHVSM+uDznSq
-         nhdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731677389; x=1732282189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PXyAxxnKLpgZmGT3ZHAoHzNaVqLioXGnV41IMIjl6Ac=;
-        b=DNzaJd/BYeiZFB/zEpsWjgYaHE9Ez1oRn4jaY9pUJxT8/7C39Btk04w5vdYZaRctlO
-         gJeG35v8lHGlPBne0gnqvkx247ah2bvtABIcxdzUeWL4hXTemnUSbrGAr3Lz1uSuFzpR
-         5x1pjSLEwFoYQt3Q3GV7Ijf3pRI+8cFJqKz7MRAeB80NP8nrh4YIdXxABFUpD9GKII8t
-         lHV7Li45u2Z0Ptb2M3fFsrXMVB7FWNkNnA3r46Ag3X6WN4yMw7Rc9l5O0k379MD0KUm9
-         mqFSeFml9dLvIWVXfkyQQpRyLxoQ/6KoAsSVQKKPTRVSCKS+lI9gNi3ZOs+Of6q0KUkG
-         nPAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3BLsG0sxonhnDmfrhQ+/wUpIf7DchKfC+wgLaaX18vC/ZT6lWmVcdqy51B6b9obs/5AWwh/a6eg==@vger.kernel.org, AJvYcCV8emCuU7QBUIu1SHldD5LpNsGNk83JPwacgOVMJBKMdaPFdVCcN0H/j82QjQEEjUIZvGFFXzQS1MSzC8U=@vger.kernel.org, AJvYcCVvrQ9zcBcRPmwqlojZMMhDTpl2LO2oNvi6qb97zW067lr2getIrzJK2v1I7Me2TA+I0S6yz4x/0yYB7g==@vger.kernel.org, AJvYcCXi1mHIFkxseSLCeJ1JYDLb0413TjtCt/tIltWQxnUIzUcqUz1SebKZ8GcPlB2RZ898FV5LVjvQPlnOAPShSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfQR0PX6JIs2sD26y2rK/9MDbNk6Svz9J3+jozk/uSJ09FqFK6
-	jGLD7KDxOTsa40eCF2gbtvKiIUbIyOJGx+fh5KVM1MGR2pVAqjDd6fQXhX6FVfmmeqGuAg8QqxV
-	wzfgMkcJ5pkMj6zB0IzJgkvub+w==
-X-Google-Smtp-Source: AGHT+IGqWKTlmFq3/n12hP2Y2a/LRqzo/oZoAMzv7wmcNU8urPo976WbIba/QasmZjKbU6xrICmiEgAE4o4NmycRUDo=
-X-Received: by 2002:a17:907:3f25:b0:a9a:2afc:e4e4 with SMTP id
- a640c23a62f3a-aa483557d9bmr200273066b.59.1731677388795; Fri, 15 Nov 2024
- 05:29:48 -0800 (PST)
+	s=arc-20240116; t=1731677666; c=relaxed/simple;
+	bh=gLbDLLFaCm+pneJ0ecZSsUz4EzSQvHIor0UF/fLR+1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBFD9ZJ9EXld1SV4AGZbtHHMPoawMw+Vly4gA6LidsOFfrdBTW0ng/5V6AKRWRdtf9C/S0JujF0YZqWin5ZwXsMw33YJkh/pux2oH4rMILCc0fDdjksbHvZx35mG/qSM80niwdBo7yrTTX3fkZNFIZa2r4t8F+TCBuBzz4ceSWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=HCXdOAuq; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-119-105.bstnma.fios.verizon.net [173.48.119.105])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AFDY7rU014540
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 08:34:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1731677650; bh=YXeu00rAkkBMx+jCW+Umq2TqKt3Mm3W0qM6ehUOiUGQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=HCXdOAuqIff8JiBA+SBbi/24u8UbEcsuWvhHECXJwMtaea6XMUhQ8BpksgSVVUNQE
+	 +t4yP0l/T+Wd/bWC9xsdiSG+q+njib6F70qvRObkSyD712Noh6FDprtJHFOGY2uSN+
+	 ccagrW96Jv0F6FwCkVeIceLRjkC3U3ZYGHvN8vnyHZMw75gXLw+DP9YpcCyNWJUNwG
+	 JrEBYBqbyN9mev6VkIti12/P5edZh61O8RQHD293ZsJTmRfcK22b4M5oz3j5NCuMFF
+	 o8ba5W1WHo4d8S/rSXmfsdEF1turAm1X/L/lq3PBJwsq71kY9MnacCYFhM3QDd47pt
+	 9X0xI88FotM5A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id CB07215C0317; Fri, 15 Nov 2024 08:34:07 -0500 (EST)
+Date: Fri, 15 Nov 2024 08:34:07 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        fstests@vger.kernel.org, stable@vger.kernel.org,
+        Leah Rumancik <leah.rumancik@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: generic/645 failing on ext4, xfs (probably others) on all LTS
+ kernels
+Message-ID: <20241115133407.GB582565@mit.edu>
+References: <20241110180533.GA200429@mit.edu>
+ <20241111-tragik-busfahren-483825df1c00@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114104517.51726-1-anuj20.g@samsung.com> <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de>
-In-Reply-To: <20241114121632.GA3382@lst.de>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Fri, 15 Nov 2024 18:59:11 +0530
-Message-ID: <CACzX3As0EzgC-Qgp=Kt67kjqwq8sqsEWDCpgjb3BFW2UzU=oGw@mail.gmail.com>
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-To: Christoph Hellwig <hch@lst.de>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org, 
-	martin.petersen@oracle.com, asml.silence@gmail.com, brauner@kernel.org, 
-	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, 
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com, 
-	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111-tragik-busfahren-483825df1c00@brauner>
 
-On Thu, Nov 14, 2024 at 5:46=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> On Thu, Nov 14, 2024 at 04:15:12PM +0530, Anuj Gupta wrote:
-> > PI attribute is supported only for direct IO. Also, vectored read/write
-> > operations are not supported with PI currently.
->
-> Eww.  I know it's frustration for your if maintainers give contradicting
-> guidance, but this is really an awful interface.  Not only the pointless
-> indirection which make the interface hard to use, but limiting it to
-> not support vectored I/O makes it pretty useless.
->
+On Mon, Nov 11, 2024 at 09:52:07AM +0100, Christian Brauner wrote:
 
-The check added in this patch returning failure for vectored-io is a
-mistake. The application can prepare protection information for vectored
-read/write and send. So vectored-io works with the current patchset.
-I just need to remove the check in this patch.
+> behavior would be well-specified so the patch changed that quite some
+> time ago.
+> 
+> Backporting this to older LTS kernels isn't difficult. We just need
+> custom patches for the LTS kernels but they should all be very simple.
+> 
+> Alternatively, you can just ignore the test on older kernels.
+
+Well, what the custom patch to look like wasn't obvious to me, but
+that's because I'm not sufficiently familiar with the id mapping code.
+
+So I'll just ignore the test on older kernels.  If someone wants to
+create the custom patch, I'll revert the versioned exclude for
+{kvm,gce}-xfsteests.
+
+Thanks,
+
+						- Ted
+
 
