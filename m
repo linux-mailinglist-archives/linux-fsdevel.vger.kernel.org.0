@@ -1,182 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-34946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8629CF0D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:59:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 557979CF108
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 17:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D00FB3BFE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:39:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43CF8B34550
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAB31F80C9;
-	Fri, 15 Nov 2024 15:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48B71D435C;
+	Fri, 15 Nov 2024 15:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="qf2O11I7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8PqZktV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51C61F708D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 15:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5C61C07C3;
+	Fri, 15 Nov 2024 15:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684724; cv=none; b=YRKKmR6q92Om+V4hy8LElPZUHpgoIPKd8e3GIvnDg/yroQ2aiWBQh+9U6vstjDzP1VBdWfr58yV7yp6swjxYOsZhtVFRyVJ92P0kGlPnQpAW13jwp/I61ern9CoqWEuEofuQBzQVet5klIzrAsuLiFiIjJ7QcYBj/oKQuHYVbog=
+	t=1731685961; cv=none; b=ORC3L3GrjCG81khjse0L8Z6/90/Ot/19GEj7ePkusPupBBRtaGfCNjNC1aqp0atJiLB4YO2IVKtJNdBvUOQlV45biSfc5zRbcrNWOvt2SO8zFp3qmynifFRAGgtmC1EFqD71T6+mFmYBwdOmviRT/2kz83vA2mNZQy3tXN3Sh0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684724; c=relaxed/simple;
-	bh=+l9EWxArkxZP8ea+ZGgm7I/UwC2ThOnM6mqb60PUC1g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HxCKMOOoN4AfREraLi6Vw/rc1bYQW0d1XR3rRD9jrF65VtR6Qb1T+cTszQeogY13hSxttm7u7rWlGpE0NbHhF6LMeG0f0D8SlcuBOCTX8s4zs0yMCNcOdwZfJzLwqyS5msFzR3jMAXRY6M+4k3NBLryDmodw9PcyTe4n4hSbNtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=qf2O11I7; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cbcd71012so22820735ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 07:32:02 -0800 (PST)
+	s=arc-20240116; t=1731685961; c=relaxed/simple;
+	bh=pXPwGiY6ZahzSG9hx9W4hCF3O8g/5+71d3AXALytPfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gf+DGJE59ugsic479yIWDqm2qTr5iNYCnWm794sV/oz2i8H6JlsgHEj0HCc8gt+by1KcrzyzRPwArh9IEyYc94sv3eweTjKbIt2elfpjnlJmLkecWfEP4wPwUsvIYJFsDn84EHzzdcf1JTlFndrXzHzj2pqfrM20TGaHD5YRT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8PqZktV; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f8095a200eso1543093a12.1;
+        Fri, 15 Nov 2024 07:52:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1731684722; x=1732289522; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GWXqETStm7Md/ZZi4QCCd1GSXP4JC1lp6P3n7C6qnQo=;
-        b=qf2O11I7ymYVCJ+NkAZ0PashgAyJ6uE17jb20O8NynYc7riEYo92P1HNOvH5CMOQ6c
-         TIwRukKgSrNHGyeWeGCjueZZGZiQYjAhp3H43Adq3Jex8E/IRFSIbUYPnRUTcYXKZBto
-         olRPNkh4C40kNNM5QIIS0kDAkBAojv6n+CMDfhGgDC7YSvdJlwdjfPALrGQsUtJ/2O87
-         k682Jp5u+CpYoaf2JXOc4rqRdFsXDyLjiytVV2D/UZbio4/2q0cs0PNUCWqwf8HYbLYZ
-         VbLRnGk6oTXvpJRUXcz01b0D673/oO8NTm2p90YxSVGYJspGbji9/j+zzcmy230rsyzF
-         bU7w==
+        d=gmail.com; s=20230601; t=1731685956; x=1732290756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mN7g2gHiaSOhWfvm7ZnjpAw9qkNOQF8YTr8uTh3XZAA=;
+        b=c8PqZktVXVQSKxCRunTSOxqs8zj32Y4yKKTsHyFVrqvRXnHqh3KQuHD1wlpKIRd0dW
+         DsUz0ZIxyYZxn5glbOjLh6vz7LfphcAppeEz4dzCzXHcNRxJcrI8atYeMIC/lt2dlhYC
+         806pzwIOnywJu5NN9KIGZg7ihGeU54mO9988hqtQmvw2wUwmygq+6ljsjfpuaEOrAOLI
+         mbcDVYFShYqnbQ6i3tL+hag+ikpNaphCRR/xLhZYNJoK2sbibAiqyiMnlhvWsncJg9kO
+         Adyoe4RunSQRR1CiFkx9/AZWHTJCJUGhwxlBVzmo5JL3iDkhp9tTCJMJWBcoKv/4mqsW
+         6aUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684722; x=1732289522;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GWXqETStm7Md/ZZi4QCCd1GSXP4JC1lp6P3n7C6qnQo=;
-        b=J+tBS8oIz/n3iiWLqTjS3AGoaXdKlv4oJDDv2awpsiSMWKy2RxwAgC4U0/aJQ/87Kw
-         bS9qUmrZKlgRWQCPi1glwrFjK2NJYOuxUx/2QVcORnmHcUJuKeSVULO1xLoj0YzgLdS6
-         tqZyWTi0FsEpj83vfJhUdTSVwTq5wX0YY2ccFtTPLESXhg3JZ+pBVE5YVc9+HhaGmFm5
-         6ObkHjnyjmuGgXMwcuAld0q7XnTliHzUDj/IR1Yq5ceYgDGQ95C8kVU8MbEbXGNqL5tY
-         uFRTqd9sUgt1G/7tTXx4eMKUy9EyEbzxAFaTzhBK7GuQTIE1m715Q0yRh7OamF+NMbYd
-         QhtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVp2VzCmJoMlvXG0qtm6YQUGWje+F4TKN54jURiHu7qWlYRUI5d1gOsqMCcG+LdAIiV6l6O6kEc9kwVfr1z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN93o1Ep/iwPeNgpaUwmYOGsuWVJ5zAniHR5Kbm7KhR4ZbEADF
-	8DXfTxufEXTaECXkA6yR+oPxizH4XXBSfOc6Q+dRjTT8Sblb1+TUmGDxP4QZK8nc90mKOLiAQha
-	2
-X-Google-Smtp-Source: AGHT+IEHUujjEReLNYNPy+KE0ogVxqRd47YtuHwtc3zNs/tYtNRt3+/0IcuvnNweNADhk1HvQaDdYw==
-X-Received: by 2002:a05:6902:20c7:b0:e29:1627:d4d3 with SMTP id 3f1490d57ef6-e38263c0d7amr3021251276.41.1731684704575;
-        Fri, 15 Nov 2024 07:31:44 -0800 (PST)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e381545ae18sm987344276.46.2024.11.15.07.31.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:31:44 -0800 (PST)
-From: Josef Bacik <josef@toxicpanda.com>
-To: kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	amir73il@gmail.com,
-	brauner@kernel.org,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH v8 14/19] fanotify: disable readahead if we have pre-content watches
-Date: Fri, 15 Nov 2024 10:30:27 -0500
-Message-ID: <70a54e859f555e54bc7a47b32fe5aca92b085615.1731684329.git.josef@toxicpanda.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1731684329.git.josef@toxicpanda.com>
-References: <cover.1731684329.git.josef@toxicpanda.com>
+        d=1e100.net; s=20230601; t=1731685956; x=1732290756;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mN7g2gHiaSOhWfvm7ZnjpAw9qkNOQF8YTr8uTh3XZAA=;
+        b=w/zdAqRG8Y4Rz9X6D3yEFqDtvzLsXTky/SCe8OLfEqGf5X9KsFuM8mcrdaM5l4cLWo
+         w0MDjrxOhweQfZ8uwRMh/vFASgLS3AKxE5UwP+LPv7YSXvgrTJOfK7l2HAJRNfABBNbe
+         6sEhgSXELwh3JS/djjBAP1beSVzaTfvDxP3M3rbQMjoSjwVjuwmJQHNKgJ2iWD04saAb
+         qv2ecI3CCD4zDC6iiS+0Rx+sDoJagkyw07l/+l3m3hMgMKSIqPvSJGT7zbsuH1Avwh7y
+         opDAIAgu1hb1ywwXcXr0sv7QtKZyv++NT/ZNMzG+rqNEk2UyK7o5xdlagQacIzIU95G7
+         qy0w==
+X-Gm-Message-State: AOJu0YzBKGGnoYfIwP+tA4F3qRpIauw8zvzWw/TIYP7lh+R8bTdNb593
+	M+V+7SAUD0i+rur4Qv6J9U3lPtLvdduOQuGJMKyItgs8kytdowsN3V78c4nKDfg=
+X-Google-Smtp-Source: AGHT+IHxKS2bvHVhPRdClCTHRndZZWwGMbGXbWceEWCnJM/VVBfTMP2iPk8e+y8YTQ/ziCSnQ21IdQ==
+X-Received: by 2002:a05:6a21:32a3:b0:1dc:96e7:5219 with SMTP id adf61e73a8af0-1dc96e75271mr1909657637.11.1731685956217;
+        Fri, 15 Nov 2024 07:52:36 -0800 (PST)
+Received: from [192.168.0.198] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c67a41sm1438045a12.49.2024.11.15.07.52.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 07:52:35 -0800 (PST)
+Message-ID: <e43ec7eb-6acf-41e3-b7f9-f0391bf4cb65@gmail.com>
+Date: Fri, 15 Nov 2024 21:22:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfs: Fix uninitialized value issue in hfs_iget
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+References: <20240923180050.11158-1-surajsonawane0215@gmail.com>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <20240923180050.11158-1-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-With page faults we can trigger readahead on the file, and then
-subsequent faults can find these pages and insert them into the file
-without emitting an fanotify event.  To avoid this case, disable
-readahead if we have pre-content watches on the file.  This way we are
-guaranteed to get an event for every range we attempt to access on a
-pre-content watched file.
+On 23/09/24 23:30, SurajSonawane2415 wrote:
+> Fix uninitialized value issue in hfs_iget by initializing the hfs_cat_rec
+> structure in hfs_lookup.
+> 
+> Reported-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=18dd03a3fcf0ffe27da0
+> Tested-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+> ---
+>   fs/hfs/dir.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+> index b75c26045df4..3b880b3e4b4c 100644
+> --- a/fs/hfs/dir.c
+> +++ b/fs/hfs/dir.c
+> @@ -20,7 +20,7 @@
+>   static struct dentry *hfs_lookup(struct inode *dir, struct dentry *dentry,
+>   				 unsigned int flags)
+>   {
+> -	hfs_cat_rec rec;
+> +	hfs_cat_rec rec = {0};
+>   	struct hfs_find_data fd;
+>   	struct inode *inode = NULL;
+>   	int res;
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- mm/filemap.c   | 12 ++++++++++++
- mm/readahead.c | 13 +++++++++++++
- 2 files changed, 25 insertions(+)
+I wanted to follow up on the patch I submitted. I was wondering if you 
+had a chance to review it and if there are any comments or feedback.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 196779e8e396..68ea596f6905 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3151,6 +3151,14 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 	unsigned long vm_flags = vmf->vma->vm_flags;
- 	unsigned int mmap_miss;
- 
-+	/*
-+	 * If we have pre-content watches we need to disable readahead to make
-+	 * sure that we don't populate our mapping with 0 filled pages that we
-+	 * never emitted an event for.
-+	 */
-+	if (fsnotify_file_has_pre_content_watches(file))
-+		return fpin;
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	/* Use the readahead code, even if readahead is disabled */
- 	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
-@@ -3219,6 +3227,10 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- 	struct file *fpin = NULL;
- 	unsigned int mmap_miss;
- 
-+	/* See comment in do_sync_mmap_readahead. */
-+	if (fsnotify_file_has_pre_content_watches(file))
-+		return fpin;
-+
- 	/* If we don't want any read-ahead, don't bother */
- 	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
- 		return fpin;
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 9a807727d809..b42792c20605 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -128,6 +128,7 @@
- #include <linux/blk-cgroup.h>
- #include <linux/fadvise.h>
- #include <linux/sched/mm.h>
-+#include <linux/fsnotify.h>
- 
- #include "internal.h"
- 
-@@ -544,6 +545,14 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	unsigned long max_pages, contig_count;
- 	pgoff_t prev_index, miss;
- 
-+	/*
-+	 * If we have pre-content watches we need to disable readahead to make
-+	 * sure that we don't find 0 filled pages in cache that we never emitted
-+	 * events for.
-+	 */
-+	if (fsnotify_file_has_pre_content_watches(ractl->file))
-+		return;
-+
- 	/*
- 	 * Even if readahead is disabled, issue this request as readahead
- 	 * as we'll need it to satisfy the requested range. The forced
-@@ -622,6 +631,10 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	if (!ra->ra_pages)
- 		return;
- 
-+	/* See the comment in page_cache_sync_ra. */
-+	if (fsnotify_file_has_pre_content_watches(ractl->file))
-+		return;
-+
- 	/*
- 	 * Same bit is used for PG_readahead and PG_reclaim.
- 	 */
--- 
-2.43.0
+Thank you for your time and consideration. I look forward to your response.
 
+Best regards,
+Suraj Sonawane
 
