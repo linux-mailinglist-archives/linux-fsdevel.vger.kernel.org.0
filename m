@@ -1,150 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-34858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E82D9CD4B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 01:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3359CD4CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 01:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01CCF1F2288D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 00:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42E91F2295D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 00:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B441AAC;
-	Fri, 15 Nov 2024 00:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E90339AB;
+	Fri, 15 Nov 2024 00:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hp8OcZDJ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="v9+XPC5T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD01096F;
-	Fri, 15 Nov 2024 00:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B2D1EA84
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 00:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731631308; cv=none; b=W0+4661+UtOem0DQXkxC2Yg9MK8TQlVTlTw7k0sqludLaiHzMbpX4+xqaY22yZVpRF5rzHE9zq7ooQQjST2Wgprd/tweMRrZjzxZ9vXBZTq76X2kqzl2/mfQmalHmuJoGGtj7rH4OaCDuaEwdpEC5QvlacmnrdPydrkjaEr56NM=
+	t=1731631698; cv=none; b=TPV/vQaw1/nLhmjj1gUUqpz7T56WOguOSGKZNBP1HUt26y2gH9PY7Qv1W7s3nMz/jGAR4XGaEbn9XZN279Nb3at3KopjlOIj3EvA3dnHs1KswsWtOWqJaNv128ghfgKZWEUbeJvwtk5UlPMnFEQi1OJ0HNrdNhJS/zgV5GCsX4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731631308; c=relaxed/simple;
-	bh=0eGjTFcYgGoj8hPrqRlT0CDvGF5RbC0bBVnopIte/c4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=szCmJlNVYzCoc8s0b+SWF5MPKdnuX7vDL38ZSUTNAHnBTf4vB8/a37oM5IQkl0EMSfrFW/7sKODi/jF82328pKMFqd4rUcIvz6WdBKHn6fvGgsT43mU9FOWO6TUu0+8NWseHHf5G37w2K87RTZgK6TwfGRSeL3el/dXKCk5b8iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hp8OcZDJ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38222245a86so489712f8f.1;
-        Thu, 14 Nov 2024 16:41:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731631305; x=1732236105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Ch4TFbpDEuiX+VexPStq204AKlKumcG/xHw5pvpktQ=;
-        b=hp8OcZDJfWv9Jsm9SsTvcrCJsXQS5uTWFIxznqOON6/0wRYGM+DMV+/fU45yCPOPz2
-         gxZJqYpC+6UyN9lF+Cok1aCL0r7BSp7elFjagEVFR9xiozFmGyt1ij71vxDSk1IDMm7F
-         EHlQLcv8/oZcnhTG+JC1LupQYNgOGDdyfMlLGhHxC2vWQ5TxolqXCgk3LinIWDQ73BMO
-         yl4DNkBitCpDcshuFbouAT5Tnv1fuGBzul2YOb4qSfblNb736iZLeKpnF+30t2IUji4H
-         7TovwiOP6qkgXCbHxGqX/AKql9DJzzOGp3qXTrCsF3/R9S13b20JObYZCyVcF4+ZHaVm
-         Islw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731631305; x=1732236105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Ch4TFbpDEuiX+VexPStq204AKlKumcG/xHw5pvpktQ=;
-        b=FDBVsCU3Uk3u4BA1pIAQHuJTP0BpFwKnHrR/TkKiB3hEOYlaBt6ZIjgH5uFACI9rPq
-         GhgENRqFvp0oDZ9J01JqctVl0kFBNUKuCOk5p8srkqe2y2sOH940qgJRojdjnTziqttv
-         uU6J1mJFXiKjEvlQxHjjzQsHuzxiIgOPtQmidwTdFhnH/QZFpdefgPlBSlUiOLCZWLUV
-         sncIt9a4NtGH+MmBMZz3DrnideOsZ/9uO0Z2xnmCdPrmipRDJXzdwQ8+X+A/90TdSg6+
-         9gxowN2JDohUJWZIGrfLvrl1aAy8f66H+J9zRM+N64/afQ3aF3UcgISi4YY+mq3V8K2P
-         emQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU49ZppMSycDFZwUH6aFkjpyJCjIosEoChq5tXnIS0Vw+qWofB9iOs6HFIG7nsk51+OFeIJ1hcsEXbSYIylmQ==@vger.kernel.org, AJvYcCV6MSoeAoHPO21dYDosB7nQGFpE2VhaX6+WowSudoyj64pcYXxYdeqWsrUUYKLJwTP8txej2McPvBEucm+M@vger.kernel.org, AJvYcCXBeQOaLbe/bwMbJniPBzdGv3Ft1dyVlh7coEqQ5rV7N19kqZBnz0G5IhhjM3d9xKOTzxPSGZspotQSNWtkHxFdp5cD9rdk@vger.kernel.org, AJvYcCXtrVToO2wAcxX7S0l0hEcGaLJfMRbzDRaIzRNMZMckYTFrwfQtg6iwsZH2ft84cz4xDyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR/Mxl5JGjbynXYUD5x7uZ6We+l7YilBDHElF09h41uT8/8b2h
-	SM3BIxD5bHKs1uOsUQyoutyx8cvHKXmQGyCJrym+o1ApozmSiV1CFyZlxjNBwcKaQtofzHaW76d
-	NzQVZU25fF0CYUnssyL3mhm8bryk=
-X-Google-Smtp-Source: AGHT+IFE8xhBVAHiZKN085M2hxkV87sb2WFKPHHYgfTzwJpNlqX6EqQovyrHUJuSHWalozXNtjynuL9sDH7REuPinfg=
-X-Received: by 2002:a5d:5c12:0:b0:381:f443:21d0 with SMTP id
- ffacd0b85a97d-38225ab4464mr589953f8f.59.1731631304689; Thu, 14 Nov 2024
- 16:41:44 -0800 (PST)
+	s=arc-20240116; t=1731631698; c=relaxed/simple;
+	bh=505JS9qwShJm9WxsFvOgGPiPcDplS3Rd27MY9UNou3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k1WSTc0aon6ou7jf/ODHTNWfCN+6TKhuR7hsZ3jKhdU9616SzolwroazMowlRWxivrju8pVhLvTEA7FazMCYoOWFZYwWZj2aQVLPKsxXZpK+Gzy1VGzIjnn37d73v5goSr8xoOUyxAyFq2HIq+w/WVlatBaXlNk5xCBps8RvFWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=v9+XPC5T; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731631689; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=7WPYpOS6Qm8HjeGpJRcmVvRactf0o52DYDrC5BFZLQE=;
+	b=v9+XPC5TOTl8LrofZuQLa+2uaEkrlKFE/UZRYG3eJaObpbwFJzCxs3t9rVcS1YLHD2sLWvgbsyF2dNRHof3JeO/+wlBuaRcQUY2MgL7zHW+0u7mhVN+64y+pYqoxbilx/9P8BgyuEEw2KB2OeVHD/vdoRPVQQzr6OI8PEoEhy5o=
+Received: from 30.171.192.161(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WJQSpFp_1731631687 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Nov 2024 08:48:09 +0800
+Message-ID: <07bf5e36-a726-4351-b7d1-886fd529a772@linux.alibaba.com>
+Date: Fri, 15 Nov 2024 08:48:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com> <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com>
-In-Reply-To: <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 14 Nov 2024 16:41:33 -0800
-Message-ID: <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: uncache inode which has failed entering the group
+To: Dmitry Antipov <dmantipov@yandex.ru>, Mark Fasheh <mark@fasheh.com>,
+ Joel Becker <jlbec@evilplan.org>, akpm <akpm@linux-foundation.org>
+Cc: ocfs2-devel@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ lvc-project@linuxtesting.org,
+ syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+References: <20241114043844.111847-1-dmantipov@yandex.ru>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20241114043844.111847-1-dmantipov@yandex.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 3:02=E2=80=AFPM Song Liu <songliubraving@meta.com> =
-wrote:
->
->
->
-> > On Nov 14, 2024, at 12:14=E2=80=AFPM, Alexei Starovoitov <alexei.starov=
-oitov@gmail.com> wrote:
-> >
-> > On Thu, Nov 14, 2024 at 12:44=E2=80=AFAM Song Liu <song@kernel.org> wro=
-te:
-> >>
-> >> +
-> >> +       if (bpf_is_subdir(dentry, v->dentry))
-> >> +               ret =3D FAN_FP_RET_SEND_TO_USERSPACE;
-> >> +       else
-> >> +               ret =3D FAN_FP_RET_SKIP_EVENT;
-> >
-> > It seems to me that all these patches and feature additions
-> > to fanotify, new kfuncs, etc are done just to do the above
-> > filtering by subdir ?
-> >
-> > If so, just hard code this logic as an extra flag to fanotify ?
-> > So it can filter all events by subdir.
-> > bpf programmability makes sense when it needs to express
-> > user space policy. Here it's just a filter by subdir.
-> > bpf hammer doesn't look like the right tool for this use case.
->
-> Current version is indeed tailored towards the subtree
-> monitoring use case. This is mostly because feedback on v1
-> mostly focused on this use case. V1 itself actually had some
-> other use cases.
 
-like?
 
-> In practice, fanotify fastpath can benefit from bpf
-> programmability. For example, with bpf programmability, we
-> can combine fanotify and BPF LSM in some security use cases.
-> If some security rules only applies to a few files, a
-> directory, or a subtree, we can use fanotify to only monitor
-> these files. LSM hooks, such as security_file_open(), are
-> always global. The overhead is higher if we are only
-> interested in a few files.
->
-> Does this make sense?
+On 11/14/24 12:38 PM, Dmitry Antipov wrote:
+> Syzbot has reported the following BUG:
+> 
+> kernel BUG at fs/ocfs2/uptodate.c:509!
+> ...
+> Call Trace:
+>  <TASK>
+>  ? __die_body+0x5f/0xb0
+>  ? die+0x9e/0xc0
+>  ? do_trap+0x15a/0x3a0
+>  ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+>  ? do_error_trap+0x1dc/0x2c0
+>  ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+>  ? __pfx_do_error_trap+0x10/0x10
+>  ? handle_invalid_op+0x34/0x40
+>  ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+>  ? exc_invalid_op+0x38/0x50
+>  ? asm_exc_invalid_op+0x1a/0x20
+>  ? ocfs2_set_new_buffer_uptodate+0x2e/0x160
+>  ? ocfs2_set_new_buffer_uptodate+0x144/0x160
+>  ? ocfs2_set_new_buffer_uptodate+0x145/0x160
+>  ocfs2_group_add+0x39f/0x15a0
+>  ? __pfx_ocfs2_group_add+0x10/0x10
+>  ? __pfx_lock_acquire+0x10/0x10
+>  ? mnt_get_write_access+0x68/0x2b0
+>  ? __pfx_lock_release+0x10/0x10
+>  ? rcu_read_lock_any_held+0xb7/0x160
+>  ? __pfx_rcu_read_lock_any_held+0x10/0x10
+>  ? smack_log+0x123/0x540
+>  ? mnt_get_write_access+0x68/0x2b0
+>  ? mnt_get_write_access+0x68/0x2b0
+>  ? mnt_get_write_access+0x226/0x2b0
+>  ocfs2_ioctl+0x65e/0x7d0
+>  ? __pfx_ocfs2_ioctl+0x10/0x10
+>  ? smack_file_ioctl+0x29e/0x3a0
+>  ? __pfx_smack_file_ioctl+0x10/0x10
+>  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+>  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+>  ? __pfx_ocfs2_ioctl+0x10/0x10
+>  __se_sys_ioctl+0xfb/0x170
+>  do_syscall_64+0xf3/0x230
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ...
+>  </TASK>
+> 
+> When 'ioctl(OCFS2_IOC_GROUP_ADD, ...)' has failed for the particular
+> inode in 'ocfs2_verify_group_and_input()', corresponding buffer head
+> remains cached and subsequent call to the same 'ioctl()' for the same
+> inode issues the BUG() in 'ocfs2_set_new_buffer_uptodate()' (trying
+> to cache the same buffer head of that inode). Fix this by uncaching
+> the buffer head with 'ocfs2_remove_from_cache()' on error path in
+> 'ocfs2_group_add()'.
+> 
+> Reported-by: syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=453873f1588c2d75b447
+> Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
 
-Not yet.
-This fanotify bpf filtering only reduces the number of events
-sent to user space.
-How is it supposed to interact with bpf-lsm?
+Seems the blame commit id should be:
+7909f2bf8353 ("[PATCH 2/2] ocfs2: Implement group add for online resize")
 
-Say, security policy applies to /usr/bin/*
-so lsm suppose to act on all files and subdirs in there.
-How fanotify helps ?
+Cc: stable@vger.kernel.org
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+
+> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+> ---
+>  fs/ocfs2/resize.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ocfs2/resize.c b/fs/ocfs2/resize.c
+> index c4a4016d3866..b0733c08ed13 100644
+> --- a/fs/ocfs2/resize.c
+> +++ b/fs/ocfs2/resize.c
+> @@ -574,6 +574,8 @@ int ocfs2_group_add(struct inode *inode, struct ocfs2_new_group_input *input)
+>  	ocfs2_commit_trans(osb, handle);
+>  
+>  out_free_group_bh:
+> +	if (ret < 0)
+> +		ocfs2_remove_from_cache(INODE_CACHE(inode), group_bh);
+>  	brelse(group_bh);
+>  
+>  out_unlock:
+
 
