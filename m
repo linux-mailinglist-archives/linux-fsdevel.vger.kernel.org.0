@@ -1,170 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-34926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23419CEEEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:22:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3FD9CEFCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 16:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF9F1F26A48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:22:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C6BB3117E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 15:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42C21D47C8;
-	Fri, 15 Nov 2024 15:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E651D47CB;
+	Fri, 15 Nov 2024 15:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M1M/cFA7"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jxekDYFj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8031D460E;
-	Fri, 15 Nov 2024 15:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A8916F282
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 15:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684137; cv=none; b=pbaqAjSjqSfRg0PTwQEHo0fHYKALs3f4soeSP4kEMLaCOnRzTftcR+F5k5Xodn1QlTK8vC/yfgsoYpy5CQbaCxeeqBOiKjEqjn99TjiJEMwafd++mEjeH1BPx3zmfzTvLhU+Aa2u6xOe+j+vigTrDIq4fMIGetAAPdXkbBIoWFU=
+	t=1731684301; cv=none; b=VN07Hw5KbLs+Ofv2C0gv+IoKs3PK8Hhl2HLPo5zzt1lPPTJjKZb5H+OkVZ1ReWbx7hDpYrqDtqLxuHcBcFSojCqiMn/C6KsxaJrFXOY4ECGwaCS/r4LrtK+MbhMXLN52N9VsoGqO5o8tRTlZeEu3oxI1a082yr0XM4+WMHIt/ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684137; c=relaxed/simple;
-	bh=hsxQVSYBjthGVSOK7NyoEeMCrOJxe28981prnKvfeTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxecaPeIS9uDwLGIPn/q6c5nxT85q3LNaVzQM7zPdMH1WzSdO244Uk8uKR7seX1H3gLnL6wZBvy5WlE213CumLksxTELb5QyLy7NktibmOQKN/YRnwu/KOwYBWjINROk7EnJmAwmpXTg0cpeUnLUreRtdSU5+b3ajkqZk2FxvOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M1M/cFA7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFAYlo2004138;
-	Fri, 15 Nov 2024 15:22:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=SW/XRQkAzjFGSj3ouQZLIw7IH0ArI5
-	IWd+lFiJd5eF8=; b=M1M/cFA7zG5Fn81q+yO9tcxqAr8ncetMOu1LmxhAT4ViD7
-	uq6DgTfiHbvplajEXvvTnb+6PwMZu2hLh9yCsEPuwd4m/Pn4B93XkjVah0Dm46ze
-	8OnrXT/SDzFiwua88gobFp9Hb8elZO7RWk9SwaJFWPB14+eBMdO6+wHLBF8l9b+q
-	OqrLoVIZLlrTaBmXiTm14N9TCHjdcpei8dyCxkA8C4LDrGU9V2ftXbRx58/rlT+w
-	q0+B/q42Vu4GGH4Du7YBo5kBgDGSghjOaWHqBsgoWvfAxPwRGpyYj3NymFWEkMjC
-	P/xtz1qSXq0Xz/D62V74MCIS3EvCwfol57JXpZKA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuy1kujk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 15:22:08 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AFFFJFs000713;
-	Fri, 15 Nov 2024 15:22:07 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuy1kujg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 15:22:07 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFDu6ZH029753;
-	Fri, 15 Nov 2024 15:22:06 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjmtxwh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 15:22:06 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFFM4L459965698
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 15:22:04 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BE3320049;
-	Fri, 15 Nov 2024 15:22:04 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34DF020040;
-	Fri, 15 Nov 2024 15:22:03 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.219.93])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 15 Nov 2024 15:22:03 +0000 (GMT)
-Date: Fri, 15 Nov 2024 20:51:57 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Christian Brauner <brauner@kernel.org>,
-        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        fstests@vger.kernel.org, stable@vger.kernel.org,
-        Leah Rumancik <leah.rumancik@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: generic/645 failing on ext4, xfs (probably others) on all LTS
- kernels
-Message-ID: <ZzdnFeR/dE/w5wan@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241110180533.GA200429@mit.edu>
- <20241111-tragik-busfahren-483825df1c00@brauner>
- <20241115133407.GB582565@mit.edu>
+	s=arc-20240116; t=1731684301; c=relaxed/simple;
+	bh=TIZ7Z0awf5cXcxUiF+IISaAkoCwhIcEsKazphLnlfYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oUlupuoWpOWmY2RqustItfvg+A/MXlow+KURvnLigrniwX8eabsUKmuDso8Ghiyo116q/qUawVGQFi8IdgbPkViE2jDVYeVXz+rLAzTXj+SFw3HHFLMeRwVLx2WAB0pcnQ1UjAXSvRyD2U3R2ou7o8TEKB7NVp8GEBy0DEog2m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jxekDYFj; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4609e784352so13070301cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 07:24:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731684298; x=1732289098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MhWRL4SgdQsRHwF3zYRHfFkkTS6N6p8eTQwmpFKTViw=;
+        b=jxekDYFjEkjClmziv8L24VOvwcy7vFsFvvQhTkzdnJsT047qyJiOOTvuZBv7yGEA7S
+         DhX3a5weIkiUfjNIlUPju0A8+WZg14h2iRJoqsiL/N2Xf/DtyI0FLX3t3IBYDHb76CEx
+         LtVLvWE+qWf4HjMVJnu30IX6RJBR0XF9NV7ik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731684298; x=1732289098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MhWRL4SgdQsRHwF3zYRHfFkkTS6N6p8eTQwmpFKTViw=;
+        b=b5IGNMXuh3LDlKV0fb9m0O53WekU+hXJ3D50rDkGCxW64Ffp8oZo5VInXwMvcDQWVn
+         vBq9buvz1Qjswc07OU150FcShmj6vF33FulFVHt0EvtXh+6h24+Y6Th91kHJTyYQZ3Rh
+         miFW4UOIC0jzTnyxl4vHwYbs+b+HOwoWM7AHu6ObHZoEtSSkQwqFNBgrSHW5WrO16Scp
+         TBSYcrCEUJxD4sX2mOQdJ+piBhRW84z1ty7doi3pmev8gC0R34EDNbvKdHtTlmAmrMir
+         vGJ6SH/zsySDgtzVVnFiSt3KhgOV8ecBoiiQ8LDm+IuMZ5cHKHzbxeNzQEtz+vvYQJ1I
+         YWTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzShdMmfxcEWdwFuF4Eq6T4N0DRjOmWMPSBGuLsfx87xrT0FLiAh5rH8/MfZ7GISfU46K5r82FmCoyuHnS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvXo+uIeBPlnZstPxlLOLkxVGhD0i9gjfTvK9lnuTtLIFOp8j2
+	GMm75rifrLlDTTSXHa+mxegrp1vzRWRdqr06uFL0g3/M11Ip8jhFPAdsLrW689CHN+OLmYw/F3D
+	5EA6nIgPYsjxK7yCk0KniSYRGt6CmsWrN6grMgg==
+X-Google-Smtp-Source: AGHT+IEo2rr0odYMw2XFght516xGACmkLA4n6BjOW0bN/+TMAiU5Xyo127jU/d8oAwXbYktURA2Q6cq1rbAEop0XL8I=
+X-Received: by 2002:a05:622a:5c8d:b0:460:a9da:42b8 with SMTP id
+ d75a77b69052e-46363e11f32mr36945911cf.22.1731684298435; Fri, 15 Nov 2024
+ 07:24:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115133407.GB582565@mit.edu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XuZh_QlhMl6wZdrF1se3BiPXIgh52ooP
-X-Proofpoint-GUID: KHdTY0Xs6-PZkxXd4UrC5171n2pm4zfy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- clxscore=1011 adultscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150128
+References: <20241024164726.77485-1-hreitz@redhat.com> <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
+ <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com> <CAJfpegvfYhL4-U-4=sSkcne3MSNZk3P3jqBAPYWp5b5o4Ryk6w@mail.gmail.com>
+ <ece87ac3-71e2-4c43-a144-659d19b1e75d@redhat.com> <CAJfpegtuVxtf9xoyJPveqA=uXb-wnzPcqD_rXNOV4LMahWqxEQ@mail.gmail.com>
+ <2fe45430-a07d-45bb-89b7-1e4a08d1818f@redhat.com>
+In-Reply-To: <2fe45430-a07d-45bb-89b7-1e4a08d1818f@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 15 Nov 2024 16:24:47 +0100
+Message-ID: <CAJfpegtQhcGNaH8k1XKTSV_9=T4Ayx8oDLUK-0X8CRg6Rhb1vg@mail.gmail.com>
+Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>, 
+	German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 08:34:07AM -0500, Theodore Ts'o wrote:
-> On Mon, Nov 11, 2024 at 09:52:07AM +0100, Christian Brauner wrote:
-> 
-> > behavior would be well-specified so the patch changed that quite some
-> > time ago.
-> > 
-> > Backporting this to older LTS kernels isn't difficult. We just need
-> > custom patches for the LTS kernels but they should all be very simple.
-> > 
-> > Alternatively, you can just ignore the test on older kernels.
-> 
-> Well, what the custom patch to look like wasn't obvious to me, but
-> that's because I'm not sufficiently familiar with the id mapping code.
-> 
-> So I'll just ignore the test on older kernels.  If someone wants to
-> create the custom patch, I'll revert the versioned exclude for
-> {kvm,gce}-xfsteests.
-> 
-> Thanks,
-> 
-> 						- Ted
-> 
+On Fri, 15 Nov 2024 at 15:51, Hanna Czenczek <hreitz@redhat.com> wrote:
 
-Hi,
+> Now that I look at it once again (because I was wondering why to check fm=
+, and not fm->fc), do we even need to check fm or fm->fc?  fuse_mount_destr=
+oy() assumes both are non-NULL, so I assume sb->s_root || fm->fc->initializ=
+ed should be OK, too=E2=80=A6
 
-We did notice this as well during our internal testing. I'm unfamiliar
-with the code but after spending some time I came up with the
-following patch that did fix it for us (it's a rough patch, might not
-apply cleanly to any stable kernel). Again, I'm not 100% sure if this is
-the right place to patch it but if it looks good to peopel more familiar with
-the area then I can try to send the backports to the stable.
+You're right, fm can't be NULL.  Not sure why I thought it can.
 
----
- fs/namespace.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 7906c5327f4f..368a60e48861 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3995,6 +3995,12 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- 	if (!kattr->mnt_idmap)
- 		return 0;
- 
-+	/* Don't allow idmaps with no mapping defined */
-+	if (kattr->mnt_userns->uid_map.nr_extents == 0 ||
-+	    kattr->mnt_userns->gid_map.nr_extents == 0)
-+		return -EINVAL;
-+
-+
- 	/*
- 	 * Creating an idmapped mount with the filesystem wide idmapping
- 	 * doesn't make sense so block that. We don't allow mushy semantics.
--- 
-2.43.0
-
-Regards,
-ojaswin
+Thanks,
+Miklos
 
