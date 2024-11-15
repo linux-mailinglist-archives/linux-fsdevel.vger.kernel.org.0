@@ -1,230 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-34878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04B29CDAEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:51:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8BA9CDAF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 09:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 438CBB255DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 08:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7DF41F21991
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 08:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A518FC74;
-	Fri, 15 Nov 2024 08:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D8618CC1C;
+	Fri, 15 Nov 2024 08:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgTozD10"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cimm8ghR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A6618D622;
-	Fri, 15 Nov 2024 08:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8A41632E7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 08:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731660678; cv=none; b=Hlekv/HrOB6qw3raZxsysPB+HZ22dx2VIvrETlvvmG3ulsp4LtEAykNGc0Js7aZn+5iiaMqwf2hfXraMmaHDEnGoL8p6aAVztY++Qs38yg+lMyB0oh9Slvs3Ae8fk4FIPfceeAbpoykav5XJT6A9ap901q49nfiQZM/cOstgvms=
+	t=1731660917; cv=none; b=g21nbByncxhrAQBJWgP82ZVENrnQaZ03xCzph44kPsF3lvKeNrGzm4lGPNp/jXXvS5y6TAauCokvr767dkeyDBo15M6/j7x7KzU8NXrdHS5qf7Zh+ncXeE1TfxjCbAAMI1l3ZfMTZFGwaD3UteHcEBomfIxtl08Mh/fcH98Luzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731660678; c=relaxed/simple;
-	bh=IDDtktDLwP0qAgJC0D9PubIcErY5MwpxzPAS/SeEg7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fhFUbE4YnHYD8c72I64bxRTEStGzohb+aKnOgjDYq2RVEIpoIxEjfC6cuCSOthiOG74llL9p6BjwYLXLTurvzfPe/HY4+wa7Etk36WshMRGYHRzuhzC0xQ3v3q6PvxI1pQbyxOYIdy7aGVQ1c2R+358XhMB6yeWpj3DQgAxK2Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZgTozD10; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa20c733e92so64281066b.0;
-        Fri, 15 Nov 2024 00:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731660674; x=1732265474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uQeS1B4d8WAUBiwGM9M4b/ckH0pDS9RfJAuzaYkRioI=;
-        b=ZgTozD10T3GhBvCwVDpJiMFwta1SsSmPB7eP7LfrZr3RnIpY52Dkk0VSsFr9tdrFBY
-         lakGPEn09MmJjeBWpCHjaApQRPVZHe1T00Jwh3mHDyEooHJLalUSVsFRBqg4TwdDh3f1
-         lXq6CqewuVgRAsQKHH4f3XikKvGWiK7ZmBildE0oNJLfQHY1PmdxkpQEDN8PGScvCK94
-         5kBm+WRVSvabBRYppRl38SqUv9S6N3cYu5XJqQ0vAiFCPZlTWkkSzrOv0fCJT+YTNreA
-         H35M0kj9v6/j7xCbsKneADb/6q/0AaDPNRj5zOyZ64Kz0glzGhYCN1DeKN056mOioGlT
-         7rRw==
+	s=arc-20240116; t=1731660917; c=relaxed/simple;
+	bh=KZaTCwl5/7/xBzUr+GvViHdVkA0LFzfo4lirVKWO8GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GGVSGXKV15Y+xcGN/eVdmdeOLY5TTQzSQ52/4vjwvSLlKeGoGGl9kT4VIODAbn0rOh60ggRCaTNeCTYe7AdvgAJy9JWTs3/kEBks4rhGiBMImT6YGMkk2rL5qmZvdwKUcxFfZ+K0wolcJ79+njlJBv/odBWCXUO8jWEOX8y0jm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cimm8ghR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731660915;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hAIAA7M9wulpOH1pcCM6SAcrhfMPokr2Di+1gDkf/AU=;
+	b=cimm8ghRGMuvOF9A6UQj6ufvsCRgLMv0Y2fLN5bIvi3LdAdSoP2VEssgppgJMAdIyyd5H0
+	Nx51Wd747PINsZRSG6UYWuleaqAZQ5ToyuheGFp10GavrH9fJhmTZYqP8jgyHwPyaoj3R6
+	1FXsD4z2cK2hLaNw+d3isk3PX9mDLpU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-48BX-oONP9-uuWQ01vGkbw-1; Fri, 15 Nov 2024 03:55:13 -0500
+X-MC-Unique: 48BX-oONP9-uuWQ01vGkbw-1
+X-Mimecast-MFC-AGG-ID: 48BX-oONP9-uuWQ01vGkbw
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43157e3521dso10931355e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 00:55:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731660674; x=1732265474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uQeS1B4d8WAUBiwGM9M4b/ckH0pDS9RfJAuzaYkRioI=;
-        b=LYQ34r9b84OlmdvXcTTIfR+zQeLWuQtTqvkyXi30XJQMz3CIeTgeUXua/IK6+nu1jZ
-         4VXxG357wen656zDWPJTtDNPjZaaysq4ODn/hJiAwf5IIor57tFdcPE+A9gx5DP9YFZX
-         mWINcCyJN0KO2rGXzhWRtqzDgRGw9UgKgEvGmvTwx+um4WwNhgOaS8/U8953CNta53qH
-         Nl4go5iD8k0aLU2TWMnOfNYjGiLA3BTo+/yeIaE6lFb7kF9aud6x7HT51hPIYGpNpTBi
-         FZamYbVUBDBripiQiaPtq3qpEMuN+PdGBz+mgFtaj78QAdhfz9RY+hLL+iRo+onJivhI
-         2yYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNrR3CDdRG+x3d8GcWIfJpo/bA75avaMRirlXNJ/D4KGnlFV432H8b52EtoZHHso3rkchE2nBUDlSe0Th7kg/g7To9XW+G@vger.kernel.org, AJvYcCXTftrou0nzAPg08ON6lK9UHifViiuMyZqNGXYNSx8zqh7/yOVZPeEnsV4NPDYFARCnoRlM6EcmyI75XG/e@vger.kernel.org, AJvYcCXpS2PfcZWhik01N3Zz9ZSg4VW+z568wYkFfE1XGonHgPqlgfyS0tyVg37ms/Cc68HkUvma3/qh3sdlswNM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOqEMSVW97U8yrZX3tT8/et67DWzV7oauuwkwLoIsusvE42sn3
-	s7fiHq88BZGzwnVYlUT0o/laa+aUxIyTD4jJzNG+Ok9t1eLZphUULf38NT1NPJc2ps9wSxRuLIu
-	+OUhun7dJlbRN2QfM/4BR0sUYycQ=
-X-Google-Smtp-Source: AGHT+IGKfSTOg6x0Z08frLiT8lNJLV2fwoZT7W4fNbV7m3f4x+0eisTDSrwGEYppIv5w2GfL3RuWoHmSEOeT2BWwfF4=
-X-Received: by 2002:a17:907:26cb:b0:a9a:3f9d:62f8 with SMTP id
- a640c23a62f3a-aa48341362cmr173901366b.19.1731660673989; Fri, 15 Nov 2024
- 00:51:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731660912; x=1732265712;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hAIAA7M9wulpOH1pcCM6SAcrhfMPokr2Di+1gDkf/AU=;
+        b=ChwwPk9AC3kdvHKw7Yij0Tg5BWiQovITvTv2vWoonszYQzZmdEikC9Jga+2OOeNYJ8
+         B0C1tpWgyzcYOJYqZC4TDVOh/whDJ6+tGt6xAw8FA9u+tfCZIwHds9X1VyfxtpgzrTqf
+         EK7hIjmjd4k2jbcSE2DXFYjhzqg5rNDiCnEi6zfnepRQaKSKNF+WBYgiidsorEsaXcts
+         d+DQeGGEPlFWxdSALsTdZL5QzUWUAwex+yaLRxlGlOUFPG3fWOeTvgHGkw27eEqB4NO2
+         3//AYp8rlsc3iSJhMSpQFSHbqkNb69BAH/6IRJFJ9YLd3jxwXehbSvEA8HcUIwg6Rmr2
+         Vz4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUI3EqfxGUMjj9m4xtOJlngsHotHp1S7F9Hah3X/Fx0GqXuW71fEhjSyDX91spCEBLtivMQzTve4LsW/pXa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxoDkygyxxmTXvDBUAno4Ll9KKBH9s9n+oPReEex+J5eSW+MPe
+	bQOmfpXXSimiidMjUsh0w7w9+1WsWK4OYhs7W18+fMJ/WTwYpUNDGPvvWbz/HRv1AHNXhHl2R+I
+	O4xpaRFlCg9RsPHrFYkaKO81sPyjK+RR1M3kyteGGtCaPZ+/lMAGbyG6Vz/DoxgE=
+X-Received: by 2002:a05:600c:3d86:b0:431:6083:cd38 with SMTP id 5b1f17b1804b1-432df7203aemr13958915e9.6.1731660912061;
+        Fri, 15 Nov 2024 00:55:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvUGx7iWk3PQvRCc1l6MRIL8JhbxHCh72nhh8kJajEsnmwrLEeB/CeCx/cWKXViuHaYcVO8A==
+X-Received: by 2002:a05:600c:3d86:b0:431:6083:cd38 with SMTP id 5b1f17b1804b1-432df7203aemr13958655e9.6.1731660911667;
+        Fri, 15 Nov 2024 00:55:11 -0800 (PST)
+Received: from [192.168.3.141] (p5b0c694e.dip0.t-ipconnect.de. [91.12.105.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265e16sm50538415e9.12.2024.11.15.00.55.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 00:55:10 -0800 (PST)
+Message-ID: <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
+Date: Fri, 15 Nov 2024 09:55:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-2-song@kernel.org>
-In-Reply-To: <20241114084345.1564165-2-song@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Nov 2024 09:51:02 +0100
-Message-ID: <CAOQ4uxjFpsOLipPN5tXgBG4SsLJEFpndnmoc67Nr7z66QTuHnQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 1/7] fanotify: Introduce fanotify
- fastpath handler
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
+ s390
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+ Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
+ <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <ZzcKY8hap3OMqTjC@MiWiFi-R3L-srv>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZzcKY8hap3OMqTjC@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 9:44=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> fanotify fastpath handler enables handling fanotify events within the
-> kernel, and thus saves a trip to the user space. fanotify fastpath handle=
-r
-> can be useful in many use cases. For example, if a user is only intereste=
-d
-> in events for some files in side a directory, a fastpath handler can be
-> used to filter out irrelevant events.
->
-> fanotify fastpath handler is attached to fsnotify_group. At most one
-> fastpath handler can be attached to a fsnotify_group. The attach/detach
-> of fastpath handlers are controlled by two new ioctls on the fanotify fds=
-:
-> FAN_IOC_ADD_FP and FAN_IOC_DEL_FP.
->
-> fanotify fastpath handler is packaged in a kernel module. In the future,
-> it is also possible to package fastpath handler in a BPF program. Since
-> loading modules requires CAP_SYS_ADMIN, _loading_ fanotify fastpath
-> handler in kernel modules is limited to CAP_SYS_ADMIN. However,
-> non-SYS_CAP_ADMIN users can _attach_ fastpath handler loaded by sys admin
-> to their fanotify fds. To make fanotify fastpath handler more useful
-> for non-CAP_SYS_ADMIN users, a fastpath handler can take arguments at
-> attach time.
->
-> sysfs entry /sys/kernel/fanotify_fastpath is added to help users know
-> which fastpath handlers are available. At the moment, files are added for
-> each fastpath handler: flags, desc, and init_args.
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/notify/fanotify/Kconfig             |  13 ++
->  fs/notify/fanotify/Makefile            |   1 +
->  fs/notify/fanotify/fanotify.c          |  29 +++
->  fs/notify/fanotify/fanotify_fastpath.c | 282 +++++++++++++++++++++++++
->  fs/notify/fanotify/fanotify_user.c     |   7 +
->  include/linux/fanotify.h               | 131 ++++++++++++
->  include/linux/fsnotify_backend.h       |   4 +
->  include/uapi/linux/fanotify.h          |  25 +++
->  8 files changed, 492 insertions(+)
->  create mode 100644 fs/notify/fanotify/fanotify_fastpath.c
->
-> diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-> index 0e36aaf379b7..74677d3699a3 100644
-> --- a/fs/notify/fanotify/Kconfig
-> +++ b/fs/notify/fanotify/Kconfig
-> @@ -24,3 +24,16 @@ config FANOTIFY_ACCESS_PERMISSIONS
->            hierarchical storage management systems.
->
->            If unsure, say N.
-> +
-> +config FANOTIFY_FASTPATH
-> +       bool "fanotify fastpath handler"
-> +       depends on FANOTIFY
-> +       default y
-> +       help
-> +          Say Y here if you want to use fanotify in kernel fastpath hand=
-ler.
-> +          The fastpath handler can be implemented in a kernel module or =
-a
-> +          BPF program. The fastpath handler can speed up fanotify in man=
-y
-> +          use cases. For example, when the listener is only interested i=
-n
-> +          a subset of events.
-> +
-> +          If unsure, say Y.
-> \ No newline at end of file
-> diff --git a/fs/notify/fanotify/Makefile b/fs/notify/fanotify/Makefile
-> index 25ef222915e5..543cb7aa08fc 100644
-> --- a/fs/notify/fanotify/Makefile
-> +++ b/fs/notify/fanotify/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  obj-$(CONFIG_FANOTIFY)         +=3D fanotify.o fanotify_user.o
-> +obj-$(CONFIG_FANOTIFY_FASTPATH)        +=3D fanotify_fastpath.o
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
-c
-> index 224bccaab4cc..b395b628a58b 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -18,6 +18,8 @@
->
->  #include "fanotify.h"
->
-> +extern struct srcu_struct fsnotify_mark_srcu;
-> +
->  static bool fanotify_path_equal(const struct path *p1, const struct path=
- *p2)
->  {
->         return p1->mnt =3D=3D p2->mnt && p1->dentry =3D=3D p2->dentry;
-> @@ -888,6 +890,7 @@ static int fanotify_handle_event(struct fsnotify_grou=
-p *group, u32 mask,
->         struct fsnotify_event *fsn_event;
->         __kernel_fsid_t fsid =3D {};
->         u32 match_mask =3D 0;
-> +       struct fanotify_fastpath_hook *fp_hook __maybe_unused;
->
->         BUILD_BUG_ON(FAN_ACCESS !=3D FS_ACCESS);
->         BUILD_BUG_ON(FAN_MODIFY !=3D FS_MODIFY);
-> @@ -933,6 +936,27 @@ static int fanotify_handle_event(struct fsnotify_gro=
-up *group, u32 mask,
->         if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
->                 fsid =3D fanotify_get_fsid(iter_info);
->
-> +#ifdef CONFIG_FANOTIFY_FASTPATH
-> +       fp_hook =3D srcu_dereference(group->fanotify_data.fp_hook, &fsnot=
-ify_mark_srcu);
-> +       if (fp_hook) {
-> +               struct fanotify_fastpath_event fp_event =3D {
-> +                       .mask =3D mask,
-> +                       .data =3D data,
-> +                       .data_type =3D data_type,
-> +                       .dir =3D dir,
-> +                       .file_name =3D file_name,
-> +                       .fsid =3D &fsid,
-> +                       .match_mask =3D match_mask,
-> +               };
-> +
-> +               ret =3D fp_hook->ops->fp_handler(group, fp_hook, &fp_even=
-t);
-> +               if (ret =3D=3D FAN_FP_RET_SKIP_EVENT) {
-> +                       ret =3D 0;
-> +                       goto finish;
-> +               }
-> +       }
-> +#endif
-> +
+On 15.11.24 09:46, Baoquan He wrote:
+> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+>> This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
+>> virtio-mem support on s390.
+>>
+>> The only "different than everything else" thing about virtio-mem on s390
+>> is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
+>> during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
+>> crash kernel must detect memory ranges of the crashed/panicked kernel to
+>> include via PT_LOAD in the vmcore.
+>>
+>> On other architectures, all RAM regions (boot + hotplugged) can easily be
+>> observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
+>> the elfcore hdr.
+>>
+>> On s390, information about "ordinary" memory (heh, "storage") can be
+>> obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
+>> that information is stored early during boot in the "physmem" memblock
+>> data structure.
+>>
+>> But virtio-mem memory is always detected by as device driver, which is
+>> usually build as a module. So in the crash kernel, this memory can only be
+>                                         ~~~~~~~~~~~
+>                                         Is it 1st kernel or 2nd kernel?
+> Usually we call the 1st kernel as panicked kernel, crashed kernel, the
+> 2nd kernel as kdump kernel.
 
-To me it makes sense that the fastpath module could also return a negative
-(deny) result for permission events.
+It should have been called "kdump (2nd) kernel" here indeed.
 
-Is there a specific reason that you did not handle this or just didn't thin=
-k
-of this option?
+>> properly detected once the virtio-mem driver started up.
+>>
+>> The virtio-mem driver already supports the "kdump mode", where it won't
+>> hotplug any memory but instead queries the device to implement the
+>> pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
+>> the vmcore.
+>>
+>> With this series, if the virtio-mem driver is included in the kdump
+>> initrd -- which dracut already takes care of under Fedora/RHEL -- it will
+>> now detect the device RAM ranges on s390 once it probes the devices, to add
+>> them to the vmcore using the same callback mechanism we already have for
+>> pfn_is_ram().
+> 
+> Do you mean on s390 virtio-mem memory region will be detected and added
+> to vmcore in kdump kernel when virtio-mem driver is initialized? Not
+> sure if I understand it correctly.
 
-Thanks,
-Amir.
+Yes exactly. In the kdump kernel, the driver gets probed and registers 
+the vmcore callbacks. From there, we detect and add the device regions.
+
+Thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
