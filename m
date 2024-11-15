@@ -1,176 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-34975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-34976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0769CF4E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:33:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD12B9CF525
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 20:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E10BB2B292
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D82228C564
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2024 19:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BF71D63EE;
-	Fri, 15 Nov 2024 19:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5B1E1C08;
+	Fri, 15 Nov 2024 19:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRTkh1FA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3Eztt1G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C170713D297
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 19:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE91CEE97;
+	Fri, 15 Nov 2024 19:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699202; cv=none; b=Qg4MuWG3nSh4zEBL52I0sKneJkGKZuOL5DTxuYM8aq25teqIh4isNJnakJEHBMIbXnRe8Y5yvWZobFMNDbl4T7VI9v2TZQ8qqVoY8bZxFNKf3dKSkAQasNP/u93jXDtCpaP636xarunWn9BjBXBKhavr6Olr/0NKtE56axaFaNI=
+	t=1731699711; cv=none; b=Ym3oBIRnkFLaeANFrf+JClyehcYIwiCtjs1XavASd3X5vW9801d/SrFmNqFnQCLWAjCur/SCFXexrYbR7dXl5IMj496LgoS9uptczf5O2/IAlwirMENOyK01AXwpPuGYSxf0aLKcu6oum3h9jr+6NaSwlP0OO+4KvCAZPNw2gNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699202; c=relaxed/simple;
-	bh=95ohT0IF3uLJ1BUQ0CBDN7i7vyBA0unWb6I0/J1pLG0=;
+	s=arc-20240116; t=1731699711; c=relaxed/simple;
+	bh=11+JLjIDjOOyK0Aqas1540GH5ts0hbJToWK8RT6in2Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2sJT8hrANE38hQrN4q5O4n87TnK1VvrTFXCx+2e3XiQrC5x+CwzS0x+51V5o/sCxix6ESj2lUV4XGLn//wAe1OOMI8Ey1qIgNH57rmXeBtmjqDga8Hw49nCx/88mwPffZl0dCzdYZkbBLWlnqx1qyFMNii0/JNB31J9JJhkzIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRTkh1FA; arc=none smtp.client-ip=209.85.161.44
+	 To:Cc:Content-Type; b=RElvCZoHE2hNTmNZ7POSY/n2t0woe1LUByuRA8TTawuMTH7q4JFs5DTyHgUuUvSal6bgZlm3q9f0ALcQbjWJ2nsvMUbilppBKYuuwg5zL/KuIjQeyntnQw20gQYwEsbXo7AxIr0bPGP7qkuhmdlF4pSR9Nb2Ddq+WkMdfCztFpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3Eztt1G; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5eb70a779baso1159296eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2024 11:33:20 -0800 (PST)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3821a905dbcso1384467f8f.0;
+        Fri, 15 Nov 2024 11:41:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731699200; x=1732304000; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731699708; x=1732304508; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3iQri3sxuB/Kv03iTUdizwGXxr5fOcdPkNRuCmH3lcM=;
-        b=DRTkh1FAXyhXfyArLLhHkrokTGMJzLSjH6hRe/s0fU0W6Uy/RHM+pHNYS+faHS2ViC
-         VY48JnniNGp7R98knWTI/U+HlDR5tcm6QpFHyuFEM+4DnBAuuL6nnapQ2C7AZ5Q6my5Y
-         dq2LjEWn8x0KC7PfiDqOn+w66bEZjTFJdgOJAJSF35TvWuHXnIDk+Im+oMwo619SYeMp
-         Wh6a5bbi/8eGxFM4wMTmk3PBdDOEeboMdffFO+ermFCnrDF1pvxC/wdkRH4MpRmfypHh
-         Wu6tVeO4GLBjhrc9BqlhxlVnRdro/tfDNOf3r0mg00pcG82pVuzJf3tJGBdmzgfM0lBj
-         fNww==
+        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
+        b=V3Eztt1GU5sGkaAu+0hIjjMiWDrFZguJSTyhXACLs+LDVYKqTr2ont3IUaMFRH6IHB
+         0PNzqTwCvdo4EzhFX7Lz9mfj2y1aTTHbcKozAx3AlUz5Bgyeasndcu0IsfIUgwJ4rVeF
+         gRr14a1yZxI9REaRvEVD3wHLrnU+MGlLI1GZR7CKQQxIz8iBTJfsCoegDh0DNK+Eg3Ie
+         D9neFNnThzrKo84HQzT6S2XaKXCQF2DUsbn8pwzMp8R9a1S/5yPrMlVAEgTEMU4d0W3P
+         jl8JIguQPOQKKrhFTIR+DDNvpzqvUKp+0yhShQ65rwf1ijQZ9LIfsBzH0bMdgWKiXOhz
+         AaVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731699200; x=1732304000;
+        d=1e100.net; s=20230601; t=1731699708; x=1732304508;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3iQri3sxuB/Kv03iTUdizwGXxr5fOcdPkNRuCmH3lcM=;
-        b=spdAIxvaVtXSopICvehbvx1JjWuX5XEOx1UvnAOS4P5LaJOOYSstYD4Bhkrx2ojWUI
-         FTypzI0EfUrViYbtY+4cWi/TT0h5MUHX5lJU+fuowSn2fyDT9jL6RvCt5QSWyYfPQ6mx
-         E7zVIZgKlTOl5eIDMTHA+tJ+TD85xjSjT3G89IIooL4Kwk0letbhmJ4W47GkVs2eAsZy
-         hGFtz+maww26HTy2/RgylNRBAUYpadTO0GlOJqXkyRWDZEx5nC9T6NsraN2yqEjHKdUw
-         5AN83xPe+YDYHoT2AWEayd0LQt8O2fBPEu3v1kHim7TlTsZl/KNu6Af/DqXgtDZg0v4N
-         Z6cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYBpdJPBwtRDrrchtFXrBGto9wE60yf+lUkdckwBs95QrwCTVplZcQVFmdmxOQaB+v9vWl2sSWnx+gV9Os@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9qrKlALSHyRC4wnShep5Jy8YZsPcKb8yyFkLtQjUVi9LJzkII
-	CQt9rJMWz1nKfUvornI28w75tC6TDcj8cc/5JgYSHZNvYy+Nc+ow7zDUfc1KMbX6xxACcz1Wl9f
-	JC9ipSZNXD2CEgFP3QpbFeB9SMeE=
-X-Google-Smtp-Source: AGHT+IH2RmcVes3AG0lbD9cuLYYXUcOiGnvmOTFEevBeg1h1Hv39lcvK78H5/4/K7h3wGT7+BQnzD/ccTxeDJ13johg=
-X-Received: by 2002:a05:6359:100c:b0:1c3:d56f:75d5 with SMTP id
- e5c5f4694b2df-1c6cd0a3e56mr285100855d.12.1731699199614; Fri, 15 Nov 2024
- 11:33:19 -0800 (PST)
+        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
+        b=S7xMu3ufqWt4hiL57n8XOYXSlmMZ3aeZ15qsz73jOgDoraosvhT8BMK+zvpogCpkj7
+         wG7yiSgxJjHu3lOkbM0CiDEG2ofX2TDcy1P+vvphlHHBs/2apuVF+Mc4lh+d01dRdVTf
+         c5GMlo0wIV4XE2m9YyMyYYGwR9h9XeDMApPm/BYRm6kUJ2RgJOXq85ftS0/OB45+qAs4
+         WH6Fqp/s05U5wS1Aaz7FWlZWEGs1syBWmjTJ0JGk9BzTI6SIbNatCBgZR7epuL+VNUl7
+         aUZ0I0dTe559D1vpg/WZeTc/pjaWi3dBFQ61ndZoVkQvBF9LdmELBYr//rRYlJgoBlLU
+         crOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUztC56waOTJ0rXottSRHRPXKjVfdDiFu63nu+AlFq06+iA+/93wVLhrf0txRmgDsvcQD8yOvI1AJN6K2SVfMjxFQu6adyG@vger.kernel.org, AJvYcCVNeAykylK1vGcWCDqQ8KoG3VBZXcB8jRgdwYIYn0iRILCzc0cwPKMng8x8q/vnp+11BrMKsB2hflZfTo4w@vger.kernel.org, AJvYcCWE/905eFDJiTAMXkX8zHklyu/zAWICPA/PVqBhlYeGK+DUJV0tMYr4eWWSu7yb9P6eVkcI3r687OUgh08XUw==@vger.kernel.org, AJvYcCXCnI5oKWH5ExIBFIdLWlUUJrZKyxzn+2x93BTQ4rS8u2KqBjDqmpphdBw7gz0Q3N6WNsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZa2//VFSA2l1WVvMBj3PM9RyiQuvSMA0g1XU24oYF6GoUFZ6f
+	gHZyfmEgcqZeg1/YMtJBdtmA79Cq6DxvYxy3JdeDafILduzkAswubPdeOPTD3FD4BhPc+QnbXqU
+	+h4RaPfigFNS+mn7dAUG+czvImuM=
+X-Google-Smtp-Source: AGHT+IGHWSINqizwBrIJZlSoKrrg7DDQwkttX3kAOSa+kF7ZXNbLwGYJTiHnJ0AB6OJJOAogaGxA3sd8WRNWsXBj4wU=
+X-Received: by 2002:a5d:47a4:0:b0:37d:4e74:684 with SMTP id
+ ffacd0b85a97d-38225aa59f8mr3079318f8f.52.1731699707797; Fri, 15 Nov 2024
+ 11:41:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107235614.3637221-1-joannelkoong@gmail.com>
- <20241107235614.3637221-2-joannelkoong@gmail.com> <lbwgnktuip4jf5yqqgkgopddibulf5we6clmitt5mg3vff53zq@feyj77bk7pdt>
- <CAJnrk1ZOc3xwCk7bVTKBSAh7sf-_szoSW-brEVx8e09icYiDDQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZOc3xwCk7bVTKBSAh7sf-_szoSW-brEVx8e09icYiDDQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 15 Nov 2024 11:33:08 -0800
-Message-ID: <CAJnrk1YmwRaMFZHzfLiHfXmVHeHdKmyR2027YpwN+_LS91YS6g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] mm: add AS_WRITEBACK_MAY_BLOCK mapping flag
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, linux-mm@kvack.org, 
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
+References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
+ <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
+ <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
+ <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
+ <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
+In-Reply-To: <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 15 Nov 2024 11:41:36 -0800
+Message-ID: <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
+ BPF based fanotify fastpath handler
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11, 2024 at 1:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Fri, Nov 8, 2024 at 4:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
-> >
-> > On Thu, Nov 07, 2024 at 03:56:09PM -0800, Joanne Koong wrote:
-> > > Add a new mapping flag AS_WRITEBACK_MAY_BLOCK which filesystems may s=
-et
-> > > to indicate that writeback operations may block or take an indetermin=
-ate
-> > > amount of time to complete. Extra caution should be taken when waitin=
-g
-> > > on writeback for folios belonging to mappings where this flag is set.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > ---
-> > >  include/linux/pagemap.h | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> > > index 68a5f1ff3301..eb5a7837e142 100644
-> > > --- a/include/linux/pagemap.h
-> > > +++ b/include/linux/pagemap.h
-> > > @@ -210,6 +210,7 @@ enum mapping_flags {
-> > >       AS_STABLE_WRITES =3D 7,   /* must wait for writeback before mod=
-ifying
-> > >                                  folio contents */
-> > >       AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access t=
-o the mapping */
-> > > +     AS_WRITEBACK_MAY_BLOCK =3D 9, /* Use caution when waiting on wr=
-iteback */
-> >
-> > To me 'may block' does not feel right. For example in reclaim code,
-> > folio_wait_writeback() can get blocked and that is fine. However with
-> > non-privileged fuse involved, there are security concerns. Somehow 'may
-> > block' does not convey that. Anyways, I am not really pushing back but
-> > I think there is a need for better name here.
->
-> Ahh I see where this naming causes confusion - the "MAY_BLOCK" part
-> could be interpreted in two ways: a) may block as in it's possible for
-> the writeback to block and b) may block as in it's permissible/ok for
-> the writeback to block. I intended "may block" to signify a) but
-> you're right, it could be easily interpreted as b).
->
-> I'll change this to AS_WRITEBACK_BLOCKING.
-
-Thinking about this some more, I think AS_WRITEBACK_ASYNC would be a
-better name. (AS_WRITEBACK_BLOCKING might imply that the writeback
-->writepages() operation itself is blocking).
-
-I'll make this change for v5.
-
-Thanks,
-Joanne
-
->
-> Thanks,
-> Joanne
+On Thu, Nov 14, 2024 at 11:01=E2=80=AFPM Song Liu <songliubraving@meta.com>=
+ wrote:
 >
 > >
-> > >       /* Bits 16-25 are used for FOLIO_ORDER */
-> > >       AS_FOLIO_ORDER_BITS =3D 5,
-> > >       AS_FOLIO_ORDER_MIN =3D 16,
-> > > @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct a=
-ddress_space *mapping)
-> > >       return test_bit(AS_INACCESSIBLE, &mapping->flags);
-> > >  }
-> > >
-> > > +static inline void mapping_set_writeback_may_block(struct address_sp=
-ace *mapping)
-> > > +{
-> > > +     set_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-> > > +}
-> > > +
-> > > +static inline bool mapping_writeback_may_block(struct address_space =
-*mapping)
-> > > +{
-> > > +     return test_bit(AS_WRITEBACK_MAY_BLOCK, &mapping->flags);
-> > > +}
-> > > +
-> > >  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
-> > >  {
-> > >       return mapping->gfp_mask;
-> > > --
-> > > 2.43.5
-> > >
+> > I think bpf-lsm hook fires before fanotify, so bpf-lsm prog
+> > implementing some security policy has to decide right
+> > at the moment what to do with, say, security_file_open().
+> > fanotify with or without bpf fastpath is too late.
+>
+> Actually, fanotify in permission mode can stop a file open.
+
+The proposed patch 1 did:
+
++/* Return value of fp_handler */
++enum fanotify_fastpath_return {
++ /* The event should be sent to user space */
++ FAN_FP_RET_SEND_TO_USERSPACE =3D 0,
++ /* The event should NOT be sent to user space */
++ FAN_FP_RET_SKIP_EVENT =3D 1,
++};
+
+It looked like a read-only notification to user space
+where bpf prog is merely a filter.
+
+> In current upstream code, fsnotify hook fsnotify_open_perm
+> is actually part of security_file_open(). It will be moved
+> to do_dentry_open(), right after security_file_open(). This
+> move is done by 1cda52f1b461 in linux-next.
+
+Separating fsnotify from LSM makes sense.
+
+> In practice, we are not likely to use BPF LSM and fanotify
+> on the same hook at the same time. Instead, we can use
+> BPF LSM hooks to gather information and use fanotify to
+> make allow/deny decision, or vice versa.
+
+Pick one.
+If the proposal is changing to let fsnotify-bpf prog to deny
+file_open then it's a completely different discussion.
+
+In such a case make it clear upfront that fsnotify will
+rely on CONFIG_FANOTIFY_ACCESS_PERMISSIONS and
+bpf-lsm part of file access will not be used,
+since interaction of two callbacks at file_open makes little sense.
+
+> > In general fanotify is not for security. It's notifying
+> > user space of events that already happened, so I don't see
+> > how these two can be combined.
+>
+> fanotify is actually used by AntiVirus softwares. For
+> example, CalmAV (https://www.clamav.net/) uses fanotify
+> for its Linux version (it also supports Window and MacOS).
+
+It's relying on user space to send back FANOTIFY_PERM_EVENTS ?
+
+fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+
+is a pretty long path to call bpf prog and
+preparing a giant 'struct fanotify_fastpath_event'
+is not going to fast either.
+
+If we want to accelerate that with bpf it needs to be done
+sooner with negligible overhead.
+
+>
+> I guess I didn't state the motivation clearly. So let me
+> try it now.
+>
+> Tracing is a critical part of a security solution. With
+> LSM, blocking an operation is straightforward. However,
+> knowing which operation should be blocked is not always
+> easy. Also, security hooks (LSM or fanotify) sit in the
+> critical path of user requests. It is very important to
+> optimize the latency of a security hook. Ideally, the
+> tracing logic should gather all the information ahead
+> of time, and make the actual hook fast.
+>
+> For example, if security_file_open() only needs to read
+> a flag from inode local storage, the overhead is minimal
+> and predictable. If security_file_open() has to walk the
+> dentry tree, or call d_path(), the overhead will be
+> much higher. fanotify_file_perm() provides another
+> level of optimization over security_file_open(). If a
+> file is not being monitored, fanotify will not generate
+> the event.
+
+I agree with motivation, but don't see this in the patches.
+The overhead to call into bpf prog is big.
+Even if prog does nothing it's still going to be slower.
+
+> Security solutions hold higher bars for the tracing logic:
+>
+> - It needs to be accurate, as false positives and false
+>   negatives can be very annoying and/or harmful.
+> - It needs to be efficient, as security daemons run 24/7.
+>
+> Given these requirements of security solutions, I believe
+> it is important to optimize tracing logic as much as
+> possible. And BPF based fanotify fastpath handler can
+> bring non-trivials benefit to BPF based security solutions.
+
+Doing everything in the kernel is certainly faster than
+going back and forth to user space,
+but bpf-lsm should be able to do the same already.
+
+Without patch 1 and only patches 4,5 that add few kfuncs,
+bpf-lsm prog will be able to remember subtree dentry and
+do the same is_subdir() to deny.
+The patch 7 stays pretty much as-is. All in bpf-lsm.
+Close to zero overhead without long chain of fsnotify callbacks.
+
+> fanotify also has a feature that LSM doesn't provide.
+> When a file is accessed, user space daemon can get a
+> fd on this file from fanotify. OTOH, LSM can only send
+> an ino or a path to user space, which is not always
+> reliable.
+
+That sounds useful, but we're mixing too many things.
+If user space cares about fd it will be using the existing
+mechanism with all accompanied overhead. fsnotify-bpf can
+barely accelerate anything, since user space makes
+ultimate decisions.
+If user space is not in the driving seat then existing bpf-lsm
+plus few kfuncs to remember dentry and call is_subdir()
+will do the job and no need for patch 1.
 
