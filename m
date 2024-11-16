@@ -1,131 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-35010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A632A9CFD2A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 09:01:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3539CFD60
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 09:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3BBAB27B2B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 08:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE801F24492
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AFC19146E;
-	Sat, 16 Nov 2024 08:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6FA192B63;
+	Sat, 16 Nov 2024 08:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+klF+xr"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fnp5MNNB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76436B64A;
-	Sat, 16 Nov 2024 08:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01AD15381A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 08:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731744077; cv=none; b=X8pa84rXDXNU6bBcv02Ut9y6U6Kc7BUzAdX6dk1CC//6JB29Rk6We7g6yN/Ei37G3Et3PckQZQ2gOWcmxkoJYNkPuuUFW2kTaaO8peVxaobP8Lx9ZYD15viO6/SEQ6dxkXQv7kCyTaWyyIfkjswkYhOTOfyVpAi3JO6sHIk12hU=
+	t=1731746530; cv=none; b=S3ofpg/rDtriBLFrY66cjWuMiGLBpP/QLog+NaFADAoiSK686sUujAhW80YQe8X4lW0Q7+UZw6wwbN7vour7wUIt2XCafkOIVJEajKut3qslOoMd/bmwVbEFm8lCKC3feHRF4Kx72gkAK4LrS2Ev2FynBE5dM8NWfYQR1ZfG30o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731744077; c=relaxed/simple;
-	bh=0HJM9cjcvmpdVTDGL1l6M1Dj+SmvBnR7aytq8be+/pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZYsyqFek9Y3LbJyvXEIqklvJmlIGN9aSnyu+u0MClK+tyQQ5tI53ECQkYFmE9GLErrSmR/U5MlfowsB7G/DYgx8X8WSYrVyw7rlA3iiZ/IjUUvECGWtDt7E+m3wJbiBOywPVQbNPw1M+qGM4GL2CYlc8902H/NS0QzwtHw252k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+klF+xr; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so4362164a12.2;
-        Sat, 16 Nov 2024 00:01:15 -0800 (PST)
+	s=arc-20240116; t=1731746530; c=relaxed/simple;
+	bh=RpFXE/zZCF8LuoyFo6xYLRzdU/hjSpEWwhXUmLgLSIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y2bCuYxPa52mWp+ZcDoY2g8Nf922YjRFt9NLhHFRkbGGeBcsXv277cAFmx6/teJvkY5Q2TErNH64IexekZyma3VcMYSNFbcTQnycI9v8HBjUjin0bwspfQSefQR52Qer+bZOfF23JSMQNpOwNEH7kKonhXHTLb6kQC+Al9sOb/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fnp5MNNB; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-382376fcc4fso140299f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 00:42:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731744074; x=1732348874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MSXDTZ0aay8d1yiOoVnu2o6e/epgyQVcOo5da5OfdOM=;
-        b=Q+klF+xr4jlG+dcd9QRLzpcFTWWQBcje8AoH5klXvmNlACFYN88OWTFpdlzcoJ+/A3
-         dPgRA57TXxBzDnQJSRmQrhtrqxcqrFoRB3yedrDNVI72iFE99eBGAHKIoU4XrxX2FW22
-         IG9VCa0lgu6p3sQQDG//Fugca0IsfbDR2DzNum9oNFSmR71oHimhPYMBr08GASgTRbPF
-         2qweqkCxZuegWAy4NGbG+7BGDcAmd0LRT2FxiEEuvLGb5Z2pNIwrLNKJvHX4vboKEC7e
-         Oa25ZwIzDxzxq1c/+03lq7SETF6WHZWpUX4uko1ZsvO4mv9o+Oi/TSid5/PmZZ7xmSbw
-         Kjzg==
+        d=linaro.org; s=google; t=1731746527; x=1732351327; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qD/PSgFlehOn9QqoTVH1cb+ziNhJJDu+AfRYpR73DRc=;
+        b=fnp5MNNBeZlEBGT4okzceHAHw1Wiefn2JbaOXqUQ3YZQn9fUYbxYWGfYsJ/BwyEL+S
+         B0ChcTKyQzs4LAXFxi92i91UjGHlToWRH/7Ul23g5VReE1c1CJc+awhld2nts7G9vKAN
+         1B4jG1ihYyy+DpRboD0U1i66OwaV5XWiPZkJMh5GtPG7aMxVul5RUX4KG25RcRE3Dqwv
+         j73T7HtJbff5Zv8jtQICFA7P7jcBAlHK4zCYT1mlGw9oZoX5HFVHJT0dsgpnC4Gd7ut5
+         STL+40dxt/xDdhc61WOGc5+tJIwW3jBZIvdL6t8ZsFjdG5bFImm0yJM/MLmKqFT+zmTD
+         gAuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731744074; x=1732348874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MSXDTZ0aay8d1yiOoVnu2o6e/epgyQVcOo5da5OfdOM=;
-        b=M30kdtZf9u+FWYIGkNYTlk3G5mA4CfL1ybIkuX1QP/CIKHFp19jZh3s8mYdFolrVy6
-         S7slPtAuZLmLLg9jEuxxYt6JOg/1ecnN5GVvVcyfk+JhR15AY9xb1i12pTuZlSY2q87v
-         ByNiW8kXHHW0Y0Iv9jzXVH9NfUjl99qhdwz3CixfgJ+sJ3ItT26N2nAJDqNpIc24nCAZ
-         3YtRxgVqrjIakx7F3b/i5k5xoTX1+/8zJcZSf7nXv65EDVVupqL5RKnqyfdvaDxtYSiz
-         XCa4OlGdMFTCmGzPXgDMbUN8er6NVqtXbo49Z+xBcL8qnbSbScPCvXTjglHGbWVfuBUh
-         AeHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7coujpF1Utl4MMEHTco5/CxxK9NXROHViSph62dJsPXqTnlFYpMzHs+BWk2j7rcB/QHzTi2guO/fg643m@vger.kernel.org, AJvYcCVpr8G54ajgjrq4U4NZvDZKp/RDV0zuw3jobEyNXGMj+4vrHCFqSzbBavsNVcYnCmt3xIVAbUvKbqtR9Y4V@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIY2shqGxQmtbf+DLspC+c7sGNk6QUCUh/Vn0d+2Z34rNt9L4X
-	bfMpUGQvnf3PTQyfi5yFekUmA9nqdKY3oKFLFZ67qf/dBlgm22bCPvrfmHxkFKsVXMP7p9dR0rt
-	nmFLjcl8AntvJYTFYISEF04tiJkSDLxxG
-X-Google-Smtp-Source: AGHT+IFr7u/yrjt5Q6SDniYU7mwzeqrSSSE/z+mZgR4Wv/vU6F2I3kUGth1q6lU1BwTQujQdi2q1yvWygsEk3HeGf04=
-X-Received: by 2002:a05:6402:2106:b0:5cf:a296:ac6d with SMTP id
- 4fb4d7f45d1cf-5cfa296ad7dmr1298340a12.18.1731744073592; Sat, 16 Nov 2024
- 00:01:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731746527; x=1732351327;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qD/PSgFlehOn9QqoTVH1cb+ziNhJJDu+AfRYpR73DRc=;
+        b=W2YlsXSTu/7MxkM7IDHD1WH8YYdDaoG518a7myzSMIfZYL1WWKfygJnuPFgWN1zunr
+         innGlFWoee/B1AwVDHCeszvw3ffvD1tpSxCeCh1iosbcElqDdQ8WAYbc3g3EreA7gaaS
+         dmsZ6+YWs+x4asP+q6WQRF41YaWK1vR7tJYeJcNscOUh4sLDIWuKAAkJq5yIBzS9KTI0
+         PSrGea4xSSig4PQLw5+9anYUHYoRsFs2U7DQd5GjFEzeE7ZWKORCzpNyZgVmm3zb/DlY
+         4l3SeHXbGEy5YJ5sBqJBV/m/EyRnsCfHKP0xpWojhc0yNseU9BQCCsh50zUfDgvNEwih
+         /V4g==
+X-Gm-Message-State: AOJu0YzsbSaBT3Y7HzbMkYBAyUwC09+iizdcV3zZ0P5iRAeSBC9kDHv0
+	7CirST1SuNZNLM5m1Jzbl0G15YARuQLaDMBgfwuuxhyzMz+AImFUoRm1q7gpfRt4LmejX0fUuf/
+	b
+X-Google-Smtp-Source: AGHT+IG1oFCmhu6ZkIFfziXfj2Y9E7CtL16NrnXKqy0a+kbhGk9ZtfR762BdiRMU0kvKoGoLnQwckw==
+X-Received: by 2002:a05:6000:1445:b0:382:22d5:9e55 with SMTP id ffacd0b85a97d-38225a883b3mr3417877f8f.42.1731746526922;
+        Sat, 16 Nov 2024 00:42:06 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1685csm6782443f8f.83.2024.11.16.00.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 00:42:06 -0800 (PST)
+Date: Sat, 16 Nov 2024 11:42:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [bug report] statmount: retrieve security mount options
+Message-ID: <c8eaa647-5d67-49b6-9401-705afcb7e4d7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116064128.280870-1-mjguzik@gmail.com> <20241116073626.GB3387508@ZenIV>
- <20241116074209.GC3387508@ZenIV>
-In-Reply-To: <20241116074209.GC3387508@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 16 Nov 2024 09:01:01 +0100
-Message-ID: <CAGudoHH-v=eDxV0D3wU+bXmGL75UEj7z=yy7r0jx303E4aW38Q@mail.gmail.com>
-Subject: Re: [PATCH] fs: delay sysctl_nr_open check in expand_files()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, Nov 16, 2024 at 8:42=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Sat, Nov 16, 2024 at 07:36:26AM +0000, Al Viro wrote:
-> > On Sat, Nov 16, 2024 at 07:41:28AM +0100, Mateusz Guzik wrote:
-> > > Suppose a thread sharing the table started a resize, while
-> > > sysctl_nr_open got lowered to a value which prohibits it. This is sti=
-ll
-> > > going to go through with and without the patch, which is fine.
-> > >
-> > > Further suppose another thread shows up to do a matching expansion wh=
-ile
-> > > resize_in_progress =3D=3D true. It is going to error out since it per=
-forms
-> > > the sysctl_nr_open check *before* finding out if there is an expansio=
-n
-> > > in progress. But the aformentioned thread is going to succeded, so th=
-e
-> > > error is spurious (and it would not happen if the thread showed up a
-> > > little bit later).
-> > >
-> > > Checking the sysctl *after* we know there are no pending updates sort=
-s
-> > > it out.
-> >
-> >       What for?  No, seriously - what's the point?  What could possibly
-> > observe an inconsistent situation?  How would that look like?
->
-> PS: I'm not saying I hate that patch; I just don't understand the point..=
-.
+Hello Christian Brauner,
 
-Per the description, if you get unlucky enough one thread is going to
-spuriously error out. So basically any multithreaded program which
-ends up trying to expand the fd table while racing against
-sysctl_nr_open going down can in principle run into it. Except people
-normally don't mess with sysctl_nr_open, so I don't think this shows
-up during normal operation.
+Commit aefff51e1c29 ("statmount: retrieve security mount options")
+from Nov 14, 2024 (linux-next), leads to the following Smatch static
+checker warning:
 
-I explicitly noted this is not a serious problem, just a thing I
-noticed while poking around. If you want to NAK this that's fine with
-me, it's not worth arguing over.
+	fs/namespace.c:5120 statmount_opt_sec_array()
+	info: return a literal instead of 'err'
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+fs/namespace.c
+    5108 static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
+    5109 {
+    5110         struct vfsmount *mnt = s->mnt;
+    5111         struct super_block *sb = mnt->mnt_sb;
+    5112         size_t start = seq->count;
+    5113         char *buf_start;
+    5114         int err;
+    5115 
+    5116         buf_start = seq->buf + start;
+    5117 
+    5118         err = security_sb_show_options(seq, sb);
+    5119         if (!err)
+                     ^^^^
+--> 5120                 return err;
+
+The Smatch check is suggesting that the return statement should be "return 0;"
+but I'm not totally sure.  It sort of looks like this if statement is reversed.
+
+    5121 
+    5122         if (unlikely(seq_has_overflowed(seq)))
+    5123                 return -EAGAIN;
+    5124 
+    5125         if (seq->count == start)
+    5126                 return 0;
+    5127 
+    5128         err = statmount_opt_unescape(seq, buf_start);
+    5129         if (err < 0)
+    5130                 return err;
+    5131 
+    5132         s->sm.opt_sec_num = err;
+    5133         return 0;
+    5134 }
+
+regards,
+dan carpenter
 
