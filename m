@@ -1,128 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-35014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBCF9CFF6A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 16:15:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A839CFF99
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 16:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C4B1F24559
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 15:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D186281F85
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC60E80BEC;
-	Sat, 16 Nov 2024 15:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8118E13CFAD;
+	Sat, 16 Nov 2024 15:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dEtA5uST"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2q/J/57"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73A2942A;
-	Sat, 16 Nov 2024 15:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C388172D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 15:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731770105; cv=none; b=OGwvclRETdXKqPGvDMG4LW/a5Z9K1hLoYFKUBVs+G8Ne6Yy5/bH48wBbXFZQ3cczzdQDjkU2bHaniadWICkcx/rTWeYQ7D2FUNvMd0d8jlFicz8rBd/FfVxVFAJ7GOxKcfauQ9oPQRcA8fhop2S1vDgptG5FWBoOSNwU/dcHOpQ=
+	t=1731771633; cv=none; b=QiNLhfMrXyUzF+HnfGhMhEbzFSGfjuOaB6dqKFRHT1YJ319/hPXe2XKSbQbmm2iDs/8qVGcwUG7eaTV/m/2cgbu1I37FNXGtuPcQ0hbzoelb+Fq30psZwu5YYiPzcg0UsvT+OGUWDfi/ib8pEGAXoyPGIpyeUAUWSO8t6aiulv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731770105; c=relaxed/simple;
-	bh=67qCN2LFPj5ydbZda23+LlMAeSW99PpRs7nR715ypmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rwb17qn6H3fStrDwypoWJ7yfi2ueB+nmLMRpL23Slh3pi7NrnP8xxM+3q8b133n2/o8IsYgrknD87zQ0Gu4yaHrFPmCITxcaJbdE9D2QtkZfr3h5v+tq6/OI/MeNZrS+WqUWqoDOm17j9w247T5ny+mu55cioEeIDxo2Qu3Tbvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dEtA5uST; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=+0extUEjVm7z5Ue/B1qKSYMZ5TW6HJx8FZm8Lh/lwwc=; b=dEtA5uSTFAQQQZZC
-	oH1LFfT5zoZM9JOA91yS0QtnAOA7VniTJ3D4z5ENVudnGLhWztNqv6k16mkvkez/1J7Ow2BXd8BWB
-	3xM/sldeiAVUK2buun5WuTTMTKJwwg0wSOXfqy0mAr/hWCsdja/DAd8+uyYGq3RdX/D/QGQeJvjTG
-	acLer2XzFocF4TlxhicSSGvYm0/g4DPjCUZUUpiSxoxKxi8qEAxRHyPris8ZbECtKRAdg0blKnALF
-	Mr2zM4k591nmLDlq9FriJ8qPWE8ue3rbo0fyPPXpLcl2cUcwFvB+NqEXGW/I59tkji/Dhwc5XUmGT
-	1oxE56rQT9oWma6g/w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tCKVb-000INb-0j;
-	Sat, 16 Nov 2024 15:14:47 +0000
-From: linux@treblig.org
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] filemap: Remove unused folio_add_wait_queue
-Date: Sat, 16 Nov 2024 15:14:46 +0000
-Message-ID: <20241116151446.95555-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731771633; c=relaxed/simple;
+	bh=Wd+7kLQISUZlzyPvYmSUTVOb8NV4Vyd3OpsFXw6X7a0=;
+	h=From:Message-ID:To:Subject:Date:MIME-Version:Content-Type; b=OmUzos5q/iwG40NwcNZ/z0wriYQBuTlswwRgRBfzNZ1cMmFdVMfFj3LmjR5yzZA03g6+cI+16odBXvZtgSKkh+1wkNgVvRlvb72bNJzYRusi+MDDreb8jdlUFiTgiE0NK4eDxgycvag/vkMBbOSbVroXqa6mEw+BwrhOjC8vvO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2q/J/57; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-211eb36e0bcso878345ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 07:40:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731771629; x=1732376429; darn=vger.kernel.org;
+        h=mime-version:date:subject:to:reply-to:message-id:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XHEOkgJ64rwJ+cv0sVIqPUmbc8l+iTifR7HzGzNced0=;
+        b=P2q/J/57jmCD20YNzlbRoAMmFnOGoyzunwu67AIYJEAY0gILM7KFMlcT+r9ve/c1ev
+         zQaqevl3sMnOzSoxnBwAKYZqV+CGEBZurx402KKdsuZQRIYa4B2WSgWSop84+VYzhBnC
+         gKOFaVRJEWYPHJzAWlSDV5+ortSia/LcNAsZwfkvzNXNJ+6iA8ZiTl/CkEONpyqSqlX6
+         ZOTpA0AzWoyDHo1hkB2R57WhV+Buzo82Wf2zBEVAzYBuezcSn5Pgkvp1toM2E91YXhoJ
+         telkVFlA/MRpQKfbI+A1XhLDDfAVBkO3t+ptKUiXbFwEA7aIuv4B2hct52BZdPt+VJXq
+         6v9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731771629; x=1732376429;
+        h=mime-version:date:subject:to:reply-to:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XHEOkgJ64rwJ+cv0sVIqPUmbc8l+iTifR7HzGzNced0=;
+        b=AYzxyNgX2dZ9INz9BB+lU0EB7YWDrh8M+WR1LTNvJa771mwtt5eyYD5vmYxyzYjcKg
+         8WMbDgMpiCDe76q0fgp/Zx1DSR1yLqhNdIXC73tk6jy3B1QrEtAlad8gd410/yw4jddE
+         /hOhLCc9B/6+G0n8jJ+XGRgPp/vcBR37gAXV6O/SYADFymv/Nypk806jhOcQtTNhUskR
+         uBDq5xvvM6eUAnQp4sRcIiqcWdMFu5Df6WsWk90D4V9WZdLa3SwRFEZpouPw2vGZIpig
+         XKdeyNl4fIkCRiFYXLDljRtcJsP5Sh/px13/QQYmtTZW3xjLkCXE69IaDIFPC6651Y7G
+         igCw==
+X-Gm-Message-State: AOJu0YxOsedYcvoeWMcdVUSmUYYe+/LGlTq6Gnu5au8sWeIUe2QqtSEH
+	A7imko8HQmba0PRYSOnmbXbcMzSl6Us650YkL3rWyeyuPVNq03v7K48awQ==
+X-Gm-Gg: ASbGncscdxZZOO539w8tTQr+eR52+J+1Ol6jECtrMjhLmT6n/o0786Px7Ji3ZiVqXC2
+	+z60vUoAvwzg9cUi/LXRTueIQiIO1VsHJpJya0uk9jO/QW+hK7DszrAxXqfKcz8WjAmxQh581mt
+	W+mEILzSoK9KahTiO2a8wgX1fPoM6ahZP0daCqDHwIjY1SNtoL00swBm9m5kUUGUBvQVPjNXMNa
+	544DrQZ5ARg1cHsnmNx7/M15NVgHMpSgM0dqDZYazmBOE9DZ1P6a8QRAhOxN1dQxQmiyw==
+X-Google-Smtp-Source: AGHT+IEeygEg4c/FsikVOccAzrv9NWlWVO5HzIW1K/5Qq4MGh+H/Kv8uo57UErp/565v+74404oZwg==
+X-Received: by 2002:a17:90b:1b4b:b0:2e2:e139:447d with SMTP id 98e67ed59e1d1-2ea151f6a56mr3439436a91.0.1731771629562;
+        Sat, 16 Nov 2024 07:40:29 -0800 (PST)
+Received: from [103.67.163.162] ([103.67.163.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea3aeb2513sm1196122a91.16.2024.11.16.07.40.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Nov 2024 07:40:28 -0800 (PST)
+From: "Van. HR" <sonukumar20772@gmail.com>
+X-Google-Original-From: "Van. HR" <infodesk@information.com>
+Message-ID: <0adf78ff24f8074c89daac667ce89dbe09645c06f891952d48b407ebd2727246@mx.google.com>
+Reply-To: dirofdptvancollin@gmail.com
+To: linux-fsdevel@vger.kernel.org
+Subject: Nov:16:24
+Date: Sat, 16 Nov 2024 10:40:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello,
+I am a private investment consultant representing the interest of a multinational  conglomerate that wishes to place funds into a trust management portfolio.
 
-folio_add_wait_queue() has been unused since 2021's
-commit 850cba069c26 ("cachefiles: Delete the cachefiles driver pending
-rewrite")
+Please indicate your interest for additional information.
 
-Remove it.
+Regards,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/pagemap.h |  5 -----
- mm/filemap.c            | 19 -------------------
- 2 files changed, 24 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 68a5f1ff3301..4650416cbf6c 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1267,11 +1267,6 @@ void folio_end_private_2(struct folio *folio);
- void folio_wait_private_2(struct folio *folio);
- int folio_wait_private_2_killable(struct folio *folio);
- 
--/*
-- * Add an arbitrary waiter to a page's wait queue
-- */
--void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter);
--
- /*
-  * Fault in userspace address range.
-  */
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 56fa431c52af..b1bdd8ce7f49 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1473,25 +1473,6 @@ static int folio_put_wait_locked(struct folio *folio, int state)
- 	return folio_wait_bit_common(folio, PG_locked, state, DROP);
- }
- 
--/**
-- * folio_add_wait_queue - Add an arbitrary waiter to a folio's wait queue
-- * @folio: Folio defining the wait queue of interest
-- * @waiter: Waiter to add to the queue
-- *
-- * Add an arbitrary @waiter to the wait queue for the nominated @folio.
-- */
--void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter)
--{
--	wait_queue_head_t *q = folio_waitqueue(folio);
--	unsigned long flags;
--
--	spin_lock_irqsave(&q->lock, flags);
--	__add_wait_queue_entry_tail(q, waiter);
--	folio_set_waiters(folio);
--	spin_unlock_irqrestore(&q->lock, flags);
--}
--EXPORT_SYMBOL_GPL(folio_add_wait_queue);
--
- /**
-  * folio_unlock - Unlock a locked folio.
-  * @folio: The folio.
--- 
-2.47.0
+Van Collin.
 
 
