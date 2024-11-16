@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-35016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59789CFFF1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 17:51:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF039D000A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 18:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B81E1F24199
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 16:51:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB3F0B255B1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 17:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B62187FFA;
-	Sat, 16 Nov 2024 16:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74418FDA3;
+	Sat, 16 Nov 2024 17:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yU6jiluY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="obGJdOaP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A510B57C9F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 16:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CF418C006
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 17:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775857; cv=none; b=lH1LEkIIeIsg7Rx6X31LoU9V2YKMaSZs346pGktG0txQEOoTrKPpK7VQLSsTP/pPOlsfdufsjoRfR/DXCeXzkbXELK2l+0RVe3EBHm1KkbsRtIXGSIe+lrEK1p4oDbSWuRd+xSJu2KZDSQBb7WpnuimYgbn04itDbXdEx/IhVw0=
+	t=1731777684; cv=none; b=UZI4IIab4GvNIEWdeFHJ4QnPwLQB9Vor/9xvXHZqsBedBgW05yzw16vEtRl3Se9oQzmzdA+gi6pJQL3O0dXL8MX04b+Q/+bY6mFpqbBXh+deiNYcJTffOMsYN+HtuqMzvIEW9/YLNzz55UAPojk01bKLBUlYbqsqLzFEyXsuNQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775857; c=relaxed/simple;
-	bh=JxVQRUmXu/GR6DOZL4O8huHliPPvYC5bjH4b+yDupQ0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qDs6LZsghGjlnB2/gLVN/GBBqbrDMgMs/8ZEIT6OpitrgysNUC/kN+WgMgs7DQgVq9tTbVNVIebAERkjqwYE+u2mD1XAtWhSVCxXRzsVD07ApzYNqHgYvcqNNkob0Edf4NvuNpSQ3/xteiB5/2E0yz3fKg14AVMvbeYu04qbQzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yU6jiluY; arc=none smtp.client-ip=209.85.222.47
+	s=arc-20240116; t=1731777684; c=relaxed/simple;
+	bh=yol5Alb9ExOeIi21uxzg8Zrtd3N1J1d9mDIHvq8GR48=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aEmHZ3E5/JJmPv65vL1J3FXQuAQjMbULa7fjTEwsfO8jIB/RK27xhufv4xxHzvN4XJGXyqiFaxj+rJABi8ES6lGY2yKav4FGg/xcMZxk7lzK1U+iMx0Dtq+4donCdCdWh2Ubv6l8rQiUXqu+u5zETYqW7RCcmlPJ2W6VjvaHOgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=obGJdOaP; arc=none smtp.client-ip=209.85.221.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-856e98ad00bso233898241.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 08:50:55 -0800 (PST)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-50d2e71de18so1323478e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 09:21:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731775854; x=1732380654; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731777682; x=1732382482; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
-        b=yU6jiluYkdj1tOLAT9wtUgvASi5XtQAitq7sYOzTj7/+AwR+YuPR13AhliKtJ+BTF9
-         VTDuBPHv6LWdAmwo56X0UY8RGOTg8DVOfzOePPXxXlvs0WdzoHWB/djYhzvtRDsIAC1C
-         vmBiYFSfWMut/LcCzMk9FOBahHc/Qsv/lOq3rsksii/GyvpFQ4BTBag0LQXh+MhL9l8Q
-         ul4TUpKTdaGvUoY+3lpt2OXjOF9jOm4SbNb/HupOPswWfFxqUbGDxa2KMm/IJVZeMN3M
-         GB0fEcNnmlocXe5ssvWvN2qf2q67yDhSINk5kpb54z8HRU96d6Nxlxk17Fg4oISbZ9iR
-         spaA==
+        bh=4RJlVpmB+lhfFzCb8c/rYbScRS3m48z55/dvsQke+wk=;
+        b=obGJdOaPTnuJsJa2q35g+fNG2aIsvYHdH7xA+Kx9XlBOkc0PbfO/wmqjnCf55rXY1h
+         Icr1qXqUz9qwnq4riX/1AhjWtAiT4RSnl7qRDUePX8EIWw+ROEWlT1hP3uIVEaK3sT/c
+         8SYpV8QdXFts9z5MizUZJ2mrg/MOIdrGJVzEAjrZRpfbwErBDMrCLrP0xIN5eJbXYExD
+         YKGyFS7tYRfFC+WeDs9dTqjk80VE12YT3kWqqJwTR/BsggKZtiZvMhVtmwDGy8/Ws7Gz
+         EucPlD8KkW563n/ndTj5rAvSmRf+hFsAoPTdBylCNK1LVWjHjMOxWwJ5T7m2dM4IMOrw
+         05/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731775854; x=1732380654;
+        d=1e100.net; s=20230601; t=1731777682; x=1732382482;
         h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
-        b=RvqeAKgRfK9KR0rPFDL7EUNbCMbsNX6WvD3+uHpvtwJdRJvmvy38It5GChk29LkNsb
-         OouQy0fGCB6yQG4Kl03ijx1WKIputMlE/9k9pIYnABbylPWhIY5bOpBuK9tbrFzgO+3/
-         IZlIov2rdEh6t3KL5Op8yX6a+/2tBnJRAiaiWKfZ5xB42+d5RNXok4F2v8YEMupVEChi
-         /p5gBFTPnr67WC+MgOIQhXImGQPEH1CnlFHgUDBuGTXRj1WicxxvYL0MQN/Z7ZB6q9JM
-         PvH5L0f7GUKnyDuKf0pjusQGlldgSwdkCjn62PVi8Dnljy0Le1uwlldg1RX+cR12XRvD
-         CWCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVSxI+JrQ+W1iREEMm5A6q0scHhgTBmm+Xmkf76duQIpY/nDoAi+Bw6ryJG58r+d86/cOsL3ypRgEXmU+F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9mNGiiistqQoIiw+SyqMWfRNx4nheVYnwyW00oovVFTgkej8v
-	MGXdU2BW7usFeB/9wtMyvkG+zqa6Ic6CGt/lbZT8lTkSM7qHSXprvwt8n+eHSNia0WwphR9ueVP
-	aL6lt+AtajN5Oa4owKJuC5sSLonXMC88E/KBlGg==
-X-Google-Smtp-Source: AGHT+IGxwi/IVhPflsdG08C7ZbvkGxsHxai4iTgnUdrVuVk07lklbn089q1LGPkXwyBIKlKfDffXfQwU/VQ3TdNFYOg=
-X-Received: by 2002:a05:6102:3f03:b0:4a3:db6a:dbbf with SMTP id
- ada2fe7eead31-4ad62bffe1amr7191005137.14.1731775854568; Sat, 16 Nov 2024
- 08:50:54 -0800 (PST)
+        bh=4RJlVpmB+lhfFzCb8c/rYbScRS3m48z55/dvsQke+wk=;
+        b=qW46pLir4pufik1W0W70xwBQejuAfcjFVMEc9c3itTIVrLi3d244HCB7tgzlrOZLcc
+         iHa5gNAzp8wEM7yBPCyIjf//zO57qiHHx8vbetzjWjNjKVkz3j9g4kP4h43I6frdTrmv
+         6R3f9T2IdB7YfhUc9P0IL+1HLEDPoeQrkpo8cpTn1BuOAmgYTfb5K6ZwlQjPGrKgTAs1
+         V72vXfHUBH4hCW52Xgs/nyHP3rZL20Yztpq0ODcKJYrcJj6+eH77fLXudkmq5HFC3Lbb
+         ilduaAM7mEFAs3CDWSrqoM6C7BLy64xZ8kUiocmSRxxurjhl7iDV85OJZMMlQcV7m32t
+         p4qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNiG4UKTQF2120CwDaoQ0ygoJ8Scy68gWXVYt2+jjB/Fz2jhadSs7k4brhrnka93awUlwruS+ZJo7ruKk0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJdiWeF7fUJdF1cCRKMBBNEyka2wO4y/7mLxJdcpdtgInoFu43
+	wIS5Ju1HOhsQ0ktpX4wDlEDIdUQ/i7Otkl4plQXHPe3daxipLS0bYqD6CdVd/93iCE5MfskgNcu
+	9cqmYf0Fm8WrbVqZDDLjdFu8siMLKdYJ6NpHIRk02c/VPXIx+Ec4=
+X-Google-Smtp-Source: AGHT+IG7/o2ScsG55LigeM8KzfLtSAk8gbaDRL9xhU7vNgH39ygnmTrnh1Fxw/t1DOqBNwgHAZBvodROL5Sxq5LHfqg=
+X-Received: by 2002:a05:6122:4581:b0:50d:69a8:f5a6 with SMTP id
+ 71dfb90a1353d-5147866c06amr6266906e0c.9.1731777681818; Sat, 16 Nov 2024
+ 09:21:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,190 +69,138 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 16 Nov 2024 22:20:43 +0530
-Message-ID: <CA+G9fYvVAvEBbFzhQQ_UBf+PYMojtN1O4qHKXngu33AT8HqEnA@mail.gmail.com>
-Subject: ltp-syscalls/ioctl04: sysfs: cannot create duplicate filename '/kernel/slab/:a-0000176'
-To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-ext4 <linux-ext4@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+Date: Sat, 16 Nov 2024 22:51:10 +0530
+Message-ID: <CA+G9fYs9R7DwZVkA_MRaqWwrfuuvZ-3wMcYuk3oHA0prN3bKRA@mail.gmail.com>
+Subject: arm64: __kmem_cache_create_args(ext4_groupinfo_4k) failed with error
+ -22 - Boot failed
+To: open list <linux-kernel@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
 	Linux Regressions <regressions@lists.linux.dev>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-The LTP syscalls ioctl04 and sequence test cases reported failures due
-to following
-reasons in the test log on the following environments on
-sashal/linus-next.git tree.
- - qemu-x86_64
- - qemu-x86_64-compat
- - testing still in progress
-
-LTP test failed log:
----------------
-<4>[   70.931891] sysfs: cannot create duplicate filename
-'/kernel/slab/:a-0000176'
-...
-<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
-<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
-<3>[   70.977680] EXT4-fs (loop0): mount failed
-ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
+The qemu-arm64, qemu-armv7 and qemu-riscv boot failed on Sasha Linus-next tree
+due to ext4 crash. Please find more details below
 
 First seen on commit sha id c12cd257292c0c29463aa305967e64fc31a514d8.
-  Good: 7ff71d62bdc4828b0917c97eb6caebe5f4c07220
-  Bad:  c12cd257292c0c29463aa305967e64fc31a514d8
-  (not able to fetch these ^ commit ids now)
+Good: 7ff71d62bdc4828b0917c97eb6caebe5f4c07220
+Bad:  d11b462aa01e0ffd5f8cc81bd5d2cfe4e48c8fbd
 
-qemu-x86_64:
-  * ltp-syscalls/fanotify14
-  * ltp-syscalls/ioctl04
-  * etc..
+qemu-arm64:
+ * boot/gcc-13-lkftconfig
+ * boot/clang-nightly-lkftconfig
+ * boot/gcc-13-lkftconfig-perf
+
+qemu-armv7:
+ * boot/gcc-13-lkftconfig
+ * boot/clang-19-lkftconfig
+
+qemu-riscv64:
+ * boot/clang-19-lkftconfig
+ * boot/gcc-13-lkftconfig
 
 Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
 Test log:
 ---------
-tst_tmpdir.c:316: TINFO: Using /scratch/ltp-8XkJXJek4F/LTP_iocSaDyQw
-as tmpdir (ext2/ext3/ext4 filesystem)
-tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
-<6>[   70.394900] loop0: detected capacity change from 0 to 614400
-tst_test.c:1158: TINFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
-mke2fs 1.47.1 (20-May-2024)
-tst_test.c:1860: TINFO: LTP version: 20240930
-tst_test.c:1864: TINFO: Tested kernel: 6.12.0-rc7 #1 SMP
-PREEMPT_DYNAMIC @1731766491 x86_64
-tst_test.c:1703: TINFO: Timeout per run is 0h 02m 30s
-ioctl04.c:29: TPASS: BLKROGET returned 0
-<6>[   70.921794] EXT4-fs (loop0): mounting ext2 file system using the
-ext4 subsystem
-ioctl04.c:42: TPASS: BLKROGET returned 1
-ioctl04.c:53: TPASS: Mounting RO device RW failed: EACCES (13)
-<4>[   70.931891] sysfs: cannot create duplicate filename
-'/kernel/slab/:a-0000176'
-<4>[   70.932354] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
-<4>[   70.932936] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-<4>[   70.933433] Call Trace:
-<4>[   70.933894]  <TASK>
-<4>[   70.934161]  dump_stack_lvl+0x96/0xb0
-<4>[   70.934608]  dump_stack+0x14/0x20
-<4>[   70.934909]  sysfs_warn_dup+0x5f/0x80
-<4>[   70.935215]  sysfs_create_dir_ns+0xd0/0xf0
-<4>[   70.935521]  kobject_add_internal+0xa8/0x2e0
-<4>[   70.935944]  kobject_init_and_add+0x8c/0xd0
-<4>[   70.936265]  sysfs_slab_add+0x11a/0x1f0
-<4>[   70.936446]  do_kmem_cache_create+0x433/0x500
-<4>[   70.936622]  __kmem_cache_create_args+0x19c/0x250
-<4>[   70.936827]  ext4_mb_init+0x690/0x7e0
-<4>[   70.937180]  ext4_fill_super+0x1934/0x31e0
-<4>[   70.937547]  ? sb_set_blocksize+0x21/0x70
-<4>[   70.937911]  ? __pfx_ext4_fill_super+0x10/0x10
-<4>[   70.938346]  get_tree_bdev_flags+0x13c/0x1d0
-<4>[   70.938780]  get_tree_bdev+0x14/0x20
-<4>[   70.939118]  ext4_get_tree+0x19/0x20
-<4>[   70.939354]  vfs_get_tree+0x2e/0xe0
-<4>[   70.939717]  path_mount+0x309/0xb00
-<4>[   70.940025]  ? putname+0x5e/0x80
-<4>[   70.940183]  __x64_sys_mount+0x11d/0x160
-<4>[   70.940353]  x64_sys_call+0x1719/0x20b0
-<4>[   70.940516]  do_syscall_64+0xb2/0x1d0
-<4>[   70.940711]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-<4>[   70.941202] RIP: 0033:0x7f667d9dd4ea
-<4>[   70.941527] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
-ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
-00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
-89 01 48
-<4>[   70.942905] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
-ORIG_RAX: 00000000000000a5
-<4>[   70.943283] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
-00007f667d9dd4ea
-<4>[   70.943788] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
-000055e50099cca0
-<4>[   70.944248] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
-0000000000000000
-<4>[   70.944479] R10: 0000000000000001 R11: 0000000000000246 R12:
-00007ffe22faed0c
-<4>[   70.944704] R13: 000055e50098e60b R14: 0000000000000000 R15:
-0000000000000000
-<4>[   70.945086]  </TASK>
-<3>[   70.946069] kobject: kobject_add_internal failed for :a-0000176
-with -EEXIST, don't try to register things with the same name in the
-same directory.
-<3>[   70.948453] SLUB: Unable to add cache ext4_groupinfo_1k to sysfs
-<4>[   70.951178] __kmem_cache_create_args(ext4_groupinfo_1k) failed
+<4>[    1.961480] __kmem_cache_create_args(ext4_groupinfo_4k) failed
 with error -22
-<4>[   70.952636] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
-<4>[   70.953183] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-<4>[   70.953975] Call Trace:
-<4>[   70.954215]  <TASK>
-<4>[   70.954460]  dump_stack_lvl+0x96/0xb0
-<4>[   70.954877]  dump_stack+0x14/0x20
-<4>[   70.955079]  __kmem_cache_create_args+0x7d/0x250
-<4>[   70.955331]  ext4_mb_init+0x690/0x7e0
-<4>[   70.955698]  ext4_fill_super+0x1934/0x31e0
-<4>[   70.956271]  ? sb_set_blocksize+0x21/0x70
-<4>[   70.958236]  ? __pfx_ext4_fill_super+0x10/0x10
-<4>[   70.958570]  get_tree_bdev_flags+0x13c/0x1d0
-<4>[   70.958812]  get_tree_bdev+0x14/0x20
-<4>[   70.958990]  ext4_get_tree+0x19/0x20
-<4>[   70.959752]  vfs_get_tree+0x2e/0xe0
-<4>[   70.960137]  path_mount+0x309/0xb00
-<4>[   70.960340]  ? putname+0x5e/0x80
-<4>[   70.960560]  __x64_sys_mount+0x11d/0x160
-<4>[   70.961572]  x64_sys_call+0x1719/0x20b0
-<4>[   70.961841]  do_syscall_64+0xb2/0x1d0
-<4>[   70.962060]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-<4>[   70.963017] RIP: 0033:0x7f667d9dd4ea
-<4>[   70.963229] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
-ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
-00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
-89 01 48
-<4>[   70.964889] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
-ORIG_RAX: 00000000000000a5
-<4>[   70.965471] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
-00007f667d9dd4ea
-<4>[   70.965693] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
-000055e50099cca0
-<4>[   70.965938] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
-0000000000000000
-<4>[   70.966152] R10: 0000000000000001 R11: 0000000000000246 R12:
-00007ffe22faed0c
-<4>[   70.966370] R13: 000055e50098e60b R14: 0000000000000000 R15:
-0000000000000000
-<4>[   70.966593]  </TASK>
-<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
-<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
-<3>[   70.977680] EXT4-fs (loop0): mount failed
-ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
+<4>[    1.962527] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc7 #1
+<4>[    1.963220] Hardware name: linux,dummy-virt (DT)
+<4>[    1.964500] Call trace:
+<4>[ 1.964869] dump_backtrace (arch/arm64/kernel/stacktrace.c:321)
+<4>[ 1.966166] show_stack (arch/arm64/kernel/stacktrace.c:328)
+<4>[ 1.966570] dump_stack_lvl (lib/dump_stack.c:123)
+<4>[ 1.966998] dump_stack (lib/dump_stack.c:130)
+<4>[ 1.967331] __kmem_cache_create_args (mm/slab_common.c:363)
+<4>[ 1.967774] ext4_mb_init (include/linux/slab.h:349
+fs/ext4/mballoc.c:3525 fs/ext4/mballoc.c:3614)
+<4>[ 1.968194] ext4_fill_super (fs/ext4/super.c:5543 fs/ext4/super.c:5717)
+<4>[ 1.968680] get_tree_bdev_flags (fs/super.c:1636)
+<4>[ 1.969043] get_tree_bdev (fs/super.c:1660)
+<4>[ 1.969370] ext4_get_tree (fs/ext4/super.c:5750)
+<4>[ 1.969781] vfs_get_tree (fs/super.c:1814)
+<4>[ 1.970174] path_mount (fs/namespace.c:3507 fs/namespace.c:3834)
+<4>[ 1.970592] init_mount (fs/init.c:25)
+<4>[ 1.970937] do_mount_root (init/do_mounts.c:165)
+<4>[ 1.971369] mount_root_generic (init/do_mounts.c:205)
+<4>[ 1.971782] mount_root (init/do_mounts.c:410)
+<4>[ 1.972175] prepare_namespace (init/do_mounts.c:493)
+<4>[ 1.972610] kernel_init_freeable (init/main.c:1593)
+<4>[ 1.973030] kernel_init (init/main.c:1473)
+<4>[ 1.973385] ret_from_fork (arch/arm64/kernel/entry.S:861)
+<0>[    1.974278] EXT4-fs: no memory for groupinfo slab cache
+<3>[    1.974889] EXT4-fs (vda): failed to initialize mballoc (-12)
+<3>[    1.979727] EXT4-fs (vda): mount failed
+<4>[    1.985849] VFS: Cannot open root device "/dev/vda" or
+unknown-block(254,0): error -12
+<4>[    1.986425] Please append a correct "root=" boot option; here
+are the available partitions:
+<4>[    1.987344] fe00         2651632 vda
+<4>[    1.987471]  driver: virtio_blk
+<4>[    1.988006] 1f00          131072 mtdblock0
+<4>[    1.988071]  (driver?)
+<3>[    1.988693] List of all bdev filesystems:
+<3>[    1.989007]  ext3
+<3>[    1.989089]  ext2
+<3>[    1.989243]  ext4
+<3>[    1.990678]  squashfs
+<3>[    1.990900]  vfat
+<3>[    1.991157]
+<0>[    1.991778] Kernel panic - not syncing: VFS: Unable to mount
+root fs on unknown-block(254,0)
+<4>[    1.993227] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc7 #1
+<4>[    1.994220] Hardware name: linux,dummy-virt (DT)
+<4>[    1.994690] Call trace:
+<4>[ 1.994943] dump_backtrace (arch/arm64/kernel/stacktrace.c:321)
+<4>[ 1.995263] show_stack (arch/arm64/kernel/stacktrace.c:328)
+<4>[ 1.995478] dump_stack_lvl (lib/dump_stack.c:124)
+<4>[ 1.995802] dump_stack (lib/dump_stack.c:130)
+<4>[ 1.996206] panic (kernel/panic.c:354)
+<4>[ 1.996603] mount_root_generic (init/do_mounts.c:252)
+<4>[ 1.996964] mount_root (init/do_mounts.c:410)
+<4>[ 1.998083] prepare_namespace (init/do_mounts.c:493)
+<4>[ 1.998533] kernel_init_freeable (init/main.c:1593)
+<4>[ 1.998977] kernel_init (init/main.c:1473)
+<4>[ 1.999334] ret_from_fork (arch/arm64/kernel/entry.S:861)
+<2>[    1.999930] SMP: stopping secondary CPUs
+<0>[    2.001613] Kernel Offset: 0x25c315a00000 from 0xffff800080000000
+<0>[    2.001973] PHYS_OFFSET: 0x40000000
+<0>[    2.003672] CPU features: 0x00,0000000d,062f797c,677e7f3f
+<0>[    2.005317] Memory Limit: none
+<0>[    2.007534] ---[ end Kernel panic - not syncing: VFS: Unable to
+mount root fs on unknown-block(254,0) ]---
 
-Summary:
-passed   3
-failed   1
+
+Boot log:
+---------
+- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15193-gd11b462aa01e/testrun/25853423/suite/boot/test/gcc-13-lkftconfig-no-kselftest-frag/log
+- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15430-gc12cd257292c/testrun/25848510/suite/boot/test/clang-19-lkftconfig/log
 
 Build image:
 -----------
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/log
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15430-gc12cd257292c/testrun/25848631/suite/ltp-syscalls/test/ioctl04/history/
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/details/
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2owGnu3uAtzDsaiD2mLqcZ5VwHq/
 
 Steps to reproduce:
 ------------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2owGobRSnVpIZQtcenWfntoheHJ/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2owGobRSnVpIZQtcenWfntoheHJ/tux_plan
 
 metadata:
 ----
-  Linux version: 6.12.0-rc7
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
-  git sha: ac3274b9a6ec132398615faaa725c8fa23700219
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/
-  toolchain: gcc-13
-  config: gcc-13-lkftconfig
-  arch: x86_64 and testing is in progress for other architectures
+Linux version: 6.12.0-rc7
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+git sha: d11b462aa01e0ffd5f8cc81bd5d2cfe4e48c8fbd
+kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2owGnu3uAtzDsaiD2mLqcZ5VwHq/config
+build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2owGnu3uAtzDsaiD2mLqcZ5VwHq/
+toolchain: gcc-13 and clang-19
+config: gcc-13-lkftconfig
+arch: arm64
 
 --
 Linaro LKFT
