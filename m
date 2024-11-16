@@ -1,92 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-35005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953EA9CFC5C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 03:32:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B0B9CFCEC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 07:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D950285D05
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 02:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9EBA2879D8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 06:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EE91547C3;
-	Sat, 16 Nov 2024 02:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B767191F67;
+	Sat, 16 Nov 2024 06:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="V18PyhzL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcfKbr6x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D972423C9;
-	Sat, 16 Nov 2024 02:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF5A372;
+	Sat, 16 Nov 2024 06:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731724368; cv=none; b=j2lFinUpvNV2qZOIGoLvGJWn9NX3g72jjmlFiGDqsoVTe8n5VFU3b5GiOXSjIH/9Myh3pId3yrhGSY7WSPdoqhzLuBuFm1A46Vrqbbya4ga9/Y5dFxZJzixEopHmKPt9awyq+iAczUTRQuv8vRtM6zqK6MQxRNYuGYfhQqLBmvg=
+	t=1731739298; cv=none; b=g/ougazgrBi2I+cMYDWPKkEbCrxtgUTfGUSRcNeYslHvXWQpLksLy+jBvevSsxsmVLcY3hp0xc08K4SqMsHJ8y+Kdm+QkxQTLURNySqHtQ3ABIaRs+yBp8LhzXIeKPok68V3bJRF6jEHz2R0YqX5Bk9kwOaRXaewVPtv22IsOXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731724368; c=relaxed/simple;
-	bh=mrPqJwW5DmCq5Q98xz8AQAjx4GgSEPHdfp0he8D87tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jud+mlqKtYLM2VgQ3kBVF+2D+zBCSS+tIBflOnWD3syVuan0IRGfQSiBnn7MvWjnatoNzTPtb9RIHdBEQEvxFYLiqp2970UtWaOxSMdUwuQS3DgE9eSKdR7Y7YGwBNqMEbmF1zhuy6BbLAMXWAYQIsZHhjMO25pNvEf9u+F1slQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=V18PyhzL; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RGZwqT4r3Z/8PYH5DruXwKL/SF2DIpfPKsvdcYocV88=; b=V18PyhzLifBBqE4+oVzEbG2sQp
-	bUsvw0PBuSkzVXHHIIUJ01gj0bmHcu19wIfpDfdFyJ8vEjHTzeVg5yAdN5l9tzZY7NyrfHbLwEpA7
-	wIgojWRJiTvo90fP6o1V9xm7iRdF4ud0vRwiplPDjnej3AXJ57LAQhryvy1PVHzgL2oe6owyRgZXY
-	IxNbgdMBLi9kQp/tiJrU0JTZMJiRE6IkuVu8mEcSVrYEfz06jEzBmstS6NEu2So5XtRPztoVHnQ4Y
-	JvbFcOn58p+Svf7jleI+WwO4biygmzDlPmAY+DxhL/QwbDrHdSX2FUwJ9Nsj6KfmcpZ/j8riQsigd
-	hs0CGihQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tC8c5-0000000FeJC-2i65;
-	Sat, 16 Nov 2024 02:32:41 +0000
-Date: Sat, 16 Nov 2024 02:32:41 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-	syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fs: add check for symlink corrupted
-Message-ID: <20241116023241.GZ3387508@ZenIV>
-References: <20241115132455.GS3387508@ZenIV>
- <20241116013950.1563199-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1731739298; c=relaxed/simple;
+	bh=VulH+KhWYNszXMFW/vC/4n64rTJ2zXIHgSLHDn9JUZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rrYo1KwQo0K4ykoZw0Q7THiJ3C/LnUD+Gq5JWzupQQ5oW4arGt50vDTGatj73HdZTWQ5DwVrnw3NWP3eREcnzbgZQgn+7bbWwH8ac25nHFr4nDhYFo1zYTbnw5olCcA1hTIaOv36GYiOu8esmPjlEpZtzOPt4RNRxn2d2nVjyGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcfKbr6x; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so464600e87.2;
+        Fri, 15 Nov 2024 22:41:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731739295; x=1732344095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GSqB1ZG3zrm6HjbgNzhu/Y0VVIHRXr02wctn/d0ReOA=;
+        b=jcfKbr6xgSDiK2OAdX+BCeiQx+j7Vo3b0a/xQITaDq7DZRaNpUmSe+klV53Vaco7pC
+         ZCNqr2rOKsD0X+kt5imVUFyxIAFUeqqyzP2nTz9nvCVngmMbc/kTYfw2bfLSACqjAIVo
+         pHoJs4V9tjfP+BL8ErJ1Hi+bUxBez3CLS2eup1mDSYDKp6P5S3N9XFMU1JmreKqazJKx
+         5ha42t8gp0ToR8+WNcAkJaESvIOIF9WDrxhiZYhkQZ7Y9GaWGG5r/e8TvmwfAHZyVSWO
+         1iiFqCBob35XFUs6fgPcYAVGiYF7dS6aTwpthEw8MbD8iWJCj9UvOEJmBXf4u7a268d4
+         E0HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731739295; x=1732344095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GSqB1ZG3zrm6HjbgNzhu/Y0VVIHRXr02wctn/d0ReOA=;
+        b=SlBknNzpbgj3aTkCID8wknoTSqUqtnUe8nX3guJJSTwC3MuNq2XXMQAX2iPaPeX0uM
+         /oXJKgPyDC0YRUyqwiWjEajMeBwbmTfvOAF7FhO4C2TifX6r1yJD3fmZwnMQbqdWoxxe
+         tb81Q9a/wgoWOFyE0Sy8vcyhJu2Ord+Nz+s+gpK0/2kfqmrHKVQPgWZvztBEr6ILLfQg
+         YxDP7jmL12YKlXOZiI8bzvWvauOwrXaroey+JyN05YQFZG88xagiybkhWBLbM3gbinvy
+         Uq085kTZgo+ZL4OSgFu5klwIQcRKL9DxGblzPM3DmMng1yDzWszpr635e89lnnGtzqy3
+         v3og==
+X-Forwarded-Encrypted: i=1; AJvYcCVpATFud11tYXg769JMwAo9PgeG8vVVWzMg1SYM0repq/Vrtes+yM0/usNmkwRVZjQ5fFHp81O4zgsjfpRk@vger.kernel.org, AJvYcCXfE71plRIWYVfD08OsyFHMk7rZcvRDyBUBQrVqDRdCCkuQg3b60vphTaOYebT8CvviI7NU2RUKiJ13AfGX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFCCr5ideFpeKTYpVoBme5x5UEwX3UE0XuL3dh4w6UjC3EuPK/
+	OKBmFXkWwYfs6qRyvrImG16LDSCbUvLb4OhJheSPgx07kVtT/B/q
+X-Google-Smtp-Source: AGHT+IEzn0yB83UQVNZL0IDB0dCXekHn4LMseJyTAqJdIMUxf2tyGEnb4+/KmfUfeih70Hkaj9jtYA==
+X-Received: by 2002:a05:6512:2316:b0:53d:a556:535f with SMTP id 2adb3069b0e04-53dab3b16f7mr3517405e87.40.1731739294700;
+        Fri, 15 Nov 2024 22:41:34 -0800 (PST)
+Received: from f.. (cst-prg-22-33.cust.vodafone.cz. [46.135.22.33])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df4fc07sm262480166b.44.2024.11.15.22.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 22:41:33 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: delay sysctl_nr_open check in expand_files()
+Date: Sat, 16 Nov 2024 07:41:28 +0100
+Message-ID: <20241116064128.280870-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241116013950.1563199-1-lizhi.xu@windriver.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 16, 2024 at 09:39:50AM +0800, Lizhi Xu wrote:
-> On Fri, 15 Nov 2024 13:24:55 +0000, Al Viro wrote:
-> > On Fri, Nov 15, 2024 at 01:06:15PM +0000, Al Viro wrote:
-> > > On Fri, Nov 15, 2024 at 05:49:08PM +0800, Lizhi Xu wrote:
-> > > > syzbot reported a null-ptr-deref in pick_link. [1]
-> > > > When symlink's inode is corrupted, the value of the i_link is 2 in this case,
-> > > > it will trigger null pointer deref when accessing *res in pick_link().
-> > > >
-> > > > To avoid this issue, add a check for inode mode, return -EINVAL when it's
-> > > > not symlink.
-> > >
-> > > NAK.  Don't paper over filesystem bugs at pathwalk time - it's the wrong
-> > > place for that.  Fix it at in-core inode creation time.
-> > 
-> > BTW, seeing that ntfs doesn't even touch ->i_link, you are dealing
-> Yes, ntfs3 does not handle the relevant code of i_link.
-> > with aftermath of memory corruption, so it's definitely papering over
-> > the actual bug here.
-> I see that finding out how the value of i_link becomes 2 is the key.
+Suppose a thread sharing the table started a resize, while
+sysctl_nr_open got lowered to a value which prohibits it. This is still
+going to go through with and without the patch, which is fine.
 
-How about 'how the memory currently pointed to by inode had come to be
-available for use by something that stored 2 at that particular offset'?
+Further suppose another thread shows up to do a matching expansion while
+resize_in_progress == true. It is going to error out since it performs
+the sysctl_nr_open check *before* finding out if there is an expansion
+in progress. But the aformentioned thread is going to succeded, so the
+error is spurious (and it would not happen if the thread showed up a
+little bit later).
+
+Checking the sysctl *after* we know there are no pending updates sorts
+it out.
+
+While here annotate the thing as unlikely.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+This is a random tidbit I found while looking at the code, I don't think
+this is a particularly impactful problem but definitely worth sorting
+out in master.
+
+I doubt it warrants backports to stable so I'm not cc-ing it.
+
+ fs/file.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index fb1011cf6b4a..019fb9acf91b 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -278,10 +278,6 @@ static int expand_files(struct files_struct *files, unsigned int nr)
+ 	if (nr < fdt->max_fds)
+ 		return 0;
+ 
+-	/* Can we expand? */
+-	if (nr >= sysctl_nr_open)
+-		return -EMFILE;
+-
+ 	if (unlikely(files->resize_in_progress)) {
+ 		spin_unlock(&files->file_lock);
+ 		wait_event(files->resize_wait, !files->resize_in_progress);
+@@ -289,6 +285,10 @@ static int expand_files(struct files_struct *files, unsigned int nr)
+ 		goto repeat;
+ 	}
+ 
++	/* Can we expand? */
++	if (unlikely(nr >= sysctl_nr_open))
++		return -EMFILE;
++
+ 	/* All good, so we try */
+ 	files->resize_in_progress = true;
+ 	error = expand_fdtable(files, nr);
+-- 
+2.43.0
+
 
