@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-35019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF2F9D002B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 18:59:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E591A9D0030
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 19:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024021F21C2F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 17:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46586B25549
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2024 18:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B971991BA;
-	Sat, 16 Nov 2024 17:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995CC19CC2D;
+	Sat, 16 Nov 2024 17:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="xSLgKRvq"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="uxU1GykK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95BC191484
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 17:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D851D194C85
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 17:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731779970; cv=none; b=Yw7hoRlHRTcAgsdNzRwrxAFyj1dIQ5YI6UMOTpvU9c5IrbGCPyaTC4M14IXWvKpzam/QSjmjAd6mZ40btHXvglcBi4LZ+r/uf4EvTY+0yvV9cdxJ+V0x7208NNDUDJ24AWFgis4LRN02sfJnPvLFEOkhYQSRpkEY8X/CQKr7YMw=
+	t=1731779971; cv=none; b=SfS2dCiIfselTARs8N7GZpre1E7PWsH0JlqPPCs2ucKjHXCmLp/G24vQrdkBfIvuS5uBxehnLGG5vrsbXGWOUZ+hCB81lm3J+enJjwQ026sxCarfhQSH3Pjy7qRvXsqEPoZd5sSABlSBYoP65bTkRhZgrMFkgZZ2wMloWBMIFmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731779970; c=relaxed/simple;
-	bh=lfJrkQU7kDKAcbgAg+MX5GusICFlw92JF3DwO3UuDT0=;
+	s=arc-20240116; t=1731779971; c=relaxed/simple;
+	bh=bIwDxueUJud+n2/mIeUPWBecNLHhmDU7Xn2mmiUGf6s=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GVy4HuJl1VAU+rwMd+IZ8SPYDiUqXnF4is7WqDiJMsVDid2kZnnvzet6eOXutyBdpg0Wj/9ud4+F99k2iPbLukqvGIkoGfF7AM9YrzODnk5rq8hKtGa1xGhCH4Trg6To82X68Va475N/ead7Mm71TpLvaljY0tT/tCsLe2l4Udg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=xSLgKRvq; arc=none smtp.client-ip=209.85.222.182
+	 MIME-Version; b=G/NczYSdpCS3z5haIzbeCn629jx6i/XvaN7XGlZ5Os19wFCCqcRQTWcJ7OOe0Paxl5rFMOVjOFdiwNG7HTSnL8bfthM+Z5AVjQr7cDPNSFPSb8RlMWtTAOuXV03mB05Ewyu1pE2N2OQzFyH+wPHdbkeKqh9QMypOrWx7UJfelYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=uxU1GykK; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b15eadee87so132185485a.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 09:59:28 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-460c2418e37so14338441cf.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2024 09:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731779968; x=1732384768; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731779969; x=1732384769; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=q+AdtzJV8StRb0yy8pEXghurQ0eEZGVtS6O69RbdSyA=;
-        b=xSLgKRvq2J3aFK5p2JVdxbkHbQzrBADD+qUNuUzCr9f7Ryktdoi1aafaEp7jaaG1Ny
-         uwFOpin86TL9/Yd052RzVYfnaJZ/IScJPIhV91qJ89ErkdcuoIiqjIYZSIzg6+jQ3DaN
-         tD0QpS6Kq8l3ocpuZ/aid4OQ59jdZ0QNxCqXL91+gL9z8VvUVcccmvucwmqpYBqKsbrl
-         qka94THxQJyK4RmOAULJ9vSPrSxgOF4XeFlSGU0/6Dnv8UVGYxHb9KVpRq2sjSP4fb/x
-         ScN7lNwuBRug+LnMECmSD1M6HgOnrZIL327Vm9HdbBUuZrp+gn6soQvjPXZiSm2PmOnD
-         Y69w==
+        bh=8NgfUO+bQWj6bU8BgCVOh0fIa47vMCexDt60Dq7gXNk=;
+        b=uxU1GykKNMZCbWxpjzqobztisCh9k6Tx6uWhHxXDuyD+rXG48SF4MUVGkr0KkfMDwl
+         qzZAop8JzhtNcpREH+mcVL92W0+hSfPBkUt9iju8Izy1dJuI4okjTgyNs0qcAr7zhC31
+         sjwoOKFCcMxj6cMFpEVKHFLZjkjOGRoPc2BolRWiSUO3bmVVB+WUoS7NoHUwUgenHoRA
+         5mt8Kb4SKK1Vb1U1G+5J45gy1L+cDlPB/6ye2wugK5PnYUHmh2FydpbweLslJ0E6yeWH
+         aq89LNXrEaARk499i9WTH3nLaxZFM9q+DCSTgqtLH8fYzKiP1Y02rsYespE1knE3ux0z
+         0jAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731779968; x=1732384768;
+        d=1e100.net; s=20230601; t=1731779969; x=1732384769;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q+AdtzJV8StRb0yy8pEXghurQ0eEZGVtS6O69RbdSyA=;
-        b=vs0+UJwFTLDwG8CLa9hwuE2n8aBGP6bWgfP9HnS6PDLxmFUHV6M2ht5Y9mObIkCXQi
-         fzICfPazIy0fSMyy3zp+E4g9TMqFFriS8ew15FlauVpTgJGj0fqiChfNbDG62DzDpuO9
-         JcGhz8pL05Y8Wbomlt5AzI/uVr0nwhP8cGibOyilKsntL0kCdy8Jgbha7780cOvQ9vB1
-         nJw0weQo0IXTvy3TOvNTHA2gMuOESe66TN5fMtvNk5iQU6fvqcCp8Y4RH3/9bBPgWh9t
-         jW8C1UeU4sM7sdLv6ypmdaqNOomuYx3Vm0scmRAMwblOkLumEJJPJwflNtRitIy+BMVd
-         /F7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXD7w00eQdKSJz4kFHfhxrkWZc5j0xf3Dp04CmnckTbo59R1LJgudwK6ffjD9JYoPv0AG+J3VamiaAoPGFr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxkxIvyEhBnp9YmNBUQF8C4gwy2X/AmQmimGs02Cr43vjgMY4M
-	BspyMCwbxm2XLINBan7fnXPcqEH0rkZF5nic0NuRv3wIqDuBAlBNgaRX1RK2DKY=
-X-Google-Smtp-Source: AGHT+IHID5UaFDu345/iXR65Tjm/g4UasFabizEe9rsgDtnAMppuhhS2EDxuUbmo+8naXZvVw6Ss7Q==
-X-Received: by 2002:a05:620a:468d:b0:7b1:5504:2772 with SMTP id af79cd13be357-7b362378df6mr1035738885a.55.1731779967540;
-        Sat, 16 Nov 2024 09:59:27 -0800 (PST)
+        bh=8NgfUO+bQWj6bU8BgCVOh0fIa47vMCexDt60Dq7gXNk=;
+        b=nA4g/Eirl7w4YS783io/CoAiJOrFCnaOVkrDE/HE7g7svG3MpyMO3aTfkpvZPUS+oB
+         6QjeVHWDpel+ROuWxGg7GbHrK3++qReBhMDFdeUjeEzen3dCKHOsJzqtNZAwGRHR1roB
+         E62rVWp8DK4mpGQKK/t1QGvT9SE3e5gVckQMGa8tRCebM/AkJbK/K0JwlBP1ENQxjXFb
+         Odva+SITg43iAKtRiRdh/nh1LNT55i6/V3RhFgoUdUgfyCKmr6c5ezaPPdtN3r4a/fkF
+         sOQR2ezYyjxVp41vNqTVBemw0atMiA4o+7A4PAheDBerW61C7O7zEevz4eNL2/Mb0W0b
+         I2FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDT3EE905sMzqcukEuUgFG+L1yoYdWFdKhFb47GNqu//A/Uv2EMjQSt9FMy+0/AjFCbk3xRUaCpY/9eoo4@vger.kernel.org
+X-Gm-Message-State: AOJu0YydyX0m138nUubNK3m+4HfkyRazrIh+IAhJlJWy/EIsuVZ/bmQI
+	M76e4CVBjUqd7MmEPjDgZg2iuVzWzURtgOncRawj19D13VM/kPhIiISrjbwHf+s=
+X-Google-Smtp-Source: AGHT+IEMOLNEsp5sqgIkt52tiSL0kf4hziLkF3l6oWPXAHVLzfNvt2ajo6yR1l9MnxJe6dgs1UWO0g==
+X-Received: by 2002:a05:6214:5d0a:b0:6cb:e6b2:4a84 with SMTP id 6a1803df08f44-6d3fb7cc924mr77641716d6.14.1731779968837;
+        Sat, 16 Nov 2024 09:59:28 -0800 (PST)
 Received: from soleen.c.googlers.com.com (51.57.86.34.bc.googleusercontent.com. [34.86.57.51])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca309d6sm280530085a.94.2024.11.16.09.59.26
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca309d6sm280530085a.94.2024.11.16.09.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 09:59:26 -0800 (PST)
+        Sat, 16 Nov 2024 09:59:28 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pasha.tatashin@soleen.com,
 	linux-kernel@vger.kernel.org,
@@ -109,9 +109,9 @@ To: pasha.tatashin@soleen.com,
 	tandersen@netflix.com,
 	rientjes@google.com,
 	gthelen@google.com
-Subject: [RFCv1 1/6] mm: Make get_vma_name() function public
-Date: Sat, 16 Nov 2024 17:59:17 +0000
-Message-ID: <20241116175922.3265872-2-pasha.tatashin@soleen.com>
+Subject: [RFCv1 2/6] pagewalk: Add a page table walker for init_mm page table
+Date: Sat, 16 Nov 2024 17:59:18 +0000
+Message-ID: <20241116175922.3265872-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
 References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
@@ -123,172 +123,80 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Page Detective will be using get_vma_name() that is currently used by
-fs/proc to show names of VMAs in /proc/<pid>/smaps for example.
-
-Move this function to mm/vma.c, and make it accessible by modules.
+Page Detective will use it to walk the kernel page table. Make this
+function accessible from modules, and also while here make
+walk_page_range() accessible from modules, so Page Detective could
+use it to walk user page tables.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- fs/proc/task_mmu.c | 61 ----------------------------------------------
- include/linux/fs.h |  3 +++
- mm/vma.c           | 60 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 61 deletions(-)
+ include/linux/pagewalk.h |  2 ++
+ mm/pagewalk.c            | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index e52bd96137a6..b28c42b7a591 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -240,67 +240,6 @@ static int do_maps_open(struct inode *inode, struct file *file,
- 				sizeof(struct proc_maps_private));
+diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
+index f5eb5a32aeed..ff25374470f0 100644
+--- a/include/linux/pagewalk.h
++++ b/include/linux/pagewalk.h
+@@ -124,6 +124,8 @@ int walk_page_range_novma(struct mm_struct *mm, unsigned long start,
+ int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
+ 			unsigned long end, const struct mm_walk_ops *ops,
+ 			void *private);
++int walk_page_range_kernel(unsigned long start, unsigned long end,
++			   const struct mm_walk_ops *ops, void *private);
+ int walk_page_vma(struct vm_area_struct *vma, const struct mm_walk_ops *ops,
+ 		void *private);
+ int walk_page_mapping(struct address_space *mapping, pgoff_t first_index,
+diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+index 5f9f01532e67..050790aeb15f 100644
+--- a/mm/pagewalk.c
++++ b/mm/pagewalk.c
+@@ -478,6 +478,7 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
+ 	} while (start = next, start < end);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(walk_page_range);
+ 
+ /**
+  * walk_page_range_novma - walk a range of pagetables not backed by a vma
+@@ -541,6 +542,37 @@ int walk_page_range_novma(struct mm_struct *mm, unsigned long start,
+ 	return walk_pgd_range(start, end, &walk);
  }
  
--static void get_vma_name(struct vm_area_struct *vma,
--			 const struct path **path,
--			 const char **name,
--			 const char **name_fmt)
--{
--	struct anon_vma_name *anon_name = vma->vm_mm ? anon_vma_name(vma) : NULL;
--
--	*name = NULL;
--	*path = NULL;
--	*name_fmt = NULL;
--
--	/*
--	 * Print the dentry name for named mappings, and a
--	 * special [heap] marker for the heap:
--	 */
--	if (vma->vm_file) {
--		/*
--		 * If user named this anon shared memory via
--		 * prctl(PR_SET_VMA ..., use the provided name.
--		 */
--		if (anon_name) {
--			*name_fmt = "[anon_shmem:%s]";
--			*name = anon_name->name;
--		} else {
--			*path = file_user_path(vma->vm_file);
--		}
--		return;
--	}
--
--	if (vma->vm_ops && vma->vm_ops->name) {
--		*name = vma->vm_ops->name(vma);
--		if (*name)
--			return;
--	}
--
--	*name = arch_vma_name(vma);
--	if (*name)
--		return;
--
--	if (!vma->vm_mm) {
--		*name = "[vdso]";
--		return;
--	}
--
--	if (vma_is_initial_heap(vma)) {
--		*name = "[heap]";
--		return;
--	}
--
--	if (vma_is_initial_stack(vma)) {
--		*name = "[stack]";
--		return;
--	}
--
--	if (anon_name) {
--		*name_fmt = "[anon:%s]";
--		*name = anon_name->name;
--		return;
--	}
--}
--
- static void show_vma_header_prefix(struct seq_file *m,
- 				   unsigned long start, unsigned long end,
- 				   vm_flags_t flags, unsigned long long pgoff,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3559446279c1..a25b72397af5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3474,6 +3474,9 @@ void setattr_copy(struct mnt_idmap *, struct inode *inode,
- 
- extern int file_update_time(struct file *file);
- 
-+void get_vma_name(struct vm_area_struct *vma, const struct path **path,
-+		  const char **name, const char **name_fmt);
-+
- static inline bool vma_is_dax(const struct vm_area_struct *vma)
- {
- 	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
-diff --git a/mm/vma.c b/mm/vma.c
-index 7621384d64cf..1bd589fbc3c7 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -2069,3 +2069,63 @@ void mm_drop_all_locks(struct mm_struct *mm)
- 
- 	mutex_unlock(&mm_all_locks_mutex);
- }
-+
-+void get_vma_name(struct vm_area_struct *vma, const struct path **path,
-+		  const char **name, const char **name_fmt)
++/**
++ * walk_page_range_kernel - walk a range of pagetables of kernel/init_mm
++ * @start:	start address of the virtual address range
++ * @end:	end address of the virtual address range
++ * @ops:	operation to call during the walk
++ * @private:	private data for callbacks' usage
++ *
++ * Similar to walk_page_range_novma() but specifically walks init_mm.pgd table.
++ *
++ * Note: This function takes two looks: get_online_mems(), and mmap_read, this
++ * is to prevent kernel page tables from being freed while walking.
++ */
++int walk_page_range_kernel(unsigned long start, unsigned long end,
++			   const struct mm_walk_ops *ops, void *private)
 +{
-+	struct anon_vma_name *anon_name = vma->vm_mm ? anon_vma_name(vma) : NULL;
-+
-+	*name = NULL;
-+	*path = NULL;
-+	*name_fmt = NULL;
-+
-+	/*
-+	 * Print the dentry name for named mappings, and a
-+	 * special [heap] marker for the heap:
-+	 */
-+	if (vma->vm_file) {
-+		/*
-+		 * If user named this anon shared memory via
-+		 * prctl(PR_SET_VMA ..., use the provided name.
-+		 */
-+		if (anon_name) {
-+			*name_fmt = "[anon_shmem:%s]";
-+			*name = anon_name->name;
-+		} else {
-+			*path = file_user_path(vma->vm_file);
++		get_online_mems();
++		if (mmap_read_lock_killable(&init_mm)) {
++			put_online_mems();
++			return -EAGAIN;
 +		}
-+		return;
-+	}
 +
-+	if (vma->vm_ops && vma->vm_ops->name) {
-+		*name = vma->vm_ops->name(vma);
-+		if (*name)
-+			return;
-+	}
++		walk_page_range_novma(&init_mm, start, end, ops,
++				      init_mm.pgd, private);
 +
-+	*name = arch_vma_name(vma);
-+	if (*name)
-+		return;
++		mmap_read_unlock(&init_mm);
++		put_online_mems();
 +
-+	if (!vma->vm_mm) {
-+		*name = "[vdso]";
-+		return;
-+	}
-+
-+	if (vma_is_initial_heap(vma)) {
-+		*name = "[heap]";
-+		return;
-+	}
-+
-+	if (vma_is_initial_stack(vma)) {
-+		*name = "[stack]";
-+		return;
-+	}
-+
-+	if (anon_name) {
-+		*name_fmt = "[anon:%s]";
-+		*name = anon_name->name;
-+		return;
-+	}
++		return 0;
 +}
-+EXPORT_SYMBOL_GPL(get_vma_name);
++EXPORT_SYMBOL_GPL(walk_page_range_kernel);
++
+ int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
+ 			unsigned long end, const struct mm_walk_ops *ops,
+ 			void *private)
 -- 
 2.47.0.338.g60cca15819-goog
 
