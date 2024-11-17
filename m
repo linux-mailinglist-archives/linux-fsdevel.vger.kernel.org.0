@@ -1,148 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-35044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28A29D065C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2024 22:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A50C9D0711
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 00:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938B8282519
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2024 21:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB599281FD1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2024 23:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4E1DDC08;
-	Sun, 17 Nov 2024 21:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454581DE2A9;
+	Sun, 17 Nov 2024 23:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Q526gACL"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wBF5LxbE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5521DDA16
-	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 21:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467311DC1B7
+	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 23:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731879749; cv=none; b=e84KrIPq2MV0q7YkXz03x/cFmT7RvQuQlGr1sLzHqWTxE6jUYYsjJJvtQOuckmhT7uVtrZRTliEHNPF/cCnWzpipL7a2L7HPXJH92UeQShp17VWDs/ELuTfjX6pjJp0iXmXx39pmJO1lPdE1N/5P8L9rxvuxNcF3nstqorZf6Uw=
+	t=1731886923; cv=none; b=f4tdrAfn3GnsqY75QIrjqUxbcO3kI3+ifU3HRcPBEyzP8lK43Z5JTJ4UsQfGgCsYecHyvaa6eIR1NyQ0QMe86TZDKHP6xea3CqkTTKL63Y0ZyWIbNcbGuW3CoDVW1f6tfz4cgLDlkU7HaGFeEX6x5cJZ/E3fhDwOdhlEPmnV4pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731879749; c=relaxed/simple;
-	bh=fbnwBa/ZpueSh9SqikfHGUoxX6deXqluvSX6WSJQJJs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Q7hUJcRYdKb3vzzQcUNRHREen7jgCHfMFlGhTU0oTCVJkwjGxuI+5x4NV9XdGpHvFybMi2Oi7FQiZvGRuUI7jrXIs89cKVNbKtOhWlkuVkceIbbDY5CNyxTbJENaHZMoyx+IY8QFlvM9koVxPA7P2ftD6N0Nk0Si0ccz+lz/5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Q526gACL; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38233152c8fso94693f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 13:42:27 -0800 (PST)
+	s=arc-20240116; t=1731886923; c=relaxed/simple;
+	bh=qxTOujbTL10cxGD+QdGTBhyG9RaWSm17XBudCi8uBi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SzLWdiAKVnVNK5dMLy2z/XXkKc+wLY5ynTqPvx92h1Fg1yJuJcc/gU3d36/wxi7UWx88yMR3CpTrl+BobHvAhqYN8Xg5LElwI41xGjklnIEjOUFRrI+ZTqJp9MoX+ikj5aosVcX1YOk1VKeLMTmGwM7V2uAPtWCUuVUirqXet8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=wBF5LxbE; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72041ff06a0so848575b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 15:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1731879746; x=1732484546; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zr6CSSq+yYWOM7mVKH3wNw8lI+twmShT9Ch+V8e8Hus=;
-        b=Q526gACLPCDOWLLrEoYKBrLLfdC2d05mdnCg98TDFXNH4uNAPiZX3ZrYW4cbl4WhtJ
-         +awuTdVmtIafCxljL7oloVn+ArbH2XE2nrt/Hdki5eVxHmvQmwGy2yutJ1b/1/aQ7VrU
-         6atrZNHPfLsNTDX5ArB9AZ1dinbNjWly+mejJif4Bywlr7K9G5kIQEscS2UOJnXCa6T/
-         VsukXHbfzwnnrwgw+ctEv+bBF72BG/jcn60CovYszlmbcBzhQCyP/q71E6v4Jww9zJaS
-         LGUxWMiQ7AAkEcdp/HbN1hUb+oIQcGBhthHb0+9OeKns2vQPyzaZlZPM/IDzhRX5ghXN
-         8NYA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731886921; x=1732491721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SUTPquA8eQo3SmUaOr4zN6yMlKLusBV0j+4/2JWItaw=;
+        b=wBF5LxbEq1PaT3a7msB8CtZvB9UfUUMd6RvXeTP+U2KGj0YeSxvwT8yY0G8WczWIkn
+         15J4k9uJ6Dpd6AZfbNOUaRSD3HuYa30JFrAGQSAzQGF7yDEQ972Fyu+HYAti8nnqais9
+         1/gT7f2hWhtHVW4KRmBJFdYRx5grtC4yQYlhzEL9PQYuqs37O5iApXLGrWYxvJ6G3gNM
+         wN195gi6v/bU6+pRQSs5pNlM+jTCCuahDA3AIfjFOj2YZ1n3sjsUbQd9Nl08Bmz/W8OE
+         SMo4zHpIlfR43nZBWpCPaVjPWOvrj4OkjaBCQFn5tcJzdr1ZlX4yV+ICw3LXWBlBLzJH
+         XorQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731879746; x=1732484546;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zr6CSSq+yYWOM7mVKH3wNw8lI+twmShT9Ch+V8e8Hus=;
-        b=WmSqVdRPTdnBJi+9NH5HhZgGfeZXfUEQ0SJjJ7OEx228MGNoWRDdecNyYuBAuzAR7b
-         5/GW9hKQWAYPTDMWWi3qp3d9/k4ENuL5Qh+6TxjEL10+31dARzOyJsK8BVHmpfRcVH21
-         ectSQDk+VIUkIF5EBnAoxwwENQwphJ4FbLdr4SPvoD6nv8E7cMb7yjl3vb8BjP2H6y8S
-         QQUHy9g5WToEAAAhcKJyvTFr/THPsBFqleoO8eNTvhy0VOx0/ZsBlH1nOLeLOn+Zo4vY
-         QBVFP6vlwuxHm34cLbfGUSc5yXD7Ja8p6UiAg48ad9sEEXQhVJaJKdDX5C1vVdkMXE+S
-         APOw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2yYgt4YfgUGxviFtePtIMQEUvKM2DxvfHJnxZOea/Pva5o/6cDzZ2+QslmZve4M+RH24JLuR6WrwUBwkz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpkspiQ8t4MY7+alfDGHca6wH3Oix/6xzrkzjeSczZMKtLF4Mi
-	pHeYZMbzFXxQsD4Sr1o0d5CoZEpltB3O8kK0WZIrLsbYyoxgCs5uAPX5d7FR2cc=
-X-Gm-Gg: ASbGncvuwpKtYOeWNAZ9YbbYqAy6y3fk+S9bxCK6OXDXY7A4jMcairHM8P8glPkKIgt
-	kaBJ7dXztN7HE030ukQzQpcfn/DdILV+UUqdD19rQcuFEfQgR3CmqYnUbzdcBx2Ncxo183GtKgo
-	WQnjOU9ECA/UaFmIxv4Kw8CICUSs22Pqd8doMMXfJJVG/8wxNoFC3OrIOE6nqyPM93pQ4k3apkV
-	e0Wj+oSezOkPsTEQ0OmzrhDVmlj/sDFsFDOdvKUD5VZ29g1HAeKUlguezBolfhyyqqwtFLwXu4K
-	E2imVw==
-X-Google-Smtp-Source: AGHT+IF+9oJFbi21AiEkbm/uejQ7RsC8IrNLz23sCIY+EPlWop6ZGwOrWSuUxfNkWi1PvkVhegUgpA==
-X-Received: by 2002:a05:6000:2d03:b0:382:3ef9:dfbc with SMTP id ffacd0b85a97d-3823ef9eecemr723300f8f.5.1731879746245;
-        Sun, 17 Nov 2024 13:42:26 -0800 (PST)
-Received: from smtpclient.apple ([2001:a61:a4f:301:d900:ed0f:882d:dc03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382491e19bdsm477489f8f.16.2024.11.17.13.42.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Nov 2024 13:42:25 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1731886921; x=1732491721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SUTPquA8eQo3SmUaOr4zN6yMlKLusBV0j+4/2JWItaw=;
+        b=ZGeNt38pZwegx+khRTpYOCPYS/mjhyviriC1V7+9in6zehfSe5wNwXMQmJK0CoGMwM
+         ZgqEyL+qN9fbh9vsMboDor2g7UpqwyiTsVcIKHDx4AHEpW0PIfqqE+CDgp64ckkNNACZ
+         MEGOnOvOBRpEM1ap4rKRwVDRWP1Zhj5rENOm1MmFu+yCMMfWlGZ0c+mj96IB57Z86rOe
+         oSp/Jx9AKaLTypePgeHIg5w+0c9PJalU8IufDVZPCEguUorB1ZBzFghY1QDoiX5DC/MN
+         jRlLBZfWw++0CZSN/C85YSPT/Iopk0oK1aHul8/drpDoGDIq7C5BSbbQlFg4Zx3d1SXq
+         RLyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQC6anbKVAqmw4B2Pi/FsJgEVWWvoy44jem+0DTSBtPj8MOy9J9IDj7A07HaRW/F6+RXimRS31sn7LQYOU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUo+jgSHYRVlPtJ0dvvYC46Zgxu5H0kDctcHGZAkEif9U/3jk7
+	6JPt1glEKiYNHNJ9xYtklezcaxRsmo96viHxakGDKatgT68wuArJ5+Ri0SE0zRc=
+X-Google-Smtp-Source: AGHT+IGiAd1rAkdTifocy8exaCIjQV+CPbeJh6699Tv0xtsUdygH+X0bJrVxisJuCl+ycdb/1IDZPw==
+X-Received: by 2002:a05:6a00:a0c:b0:71e:e4f:3e58 with SMTP id d2e1a72fcca58-72476cad10fmr13213225b3a.17.1731886921599;
+        Sun, 17 Nov 2024 15:42:01 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eef26sm4858255b3a.33.2024.11.17.15.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 15:42:01 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tCo8F-00G4fV-1g;
+	Mon, 18 Nov 2024 09:52:39 +1100
+Date: Mon, 18 Nov 2024 09:52:39 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
+ calling vfs_getattr
+Message-ID: <ZzpztwFlxgz8q6BZ@dread.disaster.area>
+References: <20241117163719.39750-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [RESEND PATCH] fscache: Remove duplicate included header
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <20240830-weihnachten-umtreiben-d3a9f1aee2e7@brauner>
-Date: Sun, 17 Nov 2024 22:42:13 +0100
-Cc: netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>,
- dhowells@redhat.com,
- jlayton@kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <FE1592EE-F840-4E90-9177-FD2D03261E3B@toblux.com>
-References: <20240628062329.321162-2-thorsten.blum@toblux.com>
- <20240628-dingfest-gemessen-756a29e9af0b@brauner>
- <4A2EAFA2-842F-46EF-995E-7843937E8CD5@toblux.com>
- <20240830-weihnachten-umtreiben-d3a9f1aee2e7@brauner>
-To: Christian Brauner <brauner@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241117163719.39750-1-aha310510@gmail.com>
 
-On 30. Aug 2024, at 15:17, Christian Brauner wrote:
-> On Thu, Aug 29, 2024 at 02:29:34PM GMT, Thorsten Blum wrote:
->> On 28. Jun 2024, at 10:44, Christian Brauner wrote:
->>> On Fri, 28 Jun 2024 08:23:30 +0200, Thorsten Blum wrote:
->>>> Remove duplicate included header file linux/uio.h
->>>> 
->>>> 
->>> 
->>> Applied to the vfs.netfs branch of the vfs/vfs.git tree.
->>> Patches in the vfs.netfs branch should appear in linux-next soon.
->>> 
->>> Please report any outstanding bugs that were missed during review in a
->>> new review to the original patch series allowing us to drop it.
->>> 
->>> It's encouraged to provide Acked-bys and Reviewed-bys even though the
->>> patch has now been applied. If possible patch trailers will be updated.
->>> 
->>> Note that commit hashes shown below are subject to change due to rebase,
->>> trailer updates or similar. If in doubt, please check the listed branch.
->>> 
->>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
->>> branch: vfs.netfs
->>> 
->>> [1/1] fscache: Remove duplicate included header
->>>     https://git.kernel.org/vfs/vfs/c/5094b901bedc
->> 
->> Hi Christian,
->> 
->> I just noticed that this patch never made it into linux-next and I 
->> can't find it in the vfs.netfs branch either. Any ideas?
+On Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
+> Many filesystems lock inodes before calling vfs_getattr, so there is no
+> data-race for inodes. However, some functions in fs/stat.c that call
+> vfs_getattr do not lock inodes, so the data-race occurs.
 > 
-> Picked into vfs.fixes.
+> Therefore, we need to apply a patch to remove the long-standing data-race
+> for inodes in some functions that do not lock inodes.
 
-Hi Christian,
+The lock does nothing useful here. The moment the lock is dropped,
+the information in the stat buffer is out of date (i.e. stale) and
+callers need to treat it as such. i.e. stat data is a point in time
+snapshot of inode state and nothing more.
 
-I just noticed that this patch (again) didn't make it into linux-next.
-Any ideas why not? The link just says:
+Holding the inode lock over the getattr call does not change this -
+the information returned by getattr is not guaranteed to be up to
+date by the time the caller reads it.
 
-  Notice: this object is not reachable from any branch.
+i.e. If a caller needs stat information to be serialised against
+other operations on the inode, then it needs to hold the inode lock
+itself....
 
-Obviously, this patch isn't very important, but maybe this happens with
-other, more important patches too?
-
-Thanks,
-Thorsten
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
