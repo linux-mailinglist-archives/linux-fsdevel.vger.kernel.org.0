@@ -1,72 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-35104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A175D9D127B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 14:53:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794D49D12BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 15:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4561F23A0E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26BA71F23344
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 14:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B80B19D88D;
-	Mon, 18 Nov 2024 13:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CD41A0706;
+	Mon, 18 Nov 2024 14:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0Cnq2Gz"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n4sC80YO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED94B19ABCB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C6019AD7E;
+	Mon, 18 Nov 2024 14:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731938005; cv=none; b=aFhzeAOg9JbmQDW4uQzX0/4Mh4prRF4rUMpPSJghOI8cz8wh5SDHDojJAgEaLYi9i/Gy5OowcK0Fg3Sa66lkWHdatkF48Wwm6BAWqqkuan4jAZlLhK6AFId1+u8CgvXxfMiVRVTfOBfDpTHa8bz5xHeXzzEZ7hLHcioYqe0fINc=
+	t=1731939271; cv=none; b=GSjDDGCp7mUF7/INco72aWnIAJ+zjaVvNfUgnQOd/h0PSJ8566issX+MFuY28QgOIqKU3yRBqbVdpVpOYNY22vFauaO9fpJhPqEpR9CEAquas796iIpnP+CoTGa8tgc8Tesee6yOGuGN3VkQQKKsrA46xRiqW6FY3HRyz26sIpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731938005; c=relaxed/simple;
-	bh=vrrZwIA5mLsxJTexH4Ruo56nZj/iQ04rKBtfus6Snww=;
+	s=arc-20240116; t=1731939271; c=relaxed/simple;
+	bh=Iq4KCZXx57qcNeVJC9BAFCclI6aVAFK4IGWquYM+SAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YcCcjAh5Fhp0AXUCq8A5dECztxDOlexPjGTs5TVCUmOFvxshQTJD0SvN4ebJUSifV92p94I7odIg2gxofX5kZaQukRFyo0oYLsV4bsXrn+YSGXhaQIFMfx0O0NvXVbEcavFW3RKnwN5wDZFGSGRFtCXR7E7tgtb21dAwFG0J5mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K0Cnq2Gz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731938002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jNM+Ggdd5VK5j8i8cpp4E7tzP93ElEYjMY80yCgImfQ=;
-	b=K0Cnq2Gz99wNfXKG+UzKPWUbpxTE4u/ueen8axoDV0ZC4HsmvHMw/+HPJOPqyotckU5jZt
-	rE21+Ul827zcmNRc5GMZTTILbacmxq1zrdDRQ4GPsRfYd8GE1oE6i82hBN5e2ER7kWAsaL
-	Zf8lh5dhPi+GSwYhTdY47oeZwpJDaxw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-505-eLiPnp_EOhqjFnOGZK8npQ-1; Mon,
- 18 Nov 2024 08:53:21 -0500
-X-MC-Unique: eLiPnp_EOhqjFnOGZK8npQ-1
-X-Mimecast-MFC-AGG-ID: eLiPnp_EOhqjFnOGZK8npQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9161F1955F41;
-	Mon, 18 Nov 2024 13:53:19 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.120])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97BC630001A0;
-	Mon, 18 Nov 2024 13:53:18 +0000 (UTC)
-Date: Mon, 18 Nov 2024 08:54:51 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	djwong@kernel.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6tnbEkmS5evyUpuIl38LVu3L2gb7cohJUFmSqcpGbBFiZ3nSQKoKrSarMOOB2QOTcqzm6nIn4bjR5YWsLIF3HR6FPvbqt47pHFp1J6KtadLBKKzv6DZ3kEDpSHH9t6KeK9Au+vuTVs6KWUSpJPhIqGPi2poGNRPU3Unui0oWaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n4sC80YO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IqVWXojb9n2L8fyUpFXSPsgqhzGXl83CytZq7+3ZL6c=; b=n4sC80YOxuD/KIdVXJFIU3pxPH
+	FFFJ5h+2xw6lGI9PD4QU83vObbsY3nwV131S+BTQvfAQblHJgHLY65yW3Gotyt4LeIhfh5YAfg43c
+	NNOAvzw/UfjZ56DMMUX/o4pGI9OwB7g+/mTzhK+VOMdZvMrV+QqE8hGppb9gv01jqvEyTeahvaYW6
+	OAM8UPQ+u2P9hA8BTD9zGM9K+GMX+XlZvK6BccUXUjWMAvHXZJAkBFkyhqlZiZ+FYzNOZN8ORavv5
+	3DA0Eyfzy4EObk+JzztkQG0jo4KDft5dlObMsU2CYhsWyduEO7tpQwETESskRpkQJLYwfl56Yq8v8
+	J2cakrDQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tD2WI-00000009ijm-2Ief;
+	Mon, 18 Nov 2024 14:14:26 +0000
+Date: Mon, 18 Nov 2024 06:14:26 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, djwong@kernel.org
 Subject: Re: [PATCH v4 2/3] iomap: lift zeroed mapping handling into
  iomap_zero_range()
-Message-ID: <ZztHK7WTZLu2V8bD@bfoster>
+Message-ID: <ZztLwrkl4Qlbm5Ku@infradead.org>
 References: <20241115200155.593665-1-bfoster@redhat.com>
  <20241115200155.593665-3-bfoster@redhat.com>
  <Zzre3i7UZARRpVgC@infradead.org>
+ <ZztHK7WTZLu2V8bD@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,38 +64,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zzre3i7UZARRpVgC@infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <ZztHK7WTZLu2V8bD@bfoster>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sun, Nov 17, 2024 at 10:29:50PM -0800, Christoph Hellwig wrote:
-> On Fri, Nov 15, 2024 at 03:01:54PM -0500, Brian Foster wrote:
-> > In preparation for special handling of subranges, lift the zeroed
-> > mapping logic from the iterator into the caller. Since this puts the
-> > pagecache dirty check and flushing in the same place, streamline the
-> > comments a bit as well.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+On Mon, Nov 18, 2024 at 08:54:51AM -0500, Brian Foster wrote:
+> I actually think it's easier for you to just fix it up according to your
+> needs rather than spin around on the list on it, since I'm not totally
+> clear on what the goal is here anyways.
 > 
-> I don't want to block this improvement on stylistic things, but
-> I still don't like moving more code than the function invocation into
-> the iter body.  I hope you're okay with me undoing that sooner or later.
-> 
-> 
+> Not sure if you saw my comment here [1], but my goal is to eventually
+> remove this code anyways in favor of something that supports more of a
+> sparse folio iteration. Whether it gets removed first or reworked in the
+> meantime as part of broader cleanups isn't such a big deal. I just want
+> to point that out so it's clear it's not worth trying too hard to
+> beautify it.
 
-I actually think it's easier for you to just fix it up according to your
-needs rather than spin around on the list on it, since I'm not totally
-clear on what the goal is here anyways.
-
-Not sure if you saw my comment here [1], but my goal is to eventually
-remove this code anyways in favor of something that supports more of a
-sparse folio iteration. Whether it gets removed first or reworked in the
-meantime as part of broader cleanups isn't such a big deal. I just want
-to point that out so it's clear it's not worth trying too hard to
-beautify it.
-
-Brian
-
-[1] https://lore.kernel.org/linux-fsdevel/ZzdgWkt1DRCTWfCv@bfoster/
+Sounds good, thanks!
 
 
