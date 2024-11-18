@@ -1,142 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-35098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832819D107F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:20:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C5F9D10E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F62C1F2253C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F5B1F222CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1241991DD;
-	Mon, 18 Nov 2024 12:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkg8gMWo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBA719A298;
+	Mon, 18 Nov 2024 12:49:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267973477;
-	Mon, 18 Nov 2024 12:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49A426AD0;
+	Mon, 18 Nov 2024 12:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731932424; cv=none; b=mfzU0PK1FC4tVTcHU5FM9oEvCT4khXPdKIPHVvFyKyrLukJdC055+LTyf6JBvDp2zrJrdSgo50vo5Ip6PDsUbYbq9656+CdlA6WxqtuXY5NjiEOJdmLK0ST0nkG839Lvx3KMT3uTEqkN9r6aiBeoqRR21xuCA7/18NxCmrsq6dE=
+	t=1731934150; cv=none; b=WW5P7/FtkznqCsH3qWW4wXrNQ36tlgO37nHMixyFCt4sxF9tru/bp4IUngsrh4Tj/DbulWVfkNrXo7+iIkxGXhAwLA0cDWqrXqMeoxiWds+SkqxiEJFS3ELrvFbHtkryWakBibClTi+5WHFWTugNMAWvYrvEK0uw6ZM0M/Jk+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731932424; c=relaxed/simple;
-	bh=IhI/h80fUah5nG2xsX5MC36XPiFxN7OiHquqoWt4auU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JKVqzO5pQOVIUt2PRk+pyKbdXnZDvBNRFeh1E7umuCQ702mynjAirLlpZm2HJgPNpuS07X7/ZbWna2sluKVABas3HBEy715Pc3RzCW5SZernSPd1Y9/u7llZ4TD+VCtD97b0uZqoOP3jEEhCQbhc/ka+vO8oOF5mdpTYA38i+ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkg8gMWo; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfcb7183deso1245240a12.0;
-        Mon, 18 Nov 2024 04:20:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731932421; x=1732537221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=91Y+NIQ0g0iO6ktSe6fnjx/GmiuOAuw5cfhfOdvqzxw=;
-        b=lkg8gMWo8ZKqQs2GhDm4jAtJ3f9AZdcdKLa1rBDjQX/Bdh5G564kUfIvygvdiJKZc1
-         L3cG9jJ9z9XbcWqBlEzSPoCeElmNsfgrfbt7DKTlnrNvNQ0WvTPaGNmyC/cOK6RpMldT
-         t9nA3s6RUcw6JyN9CKIdfvkTXh4+yoPnBX/9jlVn2glKslHujBksy19YDY5+I4duuhmQ
-         3BHiSDWJ6vFblTzWl1jBuFNhkk3oF8PC8P8sEx1rZzVH3vCiggJhju3mFAbGmw7yj2t8
-         x22BWvpRijtcEFeCToHC+tBgiillt2Kdsccoe+xCp0DuKqUvH2vKyHumeqPBzLkbJEwU
-         JUtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731932421; x=1732537221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=91Y+NIQ0g0iO6ktSe6fnjx/GmiuOAuw5cfhfOdvqzxw=;
-        b=saNld0p7GZjPETmR8Zk3BKmV66mmum2gPWH3K7nVvvyr454y9aXhYt1neDMhZIgaLd
-         BaFZRYNRCL9Errnuukrp+Pckv9XBorl8EGXy9G6vvRZEGctEYFsPHJbh7AMqwC4aBV0+
-         uV74udR+5HJ47zygiw4ZOt4jWZjA2QC1hSGmcL40JdRS45rPZADiAe+HPSHx1u1CwQ4Z
-         dbVviiE/KeL8JTzUhG8N8WjqBVe13YxXmoJ5EBqWGhxj1C5ioRrMOOrtwp9cHoStRvbR
-         hk7ZuaPNGlFXqlugSq+3h+KgNu4nqz8suzMhP+h1HS3flLNMqu9PG8QRo9kG/tU77eSi
-         iwlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr7BmCHypAmEXTDy8fTBoQDbmAWOkdMi9pu0zdXx9Q0jlh2lT4L5op0W58sSdV1nSY79XKXitVAMJeKzqF@vger.kernel.org, AJvYcCWZnlB1JCV3hd65ThQNY1iezTVzi1AAkRHEQl77Rq718T25kmTbdjDDeq22P74fqwYe/DVrCdveNIR25noy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUOL7sNtV9H+imFuC6fsv+YpZE+bdb4sQFhvxvrGh7/GNkpZmc
-	f/777/DeNvf35P/WdBbxsOO736Bb0aq2EBrlEQdgJRcGZuK0d1JJl58cDIrjrHH75krlTWvX8eC
-	0Mvhi5LLKRe2OjWa1uVFLyk5QFwg=
-X-Google-Smtp-Source: AGHT+IGH4on/EbSLBQIqwiESQGhEX8bQ+wc9QBqriPeieJ05H4CEuJJx0XilNOHUip/VpFUFJyrTkNPOjoYB0KEI4hQ=
-X-Received: by 2002:a05:6402:2807:b0:5cf:c187:c76c with SMTP id
- 4fb4d7f45d1cf-5cfc187c9d5mr3336099a12.14.1731932420857; Mon, 18 Nov 2024
- 04:20:20 -0800 (PST)
+	s=arc-20240116; t=1731934150; c=relaxed/simple;
+	bh=wHmkj8DXtelIvOhADAEWw/Bqiw8vgdqx0hOR8s9/pD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV27rB+cYZGlQXPJEE1Kh8pyg/TzHWW0S8A2X6S7XB/IGHPegmN3AztwK1ndgqyuvNmC/go5DdBMLO7pqScsSas4ODMnAyFC2gV+lUQpIc3iF4jPpSXvvGrvb32dWA6UevOeuZHuixKd7UBtkbP0BUkeuOqdopvdOFGYI4J4Oz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5F06568BFE; Mon, 18 Nov 2024 13:49:01 +0100 (CET)
+Date: Mon, 18 Nov 2024 13:49:01 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Anuj Gupta <anuj20.g@samsung.com>,
+	axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
+	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
+	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+Message-ID: <20241118124901.GA27505@lst.de>
+References: <20241114104517.51726-1-anuj20.g@samsung.com> <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com> <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de> <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com> <20241114151921.GA28206@lst.de> <f945c1fc-2206-45fe-8e83-ebe332a84cb5@gmail.com> <20241115171205.GA23990@lst.de> <397bc8b7-b569-4726-984a-46054d6b5950@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118085357.494178-1-mjguzik@gmail.com> <20241118115359.mzzx3avongvfqaha@quack3>
-In-Reply-To: <20241118115359.mzzx3avongvfqaha@quack3>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 18 Nov 2024 13:20:09 +0100
-Message-ID: <CAGudoHHezVS1Z00N1EvC-QC5Z_R7pAbJw+B0Z1rijEN_OdFO1g@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
- is populated
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <397bc8b7-b569-4726-984a-46054d6b5950@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Nov 18, 2024 at 12:53=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Fri, Nov 15, 2024 at 07:03:28PM +0000, Pavel Begunkov wrote:
+>>> but that shouldn't be PI specific.
+>>
+>> Why would anyone not use the SQE128 version?
 >
-> On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
-> > This gives me about 1.5% speed up when issuing readlink on /initrd.img
-> > on ext4.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > I had this running with the following debug:
-> >
-> > if (strlen(link) !=3D inode->i_size)
-> >        printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
-> >            strlen(link), inode->i_size);
-> >
-> > nothing popped up
->
-> Then you didn't run with UDF I guess ;). There inode->i_size is the lengt=
-h
-> of on-disk symlink encoding which is definitely different from the length
-> of the string we return to VFS (it uses weird standards-defined cross OS
-> compatible encoding of a path and I'm not even mentioning its own special
-> encoding of character sets somewhat resembling UCS-2).
->
+> !SQE128 with user pointer can easily be faster depending on the
+> ratio of requests that use SQE128 and don't. E.g. one PI read
+> following with a 100 of send/recv on average. copy_from_user
+> is not _that_ expensive and we're talking about zeroing an
+> extra never used afterwards cache line.
 
-Indeed I did not, thanks. :>
+Why would you use the same ring for it?  Remember PI is typically
+used by thing like databases.  Everything that does disk I/O
+will use it, so optimizing for it actually being used absolutely
+makes sense.
 
-> > I would leave something of that sort in if it was not defeating the
-> > point of the change.
-> >
-> > However, I'm a little worried some crap fs *does not* fill this in
-> > despite populating i_link.
-> >
-> > Perhaps it would make sense to keep the above with the patch hanging ou=
-t
-> > in next and remove later?
-> >
-> > Anyhow, worst case, should it turn out i_size does not work there are a=
-t
-> > least two 4-byte holes which can be used to store the length (and
-> > chances are some existing field can be converted into a union instead).
->
-> I'm not sure I completely follow your proposal here...
->
-
-I am saying if the size has to be explicitly stored specifically for
-symlinks, 2 options are:
-- fill up one of the holes
-- find a field which is never looked at for symlink inodes and convert
-into a union
-
-I'm going to look into it.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
