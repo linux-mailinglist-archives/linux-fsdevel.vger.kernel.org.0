@@ -1,166 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-35046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182039D0703
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 00:30:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F219D073C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 01:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C624F281DF9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2024 23:30:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10CD2B21B45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 00:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAD71DE2A7;
-	Sun, 17 Nov 2024 23:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6C68836;
+	Mon, 18 Nov 2024 00:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hond2bpe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B91DDA33;
-	Sun, 17 Nov 2024 23:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8BB819;
+	Mon, 18 Nov 2024 00:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731886196; cv=none; b=a5k4gEILkc0cIVoLlCiruIqRvNzn5tsUHuOme34KieK8UHPFIum4rC9up0S3mm8YiBhU/PvWpLRHb3Y2x1OU5C4wKDJ5xrhd+JaElT2Vuyr4STKp9XQNCrv01dDtM7C8rkV2kP4Loo3d8q/5xUq5/6mysKQS+RCYRhNCAnppthg=
+	t=1731889236; cv=none; b=uGpaqEgc0yvjS9LvvJhKufS7yRsdbNzAOuYeHhYnBtQhEvDtUlpANjS0rUe1ao589Ooid5ZTAd1nOJ6LE3TGqmyuiHXHFXSovgL3pMf+ayXxt2jJ4xLlU14KNbvkn9HBqdG3cARKB2hN/NNj5NbvcQz2/hNa0ppwcISBde/wGfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731886196; c=relaxed/simple;
-	bh=jIMynjpJaK/O61eRSvGhtn9jzOXXW78GlgyU9AxE0b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTOGm4FIC4v3jNP+t1pSfw9QP3jbWHIQMcg/cN5s78yYr4zerLpT3JVMjsaJcS8RsXVf+zOke9IdzmPse1DXyXNEbtbcNks6OG74csGP7Rpts+RL8oJobgbGvQqwGHI6b33GF93O7hs0lY9WGJQ8R19NDbod0HNfXrng2vdZo2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 605B7100814;
-	Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id QSGkpr7bSMwc; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id 503DA100723; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-X-Spam-Level: 
-Received: from [192.168.50.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id C06851006EE;
-	Mon, 18 Nov 2024 10:29:43 +1100 (AEDT)
-Message-ID: <fe9f3161-b9e5-4943-9d55-dfec08e7594e@themaw.net>
-Date: Mon, 18 Nov 2024 07:29:42 +0800
+	s=arc-20240116; t=1731889236; c=relaxed/simple;
+	bh=qWcd5D8sd3+UhMvKYdzQ49jgWbEfqcjhjlh2Rt3gUAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ScLxoCRvu8OMWOvW1prHgz9ktHGI8OHYiKVD5+SqN7MRiL0u2fW7Vv2gE4UaOQORocLExI+lVtdvbLgGes7dYh4jKlu64CFbMarbv5k9uaox/izvNFOcCLV5i5uaPK25n/VVVKv5zRfQE6Jn4iG0jgFbx58sdr7/ShN3H6rpA70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hond2bpe; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ed49edd41so637762666b.0;
+        Sun, 17 Nov 2024 16:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731889233; x=1732494033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3uuKKKzXvA1LlQ/Rb2ziaNjZ6F4SAZ97tfXKGSd9YBU=;
+        b=hond2bpeqbjLmU3Zed9HqYyRsQZogqyuuAVYXjt7z45k34F5N/BWUJDNiyz/rW6bgy
+         OQyvYiu7Y8Yo5ycejgGSTeXVfzQetcpfC5qpH3pBe0pw0vVdr2BMMcMFTky9oR09cm8a
+         q/0WKf1BX13l6ICslaW7lgOpm7ZQrIXjfXdjun7JRgwxJQqiip0gyMpYggrsbXmMUeRE
+         C2xyWFKP8kVKyL0OISyzJs+9xnYgmzYQ9gmRm1JHCKEEH4u/lUIoQ4HIdmE3SPcmcu6U
+         Mc/v7AGS38lUHRHW1GnTsYMDptLbWc1v2WbFEPceYUwdgSFQmJj54TS7+9l0suibVjm/
+         Zo+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731889233; x=1732494033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3uuKKKzXvA1LlQ/Rb2ziaNjZ6F4SAZ97tfXKGSd9YBU=;
+        b=HGsmVIpp4SorQ25xTEFq9GuXcRAf6P9wb+j8s2TORpHMWfiUr2m8kObBwpsR5KR3yS
+         0i+6eAYQgeha4exaJOY9oShjxFHnEI6M1Rfx3wbSBc2GbfugbsdxVBO7aEmBamqASOk6
+         94lqHvLtm7KkAeiRJqgOQYqoul78UzCPWy2rDBfDoUGceD4uG2pxjWYv7IpGghfnYlda
+         Ccg3fPdnThhVh8pbEZXC9LLohX/UmLLk0qUGgJC0T9cqPynrKeTAX2syUm5IBFbMZtXz
+         4Kr8NEqgfY1p7TOCSaFtzCqsLHuiC3F9yrNMciid6AMafJXvnNdgR3W1nZ9n3H/4zkXs
+         /MMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ1X3GiOqZeH2vB+48Xecj8WDYjzhEBEWCMPdKtzXLNYvKy+bnxq3XU98ZFVNKGH6q71nIYMVz6s3VhEnx@vger.kernel.org, AJvYcCVh3yu0gCUCP8aL32ABmnz7EujnRLe1AZ3pC3ytKprcUlWXk2v6MBW8XvIWFZqu5vKnUGtbSUsHAOXsKOHE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy1LUfOCc18OyaT7lI+6/0J/ae4O3dUrS1hj0wTEL3Kt3Z0Jxo
+	5dGItMqCHrhOuC3Ry6MQSF/TzpS9oZNtiw0eC9Th3EQ66N9mQJ8HUQfR8w==
+X-Google-Smtp-Source: AGHT+IE1n4bVGAu7K0QcRxrjHt1lZHMiWhWUFTOQceUV1qY68Y/pvTgIqS29ZwC0izS+mKfshcnuLw==
+X-Received: by 2002:a17:907:c12:b0:a9a:2afc:e4e3 with SMTP id a640c23a62f3a-aa4835523fdmr982278166b.50.1731889232571;
+        Sun, 17 Nov 2024 16:20:32 -0800 (PST)
+Received: from f.. (cst-prg-69-34.cust.vodafone.cz. [46.135.69.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dfffcd4sm470271466b.98.2024.11.17.16.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 16:20:31 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: move getattr in inode_operations to a more commonly read area
+Date: Mon, 18 Nov 2024 01:20:24 +0100
+Message-ID: <20241118002024.451858-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241113151848.hta3zax57z7lprxg@quack3>
- <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
- <20241114115652.so2dkvhaahl2ygvl@quack3>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net; keydata=
- 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
-In-Reply-To: <20241114115652.so2dkvhaahl2ygvl@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Notabaly occupied by lookup, get_link and permission.
 
-On 14/11/24 19:56, Jan Kara wrote:
-> On Thu 14-11-24 09:45:23, Ian Kent wrote:
->> On 13/11/24 23:18, Jan Kara wrote:
->>> On Wed 13-11-24 08:45:06, Jeff Layton wrote:
->>>> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
->>>>> On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
->>>>> Next on the wish list is a notification (a file descriptor that can be
->>>>> used in epoll) that returns a 64-bit ID when there is a change in the
->>>>> mount node. This will enable us to enhance systemd so that it does not
->>>>> have to read the entire mount table after every change.
->>>>>
->>>> New fanotify events for mount table changes, perhaps?
->>> Now that I'm looking at it I'm not sure fanotify is a great fit for this
->>> usecase. A lot of fanotify functionality does not really work for virtual
->>> filesystems such as proc and hence we generally try to discourage use of
->>> fanotify for them. So just supporting one type of event (like FAN_MODIFY)
->>> on one file inside proc looks as rather inconsistent interface. But I
->>> vaguely remember we were discussing some kind of mount event, weren't we?
->>> Or was that for something else?
->> I still need to have a look at the existing notifications sub-systems but,
->> tbh, I also don't think they offer the needed functionality.
->>
->> The thing that was most useful with David's notifications when I was trying
->> to improve the mounts handling was the queuing interface. It allowed me to
->> batch notifications up to around a couple of hundred and grab them in one go
->> for processing. This significantly lowered the overhead of rapid fire event
->> processing. The ability to go directly to an individual mount and get it's
->> information only got about half the improvement I saw, the rest come from
->> the notifications improvement.
-> Well, if we implemented the mount notification events in fanotify, then the
-> mount events get queued in the notification group queue and you can process
-> the whole batch of events in one go if you want. So I don't see batching as
-> an issue. What I'm more worried about is that watching the whole system
-> for new mounts is going to be somewhat cumbersome when all you can do is to
-> watch new mounts attached under an existing mount / filesystem.
+This pushes unlink to another cache line, otherwise the layout is the
+same on that front.
 
-But, for mounts/unounts for example, isn't it the act of performing the
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-mount/unmount that triggers the notification if the path in within a file
+Probably more can be done to rearrange struct. If someone is down to do
+it, I'm happy with this patch being dropped.
 
-system that's marked to report such events?
+ include/linux/fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Ian
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e29433c5ecc..972147da71f9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2140,6 +2140,8 @@ struct inode_operations {
+ 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
+ 	int (*permission) (struct mnt_idmap *, struct inode *, int);
+ 	struct posix_acl * (*get_inode_acl)(struct inode *, int, bool);
++	int (*getattr) (struct mnt_idmap *, const struct path *,
++			struct kstat *, u32, unsigned int);
+ 
+ 	int (*readlink) (struct dentry *, char __user *,int);
+ 
+@@ -2157,8 +2159,6 @@ struct inode_operations {
+ 	int (*rename) (struct mnt_idmap *, struct inode *, struct dentry *,
+ 			struct inode *, struct dentry *, unsigned int);
+ 	int (*setattr) (struct mnt_idmap *, struct dentry *, struct iattr *);
+-	int (*getattr) (struct mnt_idmap *, const struct path *,
+-			struct kstat *, u32, unsigned int);
+ 	ssize_t (*listxattr) (struct dentry *, char *, size_t);
+ 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
+ 		      u64 len);
+-- 
+2.43.0
 
 
