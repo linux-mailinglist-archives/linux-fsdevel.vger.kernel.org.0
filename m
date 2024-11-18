@@ -1,256 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-35151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098B09D1ADB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 22:56:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224999D1AEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 23:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6011FB222A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 21:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54221F220C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 22:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402351E7C26;
-	Mon, 18 Nov 2024 21:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E56A1E7C29;
+	Mon, 18 Nov 2024 22:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J47VDU1O"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Gb6Yp+hb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B42150981
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 21:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334A4191F99
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 22:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966964; cv=none; b=jdBQU/L3LT9etW7bVtgiqKr/Z+6IeeJhLWg936zBQ/TKLhaw63WsCYhYb7Y2t1AJuCT9j4YGCFui9dRezTNtvFQXcqP5ykO22wJmMLeJUmQoyHxdKMNMYPfZes/QmN1e8gTLW6SEzrj5Jf+qk5QFE5FNl9/25vDaUErkPCTzecE=
+	t=1731967761; cv=none; b=G/qwTGjApB73uSZGJwYFpy2O2DQCdISylnNZcSeR62BzQPdKHljelRtxp5nEk7/yqtJQDMM9cFVh/wTEQE4AJuDCaMECARzQnd65BbSl9jwbwaRT5wV+hOTjmmE98UqMhJdjod0AfXvGFrBMFMFEIo8Ezlu6U676cTd/z34bKYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731966964; c=relaxed/simple;
-	bh=dFqGuN73NKg5Ul2YHfrkoQvbXBHxCp2XwiECgctCa7E=;
+	s=arc-20240116; t=1731967761; c=relaxed/simple;
+	bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pD5KF3EC9eodUp3knp3O+dj+ZLekUjfUkX+BFSZjPlWux2/Xw/hR+bZZ6tgONxijfVikOUaxFbwbEGkONYNAoO4bVu5LJt+u6b+fkmlkxUzte76qwRwNq/H/bBmie+ljIa+d+WL2DmvWT0+sAu54y7HSrmxya0yG1QXhcXmLjNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J47VDU1O; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so3356a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 13:56:02 -0800 (PST)
+	 To:Cc:Content-Type; b=ZRpSXOjFODr0aClO6wR9UYvcO8YCnVAeCvg5jGibzIzhYPzOApslP0kYQiaRj1B54U3PcpSnNblX4Gq9nY7iuFPiXHtCCCILciBrZnlYSVscXSP0hmP35+8am+yVXRHyZEIvE9+PW6raq1ylZocf10AgWqvRxJUgSBtMoPIh4xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Gb6Yp+hb; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4609d8874b1so29095311cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 14:09:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731966961; x=1732571761; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731967759; x=1732572559; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KcPakxF9jKHtjtmBhR2QQPFYJaNPHuWfmL+ZcLJedzc=;
-        b=J47VDU1OeDNjrsSniG5XqybBofPtkSQlSPnaEoJudBnWlNdOIy7pi9sUhPjE3d1EUB
-         qsYFOWbr39HFSAH4X68uRNb2lJKln6nb2l3RtYZ973mMRXvBwlNgnfvvPZ9AYRzYC/G8
-         F8eyvOHPeAiUcNpnVGT4/BphotyMnMxNEMix6aA3Me5PyL63xYgP4wwevTKVwpsadYqX
-         GD/kmkCenBEGYdFgIuNQfGn2xMTwEMKeNbfZ4gPaUSMrXa9ry7V3+4gJHwi/uOk4Olh0
-         MD+7ajqFBj15ABmgGhhhnSMP3ZCtxkcELssNLgV8KFgurJpXBEd4+fSmk3bwc+ya8TqD
-         bzAA==
+        bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
+        b=Gb6Yp+hb3LS2S3zgzu9xXG4v1kmiTe9wY1PbV3QgOWMQHSmHWOWT1xI8dU7iO68kBV
+         4Ojo3PWXytSFdernv3ZGsb9YFfVbwDrZd5mI/0vNDx9a1+Q/WWeCJ3GevOlUWT/SqRy4
+         Gy05r3/i+oZu1i3SopG02MLYAPG24QJUhTP/gryTdmzcfiNnp2l3x1v7JdQqq6aM2mR9
+         vfETuXNlo83U6lSzYagXrpZbraIsauv0elkttf3q65wCPujazJlhFsgWbv1NLU2UjZjj
+         VAIK7E0RbqfZVOV7eBQtKfINmP2xPdFxtDvH6O6VPmZrYP75MyniX6+BzzI7rtGsZoi+
+         MBYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731966961; x=1732571761;
+        d=1e100.net; s=20230601; t=1731967759; x=1732572559;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KcPakxF9jKHtjtmBhR2QQPFYJaNPHuWfmL+ZcLJedzc=;
-        b=YYQk03Jk1FhLvr5+mOijSbhqNHrvc8Pp42eFPhlC91gp+N8fenWwAkBSSKLbKV5Xcb
-         +DmoFZgp2rcDouWzDqmswMZ0H8nfOVh22yQjUIKwv6NQlkt5CCgHmRaUkNgr4mk6xXuN
-         2/6R+tHQYZ3D6MkUplAV9oXfNtLoEpSRX+6Zs2fbhumOnik06Xtj3XV40ujSb8W7W6d8
-         nB1L0g+d6SB7DaZ4IzQAMIddJwu/nNBHyUFzlaDytiVnUDr48xf9XTdF4xXM2Ns6MmeL
-         lSxmti+AANymKwfL8Ssu1OM1f35m3hb698jEvOLf7JP7r8KWnG+Xsu9gehvB3XKoLSa7
-         wlwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIDJJltvjW4k47CiSEcyHjkpIOzmwFlQJnqepTB8MLNsYG2vT7h4tDocGHhgeDhV7tw/S5U4ZQxmFnjheJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhvh/Z1jvSs0yijjiinSe4aAmjikD0xfXC6nBrdQ95OWE7yDdA
-	MSaK1L6Dx2+ByUAMiAxCtLJuW7sFqOxlmoU+XmVT4d4e/GYlb1J+sUmt0qsJAvfFXdYatDLJoCV
-	oY6rJmj3Qg6sSqZX5+IG3wLVb3lAz+ncu3Prr
-X-Gm-Gg: ASbGncuSLE9NOhsko1cRxc+fvyAtRekUJUlPrn42QmaY7HG/0Of4E7VfeQ7SIKpELRs
-	bCqC6IRb29sl+5q84MwBrlQmD737ryuLabb4OlyDZb0pjuVCvbmQFNl00X8c9
-X-Google-Smtp-Source: AGHT+IEmQBLeCGEVSsJbyVXTx3ofqhXea4Wqz/7DGUro15QCcR8ixmXK0vAE1L66ZK1G6ThZtJ4ySWriaqF8oPGf1vk=
-X-Received: by 2002:aa7:dac4:0:b0:5cf:4994:501d with SMTP id
- 4fb4d7f45d1cf-5cfdfc082ddmr14414a12.3.1731966960689; Mon, 18 Nov 2024
- 13:56:00 -0800 (PST)
+        bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
+        b=EbYGZ/auY2Io2Iu0q1NiktI9nAbxx+QAMpY3GBNrWZd5/1oWDUrm3vE1fbHwcCpBWF
+         CrZE/73CBGI0HZymihY2P8H9W9Xzmun+zeE06ZnmqSfr/8U+DfP9zW2t6F7kt9PseJR8
+         aHKrdR/xi2yg90UpLcvzpxcFotkiROfCRuULWYT/olY3MfdvkUNot/72ULi4vZwc7ZC+
+         V98wp3DmOcxtZ/FxxCPHfmIxiub4shGX+ED1XGR9CDEKlwhccXuVVqT2vCetIDd3BCWb
+         H4B3+nmz66abiJpepIvMqHGj57EmzBkwhJDAOmMrfhSXOodCfN7vUKkWlPWLJzOm5v40
+         eO0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVfTvQsE0zfxWaDDVAETXmJmX8tJH179EoZyAyNKFaxJVY2w2cRSl+A7ODnOv6mdDDY6SP+HVrfnwDNgurG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhOVtNnRwuMjKdzfUVirUoN4fS3VrjeTrWQBjXL3yrG4XOy+qT
+	2AyZ7Y7dOgoG9LzqEFXUMkfb9XZ0vvPrcfd38/3fVTYVt6UaW6FXVn7EFIrmBKRX4SJDcypDOP2
+	otK+pL96El04MNMd1NBTNRGHvnQOculYIV1uB1A==
+X-Google-Smtp-Source: AGHT+IGuHkyDbKbXTopolKHlpXUuh5hPb8odsFN1/bRhiOBmnf88AGPczox19phVHKQRb/h9sm7V4erFguZn2MVlnKk=
+X-Received: by 2002:ac8:5946:0:b0:458:2764:37d5 with SMTP id
+ d75a77b69052e-46363de80famr188224651cf.6.1731967759219; Mon, 18 Nov 2024
+ 14:09:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com> <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-In-Reply-To: <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 18 Nov 2024 22:55:24 +0100
-Message-ID: <CAG48ez10dYpom22cQNgj62wkztbjpJiuuSroE5BahNkpnN-y3Q@mail.gmail.com>
-Subject: Re: [RFCv1 4/6] misc/page_detective: Introduce Page Detective
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com> <ZzuRSZc8HX9Zu0dE@google.com>
+In-Reply-To: <ZzuRSZc8HX9Zu0dE@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 18 Nov 2024 17:08:42 -0500
+Message-ID: <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Roman Gushchin <roman.gushchin@linux.dev>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
 	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
 	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
 	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, shuah@kernel.org, 
-	vegard.nossum@oracle.com, vattunuru@marvell.com, schalla@marvell.com, 
-	david@redhat.com, willy@infradead.org, osalvador@suse.de, 
-	usama.anjum@collabora.com, andrii@kernel.org, ryan.roberts@arm.com, 
-	peterx@redhat.com, oleg@redhat.com, tandersen@netflix.com, 
-	rientjes@google.com, gthelen@google.com
+	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 16, 2024 at 6:59=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
-> Page Detective is a kernel debugging tool that provides detailed
-> information about the usage and mapping of physical memory pages.
+On Mon, Nov 18, 2024 at 2:11=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
 >
-> It operates through the Linux debugfs interface, providing access
-> to both virtual and physical address inquiries. The output, presented
-> via kernel log messages (accessible with dmesg), will help
-> administrators and developers understand how specific pages are
-> utilized by the system.
+> On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
+> > Page Detective is a new kernel debugging tool that provides detailed
+> > information about the usage and mapping of physical memory pages.
+> >
+> > It is often known that a particular page is corrupted, but it is hard t=
+o
+> > extract more information about such a page from live system. Examples
+> > are:
+> >
+> > - Checksum failure during live migration
+> > - Filesystem journal failure
+> > - dump_page warnings on the console log
+> > - Unexcpected segfaults
+> >
+> > Page Detective helps to extract more information from the kernel, so it
+> > can be used by developers to root cause the associated problem.
+> >
+> > It operates through the Linux debugfs interface, with two files: "virt"
+> > and "phys".
+> >
+> > The "virt" file takes a virtual address and PID and outputs information
+> > about the corresponding page.
+> >
+> > The "phys" file takes a physical address and outputs information about
+> > that page.
+> >
+> > The output is presented via kernel log messages (can be accessed with
+> > dmesg), and includes information such as the page's reference count,
+> > mapping, flags, and memory cgroup. It also shows whether the page is
+> > mapped in the kernel page table, and if so, how many times.
 >
-> This tool can be used to investigate various memory-related issues,
-> such as checksum failures during live migration, filesystem journal
-> failures, general segfaults, or other corruptions.
-[...]
-> +/*
-> + * Walk kernel page table, and print all mappings to this pfn, return 1 =
-if
-> + * pfn is mapped in direct map, return 0 if not mapped in direct map, an=
-d
-> + * return -1 if operation canceled by user.
-> + */
-> +static int page_detective_kernel_map_info(unsigned long pfn,
-> +                                         unsigned long direct_map_addr)
-> +{
-> +       struct pd_private_kernel pr =3D {0};
-> +       unsigned long s, e;
-> +
-> +       pr.direct_map_addr =3D direct_map_addr;
-> +       pr.pfn =3D pfn;
-> +
-> +       for (s =3D PAGE_OFFSET; s !=3D ~0ul; ) {
-> +               e =3D s + PD_WALK_MAX_RANGE;
-> +               if (e < s)
-> +                       e =3D ~0ul;
-> +
-> +               if (walk_page_range_kernel(s, e, &pd_kernel_ops, &pr)) {
+> This looks questionable both from the security and convenience points of =
+view.
+> Given the request-response nature of the interface, the output can be
+> provided using a "normal" seq-based pseudo-file.
 
-I think which parts of the kernel virtual address range you can safely
-pagewalk is somewhat architecture-specific; for example, X86 can run
-under Xen PV, in which case I think part of the page tables may not be
-walkable because they're owned by the hypervisor for its own use?
-Notably the x86 version of ptdump_walk_pgd_level_core starts walking
-at GUARD_HOLE_END_ADDR instead.
+We opted to use dmesg for output because it's the standard method for
+capturing kernel information and is commonly included in bug reports.
+Introducing a new file would require modifying existing data
+collection scripts used for reporting, so this approach minimizes
+disruption to existing workflows.
 
-See also https://kernel.org/doc/html/latest/arch/x86/x86_64/mm.html
-for an ASCII table reference on address space regions.
+> But I have a more generic question:
+> doesn't it make sense to implement it as a set of drgn scripts instead
+> of kernel code? This provides more flexibility, is safer (even if it's bu=
+ggy,
+> you won't crash the host) and should be at least in theory equally
+> powerful.
 
-> +                       pr_info("Received a cancel signal from user, whil=
-e scanning kernel mappings\n");
-> +                       return -1;
-> +               }
-> +               cond_resched();
-> +               s =3D e;
-> +       }
-> +
-> +       if (!pr.vmalloc_maps) {
-> +               pr_info("The page is not mapped into kernel vmalloc area\=
-n");
-> +       } else if (pr.vmalloc_maps > 1) {
-> +               pr_info("The page is mapped into vmalloc area: %ld times\=
-n",
-> +                       pr.vmalloc_maps);
-> +       }
-> +
-> +       if (!pr.direct_map)
-> +               pr_info("The page is not mapped into kernel direct map\n"=
-);
-> +
-> +       pr_info("The page mapped into kernel page table: %ld times\n", pr=
-.maps);
-> +
-> +       return pr.direct_map ? 1 : 0;
-> +}
-> +
-> +/* Print kernel information about the pfn, return -1 if canceled by user=
- */
-> +static int page_detective_kernel(unsigned long pfn)
-> +{
-> +       unsigned long *mem =3D __va((pfn) << PAGE_SHIFT);
-> +       unsigned long sum =3D 0;
-> +       int direct_map;
-> +       u64 s, e;
-> +       int i;
-> +
-> +       s =3D sched_clock();
-> +       direct_map =3D page_detective_kernel_map_info(pfn, (unsigned long=
-)mem);
-> +       e =3D sched_clock() - s;
-> +       pr_info("Scanned kernel page table in [%llu.%09llus]\n",
-> +               e / NSEC_PER_SEC, e % NSEC_PER_SEC);
-> +
-> +       /* Canceled by user or no direct map */
-> +       if (direct_map < 1)
-> +               return direct_map;
-> +
-> +       for (i =3D 0; i < PAGE_SIZE / sizeof(unsigned long); i++)
-> +               sum |=3D mem[i];
+Regarding your suggestion, our plan is to perform reverse lookups in
+all page tables: kernel, user, IOMMU, and KVM. Currently, we only
+traverse the kernel and user page tables, but we intend to extend this
+functionality to IOMMU and KVM tables in future updates, I am not sure
+if drgn can provide this level of details within a reasonable amount
+of time.
 
-If the purpose of this interface is to inspect pages in weird states,
-I wonder if it would make sense to use something like
-copy_mc_to_kernel() in case that helps avoid kernel crashes due to
-uncorrectable 2-bit ECC errors or such. But maybe that's not the kind
-of error you're concerned about here? And I also don't have any idea
-if copy_mc_to_kernel() actually does anything sensible for ECC errors.
-So don't treat this as a fix suggestion, more as a random idea that
-should probably be ignored unless someone who understands ECC errors
-says it makes sense.
+This approach will be helpful for debugging memory corruption
+scenarios. Often, external mechanisms detect corruption but require
+kernel-level information for root cause analysis. In our experience,
+invalid mappings persist in page tables for a period after corruption,
+providing a window to identify other users of the corrupted page via
+timely reverse lookup.
 
-But I think you should at least be using READ_ONCE(), since you're
-reading from memory that can change concurrently.
+Additionally, using crash/drgn is not feasible for us at this time, it
+requires keeping external tools on our hosts, also it requires
+approval and a security review for each script before deployment in
+our fleet.
 
-> +       if (sum =3D=3D 0)
-> +               pr_info("The page contains only zeroes\n");
-> +       else
-> +               pr_info("The page contains some data\n");
-> +
-> +       return 0;
-> +}
-[...]
-> +/*
-> + * print information about mappings of pfn by mm, return -1 if canceled
-> + * return number of mappings found.
-> + */
-> +static long page_detective_user_mm_info(struct mm_struct *mm, unsigned l=
-ong pfn)
-> +{
-> +       struct pd_private_user pr =3D {0};
-> +       unsigned long s, e;
-> +
-> +       pr.pfn =3D pfn;
-> +       pr.mm =3D mm;
-> +
-> +       for (s =3D 0; s !=3D TASK_SIZE; ) {
-
-TASK_SIZE does not make sense when inspecting another task, because
-TASK_SIZE depends on the virtual address space size of the current
-task (whether you are a 32-bit or 64-bit process). Please use
-TASK_SIZE_MAX for remote process access.
-
-> +               e =3D s + PD_WALK_MAX_RANGE;
-> +               if (e > TASK_SIZE || e < s)
-> +                       e =3D TASK_SIZE;
-> +
-> +               if (mmap_read_lock_killable(mm)) {
-> +                       pr_info("Received a cancel signal from user, whil=
-e scanning user mappings\n");
-> +                       return -1;
-> +               }
-> +               walk_page_range(mm, s, e, &pd_user_ops, &pr);
-> +               mmap_read_unlock(mm);
-> +               cond_resched();
-> +               s =3D e;
-> +       }
-> +       return pr.maps;
-> +}
+Thanks,
+Pasha
 
