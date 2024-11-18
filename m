@@ -1,173 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-35095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F199D103E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B859D1059
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7E9CB24E81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 11:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4DEB21491
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B671990AD;
-	Mon, 18 Nov 2024 11:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0C11990B7;
+	Mon, 18 Nov 2024 12:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2GSgfRx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20060192B83;
-	Mon, 18 Nov 2024 11:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181D7190470
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 12:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930843; cv=none; b=Ixf/pV0fvTI8LbXCXKQF0VUbHAIfE2ZkrNgQRubySyPUev5GwtV0pcFmrbF2qiS6Nz+wsjLHkJj2iuMv3iawBAdfIxcuT3DgaVh1vdVItmc4NYFV4x77FqlRDgONh4Cd7dI8QlYebc0Pccb/OzeQPzT0EJzGCk8rKTIZUtydneI=
+	t=1731931694; cv=none; b=qPc5pWvnvksRdCiN9m6nzXsVN9But7511KKGMmIJwGJ+IrZrzj0mA7lbPvD00P0r/mswX3YF7CbEcy3+65QxnQiEzAEEEdZvW0BQ4f4+mUjEJP2KgLuQ2rSs4SvlrFNtrldK1ivJp2iuqqu8Zo9qQeCZkZa6Pfs9sltE9tRlZDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930843; c=relaxed/simple;
-	bh=9K0skQr+EdtdZq7OjMJRx3mFXy+Jo/jUCpFh4T0wXY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JV0pGh0z73UlDvA42bwq849fTXF5ieY5WalGFCDp3wL3LfIrcbiGnqsqQZPGCzHH26MTlv+/JKVZRBHicdZM465JcJoPgOXGMfNTrs6S0Fku6qCpNItejsjkkVvW8OVdIpjxL7wiyL25Z7vaD/mRwNBBdFwmmtyduKBJ2DvYgKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C4DE1F365;
-	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
-	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
-	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731930839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
-	wwMarSOxSQExZGCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
-	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
-	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731930839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
-	wwMarSOxSQExZGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4DF5E134A0;
-	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y2TFEtcqO2cvSQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 11:53:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 10507A0984; Mon, 18 Nov 2024 12:53:59 +0100 (CET)
-Date: Mon, 18 Nov 2024 12:53:59 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
- is populated
-Message-ID: <20241118115359.mzzx3avongvfqaha@quack3>
-References: <20241118085357.494178-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1731931694; c=relaxed/simple;
+	bh=71lS8hQ0kTzOSToCRJa1KXGzs+V+TTJEgfptPNMf+pM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jjtGFuIIo8h5DkGLZhC6LhQBe6joEGoWtzoGBCWIoaHI9tQrdVzguWXPIigQazwKdlrYt4+f5AFfSOCDQYNlrq/puQH6c7nE4pcUEG8ltKR+QI+kfhOwIyVEKU+UlQQTpEwOn8dpNtAGzsxdQ/JQuLX72SArcr3Y19mooz6t4SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2GSgfRx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26C7C4CED0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 12:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731931693;
+	bh=71lS8hQ0kTzOSToCRJa1KXGzs+V+TTJEgfptPNMf+pM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r2GSgfRx73m8dG/RYxRFRBOH7G96R4oz+IQDIvdl0S5cOiNA5hVpBmbPPKqX0TWiK
+	 Gfo73vKMC7W6RFV8cqIKW+DErhl/3m0krhOnxMFKWqdEU3PxP+AZ8W+nWkMIZmIwsd
+	 grWrLEi30/PEB4OJveP/oOXo6oYqIGj6mnhGIHvGWEPB9zbn8OdMsLdKCQ1ScdGfxl
+	 lLfdEVLRW+rrzOXOFSzwJxKqIOwQOKZiTP7nUIO9e2fkc74BMsz8uE8/7/y7uKDgA1
+	 P4zm9lR20bisRZKgDSyUJRGTSjr7D2ZYURMEe31TiNwIMIpEyP5l3NY/LuDqB+e9p/
+	 /kYP1B7xdAZHQ==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-295d27f9fc9so1000767fac.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 04:08:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWmWWEz8fTEbFeOtAeE9YIjCemeOCPGSQbXFykxQeQ/njAwmV7VU+A/HBHoXpd9SfKmVE6GU+RrO5UoO4R1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk6edeYyneUVgu4SSgnLIEggpB1zoq5ERBbg+A+kspXK04MIpS
+	sv9iJK/siBxeQOKuAeZKszhIWJI18Apokdwdc0v8jRJszZo64IbRGrQGx5oeAZJ745Q1PED4HsY
+	cF1UG1iOyCfusy3u5gx9q4Z2DCz8=
+X-Google-Smtp-Source: AGHT+IEtmkGeZKpbNT8KqoeYqpWihttibUnHkl0C8oBp8L0Q8S3yiO1/gt5Wbi3s4U+37PhiV4Y3uuy56UoqZfmH9i4=
+X-Received: by 2002:a05:6870:a105:b0:278:8fe:6293 with SMTP id
+ 586e51a60fabf-2962dcd3385mr8925446fac.1.1731931692763; Mon, 18 Nov 2024
+ 04:08:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118085357.494178-1-mjguzik@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <PUZPR04MB6316B385B7AE35C20C574B4481272@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB6316B385B7AE35C20C574B4481272@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 18 Nov 2024 21:08:01 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-JAe0g8ASrPyy_yYgQHXHkoQmSPcgdQHinQRqgm1hh_A@mail.gmail.com>
+Message-ID: <CAKYAXd-JAe0g8ASrPyy_yYgQHXHkoQmSPcgdQHinQRqgm1hh_A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] exfat: reduce FAT chain traversal
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
-> This gives me about 1.5% speed up when issuing readlink on /initrd.img
-> on ext4.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
-> 
-> I had this running with the following debug:
-> 
-> if (strlen(link) != inode->i_size)
->        printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
->            strlen(link), inode->i_size);
-> 
-> nothing popped up
+On Mon, Nov 18, 2024 at 11:01=E2=80=AFAM Yuezhang.Mo@sony.com
+<Yuezhang.Mo@sony.com> wrote:
+>
+> This patch set is designed to reduce FAT traversal, it includes the
+> patch to implement this feature as well as the patches to optimize and
+> clean up the code to facilitate the implementation of this feature.
+>
+> Changes for v3:
+>   - [2/7] add this new patch.
+>   - [3/7] use macro instead of function.
+>
+> Changes for v2:
+>   - [6/6] add inline descriptions for 'dir' and 'entry' in
+>     'struct exfat_dir_entry' and 'struct exfat_inode_info'.
+>
+> Yuezhang Mo (7):
+>   exfat: remove unnecessary read entry in __exfat_rename()
+>   exfat: rename argument name for exfat_move_file and exfat_rename_file
+>   exfat: add exfat_get_dentry_set_by_ei() helper
+>   exfat: move exfat_chain_set() out of __exfat_resolve_path()
+>   exfat: remove argument 'p_dir' from exfat_add_entry()
+>   exfat: code cleanup for exfat_readdir()
+>   exfat: reduce FAT chain traversal
+Applied them to #dev.
+Thanks!
 
-Then you didn't run with UDF I guess ;). There inode->i_size is the length
-of on-disk symlink encoding which is definitely different from the length
-of the string we return to VFS (it uses weird standards-defined cross OS
-compatible encoding of a path and I'm not even mentioning its own special
-encoding of character sets somewhat resembling UCS-2).
-
-> I would leave something of that sort in if it was not defeating the
-> point of the change.
-> 
-> However, I'm a little worried some crap fs *does not* fill this in
-> despite populating i_link.
-> 
-> Perhaps it would make sense to keep the above with the patch hanging out
-> in next and remove later?
-> 
-> Anyhow, worst case, should it turn out i_size does not work there are at
-> least two 4-byte holes which can be used to store the length (and
-> chances are some existing field can be converted into a union instead).
-
-I'm not sure I completely follow your proposal here...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>  fs/exfat/dir.c      |  29 ++------
+>  fs/exfat/exfat_fs.h |   6 ++
+>  fs/exfat/inode.c    |   2 +-
+>  fs/exfat/namei.c    | 173 +++++++++++++++++++-------------------------
+>  4 files changed, 86 insertions(+), 124 deletions(-)
+>
+> --
+> 2.43.0
+>
 
