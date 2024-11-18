@@ -1,126 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-35114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292029D1705
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 18:21:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD639D1759
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 18:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E5828386E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 17:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC271F22EC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 17:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7971C1F11;
-	Mon, 18 Nov 2024 17:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE11C1F19;
+	Mon, 18 Nov 2024 17:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PkvuyAmD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1IbuvfC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C51C1AB1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 17:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5098F1B0F24;
+	Mon, 18 Nov 2024 17:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731950427; cv=none; b=urxoyJFPzF3wCVT1HP2DOBYdGwBDBjDyvmSNnOan9flLw1MhTRr+2k50WPbgH5diE2Gpc/Y+wYRN8/ZYaGO71oo/YwJXHdh8zTBiUvak3nubsPNTWvx0M5XHcTJM+AEQzSOxUbsapRKa4kBZ/zgTRBMES6S4pCqTVKgTFLGRlQQ=
+	t=1731951858; cv=none; b=gBmOi+d7A4pQWqlow+xu5v2fEB5dEJwnVYTH9l5ZmUoTywsYjOfne/nqBv2IXB5b2VEPghE6/gqD8V9GrOwRnO+ShlOxS6re5nZVNPdUs/8LDbTGXZ8+GSCxkOKjxFE7yYbWKh7QDQilDaM7jcf5MYHzChLeBGQqXCO1bx2bKZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731950427; c=relaxed/simple;
-	bh=QvW2+t11JE5qZYQ/utYmcrFzR4tFb8NbOkxwQxklLRY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=dHunQk99CAAYpIAJnI/PbzBye4iDyRTTNQyryJwxlDLQ35O2/E+asCAR7IWP+UJuqCUIjbzzut7PpT5cPwGcyC+kEnjrAn7krp48cidD6gqGQugXN+hlHnbr4Gk8S8RPjSl4IE4SXyeXP9SdJhX1enQqsq199hU7Cqoq7m1iOx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PkvuyAmD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731950425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FHIXshzU7B/fw7mP4ANo81ZSu1pvlr9VA+iMyEA9kz8=;
-	b=PkvuyAmDP/lS+z4Vli408Dy/08wbevlFxTRj0W/L3Flkt/ZglkUhypkcGn3hCjSDlYt9r4
-	Yibm0/5ianRmwd75mKkpkwERyY+JJa8CsL/Ys4zIsszZuqQB/iXOn6ze3rMQJIf/zFWxdk
-	sIeFmrrxD4WnemuuHRvRHzh7jxfqdpw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-152-eXuZijuZMpiG0ZJ9iVPEIQ-1; Mon,
- 18 Nov 2024 12:20:22 -0500
-X-MC-Unique: eXuZijuZMpiG0ZJ9iVPEIQ-1
-X-Mimecast-MFC-AGG-ID: eXuZijuZMpiG0ZJ9iVPEIQ
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A67371955D62;
-	Mon, 18 Nov 2024 17:20:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.207])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 261D5195DF81;
-	Mon, 18 Nov 2024 17:20:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20241114163931.GA1928968@thelio-3990X>
-References: <20241114163931.GA1928968@thelio-3990X> <20241108173236.1382366-1-dhowells@redhat.com> <20241108173236.1382366-29-dhowells@redhat.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 28/33] netfs: Change the read result collector to only use one work item
+	s=arc-20240116; t=1731951858; c=relaxed/simple;
+	bh=63XIO8sRABg67XicxNbfY6QsDQLmc5CXskO87BQUG6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UJBtedq4Lxi38p4qEGCrzSpTyfTUonwmLKW8MjdCoV3R6GsMwynQ9roQzht4NvEIW0Az0aJlTjlZWcgnuRWmwn78aIvEuezMfdZRDVrj6+Gi3HHrJMn7BmnzlyobK+PtNGATlQ6AJVfIyIMUJtHocPFK9Ts7UBcJ6wJOQ9gRBis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1IbuvfC; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3000957e87.0;
+        Mon, 18 Nov 2024 09:44:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731951854; x=1732556654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bVO8qk3DSHDvk4oNuHMVMR5RvZCXGNXgG4n2Q5ZEl4o=;
+        b=J1IbuvfCm2KEWiNuEMRh1r6WpspKXvlECfVe/BPUCc5RinVHnODC2uO3ltSb9b7bbc
+         ho4UJ9G30hHgq93Y2Yb5Cy7Bd0N9c3WfJ5pbwXcsB0OVZK/sQdVnqagb1pV7YGieCz+N
+         4i1oib0SjH7HUuc/4jDMQrEbYFqgLQHTJumazJMhERm4DZs2zO8S7cFF0K9VcrwbuH7i
+         q2bopH2XCB8kLUakqEmvid0GpCW6PwT10tGBXBeZu0o7uGj3bxcg4vSs3Qi7PL5l4hoD
+         6qwULt2WvDHhErD25Mil4vtrkDPbZGl9lyN7+hQrulMmzX0HQdl+JVFqJBDC40w+7zL8
+         qzmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731951854; x=1732556654;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVO8qk3DSHDvk4oNuHMVMR5RvZCXGNXgG4n2Q5ZEl4o=;
+        b=rEE5pJk3oiKz6meITOJ0CMxboI7JC9LDjaD9yuiu4DW6wGZmPpURsuyv08QQdkWSFB
+         /7fDisuBWU75GaJTTsiEqgPFPgFfYHWzb79XAgK1dHNy7czHJBL9X7KXJaHXb7MOjOHn
+         VZEPWNc1Zv7PFcXxhXjhJ82QCyFJTzHaY++sw1FjSI6wFqA0TWsUlP9TpZtuY1kt1uQd
+         XImUB0v3G2QbSMnmFoSbCNvBAIG5JHGbyVqeJ5j/o5Aro9Ie56GSah1Exm3fAgIR+txb
+         vVRi1huI87+iHhXTbSmBZh1Vl44pRyOs+sD+Uln4pIWYHtfkpwSpzInZi/c5+7uH8myz
+         k1FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKD2TAp6MpPUKFHxPPADiT1N5EKtBiYZFGPS19NysRUuwJBznXQ5eGPK4wg5LhHjxYUuD8EB8BHJFmk1nBQ==@vger.kernel.org, AJvYcCVS8ssonJ3ZM/NCjuV7tBoxIuBlf50tpCt3J8lJMzpzclCGcHAT3Jp3sHz8OXSeGp9YjcIoyl0QT6GkRys=@vger.kernel.org, AJvYcCWGAO75wx0gXCujhPhSgacWKNq+WewiuGFNcS9tyDig2ASgQdGoG/Xjl1YDBSXVCAJhGxwe4EbKwg==@vger.kernel.org, AJvYcCWJbN8vLrtmRPkdeooFQy/vQJkKuZxoymdPvaQIrZC9WJ/dBg444wFtaGjQAHq+SRXHqO7I/uEiAFUWAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhpvmgF9jkOWJcvYYZYvwPch12FXIdqsRxltF44dkf/uABQqB0
+	gNHFpwqxlvuMOP6HdymKi9Wk3kCNpc8y2/Wy13SvEyMJmhwK3BMG
+X-Google-Smtp-Source: AGHT+IE8deZQbEFmLxsNjvaQHppwSiVlfb/JcEO8eBT8Er4XhuZQWQlwrAn+B4VtBktpYvCn9ldPGA==
+X-Received: by 2002:a2e:b896:0:b0:2ff:566e:b597 with SMTP id 38308e7fff4ca-2ff606fb54fmr81123891fa.38.1731951854002;
+        Mon, 18 Nov 2024 09:44:14 -0800 (PST)
+Received: from [192.168.42.187] (82-132-219-237.dab.02.net. [82.132.219.237])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e045270sm561214266b.146.2024.11.18.09.44.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 09:44:13 -0800 (PST)
+Message-ID: <4f5ef808-aef0-40dd-b3c8-c34977de58d2@gmail.com>
+Date: Mon, 18 Nov 2024 17:45:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <948807.1731950408.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 18 Nov 2024 17:20:08 +0000
-Message-ID: <948808.1731950408@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+To: Christoph Hellwig <hch@lst.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+ jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241114104517.51726-1-anuj20.g@samsung.com>
+ <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+ <20241114104517.51726-7-anuj20.g@samsung.com>
+ <c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
+ <b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
+ <20241118125029.GB27505@lst.de>
+ <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
+ <20241118170329.GA14956@lst.de>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241118170329.GA14956@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Nathan Chancellor <nathan@kernel.org> wrote:
+On 11/18/24 17:03, Christoph Hellwig wrote:
+> On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
+>>>
+>>> Can we please stop overdesigning the f**k out of this?  Really,
+>>
+>> Please stop it, it doesn't add weight to your argument. The design
+>> requirement has never changed, at least not during this patchset
+>> iterations.
+> 
+> That's what you think because you are overdesigning the hell out of
+> it.  And at least for me that rings every single alarm bell about
+> horrible interface design.
 
-> This change as commit 1bd9011ee163 ("netfs: Change the read result
-> collector to only use one work item") in next-20241114 causes a clang
-> warning:
-> =
+Well, and that's what you think, terribly incorrectly as far as
+I can say.
 
->   fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialize=
-d when used here [-Werror,-Wuninitialized]
->     235 |         if (list_is_last(&subreq->rreq_link, &stream->subreque=
-sts))
->         |                           ^~~~~~
->   fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to=
- silence this warning
->      28 |         struct netfs_io_subrequest *subreq;
->         |                                           ^
->         |                                            =3D NULL
-> =
+>>> either we're fine using the space in the extended SQE, or
+>>> we're fine using a separate opcode, or if we really have to just
+>>> make it uring_cmd.  But stop making thing being extensible for
+>>> the sake of being extensible.
+>>
+>> It's asked to be extendible because there is a good chance it'll need to
+>> be extended, and no, I'm not suggesting anyone to implement the entire
+>> thing, only PI bits is fine.
+> 
+> Extensibility as in having reserved fields that can be checked for
+> is one thing.  "Extensibility" by adding indirections over indirections
 
-> May be a shadowing issue, as adding KCFLAGS=3D-Wshadow shows:
+I don't know where you found indirections over indirections.
 
-Yep.  I'll remove both shadowing variables (there's also one at line 45 in=
- the
-bit that deals with the non-renegotiation case) and use the outermost one.
+> without a concrete use case is another thing.  And we're deep into the
+> latter phase now.
+> 
+>> And no, it doesn't have to be "this or that" while there are other
+>> options suggested for consideration. And the problem with the SQE128
+>> option is not even about SQE128 but how it's placed inside, i.e.
+>> at a fixed spot.
+>>
+>> Do we have technical arguments against the direction in the last
+>> suggestion?
+> 
+> Yes.  It adds completely pointless indirections and variable offsets.
 
-Thanks,
-David
+One indirection, and there are no variable offsets while PI remains
+the only user around.
 
+> How do you expect people to actually use that sanely without
+> introducing bugs left right and center?
+
+I've just given you an example how the user space can look like, I
+have absolutely no idea what you're talking about.
+
+> I really don't get why you want to make an I/O fast path as complicated
+> as possible.
+
+Exactly, _fast path_. PI-only handling is very simple, I don't buy
+that "complicated". If we'd need to add more without an API expecting
+that, that'll mean a yet another forest of never ending checks in the
+fast path effecting all users.
+
+-- 
+Pavel Begunkov
 
