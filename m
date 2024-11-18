@@ -1,61 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-35149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C239D1A46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 22:16:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C719D1AAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 22:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E49B23307
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 21:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711D31F22312
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 21:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F29F1C1F1F;
-	Mon, 18 Nov 2024 21:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145B1E7653;
+	Mon, 18 Nov 2024 21:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSiyfZMk"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DQz2+WS4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C5155312;
-	Mon, 18 Nov 2024 21:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B1D14D71A;
+	Mon, 18 Nov 2024 21:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731964601; cv=none; b=RbFHgmTaduGJbVYH/Tcz/C2hhWp1dY7j/7AEOWFKaoNzz1WqqogQwzAckZKw/MxYuc8oqVX6svhXwxZmDElwkJH8WO9eUjWMQJm1rkrcyfkrG6SO5E7fGwCHLZv2lmUAsHN2fJlMf/zz7gmtQesd60lk22C2SMPOTAir9a9q4xU=
+	t=1731965893; cv=none; b=o+CjacdodQteWr1dgKFMMm4/8D6DjVPzmR3XbT7sK0n3WL3HP9l+KKJU1Se3z8Er3HLIUpcGbUJYhiMDGysJ7pNONlmQJeIyGlbx3fDu1DyECHsuWZbRRz8J2iEnJdMHYA78R1AeXE9da0j50isyMbjTdHoldxoxJ6dbwJ5U7/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731964601; c=relaxed/simple;
-	bh=24UJjS8/aP1EOhV1GxQeDSO01e5Mj2oB9xq3YkkR/dY=;
+	s=arc-20240116; t=1731965893; c=relaxed/simple;
+	bh=UNg6qY2w/vPJZEPaRf1+NeUjUf7xuNclQpzB0R+mkU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOxEmHQ7rDCOCDTnA6tdjpDRlRd11RWcOv5va98HBbJDcil0AmZFpCzy68PePy4tz45FvrLWvlyy5qbtPV2Vq7+CHwb8bRNXiDweb2cDrWPTostwriH9UwUqGzO5VSIHppowZ8do3Y2+dhSN3RsuQa6UjJ8iFSpeLN90hhMa8xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSiyfZMk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96EAC4CED0;
-	Mon, 18 Nov 2024 21:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731964599;
-	bh=24UJjS8/aP1EOhV1GxQeDSO01e5Mj2oB9xq3YkkR/dY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pSiyfZMkEaHpJ18VaTlsy9NHYzlXUSDqhp1bhCYtv2ZZuWn8VY7xiW19vezaNzp/3
-	 ymCScH9tiMmymvDl4NpTLNoskDvWz/iskA02g+AFJ4HkngVtKHKldJKvde7ScTxMg7
-	 h+2fM8CzT/CBoEwP+YUIW17BQgl/sLUSF9qZ2RV9yPftl9KOg24ZAZT+4WqgYSIbfB
-	 7Mf/LiiGqaEjsyzlSPbMXvv9DS3YR3/5Ch4nful0OPqGAyuCXXYuPd2JfiFl0W+tAE
-	 K1aZe7+K99fdMCaGi204Q+fDsiAo7dqWv4IhNWMtL0YHCE+5GUy2NlpnNNiW2g9P/s
-	 ZUJbi5cvFBw3A==
-Date: Mon, 18 Nov 2024 13:16:37 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: willy@infradead.org, hare@suse.de, david@fromorbit.com,
-	djwong@kernel.org, john.g.garry@oracle.com, ritesh.list@gmail.com,
-	kbusch@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com,
-	nilay@linux.ibm.com
-Subject: Re: [RFC 8/8] bdev: use bdev_io_min() for statx block size
-Message-ID: <ZzuutQp5HzZp-lCQ@bombadil.infradead.org>
-References: <20241113094727.1497722-1-mcgrof@kernel.org>
- <20241113094727.1497722-9-mcgrof@kernel.org>
- <20241118070805.GA932@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cx/gMyQ2Y0KU6UZ3VsvXdz8ZpDYY9gA6jlmhdoxWL4M9YsAhhZnX0MUu6H81jrq2JfHcLGshad7J7GY7bssNIeryu/79/Jeg/320ORFyBk2Mplwq/CT5u1R2pttNi+X+5hfN5VxKMHg/aqBNoqlodtcNCQw9HUOeW2u8gvj2VDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DQz2+WS4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xtGptwAPqUHyxRvP/wAQ+2bFiCnqxRoaLpG+WpTq/e0=; b=DQz2+WS4LWUMHyB52nprtsJARA
+	QbsQouioQs0VLOrmQx8/qA7ChTOeRBJIoNazS/4WvuP1rayjV5j+VUPktnzaiAQRHMN/cOSgQA9bY
+	7c559BKFnmRT9w+B48A+3ndQq3vxdA25ObOp8B71kxtoUOxu5m3EXW0QBXSezHAP3+1dpTaLLnWEF
+	twXIOvO7X9LicR3aY69Ccjo75tTbt9DTriUW7sKUKPPrAGfsoDLaNjacxpj0kCeUTO8k2UQUuhYpi
+	guxkQc/cvPBtU0PqbhTp3NFz7VKsUxecWjAVNY6lUHLkreqdffGtlJ8FlDGHn4XU/QwwdzBaGb8oC
+	gGg09V8w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tD9Rg-0000000GW0v-3Hot;
+	Mon, 18 Nov 2024 21:38:08 +0000
+Date: Mon, 18 Nov 2024 21:38:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] statx stuff
+Message-ID: <20241118213808.GI3387508@ZenIV>
+References: <20241115150806.GU3387508@ZenIV>
+ <20241115153344.GW3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,76 +60,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118070805.GA932@lst.de>
+In-Reply-To: <20241115153344.GW3387508@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Nov 18, 2024 at 08:08:05AM +0100, Christoph Hellwig wrote:
-> On Wed, Nov 13, 2024 at 01:47:27AM -0800, Luis Chamberlain wrote:
-> >  	if (S_ISBLK(stat->mode))
-> > -		bdev_statx(path, stat, request_mask);
-> > +		bdev_statx(path, stat, request_mask | STATX_DIOALIGN);
-> 
-> And this is both unrelated and wrong.
+[now that the part shared with vfs.xattr2 is merged...]
 
-I knew this was an eyesore, but was not sure if we really wanted to
-go through the trouble of adding a new field for blksize alone, but come
-to think of it, with it at least userspace knows for sure its
-getting where as befault it was not.
+The following changes since commit e896474fe4851ffc4dd860c92daa906783090346:
 
-If we add it, and since it would be added post LBS support it could also
-signal that a kernel supports LBS. That may be a useful clue for default
-mkfs in case it is set and larger than today's 4k default.
+  getname_maybe_null() - the third variant of pathname copy-in (2024-10-19 20:33:34 -0400)
 
-So how about:
+are available in the Git repository at:
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 3a5fd65f6c8e..f5d7cda97616 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1277,7 +1277,8 @@ void bdev_statx(struct path *path, struct kstat *stat,
- 	struct inode *backing_inode;
- 	struct block_device *bdev;
- 
--	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC)))
-+	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC |
-+			      STATX_BLKSIZE)))
- 		return;
- 
- 	backing_inode = d_backing_inode(path->dentry);
-@@ -1306,6 +1307,11 @@ void bdev_statx(struct path *path, struct kstat *stat,
- 			queue_atomic_write_unit_max_bytes(bd_queue));
- 	}
- 
-+	if (request_mask & STATX_BLKSIZE) {
-+		stat->blksize = (unsigned int) bdev_io_min(bdev);
-+		stat->result_mask |= STATX_BLKSIZE;
-+	}
-+
- 	blkdev_put_no_open(bdev);
- }
- 
-diff --git a/fs/stat.c b/fs/stat.c
-index 41e598376d7e..d4cb2296b42d 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -268,7 +268,7 @@ static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
- 	 * obtained from the bdev backing inode.
- 	 */
- 	if (S_ISBLK(stat->mode))
--		bdev_statx(path, stat, request_mask);
-+		bdev_statx(path, stat, request_mask | STATX_BLKSIZE);
- 
- 	return error;
- }
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 887a25286441..b7e180bf72b8 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -164,6 +164,7 @@ struct statx {
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
- #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-+#define STATX_BLKSIZE		0x00020000U	/* Want/got stx_blksize */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-statx
+
+for you to fetch changes up to 6c056ae4b27575d9230b883498d3cd02315ce6cc:
+
+  libfs: kill empty_dir_getattr() (2024-11-13 11:46:44 -0500)
+
+----------------------------------------------------------------
+sanitize struct filename and lookup flags handling in statx
+and friends
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (4):
+      io_statx_prep(): use getname_uflags()
+      kill getname_statx_lookup_flags()
+      fs/stat.c: switch to CLASS(fd_raw)
+      libfs: kill empty_dir_getattr()
+
+Stefan Berger (1):
+      fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
+
+ fs/ecryptfs/inode.c        | 12 ++----------
+ fs/internal.h              |  1 -
+ fs/libfs.c                 | 11 -----------
+ fs/overlayfs/inode.c       | 10 +++++-----
+ fs/overlayfs/overlayfs.h   |  8 --------
+ fs/stat.c                  | 24 +++++++-----------------
+ include/uapi/linux/fcntl.h |  4 ----
+ io_uring/statx.c           |  3 +--
+ 8 files changed, 15 insertions(+), 58 deletions(-)
 
