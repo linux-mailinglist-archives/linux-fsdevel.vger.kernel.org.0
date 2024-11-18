@@ -1,283 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-35121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB2A9D18FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 20:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6887E9D1931
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 20:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E42A6B22F98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 19:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5D32832FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 19:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BE11E5022;
-	Mon, 18 Nov 2024 19:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7901E5726;
+	Mon, 18 Nov 2024 19:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBMSoMUF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZePGBNaz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B11217BBF;
-	Mon, 18 Nov 2024 19:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E28191F99;
+	Mon, 18 Nov 2024 19:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731958376; cv=none; b=fk1Mh8u1ahx9E3QFPPufRxGmypgFmQybkoXIE4btrZmmwJaFPPO1j9sKkYCAcNGlenv/jpsSrlTUHgspZXZEP2ZcscuQW0KoOSVkg6s9YbLiNwQGeNceOY0NfammT2aeeCpjQ2etYAyqNmhLkoLQEEmX0C4hcv9Ab7VRtxBPVdw=
+	t=1731959332; cv=none; b=BpoCpAVZ/V5S2k37il8RmH8bCMUUCWhppw3sM7opW5VOjAk6O1LIRSXDlr9J02sl/3/AhM6KzwZb5CWBkMZbxtq3EgmpIFPkfJP0NT0Zk5JHofg5wb4kPweHx2J+uHw5/ZJ8Dnz7z2D3rD4QfpSoWkT4cVvj5VNIgbF3gHrv/1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731958376; c=relaxed/simple;
-	bh=CXrVOy7sVwbasAR7srnupV5NSzNrjv/HeZ8lV60+Zqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOTt3+f0LARcD+6SfCoea2V6td2F+A7AoedHuGhCZsx6ryo4J41yd+tY4K5Jc+YTQmHHLDJqnXVBI6Ipajbi6taFPGNoF252E9HtB6tIvgsnVNIafnGRhL6Aa90aOKEaBsh5oPQlJ/VWXABHdrCPGzQAFUh06QBRcz104qev2j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBMSoMUF; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46094b68e30so22708341cf.0;
-        Mon, 18 Nov 2024 11:32:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731958373; x=1732563173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D3aw+l9dNkcLkNrO2Pq7kW0cBMAuFKpkuRyv9EfA/6Y=;
-        b=ZBMSoMUFKgON/mnRyhLgWm/Ndv1M/3cGpkIh6DTbNSx4CgsJ7e666r0Ol+C+hx6Jq2
-         tyIxqhQdVc7IZ74rpHmJYJudqdqLDfPCM9kGz39DHPSIRZbOM9U3ugO2he4GuiYbDTDE
-         d5sAmIFpHbdi1IighWD4twTFGpPv1Z1wa4djjIcueBOsfnKBLhgNYNoG8uOnPnbpYZWI
-         JjFq4mNa0VevvaS5+I+e6XjdVO8M3p8N1ACv/ZpYWmvJkbV1ptIiVXN53jEOczwV4RG4
-         HN7y2a1h7ClWGwtnjngRdMy82w1OW/KgNp4k+UCMqnEAnHlxIQ3TkQp3iQcV6bMUaqPw
-         R/XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731958373; x=1732563173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D3aw+l9dNkcLkNrO2Pq7kW0cBMAuFKpkuRyv9EfA/6Y=;
-        b=OQAG8uTEpsFDF0i81jXTfCNg4/FHRTSQ5N3E+lh8k7f4Gd5jMfOSfzrBNMXwmJMuoY
-         OHvesBQZFbc/2a/aXcgDULA6k0RlgavfII3evarO6Y6O0bvdpCPVJvI2xDuQ5gNeJrbU
-         t7wyttEBjdGsNOZWzVlxlMx1A3XX+dZuYVs4uf5yJFYHJ61lBCK6DmP7SlRsfuKjRAbM
-         0C7ald4PkvE8KJ5x7Ha+fpX4GI/V5CusfNQ/XSgeNHRJpigep3TxcTGKcVJaeKXfkCcY
-         oF7/Kt64iYibpOlb3gJ6ktWsZU5j5WF1r7lJBzH9L5BCk3mqanXeGEPMjshCq1C54G17
-         Vx9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaMWF764sOezDzKlPv4rqfyQPhmAfo4emDlsPKRzmUfwgwDKNkKcgV+wxpzJC6zKwEU0SoY1M5PA==@vger.kernel.org, AJvYcCXDBSpWW2+QpJV9ia+WgvUE8zq0Sr/R9aNGlwP9/UOM4rl3CwvSMspijRiHEbtx25qV5eq1zazapZEiPR2NbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtmG8Hg7cLra86McV+mgGXIINVMl2wqleV9xYZ5LPcLxneHewb
-	IBsWBS33KJfZBY0JeCaEGJ4asUJq/yezlJSkyMsPioiIYM/B/vqC/GmowCrBqXSkiytoTRtU0+3
-	lTGoeIfVMY84+13BDTZJfaplI0oY=
-X-Google-Smtp-Source: AGHT+IFldBnd1UdGeKQ2PGX9AW0KXnjkGEzEcD0/ycQg0O0d2R/gC78fXYAZXMtIWK0Gy6I6cm2o8UuQg53g09J+T44=
-X-Received: by 2002:a05:622a:24c:b0:463:1039:fae7 with SMTP id
- d75a77b69052e-46363eb5c20mr196063751cf.49.1731958373479; Mon, 18 Nov 2024
- 11:32:53 -0800 (PST)
+	s=arc-20240116; t=1731959332; c=relaxed/simple;
+	bh=pCeb4gUF5vULlb8yMn5g4r+Fnmy/gdq4guszNhta4uw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ojyFEeS1j5SEZ6shS1RVjt7LK2SefMguGwXspqGX1WlERZAfByiXgBEm7MXZHy5fV2FitYgCALUmuWHBIrqaj3je7Hvp+9XMouY+5V6r7yDWl+jznb+Kshh8V8kSnrg4JAUt6Aq3dXQN7T1N5lro0ahcXxlzaUaODk9zryQSpWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZePGBNaz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9F1C4CECC;
+	Mon, 18 Nov 2024 19:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731959331;
+	bh=pCeb4gUF5vULlb8yMn5g4r+Fnmy/gdq4guszNhta4uw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZePGBNazhuTrIuGLTYNg6vNlxkpyK0wmOXxWvCPxyrHl8yrhbgmPBW+hDaSKiwLdL
+	 Ua250S9Mjc738bKlbFd6wgtmJKD4hjgoapFmQtbuBXC/NJYyXj0jvRZ2fu5HiMzu7Y
+	 Z8QPS5Z0KMHMyalpEvC4MwQxw9ls/IRfbTnyDY3yX1EsGs8EKj95wuHKZXyps/xExn
+	 +sSAtixkiDpcNTuIflw56xWAvCxATKhlq1uhNs7sRD+1Xlye3UkCvhwH5Ym+seNUBc
+	 sAi0hBaYcMyXFExPTEOwnw7n0i2iiEUorzNVrlpCcHJyakKHXGaEXt8cj1RcMwtKL1
+	 CnxoXuOkz5pog==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 5EF7F3809A80;
+	Mon, 18 Nov 2024 19:49:04 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs multigrain timestamps
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241115-vfs-mgtime-1dd54cc6d322@brauner>
+References: <20241115-vfs-mgtime-1dd54cc6d322@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241115-vfs-mgtime-1dd54cc6d322@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.mgtime
+X-PR-Tracked-Commit-Id: 9fed2c0f2f0771b990d068ef0a2b32e770ae6d48
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6ac81fd55e8af8e78a716b4ba213c8c6381d94fd
+Message-Id: <173195934303.4157972.16641633341033070598.pr-tracker-bot@kernel.org>
+Date: Mon, 18 Nov 2024 19:49:03 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com> <20241107-fuse-uring-for-6-10-rfc4-v5-15-e8660a991499@ddn.com>
-In-Reply-To: <20241107-fuse-uring-for-6-10-rfc4-v5-15-e8660a991499@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 18 Nov 2024 11:32:42 -0800
-Message-ID: <CAJnrk1ZexeFu7PopHUe_jPNRCGWWG5ha-P9min0VV+LJO5mAZw@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 15/16] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
-	bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 9:04=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
-rote:
->
-> When the fuse-server terminates while the fuse-client or kernel
-> still has queued URING_CMDs, these commands retain references
-> to the struct file used by the fuse connection. This prevents
-> fuse_dev_release() from being invoked, resulting in a hung mount
-> point.
+The pull request you sent on Fri, 15 Nov 2024 14:49:52 +0100:
 
-Could you explain the flow of what happens after a fuse server
-terminates? How does that trigger the IO_URING_F_CANCEL uring cmd?
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.mgtime
 
->
-> This patch addresses the issue by making queued URING_CMDs
-> cancelable, allowing fuse_dev_release() to proceed as expected
-> and preventing the mount point from hanging.
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev_uring.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++=
-+-----
->  1 file changed, 70 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 6af515458695ccb2e32cc8c62c45471e6710c15f..b465da41c42c47eaf69f09bab=
-1423061bc8fcc68 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -23,6 +23,7 @@ MODULE_PARM_DESC(enable_uring,
->
->  struct fuse_uring_cmd_pdu {
->         struct fuse_ring_ent *ring_ent;
-> +       struct fuse_ring_queue *queue;
->  };
->
->  /*
-> @@ -382,6 +383,61 @@ void fuse_uring_stop_queues(struct fuse_ring *ring)
->         }
->  }
->
-> +/*
-> + * Handle IO_URING_F_CANCEL, typically should come on daemon termination
-> + */
-> +static void fuse_uring_cancel(struct io_uring_cmd *cmd,
-> +                             unsigned int issue_flags, struct fuse_conn =
-*fc)
-> +{
-> +       struct fuse_uring_cmd_pdu *pdu =3D (struct fuse_uring_cmd_pdu *)c=
-md->pdu;
-> +       struct fuse_ring_queue *queue =3D pdu->queue;
-> +       struct fuse_ring_ent *ent;
-> +       bool found =3D false;
-> +       bool need_cmd_done =3D false;
-> +
-> +       spin_lock(&queue->lock);
-> +
-> +       /* XXX: This is cumbersome for large queues. */
-> +       list_for_each_entry(ent, &queue->ent_avail_queue, list) {
-> +               if (pdu->ring_ent =3D=3D ent) {
-> +                       found =3D true;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       if (!found) {
-> +               pr_info("qid=3D%d Did not find ent=3D%p", queue->qid, ent=
-);
-> +               spin_unlock(&queue->lock);
-> +               return;
-> +       }
-> +
-> +       if (ent->state =3D=3D FRRS_WAIT) {
-> +               ent->state =3D FRRS_USERSPACE;
-> +               list_move(&ent->list, &queue->ent_in_userspace);
-> +               need_cmd_done =3D true;
-> +       }
-> +       spin_unlock(&queue->lock);
-> +
-> +       if (need_cmd_done)
-> +               io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
-> +
-> +       /*
-> +        * releasing the last entry should trigger fuse_dev_release() if
-> +        * the daemon was terminated
-> +        */
-> +}
-> +
-> +static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issu=
-e_flags,
-> +                                     struct fuse_ring_ent *ring_ent)
-> +{
-> +       struct fuse_uring_cmd_pdu *pdu =3D (struct fuse_uring_cmd_pdu *)c=
-md->pdu;
-> +
-> +       pdu->ring_ent =3D ring_ent;
-> +       pdu->queue =3D ring_ent->queue;
-> +
-> +       io_uring_cmd_mark_cancelable(cmd, issue_flags);
-> +}
-> +
->  /*
->   * Checks for errors and stores it into the request
->   */
-> @@ -606,7 +662,8 @@ static int fuse_uring_send_next_to_ring(struct fuse_r=
-ing_ent *ring_ent)
->   * Put a ring request onto hold, it is no longer used for now.
->   */
->  static void fuse_uring_ent_avail(struct fuse_ring_ent *ring_ent,
-> -                                struct fuse_ring_queue *queue)
-> +                                struct fuse_ring_queue *queue,
-> +                                unsigned int issue_flags)
->         __must_hold(&queue->lock)
->  {
->         struct fuse_ring *ring =3D queue->ring;
-> @@ -626,6 +683,7 @@ static void fuse_uring_ent_avail(struct fuse_ring_ent=
- *ring_ent,
->         list_move(&ring_ent->list, &queue->ent_avail_queue);
->
->         ring_ent->state =3D FRRS_WAIT;
-> +       fuse_uring_prepare_cancel(ring_ent->cmd, issue_flags, ring_ent);
->  }
->
->  /* Used to find the request on SQE commit */
-> @@ -729,7 +787,8 @@ static void fuse_uring_commit(struct fuse_ring_ent *r=
-ing_ent,
->   * Get the next fuse req and send it
->   */
->  static void fuse_uring_next_fuse_req(struct fuse_ring_ent *ring_ent,
-> -                                   struct fuse_ring_queue *queue)
-> +                                   struct fuse_ring_queue *queue,
-> +                                   unsigned int issue_flags)
->  {
->         int has_next, err;
->         int prev_state =3D ring_ent->state;
-> @@ -738,7 +797,7 @@ static void fuse_uring_next_fuse_req(struct fuse_ring=
-_ent *ring_ent,
->                 spin_lock(&queue->lock);
->                 has_next =3D fuse_uring_ent_assign_req(ring_ent);
->                 if (!has_next) {
-> -                       fuse_uring_ent_avail(ring_ent, queue);
-> +                       fuse_uring_ent_avail(ring_ent, queue, issue_flags=
-);
->                         spin_unlock(&queue->lock);
->                         break; /* no request left */
->                 }
-> @@ -813,7 +872,7 @@ static int fuse_uring_commit_fetch(struct io_uring_cm=
-d *cmd, int issue_flags,
->          * and fetching is done in one step vs legacy fuse, which has sep=
-arated
->          * read (fetch request) and write (commit result).
->          */
-> -       fuse_uring_next_fuse_req(ring_ent, queue);
-> +       fuse_uring_next_fuse_req(ring_ent, queue, issue_flags);
->         return 0;
->  }
->
-> @@ -853,7 +912,7 @@ static void _fuse_uring_fetch(struct fuse_ring_ent *r=
-ing_ent,
->         struct fuse_ring *ring =3D queue->ring;
->
->         spin_lock(&queue->lock);
-> -       fuse_uring_ent_avail(ring_ent, queue);
-> +       fuse_uring_ent_avail(ring_ent, queue, issue_flags);
->         ring_ent->cmd =3D cmd;
->         spin_unlock(&queue->lock);
->
-> @@ -1021,6 +1080,11 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsig=
-ned int issue_flags)
->         if (fc->aborted)
->                 goto out;
->
-> +       if ((unlikely(issue_flags & IO_URING_F_CANCEL))) {
-> +               fuse_uring_cancel(cmd, issue_flags, fc);
-> +               return 0;
-> +       }
-> +
->         switch (cmd_op) {
->         case FUSE_URING_REQ_FETCH:
->                 err =3D fuse_uring_fetch(cmd, issue_flags, fc);
-> @@ -1080,7 +1144,7 @@ fuse_uring_send_req_in_task(struct io_uring_cmd *cm=
-d,
->
->         return;
->  err:
-> -       fuse_uring_next_fuse_req(ring_ent, queue);
-> +       fuse_uring_next_fuse_req(ring_ent, queue, issue_flags);
->  }
->
->  /* queue a fuse request and send it if a ring entry is available */
->
-> --
-> 2.43.0
->
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6ac81fd55e8af8e78a716b4ba213c8c6381d94fd
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
