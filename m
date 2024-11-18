@@ -1,143 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-35157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071749D1BB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 00:10:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5856A9D1BC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 00:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90B91F2223A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 23:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD6C3B21E9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 23:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0061E8825;
-	Mon, 18 Nov 2024 23:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB52197552;
+	Mon, 18 Nov 2024 23:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDxOX/MF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8KIVlVZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0845B153BE4;
-	Mon, 18 Nov 2024 23:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF159147C71;
+	Mon, 18 Nov 2024 23:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731971441; cv=none; b=pSEyEQv129d10vDJXjiVD8Pf5hu1l1VafvlcQ5g63xkaorBhhHttsgyKbwW77BkPrE2k3qMSAxG84hY3rQM9iYEDqpAzEG0LrYnfdRlOUY3EFURGdjLIENTOFla4tPOpBTJmI+GhqMCwHVQFG5k9y5SVwAnoQdjFzLdTYZlTyvM=
+	t=1731971722; cv=none; b=U6q4VO0WDJihwt0bzc4kZISluXR3uzucRR1I7kdWtlrfKt7X+xhdyT5VjUzYF6rM48kZrwDuljC487XRCE4gkOAFHvBUpVxUv0b7Jh2wv/vrvb3mYRYLs1wavY8pRFjm9BXBfA8O2GrQmSkCAIVR3uXS2ahiaIOT2/hjDzIedj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731971441; c=relaxed/simple;
-	bh=UTsScOuiOnZAf0N7bi0kKSG8twQH/EN51DMMmvUFUJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=svah+dhRSyiFCjBIB9O2BGmX+Dj+wgxAI2nthFOUTgVhJNSeFWXuk2LJiWTV2kK6UhZJtgp6swI8AtC6ZFpju187/VStOpfsMfStkV8V5SqHpdLxqMHL3w7o3MJ8gxpQvu6crKAcNjOMDjU98kvXbEzyW/Aqc9eqFWyyN0DXzz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDxOX/MF; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460ad0440ddso1877641cf.3;
-        Mon, 18 Nov 2024 15:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731971439; x=1732576239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DXiyuALWVuDoOJhucZvM36T1DPAUGVkjFgg29QK7pNc=;
-        b=EDxOX/MFglYkyd4iGLgWUwKFuknijiNuJ4UqcZAFPNz/qTVLHYM0c8cbCzE8FcFCvk
-         zVuEaqfeJa+UZgSclfH/9UjERe3hGNqrk5mt/tWXg9DqTdwXZSH5v/+co/M7SQMZwdN6
-         3oRnD8ElV7GEmk8+ObFvRMgXnY8fiUp/rLeqwsHbu52/ZFgm2/G1M39QedB1Ic4mDIfc
-         g983APD2vNZIZMzA5fzFmWEE6naTSUnOgwyHuyVJcQIuXGkIlfFUVn0mN166AQKhe0zZ
-         y0YwHnIxNFYVz8bZL6yW3q6nUJ3dnuLI1AHHfLB80jRh7w222/d+W6rWWrAHq3GgFseH
-         IAHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731971439; x=1732576239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DXiyuALWVuDoOJhucZvM36T1DPAUGVkjFgg29QK7pNc=;
-        b=UOciCMgOqluVNV4wCJQtT+nF8ozVOIPMBDplR3/Ad9/Gt/x40aPk2E9l591XokM+Tq
-         sDPHDacW1kQP8r6VmUgs0XXiYVtpO4xiRBl52CuPXyZxBLKziHHqX0nLFv9JnLB42aIu
-         J14n4Ceag0OfHXRKeuAZnMcUz8J+3bFNvSiG5MINxZNCRUM8foQepQhiMTupCdH3pwRk
-         q84+d9E2Wvq9zaKQDn2LhSJhiIC67g99wg8z+pqDae9nVfdpI/6cJ9bqp7LhgnNNpKgP
-         +njfvPPIa9nUCwH9uuoBZRsi89VYm058oBmwinJA4I7YtzuPDysOtK69jTEB4IHzXOUk
-         nNkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBzIz/1hcibf2Q9rAzVZB/bbsdhqiWFODjCnO2iKVhZEFr/KJzTxfTE53XjZJBwEE37lOGEMmQpQ==@vger.kernel.org, AJvYcCWx0AhCpY+PzirXXEGKZm5VCspYQviyrFtdojnf8vjx6j4dS2MZOLDnld7O1zidsBguiwLEq7dKZWG5TAzVyg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkHII0jT4bO5oeEYmb4hNgKhfWeAOclTfP+IXnhZ7TGYE/ejv2
-	u1QsspGgkyqLI7z24h2JGIN2ceLFVF2lYnvW6M+xIJ26Nk1VFaKBibFnj3QyJ9pshXkWXdqIUkB
-	f3anN7PocGoxrrFPkA3a37jyunKA=
-X-Google-Smtp-Source: AGHT+IH3hbsCbzRg6Xo/GzchZfftr06ZcozEZW4kQLl75ssXq19oaaWMvfZICQLMND19LBrrHqXDTPRzxTMmW3OWm3Y=
-X-Received: by 2002:a05:622a:529b:b0:461:57f9:6294 with SMTP id
- d75a77b69052e-46363e9fba9mr191600851cf.38.1731971438724; Mon, 18 Nov 2024
- 15:10:38 -0800 (PST)
+	s=arc-20240116; t=1731971722; c=relaxed/simple;
+	bh=xEkqWzgqeMIkvdQHPZg4p3xgSfo/UinTqXhG8KrlTWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjLU7yF/3q46axp271lsAYw4IIRC+x6MlRnqYrVg8PpLDxUqk3NbHRqMo/fNBh+iGTTZh/QzzcQcWE7AZiLfGCUlKsTAPWQFxYYFMWNu+Ri2mV4DjjJc904W8y0q0tEujib8Cqo/v0RgcOVbaEw7UbM/bJbcRyjO0JAZPb6NynM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8KIVlVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5926FC4CECC;
+	Mon, 18 Nov 2024 23:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731971722;
+	bh=xEkqWzgqeMIkvdQHPZg4p3xgSfo/UinTqXhG8KrlTWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F8KIVlVZBovIunuQBDOqCmTUgu5pJ24G3oQgN7rX0lzjnhvEJVYd1FDG1Hsmqm4n7
+	 K4dlQ0+x7sHql2UbeM8jReXxyS2DWjwGXcwSeBhxaWCMLDinCMlVT10wpS8xURtSjP
+	 s7M8pUfmoYBfvPHbJvRYpvpnDjzqRN1ODFDJTtZAesCm3dqaeeoCdNzoFhM61B3s5w
+	 7m9L7EhPHv6Ogq2sLknXCuFBaPA40OozG6Hze/mMrlxO/kxV6oALSjAMaCV7bq+C3Q
+	 uA45Z/hJeDQpi75BeykQ0P1SL4kk6PF6XihascA4z66pX5PQscQvYfN0sP8ch/k7e5
+	 Uj/PTpfnPpnVg==
+Date: Mon, 18 Nov 2024 15:15:21 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, david@fromorbit.com, zokeefe@google.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [PATCH 03/27] ext4: don't write back data before punch hole in
+ nojournal mode
+Message-ID: <20241118231521.GA9417@frogsfrogsfrogs>
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com>
- <20241107-fuse-uring-for-6-10-rfc4-v5-15-e8660a991499@ddn.com>
- <CAJnrk1ZexeFu7PopHUe_jPNRCGWWG5ha-P9min0VV+LJO5mAZw@mail.gmail.com> <97f18455-7651-42c1-9e76-4fb62220e739@fastmail.fm>
-In-Reply-To: <97f18455-7651-42c1-9e76-4fb62220e739@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 18 Nov 2024 15:10:27 -0800
-Message-ID: <CAJnrk1aF0DDBX08KcPD3Y4pP-KyeoS0-tRsDH0a9SJnRzgHwJg@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 15/16] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
-	bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111059.2566137-4-yi.zhang@huaweicloud.com>
 
-On Mon, Nov 18, 2024 at 11:55=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
-> On 11/18/24 20:32, Joanne Koong wrote:
-> > On Thu, Nov 7, 2024 at 9:04=E2=80=AFAM Bernd Schubert <bschubert@ddn.co=
-m> wrote:
-> >>
-> >> When the fuse-server terminates while the fuse-client or kernel
-> >> still has queued URING_CMDs, these commands retain references
-> >> to the struct file used by the fuse connection. This prevents
-> >> fuse_dev_release() from being invoked, resulting in a hung mount
-> >> point.
-> >
-> > Could you explain the flow of what happens after a fuse server
-> > terminates? How does that trigger the IO_URING_F_CANCEL uring cmd?
->
-> This is all about daemon termination, when the mount point is still
-> alive. Basically without this patch even plain (non forced umount)
-> hangs.
-> Without queued IORING_OP_URING_CMDs there is a call into
-> fuse_dev_release() on daemon termination, with queued
-> IORING_OP_URING_CMDs this doesn't happen as each of these commands
-> holds a file reference.
->
-> IO_URING_F_CANCEL is triggered from from io-uring, I guess when
-> the io-uring file descriptor is released
-> (note: 'io-uring fd' !=3D '/dev/fuse fd').
+On Tue, Oct 22, 2024 at 07:10:34PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> There is no need to write back all data before punching a hole in
+> data=ordered|writeback mode since it will be dropped soon after removing
+> space, so just remove the filemap_write_and_wait_range() in these modes.
+> However, in data=journal mode, we need to write dirty pages out before
+> discarding page cache in case of crash before committing the freeing
+> data transaction, which could expose old, stale data.
 
-Gotcha. I took a look at the io_uring code and it looks like the call
-chain looks something like this:
+Can't the same thing happen with non-journaled data writes?
 
-io_uring_release()
-  io_ring_ctx_wait_and_kill()
-    io_ring_exit_work()
-      io_uring_try_cancel_requests()
-        io_uring_try_cancel_uring_cmd()
-            file->f_op->uring_cmd() w/ IO_URING_F_CANCEL issues_flag
+Say you write 1GB of "A"s to a file and fsync.  Then you write "B"s to
+the same 1GB of file and immediately start punching it.  If the system
+reboots before the mapping updates all get written to disk, won't you
+risk seeing some of those "A" because we no longer flush the "B"s?
 
->
->
-> I guess I need to improve the commit message a bit.
->
->
->
-> Cheers,
-> Bernd
->
->
->
->
+Also, since the program didn't explicitly fsync the Bs, why bother
+flushing the dirty data at all?  Are data=journal writes supposed to be
+synchronous flushing writes nowadays?
+
+--D
+
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/ext4/inode.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index f8796f7b0f94..94b923afcd9c 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3965,17 +3965,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>  
+> -	/*
+> -	 * Write out all dirty pages to avoid race conditions
+> -	 * Then release them.
+> -	 */
+> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+> -		ret = filemap_write_and_wait_range(mapping, offset,
+> -						   offset + length - 1);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	inode_lock(inode);
+>  
+>  	/* No need to punch hole beyond i_size */
+> @@ -4037,6 +4026,21 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  		ret = ext4_update_disksize_before_punch(inode, offset, length);
+>  		if (ret)
+>  			goto out_dio;
+> +
+> +		/*
+> +		 * For journalled data we need to write (and checkpoint) pages
+> +		 * before discarding page cache to avoid inconsitent data on
+> +		 * disk in case of crash before punching trans is committed.
+> +		 */
+> +		if (ext4_should_journal_data(inode)) {
+> +			ret = filemap_write_and_wait_range(mapping,
+> +					first_block_offset, last_block_offset);
+> +			if (ret)
+> +				goto out_dio;
+> +		}
+> +
+> +		ext4_truncate_folios_range(inode, first_block_offset,
+> +					   last_block_offset + 1);
+>  		truncate_pagecache_range(inode, first_block_offset,
+>  					 last_block_offset);
+>  	}
+> -- 
+> 2.46.1
+> 
+> 
 
