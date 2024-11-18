@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-35088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832789D1009
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:47:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3269D100B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4916E284150
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 11:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585B01F213A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 11:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB7E1A08A4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B141A0BC0;
 	Mon, 18 Nov 2024 11:45:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468F8199FBF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE01319ABC3;
 	Mon, 18 Nov 2024 11:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930318; cv=none; b=jVFFHVkfBTIGBjGW1Mi4P34zxpe7hYQl+OhY50wlt4MDQVTKILg7LJLGW4GGkm8aUKWnGCkecS1U/qCaDq3Tt210Av+hUIADqgeNU3RnqyVtnLxqYbzSfnY4hNKWXcnPDUqCWEvl9ZEUryvygwUsyA9Vtj+Ak6+6cvFWIsZ4N68=
+	t=1731930319; cv=none; b=fcgp1IQoX7LQHS1SZ8rOJAH4hR3+LP9n0AurKhk32l+37eRPY9xrFURvNDNvxCx/dh7oc7PK7c9V1htfQkzwjM1mWkl4i//zFdYFp+g6Au+l5N2tvobwyo/iWOMF/NYgFSSp7pj5Wpj6WSGNrRHHTdnQuMwSOoZrmei1/Jo5Os0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930318; c=relaxed/simple;
-	bh=lWSLPRuV+mb9jmNhM4FND2hrmaTWA3erZEgnMnmts00=;
+	s=arc-20240116; t=1731930319; c=relaxed/simple;
+	bh=fDmN+0rl4p6XTOwNk557Bs4jaQqJuN4meCMuf2wwwoI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dtIogiW6qKBhwx0Lk8waihV8YRYcKvCAYdoIPqglAQ0RQ83l+Grb+Gno5f4i0NiqJiPO0D6ttFhlGFP+pLYv8ASu/etrjXgHSMiYfXD0KqDjMiCw0oclnhB/zOhVc6+VwW+kr4fcLqTA4Z8YUP5zlOUHLQHusFjqqkgJ8xBZW+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=R6Y6qhJ04Fa4wyNM64s+WzITExcSADWde4/2E06SksmxuHp6PAOW3wlGHnf9PoySFzNctFCqdQtYRBkSOKQjyAdXRDyi/Kyz6jNU79sJUu5QL86UpBFjXTwPylWR9ENOyv+Zgd4VhZWm0Z6vfPqgQmV9lMhmu8HCUvY1CdEuz5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XsQlw6kknz4f3lX4;
-	Mon, 18 Nov 2024 19:45:00 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XsQlq4PwPz4f3nV8;
+	Mon, 18 Nov 2024 19:44:55 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4CC601A018D;
+	by mail.maildlp.com (Postfix) with ESMTP id EA9751A0196;
 	Mon, 18 Nov 2024 19:45:14 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.107])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S9;
-	Mon, 18 Nov 2024 19:45:13 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S10;
+	Mon, 18 Nov 2024 19:45:14 +0800 (CST)
 From: Ye Bin <yebin@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -56,9 +56,9 @@ To: viro@zeniv.linux.org.uk,
 	linux-security-module@vger.kernel.org
 Cc: yebin10@huawei.com,
 	zhangxiaoxu5@huawei.com
-Subject: [PATCH 05/11] fs: use sb_for_each_inodes_safe API
-Date: Mon, 18 Nov 2024 19:45:02 +0800
-Message-Id: <20241118114508.1405494-6-yebin@huaweicloud.com>
+Subject: [PATCH 06/11] fsnotify: use sb_for_each_inodes API
+Date: Mon, 18 Nov 2024 19:45:03 +0800
+Message-Id: <20241118114508.1405494-7-yebin@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241118114508.1405494-1-yebin@huaweicloud.com>
 References: <20241118114508.1405494-1-yebin@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S9
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFWkXr1xtFWUXw1fJryfXrb_yoWDCwb_Aa
-	43ZF95Kw4aq3sYkr4DtwsxXF909w1kGr13ury7tFW5trnFqas8XwsFyFyYvr48CF1Sg398
-	Ar1fXFyfGr4IgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S10
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr1UWw13ZryfKFyrKFyUWrg_yoW3CwcEgF
+	1UZrWrKr4aqr1fKrs8G39IyFZY9r1rGr1UGrnrXFyqyF1aqF1DXaykJr98ZF4Uua15KrZ3
+	JF1ktFy3KrWIkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUbgxYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
 	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
 	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
@@ -91,35 +91,26 @@ X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
 From: Ye Bin <yebin10@huawei.com>
 
-Use sb_for_each_inodes_safe API foreach super_block->s_inodes.
+Use sb_for_each_inodes API foreach super_block->s_inodes.
 
 Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
- fs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/notify/fsnotify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index e5a60084a7a9..dc966990bda6 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -861,7 +861,7 @@ void evict_inodes(struct super_block *sb)
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 82ae8254c068..11a4eb61b5b2 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -40,7 +40,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+ 	struct inode *inode, *iput_inode = NULL;
  
- again:
  	spin_lock(&sb->s_inode_list_lock);
--	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-+	sb_for_each_inodes_safe(inode, next, &sb->s_inodes) {
- 		if (atomic_read(&inode->i_count))
- 			continue;
- 
-@@ -911,7 +911,7 @@ void invalidate_inodes(struct super_block *sb)
- 
- again:
- 	spin_lock(&sb->s_inode_list_lock);
--	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-+	sb_for_each_inodes_safe(inode, next, &sb->s_inodes) {
- 		spin_lock(&inode->i_lock);
- 		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
- 			spin_unlock(&inode->i_lock);
+-	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
++	sb_for_each_inodes(inode, &sb->s_inodes) {
+ 		/*
+ 		 * We cannot __iget() an inode in state I_FREEING,
+ 		 * I_WILL_FREE, or I_NEW which is fine because by that point
 -- 
 2.34.1
 
