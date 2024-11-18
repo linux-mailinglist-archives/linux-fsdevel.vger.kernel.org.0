@@ -1,110 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-35096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B859D1059
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:08:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D604C9D107B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4DEB21491
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3A01F229A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0C11990B7;
-	Mon, 18 Nov 2024 12:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E521419AA5F;
+	Mon, 18 Nov 2024 12:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2GSgfRx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ubof+VgI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181D7190470
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 12:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AD71993BD;
+	Mon, 18 Nov 2024 12:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731931694; cv=none; b=qPc5pWvnvksRdCiN9m6nzXsVN9But7511KKGMmIJwGJ+IrZrzj0mA7lbPvD00P0r/mswX3YF7CbEcy3+65QxnQiEzAEEEdZvW0BQ4f4+mUjEJP2KgLuQ2rSs4SvlrFNtrldK1ivJp2iuqqu8Zo9qQeCZkZa6Pfs9sltE9tRlZDw=
+	t=1731932327; cv=none; b=UspLDU0v0pBotrx/A4eHpIlyYzthPNDhXtejju5TQzop71uIQMfHJiUXMhCGOhCDxJtZmZc9HcSjTMoCuU1Q4eNbgZ3cR1BwGBsVrOO/eD+E+ZnIKLS18cC9qUWwVewidlHHvPmrdlolCx+JfpUcnRV/xVSRDPVApCuyhhkfSWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731931694; c=relaxed/simple;
-	bh=71lS8hQ0kTzOSToCRJa1KXGzs+V+TTJEgfptPNMf+pM=;
+	s=arc-20240116; t=1731932327; c=relaxed/simple;
+	bh=yDsohliDOZudRrQrujTiKASGsUMF3ytPqQxGXKnP1do=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jjtGFuIIo8h5DkGLZhC6LhQBe6joEGoWtzoGBCWIoaHI9tQrdVzguWXPIigQazwKdlrYt4+f5AFfSOCDQYNlrq/puQH6c7nE4pcUEG8ltKR+QI+kfhOwIyVEKU+UlQQTpEwOn8dpNtAGzsxdQ/JQuLX72SArcr3Y19mooz6t4SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2GSgfRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26C7C4CED0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 12:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731931693;
-	bh=71lS8hQ0kTzOSToCRJa1KXGzs+V+TTJEgfptPNMf+pM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r2GSgfRx73m8dG/RYxRFRBOH7G96R4oz+IQDIvdl0S5cOiNA5hVpBmbPPKqX0TWiK
-	 Gfo73vKMC7W6RFV8cqIKW+DErhl/3m0krhOnxMFKWqdEU3PxP+AZ8W+nWkMIZmIwsd
-	 grWrLEi30/PEB4OJveP/oOXo6oYqIGj6mnhGIHvGWEPB9zbn8OdMsLdKCQ1ScdGfxl
-	 lLfdEVLRW+rrzOXOFSzwJxKqIOwQOKZiTP7nUIO9e2fkc74BMsz8uE8/7/y7uKDgA1
-	 P4zm9lR20bisRZKgDSyUJRGTSjr7D2ZYURMEe31TiNwIMIpEyP5l3NY/LuDqB+e9p/
-	 /kYP1B7xdAZHQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-295d27f9fc9so1000767fac.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 04:08:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWmWWEz8fTEbFeOtAeE9YIjCemeOCPGSQbXFykxQeQ/njAwmV7VU+A/HBHoXpd9SfKmVE6GU+RrO5UoO4R1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk6edeYyneUVgu4SSgnLIEggpB1zoq5ERBbg+A+kspXK04MIpS
-	sv9iJK/siBxeQOKuAeZKszhIWJI18Apokdwdc0v8jRJszZo64IbRGrQGx5oeAZJ745Q1PED4HsY
-	cF1UG1iOyCfusy3u5gx9q4Z2DCz8=
-X-Google-Smtp-Source: AGHT+IEtmkGeZKpbNT8KqoeYqpWihttibUnHkl0C8oBp8L0Q8S3yiO1/gt5Wbi3s4U+37PhiV4Y3uuy56UoqZfmH9i4=
-X-Received: by 2002:a05:6870:a105:b0:278:8fe:6293 with SMTP id
- 586e51a60fabf-2962dcd3385mr8925446fac.1.1731931692763; Mon, 18 Nov 2024
- 04:08:12 -0800 (PST)
+	 To:Cc:Content-Type; b=Uj8J7eibBvtgnhAp97t9xqv5/VQhZOnyPoRvKrh9WJBLsxPvNZEM0/GXjaJVyLfHnXf0WacD2xKc8AXRZ1DhUtHy21bctG6wB65g+BFnXTUEGdzg7bQUc2KS8hHYHtJp4Xj7VKCkoAh9rtOERZIvCwHreLx2ZA1ssKZ8EvDtEbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ubof+VgI; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ec86a67feso806442266b.1;
+        Mon, 18 Nov 2024 04:18:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731932324; x=1732537124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yDsohliDOZudRrQrujTiKASGsUMF3ytPqQxGXKnP1do=;
+        b=Ubof+VgIZOqM4vgQWB+j3ds7AhSzwssJ7xddTlhF5EyhR0oc8kaB5W8px1c8QreMJg
+         oR2tTptpK29fgRok7OWJW98x60AGsNyPErmvb61iJVejUSfqfY2HQb4HQtP5V/PyZ72U
+         2LeNmzhvhl/O/Pm88IhynxlImORdQf6vF9KVbUau7vGk3LBHw6kBnRBnfnbN78DrfRmu
+         oKgYm6bdvxJXmWqRPy7CAci7dXlQPh3TnAFkrKXwfdsG6BxbEzQgLJsZ5tpjZJAs/BFT
+         GBZrcrSFUXIJQM66rcf4MLfNGU5j9QZo/viNdSpn5j9AB4mS0qBKOgKm0OAfP2i48e9+
+         j4Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731932324; x=1732537124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yDsohliDOZudRrQrujTiKASGsUMF3ytPqQxGXKnP1do=;
+        b=Dk0zPl0kyXQMbFczYQ8MosCjiKx0WEP1uah1uMniVOq7SaNjZTQ0PpzYeow9t8jUJI
+         h3hwkhbXDluyCBlNjVxHeBVa6hzALVINi0yer7ocT/BLAJqMr5XfbBaqVKXQCU3X0bpb
+         JPogrUmY0JrTmcvK5H+Ls9PVrppXI+gznLr8eb9qZFgVnNCQRlNMLmCuRWSwX+mAUToe
+         kIuD6XgPC79G7KtoOCifsQoWsEtvZW1+vRtlIYVPciONBAc+WkLLUz0UXjPfYhhAeDkL
+         ZPgCbBBkCxnoYqPqwBlrphUnpBnRIDpW58I6i0razM2oJVDTg3PAVoWoLGsaJjFOA1u/
+         FKqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSkUEy/KqtRuUPv4s9973M2+GHYZgpStIL1a9UHbq7qKAzf03Xfp8P6ImUryhyadCGRnED5vgwUQf7zgt0@vger.kernel.org, AJvYcCXUjLuXOZsODeKD2WAWcmEBY8IcBK6l9N0+lbUUK9VN/nZsUOgxGL4KB4Hjaum7b+69QSBB1LapwvzyArHt@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhQ5MQYM6Xs7AD+UewBdw4I7m07oGnEF8eXUc5MlXAJkkv8DJx
+	DKyiCotCNqnSJvSAItE1tKKkhRSNQ9CX0HxHzxNm4TUN14+GKW58TopIxUcy7IUACl/v1ESFCSZ
+	QFk47BEA90AdXyOeJS7P8unfNJ1E=
+X-Google-Smtp-Source: AGHT+IHQJYYIr9PB+WzV3jcYDAnV8dwUhr1rpo/KX7OG4Saau0b2lt/S0o+p3wdDC3DA5c/HDTGyYIBYRMV+Di0Y2gI=
+X-Received: by 2002:a17:907:9281:b0:a9e:43d9:401a with SMTP id
+ a640c23a62f3a-aa4834263a3mr1118913166b.14.1731932323629; Mon, 18 Nov 2024
+ 04:18:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PUZPR04MB6316B385B7AE35C20C574B4481272@PUZPR04MB6316.apcprd04.prod.outlook.com>
-In-Reply-To: <PUZPR04MB6316B385B7AE35C20C574B4481272@PUZPR04MB6316.apcprd04.prod.outlook.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 18 Nov 2024 21:08:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-JAe0g8ASrPyy_yYgQHXHkoQmSPcgdQHinQRqgm1hh_A@mail.gmail.com>
-Message-ID: <CAKYAXd-JAe0g8ASrPyy_yYgQHXHkoQmSPcgdQHinQRqgm1hh_A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] exfat: reduce FAT chain traversal
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+References: <20241118002024.451858-1-mjguzik@gmail.com> <20241118112632.gfnhr7ldcjdi6d2z@quack3>
+In-Reply-To: <20241118112632.gfnhr7ldcjdi6d2z@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 18 Nov 2024 13:18:31 +0100
+Message-ID: <CAGudoHERYqaW8oNf44kHG19OHwtrGGAk0AW2UnnX_NKn8aQcOA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: move getattr in inode_operations to a more commonly
+ read area
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2024 at 11:01=E2=80=AFAM Yuezhang.Mo@sony.com
-<Yuezhang.Mo@sony.com> wrote:
+On Mon, Nov 18, 2024 at 12:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> This patch set is designed to reduce FAT traversal, it includes the
-> patch to implement this feature as well as the patches to optimize and
-> clean up the code to facilitate the implementation of this feature.
+> On Mon 18-11-24 01:20:24, Mateusz Guzik wrote:
+> > Notabaly occupied by lookup, get_link and permission.
+> >
+> > This pushes unlink to another cache line, otherwise the layout is the
+> > same on that front.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > Probably more can be done to rearrange struct. If someone is down to do
+> > it, I'm happy with this patch being dropped.
 >
-> Changes for v3:
->   - [2/7] add this new patch.
->   - [3/7] use macro instead of function.
+> This makes some sense to me although I'd like to establish some higher
+> level guidelines (and document them in a comment) about what goes where i=
+n
+> the inode_operations struct. A lot of accesses to inode->i_op actually do
+> get optimized away with inode->i_opflags (e.g. frequent stuff like
+> .permission or .get_inode_acl) so there are actually high chances there's
+> only one access to inode->i_op for the operation we are doing and in such
+> case the ordering inside inode_operations doesn't really matter (it's
+> likely cache cold anyway). So I'm somewhat uncertain what the right
+> grouping should be and if it matters at all.
 >
-> Changes for v2:
->   - [6/6] add inline descriptions for 'dir' and 'entry' in
->     'struct exfat_dir_entry' and 'struct exfat_inode_info'.
->
-> Yuezhang Mo (7):
->   exfat: remove unnecessary read entry in __exfat_rename()
->   exfat: rename argument name for exfat_move_file and exfat_rename_file
->   exfat: add exfat_get_dentry_set_by_ei() helper
->   exfat: move exfat_chain_set() out of __exfat_resolve_path()
->   exfat: remove argument 'p_dir' from exfat_add_entry()
->   exfat: code cleanup for exfat_readdir()
->   exfat: reduce FAT chain traversal
-Applied them to #dev.
-Thanks!
 
->
->  fs/exfat/dir.c      |  29 ++------
->  fs/exfat/exfat_fs.h |   6 ++
->  fs/exfat/inode.c    |   2 +-
->  fs/exfat/namei.c    | 173 +++++++++++++++++++-------------------------
->  4 files changed, 86 insertions(+), 124 deletions(-)
->
-> --
-> 2.43.0
->
+So I ran bpftrace attached to all ext4 inode ops during the venerable
+kernel build.
+
+As I expected getattr is most commonly used. But indeed the rest is a
+footnote in comparison, so it very well may be this change is a nop or
+close to it.
+
+So ye, I this is probably droppable as is, I'm not definitely not
+going to push one way or the other.
+
+result:
+@[kprobe:ext4_tmpfile]: 1
+@[kprobe:ext4_symlink]: 2
+@[kprobe:ext4_set_acl]: 18
+@[kprobe:ext4_rename2]: 69
+@[kprobe:ext4_rmdir]: 163
+@[kprobe:ext4_mkdir]: 172
+@[kprobe:ext4_get_acl]: 753
+@[kprobe:ext4_setattr]: 3938
+@[kprobe:ext4_unlink]: 7218
+@[kprobe:ext4_create]: 18576
+@[kprobe:ext4_lookup]: 99644
+@[kprobe:ext4_file_getattr]: 5737047
+@[kprobe:ext4_getattr]: 5909325
+
+oneliner: bpftrace -e
+'kprobe:ext4_create,kprobe:ext4_fiemap,kprobe:ext4_fileattr_get,kprobe:ext4=
+_fileattr_set,kprobe:ext4_file_getattr,kprobe:ext4_get_acl,kprobe:ext4_geta=
+ttr,kprobe:ext4_link,kprobe:ext4_listxattr,kprobe:ext4_lookup,kprobe:ext4_m=
+kdir,kprobe:ext4_mknod,kprobe:ext4_rename2,kprobe:ext4_rmdir,kprobe:ext4_se=
+t_acl,kprobe:ext4_setattr,kprobe:ext4_symlink,kprobe:ext4_tmpfile,kprobe:ex=
+t4_unlink
+{ @[probe] =3D count(); }'
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
