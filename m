@@ -1,121 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-35060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F369D0927
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 07:01:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39B39D0950
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 07:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CF4B21A04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 06:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9281F2268A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 06:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7BA143759;
-	Mon, 18 Nov 2024 06:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7B6145B27;
+	Mon, 18 Nov 2024 06:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3HINUEj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj432bVi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A58DDC5;
-	Mon, 18 Nov 2024 06:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D80522083
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 06:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731909654; cv=none; b=XlxBLAaZGpCAojq16nDO73YkE4Md4zdDZCEb3cmypzHoio9wnLCAU3yXZKZTuRW/PWKsRFXJ1yoUPacAL6qfe/MglxaxE+rvbmpelscUcajrJyjGuAXmhqacYhWwmOA/puhwvbmgLQtk2w2qKnH1UY+XJb1A9qCzYN/9+bgTO2Q=
+	t=1731910106; cv=none; b=P0JdKwB/Iwsc6ep2gyJ14yyM5epzAotPWgxbOysGm0vIFb2QUlya0lS3gKHJ+godrFWc7aGolIVSlq0SVf5ZaCYjLsmKJoUqzO4fxjlv+WVAYhaOBb1+vLicBuHw9ep3OsB9j6Tu5h/LItlO8qFIHG5jzwZJJfkypVNjKHQPa1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731909654; c=relaxed/simple;
-	bh=sgFGmAJSWz62h5J0gaOs0tTJ0+JIkMwQW8wgYGPyNjw=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=ZBdUuTe2RObH9vQHS2/z+HeghRBCm9zoQMAIy9dCrg028ByqZVd/YM6gbfmJPZIKYW0QxFzRhrQ9XkRdL3MD4BHfv/4qsx9Zd91K1pStygoQHkxqA9J1Hc2fNR0hUC0SRuE1AE+n0lPVb5wQN/xutxdUCup0pB6VU/YjZLB6Zbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3HINUEj; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21210fe8775so5314035ad.1;
-        Sun, 17 Nov 2024 22:00:53 -0800 (PST)
+	s=arc-20240116; t=1731910106; c=relaxed/simple;
+	bh=cJ2P6uR4opZsVGWIta5h5IZmD3jekZ9UDttr48No1E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H6Db6fDsON3FDXwG5t5rFYAe8E8j41P00mjVbplPkdmk0EPk+pyg+lufCQ8IlHwElQ6vtjMfqj5FZPIsX9CI/yNFq94ACTQ5nQKTBef9vkjykMquPCJKmU8Hb3mmUZtHkoc+ddS0WrkvDZUwOfNCTPaYD4QTsZ5TBvCJvaIbEWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj432bVi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so34715825e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 22:08:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731909652; x=1732514452; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
-        b=k3HINUEjcyuCyACMEeizV1B5Dj86tZQqBhZ2PXX4ZrTbGKvNAqse7ZbZJD0PfY4eRS
-         wLG1DBYo2FzFZ6FeA8bgJ5dXP0PoUufKkkJQU8jGCVbik29gEJFGk0o21ffD8wPXyfEW
-         yjSGsQiU59+1ZJ/QHLT4p+kQQsWnHk6WV9zU2cL1yQZkYdlqmNTm21Fjx3pIrxOg0LAe
-         D8wxIYepF4YMusf6ByyRH4uXRyqTiPN9HfXExchu8gD+mVUHler8ppmvwlBlkbHmUFwb
-         9SyUiB0l0RPoCkdgnYHS4E2uDnDAGH9xdqPJBFXrYJG8ZA0H9b6Top4vHwnzPNmO9PXk
-         kWZQ==
+        d=linaro.org; s=google; t=1731910103; x=1732514903; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
+        b=Dj432bVieEbcQxizrB7AhmvEEiIYvJJsuqzBbCQJEsDYCv4WHJaiNywoHacU8CEwht
+         2hxP89nt6T5IjXvtqiihUxB7cDYRmidNWlayEYHqgnC9vmoWpGt5Fir/KiAdFsv1O7oB
+         VF+LY5UiBFR0qtkU7rA3ODPWU4mN8hYptXymGWWJH3mKLS92Wj/IK1e+drcCiqyCX2qY
+         +DuKsUBhz0JpSy8pTZM4zHevnzf/GnkJA8NxR3Q1rJ6UY2pnia+Rxq0/cVYX41bmBSYc
+         IM1Mkpc0x6oGZ8t+sDGFoDG/9FqnWHd1/tFfNvXXf/WIUlidmGsOTCWiWdo/4khMXhmu
+         e3kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731909652; x=1732514452;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
-        b=xJACQ1pPD7+1fk8eCCKGnQScFV3iFvtFR3uMXIPochwCBkgeitM3hd5VteF4t4qAPA
-         4lu1l8EJl90R6CWTkqX50+oX5y0pipliYAdV3U6/WhRHAEf6e8DR+e9LI2U2/8ZobMOM
-         TI9P6FQxyrw2CaYDIG7BskFJoGbSsA8um6RGOP1T8aQVhFOB9SYyb2QVj4Wn2fUIzJrD
-         DKr8vHFiN4qDCvGnNQu0UAzqVyPPwu7jQU2nEcvxwZ4CCZt09PksOTV2ItdLk1t7TNk8
-         JOz41Bkv/gPrKxOhZ+Mjd/fDe4Ib91K+rg5Wzdsjw2FkCevtHAFch4imNtg0eFT+Yzgz
-         wV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSW6rGdsntcVO1udcOBEbSTxk94hpgfQu9pkx7NTYglaQh5jtz3VbHPVSvCcVX2h3S3GjYqDyp@vger.kernel.org, AJvYcCXnKkgXJPvdk6opIn1c/rTZNqwIzXy47OKQUCHkre3oC1hlL/K9yfYMbQcL5PrYyH2my5Tp0H/BJV3X3ixd@vger.kernel.org, AJvYcCXyPH8nBow3B8ZHDTlQr/JLPZMuJ3NsAYQ4hnE9FYbCsheNireN1B3wAjiZBdeYUG9o9bKBljgn9eo0ymgO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVUoih+UjHMKS7WC4HV+QDd2uR7+T9wKKlWUFLhTohZqCxyEG0
-	bGUEHOW90zgBENqqrngeH4V0ZaaiOp2XqDupykQrtKMEPWZ9Hh4Y21vVMwwK
-X-Google-Smtp-Source: AGHT+IFdxyTPCM6q1QU17AqfiduUvqhQ1jdXop17N8bmnqw3ZxHsAmLAuld0aAwN/RD4QYOI9Rf7Tg==
-X-Received: by 2002:a17:902:ce0e:b0:20b:a73b:3f5 with SMTP id d9443c01a7336-211d06f619cmr172400875ad.14.1731909651862;
-        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
-Received: from smtpclient.apple ([2001:e60:a40b:abbe:19cc:3a68:771c:24a1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7b9csm49435665ad.73.2024.11.17.22.00.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+        d=1e100.net; s=20230601; t=1731910103; x=1732514903;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
+        b=F97bBkxAYGYJJkXafkpymR20oUAqtv0yfeoPso2RF48TQpOY3B29RYb9QsYfcpC7Or
+         x5MNeNcapIQpt9DSAJsj+jflHzRIUXKJZZCRz9GxDZQ5iETUbMhXP5UZocm+ULZVmWcl
+         1SoiGA8EzTzKVmarkaspXxg8ajEbMRbPJ6ZkiPtyzvlFTa8LrNkYUmzvahgrEyXHLA6u
+         wmb79h2as+TutxQ9DIGZvi07u0OCYXsABp6vmfg+5Vt8IbBv//2pyEDo/XCubg2SeDdR
+         lNhWsPu+YTu1fhVDcPqP5/BqgVjM5gD+d8tw9rap/zrI93X+18Dz/NMroZ/B3ZkBJEpk
+         8Phw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPNtNPXfp2hphn80Zv4WxU0KButCbZZ3yMncahOYSGtjHyIm/nsGvM8YUI5E8/E8MC6un9Qou/mb3iBREW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaetQ+xAPFI9baWHS6SBYNkRhUNyhU2MI+YG6sdH9SzUVMmBDk
+	fvCQOyJRZL3hPfM7XWY4sG1J8VXmI2gq0ZoyBhs62CxQN2dLVQrwcZqBJBN2Oos=
+X-Google-Smtp-Source: AGHT+IEro4yYmZP5OKHef+XOzgZ/LRIKlD6qWiYZLHMGCu2nTq/i6YxPj2oMalXqgeMbxjS/2dLAvw==
+X-Received: by 2002:a05:600c:4505:b0:431:1868:417f with SMTP id 5b1f17b1804b1-432df74be9amr107263115e9.17.1731910102919;
+        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab788a2sm141599425e9.11.2024.11.17.22.08.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
+Date: Mon, 18 Nov 2024 09:08:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] netfs: silence an uninitialized variable warning
+Message-ID: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when calling vfs_getattr
-Date: Mon, 18 Nov 2024 15:00:39 +0900
-Message-Id: <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
-References: <20241117165540.GF3387508@ZenIV>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20241117165540.GF3387508@ZenIV>
-To: Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+Smatch complains that "ret" is uninitialized on the success path if we
+don't enter the nested loop at the end of the function.  In real life we
+will enter that loop so "ret" will be zero.
 
-Hello,
+Generally, I don't endorse silencing static checker warnings but in this
+case, I think it make sense.
 
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> =EF=BB=BFOn Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
->> Many filesystems lock inodes before calling vfs_getattr, so there is no
->> data-race for inodes. However, some functions in fs/stat.c that call
->> vfs_getattr do not lock inodes, so the data-race occurs.
->>=20
->> Therefore, we need to apply a patch to remove the long-standing data-race=
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/netfs/write_issue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> for inodes in some functions that do not lock inodes.
->=20
-> Why do we care?  Slapping even a shared lock on a _very_ hot path, with
-> possible considerable latency, would need more than "theoretically it's
-> a data race".
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index cd2b349243b3..8f02d8effe78 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -862,7 +862,7 @@ int netfs_writeback_single(struct address_space *mapping,
+ 	struct netfs_inode *ictx = netfs_inode(mapping->host);
+ 	struct folio_queue *fq;
+ 	size_t size = iov_iter_count(iter);
+-	int ret;
++	int ret = 0;
+ 
+ 	if (WARN_ON_ONCE(!iov_iter_is_folioq(iter)))
+ 		return -EIO;
+-- 
+2.45.2
 
-All the functions that added lock in this patch are called only via syscall,=
-
-so in most cases there will be no noticeable performance issue. And
-this data-race is not a problem that only occurs in theory. It is
-a bug that syzbot has been reporting for years. Many file systems that
-exist in the kernel lock inode_lock before calling vfs_getattr, so
-data-race does not occur, but only fs/stat.c has had a data-race
-for years. This alone shows that adding inode_lock to some
-functions is a good way to solve the problem without much=20
-performance degradation.
-
-Regards,
-
-Jeongjun Park=
 
