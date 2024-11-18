@@ -1,240 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-35101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246839D10FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C189D1106
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 13:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABFA282F3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C710A283087
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C58E199EA1;
-	Mon, 18 Nov 2024 12:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB6E19C54D;
+	Mon, 18 Nov 2024 12:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mcBwdbcV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Pj6kFwX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xbPLruUq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9BYL6XBF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TdOZWBTK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7D543173;
-	Mon, 18 Nov 2024 12:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01228190468
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 12:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731934428; cv=none; b=g+9x0/sT46aejbauF2ILJXCe3woflnsPifjoi8m5KNwkUQSnmCEEHiAU2GGf+4onIyp+uiICVB0TFKOtrMAs1WsxBqZfdksC8+TNrvm4eA+uedTYiLmjHOnydaB4D5HnJ3qmyLrljW68cvLgi84usBW9DAjkko0gnAwtRbupTWM=
+	t=1731934467; cv=none; b=My5K5BswmWsb0nw76r065x8roVGhVT2UhmMOYxBdymfOOTTSsiF3BA1nBpatzmsDLBwSSTOqZuOTQWD1WW8IXvIevTogeNmG6FIHKp2Q2FCXNlx3+cq1z11xIL4slXrwmxOvE9EJzHGqqD1DjZH61NjoYwBn86DF4uX8e5niPTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731934428; c=relaxed/simple;
-	bh=7HUMOs0Yn6bQypZmiDJ12CLfjTG3zCZf7cLGa2kD+lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIUdKjXkOB7C1Ia8hCvW+b0IYOK+9xwA50FBkOcSXUNBdNldY0rLMKQ/bcVHRfD921zszepsMH5apuCho+1mi+gOMUAK7GhZrOmPWt4L4gzKiVGTEZ9g+CCBTKpijCm6D5HJ2sfJADHJ9ef1YMzwYwLCh8GF8v2vPMybtZ0qcLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mcBwdbcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Pj6kFwX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xbPLruUq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9BYL6XBF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D4B151F441;
-	Mon, 18 Nov 2024 12:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731934425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XUIJyzl8hMjBfg4z8m29f4cxyc5jxiPHUIR7lmr+4lQ=;
-	b=mcBwdbcVtWdj2aaHW/AfNmz4DNQdhKooY7WI6EFZqj/YLUW8RxVen0mXyZT2ovqI5u8Y8x
-	iUX/RmXyturbwNo3AJRy/gSIPKcE9AjJeOfA+zxdm7nT8kYop1bfublAxt9YUC1rUlXFYY
-	s7wDPBsRT36WkZn0JxNXDscwDU38k8o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731934425;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XUIJyzl8hMjBfg4z8m29f4cxyc5jxiPHUIR7lmr+4lQ=;
-	b=8Pj6kFwXdMgyq5hrhOww0NEWsf1na1FzjUo9JkCS4/2Xr4mpUx6ApZAwUj5EEFpVYS3p7V
-	LVH5xVEqNKaOpCCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xbPLruUq;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=9BYL6XBF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731934424; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XUIJyzl8hMjBfg4z8m29f4cxyc5jxiPHUIR7lmr+4lQ=;
-	b=xbPLruUqRQwFQ0nwxlC9DaP7XjqbbIuJSV5f8Wp5COH2vK8UQ/RyssrD4XfNJ5KZXBKpe6
-	oDdY7glW7f+NJkkYECYN9s6iRb907QLfZR/8TWGesCwi2hBACQJhx3Hp7gOozWSat2No89
-	RA+EnAbGzheCPfTQVeWcFo5Q0b26QHQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731934424;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XUIJyzl8hMjBfg4z8m29f4cxyc5jxiPHUIR7lmr+4lQ=;
-	b=9BYL6XBF/IAA1M7AkiEXzZHrJxzUBe30svzZZb3UvO26HYmNfOAI2ZdzYBBDUo4Df49qcC
-	+fqxEGRx1uJIhVCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C94261376E;
-	Mon, 18 Nov 2024 12:53:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pD8dMdg4O2efWgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 12:53:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 834EBA0984; Mon, 18 Nov 2024 13:53:44 +0100 (CET)
-Date: Mon, 18 Nov 2024 13:53:44 +0100
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-ext4@vger.kernel.org,
-	Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Disha Goel <disgoel@linux.ibm.com>,
-	Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH 1/1] quota: flush quota_release_work upon quota writeback
-Message-ID: <20241118125344.a3n3kn6crvrixglb@quack3>
-References: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
- <20241115183449.2058590-2-ojaswin@linux.ibm.com>
- <87plmwcjcd.fsf@gmail.com>
- <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <7077c905-2a19-46f2-9f45-d82ed673d48b@huawei.com>
+	s=arc-20240116; t=1731934467; c=relaxed/simple;
+	bh=RFZav5imPpDajhAmqlY2eOGgnED4NjQI6+JJoDQ71N0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jejs5FadUu2p9xhV8jZ0UGeiIH21d1w74sZd4au3Yy118yYmdXFYQ3Lc6GN2P/BWZ1BuvtEMcD1nEPkcxSTfB2GWjBAw0SO1aKD52YPnp3tF4j8KLdKHTmrDEIWkdYJsPu1SuHTvkLLDQiNoOMVLIwHZDMOSY3B7YOsdy6JUh+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TdOZWBTK; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so6164a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 04:54:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731934464; x=1732539264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RFZav5imPpDajhAmqlY2eOGgnED4NjQI6+JJoDQ71N0=;
+        b=TdOZWBTKFiS5gRjdYjk9+2Hyj9TFvL1/Qx0tNNCB2IgLrmjW5yvKKbk73asRnnQBli
+         ilMGAV7y2yDGvQNZE4bFat/WU6KH4cC/dc0wRFGOrpcHzRy15FzIvt0K8feDzGZJXunG
+         JYao2hKg+OdPml5zil28vesqetiCcX7hhKuAYxEZ+Fzik8EvCKFEDUAJdkZcs6rvXfbj
+         t6zhTNj3KN/XtS2f/MLyfUKyacNLOcTiKc7K76Rjg/ZSmqpatC2ogaamGL89Knax+y7J
+         QV5IMcL/ymSOWYEtHO1ALD2b7i+Hxc4oHAOFMVyRSkPQq4awbdZZrXAFRiSEvY1Q0em9
+         rRlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731934464; x=1732539264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RFZav5imPpDajhAmqlY2eOGgnED4NjQI6+JJoDQ71N0=;
+        b=Gt8D4KIhTjtTKdk6VqUlInnSE0lAh+IHCjlQdz1v6ko8PIRs/NF3gtpOiXHXUnZE08
+         rhozBX+TbPSemtj/+9wNW7rZBkVW3nnNvoUXUUIS3XIMjEoj4134tyCXh+KLsdZ+Mt6y
+         KX6Bd7JIACw5VTapIiwIhNmtFc2/XBf6rEE2W4N5TvT5up6BeXhw/u/tpxa7waMz9E4x
+         rkdzTFNVTQFh+tOFFcaxmOv4TbSzebn+hjcqiDe03KF6zJSfmExv0gn+lQbarXXLGDaz
+         TEVa9dMUxwK5JZokAunMI3NHKsKpRxRgaIT6NdWOCVk+EkQ5WOYemNSRjooVQy6y1sx1
+         RxDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpdA87dzBTSiYuSxUco3dCsif3uFnxAqkIcNiU76dVCEK0UIbP/Vc5DgqsuBtUMNEhrALJlvGLvdzCmEW@vger.kernel.org
+X-Gm-Message-State: AOJu0YygVjuVRZa9YRatDg5snV/EltXjUpRh1MaBzYBBxlfdt/QOVENL
+	qqpjmGTZzvbT/bTel6JbpjmWRosBcSMSufepV+ZqxKXzZmEDQPg6y+yuHrnor1qzIJrZCcHJrZ/
+	9ot1YmmIPoRUKDezHH67xOKuUbyhdNzFe7DC/H4+dCCqVznJ1g6W4oog=
+X-Gm-Gg: ASbGncv+olWghSVjHjagfeB2OZT7+S799u2Krh73VwI7OFK9ftC5eC/C5obh6pyhINO
+	Fw+n3K3n/rWFfhnZOnIWO4SyGRgcAWaI7QNY0GbbDlnhyW1jKDNC6kFfc9vE=
+X-Google-Smtp-Source: AGHT+IFWl9n8jfw906nl94a7cbMwHIP9Gd4TNcFZWOOm8Tvrj69mcd0XEdLXVwoqv6yIo+K1feYbwLqCVdza/E5/6V8=
+X-Received: by 2002:aa7:de84:0:b0:5cf:6f4d:c29c with SMTP id
+ 4fb4d7f45d1cf-5cfa298afd6mr136645a12.4.1731934463854; Mon, 18 Nov 2024
+ 04:54:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7077c905-2a19-46f2-9f45-d82ed673d48b@huawei.com>
-X-Rspamd-Queue-Id: D4B151F441
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,gmail.com,vger.kernel.org,suse.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com> <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local>
+In-Reply-To: <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 18 Nov 2024 13:53:46 +0100
+Message-ID: <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
+	linux-hardening@vger.kernel.org, 
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 18-11-24 09:29:19, Baokun Li wrote:
-> On 2024/11/17 1:59, Ojaswin Mujoo wrote:
-> > On Sat, Nov 16, 2024 at 02:20:26AM +0530, Ritesh Harjani wrote:
-> > > Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
-> > > 
-> > > > One of the paths quota writeback is called from is:
-> > > > 
-> > > > freeze_super()
-> > > >    sync_filesystem()
-> > > >      ext4_sync_fs()
-> > > >        dquot_writeback_dquots()
-> > > > 
-> > > > Since we currently don't always flush the quota_release_work queue in
-> > > > this path, we can end up with the following race:
-> > > > 
-> > > >   1. dquot are added to releasing_dquots list during regular operations.
-> > > >   2. FS freeze starts, however, this does not flush the quota_release_work queue.
-> > > >   3. Freeze completes.
-> > > >   4. Kernel eventually tries to flush the workqueue while FS is frozen which
-> > > >      hits a WARN_ON since transaction gets started during frozen state:
-> > > > 
-> > > >    ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
-> > > >    __ext4_journal_start_sb+0x64/0x1c0 [ext4]
-> > > >    ext4_release_dquot+0x90/0x1d0 [ext4]
-> > > >    quota_release_workfn+0x43c/0x4d0
-> > > > 
-> > > > Which is the following line:
-> > > > 
-> > > >    WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
-> > > > 
-> > > > Which ultimately results in generic/390 failing due to dmesg
-> > > > noise. This was detected on powerpc machine 15 cores.
-> > > > 
-> > > > To avoid this, make sure to flush the workqueue during
-> > > > dquot_writeback_dquots() so we dont have any pending workitems after
-> > > > freeze.
-> > > Not just that, sync_filesystem can also be called from other places and
-> > > quota_release_workfn() could write out and and release the dquot
-> > > structures if such are found during processing of releasing_dquots list.
-> > > IIUC, this was earlier done in the same dqput() context but had races
-> > > with dquot_mark_dquot_dirty(). Hence the final dqput() will now add the
-> > > dquot structures to releasing_dquots list and will schedule a delayed
-> > > workfn which will process the releasing_dquots list.
-> > Hi Ritesh,
-> > 
-> > Ohh right, thanks for the context. I see this was done here:
-> > 
-> >    dabc8b207566 quota: fix dqput() to follow the guarantees dquot_srcu
-> >    should provide
+On Mon, Nov 18, 2024 at 12:17=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
+> > It operates through the Linux debugfs interface, with two files: "virt"
+> > and "phys".
+> >
+> > The "virt" file takes a virtual address and PID and outputs information
+> > about the corresponding page.
+> >
+> > The "phys" file takes a physical address and outputs information about
+> > that page.
+> >
+> > The output is presented via kernel log messages (can be accessed with
+> > dmesg), and includes information such as the page's reference count,
+> > mapping, flags, and memory cgroup. It also shows whether the page is
+> > mapped in the kernel page table, and if so, how many times.
+>
+> I mean, even though I'm not a huge fan of kernel pointer hashing etc. thi=
+s
+> is obviously leaking as much information as you might want about kernel
+> internal state to the point of maybe making the whole kernel pointer
+> hashing thing moot.
+>
+> I know this requires CAP_SYS_ADMIN, but there are things that also requir=
+e
+> that which _still_ obscure kernel pointers.
+>
+> And you're outputting it all to dmesg.
+>
+> So yeah, a security person (Jann?) would be better placed to comment on
+> this than me, but are we sure we want to do this when not in a
+> CONFIG_DEBUG_VM* kernel?
 
-Yup.
+I guess there are two parts to this - what root is allowed to do, and
+what information we're fine with exposing to dmesg.
 
-> Nice catch! Thanks for fixing this up!
-> 
-> Have you tested the performance impact of this patch? It looks like the
-> unconditional call to flush_delayed_work() in dquot_writeback_dquots()
-> may have some performance impact for frequent chown/sync scenarios.
+If the lockdown LSM is not set to LOCKDOWN_CONFIDENTIALITY_MAX, the
+kernel allows root to read kernel memory through some interfaces - in
+particular, BPF allows reading arbitrary kernel memory, and perf
+allows reading at least some stuff (like kernel register states). With
+lockdown in the most restrictive mode, the kernel tries to prevent
+root from reading arbitrary kernel memory, but we don't really change
+how much information goes into dmesg. (And I imagine you could
+probably still get kernel pointers out of BPF somehow even in the most
+restrictive lockdown mode, but that's probably not relevant.)
 
-Well, but sync(2) or so is expensive anyway. Also dquot_writeback_dquots()
-should persist all pending quota modifications and it is true that pending
-dquot_release() calls can remove quota structures from the quota file and
-thus are by definition pending modifications. So I agree with Ojaswin that
-putting the workqueue flush there makes sense and is practically required
-for data consistency guarantees.
+The main issue with dmesg is that some systems make its contents
+available to code that is not running with root privileges; and I
+think it is also sometimes stored persistently in unencrypted form
+(like in EFI pstore) even when everything else on the system is
+encrypted.
+So on one hand, we definitely shouldn't print the contents of random
+chunks of memory into dmesg without a good reason; on the other hand,
+for example we do already print kernel register state on WARN() (which
+often includes kernel pointers and could theoretically include more
+sensitive data too).
 
-> When calling release_dquot(), we will only remove the quota of an object
-> (user/group/project) from disk if it is not quota-limited and does not
-> use any inode or block.
-> 
-> Asynchronous removal is now much more performance friendly, not only does
-> it make full use of the multi-core, but for scenarios where we have to
-> repeatedly chown between two objects, delayed release avoids the need to
-> repeatedly allocate/free space in memory and on disk.
+So I think showing page metadata to root when requested is probably
+okay as a tradeoff? And dumping that data into dmesg is maybe not
+great, but acceptable as long as only root can actually trigger this?
 
-True, but unless you call sync(2) in between these two calls this is going
-to still hold.
+I don't really have a strong opinion on this...
 
-> Overall, since the actual dirty data is already on the disk, there is no
-> consistency issue here as it is just clearing unreferenced quota on the
-> disk, so I thought maybe it would be better to call flush_delayed_work()
-> in the freeze context.
 
-To summarise, I don't think real-life workloads are going to observe the
-benefit and conceptually the call really belongs more to
-dquot_writeback_dquots().
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+To me, a bigger issue is that dump_page() looks like it might be racy,
+which is maybe not terrible in debugging code that only runs when
+something has already gone wrong, but bad if it is in code that root
+can trigger on demand? __dump_page() copies the given page with
+memcpy(), which I don't think guarantees enough atomicity with
+concurrent updates of page->mapping or such, so dump_mapping() could
+probably run on a bogus pointer. Even without torn pointers, I think
+there could be a UAF if the page's mapping is destroyed while we're
+going through dump_page(), since the page might not be locked. And in
+dump_mapping(), the strncpy_from_kernel_nofault() also doesn't guard
+against concurrent renaming of the dentry, which I think again would
+probably result in UAF.
+So I think dump_page() in its current form is not something we should
+expose to a userspace-reachable API.
 
