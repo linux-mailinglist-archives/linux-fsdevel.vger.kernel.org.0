@@ -1,117 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-35119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E985A9D18B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 20:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1204D9D18DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 20:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F2C1F21A6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 19:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F071F21ECB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 19:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989A1E5019;
-	Mon, 18 Nov 2024 19:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39BE1E5721;
+	Mon, 18 Nov 2024 19:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AYrP8LJZ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ggvmb8Mc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027D21E130F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 19:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE41E5005
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 19:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731957085; cv=none; b=c7l0UwDNvZOmLMkudJJUqoUkU4WbKvAbs1NSQiK618EO9BsvyfimVL9YpbzD4Kc3GqOBvvrS7kNqc4wQCu3yslLIuSe7yXl1U9zTgncgM8GNBdValbDvC/ttav6c69KvlmXJNzx9jH8lHMYjlztpQdtUmxnKy/zconiBloPOI5Q=
+	t=1731957994; cv=none; b=jWPiNB/A2I2jh1ib+01r8kwK4cflqTybzudbe538Kv85J2NOaHkhZ8kKU8rTJUR5SGyJSWz55NzwoxHB0MIoHnrWia65J8xcqiYhDzHQqBZFs08+00BKZtpIxIiOPMd++KuOR+iew8rwFCL5XWkXFP5zmqjhXIhv34KkCYHhfWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731957085; c=relaxed/simple;
-	bh=rnXfYxw96o9uGMVvCmLOhoWSMw2XpArfsXz+kgsdKfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVa1BsAuE/hCBdaRgLGfC1wffxMnVTC2Ojoj7B3PypLLwHho2Xcj5iNqmgbD2KHBrNIiKWAA/INp5pHW93jOmzpt0E9B/cbv6PuxdovPULaKgfiptGkGZmtb9F91x3Y9l1LYFrXwRvY9u8NbQbQRkh3pBjXAjBtVW8n2XidmkV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AYrP8LJZ; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 18 Nov 2024 19:11:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731957075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J9bdmC8O0mZuSc1d3ov6kK3zAXL6Ki/uwfsmjx15YrI=;
-	b=AYrP8LJZV2AGKUOMf90n+zfu8+d1nAItkyc8LsvyQowiseGlvnGU+zD0Dt3EY5ONppo0Xe
-	7EQ2qFFx9REbsv7WMGmtRD9WY6WsnDyciUXEOiytFTesKekvLLsR6l9Zigv/WrtKF4v9QS
-	EpMbWvpMZO6tUGBRzZI402Evm3OZ0oc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com,
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tj@kernel.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
-	jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com,
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com,
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com,
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com,
-	oleg@redhat.com, tandersen@netflix.com, rientjes@google.com,
-	gthelen@google.com
-Subject: Re: [RFCv1 0/6] Page Detective
-Message-ID: <ZzuRSZc8HX9Zu0dE@google.com>
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1731957994; c=relaxed/simple;
+	bh=zUVH/uAD+IJTLUQDBYc09NFu0bSjr4OlrRtyJAhnrBA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E2xVKZ99jSJ9tcG+4HUAT1l2z2OI7OA2L6z+bgejd8otaRqvh8EKXKkYVVHJgRESwOZenMFnf4qFcUPNDA0Im3uXA7+ZtRxBNCMR/VNKBEOa3kh7mM0fhwthrHbZ1TKQGg0OA6f0Fsr9Aon31mxtugxTTzAHpxdfBLJp2RP5uHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ggvmb8Mc; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa1e51ce601so472127766b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1731957989; x=1732562789; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
+        b=Ggvmb8McADv0dJS5a1c+bREFDDd2pmnuS6SCw18hzYkx7Nz3UtZka8bWh6x0SWc5vG
+         uZmYbDmy4n1v6jQKAuOwTXUUtgC/YYVhT5BgTcWIsTUvMlFMIyX7/rslfJtl3oLiibBD
+         CHLK874swKbu0j5236YgyzUdCsvqWh5V4cn1A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731957989; x=1732562789;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
+        b=rjnLPr5r2sw2YlP9wazFH3vWEEf5itMwGgaQ8F6kzwb5PQtWAzar9zGTUoTtGA/eF+
+         Ulo7mGm6w0PFjrMzphC4F/M28anqvCUGNlIKcm6aR/7Uzlz+0U7J/bdoEo5gkvL8g4nw
+         tKKyAyOKxAqITJgQkYzxH4vSRX3UwUqGizNTsuucorAp5F/8WbP3aEPAQ6CbvSoMeEgA
+         wkvDaC/2jjnW/kT8JoRk8P/EiY0rKgKAuNqSstpBMclIaqg/zmZv2qqF9r0xNPE0RLfi
+         78xjkIk6I06bz9Y/TcxncB3HuzYZ/ilpeTYqFp2LpftWHpmpg47d+VCFTH9p0xmfHGdU
+         AxkQ==
+X-Gm-Message-State: AOJu0YwlYFnjSGTQthaaqPLsPtvtPSDcVpO2Krt5oGyzAO/j0xE8X5C1
+	iFu9Vz8E23vl7odrvsKGZNP71R1u6cd7QgH/UDLR6dYsw058pWBfcT/ub4jsrQcmWBU3syKLcJU
+	qItLwhw==
+X-Google-Smtp-Source: AGHT+IHgEhgmWrg5cSDGqvJj1WMMHtDdb4CM57jUC9UT/7wGZ/3a++pwdrHou31SvuqtvVBQ1iYuyQ==
+X-Received: by 2002:a17:907:1b02:b0:a9e:d7df:8a7e with SMTP id a640c23a62f3a-aa48347c883mr1290677366b.31.1731957989544;
+        Mon, 18 Nov 2024 11:26:29 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfde8b7287sm77926a12.42.2024.11.18.11.26.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 11:26:29 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa1e51ce601so472122466b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:28 -0800 (PST)
+X-Received: by 2002:a17:906:d7cb:b0:aa4:c8f0:6ea1 with SMTP id
+ a640c23a62f3a-aa4c8f06f4fmr18763766b.54.1731957988223; Mon, 18 Nov 2024
+ 11:26:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+In-Reply-To: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 18 Nov 2024 11:26:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
+Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs tmpfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
-> Page Detective is a new kernel debugging tool that provides detailed
-> information about the usage and mapping of physical memory pages.
-> 
-> It is often known that a particular page is corrupted, but it is hard to
-> extract more information about such a page from live system. Examples
-> are:
-> 
-> - Checksum failure during live migration
-> - Filesystem journal failure
-> - dump_page warnings on the console log
-> - Unexcpected segfaults
-> 
-> Page Detective helps to extract more information from the kernel, so it
-> can be used by developers to root cause the associated problem.
-> 
-> It operates through the Linux debugfs interface, with two files: "virt"
-> and "phys".
-> 
-> The "virt" file takes a virtual address and PID and outputs information
-> about the corresponding page.
-> 
-> The "phys" file takes a physical address and outputs information about
-> that page.
-> 
-> The output is presented via kernel log messages (can be accessed with
-> dmesg), and includes information such as the page's reference count,
-> mapping, flags, and memory cgroup. It also shows whether the page is
-> mapped in the kernel page table, and if so, how many times.
+On Fri, 15 Nov 2024 at 06:07, Christian Brauner <brauner@kernel.org> wrote:
+>
+> This adds case-insensitive support for tmpfs.
 
-This looks questionable both from the security and convenience points of view.
-Given the request-response nature of the interface, the output can be
-provided using a "normal" seq-based pseudo-file.
+Ugh.
 
-But I have a more generic question:
-doesn't it make sense to implement it as a set of drgn scripts instead
-of kernel code? This provides more flexibility, is safer (even if it's buggy,
-you won't crash the host) and should be at least in theory equally
-powerful.
+I've pulled this, but I don't love it.
 
-Thanks!
+This pattern:
+
+    if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+        d_add(dentry, inode);
+    else
+        d_instantiate(dentry, inode);
+
+needs an explanation, and probably a helper.
+
+And
+
+>  include/linux/shmem_fs.h            |   6 +-
+>  mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
+
+I'm starting to think this should be renamed and/or possibly split up
+a bit. The actual path component handling functions should be moved
+out of mm/shmem.c.
+
+The whole "mm/shmem.c" thing made sense back in the days when this was
+mainly about memory management functions with some thing wrappers for
+exposing them as a filesystem, and tmpfs was kind of an odd special
+case.
+
+Those thin wrappers aren't very thin any more, and "shmem" is becoming
+something of a misnomer with the actual filesystem being called
+"tmpfs".
+
+We also actually have *two* different implementations of "tmpfs" -
+both in that same file - which is really annoying. The other one is
+based on the ramfs code.
+
+Would it be possible to try to make this a bit saner?
+
+           Linus
 
