@@ -1,78 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-35061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39B39D0950
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 07:08:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C2A9D09A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 07:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9281F2268A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 06:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367BB2821BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 06:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7B6145B27;
-	Mon, 18 Nov 2024 06:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D27148832;
+	Mon, 18 Nov 2024 06:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj432bVi"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u30vy4Q9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D80522083
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 06:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B48145A16;
+	Mon, 18 Nov 2024 06:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731910106; cv=none; b=P0JdKwB/Iwsc6ep2gyJ14yyM5epzAotPWgxbOysGm0vIFb2QUlya0lS3gKHJ+godrFWc7aGolIVSlq0SVf5ZaCYjLsmKJoUqzO4fxjlv+WVAYhaOBb1+vLicBuHw9ep3OsB9j6Tu5h/LItlO8qFIHG5jzwZJJfkypVNjKHQPa1M=
+	t=1731911395; cv=none; b=i3At7/JEMcUUhBwAx8bgdSmw88hbOqs1ZPSgKO7T1J6CiWL5TY3oJ0stdnZzLw7WszQNBvUVXgMEGyH0gqP/WJZLsho/xsk+eq5D1N/K21JQLZvxJ+htGzrfIMEKKDjjfIGhcsZh4sTV6+cWRjNFkV7RE/JfPQIpuYZTa0Xe9Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731910106; c=relaxed/simple;
-	bh=cJ2P6uR4opZsVGWIta5h5IZmD3jekZ9UDttr48No1E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H6Db6fDsON3FDXwG5t5rFYAe8E8j41P00mjVbplPkdmk0EPk+pyg+lufCQ8IlHwElQ6vtjMfqj5FZPIsX9CI/yNFq94ACTQ5nQKTBef9vkjykMquPCJKmU8Hb3mmUZtHkoc+ddS0WrkvDZUwOfNCTPaYD4QTsZ5TBvCJvaIbEWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj432bVi; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so34715825e9.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2024 22:08:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731910103; x=1732514903; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
-        b=Dj432bVieEbcQxizrB7AhmvEEiIYvJJsuqzBbCQJEsDYCv4WHJaiNywoHacU8CEwht
-         2hxP89nt6T5IjXvtqiihUxB7cDYRmidNWlayEYHqgnC9vmoWpGt5Fir/KiAdFsv1O7oB
-         VF+LY5UiBFR0qtkU7rA3ODPWU4mN8hYptXymGWWJH3mKLS92Wj/IK1e+drcCiqyCX2qY
-         +DuKsUBhz0JpSy8pTZM4zHevnzf/GnkJA8NxR3Q1rJ6UY2pnia+Rxq0/cVYX41bmBSYc
-         IM1Mkpc0x6oGZ8t+sDGFoDG/9FqnWHd1/tFfNvXXf/WIUlidmGsOTCWiWdo/4khMXhmu
-         e3kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731910103; x=1732514903;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
-        b=F97bBkxAYGYJJkXafkpymR20oUAqtv0yfeoPso2RF48TQpOY3B29RYb9QsYfcpC7Or
-         x5MNeNcapIQpt9DSAJsj+jflHzRIUXKJZZCRz9GxDZQ5iETUbMhXP5UZocm+ULZVmWcl
-         1SoiGA8EzTzKVmarkaspXxg8ajEbMRbPJ6ZkiPtyzvlFTa8LrNkYUmzvahgrEyXHLA6u
-         wmb79h2as+TutxQ9DIGZvi07u0OCYXsABp6vmfg+5Vt8IbBv//2pyEDo/XCubg2SeDdR
-         lNhWsPu+YTu1fhVDcPqP5/BqgVjM5gD+d8tw9rap/zrI93X+18Dz/NMroZ/B3ZkBJEpk
-         8Phw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPNtNPXfp2hphn80Zv4WxU0KButCbZZ3yMncahOYSGtjHyIm/nsGvM8YUI5E8/E8MC6un9Qou/mb3iBREW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaetQ+xAPFI9baWHS6SBYNkRhUNyhU2MI+YG6sdH9SzUVMmBDk
-	fvCQOyJRZL3hPfM7XWY4sG1J8VXmI2gq0ZoyBhs62CxQN2dLVQrwcZqBJBN2Oos=
-X-Google-Smtp-Source: AGHT+IEro4yYmZP5OKHef+XOzgZ/LRIKlD6qWiYZLHMGCu2nTq/i6YxPj2oMalXqgeMbxjS/2dLAvw==
-X-Received: by 2002:a05:600c:4505:b0:431:1868:417f with SMTP id 5b1f17b1804b1-432df74be9amr107263115e9.17.1731910102919;
-        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab788a2sm141599425e9.11.2024.11.17.22.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
-Date: Mon, 18 Nov 2024 09:08:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] netfs: silence an uninitialized variable warning
-Message-ID: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
+	s=arc-20240116; t=1731911395; c=relaxed/simple;
+	bh=ev9BjSlw7zUkqO3HRQh7AV1acr5gaD2o5YncQjhHz60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpMnf7tl7tj9wPhkrmBJSdLQxNM8Hpxz5BZxUh1reGDLXNLbtJbrQLWfgcYANHqTgLUFUTKGPCtJadekrypvsEOaG0ePsk4lF9Q7R1lLIpPyXA++tdvAyIGb6x4vaBTWCuLO57RJyrtkzURTzMqv9g3ZKb20XXH4+3mdO44VlgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u30vy4Q9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ejQ0qHYa2a9aJP6wtBIMu6a8RqHn3rX65MiWqvDFrAg=; b=u30vy4Q9W3DUEbpgh/V6Ly0WAs
+	Bm+qSl+cQrUowh4THbT+EoPmNmxrGluQZBOVN4yPznvL3P6GVAkvhczUqR31M07E6dLJ1aDhT3DFy
+	m0iL8fxDrD3R1abiryjK/clMG4dX9a0Sv1ZWkWVUO03cPh9p7g6Pd5BCLtzZI3JA8qZgQ/az+fTqz
+	DsmpSxQvkRDTnxuNnFje37nEZHuxe6wSNDV19vdHSFiB8tpYDETJGUIGjijF54BiuOqP7rn6khGjs
+	V0fkdC7GyTucgtukO8k3HPgggn9HlQTbvHkNh3A1DI0RlQZTHJJTETber57iZnvrOVf4kYAFXNi8Y
+	e19q4Qrg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCvGg-00000008WnI-3BYx;
+	Mon, 18 Nov 2024 06:29:50 +0000
+Date: Sun, 17 Nov 2024 22:29:50 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	hch@infradead.org, djwong@kernel.org
+Subject: Re: [PATCH v4 2/3] iomap: lift zeroed mapping handling into
+ iomap_zero_range()
+Message-ID: <Zzre3i7UZARRpVgC@infradead.org>
+References: <20241115200155.593665-1-bfoster@redhat.com>
+ <20241115200155.593665-3-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,34 +62,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20241115200155.593665-3-bfoster@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Smatch complains that "ret" is uninitialized on the success path if we
-don't enter the nested loop at the end of the function.  In real life we
-will enter that loop so "ret" will be zero.
+On Fri, Nov 15, 2024 at 03:01:54PM -0500, Brian Foster wrote:
+> In preparation for special handling of subranges, lift the zeroed
+> mapping logic from the iterator into the caller. Since this puts the
+> pagecache dirty check and flushing in the same place, streamline the
+> comments a bit as well.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Generally, I don't endorse silencing static checker warnings but in this
-case, I think it make sense.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/netfs/write_issue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index cd2b349243b3..8f02d8effe78 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -862,7 +862,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 	struct netfs_inode *ictx = netfs_inode(mapping->host);
- 	struct folio_queue *fq;
- 	size_t size = iov_iter_count(iter);
--	int ret;
-+	int ret = 0;
- 
- 	if (WARN_ON_ONCE(!iov_iter_is_folioq(iter)))
- 		return -EIO;
--- 
-2.45.2
+I don't want to block this improvement on stylistic things, but
+I still don't like moving more code than the function invocation into
+the iter body.  I hope you're okay with me undoing that sooner or later.
 
 
