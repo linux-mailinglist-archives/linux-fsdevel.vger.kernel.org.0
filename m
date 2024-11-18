@@ -1,79 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-35109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4729D14DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 16:59:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5239D1573
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 17:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C28FB2BC6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 15:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9351F23594
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 16:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856411BC077;
-	Mon, 18 Nov 2024 15:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4065E1AA1E4;
+	Mon, 18 Nov 2024 16:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YwGR+Ap4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C+ZgNer4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D5A1AE01D;
-	Mon, 18 Nov 2024 15:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317581BBBC4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 16:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731944664; cv=none; b=HFFUeghJI0fy9mFyDAIoNqKpXIQ0dcTRpv7JWhB0mhtl2f18f3G+JvCwYB2hh831M3NThBBDecRBPG4yJ8vJPH1OcrfPbL5JOrVX+fA9zWyKv9eBc4nXGO6+mEL+NTIdR23PD8CmxwaGphGhjeNRw9QefRKs0xYBSiJ+ll/eaiA=
+	t=1731947740; cv=none; b=RzmWMd9Xzzq5pn2TfA19URUPppr5Dhyh9Xf2ySmKVjlEcORi18YZGdC1/D9H3fooyL32o6j9OMD0vCRoa9P+hTRJ5hNR896vME1KaD0O866mLPxj2oKoqqLouv1au7iEDUUXazEfMYRy2s9XGKA8h2V+vrqa1GL5mWQz5BexzDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731944664; c=relaxed/simple;
-	bh=1S4kc4XaVfOflWXcjf8x0Za3BP+BFQ/ELMboQd8SWlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZSQcXkDdjF8cJLN4uzoosvyy6wiUmB6dejEV4DvzIr2WNM+y8nbV1ArfpMXveLaP6FClGcG/Q8w0PfaUhUeOEtN9mYpSNotBg00+eTUWlHhrLV0BmXItthFNkz6A/7vtmvee13nY2akA9n7QMQ0wguI0xl/rg8hu1+N0FIwGAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YwGR+Ap4; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=U4YplOiZXPPZzPsqHuvWsfd3v86LFROZH/s6gwRNhlk=; b=YwGR+Ap41VqK4Cym6epNZe/X7h
-	fj2/Qm0QkK7vvVuE0fRLDNKSvm1JZfU8SXfhb/+kQJjvPeAgMtRJA9Ws6jcuduvW+KDZszAktYDUL
-	uUCgOiQplQU4y+ijQwQYPxseMIACNqgr1mIlsI+CTTO9w8594Jjz0KQohzt0uch9o+wjQrfrVy8Sq
-	rhdJvNmYElDJnzjfFQkRwFkQIDHXIXy4L9iehy2dEP0/vJcs18DDtxVrTUgMwRSCkEWBz4NIj0d9o
-	neHZ4w30kjfrCuGSIUd/X2ZWhNPTxvO92aa3n0TCx6LTBQbmXGNl+NHS3CSMycI67IgBVtYkbfymh
-	XRPISbRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tD3vG-0000000GQWu-3ewp;
-	Mon, 18 Nov 2024 15:44:18 +0000
-Date: Mon, 18 Nov 2024 15:44:18 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
- is populated
-Message-ID: <20241118154418.GH3387508@ZenIV>
-References: <20241118085357.494178-1-mjguzik@gmail.com>
- <20241118115359.mzzx3avongvfqaha@quack3>
- <CAGudoHHezVS1Z00N1EvC-QC5Z_R7pAbJw+B0Z1rijEN_OdFO1g@mail.gmail.com>
- <20241118144104.wjoxtdumjr4xaxcv@quack3>
- <CAGudoHECQkQQrcHuWkP2badRP6eXequEiBD2=VTcMfd_Tfj+rA@mail.gmail.com>
+	s=arc-20240116; t=1731947740; c=relaxed/simple;
+	bh=wwmrSMmvUtQxOnWoWMX94ibGfGj/+431cg0WAd2Ud6U=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=spVXHUty0mkcmbKfw17QQJooigd9eqGvkcIY82W+hX/d2mCBkL1frHxidE7ISUq1311BBnQEPxFV9lQDKs7MShgpxIf4LjyCvK7bkAfn1EXn6zMCO3CqFTCAZ6ifo5BrAoLqE6nmxFUSn14VCWJBRVHPSQSSnehezMyh0yLotQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C+ZgNer4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731947738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F48vEQ6V/tDlXaOtinAU3DdgDvVmHs2S/fGlg/NOvdQ=;
+	b=C+ZgNer4hKOeHdJEBG/l6jXUewb3GN736uG8q4K4/NF8RzEYX/ixS5TCkMfD/cdt+Xct8Y
+	MKVk2ifwKjV6qHboJL65bnLN0aow7LdWt8Hs/+sDR6naIxDDZlqlrLNacPsmA5TLIqJT62
+	F0F0Cu3nbjXKcvtoR6R9kiGO9Jinitc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-HpCdFzANNgKaFZmQE0YgOw-1; Mon,
+ 18 Nov 2024 11:35:33 -0500
+X-MC-Unique: HpCdFzANNgKaFZmQE0YgOw-1
+X-Mimecast-MFC-AGG-ID: HpCdFzANNgKaFZmQE0YgOw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5300197731B;
+	Mon, 18 Nov 2024 16:35:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.207])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 710421956054;
+	Mon, 18 Nov 2024 16:35:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <17eb79fc-ccd9-4c85-bd23-e08380825c41@ijzerbout.nl>
+References: <17eb79fc-ccd9-4c85-bd23-e08380825c41@ijzerbout.nl> <20241108173236.1382366-1-dhowells@redhat.com> <20241108173236.1382366-24-dhowells@redhat.com>
+To: Kees Bakker <kees@ijzerbout.nl>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 23/33] afs: Use netfslib for directories
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHECQkQQrcHuWkP2badRP6eXequEiBD2=VTcMfd_Tfj+rA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <941498.1731947719.1@warthog.procyon.org.uk>
+Date: Mon, 18 Nov 2024 16:35:19 +0000
+Message-ID: <941499.1731947719@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Nov 18, 2024 at 03:51:34PM +0100, Mateusz Guzik wrote:
+Kees Bakker <kees@ijzerbout.nl> wrote:
 
-> This is only 1.5% because of other weird slowdowns which don't need to
-> be there, notably putname using atomics. If the other crap was already
-> fixed it would be closer to 5%.
+> > +	iterate_folioq(&iter, iov_iter_count(&iter), dvnode, ctx,
+> > +		       afs_dir_iterate_step);
+> > +
+> > +	if (ret == -ESTALE)
+> This is dead code because `ret` is set to 0 and never changed.
+> > +		afs_invalidate_dir(dvnode, afs_dir_invalid_iter_stale);
 
-Describe your plans re putname(), please.  Because we are pretty much
-certain to step on each other's toes here in the coming cycle.
+Yeah.  I posted a modification for this in response to someone else.  ESTALE
+needs to be set if iterate_folioq() returns 0.
+
+David
+
 
