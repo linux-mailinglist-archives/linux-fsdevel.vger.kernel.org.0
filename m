@@ -1,231 +1,259 @@
-Return-Path: <linux-fsdevel+bounces-35069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FE49D0B24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 09:43:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7609D0B3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 09:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED25B22AF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 08:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460CF1F221B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 08:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3118C939;
-	Mon, 18 Nov 2024 08:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8628718B46E;
+	Mon, 18 Nov 2024 08:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJWxoI3G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA9213D28F;
-	Mon, 18 Nov 2024 08:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28544161302;
+	Mon, 18 Nov 2024 08:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731919356; cv=none; b=h1n+XOMfQret5U+3iH/QmRW9iLnttlGCB4LsjmZu3tDlB0fP+RCtjQZJKoUDDE9eff/OBJRxrDgus4C6jMfAVjHvwcKC/rWwkghBdqf/40/ioXEPuk8vw4bOEwHxjpL2/A7Yz3VeKB9+MgpuqVUTfoB31LuG481+BFHav4h0r4A=
+	t=1731920053; cv=none; b=dFxyJ5OspkdaJTY8QymjJKVkGoiZ0uLeATGz8bBWXKjtUlHdb1SwXM9dRyWKXEz9OC3mbvVkaJCFyWFDBD/kjNHdhd+7i0PekBTUZHfzCOSxG0emEFgqsj0vVzm9+ucJcESBzkozRZBLbD942sBVcdf5vdvhPuvnQw+0cUkd7Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731919356; c=relaxed/simple;
-	bh=NJk4dTR0bI8XvHZ5QN8n8S1bH0X2uE6U3zNWG86A7bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=azyZiMbmw9NhVYopNje8OeB2nlMBE4JWHkzY3VSioNL5Pp1ESXy8RZSHQC2u5+Gk63Rks6A5Oc3elhYnF7SJWkEsowW6RFIuGBhaH4PIlBylYeBQkRz9abveIoWhCC/Z8denYM95vd/6UW2aHESkz107aQh81OBDlJIOpBrezsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XsLg00LDrz1T4sT;
-	Mon, 18 Nov 2024 16:40:28 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1E54140138;
-	Mon, 18 Nov 2024 16:42:24 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Nov
- 2024 16:42:23 +0800
-Message-ID: <01fadf73-6b0f-44ff-9325-515fae37d968@huawei.com>
-Date: Mon, 18 Nov 2024 16:42:23 +0800
+	s=arc-20240116; t=1731920053; c=relaxed/simple;
+	bh=BHmPj2GKglel+dM6EkvB195s41aF0+QsrleQeUPbE40=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tY7p0trfvTAagLg4culX75JYDx38i274Y9VzyDvFPAo/5oLEERZu+kKo4yaSbnSfQc3MXUxYZvN3PinzOptItKbIKhoOfWmmvG1HyuRCwKlo7kSMl+gt3hY1qfC0yxMBKk6ivlQ6vqSFY59nTrg4uOq1weAb85AOsM3H53vDh/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJWxoI3G; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so2549614a12.0;
+        Mon, 18 Nov 2024 00:54:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731920049; x=1732524849; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ImUwhj3KLskmnmevpPwGVzAUnC3K8Cw7DOCj378hYQ4=;
+        b=JJWxoI3G/O7dceYiB+YBt1xRXX6+ngFfNHve1tO18EJfPII52NIxKlndlUmk5Tq3PH
+         mYZ+3QrZArbR7H866c4tjjgoRx4uoqSY6hYtXvUclwqD3AlUsT/BUI8Tu6Y1S9MpMIlG
+         wn4wWnmCyPc2zsNGA0rMxh5r4vKJOOFXaGdKOKViI5yY9bWQo4jAQIpluuer+43CKnfm
+         u9saqaCo1WISF/vOMkMoeLHcxHuWF2cKxOG9ijNpa2vkDbNYBEhmMP5f1crOekRlxAG2
+         mi0jvR/+q+84f9dGsMNiihazTox9IV0+RaS4a9IxYgGOkkH11WfL3dikWuUT+OApGo3a
+         JuVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731920049; x=1732524849;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ImUwhj3KLskmnmevpPwGVzAUnC3K8Cw7DOCj378hYQ4=;
+        b=KE0CTHm5CvdKsVnS/IvbqhRGf4qtlgky3Ezr9ZPpA8FkZkW3uwDyW9aPZV7RJsr3yz
+         o7q/QinBcTNmLT8rzquvUjcwqW4PN2O4BT2meR+lwpqZN4DR2tQ0/dMuv5S7Vazp4glQ
+         m3o4o/CRTMkNvDd426MH5bOhOECAN5TDB0/ctXv25TkNoZe9tU9EDOG8tYxJETHISwfm
+         cR7f4Prcr287awWBqk/0d0Rl/3o7ulM8C0DqKLzqZQb/U4KMnI2t65SjpPK5jDuDcGuQ
+         0Rjr93Aioo8btMxA799kRLFwzw+aUCHdnUKCWgKMSCtoBXIs/kA3y1JMha7Mio8RV6Uj
+         4mqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbvaEUdH1xNgeCA3tPiEchR584IcrPOrLWF48t3GrkFM8SlGW7u4IvcdslawSB0czfFy46FtAwnkh82G2X@vger.kernel.org, AJvYcCWeUn2ma1mVH+Ym9WbXV6tY/ie5HSGi7U1Wo4AkD3RdM1ez7yD7SwWhi30xtjL32tUrcTeC3xku2b/Y+osh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl11hLPNqD+Hkb5SannnwwVkGiSCz0FkoiLC8xLyPvmkVJKu9f
+	8iDYbR4Vd1CaiCyoF5MbO7kyq5ZR73xm7Y9CUUc7QGgnTcZcbFs6
+X-Google-Smtp-Source: AGHT+IFMZsuRW8lyHa4uZxiVXF1UJ6529fUgXwhx7zMAEfmXDbMidud1UIVIS50bZZhM6fd+8aIv2w==
+X-Received: by 2002:a05:6402:5189:b0:5cf:cf81:c39f with SMTP id 4fb4d7f45d1cf-5cfcf81c701mr1111937a12.19.1731920047654;
+        Mon, 18 Nov 2024 00:54:07 -0800 (PST)
+Received: from f.. (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b9e168sm4524329a12.21.2024.11.18.00.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 00:54:06 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link is populated
+Date: Mon, 18 Nov 2024 09:53:57 +0100
+Message-ID: <20241118085357.494178-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/17] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-To: Jens Axboe <axboe@kernel.dk>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<hannes@cmpxchg.org>, <clm@meta.com>, <linux-kernel@vger.kernel.org>,
-	<willy@infradead.org>, <kirill@shutemov.name>, <linux-btrfs@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-	<bfoster@redhat.com>, Yang Erkun <yangerkun@huawei.com>
-References: <20241114152743.2381672-2-axboe@kernel.dk>
- <20241114152743.2381672-12-axboe@kernel.dk>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20241114152743.2381672-12-axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Content-Transfer-Encoding: 8bit
 
-On 2024/11/14 23:25, Jens Axboe wrote:
-> If RWF_UNCACHED is set for a write, mark new folios being written with
-> uncached. This is done by passing in the fact that it's an uncached write
-> through the folio pointer. We can only get there when IOCB_UNCACHED was
-> allowed, which can only happen if the file system opts in. Opting in means
-> they need to check for the LSB in the folio pointer to know if it's an
-> uncached write or not. If it is, then FGP_UNCACHED should be used if
-> creating new folios is necessary.
->
-> Uncached writes will drop any folios they create upon writeback
-> completion, but leave folios that may exist in that range alone. Since
-> ->write_begin() doesn't currently take any flags, and to avoid needing
-> to change the callback kernel wide, use the foliop being passed in to
-> ->write_begin() to signal if this is an uncached write or not. File
-> systems can then use that to mark newly created folios as uncached.
->
-> This provides similar benefits to using RWF_UNCACHED with reads. Testing
-> buffered writes on 32 files:
->
-> writing bs 65536, uncached 0
->    1s: 196035MB/sec
->    2s: 132308MB/sec
->    3s: 132438MB/sec
->    4s: 116528MB/sec
->    5s: 103898MB/sec
->    6s: 108893MB/sec
->    7s: 99678MB/sec
->    8s: 106545MB/sec
->    9s: 106826MB/sec
->   10s: 101544MB/sec
->   11s: 111044MB/sec
->   12s: 124257MB/sec
->   13s: 116031MB/sec
->   14s: 114540MB/sec
->   15s: 115011MB/sec
->   16s: 115260MB/sec
->   17s: 116068MB/sec
->   18s: 116096MB/sec
->
-> where it's quite obvious where the page cache filled, and performance
-> dropped from to about half of where it started, settling in at around
-> 115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
-> reclaim pages.
->
-> Running the same test with uncached buffered writes:
->
-> writing bs 65536, uncached 1
->    1s: 198974MB/sec
->    2s: 189618MB/sec
->    3s: 193601MB/sec
->    4s: 188582MB/sec
->    5s: 193487MB/sec
->    6s: 188341MB/sec
->    7s: 194325MB/sec
->    8s: 188114MB/sec
->    9s: 192740MB/sec
->   10s: 189206MB/sec
->   11s: 193442MB/sec
->   12s: 189659MB/sec
->   13s: 191732MB/sec
->   14s: 190701MB/sec
->   15s: 191789MB/sec
->   16s: 191259MB/sec
->   17s: 190613MB/sec
->   18s: 191951MB/sec
->
-> and the behavior is fully predictable, performing the same throughout
-> even after the page cache would otherwise have fully filled with dirty
-> data. It's also about 65% faster, and using half the CPU of the system
-> compared to the normal buffered write.
->
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   include/linux/fs.h      |  5 +++++
->   include/linux/pagemap.h |  9 +++++++++
->   mm/filemap.c            | 12 +++++++++++-
->   3 files changed, 25 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 45510d0b8de0..122ae821989f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2877,6 +2877,11 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
->   				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
->   		if (ret)
->   			return ret;
-> +	} else if (iocb->ki_flags & IOCB_UNCACHED) {
-> +		struct address_space *mapping = iocb->ki_filp->f_mapping;
-> +
-> +		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
-> +					      iocb->ki_pos + count);
->   	}
->   
+This gives me about 1.5% speed up when issuing readlink on /initrd.img
+on ext4.
 
-Hi Jens,
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-The filemap_fdatawrite_range_kick() helper function is not added until
-the next patch, so you should swap the order of patch 10 and patch 11.
+I had this running with the following debug:
 
-Regards,
-Baokun
+if (strlen(link) != inode->i_size)
+       printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
+           strlen(link), inode->i_size);
 
->   	return count;
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index d55bf995bd9e..cc02518d338d 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -14,6 +14,7 @@
->   #include <linux/gfp.h>
->   #include <linux/bitops.h>
->   #include <linux/hardirq.h> /* for in_interrupt() */
-> +#include <linux/writeback.h>
->   #include <linux/hugetlb_inline.h>
->   
->   struct folio_batch;
-> @@ -70,6 +71,14 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
->   	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
->   }
->   
-> +/*
-> + * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
-> + * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
-> + * must check for this and pass FGP_UNCACHED for folio creation.
-> + */
-> +#define foliop_uncached			((struct folio *) 0xfee1c001)
-> +#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
-> +
->   /**
->    * filemap_set_wb_err - set a writeback error on an address_space
->    * @mapping: mapping in which to set writeback error
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 13815194ed8a..297cb53332ff 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -4076,7 +4076,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->   	ssize_t written = 0;
->   
->   	do {
-> -		struct folio *folio;
-> +		struct folio *folio = NULL;
->   		size_t offset;		/* Offset into folio */
->   		size_t bytes;		/* Bytes to write to folio */
->   		size_t copied;		/* Bytes copied from user */
-> @@ -4104,6 +4104,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->   			break;
->   		}
->   
-> +		/*
-> +		 * If IOCB_UNCACHED is set here, we now the file system
-> +		 * supports it. And hence it'll know to check folip for being
-> +		 * set to this magic value. If so, it's an uncached write.
-> +		 * Whenever ->write_begin() changes prototypes again, this
-> +		 * can go away and just pass iocb or iocb flags.
-> +		 */
-> +		if (iocb->ki_flags & IOCB_UNCACHED)
-> +			folio = foliop_uncached;
-> +
->   		status = a_ops->write_begin(file, mapping, pos, bytes,
->   						&folio, &fsdata);
->   		if (unlikely(status < 0))
+nothing popped up
 
+I would leave something of that sort in if it was not defeating the
+point of the change.
+
+However, I'm a little worried some crap fs *does not* fill this in
+despite populating i_link.
+
+Perhaps it would make sense to keep the above with the patch hanging out
+in next and remove later?
+
+Anyhow, worst case, should it turn out i_size does not work there are at
+least two 4-byte holes which can be used to store the length (and
+chances are some existing field can be converted into a union instead).
+
+Bench:
+$ cat tests/readlink1.c
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <assert.h>
+#include <string.h>
+
+char *testcase_description = "readlink /initrd.img";
+
+void testcase(unsigned long long *iterations, unsigned long nr)
+{
+        char *tmplink = "/initrd.img";
+        char buf[1024];
+
+        while (1) {
+                int error = readlink(tmplink, buf, sizeof(buf));
+                assert(error > 0);
+
+                (*iterations)++;
+        }
+}
+
+ fs/namei.c                     | 43 ++++++++++++++++++----------------
+ fs/proc/namespaces.c           |  2 +-
+ include/linux/fs.h             |  2 +-
+ security/apparmor/apparmorfs.c |  2 +-
+ 4 files changed, 26 insertions(+), 23 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 9d30c7aa9aa6..7aced8aca0f6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -5272,19 +5272,16 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
+ 				getname(newname), 0);
+ }
+ 
+-int readlink_copy(char __user *buffer, int buflen, const char *link)
++int readlink_copy(char __user *buffer, int buflen, const char *link, int linklen)
+ {
+-	int len = PTR_ERR(link);
+-	if (IS_ERR(link))
+-		goto out;
++	int copylen;
+ 
+-	len = strlen(link);
+-	if (len > (unsigned) buflen)
+-		len = buflen;
+-	if (copy_to_user(buffer, link, len))
+-		len = -EFAULT;
+-out:
+-	return len;
++	copylen = linklen;
++	if (unlikely(copylen > (unsigned) buflen))
++		copylen = buflen;
++	if (copy_to_user(buffer, link, copylen))
++		copylen = -EFAULT;
++	return copylen;
+ }
+ 
+ /**
+@@ -5317,13 +5314,15 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ 	}
+ 
+ 	link = READ_ONCE(inode->i_link);
+-	if (!link) {
+-		link = inode->i_op->get_link(dentry, inode, &done);
+-		if (IS_ERR(link))
+-			return PTR_ERR(link);
++	if (link)
++		return readlink_copy(buffer, buflen, link, inode->i_size);
++
++	link = inode->i_op->get_link(dentry, inode, &done);
++	res = PTR_ERR(link);
++	if (!IS_ERR(link)) {
++		res = readlink_copy(buffer, buflen, link, strlen(link));
++		do_delayed_call(&done);
+ 	}
+-	res = readlink_copy(buffer, buflen, link);
+-	do_delayed_call(&done);
+ 	return res;
+ }
+ EXPORT_SYMBOL(vfs_readlink);
+@@ -5391,10 +5390,14 @@ EXPORT_SYMBOL(page_put_link);
+ 
+ int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ {
++	const char *link;
++	int res;
++
+ 	DEFINE_DELAYED_CALL(done);
+-	int res = readlink_copy(buffer, buflen,
+-				page_get_link(dentry, d_inode(dentry),
+-					      &done));
++	link = page_get_link(dentry, d_inode(dentry), &done);
++	res = PTR_ERR(link);
++	if (!IS_ERR(link))
++		res = readlink_copy(buffer, buflen, link, strlen(link));
+ 	do_delayed_call(&done);
+ 	return res;
+ }
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index 8e159fc78c0a..c610224faf10 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -83,7 +83,7 @@ static int proc_ns_readlink(struct dentry *dentry, char __user *buffer, int bufl
+ 	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
+ 		res = ns_get_name(name, sizeof(name), task, ns_ops);
+ 		if (res >= 0)
+-			res = readlink_copy(buffer, buflen, name);
++			res = readlink_copy(buffer, buflen, name, strlen(name));
+ 	}
+ 	put_task_struct(task);
+ 	return res;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 972147da71f9..7d456db6a381 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3351,7 +3351,7 @@ extern const struct file_operations generic_ro_fops;
+ 
+ #define special_file(m) (S_ISCHR(m)||S_ISBLK(m)||S_ISFIFO(m)||S_ISSOCK(m))
+ 
+-extern int readlink_copy(char __user *, int, const char *);
++extern int readlink_copy(char __user *, int, const char *, int);
+ extern int page_readlink(struct dentry *, char __user *, int);
+ extern const char *page_get_link(struct dentry *, struct inode *,
+ 				 struct delayed_call *);
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 01b923d97a44..60959cfba672 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -2611,7 +2611,7 @@ static int policy_readlink(struct dentry *dentry, char __user *buffer,
+ 	res = snprintf(name, sizeof(name), "%s:[%lu]", AAFS_NAME,
+ 		       d_inode(dentry)->i_ino);
+ 	if (res > 0 && res < sizeof(name))
+-		res = readlink_copy(buffer, buflen, name);
++		res = readlink_copy(buffer, buflen, name, strlen(name));
+ 	else
+ 		res = -ENOENT;
+ 
+-- 
+2.43.0
 
 
