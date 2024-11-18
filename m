@@ -1,42 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-35083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABB39D100C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:47:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B5B9D102D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 12:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AFA0B2742F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 11:46:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E925DB287D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 11:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F3A1993A3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D759199EB4;
 	Mon, 18 Nov 2024 11:45:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6356148827;
-	Mon, 18 Nov 2024 11:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B4B176AA9;
+	Mon, 18 Nov 2024 11:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930315; cv=none; b=BAgOl0gXIMCP/p3o8BrhHQUszBAtPUkc8hROj9m0TSU6WHq5o7p6nUcY7ga4b0P+gJKGeTGTcYp7vze5HhMlYtCoGrr3y+H6Lcfz5IbliTmeCj1uQyJ49csX429NUlvFNBYfi0J2F9aYZ5U4S1g/ZWTv8y4/ftjGdoIgjRoZ94g=
+	t=1731930316; cv=none; b=jzJE9l+zfJPIDZFPZlB5SbEEic7IKhEyqNwCoyBchyX2TvcrM8n6rUESYcYXrO9mcUxdVCAW2UOPQL2pJMhrtpusnSzcYOkaQUgR+ZzLJnf3a9Yk4a2YHGZ6eYFh1fNLHGyjdNZXOMdDBoaFcnPz2xPyng0kBCNNF1XXzC9XbIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930315; c=relaxed/simple;
-	bh=rcgFhFs++ejbghwtrVjfsT60p3rYlOkju6ZDDpb8mZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L3sVYJAXZkRqX5n8AtN1jU2126urH5t7hI63RtKzP96CRSkGjABIx5bhiANaQ+kyKu7cyHehCKx4LQuxh5ipq44eNzUDG0fnJauA6Gx4kkKUysEH5uDPfPMbkjOpqu7uTv+DIz8Mul7XxzAbiK0s4JStHBihmATla3ysFjFS1RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	s=arc-20240116; t=1731930316; c=relaxed/simple;
+	bh=Fmpzr+4VilJEIsxQkky2Ak7IZhFT54pKHZH1FgLJg8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hnhd8IpH59KE0rzSoZdJfE2qsQuP5F967FNcmn3+6oNOHATw+D++l2tF4crNSHnAASMsVprAGRsaoR7s/Ao61qFF8rpL8mmtpBhr+O0Kqco9CFq9I0LixtOjYhAVMdq9Y/85V1XpRWj6Y3MNPu67D4WGSS1Z1MDAWOIzzCbLjww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XsQlm45H7z4f3jXJ;
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XsQlm2Q5wz4f3nV2;
 	Mon, 18 Nov 2024 19:44:52 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 04FE61A0568;
+	by mail.maildlp.com (Postfix) with ESMTP id A542B1A0568;
 	Mon, 18 Nov 2024 19:45:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.107])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S4;
-	Mon, 18 Nov 2024 19:45:10 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S5;
+	Mon, 18 Nov 2024 19:45:11 +0800 (CST)
 From: Ye Bin <yebin@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -55,10 +56,12 @@ To: viro@zeniv.linux.org.uk,
 	linux-security-module@vger.kernel.org
 Cc: yebin10@huawei.com,
 	zhangxiaoxu5@huawei.com
-Subject: [PATCH 00/11] fix hungtask due to repeated traversal of inodes list
-Date: Mon, 18 Nov 2024 19:44:57 +0800
-Message-Id: <20241118114508.1405494-1-yebin@huaweicloud.com>
+Subject: [PATCH 01/11] fs: introduce I_CURSOR flag for inode
+Date: Mon, 18 Nov 2024 19:44:58 +0800
+Message-Id: <20241118114508.1405494-2-yebin@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241118114508.1405494-1-yebin@huaweicloud.com>
+References: <20241118114508.1405494-1-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,64 +69,98 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4fuF15Xr1DWw45ZFyDGFg_yoW8WrW8pF
-	43XFW3XF4UJry3Wr93Jw18Xw1Syan5GrWDJrW7tw13Xr45Aryayr4Iyw1YgFyDWFWrZw1Y
-	9r4UC3y7uF1DXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
-	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU0s2-5UUUUU==
+X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7uryfWr1fuw48JFyrAw1xAFb_yoW8tF15pF
+	W2kry5tw4DXFW7Cayftanxua1fKF1xCrW5t34xWws5Xr17tw10q3Wvqr1Yyr93JFWkGrWY
+	qrs0k34qgFWxJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
+	0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3cTm
+	DUUUU
 X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
 From: Ye Bin <yebin10@huawei.com>
 
-As commit 04646aebd30b ("fs: avoid softlockups in s_inodes iterators")
-introduces the retry logic. In the problem environment, the 'i_count'
-of millions of files is not zero. As a result, the time slice for each
-traversal to the matching inode process is almost used up, and then the
-traversal is started from scratch. The worst-case scenario is that only
-one inode can be processed after each wakeup. Because this process holds
-a lock, other processes will be stuck for a long time, causing a series
-of problems.
-To solve the problem of repeated traversal from the beginning, each time
-the CPU needs to be freed, a cursor is inserted into the linked list, and
-the traversal continues from the cursor next time.
+This patch introduce I_CURSOR flag for inode and introduce
+sb_for_each_inodes_safe/sb_for_each_inodes/sb_for_each_inodes_continue_safe
+API for foreach super_block->s_inodes.
 
-Ye Bin (11):
-  fs: introduce I_CURSOR flag for inode
-  block: use sb_for_each_inodes API
-  fs: use sb_for_each_inodes API
-  gfs2: use sb_for_each_inodes API
-  fs: use sb_for_each_inodes_safe API
-  fsnotify: use sb_for_each_inodes API
-  quota: use sb_for_each_inodes API
-  fs/super.c: use sb_for_each_inodes API
-  landlock: use sb_for_each_inodes API
-  fs: fix hungtask due to repeated traversal of inodes list
-  fs: fix potential soft lockup when 'sb->s_inodes' has large number of
-    inodes
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ include/linux/fs.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
- block/bdev.c           |  4 +--
- fs/drop_caches.c       |  2 +-
- fs/gfs2/ops_fstype.c   |  2 +-
- fs/inode.c             | 59 ++++++++++++++++++++++++++++--------------
- fs/notify/fsnotify.c   |  2 +-
- fs/quota/dquot.c       |  4 +--
- fs/super.c             |  2 +-
- include/linux/fs.h     | 45 ++++++++++++++++++++++++++++++++
- security/landlock/fs.c |  2 +-
- 9 files changed, 93 insertions(+), 29 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0a152c31d1bf..cf2734e0b2cd 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2473,6 +2473,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+ #define I_DONTCACHE		(1 << 15)
+ #define I_SYNC_QUEUED		(1 << 16)
+ #define I_PINNING_NETFS_WB	(1 << 17)
++#define I_CURSOR		(1 << 18)
+ 
+ #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+ #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+@@ -3809,4 +3810,48 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
+ 
+ int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
+ 
++static inline bool inode_is_cursor(struct inode *inode)
++{
++	return inode->i_state & I_CURSOR;
++}
++
++static inline struct inode *next_sb_inode(struct inode *pos,
++					  struct list_head *head)
++{
++	struct inode *inode;
++	struct list_head *start;
++
++	if (!pos)
++		return NULL;
++
++	start = &pos->i_sb_list;
++
++	list_for_each_continue(start, head) {
++		inode = list_entry(start, typeof(*inode), i_sb_list);
++		if (likely(!inode_is_cursor(inode)))
++			return inode;
++	}
++
++	return NULL;
++}
++
++#define sb_for_each_inodes_safe(pos, n, head)                 \
++	for (pos = list_entry(head, typeof(*pos), i_sb_list), \
++		pos = next_sb_inode(pos, head),               \
++		n = next_sb_inode(pos, head);                 \
++	     pos != NULL;                                     \
++	     pos = n, n = next_sb_inode(n, head))
++
++#define sb_for_each_inodes(pos, head)                          \
++	for (pos = list_entry(head, typeof(*pos), i_sb_list), \
++		pos = next_sb_inode(pos, head);                \
++	     pos != NULL;                                     \
++	     pos = next_sb_inode(pos, head))
++
++#define sb_for_each_inodes_continue_safe(pos, n, head)        \
++	for (pos = next_sb_inode(pos, head),                  \
++		n = next_sb_inode(pos, head);                 \
++	     pos != NULL;                                     \
++	     pos = n, n = next_sb_inode(n, head))
++
+ #endif /* _LINUX_FS_H */
 -- 
 2.34.1
 
