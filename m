@@ -1,162 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-35172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0FF9D203D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 07:30:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9589D2067
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 07:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102661F222F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 06:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CBBDB21A9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 06:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3510515854A;
-	Tue, 19 Nov 2024 06:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB9513B7B3;
+	Tue, 19 Nov 2024 06:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+rzBn1y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD65D155C8A;
-	Tue, 19 Nov 2024 06:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA5A4A35
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2024 06:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731997810; cv=none; b=iGu0GkfFgvdO3DUTVtQw0HIMnjCINsFW7OTMXVU9k8kw0zi/4PWLm9j1bBQmhwkBDQhEMVQqavtEhDhwNWngpiKKf9n6H7HGY7FC3yjABXsUgtSNHrbYiLsB8eXo7F5+1gwmhp2EGcr6C6QPQ0i/SPNQiZ1q5yn1UJ9pKXSSNmc=
+	t=1731998722; cv=none; b=bFxhlHfqHO/Nt46Sm+g4tm0izYt8gp9nRRspYQBXj0+olch0yEWAkyThCrfs+IlHYU3qHdzfqa0EZu4c0jnp0HV7PerY4S+Ob/FnYm7A+tM+MfjXhD1aRLV6pAZGj8DqCVQZh0TPv/yHUu/HcIqozUrPx7Cr7FAwxXF7+6QtF08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731997810; c=relaxed/simple;
-	bh=4qAzza/2ZTu6Ygf5D4eRWFT4hXBKg3JSc+ED4US8OMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UPPrJ24wF/A9aljGLlRcURVxWnP8KqfE+cR8SqRe6K/QMiOZ52QUcL7M8+ZdJch8KEknG5am5k3CfnoNw1xQbB1v0UFdO3pWxHXyMUOAn+COpppBrf2Addo+rGWRofMGnEd345gkbs5KLUcce9c4q26RzoW8HgBpKat9Eg84Hl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XsvkC3VFZz1yqbk;
-	Tue, 19 Nov 2024 14:30:11 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id C252C1A016C;
-	Tue, 19 Nov 2024 14:29:58 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Nov
- 2024 14:29:57 +0800
-Message-ID: <b2ea547a-6097-4f95-9ee7-097c8363a076@huawei.com>
-Date: Tue, 19 Nov 2024 14:29:57 +0800
+	s=arc-20240116; t=1731998722; c=relaxed/simple;
+	bh=eMMP5rz2BE42egv5BZe9LSGHOhRMuAI1yJxJ1dG22wI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rLXkMsKUS16HMA4hlgx97ZV7Ya0aL8r7tPtPbutpArRIOlP2uI7w8ppY4AmnX1AOWMjGWCaByT1uH8jjtgM1ykNL/JL2pzW/0HZ76Ft5ce7xVP7ucqx70mrx+GIIzkH1NnbjBiX37A3mKHjlGcC/5/OHsh7yZN+PBoKfV0kyebk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+rzBn1y; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a850270e2so546433566b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2024 22:45:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731998719; x=1732603519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDmRB5ClgJpHFr+fT43VEyIex40kGdWvjXQFf2Qtd4I=;
+        b=l+rzBn1yXV6A7Id32PSssi1DmLCD+gN5frdoZg64URsoh4peRG0Xai2VcA91zAeLvQ
+         1K/9AcxZJksYEtfTjrCQH52TwQ77imCoVfhuTrfwRmgZBXM8hkebUTsjDGxAjjHgM8yb
+         f0y0HK3h4omIa/kZocosxQo6aFovM1N4dah39fmIj9G/5g8liieTmTbpPMN+a8G6hwXd
+         GcJfxnic0vq//wQQLFMIfFrNqx/f+RSvyjGjDOg6EAscaP2gMmb3dMZRZJSHVVmZ1Xr2
+         MXGfFh/pV2EGpnOqVwC+cUdESGkO8wEu72VIHrvH2XAAYv11PRNxkhdNaWBn7g0sSXt2
+         vMLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731998719; x=1732603519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KDmRB5ClgJpHFr+fT43VEyIex40kGdWvjXQFf2Qtd4I=;
+        b=JaJLlE56WVYH39BCd3/MhNd1pIkBf7jcJRVbdhvQpS2CEz+05fqO/+u0ZWMd0HujAd
+         iI1qwfz7OdtZz0ySFeiShPt/6IgVN4Ijwp+5iuPKqR71541LmhVsOX1wxmR0/9U9Ynrc
+         n+Q/wGp5MIoOELelPF9grJ1jBvbfufyb82c80v8jaFbPtTzm422xBXZBc7QsH+9cHYNY
+         WOW8D87fW/PzS7WpBqN5QA52KzmoMjC/rFOK6J018yezCUA+rQ+eR+iBpeL27ypeKu9G
+         r79yaORgr7vWDqabbkQdpQewrSsUgwMiTqZzOGWluRf4u8kaO34hOVV48wmUCsIGch7K
+         HGvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9hcEvWBhLfBnlxtM/uP64HIbGcYJ7E7Lnl/ZhWaERtQ8xYuEHf71S4IPrFEfsD4Sh4hU/CkgfCkX9X9xD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Z4wxfabLkPXiw5EdiOvt01KVTsPEZE6PERDUUbeguA22mkQ3
+	Sv514HAAL4aIsI3OPtuJx7N2DmPadBh6DSMxG+mkE3vSUN01dS8uu/+3vugOUPA1eNUD84XvlkM
+	ZcgozmGSM/6m5aq5swHWuC8ffKFk=
+X-Google-Smtp-Source: AGHT+IETr8ZW3iGSUCpNPmZjIUyx01m4KQKrxOLyiCOAZZMrYeYdHbDlG7UwmhPFIsJrU4mdGlPKR83UaJJmZp2OueE=
+X-Received: by 2002:a17:906:ef08:b0:a99:3c32:b538 with SMTP id
+ a640c23a62f3a-aa483528a6fmr1391898666b.42.1731998718649; Mon, 18 Nov 2024
+ 22:45:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] quota: flush quota_release_work upon quota writeback
-To: Jan Kara <jack@suse.cz>
-CC: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Ritesh Harjani
-	<ritesh.list@gmail.com>, <linux-ext4@vger.kernel.org>, Jan Kara
-	<jack@suse.com>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, Disha Goel <disgoel@linux.ibm.com>, Yang
- Erkun <yangerkun@huawei.com>
-References: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
- <20241115183449.2058590-2-ojaswin@linux.ibm.com> <87plmwcjcd.fsf@gmail.com>
- <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <7077c905-2a19-46f2-9f45-d82ed673d48b@huawei.com>
- <20241118125344.a3n3kn6crvrixglb@quack3>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20241118125344.a3n3kn6crvrixglb@quack3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+References: <202411191423.eEl9yEsr-lkp@intel.com>
+In-Reply-To: <202411191423.eEl9yEsr-lkp@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 19 Nov 2024 07:45:07 +0100
+Message-ID: <CAOQ4uxhsyuyd9=iJ1GLYXPrtfUqsdWaxObLUGngKV8bwhbK1-A@mail.gmail.com>
+Subject: Re: [amir73il:fan_pre_content 19/21] ERROR: modpost:
+ "filemap_fsnotify_fault" [fs/xfs/xfs.ko] undefined!
+To: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/11/18 20:53, Jan Kara wrote:
-> On Mon 18-11-24 09:29:19, Baokun Li wrote:
->> On 2024/11/17 1:59, Ojaswin Mujoo wrote:
->>> On Sat, Nov 16, 2024 at 02:20:26AM +0530, Ritesh Harjani wrote:
->>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->>>>
->>>>> One of the paths quota writeback is called from is:
->>>>>
->>>>> freeze_super()
->>>>>     sync_filesystem()
->>>>>       ext4_sync_fs()
->>>>>         dquot_writeback_dquots()
->>>>>
->>>>> Since we currently don't always flush the quota_release_work queue in
->>>>> this path, we can end up with the following race:
->>>>>
->>>>>    1. dquot are added to releasing_dquots list during regular operations.
->>>>>    2. FS freeze starts, however, this does not flush the quota_release_work queue.
->>>>>    3. Freeze completes.
->>>>>    4. Kernel eventually tries to flush the workqueue while FS is frozen which
->>>>>       hits a WARN_ON since transaction gets started during frozen state:
->>>>>
->>>>>     ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
->>>>>     __ext4_journal_start_sb+0x64/0x1c0 [ext4]
->>>>>     ext4_release_dquot+0x90/0x1d0 [ext4]
->>>>>     quota_release_workfn+0x43c/0x4d0
->>>>>
->>>>> Which is the following line:
->>>>>
->>>>>     WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
->>>>>
->>>>> Which ultimately results in generic/390 failing due to dmesg
->>>>> noise. This was detected on powerpc machine 15 cores.
->>>>>
->>>>> To avoid this, make sure to flush the workqueue during
->>>>> dquot_writeback_dquots() so we dont have any pending workitems after
->>>>> freeze.
->>>> Not just that, sync_filesystem can also be called from other places and
->>>> quota_release_workfn() could write out and and release the dquot
->>>> structures if such are found during processing of releasing_dquots list.
->>>> IIUC, this was earlier done in the same dqput() context but had races
->>>> with dquot_mark_dquot_dirty(). Hence the final dqput() will now add the
->>>> dquot structures to releasing_dquots list and will schedule a delayed
->>>> workfn which will process the releasing_dquots list.
->>> Hi Ritesh,
->>>
->>> Ohh right, thanks for the context. I see this was done here:
->>>
->>>     dabc8b207566 quota: fix dqput() to follow the guarantees dquot_srcu
->>>     should provide
-> Yup.
+On Tue, Nov 19, 2024 at 7:25=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
 >
->> Nice catch! Thanks for fixing this up!
->>
->> Have you tested the performance impact of this patch? It looks like the
->> unconditional call to flush_delayed_work() in dquot_writeback_dquots()
->> may have some performance impact for frequent chown/sync scenarios.
-> Well, but sync(2) or so is expensive anyway. Also dquot_writeback_dquots()
-> should persist all pending quota modifications and it is true that pending
-> dquot_release() calls can remove quota structures from the quota file and
-> thus are by definition pending modifications. So I agree with Ojaswin that
-> putting the workqueue flush there makes sense and is practically required
-> for data consistency guarantees.
-Make sense.
->> When calling release_dquot(), we will only remove the quota of an object
->> (user/group/project) from disk if it is not quota-limited and does not
->> use any inode or block.
->>
->> Asynchronous removal is now much more performance friendly, not only does
->> it make full use of the multi-core, but for scenarios where we have to
->> repeatedly chown between two objects, delayed release avoids the need to
->> repeatedly allocate/free space in memory and on disk.
-> True, but unless you call sync(2) in between these two calls this is going
-> to still hold.
-Yeah without sync or syncfs, it's the same as before.
->> Overall, since the actual dirty data is already on the disk, there is no
->> consistency issue here as it is just clearing unreferenced quota on the
->> disk, so I thought maybe it would be better to call flush_delayed_work()
->> in the freeze context.
-> To summarise, I don't think real-life workloads are going to observe the
-> benefit and conceptually the call really belongs more to
-> dquot_writeback_dquots().
+> tree:   https://github.com/amir73il/linux fan_pre_content
+> head:   a2b4aa2a63d555f7b7d22f6f54583dff35a1f608
+> commit: d3e0f4f0a419a7012bcdc60530619ba2cdf96e85 [19/21] xfs: add pre-con=
+tent fsnotify hook for write faults
+> config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241119=
+/202411191423.eEl9yEsr-lkp@intel.com/config)
+> compiler: sh4-linux-gcc (GCC) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20241119/202411191423.eEl9yEsr-lkp@intel.com/reproduce)
 >
-> 								Honza
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411191423.eEl9yEsr-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>, old ones prefixed by <<):
+>
+> >> ERROR: modpost: "filemap_fsnotify_fault" [fs/xfs/xfs.ko] undefined!
 
-Okay, thanks for the feedback!
+Jan,
 
+We need an empty implementation of filemap_fsnotify_fault() for
+!CONFIG_MMU to avert this warning.
 
-Regards,
-Baokun
+Could you add it on commit?
 
+Thanks,
+Amir.
 
