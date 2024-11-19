@@ -1,207 +1,262 @@
-Return-Path: <linux-fsdevel+bounces-35205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9F59D25C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 13:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A23E39D25CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 13:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95725B2899B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 12:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0271DB28FB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 12:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F411CCEE8;
-	Tue, 19 Nov 2024 12:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141AA1CBEA7;
+	Tue, 19 Nov 2024 12:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+8BNuKe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD51CB307;
-	Tue, 19 Nov 2024 12:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4147157472;
+	Tue, 19 Nov 2024 12:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732019299; cv=none; b=UDU1jeytUeIBkpE7jCnbYsuQKVG3Auy1V7v4pJ2aHWmg9dd4K6UQLAUEdq5QxgMDE6QdrmtPiMQro5fQYCmvtQCDH9C8sUj1ydszjDgO53HXvtDW28AO2LqEP1XSGX0gCcFRUlkb0rdZyylMqzyiEp7tTS3Fb1AJ1/fClBaEURE=
+	t=1732019369; cv=none; b=qEi6BjvKLVD8oMCkvBUfI+jxSYgFOqxJH/i0+MKf3Uh59PxW88mCOxJWV01IFSSy0ZzMaFu2V+uuaJ2RFDgR9+gHUz1fp1mCwIyibLy4XmP3LK2m0VG5X+cwjOvGn+yToFrqvtnxlYt8G3uaBwhnnuOtX/Fr2zpxyzeqgDXBtkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732019299; c=relaxed/simple;
-	bh=KZ5pNKRTZd2Wsnop4Uo5KXxBybI54wxOzs6eCvzDSU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1avRW3FjLyROmMXoSujOAwRHPd5rpXyuD5Jd09cBWb8UCflTW18+yDjiuF1NycGu6j89N7QiUxwEpbmE1PomrQs60PPmgoL01p8wWXuBXxtOAeD9flfxw9vEpx/tpJjMeK/CxExEqkoV6glMn4nwdlevW+S3Dq+VsKMPw7mUW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AJCR8jU019294;
-	Tue, 19 Nov 2024 06:27:08 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AJCR6eq019293;
-	Tue, 19 Nov 2024 06:27:06 -0600
-Date: Tue, 19 Nov 2024 06:27:06 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Song Liu <songliubraving@meta.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241119122706.GA19220@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com> <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
+	s=arc-20240116; t=1732019369; c=relaxed/simple;
+	bh=p8Yl/1BFqqV0Cn6OSfhR36jUOfMKyX2cywI1X5xIm/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=l6ZAjFWWimKjEIZ9HlMPEyfDndj1pv7dqiX2/JAfnWct6mmKihuuHt71ucx6WNTjT4Dgw2b8JonXWU7TKdYhy1XXG0P+FrKY5MtF4kgAEHNQHtDe6I4BZUZ+BqzDsK2O5Co96evJASfPjmkpYTVutZP9wCQPULfXEwVABQjxBMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+8BNuKe; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2ea78d164b3so688122a91.2;
+        Tue, 19 Nov 2024 04:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732019366; x=1732624166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x8Cy4XcMd92kGMZiPRTiEZ4gdTHlal5Fe394Gz1xPoA=;
+        b=X+8BNuKemJo6mfQqFhPyGbcmySXxNTFT+59ZROfaWEs96hvHrVGGUVdZPQTfaZt+1c
+         uBnNLJ/sZkjulz0HwoXWKDn9wzLl8mdUfB+hiey7k7yZErL0EwRmnSi2Q/0gH3XF4LF6
+         ocF0caKhLLhYxcnPmlxv7++Uo4aAbn8LhOkS6Ibk3miH6hGJvntHP/IeJraXpxS4Qj3E
+         s9ofmMzOnZMhRuBg+5NPD+P8GrteCzNnYXKcrVXcDl6V1JU2NcNhKqhZWPYchatvyopt
+         h7oIOaPPN4hKXgozwJ53EHyVF4Kg1TCxQprvt3Yk1gDxuhdz/ju1jncHzIzv6f+NuC9l
+         zvOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732019366; x=1732624166;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x8Cy4XcMd92kGMZiPRTiEZ4gdTHlal5Fe394Gz1xPoA=;
+        b=ST4w7rk9xuBEjP9JjR1q5EMC219hA9u9fwGzED49HTJxFJd+VY3Jp9wyYAthIbc+3w
+         P+NHHs2PVfEexG9YLr2OTvJjoqAHphLfP3LNPA7Q2KClFnbhjJD1wR0MvVABBJOFDiz1
+         gpifxOvAyF4gxyjTYQH8zCxF/BSNojx4LRjZO8EDvuE98LAtp6UBDhyFQVrCy1G/E7QL
+         mdgeJE+fZx4dhDL+MIc1DJ22nlDO4Z7ZiWrqFVcsFSh/83vVJIP1z1RnL+Yo0ows67gk
+         Bqse2qXVTwP6RGAU3NbUMPFqkUxyM0Zql91TfktO5YaceLklLP1vg40EC9OkDnndAt+h
+         5H1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjsbXpyxVdJ6Yvwj4+si5l2qIzE+cb/a2p/Pidnu4Q95uAeYJjkvjriKF4rto+Unc3PNw9Yyqm3zJLrreG@vger.kernel.org, AJvYcCXQjHe27OlUhKv02WYEWnCJkQvjd80c9NYDESXzh/kO4R4Hrw+nJYNFlyewPGWgjlyuJA+tFOuhyaeL/dNn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8e26q4V2eMABUPbNvt6RVf4JZYBlUH9wcGhn8BedmX4jVcoUc
+	V8iFgFsDyZ46u4aitMzlvOIHKZZbY0AqyjW2t26Of6N/phY6tdm+G2zh18a35UQ=
+X-Google-Smtp-Source: AGHT+IHbmrydBTMkJRe5R2ZwCxpRenmU8Eus8/aMcSDJwulMF+J5G1E0KpHb/AVHDPSNAuhUL6uDhw==
+X-Received: by 2002:a17:90b:5281:b0:2ea:97b6:c466 with SMTP id 98e67ed59e1d1-2ea97b6c53emr7066154a91.12.1732019365919;
+        Tue, 19 Nov 2024 04:29:25 -0800 (PST)
+Received: from localhost.localdomain ([43.154.34.99])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea737252bdsm3792883a91.12.2024.11.19.04.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 04:29:25 -0800 (PST)
+From: Jim Zhao <jimzhao.ai@gmail.com>
+To: jack@suse.cz,
+	shikemeng@huaweicloud.com
+Cc: akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	jimzhao.ai@gmail.com
+Subject: Re: [PATCH v2] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
+Date: Tue, 19 Nov 2024 20:29:22 +0800
+Message-Id: <20241119122922.3939538-1-jimzhao.ai@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
+References: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 19 Nov 2024 06:27:08 -0600 (CST)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 17, 2024 at 10:59:18PM +0000, Song Liu wrote:
+Thanks, Jan, I just sent patch v2, could you please review it ?
 
-> Hi Christian, James and Jan, 
+And I found the debug info in the bdi stats. 
+The BdiDirtyThresh value may be greater than DirtyThresh, and after applying this patch, the value of BdiDirtyThresh could become even larger.
 
-Good morning, I hope the day is starting well for everyone.
+without patch:
+---
+root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
+BdiWriteback:                0 kB
+BdiReclaimable:             96 kB
+BdiDirtyThresh:        1346824 kB
+DirtyThresh:            673412 kB
+BackgroundThresh:       336292 kB
+BdiDirtied:              19872 kB
+BdiWritten:              19776 kB
+BdiWriteBandwidth:           0 kBps
+b_dirty:                     0
+b_io:                        0
+b_more_io:                   0
+b_dirty_time:                0
+bdi_list:                    1
+state:                       1
 
-> > On Nov 14, 2024, at 1:49???PM, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> [...]
-> 
-> >> 
-> >> We can address this with something like following:
-> >> 
-> >> #ifdef CONFIG_SECURITY
-> >>         void                    *i_security;
-> >> #elif CONFIG_BPF_SYSCALL
-> >>         struct bpf_local_storage __rcu *i_bpf_storage;
-> >> #endif
-> >> 
-> >> This will help catch all misuse of the i_bpf_storage at compile
-> >> time, as i_bpf_storage doesn't exist with CONFIG_SECURITY=y. 
-> >> 
-> >> Does this make sense?
-> > 
-> > Got to say I'm with Casey here, this will generate horrible and failure
-> > prone code.
-> > 
-> > Since effectively you're making i_security always present anyway,
-> > simply do that and also pull the allocation code out of security.c in a
-> > way that it's always available?  That way you don't have to special
-> > case the code depending on whether CONFIG_SECURITY is defined. 
-> > Effectively this would give everyone a generic way to attach some
-> > memory area to an inode.  I know it's more complex than this because
-> > there are LSM hooks that run from security_inode_alloc() but if you can
-> > make it work generically, I'm sure everyone will benefit.
+with patch:
+---
+root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
+BdiWriteback:               96 kB
+BdiReclaimable:            192 kB
+BdiDirtyThresh:        3090736 kB
+DirtyThresh:            650716 kB
+BackgroundThresh:       324960 kB
+BdiDirtied:             472512 kB
+BdiWritten:             470592 kB
+BdiWriteBandwidth:      106268 kBps
+b_dirty:                     2
+b_io:                        0
+b_more_io:                   0
+b_dirty_time:                0
+bdi_list:                    1
+state:                       1
 
-> On a second thought, I think making i_security generic is not 
-> the right solution for "BPF inode storage in tracing use cases". 
-> 
-> This is because i_security serves a very specific use case: it 
-> points to a piece of memory whose size is calculated at system 
-> boot time. If some of the supported LSMs is not enabled by the 
-> lsm= kernel arg, the kernel will not allocate memory in 
-> i_security for them. The only way to change lsm= is to reboot 
-> the system. BPF LSM programs can be disabled at the boot time, 
-> which fits well in i_security. However, BPF tracing programs 
-> cannot be disabled at boot time (even we change the code to 
-> make it possible, we are not likely to disable BPF tracing). 
-> IOW, as long as CONFIG_BPF_SYSCALL is enabled, we expect some 
-> BPF tracing programs to load at some point of time, and these 
-> programs may use BPF inode storage. 
-> 
-> Therefore, with CONFIG_BPF_SYSCALL enabled, some extra memory 
-> always will be attached to i_security (maybe under a different 
-> name, say, i_generic) of every inode. In this case, we should 
-> really add i_bpf_storage directly to the inode, because another 
-> pointer jump via i_generic gives nothing but overhead. 
-> 
-> Does this make sense? Or did I misunderstand the suggestion?
 
-There is a colloquialism that seems relevant here: "Pick your poison".
+@kemeng, is this a normal behavior or an issue ?
 
-In the greater interests of the kernel, it seems that a generic
-mechanism for attaching per inode information is the only realistic
-path forward, unless Christian changes his position on expanding
-the size of struct inode.
+Thanks,
+Jim Zhao
 
-There are two pathways forward.
 
-1.) Attach a constant size 'blob' of storage to each inode.
-
-This is a similar approach to what the LSM uses where each blob is
-sized as follows:
-
-S = U * sizeof(void *)
-
-Where U is the number of sub-systems that have a desire to use inode
-specific storage.
-
-Each sub-system uses it's pointer slot to manage any additional
-storage that it desires to attach to the inode.
-
-This has the obvious advantage of O(1) cost complexity for any
-sub-system that wants to access its inode specific storage.
-
-The disadvantage, as you note, is that it wastes memory if a
-sub-system does not elect to attach per inode information, for example
-the tracing infrastructure.
-
-This disadvantage is parried by the fact that it reduces the size of
-the inode proper by 24 bytes (4 pointers down to 1) and allows future
-extensibility without colliding with the interests and desires of the
-VFS maintainers.
-
-2.) Implement key/value mapping for inode specific storage.
-
-The key would be a sub-system specific numeric value that returns a
-pointer the sub-system uses to manage its inode specific memory for a
-particular inode.
-
-A participating sub-system in turn uses its identifier to register an
-inode specific pointer for its sub-system.
-
-This strategy loses O(1) lookup complexity but reduces total memory
-consumption and only imposes memory costs for inodes when a sub-system
-desires to use inode specific storage.
-
-Approach 2 requires the introduction of generic infrastructure that
-allows an inode's key/value mappings to be located, presumably based
-on the inode's pointer value.  We could probably just resurrect the
-old IMA iint code for this purpose.
-
-In the end it comes down to a rather standard trade-off in this
-business, memory vs. execution cost.
-
-We would posit that option 2 is the only viable scheme if the design
-metric is overall good for the Linux kernel eco-system.
-
-> Thanks,
-> Song
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> With the strictlimit flag, wb_thresh acts as a hard limit in
+> balance_dirty_pages() and wb_position_ratio().  When device write
+> operations are inactive, wb_thresh can drop to 0, causing writes to be
+> blocked.  The issue occasionally occurs in fuse fs, particularly with
+> network backends, the write thread is blocked frequently during a period.
+> To address it, this patch raises the minimum wb_thresh to a controllable
+> level, similar to the non-strictlimit case.
+>
+> Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
+> ---
+> Changes in v2:
+> 1. Consolidate all wb_thresh bumping logic in __wb_calc_thresh for consistency;
+> 2. Replace the limit variable with thresh for calculating the bump value,
+> as __wb_calc_thresh is also used to calculate the background threshold;
+> 3. Add domain_dirty_avail in wb_calc_thresh to get dtc->dirty.
+> ---
+>  mm/page-writeback.c | 48 ++++++++++++++++++++++-----------------------
+>  1 file changed, 23 insertions(+), 25 deletions(-)
+>
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index e5a9eb795f99..8b13bcb42de3 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
+>                                     unsigned long thresh)
+>  {
+>       struct wb_domain *dom = dtc_dom(dtc);
+> +     struct bdi_writeback *wb = dtc->wb;
+>       u64 wb_thresh;
+> +     u64 wb_max_thresh;
+>       unsigned long numerator, denominator;
+>       unsigned long wb_min_ratio, wb_max_ratio;
+>
+> @@ -931,11 +933,27 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
+>       wb_thresh *= numerator;
+>       wb_thresh = div64_ul(wb_thresh, denominator);
+>
+> -     wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
+> +     wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
+>
+>       wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
+> -     if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
+> -             wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+> +
+> +     /*
+> +      * It's very possible that wb_thresh is close to 0 not because the
+> +      * device is slow, but that it has remained inactive for long time.
+> +      * Honour such devices a reasonable good (hopefully IO efficient)
+> +      * threshold, so that the occasional writes won't be blocked and active
+> +      * writes can rampup the threshold quickly.
+> +      */
+> +     if (thresh > dtc->dirty) {
+> +             if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
+> +                     wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
+> +             else
+> +                     wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
+> +     }
+> +
+> +     wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+> +     if (wb_thresh > wb_max_thresh)
+> +             wb_thresh = wb_max_thresh;
+>
+>       return wb_thresh;
+>  }
+> @@ -944,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
+>  {
+>       struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
+>
+> +     domain_dirty_avail(&gdtc, true);
+>       return __wb_calc_thresh(&gdtc, thresh);
+>  }
+>
+> @@ -1120,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
+>       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>               long long wb_pos_ratio;
+>
+> -             if (dtc->wb_dirty < 8) {
+> -                     dtc->pos_ratio = min_t(long long, pos_ratio * 2,
+> -                                        2 << RATELIMIT_CALC_SHIFT);
+> -                     return;
+> -             }
+> -
+>               if (dtc->wb_dirty >= wb_thresh)
+>                       return;
+>
+> @@ -1196,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
+>        */
+>       if (unlikely(wb_thresh > dtc->thresh))
+>               wb_thresh = dtc->thresh;
+> -     /*
+> -      * It's very possible that wb_thresh is close to 0 not because the
+> -      * device is slow, but that it has remained inactive for long time.
+> -      * Honour such devices a reasonable good (hopefully IO efficient)
+> -      * threshold, so that the occasional writes won't be blocked and active
+> -      * writes can rampup the threshold quickly.
+> -      */
+> -     wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
+>       /*
+>        * scale global setpoint to wb's:
+>        *      wb_setpoint = setpoint * wb_thresh / thresh
+> @@ -1459,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
+>        * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
+>        * Hence, to calculate "step" properly, we have to use wb_dirty as
+>        * "dirty" and wb_setpoint as "setpoint".
+> -      *
+> -      * We rampup dirty_ratelimit forcibly if wb_dirty is low because
+> -      * it's possible that wb_thresh is close to zero due to inactivity
+> -      * of backing device.
+>        */
+>       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>               dirty = dtc->wb_dirty;
+> -             if (dtc->wb_dirty < 8)
+> -                     setpoint = dtc->wb_dirty + 1;
+> -             else
+> -                     setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+> +             setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+>       }
+>
+>       if (dirty < setpoint) {
+> --
+> 2.20.1
 
