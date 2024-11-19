@@ -1,213 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-35162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D73C9D1C07
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 00:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B92A9D1C24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 01:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E64D28174B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2024 23:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF43D282672
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2024 00:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E9B1E765D;
-	Mon, 18 Nov 2024 23:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB2F11CA0;
+	Tue, 19 Nov 2024 00:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Z+7SCZDs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ANLnZlVO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjepgakh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DD913DBBE;
-	Mon, 18 Nov 2024 23:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB03C8FF;
+	Tue, 19 Nov 2024 00:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731973679; cv=none; b=nxtO5rDKS7/GYIi85/1hQOdh4sz2dXBZuLqWkC9SzdRX6Kvei4GEhez3F/l+mDVL8EFsg2aDy1+3CDZJyErOPRI+szkQWnsCn2f+rpt3KjUEbTNI6++inejHhGDSzhMAYUhLGqUJUCYZ+A7ykeeli6Rp3T0zxbX0Fo94IlWBp20=
+	t=1731975063; cv=none; b=s1V5Can8ASw0xOvpLRu6oVy5pXJF1S3NgO8jvmnwET347SB15NgZqkLEzEgr8FXfALYjF533w3JP3sCcWg3inZKU6us3yGCYCmAZ0PmVhdUzKmJQxfiY3cPp51sx9m7ni2VanZGEMTPUZkyo5M57WXcr2+hR5SkJN3AqMsfXbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731973679; c=relaxed/simple;
-	bh=iBVHg3IEafuD73dUUWQ5EJGeH3XPwxwEpn7KIG4MR3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tYFHYW0hXCvQ56Ainfl94JNVwrPQ+tspNVrq1t39UGZNqa0L29K7/0TWKxxA2YAOo6Bk9OmlBCdzWHazu6oWvSYslDnmTifiQzPkVAmIfsTRCNdn3N9IIBvfVhE7YPkPay6g+69/hlsNTf1jm4VPOTSHVvf+4bb5QwIIuG+vg7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Z+7SCZDs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ANLnZlVO; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id A2C341140196;
-	Mon, 18 Nov 2024 18:47:55 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 18 Nov 2024 18:47:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1731973675;
-	 x=1732060075; bh=yiuwHaKdpl+mqeAJRbEzrwIkYzdksmHGumHpEu9Fjcc=; b=
-	Z+7SCZDsUYXIZqGn2ewETSfSIr+rrKrBc/mqdMtQ6/4Q/NFan7cTcXsVus5qlwVH
-	I/ce5hf/FS/0Cb+0bqht/rmBRD+l32eoLLht5DCnR7O9xbKUovW3XKOgtdo4od88
-	6TNymwCX8v28BhsB8qORuCSr3iFKvGRknfHTArCH2a03H84FqsNYmIyPJYujvdbA
-	JQzKNZFy8uB4D2GERhrHvQl6YJrbceD9dSPX5ikuuSdhmEn5G48kpedi2BHq3vDP
-	ZvTx2EVZo1Ng5lNRirI5x4waeAv2pVUNhqh9kAkLixZhzI3DhquIy2Uhj5yjmOHA
-	+gLPXpoydv2yKrJd9iJRIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731973675; x=
-	1732060075; bh=yiuwHaKdpl+mqeAJRbEzrwIkYzdksmHGumHpEu9Fjcc=; b=A
-	NLnZlVO6mysEa6KUj+OISzrjPsH1h9NxFRY7H+ODp4y3nHj2YOlH/AlNCWK0GE3L
-	K0C+s504jzzEaFs87wMQC28oFnpPhLVMcCvy8isUR93zoMhg1DQl8hYoERIq28y7
-	2T5aVplN9X52x06verQR/GwW1b1ufXaElifBwcZpDbTTOUReNu8F87r8sf/r5Qlc
-	BQ48t5aFSEfyNvpbth9FpoMl5NOJt26WcHEISzPffKjWodJdZRhIk+0Hvhly6/sx
-	rQahrhA9aniBuZo+eIKPz+zENVXSnC/LHkoIEn8C3GiaHwHwlVdCkorxaA+7lUTA
-	tXT1SMwvE7FDwbP2g9rwA==
-X-ME-Sender: <xms:KtI7Z5Gs4Fl-wkopYptinfjuRVo0hSxD3ETR1r0ggnwgfTvspLqOdA>
-    <xme:KtI7Z-XbVTt0TBtHmPWzQOQoelUpxPeJp1IRsGj0cE5KLiH3Zwl6kmWFUmr7NUdpR
-    2erggvyW_DJB-4t>
-X-ME-Received: <xmr:KtI7Z7K2mqvxVoRU2k9pGMPiH0uNphFLZGCxZ_HFEwydselG3-7XZF4su1Y_Dgzl1cOsTAWYlkizgTZCQc2zUOotdbgapH7Ioj3BWN_UxL3ou2wGG_0_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfedugddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
-    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
-    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevgfeukedtfeeugfek
-    ueeikeeileejheffjeehleduieefteeufefhteeuhefhfeenucffohhmrghinhepkhgvrh
-    hnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsggprh
-    gtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgv
-    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrthesug
-    gunhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghp
-    thhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegrshhmlhdrshhilh
-    gvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhgsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghn
-    uggrrdgtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:KtI7Z_Eh_x3nC_u1i514j91XNkyG8sPPosoSEh5gF6zKA6JMm-ryZw>
-    <xmx:KtI7Z_W9j4JjXH2C25i8yRBcT1lw6UKzJ20s44TA0IjGlI_bS2P8og>
-    <xmx:KtI7Z6OboNCUHWpRkqt1tsFSzTyZxfX_i6PBEUExqt8e6g4U8eazBg>
-    <xmx:KtI7Z-1HGGcyxs3kXmxoUjJvzHOKsrfzo1nNMhqu3VllZ1A_mEzjYA>
-    <xmx:K9I7Z4sdynvwiWgdEVYlZyQNDzJB1TRe3OPWfqSU4baAGPfJb44re2rR>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Nov 2024 18:47:52 -0500 (EST)
-Message-ID: <19af894d-d5ac-4fcf-8fa1-b387c354c669@fastmail.fm>
-Date: Tue, 19 Nov 2024 00:47:51 +0100
+	s=arc-20240116; t=1731975063; c=relaxed/simple;
+	bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZcB3ExZftVJaHUnSHx+jmxXYcembklgZVVwpzl5qE3elWzi3apMHb6XvP3MQOFAu9NbPYWAnKEhTxbKAOPUMh0rKNnCYb5DyNRDtaivLEsFw1dDFJeOVKzKFwAW0qJhyoj+OQpay6vFZ8ybYITXUPZZ/hvN5V8hZka1dn9CLDsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjepgakh; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so22345495e9.3;
+        Mon, 18 Nov 2024 16:11:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731975060; x=1732579860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+        b=Yjepgakh+KmMbwuwQYtXE3q7MMM98AcaavdVH1OBm/LcQqaRfl73El22AOrKhdnFgK
+         /bMD4s2G1XCkrB0BnpCSABJsv7MaFHpw93RXM3s3B5gJlYc3BOrCWKnhf9xsu/uQEMVV
+         jkEw7U4GpRd4DT0BBYXmKbLGgCdodKOE35tyfrFV9YWsIyfz487+9XszaBEwPXGtm6kk
+         WvF/JFOZrZxo0QD/OeIBygjpInnfevCP76pczExNZuxZxyXif4qBzVyx61ILmM5SIvvG
+         adGimucUx095tceOXBOtsK1NM7kTn8zKXywc9mwC8iXF/vlCFdUYx4nm5muaYuO7Pxa5
+         rxeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731975060; x=1732579860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+        b=RT6uTcYOC7qlKJw8R9KLLb0Q5waawQwPuD51fLoZGtPPN62O7/xLpalUFjgVtEFwFh
+         Tuhkc9FP4p2i7jq8vFiTYOA3Tddu9TAOWgcmzkAdbW7V7SpPxQYQKjkqYo+iJAvIoOwI
+         suXPSR26JqzjusciEo4EPOHxGIrxkn0j54LZV96er0RLbKkJqJ3StUjKTQYJYPljEWYb
+         Yiqqhjap56vj2Q09b9ZPvH/2VIaOUzJSCN8+z7mjSv5unfbEl3TxTHBCaGCwy44MdsGL
+         imcX1Q51Y7Cgwqzp7H7xMJj6gIM/9vKomMY46n/yrbb83zeAiAGEFvjYZgje3PMvkA4z
+         tEyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS01atyBuS25m80H6QcHoN6qNybWitp2NQdhierPJKDdqqqMjiJ4zbjHxHG3R8MM+GAxFk8OS2tf5uIim2@vger.kernel.org, AJvYcCV2H9I/Le02Q58EdE6ZRQHj34DevjvWwOuLJsd0AQG0YBPR7gRDWspA2vq93wsoB+KCRFen/5ffjwW4zDAWQCgziLzOQiDX@vger.kernel.org, AJvYcCVeMKhkc2DmFF+SkK82v0fRbYtNL4VKckzYILWt+it0mfCn4ztj5tYGsJifhzISMM/BqJM=@vger.kernel.org, AJvYcCWsIROZe5XHMCcqQd1KyAAhZKXJlkXqh1gs4VmJvHK+BJh2SGWqwWdhS27t7I2t0K2KtjTl+b6NeUdDgdMzyA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Yigvyh+I3fVxQwopI8kfXFbGIWeRCbnoVsf9mYJjXnBeMjZt
+	Z/PbWyLkjRzoezw6WWya+iM2VR8nX5Ac/WCPIGdPVBHAJ6ZFGjbF0FlYpB1TZdt3pJnJnaM9wMD
+	PUW+seoQ23wNhrdb8UwqflLgbIQ8=
+X-Google-Smtp-Source: AGHT+IFbKcAGeX9oW64nBsmy9scvBQQTJAqWNC31VE6QpX+sDVYU8zY8RFHlGMnLhwshWBMEpIEUlBFKw7tTwUJwZzo=
+X-Received: by 2002:a05:6000:71d:b0:37d:45de:9dfb with SMTP id
+ ffacd0b85a97d-38225acd2e4mr10716132f8f.46.1731975059636; Mon, 18 Nov 2024
+ 16:10:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v5 15/16] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
-To: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
- David Wei <dw@davidwei.uk>, bernd@bsbernd.com
-References: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com>
- <20241107-fuse-uring-for-6-10-rfc4-v5-15-e8660a991499@ddn.com>
- <CAJnrk1YuoiWzq=ykn9wFKG3RZYdFm-AzSiXfoP=Js0S-P7eKZA@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1YuoiWzq=ykn9wFKG3RZYdFm-AzSiXfoP=Js0S-P7eKZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
+ <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
+ <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
+ <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
+ <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com> <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
+ <968F7C58-691D-4636-AA91-D0EA999EE3FD@fb.com> <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
+In-Reply-To: <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 18 Nov 2024 16:10:48 -0800
+Message-ID: <CAADnVQJtW=WBOmxXjfL2sWsHafHJjYh4NCWXT5Gnxk99AqBfBw@mail.gmail.com>
+Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
+ BPF based fanotify fastpath handler
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 18, 2024 at 12:51=E2=80=AFPM Song Liu <songliubraving@meta.com>=
+ wrote:
+>
+>
+>
+> > On Nov 15, 2024, at 1:05=E2=80=AFPM, Song Liu <songliubraving@meta.com>=
+ wrote:
+>
+> [...]
+> >
+> >>
+> >> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+> >>
+> >> is a pretty long path to call bpf prog and
+> >> preparing a giant 'struct fanotify_fastpath_event'
+> >> is not going to fast either.
+> >>
+> >> If we want to accelerate that with bpf it needs to be done
+> >> sooner with negligible overhead.
+> >
+> > Agreed. This is actually something I have been thinking
+> > since the beginning of this work: Shall it be fanotify-bpf
+> > or fsnotify-bpf. Given we have more materials, this is a
+> > good time to have broader discussions on this.
+> >
+> > @all, please chime in whether we should redo this as
+> > fsnotify-bpf. AFAICT:
+> >
+> > Pros of fanotify-bpf:
+> > - There is existing user space that we can leverage/reuse.
+> >
+> > Pros of fsnotify-bpf:
+> > - Faster fast path.
+> >
+> > Another major pros/cons did I miss?
+>
+> Adding more thoughts on this: I think it makes more sense to
+> go with fanotify-bpf. This is because one of the benefits of
+> fsnotify/fanotify over LSM solutions is the built-in event
+> filtering of events. While this call chain is a bit long:
+>
+> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+>
+> There are built-in filtering in fsnotify() and
+> send_to_group(), so logics in the call chain are useful.
 
+fsnotify_marks based filtering happens in fsnotify.
+No need to do more indirect calls to get to fanotify.
 
-On 11/19/24 00:30, Joanne Koong wrote:
-> On Thu, Nov 7, 2024 at 9:04 AM Bernd Schubert <bschubert@ddn.com> wrote:
->>
->> When the fuse-server terminates while the fuse-client or kernel
->> still has queued URING_CMDs, these commands retain references
->> to the struct file used by the fuse connection. This prevents
->> fuse_dev_release() from being invoked, resulting in a hung mount
->> point.
->>
->> This patch addresses the issue by making queued URING_CMDs
->> cancelable, allowing fuse_dev_release() to proceed as expected
->> and preventing the mount point from hanging.
->>
->> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->> ---
->>  fs/fuse/dev_uring.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++-----
->>  1 file changed, 70 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->> index 6af515458695ccb2e32cc8c62c45471e6710c15f..b465da41c42c47eaf69f09bab1423061bc8fcc68 100644
->> --- a/fs/fuse/dev_uring.c
->> +++ b/fs/fuse/dev_uring.c
->> @@ -23,6 +23,7 @@ MODULE_PARM_DESC(enable_uring,
->>
->>  struct fuse_uring_cmd_pdu {
->>         struct fuse_ring_ent *ring_ent;
->> +       struct fuse_ring_queue *queue;
->>  };
->>
->>  /*
->> @@ -382,6 +383,61 @@ void fuse_uring_stop_queues(struct fuse_ring *ring)
->>         }
->>  }
->>
->> +/*
->> + * Handle IO_URING_F_CANCEL, typically should come on daemon termination
->> + */
->> +static void fuse_uring_cancel(struct io_uring_cmd *cmd,
->> +                             unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +       struct fuse_uring_cmd_pdu *pdu = (struct fuse_uring_cmd_pdu *)cmd->pdu;
->> +       struct fuse_ring_queue *queue = pdu->queue;
->> +       struct fuse_ring_ent *ent;
->> +       bool found = false;
->> +       bool need_cmd_done = false;
->> +
->> +       spin_lock(&queue->lock);
->> +
->> +       /* XXX: This is cumbersome for large queues. */
->> +       list_for_each_entry(ent, &queue->ent_avail_queue, list) {
->> +               if (pdu->ring_ent == ent) {
->> +                       found = true;
->> +                       break;
->> +               }
->> +       }
-> 
-> Do we have to check that the entry is on the ent_avail_queue, or can
-> we assume that if the ent->state is FRRS_WAIT, the only queue it'll be
-> on is the ent_avail_queue? I see only one case where this isn't true,
-> for teardown in fuse_uring_stop_list_entries() - if we had a
-> workaround for this, eg having some teardown state signifying that
-> io_uring_cmd_done() needs to be called on the cmd and clearing
-> FRRS_WAIT, then we could get rid of iteration through ent_avail_queue
-> for every cancelled cmd.
+I would add the bpf struct_ops hook right before send_to_group
+or inside of it.
+Not sure whether fsnotify_group concept should be reused
+or avoided.
+Per inode mark/mask filter should stay.
 
+> struct fanotify_fastpath_event is indeed big. But I think
+> we need to pass these information to the fastpath handler
+> either way.
 
-I'm scared that we would run into races - I don't want to access memory
-pointed to by pdu->ring_ent, before I'm not sure it is on the list.
-Remember the long discussion Miklos and I had about the tiny 'tag'
-variable and finding requests using existing hash lists [0] ? 
-Personally I would prefer an array of 
+Disagree.
+That was the old way of hooking bpf bits in.
+uapi/bpf.h is full of such "context" structs.
+xpd_md, bpf_tcp_sock, etc.
+They pack fields into one struct only because
+old style bpf has one input argument: ctx.
+struct_ops doesn't have this limitation.
+Pass things like path/dentry/inode/whatever pointers directly.
+No need to pack into fanotify_fastpath_event.
 
-struct queue_entries {
-	struct fuse_ring_ent *ring_ent;
-	bool valid;
-}
+> Overall, I think current fastpath design makes sense,
+> though there are things we need to fix (as Amir and Alexei
+> pointed out). Please let me know comments and suggestions
+> on this.
 
-
-in struct fuse_ring_queue {
-    ...
-    struct queue_entries *entries[]
-}
-
-And that array would only get freed on queue destruction. Besides
-avoiding hash lists, it would also allow to use 'valid' to know if
-we can access the ring_entry and then check the state.
-
-Thanks,
-Bernd
-
-
-[0] https://lore.kernel.org/linux-fsdevel/CAJfpegu_UQ1BNp0UDHeOZFWwUoXbJ_LP4W=o+UX6MB3DsJbH8g@mail.gmail.com/T/#t
+On one side you're arguing that extra indirection for
+inode local storage due to inode->i_secruity is needed
+for performance,
+but on the other side you're not worried about the deep
+call stack of fsnotify->fanotify and argument packing
+which add way more overhead than i_security hop.
 
