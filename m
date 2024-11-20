@@ -1,334 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-35364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46CF9D43A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 22:53:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843099D43E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 23:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527991F22038
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 21:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45557283E14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 22:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92BD1AF0A1;
-	Wed, 20 Nov 2024 21:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63211C1F12;
+	Wed, 20 Nov 2024 22:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EY8vvy7P"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hjwf6T9L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7824113D897
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 21:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5361F1F931
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 22:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732139616; cv=none; b=L2EomEnSCE7HQYzdu81ulSXjADdpiJayrJX5BvIAfU+sCFyHP3uNruyGUHVeuGrZy04BXFprjsiQG4tEMuVxOwGHbsykKcuJdA49yDjb3UTztGYI8yCNYcmkcOG1BnEqsVqUGRpQ7pDWTdT7M27wZRD58QisjCyY3o9xT7Am0Cs=
+	t=1732141271; cv=none; b=esvdV5D3x7H3MW+SDVFaQEr11k2nIxrkRHyoRJ9SB6VGlne+vHDtbL85sxx7l/9IZAO5Ywz5Aw8qOmi/JPOjSIFzdaj2kXypdBzEs1DIIhnzyW86kzwvMocSmr2bWaVp89+QypajP+xPfZdegC4dtN/tDBJWoe1BmqHivXPrjL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732139616; c=relaxed/simple;
-	bh=Cd5K41KkG5+C43a8cZpPBG6Tlh45gcAD91ytZYyWrd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWVG/bxPlGkKLKkvrXsmURqQ6GtzsmdwwOblthcMYcsupsXDCVYW/LLpBnW3oU//dwCfCkrLUz3wfwkYgfDvswZTZN+njMDZiN2ekIl+ItMLonUUhXpNwV5/EpT5Zai1xmtTYMJxvmCJ+lUD00AXmTfV3rei4fYd1duAibpaM/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EY8vvy7P; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-514589ac56dso123308e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 13:53:34 -0800 (PST)
+	s=arc-20240116; t=1732141271; c=relaxed/simple;
+	bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FnMGAsEKg2cgQ18DUGWsT8nfInDGCgKFNnB1ZMkN0ww//Q+Is4oEBAUaJ0aLyA4VOylkc6uAIyU53tCtsjBip0gLMcRKo4tb9KPeDloLi4oyQar8GAYC7i08cu8D4B6Sv2MaUSQ1PjjJJlvBArragqluTvk20VMAbmf2ptYhoVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hjwf6T9L; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83ab21c26f1so10803139f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 14:21:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732139613; x=1732744413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FNqRnLkdM/MKN7Sbep9kEEBFrTQCIKbfDVRooqcVko8=;
-        b=EY8vvy7P0md9LeLcYgA6lfFDtZQTCLgmTsVvH7dsqRUBnvINkg4V1t7+wZ2clt9V5t
-         nZCV5bWwRySSf2DELZKbaHOFujOx2GZK00xKhd8qOgVgA89vvCi7IkTm+GG3++D3KqDJ
-         HtcTdttHcZ8mJp6I3MPWJi+Rak8dHJvd2EGIoTPv3lVv6UeoFJtSsCwaelJcsEfVPlUL
-         A5J1e2hPTIT/sl26I9tMkCPhXdSeNqUE8qJ3tSGJFGr0gNMA8LGyJVURht3jcgzRkeuZ
-         +kKHld39bfbwI1BoGingz94GSFWDhTb0TbCkasTT16c2S8jA3LLNB6rx30cE1I0s6dbx
-         gICA==
+        d=linuxfoundation.org; s=google; t=1732141268; x=1732746068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+        b=hjwf6T9LG9TzzRypZ7QQuwISSNhMxVFW8OjiLPdexCtHHIu2osbjXBqWZZV5bFmx0B
+         EzxyPt8YgvKxopbhQdtolmDNgpwF+5U43i/rQcyQwKZ0hBs8x3JBlf/C0En6GPtFxUhH
+         iYUYkAp7P6qUNpGfZ/46wAQCeeqH4vznCuDfw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732139613; x=1732744413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FNqRnLkdM/MKN7Sbep9kEEBFrTQCIKbfDVRooqcVko8=;
-        b=L+dOQNGdt9YU3swK+QV3GYkH/bxIod1Olp8IzCeFVRuVM6Q9lBUWLVDqR4oMN0c77E
-         Kyc7m4dZbC0k705wvDQy0CDchCUY8IwjvvoRrMrucsdhmFSDHkdTopbtoImDKMjRC1uz
-         X5A8PC7SqQwThMNb0MYL5SOylJWR7/aPJ6lRWCXzuQl1FcCUzLPnyrmTHOpUqkLPNSsC
-         kf3TSbF5t/ue9ZfD/PoUvg9L7uPUYt4FBhMktFPsCRsn3+Ar/Go21gtS9Rb35IzJwp/2
-         2yPGkKqq1th0XLbigM8nixxNjnK3OszAQZX/P70M4yRM+n5guEivvK1H59eWQ69tKu6K
-         F4+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3EP4SjyVlQGScxEfIxC0/u6ux/JUI2zpc5QU4CCiKHaFyFLsw6H1PWBHWjrVlgIXluu4mSv22xu+QvCP2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKAjsZm5j3UQMzD9uzlvmjOGApYCZPQBszI1gRH+sxH855j+82
-	R4xVMWfkXGU8mHkhOp7xr1WrECbE7q3aq+xG8D4ez8sHpJceEOqHXAnyit67T8UA/7HNgRRoHGw
-	ccl6+t67dgSRX/IYNApgS6nnqz/U=
-X-Google-Smtp-Source: AGHT+IFSgJi24wLaX+gTeo0PZKH1fBVzpcPBaSH3lmAcHsg4m1cvDTt/W9SIKJP9VDnUS2p7iECfvEcaPEq44ffTg3w=
-X-Received: by 2002:a05:6102:3ec4:b0:4ad:48f4:8be1 with SMTP id
- ada2fe7eead31-4adaf60e2d5mr4213082137.25.1732139613318; Wed, 20 Nov 2024
- 13:53:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732141268; x=1732746068;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+        b=i0ws0FIbAaUGDRftwYdfcE9+EiszK0wgaS2unH1dAy04N5PcZgRQJ4isENLHUlht/2
+         hRfkI4aNFEeRcNYUWGR5JRJIJhg4QBDO+CmJ5AiuPLAGFZeSrM0Rw4w1UFotnSpYr+n2
+         vXsr3hAiTcKgN0qkNyLNmseJHRTAcqmZFFfGCyYwcsgy7fvBo+SR3jXHrn9yUIjsiySx
+         xQoXrYHMRrwlKlIwwdwvLOgJ4OK2QRSp7HHJglvym4oT34VgYirktacW/FShZm1/yQOT
+         r+X74hX+sfGqxSpJMqEPvVYCWowXc3FFfJT/jojBV/AvIgf2LYx12S6V5UNeUTB4K5Hb
+         K5Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnpk3A5lKLRgqn4uWifvNAwW65FURAR1eyIbPC77x5JsQ5dKgKgJe9Km3yeXsz0cfZaA+/1sAjxgU71CZ0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmRBDA3KhM2Vngxo5T7wcZBFSUnGmvfKDcwxS/BmawI2t6e4uw
+	A8jLAJj4U046dQyn7DEHhn65VcScvEqOibn5k02em5/BQ3njSw3E3KsMBKYjOZM=
+X-Google-Smtp-Source: AGHT+IFmwjcCHTD7M7msR+ZombMchwunGMPWFXdbv0JlxupApzrqgjgRYqau+Y+HPtOu4H5jYx5Agw==
+X-Received: by 2002:a05:6602:3423:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-83eb5f5de66mr521515639f.2.1732141268473;
+        Wed, 20 Nov 2024 14:21:08 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83e6e0ece8csm308117639f.41.2024.11.20.14.21.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:21:07 -0800 (PST)
+Message-ID: <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+Date: Wed, 20 Nov 2024 15:21:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115224459.427610-1-joannelkoong@gmail.com>
- <20241115224459.427610-6-joannelkoong@gmail.com> <cad4a8b3-8065-4187-875f-1810263b988c@linux.alibaba.com>
-In-Reply-To: <cad4a8b3-8065-4187-875f-1810263b988c@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 20 Nov 2024 13:53:22 -0800
-Message-ID: <CAJnrk1aiNZM_JhCwNX+XCdBWsqWxujLi3sUYaQEuN-qnA2gneQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev, 
-	josef@toxicpanda.com, linux-mm@kvack.org, bernd.schubert@fastmail.fm, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+From: Shuah Khan <skhan@linuxfoundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+Content-Language: en-US
+In-Reply-To: <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 1:56=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
-> On 11/16/24 6:44 AM, Joanne Koong wrote:
-> > In the current FUSE writeback design (see commit 3be5a52b30aa
-> > ("fuse: support writable mmap")), a temp page is allocated for every
-> > dirty page to be written back, the contents of the dirty page are copie=
-d over
-> > to the temp page, and the temp page gets handed to the server to write =
-back.
-> >
-> > This is done so that writeback may be immediately cleared on the dirty =
-page,
-> > and this in turn is done for two reasons:
-> > a) in order to mitigate the following deadlock scenario that may arise
-> > if reclaim waits on writeback on the dirty page to complete:
-> > * single-threaded FUSE server is in the middle of handling a request
-> >   that needs a memory allocation
-> > * memory allocation triggers direct reclaim
-> > * direct reclaim waits on a folio under writeback
-> > * the FUSE server can't write back the folio since it's stuck in
-> >   direct reclaim
-> > b) in order to unblock internal (eg sync, page compaction) waits on
-> > writeback without needing the server to complete writing back to disk,
-> > which may take an indeterminate amount of time.
-> >
-> > With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigate=
-s
-> > the situations described above, FUSE writeback does not need to use
-> > temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
-> >
-> > This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
-> > and removes the temporary pages + extra copying and the internal rb
-> > tree.
-> >
-> > fio benchmarks --
-> > (using averages observed from 10 runs, throwing away outliers)
-> >
-> > Setup:
-> > sudo mount -t tmpfs -o size=3D30G tmpfs ~/tmp_mount
-> >  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=3D4=
- -o source=3D~/tmp_mount ~/fuse_mount
-> >
-> > fio --name=3Dwriteback --ioengine=3Dsync --rw=3Dwrite --bs=3D{1k,4k,1M}=
- --size=3D2G
-> > --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1 --directory=3D/roo=
-t/fuse_mount
-> >
-> >         bs =3D  1k          4k            1M
-> > Before  351 MiB/s     1818 MiB/s     1851 MiB/s
-> > After   341 MiB/s     2246 MiB/s     2685 MiB/s
-> > % diff        -3%          23%         45%
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  fs/fuse/file.c | 339 +++----------------------------------------------
-> >  1 file changed, 20 insertions(+), 319 deletions(-)
-> >
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index 88d0946b5bc9..56289ac58596 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -1172,7 +1082,7 @@ static ssize_t fuse_send_write_pages(struct fuse_=
-io_args *ia,
-> >       int err;
-> >
-> >       for (i =3D 0; i < ap->num_folios; i++)
-> > -             fuse_wait_on_folio_writeback(inode, ap->folios[i]);
-> > +             folio_wait_writeback(ap->folios[i]);
-> >
-> >       fuse_write_args_fill(ia, ff, pos, count);
-> >       ia->write.in.flags =3D fuse_write_flags(iocb);
-> > @@ -1622,7 +1532,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, s=
-truct iov_iter *iter,
-> >                       return res;
-> >               }
-> >       }
-> > -     if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
-> > +     if (!cuse && filemap_range_has_writeback(mapping, pos, (pos + cou=
-nt - 1))) {
-> >               if (!write)
-> >                       inode_lock(inode);
-> >               fuse_sync_writes(inode);
-> > @@ -1825,7 +1735,7 @@ static void fuse_writepage_free(struct fuse_write=
-page_args *wpa)
-> >               fuse_sync_bucket_dec(wpa->bucket);
-> >
-> >       for (i =3D 0; i < ap->num_folios; i++)
-> > -             folio_put(ap->folios[i]);
-> > +             folio_end_writeback(ap->folios[i]);
->
-> I noticed that if we folio_end_writeback() in fuse_writepage_finish()
-> (rather than fuse_writepage_free()), there's ~50% buffer write
-> bandwridth performance gain (5500MB -> 8500MB)[*]
->
-> The fuse server is generally implemented in multi-thread style, and
-> multi (fuse server) worker threads could fetch and process FUSE_WRITE
-> requests of one fuse inode.  Then there's serious lock contention for
-> the xarray lock (of the address space) when these multi worker threads
-> call fuse_writepage_end->folio_end_writeback when they are sending
-> replies of FUSE_WRITE requests.
->
-> The lock contention is greatly alleviated when folio_end_writeback() is
-> serialized with fi->lock.  IOWs in the current implementation
-> (folio_end_writeback() in fuse_writepage_free()), each worker thread
-> needs to compete for the xarray lock for 256 times (one fuse request can
-> contain at most 256 pages if FUSE_MAX_MAX_PAGES is 256) when completing
-> a FUSE_WRITE request.
->
-> After moving folio_end_writeback() to fuse_writepage_finish(), each
-> worker thread needs to compete for fi->lock only once.  IOWs the locking
-> granularity is larger now.
->
+On 11/20/24 14:37, Shuah Khan wrote:
+> On 11/20/24 14:20, Kent Overstreet wrote:
+>> On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
+>>> On 11/20/24 13:34, Kent Overstreet wrote:
+>>>> On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
+>>>>> On 9/2/24 03:51, Kent Overstreet wrote:
+>>>>>> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+>>>>>>> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+>>>>>>>> On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+>>>>>>>>> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+>>>>>>>>> [...]
+>>>>>>>>>> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+>>>>>>>>>> in the case of bugs, because that's going to be an improvement w.r.t.
+>>>>>>>>>> system robustness, in exactly the same way we don't use BUG_ON() if it's
+>>>>>>>>>> something that we can't guarantee won't happen in the wild - we WARN()
+>>>>>>>>>> and try to handle the error as best we can.
+>>>>>>>>>
+>>>>>>>>> We have discussed that in a different email thread. And I have to say
+>>>>>>>>> that I am not convinced that returning NULL makes a broken code much
+>>>>>>>>> better. Why? Because we can expect that broken NOFAIL users will not have a
+>>>>>>>>> error checking path. Even valid NOFAIL users will not have one because
+>>>>>>>>> they _know_ they do not have a different than retry for ever recovery
+>>>>>>>>> path.
+>>>>>>>>
+>>>>>>>> You mean where I asked you for a link to the discussion and rationale
+>>>>>>>> you claimed had happened? Still waiting on that
+>>>>>>>
+>>>>>>> I am not your assistent to be tasked and search through lore archives.
+>>>>>>> Find one if you need that.
+>>>>>>>
+>>>>>>> Anyway, if you read the email and even tried to understand what is
+>>>>>>> written there rather than immediately started shouting a response then
+>>>>>>> you would have noticed I have put actual arguments here. You are free to
+>>>>>>> disagree with them and lay down your arguments. You have decided to
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>> Yeah, enough of this insanity.
+>>>>>>>
+>>>>>>> so I do not think you are able to do that. Again...
+>>>>>>
+>>>>>> Michal, if you think crashing processes is an acceptable alternative to
+>>>>>> error handling _you have no business writing kernel code_.
+>>>>>>
+>>>>>> You have been stridently arguing for one bad idea after another, and
+>>>>>> it's an insult to those of us who do give a shit about writing reliable
+>>>>>> software.
+>>>>>>
+>>>>>> You're arguing against basic precepts of kernel programming.
+>>>>>>
+>>>>>> Get your head examined. And get the fuck out of here with this shit.
+>>>>>>
+>>>>>
+>>>>> Kent,
+>>>>>
+>>>>> Using language like this is clearly unacceptable and violates the
+>>>>> Code of Conduct. This type of language doesn't promote respectful
+>>>>> and productive discussions and is detrimental to the health of the
+>>>>> community.
+>>>>>
+>>>>> You should be well aware that this type of language and personal
+>>>>> attack is a clear violation of the Linux kernel Contributor Covenant
+>>>>> Code of Conduct as outlined in the following:
+>>>>>
+>>>>> https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+>>>>>
+>>>>> Refer to the Code of Conduct and refrain from violating the Code of
+>>>>> Conduct in the future.
+>>>>
+>>>> I believe Michal and I have more or less worked this out privately (and
+>>>> you guys have been copied on that as well).
+>>>
+>>> Thank you for updating us on the behind the scenes work between you
+>>> and Michal.
+>>>
+>>> I will make one correction to your statement, "you guys have been copied on
+>>> that as well" - which is inaccurate. You have shared your email exchanges
+>>> with Michal with us to let us know that the issue has been sorted out.
+>>
+>> That seems to be what I just said.
+>>
+>>> You might have your reasons and concerns about the direction of the code
+>>> and design that pertains to the discussion in this email thread. You might
+>>> have your reasons for expressing your frustration. However, those need to be
+>>> worked out as separate from this Code of Conduct violation.
+>>>
+>>> In the case of unacceptable behaviors as defined in the Code of Conduct
+>>> document, the process is to work towards restoring productive and
+>>> respectful discussions. It is reasonable to ask for an apology to help
+>>> us get to the goal as soon as possible.
+>>>
+>>> I urge you once again to apologize for using language that negatively impacts
+>>> productive discussions.
+>>
+>> Shuah, I'd be happy to give you that after the discussion I suggested.
+>> Failing that, I urge you to stick to what we agreed to last night.
+The only thing we agreed upon is that you would respond the thread
+to update your sorting things out with Michal.
 
-Interesting! Thanks for sharing. Are you able to consistently repro
-these results and on different machines? When I run it locally on my
-machine using the commands you shared, I'm seeing roughly the same
-throughput:
+As for the discussion, I will repeat what I said in our conversation
+that the discussion will be lot more productive after making amends
+with the community. I stand by that assessment.
 
-Current implementation (folio_end_writeback() in fuse_writepage_free()):
-  WRITE: bw=3D385MiB/s (404MB/s), 385MiB/s-385MiB/s (404MB/s-404MB/s),
-io=3D113GiB (121GB), run=3D300177-300177msec
-  WRITE: bw=3D384MiB/s (403MB/s), 384MiB/s-384MiB/s (403MB/s-403MB/s),
-io=3D113GiB (121GB), run=3D300178-300178msec
+I will also repeat what I said that the discussion and debate is
+outside the scope of the current issue the Code of Conduct Committee
+is trying to resolve.
 
-fuse_end_writeback() in fuse_writepage_finish():
-  WRITE: bw=3D387MiB/s (406MB/s), 387MiB/s-387MiB/s (406MB/s-406MB/s),
-io=3D113GiB (122GB), run=3D300165-300165msec
-  WRITE: bw=3D381MiB/s (399MB/s), 381MiB/s-381MiB/s (399MB/s-399MB/s),
-io=3D112GiB (120GB), run=3D300143-300143msec
+I didn't pick up on your desire to apologize after the discussion in
+our conversation.
 
-I wonder if it's because your machine is so much faster that lock
-contention makes a difference for you whereas on my machine there's
-other things that slow it down before lock contention comes into play.
+Are you saying you will be happy to make amends with an apology after
+the discussion and debate?
 
-I see your point about why it would make sense that having
-folio_end_writeback() in fuse_writepage_finish() inside the scope of
-the fi->lock could make it faster, but I also could see how having it
-outside the lock could make it faster as well. I'm thinking about the
-scenario where if there's 8 threads all executing
-fuse_send_writepage() at the same time, calling folio_end_writeback()
-outside the fi->lock would unblock other threads trying to get the
-fi->lock and that other thread could execute while
-folio_end_writeback() gets executed.
-
-Looking at it some more, it seems like it'd be useful if there was
-some equivalent api to folio_end_writeback() that takes in an array of
-folios and would only need to grab the xarray lock once to clear
-writeback on all the folios in the array.
-
-When fuse supports large folios [*] this will help lock contention on
-the xarray lock as well because there'll be less folio_end_writeback()
-calls.
-
-I'm happy to move the fuse_end_writeback() call to
-fuse_writepage_finish() considering what you're seeing. 5500 Mb ->
-8800 Mb is a huge perf improvement!
-
-[*] https://lore.kernel.org/linux-fsdevel/20241109001258.2216604-1-joannelk=
-oong@gmail.com/
-
->
->
-> > @@ -2367,54 +2111,23 @@ static int fuse_writepages_fill(struct folio *f=
-olio,
-> >               data->wpa =3D NULL;
-> >       }
-> >
-> > -     err =3D -ENOMEM;
-> > -     tmp_folio =3D folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
-> > -     if (!tmp_folio)
-> > -             goto out_unlock;
-> > -
-> > -     /*
-> > -      * The page must not be redirtied until the writeout is completed
-> > -      * (i.e. userspace has sent a reply to the write request).  Other=
-wise
-> > -      * there could be more than one temporary page instance for each =
-real
-> > -      * page.
-> > -      *
-> > -      * This is ensured by holding the page lock in page_mkwrite() whi=
-le
-> > -      * checking fuse_page_is_writeback().  We already hold the page l=
-ock
-> > -      * since clear_page_dirty_for_io() and keep it held until we add =
-the
-> > -      * request to the fi->writepages list and increment ap->num_folio=
-s.
-> > -      * After this fuse_page_is_writeback() will indicate that the pag=
-e is
-> > -      * under writeback, so we can release the page lock.
-> > -      */
-> >       if (data->wpa =3D=3D NULL) {
-> >               err =3D -ENOMEM;
-> >               wpa =3D fuse_writepage_args_setup(folio, data->ff);
-> > -             if (!wpa) {
-> > -                     folio_put(tmp_folio);
-> > +             if (!wpa)
-> >                       goto out_unlock;
-> > -             }
-> >               fuse_file_get(wpa->ia.ff);
-> >               data->max_folios =3D 1;
-> >               ap =3D &wpa->ia.ap;
-> >       }
-> >       folio_start_writeback(folio);
->
-> There's also a lock contention for the xarray lock when calling
-> folio_start_writeback().
->
-> I also noticed a strange thing that, if we lock fi->lock and unlock
-> immediately, the write bandwidth improves by 5% (8500MB -> 9000MB).  The
-
-Interesting! By lock fi->lock and unlock immediately, do you mean
-locking it, then unlocking it, then calling folio_start_writeback() or
-locking it, calling folio_start_writeback() and then unlocking it?
-
-
-Thanks,
-Joanne
-
-> palce where to insert the "locking fi->lock and unlocking" actually
-> doesn't matter.  "perf lock contention" shows the lock contention for
-> the xarray lock is greatly alleviated, though I can't understand how it
-> is done quite well...
->
-> As the performance gain is not significant (~5%), I think we can leave
-> this stange phenomenon aside for now.
->
->
->
-> [*] test case:
-> ./passthrough_hp  --bypass-rw 2  /tmp /mnt
-> (testbench mode in
-> https://github.com/libfuse/libfuse/pull/807/commits/e83789cc6e83ca42ccc98=
-99c4f7f8c69f31cbff9
-> bypass the buffer copy along with the persistence procedure)
->
-> fio -fallocate=3D0 -numjobs=3D32 -iodepth=3D1 -ioengine=3Dsync -sync=3D0
-> --direct=3D0 -rw=3Dwrite -bs=3D1M -size=3D100G --time_based --runtime=3D3=
-00
-> -directory=3D/mnt/ --group_reporting --name=3DFio
-> --
-> Thanks,
-> Jingbo
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
