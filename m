@@ -1,105 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-35368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BA19D4454
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 00:12:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898E19D446D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 00:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527481F21B04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 23:12:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D06B23D4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 23:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6091BDA80;
-	Wed, 20 Nov 2024 23:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903C413BAF1;
+	Wed, 20 Nov 2024 23:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qkcRHLPP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HKrwqy09"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44342048
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 23:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AF913C3D3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 23:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732144337; cv=none; b=AwIT0eQ8sWssgyTye8HJWuwAkpSxyOZLr/otKCKyvl0rbtYrGob1Lbdk6mNOT5lEPFsW+fI2mot4rdlOmVumXTLwz0Z7mgucYg1bUfm9KK0PjgbKJLp3YaValQXJevZPdUg+Vt6ZqZGmS068wfFfF9zmncDWmgm8A14H/W+z+to=
+	t=1732144912; cv=none; b=FI4k6MyvuuukJS4SL1MYq5BUvDvudjGENLZICXdyTy/gvbhkB2rzRhcDEFL+s9CMGGjApZWVuN8MuYs7hUti45zqKGfb4TaJILrSmC2I1W/ECe5x4BjDcrforKICVPr2nRFbp25nTQfdCSe+XTT8GctqV4KSooKVIBv9KJ4YCnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732144337; c=relaxed/simple;
-	bh=x8HjiroxpsIYhVfoexyBukF6/dMPHY3yTGvhwTLtPGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwUwsfKBMBnBXmjVu93HNG0TFRAlYNw3yGS3q3nuFn4DomfX/6XcLgZgGPBX2fXEsf1q2F57H3mnihcg3XFhZZ1RaRMPmTxr+cR41wRPrEzDWsmbTZUlgHMvf4pmVaGw00ofjOgtzBp2MFtYvmROTcrzqRLwugHg2lxXr8OTHwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qkcRHLPP; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-211f1b2bf2bso29355ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 15:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732144335; x=1732749135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x8HjiroxpsIYhVfoexyBukF6/dMPHY3yTGvhwTLtPGQ=;
-        b=qkcRHLPP8S8S7w4JmZ7ARV5u8q1ncE2PvDvoAhBduj+1UvkBS6sry9vp6hapUld/EI
-         241wBtNXi9zg1YymLCIjS5LOyaSdEPQl2S1Tnn8HQhrLUg36n7K646vJ16/d8txrLeOk
-         25oG34zHOduCyvgfQWSw9zgtcim2fO2R3qhyE/LiEaCFzoMp41tCD2EWKq0OfGgU3jnS
-         Xo44JsvoyKzR/SQrShRhSsekaA9O8QbDWbQT/iJMrtC29TeNMnsjws7fOU1yQ2H0bK0o
-         M4C8n3bYw8ZV68WQxsd2Eq2TAr2tgbVPqWzm9aZ5F6CKw2SavHOUzDdUFeiordS0FVrW
-         oNmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732144335; x=1732749135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x8HjiroxpsIYhVfoexyBukF6/dMPHY3yTGvhwTLtPGQ=;
-        b=MF5M1zWz3Yffkvwk/Q4fWDx9TvcW89QYrBl4TJrt5UFPekiWuo8LZIYs/xOHHRQKnf
-         0HFfqOWB3W8Q+7sMkXg94qKP0JZUCo1qqw6jQcHudp8KjYbdeB7qZwFgs+71gMifJSyL
-         DOPwIRjnWyoQ1ENfeXLmm2EUH1pret2y6UY9Tku3hBH/0YSAH5Ki5dHiNWq7G6q9C4zF
-         bWvh3jooBOCPkLHvnzJJ00ZqO6RJlB3pV84RIbj5Ti2E+wU+SWB4v4a0f0zfbX/cRME9
-         1MadnxtvAF5Fx6EEQqLHAoTeNxRtXPv0BJhJuTDtV4H/XxWrgljthgnmhin7jH/lna0p
-         CQVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlS64rtDlnDb4SVBFTopoVWNyZZqozLgoAWFiKLbPgRVmX20abK+kL2oy4nyVz9xCZ9FzxL1tHXV2JWXTt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7BtvAVeJdJU5z66urZKdD663vKg6C6VD86H/FS5CPlwqO4eid
-	wcr/L8b/+UvtCOG0NP2zEdMq7w4lO3bAKf7FZeqAx+Mq6CAJ+rGRi6QRtbnx5GRGNRRe2sauOmc
-	0Cqp49ldOVAM5ub4XMjTUH1A4QVEk8kydnr6u
-X-Gm-Gg: ASbGncudLIJMg3o0hkbsJgKQ2M/MflrmDkrvTHIe0Qu6E4x+oQs3QxV8EuF63kxqWAT
-	PA15pOhQg18afehqNnxPDo//yMsrxQD4lRrq9d/jF+JBBHkF4yHkXMnUpp3s=
-X-Google-Smtp-Source: AGHT+IHllzdMFCX/RYl2KtmCvSHbJhx7iEOYFL56BaE8loYLrfNGhRx1//aKyRIuYiDsLRGb0J/wKReDd2pe3MAnsZw=
-X-Received: by 2002:a17:903:985:b0:20c:bb35:dafe with SMTP id
- d9443c01a7336-2128428b639mr1047155ad.0.1732144335092; Wed, 20 Nov 2024
- 15:12:15 -0800 (PST)
+	s=arc-20240116; t=1732144912; c=relaxed/simple;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/l5GzCQUAmEhEPUolPCnZsgnK93r37Y2fwLMxbDWNTFElKu5uO149r1M4zLX8eFmwZJWI/9sfA1Cexzsa3I5gOtuXXBlfeiMH2KxoNt5bsMuBT12tCZsODJ9Yzp3vKmPY4pgLwgwkISorA0omYc8Zm1D/uSTuxoI4A3Wu7tDzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HKrwqy09; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 18:21:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732144908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	b=HKrwqy09rx+v3St23VlrK6XlssnrZJ4sNXBHbXhKUzVhYaBvnvTAmeXFQY9KeRZ+PII+QN
+	HwPjeSSjpI8GuJ1gLIBH89oKKoVhUMw/npHWT80DDmWfRxoykto0sOpdAXNqtwVKmiZsQa
+	5tA3yCWmWNB79qvI+pkZza0c4Oh92NM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <3hzjgsbq4fjmo4fd3d7gmn6p4uhqw2plqwx3lgzymtlf7vbgzf@ql7ly575idde>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110152906.1747545-1-axboe@kernel.dk> <ZzI97bky3Rwzw18C@casper.infradead.org>
- <CAOUHufZX=fxTiKj20cft_Cq+6Q2Wo6tfq0HWucqsA3wCizteTg@mail.gmail.com>
- <ZzJ7obt4cLfFU-i2@casper.infradead.org> <CAOUHufadwDtw8rL76yay9m=KowPJQv67kx3hpEQ-KEYhxpdagw@mail.gmail.com>
-In-Reply-To: <CAOUHufadwDtw8rL76yay9m=KowPJQv67kx3hpEQ-KEYhxpdagw@mail.gmail.com>
-From: Yuanchu Xie <yuanchu@google.com>
-Date: Wed, 20 Nov 2024 15:11:58 -0800
-Message-ID: <CAJj2-QFworodFR0CE7FryJdKnv=2AEGbvJF=txZhdDPmFvaYsQ@mail.gmail.com>
-Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
-To: Yu Zhao <yuzhao@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 11, 2024 at 2:08=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> I was under the impression that our engineers took care of that. But
-> apparently it's still pending:
-> https://lore.kernel.org/linux-man/20230320222057.1976956-1-talumbau@googl=
-e.com/
->
-> Will find someone else to follow up on that.
->
+Lastly, the thing that motivated me to make an issue out of this was
+several recent complaints, by my funders, that it's gotten increasingly
+difficult to get work done on the lists lately without showing up at
+conferences and shmoozing with the right people. I've noticed that as
+well.
 
-Following up on this thread. Alejandro applied the manpage change for NOREU=
-SE.
+That's something we do need to address, and I see a common thread
+between that and dismissive/authoritarian behaviour, and I think those
+of us at the highest level (i.e. CoC board members) should be mindful of
+how we set the tone for everyone else.
 
-https://lore.kernel.org/linux-man/20241120104714.kobevbrggqo7urun@devuan/
+Yes, we're all Busy Important People (TM), but doing our jobs well
+requires us to engage well with people.
+
+I think that should be prioritized at least as much as "language". It's
+not just about what words we use to communicate, it's about whether
+we're able to communicate effectively or at all.
+
+Couple's therapists say they can tell in a few minutes if a relationship
+is worth salvaging or if it's beyond repair - and it comes down to if
+they come in displaying anger or dismissiventess. Anger can be worked
+through, dismissiveness means they no longer care.
+
+I find the same is true with engineers. When people are pissed off about
+something, that anger is often pointing to some important issue
+underneath that, and getting to the bottom of it is going to hava a big
+payoff. But when teams stop being able to work together - when people
+start getting silod, afraid to stick their head up - that's really bad.
+
+Vannevar Bush said that all he did was get people to talk to each other.
 
