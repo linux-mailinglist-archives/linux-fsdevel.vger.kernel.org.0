@@ -1,170 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-35341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342859D3FD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:14:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BEA9D3FDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94C82849AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097E01F22824
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7731420DD;
-	Wed, 20 Nov 2024 16:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659F014D439;
+	Wed, 20 Nov 2024 16:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="cdtUej7x"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IisjzLSh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6R5ZHaJW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IisjzLSh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6R5ZHaJW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9744D13E41A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 16:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194F713957C;
+	Wed, 20 Nov 2024 16:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119258; cv=none; b=EmYnt4Gt4r+NNWLWhOYVadPTas6ifX0hUkVx8FD55FvBAd8ka+em3PWzRU/rPZgz6GmBgF2Gf0vAd+mMnkdDCtq/bMVIPvO9EjdE+Aq7yH8WwB6mof4Lti5JL0ItPyW+IcExXSUSZFLNR9AvKBpCsTOuPibwzcEblyhIUuWXptQ=
+	t=1732119391; cv=none; b=H6n/83+GE7tmdIqmnutAW4uqV4cOgIATE/3XrCp3bjI6OhhO5G5yrJ6cOdD/3sNp99wVwGqbwsMcA3Vyl1HdkQ4INVKRKoXAfq3FCMjsRceSRARnQhhZBLoa/Z1H7rsUy8ui+rZQPeEqpkNNlqschJJXE2EedtbHHIRelZNavyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119258; c=relaxed/simple;
-	bh=g7QfRcSQn+gmJxBWhXW/TDF3sI8DjgoFIAHLcTGc4so=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUSugQTlvVAlYLmH5o4hCrekyTkLnwD9jb0c85I4IJc3WoSD7gMbjX6Y+bCa3qLHh5EVHSh23MLYmZzQdB9mDcrw0hFv8CDW2oHUVuzp8vGMGY9VbYKXVjwdPBwnRc1FSQYUg8sefrjY4qHTozTSO7JC/9XieEdZkAH6gxHXMZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=cdtUej7x; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b158542592so304683485a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 08:14:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1732119255; x=1732724055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=36mHAHuOoczvUZMevzRpdY4PbCa8tx9CNRg6h+RZgJg=;
-        b=cdtUej7x3IYT7y9XJ5WDfNS9BQ4CEugaJF8mLkReIuZbp5SQ/cK64/1lRDqsOpxXJh
-         Y8Ff8MiwLAO1wHoXCjkhaDeld6ozrWthThzAp+so1nL2OdjduAekmqw8OsIqhh41Jzai
-         ibnhz7uY0+tDvht+9a/2BttZjOLFPQ1avZApk899yvcXXedUBE3p7pVbDOtCsw6s/+Iz
-         duWxuy8NdbUiBfYvGo0HhnYCvH6vB9vyAu4HLJ7JbfePlXAaf+09m/GzcmXv7mXA9nLi
-         b03CrcZYUWBWHkCZr04GHkHYIfBBzxX0kbGb1aANjN16nwSLG/eN6ARZF9GZaeL/hVlY
-         SLnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119255; x=1732724055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=36mHAHuOoczvUZMevzRpdY4PbCa8tx9CNRg6h+RZgJg=;
-        b=RY9fPStVyiqmoegacnwVHgjbTmfE0sxmYb4lc5+9pzd+p+qtuWq4GjT21sqiJ7LyId
-         9k+V338jrV0Goa3BwfLumQkfO7NdalqYcF3Bik0Ajw80J+BNhd/fhluAgA6bhQdKinHy
-         9ZCay85DWHL4GIYqYe6APOaB2/Lzp8FWiV7OjkaSfTOXXtUperKZ73zCr10i+JZO9H/m
-         zF96IMx2spS1HYprVw78HdSZs3oUcJwiFFYYzOtsMHv5Lwojd8hbuSYnJRlw2b5xuc/A
-         Vxk6jVhagePzLnQ5IbLrbmoMAPp6W8IH6G43K9RXWgBfRxrnt0dhyAPVKAEwpjWHWkMn
-         gQYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLK4h63nJCPXstmo44nVnLfE08xUgI61+a44uwu2QvuNfpzoLWSVBG/Ms1T0EJS+u5YT3O/qjPaALN2yhK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcPeeWzT0YSMg4+U9vY0H++VkVS/ykxu51qjUDleq8xug7J8Jy
-	Su46YUbIUJl+adB0qmiPaxrNeHYfF+Q4IY9Gw5MJUUvDy1NqatR+hET2TjswWHmzY3mbKwBaC/C
-	YfM9G3IWnxeD+lr8Dt4KgekNB5uz1/wh7X25zJg==
-X-Google-Smtp-Source: AGHT+IFt7Yq3qdxAOZPq5rfspDx9bBIP2Xc48nqDhvTlFobjMOD2awIarz0pB2lJFk6Gsup7XNJxHXCOtbCvhDGq3MA=
-X-Received: by 2002:a05:622a:14d2:b0:458:5ed8:628 with SMTP id
- d75a77b69052e-464777e2232mr41870841cf.2.1732119255280; Wed, 20 Nov 2024
- 08:14:15 -0800 (PST)
+	s=arc-20240116; t=1732119391; c=relaxed/simple;
+	bh=2zJoHAyB8rvbnBz3xn6o2akF7IGLbhyjd5tgXI0WmMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdJqwuxjD3PEIeq30X8MwJHhQKhYe3h2HElN7xsffsMk/Q82mu40hY3TETo92VbOsU/n2Vwup1LlIwo88UFG4RwuVv2IApAAW/KwVJQBWw4+NRzJhlzIDZtSk3aO2ea6fJbdlhWLwlN0myFGIFucr8MhkUTYOlu0LBu/bn8SGVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IisjzLSh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6R5ZHaJW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IisjzLSh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6R5ZHaJW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BF2C219B3;
+	Wed, 20 Nov 2024 16:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732119388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz13sx0cDR8noJSoNQ/P4iPjmJ9JKdZOk5KjfUWLOnk=;
+	b=IisjzLShbwz7Pj1uEHoXXbbKY/Uieu+EWXzK2LpFMn4x55huJksMH4KvC7c+Np7thb9Xr1
+	fyflW0FGhu7K87I8XIMxRAcsmSwUZuQIfOZYJcuzS0Y8Duqb9zOTXRhBJpNGObZqt55a5v
+	moGTA+2Dl+1jTxPMDLtVPvKuuVxBBVs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732119388;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz13sx0cDR8noJSoNQ/P4iPjmJ9JKdZOk5KjfUWLOnk=;
+	b=6R5ZHaJWwGwfgTvxo4AQbJvD7X9Zi+P7MjsUD+TAY0+NTfvSIhPtg1ebrUKTKC/8WB/xup
+	sy6+m4iFeMkFt3CQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732119388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz13sx0cDR8noJSoNQ/P4iPjmJ9JKdZOk5KjfUWLOnk=;
+	b=IisjzLShbwz7Pj1uEHoXXbbKY/Uieu+EWXzK2LpFMn4x55huJksMH4KvC7c+Np7thb9Xr1
+	fyflW0FGhu7K87I8XIMxRAcsmSwUZuQIfOZYJcuzS0Y8Duqb9zOTXRhBJpNGObZqt55a5v
+	moGTA+2Dl+1jTxPMDLtVPvKuuVxBBVs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732119388;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz13sx0cDR8noJSoNQ/P4iPjmJ9JKdZOk5KjfUWLOnk=;
+	b=6R5ZHaJWwGwfgTvxo4AQbJvD7X9Zi+P7MjsUD+TAY0+NTfvSIhPtg1ebrUKTKC/8WB/xup
+	sy6+m4iFeMkFt3CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B0B1137CF;
+	Wed, 20 Nov 2024 16:16:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WrvrCVwLPmdEUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 20 Nov 2024 16:16:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C9B38A08A2; Wed, 20 Nov 2024 17:16:23 +0100 (CET)
+Date: Wed, 20 Nov 2024 17:16:23 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v8 09/19] fsnotify: generate pre-content permission event
+ on truncate
+Message-ID: <20241120161623.brmiiggtwcvcre3u@quack3>
+References: <cover.1731684329.git.josef@toxicpanda.com>
+ <23af8201db6ac2efdea94f09ab067d81ba5de7a7.1731684329.git.josef@toxicpanda.com>
+ <20241120152340.gu7edmtm2j3lmxoy@quack3>
+ <CAOQ4uxiyAU7n4w-BMZx9gzL_DTeKMPkBOy9OZzZYEsqkMHWAGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
- <2024111938-anointer-kooky-d4f9@gregkh> <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
- <ZzzXqXGRlAwk-H2m@google.com> <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
- <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
-In-Reply-To: <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 20 Nov 2024 11:13:37 -0500
-Message-ID: <CA+CK2bC-jNxUgp9JB=H9GsMu1FrxyqXxCe_v1G-43A1-eed0VA@mail.gmail.com>
-Subject: Re: [RFCv1 0/6] Page Detective
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
-	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiyAU7n4w-BMZx9gzL_DTeKMPkBOy9OZzZYEsqkMHWAGw@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Nov 19, 2024 at 2:36=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Tue, Nov 19, 2024 at 11:30=E2=80=AFAM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
+On Wed 20-11-24 16:57:30, Amir Goldstein wrote:
+> On Wed, Nov 20, 2024 at 4:23 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > On Tue, Nov 19, 2024 at 1:23=E2=80=AFPM Roman Gushchin <roman.gushchin@=
-linux.dev> wrote:
+> > On Fri 15-11-24 10:30:22, Josef Bacik wrote:
+> > > From: Amir Goldstein <amir73il@gmail.com>
 > > >
-> > > On Tue, Nov 19, 2024 at 10:08:36AM -0500, Pasha Tatashin wrote:
-> > > > On Mon, Nov 18, 2024 at 8:09=E2=80=AFPM Greg KH <gregkh@linuxfounda=
-tion.org> wrote:
-> > > > >
-> > > > > On Mon, Nov 18, 2024 at 05:08:42PM -0500, Pasha Tatashin wrote:
-> > > > > > Additionally, using crash/drgn is not feasible for us at this t=
-ime, it
-> > > > > > requires keeping external tools on our hosts, also it requires
-> > > > > > approval and a security review for each script before deploymen=
-t in
-> > > > > > our fleet.
-> > > > >
-> > > > > So it's ok to add a totally insecure kernel feature to your fleet
-> > > > > instead?  You might want to reconsider that policy decision :)
-> > > >
-> > > > Hi Greg,
-> > > >
-> > > > While some risk is inherent, we believe the potential for abuse her=
-e
-> > > > is limited, especially given the existing  CAP_SYS_ADMIN requiremen=
-t.
-> > > > But, even with root access compromised, this tool presents a smalle=
-r
-> > > > attack surface than alternatives like crash/drgn. It exposes less
-> > > > sensitive information, unlike crash/drgn, which could potentially
-> > > > allow reading all of kernel memory.
+> > > Generate FS_PRE_ACCESS event before truncate, without sb_writers held.
 > > >
-> > > The problem here is with using dmesg for output. No security-sensitiv=
-e
-> > > information should go there. Even exposing raw kernel pointers is not
-> > > considered safe.
+> > > Move the security hooks also before sb_start_write() to conform with
+> > > other security hooks (e.g. in write, fallocate).
+> > >
+> > > The event will have a range info of the page surrounding the new size
+> > > to provide an opportunity to fill the conetnt at the end of file before
+> > > truncating to non-page aligned size.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > >
-> > I am OK in writing the output to a debugfs file in the next version,
-> > the only concern I have is that implies that dump_page() would need to
-> > be basically duplicated, as it now outputs everything via printk's.
->
-> Perhaps you can refactor the code in dump_page() to use a seq_buf,
-> then have dump_page() printk that seq_buf using seq_buf_do_printk(),
-> and have page detective output that seq_buf to the debugfs file?
+> > I was thinking about this. One small issue is that similarly as the
+> > filesystems may do RMW of tail page during truncate, they will do RMW of
+> > head & tail pages on hole punch or zero range so we should have some
+> > strategically sprinkled fsnotify_truncate_perm() calls there as well.
+> > That's easy enough to fix.
+> 
+> fallocate already has fsnotify_file_area_perm() hook.
+> What is missing?
 
-Good idea, I will look into modifying it this way.
+Sorry, I've missed that in the patch that was adding it.
 
-> We do something very similar with memory_stat_format(). We use the
+> > But there's another problem which I'm more worried about: If we have
+> > a file 64k large, user punches 12k..20k and then does read for 0..64k, then
+> > how does HSM daemon in userspace know what data to fill in? When we'll have
+> > modify pre-content event, daemon can watch it and since punch will send modify
+> > for 12k-20k, the daemon knows the local (empty) page cache is the source of
+> > truth. But without modify event this is just a recipe for data corruption
+> > AFAICT.
+> >
+> > So it seems the current setting with access pre-content event has only chance
+> > to work reliably in read-only mode? So we should probably refuse writeable
+> > open if file is being watched for pre-content events and similarly refuse
+> > truncate?
+> 
+> I am confused. not sure I understand the problem.
+> 
+> In the events that you specific, punch hole WILL generate a FS_PRE_ACCESS
+> event for 12k-20k.
+> 
+> When HSM gets a FS_PRE_ACCESS event for 12k-20k it MUST fill the content
+> and keep to itself that 12k-20k is the source of truth from now on.
 
-void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-{
-        /* Use static buffer, for the caller is holding oom_lock. */
-        static char buf[PAGE_SIZE];
-        ....
-        seq_buf_init(&s, buf, sizeof(buf));
-        memory_stat_format(memcg, &s);
-        seq_buf_do_printk(&s, KERN_INFO);
-}
+Ah, right. I've got confused and didn't realize we'll be sending FS_PRE_ACCESS
+for 12k-20k. Thanks for clarification!
 
-This is a callosal stack allocation, given that our fleet only has 8K
-stacks. :-)
+> The extra FS_PRE_ACCESS event on 0..64k absolutely does not change that.
+> IOW, a FS_PRE_ACCESS event on 0..64k definitely does NOT mean that
+> HSM NEEDS to fill content in 0..64k, it just means that it MAY needs
+> to fill content
+> if it hasn't done that for a range before the event.
+> 
+> To reiterate this important point, it is HSM responsibility to maintain the
+>  "content filled map" per file is its own way, under no circumstances it is
+> assumed that fiemap or page cache state has anything to do with the
+> "content filled map".
+> 
+> The *only* thing that HSM can assume if that if its "content filled map"
+> is empty for some range, then page cache is NOT yet populated in that
+> range and that also relies on how HSM and mount are being initialized
+> and exposed to users.
 
-> same function to generate the memcg stats in a seq_buf, then we use
-> that seq_buf to output the stats to memory.stat as well as the OOM
-> log.
+OK, understood and makes sense.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
