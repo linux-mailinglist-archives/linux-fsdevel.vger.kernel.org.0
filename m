@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-35282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4C29D35E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5409D35FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A8F8B233C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 08:50:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C67B23761
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 08:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C5E19B3EE;
-	Wed, 20 Nov 2024 08:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66CF1865E5;
+	Wed, 20 Nov 2024 08:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/3ci7cq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4HOON5g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A83A199E8B;
-	Wed, 20 Nov 2024 08:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00E15B0EE;
+	Wed, 20 Nov 2024 08:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092596; cv=none; b=EA1Im9E2CtarP27AZW5RJnKt9iXEw3ipNd83SM6NeXefWJ/nNjmMmXkP9jA7Z6Wki8PaF/9Ke/E6h0wTVA+p4b8ODfJVrAgiRK1UnPxqHrXicR/8cZnYx9vQUgOddDSpNqBlHX8ZyQ7+fRyPwKmCYUJieaDvoOuBxLPsH15QLhU=
+	t=1732092852; cv=none; b=HFnbhKHn+H3lhWzT1g49g9FUIX7z2RqH2hDpcIUUcK+NhRSbPxHoxGBdPLSeU2wHG2lrzO0WQ4w9B8xaTCn3De85c3bHXUohfpXrxOh1dOeLLB7ygcs0m8zAVC2At1m6NLGgNR4znoWlca45Bv0alVLN1XOWPKDmqdzpYoOyLeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092596; c=relaxed/simple;
-	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
+	s=arc-20240116; t=1732092852; c=relaxed/simple;
+	bh=XGBGHJ1UrQTa4nLheK/M4FsN7lw4iA53sAEYC2MpFe8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKaZT8mZfc9af/EF6D9KO7vxRAX8Vv695xGzzFNoCeqf76R84GFW6Aae96q/IKczKtaNff/dROlkCrOWf5EFXMMMM3d/RLz4Zdu3aHM9DxQjdcYmFaT9kvKej5JZXzxHBcdm4krHm7+p2C4Hpl7AczvXw5cJVBRB1D6eOU/0HsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/3ci7cq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90001C4CECD;
-	Wed, 20 Nov 2024 08:49:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IsvHgX2QgIADpV1zMnxJjdQ8i7GIZ0S0G1nrjOqo7Txu6ci2w9AaCDtmHLd6fzH7DH5ZUB/r81Ou03WRj7cikNZ4Um3gX7ekkREa9+iqZ1t/a4SXTsNEkim/hQoEqDRZgNYVcJz73lMoTLwIIZtNtSzeqK8JR8W4pg1J/KV8Toc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4HOON5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458BEC4CECD;
+	Wed, 20 Nov 2024 08:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732092595;
-	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
+	s=k20201202; t=1732092851;
+	bh=XGBGHJ1UrQTa4nLheK/M4FsN7lw4iA53sAEYC2MpFe8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g/3ci7cq9nIOI9kexjaDHIx+ZsChbHM8JjOiuJkd+/NiDhHWB0NrsGyspopnxZ0fH
-	 TqjrXHh76Nbq/rrTSHDakCzXr94/TG+TdJDOLZPCmAWIAU79a57if0gso14Eox6oW1
-	 yFSB0yg0Fq/4ZPFQ2Hg3HRL7XOHU2j77Cqt5Ww69+S7PxcINF6ocEGgiPtEWXIb+lI
-	 3CMibvqaUvGWkwgBrk1AroUzrwzX5Gafsmg5HCO42Alv/lHglNXFJiWUFqpHoShh6F
-	 TRDqOFfvOp05yCgTH/AZd21yjwORcIPKbZQ9mefU+RWl1i5T9ehii41wrktNxKYkAj
-	 +8FOJxr1NgTSw==
-Date: Wed, 20 Nov 2024 09:49:51 +0100
+	b=Z4HOON5gcw8ibSmu12PZAr6y10tAigi2d3qTzAQAwOV9S8ICHFdqPppJQET7mK9Bf
+	 eh+HvzaPFPl8N9waCrT13mIRkIexTLUz5+ej+BvRpGaSnRQFUOG7VmPb/9cMV7RAmA
+	 FFQ5NHK65fBXBV23W/Z9VeTyDOwWAI2v5WkR4rgn7ZR0xWvMTWIHPwL2UwY1lUG21G
+	 EO0IEFLp1GzqXMqzj2NiwyeKo8hvSh1lZipp5cVMOHv0K3GDLFA18vDNosQqwHY2SY
+	 Ch5eeq3DtRh9vbT2NH8W32727Qaqi2MzML9ouUuItvdd0IXVhI1qYkKMwgX12SOzVH
+	 kVPQe6xlF7R4Q==
+Date: Wed, 20 Nov 2024 09:54:06 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
-Message-ID: <20241120-abermals-inkrafttreten-8b838a76833f@brauner>
-References: <20241115-vfs-netfs-7df3b2479ea4@brauner>
- <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs tmpfs
+Message-ID: <20241120-annahme-tilgen-cfa206be31ce@brauner>
+References: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+ <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,37 +57,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
+In-Reply-To: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
 
-On Mon, Nov 18, 2024 at 10:29:42AM -0800, Linus Torvalds wrote:
-> On Fri, 15 Nov 2024 at 06:00, Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Nov 18, 2024 at 11:26:12AM -0800, Linus Torvalds wrote:
+> On Fri, 15 Nov 2024 at 06:07, Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > A pidfs patch ended up in the branch and I didn't notice it. I decided
-> > to leave it in here instead of rebasing the whole branch.
+> > This adds case-insensitive support for tmpfs.
 > 
-> What happened here?
+> Ugh.
+> 
+> I've pulled this, but I don't love it.
+> 
+> This pattern:
+> 
+>     if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+>         d_add(dentry, inode);
+>     else
+>         d_instantiate(dentry, inode);
+> 
+> needs an explanation, and probably a helper.
 
-The base of the branch is definitely v6.12-rc1. The branch is simply
-vfs.netfs with vfs-6.13.netfs tag. And the branch looks perfectly fine.
-
-I think the issue was that I sent you the fixes tag you mention below
-that contained some fixes that were in vfs.netfs. So afterwards I just
-didn't rebase vfs.netfs but merged two other series on top of it with
-v6.12-rc1 as parent. And I think that might've somehow confused the git
-request-pull call.
-
-Rebasing would've been the cleaner thing here since I had a long time
-until the merge window. But other than that it doesn't look like I did
-something that was actively wrong? But I might just be missing
-something.
+I think we had this discussion before where we decided to move all the
+checks inline. But yes, this could probably be refactored to be easier
+to understand.
 
 > 
-> Not only isn't there a pidfs patch in here, it also doesn't have the
-> afs patches you claim it has, because all of those came in long ago in
-> commit a5f24c795513: "Pull vfs fixes from Christian Brauner".
+> And
 > 
-> So I've pulled this, but your pull request was all wonky because you
-> used some odd base commit.
+> >  include/linux/shmem_fs.h            |   6 +-
+> >  mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
 > 
->               Linus
+> I'm starting to think this should be renamed and/or possibly split up
+> a bit. The actual path component handling functions should be moved
+> out of mm/shmem.c.
+> 
+> The whole "mm/shmem.c" thing made sense back in the days when this was
+> mainly about memory management functions with some thing wrappers for
+> exposing them as a filesystem, and tmpfs was kind of an odd special
+> case.
+> 
+> Those thin wrappers aren't very thin any more, and "shmem" is becoming
+> something of a misnomer with the actual filesystem being called
+> "tmpfs".
+> 
+> We also actually have *two* different implementations of "tmpfs" -
+> both in that same file - which is really annoying. The other one is
+> based on the ramfs code.
+> 
+> Would it be possible to try to make this a bit saner?
+
+So one possibility would be to move tmpfs into fs and have fs/tmpfs/ (or
+mm/tmpfs/) which would also be nice because mm/shmem.c is actively
+confusing when you're looking for the tmpfs code. And then it could
+simply be split up. I'm all for it.
 
