@@ -1,138 +1,303 @@
-Return-Path: <linux-fsdevel+bounces-35303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B20D9D388F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:43:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB459D38B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5ECA1F23DFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:43:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99F1FB24410
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC6C19E99B;
-	Wed, 20 Nov 2024 10:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0918519D093;
+	Wed, 20 Nov 2024 10:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtJ5isa9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MsucGR9R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986A719D8A0;
-	Wed, 20 Nov 2024 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF5219CC34
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 10:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732099371; cv=none; b=ChuJoxHJGgcnTpUpaJ7kxisecmh9hblibfWHPMWqKHOf2S5vkX+1iyhETZ87Qw0N6ubcHXT3Xz2qQqUVucc/g950JKrywMAIVo215J5qryJaeiupKtDXWKHAzJ9LZQT1dA9gsPQOb/7XYNSTV+xH2IgdG8GivTZ8wgMIf6OxhMc=
+	t=1732099733; cv=none; b=fc1tIh4QAIN4xUImnKkWvBLOpxn2WJkbROCEQerqRdolxei9JRpdTJ05XizkXfPaElMfubD/3YySFzhGNzhPPuhnKMTAK8wO/Z7TvQBT1PUOPaIYYQUZ4yl31MtSy9ejfI8SrmCGIPcisHE7qYeeA0XAwlieEramULo6BhsLG4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732099371; c=relaxed/simple;
-	bh=8CdhlOiWSgPSc0I2TJV4p5BcnUvFnL+U8Uc7hVG1hS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/2iRy6g8AD+4D0uZBCBuUY5M0L61/BhY9evjtTVQv8AOeIIJz24MvFb/bbZHts9H4/0RN6/hXEeW/xv9XtdTGJqQ7olKY2sx39GraA1qNr/WNrO6QkDkQoHWLNb4Q4gSU16q9hk53edOP3CPuFjCp8o8pQx/fU00CbrxO3MzZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtJ5isa9; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cffb4d7d9dso371670a12.0;
-        Wed, 20 Nov 2024 02:42:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732099368; x=1732704168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1Fye+w9f2/wqLsR/K13urMmL0eynzt5Fyy+QvQyjT8=;
-        b=XtJ5isa9R325PsuOhDtxspq/vNK9PSfzXFlJk5vuiHECEdeUjUNbePgNVOwgMAgFDn
-         PD5RivreQlws7cEAf98hGosvuuljpbXkSBLZ5eopXXjuRoMa/6mDgEAhAw8vvtWk5U2+
-         TDpqH/yGGHgjkq+TzYpuFdfxtU95YN/lBhklTSa+JrNcKVLNtniaZ573YDKhycvTZRrz
-         AclAVJIo/l7Ug7DZ72Wfu2epTO1ljsELJCij7SKFpuKiovGBwFYofxO5o+IeB2/PevOm
-         U2o5y24kjVzL8WiL0m6tU0OtXOPu+vuRBKdbcVX8hA3+TymF7SQiV2/y8W3gZbMYsBqU
-         LsLw==
+	s=arc-20240116; t=1732099733; c=relaxed/simple;
+	bh=XC8Mm92Ij6nVgJE1Djy3NtQ0fZS7oZmrFjKmK4b17TM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbN70x1qFAzM8zMu35I64UInOvjBLHSdrcwlJ0zV1CJBpmTBwulW4uRjKFYj2vIEZwjicMAgZ/uzAHyTOlGOkICZgklyKxC/RXJolpoRcU4xnxeybL61AGb2Mqa6blPsDBSflOkGBD2F4jyKcsXpYt64DQVHbd7vYyFFC5qGvQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MsucGR9R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732099730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=TYJiOMspK7IsPxdhCdCDQF9p6uoKVIA0MyWnICkfAEs=;
+	b=MsucGR9RwDnFXUUOMPzbo07WFZqUJhBILV3CtDp8kIz7bQN+NKtbKO0UDWrmHGDgtjcQVq
+	EnrdjEBYT6uG2QQZhfa9Y6BbvT3eUEL4NGqZaScHsilq1/Re3hHw4tmu0rB2Pu0mR4z1EK
+	eWKoDsS57ZfLJ4omBHun/smhBcNe7uE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-X7KjHuBDPAe3KJ7999v29w-1; Wed, 20 Nov 2024 05:48:47 -0500
+X-MC-Unique: X7KjHuBDPAe3KJ7999v29w-1
+X-Mimecast-MFC-AGG-ID: X7KjHuBDPAe3KJ7999v29w
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso39887635e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 02:48:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732099368; x=1732704168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g1Fye+w9f2/wqLsR/K13urMmL0eynzt5Fyy+QvQyjT8=;
-        b=GZ+kQccde3B512j6ZPhKWFLRO2boGbbb+j0uIhLmoasGsKAc0H5sSBWSyMnh2aJ69x
-         D9j5Cq4VdrVlnBAJaVILfvaXmCiI/W++UsRzRjHDtiI6y8dFS0/gAGLCqty95WLkw7sn
-         qpo+EOiRKcjHs/hhdX6cjJtOuOfbK4n4HxyHu0rF6k7LvTuM4yd5eu5ciATLLELD2X+j
-         UFyBcSLOTxNeHhua8wDt7Sxz1WtO27SFETtErqkcYXgn1A6vMzTO5JI9vNvD2N8HOla+
-         D8R0XPb+CjRMTcm2k7UtqU8QnqIf/llPqUS4mXCRuC5YKNqs9T1ZNogaYJs4+OolUerw
-         utCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxVyStikzOY7og898bzS3KTPtNTgtu1IEa3Kle35HrNyXc3xHSQcq+kvU74d72c3BilyE163tdSEyT3OQGrA==@vger.kernel.org, AJvYcCXi+WUZW7LxOazlOAZbnxoaX+c0Il7MiU/MgGCbq+BD0zGqZpQcxIRhkNqzj2XB2fxNzoIYcifeJ45n@vger.kernel.org, AJvYcCXvlJd9LGNQAsJhB7H1QIIme5ANP1T+mj56h+CmFa1ZdTKCMe3tbkB6TRUu7FlExsA74F9RIWzsFmhoYj2m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+grZYVaasNUwZ4+UAbmy4YD5nme8BkfpYcoGwQS88nBeeedpr
-	lYz7oGcDyIObcL6WldlWUbG0s0//c0bA/roTnr7FTW9SB8h2tFRsfjPWzwK5ch1txqwHHxWmvk5
-	IzX4/MEmClSPzJ/bsdX9Yo11RIEg=
-X-Google-Smtp-Source: AGHT+IHvQxdoP+pAvWn1yN9/vfpnNgFvtu0z7BICfkNMmGGOWDcXwtOpUgaA6XYGwsQAvynctV9szk8UEj3jV6Hqhts=
-X-Received: by 2002:a17:906:6a04:b0:a9e:d539:86c4 with SMTP id
- a640c23a62f3a-aa4dd5481d0mr159817966b.9.1732099367707; Wed, 20 Nov 2024
- 02:42:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732099726; x=1732704526;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TYJiOMspK7IsPxdhCdCDQF9p6uoKVIA0MyWnICkfAEs=;
+        b=idccOpxYn21qnLmJArhIoUBIvVH9+rQ9vihBD4MeuAuOQ3bDI9dpm9jHCVa9hYJdHv
+         Ao9SAJfKU/RzEVDr9hSmtti1SHBD7E90sJ4afJbXNOsXFWtj1zYvDv2NangCDN1I3Ae+
+         VBB5C1q5AA+r3H5edlhnGGKY3OFtS7DjkCQ95WRAsLMEAM6UrhaF8nUXgfNQ6T+I+nxx
+         dG+KPFyPRY9k1XD75nI3Pzr+KhwNlqmJcLqeDqKrOO1eKZ/uWX6WRw3tocrbiqjHHVdG
+         FIvfwgI6kHqguXiO0ywEg0IiUGCICGHjkeKVgF5V/E3wiwoYdrzigJGv9JQzmDGW9HRl
+         Jl8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWl+l5FTR4X+T7BJuxColPPicsgDB0KUwAqWwM199158laCMtXzLx1Twl4bX6tNbmLOBehGGvr3hgs/4I49@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnq/dfYQZGfRLR73bOaDp1f/u/m8UGippqSgIrkwlb0Hq6yMXs
+	+6F2Mjq9a5b2eX0CzvR8s0RMtEDBDUk5TQDHbc4Ab9/Zs9/KAdCZ/iwYQy4E54cYOjVD0349c1n
+	acoNO0tMq61XcRFWSNVWFON6uIZGCoUkHeqLVGZmwHVk4j27WOqO6smpmMr34EAY=
+X-Received: by 2002:a05:600c:4ed2:b0:431:52a3:d9d5 with SMTP id 5b1f17b1804b1-43348903e9dmr25118815e9.0.1732099726060;
+        Wed, 20 Nov 2024 02:48:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH5ri0Ctyn0tsKk21xv1/ls13TeHxIMZx0VuvaIyqn9RF2BrSvePdGve47YAO822hbBk4iZ7Q==
+X-Received: by 2002:a05:600c:4ed2:b0:431:52a3:d9d5 with SMTP id 5b1f17b1804b1-43348903e9dmr25118425e9.0.1732099725605;
+        Wed, 20 Nov 2024 02:48:45 -0800 (PST)
+Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45fa728sm14606045e9.14.2024.11.20.02.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 02:48:44 -0800 (PST)
+Message-ID: <4b07a3eb-aad6-4436-9591-289c6504bb92@redhat.com>
+Date: Wed, 20 Nov 2024 11:48:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119094555.660666-1-mjguzik@gmail.com> <20241120-werden-reptil-85a16457b708@brauner>
-In-Reply-To: <20241120-werden-reptil-85a16457b708@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 20 Nov 2024 11:42:33 +0100
-Message-ID: <CAGudoHGOC6to4_nJX9vhWV8HnF19U2xmmZY3Nc0ZbZnyTtGyxw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] symlink length caching
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, 
-	tytso@mit.edu, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM
+ to detect device RAM ranges in 2nd kernel
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+ Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
+ <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-8-david@redhat.com> <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 11:33=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Tue, Nov 19, 2024 at 10:45:52AM +0100, Mateusz Guzik wrote:
-> > quote:
-> >     When utilized it dodges strlen() in vfs_readlink(), giving about 1.=
-5%
-> >     speed up when issuing readlink on /initrd.img on ext4.
-> >
-> > Benchmark code at the bottom.
-> >
-> > ext4 and tmpfs are patched, other filesystems can also get there with
-> > some more work.
-> >
-> > Arguably the current get_link API should be patched to let the fs retur=
-n
-> > the size, but that's not a churn I'm interested into diving in.
-> >
-> > On my v1 Jan remarked 1.5% is not a particularly high win questioning
-> > whether doing this makes sense. I noted the value is only this small
-> > because of other slowdowns.
->
-> The thing is that you're stealing one of the holes I just put into struct
-> inode a cycle ago or so. The general idea has been to shrink struct
-> inode if we can and I'm not sure that caching the link length is
-> actually worth losing that hole. Otherwise I wouldn't object.
->
+On 20.11.24 11:13, Baoquan He wrote:
+> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+>> s390 allocates+prepares the elfcore hdr in the dump (2nd) kernel, not in
+>> the crashed kernel.
+>>
+>> RAM provided by memory devices such as virtio-mem can only be detected
+>> using the device driver; when vmcore_init() is called, these device
+>> drivers are usually not loaded yet, or the devices did not get probed
+>> yet. Consequently, on s390 these RAM ranges will not be included in
+>> the crash dump, which makes the dump partially corrupt and is
+>> unfortunate.
+>>
+>> Instead of deferring the vmcore_init() call, to an (unclear?) later point,
+>> let's reuse the vmcore_cb infrastructure to obtain device RAM ranges as
+>> the device drivers probe the device and get access to this information.
+>>
+>> Then, we'll add these ranges to the vmcore, adding more PT_LOAD
+>> entries and updating the offsets+vmcore size.
+>>
+>> Use Kconfig tricks to include this code automatically only if (a) there is
+>> a device driver compiled that implements the callback
+>> (PROVIDE_PROC_VMCORE_DEVICE_RAM) and; (b) the architecture actually needs
+>> this information (NEED_PROC_VMCORE_DEVICE_RAM).
+>>
+>> The current target use case is s390, which only creates an elf64
+>> elfcore, so focusing on elf64 is sufficient.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   fs/proc/Kconfig            |  25 ++++++
+>>   fs/proc/vmcore.c           | 156 +++++++++++++++++++++++++++++++++++++
+>>   include/linux/crash_dump.h |   9 +++
+>>   3 files changed, 190 insertions(+)
+>>
+>> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+>> index d80a1431ef7b..1e11de5f9380 100644
+>> --- a/fs/proc/Kconfig
+>> +++ b/fs/proc/Kconfig
+>> @@ -61,6 +61,31 @@ config PROC_VMCORE_DEVICE_DUMP
+>>   	  as ELF notes to /proc/vmcore. You can still disable device
+>>   	  dump using the kernel command line option 'novmcoredd'.
+>>   
+>> +config PROVIDE_PROC_VMCORE_DEVICE_RAM
+>> +	def_bool n
+>> +
+>> +config NEED_PROC_VMCORE_DEVICE_RAM
+>> +	def_bool n
+>> +
+>> +config PROC_VMCORE_DEVICE_RAM
+>> +	def_bool y
+>> +	depends on PROC_VMCORE
+>> +	depends on NEED_PROC_VMCORE_DEVICE_RAM
+>> +	depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
+> 
+> Kconfig item is always a thing I need learn to master.
 
-Per the patch description this can be a union with something not used
-for symlinks. I'll find a nice field.
+Yes, it's usually a struggle to get it right. It took me a couple of 
+iterations to get to this point :)
 
-> > All that aside there is also quite a bit of branching and func calling
-> > which does not need to be there (example: make vfsuid/vfsgid, could be
-> > combined into one routine etc.).
->
-> They should probably also be made inline functions and likely/unlikely
-> sprinkled in there.
+> When I checked
+> this part, I have to write them down to deliberate. I am wondering if
+> below 'simple version' works too and more understandable. Please help
+> point out what I have missed.
+> 
+> ===========simple version======
+> config PROC_VMCORE_DEVICE_RAM
+>          def_bool y
+>          depends on PROC_VMCORE && VIRTIO_MEM
+>          depends on NEED_PROC_VMCORE_DEVICE_RAM
+> 
+> config S390
+>          select NEED_PROC_VMCORE_DEVICE_RAM
+ > ============
 
-someone(tm) should at least do a sweep through in-vfs code. for
-example LOOKUP_IS_SCOPED is sometimes marked as unlikely and other
-times has no annotations whatsoever, even though ultimately it all
-executes in the same setting
+So the three changes you did are
 
-Interestingly even __read_seqcount_begin (used *twice* in path_init())
-is missing one. I sent a patch to fix it long time ago but the
-recipient did not respond, maybe I should resend with more people in
-cc (who though?), see:
-https://lore.kernel.org/all/20230727180355.813995-1-mjguzik@gmail.com/
+(a) Remove the config option but select/depend on them.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+(b) Remove the "depends on PROC_VMCORE" from PROC_VMCORE_DEVICE_RAM,
+     and the "if PROC_VMCORE" from s390.
+
+(c) Remove the PROVIDE_PROC_VMCORE_DEVICE_RAM
+
+
+Regarding (a), that doesn't work. If you select a config option that 
+doesn't exist, it is silently dropped. It's always treated as if it 
+wouldn't be set.
+
+Regarding (b), I think that's an anti-pattern (having config options 
+enabled that are completely ineffective) and I don't see a benefit 
+dropping them.
+
+Regarding (c), it would mean that s390x unconditionally includes that 
+code even if virtio-mem is not configured in.
+
+So while we could drop PROVIDE_PROC_VMCORE_DEVICE_RAM -- (c), it would 
+that we end up including code in configurations that don't possibly need 
+it. That's why I included that part.
+
+> 
+> 
+> ======= config items extracted from this patchset====
+> config PROVIDE_PROC_VMCORE_DEVICE_RAM
+>          def_bool n
+> 
+> config NEED_PROC_VMCORE_DEVICE_RAM
+>          def_bool n
+> 
+> config PROC_VMCORE_DEVICE_RAM
+>          def_bool y
+>          depends on PROC_VMCORE
+>          depends on NEED_PROC_VMCORE_DEVICE_RAM
+>          depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
+> 
+> config VIRTIO_MEM
+> 	depends on X86_64 || ARM64 || RISCV
+>           ~~~~~ I don't get why VIRTIO_MEM dones't depend on S390 if
+>                 s390 need PROC_VMCORE_DEVICE_RAM.
+
+This series depends on s390 support for virtio-mem, which just went 
+upstream.
+
+See
+
+commit 38968bcdcc1d46f2fdcd3a72599d5193bf8baf84
+Author: David Hildenbrand <david@redhat.com>
+Date:   Fri Oct 25 16:14:49 2024 +0200
+
+     virtio-mem: s390 support
+
+
+>          ......
+>          select PROVIDE_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
+> 
+> config S390
+>          select NEED_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
+> =================================================
+> 
+
+Thanks for having a look!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
