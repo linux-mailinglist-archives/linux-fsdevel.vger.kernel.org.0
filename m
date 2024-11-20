@@ -1,157 +1,353 @@
-Return-Path: <linux-fsdevel+bounces-35296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF9E9D3755
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFACC9D37B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CECC1F23246
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591CB1F22DE1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371C11991BE;
-	Wed, 20 Nov 2024 09:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDB419DF4F;
+	Wed, 20 Nov 2024 09:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XtMoSKSN"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fW6CeUwV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B64742AAB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2E318EFC1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096027; cv=none; b=mMphA4H3JPNpltx9IO6yLNFRU8PNBMpWkulLvRBoUaIFN01gkFWr/hXXIiRZCPyTVQAz6paBySs2dUeitKDZGmEw/o5fIM0fliHQ3CyOf+BSt5ORw/FI4y0c0iH9OQ7MrQNQskza7AMfk0QcP9EO4K2RI9uUWHj3KaeWjno5lYU=
+	t=1732096585; cv=none; b=g4sToUEOzs4klgLh+3j/M43h0R6H1K4LWpzWHbhQQfnVmDDdjf4QMWwOPtaGHIhv1xy5rUQ0BeNNqlW41XdLgi62DWpHUfdYt1dB6VdlQQs/mCXnLaBzMGOd2D221/SWIh2WENwmjHuhs2dffmDO0V5eIz12trQcwGq8NuQMi6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096027; c=relaxed/simple;
-	bh=BeB0I5N9lmAH1/USVhzS2jrTuW+JT107L4SWdR0WNKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwk+Uift3M4EY8jHgppt8vJuczQ5Oh+rvsXP+YqKPKpGrkJqgmDy06nizEgjhw92RfvAD8XDdGpcO1UUbbylZTCSq2KfGxH3gvRkHdGBpAlTP5H4k5wVqb+19ARmgD3FgHjhmsEobGReROz2GnYqVBkBU7MGXKVakONS5DmGy4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XtMoSKSN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732096025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RQ/EL0J6kjGmTeoQldkQB/yJmR9CyO2pv3yRZbq8j84=;
-	b=XtMoSKSNsPWuCNDOKyyMHqy3b3/z8dIbqFkH46d5CM22MgtYrAl82vTOS93UVjBLpLmsEC
-	sb+n/xWVKRiy2Gd9d6JYmnbbtwO0buvKoiXTAM9MXNEoA5HOVrFTajh3STfHVzW6coeRkO
-	hLbwqGWxoaPjm+QQmyXnNuE/ixS92xs=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-Humkb_9bOb-2SPRao4GIRw-1; Wed,
- 20 Nov 2024 04:47:03 -0500
-X-MC-Unique: Humkb_9bOb-2SPRao4GIRw-1
-X-Mimecast-MFC-AGG-ID: Humkb_9bOb-2SPRao4GIRw
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 770D91955BCF;
-	Wed, 20 Nov 2024 09:47:01 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE26530000DF;
-	Wed, 20 Nov 2024 09:46:58 +0000 (UTC)
-Date: Wed, 20 Nov 2024 17:46:54 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 06/11] fs/proc/vmcore: factor out freeing a list of
- vmcore ranges
-Message-ID: <Zz2wDu9XskX1dgN7@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-7-david@redhat.com>
+	s=arc-20240116; t=1732096585; c=relaxed/simple;
+	bh=9dRJzAz8UuQq1G4RTL0SgfQ4llXaHjy6aqBMkg96PBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1w615v2T0GK0dU20+daUOF8Rw+PWmX4c87/SS2Vsr/yaauZ4yhQEEhQ30qCefDLzmgSlkiZRqDWupvxwa2x9wg1iXBT+TL68egYmGJIR7JznmYvuMRQcqtV95n6U5pNaNTqhyUaZrsKJVzjtBtfExUw7ujZveyLONBWmD9oMwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fW6CeUwV; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732096572; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=OdX8fHoMlswM6ZP/2AT7Q0ptZ6gYWHmieT+vd+jRDeg=;
+	b=fW6CeUwVUg2aPfXD65eJpbsu8CRrO4i9iaMhbDvyBjPFadM+1yLnrXt/6Xr2yxbHk8dMVQw1jQlAXWwubdx2wmHeQ8hGbia0W/EUlPjkOpDJqmMefsKKkwr00u4ttV0xOC7VOeSo08rWvlP4Bs1rqzw/iVrjVLaCwOSMFSHRz+U=
+Received: from 30.221.144.243(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WJrw6GJ_1732096571 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Nov 2024 17:56:12 +0800
+Message-ID: <cad4a8b3-8065-4187-875f-1810263b988c@linux.alibaba.com>
+Date: Wed, 20 Nov 2024 17:56:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025151134.1275575-7-david@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+Cc: shakeel.butt@linux.dev, josef@toxicpanda.com, linux-mm@kvack.org,
+ bernd.schubert@fastmail.fm, kernel-team@meta.com
+References: <20241115224459.427610-1-joannelkoong@gmail.com>
+ <20241115224459.427610-6-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20241115224459.427610-6-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> Let's factor it out into include/linux/crash_dump.h, from where we can
-> use it also outside of vmcore.c later.
+
+
+On 11/16/24 6:44 AM, Joanne Koong wrote:
+> In the current FUSE writeback design (see commit 3be5a52b30aa
+> ("fuse: support writable mmap")), a temp page is allocated for every
+> dirty page to be written back, the contents of the dirty page are copied over
+> to the temp page, and the temp page gets handed to the server to write back.
 > 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> This is done so that writeback may be immediately cleared on the dirty page,
+> and this in turn is done for two reasons:
+> a) in order to mitigate the following deadlock scenario that may arise
+> if reclaim waits on writeback on the dirty page to complete:
+> * single-threaded FUSE server is in the middle of handling a request
+>   that needs a memory allocation
+> * memory allocation triggers direct reclaim
+> * direct reclaim waits on a folio under writeback
+> * the FUSE server can't write back the folio since it's stuck in
+>   direct reclaim
+> b) in order to unblock internal (eg sync, page compaction) waits on
+> writeback without needing the server to complete writing back to disk,
+> which may take an indeterminate amount of time.
+> 
+> With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
+> the situations described above, FUSE writeback does not need to use
+> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
+> 
+> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
+> and removes the temporary pages + extra copying and the internal rb
+> tree.
+> 
+> fio benchmarks --
+> (using averages observed from 10 runs, throwing away outliers)
+> 
+> Setup:
+> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
+>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
+> 
+> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
+> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
+> 
+>         bs =  1k          4k            1M
+> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
+> After   341 MiB/s     2246 MiB/s     2685 MiB/s
+> % diff        -3%          23%         45%
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
->  fs/proc/vmcore.c           |  9 +--------
->  include/linux/crash_dump.h | 11 +++++++++++
->  2 files changed, 12 insertions(+), 8 deletions(-)
-
-LGTM,
-
-Acked-by: Baoquan He <bhe@redhat.com>
-
+>  fs/fuse/file.c | 339 +++----------------------------------------------
+>  1 file changed, 20 insertions(+), 319 deletions(-)
 > 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 76fdc3fb8c0e..3e90416ee54e 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -1568,14 +1568,7 @@ void vmcore_cleanup(void)
->  		proc_vmcore = NULL;
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 88d0946b5bc9..56289ac58596 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -415,89 +415,11 @@ u64 fuse_lock_owner_id(struct fuse_conn *fc, fl_owner_t id)
+>  
+>  struct fuse_writepage_args {
+>  	struct fuse_io_args ia;
+> -	struct rb_node writepages_entry;
+>  	struct list_head queue_entry;
+> -	struct fuse_writepage_args *next;
+>  	struct inode *inode;
+>  	struct fuse_sync_bucket *bucket;
+>  };
+>  
+> -static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+> -					    pgoff_t idx_from, pgoff_t idx_to)
+> -{
+> -	struct rb_node *n;
+> -
+> -	n = fi->writepages.rb_node;
+> -
+> -	while (n) {
+> -		struct fuse_writepage_args *wpa;
+> -		pgoff_t curr_index;
+> -
+> -		wpa = rb_entry(n, struct fuse_writepage_args, writepages_entry);
+> -		WARN_ON(get_fuse_inode(wpa->inode) != fi);
+> -		curr_index = wpa->ia.write.in.offset >> PAGE_SHIFT;
+> -		if (idx_from >= curr_index + wpa->ia.ap.num_folios)
+> -			n = n->rb_right;
+> -		else if (idx_to < curr_index)
+> -			n = n->rb_left;
+> -		else
+> -			return wpa;
+> -	}
+> -	return NULL;
+> -}
+> -
+> -/*
+> - * Check if any page in a range is under writeback
+> - */
+> -static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> -				   pgoff_t idx_to)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -	bool found;
+> -
+> -	if (RB_EMPTY_ROOT(&fi->writepages))
+> -		return false;
+> -
+> -	spin_lock(&fi->lock);
+> -	found = fuse_find_writeback(fi, idx_from, idx_to);
+> -	spin_unlock(&fi->lock);
+> -
+> -	return found;
+> -}
+> -
+> -static inline bool fuse_page_is_writeback(struct inode *inode, pgoff_t index)
+> -{
+> -	return fuse_range_is_writeback(inode, index, index);
+> -}
+> -
+> -/*
+> - * Wait for page writeback to be completed.
+> - *
+> - * Since fuse doesn't rely on the VM writeback tracking, this has to
+> - * use some other means.
+> - */
+> -static void fuse_wait_on_page_writeback(struct inode *inode, pgoff_t index)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -
+> -	wait_event(fi->page_waitq, !fuse_page_is_writeback(inode, index));
+> -}
+> -
+> -static inline bool fuse_folio_is_writeback(struct inode *inode,
+> -					   struct folio *folio)
+> -{
+> -	pgoff_t last = folio_next_index(folio) - 1;
+> -	return fuse_range_is_writeback(inode, folio_index(folio), last);
+> -}
+> -
+> -static void fuse_wait_on_folio_writeback(struct inode *inode,
+> -					 struct folio *folio)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -
+> -	wait_event(fi->page_waitq, !fuse_folio_is_writeback(inode, folio));
+> -}
+> -
+>  /*
+>   * Wait for all pending writepages on the inode to finish.
+>   *
+> @@ -886,13 +808,6 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio)
+>  	ssize_t res;
+>  	u64 attr_ver;
+>  
+> -	/*
+> -	 * With the temporary pages that are used to complete writeback, we can
+> -	 * have writeback that extends beyond the lifetime of the folio.  So
+> -	 * make sure we read a properly synced folio.
+> -	 */
+> -	fuse_wait_on_folio_writeback(inode, folio);
+> -
+>  	attr_ver = fuse_get_attr_version(fm->fc);
+>  
+>  	/* Don't overflow end offset */
+> @@ -1003,17 +918,12 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+>  static void fuse_readahead(struct readahead_control *rac)
+>  {
+>  	struct inode *inode = rac->mapping->host;
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	unsigned int max_pages, nr_pages;
+> -	pgoff_t first = readahead_index(rac);
+> -	pgoff_t last = first + readahead_count(rac) - 1;
+>  
+>  	if (fuse_is_bad(inode))
+>  		return;
+>  
+> -	wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first, last));
+> -
+>  	max_pages = min_t(unsigned int, fc->max_pages,
+>  			fc->max_read / PAGE_SIZE);
+>  
+> @@ -1172,7 +1082,7 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
+>  	int err;
+>  
+>  	for (i = 0; i < ap->num_folios; i++)
+> -		fuse_wait_on_folio_writeback(inode, ap->folios[i]);
+> +		folio_wait_writeback(ap->folios[i]);
+>  
+>  	fuse_write_args_fill(ia, ff, pos, count);
+>  	ia->write.in.flags = fuse_write_flags(iocb);
+> @@ -1622,7 +1532,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>  			return res;
+>  		}
+>  	}
+> -	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
+> +	if (!cuse && filemap_range_has_writeback(mapping, pos, (pos + count - 1))) {
+>  		if (!write)
+>  			inode_lock(inode);
+>  		fuse_sync_writes(inode);
+> @@ -1825,7 +1735,7 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
+>  		fuse_sync_bucket_dec(wpa->bucket);
+>  
+>  	for (i = 0; i < ap->num_folios; i++)
+> -		folio_put(ap->folios[i]);
+> +		folio_end_writeback(ap->folios[i]);
+
+I noticed that if we folio_end_writeback() in fuse_writepage_finish()
+(rather than fuse_writepage_free()), there's ~50% buffer write
+bandwridth performance gain (5500MB -> 8500MB)[*]
+
+The fuse server is generally implemented in multi-thread style, and
+multi (fuse server) worker threads could fetch and process FUSE_WRITE
+requests of one fuse inode.  Then there's serious lock contention for
+the xarray lock (of the address space) when these multi worker threads
+call fuse_writepage_end->folio_end_writeback when they are sending
+replies of FUSE_WRITE requests.
+
+The lock contention is greatly alleviated when folio_end_writeback() is
+serialized with fi->lock.  IOWs in the current implementation
+(folio_end_writeback() in fuse_writepage_free()), each worker thread
+needs to compete for the xarray lock for 256 times (one fuse request can
+contain at most 256 pages if FUSE_MAX_MAX_PAGES is 256) when completing
+a FUSE_WRITE request.
+
+After moving folio_end_writeback() to fuse_writepage_finish(), each
+worker thread needs to compete for fi->lock only once.  IOWs the locking
+granularity is larger now.
+
+
+
+> @@ -2367,54 +2111,23 @@ static int fuse_writepages_fill(struct folio *folio,
+>  		data->wpa = NULL;
 >  	}
 >  
-> -	/* clear the vmcore list. */
-> -	while (!list_empty(&vmcore_list)) {
-> -		struct vmcore_mem_node *m;
+> -	err = -ENOMEM;
+> -	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
+> -	if (!tmp_folio)
+> -		goto out_unlock;
 > -
-> -		m = list_first_entry(&vmcore_list, struct vmcore_mem_node, list);
-> -		list_del(&m->list);
-> -		kfree(m);
-> -	}
-> +	vmcore_free_mem_nodes(&vmcore_list);
->  	free_elfcorebuf();
->  
->  	/* clear vmcore device dump list */
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index ae77049fc023..722dbcff7371 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -135,6 +135,17 @@ static inline int vmcore_alloc_add_mem_node(struct list_head *list,
->  	return 0;
->  }
->  
-> +/* Free a list of vmcore memory nodes. */
-> +static inline void vmcore_free_mem_nodes(struct list_head *list)
-> +{
-> +	struct vmcore_mem_node *m, *tmp;
-> +
-> +	list_for_each_entry_safe(m, tmp, list, list) {
-> +		list_del(&m->list);
-> +		kfree(m);
-> +	}
-> +}
-> +
->  #else /* !CONFIG_CRASH_DUMP */
->  static inline bool is_kdump_kernel(void) { return false; }
->  #endif /* CONFIG_CRASH_DUMP */
-> -- 
-> 2.46.1
-> 
+> -	/*
+> -	 * The page must not be redirtied until the writeout is completed
+> -	 * (i.e. userspace has sent a reply to the write request).  Otherwise
+> -	 * there could be more than one temporary page instance for each real
+> -	 * page.
+> -	 *
+> -	 * This is ensured by holding the page lock in page_mkwrite() while
+> -	 * checking fuse_page_is_writeback().  We already hold the page lock
+> -	 * since clear_page_dirty_for_io() and keep it held until we add the
+> -	 * request to the fi->writepages list and increment ap->num_folios.
+> -	 * After this fuse_page_is_writeback() will indicate that the page is
+> -	 * under writeback, so we can release the page lock.
+> -	 */
+>  	if (data->wpa == NULL) {
+>  		err = -ENOMEM;
+>  		wpa = fuse_writepage_args_setup(folio, data->ff);
+> -		if (!wpa) {
+> -			folio_put(tmp_folio);
+> +		if (!wpa)
+>  			goto out_unlock;
+> -		}
+>  		fuse_file_get(wpa->ia.ff);
+>  		data->max_folios = 1;
+>  		ap = &wpa->ia.ap;
+>  	}
+>  	folio_start_writeback(folio);
 
+There's also a lock contention for the xarray lock when calling
+folio_start_writeback().
+
+I also noticed a strange thing that, if we lock fi->lock and unlock
+immediately, the write bandwidth improves by 5% (8500MB -> 9000MB).  The
+palce where to insert the "locking fi->lock and unlocking" actually
+doesn't matter.  "perf lock contention" shows the lock contention for
+the xarray lock is greatly alleviated, though I can't understand how it
+is done quite well...
+
+As the performance gain is not significant (~5%), I think we can leave
+this stange phenomenon aside for now.
+
+
+
+[*] test case:
+./passthrough_hp  --bypass-rw 2  /tmp /mnt
+(testbench mode in
+https://github.com/libfuse/libfuse/pull/807/commits/e83789cc6e83ca42ccc9899c4f7f8c69f31cbff9
+bypass the buffer copy along with the persistence procedure)
+
+fio -fallocate=0 -numjobs=32 -iodepth=1 -ioengine=sync -sync=0
+--direct=0 -rw=write -bs=1M -size=100G --time_based --runtime=300
+-directory=/mnt/ --group_reporting --name=Fio
+-- 
+Thanks,
+Jingbo
 
