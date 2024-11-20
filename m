@@ -1,253 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-35330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CFA9D3EDD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:19:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836AD9D3FA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354AF282167
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:19:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98833B2D207
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACC81C331A;
-	Wed, 20 Nov 2024 15:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F5F1AA1CA;
+	Wed, 20 Nov 2024 15:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ0Sx9y0"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="bukzJIPG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33861B5338
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 15:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368AE1F61C;
+	Wed, 20 Nov 2024 15:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115788; cv=none; b=IcoOpTrEGLjhZcIjPf0sXbQUcFZpQd/tPZhk5prYpuOXAdj7tYRhOo1JmaAe6LYGgH+YN/IGxT4PU8wZSNQraVh4GYhsQoLg62LvoEB6UZ5DFmBOWfJ3IfvF5OWYJHyFA/wa1CLQLpP7bLA3Ws4bwomMWwFk3tzYZ5F1w2k7KBI=
+	t=1732116179; cv=none; b=rNFNl8f51DdSRRUJc84RulpGQ7jTcM1MD5wzCyZlTL3FyLaKBb9MaGyqWeLz3e3Fr93h5Y9IkT8ptzUUprHWPPkYR623Gj2rJnchUOfYwqdgFT2bIjn+CQiZS3++NoBQ8EnteTbVVf6ysf2oWlUq3BbsrtrbeBmN0FxHoAGL5A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115788; c=relaxed/simple;
-	bh=7z+dASFFq1fbLDDftucFXgXTNlzHg9uiO6TXd5lzD0o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lZBipK97o22yXqutAHeEB1a5NzDd3kEVyRTe30WFcrKYq1miBJfmkz6XWaLKqhUr0dcR1zZMDpAxZNMVJPGF55JFr1hcIhRDu1hZEU8ZDPFHJQlkQ+d0pxJ2RSTaSxz0EybecLkZCxUt0gFx0wpki0gTbiTMA9E9K5DP+xu7OUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ0Sx9y0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DADC4CECD;
-	Wed, 20 Nov 2024 15:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732115787;
-	bh=7z+dASFFq1fbLDDftucFXgXTNlzHg9uiO6TXd5lzD0o=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fJ0Sx9y0TpzYKm5jz/UjO5zldwgvfMMfArrCmgQluw8V+2az1+BK0YKET9wc7kQV+
-	 WKGEfEi9dxaLN97LmV/Cw82Cik5nJp8V944ho6vvOh7GrRifHRjEGw5++ZssN0yvio
-	 5Ef0kX6jHjt5DBS31OSRySNppk26/pL6SMLKrziLY4pZ91uXuNQrhhN0kbT+/cYYZi
-	 /MTzvsB1E/ySaZLVgvbmNiiRd6KMqihmhKy0v9fnJ9POei0iZ/54MlXSkcpX58emmh
-	 +3SBGeo3clVDQFkqAq9sNTF8lV5S3jMJvoFpWLcYfvI3hF0qIFj18iK3qzcNpKumz9
-	 5I7GbSWk/wRnw==
-Message-ID: <59fc7ea80e9ab1463cac4b45c487545e0c05eacf.camel@kernel.org>
-Subject: Re: [PATCH] statmount: clean up unescaped option handling
-From: Jeff Layton <jlayton@kernel.org>
-To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <christian@brauner.io>, Josef Bacik
- <josef@toxicpanda.com>
-Date: Wed, 20 Nov 2024 10:16:25 -0500
-In-Reply-To: <20241120142732.55210-1-mszeredi@redhat.com>
-References: <20241120142732.55210-1-mszeredi@redhat.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732116179; c=relaxed/simple;
+	bh=7HSMTOSLIuP9rca81Zdn2qb0WbYseuUIWKIfSE9hWFY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=a3zx++aIa6b+Z5WCd3jaKeZtTxfeuHtzP6QusIBtNIF+YuIXWoERjpBsV4YW2ZVQUvWHeyGbdtF4B3x5At6LcZE4herWqmsf/8W9UsZCs6JDhbufcqhuaDCfYF2XzH7ZuK4qzc5owGdzitp8flMNkpE3QjeBUjRhE+s1ZB9Jo9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=bukzJIPG; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2653A403E5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1732116177; bh=F7TGxCuWmnHhM60mB3zccDkNdB0MqcFNwLzQHlKYkx4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bukzJIPGKY14sI9P5nuItCcL1jwwnr4Ugrfz79nRbNqOGwE3eIiaYaeD3WembPh3L
+	 01pynC+fxwfeBA1c0R03AAozh6DNOxvX7SBjE+neih0hplCmIZGKfoLuYFsHlmEbJq
+	 gKws+n3ikuBvCHlGAu2rXvVJ971kWZIjLJ/gh08k8WGw1OHQ1Qx5shJY+LjdUOfIaD
+	 Vu6+hkGX+VwKTxSrjIawWawFaNUOlclFJCqDRV9RGTFYRLn1dmMKSr/Ne8bigRuzK1
+	 ZEXjF5YeiR8tUNmwDHsXoMiYytGf1BIGyn95jhV1vXAe8iKCstJmrwIrAY7wRqfeMN
+	 Pcf3tWECV1KAg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2653A403E5;
+	Wed, 20 Nov 2024 15:22:57 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Christian Brauner <brauner@kernel.org>, Randy Dunlap
+ <rdunlap@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>,
+ autofs@vger.kernel.org, Alexander Aring <aahringo@redhat.com>, David
+ Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, Eric Biggers
+ <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ fsverity@lists.linux.dev, Mark Fasheh <mark@fasheh.com>, Joel Becker
+ <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH] Documentation: filesystems: update filename extensions
+In-Reply-To: <20241120-packen-popsong-7d5d34c0574c@brauner>
+References: <20241120055246.158368-1-rdunlap@infradead.org>
+ <20241120-packen-popsong-7d5d34c0574c@brauner>
+Date: Wed, 20 Nov 2024 08:22:56 -0700
+Message-ID: <87a5dudj5b.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, 2024-11-20 at 15:27 +0100, Miklos Szeredi wrote:
-> Move common code from opt_array/opt_sec_array to helper.  This helper
-> does more than just unescape options, so rename to
-> statmount_opt_process().
->=20
-> Handle corner case of just a single character in options.
->=20
-> Rename some local variables to better describe their function.
->=20
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/namespace.c | 44 +++++++++++++++++++-------------------------
->  1 file changed, 19 insertions(+), 25 deletions(-)
->=20
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index eb34a5160f64..23e81c2a1e3f 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5057,21 +5057,32 @@ static int statmount_mnt_opts(struct kstatmount *=
-s, struct seq_file *seq)
->  	return 0;
->  }
-> =20
-> -static inline int statmount_opt_unescape(struct seq_file *seq, char *buf=
-_start)
-> +static inline int statmount_opt_process(struct seq_file *seq, size_t sta=
-rt)
->  {
-> -	char *buf_end, *opt_start, *opt_end;
-> +	char *buf_end, *opt_end, *src, *dst;
->  	int count =3D 0;
-> =20
-> +	if (unlikely(seq_has_overflowed(seq)))
-> +		return -EAGAIN;
-> +
->  	buf_end =3D seq->buf + seq->count;
-> +	dst =3D seq->buf + start;
-> +	src =3D dst + 1;	/* skip initial comma */
-> +
-> +	if (src >=3D buf_end) {
-> +		seq->count =3D start;
-> +		return 0;
-> +	}
-> +
->  	*buf_end =3D '\0';
-> -	for (opt_start =3D buf_start + 1; opt_start < buf_end; opt_start =3D op=
-t_end + 1) {
-> -		opt_end =3D strchrnul(opt_start, ',');
-> +	for (; src < buf_end; src =3D opt_end + 1) {
-> +		opt_end =3D strchrnul(src, ',');
->  		*opt_end =3D '\0';
-> -		buf_start +=3D string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL=
-) + 1;
-> +		dst +=3D string_unescape(src, dst, 0, UNESCAPE_OCTAL) + 1;
->  		if (WARN_ON_ONCE(++count =3D=3D INT_MAX))
->  			return -EOVERFLOW;
->  	}
-> -	seq->count =3D buf_start - 1 - seq->buf;
-> +	seq->count =3D dst - 1 - seq->buf;
->  	return count;
->  }
-> =20
-> @@ -5080,24 +5091,16 @@ static int statmount_opt_array(struct kstatmount =
-*s, struct seq_file *seq)
->  	struct vfsmount *mnt =3D s->mnt;
->  	struct super_block *sb =3D mnt->mnt_sb;
->  	size_t start =3D seq->count;
-> -	char *buf_start;
->  	int err;
-> =20
->  	if (!sb->s_op->show_options)
->  		return 0;
-> =20
-> -	buf_start =3D seq->buf + start;
->  	err =3D sb->s_op->show_options(seq, mnt->mnt_root);
->  	if (err)
->  		return err;
-> =20
-> -	if (unlikely(seq_has_overflowed(seq)))
-> -		return -EAGAIN;
-> -
-> -	if (seq->count =3D=3D start)
-> -		return 0;
-> -
-> -	err =3D statmount_opt_unescape(seq, buf_start);
-> +	err =3D statmount_opt_process(seq, start);
->  	if (err < 0)
->  		return err;
-> =20
-> @@ -5110,22 +5113,13 @@ static int statmount_opt_sec_array(struct kstatmo=
-unt *s, struct seq_file *seq)
->  	struct vfsmount *mnt =3D s->mnt;
->  	struct super_block *sb =3D mnt->mnt_sb;
->  	size_t start =3D seq->count;
-> -	char *buf_start;
->  	int err;
-> =20
-> -	buf_start =3D seq->buf + start;
-> -
->  	err =3D security_sb_show_options(seq, sb);
->  	if (err)
->  		return err;
-> =20
-> -	if (unlikely(seq_has_overflowed(seq)))
-> -		return -EAGAIN;
-> -
-> -	if (seq->count =3D=3D start)
-> -		return 0;
-> -
-> -	err =3D statmount_opt_unescape(seq, buf_start);
-> +	err =3D statmount_opt_process(seq, start);
->  	if (err < 0)
->  		return err;
-> =20
+Christian Brauner <brauner@kernel.org> writes:
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>
+> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+>
+> @Jon, should I take this through the vfs tree?
+
+Up to you.  It looks like I'll definitely have another pull request
+during this merge window, so I can get it Linusward too.  Just lemme
+know what your preference is.
+
+jon
 
