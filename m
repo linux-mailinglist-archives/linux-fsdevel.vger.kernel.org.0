@@ -1,279 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-35285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B269D362E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0599D3644
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D808B25FB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:00:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959B0B26DB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D879C189F2B;
-	Wed, 20 Nov 2024 09:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A05519C56D;
+	Wed, 20 Nov 2024 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuI4Y3T2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9t1xG2N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41882178368
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 08:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6810F19C551
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093201; cv=none; b=qEd2Lqbex9zbxhuYHuubncOgqV54Csm01fW2av934tmiI/3VswFEiggzUnoZL3v2GUtwHR5FM9avMpY/DFYBuNS2wuOUFxxu7gSUcDodoIWloQORsE8pTzQccY3ZC010u0Yuq/Hu/j55oHDYiSI63VDS4vZOJ9mLaKbIKuGX0q4=
+	t=1732093311; cv=none; b=MlBK1HF979RP+FHXhdyvAR+Ur4xZZWb9yRhYf4nRdHhyjjkEvhU13lcYfqHFKYaI7ChxObWUXlbTGfEsXM30X39RC1F91JQhyCfm6HL0KDDBoJhgE5J7AZSL9crklDGv9F4zITEpd68ILjcFIP3wkeb1/aKGIcPjsXy8ENF8b9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093201; c=relaxed/simple;
-	bh=gqoCziSjiEZ/8ZKLDgJocNZFBiNN+JU+ZWF2dnYaXeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LY4SY/Ry2wL30a2OpfdRx2y5FAzHb9Iu+ACBXj9FMktxJPbXfjkWRXz5OgGoe/40XAByG7I6tAV4UAoOLuzKpIt4z/s9RfE/pAWMJllTE6jF0AzFfSWRoAfEmslpUMcTisn7dt/QzlEvIUEN3X9ZljxbwZ4pyMjYfwtaUhLj5gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuI4Y3T2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA31C4CECD;
-	Wed, 20 Nov 2024 08:59:57 +0000 (UTC)
+	s=arc-20240116; t=1732093311; c=relaxed/simple;
+	bh=mB971s82172xI/J7xs0mr2omR//1cMIof8yyr6s1idc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QdcCAZJuWEo9a2En+qRJmC6lpNZQeEKhA1F3orEqbUoxcA/V8HIxojWfLXa5ipLVvcFTIc6MNxmZZ/K1twFT4Du/tg+V31Wjc4n0EGDiRjIYQ86hI2d0SJSE7BFHXq6KXvPVagDR/leq2dz4HAoE7Pe7ACk2e31pIsDraU81eaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9t1xG2N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6013C4CED7;
+	Wed, 20 Nov 2024 09:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732093199;
-	bh=gqoCziSjiEZ/8ZKLDgJocNZFBiNN+JU+ZWF2dnYaXeY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RuI4Y3T2PQPiTZUxuLry+YAJHrtsUMImgggxzm7l92GEO7qMxk0f/AGafAgomT5oD
-	 Oe9GVz6eKDFUUB7edrNSMwUpkCeX+3Bbtdsazu7YhxZ9xikyxO/xJ8+pnznYALJOLc
-	 6v76kZkNN3QVfsebOomHBd/G0Y/jYLXyptND+ubOJJa90gaPvaoRcVO3d64HOAajkf
-	 6IJT+uAYNJN583pBJtWU8FzjiKt6Ut9NQwiq3vuQ9rLd90nwkJN8MWqzM2n29yPxFd
-	 19e7FL9mx7UZduzcB9k23CdvJq5V+Qa9yEVtWTML3qFMmUM7226uKE3rx+TNGD6GZi
-	 Lb1vT4AUIH62Q==
-Date: Wed, 20 Nov 2024 09:59:54 +0100
+	s=k20201202; t=1732093311;
+	bh=mB971s82172xI/J7xs0mr2omR//1cMIof8yyr6s1idc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h9t1xG2N25NyB1dPJSqyM277tLLcZl6kCsjPVIvwP7IHEw3qs6I0WTYDiWbmP7Mej
+	 P+3N3lr2fE0XHVg48CoFObkm5HMZWTwC+PweVmHZOt/hzGYTYeT9mzIrMNu8bWEHi7
+	 rie40UNnNKA23XAEH/MYvPceqqiecBlAfam1gcdCN9afcuFjnDapLeDsaM+fae6InB
+	 JDruH7644eN1exghTu3MFYlXO6hCAPlv6JYJrBCTNW+MpiSpRMg2gW5zuD5TixOGuB
+	 gu9H5ys1DjDhJakMU2SwoGnOuyO+kELWtpPo1a9WvvegedI/srf9xcT/cxluEZFQZq
+	 oe0LWFbfkBOlw==
 From: Christian Brauner <brauner@kernel.org>
 To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, cel@kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, Hugh Dickens <hughd@google.com>, yukuai3@huawei.com, 
-	yangerkun@huaweicloud.com
-Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
- values wrap
-Message-ID: <20241120-abzocken-senfglas-8047a54f1aba@brauner>
+Cc: Christian Brauner <brauner@kernel.org>,
+	yukuai3@huawei.com,
+	yangerkun@huaweicloud.com,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Hugh Dickens <hughd@google.com>
+Subject: Re: [RFC PATCH 0/2] Improve simple directory offset wrap behavior
+Date: Wed, 20 Nov 2024 10:01:37 +0100
+Message-ID: <20241120-jurymitglied-randnotiz-b382d61369dc@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241117213206.1636438-1-cel@kernel.org>
 References: <20241117213206.1636438-1-cel@kernel.org>
- <20241117213206.1636438-3-cel@kernel.org>
- <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org>
- <ZzuqYeENJJrLMxwM@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZzuqYeENJJrLMxwM@tissot.1015granger.net>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1424; i=brauner@kernel.org; h=from:subject:message-id; bh=mB971s82172xI/J7xs0mr2omR//1cMIof8yyr6s1idc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbLi3f7lKUFfn30wHRqS+FV6bXsN8LNLrL6DpP+OXL/ zyn8qzVOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSdIDhv7M5a0f3WpGzf9q7 esz/hG3Zei2odbUp49wt/zzqPGe5bWRk2PciKbb6eqVPzYPkqCv9koE3N/w+N/nj4/kbXb2Z9O+ vYgMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 18, 2024 at 03:58:09PM -0500, Chuck Lever wrote:
-> On Mon, Nov 18, 2024 at 03:00:56PM -0500, Jeff Layton wrote:
-> > On Sun, 2024-11-17 at 16:32 -0500, cel@kernel.org wrote:
-> > > From: Chuck Lever <chuck.lever@oracle.com>
-> > > 
-> > > The fix in commit 64a7ce76fb90 ("libfs: fix infinite directory reads
-> > > for offset dir") introduced a fence in offset_iterate_dir() to stop
-> > > the loop from returning child entries created after the directory
-> > > was opened. This comparison relies on the strong ordering of
-> > > DIR_OFFSET_MIN <= largest child offset <= next_offset to terminate
-> > > the directory iteration.
-> > > 
-> > > However, because simple_offset_add() uses mtree_alloc_cyclic() to
-> > > select each next new directory offset, ctx->next_offset is not
-> > > always the highest unused offset. Once mtree_alloc_cyclic() allows
-> > > a new offset value to wrap, ctx->next_offset will be set to a value
-> > > less than the actual largest child offset.
-> > > 
-> > > The result is that readdir(3) no longer shows any entries in the
-> > > directory because their offsets are above ctx->next_offset, which is
-> > > now a small value. This situation is persistent, and the directory
-> > > cannot be removed unless all current children are already known and
-> > > can be explicitly removed by name first.
-> > > 
-> > > In the current Maple tree implementation, there is no practical way
-> > > that 63-bit offset values can ever wrap, so this issue is cleverly
-> > > avoided. But the ordering dependency is not documented via comments
-> > > or code, making the mechanism somewhat brittle. And it makes the
-> > > continued use of mtree_alloc_cyclic() somewhat confusing.
-> > > 
-> > > Further, if commit 64a7ce76fb90 ("libfs: fix infinite directory
-> > > reads for offset dir") were to be backported to a kernel that still
-> > > uses xarray to manage simple directory offsets, the directory offset
-> > > value range is limited to 32-bits, which is small enough to allow a
-> > > wrap after a few weeks of constant creation of entries in one
-> > > directory.
-> > > 
-> > > Therefore, replace the use of ctx->next_offset for fencing new
-> > > children from appearing in readdir results.
-> > > 
-> > > A jiffies timestamp marks the end of each opendir epoch. Entries
-> > > created after this timestamp will not be visible to the file
-> > > descriptor. I chose jiffies so that the dentry->d_time field can be
-> > > re-used for storing the entry creation time.
-> > > 
-> > > The new mechanism has its own corner cases. For instance, I think
-> > > if jiffies wraps twice while a directory is open, some children
-> > > might become invisible. On 32-bit systems, the jiffies value wraps
-> > > every 49 days. Double-wrapping is not a risk on systems with 64-bit
-> > > jiffies. Unlike with the next_offset-based mechanism, re-opening the
-> > > directory will make invisible children re-appear.
-> > > 
-> > > Reported-by: Yu Kuai <yukuai3@huawei.com>
-> > > Closes: https://lore.kernel.org/stable/20241111005242.34654-1-cel@kernel.org/T/#m1c448e5bd4aae3632a09468affcfe1d1594c6a59
-> > > Fixes: 64a7ce76fb90 ("libfs: fix infinite directory reads for offset dir")
-> > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> > > ---
-> > >  fs/libfs.c | 36 +++++++++++++++++-------------------
-> > >  1 file changed, 17 insertions(+), 19 deletions(-)
-> > > 
-> > > diff --git a/fs/libfs.c b/fs/libfs.c
-> > > index bf67954b525b..862a603fd454 100644
-> > > --- a/fs/libfs.c
-> > > +++ b/fs/libfs.c
-> > > @@ -294,6 +294,7 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
-> > >  		return ret;
-> > >  
-> > >  	offset_set(dentry, offset);
-> > > +	WRITE_ONCE(dentry->d_time, jiffies);
-> > >  	return 0;
-> > >  }
-> > >  
-> > > @@ -454,9 +455,7 @@ void simple_offset_destroy(struct offset_ctx *octx)
-> > >  
-> > >  static int offset_dir_open(struct inode *inode, struct file *file)
-> > >  {
-> > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-> > > -
-> > > -	file->private_data = (void *)ctx->next_offset;
-> > > +	file->private_data = (void *)jiffies;
-> > >  	return 0;
-> > >  }
-> > >  
-> > > @@ -473,9 +472,6 @@ static int offset_dir_open(struct inode *inode, struct file *file)
-> > >   */
-> > >  static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
-> > >  {
-> > > -	struct inode *inode = file->f_inode;
-> > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-> > > -
-> > >  	switch (whence) {
-> > >  	case SEEK_CUR:
-> > >  		offset += file->f_pos;
-> > > @@ -490,7 +486,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
-> > >  
-> > >  	/* In this case, ->private_data is protected by f_pos_lock */
-> > >  	if (!offset)
-> > > -		file->private_data = (void *)ctx->next_offset;
-> > > +		/* Make newer child entries visible */
-> > > +		file->private_data = (void *)jiffies;
-> > >  	return vfs_setpos(file, offset, LONG_MAX);
-> > >  }
-> > >  
-> > > @@ -521,7 +518,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
-> > >  			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-> > >  }
-> > >  
-> > > -static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
-> > > +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx,
-> > > +			       unsigned long fence)
-> > >  {
-> > >  	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-> > >  	struct dentry *dentry;
-> > > @@ -531,14 +529,15 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
-> > >  		if (!dentry)
-> > >  			return;
-> > >  
-> > > -		if (dentry2offset(dentry) >= last_index) {
-> > > -			dput(dentry);
-> > > -			return;
-> > > -		}
-> > > -
-> > > -		if (!offset_dir_emit(ctx, dentry)) {
-> > > -			dput(dentry);
-> > > -			return;
-> > > +		/*
-> > > +		 * Output only child entries created during or before
-> > > +		 * the current opendir epoch.
-> > > +		 */
-> > > +		if (time_before_eq(dentry->d_time, fence)) {
-> > > +			if (!offset_dir_emit(ctx, dentry)) {
-> > > +				dput(dentry);
-> > > +				return;
-> > > +			}
-> > >  		}
-> > >  
-> > >  		ctx->pos = dentry2offset(dentry) + 1;
-> > > @@ -569,15 +568,14 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
-> > >   */
-> > >  static int offset_readdir(struct file *file, struct dir_context *ctx)
-> > >  {
-> > > +	unsigned long fence = (unsigned long)file->private_data;
-> > >  	struct dentry *dir = file->f_path.dentry;
-> > > -	long last_index = (long)file->private_data;
-> > >  
-> > >  	lockdep_assert_held(&d_inode(dir)->i_rwsem);
-> > >  
-> > >  	if (!dir_emit_dots(file, ctx))
-> > >  		return 0;
-> > > -
-> > > -	offset_iterate_dir(d_inode(dir), ctx, last_index);
-> > > +	offset_iterate_dir(d_inode(dir), ctx, fence);
-> > >  	return 0;
-> > >  }
-> > >  
-> > 
-> > Using timestamps instead of directory ordering does seem less brittle,
-> > and the choice to use jiffies makes sense given that d_time is also an
-> > unsigned long.
-> > 
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On Sun, 17 Nov 2024 16:32:04 -0500, cel@kernel.org wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
 > 
-> Precisely. The goal was to re-use as much code as possible to avoid
-> perturbing the current size of "struct dentry".
+> This series attempts to narrow some gaps in the current tmpfs
+> directory offset mechanism, based on misbehaviors reported by Yu
+> Kuai <yukuai3@huawei.com> and Yang Erkun <yangerkun@huawei.com>.
 > 
-> That said, I'm not overjoyed with using jiffies, given it has
-> similar wrapping issues as ctx->next_offset on 32-bit systems. The
-> consequences of an offset value wrap are less severe, though, since
-> that can no longer make children entries disappear permanently.
+> It does not fully close the window on bad behavior, as noted in
+> the patch description of 2/2. Perhaps discussion and review can
+> identify improvements that further clean up the corner cases.
 > 
-> I've been trying to imagine a solution that does not depend on the
-> range of an integer value and has solidly deterministic behavior in
-> the face of multiple child entry creations during one timer tick.
-> 
-> We could partially re-use the legacy cursor/list mechanism.
-> 
-> * When a child entry is created, it is added at the end of the
->   parent's d_children list.
-> * When a child entry is unlinked, it is removed from the parent's
->   d_children list.
-> 
-> This includes creation and removal of entries due to a rename.
-> 
-> 
-> * When a directory is opened, mark the current end of the d_children
->   list with a cursor dentry. New entries would then be added to this
->   directory following this cursor dentry in the directory's
->   d_children list.
-> * When a directory is closed, its cursor dentry is removed from the
->   d_children list and freed.
-> 
-> Each cursor dentry would need to refer to an opendir instance
-> (using, say, a pointer to the "struct file" for that open) so that
-> multiple cursors in the same directory can reside in its d_chilren
-> list and won't interfere with each other. Re-use the cursor dentry's
-> d_fsdata field for that.
-> 
-> 
-> * offset_readdir gets its starting entry using the mtree/xarray to
->   map ctx->pos to a dentry.
-> * offset_readdir continues iterating by following the .next pointer
->   in the current dentry's d_child field.
-> * offset_readdir returns EOD when it hits the cursor dentry matching
->   this opendir instance.
-> 
-> 
-> I think all of these operations could be O(1), but it might require
-> some additional locking.
+> [...]
 
-This would be a bigger refactor of the whole stable offset logic. So
-even if we end up doing that I think we should use the jiffies solution
-for now.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/2] libfs: Return ENOSPC when the directory offset range is exhausted
+      https://git.kernel.org/vfs/vfs/c/7f82c425d13b
+[2/2] libfs: Improve behavior when directory offset values wrap
+      https://git.kernel.org/vfs/vfs/c/3e8dd5a7404a
 
