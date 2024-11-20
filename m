@@ -1,173 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-35332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7A79D3EEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1E19D3F07
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787E5283CBA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C02282171
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451521AA78C;
-	Wed, 20 Nov 2024 15:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F861B6555;
+	Wed, 20 Nov 2024 15:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vXvMKbuJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HdAhwtR9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0b3zeo0j";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B4SowmnV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FB60EKDD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F395CAD58;
-	Wed, 20 Nov 2024 15:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FD1156F39;
+	Wed, 20 Nov 2024 15:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732116229; cv=none; b=OK72m2IJjE1TEU0OWtCxPdq/qGjQXOHFHHRrG2OuT31nXQpD79LPTc7ZvnArigUu3isJC6nN9oxkj2LyDvXw1NQPVd0YOotM/O//htGzkvQlNfWKUKJm2IiyKt9k/nMaV+eXqx/8fHoWRjGdmMhWBuOWRMOjcam1MXeXk1a5Yb0=
+	t=1732116578; cv=none; b=ASwBJjPalQIps6kYYyFnxQAuVHxcWKJZ9bdRiym9kvV9kQRC3rwDbyT1yEFIDI4V26b4upeSrKWCMDWp6iEubVo7TBHKayDfaQZ1JAcvxw0sMztAvWWf0cX+eStP/A6vAZt8B8geKpninU3flMHauot5hoyrEf8koGa1Drwi+AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732116229; c=relaxed/simple;
-	bh=yM3fdwupjvWIi5QCB60oGdhLi9PZdzHDr5blBMfmfts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N662jDtu+sIya0M/7zmSh7be0psPcAU2cWK5cZohO0ZBjI4yadpSvXzqI9kIWsGYT9bpj2lNFkz1LtMStAEjqJbwx9m0HOSvI1qOqsqUdl2GKqM89t0Rydo9HaPU/F+7SmUssxF++xB8BBBfsj6WdYfw4T7xrZ+mp6GSQkQXVUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vXvMKbuJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HdAhwtR9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0b3zeo0j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B4SowmnV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5F66B1F79B;
-	Wed, 20 Nov 2024 15:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732116226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rbLMuMC2yYdzj3nG2I+d54+tseu9D8HIg5szJY41NA4=;
-	b=vXvMKbuJ8/tKiFmOFejVn6aU5sqs95QkUwnPnUMV3Z4UZBsxxPYAoJrIrt56XH/efZHl3h
-	jI545fB+xBCTJC//WtokwslS4wBZMDfYEnO+u1hmrHDfr+QkavHbd9pbWlLwrzeUHB0Y0v
-	nvB28liZ6VQrUXH0fW8+daCwskjVcuc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732116226;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rbLMuMC2yYdzj3nG2I+d54+tseu9D8HIg5szJY41NA4=;
-	b=HdAhwtR9MU3lDSTEQRB2OMAGN7JgHjx2Abe/4h/txkI83A6JxEtlfXQH8ZMOI+IWeeMt3b
-	VZ6zBdLye5p+ciDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732116225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rbLMuMC2yYdzj3nG2I+d54+tseu9D8HIg5szJY41NA4=;
-	b=0b3zeo0j+VtafXLc0T225LA1IjNvqKTPZ/CRcJikFUHJ5iu3wAjsEAc/P5ZDgC+9ahd9B5
-	/D+4aYmI3snW2tlMNaAV9xjJJjneYf1nz+lpItqQAHsE1/K+CXkRwKxfXzdEDovsGV74Qg
-	ku/qH818rb5j37Zp7MosU5oIZ1guFSc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732116225;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rbLMuMC2yYdzj3nG2I+d54+tseu9D8HIg5szJY41NA4=;
-	b=B4SowmnVqbIass1asF76dEX9d8zqNh3zp6d6fd6iTT36FOV6OlKGA/cqGiiD3+t+32YUJ7
-	eIjeek0E4JGTxWBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FA5213297;
-	Wed, 20 Nov 2024 15:23:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id js5nEwH/PWfzQgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 20 Nov 2024 15:23:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E5D1AA08A2; Wed, 20 Nov 2024 16:23:40 +0100 (CET)
-Date: Wed, 20 Nov 2024 16:23:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org,
-	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v8 09/19] fsnotify: generate pre-content permission event
- on truncate
-Message-ID: <20241120152340.gu7edmtm2j3lmxoy@quack3>
-References: <cover.1731684329.git.josef@toxicpanda.com>
- <23af8201db6ac2efdea94f09ab067d81ba5de7a7.1731684329.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1732116578; c=relaxed/simple;
+	bh=GMJRSIN/jwN1mEeXDPhC5UQ+MYY/wdAISwzlBog0b14=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZgH2xvaIENCtMoxTSDThkex3u8pfzFGuFpplYh/h/gxPNzGjUyRTRJwUtSZnWd2W8F+K0URQ8nZ7iZ+E3CwD8qFV4WBr46rsYfc5OtleK8z8Ui6Kjd5KFkP8R5HnBVVjRcyEjNBMQB9HDXS7zT1mWVcsbtil0fBSDM2m1QxRPJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FB60EKDD; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732116577; x=1763652577;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GMJRSIN/jwN1mEeXDPhC5UQ+MYY/wdAISwzlBog0b14=;
+  b=FB60EKDD8Uq6AkLoz0qzIidGVOBPGXv72SQL0hFB1F0epi5aeCe7CKOr
+   S+Ig+Z4c711LcptxkuQLid1FjZmK3828IRE/2XMV7F+DMvIiN9aib3gIK
+   YDUblHFFU1n1wl5/7S4x8bblVYsNh8RlLRW8289EVHYzMTQSrG2KTxJIX
+   +hpgAN0pNoGUpPHEC7mOy3Q1k/gIunhLSsvbD83JLIqUY1ppIalGqb4L6
+   Z/gMC3q+BuXdYq28zV5UMgbQ8DtZoi8Zcefv22LAt8+pyoxEeUxt2T4Vo
+   fe4/JBtoqdwvYlbHpFrW1sGRa+PgT38SCkcdVh/x2Q/dXNZTy51R4DatP
+   w==;
+X-CSE-ConnectionGUID: 6jH+taCjT8unZgVUUKRdQg==
+X-CSE-MsgGUID: HCYBXT2mRky1SBYXQ3ecXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="35856478"
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="35856478"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 07:29:36 -0800
+X-CSE-ConnectionGUID: JioBrdkvQk2Y5jNMYdMdmw==
+X-CSE-MsgGUID: ev1M0HImQeKcY4srIRu0nQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="89533919"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa006.fm.intel.com with ESMTP; 20 Nov 2024 07:29:35 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id C65E8301B9F; Wed, 20 Nov 2024 07:29:34 -0800 (PST)
+From: Andi Kleen <ak@linux.intel.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
+  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  cgroups@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  akpm@linux-foundation.org,  corbet@lwn.net,  derek.kiernan@amd.com,
+  dragan.cvetic@amd.com,  arnd@arndb.de,  gregkh@linuxfoundation.org,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,
+  tj@kernel.org,  hannes@cmpxchg.org,  mhocko@kernel.org,
+  roman.gushchin@linux.dev,  shakeel.butt@linux.dev,
+  muchun.song@linux.dev,  Liam.Howlett@oracle.com,
+  lorenzo.stoakes@oracle.com,  vbabka@suse.cz,  jannh@google.com,
+  shuah@kernel.org,  vegard.nossum@oracle.com,  vattunuru@marvell.com,
+  schalla@marvell.com,  david@redhat.com,  willy@infradead.org,
+  osalvador@suse.de,  usama.anjum@collabora.com,  andrii@kernel.org,
+  ryan.roberts@arm.com,  peterx@redhat.com,  oleg@redhat.com,  tandersen@
+Subject: Re: [RFCv1 0/6] Page Detective
+In-Reply-To: <20241116175922.3265872-1-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Sat, 16 Nov 2024 17:59:16 +0000")
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+Date: Wed, 20 Nov 2024 07:29:34 -0800
+Message-ID: <87wmgxvs81.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23af8201db6ac2efdea94f09ab067d81ba5de7a7.1731684329.git.josef@toxicpanda.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,vger.kernel.org,suse.cz,gmail.com,kernel.org,linux-foundation.org,zeniv.linux.org.uk,kvack.org];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
-On Fri 15-11-24 10:30:22, Josef Bacik wrote:
-> From: Amir Goldstein <amir73il@gmail.com>
-> 
-> Generate FS_PRE_ACCESS event before truncate, without sb_writers held.
-> 
-> Move the security hooks also before sb_start_write() to conform with
-> other security hooks (e.g. in write, fallocate).
-> 
-> The event will have a range info of the page surrounding the new size
-> to provide an opportunity to fill the conetnt at the end of file before
-> truncating to non-page aligned size.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Pasha Tatashin <pasha.tatashin@soleen.com> writes:
 
-I was thinking about this. One small issue is that similarly as the
-filesystems may do RMW of tail page during truncate, they will do RMW of
-head & tail pages on hole punch or zero range so we should have some
-strategically sprinkled fsnotify_truncate_perm() calls there as well.
-That's easy enough to fix.
+> Page Detective is a new kernel debugging tool that provides detailed
+> information about the usage and mapping of physical memory pages.
+>
+> It is often known that a particular page is corrupted, but it is hard to
+> extract more information about such a page from live system. Examples
+> are:
+>
+> - Checksum failure during live migration
+> - Filesystem journal failure
+> - dump_page warnings on the console log
+> - Unexcpected segfaults
+>
+> Page Detective helps to extract more information from the kernel, so it
+> can be used by developers to root cause the associated problem.
+>
+> It operates through the Linux debugfs interface, with two files: "virt"
+> and "phys".
+>
+> The "virt" file takes a virtual address and PID and outputs information
+> about the corresponding page.
+>
+> The "phys" file takes a physical address and outputs information about
+> that page.
+>
+> The output is presented via kernel log messages (can be accessed with
+> dmesg), and includes information such as the page's reference count,
+> mapping, flags, and memory cgroup. It also shows whether the page is
+> mapped in the kernel page table, and if so, how many times.
 
-But there's another problem which I'm more worried about: If we have
-a file 64k large, user punches 12k..20k and then does read for 0..64k, then
-how does HSM daemon in userspace know what data to fill in? When we'll have
-modify pre-content event, daemon can watch it and since punch will send modify
-for 12k-20k, the daemon knows the local (empty) page cache is the source of
-truth. But without modify event this is just a recipe for data corruption
-AFAICT.
+A lot of all that is already covered in /proc/kpage{flags,cgroup,count)
+Also we already have /proc/pid/pagemap to resolve virtual addresses.
 
-So it seems the current setting with access pre-content event has only chance
-to work reliably in read-only mode? So we should probably refuse writeable
-open if file is being watched for pre-content events and similarly refuse
-truncate?
+At a minimum you need to discuss why these existing mechanisms are not
+suitable for you and how your new one is better.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If something particular is missing perhaps the existing mechanisms
+can be extended?
+
+Outputting in the dmesg seems rather clumpsy for a production mechanism.
+
+I personally would just use live crash or live gdb on /proc/kcore to get
+extra information, although I can see that might have races.
+
+-Andi
 
