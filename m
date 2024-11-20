@@ -1,58 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-35299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A269D3842
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:23:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734D49D384B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA531F23B81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B73CCB24403
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2519C561;
-	Wed, 20 Nov 2024 10:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED319C554;
+	Wed, 20 Nov 2024 10:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+eMoxnK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8/c1591"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDB4183CA2;
-	Wed, 20 Nov 2024 10:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341F5156669;
+	Wed, 20 Nov 2024 10:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732098192; cv=none; b=tVkEP7b4ma/6qbafXCfstrazFaHayF8PjTG8oW6Ymkb8JZZzBUUUtU420giDXA0SnItLzkWm41RjlaOV2/RVMR9yJdp7vq22EbQuw8wFBcslRC7z1Z338Fj/xFi+XbK5H99vmDEHZjNvtzv/f2ZUYvnd79yTVVEex4feXzWpC5g=
+	t=1732098371; cv=none; b=BZz80P5zT0OqH9FmqB6fQHVieh/PsmrJ0Y68oEd3kL2SbNMD5V7hWCi/zLtdJzcg9/T0NugcKIaXr2SCqWGIkVDK1L7DINtkNLFp6um0s9mPUMVI1DlG0A+dqTsTjYJ/krNxIEOEluGwnD/G958oI//eOz4fpmVn3Ni6p2uy8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732098192; c=relaxed/simple;
-	bh=5q2Pm04NgG3SUl9CYckfofHezS5qo6XPMnYe4JiaAPw=;
+	s=arc-20240116; t=1732098371; c=relaxed/simple;
+	bh=SfqMrzJd3Xvy1fALjmr1wuzHzJstYU6OALJn4TwxQkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/KnoI48+UIS9sqWI4bVUFd/L4OiyqyPhgvOrjl3KTYFMrhzOwlXI8tOUyHfDV0hUWtgzJY0o+tODIYvglP4jeXApgLnY9Bh0+pRpk26KWyfkq0F6xlYvRRt8FVzun1qESwSWudiPhRW/73hDNAzIAVXJa4DeDyrPoOWIZEpn/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+eMoxnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A8C5C4CECD;
-	Wed, 20 Nov 2024 10:23:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6Fx9gy0/M0dg/3CVHrAuBmEtdbZDixUTgZBDwlX6PaVkN9/N+Ff2HOB6S2RvpEjgkPjAPcfQIglXmGXZPqbzf/jHtWnLe5Qj50RMec0YuiFRLl4aXGYgHytsKbbYKUcxYkFgMKM3OpNEyJWdtrlwXHYmzqvHKIAeSwOPLuyJHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8/c1591; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E064FC4CED6;
+	Wed, 20 Nov 2024 10:26:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732098192;
-	bh=5q2Pm04NgG3SUl9CYckfofHezS5qo6XPMnYe4JiaAPw=;
+	s=k20201202; t=1732098370;
+	bh=SfqMrzJd3Xvy1fALjmr1wuzHzJstYU6OALJn4TwxQkg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+eMoxnKvsgyF57x2XplwTqL8m36gjGkgsrRLOvW2sqWfalEXGV0b2eRiDcg5r5eR
-	 5MD06NQHwaQbcL8/6VnWISOmQfrjTET0haS5kC1CdYdKcruzHjtFqYy35CU9E3EdxU
-	 b2jpPLaBVDY3qLj/NOmFYwN77X0n7Ze9Dla2DQOK9Xe8YifXdbgiuukZJR7KqyvqBz
-	 07spjJWSib9Loq7cFHEnIkqSdoxiC0FP43d1k8PY1O7K+puH2xT9BnAUyuQ9CEHAmb
-	 M4nygrYlluishdz6apDGLgRBjwK+uo0JU8k+n7sAgG6TiR3gfd6hw1xWHfy1W5bP3z
-	 bBAak5s/Zx9Tw==
-Date: Wed, 20 Nov 2024 11:23:04 +0100
+	b=I8/c1591CJz8QoI8QyrOALAZusV7o0ALRWyg73eQlfR9QRMs99AQuDPvwlcvkz9tA
+	 bji8DYG2t5zKFKiMzlnDFC5YT0nNZ+RHOmG8S0WKHWTaqliSHKtb3MEgNNYwMBsZZZ
+	 5w3hFb5TI50cNd8U8wWfffGuRv2proHdiAuX/thuyAxwoSVWKekP2DMpYVP1DqZ+Vu
+	 erxiZrYjJ2RilBYq6sCLsYNZemNmLjfQmJBx1I8u5DKU7Psdv542GzBAJueGio5S54
+	 9M8jO03Ld7N2GscyFgV9OO/SNoRKxn0fB9lJAtxzqKGR2apGirl3JQbEoJWWK3vleT
+	 sJ6isYqfHL3Dw==
+Date: Wed, 20 Nov 2024 11:26:06 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>, autofs@vger.kernel.org, 
-	Alexander Aring <aahringo@redhat.com>, David Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, fsverity@lists.linux.dev, 
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH] Documentation: filesystems: update filename extensions
-Message-ID: <20241120-packen-popsong-7d5d34c0574c@brauner>
-References: <20241120055246.158368-1-rdunlap@infradead.org>
+To: ZhengYuan Huang <gality369@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju@buaa.edu.cn
+Subject: Re: [BUG] fs/eventfd: Possible undefined behavior about read and
+ eventfd interaction
+Message-ID: <20241120-bunker-kleiden-a0b5bb79a1e8@brauner>
+References: <0c04e4ea-b900-4476-abc9-6b57e5c26e43@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,35 +58,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120055246.158368-1-rdunlap@infradead.org>
+In-Reply-To: <0c04e4ea-b900-4476-abc9-6b57e5c26e43@gmail.com>
 
-On Tue, Nov 19, 2024 at 09:52:46PM -0800, Randy Dunlap wrote:
-> Update references to most txt files to rst files.
-> Update one reference to an md file to a rst file.
-> Update one file path to its current location.
+On Wed, Nov 20, 2024 at 01:40:32PM +0800, ZhengYuan Huang wrote:
+> Hello,
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Ian Kent <raven@themaw.net>
-> Cc: autofs@vger.kernel.org
-> Cc: Alexander Aring <aahringo@redhat.com>
-> Cc: David Teigland <teigland@redhat.com>
-> Cc: gfs2@lists.linux.dev
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Theodore Y. Ts'o <tytso@mit.edu>
-> Cc: fsverity@lists.linux.dev
-> Cc: Mark Fasheh <mark@fasheh.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Cc: ocfs2-devel@lists.linux.dev
-> ---
+> Our dynamic analysis tool has encountered a potential issue with the
+> interaction between read and eventfd. Below is a minimal code snippet
+> to reproduce the behavior:
+> 
+> int main() {
+>   int fd = syscall(__NR_eventfd, 1);
+>   int ret = syscall(__NR_read, fd, 0x000fffffffffffff, 8);
+>   assert(ret == -1); // invalid address
+>   long value;
+>   int ret2 = syscall(__NR_read, fd, &value, 8);
+>   assert(0); // never reached here
+>   return 0;
+> }
+> 
+> When read is called with an eventfd file descriptor and an invalid 
+> address as the second argument, it fails and correctly returns an 
+> "invalid address" error. However, the second read syscall does not 
+> proceed; instead, it blocks indefinitely. This suggests that the 
+> counter in the eventfd object is consumed by the first read syscall, 
+> despite its failure.
+> 
+> I could not find any explanation for this behavior in the man pages 
+> or the source code. Could you clarify if this behavior is expected, 
+> or might it be a bug?
+> 
+> Thank you for your time and assistance. Please let me know if 
+> further details or additional reproducer information are needed.
 
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-
-@Jon, should I take this through the vfs tree?
+Yes, that is expected as the copy_to_user() is the last step in
+eventfd_read() and userspace clearly messed up by providing an invalid
+address.
 
