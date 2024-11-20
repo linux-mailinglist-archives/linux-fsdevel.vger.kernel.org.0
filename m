@@ -1,250 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-35291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7084E9D370C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:28:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FA99D3739
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE013B2211D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A7A1F21F9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA96619ABD8;
-	Wed, 20 Nov 2024 09:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127A919D89B;
+	Wed, 20 Nov 2024 09:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFBCIo9N"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFa3JGgF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EE0200CB;
-	Wed, 20 Nov 2024 09:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A2619C551
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094913; cv=none; b=Q61OZtXrfHIVU3YfSrqR8qRBNNVN3qNu/T/VMHXDwV38hlrqNk1AI5GacKDcB5jlLSv3k0MdoSl8ShyWO+nM636jmv4p0z1wm+f0PzImQOMqAPfD6wzmMOPVxrv2zrv9ZLqOEfDv8CNKFEYIB+X1GqkCRUBi5q+bPnjDA2V8hKQ=
+	t=1732095757; cv=none; b=aWnUbnNq05z73g0dBGnr54wX+PFEFk0tSlCvoaBRUaBCNiafL5dmf2/+7qYYmeJdOmivzJ6g+JKiIEZlc4gkcw0Y8Qdekx2e6rKbxxxqZRf6hx1dyzqtPrXa8w6V60j5muoT+PBSsK1kPy/7LTHwc0tWAqIBsBvUR4sFaoUrx8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094913; c=relaxed/simple;
-	bh=VrcMGITK8dOAe5io5QsstOrr2rW+8zosAYtEPi0gZug=;
+	s=arc-20240116; t=1732095757; c=relaxed/simple;
+	bh=+MfqtJzp+ShAy/X+9uRsWq7bOah9Lc4YrSYMKQjQ8Aw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2Kfpic46aYncMeGiH4ZsfwSxsmrnACivEKBY3P+MpyA2TOzbF5JWPXKJIM0ZtfL9jU0ZMsHaJ+IyW6GPL9vRpFZXW9KrvkQeuDwVbcYx7nbxW18UzVH2lBUqphq/KTmeqUewscd6V5bO8SDGKolzna7X3QcZbLs6SJ0EqqyD68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFBCIo9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D989FC4CECD;
-	Wed, 20 Nov 2024 09:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732094912;
-	bh=VrcMGITK8dOAe5io5QsstOrr2rW+8zosAYtEPi0gZug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BFBCIo9NM7T3C8kL+eYe/R11UdP27waGeu/Tgc2t5UfEomqenlmAs7S32a/VgkfjW
-	 EICNtgnOCB3TdBR0P88GanbPfaDjmZE73S4I7FxrGBxCom7jtrnNOL9egb2sKKQRPr
-	 gnQCKtmbTrG5O9Ogl3oW10d710bmric/Jiu8UEODtLb4wQ5myLFKUoad35wsNYIScV
-	 /l6rtf3p7oCt2FTpUujSTsn1LimMX39EUP6bHJnU9iea865rVkzd2PUFWmDtTpiteX
-	 Ui5/GhoW/gcVjGIUiXfTQpmdnOK72pSVpdARXg1kCdbI1xASZEheg217InxFyWxrZY
-	 AFDvPRQirbGsg==
-Date: Wed, 20 Nov 2024 10:28:25 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"repnop@google.com" <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241120-wimpel-virologen-1a58b127eec6@brauner>
-References: <20241112082600.298035-1-song@kernel.org>
- <20241112082600.298035-3-song@kernel.org>
- <20241113-sensation-morgen-852f49484fd8@brauner>
- <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3>
- <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
- <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
- <CAOQ4uxgUYHEZTx7udTXm8fDTfhyFM-9LOubnnAc430xQSLvSVA@mail.gmail.com>
- <CAOQ4uxhyDAHjyxUeLfWeff76+Qpe5KKrygj2KALqRPVKRHjSOA@mail.gmail.com>
- <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=blt8tCMW4K8qxS7bIL2HG2ofuxrDnWFaB3d+36fyZRoBFjOfzbrcoo4Yk1WG3TBKkzYUrSZJ0E7DtYXKxYhtNmuyKCBVdcbvSF+corRGbCqpkZICL0V3x2IJmP2APHaGaV2F3GBRKCQTt3iy0yNGKO/8vAP6MmOTiVoxRsbZIDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFa3JGgF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732095755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BtnWcCy/RhXE31KVrvFbhBplS1bhLk3pDVg35AMkfJY=;
+	b=SFa3JGgFffyR/3hvrW9iYeEMHJgTU8gcb2mDsls2+xrGPdX+XRru01t6kGBruqGoGGBXXY
+	9vD4AR3mDnzHsV9t921BWw6DqaxM3vrxpkDxOTA93YDUf7GG7EFI65ZRx74fgFFGGl8rnY
+	hCRsDDBC617RTq5QUebFNIsko/Dlef4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-MR-qE1QFOU6higATofrtoA-1; Wed,
+ 20 Nov 2024 04:42:30 -0500
+X-MC-Unique: MR-qE1QFOU6higATofrtoA-1
+X-Mimecast-MFC-AGG-ID: MR-qE1QFOU6higATofrtoA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B67019560BA;
+	Wed, 20 Nov 2024 09:42:27 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BE5319560A3;
+	Wed, 20 Nov 2024 09:42:25 +0000 (UTC)
+Date: Wed, 20 Nov 2024 17:42:19 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from
+ kcore.h to crash_dump.h
+Message-ID: <Zz2u+2abswlwVcer@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-5-david@redhat.com>
+ <ZzcYEQwLuLnGQM1y@MiWiFi-R3L-srv>
+ <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
+In-Reply-To: <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Nov 19, 2024 at 09:53:20PM +0000, Song Liu wrote:
-> Hi Jeff and Amir, 
-> 
-> Thanks for your inputs!
-> 
-> > On Nov 19, 2024, at 7:30 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+On 11/15/24 at 10:59am, David Hildenbrand wrote:
+> On 15.11.24 10:44, Baoquan He wrote:
+> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > These defines are not related to /proc/kcore, move them to crash_dump.h
+> > > instead. While at it, rename "struct vmcore" to "struct
+> > > vmcore_mem_node", which is a more fitting name.
 > > 
-> > On Tue, Nov 19, 2024 at 4:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >> 
-> >> On Tue, Nov 19, 2024 at 3:21 PM Jeff Layton <jlayton@kernel.org> wrote:
-> >>> 
+> > Agree it's inappropriate to put the defintions in kcore.h. However for
+> > 'struct vmcore', it's only used in fs/proc/vmcore.c from my code
+> > serching, do you think if we can put it in fs/proc/vmcore.c directly?
+> > And 'struct vmcoredd_node' too.
 > 
-> [...]
-> 
-> >>> Longer term, I think it may be beneficial to come up with a way to attach
-> >>>>> private info to the inode in a way that doesn't cost us one pointer per
-> >>>>> funcionality that may possibly attach info to the inode. We already have
-> >>>>> i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's always a tough
-> >>>>> call where the space overhead for everybody is worth the runtime &
-> >>>>> complexity overhead for users using the functionality...
-> >>>> 
-> >>>> It does seem to be the right long term solution, and I am willing to
-> >>>> work on it. However, I would really appreciate some positive feedback
-> >>>> on the idea, so that I have better confidence my weeks of work has a
-> >>>> better chance to worth it.
-> >>>> 
-> >>>> Thanks,
-> >>>> Song
-> >>>> 
-> >>>> [1] https://github.com/systemd/systemd/blob/main/src/core/bpf/restrict_fs/restrict-fs.bpf.c
-> >>> 
-> >>> fsnotify is somewhat similar to file locking in that few inodes on the
-> >>> machine actually utilize these fields.
-> >>> 
-> >>> For file locking, we allocate and populate the inode->i_flctx field on
-> >>> an as-needed basis. The kernel then hangs on to that struct until the
-> >>> inode is freed.
-> 
-> If we have some universal on-demand per-inode memory allocator, 
-> I guess we can move i_flctx to it?
-> 
-> >>> We could do something similar here. We have this now:
-> >>> 
-> >>> #ifdef CONFIG_FSNOTIFY
-> >>>        __u32                   i_fsnotify_mask; /* all events this inode cares about */
-> >>>        /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> >>>        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> >>> #endif
-> 
-> And maybe some fsnotify fields too?
-> 
-> With a couple users, I think it justifies to have some universal
-> on-demond allocator. 
-> 
-> >>> What if you were to turn these fields into a pointer to a new struct:
-> >>> 
-> >>>        struct fsnotify_inode_context {
-> >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
-> >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> >>>        };
-> >>> 
-> >> 
-> >> The extra indirection is going to hurt for i_fsnotify_mask
-> >> it is being accessed frequently in fsnotify hooks, so I wouldn't move it
-> >> into a container, but it could be moved to the hole after i_state.
-> 
-> >>> Then whenever you have to populate any of these fields, you just
-> >>> allocate one of these structs and set the inode up to point to it.
-> >>> They're tiny too, so don't bother freeing it until the inode is
-> >>> deallocated.
-> >>> 
-> >>> It'd mean rejiggering a fair bit of fsnotify code, but it would give
-> >>> the fsnotify code an easier way to expand per-inode info in the future.
-> >>> It would also slightly shrink struct inode too.
-> 
-> I am hoping to make i_bpf_storage available to tracing programs. 
-> Therefore, I would rather not limit it to fsnotify context. We can
-> still use the universal on-demand allocator.
+> See the next patches and how virtio-mem will make use of the feactored out
+> functions. Not putting them as inline functions into a header will require
+> exporting symbols just do add a vmcore memory node to the list, which I want
+> to avoid -- overkill for these simple helpers.
 
-Can't we just do something like:
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7e29433c5ecc..cc05a5485365 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -627,6 +627,12 @@ is_uncached_acl(struct posix_acl *acl)
- #define IOP_DEFAULT_READLINK   0x0010
- #define IOP_MGTIME     0x0020
-
-+struct inode_addons {
-+        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-+        struct bpf_local_storage __rcu          *i_bpf_storage;
-+        __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-+};
-+
- /*
-  * Keep mostly read-only and often accessed (especially for
-  * the RCU path lookup and 'stat' data) fields at the beginning
-@@ -731,12 +737,7 @@ struct inode {
-                unsigned                i_dir_seq;
-        };
-
--
--#ifdef CONFIG_FSNOTIFY
--       __u32                   i_fsnotify_mask; /* all events this inode cares about */
--       /* 32-bit hole reserved for expanding i_fsnotify_mask */
--       struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
--#endif
-+       struct inode_addons *i_addons;
-
- #ifdef CONFIG_FS_ENCRYPTION
-        struct fscrypt_inode_info       *i_crypt_info;
-
-Then when either fsnotify or bpf needs that storage they can do a
-cmpxchg() based allocation for struct inode_addons just like I did with
-f_owner:
-
-int file_f_owner_allocate(struct file *file)
-{
-	struct fown_struct *f_owner;
-
-	f_owner = file_f_owner(file);
-	if (f_owner)
-		return 0;
-
-	f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-	if (!f_owner)
-		return -ENOMEM;
-
-	rwlock_init(&f_owner->lock);
-	f_owner->file = file;
-	/* If someone else raced us, drop our allocation. */
-	if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
-		kfree(f_owner);
-	return 0;
-}
-
-The internal allocations for specific fields are up to the subsystem
-ofc. Does that make sense?
-
-> >>>        struct fsnotify_inode_context {
-> >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
-> >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> >>>        };
+I see. It makes sense to put them in crash_dump.h. Thanks for
+explanation.
 
 > 
-> >> 
-> >> This was already done for s_fsnotify_marks, so you can follow the recipe
-> >> of 07a3b8d0bf72 ("fsnotify: lazy attach fsnotify_sb_info state to sb")
-> >> and create an fsnotify_inode_info container.
-> >> 
 > > 
-> > On second thought, fsnotify_sb_info container is allocated and attached
-> > in the context of userspace adding a mark.
-> > 
-> > If you will need allocate and attach fsnotify_inode_info in the content of
-> > fast path fanotify hook in order to add the inode to the map, I don't
-> > think that is going to fly??
+> > And about the renaming, with my understanding each instance of struct
+> > vmcore represents one memory region, isn't it a little confusing to be
+> > called vmcore_mem_node? I understand you probablly want to unify the
+> > vmcore and vmcoredd's naming. I have to admit I don't know vmcoredd well
+> > and its naming, while most of people have been knowing vmcore representing
+> > memory region very well.
 > 
-> Do you mean we may not be able to allocate memory in the fast path 
-> hook? AFAICT, the fast path is still in the process context, so I 
-> think this is not a problem?
+> I chose "vmcore_mem_node" because it is a memory range stored in a list.
+> Note the symmetry with "vmcoredd_node"
+
+I would say the justification of naming "vmcore_mem_node" is to keep
+symmetry with "vmcoredd_node". If because it is a memory range, it really
+should not be called vmcore_mem_node. As we know, memory node has
+specific meaning in kernel, it's the memory range existing on a NUMA node.
+
+And vmcoredd is not a widely used feature. At least in fedora/RHEL, we
+leave it to customers themselves to use and handle, we don't support it.
+And we add 'novmcoredd' to kdump kernel cmdline by default to disable it
+in fedora/RHEL. So a rarely used feature should not be taken to decide
+the naming of a mature and and widely used feature's name. My personal
+opinion.
+
 > 
-> Thanks,
-> Song 
+> If there are strong feelings I can use a different name, but
+
+Yes, I would suggest we better keep the old name or take a more
+appropriate one if have to change.
+
+> "vmcore_mem_node" really describes what it actually is. Especially now that
+> we have different vmcore nodes.
 > 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+
 
