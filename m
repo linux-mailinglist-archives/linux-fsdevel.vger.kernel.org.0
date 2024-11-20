@@ -1,282 +1,417 @@
-Return-Path: <linux-fsdevel+bounces-35328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C726D9D3DD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BB09D3EBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 210F5B29706
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 14:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843A6281649
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2601AF0CC;
-	Wed, 20 Nov 2024 14:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74F91C9EBC;
+	Wed, 20 Nov 2024 15:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fra+lEI8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aXT3Cw/0";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="a7pJ+xI1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680FB1AA7A6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113576; cv=none; b=g0ZwXRG/60C1BQOjH6t2uyRL/YZhZ4ENucZBh3XjRYdPYtf/CVNJZPX+zoGpuXRX81B9udhJlNvAmx3Io2wR1a+NnzYwULpYf7sSaNWLOL0cnLFMinrjrcN/fiN0XVHvjqX0uGy0xCmY1K4U4cKKhP7ATIUPXQAg7Vy01lDpfFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113576; c=relaxed/simple;
-	bh=btSNVYwlC8RJUtn0GBIme5+bVVj7TfwEc6LV82NkhM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGKDZM7VrmJd01DhkLm653+C8i5SeEQ2dDY5Hk0qy9nYswnbbavT5L20AW3+cvoMqALaJda71BuCVomzfQB1gBJT6Sm/vxLsKAdwZvxFFj8ahyz4O+cvyEvCM8dc4gXs7d91k3bOH4g65j7orS0XwWvgKfpn6NuIGzcg1gUNFek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fra+lEI8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732113573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h3VNC3b6pyuHC0GRlERPYXF58+ZikMBaiQzrtXGN3kc=;
-	b=fra+lEI86i0iAislvCJZ6jMe46dqRCAYdd8eG03t0CXmO49Dv0zmUeSYKQQFZRRjCKWSvz
-	SedOVB1o5V1dJXfU4M6mc/PfgbWEGUeHXh8ib/QbeAKO0nsgRDQoYk8FpjsYyrAIdNU9y+
-	hDVXqacJnpyGip5KhafEeWbgguFjlXU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-zPlULR6-PM2ayuGvyg97iw-1; Wed, 20 Nov 2024 09:39:31 -0500
-X-MC-Unique: zPlULR6-PM2ayuGvyg97iw-1
-X-Mimecast-MFC-AGG-ID: zPlULR6-PM2ayuGvyg97iw
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-382342b66f5so2525053f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 06:39:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732113570; x=1732718370;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h3VNC3b6pyuHC0GRlERPYXF58+ZikMBaiQzrtXGN3kc=;
-        b=e5wQ1L0uOsuqBZCodbd+y54vlHd0OQjMl1Sa+uTfmefrIh0jg+X8NwQT9G+gOPkd5X
-         RDyOULZSrBhyCXGP+Q3R/HAwxWTEuQfPWu4hS/2xRBq1vrC93IS86JLjtM87hhaFQZ+L
-         3zomZ2pyk+LuvvDl2baGOM9ms9LeUlv6KokbqIouAPjSv0lq2hdCxSiufqWXjWm2k3cH
-         tLly6/qB5Rf6kdjmo/GC02g9EluT4Dq1+FeJPcMwziQeCEO61Gzalw1xYohmWumpOJRe
-         qGEn/Z4RiI358Z5CyMvxs8QypEtX9xGHK/ZMqNA7RAsRC9xiB6b1YLe8hbJgIp0AVS7R
-         ZQGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHEYkhfhXyO13CMM/tms6E7HpObIxVsGp4eYmgxD3YdpHK4teOf7Hu6FmpaTAvl6VlArzSwuOizZDVy1h/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx58OGXWEZ1Uy2WyV9wOUCrxEvJvoyJqknrmHZ/1W5nImOrvfFE
-	vsn4nN5BFdPlxGRuZs7GeH2sN5mxRtyDcDVPaQ2lcBQrOd7aVNa7/42aliABjZMTD4xrSCSmg7A
-	bg3P3I/xgWqvMsL8gijJnW6ATPjGhGZCLOGi//Yvl4ELjTo/9AN2mAE+cLiN7Mqk=
-X-Received: by 2002:a05:6000:2d01:b0:382:5284:995 with SMTP id ffacd0b85a97d-38254af52edmr1741472f8f.16.1732113570642;
-        Wed, 20 Nov 2024 06:39:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3PCfqnU0zEBWkF3nAGnG0ftAq5fWrullBMMZxuX6xEoDVnbaIbozVyZf2Yd0u6zKlmX8E6w==
-X-Received: by 2002:a05:6000:2d01:b0:382:5284:995 with SMTP id ffacd0b85a97d-38254af52edmr1741442f8f.16.1732113570280;
-        Wed, 20 Nov 2024 06:39:30 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4c68sm21058255e9.22.2024.11.20.06.39.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 06:39:29 -0800 (PST)
-Message-ID: <3ed18ba1-e4b1-461e-a3a7-5de2df59ca60@redhat.com>
-Date: Wed, 20 Nov 2024 15:39:27 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA31BDAB5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 15:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732115189; cv=fail; b=Lh7QZU8n5y/W1thcO33uf64tDH9KJNKrr+//njJHUbwJU7kaUbtS44RJmsFJGv6EO2TwI5pniMjzfcz6006oI88xPqcj85qso1pqRhSuCYiAtk1s5Djtfwcx4+h5Qa/QgJIWTyMyc8zHrf/nL+OwTxtJHlHXtqlqLhaL42sKuI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732115189; c=relaxed/simple;
+	bh=xKg7L8jN0K6S+Tmsb5PdVzdErSm7uCYvEuu+24Ro3qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QmGVUqP4sXDsGweejU2lx4xejcuwUZ8cu1tr4d/wD3we5YsoQs6NnW96px7fA3B79zISWYw8Tkc58Li28xMeVpQe35xZt0o6DxZWjsB2qvnVta4YlofpsFMOzOQVuYu1jkP15yg8aYADD6HjCe2jOqZtPdO+GmZH3YQ34T7x2lE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aXT3Cw/0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=a7pJ+xI1; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKBMZWk020281;
+	Wed, 20 Nov 2024 15:05:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=ZimoWu+GRs9fjR3GFw
+	wLA4UrmsiOhftB+EcOBmBzoBE=; b=aXT3Cw/0kOf1RPZlkqejSel9tpNnGucSRj
+	i+c8u3++xb9RmzCPQY/SHJmL7tz8WjtSPmbfRge9T7H4D/VM+Z+QZwRETgLTqjX9
+	8o2aeFG3+EnR6KgW5wfijXHqJOa28S2LTG6UWJwpktLt3Jfp9ZUZCBfknJiFU/G9
+	cE0rZzdRCtEfAkJwYmr++eoSlVHsoPc2vyK8Ymip/JBDJZLXlZJvVjL2ne/0mhNT
+	leonQecmHn8GRsm63zH4IQdqqg/TR1kmVlrCNfNM8ga2XTQzpSzJuDg4cYb29meA
+	SiksgDA+uX4NshAExFZ7mD2vchgBJlUFilIb6LNoF4+kgmOrGo1Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 430xv4t40m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 15:05:54 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEsjPx037333;
+	Wed, 20 Nov 2024 15:05:53 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2042.outbound.protection.outlook.com [104.47.51.42])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42xhuadtks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 15:05:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zdk91zWUMkgC4nezEVGNiNebi0iDI9fxeEHfsvAHG5DiYqWo0u62IF7pPJbmStdmcf73ogwOTMYzu9cGmuD6e/AdrIghR9DIMPNLfNXgPeWtuVYxPArU7pkrInMoEPp5tdkZnTEXPdcSYjJ3J1d1vbDC3/ItEL9v2EZLNoXdAm9xaxOuLdVu2l9WapTvKIncMghDvirehos96UYE2laV1Zqaz6+DRLLQp7F2dNTIZzV0rJG/YDNS6Y+bICIRN1hTcr4JFKFrPOWEA/E/nV9CmhAWlrFVwVj+2Y+FIP9m08NiOGspLX8R6CIsIiJLjVbynfKpV0Ncsj9mjFNv583pSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZimoWu+GRs9fjR3GFwwLA4UrmsiOhftB+EcOBmBzoBE=;
+ b=Y7VJZ8e+Ko+NH6ML+tilRxygKFZA33BMozhfXkfU8U93fyJ0ksydejIGJYw7gEEBmsWCvPvwuALWFA3NtXoFbO5qt4FT2gv3pqEz5eMyiGTEs5FowVhYiItikqh45Y6FOGf7gC1Mx8dheBdQhwKXRb2YMPyeTzD+tyflg6mdOvvPB/FzSuNmEhH9774Dbx/Db+RA1rrtei29DaWtSRFt7g8az5bcwFynoTdaQrH2haeQIuZFa/2FwkNN3wRgTpav/kk6wo25Sxd1wJqAZD80ga0lO+fWXVsFBcAkk8C3k1QHPwEJnistz9zY7nM3XloMgyUkY769ZHxKxMZtzkN1KQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZimoWu+GRs9fjR3GFwwLA4UrmsiOhftB+EcOBmBzoBE=;
+ b=a7pJ+xI1mwtwzj3gF2VgEQ0OEIEdTqECq7b7SMeb7qeT/IvhrNpS/K9y3FvITCNytM3ICaMqQ0/ayY9TqMu1q8ViiAT/XzZE2DaNuMNlHOJ+1yZnxV4Fbn8iUs4E4xyZurKyL4I5mvukkmfsweW6+qDDhVA1SOkzainsThDvW3s=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by PH7PR10MB6228.namprd10.prod.outlook.com (2603:10b6:510:213::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Wed, 20 Nov
+ 2024 15:05:45 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8158.023; Wed, 20 Nov 2024
+ 15:05:45 +0000
+Date: Wed, 20 Nov 2024 10:05:42 -0500
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, cel@kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Hugh Dickens <hughd@google.com>,
+        yukuai3@huawei.com, yangerkun@huaweicloud.com
+Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
+ values wrap
+Message-ID: <Zz36xlmSLal7cxx4@tissot.1015granger.net>
+References: <20241117213206.1636438-1-cel@kernel.org>
+ <20241117213206.1636438-3-cel@kernel.org>
+ <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org>
+ <ZzuqYeENJJrLMxwM@tissot.1015granger.net>
+ <20241120-abzocken-senfglas-8047a54f1aba@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120-abzocken-senfglas-8047a54f1aba@brauner>
+X-ClientProxiedBy: CH0PR03CA0200.namprd03.prod.outlook.com
+ (2603:10b6:610:e4::25) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM
- to detect device RAM ranges in 2nd kernel
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
- <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-8-david@redhat.com> <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
- <4b07a3eb-aad6-4436-9591-289c6504bb92@redhat.com>
- <Zz3sm+BhCrTO3bId@MiWiFi-R3L-srv>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zz3sm+BhCrTO3bId@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH7PR10MB6228:EE_
+X-MS-Office365-Filtering-Correlation-Id: eed53bf2-5459-4dd9-5e69-08dd0974cf30
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6xfoR/z3E9fW2cM/G7WAwzwYp0AMvxS0s1r/M0tM7zisnf8yAVtoDtlzmIU9?=
+ =?us-ascii?Q?Ah/rIQ94rSnF2QHDhEK2BohNKDdk5btupfut7G+xhGv4wRHPql6JA7D0t2iY?=
+ =?us-ascii?Q?KFMXzAlkOamlR/c+Ke4+yI2d9AY9vHkQZAfKAO9gtF8eKe1Df4PC+fO5JpsN?=
+ =?us-ascii?Q?HYt4YTOV+UDbWg7sHIBwNU/Nt500wEPrnpKJ5Z/oB373jvZVj4jheC7K/w9Y?=
+ =?us-ascii?Q?GF1vnJ/qs8gievYiSXt2WiJT/G0q/J0nme9fgEPrTNBGUVYlBl+ZjgpCOcn8?=
+ =?us-ascii?Q?3vb72ITHfpJXpk7M2Hs1/M8dj/8pq62LuWHJbuADQ/3kkslUDjKj3NqGEKWo?=
+ =?us-ascii?Q?VOx4EGlUbCGOuTkDOboyjHS6sH0Lvzl3qacP93GusLKnihYMt9IbLVFWxc5E?=
+ =?us-ascii?Q?kO2DwuDswaWopgUR603qXvKm87kOVHmZlvJMkUgc4/aLzmMS7s9dfCoeO8ce?=
+ =?us-ascii?Q?jiM3IE1rLtG5oB9P1X1n2Mg0QwR4FmNtmleHt7gACwyP6N0sTQKhO4NzbjtX?=
+ =?us-ascii?Q?l6n0UcvAJrPPA4XGLPOjZPj4V6y8IzdW4wmA73ZXts9eSeXbFHhCLowq5I/Q?=
+ =?us-ascii?Q?ra795+KQuK/GTHEhXhrnzPchrG1P5ku5L6WCoKv1+LUaxhaFTXMpEBbw/mwR?=
+ =?us-ascii?Q?ihRrkOzcp1nTzxVnKBMyKh+vvb2sxoEvdxTIsYKHgKDowrYfc06/k/HQnpVv?=
+ =?us-ascii?Q?2+uvJYoCRbvA8tX5mKjojgkd9YMm7qXqlhhpuMOdgdIwLw4FT7U+nUhhrH9n?=
+ =?us-ascii?Q?Y7hDvrrjFRLCQiUTIemSikr8uKSyrV6Pr3leIPqUTx2OtYc5CnTaggP68AGz?=
+ =?us-ascii?Q?jryKIZQF8k+u25yqsjcaGXDttTXNkgnI3p6VARDWJphivAwhKE5h3p8m6Aq6?=
+ =?us-ascii?Q?qGJN/n6t8ligfCegCym/rquPsleNViLG9PeIeX5CFSRAk/Ej+PU8SCXKEE8O?=
+ =?us-ascii?Q?pRLyIiLMXXLjOyhQebRZaANHNSZR2ehCdQ6rcqo2eIFCEaBUGqDo6CZ4ReiZ?=
+ =?us-ascii?Q?kfGC/AGnYvISWsDEs/Pszy0AeyVpJWmvJ//yFAjr7mQTYtFMcVoP7niOrXH1?=
+ =?us-ascii?Q?mRGd87XXGW6t671vEV/evU05wdelQD/TLcMYIkdftqoE+jpx0FshFlWPyyXm?=
+ =?us-ascii?Q?IhB41iaUt5+PlOkaUzZjQOHisuHIAxBWyygGyzbW25EAlr2fkEgLj3sjTfBH?=
+ =?us-ascii?Q?6xxbJJsEOoiYFUAOntsfVKuYcKlH52+hAZ04a9DlWnSR9OfopQo35mXJwz/8?=
+ =?us-ascii?Q?Krn2ereiEOAeHBLVRWXYD+NCVg7bD1waXHaE1dVIvA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/30gPoS+MzSbnwlv0KS1i18rxqA3g7+tzwfM67+IUPouGnf0E5k2MpCF6KJR?=
+ =?us-ascii?Q?GKYqMh/wdLvfgSRN1vEZcZUE+rE5SKRI7Il275C2LXzJskEP6e02sWU8Y6LM?=
+ =?us-ascii?Q?ZdruScy0tW/VwLI0wPeN3klCVe5rQkRiuq6OfDL7zrJWcG6GTSvvKY8zLnPy?=
+ =?us-ascii?Q?/GYl1J8ckBuCpdJBdJABESM/4BARD09vxIo8kwyPFYNnkkPgRKF47Cj+DD4U?=
+ =?us-ascii?Q?2zTryesIO0J2FjxOtot9ePSOUUdGOV6SD7QbnsAzqmhUWyCRpNroXCExnXG0?=
+ =?us-ascii?Q?hemCtfTEPdraFp+l53QZ9r45+kiWOvxqkIERbkeyDClyMV/yL9bNZ5eZiyLw?=
+ =?us-ascii?Q?S+O6e59Cqya9aX5B/sypr3GX5xtKIJFVqQm5uIJ1LSbu1KLGQHpPm3w/BFr1?=
+ =?us-ascii?Q?kyF8aZsjiFkm65pAuZWvqgmb73j/tB6O68bPgb7MD+1k/TQ7fhstf9LAKfsI?=
+ =?us-ascii?Q?J47fLjWcRUeni/ZOH9B+ENxtozKUNj8baKD34/l5EocsyyX+yAGUpmX6FiFM?=
+ =?us-ascii?Q?3B96Q5AXf7Qar4iOalaiz2XA/Vcoy2yvwdVF3hizlzFGg1C9sGu7g/jFCCvW?=
+ =?us-ascii?Q?spG6SqZhe21kMpNzkViBaIVMdie3HFxWA/SiMZVTP17rYw+1eugVufrBk4Ff?=
+ =?us-ascii?Q?CdSnh328tLpU1uyuMmoA20wV4WHB7tCzTWMi4Io67lI520/dp3QazSmb47m9?=
+ =?us-ascii?Q?0htTrf1YvJL7fpX7ehKOD0ptg1WpzucJCR7IYDzUVPblqpPIxXxdRps3BUwo?=
+ =?us-ascii?Q?ntlKZ2BOxpqYbV7qEyDOa6bOQ4sbbvm8P5MivW4ArHxgy9qkHfmM1BKjBe7f?=
+ =?us-ascii?Q?8X4z2CcaVH23xTD14upXgey7Tt3ud8hypnRjlsDnREVgwzYGhDaXJIBfE0Re?=
+ =?us-ascii?Q?qsFDxJHZDmYZn3xzx5QUYpHBJYYXuQnK/J6vgwc2LECJyoWSCgSbn2Oi53P2?=
+ =?us-ascii?Q?3D0YjVkDKW9eSq54aIXoAf+VT4sM/C/Df3segj2v10yJ3BQ72nzyXu9sPNRj?=
+ =?us-ascii?Q?L0WfzEaR/og6qa1Qe7HeQhJZvqD+QyS55386sud1v4Px5H/VX2z1mLHXWi35?=
+ =?us-ascii?Q?kfUT3QLMjZUTIrxjw7WWzJEJ3nQ1lJZXgefnCen++k1kpV+YDI95m789zi2L?=
+ =?us-ascii?Q?78JNDz1lnO6o78W3mJwiONVRiuMAi8BuhjRYG+Wvb5jQad9pgN2fh5Iu9dn3?=
+ =?us-ascii?Q?C8bE35W4Afe4mZFd3I+DVItaxoP6gHerOYO2QdtRYN7jbh/dN0cs+OfnkPY9?=
+ =?us-ascii?Q?RWhH21/PcK3rg6pa6kQ32wMSFCBny5JYdr4nEQdAMn1ceQFT3n4XW1RFtnrz?=
+ =?us-ascii?Q?sZQ0vtprVzjsZeJZOpvpSGsfpzg+Y8mxVZ/1zVPHEMKtkUEqSS7PggSVk/fl?=
+ =?us-ascii?Q?KA9u+PmO2YiKmunDI6lZkGHZBovzI05UH7i5yrJlVuOPPZPxpBkvkNB3qQ04?=
+ =?us-ascii?Q?4mKEnADoKUILtiGew3ilqeaTuU/ZhP0y0GMqztJWw8Fr8SWf35t3kp0EDG/Z?=
+ =?us-ascii?Q?RhrtdjRL+/6gngsB5Ja4jHsbDUBxx5W/X5/t+TAtqCHlUwmClxjFriN2+GCo?=
+ =?us-ascii?Q?6DdrhdhsunCg4+oYLlPwiz40+NXN3iR04+sripMa9HkfQTInGy+WDg4tzFw1?=
+ =?us-ascii?Q?XA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	JTtzo1tmT9S9xfNCh6LJ3q/yEzLhv8JSgPSOHLXXvLRSzc2yZ2rBIjGWw5328wGzwlxL95RsfckI5kL8eROfie824UrnfhwimnXMoIUhvXYAfMpn4GUt1cPsFuD/tL2fU9ZfgUBhSpjWeY0E3lF4Ukan0DLTwbGY380IJ3Ow3hTtbJ1RnfDT87ZGkAx6aCwJH2IROTBiVJm9guko20k9xkYYeD30l8AFK77FwjloUl7UP4bfUkxfXZjbcOZwmtlQZ2B/A3KWzVa/EJV7IWgbv1UBbqvH+1f8WUd+xN+gfjCEJu56Jo22hNOhnH9yb9xNHxrKGAnXb+Mqf0TiBRFs0legcnJmTqjhWdE+Ftjkjd6GOpnTzlXX6DlSv7li//LNI//+Pcy+5kwgbeV8hwTxZIcWsMKjS+xl8LnxRZWp+CSxg/YlCKebnlzR3Rt0srvfAa5/zi4/BhJjbmJ6mXYipDsUNVyL8UyzJ6AmEyYcCMhw0w8yFdjEHSjAGlo5G8kXu5C/bhLEJvKPpvVjaE7Viz8jMRUu1H/H/HzS1lU7TJ29vYyVZjL8aRl5w5F3OZoGW+ehJBCZufCyGuaxJaXs5JhYCtnDzl4ca2GymWiAL6Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eed53bf2-5459-4dd9-5e69-08dd0974cf30
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 15:05:45.5039
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DrdV8qlJ8hfOPV2yqppdJstl0b7SWfExJ4BMZZ4IQ1s9BBRQL5kZ47aKPANIpc2WIrAd3q7X6+Ok25s1qi6p0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6228
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-20_12,2024-11-20_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411200101
+X-Proofpoint-GUID: UQUM9kxylb230nX8rKpEMX3RDpIr3tfh
+X-Proofpoint-ORIG-GUID: UQUM9kxylb230nX8rKpEMX3RDpIr3tfh
 
-On 20.11.24 15:05, Baoquan He wrote:
-> On 11/20/24 at 11:48am, David Hildenbrand wrote:
->> On 20.11.24 11:13, Baoquan He wrote:
->>> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
->>>> s390 allocates+prepares the elfcore hdr in the dump (2nd) kernel, not in
->>>> the crashed kernel.
->>>>
->>>> RAM provided by memory devices such as virtio-mem can only be detected
->>>> using the device driver; when vmcore_init() is called, these device
->>>> drivers are usually not loaded yet, or the devices did not get probed
->>>> yet. Consequently, on s390 these RAM ranges will not be included in
->>>> the crash dump, which makes the dump partially corrupt and is
->>>> unfortunate.
->>>>
->>>> Instead of deferring the vmcore_init() call, to an (unclear?) later point,
->>>> let's reuse the vmcore_cb infrastructure to obtain device RAM ranges as
->>>> the device drivers probe the device and get access to this information.
->>>>
->>>> Then, we'll add these ranges to the vmcore, adding more PT_LOAD
->>>> entries and updating the offsets+vmcore size.
->>>>
->>>> Use Kconfig tricks to include this code automatically only if (a) there is
->>>> a device driver compiled that implements the callback
->>>> (PROVIDE_PROC_VMCORE_DEVICE_RAM) and; (b) the architecture actually needs
->>>> this information (NEED_PROC_VMCORE_DEVICE_RAM).
->>>>
->>>> The current target use case is s390, which only creates an elf64
->>>> elfcore, so focusing on elf64 is sufficient.
->>>>
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>> ---
->>>>    fs/proc/Kconfig            |  25 ++++++
->>>>    fs/proc/vmcore.c           | 156 +++++++++++++++++++++++++++++++++++++
->>>>    include/linux/crash_dump.h |   9 +++
->>>>    3 files changed, 190 insertions(+)
->>>>
->>>> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
->>>> index d80a1431ef7b..1e11de5f9380 100644
->>>> --- a/fs/proc/Kconfig
->>>> +++ b/fs/proc/Kconfig
->>>> @@ -61,6 +61,31 @@ config PROC_VMCORE_DEVICE_DUMP
->>>>    	  as ELF notes to /proc/vmcore. You can still disable device
->>>>    	  dump using the kernel command line option 'novmcoredd'.
->>>> +config PROVIDE_PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool n
->>>> +
->>>> +config NEED_PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool n
->>>> +
->>>> +config PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool y
->>>> +	depends on PROC_VMCORE
->>>> +	depends on NEED_PROC_VMCORE_DEVICE_RAM
->>>> +	depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
->>>
->>> Kconfig item is always a thing I need learn to master.
->>
->> Yes, it's usually a struggle to get it right. It took me a couple of
->> iterations to get to this point :)
->>
->>> When I checked
->>> this part, I have to write them down to deliberate. I am wondering if
->>> below 'simple version' works too and more understandable. Please help
->>> point out what I have missed.
->>>
->>> ===========simple version======
->>> config PROC_VMCORE_DEVICE_RAM
->>>           def_bool y
->>>           depends on PROC_VMCORE && VIRTIO_MEM
->>>           depends on NEED_PROC_VMCORE_DEVICE_RAM
->>>
->>> config S390
->>>           select NEED_PROC_VMCORE_DEVICE_RAM
->>> ============
+On Wed, Nov 20, 2024 at 09:59:54AM +0100, Christian Brauner wrote:
+> On Mon, Nov 18, 2024 at 03:58:09PM -0500, Chuck Lever wrote:
+> > On Mon, Nov 18, 2024 at 03:00:56PM -0500, Jeff Layton wrote:
+> > > On Sun, 2024-11-17 at 16:32 -0500, cel@kernel.org wrote:
+> > > > From: Chuck Lever <chuck.lever@oracle.com>
+> > > > 
+> > > > The fix in commit 64a7ce76fb90 ("libfs: fix infinite directory reads
+> > > > for offset dir") introduced a fence in offset_iterate_dir() to stop
+> > > > the loop from returning child entries created after the directory
+> > > > was opened. This comparison relies on the strong ordering of
+> > > > DIR_OFFSET_MIN <= largest child offset <= next_offset to terminate
+> > > > the directory iteration.
+> > > > 
+> > > > However, because simple_offset_add() uses mtree_alloc_cyclic() to
+> > > > select each next new directory offset, ctx->next_offset is not
+> > > > always the highest unused offset. Once mtree_alloc_cyclic() allows
+> > > > a new offset value to wrap, ctx->next_offset will be set to a value
+> > > > less than the actual largest child offset.
+> > > > 
+> > > > The result is that readdir(3) no longer shows any entries in the
+> > > > directory because their offsets are above ctx->next_offset, which is
+> > > > now a small value. This situation is persistent, and the directory
+> > > > cannot be removed unless all current children are already known and
+> > > > can be explicitly removed by name first.
+> > > > 
+> > > > In the current Maple tree implementation, there is no practical way
+> > > > that 63-bit offset values can ever wrap, so this issue is cleverly
+> > > > avoided. But the ordering dependency is not documented via comments
+> > > > or code, making the mechanism somewhat brittle. And it makes the
+> > > > continued use of mtree_alloc_cyclic() somewhat confusing.
+> > > > 
+> > > > Further, if commit 64a7ce76fb90 ("libfs: fix infinite directory
+> > > > reads for offset dir") were to be backported to a kernel that still
+> > > > uses xarray to manage simple directory offsets, the directory offset
+> > > > value range is limited to 32-bits, which is small enough to allow a
+> > > > wrap after a few weeks of constant creation of entries in one
+> > > > directory.
+> > > > 
+> > > > Therefore, replace the use of ctx->next_offset for fencing new
+> > > > children from appearing in readdir results.
+> > > > 
+> > > > A jiffies timestamp marks the end of each opendir epoch. Entries
+> > > > created after this timestamp will not be visible to the file
+> > > > descriptor. I chose jiffies so that the dentry->d_time field can be
+> > > > re-used for storing the entry creation time.
+> > > > 
+> > > > The new mechanism has its own corner cases. For instance, I think
+> > > > if jiffies wraps twice while a directory is open, some children
+> > > > might become invisible. On 32-bit systems, the jiffies value wraps
+> > > > every 49 days. Double-wrapping is not a risk on systems with 64-bit
+> > > > jiffies. Unlike with the next_offset-based mechanism, re-opening the
+> > > > directory will make invisible children re-appear.
+> > > > 
+> > > > Reported-by: Yu Kuai <yukuai3@huawei.com>
+> > > > Closes: https://lore.kernel.org/stable/20241111005242.34654-1-cel@kernel.org/T/#m1c448e5bd4aae3632a09468affcfe1d1594c6a59
+> > > > Fixes: 64a7ce76fb90 ("libfs: fix infinite directory reads for offset dir")
+> > > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> > > > ---
+> > > >  fs/libfs.c | 36 +++++++++++++++++-------------------
+> > > >  1 file changed, 17 insertions(+), 19 deletions(-)
+> > > > 
+> > > > diff --git a/fs/libfs.c b/fs/libfs.c
+> > > > index bf67954b525b..862a603fd454 100644
+> > > > --- a/fs/libfs.c
+> > > > +++ b/fs/libfs.c
+> > > > @@ -294,6 +294,7 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+> > > >  		return ret;
+> > > >  
+> > > >  	offset_set(dentry, offset);
+> > > > +	WRITE_ONCE(dentry->d_time, jiffies);
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > @@ -454,9 +455,7 @@ void simple_offset_destroy(struct offset_ctx *octx)
+> > > >  
+> > > >  static int offset_dir_open(struct inode *inode, struct file *file)
+> > > >  {
+> > > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+> > > > -
+> > > > -	file->private_data = (void *)ctx->next_offset;
+> > > > +	file->private_data = (void *)jiffies;
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > @@ -473,9 +472,6 @@ static int offset_dir_open(struct inode *inode, struct file *file)
+> > > >   */
+> > > >  static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+> > > >  {
+> > > > -	struct inode *inode = file->f_inode;
+> > > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+> > > > -
+> > > >  	switch (whence) {
+> > > >  	case SEEK_CUR:
+> > > >  		offset += file->f_pos;
+> > > > @@ -490,7 +486,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+> > > >  
+> > > >  	/* In this case, ->private_data is protected by f_pos_lock */
+> > > >  	if (!offset)
+> > > > -		file->private_data = (void *)ctx->next_offset;
+> > > > +		/* Make newer child entries visible */
+> > > > +		file->private_data = (void *)jiffies;
+> > > >  	return vfs_setpos(file, offset, LONG_MAX);
+> > > >  }
+> > > >  
+> > > > @@ -521,7 +518,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+> > > >  			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+> > > >  }
+> > > >  
+> > > > -static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+> > > > +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx,
+> > > > +			       unsigned long fence)
+> > > >  {
+> > > >  	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+> > > >  	struct dentry *dentry;
+> > > > @@ -531,14 +529,15 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
+> > > >  		if (!dentry)
+> > > >  			return;
+> > > >  
+> > > > -		if (dentry2offset(dentry) >= last_index) {
+> > > > -			dput(dentry);
+> > > > -			return;
+> > > > -		}
+> > > > -
+> > > > -		if (!offset_dir_emit(ctx, dentry)) {
+> > > > -			dput(dentry);
+> > > > -			return;
+> > > > +		/*
+> > > > +		 * Output only child entries created during or before
+> > > > +		 * the current opendir epoch.
+> > > > +		 */
+> > > > +		if (time_before_eq(dentry->d_time, fence)) {
+> > > > +			if (!offset_dir_emit(ctx, dentry)) {
+> > > > +				dput(dentry);
+> > > > +				return;
+> > > > +			}
+> > > >  		}
+> > > >  
+> > > >  		ctx->pos = dentry2offset(dentry) + 1;
+> > > > @@ -569,15 +568,14 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
+> > > >   */
+> > > >  static int offset_readdir(struct file *file, struct dir_context *ctx)
+> > > >  {
+> > > > +	unsigned long fence = (unsigned long)file->private_data;
+> > > >  	struct dentry *dir = file->f_path.dentry;
+> > > > -	long last_index = (long)file->private_data;
+> > > >  
+> > > >  	lockdep_assert_held(&d_inode(dir)->i_rwsem);
+> > > >  
+> > > >  	if (!dir_emit_dots(file, ctx))
+> > > >  		return 0;
+> > > > -
+> > > > -	offset_iterate_dir(d_inode(dir), ctx, last_index);
+> > > > +	offset_iterate_dir(d_inode(dir), ctx, fence);
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > 
+> > > Using timestamps instead of directory ordering does seem less brittle,
+> > > and the choice to use jiffies makes sense given that d_time is also an
+> > > unsigned long.
+> > > 
+> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > 
+> > Precisely. The goal was to re-use as much code as possible to avoid
+> > perturbing the current size of "struct dentry".
+> > 
+> > That said, I'm not overjoyed with using jiffies, given it has
+> > similar wrapping issues as ctx->next_offset on 32-bit systems. The
+> > consequences of an offset value wrap are less severe, though, since
+> > that can no longer make children entries disappear permanently.
+> > 
+> > I've been trying to imagine a solution that does not depend on the
+> > range of an integer value and has solidly deterministic behavior in
+> > the face of multiple child entry creations during one timer tick.
+> > 
+> > We could partially re-use the legacy cursor/list mechanism.
+> > 
+> > * When a child entry is created, it is added at the end of the
+> >   parent's d_children list.
+> > * When a child entry is unlinked, it is removed from the parent's
+> >   d_children list.
+> > 
+> > This includes creation and removal of entries due to a rename.
+> > 
+> > 
+> > * When a directory is opened, mark the current end of the d_children
+> >   list with a cursor dentry. New entries would then be added to this
+> >   directory following this cursor dentry in the directory's
+> >   d_children list.
+> > * When a directory is closed, its cursor dentry is removed from the
+> >   d_children list and freed.
+> > 
+> > Each cursor dentry would need to refer to an opendir instance
+> > (using, say, a pointer to the "struct file" for that open) so that
+> > multiple cursors in the same directory can reside in its d_chilren
+> > list and won't interfere with each other. Re-use the cursor dentry's
+> > d_fsdata field for that.
+> > 
+> > 
+> > * offset_readdir gets its starting entry using the mtree/xarray to
+> >   map ctx->pos to a dentry.
+> > * offset_readdir continues iterating by following the .next pointer
+> >   in the current dentry's d_child field.
+> > * offset_readdir returns EOD when it hits the cursor dentry matching
+> >   this opendir instance.
+> > 
+> > 
+> > I think all of these operations could be O(1), but it might require
+> > some additional locking.
 > 
-> Sorry, things written down didn't correctly reflect them in my mind.
-> 
-> ===========simple version======
-> fs/proc/Kconfig:
-> config PROC_VMCORE_DEVICE_RAM
->          def_bool y
->          depends on PROC_VMCORE && VIRTIO_MEM
->          depends on NEED_PROC_VMCORE_DEVICE_RAM
-> 
-> arch/s390/Kconfig:
-> config NEED_PROC_VMCORE_DEVICE_RAM
->          def y
-> ==================================
+> This would be a bigger refactor of the whole stable offset logic. So
+> even if we end up doing that I think we should use the jiffies solution
+> for now.
 
-That would work, but I don't completely like it.
+How should I mark patches so they can be posted for discussion and
+never applied? This series is marked RFC.
 
-(a) I want s390x to select NEED_PROC_VMCORE_DEVICE_RAM instead. Staring 
-at a bunch of similar cases (git grep "config NEED" | grep Kconfig, git 
-grep "config ARCH_WANTS" | grep Kconfig), "select" is the common way to 
-do it.
+I am actually half-way through implementing the approach described
+here. It is not as big a re-write as you might think, and addresses
+some fundamental misunderstandings in the offset_iterate_dir() code.
 
-So unless there is a pretty good reason, I'll keep 
-NEED_PROC_VMCORE_DEVICE_RAM as is.
-
-
-(b) In the context of this patch, "depends on VIRTIO_MEM" does not make 
-sense. We could have an intermediate:
-
-config PROC_VMCORE_DEVICE_RAM
-          def_bool n
-          depends on PROC_VMCORE
-          depends on NEED_PROC_VMCORE_DEVICE_RAM
-
-And change that with VIRTIO_MEM support in the relevant patch.
-
-
-I faintly remember that we try avoiding such dependencies and prefer 
-selecting Kconfigs instead. Just look at the SPLIT_PTE_PTLOCKS mess we 
-still have to clean up. But as we don't expect that many providers for 
-now, I don't care.
-
-Thanks!
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Chuck Lever
 
