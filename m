@@ -1,417 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-35329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BB09D3EBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CFA9D3EDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843A6281649
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:14:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354AF282167
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74F91C9EBC;
-	Wed, 20 Nov 2024 15:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACC81C331A;
+	Wed, 20 Nov 2024 15:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aXT3Cw/0";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="a7pJ+xI1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ0Sx9y0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA31BDAB5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 15:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115189; cv=fail; b=Lh7QZU8n5y/W1thcO33uf64tDH9KJNKrr+//njJHUbwJU7kaUbtS44RJmsFJGv6EO2TwI5pniMjzfcz6006oI88xPqcj85qso1pqRhSuCYiAtk1s5Djtfwcx4+h5Qa/QgJIWTyMyc8zHrf/nL+OwTxtJHlHXtqlqLhaL42sKuI4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115189; c=relaxed/simple;
-	bh=xKg7L8jN0K6S+Tmsb5PdVzdErSm7uCYvEuu+24Ro3qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QmGVUqP4sXDsGweejU2lx4xejcuwUZ8cu1tr4d/wD3we5YsoQs6NnW96px7fA3B79zISWYw8Tkc58Li28xMeVpQe35xZt0o6DxZWjsB2qvnVta4YlofpsFMOzOQVuYu1jkP15yg8aYADD6HjCe2jOqZtPdO+GmZH3YQ34T7x2lE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aXT3Cw/0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=a7pJ+xI1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKBMZWk020281;
-	Wed, 20 Nov 2024 15:05:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=ZimoWu+GRs9fjR3GFw
-	wLA4UrmsiOhftB+EcOBmBzoBE=; b=aXT3Cw/0kOf1RPZlkqejSel9tpNnGucSRj
-	i+c8u3++xb9RmzCPQY/SHJmL7tz8WjtSPmbfRge9T7H4D/VM+Z+QZwRETgLTqjX9
-	8o2aeFG3+EnR6KgW5wfijXHqJOa28S2LTG6UWJwpktLt3Jfp9ZUZCBfknJiFU/G9
-	cE0rZzdRCtEfAkJwYmr++eoSlVHsoPc2vyK8Ymip/JBDJZLXlZJvVjL2ne/0mhNT
-	leonQecmHn8GRsm63zH4IQdqqg/TR1kmVlrCNfNM8ga2XTQzpSzJuDg4cYb29meA
-	SiksgDA+uX4NshAExFZ7mD2vchgBJlUFilIb6LNoF4+kgmOrGo1Q==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 430xv4t40m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 15:05:54 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEsjPx037333;
-	Wed, 20 Nov 2024 15:05:53 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2042.outbound.protection.outlook.com [104.47.51.42])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42xhuadtks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 15:05:53 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zdk91zWUMkgC4nezEVGNiNebi0iDI9fxeEHfsvAHG5DiYqWo0u62IF7pPJbmStdmcf73ogwOTMYzu9cGmuD6e/AdrIghR9DIMPNLfNXgPeWtuVYxPArU7pkrInMoEPp5tdkZnTEXPdcSYjJ3J1d1vbDC3/ItEL9v2EZLNoXdAm9xaxOuLdVu2l9WapTvKIncMghDvirehos96UYE2laV1Zqaz6+DRLLQp7F2dNTIZzV0rJG/YDNS6Y+bICIRN1hTcr4JFKFrPOWEA/E/nV9CmhAWlrFVwVj+2Y+FIP9m08NiOGspLX8R6CIsIiJLjVbynfKpV0Ncsj9mjFNv583pSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZimoWu+GRs9fjR3GFwwLA4UrmsiOhftB+EcOBmBzoBE=;
- b=Y7VJZ8e+Ko+NH6ML+tilRxygKFZA33BMozhfXkfU8U93fyJ0ksydejIGJYw7gEEBmsWCvPvwuALWFA3NtXoFbO5qt4FT2gv3pqEz5eMyiGTEs5FowVhYiItikqh45Y6FOGf7gC1Mx8dheBdQhwKXRb2YMPyeTzD+tyflg6mdOvvPB/FzSuNmEhH9774Dbx/Db+RA1rrtei29DaWtSRFt7g8az5bcwFynoTdaQrH2haeQIuZFa/2FwkNN3wRgTpav/kk6wo25Sxd1wJqAZD80ga0lO+fWXVsFBcAkk8C3k1QHPwEJnistz9zY7nM3XloMgyUkY769ZHxKxMZtzkN1KQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZimoWu+GRs9fjR3GFwwLA4UrmsiOhftB+EcOBmBzoBE=;
- b=a7pJ+xI1mwtwzj3gF2VgEQ0OEIEdTqECq7b7SMeb7qeT/IvhrNpS/K9y3FvITCNytM3ICaMqQ0/ayY9TqMu1q8ViiAT/XzZE2DaNuMNlHOJ+1yZnxV4Fbn8iUs4E4xyZurKyL4I5mvukkmfsweW6+qDDhVA1SOkzainsThDvW3s=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by PH7PR10MB6228.namprd10.prod.outlook.com (2603:10b6:510:213::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Wed, 20 Nov
- 2024 15:05:45 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8158.023; Wed, 20 Nov 2024
- 15:05:45 +0000
-Date: Wed, 20 Nov 2024 10:05:42 -0500
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, cel@kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Hugh Dickens <hughd@google.com>,
-        yukuai3@huawei.com, yangerkun@huaweicloud.com
-Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
- values wrap
-Message-ID: <Zz36xlmSLal7cxx4@tissot.1015granger.net>
-References: <20241117213206.1636438-1-cel@kernel.org>
- <20241117213206.1636438-3-cel@kernel.org>
- <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org>
- <ZzuqYeENJJrLMxwM@tissot.1015granger.net>
- <20241120-abzocken-senfglas-8047a54f1aba@brauner>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120-abzocken-senfglas-8047a54f1aba@brauner>
-X-ClientProxiedBy: CH0PR03CA0200.namprd03.prod.outlook.com
- (2603:10b6:610:e4::25) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33861B5338
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 15:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732115788; cv=none; b=IcoOpTrEGLjhZcIjPf0sXbQUcFZpQd/tPZhk5prYpuOXAdj7tYRhOo1JmaAe6LYGgH+YN/IGxT4PU8wZSNQraVh4GYhsQoLg62LvoEB6UZ5DFmBOWfJ3IfvF5OWYJHyFA/wa1CLQLpP7bLA3Ws4bwomMWwFk3tzYZ5F1w2k7KBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732115788; c=relaxed/simple;
+	bh=7z+dASFFq1fbLDDftucFXgXTNlzHg9uiO6TXd5lzD0o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lZBipK97o22yXqutAHeEB1a5NzDd3kEVyRTe30WFcrKYq1miBJfmkz6XWaLKqhUr0dcR1zZMDpAxZNMVJPGF55JFr1hcIhRDu1hZEU8ZDPFHJQlkQ+d0pxJ2RSTaSxz0EybecLkZCxUt0gFx0wpki0gTbiTMA9E9K5DP+xu7OUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ0Sx9y0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DADC4CECD;
+	Wed, 20 Nov 2024 15:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732115787;
+	bh=7z+dASFFq1fbLDDftucFXgXTNlzHg9uiO6TXd5lzD0o=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=fJ0Sx9y0TpzYKm5jz/UjO5zldwgvfMMfArrCmgQluw8V+2az1+BK0YKET9wc7kQV+
+	 WKGEfEi9dxaLN97LmV/Cw82Cik5nJp8V944ho6vvOh7GrRifHRjEGw5++ZssN0yvio
+	 5Ef0kX6jHjt5DBS31OSRySNppk26/pL6SMLKrziLY4pZ91uXuNQrhhN0kbT+/cYYZi
+	 /MTzvsB1E/ySaZLVgvbmNiiRd6KMqihmhKy0v9fnJ9POei0iZ/54MlXSkcpX58emmh
+	 +3SBGeo3clVDQFkqAq9sNTF8lV5S3jMJvoFpWLcYfvI3hF0qIFj18iK3qzcNpKumz9
+	 5I7GbSWk/wRnw==
+Message-ID: <59fc7ea80e9ab1463cac4b45c487545e0c05eacf.camel@kernel.org>
+Subject: Re: [PATCH] statmount: clean up unescaped option handling
+From: Jeff Layton <jlayton@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <christian@brauner.io>, Josef Bacik
+ <josef@toxicpanda.com>
+Date: Wed, 20 Nov 2024 10:16:25 -0500
+In-Reply-To: <20241120142732.55210-1-mszeredi@redhat.com>
+References: <20241120142732.55210-1-mszeredi@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH7PR10MB6228:EE_
-X-MS-Office365-Filtering-Correlation-Id: eed53bf2-5459-4dd9-5e69-08dd0974cf30
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6xfoR/z3E9fW2cM/G7WAwzwYp0AMvxS0s1r/M0tM7zisnf8yAVtoDtlzmIU9?=
- =?us-ascii?Q?Ah/rIQ94rSnF2QHDhEK2BohNKDdk5btupfut7G+xhGv4wRHPql6JA7D0t2iY?=
- =?us-ascii?Q?KFMXzAlkOamlR/c+Ke4+yI2d9AY9vHkQZAfKAO9gtF8eKe1Df4PC+fO5JpsN?=
- =?us-ascii?Q?HYt4YTOV+UDbWg7sHIBwNU/Nt500wEPrnpKJ5Z/oB373jvZVj4jheC7K/w9Y?=
- =?us-ascii?Q?GF1vnJ/qs8gievYiSXt2WiJT/G0q/J0nme9fgEPrTNBGUVYlBl+ZjgpCOcn8?=
- =?us-ascii?Q?3vb72ITHfpJXpk7M2Hs1/M8dj/8pq62LuWHJbuADQ/3kkslUDjKj3NqGEKWo?=
- =?us-ascii?Q?VOx4EGlUbCGOuTkDOboyjHS6sH0Lvzl3qacP93GusLKnihYMt9IbLVFWxc5E?=
- =?us-ascii?Q?kO2DwuDswaWopgUR603qXvKm87kOVHmZlvJMkUgc4/aLzmMS7s9dfCoeO8ce?=
- =?us-ascii?Q?jiM3IE1rLtG5oB9P1X1n2Mg0QwR4FmNtmleHt7gACwyP6N0sTQKhO4NzbjtX?=
- =?us-ascii?Q?l6n0UcvAJrPPA4XGLPOjZPj4V6y8IzdW4wmA73ZXts9eSeXbFHhCLowq5I/Q?=
- =?us-ascii?Q?ra795+KQuK/GTHEhXhrnzPchrG1P5ku5L6WCoKv1+LUaxhaFTXMpEBbw/mwR?=
- =?us-ascii?Q?ihRrkOzcp1nTzxVnKBMyKh+vvb2sxoEvdxTIsYKHgKDowrYfc06/k/HQnpVv?=
- =?us-ascii?Q?2+uvJYoCRbvA8tX5mKjojgkd9YMm7qXqlhhpuMOdgdIwLw4FT7U+nUhhrH9n?=
- =?us-ascii?Q?Y7hDvrrjFRLCQiUTIemSikr8uKSyrV6Pr3leIPqUTx2OtYc5CnTaggP68AGz?=
- =?us-ascii?Q?jryKIZQF8k+u25yqsjcaGXDttTXNkgnI3p6VARDWJphivAwhKE5h3p8m6Aq6?=
- =?us-ascii?Q?qGJN/n6t8ligfCegCym/rquPsleNViLG9PeIeX5CFSRAk/Ej+PU8SCXKEE8O?=
- =?us-ascii?Q?pRLyIiLMXXLjOyhQebRZaANHNSZR2ehCdQ6rcqo2eIFCEaBUGqDo6CZ4ReiZ?=
- =?us-ascii?Q?kfGC/AGnYvISWsDEs/Pszy0AeyVpJWmvJ//yFAjr7mQTYtFMcVoP7niOrXH1?=
- =?us-ascii?Q?mRGd87XXGW6t671vEV/evU05wdelQD/TLcMYIkdftqoE+jpx0FshFlWPyyXm?=
- =?us-ascii?Q?IhB41iaUt5+PlOkaUzZjQOHisuHIAxBWyygGyzbW25EAlr2fkEgLj3sjTfBH?=
- =?us-ascii?Q?6xxbJJsEOoiYFUAOntsfVKuYcKlH52+hAZ04a9DlWnSR9OfopQo35mXJwz/8?=
- =?us-ascii?Q?Krn2ereiEOAeHBLVRWXYD+NCVg7bD1waXHaE1dVIvA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/30gPoS+MzSbnwlv0KS1i18rxqA3g7+tzwfM67+IUPouGnf0E5k2MpCF6KJR?=
- =?us-ascii?Q?GKYqMh/wdLvfgSRN1vEZcZUE+rE5SKRI7Il275C2LXzJskEP6e02sWU8Y6LM?=
- =?us-ascii?Q?ZdruScy0tW/VwLI0wPeN3klCVe5rQkRiuq6OfDL7zrJWcG6GTSvvKY8zLnPy?=
- =?us-ascii?Q?/GYl1J8ckBuCpdJBdJABESM/4BARD09vxIo8kwyPFYNnkkPgRKF47Cj+DD4U?=
- =?us-ascii?Q?2zTryesIO0J2FjxOtot9ePSOUUdGOV6SD7QbnsAzqmhUWyCRpNroXCExnXG0?=
- =?us-ascii?Q?hemCtfTEPdraFp+l53QZ9r45+kiWOvxqkIERbkeyDClyMV/yL9bNZ5eZiyLw?=
- =?us-ascii?Q?S+O6e59Cqya9aX5B/sypr3GX5xtKIJFVqQm5uIJ1LSbu1KLGQHpPm3w/BFr1?=
- =?us-ascii?Q?kyF8aZsjiFkm65pAuZWvqgmb73j/tB6O68bPgb7MD+1k/TQ7fhstf9LAKfsI?=
- =?us-ascii?Q?J47fLjWcRUeni/ZOH9B+ENxtozKUNj8baKD34/l5EocsyyX+yAGUpmX6FiFM?=
- =?us-ascii?Q?3B96Q5AXf7Qar4iOalaiz2XA/Vcoy2yvwdVF3hizlzFGg1C9sGu7g/jFCCvW?=
- =?us-ascii?Q?spG6SqZhe21kMpNzkViBaIVMdie3HFxWA/SiMZVTP17rYw+1eugVufrBk4Ff?=
- =?us-ascii?Q?CdSnh328tLpU1uyuMmoA20wV4WHB7tCzTWMi4Io67lI520/dp3QazSmb47m9?=
- =?us-ascii?Q?0htTrf1YvJL7fpX7ehKOD0ptg1WpzucJCR7IYDzUVPblqpPIxXxdRps3BUwo?=
- =?us-ascii?Q?ntlKZ2BOxpqYbV7qEyDOa6bOQ4sbbvm8P5MivW4ArHxgy9qkHfmM1BKjBe7f?=
- =?us-ascii?Q?8X4z2CcaVH23xTD14upXgey7Tt3ud8hypnRjlsDnREVgwzYGhDaXJIBfE0Re?=
- =?us-ascii?Q?qsFDxJHZDmYZn3xzx5QUYpHBJYYXuQnK/J6vgwc2LECJyoWSCgSbn2Oi53P2?=
- =?us-ascii?Q?3D0YjVkDKW9eSq54aIXoAf+VT4sM/C/Df3segj2v10yJ3BQ72nzyXu9sPNRj?=
- =?us-ascii?Q?L0WfzEaR/og6qa1Qe7HeQhJZvqD+QyS55386sud1v4Px5H/VX2z1mLHXWi35?=
- =?us-ascii?Q?kfUT3QLMjZUTIrxjw7WWzJEJ3nQ1lJZXgefnCen++k1kpV+YDI95m789zi2L?=
- =?us-ascii?Q?78JNDz1lnO6o78W3mJwiONVRiuMAi8BuhjRYG+Wvb5jQad9pgN2fh5Iu9dn3?=
- =?us-ascii?Q?C8bE35W4Afe4mZFd3I+DVItaxoP6gHerOYO2QdtRYN7jbh/dN0cs+OfnkPY9?=
- =?us-ascii?Q?RWhH21/PcK3rg6pa6kQ32wMSFCBny5JYdr4nEQdAMn1ceQFT3n4XW1RFtnrz?=
- =?us-ascii?Q?sZQ0vtprVzjsZeJZOpvpSGsfpzg+Y8mxVZ/1zVPHEMKtkUEqSS7PggSVk/fl?=
- =?us-ascii?Q?KA9u+PmO2YiKmunDI6lZkGHZBovzI05UH7i5yrJlVuOPPZPxpBkvkNB3qQ04?=
- =?us-ascii?Q?4mKEnADoKUILtiGew3ilqeaTuU/ZhP0y0GMqztJWw8Fr8SWf35t3kp0EDG/Z?=
- =?us-ascii?Q?RhrtdjRL+/6gngsB5Ja4jHsbDUBxx5W/X5/t+TAtqCHlUwmClxjFriN2+GCo?=
- =?us-ascii?Q?6DdrhdhsunCg4+oYLlPwiz40+NXN3iR04+sripMa9HkfQTInGy+WDg4tzFw1?=
- =?us-ascii?Q?XA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	JTtzo1tmT9S9xfNCh6LJ3q/yEzLhv8JSgPSOHLXXvLRSzc2yZ2rBIjGWw5328wGzwlxL95RsfckI5kL8eROfie824UrnfhwimnXMoIUhvXYAfMpn4GUt1cPsFuD/tL2fU9ZfgUBhSpjWeY0E3lF4Ukan0DLTwbGY380IJ3Ow3hTtbJ1RnfDT87ZGkAx6aCwJH2IROTBiVJm9guko20k9xkYYeD30l8AFK77FwjloUl7UP4bfUkxfXZjbcOZwmtlQZ2B/A3KWzVa/EJV7IWgbv1UBbqvH+1f8WUd+xN+gfjCEJu56Jo22hNOhnH9yb9xNHxrKGAnXb+Mqf0TiBRFs0legcnJmTqjhWdE+Ftjkjd6GOpnTzlXX6DlSv7li//LNI//+Pcy+5kwgbeV8hwTxZIcWsMKjS+xl8LnxRZWp+CSxg/YlCKebnlzR3Rt0srvfAa5/zi4/BhJjbmJ6mXYipDsUNVyL8UyzJ6AmEyYcCMhw0w8yFdjEHSjAGlo5G8kXu5C/bhLEJvKPpvVjaE7Viz8jMRUu1H/H/HzS1lU7TJ29vYyVZjL8aRl5w5F3OZoGW+ehJBCZufCyGuaxJaXs5JhYCtnDzl4ca2GymWiAL6Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eed53bf2-5459-4dd9-5e69-08dd0974cf30
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 15:05:45.5039
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DrdV8qlJ8hfOPV2yqppdJstl0b7SWfExJ4BMZZ4IQ1s9BBRQL5kZ47aKPANIpc2WIrAd3q7X6+Ok25s1qi6p0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6228
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-20_12,2024-11-20_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411200101
-X-Proofpoint-GUID: UQUM9kxylb230nX8rKpEMX3RDpIr3tfh
-X-Proofpoint-ORIG-GUID: UQUM9kxylb230nX8rKpEMX3RDpIr3tfh
 
-On Wed, Nov 20, 2024 at 09:59:54AM +0100, Christian Brauner wrote:
-> On Mon, Nov 18, 2024 at 03:58:09PM -0500, Chuck Lever wrote:
-> > On Mon, Nov 18, 2024 at 03:00:56PM -0500, Jeff Layton wrote:
-> > > On Sun, 2024-11-17 at 16:32 -0500, cel@kernel.org wrote:
-> > > > From: Chuck Lever <chuck.lever@oracle.com>
-> > > > 
-> > > > The fix in commit 64a7ce76fb90 ("libfs: fix infinite directory reads
-> > > > for offset dir") introduced a fence in offset_iterate_dir() to stop
-> > > > the loop from returning child entries created after the directory
-> > > > was opened. This comparison relies on the strong ordering of
-> > > > DIR_OFFSET_MIN <= largest child offset <= next_offset to terminate
-> > > > the directory iteration.
-> > > > 
-> > > > However, because simple_offset_add() uses mtree_alloc_cyclic() to
-> > > > select each next new directory offset, ctx->next_offset is not
-> > > > always the highest unused offset. Once mtree_alloc_cyclic() allows
-> > > > a new offset value to wrap, ctx->next_offset will be set to a value
-> > > > less than the actual largest child offset.
-> > > > 
-> > > > The result is that readdir(3) no longer shows any entries in the
-> > > > directory because their offsets are above ctx->next_offset, which is
-> > > > now a small value. This situation is persistent, and the directory
-> > > > cannot be removed unless all current children are already known and
-> > > > can be explicitly removed by name first.
-> > > > 
-> > > > In the current Maple tree implementation, there is no practical way
-> > > > that 63-bit offset values can ever wrap, so this issue is cleverly
-> > > > avoided. But the ordering dependency is not documented via comments
-> > > > or code, making the mechanism somewhat brittle. And it makes the
-> > > > continued use of mtree_alloc_cyclic() somewhat confusing.
-> > > > 
-> > > > Further, if commit 64a7ce76fb90 ("libfs: fix infinite directory
-> > > > reads for offset dir") were to be backported to a kernel that still
-> > > > uses xarray to manage simple directory offsets, the directory offset
-> > > > value range is limited to 32-bits, which is small enough to allow a
-> > > > wrap after a few weeks of constant creation of entries in one
-> > > > directory.
-> > > > 
-> > > > Therefore, replace the use of ctx->next_offset for fencing new
-> > > > children from appearing in readdir results.
-> > > > 
-> > > > A jiffies timestamp marks the end of each opendir epoch. Entries
-> > > > created after this timestamp will not be visible to the file
-> > > > descriptor. I chose jiffies so that the dentry->d_time field can be
-> > > > re-used for storing the entry creation time.
-> > > > 
-> > > > The new mechanism has its own corner cases. For instance, I think
-> > > > if jiffies wraps twice while a directory is open, some children
-> > > > might become invisible. On 32-bit systems, the jiffies value wraps
-> > > > every 49 days. Double-wrapping is not a risk on systems with 64-bit
-> > > > jiffies. Unlike with the next_offset-based mechanism, re-opening the
-> > > > directory will make invisible children re-appear.
-> > > > 
-> > > > Reported-by: Yu Kuai <yukuai3@huawei.com>
-> > > > Closes: https://lore.kernel.org/stable/20241111005242.34654-1-cel@kernel.org/T/#m1c448e5bd4aae3632a09468affcfe1d1594c6a59
-> > > > Fixes: 64a7ce76fb90 ("libfs: fix infinite directory reads for offset dir")
-> > > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> > > > ---
-> > > >  fs/libfs.c | 36 +++++++++++++++++-------------------
-> > > >  1 file changed, 17 insertions(+), 19 deletions(-)
-> > > > 
-> > > > diff --git a/fs/libfs.c b/fs/libfs.c
-> > > > index bf67954b525b..862a603fd454 100644
-> > > > --- a/fs/libfs.c
-> > > > +++ b/fs/libfs.c
-> > > > @@ -294,6 +294,7 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
-> > > >  		return ret;
-> > > >  
-> > > >  	offset_set(dentry, offset);
-> > > > +	WRITE_ONCE(dentry->d_time, jiffies);
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > @@ -454,9 +455,7 @@ void simple_offset_destroy(struct offset_ctx *octx)
-> > > >  
-> > > >  static int offset_dir_open(struct inode *inode, struct file *file)
-> > > >  {
-> > > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-> > > > -
-> > > > -	file->private_data = (void *)ctx->next_offset;
-> > > > +	file->private_data = (void *)jiffies;
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > @@ -473,9 +472,6 @@ static int offset_dir_open(struct inode *inode, struct file *file)
-> > > >   */
-> > > >  static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
-> > > >  {
-> > > > -	struct inode *inode = file->f_inode;
-> > > > -	struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
-> > > > -
-> > > >  	switch (whence) {
-> > > >  	case SEEK_CUR:
-> > > >  		offset += file->f_pos;
-> > > > @@ -490,7 +486,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
-> > > >  
-> > > >  	/* In this case, ->private_data is protected by f_pos_lock */
-> > > >  	if (!offset)
-> > > > -		file->private_data = (void *)ctx->next_offset;
-> > > > +		/* Make newer child entries visible */
-> > > > +		file->private_data = (void *)jiffies;
-> > > >  	return vfs_setpos(file, offset, LONG_MAX);
-> > > >  }
-> > > >  
-> > > > @@ -521,7 +518,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
-> > > >  			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-> > > >  }
-> > > >  
-> > > > -static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
-> > > > +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx,
-> > > > +			       unsigned long fence)
-> > > >  {
-> > > >  	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-> > > >  	struct dentry *dentry;
-> > > > @@ -531,14 +529,15 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
-> > > >  		if (!dentry)
-> > > >  			return;
-> > > >  
-> > > > -		if (dentry2offset(dentry) >= last_index) {
-> > > > -			dput(dentry);
-> > > > -			return;
-> > > > -		}
-> > > > -
-> > > > -		if (!offset_dir_emit(ctx, dentry)) {
-> > > > -			dput(dentry);
-> > > > -			return;
-> > > > +		/*
-> > > > +		 * Output only child entries created during or before
-> > > > +		 * the current opendir epoch.
-> > > > +		 */
-> > > > +		if (time_before_eq(dentry->d_time, fence)) {
-> > > > +			if (!offset_dir_emit(ctx, dentry)) {
-> > > > +				dput(dentry);
-> > > > +				return;
-> > > > +			}
-> > > >  		}
-> > > >  
-> > > >  		ctx->pos = dentry2offset(dentry) + 1;
-> > > > @@ -569,15 +568,14 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, lon
-> > > >   */
-> > > >  static int offset_readdir(struct file *file, struct dir_context *ctx)
-> > > >  {
-> > > > +	unsigned long fence = (unsigned long)file->private_data;
-> > > >  	struct dentry *dir = file->f_path.dentry;
-> > > > -	long last_index = (long)file->private_data;
-> > > >  
-> > > >  	lockdep_assert_held(&d_inode(dir)->i_rwsem);
-> > > >  
-> > > >  	if (!dir_emit_dots(file, ctx))
-> > > >  		return 0;
-> > > > -
-> > > > -	offset_iterate_dir(d_inode(dir), ctx, last_index);
-> > > > +	offset_iterate_dir(d_inode(dir), ctx, fence);
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > 
-> > > Using timestamps instead of directory ordering does seem less brittle,
-> > > and the choice to use jiffies makes sense given that d_time is also an
-> > > unsigned long.
-> > > 
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > 
-> > Precisely. The goal was to re-use as much code as possible to avoid
-> > perturbing the current size of "struct dentry".
-> > 
-> > That said, I'm not overjoyed with using jiffies, given it has
-> > similar wrapping issues as ctx->next_offset on 32-bit systems. The
-> > consequences of an offset value wrap are less severe, though, since
-> > that can no longer make children entries disappear permanently.
-> > 
-> > I've been trying to imagine a solution that does not depend on the
-> > range of an integer value and has solidly deterministic behavior in
-> > the face of multiple child entry creations during one timer tick.
-> > 
-> > We could partially re-use the legacy cursor/list mechanism.
-> > 
-> > * When a child entry is created, it is added at the end of the
-> >   parent's d_children list.
-> > * When a child entry is unlinked, it is removed from the parent's
-> >   d_children list.
-> > 
-> > This includes creation and removal of entries due to a rename.
-> > 
-> > 
-> > * When a directory is opened, mark the current end of the d_children
-> >   list with a cursor dentry. New entries would then be added to this
-> >   directory following this cursor dentry in the directory's
-> >   d_children list.
-> > * When a directory is closed, its cursor dentry is removed from the
-> >   d_children list and freed.
-> > 
-> > Each cursor dentry would need to refer to an opendir instance
-> > (using, say, a pointer to the "struct file" for that open) so that
-> > multiple cursors in the same directory can reside in its d_chilren
-> > list and won't interfere with each other. Re-use the cursor dentry's
-> > d_fsdata field for that.
-> > 
-> > 
-> > * offset_readdir gets its starting entry using the mtree/xarray to
-> >   map ctx->pos to a dentry.
-> > * offset_readdir continues iterating by following the .next pointer
-> >   in the current dentry's d_child field.
-> > * offset_readdir returns EOD when it hits the cursor dentry matching
-> >   this opendir instance.
-> > 
-> > 
-> > I think all of these operations could be O(1), but it might require
-> > some additional locking.
-> 
-> This would be a bigger refactor of the whole stable offset logic. So
-> even if we end up doing that I think we should use the jiffies solution
-> for now.
+On Wed, 2024-11-20 at 15:27 +0100, Miklos Szeredi wrote:
+> Move common code from opt_array/opt_sec_array to helper.  This helper
+> does more than just unescape options, so rename to
+> statmount_opt_process().
+>=20
+> Handle corner case of just a single character in options.
+>=20
+> Rename some local variables to better describe their function.
+>=20
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/namespace.c | 44 +++++++++++++++++++-------------------------
+>  1 file changed, 19 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index eb34a5160f64..23e81c2a1e3f 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5057,21 +5057,32 @@ static int statmount_mnt_opts(struct kstatmount *=
+s, struct seq_file *seq)
+>  	return 0;
+>  }
+> =20
+> -static inline int statmount_opt_unescape(struct seq_file *seq, char *buf=
+_start)
+> +static inline int statmount_opt_process(struct seq_file *seq, size_t sta=
+rt)
+>  {
+> -	char *buf_end, *opt_start, *opt_end;
+> +	char *buf_end, *opt_end, *src, *dst;
+>  	int count =3D 0;
+> =20
+> +	if (unlikely(seq_has_overflowed(seq)))
+> +		return -EAGAIN;
+> +
+>  	buf_end =3D seq->buf + seq->count;
+> +	dst =3D seq->buf + start;
+> +	src =3D dst + 1;	/* skip initial comma */
+> +
+> +	if (src >=3D buf_end) {
+> +		seq->count =3D start;
+> +		return 0;
+> +	}
+> +
+>  	*buf_end =3D '\0';
+> -	for (opt_start =3D buf_start + 1; opt_start < buf_end; opt_start =3D op=
+t_end + 1) {
+> -		opt_end =3D strchrnul(opt_start, ',');
+> +	for (; src < buf_end; src =3D opt_end + 1) {
+> +		opt_end =3D strchrnul(src, ',');
+>  		*opt_end =3D '\0';
+> -		buf_start +=3D string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL=
+) + 1;
+> +		dst +=3D string_unescape(src, dst, 0, UNESCAPE_OCTAL) + 1;
+>  		if (WARN_ON_ONCE(++count =3D=3D INT_MAX))
+>  			return -EOVERFLOW;
+>  	}
+> -	seq->count =3D buf_start - 1 - seq->buf;
+> +	seq->count =3D dst - 1 - seq->buf;
+>  	return count;
+>  }
+> =20
+> @@ -5080,24 +5091,16 @@ static int statmount_opt_array(struct kstatmount =
+*s, struct seq_file *seq)
+>  	struct vfsmount *mnt =3D s->mnt;
+>  	struct super_block *sb =3D mnt->mnt_sb;
+>  	size_t start =3D seq->count;
+> -	char *buf_start;
+>  	int err;
+> =20
+>  	if (!sb->s_op->show_options)
+>  		return 0;
+> =20
+> -	buf_start =3D seq->buf + start;
+>  	err =3D sb->s_op->show_options(seq, mnt->mnt_root);
+>  	if (err)
+>  		return err;
+> =20
+> -	if (unlikely(seq_has_overflowed(seq)))
+> -		return -EAGAIN;
+> -
+> -	if (seq->count =3D=3D start)
+> -		return 0;
+> -
+> -	err =3D statmount_opt_unescape(seq, buf_start);
+> +	err =3D statmount_opt_process(seq, start);
+>  	if (err < 0)
+>  		return err;
+> =20
+> @@ -5110,22 +5113,13 @@ static int statmount_opt_sec_array(struct kstatmo=
+unt *s, struct seq_file *seq)
+>  	struct vfsmount *mnt =3D s->mnt;
+>  	struct super_block *sb =3D mnt->mnt_sb;
+>  	size_t start =3D seq->count;
+> -	char *buf_start;
+>  	int err;
+> =20
+> -	buf_start =3D seq->buf + start;
+> -
+>  	err =3D security_sb_show_options(seq, sb);
+>  	if (err)
+>  		return err;
+> =20
+> -	if (unlikely(seq_has_overflowed(seq)))
+> -		return -EAGAIN;
+> -
+> -	if (seq->count =3D=3D start)
+> -		return 0;
+> -
+> -	err =3D statmount_opt_unescape(seq, buf_start);
+> +	err =3D statmount_opt_process(seq, start);
+>  	if (err < 0)
+>  		return err;
+> =20
 
-How should I mark patches so they can be posted for discussion and
-never applied? This series is marked RFC.
-
-I am actually half-way through implementing the approach described
-here. It is not as big a re-write as you might think, and addresses
-some fundamental misunderstandings in the offset_iterate_dir() code.
-
-
--- 
-Chuck Lever
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
