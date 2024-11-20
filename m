@@ -1,303 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-35304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB459D38B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:49:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC8F9D38C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99F1FB24410
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F681F24A6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 10:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0918519D093;
-	Wed, 20 Nov 2024 10:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MsucGR9R"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1F519D884;
+	Wed, 20 Nov 2024 10:52:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF5219CC34
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 10:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E257E33C5;
+	Wed, 20 Nov 2024 10:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732099733; cv=none; b=fc1tIh4QAIN4xUImnKkWvBLOpxn2WJkbROCEQerqRdolxei9JRpdTJ05XizkXfPaElMfubD/3YySFzhGNzhPPuhnKMTAK8wO/Z7TvQBT1PUOPaIYYQUZ4yl31MtSy9ejfI8SrmCGIPcisHE7qYeeA0XAwlieEramULo6BhsLG4k=
+	t=1732099954; cv=none; b=WLCe7pNXgpUeaYx9inBSQ+gdFUU1ZyDWxiBk2FKkfE9VVVmhU62HTnpZpklKicoUaC2W157UR6Dh2xfNS3dJl8e/FciWLhvSh+QjAn+SMImr6aFAH4+eS/6iZzn5aeaXEJvN8xRzAgouZQatPK7oPoPB2UCt/U1SR0UIzXqyQws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732099733; c=relaxed/simple;
-	bh=XC8Mm92Ij6nVgJE1Djy3NtQ0fZS7oZmrFjKmK4b17TM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbN70x1qFAzM8zMu35I64UInOvjBLHSdrcwlJ0zV1CJBpmTBwulW4uRjKFYj2vIEZwjicMAgZ/uzAHyTOlGOkICZgklyKxC/RXJolpoRcU4xnxeybL61AGb2Mqa6blPsDBSflOkGBD2F4jyKcsXpYt64DQVHbd7vYyFFC5qGvQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MsucGR9R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732099730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TYJiOMspK7IsPxdhCdCDQF9p6uoKVIA0MyWnICkfAEs=;
-	b=MsucGR9RwDnFXUUOMPzbo07WFZqUJhBILV3CtDp8kIz7bQN+NKtbKO0UDWrmHGDgtjcQVq
-	EnrdjEBYT6uG2QQZhfa9Y6BbvT3eUEL4NGqZaScHsilq1/Re3hHw4tmu0rB2Pu0mR4z1EK
-	eWKoDsS57ZfLJ4omBHun/smhBcNe7uE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-X7KjHuBDPAe3KJ7999v29w-1; Wed, 20 Nov 2024 05:48:47 -0500
-X-MC-Unique: X7KjHuBDPAe3KJ7999v29w-1
-X-Mimecast-MFC-AGG-ID: X7KjHuBDPAe3KJ7999v29w
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso39887635e9.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 02:48:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732099726; x=1732704526;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TYJiOMspK7IsPxdhCdCDQF9p6uoKVIA0MyWnICkfAEs=;
-        b=idccOpxYn21qnLmJArhIoUBIvVH9+rQ9vihBD4MeuAuOQ3bDI9dpm9jHCVa9hYJdHv
-         Ao9SAJfKU/RzEVDr9hSmtti1SHBD7E90sJ4afJbXNOsXFWtj1zYvDv2NangCDN1I3Ae+
-         VBB5C1q5AA+r3H5edlhnGGKY3OFtS7DjkCQ95WRAsLMEAM6UrhaF8nUXgfNQ6T+I+nxx
-         dG+KPFyPRY9k1XD75nI3Pzr+KhwNlqmJcLqeDqKrOO1eKZ/uWX6WRw3tocrbiqjHHVdG
-         FIvfwgI6kHqguXiO0ywEg0IiUGCICGHjkeKVgF5V/E3wiwoYdrzigJGv9JQzmDGW9HRl
-         Jl8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWl+l5FTR4X+T7BJuxColPPicsgDB0KUwAqWwM199158laCMtXzLx1Twl4bX6tNbmLOBehGGvr3hgs/4I49@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnq/dfYQZGfRLR73bOaDp1f/u/m8UGippqSgIrkwlb0Hq6yMXs
-	+6F2Mjq9a5b2eX0CzvR8s0RMtEDBDUk5TQDHbc4Ab9/Zs9/KAdCZ/iwYQy4E54cYOjVD0349c1n
-	acoNO0tMq61XcRFWSNVWFON6uIZGCoUkHeqLVGZmwHVk4j27WOqO6smpmMr34EAY=
-X-Received: by 2002:a05:600c:4ed2:b0:431:52a3:d9d5 with SMTP id 5b1f17b1804b1-43348903e9dmr25118815e9.0.1732099726060;
-        Wed, 20 Nov 2024 02:48:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH5ri0Ctyn0tsKk21xv1/ls13TeHxIMZx0VuvaIyqn9RF2BrSvePdGve47YAO822hbBk4iZ7Q==
-X-Received: by 2002:a05:600c:4ed2:b0:431:52a3:d9d5 with SMTP id 5b1f17b1804b1-43348903e9dmr25118425e9.0.1732099725605;
-        Wed, 20 Nov 2024 02:48:45 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45fa728sm14606045e9.14.2024.11.20.02.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 02:48:44 -0800 (PST)
-Message-ID: <4b07a3eb-aad6-4436-9591-289c6504bb92@redhat.com>
-Date: Wed, 20 Nov 2024 11:48:42 +0100
+	s=arc-20240116; t=1732099954; c=relaxed/simple;
+	bh=BvrPqH/JjuDxvHT2iBBoF6DimfCqDzvK3hg6PwE5HHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TRSWix6sgQIKCG21FiSzyJlzmQwBnbsE5U4/wnmVkwgA6tTobsnMolNAWSvlrDTKyo6hdprBBgXAhoLvs5tTylHhKKMVh3BXRVx0FNGEh0iVxa2DmuDASLa0MiQVpAGjesRiFagqpNnhNymPsdFlbyMa6c6pIwiYiM589Uo7Gx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5673dbf66034-5504b;
+	Wed, 20 Nov 2024 18:52:25 +0800 (CST)
+X-RM-TRANSID:2ee5673dbf66034-5504b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9673dbf5635b-7f187;
+	Wed, 20 Nov 2024 18:52:25 +0800 (CST)
+X-RM-TRANSID:2ee9673dbf5635b-7f187
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: krisman@kernel.org,
+	hughd@google.com,
+	akpm@linux-foundation.org,
+	andrealmeid@igalia.com,
+	brauner@kernel.org,
+	tytso@mit.edu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v1] tmpfs: Unsigned expression compared with zero
+Date: Wed, 20 Nov 2024 18:51:50 +0800
+Message-Id: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM
- to detect device RAM ranges in 2nd kernel
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
- <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-8-david@redhat.com> <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20.11.24 11:13, Baoquan He wrote:
-> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
->> s390 allocates+prepares the elfcore hdr in the dump (2nd) kernel, not in
->> the crashed kernel.
->>
->> RAM provided by memory devices such as virtio-mem can only be detected
->> using the device driver; when vmcore_init() is called, these device
->> drivers are usually not loaded yet, or the devices did not get probed
->> yet. Consequently, on s390 these RAM ranges will not be included in
->> the crash dump, which makes the dump partially corrupt and is
->> unfortunate.
->>
->> Instead of deferring the vmcore_init() call, to an (unclear?) later point,
->> let's reuse the vmcore_cb infrastructure to obtain device RAM ranges as
->> the device drivers probe the device and get access to this information.
->>
->> Then, we'll add these ranges to the vmcore, adding more PT_LOAD
->> entries and updating the offsets+vmcore size.
->>
->> Use Kconfig tricks to include this code automatically only if (a) there is
->> a device driver compiled that implements the callback
->> (PROVIDE_PROC_VMCORE_DEVICE_RAM) and; (b) the architecture actually needs
->> this information (NEED_PROC_VMCORE_DEVICE_RAM).
->>
->> The current target use case is s390, which only creates an elf64
->> elfcore, so focusing on elf64 is sufficient.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   fs/proc/Kconfig            |  25 ++++++
->>   fs/proc/vmcore.c           | 156 +++++++++++++++++++++++++++++++++++++
->>   include/linux/crash_dump.h |   9 +++
->>   3 files changed, 190 insertions(+)
->>
->> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
->> index d80a1431ef7b..1e11de5f9380 100644
->> --- a/fs/proc/Kconfig
->> +++ b/fs/proc/Kconfig
->> @@ -61,6 +61,31 @@ config PROC_VMCORE_DEVICE_DUMP
->>   	  as ELF notes to /proc/vmcore. You can still disable device
->>   	  dump using the kernel command line option 'novmcoredd'.
->>   
->> +config PROVIDE_PROC_VMCORE_DEVICE_RAM
->> +	def_bool n
->> +
->> +config NEED_PROC_VMCORE_DEVICE_RAM
->> +	def_bool n
->> +
->> +config PROC_VMCORE_DEVICE_RAM
->> +	def_bool y
->> +	depends on PROC_VMCORE
->> +	depends on NEED_PROC_VMCORE_DEVICE_RAM
->> +	depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
-> 
-> Kconfig item is always a thing I need learn to master.
+The return value from the call to utf8_parse_version() is not
+of the unsigned type.
 
-Yes, it's usually a struggle to get it right. It took me a couple of 
-iterations to get to this point :)
+However, the return value is being assigned to an unsigned int
+variable 'version'. This will result in the inability to handle
+errors that occur when parsing a UTF-8 version number from
+a string.
 
-> When I checked
-> this part, I have to write them down to deliberate. I am wondering if
-> below 'simple version' works too and more understandable. Please help
-> point out what I have missed.
-> 
-> ===========simple version======
-> config PROC_VMCORE_DEVICE_RAM
->          def_bool y
->          depends on PROC_VMCORE && VIRTIO_MEM
->          depends on NEED_PROC_VMCORE_DEVICE_RAM
-> 
-> config S390
->          select NEED_PROC_VMCORE_DEVICE_RAM
- > ============
+Additionally, this patch can help eliminate the following
+Coccicheck warning:
 
-So the three changes you did are
+mm/shmem.c:4378:6-13: WARNING: Unsigned expression compared with zero: version < 0
 
-(a) Remove the config option but select/depend on them.
+Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+---
+ fs/unicode/utf8-core.c  | 9 +++++----
+ include/linux/unicode.h | 2 +-
+ mm/shmem.c              | 5 +++--
+ 3 files changed, 9 insertions(+), 7 deletions(-)
 
-(b) Remove the "depends on PROC_VMCORE" from PROC_VMCORE_DEVICE_RAM,
-     and the "if PROC_VMCORE" from s390.
-
-(c) Remove the PROVIDE_PROC_VMCORE_DEVICE_RAM
-
-
-Regarding (a), that doesn't work. If you select a config option that 
-doesn't exist, it is silently dropped. It's always treated as if it 
-wouldn't be set.
-
-Regarding (b), I think that's an anti-pattern (having config options 
-enabled that are completely ineffective) and I don't see a benefit 
-dropping them.
-
-Regarding (c), it would mean that s390x unconditionally includes that 
-code even if virtio-mem is not configured in.
-
-So while we could drop PROVIDE_PROC_VMCORE_DEVICE_RAM -- (c), it would 
-that we end up including code in configurations that don't possibly need 
-it. That's why I included that part.
-
-> 
-> 
-> ======= config items extracted from this patchset====
-> config PROVIDE_PROC_VMCORE_DEVICE_RAM
->          def_bool n
-> 
-> config NEED_PROC_VMCORE_DEVICE_RAM
->          def_bool n
-> 
-> config PROC_VMCORE_DEVICE_RAM
->          def_bool y
->          depends on PROC_VMCORE
->          depends on NEED_PROC_VMCORE_DEVICE_RAM
->          depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
-> 
-> config VIRTIO_MEM
-> 	depends on X86_64 || ARM64 || RISCV
->           ~~~~~ I don't get why VIRTIO_MEM dones't depend on S390 if
->                 s390 need PROC_VMCORE_DEVICE_RAM.
-
-This series depends on s390 support for virtio-mem, which just went 
-upstream.
-
-See
-
-commit 38968bcdcc1d46f2fdcd3a72599d5193bf8baf84
-Author: David Hildenbrand <david@redhat.com>
-Date:   Fri Oct 25 16:14:49 2024 +0200
-
-     virtio-mem: s390 support
-
-
->          ......
->          select PROVIDE_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
-> 
-> config S390
->          select NEED_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
-> =================================================
-> 
-
-Thanks for having a look!
-
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 6fc9ab8667e6..c54dc7ac5ce6 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -219,9 +219,9 @@ EXPORT_SYMBOL(utf8_unload);
+  *
+  * @version: input string
+  *
+- * Returns the parsed version on success, negative code on error
++ * Returns 0 on success, negative code on error
+  */
+-int utf8_parse_version(char *version)
++int utf8_parse_version(char *version_str, unsigned int *version)
+ {
+ 	substring_t args[3];
+ 	unsigned int maj, min, rev;
+@@ -230,13 +230,14 @@ int utf8_parse_version(char *version)
+ 		{0, NULL}
+ 	};
+ 
+-	if (match_token(version, token, args) != 1)
++	if (match_token(version_str, token, args) != 1)
+ 		return -EINVAL;
+ 
+ 	if (match_int(&args[0], &maj) || match_int(&args[1], &min) ||
+ 	    match_int(&args[2], &rev))
+ 		return -EINVAL;
+ 
+-	return UNICODE_AGE(maj, min, rev);
++	*version = UNICODE_AGE(maj, min, rev);
++	return 0;
+ }
+ EXPORT_SYMBOL(utf8_parse_version);
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 5e6b212a2aed..7de545bc66cb 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -78,6 +78,6 @@ int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
+ struct unicode_map *utf8_load(unsigned int version);
+ void utf8_unload(struct unicode_map *um);
+ 
+-int utf8_parse_version(char *version);
++int utf8_parse_version(char *version_str, unsigned int *version);
+ 
+ #endif /* _LINUX_UNICODE_H */
+diff --git a/mm/shmem.c b/mm/shmem.c
+index ccb9629a0f70..7d07f649a8df 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4368,14 +4368,15 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
+ 	unsigned int version = UTF8_LATEST;
+ 	struct unicode_map *encoding;
+ 	char *version_str = param->string + 5;
++	int ret;
+ 
+ 	if (!latest_version) {
+ 		if (strncmp(param->string, "utf8-", 5))
+ 			return invalfc(fc, "Only UTF-8 encodings are supported "
+ 				       "in the format: utf8-<version number>");
+ 
+-		version = utf8_parse_version(version_str);
+-		if (version < 0)
++		ret = utf8_parse_version(version_str, &version);
++		if (ret < 0)
+ 			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
+ 	}
+ 
 -- 
-Cheers,
+2.33.0
 
-David / dhildenb
+
 
 
