@@ -1,113 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-35350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCAD9D413A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 18:35:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6079D41B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 18:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D04E281140
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:35:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CCC2B25D5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42551ABEB4;
-	Wed, 20 Nov 2024 17:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FF01BAEFC;
+	Wed, 20 Nov 2024 17:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLUzD5nA"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="yQ66ORCi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE35588F;
-	Wed, 20 Nov 2024 17:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FE5146593
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 17:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732124119; cv=none; b=UM8Tvb4m+MTC6hH3cTgWq7RFY+d9w/BckATGR0pPhmHJwMTWEKmR/YkxIOtuWWYDU64+fwWmxoJ2uyPNA6swrKsDzw3JZ4H5z1vBvCo4riZ/P9vzDPHndBPbm/9D/jp0oVJ1lYGHMraXSzqwP79qW+ZzqFvf5mZEL4Ydgzcsans=
+	t=1732124857; cv=none; b=lVsESlWnUWm2IDoq6Mzrh8dwY82ojwEOFJ9Ci95N+myjOAbxgUTD/aK/woaN4WJ2GaAXyw660EDpS+Ju1beuLQlFrXCoGkTJ5v8GxCcijYrBgyq8fmgL6MC4A8RZGxqe1gU1Wib4dNtRt0S43odzYayl8MKZhWpNKAkb5w+6TU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732124119; c=relaxed/simple;
-	bh=zhUb1iqG0sWlDdOWsUtyWjkBDoFZXFk2BYB6s8NvcW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Doq+ohvoMauTE1lmgRIdbUQCuKghJdNNzGmNWXFSyBFbb5FqwC4anCSPbweV2FqNGhgF0gyi5L/vRXES4z1qkaFSEg2x3YsxhEGQJ+in9nHdYrCfIebdVconhKLrmE6dRY3ivtih4lDJlYWCM0km42A4pf9JSVR6YHbVDwfB8cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLUzD5nA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9551EC4CECD;
-	Wed, 20 Nov 2024 17:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732124118;
-	bh=zhUb1iqG0sWlDdOWsUtyWjkBDoFZXFk2BYB6s8NvcW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LLUzD5nAaUwl9vXY+3MQc8Sg4ssq4q4ByVc9JI2Y4n+Yt1kif7fKNsX1iw9qBALKd
-	 jrOIX3vDsp2ybevJ8zF9wEi7L09s4rgIFxHzejp/m2+yh18lWnuoB2Svmu6jQL7+t3
-	 QaBtG50OgjyjfvpbeVJZEVrcnLl8m7cob922A4sdXGTs0c9gELvbboSE2ZPMBQFesP
-	 vOAuV4FlMssmc2SFpWEdfqFsTjNPns8SGxD9Mz+ig/gbJCVrIRii6cssEsFwAuBu8J
-	 DKV3AkQ36KcBvFxleA+LPG4qjhOdljCjhPqKIrXpezWXIJDntBVMJMsZ/6yd6cO5t+
-	 kb0lafconi9CQ==
-Date: Wed, 20 Nov 2024 09:35:17 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Christoph Hellwig <hch@lst.de>,
-	Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk,
-	kbusch@kernel.org, martin.petersen@oracle.com,
-	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <20241120173517.GQ9425@frogsfrogsfrogs>
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
- <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com>
- <20241114121632.GA3382@lst.de>
- <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com>
- <ZzeNEcpSKFemO30g@casper.infradead.org>
+	s=arc-20240116; t=1732124857; c=relaxed/simple;
+	bh=u99IqIWwuXfqqVllQi6t586j+rI6T6G2LFrOGmNlgvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oh2bMQB+TNWsg69GsNCc9n/823OB4CkVnHoiYdnF5F2BCVrTvOFH3t0ySudNUcGSY6loScOt0Jv/DJTfWR6YISUcA37tcrSDgOKxwpHdDfS8Be0TwiCRes7uuon3atdajyMo/ppCRKY5IPUV76kkKATNl/nol60iCbqFDMjNZp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=yQ66ORCi; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46096aadaf0so127101cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:47:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1732124855; x=1732729655; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UaFYnoy6vIIc+NNFw3dXMBs61SIsGb7xxVzTfcYyYis=;
+        b=yQ66ORCidijal9Md6ogoyqmn3A3Oo02nTqw9YZoP1pMTj67QBkOagb/7QIwqVq/FDl
+         MTGYXWOYMINrjMsrCaGEcKSSVb9iHwZCSYLpByfDPoX6TAsL87/Qu8axmWRQ9hzx4v+u
+         71413HHBBRPeaALZVrrEi+iny+36Go0ea47b42TdwgFN0fJ81kUmJ59z0Lw23WIAGqUZ
+         d/o8oapSH39LwlOlHCBmv9h3ONJ7lbQJTjsj4kA7hCYxmFGcGlfcai3ROa1yyjSouf0y
+         bHbKuL9+ANMzFi+1lzqDObF4WQfKQwAh7hgMiW2DJdKyYHNNJcpD8wHceRLhbdyJxNpd
+         QKxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732124855; x=1732729655;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UaFYnoy6vIIc+NNFw3dXMBs61SIsGb7xxVzTfcYyYis=;
+        b=datV2dRR2F/gk6Utfe43FeCmXxbCbckkvFz21HM1QLd3B5CKVMnfR42KGFrPARJY1g
+         pJj0O+D95glossRZcLzGWeXrHlYoRfNDzqYiepeoLUtMMWZ3ejALC8MvNAnnzoWkRaSo
+         ETtk5nAfRuJi3IjW3zN7+Q2ApTrLYg2eSfuVnaVy87y3gDX6xvvhsu9k2pE6RpL+IYBS
+         vGNN0+MU0P9LT3u97EeF6wOC2MqwN+2kGofNNdVZ67gYbM0JBMVHIQTK8HcoiCKXLibv
+         DTOPS9tqhnuf0SOvXV+mowpPyuQOMSFhUZz8ebVZf/67c+4mLDhG1lK0ymdsVSAsVtW0
+         OqMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+T23P8TiTdsIsqi9Q6TEnOaGp40GMrypCU59Btzvvn4X0uDLmcvG5mTf93v/cKOrkh5QwLZk/CHCgD9It@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5JqVESRj9SFe69fJ/CFzjI+2Yy0FRQOKraBm+aOPPlGNRwxaW
+	jjl0FviaUd70gM94cOpsVkLg5eWDiE3vL2J58cUvL/ccN/XzhaaON9qfnHra01hutkC+6KGXSvp
+	b3XXFe+GJqOprk5UnsLz3Y2aMoJTpxhGa5UQrjw==
+X-Google-Smtp-Source: AGHT+IETZYeQkb0s7u5Wf9yV4Cku4EiSNu5qCpIOez8ZpXMAHom6F/sK07PgTzdhYiGYrI8j7GVXlIMLnKbJrLP6RZU=
+X-Received: by 2002:a05:622a:2d5:b0:460:ebb5:5fe5 with SMTP id
+ d75a77b69052e-464782a740bmr36717931cf.10.1732124854779; Wed, 20 Nov 2024
+ 09:47:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzeNEcpSKFemO30g@casper.infradead.org>
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+ <2024111938-anointer-kooky-d4f9@gregkh> <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
+ <ZzzXqXGRlAwk-H2m@google.com> <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
+ <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
+ <CA+CK2bC-jNxUgp9JB=H9GsMu1FrxyqXxCe_v1G-43A1-eed0VA@mail.gmail.com> <CAJD7tkaYuJpxijOp6se+mWHO6djaz_7KaoXjf=Rdo6nJubwB2w@mail.gmail.com>
+In-Reply-To: <CAJD7tkaYuJpxijOp6se+mWHO6djaz_7KaoXjf=Rdo6nJubwB2w@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 20 Nov 2024 12:46:57 -0500
+Message-ID: <CA+CK2bB9P0gVFVETh_zBfhnShYTJK8EX-vNfVjFY7QEKi_Gpmg@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
+	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 15, 2024 at 06:04:01PM +0000, Matthew Wilcox wrote:
-> On Thu, Nov 14, 2024 at 01:09:44PM +0000, Pavel Begunkov wrote:
-> > With SQE128 it's also a problem that now all SQEs are 128 bytes regardless
-> > of whether a particular request needs it or not, and the user will need
-> > to zero them for each request.
-> 
-> The way we handled this in NVMe was to use a bit in the command that
-> was called (iirc) FUSED, which let you use two consecutive entries for
-> a single command.
-> 
-> Some variant on that could surely be used for io_uring.  Perhaps a
-> special opcode that says "the real opcode is here, and this is a two-slot
-> command".  Processing gets a little spicy when one slot is the last in
-> the buffer and the next is the the first in the buffer, but that's a SMOP.
+> >         /* Use static buffer, for the caller is holding oom_lock. */
+> >         static char buf[PAGE_SIZE];
+> >         ....
+> >         seq_buf_init(&s, buf, sizeof(buf));
+> >         memory_stat_format(memcg, &s);
+> >         seq_buf_do_printk(&s, KERN_INFO);
+> > }
+> >
+> > This is a callosal stack allocation, given that our fleet only has 8K
+> > stacks. :-)
+>
+> That's a static allocation though :)
 
-I like willy's suggestion -- what's the difficulty in having a SQE flag
-that says "...and keep going into the next SQE"?  I guess that
-introduces the problem that you can no longer react to the observation
-of 4 new SQEs by creating 4 new contexts to process those SQEs and throw
-all 4 of them at background threads, since you don't know how many IOs
-are there.
+Ah right, did not notice it was static (and ignored the comment)
 
-That said, depending on the size of the PI metadata, it might be more
-convenient for the app programmer to supply one pointer to a single
-array of PI information for the entire IO request, packed in whatever
-format the underlying device wants.
-
-Thinking with my xfs(progs) hat on, if we ever wanted to run xfs_buf(fer
-cache) IOs through io_uring with PI metadata, we'd probably want a
-vectored io submission interface (xfs_buffers can map to discontiguous
-LBA ranges on disk), but we'd probably have a single memory object to
-hold all the PI information.
-
-But really, AFAICT it's 6 of one or half a dozen of the other, so I
-don't care all that much so long as you all pick something and merge it.
-:)
-
---D
+Pasha
 
