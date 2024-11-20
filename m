@@ -1,120 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-35261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B31D9D3335
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 06:40:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA909D3344
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 06:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B24BBB211D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 05:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37FD283AB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 05:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1F7156F39;
-	Wed, 20 Nov 2024 05:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4C71581E5;
+	Wed, 20 Nov 2024 05:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6q6eqyE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kh7ZVabP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A71547FD;
-	Wed, 20 Nov 2024 05:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79001E545;
+	Wed, 20 Nov 2024 05:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732081240; cv=none; b=Z67ue+vvF5zx5bM99cQezuhXYBDC+zi0heNXyVCV3K/wBr1k+JBsXg4PXBPPDj33tjZM+RfVg+zTnhYU+WQKgiPLN+BKGRf4qZ4HrQ09E3GLiLdAFXY51myPziKGZ0UK2DaZUk6d2iNoQbYjCy1oge2NKNFWBumZHfMaBcVS7JI=
+	t=1732081975; cv=none; b=nqpk5RxZQVffSYbFEi8yMSwcekAIV/UffMxRfdiDTMVZ55chwCXcJcMorUygl6ZETIL2+AUzej4sP93Vs4PJAXoCKemBPpOdPEQD9FxFuwdyiA0ELiOuwwmlOa/XfQQFTkcttB/xmZFBzajNSJt114oFIWayrVjOoi15ZuDwKlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732081240; c=relaxed/simple;
-	bh=NZX7EJEftC8ogdSNUbqlqxEm7+iQXkYv8nzBOlRv0z0=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=NBMpyTrV3PKu13vts8D+dkIKBIDStyPUxY/LDZxSak6+yKLdkbcw3eiVLknY+N+nI1+HdDVzQiFW1iTT8kilcBvk1maAd/4Rn57rHvKXUTXqLs/w17hWmQKEPSi39jLf+P3YawqKDeWj3ZTo4odc6qvHxB7emqnJJg95Bglfe58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6q6eqyE; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7f43259d220so2795987a12.3;
-        Tue, 19 Nov 2024 21:40:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732081238; x=1732686038; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:cc:to:content-language:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=49ldDJo3N8z4og68gIqgA/slR0RHXRgXwRCuFS38v0c=;
-        b=g6q6eqyEeyGTIQXCpiuFnqmBzYIt+g8KWKj7VfK6XbtXEItrFhEiUyrFh3gL2Anviz
-         yAxDnWTpAuTNoiGdlaLferDX/JOA53IxXBiPaeGSkPr3xAhgSk5m5Qt81wnPabtl3qYs
-         8ASVfHFx8XBY5GUtAKKm0JJMtelLWf9z4V8py263TGxeMzwq9w3fXCwQzCGkatRxTSqF
-         5phYlP+LliybKyadsiV560syQikLbg8FtRwNbTkPQFAvpFQRuwqQoiyprL8Jz9D/812D
-         vhokt2j6ZJRVlp1rxDIEAUc1lR6LprtX1kINhOGZM+BDUqFQzHpS/wW7aQbWMZ8KF/F3
-         NdMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732081238; x=1732686038;
-        h=content-transfer-encoding:subject:cc:to:content-language:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=49ldDJo3N8z4og68gIqgA/slR0RHXRgXwRCuFS38v0c=;
-        b=CX8TnJiQ3/J07X2X6SiKlV8nLpQFXMvYaTn+tmceghI3UVP4/FNT35TSxvGGEZESN3
-         Hdv+ydQcsAWyPxqy3eFIhfXIG8dO12tm563KEmAN230mduqLfWES0TPfpWDOzsVtRWRG
-         HhiK1BU2auyWgO+qITpEix0DfFTjVsaf4PZfLlf7Or8rBLb5fktnS70cUZ0yorHzNuiI
-         fQihzhb0xXfSubvhdQMlDudabF+sRVb0Y/c35gCauFlP8K4qwSzce8h2qt6c6oLuQmqc
-         Zoo+OHIzdcRPzSZVEh+/dMuDSQ8tTdl2OGZbufOf4zvx+hEkzxQ0TUf7uJt5wfaFhjTQ
-         +mqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4wZEMUgSVILaYuD8tOcTfU9x/3dNRW9v3zU4gK2YUZxB2FE9Q9LqsGieWXxKzC8+kwqvC1sGfZGc3cds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmIP++cdB5yRkRQ+w7aW8/6TUlGOKG/FNLbmarg+QrfNSfdzGe
-	5ny9SIdHQOeownjBI6P+mz82wQASXNHuJR3TvjR+7SeDqBkshsUA
-X-Google-Smtp-Source: AGHT+IG31LJq2bi3QnR5bKoafknw+rirBINa2huhIzbNN7UNJ1r6TTupybhgqrYR4YKxnchSEkCH2A==
-X-Received: by 2002:a05:6a20:8402:b0:1dc:32a:d409 with SMTP id adf61e73a8af0-1ddb0433d90mr2589292637.39.1732081238451;
-        Tue, 19 Nov 2024 21:40:38 -0800 (PST)
-Received: from [10.193.178.64] ([124.127.236.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2125fa8dddcsm14406445ad.264.2024.11.19.21.40.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 21:40:38 -0800 (PST)
-Message-ID: <0c04e4ea-b900-4476-abc9-6b57e5c26e43@gmail.com>
-Date: Wed, 20 Nov 2024 13:40:32 +0800
+	s=arc-20240116; t=1732081975; c=relaxed/simple;
+	bh=HhjLfZzAV2GlW3VZGQfySWZBZmERQ56RLr3tlOdBncI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KCjMiE4LoFVAZbOpaMSWZmKbi7cZP2h8wzHNZ+9/YUGYxckNtd5g/5sO6J4800t3mjYpAy8n+n1+lWQU7ufFd24qWl2MZB+hCSQ6UYkTqVnJMzQL7XUb2g8pWHbOhYlwFIRGiMBvWbOiwnXL+U96ce9x0LkdZQ3Szugn3RS4200=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kh7ZVabP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=jr9WLGkJrrZOa98eYcd077ebF/TWB7trxnSnvwKlbOA=; b=kh7ZVabPW5MmiXgGZnnRsh4lkh
+	Gg1CIt2l7b5iHBPiouaBLfNYV01fDd0h5SqmXhjsLrZ8dDFYnxnSfrortlmqNYXMq1X4BrNkbLTkQ
+	ppa4U+c5/YOt5Si1+Lv53bfvTktL4UckV7fCMB0+55GUs/s9S/iQ5iEPsfMnMIJGEjmMTehHroyf1
+	kAPqZYhMI9Gy4xW6nJAKx/Ky91oKFFuIQpp4TPDlVCzMReUs01J/vLUUAm1G+nXn6tEM+YGY2PnXs
+	+XQMNjd7a9gnA3KfsMSVxUxVdXe0FesnCvQQg42PSKg7V+ofsoBMio1mkTctA03W6o1F9kHnsN7ur
+	ZSLQ/mkQ==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDddx-0000000ESJw-0Ma0;
+	Wed, 20 Nov 2024 05:52:49 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Ian Kent <raven@themaw.net>,
+	autofs@vger.kernel.org,
+	Alexander Aring <aahringo@redhat.com>,
+	David Teigland <teigland@redhat.com>,
+	gfs2@lists.linux.dev,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	fsverity@lists.linux.dev,
+	Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	ocfs2-devel@lists.linux.dev
+Subject: [PATCH] Documentation: filesystems: update filename extensions
+Date: Tue, 19 Nov 2024 21:52:46 -0800
+Message-ID: <20241120055246.158368-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: ZhengYuan Huang <gality369@gmail.com>
-Content-Language: en-US
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- baijiaju@buaa.edu.cn
-Subject: [BUG] fs/eventfd: Possible undefined behavior about read and eventfd
- interaction
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Update references to most txt files to rst files.
+Update one reference to an md file to a rst file.
+Update one file path to its current location.
 
-Our dynamic analysis tool has encountered a potential issue with the
-interaction between read and eventfd. Below is a minimal code snippet
-to reproduce the behavior:
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Ian Kent <raven@themaw.net>
+Cc: autofs@vger.kernel.org
+Cc: Alexander Aring <aahringo@redhat.com>
+Cc: David Teigland <teigland@redhat.com>
+Cc: gfs2@lists.linux.dev
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Theodore Y. Ts'o <tytso@mit.edu>
+Cc: fsverity@lists.linux.dev
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: ocfs2-devel@lists.linux.dev
+---
+ Documentation/filesystems/autofs.rst                 |    2 +-
+ Documentation/filesystems/dlmfs.rst                  |    2 +-
+ Documentation/filesystems/fsverity.rst               |    2 +-
+ Documentation/filesystems/path-lookup.rst            |    2 +-
+ Documentation/filesystems/path-lookup.txt            |    2 +-
+ Documentation/filesystems/ramfs-rootfs-initramfs.rst |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-int main() {
-  int fd = syscall(__NR_eventfd, 1);
-  int ret = syscall(__NR_read, fd, 0x000fffffffffffff, 8);
-  assert(ret == -1); // invalid address
-  long value;
-  int ret2 = syscall(__NR_read, fd, &value, 8);
-  assert(0); // never reached here
-  return 0;
-}
-
-When read is called with an eventfd file descriptor and an invalid 
-address as the second argument, it fails and correctly returns an 
-"invalid address" error. However, the second read syscall does not 
-proceed; instead, it blocks indefinitely. This suggests that the 
-counter in the eventfd object is consumed by the first read syscall, 
-despite its failure.
-
-I could not find any explanation for this behavior in the man pages 
-or the source code. Could you clarify if this behavior is expected, 
-or might it be a bug?
-
-Thank you for your time and assistance. Please let me know if 
-further details or additional reproducer information are needed.
-
-Best wishes,
-ZhengYuan Huang
+--- linux-next-20241119.orig/Documentation/filesystems/autofs.rst
++++ linux-next-20241119/Documentation/filesystems/autofs.rst
+@@ -442,7 +442,7 @@ which can be used to communicate directl
+ It requires CAP_SYS_ADMIN for access.
+ 
+ The 'ioctl's that can be used on this device are described in a separate
+-document `autofs-mount-control.txt`, and are summarised briefly here.
++document `autofs-mount-control.rst`, and are summarised briefly here.
+ Each ioctl is passed a pointer to an `autofs_dev_ioctl` structure::
+ 
+         struct autofs_dev_ioctl {
+--- linux-next-20241119.orig/Documentation/filesystems/dlmfs.rst
++++ linux-next-20241119/Documentation/filesystems/dlmfs.rst
+@@ -36,7 +36,7 @@ None
+ Usage
+ =====
+ 
+-If you're just interested in OCFS2, then please see ocfs2.txt. The
++If you're just interested in OCFS2, then please see ocfs2.rst. The
+ rest of this document will be geared towards those who want to use
+ dlmfs for easy to setup and easy to use clustered locking in
+ userspace.
+--- linux-next-20241119.orig/Documentation/filesystems/fsverity.rst
++++ linux-next-20241119/Documentation/filesystems/fsverity.rst
+@@ -16,7 +16,7 @@ btrfs filesystems.  Like fscrypt, not to
+ code is needed to support fs-verity.
+ 
+ fs-verity is similar to `dm-verity
+-<https://www.kernel.org/doc/Documentation/device-mapper/verity.txt>`_
++<https://www.kernel.org/doc/Documentation/admin-guide/device-mapper/verity.rst>`_
+ but works on files rather than block devices.  On regular files on
+ filesystems supporting fs-verity, userspace can execute an ioctl that
+ causes the filesystem to build a Merkle tree for the file and persist
+--- linux-next-20241119.orig/Documentation/filesystems/path-lookup.rst
++++ linux-next-20241119/Documentation/filesystems/path-lookup.rst
+@@ -531,7 +531,7 @@ this retry process in the next article.
+ Automount points are locations in the filesystem where an attempt to
+ lookup a name can trigger changes to how that lookup should be
+ handled, in particular by mounting a filesystem there.  These are
+-covered in greater detail in autofs.txt in the Linux documentation
++covered in greater detail in autofs.rst in the Linux documentation
+ tree, but a few notes specifically related to path lookup are in order
+ here.
+ 
+--- linux-next-20241119.orig/Documentation/filesystems/ramfs-rootfs-initramfs.rst
++++ linux-next-20241119/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+@@ -315,7 +315,7 @@ the above threads) is:
+ 2) The cpio archive format chosen by the kernel is simpler and cleaner (and
+    thus easier to create and parse) than any of the (literally dozens of)
+    various tar archive formats.  The complete initramfs archive format is
+-   explained in buffer-format.txt, created in usr/gen_init_cpio.c, and
++   explained in buffer-format.rst, created in usr/gen_init_cpio.c, and
+    extracted in init/initramfs.c.  All three together come to less than 26k
+    total of human-readable text.
+ 
+--- linux-next-20241119.orig/Documentation/filesystems/path-lookup.txt
++++ linux-next-20241119/Documentation/filesystems/path-lookup.txt
+@@ -379,4 +379,4 @@ Papers and other documentation on dcache
+ 
+ 2. http://lse.sourceforge.net/locking/dcache/dcache.html
+ 
+-3. path-lookup.md in this directory.
++3. path-lookup.rst in this directory.
 
