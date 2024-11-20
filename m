@@ -1,219 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-35340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987349D3FC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:12:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342859D3FD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D28C1F22830
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:12:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94C82849AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 16:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98E145B1B;
-	Wed, 20 Nov 2024 16:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7731420DD;
+	Wed, 20 Nov 2024 16:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UO9cxOQL"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="cdtUej7x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9728613665B;
-	Wed, 20 Nov 2024 16:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9744D13E41A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 16:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119157; cv=none; b=GMCiT09ULysJ7bEPEI7j5XuS31o05peq7k+N+LtDXx1LOdPLuaJW6uMeOooxb3U53L7nBRpZQDu5gDHiE3a1ldsSy5sbiD4T7pUO2YIEnH21tLUIAagKhmq/Leg7M7cocihsmxVCrShc0r7wCJU5wuAY+GQBFT/xZe2WbDLDR9g=
+	t=1732119258; cv=none; b=EmYnt4Gt4r+NNWLWhOYVadPTas6ifX0hUkVx8FD55FvBAd8ka+em3PWzRU/rPZgz6GmBgF2Gf0vAd+mMnkdDCtq/bMVIPvO9EjdE+Aq7yH8WwB6mof4Lti5JL0ItPyW+IcExXSUSZFLNR9AvKBpCsTOuPibwzcEblyhIUuWXptQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119157; c=relaxed/simple;
-	bh=LsOXYnlAFrXH4ANT2Gwet+eFYLz+xFvrFpLsYbF5d+E=;
+	s=arc-20240116; t=1732119258; c=relaxed/simple;
+	bh=g7QfRcSQn+gmJxBWhXW/TDF3sI8DjgoFIAHLcTGc4so=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mnMxXEmYWdcOf8QAxwX7uzo5ihORVyOaPn/m0DqG/aDxDMxjRb9zYtQSa7BmpHhO19bsG8QZgnSAHbE4nxBaYbY5SA2viEm0F2CSC/PZgrAKOPu97eb8Eqk3VPtHkENsd2/irrXxT4XJJNF6/cUgalnWHVwGVirjrZuOuSeZWb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UO9cxOQL; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso71602631fa.3;
-        Wed, 20 Nov 2024 08:12:35 -0800 (PST)
+	 To:Cc:Content-Type; b=XUSugQTlvVAlYLmH5o4hCrekyTkLnwD9jb0c85I4IJc3WoSD7gMbjX6Y+bCa3qLHh5EVHSh23MLYmZzQdB9mDcrw0hFv8CDW2oHUVuzp8vGMGY9VbYKXVjwdPBwnRc1FSQYUg8sefrjY4qHTozTSO7JC/9XieEdZkAH6gxHXMZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=cdtUej7x; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b158542592so304683485a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 08:14:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732119154; x=1732723954; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1732119255; x=1732724055; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E0cgeSNXkJH2+E5FXlc5NSe4Q9H23sTP1cPn8NwPK4A=;
-        b=UO9cxOQLX68lt3e9XFzBLzHiOmdmpqwFyn9JR1oL7hO354twh4eDvdV10uR2jgn0Gx
-         Xie3+1DqeWZHBrz+mAZfJ+lRQX2te95GRe0F/9Yl1F09Y2f3GSPy8XTxhu+8ADWPoMUv
-         3F+OG1mcnbELjZ0ilbmDLCRDnCe8vlpPgSjE2SWpVErvM/vvOQkcc8EiEGd0O7uR1FMD
-         ZfvadeQk8QSouP4BPQ06QUQQVA+cv/cAROTlccXCqahby6vOK2Ab50pV4dfTzmsxxPC8
-         IUDCOFDl+iOgCcZXxDPqNRsib1m2I3W8Vd9YX/rLMzDa8Eh39UTXzJomR5Kmt/UD1idt
-         icFg==
+        bh=36mHAHuOoczvUZMevzRpdY4PbCa8tx9CNRg6h+RZgJg=;
+        b=cdtUej7x3IYT7y9XJ5WDfNS9BQ4CEugaJF8mLkReIuZbp5SQ/cK64/1lRDqsOpxXJh
+         Y8Ff8MiwLAO1wHoXCjkhaDeld6ozrWthThzAp+so1nL2OdjduAekmqw8OsIqhh41Jzai
+         ibnhz7uY0+tDvht+9a/2BttZjOLFPQ1avZApk899yvcXXedUBE3p7pVbDOtCsw6s/+Iz
+         duWxuy8NdbUiBfYvGo0HhnYCvH6vB9vyAu4HLJ7JbfePlXAaf+09m/GzcmXv7mXA9nLi
+         b03CrcZYUWBWHkCZr04GHkHYIfBBzxX0kbGb1aANjN16nwSLG/eN6ARZF9GZaeL/hVlY
+         SLnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119154; x=1732723954;
+        d=1e100.net; s=20230601; t=1732119255; x=1732724055;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E0cgeSNXkJH2+E5FXlc5NSe4Q9H23sTP1cPn8NwPK4A=;
-        b=fiH/DeeJMrZSlkSbl6+Oe6JPy/qejIBFbJX47KPaLwOqL1pn9aWJMcAZjUv9igerA4
-         xnZ78fO+tMgIXU257scRgi/THh8Tb7+/Vba1P3wO/VV64zAVcNFShqIVfeTudsr/6MmR
-         MVHQCD1O3ehcjXPisUfrXr2V2HybczhBOKzcWRWxA35eEDvWPcb0+/7DiMCfS2TnWdl3
-         2YiRMpGKODhpfu1em3+7B8nDFgApNkKx0+bLom7GjGxlQrdRUxykxtfWQvBaFNy9Zn/s
-         M1VpSDb5AWp3nYzadPQ+CN0E6I7oQdEzholbJYcQfSeRiRsy8fL28d32tPE+Xohr2mdr
-         pwZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA9xc+fA2SkS1y+JOaj+PYUJKodV99tBpZP78VGh8+gDhWFPeed7vR6QsaBjN5SoXMdSiCQ5XSsSXIHQ==@vger.kernel.org, AJvYcCUb4yAp8at44BcDY0MEbG3lru792KgTK3tPgXMcGY8tCyg2zeMHnbdYKjKhxFPm4QFvK99FqpgUfCyvBg==@vger.kernel.org, AJvYcCUceRZZbIpwRERtHVXPmazwjbXvezHrsaXjwFPgdkaD/6KeDyMwlU9n2bCA6q4/EatpQIZoqugz0QEh@vger.kernel.org, AJvYcCXDF/4lL6ssCFC/cviPBDFCNG+G86kdFDm/nw+bjyMZDxFG6I4A9aWYG+JVXcfB5t0MAy6R3tk47cGmYuUZqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGxItaqXxnEWPNqAXskrvKw3qnzryc6Ml+Dmi1yh4LyJ/HmnE0
-	jYprGh5IZuEeSY+XXk1NcL90oA1s11Hgw5WZcZkKY8YjUFhkmnfB8zFHQbijebyJC7ua2haO0J+
-	kF647nIQoNBbTbBgbfvxPKKyM12s=
-X-Google-Smtp-Source: AGHT+IF8f7v4a4sptq5ia4dSWBkD2+QG1/RGNLsS7h/kWKRgH7sx+NYjTqd9GraWx1v1b2aBXhIThMPt13OjiV/rAVI=
-X-Received: by 2002:a05:651c:221b:b0:2fb:6362:284e with SMTP id
- 38308e7fff4ca-2ff8db165bdmr29289991fa.8.1732119153173; Wed, 20 Nov 2024
- 08:12:33 -0800 (PST)
+        bh=36mHAHuOoczvUZMevzRpdY4PbCa8tx9CNRg6h+RZgJg=;
+        b=RY9fPStVyiqmoegacnwVHgjbTmfE0sxmYb4lc5+9pzd+p+qtuWq4GjT21sqiJ7LyId
+         9k+V338jrV0Goa3BwfLumQkfO7NdalqYcF3Bik0Ajw80J+BNhd/fhluAgA6bhQdKinHy
+         9ZCay85DWHL4GIYqYe6APOaB2/Lzp8FWiV7OjkaSfTOXXtUperKZ73zCr10i+JZO9H/m
+         zF96IMx2spS1HYprVw78HdSZs3oUcJwiFFYYzOtsMHv5Lwojd8hbuSYnJRlw2b5xuc/A
+         Vxk6jVhagePzLnQ5IbLrbmoMAPp6W8IH6G43K9RXWgBfRxrnt0dhyAPVKAEwpjWHWkMn
+         gQYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLK4h63nJCPXstmo44nVnLfE08xUgI61+a44uwu2QvuNfpzoLWSVBG/Ms1T0EJS+u5YT3O/qjPaALN2yhK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcPeeWzT0YSMg4+U9vY0H++VkVS/ykxu51qjUDleq8xug7J8Jy
+	Su46YUbIUJl+adB0qmiPaxrNeHYfF+Q4IY9Gw5MJUUvDy1NqatR+hET2TjswWHmzY3mbKwBaC/C
+	YfM9G3IWnxeD+lr8Dt4KgekNB5uz1/wh7X25zJg==
+X-Google-Smtp-Source: AGHT+IFt7Yq3qdxAOZPq5rfspDx9bBIP2Xc48nqDhvTlFobjMOD2awIarz0pB2lJFk6Gsup7XNJxHXCOtbCvhDGq3MA=
+X-Received: by 2002:a05:622a:14d2:b0:458:5ed8:628 with SMTP id
+ d75a77b69052e-464777e2232mr41870841cf.2.1732119255280; Wed, 20 Nov 2024
+ 08:14:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731684329.git.josef@toxicpanda.com> <5ea5f8e283d1edb55aa79c35187bfe344056af14.1731684329.git.josef@toxicpanda.com>
- <20241120155309.lecjqqhohgcgyrkf@quack3>
-In-Reply-To: <20241120155309.lecjqqhohgcgyrkf@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 20 Nov 2024 17:12:21 +0100
-Message-ID: <CAOQ4uxgjOZN_=BM3DuLLZ8Vzdh-q7NYKhMnF0p_NveYd=e7vdA@mail.gmail.com>
-Subject: Re: [PATCH v8 02/19] fsnotify: opt-in for permission events at file
- open time
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-ext4@vger.kernel.org
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+ <2024111938-anointer-kooky-d4f9@gregkh> <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
+ <ZzzXqXGRlAwk-H2m@google.com> <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
+ <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
+In-Reply-To: <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 20 Nov 2024 11:13:37 -0500
+Message-ID: <CA+CK2bC-jNxUgp9JB=H9GsMu1FrxyqXxCe_v1G-43A1-eed0VA@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
+	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 4:53=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Tue, Nov 19, 2024 at 2:36=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
 >
-> On Fri 15-11-24 10:30:15, Josef Bacik wrote:
-> > From: Amir Goldstein <amir73il@gmail.com>
+> On Tue, Nov 19, 2024 at 11:30=E2=80=AFAM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
 > >
-> > Legacy inotify/fanotify listeners can add watches for events on inode,
-> > parent or mount and expect to get events (e.g. FS_MODIFY) on files that
-> > were already open at the time of setting up the watches.
+> > On Tue, Nov 19, 2024 at 1:23=E2=80=AFPM Roman Gushchin <roman.gushchin@=
+linux.dev> wrote:
+> > >
+> > > On Tue, Nov 19, 2024 at 10:08:36AM -0500, Pasha Tatashin wrote:
+> > > > On Mon, Nov 18, 2024 at 8:09=E2=80=AFPM Greg KH <gregkh@linuxfounda=
+tion.org> wrote:
+> > > > >
+> > > > > On Mon, Nov 18, 2024 at 05:08:42PM -0500, Pasha Tatashin wrote:
+> > > > > > Additionally, using crash/drgn is not feasible for us at this t=
+ime, it
+> > > > > > requires keeping external tools on our hosts, also it requires
+> > > > > > approval and a security review for each script before deploymen=
+t in
+> > > > > > our fleet.
+> > > > >
+> > > > > So it's ok to add a totally insecure kernel feature to your fleet
+> > > > > instead?  You might want to reconsider that policy decision :)
+> > > >
+> > > > Hi Greg,
+> > > >
+> > > > While some risk is inherent, we believe the potential for abuse her=
+e
+> > > > is limited, especially given the existing  CAP_SYS_ADMIN requiremen=
+t.
+> > > > But, even with root access compromised, this tool presents a smalle=
+r
+> > > > attack surface than alternatives like crash/drgn. It exposes less
+> > > > sensitive information, unlike crash/drgn, which could potentially
+> > > > allow reading all of kernel memory.
+> > >
+> > > The problem here is with using dmesg for output. No security-sensitiv=
+e
+> > > information should go there. Even exposing raw kernel pointers is not
+> > > considered safe.
 > >
-> > fanotify permission events are typically used by Anti-malware sofware,
-> > that is watching the entire mount and it is not common to have more tha=
-t
-> > one Anti-malware engine installed on a system.
-> >
-> > To reduce the overhead of the fsnotify_file_perm() hooks on every file
-> > access, relax the semantics of the legacy FAN_ACCESS_PERM event to gene=
-rate
-> > events only if there were *any* permission event listeners on the
-> > filesystem at the time that the file was opened.
-> >
-> > The new semantic is implemented by extending the FMODE_NONOTIFY bit int=
-o
-> > two FMODE_NONOTIFY_* bits, that are used to store a mode for which of t=
-he
-> > events types to report.
-> >
-> > This is going to apply to the new fanotify pre-content events in order
-> > to reduce the cost of the new pre-content event vfs hooks.
-> >
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Link: https://lore.kernel.org/linux-fsdevel/CAHk-=3Dwj8L=3DmtcRTi=3DNEC=
-HMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com/
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > I am OK in writing the output to a debugfs file in the next version,
+> > the only concern I have is that implies that dump_page() would need to
+> > be basically duplicated, as it now outputs everything via printk's.
 >
-> FWIW I've ended up somewhat massaging this patch (see below).
->
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 23bd058576b1..8e5c783013d2 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -173,13 +173,14 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, lo=
-ff_t offset,
-> >
-> >  #define      FMODE_NOREUSE           ((__force fmode_t)(1 << 23))
-> >
-> > -/* FMODE_* bit 24 */
-> > -
-> >  /* File is embedded in backing_file object */
-> > -#define FMODE_BACKING                ((__force fmode_t)(1 << 25))
-> > +#define FMODE_BACKING                ((__force fmode_t)(1 << 24))
-> >
-> > -/* File was opened by fanotify and shouldn't generate fanotify events =
-*/
-> > -#define FMODE_NONOTIFY               ((__force fmode_t)(1 << 26))
-> > +/* File shouldn't generate fanotify pre-content events */
-> > +#define FMODE_NONOTIFY_HSM   ((__force fmode_t)(1 << 25))
-> > +
-> > +/* File shouldn't generate fanotify permission events */
-> > +#define FMODE_NONOTIFY_PERM  ((__force fmode_t)(1 << 26))
->
-> Firstly, I've kept FMODE_NONOTIFY to stay a single bit instead of two bit
-> constant. I've seen too many bugs caused by people expecting the constant
-> has a single bit set when it actually had more in my life. So I've ended =
-up
-> with:
->
-> +/*
-> + * Together with FMODE_NONOTIFY_PERM defines which fsnotify events shoul=
-dn't be
-> + * generated (see below)
-> + */
-> +#define FMODE_NONOTIFY         ((__force fmode_t)(1 << 25))
-> +
-> +/*
-> + * Together with FMODE_NONOTIFY defines which fsnotify events shouldn't =
-be
-> + * generated (see below)
-> + */
-> +#define FMODE_NONOTIFY_PERM    ((__force fmode_t)(1 << 26))
->
-> and
->
-> +/*
-> + * The two FMODE_NONOTIFY* define which fsnotify events should not be ge=
-nerated
-> + * for a file. These are the possible values of (f->f_mode &
-> + * FMODE_FSNOTIFY_MASK) and their meaning:
-> + *
-> + * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
-> + * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) events.
-> + * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content even=
-ts.
-> + */
-> +#define FMODE_FSNOTIFY_MASK \
-> +       (FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
-> +
-> +#define FMODE_FSNOTIFY_NONE(mode) \
-> +       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
-> +#define FMODE_FSNOTIFY_PERM(mode) \
-> +       (!(mode & FMODE_NONOTIFY_PERM))
+> Perhaps you can refactor the code in dump_page() to use a seq_buf,
+> then have dump_page() printk that seq_buf using seq_buf_do_printk(),
+> and have page detective output that seq_buf to the debugfs file?
 
-That looks incorrect -
-It gives the wrong value for FMODE_NONOTIFY | FMODE_NONOTIFY_PERM
+Good idea, I will look into modifying it this way.
 
-should be:
-!=3D FMODE_NONOTIFY_PERM &&
-!=3D FMODE_NONOTIFY
+> We do something very similar with memory_stat_format(). We use the
 
-The simplicity of the single bit test is for permission events
-is why I chose my model, but I understand your reasoning.
+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+{
+        /* Use static buffer, for the caller is holding oom_lock. */
+        static char buf[PAGE_SIZE];
+        ....
+        seq_buf_init(&s, buf, sizeof(buf));
+        memory_stat_format(memcg, &s);
+        seq_buf_do_printk(&s, KERN_INFO);
+}
 
-> +#define FMODE_FSNOTIFY_HSM(mode) \
-> +       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
->
-> Also I've moved file_set_fsnotify_mode() out of line into fsnotify.c. The
-> function gets quite big and the call is not IMO so expensive to warrant
-> inlining. Furthermore it saves exporting some fsnotify internals to modul=
-es
-> (in later patches).
+This is a callosal stack allocation, given that our fleet only has 8K
+stacks. :-)
 
-Sounds good.
-Since you wanted to refrain from defining a two bit constant,
-I wonder how you annotated for NONOTIFY_HSM case
-
-   return FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-
-
-Thanks,
-Amir.
+> same function to generate the memcg stats in a seq_buf, then we use
+> that seq_buf to output the stats to memory.stat as well as the OOM
+> log.
 
