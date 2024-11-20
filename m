@@ -1,201 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-35324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E305F9D3D86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:27:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9FE9D3D87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 15:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A48CE284463
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 14:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C49B1F22A8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 14:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004681A9B48;
-	Wed, 20 Nov 2024 14:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7411AA787;
+	Wed, 20 Nov 2024 14:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JwFchEBy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JdIykk8t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7509B19CC1C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 14:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BED174EDB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 14:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732112862; cv=none; b=ai2yUlfkSxlVIctcKAhZhvn+w8v9iihlCMX8Ot+8/o2ZUVktTHv1GuC7vdG6TgLIIYXi8LAMV6jbjcw6sLnvZc7YNgY1G9i8+4NvFYWULtlJ1booSOxciPm7+JyLlbr4AfGPjMKA8hhEVbCrKSXKNJfZv5U/VfHinStuV32YWx4=
+	t=1732112872; cv=none; b=i8SpDgu2hocemn47FiyO4m0hDt9FtD2+v2YIPRHvZpxYPJsvzzzwYfRDZCn4QpT7iA7lzlUDyGUlORcG2V6E3KJJPdYkc1RVMddE0zbTFlDxm5LtiBaUad2wDgwLa96pZn/em/YUGr+cn8vDZTYA9L3YvDszuvaV8Lsig8C36f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732112862; c=relaxed/simple;
-	bh=0mDxcVJ8ko3bBdWzIc8N2n9wEykIAELnMxkfgnwfFkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HQ0DNPaiwSJ4smhirWYk4u6NSjsRPFMASPpvLkmDPXNCyJrVPtM+C/oRRfwm+L+CIhGqhtG883lSwtGi0OPmXuaWDXmLZLtaAZ4LBAlhYiCCwkqfn1AfoaZnLjQsZdoBk3gWGrV/fMw3xLQ+2mOEB2xHb12ufbBH9D4HruBAKzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JwFchEBy; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1732112872; c=relaxed/simple;
+	bh=p0Zc7C89GezcT9IePEKwx7rCiN6nfzujIaD58wvI68o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeuczbJfRneIVQ3NHqBa1aK1X+uvRzHAsuAHjfUZb/QuCkPai3ur4/TBhtNRmsalhSf9aBS/eiCr9j1mUrvbex51g80WEezp6QRnDQWrrlf21GyrkgtobkGAYwI9NKRBzJIvylh2j/LeZBGCHtaOhlI8MJk5hKC4t4yt8o5gpas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JdIykk8t; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732112858;
+	s=mimecast20190719; t=1732112869;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+ajMBH/hFUfrWiQrpS4eF+RjxTkssIkGzfQ6Pgvwu2I=;
-	b=JwFchEBy++dS3S3KOZ6urksox5vjpdgidabcCIbwWr+CaCpRTiUvy1LGkOkJKEPA4iu+kS
-	7MSWfYHqAXiKFZRswq31ivnMVErEp3wTNWXGfmsiPY8kfjREkhQhtNHDMWsq60EUkHmfOh
-	PRDlJKyMbZhQyT53pfdGQlrvAkZokTQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-316-rNmHcVdbPRWMqqo65nYOLg-1; Wed, 20 Nov 2024 09:27:36 -0500
-X-MC-Unique: rNmHcVdbPRWMqqo65nYOLg-1
-X-Mimecast-MFC-AGG-ID: rNmHcVdbPRWMqqo65nYOLg
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so40337355e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 06:27:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732112854; x=1732717654;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+ajMBH/hFUfrWiQrpS4eF+RjxTkssIkGzfQ6Pgvwu2I=;
-        b=LnYL3Rta7GlxOJ/zLS5r3GQdg1nKdePtQyDXt0cMI8TQpWNkr+jK9MbkN/uSAqweac
-         FNNEv/DLmorcNd1a6HG19DCjvTCYpP7PnlhMninjPlFhcxoyglxvUgPnpla8HWpYfGA6
-         Ac89+CLNGrAdtzWp6q0mgvSlaOhk7Kwm4/83HGi5prZOXLBGoL6Mgn1XvrxUE8feYRUZ
-         SD0fCm9u3uNHNpAIgWuxIbJz8ENm0i028kV6cXj6HYgQNtZA9vSA+vqnhfCDOk2kfNlA
-         1SBjRef5ykMWVwJzu3i+SpYud6NK+5fjcAnQJpohSqdTh2VPDqOnyQnev//ed8e17/1X
-         gWxg==
-X-Gm-Message-State: AOJu0YyYN2nKuu4tzInZJdDg3cqEOOYU7OOg6N7bMh9h/fLfTGY0IHC5
-	exdbHA2NELYCQ+6CEVxVn5C0ts70nmypI4xdLEOuQyZn9Np2qXRSEYtDsJqB9xGS1WexgTdOpI3
-	NPB9ZPluuxYUNc/+JDu81OY8IuGhbwxTMFp0wzaeCWeE0AdM2d70ljIssQJcaxv82nRAho35rmD
-	rri2IY7VRQB2sweM+GUQB0pvsNYoy/hRsC1dx2YmWXj3xfhS4=
-X-Received: by 2002:a05:600c:4f08:b0:432:e5fb:2adf with SMTP id 5b1f17b1804b1-43348986a9amr27133025e9.4.1732112854608;
-        Wed, 20 Nov 2024 06:27:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEW+dgFT3CpL9rrYhM4U97210NU9RqKrYw8hqoO2XIIqIsXgyaBN6lOR1qkNGtDA50u8C8JRg==
-X-Received: by 2002:a05:600c:4f08:b0:432:e5fb:2adf with SMTP id 5b1f17b1804b1-43348986a9amr27132815e9.4.1732112854236;
-        Wed, 20 Nov 2024 06:27:34 -0800 (PST)
-Received: from maszat.piliscsaba.szeredi.hu (84-236-2-181.pool.digikabel.hu. [84.236.2.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825494fae3sm2193705f8f.110.2024.11.20.06.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 06:27:33 -0800 (PST)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <christian@brauner.io>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH] statmount: clean up unescaped option handling
-Date: Wed, 20 Nov 2024 15:27:23 +0100
-Message-ID: <20241120142732.55210-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MaINUrxGE8VlxutjVrBStumfgzjXV+9aNIWp1juyD/w=;
+	b=JdIykk8traI2qd5Jm92BQiZlmzRPxKir9vlrDN4Gk0skfeFftsDG746ABDGUQJbJIMkXXY
+	JxeLyXiIlF4lb0MxIP3oA/c8NQ/3TctMRxnI9F5FRCM91YOV3PELkbt1S2LKP7ag1N4QqE
+	p9QtiPL6Or9DOHvlsl/l3KNM91oSD2o=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-PNHLcIl7NdCqMNJtVTbpOQ-1; Wed,
+ 20 Nov 2024 09:27:46 -0500
+X-MC-Unique: PNHLcIl7NdCqMNJtVTbpOQ-1
+X-Mimecast-MFC-AGG-ID: PNHLcIl7NdCqMNJtVTbpOQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C02A1954128;
+	Wed, 20 Nov 2024 14:27:45 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8831F30000DF;
+	Wed, 20 Nov 2024 14:27:44 +0000 (UTC)
+Date: Wed, 20 Nov 2024 09:29:17 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] iomap: zero range folio batch processing
+ prototype
+Message-ID: <Zz3yPdRxSguEU2qc@bfoster>
+References: <20241119154656.774395-1-bfoster@redhat.com>
+ <Zz2f1c4mjR9blfTg@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zz2f1c4mjR9blfTg@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Move common code from opt_array/opt_sec_array to helper.  This helper
-does more than just unescape options, so rename to
-statmount_opt_process().
+On Wed, Nov 20, 2024 at 12:37:41AM -0800, Christoph Hellwig wrote:
+> On Tue, Nov 19, 2024 at 10:46:52AM -0500, Brian Foster wrote:
+> > I thought about using ->private along with a custom ->get_folio(), but I
+> > don't think that really fits the idea of a built-in mechanism. It might
+> > be more appropriate to attach to the iter, but that currently isn't
+> > accessible to ->iomap_begin(). I suppose we could define an
+> > iomap_to_iter() or some such helper that the fill helper could use to
+> > populate the batch, but maybe there are other thoughts/ideas?
+> 
+> The iter is the right place, and you can get at it using
+> container_of as already done by btrfs (and osme of my upcoming code):
+> 
+> 	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
+> 
+> 
 
-Handle corner case of just a single character in options.
+Ok, yeah.. that's pretty much what I meant by having an iomap_to_iter()
+helper, I just wasn't aware that some things were already doing that to
+poke at the iter. Thanks.
 
-Rename some local variables to better describe their function.
+I'm assuming we'd want this to be a dynamic allocation as well, since
+folio_batch is fairly large in comparison (256b compared to 208b
+iomap_iter).
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/namespace.c | 44 +++++++++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 25 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index eb34a5160f64..23e81c2a1e3f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5057,21 +5057,32 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 	return 0;
- }
- 
--static inline int statmount_opt_unescape(struct seq_file *seq, char *buf_start)
-+static inline int statmount_opt_process(struct seq_file *seq, size_t start)
- {
--	char *buf_end, *opt_start, *opt_end;
-+	char *buf_end, *opt_end, *src, *dst;
- 	int count = 0;
- 
-+	if (unlikely(seq_has_overflowed(seq)))
-+		return -EAGAIN;
-+
- 	buf_end = seq->buf + seq->count;
-+	dst = seq->buf + start;
-+	src = dst + 1;	/* skip initial comma */
-+
-+	if (src >= buf_end) {
-+		seq->count = start;
-+		return 0;
-+	}
-+
- 	*buf_end = '\0';
--	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
--		opt_end = strchrnul(opt_start, ',');
-+	for (; src < buf_end; src = opt_end + 1) {
-+		opt_end = strchrnul(src, ',');
- 		*opt_end = '\0';
--		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
-+		dst += string_unescape(src, dst, 0, UNESCAPE_OCTAL) + 1;
- 		if (WARN_ON_ONCE(++count == INT_MAX))
- 			return -EOVERFLOW;
- 	}
--	seq->count = buf_start - 1 - seq->buf;
-+	seq->count = dst - 1 - seq->buf;
- 	return count;
- }
- 
-@@ -5080,24 +5091,16 @@ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
- 	struct vfsmount *mnt = s->mnt;
- 	struct super_block *sb = mnt->mnt_sb;
- 	size_t start = seq->count;
--	char *buf_start;
- 	int err;
- 
- 	if (!sb->s_op->show_options)
- 		return 0;
- 
--	buf_start = seq->buf + start;
- 	err = sb->s_op->show_options(seq, mnt->mnt_root);
- 	if (err)
- 		return err;
- 
--	if (unlikely(seq_has_overflowed(seq)))
--		return -EAGAIN;
--
--	if (seq->count == start)
--		return 0;
--
--	err = statmount_opt_unescape(seq, buf_start);
-+	err = statmount_opt_process(seq, start);
- 	if (err < 0)
- 		return err;
- 
-@@ -5110,22 +5113,13 @@ static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
- 	struct vfsmount *mnt = s->mnt;
- 	struct super_block *sb = mnt->mnt_sb;
- 	size_t start = seq->count;
--	char *buf_start;
- 	int err;
- 
--	buf_start = seq->buf + start;
--
- 	err = security_sb_show_options(seq, sb);
- 	if (err)
- 		return err;
- 
--	if (unlikely(seq_has_overflowed(seq)))
--		return -EAGAIN;
--
--	if (seq->count == start)
--		return 0;
--
--	err = statmount_opt_unescape(seq, buf_start);
-+	err = statmount_opt_process(seq, start);
- 	if (err < 0)
- 		return err;
- 
--- 
-2.47.0
+Brian
 
 
