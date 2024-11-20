@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-35312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251E69D396F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 12:23:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E60A9D395E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 12:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E02B27EA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FB46281B49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 11:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6E319F40B;
-	Wed, 20 Nov 2024 11:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307D1A0BC5;
+	Wed, 20 Nov 2024 11:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsrvA50q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UH0kTMWl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996719D89E;
-	Wed, 20 Nov 2024 11:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9611A00FA;
+	Wed, 20 Nov 2024 11:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732101648; cv=none; b=Cqum4NCw+kmD/MxCV1MufOsitthKqabClIwFcKxAzZk4Wsy6r4s7ktmXo2DsmoWlPRVHEi8lUNKjqtGMnlmGo0SyXAOaw90HM2pDJWEDfvhnqOL9x1fC9TZKRfdY7U+1dkTbJuOK02OQtqSzBf++FzrZxNcdc63qUfe38INbLxs=
+	t=1732101652; cv=none; b=QLb9LVJl99Iwcg01/9LLjVMwLRNeXA4FzSk/eA3PTAFQgfUH2gQwrXpMgL7MvFjIorUP2X2lY0IjshHmdhP5A1K5MorLZf1Uucqk/KqTyqfYy1mZmYLycSO2MzlVuSHNr97Oc9djiJvtSfDrb5n9GX9XZBEnoUfQoyriXRGt8Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732101648; c=relaxed/simple;
-	bh=Ovv2AE6JnxiYf/AkqY/0pRDpFrK0OSb9PlwyaTGoC3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=llqy2fq7EEGeGp1xwoKqlJLi6PqlU6c16t5KsKjzNm+5it7vMZRXjK2BMXGdOADcdSLViTk2WejS8PVH4mZvw7CTnlAtkMRMiDhMzMxEehLApeVCiJqHBqUTdODjyEvZcukOo7bragrZqDGg1kF/0zutLyzKN57Z4BJab6cEtcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsrvA50q; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1732101652; c=relaxed/simple;
+	bh=oY4G8rXKvXk/RMESA/pAWGVas5Id2NmoLa0YqTfcAV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hW62lrZCphVFYnIoUEzmY2bXtVw/eG33L4IRPZzpC7W0y3+SjOhu07nSFUSyId/6+rpNqURc2bpVFWJUI3fJTdiGQxfh+rvesIsc9ksJXIa2Ove/NAzwmlazrxCNuxNcYmPGER7/gi4U8fHjw5Di9Cxu9Wo+ROWRgNGtkkOTCAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UH0kTMWl; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa1f73966a5so840972966b.2;
-        Wed, 20 Nov 2024 03:20:46 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so5233215a12.3;
+        Wed, 20 Nov 2024 03:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732101645; x=1732706445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYRyH5MT4xu/Wg26DSYNU5aXupUqtlQUxs1/p8n5l1U=;
-        b=XsrvA50q5D8hRw/X4pHERzILfB2iLpNwfmAyqDJNauplmXfLaPjSEPd9Ot5pWiV0F5
-         VBHIUsMf00I6nof+UJe6z47Qh56HRprChULPHscX65KbnZoTyUH5pDuvfXa+ziaVlmes
-         pwxgJaqWiKZ1mQ7Zlx7v5TRxe+manJnKS+YLGUNgUuU52R1B7310jX003iWnhkxMtQ3S
-         Hn+Xzg9cRAU+U+w9wMqKytTm7kx7i+swZr2R751+NmYR3z/jjEW0fSVDh2fUnfj2FHSI
-         zHruoSpf7fLOjoqfzR5+WvrT+/49d8/zRha7iLpqX2xW2Ur3cPYR2l4QoEnwPC54433K
-         pU8Q==
+        d=gmail.com; s=20230601; t=1732101649; x=1732706449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vUaKEruejfDCGRJdpj1eBL3gJs8S2bH9vNecg7yvIhA=;
+        b=UH0kTMWl04zmjomg2SbUfqjYmKgjs5K8M7U9Quby0r12nDO6+G2Y6UUCxepRrJ/X+3
+         hhHcXeBx9OqhnTBeCkFvLwwjy6B4yurAV0wTpk2aGaCuG0IvrBh66h7SlgH+2Mk9ZuTm
+         nvaisgxh4G/ZkhMuvUaVeYQeMPaiwf8M69zGB2gp9g9r0cJrbD4vZxB0i9GoqMVWeSl9
+         cGRIAOouNcOEaTpmKWsyHSgwBBjzIKi7T5vy2vVX0ijO+uk1X6Hscwyl97mpXXQP/n9d
+         v8U84bYpyd+sOonYW5qwumMNivYU0XicCb7q/BLQgSQlfp2BH5DDCb76s9g3cI1NCwmT
+         FQlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732101645; x=1732706445;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FYRyH5MT4xu/Wg26DSYNU5aXupUqtlQUxs1/p8n5l1U=;
-        b=Lw0v+avqI2K/SWM3Skap9cB6Va/ZURK2bdWso0uKR3InLvxyYo5fOcjQ72GGrH73aU
-         IJP6Lld4GzpiyzIl9sBaiPKQUVzj9ZpoMQBD4InDYhZPuZDphXdBIX1T/drv1KQXqOVy
-         iNWXZ8LIuSWDxhlM+Xc66RFsa/2izt4wq0LzS9p9YXHD2Ym43JP27ntX13N3poDIAZJb
-         QTN+9vJda70Cn6hHGmGHPxMR0Fir6MpopyVLXHNOZ4UvwwDIUesezV0dKs0LuyDiPYwS
-         5q7YpWRscfeA7pMTVUKfthF6WaYWFSvpSfPwYBGaPDzKo0mW/Wlgd6RusJsDEPxM6l6B
-         1Iug==
-X-Forwarded-Encrypted: i=1; AJvYcCVuDPdF7FibvJ2AOQonDsymmbSzeyoF766DyXb4IV7PlWOpfHrlnQYunMazQ5PDNyfbA+dSWgu3/ngX@vger.kernel.org, AJvYcCX+hY4aLWXMQUnGZF+jsN8NhnAXWUlULfkVUglfuINi8/ynzLsRd9XBEW4Qm8FEvTAotfQ72mdTT+Dxjsca3Q==@vger.kernel.org, AJvYcCXYePbkC9ZNXkpyLU5XWbxSkVqoTtClD2SlR7hhVKVNx6F/dd+ty/KwrHZRi5cRZ7xP2Q2rGejdXbWsIAAN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCvl++jigv6Z6mrOsJxgfrIsDg4sUv95RvgAjC22ml5de/yebk
-	70qo8CCdmcIpwB9ZnLAITROPAl6Sleb8o/GkAEHOGr07koCns58N
-X-Google-Smtp-Source: AGHT+IH+iUZ6CBxj/W2mkhYIPGH2AjoPmpb+wYYabsGQvnI969biIAPnC64kWETIGK4aBBpvLPzzDw==
-X-Received: by 2002:a17:907:2d08:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-aa4dd56adebmr216895866b.24.1732101644892;
-        Wed, 20 Nov 2024 03:20:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732101649; x=1732706449;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vUaKEruejfDCGRJdpj1eBL3gJs8S2bH9vNecg7yvIhA=;
+        b=WZzVgu6eDCcXq/lede2RJ1UX9sM4PKdDcevqmvs89fKcI0+G87/W+k/bR6jZq1v9sp
+         WEtVBP4/Q+XyGuG6yKugmwqLKofL6MrJDR77GjmOnok6Konc9GfHLDPi1ZD0wwoD72w0
+         GUvDCGzPO9A48amvP+clbEXNzDFofn6v9sYRDeKGlzIPGf4QyYFAeFD4QLD9E9S0A3K7
+         IazviE6AqbmPywxqef9PE7gwNvPoBAaXN1coI11/uQ7lQK/SANCwvxJz55MdhNlLYNZA
+         aStiU5u2dvAxZvlrEl7HFbPdFjCFHsxjp7+qxMAMg6BT5Oq9OoT9Uc3hqcadOTh3zyNE
+         eESg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTWZBXYQVWVMTQFzGlWMtoNtQh+x0WTuTYWEntXGFwHlW6syUHz5g0G2TcOo9ppYuHEb+ah1eSrD0sy8F9aA==@vger.kernel.org, AJvYcCUxqCWZqu953v+eTwZv38ep+ZM1GRtWjTAWhCLPifNdOQ5C5wNAWM7OjD1P+0w9zKPSp17UfDiwovp7@vger.kernel.org, AJvYcCW1F0WFQCh3lxi5XxyFnmeZKX2XqvG8OTzhHScNtkMGu+9aHx3LjejcohUl+aKG2I2t7Tu3q0/NxZfT1M7n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JyKcUe2HaP9XY/rLNi7i39Pzk1ImkRP25Z0aNGPeNFCouG5h
+	PAohA5pvH8LIEqqsGkJW+m2k81mtqHUUV6jTTCgtJftI6wCJKogQ
+X-Google-Smtp-Source: AGHT+IF/eB9UNR6VnoZKt3nFhYHrh56urFiBKWBZ6vnCYzDyugb1WbUzdkpcnja3XeP3jZyhS9PA3Q==
+X-Received: by 2002:a17:907:c1f:b0:a9d:e1d6:42a1 with SMTP id a640c23a62f3a-aa4dd57c0ecmr210229766b.30.1732101648787;
+        Wed, 20 Nov 2024 03:20:48 -0800 (PST)
 Received: from f.. (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df5690csm758559566b.75.2024.11.20.03.20.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df5690csm758559566b.75.2024.11.20.03.20.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 03:20:44 -0800 (PST)
+        Wed, 20 Nov 2024 03:20:48 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -76,10 +78,12 @@ Cc: viro@zeniv.linux.org.uk,
 	tytso@mit.edu,
 	linux-mm@kvack.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3 0/3] symlink length caching
-Date: Wed, 20 Nov 2024 12:20:33 +0100
-Message-ID: <20241120112037.822078-1-mjguzik@gmail.com>
+Subject: [PATCH v3 1/3] vfs: support caching symlink lengths in inodes
+Date: Wed, 20 Nov 2024 12:20:34 +0100
+Message-ID: <20241120112037.822078-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241120112037.822078-1-mjguzik@gmail.com>
+References: <20241120112037.822078-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,112 +92,168 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-quote:
-    When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
-    speed up when issuing readlink on /initrd.img on ext4.
+When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
+speed up when issuing readlink on /initrd.img on ext4.
 
-The size is stored in a union with i_devices, which is never looked at
-unless the inode is for a device.
+Filesystems opt in by calling inode_set_cached_link() when creating an
+inode.
 
-Benchmark code at the bottom.
+The size is stored in a new union utilizing the same space as i_devices,
+thus avoiding growing the struct or taking up any more space.
 
-ext4 and tmpfs are patched, other filesystems can also get there with
-some more work.
+Churn-wise the current readlink_copy() helper is patched to accept the
+size instead of calculating it.
 
-Arguably the current get_link API should be patched to let the fs return
-the size, but that's not a churn I'm interested into diving in.
-
-On my v1 Jan remarked 1.5% is not a particularly high win questioning
-whether doing this makes sense. I noted the value is only this small
-because of other slowdowns.
-
-To elaborate here are highlights while benching on Sapphire Rapids:
-1. putname using atomics (over 3.5% on my profile)
-
-sounds like Al has plans to do something here(?), I'm not touching it if
-it can be helped. the atomic definitely does not have to be there in the
-common case.
-
-2. kmem_cache_alloc_noprof/kmem_cache_free (over 7% combined) 
-
-They are both dog slow due to cmpxchg16b. A patchset was posted which
-adds a different allocation/free fast path which should whack majority
-of the problem, see: https://lore.kernel.org/linux-mm/20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz/
-
-If this lands I'll definitely try to make the pathname allocs use it,
-should drop about 5-6 percentage points on this sucker.
-
-3. __legitimize_mnt issues a full fence (again over 3%)
-
-As far as avoiding the fence is concerned waiting on rcu grace period on
-unmount should do the trick. However, I found there is a bunch
-complexity there to sort out before doing this will be feasible (notably
-there are multiple mounts freed in one go, this needs to be batched).
-There may be other issues which I missed and which make this not worth
-it, but the fence is definitely avoidable in principle and I would be
-surprised if there was no way to sensibly get there. No ETA, for now I'm
-just pointing this out.
-
-There is also the idea to speculatively elide lockref, but when I tried
-that last time I ran into significant LSM-related trouble.
-
-All that aside there is also quite a bit of branching and func calling
-which does not need to be there (example: make vfsuid/vfsgid, could be
-combined into one routine etc.).
-
-Ultimately there is single-threaded perf left on the table in various
-spots.
-
-v3:
-- use a union instead of a dedicated field, used up with i_devices
-
-v2:
-- add a dedicated field, flag and a helper instead of using i_size
-https://lore.kernel.org/linux-fsdevel/20241119094555.660666-1-mjguzik@gmail.com/
-
-v1 can be found here:
-https://lore.kernel.org/linux-fsdevel/20241118085357.494178-1-mjguzik@gmail.com/
-
-benchmark:
-plug into will-it-scale into tests/readlink1.c:
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <string.h>
-
-char *testcase_description = "readlink /initrd.img";
-
-void testcase(unsigned long long *iterations, unsigned long nr)
-{
-        char *tmplink = "/initrd.img";
-        char buf[1024];
-
-        while (1) {
-                int error = readlink(tmplink, buf, sizeof(buf));
-                assert(error > 0);
-
-                (*iterations)++;
-        }
-}
-
-Mateusz Guzik (3):
-  vfs: support caching symlink lengths in inodes
-  ext4: use inode_set_cached_link()
-  tmpfs: use inode_set_cached_link()
-
- fs/ext4/inode.c                |  3 ++-
- fs/ext4/namei.c                |  4 +++-
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
  fs/namei.c                     | 34 +++++++++++++++++++---------------
  fs/proc/namespaces.c           |  2 +-
  include/linux/fs.h             | 15 +++++++++++++--
- mm/shmem.c                     |  6 ++++--
  security/apparmor/apparmorfs.c |  2 +-
- 7 files changed, 43 insertions(+), 23 deletions(-)
+ 4 files changed, 34 insertions(+), 19 deletions(-)
 
+diff --git a/fs/namei.c b/fs/namei.c
+index 9d30c7aa9aa6..e56c29a22d26 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -5272,19 +5272,16 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
+ 				getname(newname), 0);
+ }
+ 
+-int readlink_copy(char __user *buffer, int buflen, const char *link)
++int readlink_copy(char __user *buffer, int buflen, const char *link, int linklen)
+ {
+-	int len = PTR_ERR(link);
+-	if (IS_ERR(link))
+-		goto out;
++	int copylen;
+ 
+-	len = strlen(link);
+-	if (len > (unsigned) buflen)
+-		len = buflen;
+-	if (copy_to_user(buffer, link, len))
+-		len = -EFAULT;
+-out:
+-	return len;
++	copylen = linklen;
++	if (unlikely(copylen > (unsigned) buflen))
++		copylen = buflen;
++	if (copy_to_user(buffer, link, copylen))
++		copylen = -EFAULT;
++	return copylen;
+ }
+ 
+ /**
+@@ -5304,6 +5301,9 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ 	const char *link;
+ 	int res;
+ 
++	if (inode->i_opflags & IOP_CACHED_LINK)
++		return readlink_copy(buffer, buflen, inode->i_link, inode->i_linklen);
++
+ 	if (unlikely(!(inode->i_opflags & IOP_DEFAULT_READLINK))) {
+ 		if (unlikely(inode->i_op->readlink))
+ 			return inode->i_op->readlink(dentry, buffer, buflen);
+@@ -5322,7 +5322,7 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ 		if (IS_ERR(link))
+ 			return PTR_ERR(link);
+ 	}
+-	res = readlink_copy(buffer, buflen, link);
++	res = readlink_copy(buffer, buflen, link, strlen(link));
+ 	do_delayed_call(&done);
+ 	return res;
+ }
+@@ -5391,10 +5391,14 @@ EXPORT_SYMBOL(page_put_link);
+ 
+ int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ {
++	const char *link;
++	int res;
++
+ 	DEFINE_DELAYED_CALL(done);
+-	int res = readlink_copy(buffer, buflen,
+-				page_get_link(dentry, d_inode(dentry),
+-					      &done));
++	link = page_get_link(dentry, d_inode(dentry), &done);
++	res = PTR_ERR(link);
++	if (!IS_ERR(link))
++		res = readlink_copy(buffer, buflen, link, strlen(link));
+ 	do_delayed_call(&done);
+ 	return res;
+ }
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index 8e159fc78c0a..c610224faf10 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -83,7 +83,7 @@ static int proc_ns_readlink(struct dentry *dentry, char __user *buffer, int bufl
+ 	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
+ 		res = ns_get_name(name, sizeof(name), task, ns_ops);
+ 		if (res >= 0)
+-			res = readlink_copy(buffer, buflen, name);
++			res = readlink_copy(buffer, buflen, name, strlen(name));
+ 	}
+ 	put_task_struct(task);
+ 	return res;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e29433c5ecc..2cc98de5af43 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -626,6 +626,7 @@ is_uncached_acl(struct posix_acl *acl)
+ #define IOP_XATTR	0x0008
+ #define IOP_DEFAULT_READLINK	0x0010
+ #define IOP_MGTIME	0x0020
++#define IOP_CACHED_LINK	0x0040
+ 
+ /*
+  * Keep mostly read-only and often accessed (especially for
+@@ -723,7 +724,10 @@ struct inode {
+ 	};
+ 	struct file_lock_context	*i_flctx;
+ 	struct address_space	i_data;
+-	struct list_head	i_devices;
++	union {
++		struct list_head	i_devices;
++		int			i_linklen;
++	};
+ 	union {
+ 		struct pipe_inode_info	*i_pipe;
+ 		struct cdev		*i_cdev;
+@@ -749,6 +753,13 @@ struct inode {
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
++static inline void inode_set_cached_link(struct inode *inode, char *link, int linklen)
++{
++	inode->i_link = link;
++	inode->i_linklen = linklen;
++	inode->i_opflags |= IOP_CACHED_LINK;
++}
++
+ /*
+  * Get bit address from inode->i_state to use with wait_var_event()
+  * infrastructre.
+@@ -3351,7 +3362,7 @@ extern const struct file_operations generic_ro_fops;
+ 
+ #define special_file(m) (S_ISCHR(m)||S_ISBLK(m)||S_ISFIFO(m)||S_ISSOCK(m))
+ 
+-extern int readlink_copy(char __user *, int, const char *);
++extern int readlink_copy(char __user *, int, const char *, int);
+ extern int page_readlink(struct dentry *, char __user *, int);
+ extern const char *page_get_link(struct dentry *, struct inode *,
+ 				 struct delayed_call *);
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 01b923d97a44..60959cfba672 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -2611,7 +2611,7 @@ static int policy_readlink(struct dentry *dentry, char __user *buffer,
+ 	res = snprintf(name, sizeof(name), "%s:[%lu]", AAFS_NAME,
+ 		       d_inode(dentry)->i_ino);
+ 	if (res > 0 && res < sizeof(name))
+-		res = readlink_copy(buffer, buflen, name);
++		res = readlink_copy(buffer, buflen, name, strlen(name));
+ 	else
+ 		res = -ENOENT;
+ 
 -- 
 2.43.0
 
