@@ -1,116 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-35351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6079D41B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 18:54:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65499D41DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 19:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CCC2B25D5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 17:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532C51F22ED6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 18:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FF01BAEFC;
-	Wed, 20 Nov 2024 17:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E628E1B3F30;
+	Wed, 20 Nov 2024 18:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="yQ66ORCi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5+GQoE9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FE5146593
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 17:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4066A1E515;
+	Wed, 20 Nov 2024 18:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732124857; cv=none; b=lVsESlWnUWm2IDoq6Mzrh8dwY82ojwEOFJ9Ci95N+myjOAbxgUTD/aK/woaN4WJ2GaAXyw660EDpS+Ju1beuLQlFrXCoGkTJ5v8GxCcijYrBgyq8fmgL6MC4A8RZGxqe1gU1Wib4dNtRt0S43odzYayl8MKZhWpNKAkb5w+6TU8=
+	t=1732126275; cv=none; b=Mzy5s954nHX57icZ7SLDqH5aiIW6P+/fa9A4nbjvXuOgmSMwl3+mDbIHxeFsnbx411lGdw/hZ9IzS2cXx2c0190A6Q0Stm4Qr4GE9qehPNbUmmtfEEx00764TB4E6E/Uwb5IxaBms6YKS3i8OJMDtbaPe8p5raK6FwzrA2njRuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732124857; c=relaxed/simple;
-	bh=u99IqIWwuXfqqVllQi6t586j+rI6T6G2LFrOGmNlgvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oh2bMQB+TNWsg69GsNCc9n/823OB4CkVnHoiYdnF5F2BCVrTvOFH3t0ySudNUcGSY6loScOt0Jv/DJTfWR6YISUcA37tcrSDgOKxwpHdDfS8Be0TwiCRes7uuon3atdajyMo/ppCRKY5IPUV76kkKATNl/nol60iCbqFDMjNZp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=yQ66ORCi; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46096aadaf0so127101cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2024 09:47:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1732124855; x=1732729655; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UaFYnoy6vIIc+NNFw3dXMBs61SIsGb7xxVzTfcYyYis=;
-        b=yQ66ORCidijal9Md6ogoyqmn3A3Oo02nTqw9YZoP1pMTj67QBkOagb/7QIwqVq/FDl
-         MTGYXWOYMINrjMsrCaGEcKSSVb9iHwZCSYLpByfDPoX6TAsL87/Qu8axmWRQ9hzx4v+u
-         71413HHBBRPeaALZVrrEi+iny+36Go0ea47b42TdwgFN0fJ81kUmJ59z0Lw23WIAGqUZ
-         d/o8oapSH39LwlOlHCBmv9h3ONJ7lbQJTjsj4kA7hCYxmFGcGlfcai3ROa1yyjSouf0y
-         bHbKuL9+ANMzFi+1lzqDObF4WQfKQwAh7hgMiW2DJdKyYHNNJcpD8wHceRLhbdyJxNpd
-         QKxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732124855; x=1732729655;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UaFYnoy6vIIc+NNFw3dXMBs61SIsGb7xxVzTfcYyYis=;
-        b=datV2dRR2F/gk6Utfe43FeCmXxbCbckkvFz21HM1QLd3B5CKVMnfR42KGFrPARJY1g
-         pJj0O+D95glossRZcLzGWeXrHlYoRfNDzqYiepeoLUtMMWZ3ejALC8MvNAnnzoWkRaSo
-         ETtk5nAfRuJi3IjW3zN7+Q2ApTrLYg2eSfuVnaVy87y3gDX6xvvhsu9k2pE6RpL+IYBS
-         vGNN0+MU0P9LT3u97EeF6wOC2MqwN+2kGofNNdVZ67gYbM0JBMVHIQTK8HcoiCKXLibv
-         DTOPS9tqhnuf0SOvXV+mowpPyuQOMSFhUZz8ebVZf/67c+4mLDhG1lK0ymdsVSAsVtW0
-         OqMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+T23P8TiTdsIsqi9Q6TEnOaGp40GMrypCU59Btzvvn4X0uDLmcvG5mTf93v/cKOrkh5QwLZk/CHCgD9It@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5JqVESRj9SFe69fJ/CFzjI+2Yy0FRQOKraBm+aOPPlGNRwxaW
-	jjl0FviaUd70gM94cOpsVkLg5eWDiE3vL2J58cUvL/ccN/XzhaaON9qfnHra01hutkC+6KGXSvp
-	b3XXFe+GJqOprk5UnsLz3Y2aMoJTpxhGa5UQrjw==
-X-Google-Smtp-Source: AGHT+IETZYeQkb0s7u5Wf9yV4Cku4EiSNu5qCpIOez8ZpXMAHom6F/sK07PgTzdhYiGYrI8j7GVXlIMLnKbJrLP6RZU=
-X-Received: by 2002:a05:622a:2d5:b0:460:ebb5:5fe5 with SMTP id
- d75a77b69052e-464782a740bmr36717931cf.10.1732124854779; Wed, 20 Nov 2024
- 09:47:34 -0800 (PST)
+	s=arc-20240116; t=1732126275; c=relaxed/simple;
+	bh=4KW8uGBjK8rnCZMWN0tePYGPLCRfhRqH20IFPcBM49M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cI6yt/aVZFSw/yGczpQwO0S24ML5XVS8oQ4V/+O0e9A7CHwi6BHXkZVBVrqQrLbB8wrsqvyHDKJ1H3lozeNKF1gimabiOa0roKughnLjQZ9GlJa6zbnS7uzdF1/FXetlHQi8oz44ylqIDX+/4o00hhWyBKdnpOCAsZacbIW98mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5+GQoE9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132BEC4CECD;
+	Wed, 20 Nov 2024 18:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732126274;
+	bh=4KW8uGBjK8rnCZMWN0tePYGPLCRfhRqH20IFPcBM49M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V5+GQoE9ZvQgP5hlFV2GTtIY/O4uH/c404WeWL9Tu4jciPU9OXkj6dLrNwqWMTAeh
+	 ezgg8TpP0M/qsIK7ofAI/svqEyJX6ciEs3pT9FcYeUemxShye00mM8O+RXIQ9W6Hw7
+	 zFOZOGJYGotCtFk/XyieCmJJuAv73Wed6lYtvdrOJ9kzRnrVo1CLfMM/8791dUmeJA
+	 MbCXkHSOOsYlm03MSm/eRM5a1H60Ou3W+euM0f2xRVXaTP5M1JlZDENCAPShluXnSq
+	 9ZLn9Kigpy/cvCyj9iKoQ8eim//N0vlqPXNuAxnQ7WYK+wxFfqYROSF8Yhg5G2hzJ7
+	 /7qJGjyyVgJbQ==
+Date: Wed, 20 Nov 2024 11:11:12 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+	Pierre Labat <plabat@micron.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <Zz4mQGrlKMiPa8NH@kbusch-mbp>
+References: <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
+ <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
+ <20241113044736.GA20212@lst.de>
+ <ZzU7bZokkTN2s8qr@dread.disaster.area>
+ <20241114060710.GA11169@lst.de>
+ <Zzd2lfQURP70dAxu@kbusch-mbp>
+ <20241115165348.GA22628@lst.de>
+ <ZzvPpD5O8wJzeHth@kbusch-mbp>
+ <20241119071556.GA8417@lst.de>
+ <20241120172158.GP9425@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
- <2024111938-anointer-kooky-d4f9@gregkh> <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
- <ZzzXqXGRlAwk-H2m@google.com> <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
- <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
- <CA+CK2bC-jNxUgp9JB=H9GsMu1FrxyqXxCe_v1G-43A1-eed0VA@mail.gmail.com> <CAJD7tkaYuJpxijOp6se+mWHO6djaz_7KaoXjf=Rdo6nJubwB2w@mail.gmail.com>
-In-Reply-To: <CAJD7tkaYuJpxijOp6se+mWHO6djaz_7KaoXjf=Rdo6nJubwB2w@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 20 Nov 2024 12:46:57 -0500
-Message-ID: <CA+CK2bB9P0gVFVETh_zBfhnShYTJK8EX-vNfVjFY7QEKi_Gpmg@mail.gmail.com>
-Subject: Re: [RFCv1 0/6] Page Detective
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
-	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120172158.GP9425@frogsfrogsfrogs>
 
-> >         /* Use static buffer, for the caller is holding oom_lock. */
-> >         static char buf[PAGE_SIZE];
-> >         ....
-> >         seq_buf_init(&s, buf, sizeof(buf));
-> >         memory_stat_format(memcg, &s);
-> >         seq_buf_do_printk(&s, KERN_INFO);
-> > }
-> >
-> > This is a callosal stack allocation, given that our fleet only has 8K
-> > stacks. :-)
->
-> That's a static allocation though :)
+On Wed, Nov 20, 2024 at 09:21:58AM -0800, Darrick J. Wong wrote:
+> 
+> How do filesystem users pick a write stream?  I get a pretty strong
+> sense that you're aiming to provide the ability for application software
+> to group together a bunch of (potentially arbitrary) files in a cohort.
+> Then (maybe?) you can say "This cohort of files are all expected to have
+> data blocks related to each other in some fashion, so put them together
+> so that the storage doesn't have to work so hard".
+> 
+> Part of my comprehension problem here (and probably why few fs people
+> commented on this thread) is that I have no idea what FDP is, or what
+> the write lifetime hints in scsi were/are, or what the current "hinting"
+> scheme is.
 
-Ah right, did not notice it was static (and ignored the comment)
+FDP is just the "new" version of NVMe's streams. Support for its
+predecessor was added in commit f5d118406247acf ("nvme: add support for
+streams")
 
-Pasha
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f5d118406247acfc4fc481e441e01ea4d6318fdc
+
+Various applications were written to that interface and showed initial
+promise, but production quality hardware never materialized. Some of
+these applications are still setting the write hints today, and the
+filesystems are all passing through the block stack, but there's just
+currently no nvme driver listening on the other side.
+
+Contrast to the older nvme streams, capable hardware subscribing to this
+newer FDP scheme have been developed, and so people want to use those
+same applications using those same hints in the exact same way that it
+was originally designed. Enabling them could be just be a simple driver
+patch like the above without bothering the filesystem people :)
+ 
+> Is this what we're arguing about?
+> 
+> enum rw_hint {
+> 	WRITE_LIFE_NOT_SET	= RWH_WRITE_LIFE_NOT_SET,
+> 	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
+> 	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
+> 	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+> 	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+> 	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+> } __packed;
+> 
+> (What happens if you have two disjoint sets of files, both of which are
+> MEDIUM, but they shouldn't be intertwined?)
+
+It's not going to perform as well. You'd be advised against over
+subscribing the hint value among applications with different relative
+expectations, but it generally (but not always) should be no worse than
+if you hadn't given any hints at all.
+ 
+> Or are these new fdp hint things an overload of the existing write hint
+> fields in the iocb/inode/bio?  With a totally different meaning from
+> anticipated lifetime of the data blocks?
+
+The meaning assigned to an FDP stream is whatever the user wants it to
+mean. It's not strictly a lifetime hint, but that is certainly a valid
+way to use them. The contract on the device's side is that writes to
+one stream won't create media interfere or contention with writes to
+other streams. This is the same as nvme's original streams, which for
+some reason did not carry any of this controversy.
 
