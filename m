@@ -1,115 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-35281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98A79D35B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:43:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4C29D35E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 09:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D8F28350C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 08:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A8F8B233C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2024 08:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5014A175D3A;
-	Wed, 20 Nov 2024 08:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C5E19B3EE;
+	Wed, 20 Nov 2024 08:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jSZEaAg6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/3ci7cq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FEE15CD46;
-	Wed, 20 Nov 2024 08:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A83A199E8B;
+	Wed, 20 Nov 2024 08:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092229; cv=none; b=WWVUUtM8gWJ30NB8IabcgyXcxXj8a6Kb3fB4HwknbY1OhIjVW3N08omoyd1cDZFx8tS2oRCApfxucdSXxj53CXv1Nqcr+HL2Btb4L1eiZmA2YDzzjFwW/Ure4BXKJRp0RFA+tmO+JUsJ1idFxhKxSZM3DFMK+1g20C4w8TVU9C4=
+	t=1732092596; cv=none; b=EA1Im9E2CtarP27AZW5RJnKt9iXEw3ipNd83SM6NeXefWJ/nNjmMmXkP9jA7Z6Wki8PaF/9Ke/E6h0wTVA+p4b8ODfJVrAgiRK1UnPxqHrXicR/8cZnYx9vQUgOddDSpNqBlHX8ZyQ7+fRyPwKmCYUJieaDvoOuBxLPsH15QLhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092229; c=relaxed/simple;
-	bh=fMhrOl+nY4qnzhafrcQPW/Z0Qozrepf0MPnbSy9LnY8=;
+	s=arc-20240116; t=1732092596; c=relaxed/simple;
+	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVTV08kw7ubjdnsVIc9449gDDHKjTC46hLTy4EfZNQIKlYqcZn3lqPy5KI8iVemi5R7wg8fOy8/ccnHnPOUCMaXo8Dlcew/GId4LZTAAgjKsafBP7+3F+U2lhIV39kHYdjVQiwpEfPdu/w5nQ0dBRtyJtTteDmy22na6kLOgV28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jSZEaAg6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JnZQmEVCjUehsHWVpGBm+X2p0J0S/Dzk+i9+yxPD6HU=; b=jSZEaAg6uPIm7zDAbC2L6IoJnv
-	/Me1OKvLDbvI12riudOPq+rgsh0MY1awPP/RcKGALJa6O+jWLeKfDzFZmRAXxstagN0wbHXQGLNad
-	2XXZ5jCzXvC9m+q1OsKLL2clbf0lvTkQhcQ7D1sjnIU5+cvMSAtK1XYUZUUOM12UU390M9Wb53y9v
-	3GyxdPLKoGmVdjCMEdVX3q3ac1M5YnnKHJ5KSxBipMAg5VDmvXOa97m40vX7Ayz6ZLd8SrqMxYZ6q
-	7R1gsMlxx6QVSnfPOg9sZy36G2tPUVMrN29zzYBAKEnyFrd6Hd6xatk9C81VT+R1rHwY+Yh0HUPuZ
-	FzUFTWhQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDgJP-0000000EnPt-3Qmm;
-	Wed, 20 Nov 2024 08:43:47 +0000
-Date: Wed, 20 Nov 2024 00:43:47 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH RFC 2/4] iomap: optional zero range dirty folio processing
-Message-ID: <Zz2hQ05dZC4D5fEl@infradead.org>
-References: <20241119154656.774395-1-bfoster@redhat.com>
- <20241119154656.774395-3-bfoster@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKaZT8mZfc9af/EF6D9KO7vxRAX8Vv695xGzzFNoCeqf76R84GFW6Aae96q/IKczKtaNff/dROlkCrOWf5EFXMMMM3d/RLz4Zdu3aHM9DxQjdcYmFaT9kvKej5JZXzxHBcdm4krHm7+p2C4Hpl7AczvXw5cJVBRB1D6eOU/0HsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/3ci7cq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90001C4CECD;
+	Wed, 20 Nov 2024 08:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732092595;
+	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g/3ci7cq9nIOI9kexjaDHIx+ZsChbHM8JjOiuJkd+/NiDhHWB0NrsGyspopnxZ0fH
+	 TqjrXHh76Nbq/rrTSHDakCzXr94/TG+TdJDOLZPCmAWIAU79a57if0gso14Eox6oW1
+	 yFSB0yg0Fq/4ZPFQ2Hg3HRL7XOHU2j77Cqt5Ww69+S7PxcINF6ocEGgiPtEWXIb+lI
+	 3CMibvqaUvGWkwgBrk1AroUzrwzX5Gafsmg5HCO42Alv/lHglNXFJiWUFqpHoShh6F
+	 TRDqOFfvOp05yCgTH/AZd21yjwORcIPKbZQ9mefU+RWl1i5T9ehii41wrktNxKYkAj
+	 +8FOJxr1NgTSw==
+Date: Wed, 20 Nov 2024 09:49:51 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs netfs
+Message-ID: <20241120-abermals-inkrafttreten-8b838a76833f@brauner>
+References: <20241115-vfs-netfs-7df3b2479ea4@brauner>
+ <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119154656.774395-3-bfoster@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 10:46:54AM -0500, Brian Foster wrote:
-> +loff_t
-> +iomap_fill_dirty_folios(
-> +	struct inode		*inode,
-> +	struct iomap		*iomap,
+On Mon, Nov 18, 2024 at 10:29:42AM -0800, Linus Torvalds wrote:
+> On Fri, 15 Nov 2024 at 06:00, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > A pidfs patch ended up in the branch and I didn't notice it. I decided
+> > to leave it in here instead of rebasing the whole branch.
+> 
+> What happened here?
 
-If you pass in the batch directly instead of the iomap this is
-completely generic and could go into filemap.c.  Adding willy
-and linux-mm for these kinds of things also tends to help to
-get good review feedback and often improvements.
+The base of the branch is definitely v6.12-rc1. The branch is simply
+vfs.netfs with vfs-6.13.netfs tag. And the branch looks perfectly fine.
 
-> +	loff_t			offset,
-> +	loff_t			length)
-> +{
-> +	struct address_space	*mapping = inode->i_mapping;
-> +	struct folio_batch	fbatch;
-> +	pgoff_t			start, end;
-> +	loff_t			end_pos;
-> +
-> +	folio_batch_init(&fbatch);
-> +	folio_batch_init(&iomap->fbatch);
-> +
-> +	end_pos = offset + length;
-> +	start = offset >> PAGE_SHIFT;
-> +	end = (end_pos - 1) >> PAGE_SHIFT;
+I think the issue was that I sent you the fixes tag you mention below
+that contained some fixes that were in vfs.netfs. So afterwards I just
+didn't rebase vfs.netfs but merged two other series on top of it with
+v6.12-rc1 as parent. And I think that might've somehow confused the git
+request-pull call.
 
-Nit: initializing these at declaration time make the code easier to
-read (at least for me :)).
+Rebasing would've been the cleaner thing here since I had a long time
+until the merge window. But other than that it doesn't look like I did
+something that was actively wrong? But I might just be missing
+something.
 
-> +
-> +	while (filemap_get_folios(mapping, &start, end, &fbatch) &&
-> +	       folio_batch_space(&iomap->fbatch)) {
-> +		struct folio *folio;
-> +		while ((folio = folio_batch_next(&fbatch))) {
-> +			if (folio_trylock(folio)) {
-> +				bool clean = !folio_test_dirty(folio) &&
-> +					     !folio_test_writeback(folio);
-> +				folio_unlock(folio);
-> +				if (clean)
-> +					continue;
-
-What does the lock protect here given that it can become stale as soon
-as we unlock?
-
-Note that there also is a filemap_get_folios_tag that only looks up
-folios with the right tag (dirty or writeback).  Currently it only
-supports a single tag, which wuld not be helpful here, but this might
-be worth talking to the pagecache and xarray maintainer.
-
+> 
+> Not only isn't there a pidfs patch in here, it also doesn't have the
+> afs patches you claim it has, because all of those came in long ago in
+> commit a5f24c795513: "Pull vfs fixes from Christian Brauner".
+> 
+> So I've pulled this, but your pull request was all wonky because you
+> used some odd base commit.
+> 
+>               Linus
 
