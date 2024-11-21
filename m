@@ -1,91 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-35379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33FC9D46CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 05:35:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0149D46FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 05:53:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106CFB21C4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 04:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916D21F22553
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 04:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05635146D6B;
-	Thu, 21 Nov 2024 04:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CED149011;
+	Thu, 21 Nov 2024 04:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G30m4Xqn"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ub7OH5ZF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2D85234
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 04:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3DF230986
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 04:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732163722; cv=none; b=j/Iz7Nrg4padwRaXp/UO+l+hhlmiCS047l0eGueh4vmebfpcDXbMiigt4odehAKMcjaZdXTuHem6ZMMWCclPTnXKGLLcrjsyvgnQPatJ/UxvFBFMWKdFINeb8TQ7Gik9LsJJ0xToimfzw5CpIE89qbjtiLe4YEzHBF/lBN/bdDY=
+	t=1732164816; cv=none; b=LQTf9frCpI3OT75Z/oZpZ0FJ7ztxV+s8dK1xLTKpyb573TIAKRaOSdD6rzjg/wOCHrCR2H02mAe6XBKK2RbPByYpZrpWZ5nNLpVx6ZqhI4XOHpT5vlRL9yyUiMCDW1zWTYmnBVzxex2f3t4UxS4llnLzs+zjHonp4BmFNH4qTd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732163722; c=relaxed/simple;
-	bh=E2sGYIEW4FeEoEaJR7y1bs/G/4XWUr2LpZKVyBuu2t8=;
+	s=arc-20240116; t=1732164816; c=relaxed/simple;
+	bh=Ij0HDsfLaBRrZfAtCTu8XbYtmIPNsEOALdn60KpGHsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZjYvZimGHgSEmAy130uf8Ft9rwiM2mdWgjBXAIsk4aTIRW6ogenlR3UeX6rRqZSfxRrHCPFlQHOEOI1I1NCIcOduNcPOo/I7NaSEOIEYL+5uVYOP5CaLGyk1UH5ReILL2Vn/tpbok0G1UNSiNtNH5wq9X4erdThA1ORUTilEgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G30m4Xqn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732163719;
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0Z/kkpH0eCJNJnbAqk5CsA0tlu+xCOHY8OIxTY3bplfz+zlbiiCJU6PlnCzEprrQDI+2I08SBF9pQzR/oFZrMiaaV70lJRMA4UPOgWiqmVNwuDXH9FKBVpB1LI0h1m/YnQgunhCHryKHL3vltup3Bh+6BHfoc2aRnz4gteuvMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ub7OH5ZF; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 23:53:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732164810;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mKMqxRLlVvUCqserKLr/Bagm1GzwWwOkUXng3lrWCp4=;
-	b=G30m4Xqn+/rSo/MB7XeH+MeRBIxz8+OWL5o0cRtJH1dqKvS9UIjaheQS1vqfBn2+phdSZv
-	qAALx7PWeirG2cs3i9roykkr6IlHLxK31v5f66H0x7UG0qB82SxszcfdHyF+/6GPHYwHh8
-	PpK2MwnrvJDM+s7zIFKe2+jArZOiaWE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-NE4qc6erMmah3GjoeKhcQQ-1; Wed,
- 20 Nov 2024 23:35:16 -0500
-X-MC-Unique: NE4qc6erMmah3GjoeKhcQQ-1
-X-Mimecast-MFC-AGG-ID: NE4qc6erMmah3GjoeKhcQQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 51C9B19560AE;
-	Thu, 21 Nov 2024 04:35:13 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77E3B30000DF;
-	Thu, 21 Nov 2024 04:35:10 +0000 (UTC)
-Date: Thu, 21 Nov 2024 12:35:05 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from
- kcore.h to crash_dump.h
-Message-ID: <Zz64efFyFstyDdN8@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-5-david@redhat.com>
- <ZzcYEQwLuLnGQM1y@MiWiFi-R3L-srv>
- <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
- <Zz2u+2abswlwVcer@MiWiFi-R3L-srv>
- <120bc3d9-2993-47eb-a532-eb3a5f6c4116@redhat.com>
+	bh=ENB2kor/jdS78IhNaupupsMY4qX+PiyIEzt301nX8dw=;
+	b=ub7OH5ZFxuMTogSswMhL6laP6FmQ+LpfRgOWFiPWmxY2qlPEKOD7uorveRva0zo/xwBdSE
+	gH+QltkL48B32CHyOwZgPSK2ll1/NgflmB16iYHWh+l8EPzYYAPOFztgHWLAPnGLfgA6ve
+	tVI43Oz1XoumG7YqcMlD25QAXKJCcos=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Theodore Ts'o <tytso@mit.edu>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <thwbzrybt6kk3x6o5ege3h7k6vsip4j6mllxdvn6poldvdczz6@zobwlfwgxhkt>
+References: <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu>
+ <20241121042558.GA20176@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,99 +72,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <120bc3d9-2993-47eb-a532-eb3a5f6c4116@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20241121042558.GA20176@lst.de>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/20/24 at 11:28am, David Hildenbrand wrote:
-> On 20.11.24 10:42, Baoquan He wrote:
-> > On 11/15/24 at 10:59am, David Hildenbrand wrote:
-> > > On 15.11.24 10:44, Baoquan He wrote:
-> > > > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> > > > > These defines are not related to /proc/kcore, move them to crash_dump.h
-> > > > > instead. While at it, rename "struct vmcore" to "struct
-> > > > > vmcore_mem_node", which is a more fitting name.
-> > > > 
-> > > > Agree it's inappropriate to put the defintions in kcore.h. However for
-> > > > 'struct vmcore', it's only used in fs/proc/vmcore.c from my code
-> > > > serching, do you think if we can put it in fs/proc/vmcore.c directly?
-> > > > And 'struct vmcoredd_node' too.
-> > > 
-> > > See the next patches and how virtio-mem will make use of the feactored out
-> > > functions. Not putting them as inline functions into a header will require
-> > > exporting symbols just do add a vmcore memory node to the list, which I want
-> > > to avoid -- overkill for these simple helpers.
+On Thu, Nov 21, 2024 at 05:25:58AM +0100, Christoph Hellwig wrote:
+> On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+> > On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+> > > Shuah, would you be willing to entertain the notion of modifying your...
 > > 
-> > I see. It makes sense to put them in crash_dump.h. Thanks for
-> > explanation.
-> > 
+> > Kent, I'd like to gently remind you that Shuah is not speaking in her
+> > personal capacity, but as a representative of the Code of Conduct
+> > Committee[1], as she has noted in her signature.  The Code of Conduct
+> > Committee is appointed by, and reports to, the TAB[2], which is an
+> > elected body composed of kernel developers and maintainers.
 > 
-> I'll add these details to the description.
+> FYI, without taking any stance on the issue under debate here, I find the
+> language used by Shuah on behalf of the Code of Conduct committee
+> extremely patronising and passive aggressive.  This might be because I
+> do not have an American academic class background, but I would suggest
+> that the code of conduct committee should educate itself about
+> communicating without projecting this implicit cultural and class bias
+> so blatantly.
 
-Thanks.
+I wasn't even thinking about the language issue, but I think that's a
+very good point.
 
-> 
-> > > 
-> > > > 
-> > > > And about the renaming, with my understanding each instance of struct
-> > > > vmcore represents one memory region, isn't it a little confusing to be
-> > > > called vmcore_mem_node? I understand you probablly want to unify the
-> > > > vmcore and vmcoredd's naming. I have to admit I don't know vmcoredd well
-> > > > and its naming, while most of people have been knowing vmcore representing
-> > > > memory region very well.
-> > > 
-> > > I chose "vmcore_mem_node" because it is a memory range stored in a list.
-> > > Note the symmetry with "vmcoredd_node"
-> > 
-> > I would say the justification of naming "vmcore_mem_node" is to keep
-> > symmetry with "vmcoredd_node". If because it is a memory range, it really
-> > should not be called vmcore_mem_node. As we know, memory node has
-> > specific meaning in kernel, it's the memory range existing on a NUMA node.
-> > 
-> > And vmcoredd is not a widely used feature. At least in fedora/RHEL, we
-> > leave it to customers themselves to use and handle, we don't support it.
-> > And we add 'novmcoredd' to kdump kernel cmdline by default to disable it
-> > in fedora/RHEL. So a rarely used feature should not be taken to decide
-> > the naming of a mature and and widely used feature's name. My personal
-> > opinion.
-> 
-> It's a memory range that gets added to a list. So it's a node in a list ...
-> representing a memory range. :) I don't particularly care about the "node"
-> part here.
+We have a very strong culture of personal responsibility and taking
+responsibility for our work here, and I think that's one of the main
+thing that enables us to function and work together even when we're
+constantly butting heads.
 
-Ah, I missed that about list node. There are list items, list entries
-and list nodes, I didn't think of list node at tht time.
+Broadly speaking, what that means to me is: I will justify, explain and
+give the reasoning for my actions if asked, and if I can't because I
+made a mistake, then I will make it right or at least acknowledge my
+mistake.
 
-> 
-> The old "struct vmcore" name is misleading: makes one believe it somehow
-> represents "/proc/vmcore", but it really doesn't. (see below on function
-> naming)
-
-Yeah, agree. struct vmcore is a concept of the whole logical file.
-
-> 
-> > 
-> > > 
-> > > If there are strong feelings I can use a different name, but
-> > 
-> > Yes, I would suggest we better keep the old name or take a more
-> > appropriate one if have to change.
-> 
-> In light of patch #5 and #6, really only something like "vmcore_mem_node"
-> makes sense. Alternatively "vmcore_range" or "vmcore_mem_range".
-> 
-> Leaving it as "struct vmcore" would mean that we had to do in #5 and #6:
-> 
-> * vmcore_alloc_add_mem_node() -> vmcore_alloc_add()
-> * vmcore_free_mem_nodes() -> vmcore_free()
-> 
-> Which would *really* be misleading, because we are not "freeing" the vmcore.
-> 
-> Would "vmcore_range" work for you? Then we could do:
-> 
-> * vmcore_alloc_add_mem_node() -> vmcore_alloc_add_range()
-> * vmcore_free_mem_nodes() -> vmcore_free_ranges()
-
-Yeah, vmcore_range is better, which won't cause misunderstanding.
-Thanks.
-
+So, the very passive language from Shuah (i.e. "I'm not the one 'doing'
+this, I'm just implementing the policy that we all decided on, even
+though I totally wrote and advocated for that policy") does seem
+problematic to me as well.
 
