@@ -1,73 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-35395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5909D491C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:44:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4AB9D494D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D43C282DE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 08:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6EC284383
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 08:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5E91CC884;
-	Thu, 21 Nov 2024 08:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17E1CEAAF;
+	Thu, 21 Nov 2024 08:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZd9bmXE"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uJ9rSuTw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKV06pKx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uJ9rSuTw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKV06pKx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40C21CB323;
-	Thu, 21 Nov 2024 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040B1CD1F3;
+	Thu, 21 Nov 2024 08:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178641; cv=none; b=N31ONkJ20D0ZxiA/l3JmJXZBXxUcSz+l6Vep17XbOPlVf2QHJfW6J1xsslnAZpH6gO+huQ/IsOa7GPLizEi5UkunKaf8kAwDi+ZvrifxPV4MhF3Jm31A7Uf0VwUwpl2NwKMVLDpm1av6E4yLJ142xGHhjUxrTzoPqJ4J8PDqUv8=
+	t=1732179270; cv=none; b=DbobWVI8UTy73FAYC8Mtm6KkaVWLNEUzrtlAPZDovVmccsTCLmRggbFTALmYEaM6Tk84rFB/kZpP4H2eCxLUgs12P3AGj4OXJcnHTVl7T9416gxaBWm0Al0oS22TaEH05fp1E755YdbKspvhI9l/3i+b/BTuMRupEiMsovs/B4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178641; c=relaxed/simple;
-	bh=93d+OqbVd9Ea0NG2jzTeioEuzX6Aq7NOIU6RQqe9nlY=;
+	s=arc-20240116; t=1732179270; c=relaxed/simple;
+	bh=TwzpGNcP8sBopTqZejLvIXwRObHW9PYvsMVU2F3rJu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0Dx6DGzrYPDM4oCJHDskmJPQJX5zm/5Ua+XcyCBHNRp49GxrWH5zix8/p6QsjZ+/MoXxrvl21X7GymSj+XbETj/NzcLpNubWYzh707q7jdJyj6NK2E80OTzUTv6MwhjLNvZbYuAFf0KvInMHGlE50YFAVjYbZaFZdOSCBjUTPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZd9bmXE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193F1C4CECE;
-	Thu, 21 Nov 2024 08:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732178641;
-	bh=93d+OqbVd9Ea0NG2jzTeioEuzX6Aq7NOIU6RQqe9nlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZd9bmXEsHfChSC2aGGlnkiIzf9lWdGjwnqCPXDdGdAN+Z+csyftlF80cpphfn0zi
-	 ozvQS+XQXfe/gtGwm3cOUHr/4L2vKNNqChErygaOJ1t/mrVSnBczW5+X1HQCSlRPBU
-	 aX1XCMRqDLLuko25njgEYFoLzGb2wuLbhmN4zDNzXuKDUOo0kWcpm0EqBakv/v8/k7
-	 CYiqRae1FtkzC705/sCiOGSip1nXQkq6mQMR0ETfHk1NzHJLkLPARKS1NGWh8WUcTs
-	 84gt0t3tzzVmieSC7eLIhsQ1FU/msJ5G48ejiJzUhnQUzm/bg1OUG2+95xXkCpZxBd
-	 2z+CjzORZ7IgA==
-Date: Thu, 21 Nov 2024 09:43:52 +0100
-From: Christian Brauner <brauner@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2Cx/584YYMFTjsXLzYgzZ+Cw+aGLXSTBA/xNTLpIBICC4yZQgs+3X8Vc8uHtZXTcUV7BkG1CbM2RTpHcZ+JEr/qyQ2X4ZpmBMNlNWaz9hTjJIREhg3WWxdmdR5GqbBsqk70lQPditoojWvY/cvJQEIOBbfl2xZK3UJGjs5FV4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uJ9rSuTw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKV06pKx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uJ9rSuTw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKV06pKx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 78A88211BB;
+	Thu, 21 Nov 2024 08:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732179265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
+	b=uJ9rSuTwHq42Q9eV0Pm3KewVmcTElVkYABQedvIts4bOr9jE3bLJrPbvz8D5Rd72op769r
+	D7hlLV2vCSExFT7xyg96dZnT7ugJoY+s2sae2a3czx8qSallOh1s+L6JdqkLWv5J/7yngC
+	pJ4kj2KZPPBGrpJrFfgkxPnSCLc0t24=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732179265;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
+	b=tKV06pKxDviRzPYcFgiT/BAb1ygh8vMnho6u2rZfPiQVKd8sSUv3Vw29/qRKVTtrUHuJJq
+	kc+z72YKxb8ircAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uJ9rSuTw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tKV06pKx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732179265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
+	b=uJ9rSuTwHq42Q9eV0Pm3KewVmcTElVkYABQedvIts4bOr9jE3bLJrPbvz8D5Rd72op769r
+	D7hlLV2vCSExFT7xyg96dZnT7ugJoY+s2sae2a3czx8qSallOh1s+L6JdqkLWv5J/7yngC
+	pJ4kj2KZPPBGrpJrFfgkxPnSCLc0t24=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732179265;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
+	b=tKV06pKxDviRzPYcFgiT/BAb1ygh8vMnho6u2rZfPiQVKd8sSUv3Vw29/qRKVTtrUHuJJq
+	kc+z72YKxb8ircAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59C57137CF;
+	Thu, 21 Nov 2024 08:54:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VuebFUH1PmdBTgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 08:54:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CEDF3A089E; Thu, 21 Nov 2024 09:54:20 +0100 (CET)
+Date: Thu, 21 Nov 2024 09:54:20 +0100
+From: Jan Kara <jack@suse.cz>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: Song Liu <songliubraving@meta.com>, Jeff Layton <jlayton@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"repnop@google.com" <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241121-erleuchten-getobt-aba2e8f03611@brauner>
-References: <20241113-sensation-morgen-852f49484fd8@brauner>
- <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3>
- <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
- <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
- <CAOQ4uxgUYHEZTx7udTXm8fDTfhyFM-9LOubnnAc430xQSLvSVA@mail.gmail.com>
- <CAOQ4uxhyDAHjyxUeLfWeff76+Qpe5KKrygj2KALqRPVKRHjSOA@mail.gmail.com>
- <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
- <20241120-wimpel-virologen-1a58b127eec6@brauner>
- <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v8 03/19] fsnotify: add helper to check if file is
+ actually being watched
+Message-ID: <20241121085420.lpsvkixshtuju23i@quack3>
+References: <cover.1731684329.git.josef@toxicpanda.com>
+ <2ddcc9f8d1fde48d085318a6b5a889289d8871d8.1731684329.git.josef@toxicpanda.com>
+ <20241120160247.sdvonyxkpmf4wnt2@quack3>
+ <CAOQ4uxj4pwH2hfmNL0N=q8-rOF6d=-Z_yWLEwHQ671t1EvRn6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,168 +116,166 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj4pwH2hfmNL0N=q8-rOF6d=-Z_yWLEwHQ671t1EvRn6A@mail.gmail.com>
+X-Rspamd-Queue-Id: 78A88211BB
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Nov 20, 2024 at 12:19:51PM +0100, Amir Goldstein wrote:
-> On Wed, Nov 20, 2024 at 10:28 AM Christian Brauner <brauner@kernel.org> wrote:
+On Wed 20-11-24 17:42:18, Amir Goldstein wrote:
+> On Wed, Nov 20, 2024 at 5:02 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > On Tue, Nov 19, 2024 at 09:53:20PM +0000, Song Liu wrote:
-> > > Hi Jeff and Amir,
+> > On Fri 15-11-24 10:30:16, Josef Bacik wrote:
+> > > From: Amir Goldstein <amir73il@gmail.com>
 > > >
-> > > Thanks for your inputs!
+> > > So far, we set FMODE_NONOTIFY_ flags at open time if we know that there
+> > > are no permission event watchers at all on the filesystem, but lack of
+> > > FMODE_NONOTIFY_ flags does not mean that the file is actually watched.
 > > >
-> > > > On Nov 19, 2024, at 7:30 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > On Tue, Nov 19, 2024 at 4:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >>
-> > > >> On Tue, Nov 19, 2024 at 3:21 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >>>
+> > > To make the flags more accurate we add a helper that checks if the
+> > > file's inode, mount, sb or parent are being watched for a set of events.
 > > >
-> > > [...]
+> > > This is going to be used for setting FMODE_NONOTIFY_HSM only when the
+> > > specific file is actually watched for pre-content events.
 > > >
-> > > >>> Longer term, I think it may be beneficial to come up with a way to attach
-> > > >>>>> private info to the inode in a way that doesn't cost us one pointer per
-> > > >>>>> funcionality that may possibly attach info to the inode. We already have
-> > > >>>>> i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's always a tough
-> > > >>>>> call where the space overhead for everybody is worth the runtime &
-> > > >>>>> complexity overhead for users using the functionality...
-> > > >>>>
-> > > >>>> It does seem to be the right long term solution, and I am willing to
-> > > >>>> work on it. However, I would really appreciate some positive feedback
-> > > >>>> on the idea, so that I have better confidence my weeks of work has a
-> > > >>>> better chance to worth it.
-> > > >>>>
-> > > >>>> Thanks,
-> > > >>>> Song
-> > > >>>>
-> > > >>>> [1] https://github.com/systemd/systemd/blob/main/src/core/bpf/restrict_fs/restrict-fs.bpf.c
-> > > >>>
-> > > >>> fsnotify is somewhat similar to file locking in that few inodes on the
-> > > >>> machine actually utilize these fields.
-> > > >>>
-> > > >>> For file locking, we allocate and populate the inode->i_flctx field on
-> > > >>> an as-needed basis. The kernel then hangs on to that struct until the
-> > > >>> inode is freed.
-> > >
-> > > If we have some universal on-demand per-inode memory allocator,
-> > > I guess we can move i_flctx to it?
-> > >
-> > > >>> We could do something similar here. We have this now:
-> > > >>>
-> > > >>> #ifdef CONFIG_FSNOTIFY
-> > > >>>        __u32                   i_fsnotify_mask; /* all events this inode cares about */
-> > > >>>        /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > > >>>        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > > >>> #endif
-> > >
-> > > And maybe some fsnotify fields too?
-> > >
-> > > With a couple users, I think it justifies to have some universal
-> > > on-demond allocator.
-> > >
-> > > >>> What if you were to turn these fields into a pointer to a new struct:
-> > > >>>
-> > > >>>        struct fsnotify_inode_context {
-> > > >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > > >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
-> > > >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> > > >>>        };
-> > > >>>
-> > > >>
-> > > >> The extra indirection is going to hurt for i_fsnotify_mask
-> > > >> it is being accessed frequently in fsnotify hooks, so I wouldn't move it
-> > > >> into a container, but it could be moved to the hole after i_state.
-> > >
-> > > >>> Then whenever you have to populate any of these fields, you just
-> > > >>> allocate one of these structs and set the inode up to point to it.
-> > > >>> They're tiny too, so don't bother freeing it until the inode is
-> > > >>> deallocated.
-> > > >>>
-> > > >>> It'd mean rejiggering a fair bit of fsnotify code, but it would give
-> > > >>> the fsnotify code an easier way to expand per-inode info in the future.
-> > > >>> It would also slightly shrink struct inode too.
-> > >
-> > > I am hoping to make i_bpf_storage available to tracing programs.
-> > > Therefore, I would rather not limit it to fsnotify context. We can
-> > > still use the universal on-demand allocator.
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > >
-> > Can't we just do something like:
+> > I did some changes here as well. See below:
 > >
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 7e29433c5ecc..cc05a5485365 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -627,6 +627,12 @@ is_uncached_acl(struct posix_acl *acl)
-> >  #define IOP_DEFAULT_READLINK   0x0010
-> >  #define IOP_MGTIME     0x0020
+> > > -/* Are there any inode/mount/sb objects that are interested in this event? */
+> > > -static inline bool fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
+> > > -                                        __u32 mask)
+> > > +/* Are there any inode/mount/sb objects that watch for these events? */
+> > > +static inline __u32 fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
+> > > +                                         __u32 events_mask)
+> > >  {
+> > >       __u32 marks_mask = READ_ONCE(inode->i_fsnotify_mask) | mnt_mask |
+> > >                          READ_ONCE(inode->i_sb->s_fsnotify_mask);
+> > >
+> > > -     return mask & marks_mask & ALL_FSNOTIFY_EVENTS;
+> > > +     return events_mask & marks_mask;
+> > >  }
+> > >
+> > > +/* Are there any inode/mount/sb/parent objects that watch for these events? */
+> > > +__u32 fsnotify_file_object_watched(struct file *file, __u32 events_mask)
+> > > +{
+> > > +     struct dentry *dentry = file->f_path.dentry;
+> > > +     struct dentry *parent;
+> > > +     __u32 marks_mask, mnt_mask =
+> > > +             READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
+> > > +
+> > > +     marks_mask = fsnotify_object_watched(d_inode(dentry), mnt_mask,
+> > > +                                          events_mask);
+> > > +
+> > > +     if (likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED)))
+> > > +             return marks_mask;
+> > > +
+> > > +     parent = dget_parent(dentry);
+> > > +     marks_mask |= fsnotify_inode_watches_children(d_inode(parent));
+> > > +     dput(parent);
+> > > +
+> > > +     return marks_mask & events_mask;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(fsnotify_file_object_watched);
 > >
-> > +struct inode_addons {
-> > +        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > +        struct bpf_local_storage __rcu          *i_bpf_storage;
-> > +        __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> > +};
+> > I find it confusing that fsnotify_object_watched() does not take parent
+> > into account while fsnotify_file_object_watched() does. Furthermore the
+> > naming doesn't very well reflect the fact we are actually returning a mask
+> > of events. I've ended up dropping this helper (it's used in a single place
+> > anyway) and instead doing the same directly in file_set_fsnotify_mode().
+> >
+> > @@ -658,6 +660,27 @@ void file_set_fsnotify_mode(struct file *file)
+> >                 file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
+> >                 return;
+> >         }
 > > +
-> >  /*
-> >   * Keep mostly read-only and often accessed (especially for
-> >   * the RCU path lookup and 'stat' data) fields at the beginning
-> > @@ -731,12 +737,7 @@ struct inode {
-> >                 unsigned                i_dir_seq;
-> >         };
-> >
-> > -
-> > -#ifdef CONFIG_FSNOTIFY
-> > -       __u32                   i_fsnotify_mask; /* all events this inode cares about */
-> > -       /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > -       struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > -#endif
-> > +       struct inode_addons *i_addons;
-> >
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> >         struct fscrypt_inode_info       *i_crypt_info;
-> >
-> > Then when either fsnotify or bpf needs that storage they can do a
-> > cmpxchg() based allocation for struct inode_addons just like I did with
-> > f_owner:
-> >
-> > int file_f_owner_allocate(struct file *file)
-> > {
-> >         struct fown_struct *f_owner;
-> >
-> >         f_owner = file_f_owner(file);
-> >         if (f_owner)
-> >                 return 0;
-> >
-> >         f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> >         if (!f_owner)
-> >                 return -ENOMEM;
-> >
-> >         rwlock_init(&f_owner->lock);
-> >         f_owner->file = file;
-> >         /* If someone else raced us, drop our allocation. */
-> >         if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
-> >                 kfree(f_owner);
-> >         return 0;
-> > }
-> >
-> > The internal allocations for specific fields are up to the subsystem
-> > ofc. Does that make sense?
+> > +       /*
+> > +        * OK, there are some pre-content watchers. Check if anybody can be
+> > +        * watching for pre-content events on *this* file.
+> > +        */
+> > +       mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
+> > +       if (likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) &&
+> > +           !fsnotify_object_watched(d_inode(dentry), mnt_mask,
+> > +                                    FSNOTIFY_PRE_CONTENT_EVENTS))) {
+> > +               file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
+> > +               return;
+> > +       }
+> > +
+> > +       /* Even parent is not watching for pre-content events on this file? */
+> > +       parent = dget_parent(dentry);
+> > +       p_mask = fsnotify_inode_watches_children(d_inode(parent));
+> > +       dput(parent);
+> > +       if (!(p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)) {
+> > +               file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
+> > +               return;
+> > +       }
+> >  }
 > >
 > 
-> Maybe, but as I wrote, i_fsnotify_mask should not be moved out
-> of inode struct, because it is accessed in fast paths of fsnotify vfs
-> hooks, where we do not want to have to deref another context,
-> but i_fsnotify_mask can be moved to the hole after i_state.
+> Nice!
 > 
-> And why stop at i_fsnotify/i_bfp?
-> If you go to "addons" why not also move i_security/i_crypt/i_verify?
-> Need to have some common rationale behind those decisions.
+> Note that I had a "hidden motive" for future optimization when I changed
+> return value of fsnotify_object_watched() to a mask -
+> 
+> I figured that while we are doing the checks above, we can check for the
+> same price the mask ALL_FSNOTIFY_PERM_EVENTS
+> then we get several answers for the same price:
+> 1. Is the specific file watched by HSM?
+> 2. Is the specific file watched by open permission events?
+> 3. Is the specific file watched by post-open FAN_ACCESS_PERM?
+> 
+> If the answers are No, No, No, we get some extra optimization
+> in the (uncommon) use case that there are permission event watchers
+> on some random inodes in the filesystem.
+> 
+> If the answers are Yes, Yes, No, or No, Yes, No we can return a special
+> value from file_set_fsnotify_mode() to indicate that permission events
+> are needed ONLY for fsnotify_open_perm() hook, but not thereafter.
+> 
+> This would implement the semantic change of "respect FAN_ACCESS_PERM
+> only if it existed at open time" that can save a lot of unneeded cycles in
+> the very hot read/write path, for example, when watcher only cares about
+> FAN_OPEN_EXEC_PERM.
+> 
+> I wasn't sure that any of this was worth the effort at this time, but
+> just in case this gives you ideas of other useful optimizations we can do
+> with the object combined marks_mask if we get it for free.
 
-The rationale is that we need a mechanism to stop bloating our
-structures with ever more stuff somehow. What happens to older members
-of struct inode is a cleanup matter and then it needs to be seen what
-can be moved into a substruct and not mind the additional pointer chase.
+OK, I'm not opposed to returning the combined mask in principle. Just I'd
+pick somewhat different function name and it didn't quite make sense to me
+in the context of this series. If we decide to implement the optimizations
+you describe above, then I have no problem with tweaking the helpers.
 
-It's just a generalization of your proposal in a way because I don't
-understand why you would move the bpf stuff into fsnotify specific
-parts.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
