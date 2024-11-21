@@ -1,168 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-35459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3589F9D5003
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 16:45:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AD49D5048
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 17:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C708B227C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 15:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188731F22DF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 16:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2003217C210;
-	Thu, 21 Nov 2024 15:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792411990AF;
+	Thu, 21 Nov 2024 16:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcfmLjbD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kSuvxf3m";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wdlGnnSN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mn/cJpt6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yj5Ah/vh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B0013E898;
-	Thu, 21 Nov 2024 15:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E3F13F43B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 16:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732203890; cv=none; b=NNMmloW3URj93Gw6Z8wqnvuGv1AxzIjAhofcbgRt79YLs2ZYIhSEwqBtu+Qlo9H/0oYkpVigMfwJ5Vq8lPdTMybfSN4jJwPlpS3OaZaclTpGE3L4x+RRQMKV/ZGMcbnG/NrZdZxpI0BYEdMGyvSuXeTFvs/ZWdEGNxHJSBEpGak=
+	t=1732204873; cv=none; b=nWP+gxrANJ5XjdyCqvIUvtBjOQhXMbqnINtTYQinQT8bhmgR2QNh8X5r6ykVm0csfqqeTrF5BoLKhdwMreRn/aklEZfNi6zjiDnw26LsUkuLFaPtRFB6OlcQEhu1QeTJ4+XJ285kEY8XwdcpmdA4qrbuf9UZxNA02GaYWjIIn7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732203890; c=relaxed/simple;
-	bh=MB6iJnnXYaZmNl56XT3EwoAa/w2SBxfGpUrAsPhuyX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlpSFEMpVb995iKYZ2OD3Oq7gAM2np9dUX0scdIoPu7+HQBwQOwgRzWsDU1KwuyGkK1qLTUjNVGuM8Vh2N2qN6WcbH057oInP+XQpyf5BaNgP0wrOHBMTniBuE/5qLhMP/ZdXl5lUiI61CpoFCYxDjmy8iNj3Oyohq8d/F+slLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcfmLjbD; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53da353eb2eso1763386e87.3;
-        Thu, 21 Nov 2024 07:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732203887; x=1732808687; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yq70YJzrFfkaT6vO9+6QOQ5rfwZ7sR/Fpz34vhs1TzQ=;
-        b=YcfmLjbDeg66naza7X6STJigEBriur9xptPGujJR+V3z6VB4JHvuTY8yLxORIEIV4s
-         U9RYnrj3vrJd/zgVFI3KVRDqZ+7RqQgz+JfUEDiRKGDgZ7GxizBQno/6qdlVuPGdey9b
-         E1qZcZ/5vs0F1LeGD69q+asMGfw5Gz/JmwkHp+BWee5piVG4W0qCuyl/EDnSqRy2h7ON
-         hJzSkiKfQgXBOmOd9pMkZJVwWHPWdeob/iclISYrbMKPo5F4saBlUI9sR0bu4l2ZyisV
-         bBHX/6oZpVAjUeeAk3YrYUhkpGnxxeOmx+sM6PdO9HzfIa5KG9ftJmCjjh+RD0Sreszr
-         sHuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732203887; x=1732808687;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yq70YJzrFfkaT6vO9+6QOQ5rfwZ7sR/Fpz34vhs1TzQ=;
-        b=Xvdb35BOvkkK+32ZmA+uPRclcfqdGuMfPeYG/zxFb0QXjIo8IGRM5DwlyELSvvxw/n
-         V3DW//cA/zAZaIP/cPBHdKBukkiD/AumqIaWygg3M6rIW+uukcQqlxKTyGjrrJCMlVj+
-         uDi9xLtLWVb49fBYm+/o9u2k9lJEkOR4dbNxHdki0LcPixcbjBaqZ5RnQVCumFWgXASy
-         qOs7VE1EKMFTkIjZm+S/XVk17/J/ZMLcY524snbhCrL0Rw0j3PijROcz3z7zod4cWBJL
-         KaDE5QtWZiI2cgP0lKewUWLuP1BDUTZSsdJMpmsrpnmUXi6P+/es9KvWQD2dMYLqP22s
-         RdSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVi1YwvnhcO9JfK4cTqLFqj+RuIqkkBm9Fh8gQwVzVgiYqqfB1TD574vR2Y3Vgdj2LBrfMeDK5eOG4Q==@vger.kernel.org, AJvYcCWRikq9ntiwj4+3BKevlsUabH2W+AmMcdapDnKrVX0aifHQWwQzrm79zIOTebuuzR6A0c83t5uN70Zxg8omiQ==@vger.kernel.org, AJvYcCWc3ieakZ6cug5KHBvPyBn7cwERmYAsMdlHhVs7XoEo4FmImqOSJ6UBiJzJh78n+gEc9+h0+t9oYohyThk=@vger.kernel.org, AJvYcCXUebid6tj+qHDw5TgWM9fHGm7gCiXhRRNVXWpHkI4b4NMM5XRPA/6ZlTWTyQIrW5NQrCYPi7/+0Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCQUO/PRY/nU2rTt9iCjdcPfGrcU1lB/fP5y8ibKhJTzuTJMXE
-	vhOrRSRp5c+O29NAfYdo0kgpmSeaoTdMrEyAlHLt/cJpZHr9iZGm
-X-Gm-Gg: ASbGnctCOFphGJpIgpIaA0dz00SawXrx0fKhgi5kT3LPuZqc9dUY5KRdH/etO+NlkSD
-	rG9crNq9xT0ROi2MjLCq7CBxzkt1JQub0Cj8X/gV3x8YVvFcJUNrJSM0FenB2lcXpl/oMaFaPvr
-	uD7N2/7jCEzbrYNRyh/hShypwLMCT7Tuw89PSqPLSrRxnvyfGQEcfTVCN3TvJPCfX6G2UMF4afv
-	H+BP2Qp0ZsyB/UZpYOQrggsOT/rSGZOX+bAy79bULyIjpXBYVKDDdEeugZZCQ==
-X-Google-Smtp-Source: AGHT+IF++NRQF74gXAH6xM1W4Qh3AQIH8KSN5zEQe3RTf9TGDltr4dR/aWa+g/x4zzyWxju6+0KAMw==
-X-Received: by 2002:a05:6512:1195:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-53dc13230b4mr6167738e87.5.1732203886812;
-        Thu, 21 Nov 2024 07:44:46 -0800 (PST)
-Received: from [192.168.42.120] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f43801f5sm93964866b.190.2024.11.21.07.44.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 07:44:46 -0800 (PST)
-Message-ID: <506ca9ff-40c2-49eb-bcc3-e1735a4f4cd9@gmail.com>
-Date: Thu, 21 Nov 2024 15:45:37 +0000
+	s=arc-20240116; t=1732204873; c=relaxed/simple;
+	bh=DobePUaX58pEaHmStGe55s3+Vt8u2WLtj2sujKdfFhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LsBa8A7dCdnnsd2mKPU2RAgXugMQOZ95kIQ2edHCh8rYVanXq00z8yUzKDlHEInFTeaHek7gKffAOlkxV9wx5Yn5bVT/naxx8tAbZNwBK7roMsfOoigF8mFxsY6cQbDLSzwb98cuC199bYpggyAW6sgzpPAti2pwaZ26yH82N2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kSuvxf3m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wdlGnnSN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mn/cJpt6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yj5Ah/vh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E3DD31F745;
+	Thu, 21 Nov 2024 16:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732204870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=giIcY6M9ywachVqaXX7W7GFtOZGSvGEgRsQncaggfPI=;
+	b=kSuvxf3mZzNF9sCe9FOdH7nbi4ZmJEdwzMBopdGNqC2CZsFeGhrs4MsC3RI7Dg1XN5rk9q
+	aC0/dsDhgGCuOD1cHJY1jEQeVZzg9c8IZq7vG3oMndmpadxJ37GGMJiIBRPPt6v7ITW+CD
+	Sp+RopgC8N64KMP6Bvl6o03qZZtJ2LY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732204870;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=giIcY6M9ywachVqaXX7W7GFtOZGSvGEgRsQncaggfPI=;
+	b=wdlGnnSNvsqCSs0bwn/eTLEH+rGO2Y16Lj9XDm+5UfG33vgY9ZA2g7r4lr8xonqdlQFMfM
+	sRJXMcHSA9+HoABg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732204868; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=giIcY6M9ywachVqaXX7W7GFtOZGSvGEgRsQncaggfPI=;
+	b=mn/cJpt6E4W4NJ1eegtxLS/G1xpSoOGl2qzYQp3NKmESMshfmdasgzAt+gOG7nDAq486Lh
+	F+beSUOyJBYAye+oZZxz5J7GuzdRnOxLp9mRhzOdWAmW+eNbi0aVxsXQr6ad3kpA1DWS5V
+	UH6I5YH847j5gxkQyzjLnLaAzK5g5PI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732204868;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=giIcY6M9ywachVqaXX7W7GFtOZGSvGEgRsQncaggfPI=;
+	b=Yj5Ah/vhOg+dXPJQa5sWvzXXdMKPzn7GinvoHw+4eIYBX7kicDh7l0aNiJt6y9l4TSDBK7
+	p+Cx3OSriqPM8dCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D861B13927;
+	Thu, 21 Nov 2024 16:01:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lufNNERZP2fzVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 16:01:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4965FA08A2; Thu, 21 Nov 2024 17:01:08 +0100 (CET)
+Date: Thu, 21 Nov 2024 17:01:08 +0100
+From: Jan Kara <jack@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] Quota and isofs fixes for 6.13-rc1
+Message-ID: <20241121160108.vu2g7nknhxrvqlkx@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
- martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
- jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
- <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com>
- <c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
- <b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
- <20241118125029.GB27505@lst.de>
- <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
- <20241121085935.GA3851@green245>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241121085935.GA3851@green245>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Score: -3.79
+X-Spamd-Result: default: False [-3.79 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.19)[-0.969];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11/21/24 08:59, Anuj Gupta wrote:
-> On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
->> On 11/18/24 12:50, Christoph Hellwig wrote:
->>> On Sat, Nov 16, 2024 at 12:32:25AM +0000, Pavel Begunkov wrote:
-...
->> Do we have technical arguments against the direction in the last
->> suggestion? It's extendible and _very_ simple. The entire (generic)
->> handling for the bitmask approach for this set would be sth like:
->>
->> struct sqe {
->> 	u64 attr_type_mask;
->> 	u64 attr_ptr;
->> };
->> if (sqe->attr_type_mask) {
->> 	if (sqe->attr_type_mask != TYPE_PI)
->> 		return -EINVAL;
->>
->> 	struct uapi_pi_structure pi;
->> 	copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
->> 	hanlde_pi(&pi);
->> }
->>
->> And the user side:
->>
->> struct uapi_pi_structure pi = { ... };
->> sqe->attr_ptr = &pi;
->> sqe->attr_type_mask = TYPE_PI;
->>
-> 
-> How about using this, but also have the ability to keep PI inline.
-> Attributes added down the line can take one of these options:
-> 1. If available space in SQE/SQE128 is sufficient for keeping attribute
-> fields, one can choose to keep them inline and introduce a TYPE_XYZ_INLINE
-> attribute flag.
-> 2. If the available space is not sufficient, pass the attribute information
-> as pointer and introduce a TYPE_XYZ attribute flag.
-> 3. One can choose to support a attribute via both pointer and inline scheme.
-> The pointer scheme can help with scenarios where user wants to avoid SQE128
-> for whatever reasons (e.g. mixed workload).
+  Hello Linus,
 
-Right, the idea would work. It'd need to be not type specific but
-rather a separate flag covering all attributes of a request, though.
-IOW, either all of them are in user memory or all optimised. We probably
-don't have a good place for a flag, but then you can just chip away a
-bit from attr_type_mask as you're doing for INLINE.
+  could you please pull from
 
-enum {
-	TYPE_PI = 1,
-	...
-	TYPE_FLAG_INLINE = 1 << 63,
-};
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v6.13-rc1
 
-// sqe->attr_type_mask = TYPE_PI | TYPE_FLAG_INLINE;
+to get a fix of memory leak in isofs and a cleanup of includes in quota.
 
-Another question is whether it's better to use SQE or another mapping
-like reg-wait thing does. My suggestion is, send it without the INLINE
-optimisation targeting 6.14 (I assume block bits are sorted?). We'll
-figure that optimisation separately and target the same release, there
-is plenty of time for that.
+Top of the tree is 344044d8c9e2. The full shortlog is:
+
+Al Viro (1):
+      dquot.c: get rid of include ../internal.h
+
+Hao Ge (1):
+      isofs: avoid memory leak in iocharset
+
+The diffstat is
+
+ fs/isofs/inode.c | 8 ++++----
+ fs/quota/dquot.c | 1 -
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+							Thanks
+								Honza
 
 -- 
-Pavel Begunkov
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
