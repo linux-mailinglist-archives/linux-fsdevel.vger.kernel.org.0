@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-35487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E919D5577
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:28:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F429D5578
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0923DB22336
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8231F23E1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367271DC1BA;
-	Thu, 21 Nov 2024 22:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822031DA60B;
+	Thu, 21 Nov 2024 22:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="XI+HSmAK"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="A9DtDzlp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DC21CEAB8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EEC1CEAB8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228110; cv=none; b=KFn5BSlCC8vHIDXsu4GkPqVkNmCcE7P62qcDt5Tp6Ofswk5eyzgMQdbAf7bXbz0rdcZ6+LFXizpV6JRviKmMwf+2qUcCCQvXKT4vYX7J0COpk7Dn0PrzlK1FGEXm49HP6/PI8lE2FTG5tX+ErUnxtN4IRUWALitg245dWsvVH5s=
+	t=1732228131; cv=none; b=E1R9URhtjkVzc1n8T9Idp6rk8UUmyV4JziffyRFGgl8x7ulYY9Gqx5m1PhvLcYFeJ6UJWyOMjXJfNfbTY/CuJtlzEHF6IrD9/X8Zgg/phjoEsT3ozDgb8DUdzz5t7gQxDe8Vo9nIdr57gTqenHwr+3pIyIE0WAJf5+1em2Jhz3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228110; c=relaxed/simple;
-	bh=3j2Pwqay2cGjiQyXcz7YEkT4S8UT74CSBmPrFr6UJQs=;
+	s=arc-20240116; t=1732228131; c=relaxed/simple;
+	bh=NM3V6zaMGS9FYctgok7suDRu8wkYahGK3/IfRztomJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLtb17cf6+PcKww0tCKKcKW4kpyL6r1SHBw3AgjVnnbh4hwtCwdWJ+64KTqLftPw7mY5hlHTe87mWA6OoQJKw7ghti573f8TIKni3I0LyBoX6fyCi6vMcD+vzez/8/F+8hB5MHKYc6LWNiukv2KrduLgQgdkryqzPpkDD3bTNBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=XI+HSmAK; arc=none smtp.client-ip=209.85.128.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALEbXvOMfePRQHCwHyFDxgKR3sHoJxAhJKjyzsdrWHr5Z+WxvVIUJcLXT2Q4x4qxBYZJuKfjGfKe4dCs4WorwQSqWGN5v/VtOIscd8bFtBIFIHQw8s5Uk8y1Tc8I9B2Fi1+rGN9i8aQcJS27GlvJBUh5kT/yD5cUcwwmocv9EOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=A9DtDzlp; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6eb0c2dda3cso18253677b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:28:28 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6eeb3741880so14653297b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:28:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732228108; x=1732832908; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732228129; x=1732832929; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zox/2t8uEzaQBl0xEQAzmL/Et+AmR9I2KXeA+YK0FIE=;
-        b=XI+HSmAKAS8g3Vwu/aJs2YMta00VmlG33/tecxz2GPqdafVupiRxMhUnAPFo7IlkwZ
-         puLBhIFOA3/FCeaSlsVltgK4wHIoo3SZZrSA6lALHDMSG3nHjo+l9K3Kt+iLegDK858/
-         NSpwOLVZPSnJBIL7RNaEvsCUnYKkJCsEfKU4kHhMNhC/4A9RM8wWPOtg+UlX7716gPP3
-         Au5H45W1NO+2/rCv+yy5b9QRGTw8SXKhlg8Sx8MvApecJlCeMEV0ZcrORtVREeEW0Q4/
-         yTIL0B/7f15wH/3dQZc23NM6VKcEUYWCbg7y1meFSVHbyQSTB8cD+uzjsHJx0BdD9Ow9
-         zW8g==
+        bh=EoKEXnI4uTZ8zf3Qs5aeOGboVKmKizuhzfKbKzYElaw=;
+        b=A9DtDzlpCcpUNuFCNhiXfte+0CMQisGwhX+B7yF2DAqSHItjlL3Z/IEB13Z/LZm09w
+         IJ+zpVJnwoN9lW7vLptRdYes4UHkcTr8Xr9TY5G3XQ81dGIgougaMCA6KoLCReog9JjY
+         59mdR08SQtMAYBX6KkQ6QF0PTqtcFXUYWyWp4P9aZjtf7EOErUbYoigh71WJ6I58ZKL8
+         R2fwrdRQIGDhH3tbnAJlEG5Iiv07IbKdzaED74oOgJZAEjs+h06YJiFMPWBDn0R+AJoP
+         9HCV8Q+UZlWMaZK0ALzYlue83223qa2cb4BeAWFtkz9WEbuVP687i9qIiO/rUb33Xh32
+         5Lig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732228108; x=1732832908;
+        d=1e100.net; s=20230601; t=1732228129; x=1732832929;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zox/2t8uEzaQBl0xEQAzmL/Et+AmR9I2KXeA+YK0FIE=;
-        b=AEzFBOaPYrCOIKUqYt/cyNcWqatPYvMn395OGO2oiZQeI/7BbeCO5/e3qHg/0IiAKb
-         nG5JWg+Q4ap8mpXOpYCFlUozLAqnp9/riEOASBjBmHUwLdJLzLsLtwC81i2lsMvTSuV9
-         wHa+N7FhTHDmeKDJdb7PEcCTsyKDm8XztfN/yWPUj+nLCDPVcEdHXXv3jBwHZUKGnu4p
-         i13kjn+LnyX9Ig951TMtaUgH34vOxngSOj+YOq8byDfaZIVhdmjTnWs+6CP+WSPD8tcp
-         SpGKvwShSF4tPc5hNbk8EDs1KGCA+7oq8hQnL1a8T8BErYN5QU1fUOAhycX4vw+g4wEg
-         jYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy1kHd6jStUgLn8T9ljIbXy10t3Ys4uAUcLSVhC1R4jhig7OzUBMqPZKVwZRFbAChVwpZc6zKm7bosReSB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhkDln264Nl4J0j7VolJETX3u4VljwoDzB0c7/myPR8NBasgm/
-	tMzQ4G8paqdd2N0GE4r3blGVIYPvoYPvhizg0ClxH7bikQrbY9+yratrImx3W18=
-X-Gm-Gg: ASbGnct4FHYTiDzNE6y2L4s7GTr4eki3068n6HntSX+8Q32NQWVRTDCZ//ClRP6wyfa
-	TAe+datTxfQ+GLDI2ofvT7Osw7/TqQCFmvyxmijkkvDite9BvIoSsckvF07Jiz6uT6wbmlcG0Ay
-	MfKUC1H6lbpIoqe8GXO89bsXzjFXnqn5tVr1qqp3nbhP1kGjlZcycujlkM5RLeJJksCKDwyu9FH
-	249oleOYngsZiInl9aqkV0aoBv4AZgmxv/t3YN3D5EDQR06fk8e5Cx3LAj3Cqvu43kDSOsPc54b
-	a75EaYsXCVw=
-X-Google-Smtp-Source: AGHT+IHEm2yajuVRtJomWQGz6rScMG/LDDwCW1maURqdwDJ3+K4Cqz5255UlB6SJAnk0h470BJGQoA==
-X-Received: by 2002:a05:690c:6906:b0:6db:d572:aa7d with SMTP id 00721157ae682-6eee09e6706mr10559657b3.19.1732228107756;
-        Thu, 21 Nov 2024 14:28:27 -0800 (PST)
+        bh=EoKEXnI4uTZ8zf3Qs5aeOGboVKmKizuhzfKbKzYElaw=;
+        b=kZknElJaSIF/lM3LRXgQVZJJ5o/fgE7KlHaprZm7DJqWW+rb50oSU9t1eQ5G5rpdD+
+         ZYmAXAGL0FQowOx1NB+pQILF7YVWqYfLl8t50WaFHXsGWXx6URc0zNtFj5vS9nhafFVo
+         FV8jubyQvAly6rz7GTyIPh7ZDB11In2LqhcpqRoKvoq2JpMfdcqZyUCbm78HGAFzMPBE
+         I2tiDpZWIpMZzOEKGDSPb1wkigAeJDP3rg+U6AQ5M6+iN+OKQ0t9971CheV3IweT86N+
+         c/E02NHIO8FIjtGC6WXeXISxD54r+DwuM+X4Zc0qccm8lRaWvJMeAcPNXjn72M4IkryA
+         lw9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXUQeNWu9HvQEnWVDL6gPEJqAVBe7aQtZSGyBjxhulmf6RsDOZOwsI/wbYMHlHQjyUj0b8pC5jkgabheL+o@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpB5aqK5rUzmhGeHfPKYHU8ReYg8f1nZFMndveYJGNj08wKd25
+	9FWiySiv4tz4WkynznuAXwdaf99vgnFpU5yDHb2gwtXY8FilhbJ0YuMofDWG4ag=
+X-Gm-Gg: ASbGncvRiRfGXFfp00fxgs8Pmo2rzAfheRsBZgRsiwn4lwyg1gNEfyDqQZHEB8gZtgk
+	J3jsa9+5QLn1J87cv3cOmR5DhAtynG4EjKe04o3/n12mQ4nKEnDTf/xr9ftv0IJqTu3Y40kDaTZ
+	bZgrsjCJUG4Pwnamou1BAose7YEIMNgkiag+7bxIOR3HZdwp5djybvWLJQ682RbLDOdi2wnV1lf
+	j8prdhYo5lWRsgzOtK1I5+u74URWUL3HuIvJzygu/r8+ZUJsBo2C0nxunYIx93T5ZiWWpLeTk+u
+	kOXb5IH1+qY=
+X-Google-Smtp-Source: AGHT+IG0ZTj8DCitlmyMAoqVLydivdT8o1PTi6zzQUwvZgAuAxuAgyvDA4QDZQT7q4MMXMtULkXJsA==
+X-Received: by 2002:a05:690c:6d0d:b0:6e3:351f:d757 with SMTP id 00721157ae682-6eee08b9226mr11978137b3.24.1732228129379;
+        Thu, 21 Nov 2024 14:28:49 -0800 (PST)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee0095d56sm1639197b3.101.2024.11.21.14.28.26
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe153b6sm1681957b3.27.2024.11.21.14.28.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:28:27 -0800 (PST)
-Date: Thu, 21 Nov 2024 17:28:26 -0500
+        Thu, 21 Nov 2024 14:28:48 -0800 (PST)
+Date: Thu, 21 Nov 2024 17:28:47 -0500
 From: Josef Bacik <josef@toxicpanda.com>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
 	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
 	willy@infradead.org, shakeel.butt@linux.dev, kernel-team@meta.com
-Subject: Re: [PATCH 02/12] fuse: support large folios for retrieves
-Message-ID: <20241121222826.GC1974911@perftesting>
+Subject: Re: [PATCH 03/12] fuse: refactor fuse_fill_write_pages()
+Message-ID: <20241121222847.GD1974911@perftesting>
 References: <20241109001258.2216604-1-joannelkoong@gmail.com>
- <20241109001258.2216604-3-joannelkoong@gmail.com>
+ <20241109001258.2216604-4-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,10 +89,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109001258.2216604-3-joannelkoong@gmail.com>
+In-Reply-To: <20241109001258.2216604-4-joannelkoong@gmail.com>
 
-On Fri, Nov 08, 2024 at 04:12:48PM -0800, Joanne Koong wrote:
-> Add support for folios larger than one page size for retrieves.
+On Fri, Nov 08, 2024 at 04:12:49PM -0800, Joanne Koong wrote:
+> Refactor the logic in fuse_fill_write_pages() for copying out write
+> data. This will make the future change for supporting large folios for
+> writes easier. No functional changes.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
