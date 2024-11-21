@@ -1,294 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-35374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E769D4616
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 04:08:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431769D461E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 04:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B218D2818C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 03:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C081F2233F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 03:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE511304BA;
-	Thu, 21 Nov 2024 03:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EHE2nbGU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8275D13B58B;
+	Thu, 21 Nov 2024 03:14:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7C2AD00
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 03:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4883070817;
+	Thu, 21 Nov 2024 03:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732158527; cv=none; b=V609TuoD1y2QYZKKwJG51IXssBHsN2yHRkWHeb8hY/RnDsHQmyqNSPLy4iXzkbpn/FHwwI0TFsQiS/I3kjU/G5xSof/tSqAUyTUpm6EJiho4oWY+4WOki2ncqZYp8urwc5i+u9PLcpOxnaE0rjCqFXpcm0N3Oy7O+5vGzh6+Apk=
+	t=1732158860; cv=none; b=i5pMZpdskKcywlvleBH7LsRKLf1z7UvSE0P35Xo7gyaP8pWB2bDvZIytbmdPtduUNPE+pIDk+ezj4h3mcxybIQmEFv2KBWmeta7rS0Y4q+UJgZmUYXgp6d+wL4F6rCDwKnYG7s4DHenKrzu+Stmk5G5q+p+osbsioQozAW6OID8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732158527; c=relaxed/simple;
-	bh=ytjAm//5JBI9TR+Rk9jTN4bWK+a0J6W6wJvsSryRqG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hV6q9QYj56XE12ZXM2M7wyg6axGZ3+WSvwutLzZ2TQ7eU/Xyvi7hV07A79eTZ4JbNXqm7toYsEcRkuh1AUIWlKDGxEhDQhOvoIDlaNZQgrIQSU5x42HAIZT8HWYbUB1MHR921BzrTaLlovl1D6uCiJpDg4ADYrmDr5aloFzxvb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EHE2nbGU; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732158515; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=KCXXX5o9L2eLUDNzQHtOaw7+2ZdwxM3iR4LbK/u0Zys=;
-	b=EHE2nbGUiQA4/yCEc4x7P/DnKC1fP6tii9mkIfvE53GoEtADLvGe67KG/oNQUIp/Cm3cm4MXX0pYSQrPxNN7vzFiOl8ekIZ294orudN5HcgTLIJbTxUdiKJiogIXxVQQdSFnDd/a+tw884RCs/71YB8l8rfiBOPRABlAt/ZDIz0=
-Received: from 30.221.144.254(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WJuAsIM_1732158514 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 21 Nov 2024 11:08:35 +0800
-Message-ID: <53277184-6c03-469a-bb5e-3249460258ba@linux.alibaba.com>
-Date: Thu, 21 Nov 2024 11:08:32 +0800
+	s=arc-20240116; t=1732158860; c=relaxed/simple;
+	bh=PUuC1t5t+/n5ZB+R5Tem9vzjEzm8d5KZbCxm79ml7I8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=adylf98iHZpZ0Ob/6BuyLb3qrMGKYoAlIlgQfssEn+OU243AoOuMx5UPA1ejPgO7AsPTcfnYRaQHc1Uzi3q/l/d87rhQTr9ivJvWt0bnaHZWjQe44x5j+LxSvKx8GguxJbvPheX2JXHrpU0zAV35cmzQbeaRQtzh1YHxzk2QUZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL2pI2c029337;
+	Thu, 21 Nov 2024 03:13:34 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0n541-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 21 Nov 2024 03:13:34 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 20 Nov 2024 19:13:32 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 20 Nov 2024 19:13:30 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V3] fs/ntfs3: check if the inode is bad before creating symlink
+Date: Thu, 21 Nov 2024 11:13:29 +0800
+Message-ID: <20241121031329.354341-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241120161045.GL3387508@ZenIV>
+References: <20241120161045.GL3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
- josef@toxicpanda.com, linux-mm@kvack.org, bernd.schubert@fastmail.fm,
- kernel-team@meta.com
-References: <20241115224459.427610-1-joannelkoong@gmail.com>
- <20241115224459.427610-6-joannelkoong@gmail.com>
- <cad4a8b3-8065-4187-875f-1810263b988c@linux.alibaba.com>
- <CAJnrk1aiNZM_JhCwNX+XCdBWsqWxujLi3sUYaQEuN-qnA2gneQ@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1aiNZM_JhCwNX+XCdBWsqWxujLi3sUYaQEuN-qnA2gneQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: NAjo1vfwGLZaS1hclXBN6lHomPxM8qOx
+X-Proofpoint-GUID: NAjo1vfwGLZaS1hclXBN6lHomPxM8qOx
+X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=673ea55e cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=oXN7jNVGPntKbSpEweEA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-21_01,2024-11-20_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ mlxlogscore=771 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411210024
 
-
-
-On 11/21/24 5:53 AM, Joanne Koong wrote:
-> On Wed, Nov 20, 2024 at 1:56 AM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->> On 11/16/24 6:44 AM, Joanne Koong wrote:
->>> In the current FUSE writeback design (see commit 3be5a52b30aa
->>> ("fuse: support writable mmap")), a temp page is allocated for every
->>> dirty page to be written back, the contents of the dirty page are copied over
->>> to the temp page, and the temp page gets handed to the server to write back.
->>>
->>> This is done so that writeback may be immediately cleared on the dirty page,
->>> and this in turn is done for two reasons:
->>> a) in order to mitigate the following deadlock scenario that may arise
->>> if reclaim waits on writeback on the dirty page to complete:
->>> * single-threaded FUSE server is in the middle of handling a request
->>>   that needs a memory allocation
->>> * memory allocation triggers direct reclaim
->>> * direct reclaim waits on a folio under writeback
->>> * the FUSE server can't write back the folio since it's stuck in
->>>   direct reclaim
->>> b) in order to unblock internal (eg sync, page compaction) waits on
->>> writeback without needing the server to complete writing back to disk,
->>> which may take an indeterminate amount of time.
->>>
->>> With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
->>> the situations described above, FUSE writeback does not need to use
->>> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
->>>
->>> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
->>> and removes the temporary pages + extra copying and the internal rb
->>> tree.
->>>
->>> fio benchmarks --
->>> (using averages observed from 10 runs, throwing away outliers)
->>>
->>> Setup:
->>> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
->>>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
->>>
->>> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
->>> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
->>>
->>>         bs =  1k          4k            1M
->>> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
->>> After   341 MiB/s     2246 MiB/s     2685 MiB/s
->>> % diff        -3%          23%         45%
->>>
->>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>> ---
->>>  fs/fuse/file.c | 339 +++----------------------------------------------
->>>  1 file changed, 20 insertions(+), 319 deletions(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index 88d0946b5bc9..56289ac58596 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -1172,7 +1082,7 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
->>>       int err;
->>>
->>>       for (i = 0; i < ap->num_folios; i++)
->>> -             fuse_wait_on_folio_writeback(inode, ap->folios[i]);
->>> +             folio_wait_writeback(ap->folios[i]);
->>>
->>>       fuse_write_args_fill(ia, ff, pos, count);
->>>       ia->write.in.flags = fuse_write_flags(iocb);
->>> @@ -1622,7 +1532,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->>>                       return res;
->>>               }
->>>       }
->>> -     if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
->>> +     if (!cuse && filemap_range_has_writeback(mapping, pos, (pos + count - 1))) {
->>>               if (!write)
->>>                       inode_lock(inode);
->>>               fuse_sync_writes(inode);
->>> @@ -1825,7 +1735,7 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
->>>               fuse_sync_bucket_dec(wpa->bucket);
->>>
->>>       for (i = 0; i < ap->num_folios; i++)
->>> -             folio_put(ap->folios[i]);
->>> +             folio_end_writeback(ap->folios[i]);
->>
->> I noticed that if we folio_end_writeback() in fuse_writepage_finish()
->> (rather than fuse_writepage_free()), there's ~50% buffer write
->> bandwridth performance gain (5500MB -> 8500MB)[*]
->>
->> The fuse server is generally implemented in multi-thread style, and
->> multi (fuse server) worker threads could fetch and process FUSE_WRITE
->> requests of one fuse inode.  Then there's serious lock contention for
->> the xarray lock (of the address space) when these multi worker threads
->> call fuse_writepage_end->folio_end_writeback when they are sending
->> replies of FUSE_WRITE requests.
->>
->> The lock contention is greatly alleviated when folio_end_writeback() is
->> serialized with fi->lock.  IOWs in the current implementation
->> (folio_end_writeback() in fuse_writepage_free()), each worker thread
->> needs to compete for the xarray lock for 256 times (one fuse request can
->> contain at most 256 pages if FUSE_MAX_MAX_PAGES is 256) when completing
->> a FUSE_WRITE request.
->>
->> After moving folio_end_writeback() to fuse_writepage_finish(), each
->> worker thread needs to compete for fi->lock only once.  IOWs the locking
->> granularity is larger now.
->>
+On Wed, 20 Nov 2024 16:10:45 +0000, Al Viro wrote:
+> On Wed, Nov 20, 2024 at 11:04:43AM +0800, Lizhi Xu wrote:
+> > syzbot reported a null-ptr-deref in pick_link. [1]
+> >
+> > First, i_link and i_dir_seq are in the same union, they share the same memory
+> > address, and i_dir_seq will be updated during the execution of walk_component,
+> > which makes the value of i_link equal to i_dir_seq.
+> >
+> > Secondly, the chmod execution failed, which resulted in setting the mode value
+> > of file0's inode to REG when executing ntfs_bad_inode.
+> >
+> > Third, when creating a symbolic link using the file0 whose inode has been marked
+> > as bad, it is not determined whether its inode is bad, which ultimately leads to
+> > null-ptr-deref when performing a mount operation on the symbolic link bus because
+> > the i_link value is equal to i_dir_seq=2.
+> >
+> > Note: ("file0, bus" are defined in reproducer [2])
+> >
+> > To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
+> > whether the inode of file is already bad.
 > 
-> Interesting! Thanks for sharing. Are you able to consistently repro
-> these results and on different machines? When I run it locally on my
-> machine using the commands you shared, I'm seeing roughly the same
-> throughput:
+> I would really like to understand how the hell did that bad inode end up passed
+> to d_splice_alias()/d_instantiate()/whatever it had been.
+1. In the move_mount() process, the inode is created by ntfs_alloc_inode() and enters d_splice_alias() by ntfs_lookup(), at this time inode is good, as shown below:
+move_mount()->
+  user_path_at()->
+    filename_lookup()->
+      path_lookupat()->
+        lookup_last()->
+          walk_component()->
+            __lookup_slow()->
+              ntfs_lookup()->
+                d_splice_alias()->
+
+2. The subsequent chmod fails, causing the inode to be set to bad.
+3. During the link operation, d_instantiate() is executed in ntfs_link() to associate the bad inode with the dentry.
+4. During the mount operation, walk_component executes pick_link, triggering null-ptr-deref.
+
+Reproducer:
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
 > 
-> Current implementation (folio_end_writeback() in fuse_writepage_free()):
->   WRITE: bw=385MiB/s (404MB/s), 385MiB/s-385MiB/s (404MB/s-404MB/s),
-> io=113GiB (121GB), run=300177-300177msec
->   WRITE: bw=384MiB/s (403MB/s), 384MiB/s-384MiB/s (403MB/s-403MB/s),
-> io=113GiB (121GB), run=300178-300178msec
-> 
-> fuse_end_writeback() in fuse_writepage_finish():
->   WRITE: bw=387MiB/s (406MB/s), 387MiB/s-387MiB/s (406MB/s-406MB/s),
-> io=113GiB (122GB), run=300165-300165msec
->   WRITE: bw=381MiB/s (399MB/s), 381MiB/s-381MiB/s (399MB/s-399MB/s),
-> io=112GiB (120GB), run=300143-300143msec
-> 
-> I wonder if it's because your machine is so much faster that lock
-> contention makes a difference for you whereas on my machine there's
-> other things that slow it down before lock contention comes into play.
-
-Yeah, I agree that the lock contention matters only when the writeback
-kworker consumes 100% CPU, i.e. when the writeback kworker is the
-bottleneck.  To expose that, the passthrough_hp daemon works in
-benchmark[*] mode (I noticed that passthrough_hp can be the bottleneck
-when disabling "--bypass-rw" mode).
-
-[*]
-https://github.com/libfuse/libfuse/pull/807/commits/e83789cc6e83ca42ccc9899c4f7f8c69f31cbff9
-
-
-> 
-> I see your point about why it would make sense that having
-> folio_end_writeback() in fuse_writepage_finish() inside the scope of
-> the fi->lock could make it faster, but I also could see how having it
-> outside the lock could make it faster as well. I'm thinking about the
-> scenario where if there's 8 threads all executing
-> fuse_send_writepage() at the same time, calling folio_end_writeback()
-> outside the fi->lock would unblock other threads trying to get the
-> fi->lock and that other thread could execute while
-> folio_end_writeback() gets executed.
-> 
-> Looking at it some more, it seems like it'd be useful if there was
-> some equivalent api to folio_end_writeback() that takes in an array of
-> folios and would only need to grab the xarray lock once to clear
-> writeback on all the folios in the array.
-
-Yes it's exactly what we need.
-
-
-> 
-> When fuse supports large folios [*] this will help lock contention on
-> the xarray lock as well because there'll be less folio_end_writeback()
-> calls.
-
-Cool, it definitely helps.
-
-
-> 
-> I'm happy to move the fuse_end_writeback() call to
-> fuse_writepage_finish() considering what you're seeing. 5500 Mb ->
-> 8800 Mb is a huge perf improvement!
-
-This statistics is tested in benchmark ("--bypass-rw") mode.  When
-disabling "--bypass-rw" mode and testing fuse passthrough_hp over a ext4
-over nvme, the performance gain is ~10% (4009MB/s ->4428MB/s).
-
-
->>> @@ -2367,54 +2111,23 @@ static int fuse_writepages_fill(struct folio *folio,
->>>               data->wpa = NULL;
->>>       }
->>>
->>> -     err = -ENOMEM;
->>> -     tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
->>> -     if (!tmp_folio)
->>> -             goto out_unlock;
->>> -
->>> -     /*
->>> -      * The page must not be redirtied until the writeout is completed
->>> -      * (i.e. userspace has sent a reply to the write request).  Otherwise
->>> -      * there could be more than one temporary page instance for each real
->>> -      * page.
->>> -      *
->>> -      * This is ensured by holding the page lock in page_mkwrite() while
->>> -      * checking fuse_page_is_writeback().  We already hold the page lock
->>> -      * since clear_page_dirty_for_io() and keep it held until we add the
->>> -      * request to the fi->writepages list and increment ap->num_folios.
->>> -      * After this fuse_page_is_writeback() will indicate that the page is
->>> -      * under writeback, so we can release the page lock.
->>> -      */
->>>       if (data->wpa == NULL) {
->>>               err = -ENOMEM;
->>>               wpa = fuse_writepage_args_setup(folio, data->ff);
->>> -             if (!wpa) {
->>> -                     folio_put(tmp_folio);
->>> +             if (!wpa)
->>>                       goto out_unlock;
->>> -             }
->>>               fuse_file_get(wpa->ia.ff);
->>>               data->max_folios = 1;
->>>               ap = &wpa->ia.ap;
->>>       }
->>>       folio_start_writeback(folio);
->>
->> There's also a lock contention for the xarray lock when calling
->> folio_start_writeback().
->>
->> I also noticed a strange thing that, if we lock fi->lock and unlock
->> immediately, the write bandwidth improves by 5% (8500MB -> 9000MB).  The
-> 
-> Interesting! By lock fi->lock and unlock immediately, do you mean
-> locking it, then unlocking it, then calling folio_start_writeback() or
-> locking it, calling folio_start_writeback() and then unlocking it?
-
-Either way works, as long as we lock/unlock fi->lock in
-fuse_writepages_fill()...  The lock contention is further alleviated
-when folio_start_writeback() is inside the critical area of fi->lock.
-
-
--- 
-Thanks,
-Jingbo
+> That's the root cause - and it looks like ntfs is too free with make_bad_inode()
+> in general, which might cause other problems.
 
