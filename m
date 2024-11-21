@@ -1,54 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-35422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE709D4BB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE979D4BBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF935284257
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 11:25:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F56B28517F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 11:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64961DA10A;
-	Thu, 21 Nov 2024 11:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C151DDC37;
+	Thu, 21 Nov 2024 11:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jKPO1Z1G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4d1OUtVW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jKPO1Z1G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4d1OUtVW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60401D88DD;
-	Thu, 21 Nov 2024 11:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E5C1D958E;
+	Thu, 21 Nov 2024 11:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732188152; cv=none; b=ugc10ehbE9oaPWxT/nTGnZ9yO9g8DWiF8pKAWzI7zFgCSRKhZLpSZXw8VsMyjFMXpNRdwy8B7WCkWj4gxfvHC6jDvX2rHpuVOc5Tjkk+XQLInqn4G7CfSUNKYGTsp7CIoh/m60JFGTmxq/JgUbqCrUewvZ50LKg5h+WYt0zXJ5k=
+	t=1732188153; cv=none; b=TipDo9PAL4+XQUBvWAzemWiKPl1IOitPwp+/dBIzSHrWJAiKc2Uhe/+h0V9L2HI5cD7HAv4HPR7zpcEQcxrC8sqV5i56XM9VbGsLjwYq1/R4ZN8zI6bTryZ1P/2L7kkXZZfZ23+ADrdTjiycvW5CHOSvKp/PloBsbhWUlIGaPg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732188152; c=relaxed/simple;
-	bh=Ocn+ZrQi5V1CPYlGhsunfEvTz+Q2zP+e8CYCc7XXUCM=;
+	s=arc-20240116; t=1732188153; c=relaxed/simple;
+	bh=Yk2xoB+Mc1R2/tThdIlyn941Z8iax8f8aPn8/d1s2Y0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kNPSkLU4cd8Gzd66MwNvDvB98tJugF8FuqnErDMx2bIVAVEmom4lJ+dnYTJgutOY0wUYPNV80rWiqkeV8Fxko4vS8KddkLPpTPHPsjXXS0MAF2CjE2aZx0W9owSzUYSuSnEQo4CKc9HHF6Pa5GVzyJdUgqfJcOCrCPFfDckoqzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=QXhWv+OJyKxB0P9JKiKQpvFtb/eoeeeHEAbvCCjSP32wkQ58VziTUrYY8S32CYChuoeKLtSM/cU4k56g/QDj+Omqwrhk46J9VpJVFNMDQuXSmCIc9djmIPQLO7WTUIo9SBOOlncvOKwipKOxt+3aXGvPTmiDaFFSGekWYOMq1U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jKPO1Z1G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4d1OUtVW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jKPO1Z1G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4d1OUtVW; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A13C51F801;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BE23F21A06;
 	Thu, 21 Nov 2024 11:22:24 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732188144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyarj81CZbF/Jsa/EC6lcSupJZHvi+LDtQmZwDOCsoE=;
+	b=jKPO1Z1GidhhNrPp2pu9qj2kFjjc3dy94J+eMzruv0+R1Aa2O6kBDWxg7acRGKcRTKzISs
+	CZkFgK4/3H/D6d5XymxigwJFtLKwgs0eaYdSWJeqLtm7nCYDzeK8YaZSMSd3bJ49xiuq2x
+	TrUKYZJBWpDc7Uztgx4OWe2lbJuuLjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732188144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyarj81CZbF/Jsa/EC6lcSupJZHvi+LDtQmZwDOCsoE=;
+	b=4d1OUtVWF5W8SbiMXPDGd9W7jZwCJcKVnqisqtEMsfvZEZBqd0txWZ2e+TpS/wRlGI5jX9
+	AfahCH6T7DADdkAA==
+Authentication-Results: smtp-out1.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732188144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyarj81CZbF/Jsa/EC6lcSupJZHvi+LDtQmZwDOCsoE=;
+	b=jKPO1Z1GidhhNrPp2pu9qj2kFjjc3dy94J+eMzruv0+R1Aa2O6kBDWxg7acRGKcRTKzISs
+	CZkFgK4/3H/D6d5XymxigwJFtLKwgs0eaYdSWJeqLtm7nCYDzeK8YaZSMSd3bJ49xiuq2x
+	TrUKYZJBWpDc7Uztgx4OWe2lbJuuLjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732188144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyarj81CZbF/Jsa/EC6lcSupJZHvi+LDtQmZwDOCsoE=;
+	b=4d1OUtVWF5W8SbiMXPDGd9W7jZwCJcKVnqisqtEMsfvZEZBqd0txWZ2e+TpS/wRlGI5jX9
+	AfahCH6T7DADdkAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C59213ACC;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B118813927;
 	Thu, 21 Nov 2024 11:22:24 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id s9NLIvAXP2c/fwAAD6G6ig
+	id XE1BK/AXP2dGfwAAD6G6ig
 	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 11:22:24 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3B47BA089E; Thu, 21 Nov 2024 12:22:24 +0100 (CET)
+	id 40E83A08E1; Thu, 21 Nov 2024 12:22:24 +0100 (CET)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
 Cc: Amir Goldstein <amir73il@gmail.com>,
@@ -61,9 +102,9 @@ Cc: Amir Goldstein <amir73il@gmail.com>,
 	linux-ext4@vger.kernel.org,
 	linux-mm@kvack.org,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 14/19] mm: don't allow huge faults for files with pre content watches
-Date: Thu, 21 Nov 2024 12:22:13 +0100
-Message-Id: <20241121112218.8249-15-jack@suse.cz>
+Subject: [PATCH 15/19] fsnotify: generate pre-content permission event on page fault
+Date: Thu, 21 Nov 2024 12:22:14 +0100
+Message-Id: <20241121112218.8249-16-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20241121112218.8249-1-jack@suse.cz>
 References: <20241121112218.8249-1-jack@suse.cz>
@@ -74,116 +115,186 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
+X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Score: -4.00
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,toxicpanda.com,kernel.org,linux-foundation.org,ZenIV.linux.org.uk,vger.kernel.org,kvack.org,suse.cz];
+	R_RATELIMIT(0.00)[to_ip_from(RLdu9otajk16idfrkma9mbkf9b)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Score: -6.80
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A13C51F801
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
 From: Josef Bacik <josef@toxicpanda.com>
 
-There's nothing stopping us from supporting this, we could simply pass
-the order into the helper and emit the proper length.  However currently
-there's no tests to validate this works properly, so disable it until
-there's a desire to support this along with the appropriate tests.
+FS_PRE_ACCESS will be generated on page fault depending on the faulting
+method. This pre-content event is meant to be used by hierarchical storage
+managers that want to fill in the file content on first read access.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Export a simple helper that file systems that have their own ->fault()
+will use, and have a more complicated helper to be do fancy things in
+filemap_fault.
+
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/9035b82cff08a3801cef3d06bbf2778b2e5a4dba.1731684329.git.josef@toxicpanda.com
+Link: https://patch.msgid.link/aa56c50ce81b1fd18d7f5d71dd2dfced5eba9687.1731684329.git.josef@toxicpanda.com
 ---
- mm/memory.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ include/linux/mm.h |  1 +
+ mm/filemap.c       | 78 ++++++++++++++++++++++++++++++++++++++++++++++
+ mm/nommu.c         |  7 +++++
+ 3 files changed, 86 insertions(+)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 2366578015ad..111ba20a22e7 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -78,6 +78,7 @@
- #include <linux/ptrace.h>
- #include <linux/vmalloc.h>
- #include <linux/sched/sysctl.h>
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..e9077ab16972 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3405,6 +3405,7 @@ extern vm_fault_t filemap_fault(struct vm_fault *vmf);
+ extern vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		pgoff_t start_pgoff, pgoff_t end_pgoff);
+ extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
++extern vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf);
+ 
+ extern unsigned long stack_guard_gap;
+ /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 98f15dccff89..0648bb568259 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -47,6 +47,7 @@
+ #include <linux/splice.h>
+ #include <linux/rcupdate_wait.h>
+ #include <linux/sched/mm.h>
 +#include <linux/fsnotify.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
+ #include "internal.h"
+@@ -3287,6 +3288,52 @@ static vm_fault_t filemap_fault_recheck_pte_none(struct vm_fault *vmf)
+ 	return ret;
+ }
  
- #include <trace/events/kmem.h>
- 
-@@ -5622,8 +5623,17 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-+	struct file *file = vma->vm_file;
- 	if (vma_is_anonymous(vma))
- 		return do_huge_pmd_anonymous_page(vmf);
++/**
++ * filemap_fsnotify_fault - maybe emit a pre-content event.
++ * @vmf:	struct vm_fault containing details of the fault.
++ * @folio:	the folio we're faulting in.
++ *
++ * If we have a pre-content watch on this file we will emit an event for this
++ * range.  If we return anything the fault caller should return immediately, we
++ * will return VM_FAULT_RETRY if we had to emit an event, which will trigger the
++ * fault again and then the fault handler will run the second time through.
++ *
++ * This is meant to be called with the folio that we will be filling in to make
++ * sure the event is emitted for the correct range.
++ *
++ * Return: a bitwise-OR of %VM_FAULT_ codes, 0 if nothing happened.
++ */
++vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf)
++{
++	struct file *fpin = NULL;
++	int mask = (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_ACCESS;
++	loff_t pos = vmf->pgoff >> PAGE_SHIFT;
++	size_t count = PAGE_SIZE;
++	vm_fault_t ret;
++
 +	/*
-+	 * Currently we just emit PAGE_SIZE for our fault events, so don't allow
-+	 * a huge fault if we have a pre content watch on this file.  This would
-+	 * be trivial to support, but there would need to be tests to ensure
-+	 * this works properly and those don't exist currently.
++	 * We already did this and now we're retrying with everything locked,
++	 * don't emit the event and continue.
 +	 */
-+	if (unlikely(FMODE_FSNOTIFY_HSM(file->f_mode)))
-+		return VM_FAULT_FALLBACK;
- 	if (vma->vm_ops->huge_fault)
- 		return vma->vm_ops->huge_fault(vmf, PMD_ORDER);
- 	return VM_FAULT_FALLBACK;
-@@ -5633,6 +5643,7 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
- static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
++	if (vmf->flags & FAULT_FLAG_TRIED)
++		return 0;
++
++	/* No watches, we're done. */
++	if (likely(!FMODE_FSNOTIFY_HSM(vmf->vma->vm_file->f_mode)))
++		return 0;
++
++	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
++	if (!fpin)
++		return VM_FAULT_SIGBUS;
++
++	ret = fsnotify_file_area_perm(fpin, mask, &pos, count);
++	fput(fpin);
++	if (ret)
++		return VM_FAULT_SIGBUS;
++	return VM_FAULT_RETRY;
++}
++EXPORT_SYMBOL_GPL(filemap_fsnotify_fault);
++
+ /**
+  * filemap_fault - read in file data for page fault handling
+  * @vmf:	struct vm_fault containing details of the fault
+@@ -3390,6 +3437,37 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	 * or because readahead was otherwise unable to retrieve it.
+ 	 */
+ 	if (unlikely(!folio_test_uptodate(folio))) {
++		/*
++		 * If this is a precontent file we have can now emit an event to
++		 * try and populate the folio.
++		 */
++		if (!(vmf->flags & FAULT_FLAG_TRIED) &&
++		    unlikely(FMODE_FSNOTIFY_HSM(file->f_mode))) {
++			loff_t pos = folio_pos(folio);
++			size_t count = folio_size(folio);
++
++			/* We're NOWAIT, we have to retry. */
++			if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT) {
++				folio_unlock(folio);
++				goto out_retry;
++			}
++
++			if (mapping_locked)
++				filemap_invalidate_unlock_shared(mapping);
++			mapping_locked = false;
++
++			folio_unlock(folio);
++			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
++			if (!fpin)
++				goto out_retry;
++
++			error = fsnotify_file_area_perm(fpin, MAY_ACCESS, &pos,
++							count);
++			if (error)
++				ret = VM_FAULT_SIGBUS;
++			goto out_retry;
++		}
++
+ 		/*
+ 		 * If the invalidate lock is not held, the folio was in cache
+ 		 * and uptodate and now it is not. Strange but possible since we
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 385b0c15add8..a8789faa49ee 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1614,6 +1614,13 @@ int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
+ }
+ EXPORT_SYMBOL(remap_vmalloc_range);
+ 
++vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf)
++{
++	BUG();
++	return 0;
++}
++EXPORT_SYMBOL_GPL(filemap_fsnotify_fault);
++
+ vm_fault_t filemap_fault(struct vm_fault *vmf)
  {
- 	struct vm_area_struct *vma = vmf->vma;
-+	struct file *file = vma->vm_file;
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
- 	vm_fault_t ret;
- 
-@@ -5647,6 +5658,9 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 	}
- 
- 	if (vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
-+		/* See comment in create_huge_pmd. */
-+		if (unlikely(FMODE_FSNOTIFY_HSM(file->f_mode)))
-+			goto split;
- 		if (vma->vm_ops->huge_fault) {
- 			ret = vma->vm_ops->huge_fault(vmf, PMD_ORDER);
- 			if (!(ret & VM_FAULT_FALLBACK))
-@@ -5666,9 +5680,13 @@ static vm_fault_t create_huge_pud(struct vm_fault *vmf)
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
- 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- 	struct vm_area_struct *vma = vmf->vma;
-+	struct file *file = vma->vm_file;
- 	/* No support for anonymous transparent PUD pages yet */
- 	if (vma_is_anonymous(vma))
- 		return VM_FAULT_FALLBACK;
-+	/* See comment in create_huge_pmd. */
-+	if (unlikely(FMODE_FSNOTIFY_HSM(file->f_mode)))
-+		return VM_FAULT_FALLBACK;
- 	if (vma->vm_ops->huge_fault)
- 		return vma->vm_ops->huge_fault(vmf, PUD_ORDER);
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-@@ -5680,12 +5698,16 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
- 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- 	struct vm_area_struct *vma = vmf->vma;
-+	struct file *file = vma->vm_file;
- 	vm_fault_t ret;
- 
- 	/* No support for anonymous transparent PUD pages yet */
- 	if (vma_is_anonymous(vma))
- 		goto split;
- 	if (vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
-+		/* See comment in create_huge_pmd. */
-+		if (unlikely(FMODE_FSNOTIFY_HSM(file->f_mode)))
-+			goto split;
- 		if (vma->vm_ops->huge_fault) {
- 			ret = vma->vm_ops->huge_fault(vmf, PUD_ORDER);
- 			if (!(ret & VM_FAULT_FALLBACK))
+ 	BUG();
 -- 
 2.35.3
 
