@@ -1,87 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-35439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AD69D4CA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:15:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828DE9D4CC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:24:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5991F22462
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:15:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC071B22D57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9281D61B9;
-	Thu, 21 Nov 2024 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0020C1D2F74;
+	Thu, 21 Nov 2024 12:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQ9djYCn"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2kAd/9p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B448A1D3628
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 12:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EB71D2F55
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 12:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732191330; cv=none; b=a3tLkssbF7a1hjOIxkQKu9umZURD14y/NmQIndXlzG6YBgh7T+SVEwtJOPaXMn5jHmhvBoBMsfJAZxpElzaRvi9Po8syzE8zHbOh/EUtWPMTvaMklQR4vCsGEn/5MPjZNkR2b8UK/nl84INoMnv8nys2F+aZxyfoc3UirFEjQ2E=
+	t=1732191820; cv=none; b=TNdIpGjQXVdtQ06kk/qU1eAOpejG7m1O4TCwRjouAh8cI4I9Z7dUbTun11S0RgrFdRdcdSnK5+3nJ2l8QQeqqc5UldgosF+XHzmt56m8FJiGKq+hyV0el46l1HDcVQMHhh1CJI2YB04mFZcSY96jmN/2/B1MSGN6zRr/2yEP680=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732191330; c=relaxed/simple;
-	bh=bFtWSnyszr1WL+XBp+VI0x8AlLLXfFSA63R2QL+Z/ZU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FxO+AzVRB/jXbk89dLP4aNPG4kPTv0nfE1hPjkYR4da1beViXhb0+yf47m26PwylW8IDLsvoefeOs07caGlZ7zZOscsEaniRvyVOW+2byRJxNbo36uCWmSkppXhUAsGb6a1P9GGsT0iJgXKvDOki5zpc4xtQ09f4qrKCW0zAC+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQ9djYCn; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1732191820; c=relaxed/simple;
+	bh=G3QTb/yo1GuyOWWj7xTqamoXngMsH5W7sCHHE2I2oxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VNdt7XBFk2KljL6Tr38pAXkk2eVq6pdaAVowVXEVBKVERjODk+kGLAHN7ZE5vZ1V9/3ew/+/2DD4rzf5o3nsO7TQfB9V8iRemOXb9IHWYJtueh8cazh7E1WLvBEQ6tz796p/GAx1JyyU+HEk/V3hLUCBodMGIGBkND/EVaUsHxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2kAd/9p; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732191327;
+	s=mimecast20190719; t=1732191817;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6QJPf/QXzHw/XfmlRsdzm6NkegP6JwGL9mVJti62D7U=;
-	b=bQ9djYCnfw01nVBEAbzavIkth8FmyiQ6jVf3i6uKw05zU6KC60H0u6y7cJL0T+8CUKNlO1
-	Orb+SPi7e+8d1yy/Aq3kk/qU8OkVskzmG4VzmRi+u8V2GIQJ1Yx1sz+VCUrhw6So58gsq2
-	zfDs2YndSv6YkhXMbM6c8reXZEmMacE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Z6i+4dWSdQLkPEB+Ec8jfbVRCaAInR7wHYj3/psiBHE=;
+	b=H2kAd/9pUynFCsT6IqWieFaUyFMOtFAWJSZjFjVclVvIwS0irA7UVUmdmnQWFJzYX1HMC6
+	ZEupfQ79tJxIBg8//v4kgXF75UwrKf12YEFJTuM4Ez3zOnVS5dspAHa39VPlckkmhuTTvE
+	6/uscnSl1pskZ8secjzC0Fv2JI5va+c=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-458-_W9ujg9JO0WB210tLKryLw-1; Thu, 21 Nov 2024 07:15:24 -0500
-X-MC-Unique: _W9ujg9JO0WB210tLKryLw-1
-X-Mimecast-MFC-AGG-ID: _W9ujg9JO0WB210tLKryLw
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-382428c257eso436612f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 04:15:24 -0800 (PST)
+ us-mta-96-_fGRFSZgPbyZjrfVaZuFwA-1; Thu, 21 Nov 2024 07:23:36 -0500
+X-MC-Unique: _fGRFSZgPbyZjrfVaZuFwA-1
+X-Mimecast-MFC-AGG-ID: _fGRFSZgPbyZjrfVaZuFwA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3822ec50b64so458617f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 04:23:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732191323; x=1732796123;
+        d=1e100.net; s=20230601; t=1732191815; x=1732796615;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
+         :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=6QJPf/QXzHw/XfmlRsdzm6NkegP6JwGL9mVJti62D7U=;
-        b=f8YsZjgX4FMJgKqv+NUaYTrDxzAyAGBUsc2dbUo+URJnJm8TFGcm42WksOIJ1ZJKqb
-         fUddQcuxXbrokQSeiGL/LDaVxNgF5aszyqBoh79jpnSnUyPWz15yNj0VBd9m/9CSbmmv
-         ZjqRPVq9YvMlBx0s/MHUsR9/ddEOWULDG1b3c00P9oDJnqZ/gJGDVvlpaoVRWvKGOi7W
-         20Uf/rwicMFEf8CeLOChvPaomc7Udc8i749NGHGE22KWJWt4tGzYNTU3bJNrvuj6qlUd
-         1JfmBxk+pcCnIkWcZE/7img5uXRaFD8hds2/jvhGTjB2oCwt7+kTvCMlWgm1siMtfpgY
-         PV6w==
-X-Gm-Message-State: AOJu0YzyTtUqo7JAg5MSSgTUJrFW7ztghyJ53RQgtD5k3ucxnQvclsdZ
-	LJ9fWoStLGU5yhrWlaQn7zHINXIdwgB7FjZwxcARh6XIZ7+HfWDDLsS/xu3O8F6nhjCdk3IwOaq
-	/TxTePhbejLvViqRWQHWoWETIChu7Bk8dxpv/b0rd1CWqliliJxTOWnmqNHL8VRw=
-X-Gm-Gg: ASbGncvnXzCUFfuVn0It33iYfNo13FhCV4koST2p0LVS8u1jHpkAmJIkDxgZVK0Lbti
-	cPsAnN5RBLn9/Ov63rhPr08gPpH9jLwiVN/jpsHFd9/tUUrgHjjgGbuRxCkvMlFkVqF8VtwKKMp
-	QXhkwwm/5bXy0KCVNfHSFenYwQc/K7yWUpr2PAVd8CmH2tg2y8H5QWIDjNi0K16wr0e5ofdIOqO
-	4JnPnnBZZewJrYJeP3I7aEcUQ3Pn+iNR6Idhtcz2WS39S+PvALjJoM+ce1hrrAL0d3JsHwN+Gvg
-	zZwhK6124ofs5tyZnDZ2gmu9MZM0jebuMCZP5hjgxg8UZxUgme9Kgc2irDafWXeC5SEIaZ+wT+I
-	=
-X-Received: by 2002:a5d:6dae:0:b0:382:5010:c8c0 with SMTP id ffacd0b85a97d-38254b1629fmr4738668f8f.39.1732191323111;
-        Thu, 21 Nov 2024 04:15:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGf+JeO8PlWSGqxi8WzLLx0/13BvnWEOSX9j/uGWQ2jCJhjWZQ5v7kj7e8JRuJ55NvMjP3HrQ==
-X-Received: by 2002:a5d:6dae:0:b0:382:5010:c8c0 with SMTP id ffacd0b85a97d-38254b1629fmr4738643f8f.39.1732191322698;
-        Thu, 21 Nov 2024 04:15:22 -0800 (PST)
+        bh=Z6i+4dWSdQLkPEB+Ec8jfbVRCaAInR7wHYj3/psiBHE=;
+        b=LhRAP87Njlroi0ngYD82M3XeSSKEG8ghBoMoKnx0+xBW4+AkyFLyqp5B1i5eA1TJbw
+         F0l/TU3Wxn+RV5sPW2nXg0N18SNiVV0JY8BvTrsCSy/c7jaav4fvBlybQ2hZfzHMxRVJ
+         Hcs6S5dERP8OEH3YfNcYpjn0tl/HJihf+n74skvk+QjsxbvPNim3WzNgk3WMIQOqk8Vg
+         xdEnciSoioyAEjKnha/VM0BGOvdyUVC+lLtwTcvwzeyIzYAniq3CJYTU1n3cJXJfHc9Z
+         Isvk5oGijqFOjh8mnQaH+yFemjKPwEs/PRWOrjxi7Jbu1LIbTUnEiXVda+rGnvbPpvDX
+         0Ubg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSOzRLYk8xqxFlkS9TPhjjOeDD8lT/fEzkeH8d717pm6RAGxPxYJHTVwvOpIBkq/46Hzc+v/7Dy9xxRPb4@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywclo06czg0rvFdsZrGmgcPq17Ctylz8j3c0tesNG1tJU4jkYRm
+	kk0IyhiP9kuNEL6LUTvs9Ta/2VwIk5fAI1hymwLwHf/1t+BUTtexifqGKS16yTRfo9MG2C6DoBb
+	lXvOPpzg9V5DMuUnSNKYQsEVVqCMUp0URNELYFOzni8CXTQGzQygm/5nF1dE2fV8=
+X-Received: by 2002:a5d:59af:0:b0:382:516e:271b with SMTP id ffacd0b85a97d-38254b26416mr4135022f8f.58.1732191814649;
+        Thu, 21 Nov 2024 04:23:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHiEJoGXX0H9+YxrkL3w67kPrXj5+nk34QWe8K0VhlUYrcZUZM5ijH4Fehc62MFsG+2wKg9eA==
+X-Received: by 2002:a5d:59af:0:b0:382:516e:271b with SMTP id ffacd0b85a97d-38254b26416mr4134959f8f.58.1732191813180;
+        Thu, 21 Nov 2024 04:23:33 -0800 (PST)
 Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493ee59sm4842152f8f.103.2024.11.21.04.15.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493ea20sm4910187f8f.93.2024.11.21.04.23.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 04:15:22 -0800 (PST)
-Message-ID: <fbb59ba8-7d8c-4d64-ab46-d4950c073018@redhat.com>
-Date: Thu, 21 Nov 2024 13:15:21 +0100
+        Thu, 21 Nov 2024 04:23:32 -0800 (PST)
+Message-ID: <954bfd5d-49ee-4754-90a6-12b44d8350d5@redhat.com>
+Date: Thu, 21 Nov 2024 13:23:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,21 +84,29 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [ISSUE] split_folio() and dirty IOMAP folios
+Subject: Re: [PATCH v4 1/2] filemap: Pass address_space mapping to
+ ->free_folio()
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Mike Marshall <hubcap@omnibond.com>,
+ Martin Brandenburg <martin@omnibond.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: James Gowans <jgowans@amazon.com>, Mike Day <michael.day@amd.com>,
+ linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20241120-guestmem-library-v4-0-0c597f733909@quicinc.com>
+ <20241120-guestmem-library-v4-1-0c597f733909@quicinc.com>
 From: David Hildenbrand <david@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- kvm@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
- Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
- <djwong@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Thomas Huth <thuth@redhat.com>
-References: <4febc035-a4ff-4afe-a9a0-d127826852a9@redhat.com>
- <ZyzmUW7rKrkIbQ0X@casper.infradead.org>
- <ada851da-70c2-424e-b396-6153cecf7179@redhat.com>
- <Zy0g8DdnuZxQly3b@casper.infradead.org>
- <6099e202-ef0a-4d21-958c-2c42db43a5bb@redhat.com>
- <d3600a33-a481-4c4c-bda6-a446f1c965c6@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -150,122 +153,181 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <d3600a33-a481-4c4c-bda6-a446f1c965c6@redhat.com>
+In-Reply-To: <20241120-guestmem-library-v4-1-0c597f733909@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11.11.24 16:19, David Hildenbrand wrote:
-> On 08.11.24 10:11, David Hildenbrand wrote:
->> On 07.11.24 21:20, Matthew Wilcox wrote:
->>> On Thu, Nov 07, 2024 at 05:34:40PM +0100, David Hildenbrand wrote:
->>>> On 07.11.24 17:09, Matthew Wilcox wrote:
->>>>> On Thu, Nov 07, 2024 at 04:07:08PM +0100, David Hildenbrand wrote:
->>>>>> I'm debugging an interesting problem: split_folio() will fail on dirty
->>>>>> folios on XFS, and I am not sure who will trigger the writeback in a timely
->>>>>> manner so code relying on the split to work at some point (in sane setups
->>>>>> where page pinning is not applicable) can make progress.
->>>>>
->>>>> You could call something like filemap_write_and_wait_range()?
->>>>
->>>> Thanks, have to look into some details of that.
->>>>
->>>> Looks like the folio_clear_dirty_for_io() is buried in
->>>> folio_prepare_writeback(), so that part is taken care of.
->>>>
->>>> Guess I have to fo from folio to "mapping,lstart,lend" such that
->>>> __filemap_fdatawrite_range() would look up the folio again. Sounds doable.
->>>>
->>>> (I assume I have to drop the folio lock+reference before calling that)
->>>
->>> I was thinking you'd do it higher in the callchain than
->>> gmap_make_secure().  Presumably userspace says "I want to make this
->>> 256MB range secure" and we can start by writing back that entire
->>> 256MB chunk of address space.
->>>
->>> That doesn't prevent anybody from dirtying it in-between, of course,
->>> so you can still get -EBUSY and have to loop round again.
->>
->> I'm afraid that won't really work.
->>
->> On the one hand, we might be allocating these pages (+disk blocks)
->> during the unpack operation -- where we essentially trigger page faults
->> first using gmap_fault() -- so the pages might not even exist before the
->> gmap_make_secure() during unpack. One work around would be to
->> preallocate+writeback from user space, but it doesn't sound quite right.
->>
->> But the bigger problem I see is that the initial "unpack" operation is
->> not the only case where we trigger this conversion to "secure" state.
->> Once the VM is running, we can see calls on arbitrary guest memory even
->> during page faults, when gmap_make_secure() is called via
->> gmap_convert_to_secure().
->>
->>
->> I'm still not sure why we see essentially no progress being made, even
->> though we temporarily drop the PTL, mmap lock, folio lock, folio ref ...
->> maybe related to us triggering a write fault that somehow ends up
->> setting the folio dirty :/ Or because writeback is simply too slow /
->> backs off.
->>
->> I'll play with handling -EBUSY from split_folio() differently: if the
->> folio is under writeback, wait on that. If the folio is dirty, trigger
->> writeback. And I'll look into whether we really need a writable PTE, I
->> suspect not, because we are not actually "modifying" page content.
+On 20.11.24 19:12, Elliot Berman wrote:
+> When guest_memfd becomes a library, a callback will need to be made to
+> the owner (KVM SEV) to update the RMP entry for the page back to shared
+> state. This is currently being done as part of .free_folio() operation,
+> but this callback shouldn't assume that folio->mapping is set/valid.
 > 
-> The following hack makes it fly:
+> The mapping is well-known to callers of .free_folio(), so pass that
+> mapping so the callback can access the mapping's private data.
 > 
->           case -E2BIG:
->                   folio_lock(folio);
->                   rc = split_folio(folio);
-> +               if (rc == -EBUSY) {
-> +                       if (folio_test_dirty(folio) && !folio_test_anon(folio) &&
-> +                           folio->mapping) {
-> +                               struct address_space *mapping = folio->mapping;
-> +                               loff_t lstart = folio_pos(folio);
-> +                               loff_t lend = lstart + folio_size(folio);
-> +
-> +                               folio_unlock(folio);
-> +                               /* Mapping can go away ... */
-> +                               filemap_write_and_wait_range(mapping, lstart, lend);
-> +                       } else {
-> +                               folio_unlock(folio);
-> +                       }
-> +                       folio_wait_writeback(folio);
-> +                       folio_lock(folio);
-> +                       split_folio(folio);
-> +                       folio_unlock(folio);
-> +                       folio_put(folio);
-> +                       return -EAGAIN;
-> +               }
->                   folio_unlock(folio);
->                   folio_put(folio);
+> Link: https://lore.kernel.org/all/15f665b4-2d33-41ca-ac50-fafe24ade32f@redhat.com/
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>   Documentation/filesystems/locking.rst |  2 +-
+>   fs/nfs/dir.c                          | 11 ++++++-----
+>   fs/orangefs/inode.c                   |  3 ++-
+>   include/linux/fs.h                    |  2 +-
+>   mm/filemap.c                          |  9 +++++----
+>   mm/secretmem.c                        |  3 ++-
+>   mm/vmscan.c                           |  4 ++--
+>   virt/kvm/guest_memfd.c                |  3 ++-
+>   8 files changed, 21 insertions(+), 16 deletions(-)
 > 
-> 
-> I think the reason why we don't make any progress on s390x is that the writeback will
-> mark the folio clean and turn the folio read-only in the page tables as well. So when we
-> lookup the folio again in the page table, we see that the PTE is not writable and
-> trigger a write fault ...
-> 
-> ... the write fault will mark the folio dirty again, so the split will never succeed.
-> 
-> In above diff, we really must try the split_folio() a second time after waiting, otherwise we
-> run into the same endless loop.
-> 
-> 
-> I'm still not 100% sure if we need a writable PTE; after all we are not modifying page content.
-> But that's just a side effect of not being able to wait for the split_folio() to make progress
-> in the writeback case so we can retry the split again.
+> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+> index f5e3676db954b5bce4c23a0bf723a79d66181fcd..f1a20ad5edbee70c1a3c8d8a9bfc0f008a68985b 100644
+> --- a/Documentation/filesystems/locking.rst
+> +++ b/Documentation/filesystems/locking.rst
+> @@ -258,7 +258,7 @@ prototypes::
+>   	sector_t (*bmap)(struct address_space *, sector_t);
+>   	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+>   	bool (*release_folio)(struct folio *, gfp_t);
+> -	void (*free_folio)(struct folio *);
+> +	void (*free_folio)(struct address_space *, struct folio *);
+>   	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+>   	int (*migrate_folio)(struct address_space *, struct folio *dst,
+>   			struct folio *src, enum migrate_mode);
+> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+> index 492cffd9d3d845723b5f3d0eea3874b1f1773fe1..54e7069013ef2a63db24491fa65059e5ad68057a 100644
+> --- a/fs/nfs/dir.c
+> +++ b/fs/nfs/dir.c
+> @@ -55,7 +55,7 @@ static int nfs_closedir(struct inode *, struct file *);
+>   static int nfs_readdir(struct file *, struct dir_context *);
+>   static int nfs_fsync_dir(struct file *, loff_t, loff_t, int);
+>   static loff_t nfs_llseek_dir(struct file *, loff_t, int);
+> -static void nfs_readdir_clear_array(struct folio *);
+> +static void nfs_readdir_clear_array(struct address_space *, struct folio *);
+>   static int nfs_do_create(struct inode *dir, struct dentry *dentry,
+>   			 umode_t mode, int open_flags);
+>   
+> @@ -218,7 +218,8 @@ static void nfs_readdir_folio_init_array(struct folio *folio, u64 last_cookie,
+>   /*
+>    * we are freeing strings created by nfs_add_to_readdir_array()
+>    */
+> -static void nfs_readdir_clear_array(struct folio *folio)
+> +static void nfs_readdir_clear_array(struct address_space *mapping,
+> +				    struct folio *folio)
+>   {
+>   	struct nfs_cache_array *array;
+>   	unsigned int i;
+> @@ -233,7 +234,7 @@ static void nfs_readdir_clear_array(struct folio *folio)
+>   static void nfs_readdir_folio_reinit_array(struct folio *folio, u64 last_cookie,
+>   					   u64 change_attr)
+>   {
+> -	nfs_readdir_clear_array(folio);
+> +	nfs_readdir_clear_array(folio->mapping, folio);
+>   	nfs_readdir_folio_init_array(folio, last_cookie, change_attr);
+>   }
+>   
+> @@ -249,7 +250,7 @@ nfs_readdir_folio_array_alloc(u64 last_cookie, gfp_t gfp_flags)
+>   static void nfs_readdir_folio_array_free(struct folio *folio)
+>   {
+>   	if (folio) {
+> -		nfs_readdir_clear_array(folio);
+> +		nfs_readdir_clear_array(folio->mapping, folio);
+>   		folio_put(folio);
+>   	}
+>   }
+> @@ -391,7 +392,7 @@ static void nfs_readdir_folio_init_and_validate(struct folio *folio, u64 cookie,
+>   	if (folio_test_uptodate(folio)) {
+>   		if (nfs_readdir_folio_validate(folio, cookie, change_attr))
+>   			return;
+> -		nfs_readdir_clear_array(folio);
+> +		nfs_readdir_clear_array(folio->mapping, folio);
+>   	}
+>   	nfs_readdir_folio_init_array(folio, cookie, change_attr);
+>   	folio_mark_uptodate(folio);
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index aae6d2b8767df04714647db5fe1e5ce54c092fce..2d554102ba9ac83acd2b637d4568090717e87f94 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -470,7 +470,8 @@ static bool orangefs_release_folio(struct folio *folio, gfp_t foo)
+>   	return !folio_test_private(folio);
+>   }
+>   
+> -static void orangefs_free_folio(struct folio *folio)
+> +static void orangefs_free_folio(struct address_space *mapping,
+> +				struct folio *folio)
+>   {
+>   	kfree(folio_detach_private(folio));
+>   }
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e3c603d01337650d562405500013f5c4cfed8eb6..6e5b5cc99750a685b217cb8273c38e7f6bf5ae86 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -417,7 +417,7 @@ struct address_space_operations {
+>   	sector_t (*bmap)(struct address_space *, sector_t);
+>   	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
+>   	bool (*release_folio)(struct folio *, gfp_t);
+> -	void (*free_folio)(struct folio *folio);
+> +	void (*free_folio)(struct address_space *, struct folio *folio);
+>   	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+>   	/*
+>   	 * migrate the contents of a folio to the specified target. If
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 36d22968be9a1e10da42927dd627d3f22c3a747b..2c8d92dd9d5dd433acbf1b87156eb2e68337332d 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -235,12 +235,12 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
+>   
+>   void filemap_free_folio(struct address_space *mapping, struct folio *folio)
+>   {
+> -	void (*free_folio)(struct folio *);
+> +	void (*free_folio)(struct address_space *, struct folio *);
+>   	int refs = 1;
+>   
+>   	free_folio = mapping->a_ops->free_folio;
+>   	if (free_folio)
+> -		free_folio(folio);
+> +		free_folio(mapping, folio);
+>   
+>   	if (folio_test_large(folio))
+>   		refs = folio_nr_pages(folio);
+> @@ -814,7 +814,8 @@ EXPORT_SYMBOL(file_write_and_wait_range);
+>   void replace_page_cache_folio(struct folio *old, struct folio *new)
+>   {
+>   	struct address_space *mapping = old->mapping;
+> -	void (*free_folio)(struct folio *) = mapping->a_ops->free_folio;
+> +	void (*free_folio)(struct address_space *, struct folio *) =
+> +		mapping->a_ops->free_folio;
+>   	pgoff_t offset = old->index;
+>   	XA_STATE(xas, &mapping->i_pages, offset);
+>   
+> @@ -843,7 +844,7 @@ void replace_page_cache_folio(struct folio *old, struct folio *new)
+>   		__lruvec_stat_add_folio(new, NR_SHMEM);
+>   	xas_unlock_irq(&xas);
+>   	if (free_folio)
+> -		free_folio(old);
+> +		free_folio(mapping, old);
+>   	folio_put(old);
+>   }
+>   EXPORT_SYMBOL_GPL(replace_page_cache_folio);
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 3afb5ad701e14ad87b6e5173b2974f1309399b8e..8643d073b8f3554a18d419353fa604864de224c1 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -152,7 +152,8 @@ static int secretmem_migrate_folio(struct address_space *mapping,
+>   	return -EBUSY;
+>   }
+>   
+> -static void secretmem_free_folio(struct folio *folio)
+> +static void secretmem_free_folio(struct address_space *mapping,
+> +				 struct folio *folio)
 
-After discussing this with Darrick and Willy yesterday, I think the 
-reason we need a writable PTE is because we *might* modify page content:
+In the mm world, we're nowadays indenting the second parameter line with 
+two tabs. Makes it easier to rename the function without having to 
+adjust many lines, and requires less lines in general.
 
-"Requests the Ultravisor to make a page accessible to a guest. If it's 
-brought in the first time, it will be cleared. If it has been exported 
-before, it will be decrypted and integrity checked."
+Not sure about rules for FSes (personally, I just do it everywhere like 
+this now :) ).
 
-So we'll be effectively modifying the page content we will read when the 
-(now secure) page is in the unprotected/exported state.
-
-That makes things more complicated, unfortunately :)
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
