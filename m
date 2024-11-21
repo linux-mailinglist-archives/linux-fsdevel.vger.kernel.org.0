@@ -1,161 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-35401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A939D4A2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 10:45:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360E89D4A33
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 10:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E65280D7F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48341F22516
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CD41CEAAF;
-	Thu, 21 Nov 2024 09:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1BF1AAE37;
+	Thu, 21 Nov 2024 09:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvQbRRj4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYMNF25s"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130331CB528;
-	Thu, 21 Nov 2024 09:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0512623099D;
+	Thu, 21 Nov 2024 09:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732182328; cv=none; b=DjNR03pSLU9JNToNFxdgKMp0+7KrD/BcAUry/WsC8u+P/Oy5dGoraoV38AUafJjgBd12C+b0D1qnsuge7L6TaXVmh5GXdr5iypUaed2BoMQSUkAFhJDuNytXqpA18tS6M5FQ4iEzIKsBMAU/VYHsSKuaX6PnEtLuzR+BM6XXxQk=
+	t=1732182456; cv=none; b=en+OJLw7qU7nhvhMblSBrBqPL7oXmwTId8YLa91dxPReQyyDsl6gsISVMxhKKNky3LK61bItUuLUCDwC8YkCCpslaExcQHIf4LembraokIDv3WjatJLPVGmHl/4juBSBcVR9yUD4FBYXxPXqgfT92q+jIK1ez0dB29IDktNJyfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732182328; c=relaxed/simple;
-	bh=nR6Fy8BGli1AlLmlleeK5DC+YwdhxCJdaekFYFy9zek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZriyM8DirJkrN2CCKITsr4zpsdauDthvsbpFvwz5PUqzgOGZ6cdVxt1GtYQwRt6uX5dzC4sCDIKa1+tOJx2XEGxvKBjeKwqfqCHIaVOS9/NB4s7Z89knGrIcK4Xk3mx7SooMtHUR5ShKPKIeF3xReIrJFWo2FxLa56S7uUK7CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvQbRRj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE788C4CECC;
-	Thu, 21 Nov 2024 09:45:23 +0000 (UTC)
+	s=arc-20240116; t=1732182456; c=relaxed/simple;
+	bh=PbLurLVA/+bf9CYkiO8ePmZYryCDHBh3Dv96wVaozQk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sMwc+C54Sx1y0q93sODJWbZSvKxtZFFnZLmKRNG1Y5wZWbTxBGKEBVg5E+FfnGXe5MH5bwK7B6atgloItl5w8RRmrfsZ6MinSB0iWsB88iz5yrYNC3ShqjECvQ0scb+T6fVBQh1CrLmyqLM9zqy0AXVb+WIQQ6dcBGL7KQF4OyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYMNF25s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070D8C4CECE;
+	Thu, 21 Nov 2024 09:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732182326;
-	bh=nR6Fy8BGli1AlLmlleeK5DC+YwdhxCJdaekFYFy9zek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JvQbRRj4sm/HAswLm+uEPJpFCHenM3QhEJpdW/zRcI2UtBZ7xvMagK560XlqTAZs6
-	 dwBJuxyD3zv0hZfM5Gfv1/rDiqxZjiIwzPe9upYWy5q3puSJlkr+zVXtY0HTQ03HL/
-	 vO9kHutmP/K0tAjySseSOeJuW9lkoKW2heaaBct7nGk/F9LGX0g0Js6vc3vNmlu+BB
-	 oPW8edpmXZUElFXTLG4qI6feF+rU5Ma9h3Ls+6tGVGS62b0HzNFZCuIS/X3f9bzo4P
-	 N0NW2nNRz4DAq3gguneCMkCe0sqmNB01G8CDSBezQX9CUDqlHmY2h0wtXBtiCIYtCT
-	 PhdRicjOZ55ng==
-Date: Thu, 21 Nov 2024 10:45:20 +0100
+	s=k20201202; t=1732182455;
+	bh=PbLurLVA/+bf9CYkiO8ePmZYryCDHBh3Dv96wVaozQk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FYMNF25sMECw9192l5xrhE5w/aLu6TgiUIVJxe2QIFuSejiZ73Gcy/fLov55cVBS+
+	 YSEb44dSsHlTzQDSmy12P4btUKNkSSFB4XSwQ4iQKf0t8Js7mOdczmIfSDpyc2j1vr
+	 nN3uIcUxY7hqolHXaXLcvdJEhydIb7c4mFzF7Rvg+qCrcC4il+oWVI+d5Gi2gM+M4G
+	 E8RrmaGBCmafSLKvWuwHmZd2oYGxNuR79HPz22orWQI6j7oJRU0JJWZW8Ed35V6cm4
+	 nVIDnozmPQdlLM4inraRcf07AE2S37tVPn68HINPKji0z0HsAPKsde1Y/pbpdI2mDZ
+	 42SVs8X8RsT5w==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, 
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com, torvalds@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v8 02/19] fsnotify: opt-in for permission events at file
- open time
-Message-ID: <20241121-boxring-abhandeln-c2095863da2d@brauner>
-References: <cover.1731684329.git.josef@toxicpanda.com>
- <5ea5f8e283d1edb55aa79c35187bfe344056af14.1731684329.git.josef@toxicpanda.com>
- <20241120155309.lecjqqhohgcgyrkf@quack3>
+To: linux-fsdevel@vger.kernel.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] fiemap: use kernel-doc includes in fiemap docbook
+Date: Thu, 21 Nov 2024 10:47:25 +0100
+Message-ID: <20241121-abblitzen-einfordern-2f3ec7a87d41@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241121011352.201907-1-rdunlap@infradead.org>
+References: <20241121011352.201907-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241120155309.lecjqqhohgcgyrkf@quack3>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1226; i=brauner@kernel.org; h=from:subject:message-id; bh=PbLurLVA/+bf9CYkiO8ePmZYryCDHBh3Dv96wVaozQk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbM66/G/J44/adlp/DpoqFF0RpnlheF/5jkoln1MPul wpO/xb7dpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkxlOGn4ysJrrXnljufm1p c5Rb+nt89vlPDMsqFNpmsVYeqNntVsnwT6+k+MTT6msqajJP+CqFOmUYzF35T7xaOIk5mn/lhPz FnAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 04:53:09PM +0100, Jan Kara wrote:
-> On Fri 15-11-24 10:30:15, Josef Bacik wrote:
-> > From: Amir Goldstein <amir73il@gmail.com>
-> > 
-> > Legacy inotify/fanotify listeners can add watches for events on inode,
-> > parent or mount and expect to get events (e.g. FS_MODIFY) on files that
-> > were already open at the time of setting up the watches.
-> > 
-> > fanotify permission events are typically used by Anti-malware sofware,
-> > that is watching the entire mount and it is not common to have more that
-> > one Anti-malware engine installed on a system.
-> > 
-> > To reduce the overhead of the fsnotify_file_perm() hooks on every file
-> > access, relax the semantics of the legacy FAN_ACCESS_PERM event to generate
-> > events only if there were *any* permission event listeners on the
-> > filesystem at the time that the file was opened.
-> > 
-> > The new semantic is implemented by extending the FMODE_NONOTIFY bit into
-> > two FMODE_NONOTIFY_* bits, that are used to store a mode for which of the
-> > events types to report.
-> > 
-> > This is going to apply to the new fanotify pre-content events in order
-> > to reduce the cost of the new pre-content event vfs hooks.
-> > 
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Link: https://lore.kernel.org/linux-fsdevel/CAHk-=wj8L=mtcRTi=NECHMGfZQgXOp_uix1YVh04fEmrKaMnXA@mail.gmail.com/
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On Wed, 20 Nov 2024 17:13:52 -0800, Randy Dunlap wrote:
+> Add some kernel-doc notation to structs in fiemap header files
+> then pull that into Documentation/filesystems/fiemap.rst
+> instead of duplicating the header file structs in fiemap.rst.
+> This helps to future-proof fiemap.rst against struct changes.
 > 
-> FWIW I've ended up somewhat massaging this patch (see below).
+> Add missing flags documentation from header files into fiemap.rst
+> for FIEMAP_FLAG_CACHE and FIEMAP_EXTENT_SHARED.
 > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 23bd058576b1..8e5c783013d2 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -173,13 +173,14 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
-> >  
-> >  #define	FMODE_NOREUSE		((__force fmode_t)(1 << 23))
-> >  
-> > -/* FMODE_* bit 24 */
-> > -
-> >  /* File is embedded in backing_file object */
-> > -#define FMODE_BACKING		((__force fmode_t)(1 << 25))
-> > +#define FMODE_BACKING		((__force fmode_t)(1 << 24))
-> >  
-> > -/* File was opened by fanotify and shouldn't generate fanotify events */
-> > -#define FMODE_NONOTIFY		((__force fmode_t)(1 << 26))
-> > +/* File shouldn't generate fanotify pre-content events */
-> > +#define FMODE_NONOTIFY_HSM	((__force fmode_t)(1 << 25))
-> > +
-> > +/* File shouldn't generate fanotify permission events */
-> > +#define FMODE_NONOTIFY_PERM	((__force fmode_t)(1 << 26))
-> 
-> Firstly, I've kept FMODE_NONOTIFY to stay a single bit instead of two bit
-> constant. I've seen too many bugs caused by people expecting the constant
-> has a single bit set when it actually had more in my life. So I've ended up
-> with:
-> 
-> +/*
-> + * Together with FMODE_NONOTIFY_PERM defines which fsnotify events shouldn't be
-> + * generated (see below)
-> + */
-> +#define FMODE_NONOTIFY         ((__force fmode_t)(1 << 25))
-> + 
-> +/*
-> + * Together with FMODE_NONOTIFY defines which fsnotify events shouldn't be
-> + * generated (see below)
-> + */
-> +#define FMODE_NONOTIFY_PERM    ((__force fmode_t)(1 << 26))
-> 
-> and
-> 
-> +/*
-> + * The two FMODE_NONOTIFY* define which fsnotify events should not be generated
-> + * for a file. These are the possible values of (f->f_mode &
-> + * FMODE_FSNOTIFY_MASK) and their meaning:
-> + *
-> + * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
-> + * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) events.
-> + * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content events.
-> + */
-> +#define FMODE_FSNOTIFY_MASK \
-> +       (FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
+> [...]
 
-This is fine by me. But I want to preemptively caution to please not
-spread the disease of further defines based on such multi-bit defines
-like fanotify does. I'm specifically worried about stuff like:
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-#define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
-                                  FS_OPEN_EXEC_PERM)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-#define FS_EVENTS_POSS_ON_CHILD   (ALL_FSNOTIFY_PERM_EVENTS | \
-                                   FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
-                                   FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | \
-                                   FS_OPEN | FS_OPEN_EXEC)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] fiemap: use kernel-doc includes in fiemap docbook
+      https://git.kernel.org/vfs/vfs/c/07537da4e219
 
