@@ -1,281 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-35396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4AB9D494D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:55:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2792F9D4E92
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 15:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6EC284383
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 08:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7381DB22D18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 14:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17E1CEAAF;
-	Thu, 21 Nov 2024 08:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C9B1D88DD;
+	Thu, 21 Nov 2024 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uJ9rSuTw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKV06pKx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uJ9rSuTw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tKV06pKx"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MgGIjaE8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040B1CD1F3;
-	Thu, 21 Nov 2024 08:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7F41369B4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732179270; cv=none; b=DbobWVI8UTy73FAYC8Mtm6KkaVWLNEUzrtlAPZDovVmccsTCLmRggbFTALmYEaM6Tk84rFB/kZpP4H2eCxLUgs12P3AGj4OXJcnHTVl7T9416gxaBWm0Al0oS22TaEH05fp1E755YdbKspvhI9l/3i+b/BTuMRupEiMsovs/B4k=
+	t=1732198829; cv=none; b=OK1B3diCnfbhvyqEGH0+eaIiH0Z30wV9coxEKI441LrNN94lfD8t2H5Gvq0NV8k2l6wXJX1cLoRsKfbfkoW/knWF85ZvR6rNG2BnNqmqgquRdn4MUkkCVNlgkgeVHOziRC4hUdig1jE5pKNpfSoHfPnEoSScT6xG+rFQfuGKy6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732179270; c=relaxed/simple;
-	bh=TwzpGNcP8sBopTqZejLvIXwRObHW9PYvsMVU2F3rJu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2Cx/584YYMFTjsXLzYgzZ+Cw+aGLXSTBA/xNTLpIBICC4yZQgs+3X8Vc8uHtZXTcUV7BkG1CbM2RTpHcZ+JEr/qyQ2X4ZpmBMNlNWaz9hTjJIREhg3WWxdmdR5GqbBsqk70lQPditoojWvY/cvJQEIOBbfl2xZK3UJGjs5FV4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uJ9rSuTw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKV06pKx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uJ9rSuTw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tKV06pKx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 78A88211BB;
-	Thu, 21 Nov 2024 08:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732179265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
-	b=uJ9rSuTwHq42Q9eV0Pm3KewVmcTElVkYABQedvIts4bOr9jE3bLJrPbvz8D5Rd72op769r
-	D7hlLV2vCSExFT7xyg96dZnT7ugJoY+s2sae2a3czx8qSallOh1s+L6JdqkLWv5J/7yngC
-	pJ4kj2KZPPBGrpJrFfgkxPnSCLc0t24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732179265;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
-	b=tKV06pKxDviRzPYcFgiT/BAb1ygh8vMnho6u2rZfPiQVKd8sSUv3Vw29/qRKVTtrUHuJJq
-	kc+z72YKxb8ircAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uJ9rSuTw;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tKV06pKx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732179265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
-	b=uJ9rSuTwHq42Q9eV0Pm3KewVmcTElVkYABQedvIts4bOr9jE3bLJrPbvz8D5Rd72op769r
-	D7hlLV2vCSExFT7xyg96dZnT7ugJoY+s2sae2a3czx8qSallOh1s+L6JdqkLWv5J/7yngC
-	pJ4kj2KZPPBGrpJrFfgkxPnSCLc0t24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732179265;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9QDYFVgK18ikztR1aFCMrX/3aAhs0bWXjPhxnlRZtE=;
-	b=tKV06pKxDviRzPYcFgiT/BAb1ygh8vMnho6u2rZfPiQVKd8sSUv3Vw29/qRKVTtrUHuJJq
-	kc+z72YKxb8ircAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59C57137CF;
-	Thu, 21 Nov 2024 08:54:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VuebFUH1PmdBTgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 08:54:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CEDF3A089E; Thu, 21 Nov 2024 09:54:20 +0100 (CET)
-Date: Thu, 21 Nov 2024 09:54:20 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v8 03/19] fsnotify: add helper to check if file is
- actually being watched
-Message-ID: <20241121085420.lpsvkixshtuju23i@quack3>
-References: <cover.1731684329.git.josef@toxicpanda.com>
- <2ddcc9f8d1fde48d085318a6b5a889289d8871d8.1731684329.git.josef@toxicpanda.com>
- <20241120160247.sdvonyxkpmf4wnt2@quack3>
- <CAOQ4uxj4pwH2hfmNL0N=q8-rOF6d=-Z_yWLEwHQ671t1EvRn6A@mail.gmail.com>
+	s=arc-20240116; t=1732198829; c=relaxed/simple;
+	bh=s8vT+cUuucQdxZxmr6s3Mt1TxHz4+30DjZa8lMoNy0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=o0wxyjEeduMHKeGRh+6NIGEAPI5RdTkfHgke6ofdJ+dBsNoVD851lEdm6cZRFTRkiCtTUNifAm38UQgCSWL781iGexRnSSgDWALshCJ9mE+l+5znO6NzT6rBv1mz4+arE8uJj+9F6EEK8A175fM0McbkHld2GbnFZnQo6SD4Yvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MgGIjaE8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241121141222epoutp04924a7c1e1d9386d3e3479dee9267b9b5~KATcIt7v-2462324623epoutp04Z
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:12:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241121141222epoutp04924a7c1e1d9386d3e3479dee9267b9b5~KATcIt7v-2462324623epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1732198342;
+	bh=/jFwQg3L6x/QhXsFJXEKX5/pdgnqKEpG97iSSGqG2AQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MgGIjaE8zz8oICK69FcTaoU/3lQRGz7bdLX36BIgEQ0PFLCk3kfnhMXfuE422mNlV
+	 k1tHAH4nAV6RvalLa7Jr7zV7s3w/ozZM2QbaSk7R7Xx/vRoTGEbc+/ebGskiNMNjBU
+	 RnIlTe3+uG8BCj6EYZIvFC7hgK7a9US6b3jS7pz4=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241121141221epcas5p1f717aaf925a0e63cae2e559997bef624~KATbGu9Mz2866128661epcas5p1K;
+	Thu, 21 Nov 2024 14:12:21 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XvKtW4QNGz4x9Pq; Thu, 21 Nov
+	2024 14:12:19 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F0.1C.20052.3CF3F376; Thu, 21 Nov 2024 23:12:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d~J8JNJZAAv1902619026epcas5p3K;
+	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241121090727epsmtrp22645c4c5508c147abbbe8e26eda3f86f~J8JNHeYKv1714217142epsmtrp2T;
+	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
+X-AuditID: b6c32a49-3fffd70000004e54-a1-673f3fc30d21
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3F.3A.18937.E48FE376; Thu, 21 Nov 2024 18:07:26 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241121090724epsmtip223faf39b7052c34ce93410208c8e6f41~J8JK2_6n-0612906129epsmtip2I;
+	Thu, 21 Nov 2024 09:07:24 +0000 (GMT)
+Date: Thu, 21 Nov 2024 14:29:35 +0530
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+Message-ID: <20241121085935.GA3851@green245>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJsWRmVeSWpSXmKPExsWy7bCmlu5he/t0g/418hYfv/5msZizahuj
+	xeq7/WwWrw9/YrS4eWAnk8XK1UeZLN61nmOxmD29mcni6P+3bBaTDl1jtNh7S9tiz96TLBbz
+	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
+	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAV1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGh
+	rqGlhbmSQl5ibqqtkotPgK5bZg7QO0oKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpSc
+	ApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iy1bz4zFryWq5j55yBjA+MJiS5GTg4JAROJra8b
+	WLoYuTiEBHYzSjQfbWWFcD4xSqz7sYYJztn4/hkjTEtzz3dGiMRORokFKx+wQzjPGCX2zP7L
+	BFLFIqAqseL9BGYQm01AXeLI81awbhEBbYnX1w+BNTALLGSWaLr5nx0kISwQI3H9zhRWEJtX
+	QEdi3YddULagxMmZT1hAbE4BW4mtH8+zgdiiAsoSB7YdB7tPQuAJh8TvzhvsEPe5SDw/94AJ
+	whaWeHV8C1RcSuLzu71sEHa6xI/LT6FqCiSaj+2D+s1eovVUP9jVzAIZEtO+X4SqkZWYemod
+	E0ScT6L39xOoOK/EjnkwtpJE+8o5ULaExN5zDVC2h8SfF3OgAfmDSeLf3N3MExjlZyF5bhaS
+	fRC2jsSC3Z/YZjFyANnSEsv/cUCYmhLrd+kvYGRdxSiZWlCcm55abFpgmJdaDo/z5PzcTYzg
+	BK/luYPx7oMPeocYmTgYDzFKcDArifA6KNmnC/GmJFZWpRblxxeV5qQWH2I0BcbWRGYp0eR8
+	YI7JK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qBiWHxzOMbX3J2
+	PZt2xU8/LGJGtviLQBepMFUuPdFXn+bLeG3L7z8Yl3BxcpiMkpbIob9n9IOzrkt+frX79Af3
+	bL85e/Rdbn75z1LRUix7a959VlGH06t7zisUrd1t5e9TFtHh1DNXI0Sttfx+yqwfNvwX7PeW
+	1CWJvBQ0/X5Y74v0j7QX6fkrWH5GpFz+/fxjyvMz914eEpHNsvd4dv/fouTlFblBd8/yP11t
+	7fh1076jt/QSfj5VVS+fftVPl6c17vPzlVo1MgdTssSWNB3Rtbr+NGyWEONRm8s9636tfdYV
+	t9fShvH8kjV5xQ2tBRNCez+ukjz/d5qosOrmqjnzOhxW/TFOYMlZMlWRb7e9rxJLcUaioRZz
+	UXEiADr6Ruh5BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvK7fD7t0g4/PrC0+fv3NYjFn1TZG
+	i9V3+9ksXh/+xGhx88BOJouVq48yWbxrPcdiMXt6M5PF0f9v2SwmHbrGaLH3lrbFnr0nWSzm
+	L3vKbtF9fQebxfLj/5gszv89zmpxftYcdgdBj52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweXx8
+	eovFo2/LKkaPMwuOsHt83iTnsenJW6YArigum5TUnMyy1CJ9uwSujDcbO9kLVstUfGk/wt7A
+	uFCsi5GTQ0LARKK55ztjFyMXh5DAdkaJZR1NbBAJCYlTL5cxQtjCEiv/PWeHKHrCKPGv6wMT
+	SIJFQFVixfsJzCA2m4C6xJHnrWANIgLaEq+vH2IHsZkFFjNLTG6IArGFBWIkrt+Zwgpi8wro
+	SKz7sIsVYugPJomXl2ZCJQQlTs58wgLRrCVx499LoGUcQLa0xPJ/HCBhTgFbia0fz4MdKiqg
+	LHFg23GmCYyCs5B0z0LSPQuhewEj8ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4GjUCtrB
+	uGz9X71DjEwcjIcYJTiYlUR4q3Wt04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeW
+	pGanphakFsFkmTg4pRqYNh7U+fCfc4ukXPuvaeGeXp7uNssvzTjlU3d80ss3j1Vffjy6W45R
+	0PnSo2lRGT1eHwuWn/srZbMjjU+87/De3kMBQq8KFrwMvLpL1uj6Z29TEasZWv8Wdxd8aYlO
+	vra9XbVE1JWx4p+sre3z/V2fums/P+4z2tzyyyz3TsrBXxw/3s/d51G8Zv/dOXGXF908/jb7
+	wyRzXwdpZ1GBXQ+/XzKbfmB7gXsC//zblh8sW3jnOfBc2eP0Q6FnebRrXlRtWXTkg6+9Z3xv
+	nVR69tjTSFNc7daqravTPy25aebyL77//pq2pVHLOTztz8Q2rl4yZ2+QV8XTGbfXPlh/3DKe
+	jbHV9prb532ssidXG34NOaLEUpyRaKjFXFScCAAxVp8INQMAAA==
+X-CMS-MailID: 20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739
+References: <20241114104517.51726-1-anuj20.g@samsung.com>
+	<CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+	<20241114104517.51726-7-anuj20.g@samsung.com>
+	<c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
+	<b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
+	<20241118125029.GB27505@lst.de>
+	<2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj4pwH2hfmNL0N=q8-rOF6d=-Z_yWLEwHQ671t1EvRn6A@mail.gmail.com>
-X-Rspamd-Queue-Id: 78A88211BB
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Wed 20-11-24 17:42:18, Amir Goldstein wrote:
-> On Wed, Nov 20, 2024 at 5:02 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 15-11-24 10:30:16, Josef Bacik wrote:
-> > > From: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > So far, we set FMODE_NONOTIFY_ flags at open time if we know that there
-> > > are no permission event watchers at all on the filesystem, but lack of
-> > > FMODE_NONOTIFY_ flags does not mean that the file is actually watched.
-> > >
-> > > To make the flags more accurate we add a helper that checks if the
-> > > file's inode, mount, sb or parent are being watched for a set of events.
-> > >
-> > > This is going to be used for setting FMODE_NONOTIFY_HSM only when the
-> > > specific file is actually watched for pre-content events.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > I did some changes here as well. See below:
-> >
-> > > -/* Are there any inode/mount/sb objects that are interested in this event? */
-> > > -static inline bool fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
-> > > -                                        __u32 mask)
-> > > +/* Are there any inode/mount/sb objects that watch for these events? */
-> > > +static inline __u32 fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
-> > > +                                         __u32 events_mask)
-> > >  {
-> > >       __u32 marks_mask = READ_ONCE(inode->i_fsnotify_mask) | mnt_mask |
-> > >                          READ_ONCE(inode->i_sb->s_fsnotify_mask);
-> > >
-> > > -     return mask & marks_mask & ALL_FSNOTIFY_EVENTS;
-> > > +     return events_mask & marks_mask;
-> > >  }
-> > >
-> > > +/* Are there any inode/mount/sb/parent objects that watch for these events? */
-> > > +__u32 fsnotify_file_object_watched(struct file *file, __u32 events_mask)
-> > > +{
-> > > +     struct dentry *dentry = file->f_path.dentry;
-> > > +     struct dentry *parent;
-> > > +     __u32 marks_mask, mnt_mask =
-> > > +             READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
-> > > +
-> > > +     marks_mask = fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> > > +                                          events_mask);
-> > > +
-> > > +     if (likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED)))
-> > > +             return marks_mask;
-> > > +
-> > > +     parent = dget_parent(dentry);
-> > > +     marks_mask |= fsnotify_inode_watches_children(d_inode(parent));
-> > > +     dput(parent);
-> > > +
-> > > +     return marks_mask & events_mask;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(fsnotify_file_object_watched);
-> >
-> > I find it confusing that fsnotify_object_watched() does not take parent
-> > into account while fsnotify_file_object_watched() does. Furthermore the
-> > naming doesn't very well reflect the fact we are actually returning a mask
-> > of events. I've ended up dropping this helper (it's used in a single place
-> > anyway) and instead doing the same directly in file_set_fsnotify_mode().
-> >
-> > @@ -658,6 +660,27 @@ void file_set_fsnotify_mode(struct file *file)
-> >                 file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> >                 return;
-> >         }
-> > +
-> > +       /*
-> > +        * OK, there are some pre-content watchers. Check if anybody can be
-> > +        * watching for pre-content events on *this* file.
-> > +        */
-> > +       mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
-> > +       if (likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) &&
-> > +           !fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> > +                                    FSNOTIFY_PRE_CONTENT_EVENTS))) {
-> > +               file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> > +               return;
-> > +       }
-> > +
-> > +       /* Even parent is not watching for pre-content events on this file? */
-> > +       parent = dget_parent(dentry);
-> > +       p_mask = fsnotify_inode_watches_children(d_inode(parent));
-> > +       dput(parent);
-> > +       if (!(p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)) {
-> > +               file->f_mode |= FMODE_NONOTIFY | FMODE_NONOTIFY_PERM;
-> > +               return;
-> > +       }
-> >  }
-> >
+On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
+> On 11/18/24 12:50, Christoph Hellwig wrote:
+> > On Sat, Nov 16, 2024 at 12:32:25AM +0000, Pavel Begunkov wrote:
+> > > We can also reuse your idea from your previous iterations and
+> > > use the bitmap to list all attributes. Then preamble and
+> > > the explicit attr_type field are not needed, type checking
+> > > in the loop is removed and packing is better. And just
+> > > by looking at the map we can calculate the size of the
+> > > array and remove all size checks in the loop.
+> > 
+> > Can we please stop overdesigning the f**k out of this?  Really,
 > 
-> Nice!
+> Please stop it, it doesn't add weight to your argument. The design
+> requirement has never changed, at least not during this patchset
+> iterations.
 > 
-> Note that I had a "hidden motive" for future optimization when I changed
-> return value of fsnotify_object_watched() to a mask -
+> > either we're fine using the space in the extended SQE, or
+> > we're fine using a separate opcode, or if we really have to just
+> > make it uring_cmd.  But stop making thing being extensible for
+> > the sake of being extensible.
 > 
-> I figured that while we are doing the checks above, we can check for the
-> same price the mask ALL_FSNOTIFY_PERM_EVENTS
-> then we get several answers for the same price:
-> 1. Is the specific file watched by HSM?
-> 2. Is the specific file watched by open permission events?
-> 3. Is the specific file watched by post-open FAN_ACCESS_PERM?
+> It's asked to be extendible because there is a good chance it'll need to
+> be extended, and no, I'm not suggesting anyone to implement the entire
+> thing, only PI bits is fine.
 > 
-> If the answers are No, No, No, we get some extra optimization
-> in the (uncommon) use case that there are permission event watchers
-> on some random inodes in the filesystem.
+> And no, it doesn't have to be "this or that" while there are other
+> options suggested for consideration. And the problem with the SQE128
+> option is not even about SQE128 but how it's placed inside, i.e.
+> at a fixed spot.
 > 
-> If the answers are Yes, Yes, No, or No, Yes, No we can return a special
-> value from file_set_fsnotify_mode() to indicate that permission events
-> are needed ONLY for fsnotify_open_perm() hook, but not thereafter.
+> Do we have technical arguments against the direction in the last
+> suggestion? It's extendible and _very_ simple. The entire (generic)
+> handling for the bitmask approach for this set would be sth like:
 > 
-> This would implement the semantic change of "respect FAN_ACCESS_PERM
-> only if it existed at open time" that can save a lot of unneeded cycles in
-> the very hot read/write path, for example, when watcher only cares about
-> FAN_OPEN_EXEC_PERM.
+> struct sqe {
+> 	u64 attr_type_mask;
+> 	u64 attr_ptr;
+> };
+> if (sqe->attr_type_mask) {
+> 	if (sqe->attr_type_mask != TYPE_PI)
+> 		return -EINVAL;
 > 
-> I wasn't sure that any of this was worth the effort at this time, but
-> just in case this gives you ideas of other useful optimizations we can do
-> with the object combined marks_mask if we get it for free.
+> 	struct uapi_pi_structure pi;
+> 	copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
+> 	hanlde_pi(&pi);
+> }
+> 
+> And the user side:
+> 
+> struct uapi_pi_structure pi = { ... };
+> sqe->attr_ptr = &pi;
+> sqe->attr_type_mask = TYPE_PI;
+>
 
-OK, I'm not opposed to returning the combined mask in principle. Just I'd
-pick somewhat different function name and it didn't quite make sense to me
-in the context of this series. If we decide to implement the optimizations
-you describe above, then I have no problem with tweaking the helpers.
+How about using this, but also have the ability to keep PI inline. 
+Attributes added down the line can take one of these options:
+1. If available space in SQE/SQE128 is sufficient for keeping attribute
+fields, one can choose to keep them inline and introduce a TYPE_XYZ_INLINE
+attribute flag.
+2. If the available space is not sufficient, pass the attribute information
+as pointer and introduce a TYPE_XYZ attribute flag.
+3. One can choose to support a attribute via both pointer and inline scheme.
+The pointer scheme can help with scenarios where user wants to avoid SQE128
+for whatever reasons (e.g. mixed workload).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Something like this:
+
+// uapi/.../io_uring.h
+
+struct sqe {
+	...
+	u64 attr_type_mask;
+	u64 attr_ptr;
+};
+
+// kernel space
+
+if (sqe->attr_type_mask) {
+	struct uapi_pi_struct pi, *piptr;
+
+	if ((sqe->attr_type_mask & TYPE_PI_INLINE) &&
+	    (sqe->attr_type_mask & TYPE_PI))
+		return -EINVAL;
+	/* inline PI case */
+	if (sqe->attr_type_mask & TYPE_PI_INLINE) {
+		if (!(ctx->flags & IORING_SETUP_SQE128))
+			return -EINVAL;
+		piptr = (sqe + 1);
+	} else if (sqe->attr_type_mask & TYPE_PI) {
+	/* indirect PI case */
+		copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
+		piptr = &pi;
+	}
+
+	handle_pi(piptr);
+	
+}
+
+And the user side:
+
+// send PI using pointer:
+
+struct uapi_pi_structure pi = { ... };
+sqe->attr_ptr = &pi;
+sqe->attr_type_mask = TYPE_PI;
+
+// send PI inline:
+
+/* setup a big-sqe ring */
+struct uapi_pi_structure *pi = (sqe+1);
+prepare_pi(pi);
+sqe->attr_type_mask = TYPE_PI_INLINE;
+
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
+Content-Type: text/plain; charset="utf-8"
+
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_--
 
