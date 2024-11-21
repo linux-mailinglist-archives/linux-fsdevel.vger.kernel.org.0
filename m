@@ -1,93 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-35386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B495F9D47A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 07:37:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEAE9D47FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 07:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4677DB21545
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 06:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A215C1F228BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 06:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1E31C4A24;
-	Thu, 21 Nov 2024 06:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174D31C9B95;
+	Thu, 21 Nov 2024 06:54:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9210A13C3D6;
-	Thu, 21 Nov 2024 06:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4255817BD3;
+	Thu, 21 Nov 2024 06:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732171052; cv=none; b=GCBVBbAbY5yYUo3jpWBx4NHFIqDfU7fc5APno28HXDrq2VrGijDF8U7mEKK00G6qTAT0sLs5lyAdVNd4iUfo4q0aWKCYAK78Q4ssVN9dx60X3uIK5YTi7ra1z5KnoXCHUsrHcMAGU52VcxCLq3UBSy5omxNkgxpebJVN8SS5NKQ=
+	t=1732172060; cv=none; b=ZrFINGgT125Aa7pvZ/eJHBgP7nBXf24UVoDtn4ogvkdNc2cwV2y7imUCgeh9Dnt7W72PgMKBVSlrGCSJdwO83uxpBszfne3gJS+058VGkDQ95nHExO4vflsG618dOt5zIVbcECNyUpDLmOsnvPgyMAdRm4mbbLhpfGC5UonqBlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732171052; c=relaxed/simple;
-	bh=nM5frX6UFJiHs42GcgIOCN53OIHQX6k31xo4sr3tnRQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dh4Wzo9abG8DHx8jvjHQe7/RaHzCzprEa9ohVzCXDTjAbNTqVovJDxCVThKSu0AHfwMC6DJa/sfWE7/zOaJhcGftXMSjTpxUTPrwomE6P6s588MC6dPn3DmG6R48MptXDkPc7qdx7okcTkm6ddldAXOCtHdXoFvNk4ZbtWqpNXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xv7kS6k74z18N8X;
-	Thu, 21 Nov 2024 14:34:40 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4B8BF18005F;
-	Thu, 21 Nov 2024 14:37:20 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 21 Nov
- 2024 14:37:19 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: <brauner@kernel.org>, <djwong@kernel.org>, <cem@kernel.org>
-CC: <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <houtao1@huawei.com>, <leo.lilong@huawei.com>,
-	<yangerkun@huawei.com>
-Subject: [PATCH v3 2/2] xfs: clean up xfs_end_ioend() to reuse local variables
-Date: Thu, 21 Nov 2024 14:34:30 +0800
-Message-ID: <20241121063430.3304895-2-leo.lilong@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241121063430.3304895-1-leo.lilong@huawei.com>
-References: <20241121063430.3304895-1-leo.lilong@huawei.com>
+	s=arc-20240116; t=1732172060; c=relaxed/simple;
+	bh=kny5aq3Sf0mGB8wddIubpsuJjSYKI1g1UlvMUtCv9N8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgRw2Lnk6x6SJTvIHC2Ci2bx6ir4fl7VWpRFUgpdj8vN4SprjiY6N5uqG1oq+fMTlOoYBbI4CCxaHkmrFec1DsxYlm1H9mgSyYB8wbDft97WHn0586KFZ4bykVG9zjVl2n4Me4Piw5DMHOpW3Sp8EMtjAp5ud0DzyYOjf6iYKWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D51AB68AFE; Thu, 21 Nov 2024 07:54:13 +0100 (CET)
+Date: Thu, 21 Nov 2024 07:54:13 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Christoph Hellwig <hch@lst.de>, Anuj Gupta <anuj20.g@samsung.com>,
+	axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
+	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
+	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+Message-ID: <20241121065413.GA22464@lst.de>
+References: <20241114104517.51726-1-anuj20.g@samsung.com> <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com> <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de> <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com> <ZzeNEcpSKFemO30g@casper.infradead.org> <20241120173517.GQ9425@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120173517.GQ9425@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Use already initialized local variables 'offset' and 'size' instead
-of accessing ioend members directly in xfs_setfilesize() call.
+On Wed, Nov 20, 2024 at 09:35:17AM -0800, Darrick J. Wong wrote:
+> I like willy's suggestion -- what's the difficulty in having a SQE flag
+> that says "...and keep going into the next SQE"?  I guess that
+> introduces the problem that you can no longer react to the observation
+> of 4 new SQEs by creating 4 new contexts to process those SQEs and throw
+> all 4 of them at background threads, since you don't know how many IOs
+> are there.
 
-This is just a code cleanup with no functional changes.
+Which is why everyone hates the nvme fused commands with passion, and no
+one but vmware actually uses them, and no other fused command pair
+except for compare and write ever materialized.
 
-Signed-off-by: Long Li <leo.lilong@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-v2->v3: Collect reviewed-by tag
+> That said, depending on the size of the PI metadata, it might be more
+> convenient for the app programmer to supply one pointer to a single
+> array of PI information for the entire IO request, packed in whatever
+> format the underlying device wants.
+> 
+> Thinking with my xfs(progs) hat on, if we ever wanted to run xfs_buf(fer
+> cache) IOs through io_uring with PI metadata, we'd probably want a
+> vectored io submission interface (xfs_buffers can map to discontiguous
+> LBA ranges on disk), but we'd probably have a single memory object to
+> hold all the PI information.
 
- fs/xfs/xfs_aops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 559a3a577097..67877c36ed11 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -131,7 +131,7 @@ xfs_end_ioend(
- 		error = xfs_iomap_write_unwritten(ip, offset, size, false);
- 
- 	if (!error && xfs_ioend_is_append(ioend))
--		error = xfs_setfilesize(ip, ioend->io_offset, ioend->io_size);
-+		error = xfs_setfilesize(ip, offset, size);
- done:
- 	iomap_finish_ioends(ioend, error);
- 	memalloc_nofs_restore(nofs_flag);
--- 
-2.39.2
+Agreed.  And unless I'm misremembering something, all proposals so far
+had a single PI buffer for vectored read/writes.
 
 
