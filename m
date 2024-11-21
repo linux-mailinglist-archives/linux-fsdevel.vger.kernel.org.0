@@ -1,266 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-35454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2792F9D4E92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 15:20:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E34F9D4976
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 10:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7381DB22D18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 14:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C36F1F21CD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 09:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C9B1D88DD;
-	Thu, 21 Nov 2024 14:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7196B15573D;
+	Thu, 21 Nov 2024 09:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MgGIjaE8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HiOO3Ibu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7F41369B4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B43A1C9DD3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 09:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198829; cv=none; b=OK1B3diCnfbhvyqEGH0+eaIiH0Z30wV9coxEKI441LrNN94lfD8t2H5Gvq0NV8k2l6wXJX1cLoRsKfbfkoW/knWF85ZvR6rNG2BnNqmqgquRdn4MUkkCVNlgkgeVHOziRC4hUdig1jE5pKNpfSoHfPnEoSScT6xG+rFQfuGKy6Y=
+	t=1732179838; cv=none; b=qp6kOOlPvOCNy/41vvalcSRP8CTvmvjEZGUTXErd5PfDpwnnu95s3Vad1hSVGby11S2OtXylAvd5R+XWN14ACzs9lFkrTu2O8TNVMtvSnWa7+0qpvh11EmSOSFoNvbAIwjD6Y6ORdKJx+fZgaA6hSgBUkGUq3zIkuSLvxDhOhXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198829; c=relaxed/simple;
-	bh=s8vT+cUuucQdxZxmr6s3Mt1TxHz4+30DjZa8lMoNy0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=o0wxyjEeduMHKeGRh+6NIGEAPI5RdTkfHgke6ofdJ+dBsNoVD851lEdm6cZRFTRkiCtTUNifAm38UQgCSWL781iGexRnSSgDWALshCJ9mE+l+5znO6NzT6rBv1mz4+arE8uJj+9F6EEK8A175fM0McbkHld2GbnFZnQo6SD4Yvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MgGIjaE8; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241121141222epoutp04924a7c1e1d9386d3e3479dee9267b9b5~KATcIt7v-2462324623epoutp04Z
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:12:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241121141222epoutp04924a7c1e1d9386d3e3479dee9267b9b5~KATcIt7v-2462324623epoutp04Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1732198342;
-	bh=/jFwQg3L6x/QhXsFJXEKX5/pdgnqKEpG97iSSGqG2AQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MgGIjaE8zz8oICK69FcTaoU/3lQRGz7bdLX36BIgEQ0PFLCk3kfnhMXfuE422mNlV
-	 k1tHAH4nAV6RvalLa7Jr7zV7s3w/ozZM2QbaSk7R7Xx/vRoTGEbc+/ebGskiNMNjBU
-	 RnIlTe3+uG8BCj6EYZIvFC7hgK7a9US6b3jS7pz4=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241121141221epcas5p1f717aaf925a0e63cae2e559997bef624~KATbGu9Mz2866128661epcas5p1K;
-	Thu, 21 Nov 2024 14:12:21 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XvKtW4QNGz4x9Pq; Thu, 21 Nov
-	2024 14:12:19 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F0.1C.20052.3CF3F376; Thu, 21 Nov 2024 23:12:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d~J8JNJZAAv1902619026epcas5p3K;
-	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241121090727epsmtrp22645c4c5508c147abbbe8e26eda3f86f~J8JNHeYKv1714217142epsmtrp2T;
-	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
-X-AuditID: b6c32a49-3fffd70000004e54-a1-673f3fc30d21
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3F.3A.18937.E48FE376; Thu, 21 Nov 2024 18:07:26 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241121090724epsmtip223faf39b7052c34ce93410208c8e6f41~J8JK2_6n-0612906129epsmtip2I;
-	Thu, 21 Nov 2024 09:07:24 +0000 (GMT)
-Date: Thu, 21 Nov 2024 14:29:35 +0530
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
-	martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
-	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <20241121085935.GA3851@green245>
+	s=arc-20240116; t=1732179838; c=relaxed/simple;
+	bh=gB3nR5R4h8gsTpxvHF/nfyuNGADmt8PUmyGd/Q0jLrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKyEbtH6Kg8gIWa0oQ6gsSHC2CKaCILXg+WnY28gCwfppQN9ZpHz7ikz/AEs3i19pq0S0dSCkDzzTFiVxrtQvNzNnAB+pXaHoJJlg/d8gU29eWpbxxb4P9yAJnrzGsi+DlzUCv2vTQWFnFa0f5nQGfo6pZuxUkiK+xxIEpT93UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HiOO3Ibu; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Nov 2024 04:03:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732179833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FRLw+DGKdwBq59yleVzq1+0cEo5aRODfgmqZBbkpOO8=;
+	b=HiOO3Ibumb6pS42WpgNsTAOgm0t1JNKUQXlVy4TDWQpC6qMR5Mu2auqGAp/9UcRs4mpQqg
+	BTWLfzZkEJLvYUAnXH3M3QzIZgaLoNBtZfZU53hBdNRFeHRYX2v0Ve7bDDqF0uCtR1qI3I
+	NG98hydgjDXFeWfNtktWDltia42/XJ0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+	Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: review process (was: underalated stuff)
+Message-ID: <nfui5woq5n4lc4xggsflvjqr3gmukfzo64ejxrg4o6iq6ud4ju@rctq63kb43wb>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <Zz7yqeI0RatH4ao5@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJsWRmVeSWpSXmKPExsWy7bCmlu5he/t0g/418hYfv/5msZizahuj
-	xeq7/WwWrw9/YrS4eWAnk8XK1UeZLN61nmOxmD29mcni6P+3bBaTDl1jtNh7S9tiz96TLBbz
-	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
-	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAV1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGh
-	rqGlhbmSQl5ibqqtkotPgK5bZg7QO0oKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpSc
-	ApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iy1bz4zFryWq5j55yBjA+MJiS5GTg4JAROJra8b
-	WLoYuTiEBHYzSjQfbWWFcD4xSqz7sYYJztn4/hkjTEtzz3dGiMRORokFKx+wQzjPGCX2zP7L
-	BFLFIqAqseL9BGYQm01AXeLI81awbhEBbYnX1w+BNTALLGSWaLr5nx0kISwQI3H9zhRWEJtX
-	QEdi3YddULagxMmZT1hAbE4BW4mtH8+zgdiiAsoSB7YdB7tPQuAJh8TvzhvsEPe5SDw/94AJ
-	whaWeHV8C1RcSuLzu71sEHa6xI/LT6FqCiSaj+2D+s1eovVUP9jVzAIZEtO+X4SqkZWYemod
-	E0ScT6L39xOoOK/EjnkwtpJE+8o5ULaExN5zDVC2h8SfF3OgAfmDSeLf3N3MExjlZyF5bhaS
-	fRC2jsSC3Z/YZjFyANnSEsv/cUCYmhLrd+kvYGRdxSiZWlCcm55abFpgmJdaDo/z5PzcTYzg
-	BK/luYPx7oMPeocYmTgYDzFKcDArifA6KNmnC/GmJFZWpRblxxeV5qQWH2I0BcbWRGYp0eR8
-	YI7JK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qBiWHxzOMbX3J2
-	PZt2xU8/LGJGtviLQBepMFUuPdFXn+bLeG3L7z8Yl3BxcpiMkpbIob9n9IOzrkt+frX79Af3
-	bL85e/Rdbn75z1LRUix7a959VlGH06t7zisUrd1t5e9TFtHh1DNXI0Sttfx+yqwfNvwX7PeW
-	1CWJvBQ0/X5Y74v0j7QX6fkrWH5GpFz+/fxjyvMz914eEpHNsvd4dv/fouTlFblBd8/yP11t
-	7fh1076jt/QSfj5VVS+fftVPl6c17vPzlVo1MgdTssSWNB3Rtbr+NGyWEONRm8s9636tfdYV
-	t9fShvH8kjV5xQ2tBRNCez+ukjz/d5qosOrmqjnzOhxW/TFOYMlZMlWRb7e9rxJLcUaioRZz
-	UXEiADr6Ruh5BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvK7fD7t0g4/PrC0+fv3NYjFn1TZG
-	i9V3+9ksXh/+xGhx88BOJouVq48yWbxrPcdiMXt6M5PF0f9v2SwmHbrGaLH3lrbFnr0nWSzm
-	L3vKbtF9fQebxfLj/5gszv89zmpxftYcdgdBj52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweXx8
-	eovFo2/LKkaPMwuOsHt83iTnsenJW6YArigum5TUnMyy1CJ9uwSujDcbO9kLVstUfGk/wt7A
-	uFCsi5GTQ0LARKK55ztjFyMXh5DAdkaJZR1NbBAJCYlTL5cxQtjCEiv/PWeHKHrCKPGv6wMT
-	SIJFQFVixfsJzCA2m4C6xJHnrWANIgLaEq+vH2IHsZkFFjNLTG6IArGFBWIkrt+Zwgpi8wro
-	SKz7sIsVYugPJomXl2ZCJQQlTs58wgLRrCVx499LoGUcQLa0xPJ/HCBhTgFbia0fz4MdKiqg
-	LHFg23GmCYyCs5B0z0LSPQuhewEj8ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4GjUCtrB
-	uGz9X71DjEwcjIcYJTiYlUR4q3Wt04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeW
-	pGanphakFsFkmTg4pRqYNh7U+fCfc4ukXPuvaeGeXp7uNssvzTjlU3d80ss3j1Vffjy6W45R
-	0PnSo2lRGT1eHwuWn/srZbMjjU+87/De3kMBQq8KFrwMvLpL1uj6Z29TEasZWv8Wdxd8aYlO
-	vra9XbVE1JWx4p+sre3z/V2fums/P+4z2tzyyyz3TsrBXxw/3s/d51G8Zv/dOXGXF908/jb7
-	wyRzXwdpZ1GBXQ+/XzKbfmB7gXsC//zblh8sW3jnOfBc2eP0Q6FnebRrXlRtWXTkg6+9Z3xv
-	nVR69tjTSFNc7daqravTPy25aebyL77//pq2pVHLOTztz8Q2rl4yZ2+QV8XTGbfXPlh/3DKe
-	jbHV9prb532ssidXG34NOaLEUpyRaKjFXFScCAAxVp8INQMAAA==
-X-CMS-MailID: 20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
-	<CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
-	<20241114104517.51726-7-anuj20.g@samsung.com>
-	<c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
-	<b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
-	<20241118125029.GB27505@lst.de>
-	<2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
-
-------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Zz7yqeI0RatH4ao5@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
-> On 11/18/24 12:50, Christoph Hellwig wrote:
-> > On Sat, Nov 16, 2024 at 12:32:25AM +0000, Pavel Begunkov wrote:
-> > > We can also reuse your idea from your previous iterations and
-> > > use the bitmap to list all attributes. Then preamble and
-> > > the explicit attr_type field are not needed, type checking
-> > > in the loop is removed and packing is better. And just
-> > > by looking at the map we can calculate the size of the
-> > > array and remove all size checks in the loop.
-> > 
-> > Can we please stop overdesigning the f**k out of this?  Really,
+On Thu, Nov 21, 2024 at 09:43:21AM +0100, Michal Hocko wrote:
+> On Wed 20-11-24 17:39:09, Kent Overstreet wrote:
+> > Michal's (as well as Steve's) behaviour in the memory allocation
+> > profiling review process was, in my view, unacceptable (this included
+> > such things as crashing our LSF presentation with ideas they'd come up
+> > with that morning, and persistent dismissive axegrinding on the list).
+> > The project was nearly killed because of his inability to listen to the
+> > reasons for a design and being stubbornly stuck on his right to be heard
+> > as the maintainer.
 > 
-> Please stop it, it doesn't add weight to your argument. The design
-> requirement has never changed, at least not during this patchset
-> iterations.
+> Couple of entry points that might be helful for that.
+> https://lore.kernel.org/all/YxBc1xuGbB36f8zC@dhcp22.suse.cz/
+> I have expressed my concerns and set expectations to move the
+> work forward. I've had couple of back and forth with Suren about
+> specifics of overhead assumptions from the stack unwinding IIRC. 
 > 
-> > either we're fine using the space in the extended SQE, or
-> > we're fine using a separate opcode, or if we really have to just
-> > make it uring_cmd.  But stop making thing being extensible for
-> > the sake of being extensible.
+> For the first non-RFC version my feedback was
+> https://lore.kernel.org/all/ZFIMaflxeHS3uR%2FA@dhcp22.suse.cz/#t
+> not really "maintenance burden only" but a request to show that alternative
+> approaches have been explored. It was not particularly helpful that you
+> had expected tracing people would implement the feature for you.
+> https://lore.kernel.org/all/20230503092128.1a120845@gandalf.local.home/
+> Other people have also expressed that this is not completely impossible
+> https://lore.kernel.org/all/ZFKNZZwC8EUbOLMv@slm.duckdns.org/
+> The rest of the email thread is mostly a combat zone that I have avoided
+> participating as much as possible.
 > 
-> It's asked to be extendible because there is a good chance it'll need to
-> be extended, and no, I'm not suggesting anyone to implement the entire
-> thing, only PI bits is fine.
+> I didn't have any reaction to v2 at all.
 > 
-> And no, it doesn't have to be "this or that" while there are other
-> options suggested for consideration. And the problem with the SQE128
-> option is not even about SQE128 but how it's placed inside, i.e.
-> at a fixed spot.
+> v3 was aiming to be merged and I've stepped up as there was no single
+> review at the time https://lore.kernel.org/all/Zctfa2DvmlTYSfe8@tiehlicka/
 > 
-> Do we have technical arguments against the direction in the last
-> suggestion? It's extendible and _very_ simple. The entire (generic)
-> handling for the bitmask approach for this set would be sth like:
+> I admit that I was really open that I do not like the solution and I've
+> said reasons for that. Allocator APIs have always been a large mess of
+> macros, static inlines that makes it really far from free to maintain
+> and alternative ways should be considered before going that route.
 > 
-> struct sqe {
-> 	u64 attr_type_mask;
-> 	u64 attr_ptr;
-> };
-> if (sqe->attr_type_mask) {
-> 	if (sqe->attr_type_mask != TYPE_PI)
-> 		return -EINVAL;
+> I was also clear that support by MM people was necessary to get this
+> merged. I have explicitly _not_ NAKed the series and backed off for you
+> guys to gain that support. 
 > 
-> 	struct uapi_pi_structure pi;
-> 	copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
-> 	hanlde_pi(&pi);
-> }
+> So essentially there was a clear outline for you and Sure how to achieve
+> that.
 > 
-> And the user side:
-> 
-> struct uapi_pi_structure pi = { ... };
-> sqe->attr_ptr = &pi;
-> sqe->attr_type_mask = TYPE_PI;
->
+> I would really like to hear from other maintainers. Is tnis really
+> unacceptable maintainer behavior? I am OK to apologize but the above is
+> in line of my understanding of how to ack properly.
 
-How about using this, but also have the ability to keep PI inline. 
-Attributes added down the line can take one of these options:
-1. If available space in SQE/SQE128 is sufficient for keeping attribute
-fields, one can choose to keep them inline and introduce a TYPE_XYZ_INLINE
-attribute flag.
-2. If the available space is not sufficient, pass the attribute information
-as pointer and introduce a TYPE_XYZ attribute flag.
-3. One can choose to support a attribute via both pointer and inline scheme.
-The pointer scheme can help with scenarios where user wants to avoid SQE128
-for whatever reasons (e.g. mixed workload).
+I wonder if I was reading too much into what you were saying in the
+off-list thread, when I said "argument to authority". Can you tell me if
+this might be closer to the mark?
 
-Something like this:
+If I read you correctly, when you said you were "voicing your concerns",
+I took it as you being pushy because that was the effects: I need you to
+take me at my word, because you didn't see everything behind the scenes,
+that this did derail and nearly kill the project.
 
-// uapi/.../io_uring.h
+But I should've been taking you at your word, that you just really were
+that concerned.
 
-struct sqe {
-	...
-	u64 attr_type_mask;
-	u64 attr_ptr;
-};
+I think the best way I can explain this issue is with an analogy to
+parenting: when we're parenting, our first and foremost job isn't really
+to make sure there's a roof, shelter, food - that part is easy in
+today's world. The main job really is to make sure that people feel
+safe, that they can go out and explore the world without being
+terrified.
 
-// kernel space
+In order to do that, we have to master our own fears, we can't be
+projecting them all the time.
 
-if (sqe->attr_type_mask) {
-	struct uapi_pi_struct pi, *piptr;
+Being a maintainer, or any kind of leader, is the exact same thing. My
+big lesson on this was watching Andrew, back during the process of
+merging MGLRU - I couldn't believe at the time how chill he was about
+it. But he understood the process, and he's a master at this.
 
-	if ((sqe->attr_type_mask & TYPE_PI_INLINE) &&
-	    (sqe->attr_type_mask & TYPE_PI))
-		return -EINVAL;
-	/* inline PI case */
-	if (sqe->attr_type_mask & TYPE_PI_INLINE) {
-		if (!(ctx->flags & IORING_SETUP_SQE128))
-			return -EINVAL;
-		piptr = (sqe + 1);
-	} else if (sqe->attr_type_mask & TYPE_PI) {
-	/* indirect PI case */
-		copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
-		piptr = &pi;
-	}
+Part of mastering our fears in a group setting like this is learning to
+trust other people.
 
-	handle_pi(piptr);
-	
-}
+It's not that your concerns didn't have any validity - but we were
+already doing as much as we could to address them, and you didn't show
+any trust that we, I especially, knew what we were doing. And that led
+to a _lot_ of wasted effort down blind alleys that I already knew
+weren't going to work.
 
-And the user side:
+I think that may be what this is really about, sometimes you do have to
+trust that people know what they're doing; you share your knowledge if
+you have knowledge to share, otherwise you have to back off and let
+people do their work. Otherwise the whole thing breaks down and no one
+can get anything done.
 
-// send PI using pointer:
-
-struct uapi_pi_structure pi = { ... };
-sqe->attr_ptr = &pi;
-sqe->attr_type_mask = TYPE_PI;
-
-// send PI inline:
-
-/* setup a big-sqe ring */
-struct uapi_pi_structure *pi = (sqe+1);
-prepare_pi(pi);
-sqe->attr_type_mask = TYPE_PI_INLINE;
-
-
-------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
-Content-Type: text/plain; charset="utf-8"
-
-
-------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_--
+The main thing is I just want to ask yourself if you could have done
+anything better in the memory allocation profiling process. I don't need
+you to apologize for anything specific, if you can just try to work
+better together in the future that's all I need.
 
