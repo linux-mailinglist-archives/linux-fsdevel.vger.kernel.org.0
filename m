@@ -1,154 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-35445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1059D4D1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:48:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3613E9D4DC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 14:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E631B257A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17831F21D20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F44A1D799D;
-	Thu, 21 Nov 2024 12:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2163D1D89E3;
+	Thu, 21 Nov 2024 13:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="exRLNVMg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayo1rKBf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB621D04B9;
-	Thu, 21 Nov 2024 12:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF941369B4;
+	Thu, 21 Nov 2024 13:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732193304; cv=none; b=YzkoIiigmUi9vfNPIdiNOy2/u25cpPghdq0F9ZQYIuzbQ+8L3JasoDWWxmKHn5a0lTipEy69mOqmkbVOXIC3Zyrf4IAcuCgAIvq7h+cLhLzv2H4e1wJwrZ5l7HSxBijaotqT7fLl4F3y0paIZmeCP9nnVYBxtP39N4p2smNT59Y=
+	t=1732195697; cv=none; b=nKMQh4u54h4BpFugxV/Y3clHF5BFkpA04VhPNEgQRgOiSc1XVQHIkmaYR5lbwew2v4+9TZgr2i3NrFVTeznYK6Jz3Il9AQCLU43nMhrEp++ZqwFVllSDqjwcTHAHi+tFJqPmnuLnhhtn/OoMRBQpGGHoYNgsvOUTC8+shCH4O4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732193304; c=relaxed/simple;
-	bh=V6h68H8dHWhb99rXhqd+FgVURyJXDChT4nqQs+LWmwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gz3NwVIK38KA4LI1We2+icDoAppXw0WQFTIs9vnTJGoLP8gjYY7cwrqM/GjsxBuiXMqtJIBJeLdM1GHIFl9UnSj/sJ1UIMWnGBKIwyJChtDL+XLPU5YtPjNQk/pWCaB+CmywoccxGThRiL+CJslodw9mtb/M14SIwUi2vsPt8NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=exRLNVMg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL8eCQO010271;
-	Thu, 21 Nov 2024 12:48:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=m9hVYClbCAMOmyugw63CMTQBhJJdSW
-	5LuLjt4ZXI/pY=; b=exRLNVMgWxEaS7lU+yxaYTZg0qc61b4oCMgHFvzM+9TtDL
-	MITh5+6nCIM7VmCcuzeKocpaPEiMYO5c4iGo8x5wC268PsUtXqVjJTjGHjE7CP27
-	STpuLY7gh9EoMqYxHzK3ktjjJh5CNR80BwtHSSWPHHPH5pD73z7Au2E2VFEgweub
-	D0235m/Mgpy4L91BRhjt1V2pGrZQCHuDeLz0R25pe/h5NygF3sRTM94OQdEtevFI
-	WX9ot0lX4IjwIiyQaJYv04mNZS2Oo+tGhyT4RXx8FjhfP87JUnnjV6hQjACAzyH6
-	YM+s3U2Q0TT0ohv5fMpTCqpWC5fqgjEBXBfeTByg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu21mrq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:10 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ALCaD7V004456;
-	Thu, 21 Nov 2024 12:48:09 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu21mrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL7MbtV024610;
-	Thu, 21 Nov 2024 12:48:08 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1gku8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:08 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ALCm7DP58720624
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Nov 2024 12:48:07 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA65920043;
-	Thu, 21 Nov 2024 12:48:06 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B05FE20040;
-	Thu, 21 Nov 2024 12:48:05 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Nov 2024 12:48:05 +0000 (GMT)
-Date: Thu, 21 Nov 2024 18:18:03 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 0/2] Fix generic/390 failure due to quota release
- after freeze
-Message-ID: <Zz8sA7YavAg8+mqI@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1732195697; c=relaxed/simple;
+	bh=raHgp5SQRlVYGfMxAEWOYpZN6ecfHDcpykOUZsJA1N8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=piEKUGmJLmpSzH2QWdT59epR81panodoinPYpMiU2vFwSzi3RL8eJ+99mtI7wZhAmtMPc0nAr1jZ8vPdPs438NKUL5qyhxjTemjCHJM8wmJShTGKeJZnfqnif/MbKCNxOjwtkE/D/nGGwR2gQxhDyfNk1sW0r+sNWsalyDlfqNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayo1rKBf; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa20c733e92so125513166b.0;
+        Thu, 21 Nov 2024 05:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732195694; x=1732800494; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UcEid6x7hR6WD3NnjxTjV+SHdDeh2G3crDRCwr0C4Xw=;
+        b=ayo1rKBfWqXE65UIuezbz2T6LPj85a1IJ0CRUBWRL1GPUEp4Ctw5houMluET0PY2+f
+         VQLyMg9NzlIokkzDUZs7irxUknG1xo4y39CK2oqls/684z6Z6LZ29U7iZNsWlLzondMs
+         ZIVYNqUNiObiiGWBnk7dm8wd0I8oCQLX56st1IabM1h5VMTR0m2Mo8O0Lfxb4unwpSmq
+         rMGNXgyZAYercYjqDkO15az0/midglloBryfHuEmKYHQU4+dh/Nt2VBP1Qq35IzPwMfS
+         Yo9BjeodCQ8An/a73cioj/3/IeWOgNGvWGjg9g2XqY9jPlAnQFnUfWW/lurUx/ma0FMo
+         rb8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732195694; x=1732800494;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcEid6x7hR6WD3NnjxTjV+SHdDeh2G3crDRCwr0C4Xw=;
+        b=SdfQtnRWbEGG1SsOY36fFJ2ujVt8PKs46YnhjgDXmZfjv2Gn17zDGaqwxuwMLlHEXk
+         Lf6F1+OQSX3zJtrKbWsOZMYKVLKaCwMjqyLw13mp71ps3CF8+MVK1kOJDzmTw4yWGlIn
+         a+Zw8pad6+1YzRxrRXjvF06g4FlbmdgS8QdZLJ3iL93/wTWZtQemUwK/ICeaVOTLO0Zm
+         blF/dspP8TVcFmOwSPcbxqwi/rPqY1bTwrfny6tavqnhIEEgYkP5GrKgTgB/x24Jzugb
+         s81kuZyjjZAsx5Cs1yYWjg7MRjWvFSPzaSSBrsy95o80Pf7q+RfB6+B4by80h5BdMy+2
+         gd+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhyM5Yv6MC0adk86ZJosDqGCxNq5Bdh0U9wh4BXBhpbPw85qTW4bnFPXDQX491Ve3eGSBu1/DlnDRTsgk=@vger.kernel.org, AJvYcCW9FIpaie10QKY4K1/rkzAsT1SFs8sGqKMAgG4+YP+gBLSLJ6PMBkI3LYVWVT8HYemB6dm4sCVadduiyJFfCA==@vger.kernel.org, AJvYcCWM1jJwqoGNvuqi0EpNAXWPBCsqPqljY6gMRgVMiL0RT7zG/tkF2UCdAP9C4+J5rTFKSmkMwjMd7cNaqw==@vger.kernel.org, AJvYcCXZiGCuSPEcwjOWm9tmMv1xICcggnH5vrnO38/Ub/xtPx9FI+aL+Z2xW7Ze8NtHsd3OqPsVyFXbCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjxxzRZgnfzLqpukMHWY+sFWOST2ou+QpJSbZ2VVsszLg1+7BK
+	NuYqQbEqeYIf69MEEpLuCqofZGcAv/BHtKIZ/Uantl47hfEyNkky
+X-Google-Smtp-Source: AGHT+IHecWvqkw6Jt2yCsp8YXvCsBLl3jZ1zTbBKU+p/+FeJdjUtQiX377sGWOz0S8T463Hv+SgYcg==
+X-Received: by 2002:a17:907:703:b0:a99:f91e:4abb with SMTP id a640c23a62f3a-aa4dd57ba76mr569480466b.27.1732195693926;
+        Thu, 21 Nov 2024 05:28:13 -0800 (PST)
+Received: from [192.168.42.195] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f42d328dsm81636666b.109.2024.11.21.05.28.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 05:28:13 -0800 (PST)
+Message-ID: <dfef87ff-175a-4387-9d51-9688e7edbcf6@gmail.com>
+Date: Thu, 21 Nov 2024 13:29:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121123855.645335-1-ojaswin@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Om05031vx9cGbA3Ie5fxutlFcxWgbOF5
-X-Proofpoint-ORIG-GUID: 275cugeP6hY2B4eTA0bJrGx6mmc6ywmB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210098
+User-Agent: Mozilla Thunderbird
+From: Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+To: Christoph Hellwig <hch@lst.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+ jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241114104517.51726-1-anuj20.g@samsung.com>
+ <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+ <20241114104517.51726-7-anuj20.g@samsung.com>
+ <c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
+ <b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
+ <20241118125029.GB27505@lst.de>
+ <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
+ <20241118170329.GA14956@lst.de>
+ <4f5ef808-aef0-40dd-b3c8-c34977de58d2@gmail.com>
+ <20241119124938.GA30988@lst.de>
+Content-Language: en-US
+In-Reply-To: <20241119124938.GA30988@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 06:08:53PM +0530, Ojaswin Mujoo wrote:
-> Changes since v1:
+On 11/19/24 12:49, Christoph Hellwig wrote:
+> On Mon, Nov 18, 2024 at 05:45:02PM +0000, Pavel Begunkov wrote:
+>> Exactly, _fast path_. PI-only handling is very simple, I don't buy
+>> that "complicated". If we'd need to add more without an API expecting
+>> that, that'll mean a yet another forest of never ending checks in the
+>> fast path effecting all users.
+> 
+> Well, that's a good argument for a separate opcode for PI, or at least
 
-Forgot to link v1:
+No, it's not. Apart from full duplication I haven't seen any PI
+implementation that doesn't add overhead to the io_uring read-write
+path, which is ok, but pretending that dropping a new opcode solves
+everything is ill advised.
 
-https://lore.kernel.org/linux-ext4/20241115183449.2058590-1-ojaswin@linux.ibm.com/T/#t
+And I hope there is no misunderstanding on the fact that there are
+other criteria as well, and what's not explicitly mentioned is usually
+common sense. For example, it's supposed to be correct and bug free
+as well as maintainable.
 
-> 
->  * Patch 1: Move flush_delayed_work() to start of function
->  * Patch 2: Guard ext4_release_dquot against freeze
-> 
-> Regarding patch 2, as per my understanding of the journalling code,
-> right now ext4_release_dquot() can only be called from the
-> quota_realease_work workqueue and hence ideally should never have a
-> journal open but to future-proof it we make sure the journal is not
-> opened when calling sb_start_inwrite().
-> 
-> ** Original Cover **
-> 
-> Recently we noticed generic/390 failing on powerpc systems. This test
-> basically does a freeze-unfreeze loop in parallel with fsstress on the
-> FS to detect any races in the code paths.
-> 
-> We noticed that the test started failing due to kernel WARN_ONs because
-> quota_release_work workqueue started executing while the FS was frozen
-> which led to creating new transactions in ext4_release_quota. 
-> 
-> Most of the details are in the bug however I'd just like to add that
-> I'm completely new to quota code so the patch, although fixing the
-> issue, might be not be logically the right thing to do. So reviews and
-> suggestions are welcome. 
-> 
-> Also, I can only replicate this race on one of my machines reliably and
-> does not appear on others.  I've tested with with fstests -g quota and
-> don't see any new failures.
-> 
-> Ojaswin Mujoo (2):
->   quota: flush quota_release_work upon quota writeback
->   ext4: protect ext4_release_dquot against freezing
-> 
->  fs/ext4/super.c  | 17 +++++++++++++++++
->  fs/quota/dquot.c |  2 ++
->  2 files changed, 19 insertions(+)
-> 
-> -- 
-> 2.43.5
-> 
+> for a 128-byte write, isn't it?  I have real hard time trying to find
+> a coherent line in your arguments.
+
+When coming from invalid assumptions everything would seem incoherent.
+And please, I'm not here to humour you, you can leave your crude
+statements for yourself, it's getting old.
+
+-- 
+Pavel Begunkov
 
