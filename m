@@ -1,137 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-35372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A939D44D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 01:11:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AF99D4535
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 02:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06F9281FDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 00:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468EDB22330
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 01:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4FF1C28E;
-	Thu, 21 Nov 2024 00:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED21EF01;
+	Thu, 21 Nov 2024 01:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MgTLeOZ1"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YnCnmsQr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA04846C;
-	Thu, 21 Nov 2024 00:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168414C66;
+	Thu, 21 Nov 2024 01:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732147837; cv=none; b=XVLahBy2ka2kfcaLWIkFRcO9NVAQ5mZPcoemPJw7mGN/qUaCfZoB0Mp7ETz2bB45MIQQKvV+fXOMIZCJRv8MNT2nqW9JIpkWwRanWY0kYg9ahSrEEb/aJd9PXE4mm1q0lSg/dhSnfyMMLUH9HJwBfir7G0eNcXcu71nqsOQoru0=
+	t=1732151641; cv=none; b=lJqEwZSSwRPUpfYjHRXb6GjuLE0X/QpKz20fJ2isOEzMjpOQs/OyU8hpuQjLszdHRTDuLJ8qLEEQBV0WqyRWxXCxS+aQb5WTjQwSJW1YGsRLBwggo/t5W54EzdRH9/M3XF2dGTy5Jekl8RKBV/5tiQtoKbNOi/34OHtpg9gfvbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732147837; c=relaxed/simple;
-	bh=ib64hTV/S9sfhLEnicNuXT07IKzScNUMPYYtcgzyQbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMH7XCrMfxRVszyce/ZoE19nI4QGh5nX7dp8UgBB3/VrjwDcX3V+XPI1GCmZi2tk/DsrECsl9WWACxjRNTrHU/XfoHlHGQ4AyBmjNDwtcEQQyw6CWqProJBBJtcUmLySD+S1TqTxU1QcB6ylbd6l6peZazyiPey6lIQGkCl7JlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MgTLeOZ1; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 19:10:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732147833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BvGUvvPHTEAKOGb7P1+ozrjOYaiPmM61awo8yb0kUNQ=;
-	b=MgTLeOZ1bUIQKcLSwzg9uruYdttWJBlwp+C6jyewYEuqOyMv5gbq0l6qVvO3fFDfJCR1Gc
-	R0aLrn08Z/EtKE7Vpn8PLyc47HfCrMCcgWJA3gFWmN7IN4T2yBRNccOQsLtPxhgyVJfWE6
-	nHQagbk95P0kS4ON7fKgRqJ93Lsopxg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Michal Hocko <mhocko@suse.com>, 
-	Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <3ij22qnqpndxyckrdreswyxjaan3zudzdkv62vjeeytsep5bmz@5el2tljyx7wc>
-References: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
- <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
- <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
- <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
- <20241120234759.GA3707860@mit.edu>
+	s=arc-20240116; t=1732151641; c=relaxed/simple;
+	bh=l4FDzqr+e6/1dGF1MfQAFNMR+lWKMS7bW/hnMtn1YZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lfi5/3XbDru2bfN1QIZt/LZrDyB7Ub6OXqjDokkCNDFKosUZ5Ah+YSfC3NcNQhVpMSI6ciO3p/i1uUrzEiE7AefaA2G/69ijQErIYciy1rTHgZCNI3+NomKjENbbNLdXN+FBOucjJL2MVgDuQA1pYpplxqg56+3YwC41kZidHMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YnCnmsQr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=2Fl5ltEnbJlMG+sVSMC7bWYoVQrbhsNI48omXw8gVVA=; b=YnCnmsQrlp2TLhDkLcuOJoQLPZ
+	x8+6Ugg+jb53HWy34bttBIiAbGDFY+goQ4d37uk5W5mSWNM3nkJuyKj1W0shpzQdvsWzBCQBusn+c
+	ItQaCGS4NF5dRC8xky8XI5jkF3I6+cUuCNLEJD6QQTN93UoOEmMRwuS5jx2uQ9yBR6vh+tR30Jurd
+	8wrpooC6HJAqhlUPxguybmKZwDwOJr/jhprjayNd8Ou//je0BHx+9WI0CpYQqjHnQ3z98vUJo1azg
+	PdJgY7Uv6GdLNXVDdEnzgOzF8pfIQfUiI5930XIqVVhM9iZ4HlC+oDRRUZg+pxGlIODVQ8C9P3i8g
+	D9Tp9dLw==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDvlb-0000000GWPT-1Zye;
+	Thu, 21 Nov 2024 01:13:55 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2] fiemap: use kernel-doc includes in fiemap docbook
+Date: Wed, 20 Nov 2024 17:13:52 -0800
+Message-ID: <20241121011352.201907-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120234759.GA3707860@mit.edu>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
-> On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
-> > Shuah, would you be willing to entertain the notion of modifying your...
-> 
-> Kent, I'd like to gently remind you that Shuah is not speaking in her
-> personal capacity, but as a representative of the Code of Conduct
-> Committee[1], as she has noted in her signature.  The Code of Conduct
-> Committee is appointed by, and reports to, the TAB[2], which is an
-> elected body composed of kernel developers and maintainers.
-> 
-> [1] https://www.kernel.org/code-of-conduct.html
-> [2] https://www.kernel.org/doc/html/latest/process/code-of-conduct-interpretation.html
-> 
-> Speaking purely in a personal capacity, and not as a member of the TAB
-> (although I do serve as vice-chair of that body) I am extremely
-> grateful of the work of Shuah and her colleages (listed in [1]).  I
-> believe that their work is important in terms of establishing guard
-> rails regarding the minimum standards of behavior in our community.
-> 
-> If you look at the git history of the kernel sources, you will see
-> that a large number of your fellow maintainers assented to this
-> approach --- for example by providing their Acked-by in commit
-> 1279dbeed36f ("Code of Conduct Interpretation: Add document explaining
-> how the Code of Conduct is to be interpreted").
+Add some kernel-doc notation to structs in fiemap header files
+then pull that into Documentation/filesystems/fiemap.rst
+instead of duplicating the header file structs in fiemap.rst.
+This helps to future-proof fiemap.rst against struct changes.
 
-And Ted, I don't think you realize just how at my limit I am here with
-what I'm willing to put up with.
+Add missing flags documentation from header files into fiemap.rst
+for FIEMAP_FLAG_CACHE and FIEMAP_EXTENT_SHARED.
 
-I'm coming off of, what, 6+ months of getting roasted and having my work
-quested by Linus every pull request (and he did stop that, but not
-before it had done real damage, both completely changing the tone of
-public conversations and nearly scaring off people I've been trying to
-hire).
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Cc: Matthew Wilcox <willy@infradead.org>
+---
+v2: Use Willy's parameter description changes.
+    Change some 2-line parameter comments to one line.
 
-It's gotten harder and harder, not easier, for me to get work done in
-other parts of the kernel; I gave up long ago in the block layer after
-the two people in charge there had repeatedly introduced silent data
-corruption bugs into core block layer code that I'd written, without
-CCing me, which I then had to debug, which they then ignored or put up
-ridiculous fights over when reported, and now have turned petty on
-subsequent block layer patches.
+    I have not converted the flag constants from macros to enums
+    even though that would help with future-proofing the documentation.
+    If Christoph says that he would like to see that, I can work on it.
 
-Filesystem people have been good to work with, thank god, but now
-getting anything done in mm is looking like more and more of what the
-block layer has turned into.
+Cc: linux-fsdevel@vger.kernel.org
 
-And you guys, because the system works for you, keep saying "nah,
-everything is fine and this has already been decided, you don't get any
-say".
+ Documentation/filesystems/fiemap.rst |   45 ++++++-----------------
+ include/linux/fiemap.h               |   16 +++++---
+ include/uapi/linux/fiemap.h          |   47 +++++++++++++++++--------
+ 3 files changed, 57 insertions(+), 51 deletions(-)
 
-Meanwhile, I'm seeing more and more heisenbugs in the rest of the kernel
-as I'm stabilizing bcachefs, and my users are reporting the same - in
-compaction, in the block layer, now in the scheduler or locking, I'm not
-sure on the last one.
-
-And I'm sitting here wondering how the hell I'm supposed to debug my own
-code when I don't even have a stable base to work on anymore.
-
-This is turning into an utter farce.
+--- linux-next-20241120.orig/include/uapi/linux/fiemap.h
++++ linux-next-20241120/include/uapi/linux/fiemap.h
+@@ -14,37 +14,56 @@
+ 
+ #include <linux/types.h>
+ 
++/**
++ * struct fiemap_extent - description of one fiemap extent
++ * @fe_logical: byte offset of the extent in the file
++ * @fe_physical: byte offset of extent on disk
++ * @fe_length: length in bytes for this extent
++ * @fe_flags: FIEMAP_EXTENT_* flags for this extent
++ */
+ struct fiemap_extent {
+-	__u64 fe_logical;  /* logical offset in bytes for the start of
+-			    * the extent from the beginning of the file */
+-	__u64 fe_physical; /* physical offset in bytes for the start
+-			    * of the extent from the beginning of the disk */
+-	__u64 fe_length;   /* length in bytes for this extent */
++	__u64 fe_logical;
++	__u64 fe_physical;
++	__u64 fe_length;
++	/* private: */
+ 	__u64 fe_reserved64[2];
+-	__u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
++	/* public: */
++	__u32 fe_flags;
++	/* private: */
+ 	__u32 fe_reserved[3];
+ };
+ 
++/**
++ * struct fiemap - file extent mappings
++ * @fm_start: byte offset (inclusive) at which to start mapping (in)
++ * @fm_length: logical length of mapping which userspace wants (in)
++ * @fm_flags: FIEMAP_FLAG_* flags for request (in/out)
++ * @fm_mapped_extents: number of extents that were mapped (out)
++ * @fm_extent_count: size of fm_extents array (in)
++ * @fm_extents: array of mapped extents (out)
++ */
+ struct fiemap {
+-	__u64 fm_start;		/* logical offset (inclusive) at
+-				 * which to start mapping (in) */
+-	__u64 fm_length;	/* logical length of mapping which
+-				 * userspace wants (in) */
+-	__u32 fm_flags;		/* FIEMAP_FLAG_* flags for request (in/out) */
+-	__u32 fm_mapped_extents;/* number of extents that were mapped (out) */
+-	__u32 fm_extent_count;  /* size of fm_extents array (in) */
++	__u64 fm_start;
++	__u64 fm_length;
++	__u32 fm_flags;
++	__u32 fm_mapped_extents;
++	__u32 fm_extent_count;
++	/* private: */
+ 	__u32 fm_reserved;
+-	struct fiemap_extent fm_extents[]; /* array of mapped extents (out) */
++	/* public: */
++	struct fiemap_extent fm_extents[];
+ };
+ 
+ #define FIEMAP_MAX_OFFSET	(~0ULL)
+ 
++/* flags used in fm_flags: */
+ #define FIEMAP_FLAG_SYNC	0x00000001 /* sync file data before map */
+ #define FIEMAP_FLAG_XATTR	0x00000002 /* map extended attribute tree */
+ #define FIEMAP_FLAG_CACHE	0x00000004 /* request caching of the extents */
+ 
+ #define FIEMAP_FLAGS_COMPAT	(FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR)
+ 
++/* flags used in fe_flags: */
+ #define FIEMAP_EXTENT_LAST		0x00000001 /* Last extent in file. */
+ #define FIEMAP_EXTENT_UNKNOWN		0x00000002 /* Data location unknown. */
+ #define FIEMAP_EXTENT_DELALLOC		0x00000004 /* Location still pending.
+--- linux-next-20241120.orig/Documentation/filesystems/fiemap.rst
++++ linux-next-20241120/Documentation/filesystems/fiemap.rst
+@@ -12,21 +12,10 @@ returns a list of extents.
+ Request Basics
+ --------------
+ 
+-A fiemap request is encoded within struct fiemap::
+-
+-  struct fiemap {
+-	__u64	fm_start;	 /* logical offset (inclusive) at
+-				  * which to start mapping (in) */
+-	__u64	fm_length;	 /* logical length of mapping which
+-				  * userspace cares about (in) */
+-	__u32	fm_flags;	 /* FIEMAP_FLAG_* flags for request (in/out) */
+-	__u32	fm_mapped_extents; /* number of extents that were
+-				    * mapped (out) */
+-	__u32	fm_extent_count; /* size of fm_extents array (in) */
+-	__u32	fm_reserved;
+-	struct fiemap_extent fm_extents[0]; /* array of mapped extents (out) */
+-  };
++A fiemap request is encoded within struct fiemap:
+ 
++.. kernel-doc:: include/uapi/linux/fiemap.h
++   :identifiers: fiemap
+ 
+ fm_start, and fm_length specify the logical range within the file
+ which the process would like mappings for. Extents returned mirror
+@@ -60,6 +49,8 @@ FIEMAP_FLAG_XATTR
+   If this flag is set, the extents returned will describe the inodes
+   extended attribute lookup tree, instead of its data tree.
+ 
++FIEMAP_FLAG_CACHE
++  This flag requests caching of the extents.
+ 
+ Extent Mapping
+ --------------
+@@ -77,18 +68,10 @@ complete the requested range and will no
+ flag set (see the next section on extent flags).
+ 
+ Each extent is described by a single fiemap_extent structure as
+-returned in fm_extents::
++returned in fm_extents:
+ 
+-    struct fiemap_extent {
+-	    __u64	fe_logical;  /* logical offset in bytes for the start of
+-				* the extent */
+-	    __u64	fe_physical; /* physical offset in bytes for the start
+-				* of the extent */
+-	    __u64	fe_length;   /* length in bytes for the extent */
+-	    __u64	fe_reserved64[2];
+-	    __u32	fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
+-	    __u32	fe_reserved[3];
+-    };
++.. kernel-doc:: include/uapi/linux/fiemap.h
++    :identifiers: fiemap_extent
+ 
+ All offsets and lengths are in bytes and mirror those on disk.  It is valid
+ for an extents logical offset to start before the request or its logical
+@@ -175,6 +158,8 @@ FIEMAP_EXTENT_MERGED
+   userspace would be highly inefficient, the kernel will try to merge most
+   adjacent blocks into 'extents'.
+ 
++FIEMAP_EXTENT_SHARED
++  This flag is set to request that space be shared with other files.
+ 
+ VFS -> File System Implementation
+ ---------------------------------
+@@ -191,14 +176,10 @@ each discovered extent::
+                      u64 len);
+ 
+ ->fiemap is passed struct fiemap_extent_info which describes the
+-fiemap request::
++fiemap request:
+ 
+-  struct fiemap_extent_info {
+-	unsigned int fi_flags;		/* Flags as passed from user */
+-	unsigned int fi_extents_mapped;	/* Number of mapped extents */
+-	unsigned int fi_extents_max;	/* Size of fiemap_extent array */
+-	struct fiemap_extent *fi_extents_start;	/* Start of fiemap_extent array */
+-  };
++.. kernel-doc:: include/linux/fiemap.h
++    :identifiers: fiemap_extent_info
+ 
+ It is intended that the file system should not need to access any of this
+ structure directly. Filesystem handlers should be tolerant to signals and return
+--- linux-next-20241120.orig/include/linux/fiemap.h
++++ linux-next-20241120/include/linux/fiemap.h
+@@ -5,12 +5,18 @@
+ #include <uapi/linux/fiemap.h>
+ #include <linux/fs.h>
+ 
++/**
++ * struct fiemap_extent_info - fiemap request to a filesystem
++ * @fi_flags:		Flags as passed from user
++ * @fi_extents_mapped:	Number of mapped extents
++ * @fi_extents_max:	Size of fiemap_extent array
++ * @fi_extents_start:	Start of fiemap_extent array
++ */
+ struct fiemap_extent_info {
+-	unsigned int fi_flags;		/* Flags as passed from user */
+-	unsigned int fi_extents_mapped;	/* Number of mapped extents */
+-	unsigned int fi_extents_max;	/* Size of fiemap_extent array */
+-	struct fiemap_extent __user *fi_extents_start; /* Start of
+-							fiemap_extent array */
++	unsigned int fi_flags;
++	unsigned int fi_extents_mapped;
++	unsigned int fi_extents_max;
++	struct fiemap_extent __user *fi_extents_start;
+ };
+ 
+ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
 
