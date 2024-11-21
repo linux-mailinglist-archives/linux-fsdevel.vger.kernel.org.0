@@ -1,215 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-35480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A1B9D540B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 21:36:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1969D549C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44411F22FAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 20:36:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB1E8B210D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 21:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B1A1D0E10;
-	Thu, 21 Nov 2024 20:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6582F4502F;
+	Thu, 21 Nov 2024 21:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FLFIZr1r"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGDEzZWt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF33C47B;
-	Thu, 21 Nov 2024 20:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587B041C79
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 21:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732221369; cv=none; b=TvTeArzGxqDdHq2o2QKoEmzupryI76NF0ufuwtygPy1uI3RnSYBAkZgeVACbceJ05d7aAnKB8O28raZdCanfnX+8FOyzFRAJao81kYa4hYT7GedY4jzwhm7FQoZZPUoXEoQzQmcanQgFrAu4RbNhpge/rjQfnM47gP6Bd6bNjjc=
+	t=1732223899; cv=none; b=M/AA9VyOSLdeBfnngkSJsKZUgyNGKz9Y+N0sNrRJS4t1evDCKqJf/a4Kmn5/7G2r7OluxDQ4b7oyfUgtP0zx9N2jCw/07huqio/dVm45ybEeU4UCCR7OuaSNn1RWD45jp12pbmPI+DI43bAQUO0d5ydsG/r+MDosu2YlpW84F2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732221369; c=relaxed/simple;
-	bh=7Vq/O7M/rpQ/XvxNyaS3o9CEOAPJiin0cbjFnC1hENc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hut4soXcwm7yWRFgY1m+3KvXbQp0gh0eSkXdFq+RePOLhe6tJ6xqKbMCrTfKL2oUrbf7fw/21lkG6PIGadbfhpT50O/RQK7wKLnl2khKtRmlE2xJE9faWrCONfSoazcE6oQi+kU70ZVXKXUVkwILThS4V5HpOQTH2rl4IorUUh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FLFIZr1r; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALGfAQH013558;
-	Thu, 21 Nov 2024 20:34:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rlelLu
-	NxaQbOjS+AkBlNiz3aAj7rJ3O71jw+IWqCHcY=; b=FLFIZr1rr1BmrgPgUxiG3g
-	Sn9cNjYHRsSVYuOrafvD0Oas8M5sJR3icX2DR4H+Ij8pW1K/nJ1dQ80N/VTGAfJb
-	gUzKG2pWPH6ZwcS7EP/V5A85Z803GnU1c+1Pj0XfDxOkcnQU020QCLahQT6i/1Ee
-	anToxEuakKvgsE2qEjn6OwHJRSEGLWzplZjyqgcyR2KALhJ6iuST4Ap9niIrbXek
-	lmSmFnHLYvZxf1hDcNh3nvmSH52GrdPBsfQ2FxMXHw5I/46RlnCZt2b3PBSYYnkh
-	WU2kJJDaY/8gGcEnFFq9zO4Zjz7tEFINhYu22GZYGE5uf9G8uY71LM5QXTQvt1xw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4313gsufwh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 20:34:53 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ALKYqu6024816;
-	Thu, 21 Nov 2024 20:34:52 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4313gsufwe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 20:34:52 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALIpcBI000600;
-	Thu, 21 Nov 2024 20:34:51 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y77mtd41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 20:34:51 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ALKYoDo57147782
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Nov 2024 20:34:50 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5FB2C58056;
-	Thu, 21 Nov 2024 20:34:50 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C34A358052;
-	Thu, 21 Nov 2024 20:34:47 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 21 Nov 2024 20:34:47 +0000 (GMT)
-Message-ID: <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
-Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
- interpreter and 28 tests
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Al Viro
- <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees
- Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
-        Serge
- Hallyn <serge@hallyn.com>
-Cc: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-        Alejandro
- Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Heimes <christian@python.org>,
-        Dmitry Vyukov
- <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
-        Eric Biggers
- <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Fan Wu
- <wufan@linux.microsoft.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert
- Uytterhoeven <geert@linux-m68k.org>,
-        James Morris
- <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn
- <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
-        Jonathan Corbet
- <corbet@lwn.net>,
-        Jordan R Abrahams <ajordanr@google.com>,
-        Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>,
-        Linus Torvalds
- <torvalds@linux-foundation.org>,
-        Luca Boccassi <bluca@debian.org>,
-        Luis
- Chamberlain <mcgrof@kernel.org>,
-        "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>,
-        Matt Bobrowski <mattbobrowski@google.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Wilcox
- <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-        Scott Shell
- <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell
- <sfr@canb.auug.org.au>,
-        Steve Dower <steve.dower@python.org>, Steve Grubb
- <sgrubb@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Yin
- Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Thu, 21 Nov 2024 15:34:47 -0500
-In-Reply-To: <20241112191858.162021-7-mic@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
-	 <20241112191858.162021-7-mic@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732223899; c=relaxed/simple;
+	bh=W85eqoig0N5xXFsA4zJzJxB3cbCQC2wO3Db7Qrszu5o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hmcyaYgvMqPlm3d+QI6c9E/qTEo6TtP1ZzAaoWROaBXZLS86hkRFhSb8pUOG8TF2hhFecwOZRTxXT8zgYaCU/FUehqlNuu6Efxv53boZXGzkZhTh6sRBKDinIhjdJTs7P9llYVGxqfKCGw8ldXojKR7+XVdv+X79cnml9ph89Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGDEzZWt; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a76156af6bso4845565ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 13:18:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732223897; x=1732828697; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/mfZKTQyhXYaUJseYy1hv2VeyJ2+oQyIuspaPbvuUY=;
+        b=dGDEzZWtwVd5ePSJZdLufK52ZyRtlp46ZZtj0p5V5pybVwzWsqVbOJrcBGQvnNE9XS
+         LyLnHndot4+V69IJLSPAKFN8LKkQ0AqcDk8TS9trllcBcnLS3JcO/AOLuhQ3eDLdZkwb
+         8Z7XKRpGNBCNaN+QTN82Q4/LMYGUQXbOrf3WV1knKjdmtqb9wi5akXympIwjBzqsORtN
+         jnjtYDjOrOyfaH4BGjZV3Y4xrYpZk+2uc25UpEdSPCdt5pErH8ck/SWSuj0FOer34Mti
+         oE975uz3aIt0VV+CgH3KroprP/PM9yVW0bb4WdgYaG8GOEYIxYpqbWH4y2BoJjnG4z4M
+         1mWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732223897; x=1732828697;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/mfZKTQyhXYaUJseYy1hv2VeyJ2+oQyIuspaPbvuUY=;
+        b=DKHGhq1t0SatFPKI2PBv3fX8Gvm83UoG26pquUTaNJ+XUMCk6maJZLIwYGBYPqzjH6
+         h+ee8o4yjbLprbw2Txw/Wu6veIUULWNXZtKBYlS9Yzyzk/6r+2iy9dJR7o5vnsPXOljC
+         l2CK/GNvNCAKd4TXf0KcRhnq+eLEZgQxrV1wIxkUp5A9M9il8UNgcq79pDBpMxvetz65
+         Xz9v1kiHPTIw0fBYEN35N/wd6zZkFChODzGrE6LSmYM8i93y0mB+PBasUsUxnShdDLhg
+         6Jm0T23yGnIlH3irlwRricYspQq8u39JoRj0WtPLY1jsmnHj4ZCOgHx2vx2C82fsXrct
+         3szw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLDXCpvoyqchfuSoqu9xLrzCaVUTLmHq4/NlgRYgcPTCSPYq2zKT7ntH3nZPnaJKqENai4KLmXLlxb+IZR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+DTyie5XU5JOXkrhmjU4BKTBuTGd4yQp+YmObBadsRTMJmvKa
+	pC0MCA4Zme0FImKIMd/CNwNiNlNufnOT7xrOUOjbPQUI3s1ZKvT/s/FVbZqMkQ==
+X-Gm-Gg: ASbGncskv6TczqmG4nDBKxRoOuAiHYxY9ffN9+y4YPTtYlQU7LRcqMxeBKTEzodurjN
+	idRWAJ1yD8DpRTDseg9mEWQR6TQ+NaaaC72acHH1Fk9HqkuIS4WQuGU5g/L3WyvoL+i2AoRejN+
+	0YFQhN5XOvmNtjVt2TJWstgD2FjHO1blIcL5F2beLtaD9CfUJ/yOuBSCGrQH2Np5NP6HD3Kj2Ry
+	KCIA8Xxk/yt5estaRlmPBXcYfPp9z4Swjy88CS0Lzv1GMZCIr663RLA/dVr7shRQc2w3kmlxfpD
+	YH2seIandS6prLB7Dz2t4d4gTAwmJh0aZw==
+X-Google-Smtp-Source: AGHT+IFQbPCB0rHPhnpYbQiUEs7w+N6lvukYSgOaD6CKsx8IKXq0wMfQEeUnhxgXV8pSGffrHgVZTw==
+X-Received: by 2002:a05:6e02:198a:b0:3a7:1b96:220f with SMTP id e9e14a558f8ab-3a79ad03f38mr7548595ab.9.1732223897144;
+        Thu, 21 Nov 2024 13:18:17 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3fb2a7sm179889a12.77.2024.11.21.13.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 13:18:15 -0800 (PST)
+Date: Thu, 21 Nov 2024 13:18:05 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: Chuck Lever III <chuck.lever@oracle.com>
+cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+    Chuck Lever <cel@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+    Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
+    Hugh Dickins <hughd@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+    "yukuai (C)" <yukuai3@huawei.com>, 
+    "yangerkun@huaweicloud.com" <yangerkun@huaweicloud.com>
+Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
+ values wrap
+In-Reply-To: <34F4206C-8C5F-4505-9E8F-2148E345B45E@oracle.com>
+Message-ID: <63377879-1b25-605e-43c6-1d1512f81526@google.com>
+References: <20241117213206.1636438-1-cel@kernel.org> <20241117213206.1636438-3-cel@kernel.org> <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org> <ZzuqYeENJJrLMxwM@tissot.1015granger.net> <20241120-abzocken-senfglas-8047a54f1aba@brauner>
+ <Zz36xlmSLal7cxx4@tissot.1015granger.net> <20241121-lesebrille-giert-ea85d2eb7637@brauner> <34F4206C-8C5F-4505-9E8F-2148E345B45E@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5j4NljDjvOK_TMG_-0z2jGGIPzeoKdQE
-X-Proofpoint-ORIG-GUID: y_4dWfxzFvg9Bphre9Ic1A5QOC1Kd_4I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- adultscore=0 mlxlogscore=977 mlxscore=0 malwarescore=0 spamscore=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210153
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Micka=C3=ABl,
+On Thu, 21 Nov 2024, Chuck Lever III wrote:
+> 
+> I will note that tmpfs hangs during generic/449 for me 100%
+> of the time; the failure appears unrelated to renames. Do you
+> know if there is regular CI being done for tmpfs? I'm planning
+> to add it to my nightly test rig once I'm done here.
 
-On Tue, 2024-11-12 at 20:18 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
->=20
-> +
-> +/* Returns 1 on error, 0 otherwise. */
-> +static int interpret_stream(FILE *script, char *const script_name,
-> +			    char *const *const envp, const bool restrict_stream)
-> +{
-> +	int err;
-> +	char *const script_argv[] =3D { script_name, NULL };
-> +	char buf[128] =3D {};
-> +	size_t buf_size =3D sizeof(buf);
-> +
-> +	/*
-> +	 * We pass a valid argv and envp to the kernel to emulate a native
-> +	 * script execution.  We must use the script file descriptor instead of
-> +	 * the script path name to avoid race conditions.
-> +	 */
-> +	err =3D execveat(fileno(script), "", script_argv, envp,
-> +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+For me generic/449 did not hang, just took a long time to discover
+something uninteresting and eventually declare "not run".  Took
+14 minutes six years ago, when I gave up on it and short-circuited
+the "not run" with the patch below.
 
-At least with v20, the AT_CHECK always was being set, independent of whethe=
-r
-set-exec.c set it.  I'll re-test with v21.
+(I carry about twenty patches for my own tmpfs fstests testing; but
+many of those are just for ancient 32-bit environment, or to suit the
+"huge=always" option. I never have enough time/priority to review and
+post them, but can send you a tarball if they might of use to you.)
 
-thanks,
+generic/449 is one of those tests which expects metadata to occupy
+space inside the "disk", in a way which it does not on tmpfs (and a
+quick glance at its history suggests btrfs also had issues with it).
 
-Mimi
+[PATCH] generic/449: not run on tmpfs earlier
 
-> +	if (err && restrict_stream) {
-> +		perror("ERROR: Script execution check");
-> +		return 1;
-> +	}
-> +
-> +	/* Reads script. */
-> +	buf_size =3D fread(buf, 1, buf_size - 1, script);
-> +	return interpret_buffer(buf, buf_size);
-> +}
-> +
+Do not waste 14 minutes to discover that tmpfs succeeds in
+setting acls despite running out of space for user attrs.
 
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ tests/generic/449 | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tests/generic/449 b/tests/generic/449
+index 9cf814ad..a52a992b 100755
+--- a/tests/generic/449
++++ b/tests/generic/449
+@@ -22,6 +22,11 @@ _require_test
+ _require_acls
+ _require_attrs trusted
+ 
++if [ "$FSTYP" = "tmpfs" ]; then
++	# Do not waste 14 minutes to discover this:
++	_notrun "$FSTYP succeeds in setting acls despite running out of space for user attrs"
++fi
++
+ _scratch_mkfs_sized $((256 * 1024 * 1024)) >> $seqres.full 2>&1
+ _scratch_mount || _fail "mount failed"
+ 
+-- 
+2.35.3
 
