@@ -1,110 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-35435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34F99D4C1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE18D9D4C3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C4DDB23EF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 11:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701042822F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 11:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DCB1E52D;
-	Thu, 21 Nov 2024 11:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9FB1D1F6B;
+	Thu, 21 Nov 2024 11:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K9lnfuf6"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eL6cOxuP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DfPyXL+N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eL6cOxuP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DfPyXL+N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F0E3C47B;
-	Thu, 21 Nov 2024 11:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DFC1C728F;
+	Thu, 21 Nov 2024 11:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189162; cv=none; b=KbIDW68AvnZebBhcXXrqAXj9kyngCqbi89yQYPufKXhM+/tnVZ8lMNPKiiIbJco29SxKin80cPfeHtfsYugGbLtFqaBuXieANE2XCBhR0rSEfxex0DwUJqq+PKZlbWgvynH6regcZcps9zvpdQTZ4pE0UZgx2fgUTKgkexuyny4=
+	t=1732189799; cv=none; b=ZDVeEG41n7TTxdztmmrLkE9uEWgHYr7Ccfk+qlcasrQ7yc+l6g4vegVLvg5o0M5vALNfqPFcEVoc3eNkFjvVAKvAQACf+TBCEc812i9cPzoVdNkpKR5R7a+icnsvlu9ZlZhg9aEliwCBohysrMTJv0pPOSyW83q18d5cm4mr8ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189162; c=relaxed/simple;
-	bh=xAYaBEUf9TwtHxHoBr4FgtqZpbowLusqakRP77r9kOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCno/MqgehAKT9PwTv0ISRhGvlLHDqzeSP3x/i6NKY4/SNZ/hw7CPNixhcRJEwvDv82pJHnXp15rjbMfCNH2FRJYIiCFoKR3q1nVGDXRocRg/lJx7d5lAjQ+OGCOlrBVArhn7LUJjT7LglXusboJT8mrxyRi3dnDzGU19dB4cVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K9lnfuf6; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa1e51ce601so164509466b.3;
-        Thu, 21 Nov 2024 03:39:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732189159; x=1732793959; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=flmqqIvHrYVf7qQ/T7+htw1AlPLKr76abtaAFtyx13k=;
-        b=K9lnfuf6WIqcBztGoyhzjJcULOQ8WWiSLMEvaJIu1d0yN+u9NixCXxNG+Ym99tzF1V
-         8kTQJIDgV66Mbtyq8hYqacdFmJCH8pg4FuG5r5ykXe5Tl47NokZARxL+Mhcvh1vj/72h
-         3m8XCbmviYJ8xVpVkHdGooHkEXmc/SQWPzFkxgXU15col4maFGcorO/7OyvIhzDmH6X4
-         wKfmHW5Xz4EGMc/dyKcVJEwTj+dT581w2kR82lZtWvrU26cPJA92RnjZZVwZhJem00nE
-         bPRtCz8s1YRrZnEWBGMEE8suIPrzff/f2QiZItRjy4oloRN447V5GACVSGyRgZ6LFIUM
-         Pfqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732189159; x=1732793959;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=flmqqIvHrYVf7qQ/T7+htw1AlPLKr76abtaAFtyx13k=;
-        b=UohRHBrCqAZg/5jVQgx0uBsDlVDuQ1jco+VKmtqA5YVdGimqQpX1MIU42IKzvqxhN1
-         a2oloUtSaC8mbldDm7jX0Pb+c45YxoL5M08I91NjziM5yuGFe0YB4KnEil4uyn7hDZDo
-         6kQvIXoP6nfOLiwkObia7xl28iM3ZNhykEX1rRHOZMWgFS1YY4DQwixpjGV2Cr55o1mS
-         Z7wpFWoSs8FDMa5gquyz8MbjHjMfz4df8DZH1njn+FkoUeDjm87AdjTyHjEI6Ef7b3Mw
-         MnWfX6CAJiXCYpELEsBIlQ6Z8eCe0dkvshEH8g7TDU/jLQCylVahQicI5t7VH6CYGHRy
-         DP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWD1TvAWkySb8n9Q6lIQtB7TI4isL+uSiavjtzHMEd52asUhOSLVyKDn2Z+BP0o7Cjg1dj2pWvsRuN/cA==@vger.kernel.org, AJvYcCWKJogvt+BqwGESOf8M5+5GKrQ+An+llWHGWDmMFrS8BR6K6lSMdvhFvo5VRFXibzmV8HZphbcjbyQlyg==@vger.kernel.org, AJvYcCWKNlxIQPArCOXT9eZ6pa3EU3hKkubRJHCKsWSdxRP9PAoIxi++YJiB5Pohy79w/NeUmoihwUXgrLDJ@vger.kernel.org, AJvYcCWW3ghwwuADyG22yLCT3XWD+ybE++Cb38jzHr/MZXiBGKfCTK7kqs6SzIiLLHVbrlIxfR4CgUgvkAyjvT5BQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPGikDZqOoi3vp9aTJ3heNvxBA4PkD1SsUt/jyYFp9GL8zp2f8
-	+lKV1XcgLdcZ+cEY7OOvfW9GYTr/D895hplLXmIXrQ2lh4E8swnr0UxkWpSMdksiTZtzcnnxt/l
-	gW/VFgrk1hVbv1Tk4UCDM2S7FBec=
-X-Gm-Gg: ASbGncvXzHHxBpabeD+B0w7zIvTogKt9xSZysfbrB5Q90XfJvaeZf+9IVbImMcr5KmM
-	mjabZTIK0lJK0Dz1SDvNcw6zAG8t2Ytk=
-X-Google-Smtp-Source: AGHT+IFxJ5PMK5EI0p5RcxskpZT0i1r125FE0cgnA0p0b/AF7qbdGGhs4weZZIOjMWdg/3y0jLQKqWHCYKcLqfZpGX4=
-X-Received: by 2002:a17:906:eec8:b0:a99:77f0:51f7 with SMTP id
- a640c23a62f3a-aa4dd799d4bmr586113866b.61.1732189158565; Thu, 21 Nov 2024
- 03:39:18 -0800 (PST)
+	s=arc-20240116; t=1732189799; c=relaxed/simple;
+	bh=Gbdc7YRc/+Gju6ZZDPX+O06gNSLXRayRDP5dM53siL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2ideNgfozUXAJuDCZh/tP/3W6AFnqo47N9Ckr+458DbeMTXJa4p9jIowRuZ/AhLmTmvbGdZQp6aQp19RMqsbetpJh52xD3ht9/g+xvU7B3LKdomrmO+wLcQa4QFy5HwMVhooVp6ittwcrynNJ573ZmUp+u+b3DC44kzGqEx774=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eL6cOxuP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DfPyXL+N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eL6cOxuP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DfPyXL+N; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 59E541F800;
+	Thu, 21 Nov 2024 11:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732189795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
+	b=eL6cOxuP9bDelgonDV1jZ2wcdwkl1OHB24gfKYdtITJ81pRWhsgGz1d7DIraCwPCN2z8QC
+	cQwB1UJgQD86Z/fdhZjb7pY93oNtQ4K4sIoVA5lS0uierVrh22brNUjHeJ1dp+kZHqVV1y
+	/PmXPjoLf8FWAifs32H91vr4VregkUg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732189795;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
+	b=DfPyXL+NfV2NK01c8fD3yGDfcmKtWjl2OyVz6xaI7ADqdO6+hvMw2kYjytRf44D9P/Qd99
+	ANXBVacXrm7sBHDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732189795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
+	b=eL6cOxuP9bDelgonDV1jZ2wcdwkl1OHB24gfKYdtITJ81pRWhsgGz1d7DIraCwPCN2z8QC
+	cQwB1UJgQD86Z/fdhZjb7pY93oNtQ4K4sIoVA5lS0uierVrh22brNUjHeJ1dp+kZHqVV1y
+	/PmXPjoLf8FWAifs32H91vr4VregkUg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732189795;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
+	b=DfPyXL+NfV2NK01c8fD3yGDfcmKtWjl2OyVz6xaI7ADqdO6+hvMw2kYjytRf44D9P/Qd99
+	ANXBVacXrm7sBHDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 49BB113927;
+	Thu, 21 Nov 2024 11:49:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id reK2EWMeP2dJCQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 11:49:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EA8D4A089E; Thu, 21 Nov 2024 12:49:50 +0100 (CET)
+Date: Thu, 21 Nov 2024 12:49:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jim Zhao <jimzhao.ai@gmail.com>
+Cc: jack@suse.cz, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	willy@infradead.org
+Subject: Re: [PATCH v2] mm/page-writeback: raise wb_thresh to prevent write
+ blocking with strictlimit
+Message-ID: <20241121114950.5ie64l3lmi3dkoz5@quack3>
+References: <20241113100735.4jafa56p4td66z7a@quack3>
+ <20241119114444.3925495-1-jimzhao.ai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731684329.git.josef@toxicpanda.com> <5ea5f8e283d1edb55aa79c35187bfe344056af14.1731684329.git.josef@toxicpanda.com>
- <20241120155309.lecjqqhohgcgyrkf@quack3> <20241121-boxring-abhandeln-c2095863da2d@brauner>
-In-Reply-To: <20241121-boxring-abhandeln-c2095863da2d@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 21 Nov 2024 12:39:07 +0100
-Message-ID: <CAOQ4uxiu3hkx9KJdcb0EchARyM+mYS-Yz+xU9w4MBRUH6RoDzg@mail.gmail.com>
-Subject: Re: [PATCH v8 02/19] fsnotify: opt-in for permission events at file
- open time
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, 
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-> This is fine by me. But I want to preemptively caution to please not
-> spread the disease of further defines based on such multi-bit defines
-> like fanotify does. I'm specifically worried about stuff like:
->
-> #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
->                                   FS_OPEN_EXEC_PERM)
->
-> #define FS_EVENTS_POSS_ON_CHILD   (ALL_FSNOTIFY_PERM_EVENTS | \
->                                    FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
->                                    FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | \
->                                    FS_OPEN | FS_OPEN_EXEC)
+On Tue 19-11-24 19:44:42, Jim Zhao wrote:
+> With the strictlimit flag, wb_thresh acts as a hard limit in
+> balance_dirty_pages() and wb_position_ratio().  When device write
+> operations are inactive, wb_thresh can drop to 0, causing writes to be
+> blocked.  The issue occasionally occurs in fuse fs, particularly with
+> network backends, the write thread is blocked frequently during a period.
+> To address it, this patch raises the minimum wb_thresh to a controllable
+> level, similar to the non-strictlimit case.
+> 
+> Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
+> ---
+> Changes in v2:
+> 1. Consolidate all wb_thresh bumping logic in __wb_calc_thresh for consistency;
+> 2. Replace the limit variable with thresh for calculating the bump value,
+> as __wb_calc_thresh is also used to calculate the background threshold;
+> 3. Add domain_dirty_avail in wb_calc_thresh to get dtc->dirty.
 
-What do you mean?
-Those are masks for event groups, which we test in many cases.
-What is wrong with those defined?
+Since the odd value of BdiDirryThresh got explained (independent cosmetic
+bug), feel free to add:
 
-For FMODE_, we do not plan to add anymore defined (famous last words).
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks,
-Amir.
+								Honza
+
+> ---
+>  mm/page-writeback.c | 48 ++++++++++++++++++++++-----------------------
+>  1 file changed, 23 insertions(+), 25 deletions(-)
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index e5a9eb795f99..8b13bcb42de3 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
+>  				      unsigned long thresh)
+>  {
+>  	struct wb_domain *dom = dtc_dom(dtc);
+> +	struct bdi_writeback *wb = dtc->wb;
+>  	u64 wb_thresh;
+> +	u64 wb_max_thresh;
+>  	unsigned long numerator, denominator;
+>  	unsigned long wb_min_ratio, wb_max_ratio;
+>  
+> @@ -931,11 +933,27 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
+>  	wb_thresh *= numerator;
+>  	wb_thresh = div64_ul(wb_thresh, denominator);
+>  
+> -	wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
+> +	wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
+>  
+>  	wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
+> -	if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
+> -		wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+> +
+> +	/*
+> +	 * It's very possible that wb_thresh is close to 0 not because the
+> +	 * device is slow, but that it has remained inactive for long time.
+> +	 * Honour such devices a reasonable good (hopefully IO efficient)
+> +	 * threshold, so that the occasional writes won't be blocked and active
+> +	 * writes can rampup the threshold quickly.
+> +	 */
+> +	if (thresh > dtc->dirty) {
+> +		if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
+> +			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
+> +		else
+> +			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
+> +	}
+> +
+> +	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
+> +	if (wb_thresh > wb_max_thresh)
+> +		wb_thresh = wb_max_thresh;
+>  
+>  	return wb_thresh;
+>  }
+> @@ -944,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
+>  {
+>  	struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
+>  
+> +	domain_dirty_avail(&gdtc, true);
+>  	return __wb_calc_thresh(&gdtc, thresh);
+>  }
+>  
+> @@ -1120,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
+>  	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>  		long long wb_pos_ratio;
+>  
+> -		if (dtc->wb_dirty < 8) {
+> -			dtc->pos_ratio = min_t(long long, pos_ratio * 2,
+> -					   2 << RATELIMIT_CALC_SHIFT);
+> -			return;
+> -		}
+> -
+>  		if (dtc->wb_dirty >= wb_thresh)
+>  			return;
+>  
+> @@ -1196,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
+>  	 */
+>  	if (unlikely(wb_thresh > dtc->thresh))
+>  		wb_thresh = dtc->thresh;
+> -	/*
+> -	 * It's very possible that wb_thresh is close to 0 not because the
+> -	 * device is slow, but that it has remained inactive for long time.
+> -	 * Honour such devices a reasonable good (hopefully IO efficient)
+> -	 * threshold, so that the occasional writes won't be blocked and active
+> -	 * writes can rampup the threshold quickly.
+> -	 */
+> -	wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
+>  	/*
+>  	 * scale global setpoint to wb's:
+>  	 *	wb_setpoint = setpoint * wb_thresh / thresh
+> @@ -1459,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
+>  	 * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
+>  	 * Hence, to calculate "step" properly, we have to use wb_dirty as
+>  	 * "dirty" and wb_setpoint as "setpoint".
+> -	 *
+> -	 * We rampup dirty_ratelimit forcibly if wb_dirty is low because
+> -	 * it's possible that wb_thresh is close to zero due to inactivity
+> -	 * of backing device.
+>  	 */
+>  	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
+>  		dirty = dtc->wb_dirty;
+> -		if (dtc->wb_dirty < 8)
+> -			setpoint = dtc->wb_dirty + 1;
+> -		else
+> -			setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+> +		setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
+>  	}
+>  
+>  	if (dirty < setpoint) {
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
