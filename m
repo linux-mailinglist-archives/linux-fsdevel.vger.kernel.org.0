@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-35485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124239D551F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:02:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003BE9D5576
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2A2B22BDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757EE1F23AEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C51D0E10;
-	Thu, 21 Nov 2024 22:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A451DC1B7;
+	Thu, 21 Nov 2024 22:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="SiBRM/kM"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lnOy2h+X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D7B1C57AA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CD41CEAB8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226564; cv=none; b=ekKDG8kNYjBRcxbDgQEg398jGMHjM07C+3CKpn3E/QorOaXqDKiWIhoNNh+hGdt1l/Gi+jXgTDnqDe5YFRsjGZAhsK0GiZscv194tvYi2GjZqpaKqk5rJrlvk7TySTnsGpEqnXWZDTvpczDWQhl7sceUle2UAdsLi6+v+2iP6Ng=
+	t=1732228083; cv=none; b=UwtTzisaLiIDJMd7OhNwD5S6FkBi/AD/RsLkGH17CZPzGW7aZW6VCNAITB5bIabmofs/w/mDTXWJLhfWQ9pP6BJW1MQ4HpZGK5RAEfsTJzkAMAvM1k5AHZ9XVczkABxCFy//qQ9EU+A1IEJj/mcovnIUWtk5MesrsSS1GnHyw28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226564; c=relaxed/simple;
-	bh=Ou2bSsgKxk3UOtc2BsS6ApwYyHqrVQbDy+rCD3RwKL0=;
+	s=arc-20240116; t=1732228083; c=relaxed/simple;
+	bh=3Ddf0ptq7AhGVQ1MIQ3AbFy8Hg/PZF1oUE2uUgKlOIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shFZZ2XF+wGoA1Cox/eyYebX1jGn7mM8rq5/4aL4tuASpFpHZmcCDUPex0DU26qE+s2zSzXJvIuLiXlK8KtgKtN2J3jDnDrOWGYS7o00V15WnQjhTbVzopn+0WL7ob4PeUDCBDjazSALNl2HgFbEZTM4Vwg1piAdjrCwh0cRAWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=SiBRM/kM; arc=none smtp.client-ip=209.85.128.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gl588icFPSrfSTgjmB+06lgzu48rpZMcVFRhe/s51fHE6pViIQnMu2jlzt4CNMlnNXk3ncADiELbJinfKPg8eB9gl123JaWLMru598THNzUM1vLR+ygZgWBZdW+8Yfa/W4ojwe9yM3MjJxOhsvnzxN7odN46LG9u8B1W56djM78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lnOy2h+X; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eb0c2dda3cso17967627b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:02:41 -0800 (PST)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6eed41d2b12so9755967b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:28:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732226561; x=1732831361; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732228081; x=1732832881; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zc9rNl+kHMHXgDoNRE5mV3rg1Potuw14ny2kvcyl0vA=;
-        b=SiBRM/kM3PmRaIRnOVS0y0jDSlYRhvqN86sisP3zhNgfhaZ6BdJ7SK+bmZ96qGnkdy
-         10MKzfqk+laujz1dA0qh7cubR/rY00TvcVWZKuUSzWKyoi6s2fm1XqJVRJXdzOrrQbah
-         WfGLo7Djl4fAmDLXbXciIxKxuiFVi8fezNPxqcWVTdRjGTeDweQn0bFUoRllglLe7mjl
-         CIX8wAJJjK79SyDwgzLTINxqq/BFltSS9WEhBgUdiRPdP8IqInDKaZbE89AJzcE2U49f
-         ht2sYXzijaM9huS01cNYSNCGzlT7FDl97n4cFuDpn0RMTM7YJ7HUsd2imjuWYLvfyDOs
-         NWUQ==
+        bh=ONqLi4pSEc8Jt6PMueV1OM+2vzCEZq1SJbK/qfA9rM0=;
+        b=lnOy2h+XZ2hk9gAkfWaJihgbGyb8Qk8nOpS3D9bYg4coUpuPDDCFRmVmAmTsp8nZAf
+         awyYqP1Wgrg/pi7R++zqTf0N5/kEKTqSVoNZeHXyOYSUb7PssOCXX9Pn1BzgEQa1w0Jt
+         0tx3uTC3VZODDEwBfe++EQa4SmisYCj/iLSE1xySSrSGkJzcASv6zM3D6sFtmE/E+K7t
+         sPAqNUj5Q6gyN8EIAVsyI62IC/kxUqJ+viWPQOrJP7gkr/YFpst4B8KoXHgiQipYMVRQ
+         7J6Ta6xNIVnWY/mR3rRhSOHW8bXuRf/WyRbF2ug4sso2nByfNQzlGKGmqiaNbgrCTS6p
+         16rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732226561; x=1732831361;
+        d=1e100.net; s=20230601; t=1732228081; x=1732832881;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zc9rNl+kHMHXgDoNRE5mV3rg1Potuw14ny2kvcyl0vA=;
-        b=t+zxfGyddmRGN98UEMelsYfiEQXF1nZ/mmMCT17yUed4NiCRJUp4OO4S3KNdaW5qV3
-         9EyDMc6hCh3yGYWq5L9FqqeXdGp/k2DOWZLdPC9mvL52EYw6HfvwwkOL6ZXW+qveH9Un
-         Nd+4nr/86UYiOH8LNp/ufjhvCZFmazkQFJivH2g/AOh6qJUCsvsA/uHpFDT7RZACE6aD
-         pi0U9jHbOUPvURyFYVb3RAz83MAmc5cc3FRRmIQFDKhJXpGNcFfxDTyciiUw23AUfszD
-         hJsEEQz90WmryM1N5B5ccF/NTBZJUq3Jk1us9pIJ+rv1WeyB9hvGLotnEmK4Dz4h059n
-         FRJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL/wIW58Vt6A5XiZTtJ1Qm2d/9sCyAXun1VSRQqBmNhJFAV5li3Di0d9vUKjiG3fF7ChIlTrAvBxbZ9fEH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoCxFJ8Dd5L/P3FxAQF4ddTTmiGU3Z2Kcm6RcNrGzPLRq7xpmR
-	ALlmDE92rKsuuXucsQGtZZGhbnEykdjk5cyEJUESYf5CWjWMIL84eMOT4qCFdHY=
-X-Gm-Gg: ASbGncv7sSEmPqlNtd71fm2f17QcXNpOTt74gPNiine70Svah8BfhWLtcBFXaf5QgjK
-	29UKMZv1FdemhuqLN0mG9XFwdNbYspb0q68IGT0r6IHKq0E1Zu/NsnrWnB7qBLSbduSUNmaJpNY
-	xFt71zVNC5Egrpw1lJ+8PAzGkz8Knqm6fF/oy06mVPJSBvu3K+Ow0+T0HRA4R1AKh3NUySeaSEB
-	LoQIQP8u425Q0dciHWwppSe4sbAD1EJlS3EBluPetceAhTeTe7FZupGmSmFuhpdO2Oi3wJ2lGGx
-	uK7JqTA9IIY=
-X-Google-Smtp-Source: AGHT+IFR+F92+V358rbHDlhJmHtztkY9rf0mMaSihml5p76Zlcvlx335TrRPFMNk6r3qPjujTLmpqA==
-X-Received: by 2002:a05:690c:9c0f:b0:6ec:b10a:22a4 with SMTP id 00721157ae682-6eee09e8324mr10163967b3.25.1732226561060;
-        Thu, 21 Nov 2024 14:02:41 -0800 (PST)
+        bh=ONqLi4pSEc8Jt6PMueV1OM+2vzCEZq1SJbK/qfA9rM0=;
+        b=bi2AZcnGjX8DPP4ZSum48HvQnk4ACAgQ7JfRMqBkRdcTC8WEhkvhsbvA/7A8XwuEeh
+         doienNjqQKC6Himsa77hUJ8YBltC+iNM+sVJfSjfApxJaM+1AE7SvX/7aqpkLmKhPfcA
+         r4shaEoEYBd6h8IZf86cUw+0R7PnvSmkrnEXBJrg27RBwX3XWV99/YYyxhbwZdh5ldbb
+         P84TW2sSuiXHOqlIh0AEa1VEZ3yVQaxgKBUo3o6OxrFW1YFpxcsfEoUx5ki3gOKDkUqk
+         KkT46spMSO6H/72kohf1WP3117G3tUOREk08aDwXaGrcANTOfvob/uWDYrwfAPUD3bAF
+         g2rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSSaz8Y/VyHtxY1vZy7ZD8xEHkH3a2ZuMVywHHXs+g2luFbirLmTkF9uYvfXIZw5QqC7e+yICOxYOJjbIw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNZI93jh1ZIfMR7EYrkydmn9f1hx9uNqLRwgSSwR7sTsPB+tB6
+	BgKnOoujOF0tYs4tomh86kF/tk8mlpofyefwXd+CAx3st7cZxDyIXWDiwTcuexA=
+X-Gm-Gg: ASbGncvrHcS6jMf7/EZvTXG69DeCUAXxbUMQhxWg++znFi5oIaCJj+mZyiaCOmOXNXU
+	1nDHkuusZLJmhdGp4EZCHgHKI9UebFzYAnt30EkJlRmbN66LpGtdMalh7E1sHAtXImKxoftGr/9
+	AN2nvprka06y1pHtNRkzsQl56X+VnYjNlMR078BE7Bt7Bqpt+rVyT4cnKf6JLPg23Zkot7MJleb
+	x2ch1DTsg6zpfSULgQg6/IcEV6Owp9NQKuwAm5Xqy2ZLRjsye3g8rXFdT5WJc0l37ymcy/38+hI
+	gfdLZleaaJQ=
+X-Google-Smtp-Source: AGHT+IEPMDla9InbNxqGs1pJ9IZItdme4llVA1vvXlQiUIFtdyOMUh9HEEmrqNRKmTIgfv+6grwVQw==
+X-Received: by 2002:a05:690c:6912:b0:6ee:5104:f43a with SMTP id 00721157ae682-6eecd31f605mr49052157b3.20.1732228080882;
+        Thu, 21 Nov 2024 14:28:00 -0800 (PST)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe153cdsm1570787b3.4.2024.11.21.14.02.39
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee2c3410bsm737937b3.40.2024.11.21.14.27.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:02:40 -0800 (PST)
-Date: Thu, 21 Nov 2024 17:02:38 -0500
+        Thu, 21 Nov 2024 14:27:59 -0800 (PST)
+Date: Thu, 21 Nov 2024 17:27:58 -0500
 From: Josef Bacik <josef@toxicpanda.com>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
 	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com, kernel-team@meta.com
-Subject: Re: [PATCH RESEND v9 0/3] fuse: add kernel-enforced request timeout
- option
-Message-ID: <20241121220238.GA1974911@perftesting>
-References: <20241114191332.669127-1-joannelkoong@gmail.com>
+	willy@infradead.org, shakeel.butt@linux.dev, kernel-team@meta.com
+Subject: Re: [PATCH 01/12] fuse: support copying large folios
+Message-ID: <20241121222758.GB1974911@perftesting>
+References: <20241109001258.2216604-1-joannelkoong@gmail.com>
+ <20241109001258.2216604-2-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,91 +89,122 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241114191332.669127-1-joannelkoong@gmail.com>
+In-Reply-To: <20241109001258.2216604-2-joannelkoong@gmail.com>
 
-On Thu, Nov 14, 2024 at 11:13:29AM -0800, Joanne Koong wrote:
-> There are situations where fuse servers can become unresponsive or
-> stuck, for example if the server is in a deadlock. Currently, there's
-> no good way to detect if a server is stuck and needs to be killed
-> manually.
+On Fri, Nov 08, 2024 at 04:12:47PM -0800, Joanne Koong wrote:
+> Currently, all folios associated with fuse are one page size. As part of
+> the work to enable large folios, this commit adds support for copying
+> to/from folios larger than one page size.
 > 
-> This patchset adds a timeout option where if the server does not reply to a
-> request by the time the timeout elapses, the connection will be aborted.
-> This patchset also adds two dynamically configurable fuse sysctls
-> "default_request_timeout" and "max_request_timeout" for controlling/enforcing
-> timeout behavior system-wide.
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/dev.c | 89 +++++++++++++++++++++++----------------------------
+>  1 file changed, 40 insertions(+), 49 deletions(-)
 > 
-> Existing systems running fuse servers will not be affected unless they
-> explicitly opt into the timeout.
-> 
-> v8:
-> https://lore.kernel.org/linux-fsdevel/20241011191320.91592-1-joannelkoong@gmail.com/
-> Changes from v8 -> v9:
-> * Fix comment for u16 fs_parse_result, ULONG_MAX instead of U32_MAX, fix
->   spacing (Bernd)
-> 
-> v7:
-> https://lore.kernel.org/linux-fsdevel/20241007184258.2837492-1-joannelkoong@gmail.com/
-> Changes from v7 -> v8:
-> * Use existing lists for checking expirations (Miklos)
-> 
-> v6:
-> https://lore.kernel.org/linux-fsdevel/20240830162649.3849586-1-joannelkoong@gmail.com/
-> Changes from v6 -> v7:
-> - Make timer per-connection instead of per-request (Miklos)
-> - Make default granularity of time minutes instead of seconds
-> - Removed the reviewed-bys since the interface of this has changed (now
->   minutes, instead of seconds)
-> 
-> v5:
-> https://lore.kernel.org/linux-fsdevel/20240826203234.4079338-1-joannelkoong@gmail.com/
-> Changes from v5 -> v6:
-> - Gate sysctl.o behind CONFIG_SYSCTL in makefile (kernel test robot)
-> - Reword/clarify last sentence in cover letter (Miklos)
-> 
-> v4:
-> https://lore.kernel.org/linux-fsdevel/20240813232241.2369855-1-joannelkoong@gmail.com/
-> Changes from v4 -> v5:
-> - Change timeout behavior from aborting request to aborting connection
->   (Miklos)
-> - Clarify wording for sysctl documentation (Jingbo)
-> 
-> v3:
-> https://lore.kernel.org/linux-fsdevel/20240808190110.3188039-1-joannelkoong@gmail.com/
-> Changes from v3 -> v4:
-> - Fix wording on some comments to make it more clear
-> - Use simpler logic for timer (eg remove extra if checks, use mod timer API)
->   (Josef)
-> - Sanity-check should be on FR_FINISHING not FR_FINISHED (Jingbo)
-> - Fix comment for "processing queue", add req->fpq = NULL safeguard  (Bernd)
-> 
-> v2:
-> https://lore.kernel.org/linux-fsdevel/20240730002348.3431931-1-joannelkoong@gmail.com/
-> Changes from v2 -> v3:
-> - Disarm / rearm timer in dev_do_read to handle race conditions (Bernrd)
-> - Disarm timer in error handling for fatal interrupt (Yafang)
-> - Clean up do_fuse_request_end (Jingbo)
-> - Add timer for notify retrieve requests 
-> - Fix kernel test robot errors for #define no-op functions
-> 
-> v1:
-> https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoong@gmail.com/
-> Changes from v1 -> v2:
-> - Add timeout for background requests
-> - Handle resend race condition
-> - Add sysctls
-> 
-> Joanne Koong (3):
->   fs_parser: add fsparam_u16 helper
->   fuse: add optional kernel-enforced timeout for requests
->   fuse: add default_request_timeout and max_request_timeout sysctls
-> 
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 29fc61a072ba..9914cc1243f4 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -703,7 +703,7 @@ struct fuse_copy_state {
+>  	struct page *pg;
+>  	unsigned len;
+>  	unsigned offset;
+> -	unsigned move_pages:1;
+> +	unsigned move_folios:1;
+>  };
+>  
+>  static void fuse_copy_init(struct fuse_copy_state *cs, int write,
+> @@ -836,10 +836,10 @@ static int fuse_check_folio(struct folio *folio)
+>  	return 0;
+>  }
+>  
+> -static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+> +static int fuse_try_move_folio(struct fuse_copy_state *cs, struct folio **foliop)
+>  {
+>  	int err;
+> -	struct folio *oldfolio = page_folio(*pagep);
+> +	struct folio *oldfolio = *foliop;
+>  	struct folio *newfolio;
+>  	struct pipe_buffer *buf = cs->pipebufs;
+>  
+> @@ -860,7 +860,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+>  	cs->pipebufs++;
+>  	cs->nr_segs--;
+>  
+> -	if (cs->len != PAGE_SIZE)
+> +	if (cs->len != folio_size(oldfolio))
+>  		goto out_fallback;
+>  
+>  	if (!pipe_buf_try_steal(cs->pipe, buf))
+> @@ -906,7 +906,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+>  	if (test_bit(FR_ABORTED, &cs->req->flags))
+>  		err = -ENOENT;
+>  	else
+> -		*pagep = &newfolio->page;
+> +		*foliop = newfolio;
+>  	spin_unlock(&cs->req->waitq.lock);
+>  
+>  	if (err) {
+> @@ -939,8 +939,8 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+>  	goto out_put_old;
+>  }
+>  
+> -static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+> -			 unsigned offset, unsigned count)
+> +static int fuse_ref_folio(struct fuse_copy_state *cs, struct folio *folio,
+> +			  unsigned offset, unsigned count)
+>  {
+>  	struct pipe_buffer *buf;
+>  	int err;
+> @@ -948,17 +948,17 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+>  	if (cs->nr_segs >= cs->pipe->max_usage)
+>  		return -EIO;
+>  
+> -	get_page(page);
+> +	folio_get(folio);
+>  	err = unlock_request(cs->req);
+>  	if (err) {
+> -		put_page(page);
+> +		folio_put(folio);
+>  		return err;
+>  	}
+>  
+>  	fuse_copy_finish(cs);
+>  
+>  	buf = cs->pipebufs;
+> -	buf->page = page;
+> +	buf->page = &folio->page;
+>  	buf->offset = offset;
+>  	buf->len = count;
+>  
+> @@ -970,20 +970,24 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+>  }
+>  
+>  /*
+> - * Copy a page in the request to/from the userspace buffer.  Must be
+> + * Copy a folio in the request to/from the userspace buffer.  Must be
+>   * done atomically
+>   */
+> -static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
+> -			  unsigned offset, unsigned count, int zeroing)
+> +static int fuse_copy_folio(struct fuse_copy_state *cs, struct folio **foliop,
+> +			   unsigned offset, unsigned count, int zeroing)
+>  {
+>  	int err;
+> -	struct page *page = *pagep;
+> +	struct folio *folio = *foliop;
+> +	size_t size = folio_size(folio);
+>  
+> -	if (page && zeroing && count < PAGE_SIZE)
+> -		clear_highpage(page);
+> +	if (folio && zeroing && count < size) {
+> +		void *kaddr = kmap_local_folio(folio, 0);
+> +		memset(kaddr, 0, size);
+> +		kunmap_local(kaddr);
 
-These look great Joanne, you can add
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-
-to the series.  Thanks,
+There's a folio_zero_range() that can be used here instead of this, but be sure
+you get it right, I definitely did it wrong recently and I think Jan had to fix
+my mistake.  Thanks,
 
 Josef
 
