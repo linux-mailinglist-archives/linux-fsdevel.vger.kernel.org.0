@@ -1,254 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-35463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516499D506E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 17:04:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375149D5079
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 17:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B97282FE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 16:04:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7818B265E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 16:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A7C487A7;
-	Thu, 21 Nov 2024 16:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F283C19E971;
+	Thu, 21 Nov 2024 16:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lmnS+lJo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IUQgtJw4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e7bfvoUm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RNxPCw7f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKrTf+uS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499DE155CBF;
-	Thu, 21 Nov 2024 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B09156225;
+	Thu, 21 Nov 2024 16:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732205082; cv=none; b=mwcQsvhbjry0Iy+8o8KuZUrXc2h98RUua/cKiIX+gVOKOFYPymFPbXTfR45zTk+uALWLnvGb5pksIjlqT0G6uXIeeEglvkP0Rcj+XH0P68uzz7nEjrnBsIv6TDUADcGWA/ap1pI3W0qUhbT1AqXLpKrVCtkvlLKzp3Mu8A8961Y=
+	t=1732205201; cv=none; b=euTitAKqqwuzVHiFe5xjTCtt8IEI9F4v4Vt6xRl5QjQ8/kdPFOSPOVezK/MiIxQpSkSEb/cA7ExvnNXvupGrreTB4GCTQsib/3uNJTwhrFLpefW0ryBJqTkHeJSvkUU1SAVIF4sLP1EMbMgEOXeJ8p9+JvcOsug0Wx2EuVsX0QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732205082; c=relaxed/simple;
-	bh=fAH8jEz/dLOykIJUZbAzrLo6nOAluy4XwygNCqRLxNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tr3kJ+uHUJdTeZIRgdEVWR3jkCJKIILerBzVRgOGNEShidYglm8QGjt/nGvpdqYRPwS4+V9CC60fV2jJxTNh+v26FVynNfSW2HMnR0+i18Pqos1ep8CdBhhT+td4KogF5EECSwl89n5ShFC1SVuNyuqFal4iW/X+mDC8cMHq+p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lmnS+lJo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IUQgtJw4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e7bfvoUm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RNxPCw7f; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E3D8521A14;
-	Thu, 21 Nov 2024 16:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732205078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=lubBdRES4nIMJWv3O+HXFDvpQzGdY+7PDzXZ4xU9kgk=;
-	b=lmnS+lJonypEqaQd63X5BeiqFee+joLfkFu7wm5plF6pn4wkwIeW31ySPXR3skwPYr4v+N
-	kHo8MPzMtdU4sgFbTj8bqFBvikhCaygWIi+0qKMkraqrCYSdZOHKIvOUrF5FQkvo0NsO7K
-	eypmAfZ3VUtjj29PSMXyiHrI9YooEkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732205078;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=lubBdRES4nIMJWv3O+HXFDvpQzGdY+7PDzXZ4xU9kgk=;
-	b=IUQgtJw4v8mAk2+1atKVAIPGnWz3sPAvGmbttJhimcUv3t5PZcOA3l7QWb1yct+HcK8K2E
-	I+FdQ4pV2HzaM3Cw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=e7bfvoUm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RNxPCw7f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732205077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=lubBdRES4nIMJWv3O+HXFDvpQzGdY+7PDzXZ4xU9kgk=;
-	b=e7bfvoUmWvqOd91wJlvDTADLeHVo1a+jZib4GqZjGTrGjeRzk+iUr57KIbttxJp0zsaR1B
-	UaT/n7S6spMLxYiXe/ysjimvAczu591lCkg6jaD+rT6egjgbY+s3j4mf8mZOAaZr2faMUg
-	pP+Or+JxJbQHpzxTwHlDp14ErEile8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732205077;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=lubBdRES4nIMJWv3O+HXFDvpQzGdY+7PDzXZ4xU9kgk=;
-	b=RNxPCw7fZV9BC5mQbmCe3dwwQ7NUzRP+Ljfed4dnxdc2TxvoGU79vYg0IrkV99lVuNHVHV
-	aJ+rd+Fvx9/YXYCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D791013927;
-	Thu, 21 Nov 2024 16:04:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A+KdNBVaP2cnWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 16:04:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 86B38A08A2; Thu, 21 Nov 2024 17:04:33 +0100 (CET)
-Date: Thu, 21 Nov 2024 17:04:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
-Subject: [GIT PULL] Remove reiserfs
-Message-ID: <20241121160433.2xoi3lorp3y3rows@quack3>
+	s=arc-20240116; t=1732205201; c=relaxed/simple;
+	bh=C8T8mYqrzwRHWqyx+aUozIQZh0FIc2juAi/4cJz/SjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oKQJ1vKehQxbNfZoJPfcKOoZban+KZ5qswehn/EJk4aWBcwoiRBox1d9kTF/Erexn/NXgxxQIsQ7yWhQPsyMQM7ds7Jxk/8DsljQYdfUA22zQZAJdd1ijeT2+EtMFdF71+py1oYQS5lEPCTS2NbSBEZ1st/RucogPu3W0jZtu5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKrTf+uS; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9ed0ec0e92so143537766b.0;
+        Thu, 21 Nov 2024 08:06:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732205198; x=1732809998; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C8T8mYqrzwRHWqyx+aUozIQZh0FIc2juAi/4cJz/SjY=;
+        b=CKrTf+uSfss8vs9bhqZf3NZzPL35HkchduaT0C/8EtnRVQ5ayyfnIoyEu06zlwe1CD
+         CM/M3n14IO80fcGfuNKwCMgJIN3tgJzAO4FXrV5TUT7CVnBkihRAa8TnRy0kMqhn1UTm
+         pWlz2Eag/63z4fjG2C/QJPan0G9pa1DgUA5STxmCgTVWCtWgMfQlNAOxwFOG4wD5djdc
+         CxG0afbvUxIwW2HrWCISPZUDBKaAvHhBi6Q5+ArnjB4b7E6NrDbspbI8V9Bvh4FNezhf
+         0on+rW48C9tQz/9QJtxrR2UnaSPsQ0Ejokei3H/eIdYDmq+YYMBKwX4S6vk52/401f92
+         /Arw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732205198; x=1732809998;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C8T8mYqrzwRHWqyx+aUozIQZh0FIc2juAi/4cJz/SjY=;
+        b=TL0NXqribOK2opvTt1Cjjdg939tQy5IxMSt2O6vQhSSlQE6ZPkIGAfW97aP0EuCp7z
+         tDRvmvEFJ1pSQ1pu2uZj49QP3UbXEY4wYZrJWsaci7ND3f9chYVP0GWwIGqHWiqwgGnI
+         V7eGvz1dfphrPGsf9hOkeHu6b4ly8RsIEC3ac45sJQJbvHpeCkm6Seklp1VaRDFLhsyR
+         fz64DN+PQ5xa5eiX6MpFvRDosvDXLcXACDQRJwQaE4azJkIDMVLfVf4BiISq15ueFZBr
+         DvNvuxifGIdn0fK53dQfaxFwHHvcmCX3MeAowvBk4ec5t/6fPQuHY7iWEkaKOq+m3ccJ
+         crYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8pMCszTS4lCJFzpfCVt7Jm5YaGn2B96qT9xfLFxjJYNC84pMkBNUUzV10aNsudEP/C3LS+3BgcR2LVA==@vger.kernel.org, AJvYcCUv4n74iyuWHhb8MieVDkFkmm9TF7mzKpdwagM1yiTeZag2IQOoqVETWu0LPo0qSRPfG1Urt+MilBCTfQ==@vger.kernel.org, AJvYcCVX8iXEfIpDIg7BCrFpDOPTk0qGWgStM8TdkY7AsYKsfVNDZ2aIZ3/da0BNXW8VipAwQGGht9yZuILx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB0wVGslz3SqoUyPEr4P6uuZ1/YQdo80uMMrnny3r/42//wPv2
+	VOGh4cgg5EOGebqQbTiOgUhOuJ4Ks0uW4mBBaxmQakAHfvvFmKXKSS0c9RX7yL2uL4c69jKC2kY
+	79ufLTM9z1XnnEazY1wPxyZXzTBc=
+X-Gm-Gg: ASbGncukjB5AEr8G6KZTfdZP4J/M24q9tHRigiAz9sRXYGhG/c+9hvnRNuMzYQ1BUs0
+	it5dLiZ7QUG+8QRHOvMMc5FNlNkB/s3M=
+X-Google-Smtp-Source: AGHT+IGVjwdOPsUK3V0cbw4K6xWRphkCK0DuGSlSpsCdCyu66o84N965jp+z0T5f9wyLT78CKZbCDsxh+FlsY3vu8CM=
+X-Received: by 2002:a17:907:7ba3:b0:a9e:b471:8308 with SMTP id
+ a640c23a62f3a-aa4dd764962mr570109266b.49.1732205197592; Thu, 21 Nov 2024
+ 08:06:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Rspamd-Queue-Id: E3D8521A14
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241121112218.8249-1-jack@suse.cz>
+In-Reply-To: <20241121112218.8249-1-jack@suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 21 Nov 2024 17:06:26 +0100
+Message-ID: <CAOQ4uxjEc+YZaOqWvSDsQUvnAjfBpP++FSGvvk0+-ZeSuwsBWw@mail.gmail.com>
+Subject: Re: [PATCH v9 00/19] fanotify: add pre-content hooks
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, brauner@kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  Hello Linus,
+On Thu, Nov 21, 2024 at 12:22=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> I'm posting here the series I'm currently carrying in my tree [1]. The ch=
+anges
+> from v8 Josef posted are not huge but big enough that I think it's worth =
+a
+> repost. Unless somebody speaks up, the plan is to merge into fsnotify bra=
+nch
+> after the merge window closes.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git/log=
+/?h=3Dfsnotify_hsm
+>
+> v8:
+> https://lore.kernel.org/all/cover.1731684329.git.josef@toxicpanda.com
+> v7:
+> https://lore.kernel.org/linux-fsdevel/cover.1731433903.git.josef@toxicpan=
+da.com/
+> v6:
+> https://lore.kernel.org/linux-fsdevel/cover.1731355931.git.josef@toxicpan=
+da.com/
+> v5:
+> https://lore.kernel.org/linux-fsdevel/cover.1725481503.git.josef@toxicpan=
+da.com/
+> v4:
+> https://lore.kernel.org/linux-fsdevel/cover.1723670362.git.josef@toxicpan=
+da.com/
+> v3:
+> https://lore.kernel.org/linux-fsdevel/cover.1723228772.git.josef@toxicpan=
+da.com/
+> v2:
+> https://lore.kernel.org/linux-fsdevel/cover.1723144881.git.josef@toxicpan=
+da.com/
+> v1:
+> https://lore.kernel.org/linux-fsdevel/cover.1721931241.git.josef@toxicpan=
+da.com/
+>
+> v8->v9:
+> - fix DAX fault handling for ext4 & xfs
+> - rework FMODE_ constants a bit to keep FMODE_NONOTIFY a single bit
+> - move file_set_fsnotify_mode() out of line as it's quite big
+> - fold fsnotify_file_object_watched() into the single caller
 
-  could you please pull from
+I tested this with my new test cases on LTP branch fan_hsm.
+One test broke, I posted a suggested fix for patch 3/19.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git reiserfs_delete
+> - use explicit f_mode checks instead of fsnotify_file_has_pre_content_wat=
+ches()
+> - fix compilation breakage with CONFIG_NOMMU
+> - fixed up some changelogs
+>
 
-The deprecation period of reiserfs is ending at the end of this year so it
-is time to remove it.
+Other than patch 3, all looks good to me.
 
-Top of the tree is fb6f20ecb121. The full shortlog is:
-
-Jan Kara (1):
-      reiserfs: The last commit
-
-The diffstat is
-
- Documentation/filesystems/porting.rst              |    2 +-
- Documentation/userspace-api/ioctl/ioctl-number.rst |    2 +-
- MAINTAINERS                                        |    5 -
- arch/alpha/configs/defconfig                       |    1 -
- arch/arm/configs/pxa_defconfig                     |    4 -
- arch/m68k/configs/amiga_defconfig                  |    1 -
- arch/m68k/configs/apollo_defconfig                 |    1 -
- arch/m68k/configs/atari_defconfig                  |    1 -
- arch/m68k/configs/bvme6000_defconfig               |    1 -
- arch/m68k/configs/hp300_defconfig                  |    1 -
- arch/m68k/configs/mac_defconfig                    |    1 -
- arch/m68k/configs/multi_defconfig                  |    1 -
- arch/m68k/configs/mvme147_defconfig                |    1 -
- arch/m68k/configs/mvme16x_defconfig                |    1 -
- arch/m68k/configs/q40_defconfig                    |    1 -
- arch/m68k/configs/sun3_defconfig                   |    1 -
- arch/m68k/configs/sun3x_defconfig                  |    1 -
- arch/sh/configs/landisk_defconfig                  |    1 -
- arch/sh/configs/titan_defconfig                    |    1 -
- arch/um/configs/i386_defconfig                     |    1 -
- arch/um/configs/x86_64_defconfig                   |    1 -
- drivers/block/Kconfig                              |    2 +-
- fs/Kconfig                                         |    1 -
- fs/Makefile                                        |    1 -
- fs/buffer.c                                        |    3 +-
- fs/quota/Kconfig                                   |   15 +-
- fs/reiserfs/Kconfig                                |   91 -
- fs/reiserfs/Makefile                               |   30 -
- fs/reiserfs/README                                 |  151 -
- fs/reiserfs/acl.h                                  |   78 -
- fs/reiserfs/bitmap.c                               | 1476 -------
- fs/reiserfs/dir.c                                  |  346 --
- fs/reiserfs/do_balan.c                             | 1900 ---------
- fs/reiserfs/file.c                                 |  270 --
- fs/reiserfs/fix_node.c                             | 2822 -------------
- fs/reiserfs/hashes.c                               |  177 -
- fs/reiserfs/ibalance.c                             | 1161 ------
- fs/reiserfs/inode.c                                | 3416 ---------------
- fs/reiserfs/ioctl.c                                |  221 -
- fs/reiserfs/item_ops.c                             |  737 ----
- fs/reiserfs/journal.c                              | 4404 --------------------
- fs/reiserfs/lbalance.c                             | 1426 -------
- fs/reiserfs/lock.c                                 |  101 -
- fs/reiserfs/namei.c                                | 1725 --------
- fs/reiserfs/objectid.c                             |  216 -
- fs/reiserfs/prints.c                               |  792 ----
- fs/reiserfs/procfs.c                               |  490 ---
- fs/reiserfs/reiserfs.h                             | 3419 ---------------
- fs/reiserfs/resize.c                               |  230 -
- fs/reiserfs/stree.c                                | 2280 ----------
- fs/reiserfs/super.c                                | 2646 ------------
- fs/reiserfs/tail_conversion.c                      |  318 --
- fs/reiserfs/xattr.c                                | 1039 -----
- fs/reiserfs/xattr.h                                |  117 -
- fs/reiserfs/xattr_acl.c                            |  411 --
- fs/reiserfs/xattr_security.c                       |  127 -
- fs/reiserfs/xattr_trusted.c                        |   46 -
- fs/reiserfs/xattr_user.c                           |   43 -
- include/uapi/linux/reiserfs_fs.h                   |   27 -
- include/uapi/linux/reiserfs_xattr.h                |   25 -
- scripts/selinux/mdp/mdp.c                          |    3 -
- tools/objtool/noreturns.h                          |    1 -
- .../filesystems/statmount/statmount_test.c         |    2 +-
- 63 files changed, 12 insertions(+), 32804 deletions(-)
- delete mode 100644 fs/reiserfs/Kconfig
- delete mode 100644 fs/reiserfs/Makefile
- delete mode 100644 fs/reiserfs/README
- delete mode 100644 fs/reiserfs/acl.h
- delete mode 100644 fs/reiserfs/bitmap.c
- delete mode 100644 fs/reiserfs/dir.c
- delete mode 100644 fs/reiserfs/do_balan.c
- delete mode 100644 fs/reiserfs/file.c
- delete mode 100644 fs/reiserfs/fix_node.c
- delete mode 100644 fs/reiserfs/hashes.c
- delete mode 100644 fs/reiserfs/ibalance.c
- delete mode 100644 fs/reiserfs/inode.c
- delete mode 100644 fs/reiserfs/ioctl.c
- delete mode 100644 fs/reiserfs/item_ops.c
- delete mode 100644 fs/reiserfs/journal.c
- delete mode 100644 fs/reiserfs/lbalance.c
- delete mode 100644 fs/reiserfs/lock.c
- delete mode 100644 fs/reiserfs/namei.c
- delete mode 100644 fs/reiserfs/objectid.c
- delete mode 100644 fs/reiserfs/prints.c
- delete mode 100644 fs/reiserfs/procfs.c
- delete mode 100644 fs/reiserfs/reiserfs.h
- delete mode 100644 fs/reiserfs/resize.c
- delete mode 100644 fs/reiserfs/stree.c
- delete mode 100644 fs/reiserfs/super.c
- delete mode 100644 fs/reiserfs/tail_conversion.c
- delete mode 100644 fs/reiserfs/xattr.c
- delete mode 100644 fs/reiserfs/xattr.h
- delete mode 100644 fs/reiserfs/xattr_acl.c
- delete mode 100644 fs/reiserfs/xattr_security.c
- delete mode 100644 fs/reiserfs/xattr_trusted.c
- delete mode 100644 fs/reiserfs/xattr_user.c
- delete mode 100644 include/uapi/linux/reiserfs_fs.h
- delete mode 100644 include/uapi/linux/reiserfs_xattr.h
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
 
