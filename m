@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-35488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F429D5578
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7569D557F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 23:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8231F23E1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76DE91F24334
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 22:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822031DA60B;
-	Thu, 21 Nov 2024 22:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157781AAE06;
+	Thu, 21 Nov 2024 22:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="A9DtDzlp"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="fT4/D4ML"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EEC1CEAB8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91A15695
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 22:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228131; cv=none; b=E1R9URhtjkVzc1n8T9Idp6rk8UUmyV4JziffyRFGgl8x7ulYY9Gqx5m1PhvLcYFeJ6UJWyOMjXJfNfbTY/CuJtlzEHF6IrD9/X8Zgg/phjoEsT3ozDgb8DUdzz5t7gQxDe8Vo9nIdr57gTqenHwr+3pIyIE0WAJf5+1em2Jhz3w=
+	t=1732228337; cv=none; b=cRkBeCkVpdErbVyiezhkkY+M9yBJkhHgUw9pxXSnCSr5vfM9zJfK7TEJap8sHNQuLss4GAwH5Vbqw3lwmCvCC5JpETCJuJQ+gB9vCpZpU/pcSGEJuRvkHl03sTWJFvIph4fR7CZmpCcSc4Ea1dMXr80p+386oCgZrtil9+teDaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228131; c=relaxed/simple;
-	bh=NM3V6zaMGS9FYctgok7suDRu8wkYahGK3/IfRztomJU=;
+	s=arc-20240116; t=1732228337; c=relaxed/simple;
+	bh=L+jgTcZZ7/PNczPhM5S9MmCk+Byla2giQN0PGmjcmBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ALEbXvOMfePRQHCwHyFDxgKR3sHoJxAhJKjyzsdrWHr5Z+WxvVIUJcLXT2Q4x4qxBYZJuKfjGfKe4dCs4WorwQSqWGN5v/VtOIscd8bFtBIFIHQw8s5Uk8y1Tc8I9B2Fi1+rGN9i8aQcJS27GlvJBUh5kT/yD5cUcwwmocv9EOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=A9DtDzlp; arc=none smtp.client-ip=209.85.128.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=Neku1u3mNsnAQ5MDZxZCuOiJ2MmbCWThKHG4/Mzu1+dLdXqyJ8QFZ9tHQzab2zALGwiXWElA8mparw085ezvTmgsloWeLT9t0MxZY97V2U2lL2TFDL286qFQGXr7cLCE8DHP56jkqhoKH2wXD01ucJTWNl5h95ec+VzS4PbkBiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=fT4/D4ML; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6eeb3741880so14653297b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:28:50 -0800 (PST)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ee55cfa88cso13154567b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 14:32:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732228129; x=1732832929; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1732228335; x=1732833135; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoKEXnI4uTZ8zf3Qs5aeOGboVKmKizuhzfKbKzYElaw=;
-        b=A9DtDzlpCcpUNuFCNhiXfte+0CMQisGwhX+B7yF2DAqSHItjlL3Z/IEB13Z/LZm09w
-         IJ+zpVJnwoN9lW7vLptRdYes4UHkcTr8Xr9TY5G3XQ81dGIgougaMCA6KoLCReog9JjY
-         59mdR08SQtMAYBX6KkQ6QF0PTqtcFXUYWyWp4P9aZjtf7EOErUbYoigh71WJ6I58ZKL8
-         R2fwrdRQIGDhH3tbnAJlEG5Iiv07IbKdzaED74oOgJZAEjs+h06YJiFMPWBDn0R+AJoP
-         9HCV8Q+UZlWMaZK0ALzYlue83223qa2cb4BeAWFtkz9WEbuVP687i9qIiO/rUb33Xh32
-         5Lig==
+        bh=br4Z4jmJKM2k8q9ejgtU2VhhTuKOW9xE5Y6pOSf2atw=;
+        b=fT4/D4MLpxypeBxq5bRUp3asGN7FwzhZKABrVz/cinjo8S9Gs5krOUjo2Z7U9+9PhH
+         /FF386x9+MWVxcL3WVnw9tlKUDKzxNYibwxb8rWE8/p6AmRPUkEPVhCha44UjAO2qbB1
+         M5xmOdbrCJ0AoG86chELxt814ozbeGTgjI1LN8Fgtlp0vTQbSGsPkEPP7ff4CvE7/ElE
+         luIY9BO2MVH5tPAHplKTFFDJ48T/bCVtglh2h5wWdoZTkWqJei6HQ29zEE96xIoSQ/Y2
+         zSwvFyHS8MBv89BLSFcmeIdS7si4BwhAJfJ20gKTulptFRuR4d9GDqAURO6LHIhTHqJW
+         zDjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732228129; x=1732832929;
+        d=1e100.net; s=20230601; t=1732228335; x=1732833135;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EoKEXnI4uTZ8zf3Qs5aeOGboVKmKizuhzfKbKzYElaw=;
-        b=kZknElJaSIF/lM3LRXgQVZJJ5o/fgE7KlHaprZm7DJqWW+rb50oSU9t1eQ5G5rpdD+
-         ZYmAXAGL0FQowOx1NB+pQILF7YVWqYfLl8t50WaFHXsGWXx6URc0zNtFj5vS9nhafFVo
-         FV8jubyQvAly6rz7GTyIPh7ZDB11In2LqhcpqRoKvoq2JpMfdcqZyUCbm78HGAFzMPBE
-         I2tiDpZWIpMZzOEKGDSPb1wkigAeJDP3rg+U6AQ5M6+iN+OKQ0t9971CheV3IweT86N+
-         c/E02NHIO8FIjtGC6WXeXISxD54r+DwuM+X4Zc0qccm8lRaWvJMeAcPNXjn72M4IkryA
-         lw9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXUQeNWu9HvQEnWVDL6gPEJqAVBe7aQtZSGyBjxhulmf6RsDOZOwsI/wbYMHlHQjyUj0b8pC5jkgabheL+o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpB5aqK5rUzmhGeHfPKYHU8ReYg8f1nZFMndveYJGNj08wKd25
-	9FWiySiv4tz4WkynznuAXwdaf99vgnFpU5yDHb2gwtXY8FilhbJ0YuMofDWG4ag=
-X-Gm-Gg: ASbGncvRiRfGXFfp00fxgs8Pmo2rzAfheRsBZgRsiwn4lwyg1gNEfyDqQZHEB8gZtgk
-	J3jsa9+5QLn1J87cv3cOmR5DhAtynG4EjKe04o3/n12mQ4nKEnDTf/xr9ftv0IJqTu3Y40kDaTZ
-	bZgrsjCJUG4Pwnamou1BAose7YEIMNgkiag+7bxIOR3HZdwp5djybvWLJQ682RbLDOdi2wnV1lf
-	j8prdhYo5lWRsgzOtK1I5+u74URWUL3HuIvJzygu/r8+ZUJsBo2C0nxunYIx93T5ZiWWpLeTk+u
-	kOXb5IH1+qY=
-X-Google-Smtp-Source: AGHT+IG0ZTj8DCitlmyMAoqVLydivdT8o1PTi6zzQUwvZgAuAxuAgyvDA4QDZQT7q4MMXMtULkXJsA==
-X-Received: by 2002:a05:690c:6d0d:b0:6e3:351f:d757 with SMTP id 00721157ae682-6eee08b9226mr11978137b3.24.1732228129379;
-        Thu, 21 Nov 2024 14:28:49 -0800 (PST)
+        bh=br4Z4jmJKM2k8q9ejgtU2VhhTuKOW9xE5Y6pOSf2atw=;
+        b=BI1HXk0/FLbOqvk5v06p7M5WqnnLm5DYI7gcGQ8X8PYR8+Jc/tWZaHdZ/T4Yht3IR0
+         ljNttUpPNyI5J466Qmq6SuaASzR7TITrRmiNIPwOXqwDQAy77HbjR8GVClb9mQxK/u42
+         hbN4crSZiLgFZq+Cyqar/mFmfMsymf02PBSjoZh1qSLv0Bx6zQQnNJMtALJulRsLQXBe
+         NCF7qO/COZSv31G8HYMhDyEhBbw+pAigtMTP7kTZwsuIgNqY70kO6JFsXG+brgX+yorL
+         LYzQvk+mKfAFfh1ksgPnavvFNHM3qpjKPpjX8PfPiXtu9gK5JDviBINS8fFfnrtRjrV7
+         dGwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQJ/8q6y6XJj9IB1Ma33JxDWQDoHZfQYZR5vOKaUgasYIDyNvAnhkUzRItToavlyacyWfh4N72FS4nU42X@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtxoFR97n3tfaD4c+Io8PQiu/YGuf+05tNI2sigARtnzmmFDJa
+	s1KHLOxHigQHS3dY2VibWLxtAF8p1PQsnLUt4xkRwPV4s4Wkap6HLnFA+ZJjKqI=
+X-Gm-Gg: ASbGncuvmGBy1eulMQ+wE5Q+5BP6gL0VZrOqmgncTsXGs2bS4ytw5lyvnhCwmproaDO
+	K1EpjbizayxY01X/rtysxyZ1qBaMdbvnZkViy+wsGGkVYJolPJ6iC4QWeyZMJ+QAJxgHbx+f7LL
+	g6UqCJDPiYJSXPyH6AVbmG67/2RVRQl07/tRWX0mTWyZIlJ7HOJPzCs4QmiTtcb3b8DFBMSm6jf
+	10YgQ4hJRdvS2liYmXbWWCTWDSFBrwJd3sz+5+peAZF7zbdvn7uguY4DIYC7pBMwtYr1rsTsBu4
+	bkfZldDyQr4=
+X-Google-Smtp-Source: AGHT+IHVngTJRCKqnYjM1yW4Mgq6M6vuSNbiyEvgwnQUffWmj0Mc3ILb9/t1JK54RbyPQld+/VJo2A==
+X-Received: by 2002:a05:690c:3581:b0:6e3:1869:8983 with SMTP id 00721157ae682-6eee0a6fe56mr9726647b3.40.1732228334863;
+        Thu, 21 Nov 2024 14:32:14 -0800 (PST)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe153b6sm1681957b3.27.2024.11.21.14.28.48
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee008cd94sm1663167b3.95.2024.11.21.14.32.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:28:48 -0800 (PST)
-Date: Thu, 21 Nov 2024 17:28:47 -0500
+        Thu, 21 Nov 2024 14:32:14 -0800 (PST)
+Date: Thu, 21 Nov 2024 17:32:13 -0500
 From: Josef Bacik <josef@toxicpanda.com>
 To: Joanne Koong <joannelkoong@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
 	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
 	willy@infradead.org, shakeel.butt@linux.dev, kernel-team@meta.com
-Subject: Re: [PATCH 03/12] fuse: refactor fuse_fill_write_pages()
-Message-ID: <20241121222847.GD1974911@perftesting>
+Subject: Re: [PATCH 04/12] fuse: support large folios for non-writeback writes
+Message-ID: <20241121223213.GE1974911@perftesting>
 References: <20241109001258.2216604-1-joannelkoong@gmail.com>
- <20241109001258.2216604-4-joannelkoong@gmail.com>
+ <20241109001258.2216604-5-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,18 +89,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109001258.2216604-4-joannelkoong@gmail.com>
+In-Reply-To: <20241109001258.2216604-5-joannelkoong@gmail.com>
 
-On Fri, Nov 08, 2024 at 04:12:49PM -0800, Joanne Koong wrote:
-> Refactor the logic in fuse_fill_write_pages() for copying out write
-> data. This will make the future change for supporting large folios for
-> writes easier. No functional changes.
+On Fri, Nov 08, 2024 at 04:12:50PM -0800, Joanne Koong wrote:
+> Add support for folios larger than one page size for non-writeback
+> writes.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/file.c | 29 ++++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index a89fdc55a40b..6ee23ab9b7f2 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1146,19 +1146,15 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+>  	num = min(num, max_pages << PAGE_SHIFT);
+>  
+>  	ap->args.in_pages = true;
+> -	ap->descs[0].offset = offset;
+>  
+>  	while (num) {
+>  		size_t tmp;
+>  		struct folio *folio;
+>  		pgoff_t index = pos >> PAGE_SHIFT;
+> -		unsigned int bytes = min(PAGE_SIZE - offset, num);
+> -
+> - again:
+> -		err = -EFAULT;
+> -		if (fault_in_iov_iter_readable(ii, bytes))
+> -			break;
+> +		unsigned int bytes;
+> +		unsigned int folio_offset;
+>  
+> +	again:
+>  		folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
+>  					    mapping_gfp_mask(mapping));
+>  		if (IS_ERR(folio)) {
+> @@ -1166,10 +1162,20 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+>  			break;
+>  		}
+>  
+> +		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
+> +		bytes = min(folio_size(folio) - folio_offset, num);
+> +
+> +		err = -EFAULT;
+> +		if (fault_in_iov_iter_readable(ii, bytes)) {
+> +			folio_unlock(folio);
+> +			folio_put(folio);
+> +			break;
+> +		}
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+This is a deadlock potentially.  mmap the file, then buffered write to it with
+the mmaped region and you will deadlock because fault_in_iov_iter_readable()
+will try to lock the folio to submit the read, and you're already holding the
+lock from the __filemap_get_folio() call.
 
-Thanks,
+If you look at iomap_write_iter it does a the fault_in_iov_iter_readable() call
+before getting the folio, and it just uses the mapping_max_folio_size() value to
+fault in larger chunks for whatever folio we manage to grab.  Thanks,
 
 Josef
 
