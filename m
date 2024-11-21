@@ -1,103 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-35441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB00E9D4CDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:35:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6612A9D4CFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 13:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A28E282208
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:35:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8C1B25462
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2024 12:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD1F1D7E46;
-	Thu, 21 Nov 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0639B1D6DDA;
+	Thu, 21 Nov 2024 12:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNUPQW36"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qlgchR0O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9A91D3629;
-	Thu, 21 Nov 2024 12:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA71D0F66;
+	Thu, 21 Nov 2024 12:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192493; cv=none; b=BaAS6MEHz1t24rl/Lo+/+XGAvHUksyK2Z8cAQ2NlTuDUqqvIKMzM9RGth5zRnJRkFFCx6BrXI0yLfvIWN62Csli38+zbME1wwYP/KvDwa3Dt1Xj6zi6IOtdnnhCQyDammV0/Mn0+miwYNC7M1IMWHKk5o8ozbqruO78aFGpFMsw=
+	t=1732192751; cv=none; b=VyZ0OI2Jga34r1LI7rECiI3m2OB5mwh+qS3kdO0V+l0qwBGOe5DqaHAZGuwI+5KqxnBnQASDcpsHL/mwHYwzHuV+p1t9MCx4ivifbvI05BHI8aGrSXsLXAyNhO2dN7V8/jb5q/uoWW6lwdN+Siwgb2kYGPZO0nofh3G63+SJMcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192493; c=relaxed/simple;
-	bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E7/+XKC/N0tim7mezt8zNcyFaiR2jiNiQMNvgwMTlmhuongzWjJlFV/yB4YcEad2a5yljlynrFzr8ZuKkmN5mf0xQg+1D85JLdeOPlLVNJcCKFodDItGmdHyCbeIRHnurHccVrip3g2GvFe6D/a+7k7Gs+Y9iicefmSiu6kPiTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNUPQW36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4781C4CECC;
-	Thu, 21 Nov 2024 12:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732192493;
-	bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nNUPQW36SjxwGAiVy261aK8fE4BPdYUKGnAI85RSyL2fVSAtEx0a/k4ktnuHzw7jA
-	 OjwCy+7SCxSmQO9328Z4fLb7pCpxFyepOjjAWzjOC8AWLMiqTuLXAdVE4lvwB/FXMH
-	 9NiTIvcDv1tEZ22r1y3yAGRVHEpIVcZ/qgbBwjupIVFdIXIPsMsKQnf1JaeSWvGeJw
-	 3h/D3WfzwycWj3i8wR+VBlxcNNlgmKu36oWUG1nCUqnCWgb3QeTK+GwT2fZvHgoB1k
-	 gEfxPzDUnUpQL9H2MiaWG17zJWYARrdUR4aejrPcyqrug8JUmtIs4mNbEmlm6ywtSt
-	 1uCWIB9jN3BJw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	hughd@google.com,
-	linux-ext4@vger.kernel.org,
-	tytso@mit.edu,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 0/3] symlink length caching
-Date: Thu, 21 Nov 2024 13:34:44 +0100
-Message-ID: <20241121-blatt-akkubetrieben-ad5d655d184a@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241120112037.822078-1-mjguzik@gmail.com>
-References: <20241120112037.822078-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1732192751; c=relaxed/simple;
+	bh=8xjSf05nAdp1JvAMlz7MNeWjj2n5t2Son3K7+3hln0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbEixjD8m7dDq5fo14r2IOdBjkpaIut13bKAV5oitvz/0zNXcstHTr7Qa0CizS6m1w3rmN9BB2fI1ShxqQ2qCkmCC01DTUouRqAKhm4NsbZj3ZHD+DDHiP+DpS1iFNs81uDAZuBOzgoJaVuzZG49gv1/91Ta4D0aPcTsG9Z/X4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qlgchR0O; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALCLv4q023046;
+	Thu, 21 Nov 2024 12:39:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=O/ECh6stuvVYPaBsgU8koXpxoWSOynA5FZ31Yt+3r
+	hY=; b=qlgchR0Oulx29wr686zG/hPsPbUNgtMJKCQRPRW7htW7/6BTYmuXaw4/p
+	6A5lj5JG9TQ9j5AhlxpnpsTiW43J38jghAUDwekCZKux4OC1o13irr5xNjpNCyKT
+	lipn08+fHaApPMxSvxrqhJfV2zPEXI++EpDiUjZ9LvlRVQui+LGGutU7p9qNZNTB
+	NTw5eFPYofsqcCD5GpqviCtBJH41H+ZgYCf26TRSdeMaDFZkHhV4xJwuMxRaW0Zi
+	VhcL5iVq4yOxLXNSZZdifbhCD6bLn42ROZe+TO2AaabE6HCASd+VSSNpPbYVPr1u
+	AKVXYAWCkJ0EoOQxokvb0xlkDt7iA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttjw21-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:39:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ALCd03h002516;
+	Thu, 21 Nov 2024 12:39:00 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttjw1w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:39:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL61x15011994;
+	Thu, 21 Nov 2024 12:38:59 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y7xjrmht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:38:59 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ALCcvM852363570
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Nov 2024 12:38:57 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A735120043;
+	Thu, 21 Nov 2024 12:38:57 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 673AA20040;
+	Thu, 21 Nov 2024 12:38:56 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.82])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 21 Nov 2024 12:38:56 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+Subject: [PATCH v2 0/2] Fix generic/390 failure due to quota release after freeze
+Date: Thu, 21 Nov 2024 18:08:53 +0530
+Message-ID: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1297; i=brauner@kernel.org; h=from:subject:message-id; bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbazyNrz58+ZvrCj+1hw9YA59dUyxZprLRZFWIYpX1G 6vixtBrHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZq8nIsKpHzNbqzauft73s 9VdNdbBtuuOseniC73el2fsS5S937WVkuP1Mt/2I18WH5zxblXVenT3HXnDA+HF7SbHc/h2Xu1c mMQAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ekGEkwAqD5J-C8GnDljUCh-laGIg3mLt
+X-Proofpoint-ORIG-GUID: Y5RU1JJ2By94QuBbpyYMtUw-i_LC8tYI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411210098
 
-On Wed, 20 Nov 2024 12:20:33 +0100, Mateusz Guzik wrote:
-> quote:
->     When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
->     speed up when issuing readlink on /initrd.img on ext4.
-> 
-> The size is stored in a union with i_devices, which is never looked at
-> unless the inode is for a device.
-> 
-> [...]
+Changes since v1:
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+ * Patch 1: Move flush_delayed_work() to start of function
+ * Patch 2: Guard ext4_release_dquot against freeze
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Regarding patch 2, as per my understanding of the journalling code,
+right now ext4_release_dquot() can only be called from the
+quota_realease_work workqueue and hence ideally should never have a
+journal open but to future-proof it we make sure the journal is not
+opened when calling sb_start_inwrite().
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+** Original Cover **
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Recently we noticed generic/390 failing on powerpc systems. This test
+basically does a freeze-unfreeze loop in parallel with fsstress on the
+FS to detect any races in the code paths.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
+We noticed that the test started failing due to kernel WARN_ONs because
+quota_release_work workqueue started executing while the FS was frozen
+which led to creating new transactions in ext4_release_quota. 
 
-[1/3] vfs: support caching symlink lengths in inodes
-      https://git.kernel.org/vfs/vfs/c/5cbb3c7e0051
-[2/3] ext4: use inode_set_cached_link()
-      https://git.kernel.org/vfs/vfs/c/740456f67017
-[3/3] tmpfs: use inode_set_cached_link()
-      https://git.kernel.org/vfs/vfs/c/30071e02c163
+Most of the details are in the bug however I'd just like to add that
+I'm completely new to quota code so the patch, although fixing the
+issue, might be not be logically the right thing to do. So reviews and
+suggestions are welcome. 
+
+Also, I can only replicate this race on one of my machines reliably and
+does not appear on others.  I've tested with with fstests -g quota and
+don't see any new failures.
+
+Ojaswin Mujoo (2):
+  quota: flush quota_release_work upon quota writeback
+  ext4: protect ext4_release_dquot against freezing
+
+ fs/ext4/super.c  | 17 +++++++++++++++++
+ fs/quota/dquot.c |  2 ++
+ 2 files changed, 19 insertions(+)
+
+-- 
+2.43.5
+
 
