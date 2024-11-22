@@ -1,133 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-35549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6999D5B22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 09:40:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84DC9D5B46
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 09:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD25B224F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 08:40:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A62B1F22D6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 08:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2635718B462;
-	Fri, 22 Nov 2024 08:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5918BC22;
+	Fri, 22 Nov 2024 08:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O3CLSVmz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDux6kBt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B65165EE6;
-	Fri, 22 Nov 2024 08:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428E01304BA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 08:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732264831; cv=none; b=Hz1h1u66XIj83BCj6egET272XKzcnCS32ban1QKrzt6MLoNu9DpjdOHsIFsXLcLAF0O2DHxkYAN58IKf21toOjZmdjfat3Q7UvyCDWWoXDVOSnWFsDe9JJXLYvRbOIQA2hLwpUMWySfzuOvsZLXawHVrzSRhh3po18IMWQH/OlU=
+	t=1732265378; cv=none; b=URci7b48lzgtuZ9P8O3dF6D3cOh4M7zBVnCT/r5bTqYV7c4C9q6/ee+TQ1/EU9EpNoFVwGT+sPVW3PlXCpE/EjAau8g9Qn7QiZc7xB0yI4w5lS0C3nziOpowgeZm6wpFzdrr+23Dxrt21hJiyVRzs669tqdBDEuh/DU5LbYcCKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732264831; c=relaxed/simple;
-	bh=NuIAn4WN9tuE3Z3+e4/LD9vBt0vhTMGMlYSG0sjGT6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lovGkoGvILFUNpANtoUQwnhK0g51xkiD6Rnb0oaNcLNan8lQ8zqFuuP9j5Tzff5uAa7ihcEq63eFVVCpgPS9B9BGmPGr1WCMLfce6I5f8YLVPJZAJSYzdyps7KZQQm15Qgx19g0yIfAb1Vi2yxCwF5nZT2d3OtwnQP3el2rZI5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O3CLSVmz; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM1qP5U006973;
-	Fri, 22 Nov 2024 08:40:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=SaePHCRKhD41eZpCkKUbZZLRBivcQk
-	LiOz/uWyQXTGQ=; b=O3CLSVmz1Ekch1T9i3lpmR0eDkHoWv+tTb1tMfy7NjXRyR
-	FfqkcPPpOkGMpQ18kbWSPv6dB6pLIcV3Y1g+anyUeJeUYz2whK0fys6KDtX+QjU3
-	D6EvY2ROoNGgm8Hqfnfns2dDdeCybcbvpA0GG+zXRX5ZDKp+OeViftnWOR0L7B3G
-	9lIpSKuh7SZvP0ZKLCy1IL5zNIwXhicnAoQUTpOSxRJLgc+Wmd04yJh/jRy7HEDp
-	w7yj9bZDwG+PI1xdcIdNNSZCL0CMGvXy+9sbuB8B5V/5X21pqyFuPoDFq9EaMbqf
-	880br+vhgRZAtbMoLP0eTU17xSscBm/Zt1a6tjJw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu26pde-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 08:40:26 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM3Cocp025906;
-	Fri, 22 Nov 2024 08:40:25 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1jff4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 08:40:25 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AM8eNo512321172
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Nov 2024 08:40:24 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E22DC2004E;
-	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36AC120043;
-	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.16.13])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
-Date: Fri, 22 Nov 2024 09:40:17 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/kcore.c: Clear ret value in read_kcore_iter
- after successful iov_iter_zero
-Message-ID: <Z0BDcVpUjtbWmYTv@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20241121231118.3212000-1-jolsa@kernel.org>
+	s=arc-20240116; t=1732265378; c=relaxed/simple;
+	bh=DeP0muBo8/ei79yy7wFHcXL7CXCMW0UtBwOhn6Dwcxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jx3HV3Jj7UH2YJjKX15qjL8j+YOMDkIC12DIwHZjLzmsZTja9VrRIW3g6nw3u8kxgBdliB0JWyiKqdWahiVj/nUaaFKDb1w0AP+1mKsIWtubt3urc28qCaub34LJeVJc0RSe7kRFy+G46Yjlmwx88fMwwqDcGnLrQiDN4foG87s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDux6kBt; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so5634895a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 00:49:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732265374; x=1732870174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0kO/z/IdbIn2zdD3nJFBvE5a6HQLfpizTI0u8jsOVaE=;
+        b=GDux6kBtwb5KBhy5IKvVBZGYubQVSXI+Xz9raN2bCq3J2G4u/+2p3I274mS26izPZd
+         VRBQPRQVCTNv0ZIb2kPnIMCSaFYMNHUzmqJlpeAHeeWw1BlovuLOxjFiysodpIGWDGTH
+         DRSWnubo6QSKVaE2bHeGwrql85uxTWsQYxTkuMOJIhEPRLdpWXj8jj7m47LieU6jGq3g
+         ps8dEGAMMWfB15b4V1/myTOGyE15kG5vQ0QFrSbz3vIlDrzcW4RX9LARWfhDiNVXAH7b
+         BcgrWAqXrwxvgj3USAbM4lG7MeKXnFb2/0wbb4L1hhpfFRawQ7byg8XORWaMXtVWnsBa
+         OASQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732265374; x=1732870174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0kO/z/IdbIn2zdD3nJFBvE5a6HQLfpizTI0u8jsOVaE=;
+        b=BGiVY+DD0u60R1PmWRcRX5oqbRo2c6h/et2g1LE8KFufFKsJg1GYU76bG0ITjwd9Uk
+         gE6YX20hsX1soy3PJ/7SkYmpBjQ6HCNLibkjxA7UbO3KlWaYp/4r/Uy1WabZCyQr4IJf
+         D9sSfGC1EH6KyHtWsRhAq7PGBZAFJ3H0kJkJfigRVBbxTuzLBn8ngupUXaaEzGhOC31c
+         XHNTIyTILfMVIluE+Yfk+IzCUgKwt00DB75tjnM1SmF+R/RhTY3xXeVYm0XESRLZY6Ni
+         eahTag0TzPp7kG46zcFXctgu19e3O3TCxqfoiVSHskgAGTTSGv4AlYzoLLhBGtOir1/v
+         I/Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6yS3XZ2tEWBU8nguZD5mxajPBZGEZIUTboTko++cAS2TQOmPMkHrsV8u3ugDpgZaZwd6W4qxOKf3QdHFJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YydlA/kpcTzjOi5i/4gsNrklM8p7xrjyb9KSiavznR14UXgf+qu
+	gRffXpVqPo2xk+PJ9zuhLzd49kJ2ieUcB/vtP0MDGidTIvQzHcMrD2zPREGeF5FpT7I9rtrl3nZ
+	0yTZ7ibajQ0fMny3rPt2ck42Z/GI=
+X-Gm-Gg: ASbGncsbsg9o+tN3ofSYo4m0gtWPb063aUwMsO1IokvS0CAcnUblHuYRGL5DwvaRwm1
+	QtRc1tTE5W6vFTPPnQoS4hCDW90gZ9TY=
+X-Google-Smtp-Source: AGHT+IF6mlfSfDTj7T/pa7Q4laprDC0jPLXBLVl4ET5q3YYVua/l7ROLiOsRYA+M+xMr1JiFtEvwqqZitz6MKeM02xI=
+X-Received: by 2002:a17:907:60ce:b0:aa4:e53f:5fbe with SMTP id
+ a640c23a62f3a-aa509a1c2f9mr263083266b.19.1732265374191; Fri, 22 Nov 2024
+ 00:49:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121231118.3212000-1-jolsa@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pMlr2yiv_z5t_79X43YJrR_QMOwYgNvr
-X-Proofpoint-ORIG-GUID: pMlr2yiv_z5t_79X43YJrR_QMOwYgNvr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- bulkscore=0 spamscore=0 mlxlogscore=778 adultscore=0 mlxscore=0
- clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220070
+References: <20241117213206.1636438-1-cel@kernel.org> <20241117213206.1636438-3-cel@kernel.org>
+ <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org>
+ <ZzuqYeENJJrLMxwM@tissot.1015granger.net> <20241120-abzocken-senfglas-8047a54f1aba@brauner>
+ <Zz36xlmSLal7cxx4@tissot.1015granger.net> <20241121-lesebrille-giert-ea85d2eb7637@brauner>
+ <34F4206C-8C5F-4505-9E8F-2148E345B45E@oracle.com> <63377879-1b25-605e-43c6-1d1512f81526@google.com>
+ <Zz+mUNsraFF8B0bw@tissot.1015granger.net>
+In-Reply-To: <Zz+mUNsraFF8B0bw@tissot.1015granger.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 22 Nov 2024 09:49:23 +0100
+Message-ID: <CAOQ4uxhFdY3Z_jS_Z8EpziHAQuQEZgi+Y1ZLyhu-OXfprjszgQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
+ values wrap
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <cel@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	"yukuai (C)" <yukuai3@huawei.com>, 
+	"yangerkun@huaweicloud.com" <yangerkun@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 12:11:18AM +0100, Jiri Olsa wrote:
-> If iov_iter_zero succeeds after failed copy_from_kernel_nofault,
-> we need to reset the ret value to zero otherwise it will be returned
-> as final return value of read_kcore_iter.
-> 
-> This fixes objdump -d dump over /proc/kcore for me.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Fixes: 3d5854d75e31 ("fs/proc/kcore.c: allow translation of physical memory addresses")
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  fs/proc/kcore.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 51446c59388f..c82c408e573e 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -600,6 +600,7 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
->  					ret = -EFAULT;
->  					goto out;
->  				}
-> +				ret = 0;
->  			/*
->  			 * We know the bounce buffer is safe to copy from, so
->  			 * use _copy_to_iter() directly.
+On Thu, Nov 21, 2024 at 10:30=E2=80=AFPM Chuck Lever <chuck.lever@oracle.co=
+m> wrote:
+>
+> On Thu, Nov 21, 2024 at 01:18:05PM -0800, Hugh Dickins wrote:
+> > On Thu, 21 Nov 2024, Chuck Lever III wrote:
+> > >
+> > > I will note that tmpfs hangs during generic/449 for me 100%
+> > > of the time; the failure appears unrelated to renames. Do you
+> > > know if there is regular CI being done for tmpfs? I'm planning
+> > > to add it to my nightly test rig once I'm done here.
+> >
+> > For me generic/449 did not hang, just took a long time to discover
+> > something uninteresting and eventually declare "not run".  Took
+> > 14 minutes six years ago, when I gave up on it and short-circuited
+> > the "not run" with the patch below.
+> >
+> > (I carry about twenty patches for my own tmpfs fstests testing; but
+> > many of those are just for ancient 32-bit environment, or to suit the
+> > "huge=3Dalways" option. I never have enough time/priority to review and
+> > post them, but can send you a tarball if they might of use to you.)
+> >
+> > generic/449 is one of those tests which expects metadata to occupy
+> > space inside the "disk", in a way which it does not on tmpfs (and a
+> > quick glance at its history suggests btrfs also had issues with it).
+> >
+> > [PATCH] generic/449: not run on tmpfs earlier
+> >
+> > Do not waste 14 minutes to discover that tmpfs succeeds in
+> > setting acls despite running out of space for user attrs.
+> >
+> > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > ---
+> >  tests/generic/449 | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/tests/generic/449 b/tests/generic/449
+> > index 9cf814ad..a52a992b 100755
+> > --- a/tests/generic/449
+> > +++ b/tests/generic/449
+> > @@ -22,6 +22,11 @@ _require_test
+> >  _require_acls
+> >  _require_attrs trusted
+> >
+> > +if [ "$FSTYP" =3D "tmpfs" ]; then
+> > +     # Do not waste 14 minutes to discover this:
+> > +     _notrun "$FSTYP succeeds in setting acls despite running out of s=
+pace for user attrs"
+> > +fi
+> > +
+> >  _scratch_mkfs_sized $((256 * 1024 * 1024)) >> $seqres.full 2>&1
+> >  _scratch_mount || _fail "mount failed"
+> >
+> > --
+> > 2.35.3
+>
+> My approach (until I could look into the failure more) has been
+> similar:
+>
+> diff --git a/tests/generic/449 b/tests/generic/449
+> index 9cf814ad326c..8307a43ce87f 100755
+> --- a/tests/generic/449
+> +++ b/tests/generic/449
+> @@ -21,6 +21,7 @@ _require_scratch
+>  _require_test
+>  _require_acls
+>  _require_attrs trusted
+> +_supported_fs ^nfs ^overlay ^tmpfs
+>
 
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+nfs and overlay are _notrun because they do not support _scratch_mkfs_sized
 
-Thank you, Jiri!
+>  _scratch_mkfs_sized $((256 * 1024 * 1024)) >> $seqres.full 2>&1
+>  _scratch_mount || _fail "mount failed"
+>
+>
+> I stole it from somewhere else, so it's not tmpfs-specific.
+
+I think opt-out for a certain fs makes sense in some tests, but it is
+prefered to describe the requirement that is behind the opt-out.
+
+For example, you thought that nfs,overlay,tmpfs should all opt-out
+from this test. Why? Which property do they share in common and
+how can it be described in a generic way?
+
+I am not talking about a property that can be checked.
+Sometimes we need to make groups of filesystems that share a common
+property that cannot be tested, to better express the requirements.
+
+_fstyp_has_non_default_seek_data_hole() is the only example that
+comes to mind but there could be others.
+
+Thanks,
+Amir.
 
