@@ -1,153 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-35567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C09B9D5E55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:48:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B925E9D5E62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4745282BDF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 11:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793582823A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 11:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463CC1CFEC1;
-	Fri, 22 Nov 2024 11:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B281CCB50;
+	Fri, 22 Nov 2024 11:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="jAZkOlGL"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vq8j0YBG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mG2nPwLL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vq8j0YBG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mG2nPwLL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDD23098E;
-	Fri, 22 Nov 2024 11:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FAC1DE3DE;
+	Fri, 22 Nov 2024 11:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732276105; cv=none; b=stuyMZhvtRHylofZZNYOkhXJR8oJ+P1U78mfVsNYxCCbNDQfIAESFx8d7vRzjVGG+u1bo6S9icUpw7AB0qpWdbSWqM3bOwmZ9U5XYwnAb5lcQUd5mMk6yP4Fp8HGGxwOAh8zBAJuj/frFrWkoP53jF1pbtEJndq+4K0rOMegy2M=
+	t=1732276254; cv=none; b=my2P3aMR0Rr7uyKZy8kzy14ek/mXo2HJ83iK9BmhZpB0AU5IQQONmUhRfsIFNkaJnwwYvRwUfL6WyulXoooohnslOVY+6LTp9IoZprUAGaEU1G9x6MGxP96fjpT2JKvntWfStTOejstbXyHYHVVMMFRpDNkK2kw6bu6Z69v66Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732276105; c=relaxed/simple;
-	bh=TB2kdyU6xZUPn8Z/DysCrYYPiYcix4atPU5ye6Jmbrc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Tvua57MWepZIUq2koTbDFHFzlP5bqpJmYsjbnAPLPiid21xfDFGU7u4eEo9niH+KeU4PrX4oS80jNW0LF90dEEIkBIJ7sYC5rOp0tUG13e7dT2NJtM2pqp3ar+cm9NeEffQ6eYSH4oxEzQM6mE/+F6TTxcQ2KJQeNa8hTWz7ipE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=jAZkOlGL reason="key not found in DNS"; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:Date:From:To:Cc:Subject:
-	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID; bh=zppOisSNqjIPmByPd4O3POleRmZrQ4mm2nuQ
-	dsGuUro=; b=jAZkOlGLsONw0oSr9XhvXtmMNlyNDpifAlqPzrV4h2N9UcTU9qQ0
-	aOPbGgMoPQzj004UPx8wCcb+hzQPtwMP3I3SFH29SQQ3mnf2NHCO0D8LOasvglXH
-	KQAQ2psNLTDsk/y1rRz3P9jNwwQWUpRlVPSb36OxbZzRqrqmPgKr+ww=
-Received: from zhenghaoran$buaa.edu.cn ( [18.162.194.140] ) by
- ajax-webmail-coremail-app2 (Coremail) ; Fri, 22 Nov 2024 19:48:03 +0800
- (GMT+08:00)
-Date: Fri, 22 Nov 2024 19:48:03 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6YOR5rWp54S2?= <zhenghaoran@buaa.edu.cn>
-To: "Jan Kara" <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: baijiaju1990@gmail.com, zhenghaoran@buaa.edu.cn, 21371365@buaa.edu.cn
-Subject: Re: Re: [PATCH v2] fs: Fix data race in inode_set_ctime_to_ts
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
- 20240305(0ac2fdd1) Copyright (c) 2002-2024 www.mailtech.cn
- mispb-63b7ebb9-fa87-40c1-9aec-818ec5a006d9-buaa.edu.cn
-In-Reply-To: <20241122112228.6him45jdtibue26s@quack3>
-References: <20241121113546.apvyb43pnuceae3g@quack3>
- <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
- <20241122112228.6him45jdtibue26s@quack3>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1732276254; c=relaxed/simple;
+	bh=46YuAdYTa54L9lzoosFwe+UOpZiJ6UxxcaMH4kPOvZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2E/rIw3LdzABfZF87GloNIJVDANJnpImmDEIeyLlsDKplV8WQkcqlInOu1a6nlH972jYBFHznMw4gty4n1bYab10uu/6C0G8dxpuUG9ZTfkGGsnZ19gjStLIeR6ifwvwS0Z7DsTUVYZR3cbflf+TvbBlQH4KADUc3obO/Vsavg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vq8j0YBG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mG2nPwLL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vq8j0YBG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mG2nPwLL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A0DC1211F9;
+	Fri, 22 Nov 2024 11:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732276250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
+	b=Vq8j0YBGYZ94c7t2HaLJWJQAH1ygfRDlnoej4U3atMYH71rTeyRJADuUaH6fXcmyfV7Y/i
+	3WBUDyjBb5VjPm/qAbto8FGygjolvZUchHeSl8Ks7WoWJEPtMb3hWJgsI3m5te0gDuqLFs
+	RcG4be4ayrGX7UJRf9svW9kGlxk6K38=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732276250;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
+	b=mG2nPwLLFBfHpUzlZWPYZznOFgT+uYSYV4URwy6w+17zlFSQWKGQMnkUtdrtGs1SL+NPXh
+	Hsub4QHN2GpOYiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Vq8j0YBG;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mG2nPwLL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732276250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
+	b=Vq8j0YBGYZ94c7t2HaLJWJQAH1ygfRDlnoej4U3atMYH71rTeyRJADuUaH6fXcmyfV7Y/i
+	3WBUDyjBb5VjPm/qAbto8FGygjolvZUchHeSl8Ks7WoWJEPtMb3hWJgsI3m5te0gDuqLFs
+	RcG4be4ayrGX7UJRf9svW9kGlxk6K38=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732276250;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
+	b=mG2nPwLLFBfHpUzlZWPYZznOFgT+uYSYV4URwy6w+17zlFSQWKGQMnkUtdrtGs1SL+NPXh
+	Hsub4QHN2GpOYiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8012A13998;
+	Fri, 22 Nov 2024 11:50:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5go/HxpwQGcSOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 22 Nov 2024 11:50:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2BF09A08B5; Fri, 22 Nov 2024 12:50:50 +0100 (CET)
+Date: Fri, 22 Nov 2024 12:50:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: viro@zeniv.linux.org.uk, almaz.alexandrovich@paragon-software.com,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V4] fs/ntfs3: check if the inode is bad before creating
+ symlink
+Message-ID: <20241122115050.7i3eslwb77tee37j@quack3>
+References: <20241122074952.1585521-1-lizhi.xu@windriver.com>
+ <20241122081025.1661161-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <416d415d.17372.19353b35ae8.Coremail.zhenghaoran@buaa.edu.cn>
-X-Coremail-Locale: en_US
-X-CM-TRANSID:Nyz+CgCncAp0b0BnVzolAQ--.36763W
-X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/1tbiAgIJA2c-acFVSwAAsk
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122081025.1661161-1-lizhi.xu@windriver.com>
+X-Rspamd-Queue-Id: A0DC1211F9
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_RCPT(0.00)[73d8fc29ec7cba8286fa];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,windriver.com:email,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-VGhhbmsgeW91IGZvciB5b3VyIHJlcGx5IGFnYWluLiBJIGFtIHZlcnkgc29ycnkgdGhhdCB0aGUg
-cHJldmlvdXMgUGF0Y2ggVjIgZGlkIG5vdCBtZWV0IHRoZSBzdWJtaXNzaW9uIHJlcXVpcmVtZW50
-cy4gSSB3aWxsIGNhcmVmdWxseSBtb2RpZnkgdGhlIGVtYWlsIGFzIHJlcXVpcmVkIGFuZCBzdWJt
-aXQgUGF0Y2ggVjMuCgoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiSmFu
-IEthcmEiIDxqYWNrQHN1c2UuY3o+Cj4gU2VuZCB0aW1lOkZyaWRheSwgMTEvMjIvMjAyNCAxOToy
-MjoyOAo+IFRvOiAiSGFvLXJhbiBaaGVuZyIgPHpoZW5naGFvcmFuQGJ1YWEuZWR1LmNuPgo+IENj
-OiB2aXJvQHplbml2LmxpbnV4Lm9yZy51aywgYnJhdW5lckBrZXJuZWwub3JnLCBqYWNrQHN1c2Uu
-Y3osIGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnLCBiYWlqaWFqdTE5OTBAZ21haWwuY29tLCAyMTM3MTM2NUBidWFhLmVkdS5jbgo+IFN1
-YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIGZzOiBGaXggZGF0YSByYWNlIGluIGlub2RlX3NldF9jdGlt
-ZV90b190cwo+IAo+IE9uIEZyaSAyMi0xMS0yNCAxMTo1MTo1OSwgSGFvLXJhbiBaaGVuZyB3cm90
-ZToKPiA+IFYyOgo+ID4gVGhhbmtzIGZvciBIb256YSdzIHJlcGx5IGFuZCBzdWdnZXN0aW9ucy4g
-UkVBRF9PTkNFIHNob3VsZCBpbmRlZWQKPiA+IGJlIGFkZGVkIHRvIHRoZSByZWFkaW5nIHBvc2l0
-aW9uLiBJIGFkZGVkIFJFQURfT05DRSB0bwo+ID4gYGlub2RlX2dldF9jdGltZV9zZWMoKWAuIFRo
-ZSBuZXcgcGF0Y2ggaXMgYXMgZm9sbG93cy4KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBWMToKPiA+IEEgZGF0
-YSByYWNlIG1heSBvY2N1ciB3aGVuIHRoZSBmdW5jdGlvbiBgaW5vZGVfc2V0X2N0aW1lX3RvX3Rz
-KClgIGFuZAo+ID4gdGhlIGZ1bmN0aW9uIGBpbm9kZV9nZXRfY3RpbWVfc2VjKClgIGFyZSBleGVj
-dXRlZCBjb25jdXJyZW50bHkuIFdoZW4KPiA+IHR3byB0aHJlYWRzIGNhbGwgYGFpb19yZWFkYCBh
-bmQgYGFpb193cml0ZWAgcmVzcGVjdGl2ZWx5LCB0aGV5IHdpbGwKPiA+IGJlIGRpc3RyaWJ1dGVk
-IHRvIHRoZSByZWFkIGFuZCB3cml0ZSBmdW5jdGlvbnMgb2YgdGhlIGNvcnJlc3BvbmRpbmcKPiA+
-IGZpbGUgc3lzdGVtIHJlc3BlY3RpdmVseS4gVGFraW5nIHRoZSBidHJmcyBmaWxlIHN5c3RlbSBh
-cyBhbiBleGFtcGxlLAo+ID4gdGhlIGBidHJmc19maWxlX3JlYWRfaXRlcmAgYW5kIGBidHJmc19m
-aWxlX3dyaXRlX2l0ZXJgIGZ1bmN0aW9ucyBhcmUKPiA+IGZpbmFsbHkgY2FsbGVkLiBUaGVzZSB0
-d28gZnVuY3Rpb25zIGNyZWF0ZWQgYSBkYXRhIHJhY2Ugd2hlbiB0aGV5Cj4gPiBmaW5hbGx5IGNh
-bGxlZCBgaW5vZGVfZ2V0X2N0aW1lX3NlYygpYCBhbmQgYGlub2RlX3NldF9jdGltZV90b19ucygp
-YC4KPiA+IFRoZSBzcGVjaWZpYyBjYWxsIHN0YWNrIHRoYXQgYXBwZWFycyBkdXJpbmcgdGVzdGlu
-ZyBpcyBhcyBmb2xsb3dzOgo+IAo+IENoYW5nZWxvZ3Mgb2YgdGhlIHBhdGNoIGJlbG9uZyBiZWxv
-dyB0aGUgLS0tIG1hcmtlciAoc28gdGhhdCB0aGV5IGFyZSBub3QKPiBwYXJ0IG9mIHRoZSBmaW5h
-bCBjb21taXQgbWVzc2FnZSkuIFNvIHRoaXMgY2hhbmdlbG9nIHNob3VsZCBsb29rIGxpa2U6Cj4g
-Cj4gQSBkYXRhIHJhY2UgbWF5IG9jY3VyIHdoZW4gdGhlIGZ1bmN0aW9uIGBpbm9kZV9zZXRfY3Rp
-bWVfdG9fdHMoKWAgYW5kCj4gdGhlIGZ1bmN0aW9uIGBpbm9kZV9nZXRfY3RpbWVfc2VjKClgIGFy
-ZSBleGVjdXRlZCBjb25jdXJyZW50bHkuIFdoZW4KPiAuLi4uCj4gCj4gU2lnbmVkLW9mZi1ieTog
-SGFvLXJhbiBaaGVuZyA8emhlbmdoYW9yYW5AYnVhYS5lZHUuY24+Cj4gCj4gLS0tCj4gPGRpZmZz
-dGF0IGhlcmU+Cj4gCj4gY2hhbmdlcyBzaW5jZSB2MToKPiAgIC0gLi4uCj4gCj4gPHBhdGNoIGhl
-cmU+Cj4gCj4gUGxlYXNlIHNlZSAnVGhlIGNhbm9uaWNhbCBwYXRjaCBmb3JtYXQnIGNoYXB0ZXIg
-aW4KPiBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCBmb3IgbW9y
-ZSBkZXRhaWxzLgo+IAo+ID4gYGBgCj4gCj4gQWxzbyBvdXIgY2hhbmdlbG9ncyBhcmUgbm90IGlu
-IFJlU1Qgb3Igd2hhdGV2ZXIgb3RoZXIgZm9ybWF0LiBUaGV5IGFyZQo+IHBsYWluIEFTQ0lJIHRl
-eHQuIEhlbmNlIHF1b3RlcyBsaWtlIGFib3ZlIGFyZSBwb2ludGxlc3MgYW5kIG1vc3RseSByZWR1
-Y2luZwo+IHJlYWRhYmlsaXR5Lgo+IAo+ID4gPT09PT09PT09PT09REFUQV9SQUNFPT09PT09PT09
-PT09Cj4gPiBidHJmc19kZWxheWVkX3VwZGF0ZV9pbm9kZSsweDFmNjEvMHg3Y2UwIFtidHJmc10K
-PiA+IGJ0cmZzX3VwZGF0ZV9pbm9kZSsweDQ1ZS8weGJiMCBbYnRyZnNdCj4gPiBidHJmc19kaXJ0
-eV9pbm9kZSsweDJiOC8weDUzMCBbYnRyZnNdCj4gPiBidHJmc191cGRhdGVfdGltZSsweDFhZC8w
-eDIzMCBbYnRyZnNdCj4gPiB0b3VjaF9hdGltZSsweDIxMS8weDQ0MAo+ID4gZmlsZW1hcF9yZWFk
-KzB4OTBmLzB4YTIwCj4gPiBidHJmc19maWxlX3JlYWRfaXRlcisweGViLzB4NTgwIFtidHJmc10K
-PiA+IGFpb19yZWFkKzB4Mjc1LzB4M2EwCj4gPiBpb19zdWJtaXRfb25lKzB4ZDIyLzB4MWNlMAo+
-ID4gX19zZV9zeXNfaW9fc3VibWl0KzB4YjMvMHgyNTAKPiA+IGRvX3N5c2NhbGxfNjQrMHhjMS8w
-eDE5MAo+ID4gZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzcvMHg3Zgo+ID4gPT09
-PT09PT09PT09T1RIRVJfSU5GTz09PT09PT09PT09PQo+ID4gYnRyZnNfd3JpdGVfY2hlY2srMHhh
-MTUvMHgxMzkwIFtidHJmc10KPiA+IGJ0cmZzX2J1ZmZlcmVkX3dyaXRlKzB4NTJmLzB4MjlkMCBb
-YnRyZnNdCj4gPiBidHJmc19kb193cml0ZV9pdGVyKzB4NTNkLzB4MTU5MCBbYnRyZnNdCj4gPiBi
-dHJmc19maWxlX3dyaXRlX2l0ZXIrMHg0MS8weDYwIFtidHJmc10KPiA+IGFpb193cml0ZSsweDQx
-ZS8weDVmMAo+ID4gaW9fc3VibWl0X29uZSsweGQ0Mi8weDFjZTAKPiA+IF9fc2Vfc3lzX2lvX3N1
-Ym1pdCsweGIzLzB4MjUwCj4gPiBkb19zeXNjYWxsXzY0KzB4YzEvMHgxOTAKPiA+IGVudHJ5X1NZ
-U0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc3LzB4N2YKPiA+IGBgYAo+ID4gCj4gPiBUaGUgY2Fs
-bCBjaGFpbiBhZnRlciB0cmFjZWFiaWxpdHkgaXMgYXMgZm9sbG93czoKPiA+IAo+ID4gYGBgCj4g
-PiBUaHJlYWQxOgo+ID4gYnRyZnNfZGVsYXllZF91cGRhdGVfaW5vZGUoKSAtPgo+ID4gZmlsbF9z
-dGFja19pbm9kZV9pdGVtKCkgLT4KPiA+IGlub2RlX2dldF9jdGltZV9zZWMoKQo+ID4gCj4gPiBU
-aHJlYWQyOgo+ID4gYnRyZnNfd3JpdGVfY2hlY2soKSAtPgo+ID4gdXBkYXRlX3RpbWVfZm9yX3dy
-aXRlKCkgLT4KPiA+IGlub2RlX3NldF9jdGltZV90b190cygpCj4gPiBgYGAKPiAKPiBObyBuZWVk
-IHRvIHJlcGVhdCB0aGUgc3RhY2sgdHJhY2VzIGFnYWluIGhlcmUuIFRoZSBvdXRwdXQgZnJvbSBL
-Q1NBTiBhYm92ZQo+IGlzIGVub3VnaC4KPiAKPiA+IFRvIGFkZHJlc3MgdGhpcyBpc3N1ZSwgaXQg
-aXMgcmVjb21tZW5kZWQgdG8KPiA+IGFkZCBXUklURV9PTkNFIHdoZW4gd3JpdGluZyB0aGUgYGlu
-b2RlLT5pX2N0aW1lX3NlY2AgdmFyaWFibGUuCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IAo+IEFsc28gdGhpcyBsaW5l
-IG9mICctJyBpcyByZWFsbHkgdW5leHBlY3RlZC4gUGxlYXNlIGp1c3QgbGVhdmUgZW1wdHkgbGlu
-ZQo+IGhlcmUuCj4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBIYW8tcmFuIFpoZW5nIDx6aGVuZ2hhb3Jh
-bkBidWFhLmVkdS5jbj4KPiA+IC0tLQo+ID4gIGluY2x1ZGUvbGludXgvZnMuaCB8IDYgKysrLS0t
-Cj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiA+
-IAo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZnMuaCBiL2luY2x1ZGUvbGludXgvZnMu
-aAo+ID4gaW5kZXggMzU1OTQ0NjI3OWMxLi44NjljY2ZjOWE3ODcgMTAwNjQ0Cj4gPiAtLS0gYS9p
-bmNsdWRlL2xpbnV4L2ZzLmgKPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvZnMuaAo+ID4gQEAgLTE2
-NTUsNyArMTY1NSw3IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IHRpbWVzcGVjNjQgaW5vZGVfc2V0
-X210aW1lKHN0cnVjdCBpbm9kZSAqaW5vZGUsCj4gPiAgCj4gPiAgc3RhdGljIGlubGluZSB0aW1l
-NjRfdCBpbm9kZV9nZXRfY3RpbWVfc2VjKGNvbnN0IHN0cnVjdCBpbm9kZSAqaW5vZGUpCj4gPiAg
-ewo+ID4gLQlyZXR1cm4gaW5vZGUtPmlfY3RpbWVfc2VjOwo+ID4gKwlyZXR1cm4gUkVBRF9PTkNF
-KGlub2RlLT5pX2N0aW1lX3NlYyk7Cj4gPiAgfQo+IAo+IEdvb2QuIEJ1dCBwbGVhc2UgZml4IGlu
-b2RlX2dldF9jdGltZV9uc2VjKCkgYXMgd2VsbC4KPiAKPiAJCQkJCQkJCUhvbnphCj4gLS0gCj4g
-SmFuIEthcmEgPGphY2tAc3VzZS5jb20+Cj4gU1VTRSBMYWJzLCBDUgo=
+On Fri 22-11-24 16:10:25, Lizhi Xu wrote:
+> syzbot reported a null-ptr-deref in pick_link. [1]
+> 
+> First, i_link and i_dir_seq are in the same union, they share the same memory
+> address, and i_dir_seq will be updated during the execution of walk_component,
+> which makes the value of i_link equal to i_dir_seq.
+> 
+> Secondly, the chmod execution failed, which resulted in setting the mode value
+> of file0's inode to REG when executing ntfs_bad_inode.
+> 
+> Third, during the execution of the link command, it sets the inode of the
+> symlink file to the already bad inode of file0 by calling d_instantiate, which
+> ultimately leads to null-ptr-deref when performing a mount operation on the
+> symbolic link bus because it use bad inode's i_link and its value is equal to
+> i_dir_seq=2. 
+> 
+> Note: ("file0, bus" are defined in reproducer [2])
+> 
+> To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
+> whether the inode of file is already bad.
+
+So actually there's no symbolic link involved here at all (which what was
+confusing me all the time).
+
+> move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+> chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+> link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+> mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
+
+This creates only a hardlink. And in fact the creation of the link seems to
+be totally irrelevant for this problem. I believe:
+
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+mount$overlay(0x0, &(0x7f00000000c0)='./file0\x00', 0x0, 0x0, 0x0)
+
+would be as good reproducer of the problem. The core of the problem is that
+NTFS3 calls make_bad_inode() on inode that is accessible to userspace and
+is something else than a regular file. As long as that happens, some
+variant of this NULL-ptr-dereference can happen as well, just the
+reproducers will be somewhat different.
+
+So I don't think patching ntfs_link_inode() makes a lot of sense. If
+anything, I'd patch NTFS3 to not mark the inode as bad somewhere inside
+ntfs_setattr() and deal with the error in a better way.
+
+								Honza
+
+> 
+> Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+> V1 --> V2: add the root cause of the i_link not set issue and imporve the check
+> V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
+> V3 --> V4: add comments for symlink use bad inode, it is the root cause
+> 
+>  fs/ntfs3/inode.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index be04d2845bb7..fefbdcf75016 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+>  	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
+>  	struct NTFS_DE *de;
+>  
+> +	if (is_bad_inode(inode))
+> +		return -EIO;
+> +
+>  	/* Allocate PATH_MAX bytes. */
+>  	de = __getname();
+>  	if (!de)
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
