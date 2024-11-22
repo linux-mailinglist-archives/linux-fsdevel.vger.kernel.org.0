@@ -1,135 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-35562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6F69D5DEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:19:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B759D5DF9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:22:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41E51F23B21
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 11:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71641F2155A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 11:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC731DE4FB;
-	Fri, 22 Nov 2024 11:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E501DE4FC;
+	Fri, 22 Nov 2024 11:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AoRAD0CM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJB67VJ0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q2TeauU/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="24PHf3oR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MiehijWU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29025142E83;
-	Fri, 22 Nov 2024 11:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD6F1CBE81;
+	Fri, 22 Nov 2024 11:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732274325; cv=none; b=d0e5py9f0A12eJHRQREcD5lB+wWJkLVJZDCkAn7C/ze4z59MJn9k/kOxkMUw3jvdTPIYxn8lkd2ng2jgP1lUy/f5/ItDRY30dvzG7bQkUJ419I1gI8PCb2NdBT9fk1t7sHr8fvxrrVQMj/+pB4uqEqMm1WGgrWOvgSvvb9HxaV0=
+	t=1732274554; cv=none; b=qxfzxhF7QG+SEqSVgo8rXCgdbgpk/smL12neOmNxur1jLBMiV9sZPFwuyPU6NZjqiFrb63som3w35thO0SszGYlJIIAdEoR45p0FWkJmZnM+FQ4FmDlqdBhA1B1I+mXGyUFXXLKd+709sgcyQzK3QChX6m3UpOsFC1k2RHhOBV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732274325; c=relaxed/simple;
-	bh=/fKxJSUOP+Zb4ztb2hVxxM3ytaUxDd3fvJRkm2EaDTM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=FSqIn0bRiye06PbgCYuMkZ5p+qGwuZVsx3UYy4cP9Z20zxS8gwL4dxUDp1S2MdD9c7Q+8Led7ywpD0ONK2ajF/NMYBOa5VrCvoCtRZLHdhJT4bQpN5fJgdo9XRbqnwDLbJaykYzn4zYffRzDvzKg0WcjTH+OTtrsoHFVa3ZjQXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AoRAD0CM; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3807e72c468so195436f8f.3;
-        Fri, 22 Nov 2024 03:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732274322; x=1732879122; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:from:content-language
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0BC5siRWyi3JlY6lsL0F4LUp8ht8za020rXeAp4qrIQ=;
-        b=AoRAD0CMLS49JvE8+H0a0IPe9DUj8bwTMxppwJnjRzMAxB7ad/iapVRBhzjsXA8rSR
-         N03l85hfvwiOyT1J1XLieYKtYvAFI23YVAFO4aqRdaB7o2Zi38Iz29wPxZKi669PpExm
-         XWsYMgNsdVPXoscK5OkZUm9R4eZAMS6ubbLggQnNfouIZADnc0ZhhcAC/f5i2pa4i5nY
-         PaG/5IdRD3jl3GswG33Nr0jta6OCg8imQR1XU6vYTuBV1VN8LUIDv2w2fxKDFhmr15Wj
-         EmnrrU34B2G9txnAIdsyiSn9gTPjeW0G3PI6c4uIIlN8XJ4vnI5N8bHNEN1QMHZr1l0v
-         pjwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732274322; x=1732879122;
-        h=content-transfer-encoding:to:subject:from:content-language
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0BC5siRWyi3JlY6lsL0F4LUp8ht8za020rXeAp4qrIQ=;
-        b=NO9DxC/4aQL7CTHwBIsSMDGA/qXlAMhYaUHuzg0xWDES8ZMOCP2N5fmc7vIUOxaH4M
-         KljI1vaVlGuDHZXOs8/FyyHct2gG5u7r+Ujxx4f1jbEHZaLcdKnWlJR8UFumcp2/N4I7
-         vSgcrq+rk5pc+hqFXMJfolRSnYZf7Vi3ySzTFBl9KhasW3OrQn7LIBbnFwq+6GhIY9XH
-         7IW4HxyytlUvRiWksm3+52uokbXBIUhPCcz8EKllro1n4z8d0FA98E1fY9S+9OLzE/cI
-         O/+0zWg0aeh1q9IetfL1dbSFKw7yyoxIinnY4gqEfYxdeeNQuRf3Zg0rjbCrHwQ9WGWo
-         HLZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Ye00uctNCBgXvurg7qdAQpjEPqA9bHOmEzN1Cc6PZeXEnz9otWiHdkeAg5itdv4yniNptBDUQnZZlGDqzjM=@vger.kernel.org, AJvYcCXG33elRKXULUJUYDHIx7VAMUxP7b4nSlJQmzyPnlyD1yUNRZiDtnhGIFKQceUUSfhsJde30oISYSVbtjji@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQR4y5EknZHWGSPBs4CLizOU25IR7wCK7KryCsd58RoQf8Furx
-	13IU3Ge1QE3XDiu3TDLGpo4d/pyLCBl2j3CY0HvyyVuQyN5FxFObS30VYGk=
-X-Gm-Gg: ASbGncsmLyFJxVoTY2RCBjxVMA/1/X0D969m+U9Q4t1qk4l4EfrS+vhe3K5+pKX+rl6
-	cwhOvm5NFAwBMASF5ytzIsWnK5OB384oOR/75Dtv2BRZgGsl2SO6Mhzcmw9yiiMI6MqXOmfIYXR
-	lYHmosXLRj4kSRhTt68WzhtKCFeHiVhk0UeQwT3TVcDU9XGODoZUuOzVmD1sHM+D4Zkf51vmsBE
-	q7Ljmj2XoRJFWpmP08xhxGRpzqahJkNL1slSPvLNH2Lnk+Op0O7QlpcBzNjG6DbDkyKDdYH0OBh
-	jBLsFEE3KWIsGlolFg==
-X-Google-Smtp-Source: AGHT+IEihv/rLuDEibkXzI4PwKpylOIJi1rGlO6aQT+qxuE8tcevTsY7AcKepxtOPL+DpMS5g/B1Ow==
-X-Received: by 2002:a5d:59af:0:b0:382:5066:3257 with SMTP id ffacd0b85a97d-38260b59c40mr874365f8f.4.1732274322154;
-        Fri, 22 Nov 2024 03:18:42 -0800 (PST)
-Received: from localhost (145.red-81-44-150.dynamicip.rima-tde.net. [81.44.150.145])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3defsm2170288f8f.70.2024.11.22.03.18.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 03:18:41 -0800 (PST)
-Message-ID: <4b454953-eafa-4bb4-824d-6012f7924d5c@gmail.com>
-Date: Fri, 22 Nov 2024 12:18:40 +0100
+	s=arc-20240116; t=1732274554; c=relaxed/simple;
+	bh=+3elVARTpgPl0+TFsdMK74bMTLEELajCRkpQMlyPAWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZuiS06Bu5gORIUd4SYK5lu3B0uGxZQRvHao+dg8UwODIZCf+/W4iJ4KBEJQb7gehPnO6c0ekghJanOHaLO2Zhox+Xh9EdQkRzFsznS1e+nVDSmxC6BBt5UD8Gf6ilKeMwG2xBCDIfBS7pSWQbh6PPovzgnvmO2O9jjDALG6x4UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJB67VJ0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q2TeauU/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=24PHf3oR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MiehijWU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 961F31F37E;
+	Fri, 22 Nov 2024 11:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732274549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
+	b=LJB67VJ0vq2ag+ZczC4yc3MsJ8RushEOXnMeGaEJkP35dgkRRzXHL3SdY3826vhUjdqnBJ
+	mZlh/kvU0OdHZzJa2i3qghRlz1yH2ZAWQjifQqL7IKirV7wyoplODsHZKkrbk0IWb/McYD
+	97N56cprv9H/sWtznY5mMMLSodFFhEo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732274549;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
+	b=q2TeauU/lB/5UHzZuW8TcrPCdRxI6z0l8pwCai06ljY0rNqPrCrlXedux+zo0wKpcb/fkF
+	Ct9pXiaNyjQahlAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=24PHf3oR;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=MiehijWU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732274548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
+	b=24PHf3oRVIk4BLr8c6z1pdCNCQreZqFLTWKojvv8Hi5uZVaFbREaHIRL12joIRaclUVnSQ
+	TPi/8NNJU16ngraNrGiygPVbxnk70Hm4kq9od0SYe3CW/sSDMilfmFyDgPWiRm5nT82V+A
+	POI3QQIGMaz5oEiIFQ0rbRgnI6DJU1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732274548;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
+	b=MiehijWUcSRmbvxBnGVMtriWuT0PjoCJQqdoTGwr1l5yXVQ7xiKT9CIpBhgQqN2mcjhzOz
+	Zo7oe2BY4G82fBDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8637713998;
+	Fri, 22 Nov 2024 11:22:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FgJuIHRpQGcyMQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 22 Nov 2024 11:22:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 285DDA08B8; Fri, 22 Nov 2024 12:22:28 +0100 (CET)
+Date: Fri, 22 Nov 2024 12:22:28 +0100
+From: Jan Kara <jack@suse.cz>
+To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Subject: Re: [PATCH v2] fs: Fix data race in inode_set_ctime_to_ts
+Message-ID: <20241122112228.6him45jdtibue26s@quack3>
+References: <20241121113546.apvyb43pnuceae3g@quack3>
+ <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US, en-GB, es-ES
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
-Subject: Re: GIT PULL] Remove reiserfs
-To: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- reiserfs-devel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
+X-Rspamd-Queue-Id: 961F31F37E
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com,buaa.edu.cn];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi,
+On Fri 22-11-24 11:51:59, Hao-ran Zheng wrote:
+> V2:
+> Thanks for Honza's reply and suggestions. READ_ONCE should indeed
+> be added to the reading position. I added READ_ONCE to
+> `inode_get_ctime_sec()`. The new patch is as follows.
+> -----------------------------------------------------------------
+> V1:
+> A data race may occur when the function `inode_set_ctime_to_ts()` and
+> the function `inode_get_ctime_sec()` are executed concurrently. When
+> two threads call `aio_read` and `aio_write` respectively, they will
+> be distributed to the read and write functions of the corresponding
+> file system respectively. Taking the btrfs file system as an example,
+> the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
+> finally called. These two functions created a data race when they
+> finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
+> The specific call stack that appears during testing is as follows:
 
-Still traces in the tree:
+Changelogs of the patch belong below the --- marker (so that they are not
+part of the final commit message). So this changelog should look like:
 
-$ git grep -iE "reiserfs|reiser4|reiser2"
-Documentation/admin-guide/ext4.rst:  a similar level of journaling as that of XFS, JFS, and ReiserFS in its default
-Documentation/admin-guide/laptops/laptop-mode.rst:* If you mount some of your ext3/reiserfs filesystems with the -n option, then
-Documentation/admin-guide/laptops/laptop-mode.rst:ext3 or ReiserFS filesystems (also done automatically by the control script),
-Documentation/admin-guide/laptops/laptop-mode.rst:                                      "ext3"|"reiserfs")
-Documentation/admin-guide/laptops/laptop-mode.rst:                                      "ext3"|"reiserfs")
-Documentation/arch/powerpc/eeh-pci-error-recovery.rst:   Reiserfs does not tolerate errors returned from the block device.
-Documentation/process/3.Early-stage.rst: - The Reiser4 filesystem included a number of capabilities which, in the
-Documentation/process/3.Early-stage.rst:   address some of them - has caused Reiser4 to stay out of the mainline
-Documentation/process/changes.rst:reiserfsprogs          3.6.3            reiserfsck -V
-Documentation/process/changes.rst:Reiserfsprogs
-Documentation/process/changes.rst:The reiserfsprogs package should be used for reiserfs-3.6.x
-Documentation/process/changes.rst:versions of ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` and
-Documentation/process/changes.rst:``reiserfsck``. These utils work on both i386 and alpha platforms.
-Documentation/process/changes.rst:Reiserfsprogs
-Documentation/process/changes.rst:- <https://git.kernel.org/pub/scm/linux/kernel/git/jeffm/reiserfsprogs.git/>
-Documentation/trace/ftrace.rst:    360.774528 |   1)               |                                  reiserfs_prepare_for_journal() {
-Documentation/translations/it_IT/process/3.Early-stage.rst: - Il filesystem Reiser4 include una seria di funzionalità che, secondo
-Documentation/translations/it_IT/process/changes.rst:reiserfsprogs          3.6.3              reiserfsck -V
-Documentation/translations/it_IT/process/changes.rst:Reiserfsprogs
-Documentation/translations/it_IT/process/changes.rst:Il pacchetto reiserfsprogs dovrebbe essere usato con reiserfs-3.6.x (Linux
-Documentation/translations/it_IT/process/changes.rst:funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
-Documentation/translations/it_IT/process/changes.rst:``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e alpha.
-Documentation/translations/it_IT/process/changes.rst:Reiserfsprogs
-Documentation/translations/it_IT/process/changes.rst:- <https://git.kernel.org/pub/scm/linux/kernel/git/jeffm/reiserfsprogs.git/>
-Documentation/translations/zh_CN/process/3.Early-stage.rst: - Reiser4文件系统包含许多功能，核心内核开发人员认为这些功能应该在虚拟文件
-Documentation/translations/zh_CN/process/3.Early-stage.rst:   导致Reiser4置身主线内核之外。
-Documentation/translations/zh_TW/process/3.Early-stage.rst: - Reiser4文件系統包含許多功能，核心內核開發人員認爲這些功能應該在虛擬文件
-Documentation/translations/zh_TW/process/3.Early-stage.rst:   導致Reiser4置身主線內核之外。
-Documentation/userspace-api/ioctl/ioctl-number.rst:0xCD  01     linux/reiserfs_fs.h                                     Dead since 6.13
-fs/btrfs/tree-log.c: * ext3/4, xfs, f2fs, reiserfs, nilfs2). Note that when logging the inodes
-fs/ubifs/key.h: * node. We use "r5" hash borrowed from reiserfs.
-fs/ubifs/key.h: * key_r5_hash - R5 hash function (borrowed from reiserfs).
-include/linux/stringhash.h:/* Hash courtesy of the R5 hash in reiserfs modulo sign bits */
-include/uapi/linux/magic.h:#define REISERFS_SUPER_MAGIC 0x52654973      /* used by gcc */
-include/uapi/linux/magic.h:#define REISERFS_SUPER_MAGIC_STRING  "ReIsErFs"
-include/uapi/linux/magic.h:#define REISER2FS_SUPER_MAGIC_STRING "ReIsEr2Fs"
-include/uapi/linux/magic.h:#define REISER2FS_JR_SUPER_MAGIC_STRING      "ReIsEr3Fs"
-scripts/selinux/install_policy.sh:      grep -E "ext[234]|jfs|xfs|reiserfs|jffs2|gfs2|btrfs|f2fs|ocfs2" | \
-scripts/ver_linux:      printversion("Reiserfsprogs", version("reiserfsck -V"))
-scripts/ver_linux:      printversion("Reiser4fsprogs", version("fsck.reiser4 -V"))
+A data race may occur when the function `inode_set_ctime_to_ts()` and
+the function `inode_get_ctime_sec()` are executed concurrently. When
+....
+
+Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+
+---
+<diffstat here>
+
+changes since v1:
+  - ...
+
+<patch here>
+
+Please see 'The canonical patch format' chapter in
+Documentation/process/submitting-patches.rst for more details.
+
+> ```
+
+Also our changelogs are not in ReST or whatever other format. They are
+plain ASCII text. Hence quotes like above are pointless and mostly reducing
+readability.
+
+> ============DATA_RACE============
+> btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
+> btrfs_update_inode+0x45e/0xbb0 [btrfs]
+> btrfs_dirty_inode+0x2b8/0x530 [btrfs]
+> btrfs_update_time+0x1ad/0x230 [btrfs]
+> touch_atime+0x211/0x440
+> filemap_read+0x90f/0xa20
+> btrfs_file_read_iter+0xeb/0x580 [btrfs]
+> aio_read+0x275/0x3a0
+> io_submit_one+0xd22/0x1ce0
+> __se_sys_io_submit+0xb3/0x250
+> do_syscall_64+0xc1/0x190
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ============OTHER_INFO============
+> btrfs_write_check+0xa15/0x1390 [btrfs]
+> btrfs_buffered_write+0x52f/0x29d0 [btrfs]
+> btrfs_do_write_iter+0x53d/0x1590 [btrfs]
+> btrfs_file_write_iter+0x41/0x60 [btrfs]
+> aio_write+0x41e/0x5f0
+> io_submit_one+0xd42/0x1ce0
+> __se_sys_io_submit+0xb3/0x250
+> do_syscall_64+0xc1/0x190
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ```
+> 
+> The call chain after traceability is as follows:
+> 
+> ```
+> Thread1:
+> btrfs_delayed_update_inode() ->
+> fill_stack_inode_item() ->
+> inode_get_ctime_sec()
+> 
+> Thread2:
+> btrfs_write_check() ->
+> update_time_for_write() ->
+> inode_set_ctime_to_ts()
+> ```
+
+No need to repeat the stack traces again here. The output from KCSAN above
+is enough.
+
+> To address this issue, it is recommended to
+> add WRITE_ONCE when writing the `inode->i_ctime_sec` variable.
+> --------------------------------------------------------------
+
+Also this line of '-' is really unexpected. Please just leave empty line
+here.
+
+> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+> ---
+>  include/linux/fs.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3559446279c1..869ccfc9a787 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1655,7 +1655,7 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+>  
+>  static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+>  {
+> -	return inode->i_ctime_sec;
+> +	return READ_ONCE(inode->i_ctime_sec);
+>  }
+
+Good. But please fix inode_get_ctime_nsec() as well.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
