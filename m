@@ -1,185 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-35580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D199D5FFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 14:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A785B9D603F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 15:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62450B228B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 13:51:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B4F281EB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 14:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F067405A;
-	Fri, 22 Nov 2024 13:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A44179FE;
+	Fri, 22 Nov 2024 14:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9PPjpiq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCYunQ/k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131C712E7F;
-	Fri, 22 Nov 2024 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B49F2309B7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732283499; cv=none; b=rPtZTv2dNJUyEtUt+pcFBynk2w8WPIozRP0z4xzdj5XCw3YVYzno66ZRy2UNOK4esF1z/6ZF3x822uWvoiclSj5vHUOro12rEaj2zuKq7Z5ZwfI2JdYqRXyhNOGcXli0hkjZfGo6XA1vPaW7fC5AWWIYQJEjRMSQ2vDY1DN9/KQ=
+	t=1732285108; cv=none; b=H9Pp0evOXrIhL2w2uNP/RdH/lykGo+tA9sC7OPMhz3svS9E6DJqa0QSgZIb2xBi0h55xJgm4lE/qnLloT57ioheEYCBLzZeC+N77PWi5pAiSidx8+7Nl0RznPHqOigToR7IgGuEIyJMjjFDrlJqc9vy3DycD0AsvATwKv1RhGxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732283499; c=relaxed/simple;
-	bh=FUSPjYnmqvq3EZk+YaMlZMRYm+mAt5sMmrYQadC1O2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b8mwwj53vzjI6D3p1kYdpBxhy2cbAEnY73jNf//6S9d9P8+TjNKqMcIj8/EZORfTD6vGoyrfhbzsChNs+/oDsKIOAHH2Tf/UxbZWADlQ69YxEZAVCwemHQIIWOTX5CXus96pfXohSHutGV/23BZ1nI6zgkY/YH3Hg459Yi8mfFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9PPjpiq; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da2140769so2516127e87.3;
-        Fri, 22 Nov 2024 05:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732283496; x=1732888296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O1M+VNoDV01ttI4ykAkLiT0TH7dIi4lr51PaobubPkY=;
-        b=E9PPjpiqRbbSa7J3T9vUDuBGgA9SOh1kNLjk7K/5ROfBDth04v0vWA0qtv0U3U1Du+
-         8vOojvYVoMfT1KSk1kaV4IyR0qm5UZdIDRTZe24xi5Gc1RsRW0LGaUOlPkKXk32XefNF
-         TMNgm1DS3e1I8xWQyCisW/92ay9e2xs1nIgzYsEtYMyEwFhoBJGLDYft+VzdHTHHcbS+
-         bCS5idpnPDtQx57wzXVNPNEPUX/EXXpUsjCuoX1HpsPrZjLaNgrqWV2gmW8DeAeXi4jb
-         VNEQ5FpJ2pcPjSBUJ+pFLQm74uL8ZYTTE4D22xWy9Bxn8mhrJfPzS96483g/EkzazJjI
-         r27w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732283496; x=1732888296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O1M+VNoDV01ttI4ykAkLiT0TH7dIi4lr51PaobubPkY=;
-        b=g65hLxst0YlG+nk0SH61RgdJmm7yLEpi5wyHMr410e9LaewRL5gKBwkROHJE580O2u
-         QLdwrkvfqzakkoUIJHL8Ssz4ghGrtx5cn3V6ZKhxEMX+ZVqkUDVVzBPw73ag1ZdoQWnI
-         9mtCvjwujbIggTSgLCZ86A7ZkZTz9Sad/jhed5uDI8gD0n00sMxUcOkyrDV77urURCZb
-         Xmy4O2UJwMpZIdGIIRgcOJqggm96xPoasRy5e4y4vwCcagcHrTyVlHdPxgRyVPPbCTsd
-         H7O+5Bbrr8Lh1sV5UCnL3m8WVqZoccHxB7SXivJSf5cVIHcryAhBTY/i2MVsTMKoOST8
-         OAEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdoubayeRCfLRPouKPolAoZWuQ5gkV+MmtsAAmF82il7rd5ehKse1W5o7S5/TMFF1KmooSbq1uZNmag==@vger.kernel.org, AJvYcCWf+8ocdmKX7htEBxQi+BasjnRAp707vwXVJMrXCOtIMKCynFFJ+niom7iLSNUQi5bFxwhof8sB3DT4@vger.kernel.org, AJvYcCXYuetgmrM5d5wGNJF2UAFFW3pWIxcg/86LKtXo4C4ZcFRfi4c4AABtz3795OU3aFTURtj7Idz1V3dVpA==@vger.kernel.org, AJvYcCXtmElmaOy/TZ6a2rfwfVTPNQW/0lwPOU9sADVbcp8QEg3E+J7mfGxi+CLKo+WeERS4tIFpjUc9m60gq0/Lmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HQlnRGHFAQDJwhG1kmf6fTLiwemLWMmVXgcpOEWa+4DBiOmQ
-	OZTyBh52a3A7z7vyWMmPVC6WN+wO2hTbfY1HXOH7R5pgyjbWkaedKFJGxrrQsOORqo9rjiO1/h7
-	SlTNvk1Tfp0aKL9VwAd5ZsoF31UQ=
-X-Gm-Gg: ASbGnctM+/2K/xe/mrq6tWi38y4JF4m3R7xiWGRzo076PQLZNWdhiHKNRl8hZZA0v7a
-	884ixZJc1DRmvHceqVMO57ovibTue1Ag=
-X-Google-Smtp-Source: AGHT+IFksCaFnz5KcROoZ2l24vat56l/bmgqMqDIpj9UInqeXkdyaOzrJLTT+HRXZb32Fn4KXFKnG0FbN2YKckPb6S0=
-X-Received: by 2002:a05:6512:3d06:b0:539:9645:97ab with SMTP id
- 2adb3069b0e04-53dd389d83dmr1593356e87.33.1732283495537; Fri, 22 Nov 2024
- 05:51:35 -0800 (PST)
+	s=arc-20240116; t=1732285108; c=relaxed/simple;
+	bh=oH/1VH4SWk+Pr93Lyt690w84LbIIETSUZTB2Rf+OoxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhE0DHQYAEO7kGmrpK9Qsk/7tRGpMqTJE0r9mLmlyrJFQXuKL+3P52rAI1cE9zhBglAjlph2UqR9f+dte+GsmjI4/BogpfWqQdIdcMaYq9aRQU9OTDUOtMyhbmDnFWa8VzZpJaZ5cHx3mpxqJYyNnieaimSmAGNp2HsOZHhTC8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCYunQ/k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732285106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0yVasfE2vHiAdDHBcqhYhJPkY/HalhiFkM5FtdGHDI0=;
+	b=hCYunQ/ktF7pS8gB1r/+QYHJo5SdvA/1dXmBVE8FIAbENd14l4ZEThxyfXEjUN1vxQJ3IC
+	QTeuwvz8nF7Z5E8WNO0Pqrbg+RVy+Q14Q0mwdOuyA1kky9GgWAXlwzlrzj+XzCVf4cAs30
+	uvme3PoIeXs73dCjLbbi07O6NQ+iCHA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-470-uE280pUONnSfATs0eGQxKA-1; Fri,
+ 22 Nov 2024 09:18:24 -0500
+X-MC-Unique: uE280pUONnSfATs0eGQxKA-1
+X-Mimecast-MFC-AGG-ID: uE280pUONnSfATs0eGQxKA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCD0A195608A;
+	Fri, 22 Nov 2024 14:18:22 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCC7630001A0;
+	Fri, 22 Nov 2024 14:18:20 +0000 (UTC)
+Date: Fri, 22 Nov 2024 09:19:53 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Long Li <leo.lilong@huawei.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z0CTCYWwu8Ko0rPV@bfoster>
+References: <20241121063430.3304895-1-leo.lilong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731684329.git.josef@toxicpanda.com> <b80986f8d5b860acea2c9a73c0acd93587be5fe4.1731684329.git.josef@toxicpanda.com>
- <20241121104428.wtlrfhadcvipkjia@quack3> <CAOQ4uxhTiR8eHaf4q0_gLC62CWi9KdaQ05GSeqFkKFkXCH++PA@mail.gmail.com>
- <20241121163618.ubz7zplrnh66aajw@quack3> <CAOQ4uxhsEA2zj-a6H+==S+6G8nv+BQEJDoGjJeimX0yRhHso2w@mail.gmail.com>
- <CAOQ4uxgsjKwX7eoYcjU8SRWjRw39MNv=CMjjO1mQGr9Cd4iafQ@mail.gmail.com> <20241122124215.3k3udv5o6eys6ffy@quack3>
-In-Reply-To: <20241122124215.3k3udv5o6eys6ffy@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 22 Nov 2024 14:51:23 +0100
-Message-ID: <CAOQ4uxgCU6fETZTMdyzQmfyE4oBF_xgqpBdVjP20K1Yp1BSDxQ@mail.gmail.com>
-Subject: Re: [PATCH v8 10/19] fanotify: introduce FAN_PRE_ACCESS permission event
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121063430.3304895-1-leo.lilong@huawei.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Nov 22, 2024 at 1:42=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 21-11-24 19:37:43, Amir Goldstein wrote:
-> > On Thu, Nov 21, 2024 at 7:31=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > > On Thu, Nov 21, 2024 at 5:36=E2=80=AFPM Jan Kara <jack@suse.cz> wrote=
-:
-> > > > On Thu 21-11-24 15:18:36, Amir Goldstein wrote:
-> > > > > On Thu, Nov 21, 2024 at 11:44=E2=80=AFAM Jan Kara <jack@suse.cz> =
-wrote:
-> > > > > and also always emitted ACCESS_PERM.
-> > > >
-> > > > I know that and it's one of those mostly useless events AFAICT.
-> > > >
-> > > > > my POC is using that PRE_ACCESS to populate
-> > > > > directories on-demand, although the functionality is incomplete w=
-ithout the
-> > > > > "populate on lookup" event.
-> > > >
-> > > > Exactly. Without "populate on lookup" doing "populate on readdir" i=
-s ok for
-> > > > a demo but not really usable in practice because you can get spurio=
-us
-> > > > ENOENT from a lookup.
-> > > >
-> > > > > > avoid the mistake of original fanotify which had some events av=
-ailable on
-> > > > > > directories but they did nothing and then you have to ponder ha=
-rd whether
-> > > > > > you're going to break userspace if you actually start emitting =
-them...
-> > > > >
-> > > > > But in any case, the FAN_ONDIR built-in filter is applicable to P=
-RE_ACCESS.
-> > > >
-> > > > Well, I'm not so concerned about filtering out uninteresting events=
-. I'm
-> > > > more concerned about emitting the event now and figuring out later =
-that we
-> > > > need to emit it in different places or with some other info when ac=
-tual
-> > > > production users appear.
-> > > >
-> > > > But I've realized we must allow pre-content marks to be placed on d=
-irs so
-> > > > that such marks can be placed on parents watching children. What we=
-'d need
-> > > > to forbid is a combination of FAN_ONDIR and FAN_PRE_ACCESS, wouldn'=
-t we?
-> > >
-> > > Yes, I think that can work well for now.
-> > >
-> >
-> > Only it does not require only check at API time that both flags are not
-> > set, because FAN_ONDIR can be set earlier and then FAN_PRE_ACCESS
-> > can be added later and vice versa, so need to do this in
-> > fanotify_may_update_existing_mark() AFAICT.
->
-> I have now something like:
->
-> @@ -1356,7 +1356,7 @@ static int fanotify_group_init_error_pool(struct fs=
-notify_group *group)
+On Thu, Nov 21, 2024 at 02:34:29PM +0800, Long Li wrote:
+> During concurrent append writes to XFS filesystem, zero padding data
+> may appear in the file after power failure. This happens due to imprecise
+> disk size updates when handling write completion.
+> 
+> Consider this scenario with concurrent append writes same file:
+> 
+>   Thread 1:                  Thread 2:
+>   ------------               -----------
+>   write [A, A+B]
+>   update inode size to A+B
+>   submit I/O [A, A+BS]
+>                              write [A+B, A+B+C]
+>                              update inode size to A+B+C
+>   <I/O completes, updates disk size to min(A+B+C, A+BS)>
+>   <power failure>
+> 
+> After reboot:
+>   1) with A+B+C < A+BS, the file has zero padding in range [A+B, A+B+C]
+> 
+>   |<         Block Size (BS)      >|
+>   |DDDDDDDDDDDDDDDD0000000000000000|
+>   ^               ^        ^
+>   A              A+B     A+B+C
+>                          (EOF)
+> 
+>   2) with A+B+C > A+BS, the file has zero padding in range [A+B, A+BS]
+> 
+>   |<         Block Size (BS)      >|<           Block Size (BS)    >|
+>   |DDDDDDDDDDDDDDDD0000000000000000|00000000000000000000000000000000|
+>   ^               ^                ^               ^
+>   A              A+B              A+BS           A+B+C
+>                                   (EOF)
+> 
+>   D = Valid Data
+>   0 = Zero Padding
+> 
+> The issue stems from disk size being set to min(io_offset + io_size,
+> inode->i_size) at I/O completion. Since io_offset+io_size is block
+> size granularity, it may exceed the actual valid file data size. In
+> the case of concurrent append writes, inode->i_size may be larger
+> than the actual range of valid file data written to disk, leading to
+> inaccurate disk size updates.
+> 
+> This patch changes the meaning of io_size to represent the size of
+> valid data in ioend, while the extent size of ioend can be obtained
+> by rounding up based on block size. It ensures more precise disk
+> size updates and avoids the zero padding issue.  Another benefit is
+> that it makes the xfs_ioend_is_append() check more accurate, which
+> can reduce unnecessary end bio callbacks of xfs_end_bio() in certain
+> scenarios, such as repeated writes at the file tail without extending
+> the file size.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> ---
+> v2->v3:
+>   1. Modify commit message and add the description of A+B+C > A+BS
+>   2. Rename iomap_ioend_extent_size() to iomap_ioend_size_aligned()
+>   3. Move iomap_ioend_size_aligned to buffered-io.c and avoid exposed
+>      to new users.
+>   4. Add comment for rounding up io_size to explain when/why use it
+> 
+
+Thanks for the tweaks..
+
+>  fs/iomap/buffered-io.c | 43 ++++++++++++++++++++++++++++++++++++------
+>  include/linux/iomap.h  |  2 +-
+>  2 files changed, 38 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index d42f01e0fc1c..3f59dfb4d58d 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1593,12 +1593,35 @@ iomap_finish_ioends(struct iomap_ioend *ioend, int error)
 >  }
->
->  static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_m=
-ark,
-> -                                             unsigned int fan_flags)
-> +                                            __u32 mask, unsigned int fan=
-_flags)
+>  EXPORT_SYMBOL_GPL(iomap_finish_ioends);
+>  
+> +/*
+> + * Calculates the extent size of an ioend by rounding up to block size. When
+> + * the last block in the ioend's extent contains the file EOF and the EOF is
+> + * not block-aligned, the io_size will not be block-aligned.
+> + *
+> + * This function is specifically used for ioend grow/merge management:
+> + * 1. In concurrent writes, when one write's io_size is truncated due to
+> + *    non-block-aligned file size while another write extends the file size,
+> + *    if these two writes are physically and logically contiguous at block
+> + *    boundaries, rounding up io_size to block boundaries helps grow the
+> + *    first write's ioend and share this ioend between both writes.
+> + * 2. During IO completion, we try to merge physically and logically
+> + *    contiguous ioends before completion to minimize the number of
+> + *    transactions. Rounding up io_size to block boundaries helps merge
+> + *    ioends whose io_size is not block-aligned.
+> + */
+
+I might suggest to simplify this and maybe split off a comment to where
+the ioend size is trimmed as well. For example:
+
+"Calculate the physical size of an ioend by rounding up to block
+granularity. io_size might be unaligned if the last block crossed an
+unaligned i_size boundary at creation time."
+
+> +static inline size_t iomap_ioend_size_aligned(struct iomap_ioend *ioend)
+> +{
+> +	return round_up(ioend->io_size, i_blocksize(ioend->io_inode));
+> +}
+> +
+>  /*
+>   * We can merge two adjacent ioends if they have the same set of work to do.
+>   */
+>  static bool
+>  iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
 >  {
->         /*
->          * Non evictable mark cannot be downgraded to evictable mark.
-> @@ -1383,6 +1383,11 @@ static int fanotify_may_update_existing_mark(struc=
-t fsnotify_mark *fsn_mark,
->             fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
->                 return -EEXIST;
->
-> +       /* For now pre-content events are not generated for directories *=
-/
-> +       mask |=3D fsn_mark->mask;
-> +       if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
-> +               return -EEXIST;
+> +	size_t size = iomap_ioend_size_aligned(ioend);
+> +
+>  	if (ioend->io_bio.bi_status != next->io_bio.bi_status)
+>  		return false;
+>  	if (next->io_flags & IOMAP_F_BOUNDARY)
+...
+> @@ -1784,12 +1810,17 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+>  		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos);
+>  	}
+>  
+> -	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
+> +	ioend = wpc->ioend;
+> +	if (!bio_add_folio(&ioend->io_bio, folio, len, poff))
+>  		goto new_ioend;
+>  
+>  	if (ifs)
+>  		atomic_add(len, &ifs->write_bytes_pending);
+> -	wpc->ioend->io_size += len;
 > +
 
-EEXIST is going to be confusing if there was never any mark.
-Either return -EINVAL here or also check this condition on the added mask
-itself before calling fanotify_add_mark() and return -EINVAL there.
+And here..
 
-I prefer two distinct errors, but probably one is also good enough.
+"If the ioend spans i_size, trim io_size to the former to provide the fs
+with more accurate size information. This is useful for completion time
+on-disk size updates."
 
-Thanks,
-Amir.
+> +	ioend->io_size = iomap_ioend_size_aligned(ioend) + len;
+> +	if (ioend->io_offset + ioend->io_size > isize)
+> +		ioend->io_size = isize - ioend->io_offset;
+> +
+>  	wbc_account_cgroup_owner(wbc, folio, len);
+>  	return 0;
+>  }
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 5675af6b740c..956a0f7c2a8d 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -335,7 +335,7 @@ struct iomap_ioend {
+>  	u16			io_type;
+>  	u16			io_flags;	/* IOMAP_F_* */
+>  	struct inode		*io_inode;	/* file being written to */
+> -	size_t			io_size;	/* size of the extent */
+> +	size_t			io_size;	/* size of valid data */
+
+"valid data" is kind of unclear to me. Maybe just "size of data within
+eof..?"
+
+But those are just suggestions. Feel free to take, leave or reword any
+of it, and this LGTM regardless:
+
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+>  	loff_t			io_offset;	/* offset in the file */
+>  	sector_t		io_sector;	/* start sector of ioend */
+>  	struct bio		io_bio;		/* MUST BE LAST! */
+> -- 
+> 2.39.2
+> 
+> 
+
 
