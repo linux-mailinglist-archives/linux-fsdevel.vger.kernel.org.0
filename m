@@ -1,61 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-35509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FB19D5715
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 02:41:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 756739D571E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 02:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBA81F22761
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 01:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B391F22C2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 01:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B42B1531C8;
-	Fri, 22 Nov 2024 01:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5AE158DB9;
+	Fri, 22 Nov 2024 01:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rlhkFlvo"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gWozrgwZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB2017580;
-	Fri, 22 Nov 2024 01:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F9015533B;
+	Fri, 22 Nov 2024 01:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732239673; cv=fail; b=djswPlQX7NG/RmjzVt3f/G8sw73cjVCZfBizwnyghtkWp/mHuA7Qcw42CzbsV/f4hAgSMA6jXxpaubOx+c4Sz8Ct49p40PsvNx2N+2xge40R7UizqU/vOkgDG4UlcpBSJWkTe99ZUNts428y3B51SStg0C02F+lPq/dvg4R0Cl8=
+	t=1732239677; cv=fail; b=e4xAg7Ngn/6bHUmkRs3EQKIki8unxxHlzGF5Hg3B1HiUXtZX5SusNgJN2qYlcPOr1ZbI0u1DbdB8IV2QLhPGZDA4zn+46w96XYFQZ16KCthQ4/DpJ4r80VkndDrjcIAyXWmen+L+FtcQWgZ7/igPWoSUcMzAPn3yTo84MHiPv98=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732239673; c=relaxed/simple;
-	bh=24yBQLuoFf4v1Kp3tozUuLAjex1Z8RHgTWatMfkjv/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BcSLMixg1fyL6qFhAGM4tcL0pVgJZ6GVHtUaKa13TD7DvKhAQn85YB5MoX34ngDNSak0cmw2GrhGav/vR3B6cjhvY8em7KCah3CVQzBg5U0B4s+mlla6dqvqsmNeE1z/RWeJ75Raqn65ERnPvMOxfximM8a5m2P7Zq3JfsaxnMI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rlhkFlvo; arc=fail smtp.client-ip=40.107.94.67
+	s=arc-20240116; t=1732239677; c=relaxed/simple;
+	bh=+cXy75NjXZLbraO5UZj7ueoUGm1nUBGbf57dhTWW4Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=s8gO21EQi5H715sorv0Dvi4vQV6aiD3FpKDoDOzALoZKHxsqw6LbnDFmhjf3Ky3Q0GQkfyT43+3jNDAlqaaaOH34VxTAh1I0KWxKiTU++8SsZIslHAkfz+zD3HEUCi2zVUpsZoOqAdI67bKUX2JT7L+IDjcKndHTdZ3CJlKxpSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gWozrgwZ; arc=fail smtp.client-ip=40.107.243.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L6uQxg7uycdxE1U8holbM2RlRnnvmisxJnBdZPZL4yzBxDosX8xDPARt4yO9WXHZsxLPcW2dh/orVscYrWqKlEkFVxubz3qj4+T/9V1S/IX0rMhgyE8GfKONeaBXOt4EKf7pCsLF+u99cG8VfMqkdQ88BNF2gkGWUNrcOIsMXuZxTqFyBYTjKakE8e0DLjZRB3FE5QZ8pGtmDNcRQjDiPvFz+KXTzgS9adHREuBWrR6oTFpHxiYrl02CEVY21OAsna325+KGjmA9QIGu4tj7AR/9lwS7yg7Ou+uwz84QkL650m6+TSEfmbvHbMQN6fhXGtepof72UBXI03xFsJILpQ==
+ b=cNyIoyA3cQHW6lnahlQfhnRa9dZdDrQtVyyXV3H5UMizrw3Ka0YJSZP4q/npwGh1ddluWaYOyvqQGr+8hB8lVtDKjUIUmRVNV2aGTVf3Ut9d5TAFCJp7aEAxI+P+Hs+ZbfmAsoIcc0QALuAXuLw/dPqpkgP0Qi1jFQhvyk/0L14HsX7iLoNEFtuDiF0HIyruD/LklgzPQU1zIJ8AEqY2kOK5CwT2Zh8eEJ2v6C6dkJsyy1o2rF3fqrs0TJc1g0dAUxqwcVv6NU10saOqJM/YugYbbNqh0H2w7z043/ajWqAFlcW3CFEa3X+9V8pAiOXIioOQoSsFiYthFLQIqMK4vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hGyh0Mw+93+6MNfKJ7ksLUyrIRLTr9DxHq0U0ocX6Z8=;
- b=o7QXDEZkmpi/41icED1wGO3S9ThQZo+qzTtdtmemoVfDw45n2EmENcsQjWq9w6xAUhS9njuXYV8fFj6snjz3oDNX+EzPxXAaCPNPwlDNcfVQNkq1wKqeCArMOO3T4YKhUDBpHEoOCA66miSs3dWbDzLpZltVe1eyTojF0p7JHlabSuYKfM3m3p+Hvd2U+Z6vx690VW5m85Re/sAywRWovg8KF4G/LIIJlJqVCktDoQV/YNUwFzaD9qDOWKAA9FkYFzR6rvPvQQsS8vD6jzm3ZlOcQ4xmPRMmutm6SQ5naBtEcMso7afnXUJeeSv/ZlSx9xWRiWW136bAO8wFBM15/A==
+ bh=MiSKhC/DzexmAjwbx3sF4Vku37jAyZrulJ1Vd2F/Mys=;
+ b=vSliybnA+ioxNLO2q7o9dBkeFQp3v0i2wg7UfzuGWE5pSp0DDEXXduDDEECi2t4WkFCOl7PZB5vwpwZ3tk//KW51VvU+K7aOodlAEuyborC/SfOuybH60cUQLDVfTBaPvWKrNo9xyjBH+ivLY9DnPk+NroFAkumv648HQ+gVNnsQw8Ugsdn7CgpC6aQugOI9jW7XSQi6xNb1dNujSghJDWPGGgwqDdpYZ6//Zg2UNoXdV0YY4yE2VX20iEuwlCV7dUjA46T4RiXxGDXbKr5ZbypYpmGPUKj1gT1znOnf2Xd3j0GjSOUfYf7ouT7xj4vgrSMD2O3v+R3JdVkLPA3l9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hGyh0Mw+93+6MNfKJ7ksLUyrIRLTr9DxHq0U0ocX6Z8=;
- b=rlhkFlvoa5mDlbq4xiRI1k7uE4OppAiYKwDNasR6yB+sDfJAjsrpv/NlckDci9pKIHEnj9GgCIBhqbY9jQ+gzpqqWmiHHCHHMUbtN8SrUgviqOF/h0nUAYOkRoIvEcQEpc4wXH32Ewp5gbRYQQW0B549jsXyzX/YbzvrbpQUA/62ca+TcYtnzES6TZBNim3v+FMeeUUNGmX7prTpgWmEuRYT6r959zdavjfFSIIOjJXaiV1lYtfbnFyUthWbQpSvAzNdD+p4HoGRsjxyWq1sK6Z/rQiYWUuvCrdvDVDIYbVlJB/VBK6InzxL2S3d0OwyBa83GIynryrBlgD2fSfVbg==
+ bh=MiSKhC/DzexmAjwbx3sF4Vku37jAyZrulJ1Vd2F/Mys=;
+ b=gWozrgwZV65KyVKHeQUa/pwSg12GdWLPerOSDlWTM+1P3R8Ghp1eyWxAd5PBHcr9+32969XEuwBTUU2Oap5Em/zYLNOdTze3xEttWkNOfH/JnlJgvq9LDpijNERR6yFNZXmz7T+AgLKdJZg3Wthvd84IOWPLRLZtmYoiQj/rg9a+7hJJNfl8v92FXcbe8Lql7tfdQnj+KrA+XGJyVwPwsbRXbu4E8LZbLNnMDwtuUQR+58UJZes/f6sp/tNXNbUPbeVYwnrtDHik9w+nz/QDDkfpmaHeGsAG8nghAoUxOa3Chd3O3MTsoft5kHLOEPWyUMLZ+351CfsvZeSYTW4wbg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  IA1PR12MB6305.namprd12.prod.outlook.com (2603:10b6:208:3e7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Fri, 22 Nov
- 2024 01:41:08 +0000
+ 2024 01:41:12 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.8182.016; Fri, 22 Nov 2024
- 01:41:06 +0000
+ 01:41:12 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: dan.j.williams@intel.com,
 	linux-mm@kvack.org
@@ -92,16 +93,19 @@ Cc: Alistair Popple <apopple@nvidia.com>,
 	linux-xfs@vger.kernel.org,
 	jhubbard@nvidia.com,
 	hch@lst.de,
-	david@fromorbit.com
-Subject: [PATCH v3 00/25] fs/dax: Fix ZONE_DEVICE page reference counts
-Date: Fri, 22 Nov 2024 12:40:21 +1100
-Message-ID: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
+	david@fromorbit.com,
+	Vivek Goyal <vgoyal@redhat.com>
+Subject: [PATCH v3 01/25] fuse: Fix dax truncate/punch_hole fault path
+Date: Fri, 22 Nov 2024 12:40:22 +1100
+Message-ID: <bdceb724f486dbaecb026aad8b224cc247a6b11e.1732239628.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
+References: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY5P300CA0059.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:1fe::19) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+X-ClientProxiedBy: SYBPR01CA0190.ausprd01.prod.outlook.com
+ (2603:10c6:10:52::34) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,259 +114,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|IA1PR12MB6305:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e38bec2-b049-4ca3-a5f9-08dd0a96bb86
+X-MS-Office365-Filtering-Correlation-Id: 61f8c056-7dfc-451d-5a9a-08dd0a96bedf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ms9xSKHhDcUIi0VHQpC0nt3BpZVvFWC33OLYNo9wFua6r09bV/GAH3Mw51Yh?=
- =?us-ascii?Q?ZLdioLoDYOJJpB1EKQqOvbX0qp+H1Kvv2YObpA6lmcUyfkOV2WlyJHJI72AR?=
- =?us-ascii?Q?/KfCTZWTBBKXsCoJTHIT4bumK5jIIpzHqfpo11oFT3eAf9BueHBpiRuFbob9?=
- =?us-ascii?Q?IHv3bPojm5rxb+/e/1gVJnZMrgl8lwur3/qtHtlCpGlzcOqzeHpYPCVGa5n4?=
- =?us-ascii?Q?8Pu6Bx5YpWpL9xGHZPEv1Cfc7iIrQaCLPNJhgPsYw22lxQMRUVnBW5QZOY+B?=
- =?us-ascii?Q?sCHj+qeBjvObPJc+blRJJ3Ff4BnOW1/b7jMAiWeIj/YeU+YzbDCh1e2L4hUy?=
- =?us-ascii?Q?/dsExfa17/rhCEHGyHC+PWXtLa0x/nNMDD/0A179Wm94Xq4jAk90eWcyzvbh?=
- =?us-ascii?Q?RNbOBEA++lm4XHMVYaegO4XFqrEIyWnVh9vZpfEL2mj5k13GQc9CFi0+gXUD?=
- =?us-ascii?Q?c0eTdYKn+/8AsUiXfMzYXE2ZkUFuLple7PvHqrTTy6oBoCjOl5zLbijLnb8R?=
- =?us-ascii?Q?mTLpY+0+n6ad81YZLma3nUxFj1Ckk6CO3PKcZtuHhQTCGqEEDWnELXmINdiF?=
- =?us-ascii?Q?Qh3gLX2H1Rmy2D6AI7cFJHCJlU3FoJlrkVprPiu6p/bw6koZnp3ZHARtl8Ra?=
- =?us-ascii?Q?13sH+XWuvXJBQA0m3dUwAhtPNTmApnduruJ2/yNJ9zs4iwvypfkF2fZQ2jVl?=
- =?us-ascii?Q?uqclU4tzfjzc7B/do8rIMTMtWS1CbXEjtgKjJyEB5PIM26dN1MHMxXALqTyt?=
- =?us-ascii?Q?6XHq0PuXupxB5IGcO74guXtaA5hT8Dr8KZPvyIYQWOkSEenPKhEwyX5Vg+D6?=
- =?us-ascii?Q?+IFy0dbRN2tqGKYbNFCglQTVSimqvCzirhL7jORx/x9XN55OFaoiYXD0JN6G?=
- =?us-ascii?Q?nMG+vhue/nQCto9XnHmSC4h4nfn7Rl6xO48+mBT5JZmz/+D1Ab/jFLn19+Fq?=
- =?us-ascii?Q?0oUklZT2I7Y6l+0KJwKa243ePKmgKBBBnmOpB9SfyZUTOi9GH5/TZLVfIIwM?=
- =?us-ascii?Q?1p/yl4HNMYNe8nay7A1UR+OJuMHlmg2eX6xbj+Hq5kAwIqHxpfXmgKqpa74L?=
- =?us-ascii?Q?WcpK2wboqeDQSywB9D3LVuk+jC2/6rTy9WsJ3QIw+E75pV1GiasI3IBIrNiJ?=
- =?us-ascii?Q?PWgbMNvywFnoQfEaXPc0bC6WKha5ka5vWx8plO4/1yuKni/jPxR5bS8jyt3B?=
- =?us-ascii?Q?B9RrjkDuN0c28BiB2lO4pnWq4wC5QwjtCU9Sb2yuJCN1Vf3og1+KAe4YViXv?=
- =?us-ascii?Q?3Epy+vbvtkqmqsdoY3yxbBp235+gMgFlmlHW3HQWbbuHTRg7jz71JbJCrEwI?=
- =?us-ascii?Q?4zg44MFGb/G+7d7lOpaF6GkX?=
+	=?us-ascii?Q?NPTJ8tG6oj3aZQ0anSPm2zBQaJ1sUykEpXCOAzAZUisWMTqckCBZIfoRsUT1?=
+ =?us-ascii?Q?Fg8dPSVEtr0zKsrhMMRb8PU7rQ0M36sKTMnXdqG21nU6Hk2R92IbB0NXqWKy?=
+ =?us-ascii?Q?FhAlw1fy+qM1s0y1QTkpD2bFV1wi/Vbnqgmc3vtTajS+RUK0z6j4eCabkFy7?=
+ =?us-ascii?Q?Ureq+NDPqJFKBnsC2qjVWZ0NE2wDHRR789TGoCsg1TeZv7S8P1aKe/1uprpB?=
+ =?us-ascii?Q?67UbYAdCXtkaFGSx9HIbc+tk7UEcHwuq0sNr/NGyVJ0Q+pv4KZr1KsAZ/k6m?=
+ =?us-ascii?Q?FncX8pxoW7C1pKE3RZ4d1n0NR24PO+osDjPWn9pGACOumCaiZeBcrmxHwj8R?=
+ =?us-ascii?Q?IvRrYJhwliybTkRwl8lIFMOAtRXWbRyU61DT9XxtEw4FbFNf6HSEKmGtMW0p?=
+ =?us-ascii?Q?VQkFNyobdOJ8Q09GaMPEwiSAxNzJKZ5Aa1nAxYsw0A2+LlF0O2R8FBuj4zWu?=
+ =?us-ascii?Q?GTYTVRGEvC/Lrs1f/El0B16nh9xfV7/fr5blJX4fNOZFsAPpbIRwqwfg12vT?=
+ =?us-ascii?Q?XInZEpgzl9qYVEUn1gUi4Vle9EStreazAct8SwV7vJ1Nvx9KBj66V2miJu1a?=
+ =?us-ascii?Q?GXX2WHJq13Cdb71ZunMrQuqaJoXNUTJwmxQek9A18h4YqMKjsfeZgUzdynkf?=
+ =?us-ascii?Q?J10hb4URFL/vtHeb6+7NrR/Yop2Yyf83Lg73acf/0LMhDJx55F6s0v+/xdA9?=
+ =?us-ascii?Q?tZ2pRA7WEGOENXBkEYRZn4Kmn1k4OCDPiANX4RrR/S410GymkpkKl9/H7sbk?=
+ =?us-ascii?Q?0VHfXBwR6yZJL8MejBfFqG5Ueem76z1qwGHeuQMOJ/h2s0WQK7kyLDQ52Jl3?=
+ =?us-ascii?Q?c7iohjvn3w20Cm3/bLI7KeO2bz5qzn/Oj/WgKiOtPwg10JTj6haOE7MWl9Zw?=
+ =?us-ascii?Q?x8G2YVtDtQYY8BhK+7AWG55rtkUPjathOarMlcUuBBtmKvHWhGhecaSUpApm?=
+ =?us-ascii?Q?2/g2v0ukF5sM+RSY/D7ptcUSG6rR5C7TxYlcgwaNt7iUFfkN5fyFGIm3kMnm?=
+ =?us-ascii?Q?ccPjBjYObTcu9K9Q7B9bZ/3Lm6uvYXtIM64IkASIttqIGkMJ98z45pfuAzhs?=
+ =?us-ascii?Q?GsyVVBdfDj0p77PcxrSxq5K2RzMqWkWKqzXPmnvMvpzCaiEtUU+VLG7aWx75?=
+ =?us-ascii?Q?hDaiPMJvHpIuVm+T/wr3vUu0cBogV8OQZCEhKSSu6x5mgIoxIJ5SDmlZzV7C?=
+ =?us-ascii?Q?33xEkROX9ZJiB0wSrnMUWrNguOAr3YB581DMBAq3lzev7HvQIF1VIblyHo0l?=
+ =?us-ascii?Q?2iMC2NkExPMURGc44D3ABvRTCkrOvkJaXlLoZOzekGJr9hZuUmTwkdEDUXfn?=
+ =?us-ascii?Q?f1E=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S2blqFmKDSdwQbaALuPCHjcwe0IAqDAuxcq0gqCCSUJVhmqTuKbJgV/qfIbI?=
- =?us-ascii?Q?BHlA4ng98IbOJ1zmq84bfdS1wGIocbT+fACeNYHTQa6Yd82yioUYEqZbzO0a?=
- =?us-ascii?Q?qsKD8z7KSVsUF3wE56lQqtwPeShxX35169on4Kffh1HqNEpSIHyYM2uaqA02?=
- =?us-ascii?Q?Lqp3WL4mixYeLF1bw/5M+zXAqyT651yqMtTTJVXXeveNKj4dqV6xYNnNZyq/?=
- =?us-ascii?Q?lQJbIvulc1cyryclZ9FaGcwnTtnIYDR0qkOwJ3yYLXpNX6+6SCAkJArVEO1e?=
- =?us-ascii?Q?i8+Kc+DQ439O/38T3k/aczjFcIc3qMa05O++xhL5Mxr11qv789jvkv88nXCo?=
- =?us-ascii?Q?SbTC3adOvMif9W5I51deU/k0OA1eG/aMsuKrVkutnXgtOoT3VTwPAMZ024vC?=
- =?us-ascii?Q?/wGCRYC59xuFCFLdD0tvMKlff3fVyEUruGge2pD9brm6tvtaEjKRrW3KcO7L?=
- =?us-ascii?Q?gvkVMfqhPh3CDr3DEPnSYCffN3jZUpxBJ3bWG8/O3yicA3Saiz6ciyAYsrfc?=
- =?us-ascii?Q?76+UsVbo1IXKz8old8XFRsJmoAmfV9+7fqFJjhf9JbCG/9thl6DdkseTSbHH?=
- =?us-ascii?Q?KyVNDYrlIAdSujTNrVp0iHlp4aEvzH5Jor9gfGg0jTYeanOh8RiL4vvLeRzU?=
- =?us-ascii?Q?P6vwWsK6ozuM11LImMABZhgGfoFqW2G/jZVi1QTUdOORrsTWJfDWt1L4JtJw?=
- =?us-ascii?Q?ljmcxImre7RF5EooRgFue9W8emfm9brs8mlJz2phXstw0BWp6PdPrFohXK+1?=
- =?us-ascii?Q?wY7gA3sbRsNiP7TZh2ee26xyHHoB/Be5qlLp4AHNJfFK80jYRpS7RDh6nj5l?=
- =?us-ascii?Q?ixeyRI6OSgQy9zVA2/cbHXgXsdQ+1dSnmMe8p3poKm9OSzbDYscLJEsZI8zz?=
- =?us-ascii?Q?L1fNupzPMtcpqtlnVWvC6TSK5GCNanx/d/beXH/cU37KLwBqDjd9KP5Fj2ns?=
- =?us-ascii?Q?zLfY3mYg1AeVa4sstpM9U2pEPqLXwp0/huZ6b0f46NcHPtmwVNmqrLLIp74v?=
- =?us-ascii?Q?+iDtwT+0+jGpQiS+Nq03iXOyQNVH3YYmVOfJ8pMx8HH+r272D5xtyJWtLZth?=
- =?us-ascii?Q?hC0o1Ktb1aBlOUdG/5CqgEgkCUa9AWF29MLrqjLIUocO6JfFlzSo+1I/Uy0o?=
- =?us-ascii?Q?/EpG25eb9Ce7nJ1Qgvn7BKw01KFKApUYfycxa/8pbEw8QvdnR8h9HLEVWigu?=
- =?us-ascii?Q?rpfzvf0PPwSI/yshAAX44YY4nK4v/VsYammTf5HwAJLVHfsGwiuzrp64a4Z2?=
- =?us-ascii?Q?04pQkzVQxGXpgwEoSyx2zIt8hXRSx0VoHgJYvFkCNG+BdIjd1QCgOcTkKVsE?=
- =?us-ascii?Q?yBhynu65C+rhGFDo9AVpWdy1T4RCghoTxeJFUxk3EhDgssV5l/isxmNIPVGx?=
- =?us-ascii?Q?CWUBaK5CCKb6Ot5ZAPMRYVbbKppAlCD68FPlf0z9He2OQwNCaS5qA+H3uutY?=
- =?us-ascii?Q?dtJtRHtRZq5sXvt3OZ9zloe6TeNIbvcUelR8pXDlrj6EFY4DnMeW2fvWpPLH?=
- =?us-ascii?Q?Vu7RBJ5g548gC+DC6CtKbk08aYwK10gcD0uhPxhmZ9r3YWmEUK64LJWO6yj2?=
- =?us-ascii?Q?0iWhimc+bvgQHfuxx7O8LuFcpYsOBZouJeYOoKpe?=
+	=?us-ascii?Q?9PeBowriKVISPg+XZjXB/CfOYHOa49E6iyTMKF9qZZyR3oP320ne6CjzN5zT?=
+ =?us-ascii?Q?8ZFoDUx4LxT3oHb1kvXEq8oVO6aWxcnF+DtpWCHPyBfWafUsg0re7c3Fj2jg?=
+ =?us-ascii?Q?BA4NslvCpLFMUj4Q0bhC7ulfLKg6/QYNVmo6F5zm6Th3MyLlZ+UtrU6pxA79?=
+ =?us-ascii?Q?mmK0ZhmqMuk8zcwZFXNwk6UgeLpIS0FCFxkXW4sG0QWEC6QUcfu6+UYI2DqS?=
+ =?us-ascii?Q?oUneZ5+jx3x5JHzBWRgrB9VJUxk1fI7r3dD26wmTIcumnf7jZP8KI67lk9M8?=
+ =?us-ascii?Q?se8tYUKKO5PDP8slS0z1A+pzLnEsAcMceYm6DS+8C7HvomlZDiCW0MvUWA/p?=
+ =?us-ascii?Q?4u4EetijgXsSjnHjK0zNWQPEboqGhA3ee0j34ujgVUK+gpsHgh13RmrMfR8I?=
+ =?us-ascii?Q?/mnTstfDKRl09VOO554NUdldZlFhWvmT4xSZHLBkmousi5IHaPIeyL85bhUV?=
+ =?us-ascii?Q?dvYM4hMUlbvwHIv4Ztr7GJdAAMoxyJRTnahC0TXaoT9/KuijBPeOgQ6pJVSF?=
+ =?us-ascii?Q?KsR4MUMRSNa/1cqR1DJz3KVLcAb7xnacUqkx1ixwLLKN4RmHRVpePDFc2oSc?=
+ =?us-ascii?Q?lej5F4rX8KcTcBSNPW+ogNT2KXEwrxImMR0vZWFXuClUmF72QLPeE8c90tBo?=
+ =?us-ascii?Q?ZH4qOlRUuh8dd7UCGBKvoCNY/fKVPZQC3WP67HCMOjFGW2rkFVr2AWm3VF+5?=
+ =?us-ascii?Q?dw1rsruL0lOw4nIJDoE8B60XWA8NK1T5uwxLk1czIRA4yqWRRXXHgQkf5ZF/?=
+ =?us-ascii?Q?f3+16kESx36GzwICzty+JYTu0CYyEtAuA03l7UaQiyM6OlkifFLc7bxw1ANP?=
+ =?us-ascii?Q?oZZmnX0bg8qSTVsUL5ukKKEieJ8C2AgefCaXsiSQgt8JDroLK2rTpo47fYtc?=
+ =?us-ascii?Q?ejjKGmfKrWdId6Incv1MH8RFBeLu2XvwNNY5Xwc10mwaZVe4rOtxsM6/WU5V?=
+ =?us-ascii?Q?Ui0ssUcc/tWhgkmNl6RhjvsO0JkYgNGDvVAIUwTkJWPZ9Kty7brYjnZpaPB5?=
+ =?us-ascii?Q?FtyfKeNy/HDC44w7tYMZFEtzFcuhkFRB8Yn5tdMbQwdoc9bTBQ2b6gxrytsB?=
+ =?us-ascii?Q?tR8TGTIAqDP8NNzGtb7SujHKwsef3+UlGeZ42sH+mCcVCHeUFejxY0cK5Iip?=
+ =?us-ascii?Q?kcFXfV6XX29CNlKkYyK96/K5GsEPgN2DNYNBnyRdROYKwbSf2V0ijNQn/qnz?=
+ =?us-ascii?Q?HAbwvA+AUui0l370cqhxKscdy2+wGlxDL2OU1ZwW4Ge1WsIo/hu2ETXmaGZc?=
+ =?us-ascii?Q?co3YGWOHZ7GsnkM3C00xNNoVHqHp1pNHCeO9if1UqmKVL6TeMpzYtU1QLBcx?=
+ =?us-ascii?Q?Xd8Tzy4fAEKbGYdCJIrEiTdBIwrgavA0WkaMbU2gTyJJC4c1UsiSStVqIlGd?=
+ =?us-ascii?Q?ewOrB/jCvi2/L91uJwZT1hfi3Kvk0XRpTFnKm4FvHTuDKA8QC6qloseBYbOm?=
+ =?us-ascii?Q?TQnvHO2RdYQozY2Ib2Z0JSmzaLNt29wkS+rTl5EO/donll1UiN7TDpBuo1KX?=
+ =?us-ascii?Q?F9UludWUTBv+MKvsBzUHLiWhVNMhBcfEye80WtfBu2yirr6RbxSFT3XZg8AO?=
+ =?us-ascii?Q?gvyAPH7YmsvSqmVBmvM5r3IeADmOwhwgGdql7Wkg?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e38bec2-b049-4ca3-a5f9-08dd0a96bb86
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61f8c056-7dfc-451d-5a9a-08dd0a96bedf
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 01:41:06.7367
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 01:41:12.1704
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: saQ4sDPFbjlq6d9ct0mZYgV7KCZsAi5ukzL1eqxH/EH7DwE+ejFckg92c6iZz2QkLvhybTfo2OqCq/eY//wuSA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: BH8j941Oeq5Rh9qiZ4VbXwOu3n6fYBS7biU00CJXYfWMSMmaBMeCVoX2O2dNs697wmXEMHPT4rUMSe7DXfO9Ow==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6305
 
-Main updates since v2:
+FS DAX requires file systems to call into the DAX layout prior to
+unlinking inodes to ensure there is no ongoing DMA or other remote
+access to the direct mapped page. The fuse file system implements
+fuse_dax_break_layouts() to do this which includes a comment
+indicating that passing dmap_end == 0 leads to unmapping of the whole
+file.
 
- - Rename the DAX specific dax_insert_XXX functions to vmf_insert_XXX
-   and have them pass the vmf struct.
-
- - Seperate out the device DAX changes.
-
- - Restore the page share mapping counting and associated warnings.
-
- - Rework truncate to require file-systems to have previously called
-   dax_break_layout() to remove the address space mapping for a
-   page. This found several bugs which are fixed by the first half of
-   the series. The motivation for this was initially to allow the FS
-   DAX page-cache mappings to hold a reference on the page.
-
-   However that turned out to be a dead-end (see the comments on patch
-   21), but it found several bugs and I think overall it is an
-   improvement so I have left it here.
-
-Device and FS DAX pages have always maintained their own page
-reference counts without following the normal rules for page reference
-counting. In particular pages are considered free when the refcount
-hits one rather than zero and refcounts are not added when mapping the
-page.
-
-Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
-mechanism for allowing GUP to hold references on the page (see
-get_dev_pagemap). However there doesn't seem to be any reason why FS
-DAX pages need their own reference counting scheme.
-
-By treating the refcounts on these pages the same way as normal pages
-we can remove a lot of special checks. In particular pXd_trans_huge()
-becomes the same as pXd_leaf(), although I haven't made that change
-here. It also frees up a valuable SW define PTE bit on architectures
-that have devmap PTE bits defined.
-
-It also almost certainly allows further clean-up of the devmap managed
-functions, but I have left that as a future improvment. It also
-enables support for compound ZONE_DEVICE pages which is one of my
-primary motivators for doing this work.
+However this is not true - passing dmap_end == 0 will not unmap
+anything before dmap_start, and further more
+dax_layout_busy_page_range() will not scan any of the range to see if
+there maybe ongoing DMA access to the range. Fix this by checking for
+dmap_end == 0 in fuse_dax_break_layouts() and pass the entire file
+range to dax_layout_busy_page_range().
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
+Fixes: 6ae330cad6ef ("virtiofs: serialize truncate/punch_hole and dax fault path")
+Cc: Vivek Goyal <vgoyal@redhat.com>
 
 ---
 
-Cc: lina@asahilina.net
-Cc: zhang.lyra@gmail.com
-Cc: gerald.schaefer@linux.ibm.com
-Cc: dan.j.williams@intel.com
-Cc: vishal.l.verma@intel.com
-Cc: dave.jiang@intel.com
-Cc: logang@deltatee.com
-Cc: bhelgaas@google.com
-Cc: jack@suse.cz
-Cc: jgg@ziepe.ca
-Cc: catalin.marinas@arm.com
-Cc: will@kernel.org
-Cc: mpe@ellerman.id.au
-Cc: npiggin@gmail.com
-Cc: dave.hansen@linux.intel.com
-Cc: ira.weiny@intel.com
-Cc: willy@infradead.org
-Cc: djwong@kernel.org
-Cc: tytso@mit.edu
-Cc: linmiaohe@huawei.com
-Cc: david@redhat.com
-Cc: peterx@redhat.com
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: nvdimm@lists.linux.dev
-Cc: linux-cxl@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: jhubbard@nvidia.com
-Cc: hch@lst.de
-Cc: david@fromorbit.com
+I am not at all familiar with the fuse file system driver so I have no
+idea if the comment is relevant or not and whether the documented
+behaviour for dmap_end == 0 is ever relied upon. However this seemed
+like the safest fix unless someone more familiar with fuse can confirm
+that dmap_end == 0 is never used.
+---
+ fs/fuse/dax.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Alistair Popple (25):
-  fuse: Fix dax truncate/punch_hole fault path
-  fs/dax: Return unmapped busy pages from dax_layout_busy_page_range()
-  fs/dax: Don't skip locked entries when scanning entries
-  fs/dax: Refactor wait for dax idle page
-  fs/dax: Create a common implementation to break DAX layouts
-  fs/dax: Always remove DAX page-cache entries when breaking layouts
-  fs/dax: Ensure all pages are idle prior to filesystem unmount
-  fs/dax: Remove PAGE_MAPPING_DAX_SHARED mapping flag
-  mm/gup.c: Remove redundant check for PCI P2PDMA page
-  pci/p2pdma: Don't initialise page refcount to one
-  mm: Allow compound zone device pages
-  mm/memory: Enhance insert_page_into_pte_locked() to create writable mappings
-  mm/memory: Add vmf_insert_page_mkwrite()
-  huge_memory: Allow mappings of PUD sized pages
-  huge_memory: Allow mappings of PMD sized pages
-  memremap: Add is_device_dax_page() and is_fsdax_page() helpers
-  gup: Don't allow FOLL_LONGTERM pinning of FS DAX pages
-  proc/task_mmu: Ignore ZONE_DEVICE pages
-  memcontrol-v1: Ignore ZONE_DEVICE pages
-  mm/mlock: Skip ZONE_DEVICE PMDs during mlock
-  fs/dax: Properly refcount fs dax pages
-  device/dax: Properly refcount device dax pages when mapping
-  mm: Remove pXX_devmap callers
-  mm: Remove devmap related functions and page table bits
-  Revert "riscv: mm: Add support for ZONE_DEVICE"
-
- Documentation/mm/arch_pgtable_helpers.rst     |   6 +-
- arch/arm64/Kconfig                            |   1 +-
- arch/arm64/include/asm/pgtable-prot.h         |   1 +-
- arch/arm64/include/asm/pgtable.h              |  24 +-
- arch/powerpc/Kconfig                          |   1 +-
- arch/powerpc/include/asm/book3s/64/hash-4k.h  |   6 +-
- arch/powerpc/include/asm/book3s/64/hash-64k.h |   7 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h  |  52 +---
- arch/powerpc/include/asm/book3s/64/radix.h    |  14 +-
- arch/powerpc/mm/book3s64/hash_pgtable.c       |   3 +-
- arch/powerpc/mm/book3s64/pgtable.c            |   8 +-
- arch/powerpc/mm/book3s64/radix_pgtable.c      |   5 +-
- arch/powerpc/mm/pgtable.c                     |   2 +-
- arch/riscv/Kconfig                            |   1 +-
- arch/riscv/include/asm/pgtable-64.h           |  20 +-
- arch/riscv/include/asm/pgtable-bits.h         |   1 +-
- arch/riscv/include/asm/pgtable.h              |  17 +-
- arch/x86/Kconfig                              |   1 +-
- arch/x86/include/asm/pgtable.h                |  51 +---
- arch/x86/include/asm/pgtable_types.h          |   5 +-
- drivers/dax/device.c                          |  15 +-
- drivers/gpu/drm/nouveau/nouveau_dmem.c        |   3 +-
- drivers/nvdimm/pmem.c                         |   4 +-
- drivers/pci/p2pdma.c                          |  19 +-
- fs/dax.c                                      | 354 ++++++++++++++-----
- fs/ext4/inode.c                               |  43 +--
- fs/fuse/dax.c                                 |  35 +--
- fs/fuse/virtio_fs.c                           |   3 +-
- fs/proc/task_mmu.c                            |  18 +-
- fs/userfaultfd.c                              |   2 +-
- fs/xfs/xfs_inode.c                            |  40 +-
- fs/xfs/xfs_inode.h                            |   3 +-
- fs/xfs/xfs_super.c                            |  18 +-
- include/linux/dax.h                           |  23 +-
- include/linux/huge_mm.h                       |  22 +-
- include/linux/memremap.h                      |  28 +-
- include/linux/migrate.h                       |   4 +-
- include/linux/mm.h                            |  40 +--
- include/linux/mm_types.h                      |  14 +-
- include/linux/mmzone.h                        |   8 +-
- include/linux/page-flags.h                    |   6 +-
- include/linux/pfn_t.h                         |  20 +-
- include/linux/pgtable.h                       |  21 +-
- include/linux/rmap.h                          |  15 +-
- lib/test_hmm.c                                |   3 +-
- mm/Kconfig                                    |   4 +-
- mm/debug_vm_pgtable.c                         |  59 +---
- mm/gup.c                                      | 176 +---------
- mm/hmm.c                                      |  12 +-
- mm/huge_memory.c                              | 233 ++++++++-----
- mm/internal.h                                 |   2 +-
- mm/khugepaged.c                               |   2 +-
- mm/mapping_dirty_helpers.c                    |   4 +-
- mm/memcontrol-v1.c                            |   2 +-
- mm/memory-failure.c                           |   6 +-
- mm/memory.c                                   | 126 ++++---
- mm/memremap.c                                 |  59 +--
- mm/migrate_device.c                           |   9 +-
- mm/mlock.c                                    |   2 +-
- mm/mm_init.c                                  |  23 +-
- mm/mprotect.c                                 |   2 +-
- mm/mremap.c                                   |   5 +-
- mm/page_vma_mapped.c                          |   5 +-
- mm/pagewalk.c                                 |   8 +-
- mm/pgtable-generic.c                          |   7 +-
- mm/rmap.c                                     |  49 +++-
- mm/swap.c                                     |   2 +-
- mm/truncate.c                                 |  12 +-
- mm/userfaultfd.c                              |   5 +-
- mm/vmscan.c                                   |   5 +-
- 70 files changed, 886 insertions(+), 920 deletions(-)
-
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 12ef91d..501a097 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -693,6 +693,10 @@ int fuse_dax_break_layouts(struct inode *inode, u64 dmap_start,
+ 		ret = __fuse_dax_break_layouts(inode, &retry, dmap_start,
+ 					       dmap_end);
+ 	} while (ret == 0 && retry);
++	if (!dmap_end) {
++		dmap_start = 0;
++		dmap_end = LLONG_MAX;
++	}
+ 
+ 	return ret;
+ }
 -- 
 git-series 0.9.1
 
