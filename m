@@ -1,190 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-35550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84DC9D5B46
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 09:49:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F29D5BC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 10:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A62B1F22D6F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 08:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9932E2883E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 09:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5918BC22;
-	Fri, 22 Nov 2024 08:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1634D1DDA15;
+	Fri, 22 Nov 2024 09:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDux6kBt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D/L5RWgB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428E01304BA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 08:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F1015B149
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 09:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732265378; cv=none; b=URci7b48lzgtuZ9P8O3dF6D3cOh4M7zBVnCT/r5bTqYV7c4C9q6/ee+TQ1/EU9EpNoFVwGT+sPVW3PlXCpE/EjAau8g9Qn7QiZc7xB0yI4w5lS0C3nziOpowgeZm6wpFzdrr+23Dxrt21hJiyVRzs669tqdBDEuh/DU5LbYcCKQ=
+	t=1732267022; cv=none; b=rsCTWsD3cUTQQ9coY/wyf/TSbrOWPAb7ev6GMCgdT3b+FOh0jxpEVofB+xijLQ9wONj8mZRFHY6beC70CU/KzO9cmDqHcqm4qarfKpRRZ+yxUTAt5uCBuRrMrrCY6E8RFU53dSsRO9FtUJNaG+b1SyyDUaQ950Q1FkkmWQZRmOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732265378; c=relaxed/simple;
-	bh=DeP0muBo8/ei79yy7wFHcXL7CXCMW0UtBwOhn6Dwcxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jx3HV3Jj7UH2YJjKX15qjL8j+YOMDkIC12DIwHZjLzmsZTja9VrRIW3g6nw3u8kxgBdliB0JWyiKqdWahiVj/nUaaFKDb1w0AP+1mKsIWtubt3urc28qCaub34LJeVJc0RSe7kRFy+G46Yjlmwx88fMwwqDcGnLrQiDN4foG87s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDux6kBt; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so5634895a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 00:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732265374; x=1732870174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kO/z/IdbIn2zdD3nJFBvE5a6HQLfpizTI0u8jsOVaE=;
-        b=GDux6kBtwb5KBhy5IKvVBZGYubQVSXI+Xz9raN2bCq3J2G4u/+2p3I274mS26izPZd
-         VRBQPRQVCTNv0ZIb2kPnIMCSaFYMNHUzmqJlpeAHeeWw1BlovuLOxjFiysodpIGWDGTH
-         DRSWnubo6QSKVaE2bHeGwrql85uxTWsQYxTkuMOJIhEPRLdpWXj8jj7m47LieU6jGq3g
-         ps8dEGAMMWfB15b4V1/myTOGyE15kG5vQ0QFrSbz3vIlDrzcW4RX9LARWfhDiNVXAH7b
-         BcgrWAqXrwxvgj3USAbM4lG7MeKXnFb2/0wbb4L1hhpfFRawQ7byg8XORWaMXtVWnsBa
-         OASQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732265374; x=1732870174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0kO/z/IdbIn2zdD3nJFBvE5a6HQLfpizTI0u8jsOVaE=;
-        b=BGiVY+DD0u60R1PmWRcRX5oqbRo2c6h/et2g1LE8KFufFKsJg1GYU76bG0ITjwd9Uk
-         gE6YX20hsX1soy3PJ/7SkYmpBjQ6HCNLibkjxA7UbO3KlWaYp/4r/Uy1WabZCyQr4IJf
-         D9sSfGC1EH6KyHtWsRhAq7PGBZAFJ3H0kJkJfigRVBbxTuzLBn8ngupUXaaEzGhOC31c
-         XHNTIyTILfMVIluE+Yfk+IzCUgKwt00DB75tjnM1SmF+R/RhTY3xXeVYm0XESRLZY6Ni
-         eahTag0TzPp7kG46zcFXctgu19e3O3TCxqfoiVSHskgAGTTSGv4AlYzoLLhBGtOir1/v
-         I/Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6yS3XZ2tEWBU8nguZD5mxajPBZGEZIUTboTko++cAS2TQOmPMkHrsV8u3ugDpgZaZwd6W4qxOKf3QdHFJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YydlA/kpcTzjOi5i/4gsNrklM8p7xrjyb9KSiavznR14UXgf+qu
-	gRffXpVqPo2xk+PJ9zuhLzd49kJ2ieUcB/vtP0MDGidTIvQzHcMrD2zPREGeF5FpT7I9rtrl3nZ
-	0yTZ7ibajQ0fMny3rPt2ck42Z/GI=
-X-Gm-Gg: ASbGncsbsg9o+tN3ofSYo4m0gtWPb063aUwMsO1IokvS0CAcnUblHuYRGL5DwvaRwm1
-	QtRc1tTE5W6vFTPPnQoS4hCDW90gZ9TY=
-X-Google-Smtp-Source: AGHT+IF6mlfSfDTj7T/pa7Q4laprDC0jPLXBLVl4ET5q3YYVua/l7ROLiOsRYA+M+xMr1JiFtEvwqqZitz6MKeM02xI=
-X-Received: by 2002:a17:907:60ce:b0:aa4:e53f:5fbe with SMTP id
- a640c23a62f3a-aa509a1c2f9mr263083266b.19.1732265374191; Fri, 22 Nov 2024
- 00:49:34 -0800 (PST)
+	s=arc-20240116; t=1732267022; c=relaxed/simple;
+	bh=pfDeka+wDs610l+yfP6uYMmifgUfnr/ZLDWOPuzEEKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwNgpoDkGNgRSwyk3gUUXDtqGEB0O8KVUyLOV5OqV36paC+bknKH8bGl240egnIoUXwGjy14w7KAj5AubTych+F6Yhzj97NWFJJ9N8KICt8wcy/sP3LhLwZnX8nz2cj8h6HcXM6Q3cnzf4wnWXsF2OejvxZ610Q/5ufYi1RXmUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D/L5RWgB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732267018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iTleGtvdq1osypVXWqisdoYoTofXyVXhiRbJdgp9AcQ=;
+	b=D/L5RWgBB1ePlQzM9yDy+frh0QxAgxvWzEZGwDhzDwdH3pPI3TzGHkgPLmbrihry76z4Hx
+	91FUAqPlGcxuimCrgBXmqFbvOjUn5hZxVpw+t6SLmMxiBqqY//CeuBW5ZJnDBFsFZ6SE7v
+	vGH2U7CQ8qCipC9udn0qplUbTTVM/Yc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-yqNZKyvGM92oYIoNe2PX8A-1; Fri,
+ 22 Nov 2024 04:16:55 -0500
+X-MC-Unique: yqNZKyvGM92oYIoNe2PX8A-1
+X-Mimecast-MFC-AGG-ID: yqNZKyvGM92oYIoNe2PX8A
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23FF01955BF4;
+	Fri, 22 Nov 2024 09:16:52 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E86D01955E9E;
+	Fri, 22 Nov 2024 09:16:49 +0000 (UTC)
+Date: Fri, 22 Nov 2024 17:16:45 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications
+ after the vmcore was opened
+Message-ID: <Z0BL/UopaH5Xg5jS@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117213206.1636438-1-cel@kernel.org> <20241117213206.1636438-3-cel@kernel.org>
- <c65399390e8d8d3c7985ecf464e63b30c824f685.camel@kernel.org>
- <ZzuqYeENJJrLMxwM@tissot.1015granger.net> <20241120-abzocken-senfglas-8047a54f1aba@brauner>
- <Zz36xlmSLal7cxx4@tissot.1015granger.net> <20241121-lesebrille-giert-ea85d2eb7637@brauner>
- <34F4206C-8C5F-4505-9E8F-2148E345B45E@oracle.com> <63377879-1b25-605e-43c6-1d1512f81526@google.com>
- <Zz+mUNsraFF8B0bw@tissot.1015granger.net>
-In-Reply-To: <Zz+mUNsraFF8B0bw@tissot.1015granger.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 22 Nov 2024 09:49:23 +0100
-Message-ID: <CAOQ4uxhFdY3Z_jS_Z8EpziHAQuQEZgi+Y1ZLyhu-OXfprjszgQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] libfs: Improve behavior when directory offset
- values wrap
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <cel@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	"yukuai (C)" <yukuai3@huawei.com>, 
-	"yangerkun@huaweicloud.com" <yangerkun@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-4-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Nov 21, 2024 at 10:30=E2=80=AFPM Chuck Lever <chuck.lever@oracle.co=
-m> wrote:
->
-> On Thu, Nov 21, 2024 at 01:18:05PM -0800, Hugh Dickins wrote:
-> > On Thu, 21 Nov 2024, Chuck Lever III wrote:
-> > >
-> > > I will note that tmpfs hangs during generic/449 for me 100%
-> > > of the time; the failure appears unrelated to renames. Do you
-> > > know if there is regular CI being done for tmpfs? I'm planning
-> > > to add it to my nightly test rig once I'm done here.
-> >
-> > For me generic/449 did not hang, just took a long time to discover
-> > something uninteresting and eventually declare "not run".  Took
-> > 14 minutes six years ago, when I gave up on it and short-circuited
-> > the "not run" with the patch below.
-> >
-> > (I carry about twenty patches for my own tmpfs fstests testing; but
-> > many of those are just for ancient 32-bit environment, or to suit the
-> > "huge=3Dalways" option. I never have enough time/priority to review and
-> > post them, but can send you a tarball if they might of use to you.)
-> >
-> > generic/449 is one of those tests which expects metadata to occupy
-> > space inside the "disk", in a way which it does not on tmpfs (and a
-> > quick glance at its history suggests btrfs also had issues with it).
-> >
-> > [PATCH] generic/449: not run on tmpfs earlier
-> >
-> > Do not waste 14 minutes to discover that tmpfs succeeds in
-> > setting acls despite running out of space for user attrs.
-> >
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > ---
-> >  tests/generic/449 | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/tests/generic/449 b/tests/generic/449
-> > index 9cf814ad..a52a992b 100755
-> > --- a/tests/generic/449
-> > +++ b/tests/generic/449
-> > @@ -22,6 +22,11 @@ _require_test
-> >  _require_acls
-> >  _require_attrs trusted
-> >
-> > +if [ "$FSTYP" =3D "tmpfs" ]; then
-> > +     # Do not waste 14 minutes to discover this:
-> > +     _notrun "$FSTYP succeeds in setting acls despite running out of s=
-pace for user attrs"
-> > +fi
-> > +
-> >  _scratch_mkfs_sized $((256 * 1024 * 1024)) >> $seqres.full 2>&1
-> >  _scratch_mount || _fail "mount failed"
-> >
-> > --
-> > 2.35.3
->
-> My approach (until I could look into the failure more) has been
-> similar:
->
-> diff --git a/tests/generic/449 b/tests/generic/449
-> index 9cf814ad326c..8307a43ce87f 100755
-> --- a/tests/generic/449
-> +++ b/tests/generic/449
-> @@ -21,6 +21,7 @@ _require_scratch
->  _require_test
->  _require_acls
->  _require_attrs trusted
-> +_supported_fs ^nfs ^overlay ^tmpfs
->
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+......snip...
+> @@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* We'll recheck under lock later. */
+> +	if (data_race(vmcore_opened))
+> +		return -EBUSY;
 
-nfs and overlay are _notrun because they do not support _scratch_mkfs_sized
+As I commented to patch 7, if vmcore is opened and closed after
+checking, do we need to give up any chance to add device dumping
+as below? 
 
->  _scratch_mkfs_sized $((256 * 1024 * 1024)) >> $seqres.full 2>&1
->  _scratch_mount || _fail "mount failed"
->
->
-> I stole it from somewhere else, so it's not tmpfs-specific.
+fd = open(/proc/vmcore);
+...do checking;
+close(fd);
 
-I think opt-out for a certain fs makes sense in some tests, but it is
-prefered to describe the requirement that is behind the opt-out.
+quit any device dump adding;
 
-For example, you thought that nfs,overlay,tmpfs should all opt-out
-from this test. Why? Which property do they share in common and
-how can it be described in a generic way?
+run makedumpfile on s390;
+  ->fd = open(/proc/vmcore);
+    -> try to dump;
+  ->close(fd);
 
-I am not talking about a property that can be checked.
-Sometimes we need to make groups of filesystems that share a common
-property that cannot be tested, to better express the requirements.
+> +
+>  	if (!data || !strlen(data->dump_name) ||
+>  	    !data->vmcoredd_callback || !data->size)
+>  		return -EINVAL;
+> @@ -1515,12 +1507,16 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  	dump->buf = buf;
+>  	dump->size = data_size;
+>  
+> -	/* Add the dump to driver sysfs list */
+> +	/* Add the dump to driver sysfs list and update the elfcore hdr */
+>  	mutex_lock(&vmcore_mutex);
+> -	list_add_tail(&dump->list, &vmcoredd_list);
+> -	mutex_unlock(&vmcore_mutex);
+> +	if (vmcore_opened) {
+> +		ret = -EBUSY;
+> +		goto out_err;
+> +	}
+>  
+> +	list_add_tail(&dump->list, &vmcoredd_list);
+>  	vmcoredd_update_size(data_size);
+> +	mutex_unlock(&vmcore_mutex);
+>  	return 0;
+>  
+>  out_err:
+> -- 
+> 2.46.1
+> 
 
-_fstyp_has_non_default_seek_data_hole() is the only example that
-comes to mind but there could be others.
-
-Thanks,
-Amir.
 
