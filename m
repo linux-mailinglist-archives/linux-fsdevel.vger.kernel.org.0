@@ -1,75 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-35615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5099D662F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 00:00:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F269D664A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 00:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06739B23E6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 23:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E283E281EB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 23:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A821D357B;
-	Fri, 22 Nov 2024 23:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFCC198E7B;
+	Fri, 22 Nov 2024 23:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJs0KpGX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzJ39YKp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D651C9B62;
-	Fri, 22 Nov 2024 23:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D0018A94C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 23:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732316432; cv=none; b=rhJTMpYsfgyYoEMN6g/JHd4P/Uyhk+9qcqHze1Y5Idzslwt5xOPu1/myFI2CMSkBNgSt4wj7wkOS/WfTxLeAYrGSiZK+ZNIhiBYiEunbL7/TbXUqbRiT2MfPfZgtZaxQBfgQC2OF9rAo576PWIz20CDFtT3sSslVDnegvcnI+TY=
+	t=1732317866; cv=none; b=QQwDNvBSKROpyVPVr09IRixxmLjjKZbRoiwGR7hz4zrxFDnRsoZ5QY1KrRf/8cO6d6OKf1ncg7xjZ6SkZWVV9XJf0k1P/+o4QYPQFSOe7QD09njy5EfpY/caIXx+6dKn/b60Fbq86GCMMZnqS8kM0CvoKKNUk1GN9fCy2xoQCEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732316432; c=relaxed/simple;
-	bh=BuhYsZwi2iNHCmyWPxhYoAlpjwVMhcIi7lqtpfzyLwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RD10L+WNCLsJ3HW6j2mKFLKorwAv3ocEKaqhOf9C5r8NkP2u34awcoNGumkhaz/YfkOHO7AougO6b+L9LQ2aUftxK2X7AGMsidiqtQ2qsIFdzgjiFRi4dPG7BXt1ZsHibYSViITBMs+SJ9/VokgL4fFef8xiiFdCqYUdjix2b+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJs0KpGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71269C4CECE;
-	Fri, 22 Nov 2024 23:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732316431;
-	bh=BuhYsZwi2iNHCmyWPxhYoAlpjwVMhcIi7lqtpfzyLwI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fJs0KpGX3MSaJBBq+ayaJ5702tBuCPvDK5Ccuwi9LNXT+/uJFNxslBMunCPk+lOky
-	 ktJ4txqvLAm40xJX+SHSWvKofOzKhZBuzHgY52kTPvQmy6llGscd2JwZ5M2BYmOcqj
-	 YXdins1suGJuypPoby9fdUzEjNaX5XusK8+QnJGVXPAeHbj0wbkHMEBcYKUFdVLzNl
-	 bZGSBfFi2MNj06FsM/Q1Fxn3P3AWRkRenkv4OPP/cXj3Gy3IEv2OTZmLPczY8BUrfa
-	 xmmXos0m1oApEe/4ksGd2cCuF3rVWGputi0M1xS3ErJVlYPp1G9FYVGpcDPnRFzDJF
-	 DNGp/P0ezrDHQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
+	s=arc-20240116; t=1732317866; c=relaxed/simple;
+	bh=6ZtxjlNsuRG1ESX4ndNrijoYSwTNh68oVuQvDj8Sl0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g7Sx5wR4e6eIFC4mr4xgCFEND6ow/n06pSF7O8bRs4ztWlrY6/vJnib3sdXME43rb6EgIYdMnp4WuDDEnNy0yghqEQXx+lspq6qqt1rXmoDS2TiiZzSmR6p3doqtXgn6bvhPgeaafYkwdvuldVgNMkEbzkyhxlyqvbgGqlts7dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mzJ39YKp; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eb0c2dda3cso33763317b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 15:24:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732317864; x=1732922664; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCcxFgoC08WddjgvVQJDhFHo6qtZVyPlemIEDQaPX6g=;
+        b=mzJ39YKpf+50uAkgsaYGyUAiBCUWR3pzjYodcdTgryaS0nM2ZFMVgPE6fB1VfQpQNr
+         G3vlYFbnAFjEd0EyXbY749bh9PLQ2EsDUz9/+R9XK0nAV2XichbuwhCtySQJ1VxQ39LA
+         dQEewaEy1eAU0h0qtrQwaet56uao8w4ax1hgu7t4zQLX8+mNMSazBGeWZmLfZF3QnzF3
+         DhkQ4MvBp8ALxqCrQ+UpnuL2SCFQRFM15S7HJmJTsUITbBFfyuw+/bn4Ds7rlz3eHn0W
+         djer2/LR0x9rSkSHnRjxTJOMMpeuzddCTXdwDBW5o4HeDWv+VeJauJdARVRgHMFtQW+V
+         TXDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732317864; x=1732922664;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mCcxFgoC08WddjgvVQJDhFHo6qtZVyPlemIEDQaPX6g=;
+        b=rvejYQMsKOa2zPh7iuG0V+KnR9lx9hEEcW+qjyk1/103IuRolu5ElZtj8nyQsBV/5E
+         o2+wr4UJ+UgvtpFrj8mnhC2NnfTjIljb6+o3EQnM7VPqgOyMPN+IfnhWK9jZX1lWO/1q
+         pAfFIXgpa6xOLjN/VeTAbveLr8F4giwzwamxmD7xqhZ8VCGbyGWUNGMiAmHIUaf08/Hr
+         X7CD6Pa2BdZz9ZhMerWt2Fa3l2sPKNlWCkxl7vHCJ8lRbd88k5D2gRB7ajJEb/ByJY7W
+         OkUqaVvO+bUkbKSXtJQ0gHzaDlGJFEfqwzrVXWOOl1HncWSyu0w0Vz0KeLW6w7pqOwIU
+         Wu5A==
+X-Forwarded-Encrypted: i=1; AJvYcCW545qjyFiwyIx9x0Mrp9BkalvAcrmqtOSlWznjEyXul9cG2yvWkyMpRUM1cV2hvEOqrEbefCKM1gdXgIlm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5xiMU4RHuKJ1De3IaXWPWFlYQPafG0U0tqGRuJNPWzeOEmXNA
+	2V62rWUtcCUHR21SPTWbYhCF7/CX1vy+c3idy4iBcMthEQSxj/uL
+X-Gm-Gg: ASbGncsj/Dh/ZZ8qQakcPBAvhq8v0mdXHlpx8PW5QPk26y+tgD3k/jr6/aQ7blR71uD
+	BbigEn7386NbRQ0IR0VCn61pIAyYljvHcDjC3hpqVWCc+UVQ8/6w18lqJsS1Bae5FFseWJeOY8D
+	j0mlcwXcsEgA/yQYL8RmxOvr1A2Vktea0GAVIBeM44uuQrOA9IHS++94y2oYpJRKdSxwyU/Mkc3
+	A4qYQIqXcSO5d/cOixJxw1IIhtG4IggpBXsE9pr46IynncmTjjzLErTTAwUFMDSpKp4UENCjry0
+	LDN8FrZgZQ==
+X-Google-Smtp-Source: AGHT+IEq4lVU89WONK6PJHk6F5A/Atbo44HCgzN+1qkcDp+xp+kLy/RNIRz5cIx6oN7Ci5cVSnsqjA==
+X-Received: by 2002:a05:690c:700a:b0:6e5:bf26:574 with SMTP id 00721157ae682-6eee0a49959mr57594887b3.27.1732317863681;
+        Fri, 22 Nov 2024 15:24:23 -0800 (PST)
+Received: from localhost (fwdproxy-nha-114.fbsv.net. [2a03:2880:25ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eeeebc5d93sm2170897b3.116.2024.11.22.15.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 15:24:23 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: shakeel.butt@linux.dev,
+	jefflexu@linux.alibaba.com,
 	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify fiter
-Date: Fri, 22 Nov 2024 14:59:58 -0800
-Message-ID: <20241122225958.1775625-3-song@kernel.org>
+	bernd.schubert@fastmail.fm,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: [PATCH v6 0/5] fuse: remove temp page copies in writeback
+Date: Fri, 22 Nov 2024 15:23:54 -0800
+Message-ID: <20241122232359.429647-1-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241122225958.1775625-1-song@kernel.org>
-References: <20241122225958.1775625-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,404 +91,126 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This sample can run in two different mode: filter mode and block mode.
-In filter mode, the filter only sends events in a subtree to user space.
-To use it:
+The purpose of this patchset is to help make writeback-cache write
+performance in FUSE filesystems as fast as possible.
 
-[root] insmod ./filter-mod.ko
-[root] mkdir -p /tmp/a/b/c/d
-[root] ./filter-user /tmp/ /tmp/a/b &
-Running in filter mode
-[root] touch /tmp/xx      # Doesn't generate event
-[root]# touch /tmp/a/xxa  # Doesn't generate event
-[root]# touch /tmp/a/b/xxab      # Generates an event
-Accessing file xxab   # this is the output from filter-user
-[root@]# touch /tmp/a/b/c/xxabc  # Generates an event
-Accessing file xxabc  # this is the output from filter-user
+In the current FUSE writeback design (see commit 3be5a52b30aa
+("fuse: support writable mmap"))), a temp page is allocated for every dirty
+page to be written back, the contents of the dirty page are copied over to the
+temp page, and the temp page gets handed to the server to write back. This is
+done so that writeback may be immediately cleared on the dirty page, and this 
+in turn is done for two reasons:
+a) in order to mitigate the following deadlock scenario that may arise if
+reclaim waits on writeback on the dirty page to complete (more details can be
+found in this thread [1]):
+* single-threaded FUSE server is in the middle of handling a request
+  that needs a memory allocation
+* memory allocation triggers direct reclaim
+* direct reclaim waits on a folio under writeback
+* the FUSE server can't write back the folio since it's stuck in
+  direct reclaim
+b) in order to unblock internal (eg sync, page compaction) waits on writeback
+without needing the server to complete writing back to disk, which may take
+an indeterminate amount of time.
 
-In block mode, the filter will block accesses to file in a subtree. To
-use it:
+Allocating and copying dirty pages to temp pages is the biggest performance
+bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
+altogether (which will also allow us to get rid of the internal FUSE rb tree
+that is needed to keep track of writeback status on the temp pages).
+Benchmarks show approximately a 20% improvement in throughput for 4k
+block-size writes and a 45% improvement for 1M block-size writes.
 
-[root] insmod ./filter-mod.ko
-[root] mkdir -p /tmp/a/b/c/d
-[root] ./filter-user /tmp/ /tmp/a/b block &
-Running in block mode
-[root]# dd if=/dev/zero of=/tmp/a/b/xx    # this will fail
-dd: failed to open '/tmp/a/b/xx': Operation not permitted
+With removing the temp page, writeback state is now only cleared on the dirty
+page after the server has written it back to disk. This may take an
+indeterminate amount of time. As well, there is also the possibility of
+malicious or well-intentioned but buggy servers where writeback may in the
+worst case scenario, never complete. This means that any
+folio_wait_writeback() on a dirty page belonging to a FUSE filesystem needs to
+be carefully audited.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- MAINTAINERS                    |   1 +
- samples/Kconfig                |  20 ++++-
- samples/Makefile               |   2 +-
- samples/fanotify/.gitignore    |   1 +
- samples/fanotify/Makefile      |   5 +-
- samples/fanotify/filter-mod.c  | 105 ++++++++++++++++++++++++++
- samples/fanotify/filter-user.c | 131 +++++++++++++++++++++++++++++++++
- samples/fanotify/filter.h      |  19 +++++
- 8 files changed, 281 insertions(+), 3 deletions(-)
- create mode 100644 samples/fanotify/filter-mod.c
- create mode 100644 samples/fanotify/filter-user.c
- create mode 100644 samples/fanotify/filter.h
+In particular, these are the cases that need to be accounted for:
+* potentially deadlocking in reclaim, as mentioned above
+* potentially stalling sync(2)
+* potentially stalling page migration / compaction
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ad507f49324..8939a48b2d99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8658,6 +8658,7 @@ S:	Maintained
- F:	fs/notify/fanotify/
- F:	include/linux/fanotify.h
- F:	include/uapi/linux/fanotify.h
-+F:	samples/fanotify/
- 
- FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
- M:	Linus Walleij <linus.walleij@linaro.org>
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..9cc0a5cdf604 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
- 	  with it.
- 	  See also Documentation/driver-api/connector.rst
- 
-+config SAMPLE_FANOTIFY
-+	bool "Build fanotify monitoring sample"
-+	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	help
-+	  When enabled, this builds samples for fanotify.
-+	  There multiple samples for fanotify. Please see the
-+	  following configs for more details of these
-+	  samples.
-+
- config SAMPLE_FANOTIFY_ERROR
- 	bool "Build fanotify error monitoring sample"
--	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	depends on SAMPLE_FANOTIFY
- 	help
- 	  When enabled, this builds an example code that uses the
- 	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
- 	  errors.
- 	  See also Documentation/admin-guide/filesystem-monitoring.rst.
- 
-+config SAMPLE_FANOTIFY_FILTER
-+	tristate "Build fanotify filter sample"
-+	depends on SAMPLE_FANOTIFY && m
-+	help
-+	  When enabled, this builds kernel module that contains a
-+	  fanotify filter handler.
-+	  The filter handler filters out certain filename
-+	  prefixes for the fanotify user.
-+
- config SAMPLE_HIDRAW
- 	bool "hidraw sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..108360972626 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
- subdir-$(CONFIG_SAMPLE_CGROUP) += cgroup
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
- obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
--obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+= fanotify/
-+obj-$(CONFIG_SAMPLE_FANOTIFY)		+= fanotify/
- subdir-$(CONFIG_SAMPLE_HIDRAW)		+= hidraw
- obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+= hw_breakpoint/
- obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
-diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
-index d74593e8b2de..df75eb5b8f95 100644
---- a/samples/fanotify/.gitignore
-+++ b/samples/fanotify/.gitignore
-@@ -1 +1,2 @@
- fs-monitor
-+filter-user
-diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
-index e20db1bdde3b..c33e9460772e 100644
---- a/samples/fanotify/Makefile
-+++ b/samples/fanotify/Makefile
-@@ -1,5 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
--userprogs-always-y += fs-monitor
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) += fs-monitor
- 
- userccflags += -I usr/include -Wall
- 
-+obj-$(CONFIG_SAMPLE_FANOTIFY_FILTER) += filter-mod.o
-+
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FILTER) += filter-user
-diff --git a/samples/fanotify/filter-mod.c b/samples/fanotify/filter-mod.c
-new file mode 100644
-index 000000000000..eafe55b1840a
---- /dev/null
-+++ b/samples/fanotify/filter-mod.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include <linux/fsnotify.h>
-+#include <linux/fanotify.h>
-+#include <linux/module.h>
-+#include <linux/path.h>
-+#include <linux/file.h>
-+#include "filter.h"
-+
-+struct fan_filter_sample_data {
-+	struct path subtree_path;
-+	enum fan_filter_sample_mode mode;
-+};
-+
-+static int sample_filter(struct fsnotify_group *group,
-+			 struct fanotify_filter_hook *filter_hook,
-+			 struct fanotify_filter_event *filter_event)
-+{
-+	struct fan_filter_sample_data *data;
-+	struct dentry *dentry;
-+
-+	dentry = fsnotify_data_dentry(filter_event->data, filter_event->data_type);
-+	if (!dentry)
-+		return FAN_FILTER_RET_SEND_TO_USERSPACE;
-+
-+	data = filter_hook->data;
-+
-+	if (is_subdir(dentry, data->subtree_path.dentry)) {
-+		if (data->mode == FAN_FILTER_SAMPLE_MODE_BLOCK)
-+			return -EPERM;
-+		return FAN_FILTER_RET_SEND_TO_USERSPACE;
-+	}
-+	return FAN_FILTER_RET_SKIP_EVENT;
-+}
-+
-+static int sample_filter_init(struct fsnotify_group *group,
-+			      struct fanotify_filter_hook *filter_hook,
-+			      void *argp)
-+{
-+	struct fan_filter_sample_args *args;
-+	struct fan_filter_sample_data *data;
-+	struct file *file;
-+	int fd;
-+
-+	args = (struct fan_filter_sample_args *)argp;
-+	fd = args->subtree_fd;
-+
-+	file = fget(fd);
-+	if (!file)
-+		return -EBADF;
-+	data = kzalloc(sizeof(struct fan_filter_sample_data), GFP_KERNEL);
-+	if (!data) {
-+		fput(file);
-+		return -ENOMEM;
-+	}
-+	path_get(&file->f_path);
-+	data->subtree_path = file->f_path;
-+	fput(file);
-+	data->mode = args->mode;
-+	filter_hook->data = data;
-+	return 0;
-+}
-+
-+static void sample_filter_free(struct fanotify_filter_hook *filter_hook)
-+{
-+	struct fan_filter_sample_data *data = filter_hook->data;
-+
-+	path_put(&data->subtree_path);
-+	kfree(data);
-+}
-+
-+static struct fanotify_filter_ops fan_filter_sample_ops = {
-+	.filter = sample_filter,
-+	.filter_init = sample_filter_init,
-+	.filter_free = sample_filter_free,
-+	.name = "monitor-subtree",
-+	.owner = THIS_MODULE,
-+	.flags = FAN_FILTER_F_SYS_ADMIN_ONLY,
-+	.init_args_size = sizeof(struct fan_filter_sample_args),
-+	.desc =
-+	"mode = 1: only emit events under a subtree\n"
-+	"mode = 2: block accesses under a subtree",
-+	.init_args =
-+	"struct fan_filter_sample_args {\n"
-+	"    int subtree_fd;\n"
-+	"    enum fan_filter_sample_mode mode;\n"
-+	"};",
-+};
-+
-+static int __init fanotify_filter_sample_init(void)
-+{
-+	return fanotify_filter_register(&fan_filter_sample_ops);
-+}
-+static void __exit fanotify_filter_sample_exit(void)
-+{
-+	fanotify_filter_unregister(&fan_filter_sample_ops);
-+}
-+
-+module_init(fanotify_filter_sample_init);
-+module_exit(fanotify_filter_sample_exit);
-+
-+MODULE_AUTHOR("Song Liu");
-+MODULE_DESCRIPTION("Example fanotify filter handler");
-+MODULE_LICENSE("GPL");
-diff --git a/samples/fanotify/filter-user.c b/samples/fanotify/filter-user.c
-new file mode 100644
-index 000000000000..8cdf8ff2bd6d
---- /dev/null
-+++ b/samples/fanotify/filter-user.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/fanotify.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include "filter.h"
-+
-+static int total_event_cnt;
-+
-+static void handle_notifications(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *event =
-+		(struct fanotify_event_metadata *) buffer;
-+	struct fanotify_event_info_header *info;
-+	struct fanotify_event_info_fid *fid;
-+	struct file_handle *handle;
-+	char *name;
-+	int off;
-+
-+	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
-+		for (off = sizeof(*event) ; off < event->event_len;
-+		     off += info->len) {
-+			info = (struct fanotify_event_info_header *)
-+				((char *) event + off);
-+			switch (info->info_type) {
-+			case FAN_EVENT_INFO_TYPE_DFID_NAME:
-+				fid = (struct fanotify_event_info_fid *) info;
-+				handle = (struct file_handle *)&fid->handle;
-+				name = (char *)handle + sizeof(*handle) + handle->handle_bytes;
-+
-+				printf("Accessing file %s\n", name);
-+				total_event_cnt++;
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct fanotify_filter_args args = {
-+		.name = "monitor-subtree",
-+	};
-+	struct fan_filter_sample_args init_args;
-+	int fanotify_fd, subtree_fd;
-+	char buffer[BUFSIZ];
-+	const char *msg;
-+	__u64 mask;
-+	int flags;
-+
-+	if (argc < 3) {
-+		printf("Usage:\n"
-+		       "\t %s <mount point> <subtree to monitor>\n",
-+			argv[0]);
-+		return 1;
-+	}
-+
-+	subtree_fd = open(argv[2], O_RDONLY | O_CLOEXEC);
-+
-+	if (subtree_fd < 0)
-+		errx(1, "open subtree_fd");
-+
-+	init_args.subtree_fd = subtree_fd;
-+
-+	if (argc == 4 && strcmp(argv[3], "block") == 0)
-+		init_args.mode = FAN_FILTER_SAMPLE_MODE_BLOCK;
-+	else
-+		init_args.mode = FAN_FILTER_SAMPLE_MODE_FILTER;
-+
-+	args.init_args = (__u64)&init_args;
-+	args.init_args_size = sizeof(init_args);
-+
-+	flags = FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR_FID;
-+	mask = FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD;
-+
-+	if (init_args.mode == FAN_FILTER_SAMPLE_MODE_BLOCK) {
-+		flags = FAN_CLASS_CONTENT;
-+		mask |= FAN_OPEN_PERM;
-+	}
-+
-+	fanotify_fd = fanotify_init(flags, O_RDWR);
-+	if (fanotify_fd < 0) {
-+		close(subtree_fd);
-+		errx(1, "fanotify_init");
-+	}
-+
-+
-+	if (fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM,
-+			  mask, AT_FDCWD, argv[1])) {
-+		msg = "fanotify_mark";
-+		goto err_out;
-+	}
-+
-+	if (ioctl(fanotify_fd, FAN_IOC_ADD_FILTER, &args)) {
-+		msg = "ioctl";
-+		goto err_out;
-+	}
-+
-+	printf("Running in %s mode\n",
-+	       init_args.mode == FAN_FILTER_SAMPLE_MODE_BLOCK ? "block" : "filter");
-+
-+	while (total_event_cnt < 10) {
-+		int n = read(fanotify_fd, buffer, BUFSIZ);
-+
-+		if (n < 0) {
-+			msg = "read";
-+			goto err_out;
-+		}
-+
-+		handle_notifications(buffer, n);
-+	}
-+
-+	ioctl(fanotify_fd, FAN_IOC_DEL_FILTER);
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	return 0;
-+
-+err_out:
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	errx(1, msg);
-+	return 0;
-+}
-diff --git a/samples/fanotify/filter.h b/samples/fanotify/filter.h
-new file mode 100644
-index 000000000000..cdb97499019a
---- /dev/null
-+++ b/samples/fanotify/filter.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#ifndef _SAMPLES_FANOTIFY_FILTER_H
-+#define _SAMPLES_FANOTIFY_FILTER_H
-+
-+enum fan_filter_sample_mode {
-+	/* Only show event in the subtree */
-+	FAN_FILTER_SAMPLE_MODE_FILTER = 1,
-+	/* Block access to files in the subtree */
-+	FAN_FILTER_SAMPLE_MODE_BLOCK = 2,
-+};
-+
-+struct fan_filter_sample_args {
-+	int subtree_fd;
-+	enum fan_filter_sample_mode mode;
-+};
-+
-+#endif /* _SAMPLES_FANOTIFY_FILTER_H */
+This patchset adds a new mapping flag, AS_WRITEBACK_INDETERMINATE, which
+filesystems may set on its inode mappings to indicate that writeback
+operations may take an indeterminate amount of time to complete. FUSE will set
+this flag on its mappings. This patchset adds checks to the critical parts of
+reclaim, sync, and page migration logic where writeback may be waited on.
+
+Please note the following:
+* For sync(2), waiting on writeback will be skipped for FUSE, but this has no
+  effect on existing behavior. Dirty FUSE pages are already not guaranteed to
+  be written to disk by the time sync(2) returns (eg writeback is cleared on
+  the dirty page but the server may not have written out the temp page to disk
+  yet). If the caller wishes to ensure the data has actually been synced to
+  disk, they should use fsync(2)/fdatasync(2) instead.
+* AS_WRITEBACK_INDETERMINATE does not indicate that the folios should never be
+  waited on when in writeback. There are some cases where the wait is
+  desirable. For example, for the sync_file_range() syscall, it is fine to
+  wait on the writeback since the caller passes in a fd for the operation.
+
+[1]
+https://lore.kernel.org/linux-kernel/495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com/
+
+Changelog
+---------
+v5:
+https://lore.kernel.org/linux-fsdevel/20241115224459.427610-1-joannelkoong@gmail.com/
+Changes from v5 -> v6:
+* Add Shakeel and Jingbo's reviewed-bys 
+* Move folio_end_writeback() to fuse_writepage_finish() (Jingbo)
+* Embed fuse_writepage_finish_stat() logic inline (Jingbo)
+* Remove node_stat NR_WRITEBACK inc/sub (Jingbo)
+
+v4:
+https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joannelkoong@gmail.com/
+Changes from v4 -> v5:
+* AS_WRITEBACK_MAY_BLOCK -> AS_WRITEBACK_INDETERMINATE (Shakeel)
+* Drop memory hotplug patch (David and Shakeel)
+* Remove some more kunnecessary writeback waits in fuse code (Jingbo)
+* Make commit message for reclaim patch more concise - drop part about
+  deadlock and just focus on how it may stall waits
+
+v3:
+https://lore.kernel.org/linux-fsdevel/20241107191618.2011146-1-joannelkoong@gmail.com/
+Changes from v3 -> v4:
+* Use filemap_fdatawait_range() instead of filemap_range_has_writeback() in
+  readahead
+
+v2:
+https://lore.kernel.org/linux-fsdevel/20241014182228.1941246-1-joannelkoong@gmail.com/
+Changes from v2 -> v3:
+* Account for sync and page migration cases as well (Miklos)
+* Change AS_NO_WRITEBACK_RECLAIM to the more generic AS_WRITEBACK_MAY_BLOCK
+* For fuse inodes, set mapping_writeback_may_block only if fc->writeback_cache
+  is enabled
+
+v1:
+https://lore.kernel.org/linux-fsdevel/20241011223434.1307300-1-joannelkoong@gmail.com/T/#t
+Changes from v1 -> v2:
+* Have flag in "enum mapping_flags" instead of creating asop_flags (Shakeel)
+* Set fuse inodes to use AS_NO_WRITEBACK_RECLAIM (Shakeel)
+
+Joanne Koong (5):
+  mm: add AS_WRITEBACK_INDETERMINATE mapping flag
+  mm: skip reclaiming folios in legacy memcg writeback indeterminate
+    contexts
+  fs/writeback: in wait_sb_inodes(), skip wait for
+    AS_WRITEBACK_INDETERMINATE mappings
+  mm/migrate: skip migrating folios under writeback with
+    AS_WRITEBACK_INDETERMINATE mappings
+  fuse: remove tmp folio for writebacks and internal rb tree
+
+ fs/fs-writeback.c       |   3 +
+ fs/fuse/file.c          | 360 ++++------------------------------------
+ fs/fuse/fuse_i.h        |   3 -
+ include/linux/pagemap.h |  11 ++
+ mm/migrate.c            |   5 +-
+ mm/vmscan.c             |  10 +-
+ 6 files changed, 53 insertions(+), 339 deletions(-)
+
 -- 
 2.43.5
 
