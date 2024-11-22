@@ -1,70 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-35570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4EA9D5E8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 13:06:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9299D5ED2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 13:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84721F21092
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:06:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7025CB231F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 12:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A991DE3D6;
-	Fri, 22 Nov 2024 12:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ADA1DE3AD;
+	Fri, 22 Nov 2024 12:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3U62HNcr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02A44500E;
-	Fri, 22 Nov 2024 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEE52AE96
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 12:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732277203; cv=none; b=mLzWkMmQW4BffRNAvfpsDgBAjpPfpBANx2BORS7eqXPCaB+7EhPyABzgbzZ7gDVHDaUBLOLg6X5BFNqeLz7m1l5s9VXkO3yGApon/XHBwRgwCfTFxhanHHTgvani96T+JNfmY+WiIaDIXrckkZ8/jznymNKYcTVoEn1SjnwO+cA=
+	t=1732278579; cv=none; b=haE1gKDOj8krwUQLl85RrsA60wT/TRI7mAbMRtWXiRJvylWjx780b4YGccHmhf889MB3lGSllVTTLCDxqJRNSOdZ2nsjSrc8UEbumVukMZJdeiJ7T8Zk3ztb2f8Ni+1BDgQnTf1n+Ymb2lIhQHD+MB4c3cA3bsIXbkawS2lukEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732277203; c=relaxed/simple;
-	bh=BYqXJlZACzd2/GK3N7rCy85f9v4k+hok/4yv8tI6Is8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTNkf+5xt0Iu634VaZHji99gu16aUzMuuhx+khRsCxARYTnbIDmrVuRYRKIvWfFC/R1x7rxadpl7LfcM1oOZYCVsUnQ1XDYdXnNcnMpmUwUu8exwLhjZu+1tee382PxUoE6BZ6wsa5DOJmAfF7dirikQIpQ3EtKU2HSTfROQZXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+	s=arc-20240116; t=1732278579; c=relaxed/simple;
+	bh=slACuBR9p7WOAAQHd0TnczDSYTj1aLZM+9+Cd8ulmfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m0lYfR8t6g+7HTwc9m3/8iruEp7TuMt2IWyEDYWySFP0jBHRLhmdPU089cQTVB+IINgr3teYszTgckjhANl/58eSjEilEKMgtzF7ihHRVj6GlNaYW0hQHpMEY1mJnw6RcvaHZEYF1PCzH1CLmA2/vygF0VPr5KYLAsUbZRDnKXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3U62HNcr; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2EF7368C4E; Fri, 22 Nov 2024 13:06:36 +0100 (CET)
-Date: Fri, 22 Nov 2024 13:06:36 +0100
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=XV3nHWXbZse+o85K9l1Dh301Ivr7IKD5f4jS2/wT/GQ=; b=3U62HNcrt6YUUXqm3MBOuAH2tV
+	McSk3N8KzrcJMUXX9MZfJCYezmNbh9ZG9U0PCbg5lx/0R+FIzgn613iE0pF6leCFJs5XaXB5cEhpn
+	DIBM3s4OJy1Tx3U2chmNbjvwVweCcuwYtuwWOklZCESOEejSMblB6OzVP9Kn4BQD/B9zaIoulcxU/
+	mbS7aWEanDbkZo/JpVtUqFGT0UgDabboQMuCGeFOX8KkNOEzf5ZD2w3K3GQRi/3d9a80Ox5g6vTGL
+	7K01jpJIIPUuU8pie8wcjmHtahZ6PqXFnVKvH+sS99w8nVtx/9mYFAHwIJVGzRnowpg7EDXuQTUX1
+	wiRzL3Cw==;
+Received: from 2a02-8389-2341-5b80-6215-0232-ff10-500c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:6215:232:ff10:500c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tESn1-00000002SEi-0wZv;
+	Fri, 22 Nov 2024 12:29:35 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
+To: 
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <20241122120635.GA25707@lst.de>
-References: <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo> <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org> <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3> <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org> <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org> <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook> <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2> <20241120234759.GA3707860@mit.edu> <20241121042558.GA20176@lst.de> <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-fsdevel@vger.kernel.org
+Subject: permission checking for F_SET_RW_HINT
+Date: Fri, 22 Nov 2024 13:29:23 +0100
+Message-ID: <20241122122931.90408-1-hch@lst.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Nov 21, 2024 at 04:53:48PM -0700, Shuah Khan wrote:
-> I tend to use formal style when I speak on behalf of the Code of Conduct
-> committee. I would label it as very formal bordering on pedantic.
->  Would you prefer less formal style in the CoC communication?
+Hi all
 
-I would prefer a less passive agressive and more to the point one.
+I've been expanding test coverage for F_SET_RW_HINT, and noticed that
+right now there is no permission checking whatsoever.  Patch 1 fixes that
+by requiring the owner or capable to set the write hint.  Patch 2 also
+requires an fd open for write, which is a bit more arguable but still
+feels right.
 
+Diffstat:
+ fcntl.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
