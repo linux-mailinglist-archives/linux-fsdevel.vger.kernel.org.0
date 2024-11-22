@@ -1,147 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-35541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BA39D58E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 05:48:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0B69D591A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 06:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1E31F22D27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 04:48:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0442830D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2024 05:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E8F15B13C;
-	Fri, 22 Nov 2024 04:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2EC1632C2;
+	Fri, 22 Nov 2024 05:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WtuaoBJp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA3E2309A3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2024 04:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5039413C3D6;
+	Fri, 22 Nov 2024 05:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732250904; cv=none; b=NzuZ2RAIcyOw8SjmW9Jf0nrKUNSpkDD7jyroX2JIXbWwg9miA48CF0LZS8VReSlxIo2RQkgF9uXFKCyid3o5m4zalSLVQogqQpbeg17wSZxM6j9u0B3vZqfSWeh5nYvKZLXrGkdiBnojO/VIxLEALPEqqpTO4MUwby9kqOHhHhM=
+	t=1732253156; cv=none; b=cVptJPN+r2Zl+ab57rka6JXtmwAJSZQe8xgUwhH1sp6CY2J4IXxLxLSX5qAuY9cyD7qYQMZED6U4yC1g3kABIq9s2Ck1IS0vv250j5rNLjPPCeWl3zeRiTLWozm/KM+9rQp/va3SbA7OsJ77tvwt68URqVOV3I4BWpG+vSokHTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732250904; c=relaxed/simple;
-	bh=W17Eb99vA47L89/Zopwm69gA4mmWV0IPq2kmf9TqDAE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ER8RD7e4PA45/cujaTbURkIuK15o9gWnh1QrL0TMxgiS+MsJ50pf6Ko9tjhuW8/XBFN8r+mPvXkr06IlpN7iw12kukJe6fiOoksLCeU3X2T1PdvWeztms2yNVGD/ruWrLponmC/+ryfXPSy6H/qG99tEK0ySAzMVoc+2TpQV25Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83b6628a71fso192733039f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2024 20:48:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732250902; x=1732855702;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o1RcO0TmnnkYqFobA3xcmpDmvpNzGA8a+TGdYVYOpIc=;
-        b=e74Bm3FeEs2gRw2nHbVGIQJFa5WRwHqTHJB/CGhWGcrwfkuxBgl+VHKYlDz5b7Jk8o
-         JqLx9/psTJXpDZKgWUoJ7OPWo37A4Vuaq/3weiJZkm4KjF/1GvZGb7iVK/y+KUjiceAR
-         mYD0rDY3bzAXzRf5REO3SnqSwFZHYiLFIp2kgnXcazdwBs8594iawIVdlYhAmiIKM77Z
-         OONZihPO7/zf+mfDVMqfPGv0btQ9zSQpdjo9JVryd8JfXEdxJHtryC9wOKxcwv565xx2
-         VVTZxBVGTcEkNmdODbsezP3WDF6irhiV9Itlkpk7w0rUsc63lJvEyicFEu+aEH+wyN28
-         Fmog==
-X-Gm-Message-State: AOJu0YzV1j06895TDo7lzzxb4sKVQFi+6EzHlpHUJpUl9d/UVSs1JgD9
-	bXT1mK8Ihrf/g53MrM31GIOqcIXD1nu9YoG0fi5SQ9jm9MBMA5I2DIgMgssvi/eYSbVq55sOwl0
-	OXfABWappAvhvjoIblNAb4VJPaInmYq1l+gOijupcttEdA3xv643whh0=
-X-Google-Smtp-Source: AGHT+IHcJ6BOXBImHbbr7PXDhYm+3gIjaqafqRTua3U0hxg2vwoo3B0OrmzmwP6A5yyut65uzRyPFvzMEjmyJ9pzfMI6s/7Xcx4O
+	s=arc-20240116; t=1732253156; c=relaxed/simple;
+	bh=jfouwNKiq6I0rT6PIrM3V66NZunqhYiTrtxFRTjDejw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHeiTUmFdHhVKxuk8ROo6EwavoK6ZqEWd1P81ZSpdoUEcxUUeXhJ2zLWcaSDw1J+7Vn2XupUFqf4J04gpq7FvOLEnLgDdQvLAVbPUdSnBtD2sseIP72JWd/77KhIqCGKzsejytvN5ArFFxZSuSs6JMO2RrKJDaK2FjjmQoskymk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WtuaoBJp; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732253152; x=1763789152;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jfouwNKiq6I0rT6PIrM3V66NZunqhYiTrtxFRTjDejw=;
+  b=WtuaoBJp5reWbZ9V+elUcfCTen9npSk+C/YJz/ccDoyS/dpVoeq2m5WS
+   NZnBveBJxyFQoERyzLuP+uzlsWVI8+JTeJs2Rk4ulKmAIy7jh6UW0dOOP
+   2zvibaD3mk5kBkC1m7DLgNHF4Em8eHmaLJdF0Pn4JZxI02lFU+MuBox8s
+   dkK/hDP8SnOLhSi4cZ105TIEZDAX8VQeBgphCl/lB2Pm40JVdOncCy/sD
+   t6Kgwh0DpRFiYqI7V8oUrj66ic0nBi/VDGjer6PO5l3dOQQKZexPMgZ8k
+   p+Vnz/CqcN54WnDP0DBPaJliEMXvSAXAJJ3VwlDIeRvd3Sq99cDCLH5N9
+   g==;
+X-CSE-ConnectionGUID: OHlJlS2VQjOjyChMOhOgYg==
+X-CSE-MsgGUID: N+gA8MjsROuVrqGSb+V5Qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="35255653"
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="35255653"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 21:25:51 -0800
+X-CSE-ConnectionGUID: B7aXpogaSZezi4g4yJXrxw==
+X-CSE-MsgGUID: ZNQcJWJ1Syym179desVAGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="121342598"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 21 Nov 2024 21:25:48 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEMAr-0003hT-2N;
+	Fri, 22 Nov 2024 05:25:45 +0000
+Date: Fri, 22 Nov 2024 13:25:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	Jan Kara <jack@suse.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <202411221352.NvzmPEy3-lkp@intel.com>
+References: <20241121123855.645335-3-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1809:b0:3a7:8208:b843 with SMTP id
- e9e14a558f8ab-3a79af53d8bmr17513955ab.23.1732250902474; Thu, 21 Nov 2024
- 20:48:22 -0800 (PST)
-Date: Thu, 21 Nov 2024 20:48:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67400d16.050a0220.363a1b.0132.GAE@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfs_read_inode
-From: syzbot <syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121123855.645335-3-ojaswin@linux.ibm.com>
 
-Hello,
+Hi Ojaswin,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1381b2e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=570f86970553dcd2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1400bb5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162c8ac0580000
+[auto build test ERROR on tytso-ext4/dev]
+[also build test ERROR on brauner-vfs/vfs.all jack-fs/for_next linus/master v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/83bb4f67b45d/disk-f66d6acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cb0cedffb310/vmlinux-f66d6acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3af8c8949657/bzImage-f66d6acc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/bfaab1c46dcf/mount_0.gz
+url:    https://github.com/intel-lab-lkp/linux/commits/Ojaswin-Mujoo/quota-flush-quota_release_work-upon-quota-writeback/20241121-204331
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+patch link:    https://lore.kernel.org/r/20241121123855.645335-3-ojaswin%40linux.ibm.com
+patch subject: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+config: i386-buildonly-randconfig-004-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221352.NvzmPEy3-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221352.NvzmPEy3-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411221352.NvzmPEy3-lkp@intel.com/
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in hfs_inode_read_fork fs/hfs/inode.c:287 [inline]
-BUG: KMSAN: uninit-value in hfs_read_inode+0x10ae/0x1690 fs/hfs/inode.c:343
- hfs_inode_read_fork fs/hfs/inode.c:287 [inline]
- hfs_read_inode+0x10ae/0x1690 fs/hfs/inode.c:343
- inode_insert5+0x1dd/0x970 fs/inode.c:1281
- iget5_locked+0xfe/0x1d0 fs/inode.c:1338
- hfs_iget+0x121/0x240 fs/hfs/inode.c:403
- hfs_fill_super+0x2098/0x23c0 fs/hfs/super.c:431
- mount_bdev+0x39a/0x520 fs/super.c:1693
- hfs_mount+0x4d/0x60 fs/hfs/super.c:457
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+All errors (new ones prefixed by >>):
 
-Local variable rec created at:
- hfs_fill_super+0x67/0x23c0 fs/hfs/super.c:383
- mount_bdev+0x39a/0x520 fs/super.c:1693
-
-CPU: 1 UID: 0 PID: 5790 Comm: syz-executor415 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
+   In file included from fs/ext4/super.c:27:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/ext4/super.c:6912:6: error: use of undeclared identifier 'freeze_protected'; did you mean 'freeze_processes'?
+    6912 |         if (freeze_protected)
+         |             ^~~~~~~~~~~~~~~~
+         |             freeze_processes
+   include/linux/freezer.h:46:12: note: 'freeze_processes' declared here
+      46 | extern int freeze_processes(void);
+         |            ^
+   1 warning and 1 error generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +6912 fs/ext4/super.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  6893	
+  6894	static int ext4_acquire_dquot(struct dquot *dquot)
+  6895	{
+  6896		int ret, err;
+  6897		handle_t *handle;
+  6898	
+  6899		handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+  6900					    EXT4_QUOTA_INIT_BLOCKS(dquot->dq_sb));
+  6901		if (IS_ERR(handle))
+  6902			return PTR_ERR(handle);
+  6903		ret = dquot_acquire(dquot);
+  6904		if (ret < 0)
+  6905			ext4_error_err(dquot->dq_sb, -ret,
+  6906				      "Failed to acquire dquot type %d",
+  6907				      dquot->dq_id.type);
+  6908		err = ext4_journal_stop(handle);
+  6909		if (!ret)
+  6910			ret = err;
+  6911	
+> 6912		if (freeze_protected)
+  6913			sb_end_intwrite(dquot->dq_sb);
+  6914	
+  6915		return ret;
+  6916	}
+  6917	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
