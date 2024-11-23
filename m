@@ -1,84 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-35651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAE69D6ACA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:27:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928DF9D6ADD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:47:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69119281BF5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A25161AF7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ECB15098F;
-	Sat, 23 Nov 2024 18:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9C03FC7;
+	Sat, 23 Nov 2024 18:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HFvI8M8j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrMgvjTQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CFB17C2;
-	Sat, 23 Nov 2024 18:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65EB22301;
+	Sat, 23 Nov 2024 18:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732386463; cv=none; b=cEII47AycpW8IL8FW+JimkgURCWwQGxifaDyhyHSLJj7CVEeujqUXjY0mOHGFdT2EG7SZL60fCBLeM4rYdebalkxtdbcCF2yAXr4FHBK1/ihmEseU9Mzc6UWieQ/8m7uJslDEAtUNySbLhw2mal8di0BN+SxXPiR4mjzd8z8q24=
+	t=1732387649; cv=none; b=cp+0zWKpcF6ivC3YsYXHe6bNrC5MvnUPxBMZlQue5KyklohHgmFlxFrNt8JuaMtV+rI+s69BRCrA3mER1x+CD8sIT7nI8u+u82owqoWbERRKWPAlpFva6YTuPeVmrs/eJUfyI2OnduXCtvNQkH2SsveLQ+Go6H3UlN2a5a9/ySU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732386463; c=relaxed/simple;
-	bh=LA4ip6xEZWpJXB5jy+aOmy3SYHg9OHysBsS8/gpV4DY=;
+	s=arc-20240116; t=1732387649; c=relaxed/simple;
+	bh=BSv4aD9d5H9bVWz+JcZvftPNCXHFcxmKlQmYiEoonkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvBD4jPxc4zMeXWngimRVjT//DLi6wevjP+xWSn0ccaWbUBfvfI2zZKbU8kfFGryUJ6vrYMEUpWldz81po/XkuEZ4eAanqYfXC4rFaJILC7u6j9nZ+7hpjPVUU99oi/aUX4zcA5HQkhUSBN1HbqWF1jrVrs1Qx8B6erUHbio41g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HFvI8M8j; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OpZoXe5XWl4Cs2t4USf16gKmE4quBTnPnOIK7o601Ps=; b=HFvI8M8jDEJBR/p6x+unkkaMk5
-	y/49+olZd0HRffX7KpcdHHSvpiw8VN+w48UQiT5Eu7BXB+mje70iVU6B3IcoLGUQWapw8qcr7nkKR
-	M5hnmFTjwwyNw1hkbhbbdJn9HYticYo1pX0HhymGVU7SVZigslSO2B/LY6HatP+S+1hD20feLiIXh
-	+GLvpUSocobuvXtuzpMoruZoa1sCZ6MbyO+TUH9AwmlP0V9VQSHlWT+rJD3mJN003/KID8veqnX/F
-	G2ODJ0H/UX9sZkgctkFl7NRP5P96QWNSSp5lTM9++/H39nWvKhHlqdeto2OIqBQSHEkGYCJgwTmys
-	DSJuAMTw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEuqw-00000000tCe-3lDS;
-	Sat, 23 Nov 2024 18:27:30 +0000
-Date: Sat, 23 Nov 2024 18:27:30 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, mcgrof@kernel.org, kees@kernel.org,
-	joel.granados@kernel.org, adobriyan@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	flyingpeng@tencent.com, Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and
- fs.nr_open
-Message-ID: <20241123182730.GS3387508@ZenIV>
-References: <20241123180901.181825-1-alexjlzheng@tencent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDJ8FmSboEp3C1YNMISd1JdR5V4WSR0y5NgLPBlxTPZC8AlYQtQtdbYrgUmZUIxf+hM8nyuzzkFVQ5hx70GD7aL7WRAhK2vQ/n0lQ5lt6tMxvMs28Qm+Id7UE8rsxGBJ108Mu33rAF56R1VfDxZpy6BsI4nbwHOclZYtbjITvcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrMgvjTQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6EDC4CED0;
+	Sat, 23 Nov 2024 18:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732387649;
+	bh=BSv4aD9d5H9bVWz+JcZvftPNCXHFcxmKlQmYiEoonkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nrMgvjTQiW24jgTEn9nVCrQBKcdxUNzOADK7GdxSDy3abNOQ+r2W/3iiVPmu50xze
+	 HHlzBXLn5gI3V0o9TuUOhAHF0bqs42FA6vr5ylJnuIsneueM7MA13nr6fSW6euaPIP
+	 o4Y9OF7Cw2PC0UJikWim7xnga0PXhhZWnbu0vTVFQ9RSiopZDpAZR2JKZLPTmdK0eu
+	 iqDFnkEjBHfXhLuDm7NWX43SdCqrytkRDYxjHRM3wy4gZO+yOGnwFeE0fGj3aS31Js
+	 Dg9nwAoOIp/m7nYpu/wFMGgGcJqE3+d4tHtT53+qBEELZ7jaPfmlYz33EdIF11HqAr
+	 68HqgYYfRsc/w==
+Date: Sat, 23 Nov 2024 19:47:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [GIT PULL] overlayfs updates for 6.13
+Message-ID: <20241123-wortreich-eistee-542b69311fba@brauner>
+References: <20241122095746.198762-1-amir73il@gmail.com>
+ <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+ <20241123-bauhof-tischbein-579ff1db831a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241123180901.181825-1-alexjlzheng@tencent.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241123-bauhof-tischbein-579ff1db831a@brauner>
 
-On Sun, Nov 24, 2024 at 02:08:55AM +0800, Jinliang Zheng wrote:
-> According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
-> fs.file-max represent the number of file-handles that can be opened
-> by each process and the entire system, respectively.
+On Sat, Nov 23, 2024 at 01:06:14PM +0100, Christian Brauner wrote:
+> On Fri, Nov 22, 2024 at 09:21:58PM -0800, Linus Torvalds wrote:
+> > On Fri, 22 Nov 2024 at 01:57, Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > - Introduction and use of revert/override_creds_light() helpers, that were
+> > >   suggested by Christian as a mitigation to cache line bouncing and false
+> > >   sharing of fields in overlayfs creator_cred long lived struct cred copy.
+> > 
+> > So I don't actively hate this, but I do wonder if this shouldn't have
+> > been done differently.
+> > 
+> > In particular, I suspect *most* users of override_creds() actually
+> > wants this "light" version, because they all already hold a ref to the
+> > cred that they want to use as the override.
+> > 
+> > We did it that safe way with the extra refcount not because most
+> > people would need it, but it was expected to not be a big deal.
+> > 
+> > Now you found that it *is* a big deal, and instead of just fixing the
+> > old interface, you create a whole new interface and the mental burden
+> > of having to know the difference between the two.
 > 
-> Therefore, it's necessary to maintain a relative size between them,
-> meaning we should ensure that files_stat.max_files is not less than
-> sysctl_nr_open.
+> > So may I ask that you look at perhaps just converting the (not very
+> > many) users of the non-light cred override to the "light" version?
+> 
+> I think that could be a good idea in general.
+> 
+> But I have to say I'm feeling a bit defensive after having read your
+> message even though I usually try not to. :) 
 
-NAK.
-
-You are confusing descriptors (nr_open) and open IO channels (max_files).
-
-We very well _CAN_ have more of the former.  For further details,
-RTFM dup(2) or any introductory Unix textbook.
+It was just pointed out to me that this was written like I'm not reading
+you messages - which is obviously not the case. What I means it that I
+usually try to not be defensive when valid criticism is brought up. :)
 
