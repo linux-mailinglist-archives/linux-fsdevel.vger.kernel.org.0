@@ -1,91 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-35644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2BC9D6AAE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:09:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52DE9D6AAF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:11:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AB3B21612
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C4A16198B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D1E146013;
-	Sat, 23 Nov 2024 18:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9FE1422D4;
+	Sat, 23 Nov 2024 18:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBxDMkfF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxS6rn8K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553452AE90;
-	Sat, 23 Nov 2024 18:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867892AE90;
+	Sat, 23 Nov 2024 18:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732385351; cv=none; b=YMiOSWCyvLqQHGdi8EKvlzI0oT6erRRZ9zGEZUpmMURUyFS6YjJW/IYbgf2gS07Iu1xznXpl/jbKy39ZdRgrqPDYc+NzULfOwWDwYLYNlcQ7AoisnYklWR6rLaMgMVwzOgvR+RA67X0EHgv50rAym/jzMFdzeSRpuBrxreFHtjw=
+	t=1732385499; cv=none; b=oAuPTyEl0hMvB/f29k6d4wqxt9X77VBMOJZZzUwlJab/7XjQF5kcAQtNJDq4oEOCKpDK62w8qEvbWgIQ4q+NyFRf/4sFxtflHRp5jvoHGiIQhybvhoJT7Zu2wQc30uyFcniJyedeC1KMwddFam12CZ3xHh6mbsrdV03zzAdZEvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732385351; c=relaxed/simple;
-	bh=6l9s3Ydvl+883iSfMEF6k5y+5gcrrJqW4lK9xyUxr34=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCAOF1eZ1i4ZYtJcHJ9iJZ1hTZ/uPaJKI5k5W0z1wz1lMHgS4sx+c/m7Ms6tmd/x04gK6slxAFlygrOR7R8eo8sxmm4ylRfJbkfSqEFQUht9q92GVeo2DiVy1BWz581A1aqC5qYlafkuljWYGgvNkzHZ1YxVdH4PdSsQWoeNSCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBxDMkfF; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1732385499; c=relaxed/simple;
+	bh=4OWydb0uad+cSg6XEwN8/7A1yX2vzbSXD+Cg2vpFN7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nLMNze4D655FfIPPlgesv7TECZsuCndQaFs91AAvtbvBGQgh+Cu4qNuv4uNVKiJbPBqGW1HYQzR7Cm9y2PADBk6FIjBu5jPtSp8nRaYVxa9jV21G/eUq/Yrkzsm/9uZJ5d1RABqd+1V4pgp6oyRTEr/zzKGPXmJFThyhENdyAvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxS6rn8K; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-212776d6449so34878065ad.1;
-        Sat, 23 Nov 2024 10:09:10 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2126408cf52so26888745ad.1;
+        Sat, 23 Nov 2024 10:11:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732385350; x=1732990150; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
-        b=OBxDMkfF7zB0budwXpXToDRKVeRxEzDLpCjLkQ/+9ykqfVYN8xeCp3bZ3OFSD2cl6M
-         r5ArWNUma88M9uc+mYVOIRIxLWe9ZK5cNVwJmH1TdBuZCCadxD7qDvRwH8v8/yYqJDpD
-         7ebWStGwuKc3seJieDCVfwfGK4Cr3c7HFxbyeXtwIzXgTIUzunFVWmTMI0xAOkk5IWq4
-         ozj3n3JNHbmSU1IKHQFC2n4ioaQrU5jOmjWMDrJ9twKJzTimHAQkUZZrb6VTUw+0UcnP
-         X/x4/R8+gFuUMRF4d/5ttn/5SHFkxTkgqAIWewMDssx5g69ov5B9bnzLVABCwNB8IMnP
-         VSqA==
+        d=gmail.com; s=20230601; t=1732385498; x=1732990298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aRKUntj3FsK+vGHd9SV+LXgOh6pOpY3AJO079Y2j5WQ=;
+        b=FxS6rn8KH1KB466XUAMWQaXix9z7Q93LOzvWdl6cw/oOIATqrJviNV5SdNDyqbYzY7
+         Ts6o25nv71JUFtr++A6Os8W+KBuPwtUP3TECcAgIXNgtajL9v4dklbK1T0JEgX8qxLFE
+         9LJNKqPKaAIM/8X3pGDYxz5bCCrkKug+cSKK0I5j0CRs9WA9rjvCmh23j972wdTgCf+d
+         MQoo1fwhl8dhKFHVE+xoaetbRBrzugyKxaWcAJkRrgrZ1bvcZGDZFdBn7aQqNq40+Ihy
+         NFQuJ06vnperJm7vNETc6xG8GRO9SgQX/LqGAu5Oi0kiHNc2UAkllNo+jaiCRhixNakR
+         A06g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732385350; x=1732990150;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
-        b=QL8DeKFKsrqUQFatvLYtWzBugvQYOivgvf/m17K55WaZkrxpkuw0qcEMtfVtFhl6ky
-         vlfpwu8ciF69+E8qBS21e2NRitvYRIJtYPZskAgW35h5Ng1bbsIlx9YlaDeKmLFEQVV9
-         ic8fh+4+zo1GOUTuh+X/kPo7Md6vmziAllSUXoBy90CIVsx/kGSWwei442SP/aIiGBS2
-         AwSH/Sw4kXElILapqzIjEo1ZHUcy+cCjYeKhBw7xpqpWTGqQYoUGB+0kdKjYAomKYAv+
-         PJDUUgoKLdJ3AB/zosVbO/YXzudENbBbu3dQIuHuGLLrxkbi4HIATtzFayGWRsRXHSO7
-         naug==
-X-Forwarded-Encrypted: i=1; AJvYcCUlAGNkVqUDo2+31Vp1kFCjU72mkteaivT/xGE4NPxqmJazsnvvybxt0lX3XIWOtXYRm6KP1B7GrJIJUWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb7UELlvfbcPbY+aQTsln9IcA6pssoMmS9Oyp5K07judjGOm0W
-	spH7CpovgjYffhqDQEAnHEVctxXCDqegI/Y7MOWVXvbc7/daAJgB
-X-Gm-Gg: ASbGncukwrIKnBxfP/Qn21Mmt0oTp3ht9EmdQ6jm0+lX4v7RdtVGAL7aXOtN7tpqcFd
-	HnDFw65/aMFh6VmwEGTZmjvvxJ/Cq2Z+HTaEMPpiHpoPZOe8pfUxVHnG9E4eqz3wGsDZ+OezMU6
-	9EqugPMUGQmrYzjIRio3jC4N5tM1ks8ggYFLEN6r+3BSwRECnkfakzI/HfCTLB9AU/iz+iTjpub
-	Lb8dsHlKJkjHhYGVmcfe3TWne5wAhLTlKwSdwkdJCchjkS/9wEm42fUG2Q+EzxebQ==
-X-Google-Smtp-Source: AGHT+IE7+W1Fq7uSCQ8ZbRiJFN/jR8TqFwGezrB0SHydUC1bMvjCrf3pdWBBMMyJOJABN0Xxx8OaHg==
-X-Received: by 2002:a17:902:ec88:b0:212:530:a65d with SMTP id d9443c01a7336-2129f5e73bemr113795055ad.38.1732385349660;
-        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732385498; x=1732990298;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aRKUntj3FsK+vGHd9SV+LXgOh6pOpY3AJO079Y2j5WQ=;
+        b=AufvZ9IwmY2g3cVWELmsmZsfgIbrqw3VD2j4zU4i/VEja3HkpYmCj4EzmmHM7r8VVp
+         zKh2yvSAdOCgplUWEUpZyXW3OW/LyHt+50kVuESLuM45SOBfc8NX8y/PkSZk6/zDc5XZ
+         xH4B9fZC1ETxpMx2AzBdRCOuiGh/uze8t8OossLFTwB6S+qXIq2VNGg3LS6wTMGynm5L
+         2pBH24jhD6jlmYou5LAcnlfOO5ae4X0CZAeBYvkz+yuoEr/V/AWLYC0RD4itvaxtN3PK
+         qt8M7hQKBKrr2GMl6908D45RRGHSOwN+HVpC0/Q6QcTV5Bb7pQFKjQZlk7hTfbev5qP8
+         mFhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdyPMaAkTg7SNSXEdKjIttGvYmMDlC3MIw/A/8mg8wbwUyfT0CHqCPhQROO98jSqtAFR5AHtRhlILqqZ7L@vger.kernel.org, AJvYcCXbmPuKdyfc/s6Bl6h/nss0Qt1Z+tOtRGLGhgJmM6HpqpZsjA7j2xGmROnK397QccejVrkDZXZf9dad+LIp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSvf7SV3rKzP5syhJkUJZIbAvOh5EDOAcBguE/iIOgtzkLTSqV
+	baF176GI3JaJo+mEp/lGDNiKUyhjI9CsTIC5V8g1hRI4g9hnPsHu
+X-Gm-Gg: ASbGncuDzpcVbDHjd8R9mQvx6Y5wxjsLAJbcn/VhpfZekpCBPjy+6M+6HCVknJ/gUCO
+	nWm8cy4kwQnBlkKuPLd9Kd+b1+XW1CFZ5FIOcjcm16NzrjpC85y8aZ3jJrZ9HT6FFgBIvys4qWc
+	w5tjh3gyinuPkbD6GtqBcRrXE4SYU2w/ggCz0IeQ2lIlQDs/GXOZj5MkOAG2sHoGbyHCy1NXHbm
+	BXUJdrfEBFVmEKubjBFfVDmx+ko8Qn/3LK1BsGgMqbl5XEakCfmFG/hTyqFgd4u1g==
+X-Google-Smtp-Source: AGHT+IH7JsT2i9QyVrPXyB5XpQoB19pl05nm3HgNi3l9Ub1OwD1IcHz4rt2GMP3yfLk7QKZTpx7TiA==
+X-Received: by 2002:a17:902:fc50:b0:212:9b1:e580 with SMTP id d9443c01a7336-2129f7d6f95mr91193985ad.56.1732385497753;
+        Sat, 23 Nov 2024 10:11:37 -0800 (PST)
 Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc225e45sm3626491a12.42.2024.11.23.10.09.07
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc2c5fcsm34512885ad.280.2024.11.23.10.11.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+        Sat, 23 Nov 2024 10:11:37 -0800 (PST)
 From: Jinliang Zheng <alexjlzheng@gmail.com>
 X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: viro@zeniv.linux.org.uk,
+To: alexjlzheng@gmail.com
+Cc: adobriyan@gmail.com,
+	alexjlzheng@tencent.com,
 	brauner@kernel.org,
-	jack@suse.cz,
-	mcgrof@kernel.org,
-	kees@kernel.org,
-	joel.granados@kernel.org,
-	adobriyan@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	flyingpeng@tencent.com,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH 0/6] Maintain the relative size of fs.file-max and fs.nr_open
-Date: Sun, 24 Nov 2024 02:08:55 +0800
-Message-ID: <20241123180901.181825-1-alexjlzheng@tencent.com>
+	jack@suse.cz,
+	joel.granados@kernel.org,
+	kees@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mcgrof@kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH 1/6] fs: fix proc_handler for sysctl_nr_open
+Date: Sun, 24 Nov 2024 02:11:28 +0800
+Message-ID: <20241123181128.183232-1-alexjlzheng@tencent.com>
 X-Mailer: git-send-email 2.41.1
+In-Reply-To: <20241123180901.181825-1-alexjlzheng@tencent.com>
+References: <20241123180901.181825-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,32 +99,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
-fs.file-max represent the number of file-handles that can be opened
-by each process and the entire system, respectively.
+Use proc_douintvec_minmax() instead of proc_dointvec_minmax() to handle
+sysctl_nr_open, because its data type is unsigned int, not int.
 
-Therefore, it's necessary to maintain a relative size between them,
-meaning we should ensure that files_stat.max_files is not less than
-sysctl_nr_open.
+Fixes: 9b80a184eaad ("fs/file: more unsigned file descriptors")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/file_table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-However, this point is overlooked in the current kernel code, and
-this patchset aims to rectify this. Additionally, patch 0001 fixes
-the type issue with the sysctl_nr_open handler.
-
-Jinliang Zheng (6):
-  fs: fix proc_handler for sysctl_nr_open
-  fs: make files_stat globally visible
-  sysctl: refactor __do_proc_doulongvec_minmax()
-  sysctl: ensure files_stat.max_files is not less than sysctl_nr_open
-  sysctl: ensure sysctl_nr_open is not greater than files_stat.max_files
-  fs: synchronize the access of fs.file-max and fs.nr_open
-
- fs/file_table.c        | 15 ++++++++---
- include/linux/fs.h     |  2 ++
- include/linux/sysctl.h |  4 +++
- kernel/sysctl.c        | 59 ++++++++++++++++++++++++++++++++++++++----
- 4 files changed, 71 insertions(+), 9 deletions(-)
-
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 976736be47cb..502b81f614d9 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -128,7 +128,7 @@ static struct ctl_table fs_stat_sysctls[] = {
+ 		.data		= &sysctl_nr_open,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= proc_douintvec_minmax,
+ 		.extra1		= &sysctl_nr_open_min,
+ 		.extra2		= &sysctl_nr_open_max,
+ 	},
 -- 
 2.41.1
 
