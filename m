@@ -1,137 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-35655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B42B9D6B45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 20:50:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F889D6BCF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 23:32:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3858728251D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:50:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596D2B216E5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 22:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51A1188583;
-	Sat, 23 Nov 2024 19:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF64019E970;
+	Sat, 23 Nov 2024 22:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgBJq+9/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYC6/wFe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B134545;
-	Sat, 23 Nov 2024 19:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60674137C37;
+	Sat, 23 Nov 2024 22:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732391404; cv=none; b=pFB1a9jy1hgz3a+Xk2MmQgfoBClLo8VSTNSSlqHPa8xCZZa97RRFM1QOUWZw6jIOO6tcF4TbBxHGVA3WgAvWGKOqxNBpQ/WD1kodKi31QxeX+Z3d/SMIis06LRiNsIYmaumS/AGAQ8Lxrcmt7oFJPeHajUgWkI8X2SNcTzPxhkw=
+	t=1732401170; cv=none; b=ra+dNqughUUPRW+FH5+UHdbV99wSYrjZWqgIofoFc6Lw7TJZ2T55A77OYv84uq8RldNieHWoIQNdQxM7dgd+Sgz3iy5ZMm+hF2xUiqxzxAbG0iEPB3liT+lkueTTDw6rJskTbP9c/sJ0DHS3Pd7cHAIJMPP6X8OingTJtyG/tXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732391404; c=relaxed/simple;
-	bh=0lJjK/Wj3Hu8vBZP4NKVokNyrxkIqZj5FLU4Os+ancI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xhf8GQxE4+OWJcunMnPJQiJprn9AiLFZtuayZElO8uUjUtqh+0sC53YbVTtoaXPlbeV4fTqF9Ddwhkl22uyi7QaARnMoE0WrFewW4R8KC4OwCw/LX2W7NQsxTOgFsD3IkKP2YV8Gun/fq+SENkUmEZE/0/KXsuhr33vRo9O3Jqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgBJq+9/; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1732401170; c=relaxed/simple;
+	bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=A6vJSahTeqFICYhz+DpGwQJ/eMWudNu5g7sKAoAkaq2lURWw1z3BO68VGV4Rde3Uk1VuOY8IzDHXOg0lK9O8YuSk86hGyR1n6cBtvkl5/KbVeUtUTs/xeUKkrk9OTMW1TudAN4mtulqVtGsGtubD76Wt/9SXNCTNMW4A2iDqEqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYC6/wFe; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7246c8b89b4so3146851b3a.1;
-        Sat, 23 Nov 2024 11:50:02 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539ee1acb86so3744302e87.0;
+        Sat, 23 Nov 2024 14:32:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732391402; x=1732996202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732401166; x=1733005966; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wtpJ5UMR5MaspyfBoKBZMhSAyxFrrP/3aDqY9HRg/tw=;
-        b=QgBJq+9/kIbGqrS9KV2K0UWpMvL1+qegKyVCgyS2ZEWUfzBP91yxsNNO0QfO+/h2zO
-         E2Zbuw4Ag+OTvfo0pAsOJ19ZPi8XThXlxN5kBubYq/kz158WWJcXYFx0ZKczK/h/1B+a
-         pKfTRLXBI+1B/Tk3AvRnupgxVbugrAuru+i2rqtipHfhO0zCN9ZCorKuhvvnQy0rZzPR
-         Bd1YJmOcg9ImZiVhdBrtI5GClFg6Cmza6rYw2aRVbWGoiUcnaO9DIGjhJOz7dh+2lRaY
-         K1O9k2FfA8w/epGM3pumRN4CI5ZhzxZ/w2oyklI7lLL3JNORCF8tMipwl6OgdK9/qsuL
-         XjPA==
+        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+        b=BYC6/wFeTvHn2BVEfp96GlV68wHq47r2S5oLE4MZhLVRB/Y+dq8VFgYfavPBOT80UX
+         Exnn2ilcfDuykw57IFrN4A/EPoO2P2xhqtHN8DYczb5qyrYVBQQQ7Kazepb84LxmVfJE
+         xkM/TTGwWzsQx8zrnMAw0Gby0tLO3sTgUSi1HvpDQ+tjhlh8cg7fAGmnd/L2b5yiijDb
+         1d4+lmBm61DFq5lIZJESDVNNb6x35ruNS5PPw0N1KZaMj/PSFR3hsm9CNr8Kr6bagZIO
+         hPYzkf0Wrp4zBkoxT1LJkmNc1DjhMvvuPCUSKWfY3uspbNF8wP97aQ+FQd/3WffWB8eH
+         25fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732391402; x=1732996202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wtpJ5UMR5MaspyfBoKBZMhSAyxFrrP/3aDqY9HRg/tw=;
-        b=WKZPm6G7+AJnWYBc6BrjshOqrf7C71hns+8/bBk8Fa5oDivXg8ZwypysaloRQA+F/B
-         X51GpVfhYJ3Zr2T3c1ef5nv5EoBmXGUqmZ9USsevbYjfc1jJxGw5qBgMrhns4RWObrTf
-         xMHbGr/XtdS298JSRrGXo1ze5GingNEgIRwMgiebeE4GkLOp+jIfvngsm4qIT1C3I3cc
-         I8vnyTS4GfDcNtn0dHvxwgk7KsnvNWSBtJ1fkZENKdBxZeccsuzcDHOxDYnciBd4DL1v
-         jFYND3ssmZ3rRlEv7wlL9Ipev0Nkfn0cKzNQi0N4qTftsF700EhEi01S1HVjpc7ODzD4
-         /O3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVfd33gn5O1691TF/PwW6nf+9/3KoNGWa0qYGMTLBNnA3oUxuixqueEMX7vl/i7gsxBs68stoifLwUDnEOn@vger.kernel.org, AJvYcCWAk5su8ZaWEccICHE7VfTpqxJKTlgMYsKkavCrCN5mR2FxhkMK0Nj1VRb4fbW3ug7rvatkd/6XwB6r7nuU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3fns4tyW60q2V9+DFmKShxS/tNK4PoP247tw0Rn6MkrOer9H8
-	Vey2NVEjYm6BIY62+nCpEaXsk3u8yXrBsvR1ah2hh4Fb6ijv5J60
-X-Gm-Gg: ASbGncvdGyEdmfJMnYhB+/hwt5QQJ2BVw8qBDAq/rki+SjMuf0ukQYgh6c4Xt9E/g1c
-	fa1HzG2I1KPCFpA+1VYwUKsApUktR+jptLYBVDZ2K7eygOOLZyqPi0Bgpc4+pvPFcd+q68DSbOP
-	iiBeNHKzcbFDXC0X1wXZiRAO5orrznSLvcOiGSCmf2/U+0BlZReRcT9UP4FDKjnGqWg/C7f3WFk
-	DtqPUWa5//kxH0Koy5QzSSIe8HHy1J7Yz2eITI05/RY1ljGCzNgsW8YSE4/Dqz+jg==
-X-Google-Smtp-Source: AGHT+IEonW02YsXMiQhDOe5tluD1XYyX9QKCECbVHY7UXTIZwuR2Rb7BIbNCftr/q27vK/JUE+i3IQ==
-X-Received: by 2002:a05:6a00:23cc:b0:71e:44f6:690f with SMTP id d2e1a72fcca58-724de95a306mr13402766b3a.8.1732391401983;
-        Sat, 23 Nov 2024 11:50:01 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:86c6:5b62:b5b7:ec1a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de48f108sm3627957b3a.87.2024.11.23.11.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 11:50:01 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
-	brauner@kernel.org,
-	quic_jjohnson@quicinc.com,
-	jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	sandeen@redhat.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	shuah@kernel.org,
-	anupnewsmail@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] hfs: Sanity check the root record
-Date: Sat, 23 Nov 2024 11:49:47 -0800
-Message-ID: <20241123194949.9243-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67400d16.050a0220.363a1b.0132.GAE@google.com>
-References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+        d=1e100.net; s=20230601; t=1732401166; x=1733005966;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+        b=atY4nfUIWbTSWiH8/kZl1morHJdp0IAkspNWHibCSUc4bswyDqnrSwVNWT0ZZ1HEI6
+         32sLF/JPk8IdsvFuiBrnotTrbSeNTunjwSNHz4tzPUBrDyTh8v8MJTlHQBwi6TNl3gAs
+         y7+Hrge6FK3PyO8tvPkdyf1djpDtdRKLbpWDR6seyBbXaYLRJp63g3eL1TrElxXDjYZ2
+         bfRdZAv552s4EOB7i3Lcvss1TCFA+q3WZGoMJqzdtmyR3hC4JWKkkselEIz7GKaMwizN
+         jVwoCp9zUVKbhezPHWOSjgSPbhV0EfgjXvncYHc/a2bPVyq0ypraoI0ft4ezIuGDNKm5
+         7STw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIac4pVN5mhgL9LlXU7mcQLMFZdnaMdb7FIbjYVmRCS1L0BPMkkkwfW199UQn0RPBZ5tIhW+8JVjqsiM1D@vger.kernel.org, AJvYcCWdez6fzXlYX23ueciuoRXPVDuWHijF45ohSjIk5bOmAiujqmHALwhCR7T2ib5lZps/y5dH0o6AlPaHt3cp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJVAMejh7m+rPJHqxDcSEXXCJZ5mlF8hWBK2+8N4kHwXhcpQ58
+	xNyYC3Z8KxE/AqA+b55q94TVDTC4PDbZRpevfwSBkSHv93X5/mxY
+X-Gm-Gg: ASbGncuiD2LO4om0XdSgU5gkBUpDK6q/6YoVREVtztNV3jkCuBuK5zsa8m1UKVe/mza
+	iRedZXZ4U+Tfbwc5NPtJZYLpL5NxrVXoIbeppiToJRH/chsPSv6+0SWV7VeFWe+9GxGY4zhSTF/
+	vLr0NLlVPSgg5xsBf+sZ8SCV9BWarg8X7QCEcUg524XkBRikwf/CbwZ8/S1b1sZ/pAcatQzBT6L
+	yMDxEt4f5/8Xc7gk7mfWsJ4USf+Pj6BAN9+QvKBP/w91r3iFNxaFHG6OG09oE0YyPeFQmOLDL6t
+	BD7WoyXN5XMnpzaf7j0LFw==
+X-Google-Smtp-Source: AGHT+IGTZX1caXgox/FS6gjjWk+Y9HI77Uft+ZNVRiPY45h1eXn0pFbaPstf2x2zy2pf6Tod7cKVwQ==
+X-Received: by 2002:a05:6512:282b:b0:53d:c2f6:8399 with SMTP id 2adb3069b0e04-53dd39b5533mr3975249e87.53.1732401166140;
+        Sat, 23 Nov 2024 14:32:46 -0800 (PST)
+Received: from [192.168.68.111] (c83-253-44-175.bredband.tele2.se. [83.253.44.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd244571dsm1090310e87.46.2024.11.23.14.32.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Nov 2024 14:32:45 -0800 (PST)
+Message-ID: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+Date: Sat, 23 Nov 2024 23:32:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+From: Anders Blomdell <anders.blomdell@gmail.com>
+Subject: Regression in NFS probably due to very large amounts of readahead
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In the syzbot reproducer, the hfs_cat_rec for the root dir has type
-HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
-This indicates it should be used as an hfs_cat_file, which is 102 bytes.
-Only the first 70 bytes of that struct are initialized, however,
-because the entrylength passed into hfs_bnode_read() is still the length of
-a directory record. This causes uninitialized values to be used later on,
-when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
+When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+we got terrible performance (lots of nfs: server x.x.x.x not responding).
+What triggered this problem was virtual machines with NFS-mounted qcow2 disks
+that often triggered large readaheads that generates long streaks of disk I/O
+of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache area of the
+machine.
 
-Add a check to make sure the retrieved record has the correct type
-for the root directory (HFS_CDR_DIR).
+A git bisect gave the following suspect:
 
-Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
-Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Signed-off-by: Leo Stone <leocstone@gmail.com>
----
- fs/hfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [8e24a758d14c0b1cd42ab0aea980a1030eea811f] Linux 6.11.3
+git bisect bad 8e24a758d14c0b1cd42ab0aea980a1030eea811f
+# status: waiting for good commit(s), bad commit known
+# good: [8a886bee7aa574611df83a028ab435aeee071e00] Linux 6.10.11
+git bisect good 8a886bee7aa574611df83a028ab435aeee071e00
+# good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+git bisect good 0c3836482481200ead7b416ca80c68a29cfdaabd
+# good: [f669aac34c5f76b58e6cad1fef0643e5ae16d413] Merge tag 'trace-v6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+git bisect good f669aac34c5f76b58e6cad1fef0643e5ae16d413
+# bad: [78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508] sysctl: treewide: constify the ctl_table argument of proc_handlers
+git bisect bad 78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508
+# good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag 'char-misc-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
+# good: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag 'pinctrl-v6.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+git bisect good 8e313211f7d46d42b6aa7601b972fe89dcc4a076
+# bad: [fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c] Merge tag 'mm-stable-2024-07-21-14-50' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect bad fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c
+# good: [f416817197e102b9bc6118101c3be652dac01a44] kmsan: support SLAB_POISON
+git bisect good f416817197e102b9bc6118101c3be652dac01a44
+# bad: [f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6] Docs/mm/damon/index: add links to admin-guide doc
+git bisect bad f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6
+# bad: [a0b856b617c585b86a077aae5176c946e1462b7d] mm/ksm: optimize the chain()/chain_prune() interfaces
+git bisect bad a0b856b617c585b86a077aae5176c946e1462b7d
+# good: [b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00] kmsan: do not pass NULL pointers as 0
+git bisect good b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00
+# bad: [58540f5cde404f512c80fb7b868b12005f0e2747] readahead: simplify gotos in page_cache_sync_ra()
+git bisect bad 58540f5cde404f512c80fb7b868b12005f0e2747
+# bad: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
+git bisect bad 7c877586da3178974a8a94577b6045a48377ff25
+# good: [ee86814b0562f18255b55c5e6a01a022895994cf] mm/migrate: move NUMA hinting fault folio isolation + checks under PTL
+git bisect good ee86814b0562f18255b55c5e6a01a022895994cf
+# good: [901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf] filemap: fix page_cache_next_miss() when no hole found
+git bisect good 901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf
+# first bad commit: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 3bee9b5dba5e..02d78992eefd 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -354,6 +354,8 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
-+		if (rec.type != HFS_CDR_DIR)
-+			res = -EIO;
- 	}
- 	if (res)
- 		goto bail_hfs_find;
--- 
-2.43.0
+I would much appreciate some guidance on how to proceed to track down what goes wrong.
+
+Best regards
+
+Anders Blomdell
 
 
