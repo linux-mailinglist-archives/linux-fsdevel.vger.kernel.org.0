@@ -1,265 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-35639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBB59D6960
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 15:01:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFBF9D6A76
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:03:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372D81615DA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 14:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DAEC161903
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 17:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195FC1CFA9;
-	Sat, 23 Nov 2024 14:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnlfKdR/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDDC14B942;
+	Sat, 23 Nov 2024 17:03:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E771172A;
-	Sat, 23 Nov 2024 14:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FC5182C5;
+	Sat, 23 Nov 2024 17:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732370470; cv=none; b=Iyq1/aywZCvRfKb2Ky391Ab+4p9yj5bioLZk4mHrFhxiZUS6exRbb/dN7opzg4h/nCIeyEJuuSMbeeYjBrD7F17y74hFwk75CFIxQpptfGgNuyFF1C6P/5ZBBmEWdAnS9YBquj8KMrwyy5DGWl24GsjbIvCoAztQLcSh99GhM9Q=
+	t=1732381380; cv=none; b=GjwiPsb1GZ+VbcsIAkUfY5tiWUeM7rRPwkJa1tO6Iu5VoFffcs6bUByRxYSSHpNWUZqvhztKAYwF2RIQwNnDokXh/+aB4gK2n+scAA2Nx2ECmO7QIyy2rSsAlOKlZpI5LVOj3W3EVjmp5ElozSIabr64YZR+MCbAs4QTHFTmp6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732370470; c=relaxed/simple;
-	bh=WW3T3lsrLvsiimpxaEbsVwcK4gOxfeY7iZSw0tbUeHU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UG+5OhQvVM+TX1ED5wddu+24boIirbPgxXmZOhHph9Br0tiFYWTmX5M4cYNLKIE4pVr81wsjQ35Wsxcpm6PBByQ37N5E327uBUkKIa3NbP2qx7Xjf5FqUSQdx/Gdq82ebB37I2WQILK5rJbd9xi4j9yQpEvAPos2WCPFD/gesHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnlfKdR/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284D4C4CECD;
-	Sat, 23 Nov 2024 14:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732370469;
-	bh=WW3T3lsrLvsiimpxaEbsVwcK4gOxfeY7iZSw0tbUeHU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=FnlfKdR/jv32acPbd1qw0j8VcsJ07iIcNILvT7nfs53QPSs9mrOOxE6+Z4QHdMO6Y
-	 Nb/L1hAIvsC9F8OX0YAV8pMJ+mD86AOyIZbBSTW0xjz1TcgVFIgXzauv+9JIfunLxs
-	 xPaXA7he8DQfuQdei47kXBbLVPZadPVhXBlYj83Z3hR3T0Hq8XgRW4vohaMmDlzJga
-	 d2TYvnJlC/arWCv+apxy7SJGIpsM6ODOiOhuW6u7IJZKhK0KQgfjZL6hh+0eVy0d+I
-	 Zml5dDJGnKifGcyNvrxfHiT8UFdGsH7bSiVNe0YWGKu5kbGIRDHRZ65ls/adygJJlt
-	 rdxzI0CT9P0Jw==
-Message-ID: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
-Subject: Re: [PATCH v3] fs: Fix data race in inode_set_ctime_to_ts
-From: Jeff Layton <jlayton@kernel.org>
-To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Date: Sat, 23 Nov 2024 09:01:08 -0500
-In-Reply-To: <20241122130642.460929-1-zhenghaoran@buaa.edu.cn>
-References: <20241122112228.6him45jdtibue26s@quack3>
-	 <20241122130642.460929-1-zhenghaoran@buaa.edu.cn>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
+	s=arc-20240116; t=1732381380; c=relaxed/simple;
+	bh=qYV6ojSzaiLvDcHiuvU53HQJ0j3I4z89aMoHzcBSAFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erQI+aDmjXgn+9xfVl4DU093nNVywbtzRH2hwV1QHvUuAmkDkG78gcBlAqLzt/1eLgHyjCz0fjOepqL+WMkPUimkQOwEJfx2SQWH6aj6FZ8IT2pZz0hj81CwqXZZCKuEjhG1iI8vtlMAm0tJR3rJu3UTU5bz5HldSEZhHZ3l4xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4ANH1ekl027103;
+	Sat, 23 Nov 2024 11:01:40 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4ANH1bR9027102;
+	Sat, 23 Nov 2024 11:01:37 -0600
+Date: Sat, 23 Nov 2024 11:01:37 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <songliubraving@meta.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "eddyz87@gmail.com" <eddyz87@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "martin.lau@linux.dev" <martin.lau@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "mattbobrowski@google.com" <mattbobrowski@google.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "repnop@google.com" <repnop@google.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+Message-ID: <20241123170137.GA26831@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com> <20241120165425.GA1723@wind.enjellic.com> <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com> <20241121160259.GA9933@wind.enjellic.com> <d0b61238-735b-478c-9e18-c94e4dde4d88@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0b61238-735b-478c-9e18-c94e4dde4d88@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 23 Nov 2024 11:01:40 -0600 (CST)
 
-On Fri, 2024-11-22 at 21:06 +0800, Hao-ran Zheng wrote:
-> A data race may occur when the function `inode_set_ctime_to_ts()` and
-> the function `inode_get_ctime_sec()` are executed concurrently. When
-> two threads call `aio_read` and `aio_write` respectively, they will
-> be distributed to the read and write functions of the corresponding
-> file system respectively. Taking the btrfs file system as an example,
-> the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
-> finally called. These two functions created a data race when they
-> finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
-> The specific call stack that appears during testing is as follows:
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
-> btrfs_update_inode+0x45e/0xbb0 [btrfs]
-> btrfs_dirty_inode+0x2b8/0x530 [btrfs]
-> btrfs_update_time+0x1ad/0x230 [btrfs]
-> touch_atime+0x211/0x440
-> filemap_read+0x90f/0xa20
-> btrfs_file_read_iter+0xeb/0x580 [btrfs]
-> aio_read+0x275/0x3a0
-> io_submit_one+0xd22/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> btrfs_write_check+0xa15/0x1390 [btrfs]
-> btrfs_buffered_write+0x52f/0x29d0 [btrfs]
-> btrfs_do_write_iter+0x53d/0x1590 [btrfs]
-> btrfs_file_write_iter+0x41/0x60 [btrfs]
-> aio_write+0x41e/0x5f0
-> io_submit_one+0xd42/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> To address this issue, it is recommended to add WRITE_ONCE
-> when writing the `inode->i_ctime_sec` variable.and add
-> READ_ONCE when reading in function `inode_get_ctime_sec()`
-> and `inode_get_ctime_nsec()`.
->=20
-> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-> ---
-> V2 -> V3: Added READ_ONCE in inode_get_ctime_nsec() and addressed review =
-comments
-> V1 -> V2: Added READ_ONCE in inode_get_ctime_sec()
-> ---
->  include/linux/fs.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3559446279c1..c18f9a9ee5e7 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1655,12 +1655,12 @@ static inline struct timespec64 inode_set_mtime(s=
-truct inode *inode,
-> =20
->  static inline time64_t inode_get_ctime_sec(const struct inode *inode)
->  {
-> -	return inode->i_ctime_sec;
-> +	return READ_ONCE(inode->i_ctime_sec);
->  }
-> =20
->  static inline long inode_get_ctime_nsec(const struct inode *inode)
->  {
-> -	return inode->i_ctime_nsec;
-> +	return READ_ONCE(inode->i_ctime_nsec);
->  }
-> =20
->  static inline struct timespec64 inode_get_ctime(const struct inode *inod=
-e)
-> @@ -1674,8 +1674,8 @@ static inline struct timespec64 inode_get_ctime(con=
-st struct inode *inode)
->  static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inod=
-e,
->  						      struct timespec64 ts)
->  {
-> -	inode->i_ctime_sec =3D ts.tv_sec;
-> -	inode->i_ctime_nsec =3D ts.tv_nsec;
-> +	WRITE_ONCE(inode->i_ctime_sec, ts.tv_sec);
-> +	WRITE_ONCE(inode->i_ctime_nsec, ts.tv_nsec);
->  	return ts;
->  }
-> =20
+On Thu, Nov 21, 2024 at 10:11:16AM -0800, Casey Schaufler wrote:
 
-Looks reasonable. There are also bare fetches and stores of the
-i_ctime_sec field in inode_set_ctime_current(). Do we need something
-like this in addition to the above?
+Good morning, I hope the weekend is going well for everyone.
 
+> On 11/21/2024 8:02 AM, Dr. Greg wrote:
+> > On Thu, Nov 21, 2024 at 08:28:05AM +0000, Song Liu wrote:
+> >
+> >> Hi Dr. Greg,
+> >>
+> >> Thanks for your input!
+> > Good morning, I hope everyone's day is going well.
+> >
+> >>> On Nov 20, 2024, at 8:54???AM, Dr. Greg <greg@enjellic.com> wrote:
+> >>>
+> >>> On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
+> >> [...]
+> >>
+> >>>>> 2.) Implement key/value mapping for inode specific storage.
+> >>>>>
+> >>>>> The key would be a sub-system specific numeric value that returns a
+> >>>>> pointer the sub-system uses to manage its inode specific memory for a
+> >>>>> particular inode.
+> >>>>>
+> >>>>> A participating sub-system in turn uses its identifier to register an
+> >>>>> inode specific pointer for its sub-system.
+> >>>>>
+> >>>>> This strategy loses O(1) lookup complexity but reduces total memory
+> >>>>> consumption and only imposes memory costs for inodes when a sub-system
+> >>>>> desires to use inode specific storage.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index b13b778257ae..d869ee6f1c6b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2788,7 +2788,7 @@ struct timespec64 inode_set_ctime_current(struct inod=
-e *inode)
- 	 */
- 	cns =3D smp_load_acquire(&inode->i_ctime_nsec);
- 	if (cns & I_CTIME_QUERIED) {
--		struct timespec64 ctime =3D { .tv_sec =3D inode->i_ctime_sec,
-+		struct timespec64 ctime =3D { .tv_sec =3D READ_ONCE(inode->i_ctime_sec),
- 					    .tv_nsec =3D cns & ~I_CTIME_QUERIED };
-=20
- 		if (timespec64_compare(&now, &ctime) <=3D 0) {
-@@ -2809,7 +2809,7 @@ struct timespec64 inode_set_ctime_current(struct inod=
-e *inode)
- 	/* Try to swap the nsec value into place. */
- 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
- 		/* If swap occurred, then we're (mostly) done */
--		inode->i_ctime_sec =3D now.tv_sec;
-+		WRITE_ONCE(inode->i_ctime_sec, now.tv_sec);
- 		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
- 		mgtime_counter_inc(mg_ctime_swaps);
- 	} else {
-@@ -2824,7 +2824,7 @@ struct timespec64 inode_set_ctime_current(struct inod=
-e *inode)
- 			goto retry;
- 		}
- 		/* Otherwise, keep the existing ctime */
--		now.tv_sec =3D inode->i_ctime_sec;
-+		now.tv_sec =3D READ_ONCE(inode->i_ctime_sec);
- 		now.tv_nsec =3D cur & ~I_CTIME_QUERIED;
- 	}
- out:
+> >>>> SELinux and Smack use an inode blob for every inode. The performance
+> >>>> regression boggles the mind. Not to mention the additional
+> >>>> complexity of managing the memory.
 
+> >>> I guess we would have to measure the performance impacts to understand
+> >>> their level of mind boggliness.
+> >>>
+> >>> My first thought is that we hear a huge amount of fanfare about BPF
+> >>> being a game changer for tracing and network monitoring.  Given
+> >>> current networking speeds, if its ability to manage storage needed for
+> >>> it purposes are truely abysmal the industry wouldn't be finding the
+> >>> technology useful.
+> >>>
+> >>> Beyond that.
+> >>>
+> >>> As I noted above, the LSM could be an independent subscriber.  The
+> >>> pointer to register would come from the the kmem_cache allocator as it
+> >>> does now, so that cost is idempotent with the current implementation.
+> >>> The pointer registration would also be a single instance cost.
+> >>>
+> >>> So the primary cost differential over the common arena model will be
+> >>> the complexity costs associated with lookups in a red/black tree, if
+> >>> we used the old IMA integrity cache as an example implementation.
+> >>>
+> >>> As I noted above, these per inode local storage structures are complex
+> >>> in of themselves, including lists and locks.  If touching an inode
+> >>> involves locking and walking lists and the like it would seem that
+> >>> those performance impacts would quickly swamp an r/b lookup cost.
+
+> >> bpf local storage is designed to be an arena like solution that
+> >> works for multiple bpf maps (and we don't know how many of maps we
+> >> need ahead of time). Therefore, we may end up doing what you
+> >> suggested earlier: every LSM should use bpf inode storage. ;) I am
+> >> only 90% kidding.
+
+> > I will let you thrash that out with the LSM folks, we have enough on
+> > our hands just with TSEM.... :-)
+> >
+> > I think the most important issue in all of this is to get solid
+> > performance measurements and let those speak to how we move forward.
+> >
+> > As LSM authors ourself, we don't see an off-putting reason to not have
+> > a common arena storage architecture that builds on what the LSM is
+> > doing.  If sub-systems with sparse usage would agree that they need to
+> > restrict themselves to a single pointer slot in the arena, it would
+> > seem that memory consumption, in this day and age, would be tolerable.
+> >
+> > See below for another idea.
+
+> >>>>> Approach 2 requires the introduction of generic infrastructure that
+> >>>>> allows an inode's key/value mappings to be located, presumably based
+> >>>>> on the inode's pointer value.  We could probably just resurrect the
+> >>>>> old IMA iint code for this purpose.
+> >>>>>
+> >>>>> In the end it comes down to a rather standard trade-off in this
+> >>>>> business, memory vs. execution cost.
+> >>>>>
+> >>>>> We would posit that option 2 is the only viable scheme if the design
+> >>>>> metric is overall good for the Linux kernel eco-system.
+
+> >>>> No. Really, no. You need look no further than secmarks to understand
+> >>>> how a key based blob allocation scheme leads to tears. Keys are fine
+> >>>> in the case where use of data is sparse. They have no place when data
+> >>>> use is the norm.
+
+> >>> Then it would seem that we need to get everyone to agree that we can
+> >>> get by with using two pointers in struct inode.  One for uses best
+> >>> served by common arena allocation and one for a key/pointer mapping,
+> >>> and then convert the sub-systems accordingly.
+> >>>
+> >>> Or alternately, getting everyone to agree that allocating a mininum of
+> >>> eight additional bytes for every subscriber to private inode data
+> >>> isn't the end of the world, even if use of the resource is sparse.
+
+> >> Christian suggested we can use an inode_addon structure, which is 
+> >> similar to this idea. It won't work well in all contexts, though. 
+> >> So it is not as good as other bpf local storage (task, sock,
+> >> cgroup). 
+
+> > Here is another thought in all of this.
+> >
+> > I've mentioned the old IMA integrity inode cache a couple of times in
+> > this thread.  The most peacable path forward may be to look at
+> > generalizing that architecture so that a sub-system that wanted inode
+> > local storage could request that an inode local storage cache manager
+> > be implemented for it.
+> >
+> > That infrastructure was based on a red/black tree that used the inode
+> > pointer as a key to locate a pointer to a structure that contained
+> > local information for the inode.  That takes away the need to embed
+> > something in the inode structure proper.
+> >
+> > Since insertion and lookup times have complexity functions that scale
+> > with tree height it would seem to be a good fit for sparse utilization
+> > scenarios.
+> >
+> > An extra optimization that may be possible would be to maintain an
+> > indicator flag tied the filesystem superblock that would provide a
+> > simple binary answer as to whether any local inode cache managers have
+> > been registered for inodes on a filesystem.  That would allow the
+> > lookup to be completely skipped with a simple conditional test.
+> >
+> > If the infrastructure was generalized to request and release cache
+> > managers it would be suitable for systems, implemented as modules,
+> > that have a need for local inode storage.
+
+> Do you think that over the past 20 years no one has thought of this?
+> We're working to make the LSM infrastructure cleaner and more
+> robust.  Adding the burden of memory management to each LSM is a
+> horrible idea.
+
+No, I cannot ascribe to the notion that I, personally, know what
+everyone has thought about in the last 20 years.
+
+I do know, personally, that very talented individuals who are involved
+with large security sensitive operations question the trajectory of
+the LSM.  That, however, is a debate for another venue.
+
+For the lore record and everyone reading along at home, you
+misinterpreted or did not read closely my e-mail.
+
+We were not proposing adding memory management to each LSM, we were
+suggesting to Song Liu that generalizing, what was the old IMA inode
+integrity infrastructure, may be a path forward for sub-systems that
+need inode local storage, particularly systems that have sparse
+occupancy requirements.
+
+Everyone has their britches in a knicker about performance.
+
+Note that we called out a possible optimization for this architecture
+so that there would be no need to even hit the r/b tree if a
+filesystem had no sub-systems that had requested sparse inode local
+storage for that filesystem.
+
+> > It also offers the ability for implementation independence, which is
+> > always a good thing in the Linux community.
+
+> Generality for the sake of generality is seriously overrated.
+> File systems have to be done so as to fit into the VFS infrastructure,
+> network protocols have to work with sockets without impacting the
+> performance of others and so forth.
+
+We were not advocating generality for the sake of generality, we were
+suggesting a generalized architecture, that does not require expansion
+of struct inode, because Christian has publically indicated there is
+no appetite by the VFS maintainers for consuming additional space in
+struct inode for infrastructure requiring local inode storage.
+
+You talk about cooperation, yet you object to any consideration that
+the LSM should participate in a shared arena environment where
+sub-systems wanting local inode storage could just request a block in
+a common arena.  The LSM, in this case, is just like a filesystem
+since it is a consumer of infrastructure supplied by the VFS and
+should thus cooperate with other consumers of VFS infrastructure.
+
+If people go back and read our last paragraph you replied to we were
+not speaking to the advantages of generality, we were speaking to the
+advantage of independent implementations that did unnecessarily cross
+sub-system lines.  Casual observation of Linux development, and this
+thread, would suggest the importance of that.
+
+I need to get a bunch of firewood under cover so I will leave things
+at that.
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
