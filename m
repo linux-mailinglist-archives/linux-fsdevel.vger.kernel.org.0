@@ -1,127 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-35643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CEB9D6A98
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2BC9D6AAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 19:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628F8B21C96
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 17:29:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AB3B21612
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2024 18:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C0815B0EF;
-	Sat, 23 Nov 2024 17:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D1E146013;
+	Sat, 23 Nov 2024 18:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YhaQKd+8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBxDMkfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01FD146588
-	for <linux-fsdevel@vger.kernel.org>; Sat, 23 Nov 2024 17:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553452AE90;
+	Sat, 23 Nov 2024 18:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732382969; cv=none; b=BhFb6milt4f//cTsoxZ34VBdnRecVSWOb+42GLz4ZxpuKlFh6j/dLsDOwB5Jh+eTZHJcY1nzSa4TqbH48MQnbV5xhxkCSxvI9DENUXaPv4+f5y+zhxfn78+1a5VX2hC0qptXKxD39sOhRm+uE4wFAJrQO9ZTpgv7yRU8NPwxlOY=
+	t=1732385351; cv=none; b=YMiOSWCyvLqQHGdi8EKvlzI0oT6erRRZ9zGEZUpmMURUyFS6YjJW/IYbgf2gS07Iu1xznXpl/jbKy39ZdRgrqPDYc+NzULfOwWDwYLYNlcQ7AoisnYklWR6rLaMgMVwzOgvR+RA67X0EHgv50rAym/jzMFdzeSRpuBrxreFHtjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732382969; c=relaxed/simple;
-	bh=JW0p9SO4wNjvfWYrh8A4OxTL6/rZR0ph+y4ILjPxPlY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I4SsNDpQp3gIDJ6G6uf9cMKb5u1BkwTJsFC9zEuyjNabcRp9r4DuSdvINn8cmvdhijLLa6PVSuM5Da/74R5TCpBA6Koa8F74wrIhkl32p8sOCr9u3BcdOhO0pn3Romtr2Ed6zDpF6Z/IYQe+rIAhMvT/105Jb+pVtb5aJkazKnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YhaQKd+8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfa1ec3b94so3717564a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Nov 2024 09:29:26 -0800 (PST)
+	s=arc-20240116; t=1732385351; c=relaxed/simple;
+	bh=6l9s3Ydvl+883iSfMEF6k5y+5gcrrJqW4lK9xyUxr34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCAOF1eZ1i4ZYtJcHJ9iJZ1hTZ/uPaJKI5k5W0z1wz1lMHgS4sx+c/m7Ms6tmd/x04gK6slxAFlygrOR7R8eo8sxmm4ylRfJbkfSqEFQUht9q92GVeo2DiVy1BWz581A1aqC5qYlafkuljWYGgvNkzHZ1YxVdH4PdSsQWoeNSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBxDMkfF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-212776d6449so34878065ad.1;
+        Sat, 23 Nov 2024 10:09:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732382965; x=1732987765; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5vCmemIQJAyBLtyohdE3n6qmf1JVeKEXVkWL++xifbs=;
-        b=YhaQKd+8gO14MLKy18HUJtp8kTqyPb7xy8YzQjROvw5t7cN02GnSUHFOj2karQR7Gz
-         sNsHz+CgVWJTb4ZppUwPEOkDTk92lcSdX+gDsDJx8Solug8rHw7sDV88eKOQvuHxPSF+
-         zVRGolYTeg5ABEp0mQqCwi62V5ZvlOdVmp53g=
+        d=gmail.com; s=20230601; t=1732385350; x=1732990150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
+        b=OBxDMkfF7zB0budwXpXToDRKVeRxEzDLpCjLkQ/+9ykqfVYN8xeCp3bZ3OFSD2cl6M
+         r5ArWNUma88M9uc+mYVOIRIxLWe9ZK5cNVwJmH1TdBuZCCadxD7qDvRwH8v8/yYqJDpD
+         7ebWStGwuKc3seJieDCVfwfGK4Cr3c7HFxbyeXtwIzXgTIUzunFVWmTMI0xAOkk5IWq4
+         ozj3n3JNHbmSU1IKHQFC2n4ioaQrU5jOmjWMDrJ9twKJzTimHAQkUZZrb6VTUw+0UcnP
+         X/x4/R8+gFuUMRF4d/5ttn/5SHFkxTkgqAIWewMDssx5g69ov5B9bnzLVABCwNB8IMnP
+         VSqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732382965; x=1732987765;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732385350; x=1732990150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5vCmemIQJAyBLtyohdE3n6qmf1JVeKEXVkWL++xifbs=;
-        b=tsc58E0fGCeY+ySlgJ+ZQecQTEMWdzPu8fhF7LVmTAR9UGJAdrVOHe2n6BM+N/DjHZ
-         B1HyrC1Z7T3QNQJPVvBqrEBW3kdz0D8+wBFGFo483yYgvn4iDy6+FyNKNLKiOvYid9oc
-         m6hSlnjWwI9wuhjDn46fwzRF+Bin17UaqLKHJrUv93hT749Oe54D7RnJg1XIkYMQFD3k
-         P4F2NbLxFdlMftmry1kmjRx0FwQKO6e01zPr69sjk4MGzrRtgkZ0p29AnrJlgDt6qbhz
-         o9nnZCTorL8BqtKyT1Qgz+i29+f6cSGy4s/3QKF1zwGjvts09+Vy4/U21QQbQ5zKk+kg
-         tpvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBfRqCDE7tYAn/dNgzirSn/D5Moom0C/aIdwXyrUtXrcy4KuNRPBgbGAs0u/iVy0CtDsaOgWcusvcrUHIU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcI7Y5IuUwC/qktG6OWXHLx5c4TOq79/7OvQ7M/NvXrcZYTXiw
-	7v7krMROl6yfS2T3thA2nrsxdb9foHeiyD1RgFAuVs4Q8cqBzsxCCsznCrTgLPS1iXJBfffnGEN
-	xQ7D+3Q==
-X-Gm-Gg: ASbGncuqOBM/cNs2xSoYU43QUodx4S+DerbycsQOZLC9TQ1tvy79G5PiJeeL/p++9wL
-	GeyMjPFkXE91U3ndtDaDFsYF1zDtMvbtJrtPzhspIfj0u3aJ7Dm/+/mv236suZ5XXyMbujwkRFH
-	n8QmWCqlFwFwVGHFMJCXHamjxxDnnuA4F8gPiWsZ+w+3bqMiJfJ+WMOn5yOOfB+hPZu96NqlOpZ
-	uX1SC6R0lpue5zVhc9Lu7jn3Gw/mJFhXlGtimjvWqI5OwejQcFz1VGjiDiUfZYcQ/jJcmPlQx7W
-	cBnzOR3J7qOrPGYJQJ7iVXKp
-X-Google-Smtp-Source: AGHT+IHcMytunQ6eGxMQqgoxCsPUWywhaXdGc52UptBbQr6Xad7bzEG2nSP61dzx5kJ++4/5FdW9sQ==
-X-Received: by 2002:a05:6402:1eca:b0:5cf:c97c:821b with SMTP id 4fb4d7f45d1cf-5d020792a11mr5837422a12.23.1732382964738;
-        Sat, 23 Nov 2024 09:29:24 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3c040fsm2214371a12.50.2024.11.23.09.29.21
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 09:29:23 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa503cced42so277464366b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Nov 2024 09:29:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0kOpGBJnaxcYmWkf2B7EyEPANwJepguVT04ZJ0alhEFjQoekwQZU14AQOFWqT0+GGtH0rHQD/5yarxkmb@vger.kernel.org
-X-Received: by 2002:a17:906:9d2:b0:a9a:13f8:60b9 with SMTP id
- a640c23a62f3a-aa509985a54mr597055366b.36.1732382961227; Sat, 23 Nov 2024
- 09:29:21 -0800 (PST)
+        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
+        b=QL8DeKFKsrqUQFatvLYtWzBugvQYOivgvf/m17K55WaZkrxpkuw0qcEMtfVtFhl6ky
+         vlfpwu8ciF69+E8qBS21e2NRitvYRIJtYPZskAgW35h5Ng1bbsIlx9YlaDeKmLFEQVV9
+         ic8fh+4+zo1GOUTuh+X/kPo7Md6vmziAllSUXoBy90CIVsx/kGSWwei442SP/aIiGBS2
+         AwSH/Sw4kXElILapqzIjEo1ZHUcy+cCjYeKhBw7xpqpWTGqQYoUGB+0kdKjYAomKYAv+
+         PJDUUgoKLdJ3AB/zosVbO/YXzudENbBbu3dQIuHuGLLrxkbi4HIATtzFayGWRsRXHSO7
+         naug==
+X-Forwarded-Encrypted: i=1; AJvYcCUlAGNkVqUDo2+31Vp1kFCjU72mkteaivT/xGE4NPxqmJazsnvvybxt0lX3XIWOtXYRm6KP1B7GrJIJUWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb7UELlvfbcPbY+aQTsln9IcA6pssoMmS9Oyp5K07judjGOm0W
+	spH7CpovgjYffhqDQEAnHEVctxXCDqegI/Y7MOWVXvbc7/daAJgB
+X-Gm-Gg: ASbGncukwrIKnBxfP/Qn21Mmt0oTp3ht9EmdQ6jm0+lX4v7RdtVGAL7aXOtN7tpqcFd
+	HnDFw65/aMFh6VmwEGTZmjvvxJ/Cq2Z+HTaEMPpiHpoPZOe8pfUxVHnG9E4eqz3wGsDZ+OezMU6
+	9EqugPMUGQmrYzjIRio3jC4N5tM1ks8ggYFLEN6r+3BSwRECnkfakzI/HfCTLB9AU/iz+iTjpub
+	Lb8dsHlKJkjHhYGVmcfe3TWne5wAhLTlKwSdwkdJCchjkS/9wEm42fUG2Q+EzxebQ==
+X-Google-Smtp-Source: AGHT+IE7+W1Fq7uSCQ8ZbRiJFN/jR8TqFwGezrB0SHydUC1bMvjCrf3pdWBBMMyJOJABN0Xxx8OaHg==
+X-Received: by 2002:a17:902:ec88:b0:212:530:a65d with SMTP id d9443c01a7336-2129f5e73bemr113795055ad.38.1732385349660;
+        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc225e45sm3626491a12.42.2024.11.23.10.09.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mcgrof@kernel.org,
+	kees@kernel.org,
+	joel.granados@kernel.org,
+	adobriyan@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	flyingpeng@tencent.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH 0/6] Maintain the relative size of fs.file-max and fs.nr_open
+Date: Sun, 24 Nov 2024 02:08:55 +0800
+Message-ID: <20241123180901.181825-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122095746.198762-1-amir73il@gmail.com> <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
- <20241123-bauhof-tischbein-579ff1db831a@brauner>
-In-Reply-To: <20241123-bauhof-tischbein-579ff1db831a@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 23 Nov 2024 09:29:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
-Message-ID: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs updates for 6.13
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 23 Nov 2024 at 04:06, Christian Brauner <brauner@kernel.org> wrote:
->
-> So just to clarify when that issue was brought up I realized that the
-> cred bump was a big deal for overlayfs but from a quick grep I didn't
-> think for any of the other cases it really mattered that much.
+According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
+fs.file-max represent the number of file-handles that can be opened
+by each process and the entire system, respectively.
 
-Oh, I agree. It's probably not really a performance issue anywhere
-else. I don't think this has really ever come up before.
+Therefore, it's necessary to maintain a relative size between them,
+meaning we should ensure that files_stat.max_files is not less than
+sysctl_nr_open.
 
-So my "please convert everything to one single new model" is not
-because I think that would help performance, but because I really hate
-having two differently flawed models when I think one would do.
+However, this point is overlooked in the current kernel code, and
+this patchset aims to rectify this. Additionally, patch 0001 fixes
+the type issue with the sysctl_nr_open handler.
 
-We have other situations where we really do have two or more different
-interfaces for the "same" thing, with very special rules: things like
-fget() vs fget_raw() vs fget_task() (and similar issues wrt fdget).
+Jinliang Zheng (6):
+  fs: fix proc_handler for sysctl_nr_open
+  fs: make files_stat globally visible
+  sysctl: refactor __do_proc_doulongvec_minmax()
+  sysctl: ensure files_stat.max_files is not less than sysctl_nr_open
+  sysctl: ensure sysctl_nr_open is not greater than files_stat.max_files
+  fs: synchronize the access of fs.file-max and fs.nr_open
 
-But I think those other situations have more _reason_ for them.
+ fs/file_table.c        | 15 ++++++++---
+ include/linux/fs.h     |  2 ++
+ include/linux/sysctl.h |  4 +++
+ kernel/sysctl.c        | 59 ++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 71 insertions(+), 9 deletions(-)
 
-The whole "override_creds()" thing is _already_ such a special
-operation, that I hate seeing two subtly different versions of the
-interface, both with their own quirks.
+-- 
+2.41.1
 
-Because the old interface really isn't some "perfectly tailored"
-thing. Yes, the performance implications were a surprise to me and I
-hadn't seen that before, but the "refcounting isn't wonderful" was
-_not_ really a big surprise at all.
-
-                        Linus
 
