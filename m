@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-35691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CC39D749D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 16:13:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9CE9D72E2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61E3BB44D08
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EBE4286245
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158D220B81F;
-	Sun, 24 Nov 2024 13:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE6320C027;
+	Sun, 24 Nov 2024 13:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVdTktDF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YipDC/g/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A320B80D;
-	Sun, 24 Nov 2024 13:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22620C017;
+	Sun, 24 Nov 2024 13:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455889; cv=none; b=Gaq0aXTxoKf/OOXmGPeh2raQZgiufK40Q8cILRrpYgwdQODi+T07s1xlNbR9GlrN1uXFGECL1ljgbKtK+UO9mX0tiE9KVWdxO8HjsX0LSvP9rquLPRiREOqLO69AKBeuZgbGZgP3C4k0ucioGqBkafEiopxW2qm1YtmeO3XlQ6w=
+	t=1732455891; cv=none; b=K7r3kQ+HFK35fwPTk8D82Oa1ln3At7lON7BArjiMUOmaZIN5u9XfyjfBw6TixikyGA6UOYaDNH9BupoGB7xv2N9N+v/6KHU/MhGcH+5B/v5unkp+DqDDhmAhdkU8NaY3TYL/6PUnPTV8sQ1P0y2ABAJzEI2nJ6r78DF05zocXMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455889; c=relaxed/simple;
-	bh=cGAtL0IdSL5OIXyZPY4NHjrBposxrRNGFqPn12ctCts=;
+	s=arc-20240116; t=1732455891; c=relaxed/simple;
+	bh=nXqY7H+FrDdF1GL8dP3Sq3a9av6/N4Dvi59BVLXNltw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nr5vRb94h5RdpCIDtEoglhx1dOFNnImxJqYDKYCO28/FeJ2TabavKLgqOChWjLMvShzbp5xs8Z4TrkIUzFucIgBoSMDTiFwF/9l8sIp96PcCw+sGJ4IM5a1XRLX/67ZmUQO6IAQfRH/9b8A2h7JHtN+t8/QYyGwUBmD4LapRx8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVdTktDF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A46C4CECC;
-	Sun, 24 Nov 2024 13:44:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=A4+3FO/6ac2bUwMm7w1bIznJBEkSITj3fSdYN5Ig4H4a1mXKQOOwqK9a1eQCTb2K3/RycLGER/n5cXcr+JWuyHt4bKkeagTSBWPZ+NVOFhucvcJgTwm2Hlz5gvaU9TqWHm/bzwkY/9dxwV0O5Im4BTbh11EhqQR2DiJwjA0Em50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YipDC/g/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D9BC4CED7;
+	Sun, 24 Nov 2024 13:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455889;
-	bh=cGAtL0IdSL5OIXyZPY4NHjrBposxrRNGFqPn12ctCts=;
+	s=k20201202; t=1732455891;
+	bh=nXqY7H+FrDdF1GL8dP3Sq3a9av6/N4Dvi59BVLXNltw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hVdTktDF9OqnxXZHPQYIyy17fiN3Ey2QZVHkTtBZWX8bOjiVkjJEdPOuE0VUrdQAJ
-	 bvaiGs0dVP6PI9ONX9+Y1NbRT3gSPLPd2G3U2n2UJUx55QNSh16TeFZUN5P2OnGwHQ
-	 dtWA4PpzxtINxuSpwHzbDYdg+TqF0KnYwYTVW5qk3qYNhpBuxOXSrDfmzVZMe0/CDd
-	 dpsoJOul4Ozs2aQG03Prc8Qo1mjXxHKo5SEXFKg4VixgZiHODJm7t+zwU0So+Dl1fe
-	 9kKDKqrU8BXsa037EH45jJKt+iA4N3MLiiixHoetXooSZxcdB0XiDjKZgucemcA+S8
-	 Vz8rso9SHXZLw==
+	b=YipDC/g/bm/CiuXf0ojbRX3epnqq99kdT/SPd/EhKM6b2KSne8Cv8Lt0ohfQoKEDp
+	 EMIr4fSKOnkwcEwv2olG03rChXkkPhsABRM2D0b/sSbQT7OxzsE4zAju4hHvX/1sgZ
+	 t55dKS2M1zPaNs0gq1hyCN8u0173pBnPkmtGR8G/x05+rMQc2+8nyRHJu3niWvqYHO
+	 LpmzVeAAjq4aQSMUPZfEMBM9D047hNIs4Cgdwuk73+S0l+t4IsFnNkdnoor2oiuiJz
+	 qrgpsqcxXwGcD3MG13JmxKOOLrSbYM6ziWiZ+nByPmipybca1MrhFYR3vPwbfZTxIu
+	 kXuNz700N2hTQ==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -48,9 +48,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 16/26] nfsfh: avoid pointless cred reference count bump
-Date: Sun, 24 Nov 2024 14:44:02 +0100
-Message-ID: <20241124-work-cred-v1-16-f352241c3970@kernel.org>
+Subject: [PATCH 17/26] open: avoid pointless cred reference count bump
+Date: Sun, 24 Nov 2024 14:44:03 +0100
+Message-ID: <20241124-work-cred-v1-17-f352241c3970@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
 References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=774; i=brauner@kernel.org; h=from:subject:message-id; bh=cGAtL0IdSL5OIXyZPY4NHjrBposxrRNGFqPn12ctCts=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ7687TVVTdMmcbg8luu3aZotjva9559jxiXDltdWzaA T71z/rbOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACayaz/Dbxbd0jctr3fz2Xgt kXPwEM9ssyvisPe6mLyFIdw86dlkFkaGL28WKUp4LVvSX1A/vVJoY89LrSwhcZEYpwPJNxZdvLG KFwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=786; i=brauner@kernel.org; h=from:subject:message-id; bh=nXqY7H+FrDdF1GL8dP3Sq3a9av6/N4Dvi59BVLXNltw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ7685/e8y+4PX2VynyE/dwpxwMet3cuO5A1yLZL8mP/ 3RqsCl7d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEcg4jw8P31SdkKn44TosX 53Zi5Wbd8nQqY0D5LQNdiUmuunuT0hgZZv9cfShip8bVs9ctrzfZr7F3ftuir7xQ3Uxj1+2rs0Q sGQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -70,23 +70,28 @@ No need for the extra reference count bump.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/nfsd/nfsfh.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/open.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index 60b0275d5529d49ac87e8b89e4eb650ecd624f71..ef925d96078397a5bc0d0842dbafa44a5a49f358 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -221,8 +221,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, struct net *net,
- 		new->cap_effective =
- 			cap_raise_nfsd_set(new->cap_effective,
- 					   new->cap_permitted);
--		put_cred(override_creds(get_new_cred(new)));
--		put_cred(new);
-+		put_cred(override_creds(new));
- 	} else {
- 		error = nfsd_setuser_and_check_port(rqstp, cred, exp);
- 		if (error)
+diff --git a/fs/open.c b/fs/open.c
+index 0a5cd8e74fb9bb4cc484d84096c6123b21acbf16..74ee5e02d68c590475f18f099b188f052f17f555 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -447,13 +447,7 @@ static const struct cred *access_override_creds(void)
+ 	 * freeing.
+ 	 */
+ 	override_cred->non_rcu = 1;
+-
+-	old_cred = override_creds(get_new_cred(override_cred));
+-
+-	/* override_cred() gets its own ref */
+-	put_cred(override_cred);
+-
+-	return old_cred;
++	return override_creds(override_cred);
+ }
+ 
+ static long do_faccessat(int dfd, const char __user *filename, int mode, int flags)
 
 -- 
 2.45.2
