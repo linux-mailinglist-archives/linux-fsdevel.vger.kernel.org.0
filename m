@@ -1,107 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-35709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779FB9D762C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 17:54:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D999D77A5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 20:05:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A6616503D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 16:54:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F53B2DB0A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF3118B460;
-	Sun, 24 Nov 2024 16:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD5F45027;
+	Sun, 24 Nov 2024 17:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFTPN0cP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jqa3uYGs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17AD2500DC
-	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 16:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D05817;
+	Sun, 24 Nov 2024 17:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732467244; cv=none; b=PVXiuyiiEqk++Wqs+Kzk/WP5/9y+tXPYxbgr9eeYan8qVCdjsdej13FxwjGltbkaUY0zErPPzeBRWpJUlwTfPTWH9vOwMbYvf16Eg+u7xTpm4VmEtpwNYmCaZpmE64D+24OdEBzK/FKs/c3wzPmiq0gfchMUvyqKyb/1qJpi3+w=
+	t=1732467621; cv=none; b=UE1BZkQxeH+TahtYNGIFo6ec2EWXAzXlykm6Hu8HlZHuBtcIGvIzdPiGAKSzPHURKdE5/Als5xwbYhQL6d8CSdODTyU8XNet+hiqN63hMD37ql/A0uU3riOiMrtN0Q6I/C475h9yqElar9DnsnXMiURztGpD0oPV8IsD4k/cahI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732467244; c=relaxed/simple;
-	bh=lQw6qbfeSuIFp1VgZ+y1Pb6nsEXKRdeDNyilF55naII=;
+	s=arc-20240116; t=1732467621; c=relaxed/simple;
+	bh=/dPK4ynzgFtqr2qpQqwWyiqEkCdCMGKEAgNLD+QRTJs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fuP1k5jM3DnabdmeASiZPKIapudTBNCZiXpkC4Ec6BZYBmP054ABWMSfhBcgH1vtZh9ak26bX5fQ2CwvjB2ny88x3j43HIWFMZiOfwifh/v+eEp1j5sbJxgAcmvUbyl5Fdhk/5Fdy3eun0f2RMPrff16rrY/gl6NUIZA3JUNhSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFTPN0cP; arc=none smtp.client-ip=209.85.217.47
+	 To:Cc:Content-Type; b=XR9otarp0g2APsrVLKmV5JGXFJ9JhMs6OGt9m3w/oC4qIE0apqPaTPs6XiYQ8+qxfv4faauksQyTQ7T0vjRHTF73HB4Jq4L8lWgowfdtMSHJC+A4onKijCnkapeHPxfYYRFEYuWbbOWUMWUppMmkUwOJdm+fAVaAoMi2eCg1QWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jqa3uYGs; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4aefcb3242aso488075137.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 08:54:02 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so4399856a12.3;
+        Sun, 24 Nov 2024 09:00:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732467241; x=1733072041; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732467618; x=1733072418; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lQw6qbfeSuIFp1VgZ+y1Pb6nsEXKRdeDNyilF55naII=;
-        b=IFTPN0cPgOarHx4vcQw2yKgfgdb9ZC1EnH7UFpW9lfUjZK5qB3GwTol72bNSsgLB3a
-         PMNgFVGy/K0HXfURYIZK/rJwwj059iSbfZ90AObcmmJvRaXouHbpIsCcTQ1P2CnndsBY
-         Zmh3I2IAtyFRy/GhE9fdmV5pOYoMWtAtgnyp4UE5vTBJofbglhhYSTvMAxPPQMoBHCmq
-         Y2McAPV+yEelQh9bO5S44Pyq9H5OEoillDdnNSvfPRjEQUUqqnHE6fXbOurggurYe8rc
-         xnUZq+lypdtRiS1OW/fFO/t0CafIBrPCgBK1O+EZMTcrhypopyZl/ycHu67DTGl5e3cg
-         2SQA==
+        bh=WnBOeKn3QqtUgUhyApq6CMxnsh9yVP3Ww8aT4BQoRkQ=;
+        b=Jqa3uYGsJMKWgoi6YU35JsDvq9XZFNYLm9Vzk1REOY/MpEYvdMT46xhxbElfaWyolp
+         dZmompuqDCBYC22zI2RzEEYq4udLnUxHapyY8e3nhFbD4BFYnEEATJZN/2FGshlNzwDp
+         +f7+vEqdIh5lG0EwqzjCdYu1csRV4BSYYWDRenB7OxBNWcrGDKCJe/Pnjcr8RS9Uuf3C
+         q9dOQNgzF8ETTS57Yxg7SBBDsNFQkVwQRWD4VqBukAbyiY3+Wo29XvfqzrdkvKXVQMGo
+         9OSM95ZJCeUcFjH2HMoHMX0epVz8QyTZkg5fQGQxZasKYzxB3UWdSSt4qVT8se4kDBcN
+         5hRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732467241; x=1733072041;
+        d=1e100.net; s=20230601; t=1732467618; x=1733072418;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lQw6qbfeSuIFp1VgZ+y1Pb6nsEXKRdeDNyilF55naII=;
-        b=W6m03q6Q7ATXiAYJEwTFSQV4ETNd69MWjFvAczWdmR/N7gZANaH/HgJPHz9v0LPNMH
-         RGELqCczTCcx8i299pv9Tu8ZeUfPZz3RAbG8iHyM3rPknijoDj6yIaZk1/9QN7dv4yC6
-         oWiRnuTmiibhiJBcItdjKLQib2dFB/hNdruJDsIyo9NjXUsm8uDme11uovtHCD+bIL1/
-         WuAKbQM4QdqWeqdkr/cnvVDq7DFEM7H/jyEYu2arNKDHglway5b8kBXRJ/28yT3Dr8sb
-         COhIzH4J+aHGtxpD8Eh5mS4we+zjdbu71ILxcZ0h+j/ooDgIb534QUpibKe1hc2dz2iZ
-         ixYg==
-X-Gm-Message-State: AOJu0YydlQGe6OvrKixz2rKgWgFuX2LlRAG24JabiBnhPpCQLsHH1rAe
-	lvDDOnxafW2JvMHyGJlbf3utjIJGKbLEsHgQavrTRJKOlMCrHKFmheKfYABVobVZiiR/eDE32wb
-	DcJ4Bsi23cJuyq6WIgQOXX/aGZPE=
-X-Gm-Gg: ASbGncsAK9NEWXR66xcDBtIACa66hg4rhnvvpXiSiOx9LzeGbVo91sfiIdYrBm6JtgB
-	1tsYYS4KBKVDOV0piFJG6BvaNZi1CFhGFI1dnTi3NaqJKegqkgllOeAQhH6jnDhEB6Q==
-X-Google-Smtp-Source: AGHT+IELxHAI7b2PNNusQtJiryVZsN+1KNWFWUlmjUwuWsI2NaUxNSNtSTOHrQiMFYT85yM0dCIlnhiwQU86Eo1CyVU=
-X-Received: by 2002:a05:6102:3712:b0:4a3:ab95:9637 with SMTP id
- ada2fe7eead31-4addcbe66a4mr10161939137.12.1732467241528; Sun, 24 Nov 2024
- 08:54:01 -0800 (PST)
+        bh=WnBOeKn3QqtUgUhyApq6CMxnsh9yVP3Ww8aT4BQoRkQ=;
+        b=Lg6HS6OLbxc+LlOS/bLXZz+T3j2GS7msln5eCyBxFai045k0sm1YeclFlX/84QDAAe
+         /YbusO4EEFnVlI66mXe9YPOuqnLXfS4v+dBsxBSQO+xerZHo1QOy5rseD52YVk9kbyM/
+         JY8TIjCSHxBITpTIPiBP2CcXmfFCbacJzzVlREkgz0ietEqwSFmFAjkaaBhKxWZw9Zwo
+         nE9U4dycnYYYXFeYmqHOVhEMaBCHvVgvmDLJ/PX5THzGFCA0MXa7Wvyqzx4SCmTYLJbX
+         nLKrcL77jDpM8k4kbFFm/foGqQJYBbNhu9DSd2LjS7CRVlycq1owAgWeZCKYByAxcedG
+         cdgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTFt4SruARTVH9cIYZdWqnVbHrSwd38jeg1jSvLALCLgiEcNa6doZ2J2rLl+29z3dwzYNmDyoSCJehVTSA@vger.kernel.org, AJvYcCV1VqaZ0BrNYqzjA6vvSv2oOv7IstekE0fEC+MJBDzrKavFqqI937+68yBW9Mza2cf5fxFFJEuJsUzenrUa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkXikHBnXIvs9TJGZtoBRWUhpQEgVRsUxxE2cwCvuIzFuvxQ0E
+	5P5ZnXAWdNmhEiciQJGOYBEF/O4Adg9nFkAXw2XvyYUsy5tVWozOirfcUkaEOAeHB+fj0CN78Vg
+	+aW56sRBs76yZix4JL/Eik1AGujXeLFbE
+X-Gm-Gg: ASbGnculiN5L1OkI2MqUd1Zl5qkIZVMJPvw6mekL/KtKCEmsfoRmUA0XqneZU8L/ixS
+	RR2NKPuBQxsFYor1T0DA8twO3GSGx64M=
+X-Google-Smtp-Source: AGHT+IFUjmq8M6ekp5andxQ+Z87JV3aXleH6sakQSHrltlHeZfHvUX0OUbv6OH2LdPer/68ob/MgbYZeGL5PGi+4W7U=
+X-Received: by 2002:a17:906:3110:b0:aa5:46e7:4baa with SMTP id
+ a640c23a62f3a-aa546e755f4mr272194766b.7.1732467618001; Sun, 24 Nov 2024
+ 09:00:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122203830.2381905-1-btabatabai@wisc.edu> <b33f00ed-9c63-48b3-943d-50f517644486@lucifer.local>
-In-Reply-To: <b33f00ed-9c63-48b3-943d-50f517644486@lucifer.local>
-From: Bijan Tabatabai <bijan311@gmail.com>
-Date: Sun, 24 Nov 2024 10:53:50 -0600
-Message-ID: <CAMvvPS4nPawexGND2YCc_a2CPA6fCb31xS-+1Ng54fVB6h9hig@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Add support for File Based Memory Management
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	BIJAN TABATABAI <btabatabai@wisc.edu>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, mingo@redhat.com, Liam Howlett <liam.howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
+ <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 24 Nov 2024 18:00:07 +0100
+Message-ID: <CAOQ4uxhdnv0H4w=V_FXxpDPsVB5Y9noS=ksqy1=CATJUXLKVfA@mail.gmail.com>
+Subject: Re: [PATCH 00/26] cred: rework {override,revert}_creds()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 23, 2024 at 6:23=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Sun, Nov 24, 2024 at 2:44=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> + VMA guys, it's important to run scripts/get_maintainers.pl on your
-> changes so the right people are pinged :)
+> For the v6.13 cycle we switched overlayfs to a variant of
+> override_creds() that doesn't take an extra reference. To this end I
+> suggested introducing {override,revert}_creds_light() which overlayfs
+> could use.
+>
+> This seems to work rather well. As Linus correctly points out that we
+> should look into unifying both and simply make {override,revert}_creds()
+> do what {override,revert}_creds_light() currently does. Caller's that
+> really need the extra reference count can take it manually.
+>
+> This series does all that. Afaict, most callers can be directly
+> converted over and can avoid the extra reference count completely.
+>
+> Lightly tested.
 
-Sorry about that. I'll be more mindful of this next time I send a patch.
+FWIW, your work.cred branch passes the overlayfs tests.
 
-> While it's a cool project, I don't think it's upstreamable in its current
-> form - it essentially bypasses core mm functionality and 'does mm'
-> somewhere else (which strikes me, in effect, as the entire purpose of the
-> series).
+Thanks,
+Amir.
 
-Understandable.
-Thank you for spending the time to review the patches and giving a
-thorough reply!
-
-Bijan
+>
+> ---
+> Christian Brauner (26):
+>       tree-wide: s/override_creds()/override_creds_light(get_new_cred())/=
+g
+>       cred: return old creds from revert_creds_light()
+>       tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
+>       cred: remove old {override,revert}_creds() helpers
+>       tree-wide: s/override_creds_light()/override_creds()/g
+>       tree-wide: s/revert_creds_light()/revert_creds()/g
+>       firmware: avoid pointless reference count bump
+>       sev-dev: avoid pointless cred reference count bump
+>       target_core_configfs: avoid pointless cred reference count bump
+>       aio: avoid pointless cred reference count bump
+>       binfmt_misc: avoid pointless cred reference count bump
+>       coredump: avoid pointless cred reference count bump
+>       nfs/localio: avoid pointless cred reference count bumps
+>       nfs/nfs4idmap: avoid pointless reference count bump
+>       nfs/nfs4recover: avoid pointless cred reference count bump
+>       nfsfh: avoid pointless cred reference count bump
+>       open: avoid pointless cred reference count bump
+>       ovl: avoid pointless cred reference count bump
+>       cifs: avoid pointless cred reference count bump
+>       cifs: avoid pointless cred reference count bump
+>       smb: avoid pointless cred reference count bump
+>       io_uring: avoid pointless cred reference count bump
+>       acct: avoid pointless reference count bump
+>       cgroup: avoid pointless cred reference count bump
+>       trace: avoid pointless cred reference count bump
+>       dns_resolver: avoid pointless cred reference count bump
+>
+>  drivers/base/firmware_loader/main.c   |  3 +--
+>  drivers/crypto/ccp/sev-dev.c          |  2 +-
+>  drivers/target/target_core_configfs.c |  3 +--
+>  fs/aio.c                              |  3 +--
+>  fs/backing-file.c                     | 20 +++++++-------
+>  fs/cachefiles/internal.h              |  4 +--
+>  fs/nfsd/auth.c                        |  4 +--
+>  fs/nfsd/filecache.c                   |  2 +-
+>  fs/nfsd/nfs4recover.c                 |  3 +--
+>  fs/nfsd/nfsfh.c                       |  1 -
+>  fs/open.c                             | 10 ++-----
+>  fs/overlayfs/copy_up.c                |  6 ++---
+>  fs/overlayfs/dir.c                    |  4 +--
+>  fs/overlayfs/util.c                   |  4 +--
+>  fs/smb/server/smb_common.c            |  4 +--
+>  include/linux/cred.h                  | 14 ++++------
+>  kernel/cred.c                         | 50 -----------------------------=
+------
+>  kernel/trace/trace_events_user.c      |  3 +--
+>  18 files changed, 35 insertions(+), 105 deletions(-)
+> ---
+> base-commit: 228a1157fb9fec47eb135b51c0202b574e079ebf
+> change-id: 20241124-work-cred-349b65450082
+>
 
