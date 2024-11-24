@@ -1,186 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-35664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F264A9D6D54
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 10:48:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4184E9D6DFA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 11:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5462814AD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 09:48:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D950B20A87
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 10:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B38183098;
-	Sun, 24 Nov 2024 09:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtyUFx5I"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11B618B499;
+	Sun, 24 Nov 2024 10:53:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3645D33987;
-	Sun, 24 Nov 2024 09:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA7F18950A
+	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 10:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732441704; cv=none; b=ZEckF7mEiD9omnqN3WO6uXnxGy9Yd1iS0XCI8D+hv59g3+DHr/RRdbmxumLO/luiW+PKZJeXgZf6mZLrPmqa0IsHPZpCDilb7+ebo6PjcFf4Ivg7LcNhd4zTa7+uCJSpngxDrp3LFquqIKSdisZ+dxsIKDDIMGYNDbKw8QE9Z+Q=
+	t=1732445606; cv=none; b=Iij8+nUc+2865mOVU+L77coAK/fUPF8onkGZNEPkz41v9py8c41el5YM4NBfQgX5FoEsawCgmpXnV/qS2GvggY9VUe+Bms4CrPvYy80klcas3d6gP8uWqHtts89nvRst3Sbn7TiK5GwFUkjwG5fUixwQy8NnwkBxAf/1IrU79tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732441704; c=relaxed/simple;
-	bh=KqCGmrT2jLynqDzCmP910Fe66cxrqhAbO+Lk9tnciqE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GJ1P50VlBBO0bGYOn2QGbzAvjEvdqWoufZVHZmapVxstjzc/7QjJubvMxhOrOhmwoVXx+9YifchXbZ9T2pt9l8ZgKnQMHsfH7oCP1/tWfgXecIYDHGTpbQff0bSetNwp2XwlkvMhliXtUJQ9qPoF4pZOTAJRLR4CJHG1655Nf98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtyUFx5I; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21290973bcbso33875825ad.3;
-        Sun, 24 Nov 2024 01:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732441702; x=1733046502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pMAN3HfmkHHfUUVQfaiI8Aof7137pvCBcSCUXfcdjDw=;
-        b=MtyUFx5I5ja53s8SpOTq7Abh0FSgoeX8+Jcw4PPXWh2niJFQwguQD/jaSAl6dEUPi+
-         uOLgmjjqo7cZoJVoQwq/CuhG3gwwMBP9rQgRyPl+1ObAWigKF5APvAK6Yd9b0/A7fYsV
-         OvLOSSdVEWJ0QzjndtYxkCWqwP1W0iTenPyIQRD9Xn7DUocUi2QL9YkN+909e45rg6A2
-         S+KDqlXha4YYblnv+AXFJO8r1h3eg8sQxzEtoAVk5t0df5zqCZ1mZVXno9E6bA3uLy89
-         D6+JiVms6FdZQ+Q8ZCE7AHfgmcOeTfY2Ilg/UoAYo+neYh4rFg4wF6gyuz13huqxOdYX
-         pzkw==
+	s=arc-20240116; t=1732445606; c=relaxed/simple;
+	bh=u4odtu8AJ6ObfYgY9usEUiG3XIEHqAcJENXaji4aCgI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sKTj/1E/QH97YgEjsVFCnD7heUEWv9sxtn1z5TC3k1cN1mgjHhMbphrUc/3tK6p8eszr3tb4P5pa0FOs/6GUKoJAJGoSvrzW6oRvOCFBhxiyF9O4j/dTYIa8e4elHMNQhdo8uHic+U21XLycyQTV1zd1pCvclMBVxmEc9lpN6hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7b30b03ddso887695ab.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 02:53:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732441702; x=1733046502;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pMAN3HfmkHHfUUVQfaiI8Aof7137pvCBcSCUXfcdjDw=;
-        b=gghX8eJFmygxu7/PmgZvafs2k+rV2jBoFX7b0/DmDuZU3z/diZybX8qCKlO1uN/lhz
-         KmZ0hSg5vC/bTSfTOBGAw8XBRXXXOfTuE1ZQxhP6EQqo3q+nDHuApqj+x0/ZzvT63VHW
-         bkJ+T/rVkRiq2mgWlLxVzuaJhAQ+FUmUKgmRKkx9lX9Uhketw65KyGvmOXqnsiXL5JMj
-         6uk9fXERtUMGU0gvkuCROvtuyF52AqM6f7vYXMpkU3ocq1k1mlYdo26h8c4vlwhpxnx5
-         c3K8IZYvnXzJow1sYnWT531oPima+AJgR0MeMIWwvwtWTSvcYVfbtRjVEQGEGFWxyJRP
-         OnIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfvHkIkLPetn1W/5Bqxi6/JvvN9pfyQw8SxEEEChPkeIn/tqVz9tyXkNE0EZnyDx10Y0aheoi8T+1qB5aZ@vger.kernel.org, AJvYcCUgFrdmdks6RHqOB/Qt023zwkerTT9hDinj8OADl4hySOn2c3GDGf2MzGpRu0NxRUjkrXMJPnIHRMfKjkZ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrrvEpGxTcQ6/GkwE9NeUN8+8M30izYN/+/OoX64d20H16/qse
-	xT/V1SAdrLzf/4jXUUVhbMRmjIOUECQA5hYGFx7+murLm0d0ENL3
-X-Gm-Gg: ASbGnct9PL4l1dwErzhuEFrYmVEXi8ZUOlC0m2xLCxXZWLS8ixN31ndDtppVrd4gEOn
-	GAuBRiiXh9n7+nlH+YiDihYFQ0U2RYq617mSkuBzBb9E8elDTQs4puFBJtEjjROgqL9CrrvwU+D
-	yl21o8r2FbdGBLiZm3JGKMTB1zTfwGWJ7TYegzNrMNOntnoEASNadt1y7HNcBMVY37VSBZ5ZAvV
-	b9P14+hJvF78n1p30cEEIziUVUr0sLk+e58g4EavCO3h4gNZR5lG6F9vch9njKeSYxrTYOGZh2q
-	vRfS98vWURYvVQ==
-X-Google-Smtp-Source: AGHT+IGmDwNx+aFTSBpvKoQ/8uhEPo0ApQEbwxP3MxIFx9Y1eWEcDh/S9N6QM6UCqUPtuxZ8nzAkSw==
-X-Received: by 2002:a17:903:258a:b0:211:aa9e:b808 with SMTP id d9443c01a7336-2129f51d393mr91978595ad.6.1732441702204;
-        Sun, 24 Nov 2024 01:48:22 -0800 (PST)
-Received: from localhost.localdomain ([14.116.239.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba3588sm43913925ad.86.2024.11.24.01.48.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 01:48:21 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: viro@zeniv.linux.org.uk
-Cc: adobriyan@gmail.com,
-	alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	flyingpeng@tencent.com,
-	jack@suse.cz,
-	joel.granados@kernel.org,
-	kees@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org
-Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and fs.nr_open
-Date: Sun, 24 Nov 2024 17:48:13 +0800
-Message-Id: <20241124094813.1021293-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20241123193227.GT3387508@ZenIV>
-References: <20241123193227.GT3387508@ZenIV>
+        d=1e100.net; s=20230601; t=1732445604; x=1733050404;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r7fFg/Ni0KiZfql037jokePcuiaJAU45KqdnhH3FOPQ=;
+        b=olR06E4EqKcAh7FAjfOsjocGZhsoyFXVP7OwS8GEIgg2Sd/Mq6X4Oem7x7DGFG8JZ1
+         ENkNNzCjt/Yqb99VB6Wrzr+WD6PnAlO+Qv8Za4N+YbDOw+8phcn841xsZa8R5m/eBXfX
+         mqcsV+28AbRNvZFr773+1P8p3r5deGBuht022yF3vzOvphzWk50oPRZegA8oINGujwM8
+         USA/A5EhTx8oHOZX/f6s3H7NZKx9motlj/d51yr3ToHB72kbJvz/mMmQpCyxjnwcQ3QN
+         v9MLVRNYa6n2WPRvBmOtze04nVM0zDsxEB4p1yKcLtcjtavt8f87xxepgZS8rpi/7VQW
+         gRZw==
+X-Gm-Message-State: AOJu0YyBFppoTbVPgNiP1ss6Gehb9gj5W/5U28bDjJ48F4cCsHTnl8Vs
+	mlDHhKQV53iIhUmjjEaioUIhFxDckFaJnShhWK/Sd2QNUFeXyiEQYI44nxXQwDMTYIYGjkZLSHf
+	asTZMdOTS5EjR+bom+Vau/VpI2oNQA7BAfW3TAOMs2NrPVO95u1qw7SQ=
+X-Google-Smtp-Source: AGHT+IEG+JaCd1m/gkFOoY1onehyxqlbZAkUc81MpdNrM83WGg4z6bGiH7yCl/yVE2P57vMWAVDE/Jer+NAhxTmvqsLkLsfTO5Cq
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c54c:0:b0:3a7:7ee3:108d with SMTP id
+ e9e14a558f8ab-3a79afd5844mr108647175ab.23.1732445603988; Sun, 24 Nov 2024
+ 02:53:23 -0800 (PST)
+Date: Sun, 24 Nov 2024 02:53:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674305a3.050a0220.1cc393.003b.GAE@google.com>
+Subject: [syzbot] [hfs?] WARNING in hfsplus_unlink
+From: syzbot <syzbot+028180f480a74961919c@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 23 Nov 2024 19:32:27 +0000, Al Viro wrote:
-> On Sat, Nov 23, 2024 at 06:27:30PM +0000, Al Viro wrote:
-> > On Sun, Nov 24, 2024 at 02:08:55AM +0800, Jinliang Zheng wrote:
-> > > According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
-> > > fs.file-max represent the number of file-handles that can be opened
-> > > by each process and the entire system, respectively.
-> > > 
-> > > Therefore, it's necessary to maintain a relative size between them,
-> > > meaning we should ensure that files_stat.max_files is not less than
-> > > sysctl_nr_open.
-> > 
-> > NAK.
-> > 
-> > You are confusing descriptors (nr_open) and open IO channels (max_files).
-> > 
-> > We very well _CAN_ have more of the former.  For further details,
-> > RTFM dup(2) or any introductory Unix textbook.
-> 
-> Short version: there are 3 different notions -
-> 	1) file as a collection of data kept by filesystem. Such things as
-> contents, ownership, permissions, timestamps belong there.
-> 	2) IO channel used to access one of (1).  open(2) creates such;
-> things like current position in file, whether it's read-only or read-write
-> open, etc. belong there.  It does not belong to a process - after fork(),
-> child has access to all open channels parent had when it had spawned
-> a child.  If you open a file in parent, read 10 bytes from it, then spawn
-> a child that reads 10 more bytes and exits, then have parent read another
-> 5 bytes, the first read by parent will have read bytes 0 to 9, read by
-> child - bytes 10 to 19 and the second read by parent - bytes 20 to 24.
-> Position is a property of IO channel; it belongs neither to underlying
-> file (otherwise another process opening the file and reading from it
-> would play havoc on your process) nor to process (otherwise reads done
-> by child would not have affected the parent and the second read from
-> parent would have gotten bytes 10 to 14).  Same goes for access mode -
-> it belongs to IO channel.
+Hello,
 
-I'm sorry that I don't know much about the implementation of UNIX, but
-specific to the implementation of Linux, struct file is more like a
-combination of what you said 1) and 2).
+syzbot found the following issue on:
 
-But I see your point, I missed the dup() case. dup() will occupy the
-element position of the fdtable->fd array, but will not create a new
-struct file.
+HEAD commit:    bf9aa14fc523 Merge tag 'timers-core-2024-11-18' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=154e4b78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccd6152c3e2378ce
+dashboard link: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1676475f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ff46c0580000
 
-Thank you.
-Jinliang Zheng
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f7f38a2c24fc/disk-bf9aa14f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9fe13f1c9a0f/vmlinux-bf9aa14f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04d354ff9f6b/bzImage-bf9aa14f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/64b16595572b/mount_0.gz
 
-> 	3) file descriptor - a number that has a meaning only in context
-> of a process and refers to IO channel.	That's what system calls use
-> to identify the IO channel to operate upon; open() picks a descriptor
-> unused by the calling process, associates the new channel with it and
-> returns that descriptor (a number) to caller.  Multiple descriptors can
-> refer to the same IO channel; e.g. dup(fd) grabs a new descriptor and
-> associates it with the same IO channel fd currently refers to.
-> 
-> 	IO channels are not directly exposed to userland, but they are
-> very much present in Unix-style IO API.  Note that results of e.g.
-> 	int fd1 = open("/etc/issue", 0);
-> 	int fd2 = open("/etc/issue", 0);
-> and
-> 	int fd1 = open("/etc/issue", 0);
-> 	int fd2 = dup(fd1);
-> are not identical, even though in both cases fd1 and fd2 are opened
-> descriptors and reading from them will access the contents of the
-> /etc/issue; in the former case the positions being accessed by read from
-> fd1 and fd2 will be independent, in the latter they will be shared.
-> 
-> 	It's really quite basic - Unix Programming 101 stuff.  It's not
-> just that POSIX requires that and that any Unix behaves that way,
-> anything even remotely Unix-like will be like that.
-> 
-> 	You won't find the words 'IO channel' in POSIX, but I refuse
-> to use the term they have chosen instead - 'file description'.	Yes,
-> alongside with 'file descriptor', in the contexts where the distinction
-> between these notions is quite important.  I would rather not say what
-> I really think of those unsung geniuses, lest CoC gets overexcited...
-> 
-> 	Anyway, in casual conversations the expression 'opened file'
-> usually refers to that thing.  Which is somewhat clumsy (sounds like
-> 'file on filesystem that happens to be opened'), but usually it's
-> good enough.  If you need to be pedantic (e.g. when explaining that
-> material in aforementioned Unix Programming 101 class), 'IO channel'
-> works well enough, IME.
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=148be930580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=168be930580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=128be930580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 1024
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5831 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5831 Comm: syz-executor234 Not tainted 6.12.0-syzkaller-01782-gbf9aa14fc523 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 07 df e5 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 6d f4 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc9000369fbb0 EFLAGS: 00010293
+RAX: ffffffff8215f523 RBX: 1ffff11004ad054f RCX: ffff88802a931e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8215f4a3 R09: 1ffff920006d3ed8
+R10: dffffc0000000000 R11: fffff520006d3ed9 R12: ffff888025682a78
+R13: ffff888079eef370 R14: ffff888025682a30 R15: dffffc0000000000
+FS:  0000555588597380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 0000000078e92000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ hfsplus_unlink+0x3fe/0x790 fs/hfsplus/dir.c:381
+ vfs_unlink+0x365/0x650 fs/namei.c:4523
+ do_unlinkat+0x4ae/0x830 fs/namei.c:4587
+ __do_sys_unlink fs/namei.c:4635 [inline]
+ __se_sys_unlink fs/namei.c:4633 [inline]
+ __x64_sys_unlink+0x47/0x50 fs/namei.c:4633
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f81f72e79b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffbff4f578 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f81f72e79b9
+RDX: ffffffffffffffb8 RSI: 00007f81f72e79b9 RDI: 00000000200000c0
+RBP: 00007f81f735b610 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffbff4f748 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
