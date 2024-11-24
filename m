@@ -1,159 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-35712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DEC9D77AC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 20:07:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC579D7709
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 19:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CA64B360AD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 17:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314622839FC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 18:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B013C9A3;
-	Sun, 24 Nov 2024 17:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D77213D8A0;
+	Sun, 24 Nov 2024 18:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z15ZQpyV"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fvBAQwaT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD92136338;
-	Sun, 24 Nov 2024 17:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC9D6F2F3
+	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 18:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732471032; cv=none; b=dX2KWUoT5QIIh8MUzPm4y3t9iyKbEVJbhDukSiwo9kCp84qYkXvcPBBmhOYA1DUe2YrOP3aAraRkvoKhcJN9dvK3HIGtIld5TDCfJxl7me0THCRN10vzM2H9GzC4Hfw9FU22xPN6FszQoNr0hmMaJI9fHvA1p12xnTwPCCVnFMo=
+	t=1732471246; cv=none; b=Vlz4i8M/MNe760ErFL64cKBzYQE1amLhQjxBuiMXpK6UdCF7wOb/AeCuF1mgwqp8ZFWl/dZMA8M/IZAMjvaOjmBagDKblcSAnh6NR1ha7kKOhMbY30nRZQktFY5hg5bz79IlNSEGPA7k5qncqK0yMH4qD+maF9pZv1hOFQ1KzW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732471032; c=relaxed/simple;
-	bh=ubOwint+3PmjNJ0preXeyEidlcfvtrj0m5hTebbcIIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibFZ/+Tpme4sTIWW/z3+LAyGTlXTO0wt5R6giSw3/qJQE3hfIYGgzN6Pwom6JbeY4h90NKVz29zbkK47pWvI8P2SWJ2Ah83M/WfKrwVnbQ3keD8aCtTR9LodAdtu372oDC4qmJSeBT4CqA/VyaQu2yRWsewPlA4NTYXI963Sz2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z15ZQpyV; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso4816088a12.3;
-        Sun, 24 Nov 2024 09:57:10 -0800 (PST)
+	s=arc-20240116; t=1732471246; c=relaxed/simple;
+	bh=MHRc+EZrsf2NABDvI/J/e1unkMv/9URuKXuZyw9v07o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NdcNGIgk16EpNRj77ynv7jHyUhqxhJbS+G14Gb/3srNWVS73L3J36z/oqeH3/E2sjRXBJ1jW90QrKs+5cgC58yYXaBuCwRUP3r65jKnLLUHJzjReKCktIGWU/bEYGtGOug9MWqjET5EirtPQd/yZIbFUMklEAYW9HI3D2fJXJvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fvBAQwaT; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so4777358a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 10:00:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732471029; x=1733075829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/Sbe5hmOJDMXdPSuXWaoL3oWZV0YgB+btzyAOk0TiU=;
-        b=Z15ZQpyVHg7HV67RbDVRp4j+LRUFuhNlqwOs6GzRXiXDX0J6axws0gEr0HXX/kkFXx
-         SlGzZsIYrvWwKjieYyFgTcMMYv6JsYXaRzsXHfpH0dcP1s8vynxqyJUKKPFE6S70SqdF
-         K7n6X6FmFe12lrSIHvZbmekQ6ebILoXuSU9uxT0sE6NUg6z3S8OLwuHUz9j23KKQuQ6k
-         +AAqBBWZVilDy8OJzA3zs3EtUUj6WhWG9liBPXXrajyv4QcK/Dqq29t6+GbUan7G4nnW
-         KU//9DGjlRn6McDud+1LXzUprpRCdOdv+sLZHKzzJ9WQEQx3+6izdQX9cA2jKr9kRxb7
-         LjNA==
+        d=linux-foundation.org; s=google; t=1732471243; x=1733076043; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eFtkAkE9w9ozdnjm+X092ocX1iqcO1qOEalWj4WqRqg=;
+        b=fvBAQwaTB3Y5i3EuAng4142HiKE0L7NtWy9Jl13+QprMuoj07POmdz9C8T6u6g2i26
+         q+YXDdKyH1lTMyznGBE0zvCPiUlK5l4tfjqM1zM5fmKPxF0Va636UQXlB1EN2prHqHZk
+         k7nbDHM2kaXmdmhbkvrbf0g6sBIAzTgb203VM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732471029; x=1733075829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/Sbe5hmOJDMXdPSuXWaoL3oWZV0YgB+btzyAOk0TiU=;
-        b=qYmf93C4J02MV3B+Pb8ojNx+DZXjG04UPJOaZ8cQgoBxXguuptBEI3Gu82U4pVpvFl
-         5g3dvl5dG6JhwdIvtADo6ZFs7WIk7+RpPq6e+Qh8wdJV8tuXw9UqC9rHLLVjYIMFhlr0
-         O/HqOV/gt/aA+Aik2I1SCN+sF/kD66567kvPOwWef5inzWAMNQfgb3JVg3RjYBBxncKE
-         NKM27Tp/4usYGZU5B5O4OfGAKnJ+cYVpWm8nbcgszKY8hPvEb6c5q5pz5Uxtik+qk7UN
-         uXyA3/A3so008M3fuhrS3aWR/S7/4/rNkQyLzV0X91o2kbRvRo5eHbny5nOTvwoU3azW
-         ganA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgqZCYz/ar80pFX61qFLGk8enk9R2Rc3n0gIqwY50six8DC3GxZdaBhpWai21yA9bjhA13vTNonynQMDoh@vger.kernel.org, AJvYcCVNAi2fekIL71yV9NjRFBcDclx6GOmibgWgb8tLtArZ3Bi+9mK/gStLms/IePOHw0XD0eRFn3Ozi5wRMGZr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4hxjnhcQLnyB4GtOXY1iiaP+XA04k6Gh2rRTqj3YEO2Q123pY
-	DS1md7Dllq0BZlSP1dHhT9XOgRzWvivn4tYFxOxV3hzrmCllwIaQ
-X-Gm-Gg: ASbGnct3ApB7PS27PFQ1QFOOfrxurrmBwWp5UsEpEdPALt+IcGnZa26jJ3NktA+2mn2
-	zfEez8RjEJVk5UeIUop5n6tsTbsbt4Io4dIAmaC7HWG56aGVZP6Dmpp5HoQuRBQHv7O1kqW/eQm
-	2vBWSKeNVnbMyLXcViRC55XTnNIGJ1O2BtuhZjgr0XErARSLevTYjHUzCBDld8ELQrZwyqkAYhl
-	UXMsI3rIO5HWZv3wV1aOnhJ55tpUWeRE+1tGc2A+o1EfF9IzM2mG3nrrNI/AyPv3w==
-X-Google-Smtp-Source: AGHT+IEO+Ym8QUPf8bvZo+LgcayoPLKPXcc7knyY9L6gjnqH8GV0APt/CPFfPn0Q0MnOcykg4+BjKg==
-X-Received: by 2002:a05:6402:2347:b0:5cf:9e5:7d20 with SMTP id 4fb4d7f45d1cf-5d02060d320mr8316807a12.17.1732471028496;
-        Sun, 24 Nov 2024 09:57:08 -0800 (PST)
-Received: from f (cst-prg-93-239.cust.vodafone.cz. [46.135.93.239])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3b0b1fsm3228940a12.32.2024.11.24.09.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 09:57:07 -0800 (PST)
-Date: Sun, 24 Nov 2024 18:56:57 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Subject: Re: [PATCH v4] fs: Fix data race in inode_set_ctime_to_ts
-Message-ID: <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
-References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
- <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
- <20241124174435.GB620578@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1732471243; x=1733076043;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eFtkAkE9w9ozdnjm+X092ocX1iqcO1qOEalWj4WqRqg=;
+        b=eBadzT0kgBLFWc+dYLEEc02bg2ibmLJXxcr9u9XOrLBNOZbWRi7k59uh7eUcxdKaFw
+         S0zd06BYqvqIaZ2u5vP6Sy9pClScQMXOBpqZMmmOxee3F1LZIiPRJxi+x9dFVk1cVX1o
+         7cY9JMLv2TDNieda4LGzpWRgC9dJBep33Ld7pS+QyfVfSmrQbwyakHGHvLf/JZYyd9h5
+         qJgBXq2th8EJ0F3v/Bu4i17DG/vHYM1X8/c8TVabQtVbCensaKrk65wFMn2pzsJvrL9L
+         qBGf9Nj9SOQzlgsSp/i3EpzCz+rX7HJ6XR6gYX1dxFJpBlUN7nw7VeiIrS/VTAFT4bs8
+         18YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNQX3CkJxIB41pM0SFwJDYXb+M85U9gNHUgyVDLzRzUoxbzxXL7fBCg9Vd+S/VA8+mg2mmNxLeFJDZA0V1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSnI4P3Le9FfBPfr1kdH8t+kaqWMY4CxOEyySmFV0FSvA0LZkt
+	DcKQMVIzV5Azxk/05LB/KDU27ESUQtUPh1QkFj3MWsK1omqcUZSsP+7KOHAzbkcHmS7oeY1GUFs
+	xCDI+GQ==
+X-Gm-Gg: ASbGncvMpNWM3yCfBYRMPlBjuAi1YNwqumZ7IiCmIWsCjdnF1mBJBYlFSayIK486H+r
+	KcPxmOIcZa0uPS9EBFy6zrgY7NCah1+wnf837D67XZFlRxSokjdLqQtBtpggVGanb+dvBPfS7ka
+	48Uac0XvHRnqO/8AqJsIj+aQvd2b8SoUFF7Lx05XMY6oH/wchPii7wBcXWeN+QASlHP1ufIb7W0
+	jfOLMPO/1tcHfK2/hOg9H8FLis0l4LIxjhXX/ob0tgDPncQ4cE0Jluwchdtzqcwrlz3OeTLer8B
+	Gjm5C453oPOBCV6zo0OREdYX
+X-Google-Smtp-Source: AGHT+IHyta8fsZL6mYRZ0s8rWmrEKVfwyFx2LAFW5x7bhH+QNF/brDMJ6OUX23auiXQuB+jDeLoSHA==
+X-Received: by 2002:a17:907:781a:b0:aa5:39a6:2b48 with SMTP id a640c23a62f3a-aa539a62cc1mr467603966b.47.1732471242574;
+        Sun, 24 Nov 2024 10:00:42 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa55567771esm6658066b.79.2024.11.24.10.00.41
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 10:00:41 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so4777336a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 10:00:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVXlr4qS1GTrj2dGeGeUmW6IHdyxSiWjMV0ZU0pWUkAHXD1cV8EDAuw0+RYPdeMGJf+5qw96dvM4GJ77Zi+@vger.kernel.org
+X-Received: by 2002:a17:906:23ea:b0:aa5:4731:1eaa with SMTP id
+ a640c23a62f3a-aa547311fb0mr240536466b.50.1732471241090; Sun, 24 Nov 2024
+ 10:00:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241124174435.GB620578@frogsfrogsfrogs>
+References: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
+ <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 24 Nov 2024 10:00:24 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi5ZxjGBKsseL2eNHpDVDF=W_EDZcXVfmJ2Dk2Vh7o+nQ@mail.gmail.com>
+Message-ID: <CAHk-=wi5ZxjGBKsseL2eNHpDVDF=W_EDZcXVfmJ2Dk2Vh7o+nQ@mail.gmail.com>
+Subject: Re: [PATCH 00/26] cred: rework {override,revert}_creds()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 24, 2024 at 09:44:35AM -0800, Darrick J. Wong wrote:
-> On Sun, Nov 24, 2024 at 05:42:53PM +0800, Hao-ran Zheng wrote:
-> > A data race may occur when the function `inode_set_ctime_to_ts()` and
-> > the function `inode_get_ctime_sec()` are executed concurrently. When
-> > two threads call `aio_read` and `aio_write` respectively, they will
-> > be distributed to the read and write functions of the corresponding
-> > file system respectively. Taking the btrfs file system as an example,
-> > the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
-> > finally called. These two functions created a data race when they
-> > finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
-> > The specific call stack that appears during testing is as follows:
-> > 
-> > ============DATA_RACE============
-> > btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
-> > btrfs_update_inode+0x45e/0xbb0 [btrfs]
-> > btrfs_dirty_inode+0x2b8/0x530 [btrfs]
-> > btrfs_update_time+0x1ad/0x230 [btrfs]
-> > touch_atime+0x211/0x440
-> > filemap_read+0x90f/0xa20
-> > btrfs_file_read_iter+0xeb/0x580 [btrfs]
-> > aio_read+0x275/0x3a0
-> > io_submit_one+0xd22/0x1ce0
-> > __se_sys_io_submit+0xb3/0x250
-> > do_syscall_64+0xc1/0x190
-> > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > ============OTHER_INFO============
-> > btrfs_write_check+0xa15/0x1390 [btrfs]
-> > btrfs_buffered_write+0x52f/0x29d0 [btrfs]
-> > btrfs_do_write_iter+0x53d/0x1590 [btrfs]
-> > btrfs_file_write_iter+0x41/0x60 [btrfs]
-> > aio_write+0x41e/0x5f0
-> > io_submit_one+0xd42/0x1ce0
-> > __se_sys_io_submit+0xb3/0x250
-> > do_syscall_64+0xc1/0x190
-> > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > 
-> > To address this issue, it is recommended to add WRITE_ONCE
-> > and READ_ONCE when reading or writing the `inode->i_ctime_sec`
-> > and `inode->i_ctime_nsec` variable.
-> 
-> Excuse my ignorance, but how exactly does this annotation fix the race?
-> Does it prevent reordering of the memory accesses or something?  "it is
-> recommended" is not enough for dunces such as myself to figure out why
-> this fixes the problem. :(
-> 
+On Sun, 24 Nov 2024 at 05:44, Christian Brauner <brauner@kernel.org> wrote:
+>
+> This series does all that. Afaict, most callers can be directly
+> converted over and can avoid the extra reference count completely.
+>
+> Lightly tested.
 
-It prevents the compiler from getting ideas. One hypothetical is
-splitting the load from one asm op to several, possibly resulting a
-corrupted value when racing against an update
+Thanks, this looks good to me. I only had two reactions:
 
-A not hypothethical concerns some like this:
-	time64_t sec = inode_get_ctime_sec(inode);
-	/* do stuff with sec */
-	/* do other stuff */
-	/* do more stuff sec */
+ (a) I was surprised that using get_new_cred() apparently "just worked".
 
-The compiler might have decided to throw away the read sec value and do
-the load again later. Thus if an update happened in the meantime then
-the code ends up operating on 2 different values, even though the
-programmer clearly intended it to be stable.
+I was expecting us to have cases where the cred was marked 'const',
+because I had this memory of us actively marking things const to make
+sure people didn't play games with modifying the creds in-place (and
+then casting away the const just for ref updates).
 
-However, since both sec and nsec are updated separately and there is no
-synchro, reading *both* can still result in values from 2 different
-updates which is a bug not addressed by any of the above. To my
-underestanding of the vfs folk take on it this is considered tolerable.
+But apparently that's never the case for override_creds() users, so
+your patch actually ended up even simpler than I expected in that you
+didn't end up needing any new helper for just incrementing the
+refcount on a const cred.
+
+ (b) a (slight) reaction was to wish for a short "why" on the
+pointless reference bumps
+
+partly to show that it was thought about, but also partly to
+discourage people from doing it entirely mindlessly in other cases.
+
+I mean, sometimes the reference bumps were just obviously pointless
+because they ended up being right next to each other after being
+exposed, like the get/put pattern in access_override_creds().
+
+But in some other cases, like the aio_write case, I think it would
+have been good to just say
+
+ "The refcount is held by iocb->fsync.creds that cannot change over
+the operation"
+
+or similar. Or - very similarly - the binfmt_misc uses "file->f_cred",
+and again, file->f_cred is set at open time and never changed, so we
+can rely on it staying around for the file lifetime.
+
+I actually don't know if there were any exceptions to this (ie cases
+where the source of the override cred could actually go away from
+under us during the operation) where you didn't end up removing the
+refcount games as a result. You did have a couple of cases where you
+actually explained why the bump wasn't necessary, but there were a
+couple where I would have wished for that "the reference count is held
+by X, which is stable over the whole sequence" kind of notes.
+
+But not a big deal. Even in this form, I think this is a clear and
+good improvement.
+
+Thanks,
+                    Linus
 
