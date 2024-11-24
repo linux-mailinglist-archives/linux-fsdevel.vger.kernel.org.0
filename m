@@ -1,59 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-35663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FBB9D6D4A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 10:43:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F264A9D6D54
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 10:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE37B21231
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 09:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5462814AD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223E9186295;
-	Sun, 24 Nov 2024 09:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B38183098;
+	Sun, 24 Nov 2024 09:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="Nvj/U7da"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtyUFx5I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825E48837;
-	Sun, 24 Nov 2024 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3645D33987;
+	Sun, 24 Nov 2024 09:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732441392; cv=none; b=GA4wJwY9yLPpyUhnPbX8gML5RqjzlLI/OFMadAF3EMCLoL30g+AEiD+7vYfyiLwCOmok88EfYp0YgPAnBrlPhQH+3/XYbjoeWPWojWhYqucVzaitPaMKtmvrl0nbQfyj/ymP53NN29wN9hlragnf3MLeq/rnVqDGukPKaBE28Hs=
+	t=1732441704; cv=none; b=ZEckF7mEiD9omnqN3WO6uXnxGy9Yd1iS0XCI8D+hv59g3+DHr/RRdbmxumLO/luiW+PKZJeXgZf6mZLrPmqa0IsHPZpCDilb7+ebo6PjcFf4Ivg7LcNhd4zTa7+uCJSpngxDrp3LFquqIKSdisZ+dxsIKDDIMGYNDbKw8QE9Z+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732441392; c=relaxed/simple;
-	bh=7TXrT/YIvGFUas+Vhdc4qxiauuoJFaZK/vtGnuidlNo=;
+	s=arc-20240116; t=1732441704; c=relaxed/simple;
+	bh=KqCGmrT2jLynqDzCmP910Fe66cxrqhAbO+Lk9tnciqE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gSk8CQsg6aCiohuC44wiS46lnK3typrxlqPpyt7ENrt23EJww7LvFn5BT9hDHqyuZyYtBZ7o8/fWIe4eO1t6kEqDAIyWgLEj83hIOlF1weQSk5QYsY0tbFcEMqZRvCi7CHYFWoaGvzfoRGqONhQasG1N9WPuk6LqesOrTeEsCYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=Nvj/U7da reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+	 MIME-Version; b=GJ1P50VlBBO0bGYOn2QGbzAvjEvdqWoufZVHZmapVxstjzc/7QjJubvMxhOrOhmwoVXx+9YifchXbZ9T2pt9l8ZgKnQMHsfH7oCP1/tWfgXecIYDHGTpbQff0bSetNwp2XwlkvMhliXtUJQ9qPoF4pZOTAJRLR4CJHG1655Nf98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtyUFx5I; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21290973bcbso33875825ad.3;
+        Sun, 24 Nov 2024 01:48:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
-	Message-Id:In-Reply-To:References:MIME-Version:
-	Content-Transfer-Encoding; bh=JbV+Q8dcL9PtWIxVmtXG/VoDrDCWDm5rp7
-	REW9NDn34=; b=Nvj/U7damqFOPs8pv1tGqzPSRNuefFT9oLC/Ih7dhPVsNILU9t
-	hGm9VjuaF4oD39tSW7woplndqAJG7VxvrY+JQnKwv/UWmoPFTp1Nh3sf0+b9wuBC
-	eV3Ox1L1vUfZjWzPP1bldcfBh9wbo3siBLVW6Yfd1QVpSihSDXrtE/cuk=
-Received: from s1eepy-QiTianM540-A739.. (unknown [10.130.145.81])
-	by coremail-app1 (Coremail) with SMTP id OCz+CgBnlQ8g9UJnlgxNAQ--.24070S2;
-	Sun, 24 Nov 2024 17:43:00 +0800 (CST)
-From: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-To: viro@zeniv.linux.org.uk,
+        d=gmail.com; s=20230601; t=1732441702; x=1733046502; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMAN3HfmkHHfUUVQfaiI8Aof7137pvCBcSCUXfcdjDw=;
+        b=MtyUFx5I5ja53s8SpOTq7Abh0FSgoeX8+Jcw4PPXWh2niJFQwguQD/jaSAl6dEUPi+
+         uOLgmjjqo7cZoJVoQwq/CuhG3gwwMBP9rQgRyPl+1ObAWigKF5APvAK6Yd9b0/A7fYsV
+         OvLOSSdVEWJ0QzjndtYxkCWqwP1W0iTenPyIQRD9Xn7DUocUi2QL9YkN+909e45rg6A2
+         S+KDqlXha4YYblnv+AXFJO8r1h3eg8sQxzEtoAVk5t0df5zqCZ1mZVXno9E6bA3uLy89
+         D6+JiVms6FdZQ+Q8ZCE7AHfgmcOeTfY2Ilg/UoAYo+neYh4rFg4wF6gyuz13huqxOdYX
+         pzkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732441702; x=1733046502;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMAN3HfmkHHfUUVQfaiI8Aof7137pvCBcSCUXfcdjDw=;
+        b=gghX8eJFmygxu7/PmgZvafs2k+rV2jBoFX7b0/DmDuZU3z/diZybX8qCKlO1uN/lhz
+         KmZ0hSg5vC/bTSfTOBGAw8XBRXXXOfTuE1ZQxhP6EQqo3q+nDHuApqj+x0/ZzvT63VHW
+         bkJ+T/rVkRiq2mgWlLxVzuaJhAQ+FUmUKgmRKkx9lX9Uhketw65KyGvmOXqnsiXL5JMj
+         6uk9fXERtUMGU0gvkuCROvtuyF52AqM6f7vYXMpkU3ocq1k1mlYdo26h8c4vlwhpxnx5
+         c3K8IZYvnXzJow1sYnWT531oPima+AJgR0MeMIWwvwtWTSvcYVfbtRjVEQGEGFWxyJRP
+         OnIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfvHkIkLPetn1W/5Bqxi6/JvvN9pfyQw8SxEEEChPkeIn/tqVz9tyXkNE0EZnyDx10Y0aheoi8T+1qB5aZ@vger.kernel.org, AJvYcCUgFrdmdks6RHqOB/Qt023zwkerTT9hDinj8OADl4hySOn2c3GDGf2MzGpRu0NxRUjkrXMJPnIHRMfKjkZ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrrvEpGxTcQ6/GkwE9NeUN8+8M30izYN/+/OoX64d20H16/qse
+	xT/V1SAdrLzf/4jXUUVhbMRmjIOUECQA5hYGFx7+murLm0d0ENL3
+X-Gm-Gg: ASbGnct9PL4l1dwErzhuEFrYmVEXi8ZUOlC0m2xLCxXZWLS8ixN31ndDtppVrd4gEOn
+	GAuBRiiXh9n7+nlH+YiDihYFQ0U2RYq617mSkuBzBb9E8elDTQs4puFBJtEjjROgqL9CrrvwU+D
+	yl21o8r2FbdGBLiZm3JGKMTB1zTfwGWJ7TYegzNrMNOntnoEASNadt1y7HNcBMVY37VSBZ5ZAvV
+	b9P14+hJvF78n1p30cEEIziUVUr0sLk+e58g4EavCO3h4gNZR5lG6F9vch9njKeSYxrTYOGZh2q
+	vRfS98vWURYvVQ==
+X-Google-Smtp-Source: AGHT+IGmDwNx+aFTSBpvKoQ/8uhEPo0ApQEbwxP3MxIFx9Y1eWEcDh/S9N6QM6UCqUPtuxZ8nzAkSw==
+X-Received: by 2002:a17:903:258a:b0:211:aa9e:b808 with SMTP id d9443c01a7336-2129f51d393mr91978595ad.6.1732441702204;
+        Sun, 24 Nov 2024 01:48:22 -0800 (PST)
+Received: from localhost.localdomain ([14.116.239.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba3588sm43913925ad.86.2024.11.24.01.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 01:48:21 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: viro@zeniv.linux.org.uk
+Cc: adobriyan@gmail.com,
+	alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
 	brauner@kernel.org,
+	flyingpeng@tencent.com,
 	jack@suse.cz,
+	joel.granados@kernel.org,
+	kees@kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: baijiaju1990@gmail.com,
-	zhenghaoran@buaa.edu.cn,
-	21371365@buaa.edu.cn
-Subject: [PATCH v4] fs: Fix data race in inode_set_ctime_to_ts
-Date: Sun, 24 Nov 2024 17:42:53 +0800
-Message-Id: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
-References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+	linux-kernel@vger.kernel.org,
+	mcgrof@kernel.org
+Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and fs.nr_open
+Date: Sun, 24 Nov 2024 17:48:13 +0800
+Message-Id: <20241124094813.1021293-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20241123193227.GT3387508@ZenIV>
+References: <20241123193227.GT3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,155 +99,88 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:OCz+CgBnlQ8g9UJnlgxNAQ--.24070S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XF17uFy8XF18Jr1xJryUGFg_yoW7Aw45pF
-	ZrKa4fX3y5JFZ7Crs7tw4DWrnYganYqa1UJrZ7Wr4F9rn3tw18Kr1jy3yayF4UCrWkAryF
-	qay8Kr15XrnIkr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgE1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kE
-	wVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x02
-	67AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
-	80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-	c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4
-	vE-syl42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW7tr1UJr1l4I8I3I0E4IkC
-	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/
 
-A data race may occur when the function `inode_set_ctime_to_ts()` and
-the function `inode_get_ctime_sec()` are executed concurrently. When
-two threads call `aio_read` and `aio_write` respectively, they will
-be distributed to the read and write functions of the corresponding
-file system respectively. Taking the btrfs file system as an example,
-the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
-finally called. These two functions created a data race when they
-finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
-The specific call stack that appears during testing is as follows:
+On Sat, 23 Nov 2024 19:32:27 +0000, Al Viro wrote:
+> On Sat, Nov 23, 2024 at 06:27:30PM +0000, Al Viro wrote:
+> > On Sun, Nov 24, 2024 at 02:08:55AM +0800, Jinliang Zheng wrote:
+> > > According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
+> > > fs.file-max represent the number of file-handles that can be opened
+> > > by each process and the entire system, respectively.
+> > > 
+> > > Therefore, it's necessary to maintain a relative size between them,
+> > > meaning we should ensure that files_stat.max_files is not less than
+> > > sysctl_nr_open.
+> > 
+> > NAK.
+> > 
+> > You are confusing descriptors (nr_open) and open IO channels (max_files).
+> > 
+> > We very well _CAN_ have more of the former.  For further details,
+> > RTFM dup(2) or any introductory Unix textbook.
+> 
+> Short version: there are 3 different notions -
+> 	1) file as a collection of data kept by filesystem. Such things as
+> contents, ownership, permissions, timestamps belong there.
+> 	2) IO channel used to access one of (1).  open(2) creates such;
+> things like current position in file, whether it's read-only or read-write
+> open, etc. belong there.  It does not belong to a process - after fork(),
+> child has access to all open channels parent had when it had spawned
+> a child.  If you open a file in parent, read 10 bytes from it, then spawn
+> a child that reads 10 more bytes and exits, then have parent read another
+> 5 bytes, the first read by parent will have read bytes 0 to 9, read by
+> child - bytes 10 to 19 and the second read by parent - bytes 20 to 24.
+> Position is a property of IO channel; it belongs neither to underlying
+> file (otherwise another process opening the file and reading from it
+> would play havoc on your process) nor to process (otherwise reads done
+> by child would not have affected the parent and the second read from
+> parent would have gotten bytes 10 to 14).  Same goes for access mode -
+> it belongs to IO channel.
 
-============DATA_RACE============
-btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
-btrfs_update_inode+0x45e/0xbb0 [btrfs]
-btrfs_dirty_inode+0x2b8/0x530 [btrfs]
-btrfs_update_time+0x1ad/0x230 [btrfs]
-touch_atime+0x211/0x440
-filemap_read+0x90f/0xa20
-btrfs_file_read_iter+0xeb/0x580 [btrfs]
-aio_read+0x275/0x3a0
-io_submit_one+0xd22/0x1ce0
-__se_sys_io_submit+0xb3/0x250
-do_syscall_64+0xc1/0x190
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-============OTHER_INFO============
-btrfs_write_check+0xa15/0x1390 [btrfs]
-btrfs_buffered_write+0x52f/0x29d0 [btrfs]
-btrfs_do_write_iter+0x53d/0x1590 [btrfs]
-btrfs_file_write_iter+0x41/0x60 [btrfs]
-aio_write+0x41e/0x5f0
-io_submit_one+0xd42/0x1ce0
-__se_sys_io_submit+0xb3/0x250
-do_syscall_64+0xc1/0x190
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
+I'm sorry that I don't know much about the implementation of UNIX, but
+specific to the implementation of Linux, struct file is more like a
+combination of what you said 1) and 2).
 
-To address this issue, it is recommended to add WRITE_ONCE
-and READ_ONCE when reading or writing the `inode->i_ctime_sec`
-and `inode->i_ctime_nsec` variable.
+But I see your point, I missed the dup() case. dup() will occupy the
+element position of the fdtable->fd array, but will not create a new
+struct file.
 
-Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
----
-V3 -> V4: Fixed patch for latest code
-V2 -> V3: Added READ_ONCE in inode_get_ctime_nsec() and addressed review comments
-V1 -> V2: Added READ_ONCE in inode_get_ctime_sec()
----
- fs/inode.c | 16 ++++++++--------
- fs/stat.c  |  2 +-
- 2 files changed, 9 insertions(+), 9 deletions(-)
+Thank you.
+Jinliang Zheng
 
-diff --git a/fs/inode.c b/fs/inode.c
-index b13b778257ae..bfab370c8622 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2713,8 +2713,8 @@ struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 t
- {
- 	trace_inode_set_ctime_to_ts(inode, &ts);
- 	set_normalized_timespec64(&ts, ts.tv_sec, ts.tv_nsec);
--	inode->i_ctime_sec = ts.tv_sec;
--	inode->i_ctime_nsec = ts.tv_nsec;
-+	WRITE_ONCE(inode->i_ctime_sec, ts.tv_sec);
-+	WRITE_ONCE(inode->i_ctime_nsec, ts.tv_nsec);
- 	return ts;
- }
- EXPORT_SYMBOL(inode_set_ctime_to_ts);
-@@ -2788,7 +2788,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 	 */
- 	cns = smp_load_acquire(&inode->i_ctime_nsec);
- 	if (cns & I_CTIME_QUERIED) {
--		struct timespec64 ctime = { .tv_sec = inode->i_ctime_sec,
-+		struct timespec64 ctime = { .tv_sec = READ_ONCE(inode->i_ctime_sec),
- 					    .tv_nsec = cns & ~I_CTIME_QUERIED };
- 
- 		if (timespec64_compare(&now, &ctime) <= 0) {
-@@ -2809,7 +2809,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 	/* Try to swap the nsec value into place. */
- 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
- 		/* If swap occurred, then we're (mostly) done */
--		inode->i_ctime_sec = now.tv_sec;
-+		WRITE_ONCE(inode->i_ctime_sec, now.tv_sec);
- 		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
- 		mgtime_counter_inc(mg_ctime_swaps);
- 	} else {
-@@ -2824,7 +2824,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 			goto retry;
- 		}
- 		/* Otherwise, keep the existing ctime */
--		now.tv_sec = inode->i_ctime_sec;
-+		now.tv_sec = READ_ONCE(inode->i_ctime_sec);
- 		now.tv_nsec = cur & ~I_CTIME_QUERIED;
- 	}
- out:
-@@ -2857,7 +2857,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
- 	/* pairs with try_cmpxchg below */
- 	cur = smp_load_acquire(&inode->i_ctime_nsec);
- 	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
--	cur_ts.tv_sec = inode->i_ctime_sec;
-+	cur_ts.tv_sec = READ_ONCE(inode->i_ctime_sec);
- 
- 	/* If the update is older than the existing value, skip it. */
- 	if (timespec64_compare(&update, &cur_ts) <= 0)
-@@ -2883,7 +2883,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
- retry:
- 	old = cur;
- 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
--		inode->i_ctime_sec = update.tv_sec;
-+		WRITE_ONCE(inode->i_ctime_sec, update.tv_sec);
- 		mgtime_counter_inc(mg_ctime_swaps);
- 		return update;
- 	}
-@@ -2899,7 +2899,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
- 		goto retry;
- 
- 	/* Otherwise, it was a new timestamp. */
--	cur_ts.tv_sec = inode->i_ctime_sec;
-+	cur_ts.tv_sec = READ_ONCE(inode->i_ctime_sec);
- 	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
- 	return cur_ts;
- }
-diff --git a/fs/stat.c b/fs/stat.c
-index 0870e969a8a0..e39c78cd62f3 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -53,7 +53,7 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
- 	}
- 
- 	stat->mtime = inode_get_mtime(inode);
--	stat->ctime.tv_sec = inode->i_ctime_sec;
-+	stat->ctime.tv_sec = READ_ONCE(inode->i_ctime_sec);
- 	stat->ctime.tv_nsec = (u32)atomic_read(pcn);
- 	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
- 		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
--- 
-2.34.1
-
+> 	3) file descriptor - a number that has a meaning only in context
+> of a process and refers to IO channel.	That's what system calls use
+> to identify the IO channel to operate upon; open() picks a descriptor
+> unused by the calling process, associates the new channel with it and
+> returns that descriptor (a number) to caller.  Multiple descriptors can
+> refer to the same IO channel; e.g. dup(fd) grabs a new descriptor and
+> associates it with the same IO channel fd currently refers to.
+> 
+> 	IO channels are not directly exposed to userland, but they are
+> very much present in Unix-style IO API.  Note that results of e.g.
+> 	int fd1 = open("/etc/issue", 0);
+> 	int fd2 = open("/etc/issue", 0);
+> and
+> 	int fd1 = open("/etc/issue", 0);
+> 	int fd2 = dup(fd1);
+> are not identical, even though in both cases fd1 and fd2 are opened
+> descriptors and reading from them will access the contents of the
+> /etc/issue; in the former case the positions being accessed by read from
+> fd1 and fd2 will be independent, in the latter they will be shared.
+> 
+> 	It's really quite basic - Unix Programming 101 stuff.  It's not
+> just that POSIX requires that and that any Unix behaves that way,
+> anything even remotely Unix-like will be like that.
+> 
+> 	You won't find the words 'IO channel' in POSIX, but I refuse
+> to use the term they have chosen instead - 'file description'.	Yes,
+> alongside with 'file descriptor', in the contexts where the distinction
+> between these notions is quite important.  I would rather not say what
+> I really think of those unsung geniuses, lest CoC gets overexcited...
+> 
+> 	Anyway, in casual conversations the expression 'opened file'
+> usually refers to that thing.  Which is somewhat clumsy (sounds like
+> 'file on filesystem that happens to be opened'), but usually it's
+> good enough.  If you need to be pedantic (e.g. when explaining that
+> material in aforementioned Unix Programming 101 class), 'IO channel'
+> works well enough, IME.
 
