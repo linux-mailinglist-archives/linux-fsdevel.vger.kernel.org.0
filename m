@@ -1,589 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-35661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6589D6CCB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 07:25:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C73A9D6D20
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 09:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C004D281506
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 06:25:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC649B212FA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 08:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55178187561;
-	Sun, 24 Nov 2024 06:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0734B1547CF;
+	Sun, 24 Nov 2024 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igOatJ24"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="x8PZ9rMA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60341AAC;
-	Sun, 24 Nov 2024 06:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810DC3C12;
+	Sun, 24 Nov 2024 08:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732429536; cv=none; b=Ih/DjgG03awbJd5bglpLcfo3OTYAPqGFj5Z3DaJAG24GwpCEal+C5H+kdDxj57nKvrqdvLo7MUQEIhFXIYWL3TNp4wjsnPGRXK2XvSIPxJ+7E1ozQZoLS4RLxGbwEkjcJmTBe/A+CFXtQGGi6rKqVmWJUaWDsJtWtiJLLrL6FzE=
+	t=1732438038; cv=none; b=OCwtMlhMyHeHmTQRQJDtA8EvAFPhNt/y3/tbCmbgS+L1gvDb9xF5rfPYE7ls0+B516uLo3Bcr4vgSgOoaoXVTbP4Tq2lmnS6nAKwZwZMqhzB1NF+BAGYp/2C/0fhVxex5b1dNB+r2MeSEGknguLVylts1c6bjmpVmLtvd/DpKxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732429536; c=relaxed/simple;
-	bh=uTr2DLJ8vuqnzrN0fbBp4yZZ6aZUiGeleQlMZXRGFgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cpVuC0IWPdCkb6DNc8Nr6lXl28AZrZ4xf6/dVUC/ky+nxY38qfmlg5gM6SurCERA+3XY5a/IyNpeY4SWThXmxOTCs7hDBT24MWfwPOrc7jDN4UDkxIE7/BZBPgrqxbI2xrcy6jEzd9IoHIjiIbFFOqez36AbfwR77ORla+H9LIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igOatJ24; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa53a971480so100617766b.1;
-        Sat, 23 Nov 2024 22:25:34 -0800 (PST)
+	s=arc-20240116; t=1732438038; c=relaxed/simple;
+	bh=SmkG5pppsWnJiVYBd3F6Y3NOapASpge3WWBuMaCBc4U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=axukK2XHtNF4LN5Ooo/zHwEfBSolly82/AEIR9ns1ii6P2YQMElX+S2oLFT9Bl38bx0Ec6eSFwhxfmAO+faZaDUq06h/z4AWnBfYAZnqY0jKMyhGl7RNDhx+n7vrF2l41AuezXO+XXVH5YsOLbdETK09OSR8pASSdSseSnC658Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=x8PZ9rMA reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732429533; x=1733034333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LBjPqidQ0caW4DrlxEDX4pxl5FAD/5hI66myyd/R3Po=;
-        b=igOatJ24nAdde7Gd9D9Nu7ZvipJhtxJB9bdAMSeejGm76z8qtMK5cD0soNkrtpvmY1
-         tB5XttJ+cb7a7IGY019iyz6JaRGk4vDVoYDqw3AcrhOm7qMpc+oo5X5SZZCYMTGYWpGw
-         ZqNMo21vScralos/MZW6NFfnJRHCNukgTi0R9PvV9jFdTfbMF37qyA77ZjJhHc6c6bZm
-         1UAJ8rO3d2mPLLt5bBHWdWpo2w6unASpbE50PoUlCV6ewOPdlZmBVMNj/Ql+/7eSLzzf
-         L15LmAtBU+hiAlDGX13Omvn6nTmQf/h7d8pYRN0Ti0e0767QqY44+6uBErbkDVRg5pDZ
-         t8bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732429533; x=1733034333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LBjPqidQ0caW4DrlxEDX4pxl5FAD/5hI66myyd/R3Po=;
-        b=olDpTNQHbrKX8mNLXJuLDV5/BLhZRQXZuRagLNHHPZmT+JpSEI58Szr54OlIb5wf/X
-         Rp+giwHOLrlvYbg+npxIbnRZNpg5R8GnKTGyfTwCmJeAjRjNt5VKXEbPopaxMnSmRr6k
-         f+wFDnbvAWRY819D8b5JMBG/34hPGw9M8F2LWyyW7PMQOEJ2ftAHTdk7Jp4kEC0uFlpk
-         4yOM9fXhoGJiEl0kgkqM89nnC+kZiDhIOXw26uJ2Wyqcc5b1oz6FmPvh0R3iqlOPDbdM
-         BdnDBOuM4EsDiJR5uxJwtkRXeVsgftb60UqMYbblQuRX9hZK+DR/R4xsWK9qaNgMY0P7
-         UR8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU74aiUYs0k9mogqOxjFWQIZJga4YDBCSbmXSSn/zv56185zzOrCJ0Gd5NEWORoblhDsFCJKtrTHtkFFjEH@vger.kernel.org, AJvYcCUfIRWVuTMneJYYxFOS6KBV/GluLiJWGlOHq5rnMy7KEmtZ0v6mEPWpoqyjyL2o0wDbCAP4GemGcjfHVeEY@vger.kernel.org, AJvYcCUrrMNP7eXrbGB2D1MQqy3qifzYSVd2kKmWv2H8QVPjLtXkKTsA5HHYkYauG/40pow/wUdFLWF0r1qZNk7L2IMDSf8ZwMKv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhUj5E6CxP7EVmDbr4MbUTXEE3pjW4y840sUHRIebNcBRnezyy
-	Vp0Ymw7Z+l626dvpb3Ged8RzKFP7jk0vTbXaaWntrDrsHkmCyDdlt/CIVMmKFnhmlUYMSQG+SJS
-	RhcoxmPNduozSHJ44U4HugkfAwSI=
-X-Gm-Gg: ASbGncsfGbnlolh42YtbyBTwxJ9Ko6Xgo4BRZiMqPsm+OlBfam/JWuYfoIAkPKvqZxl
-	hGnpHdY/fq3eZAkumEJTw0GNwtPjG2+A=
-X-Google-Smtp-Source: AGHT+IEOTuA2rkq2d3tavAwsFU39CVFiLGGWBG0Ef9cWIFW0Q2NcFHlhOw+7kvGvRVwFaUDNa4vylzskjCWpfh3vJac=
-X-Received: by 2002:a17:907:77d4:b0:aa5:49f0:150f with SMTP id
- a640c23a62f3a-aa549f018b5mr67902266b.7.1732429532285; Sat, 23 Nov 2024
- 22:25:32 -0800 (PST)
+	d=buaa.edu.cn; s=buaa; h=Received:Date:From:To:Cc:Subject:
+	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID; bh=OI38ZUo+qIWhmN4Jrh9l/MMiqa1OcMJ6ZroG
+	WNzkrWM=; b=x8PZ9rMApbH+hMAd5L27L8aeFAg6QEZznivDxJ+mbsqXbI766Gee
+	u30452eiR+6amK5fcPnfMcSFrCnckJlokVLgiT2JD+7UP9PoWN07QrNZu1KaADSw
+	BzoGCLG+aAXNF6JbCpFHG+tmWtq5/+h/dgHbVWrpSKYBXi1PC7EsxiQ=
+Received: from zhenghaoran$buaa.edu.cn ( [115.60.191.15] ) by
+ ajax-webmail-coremail-app1 (Coremail) ; Sun, 24 Nov 2024 16:46:42 +0800
+ (GMT+08:00)
+Date: Sun, 24 Nov 2024 16:46:42 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6YOR5rWp54S2?= <zhenghaoran@buaa.edu.cn>
+To: "Jeff Layton" <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: baijiaju1990@gmail.com, 21371365@buaa.edu.cn, zhenghaoran@buaa.edu.cn
+Subject: Re: Re: [PATCH v3] fs: Fix data race in inode_set_ctime_to_ts
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
+ 20240305(0ac2fdd1) Copyright (c) 2002-2024 www.mailtech.cn
+ mispb-63b7ebb9-fa87-40c1-9aec-818ec5a006d9-buaa.edu.cn
+In-Reply-To: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+References: <20241122112228.6him45jdtibue26s@quack3>
+ <20241122130642.460929-1-zhenghaoran@buaa.edu.cn>
+ <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122225958.1775625-1-song@kernel.org> <20241122225958.1775625-2-song@kernel.org>
-In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 24 Nov 2024 07:25:20 +0100
-Message-ID: <CAOQ4uxgKoCztsPZ-X-annfrDwetpy1fcRJz-RdD-pAdMQKVH=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <26bf3b09.18da5.1935d5a0c1d.Coremail.zhenghaoran@buaa.edu.cn>
+X-Coremail-Locale: zh_TW
+X-CM-TRANSID:OCz+CgDXBxLy50Jnu9JMAQ--.39035W
+X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/1tbiAgMLA2dCDMIc1AAAsq
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Sat, Nov 23, 2024 at 12:00=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> fanotify filter enables handling fanotify events within the kernel, and
-> thus saves a trip to the user space. fanotify filter can be useful in
-> many use cases. For example, if a user is only interested in events for
-> some files in side a directory, a filter can be used to filter out
-> irrelevant events.
->
-> fanotify filter is attached to fsnotify_group. At most one filter can
-> be attached to a fsnotify_group. The attach/detach of filter are
-> controlled by two new ioctls on the fanotify fds: FAN_IOC_ADD_FILTER
-> and FAN_IOC_DEL_FILTER.
->
-> fanotify filter is packaged in a kernel module. In the future, it is
-> also possible to package fanotify filter in a BPF program. Since loading
-> modules requires CAP_SYS_ADMIN, _loading_ fanotify filter in kernel
-> modules is limited to CAP_SYS_ADMIN. However, non-SYS_CAP_ADMIN users
-> can _attach_ filter loaded by sys admin to their fanotify fds. The owner
-> of the fanotify fitler can use flag FAN_FILTER_F_SYS_ADMIN_ONLY to
-> make a filter available only to users with CAP_SYS_ADMIN.
->
-> To make fanotify filters more flexible, a filter can take arguments at
-> attach time.
->
-> sysfs entry /sys/kernel/fanotify_filter is added to help users know
-> which fanotify filters are available. At the moment, these files are
-> added for each filter: flags, desc, and init_args.
-
-It's a shame that we have fanotify knobs at /proc/sys/fs/fanotify/ and
-in sysfs, but understand we don't want to make more use of proc for this.
-
-Still I would add the filter files under a new /sys/fs/fanotify/ dir and no=
-t
-directly under /sys/kernel/
-
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/notify/fanotify/Kconfig           |  13 ++
->  fs/notify/fanotify/Makefile          |   1 +
->  fs/notify/fanotify/fanotify.c        |  44 +++-
->  fs/notify/fanotify/fanotify_filter.c | 289 +++++++++++++++++++++++++++
->  fs/notify/fanotify/fanotify_user.c   |   7 +
->  include/linux/fanotify.h             | 128 ++++++++++++
->  include/linux/fsnotify_backend.h     |   6 +-
->  include/uapi/linux/fanotify.h        |  36 ++++
->  8 files changed, 520 insertions(+), 4 deletions(-)
->  create mode 100644 fs/notify/fanotify/fanotify_filter.c
->
-> diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-> index 0e36aaf379b7..abfd59d95f49 100644
-> --- a/fs/notify/fanotify/Kconfig
-> +++ b/fs/notify/fanotify/Kconfig
-> @@ -24,3 +24,16 @@ config FANOTIFY_ACCESS_PERMISSIONS
->            hierarchical storage management systems.
->
->            If unsure, say N.
-> +
-> +config FANOTIFY_FILTER
-> +       bool "fanotify in kernel filter"
-> +       depends on FANOTIFY
-> +       default y
-> +       help
-> +          Say Y here if you want to use fanotify in kernel filter.
-> +          The filter can be implemented in a kernel module or a
-> +          BPF program. The filter can speed up fanotify in many
-> +          use cases. For example, when the listener is only interested i=
-n
-> +          a subset of events.
-> +
-> +          If unsure, say Y.
-> \ No newline at end of file
-> diff --git a/fs/notify/fanotify/Makefile b/fs/notify/fanotify/Makefile
-> index 25ef222915e5..d95ec0aeffb5 100644
-> --- a/fs/notify/fanotify/Makefile
-> +++ b/fs/notify/fanotify/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  obj-$(CONFIG_FANOTIFY)         +=3D fanotify.o fanotify_user.o
-> +obj-$(CONFIG_FANOTIFY_FILTER)  +=3D fanotify_filter.o
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
-c
-> index 224bccaab4cc..c70184cd2d45 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -18,6 +18,8 @@
->
->  #include "fanotify.h"
->
-> +extern struct srcu_struct fsnotify_mark_srcu;
-> +
->  static bool fanotify_path_equal(const struct path *p1, const struct path=
- *p2)
->  {
->         return p1->mnt =3D=3D p2->mnt && p1->dentry =3D=3D p2->dentry;
-> @@ -888,6 +890,7 @@ static int fanotify_handle_event(struct fsnotify_grou=
-p *group, u32 mask,
->         struct fsnotify_event *fsn_event;
->         __kernel_fsid_t fsid =3D {};
->         u32 match_mask =3D 0;
-> +       struct fanotify_filter_hook *filter_hook __maybe_unused;
->
->         BUILD_BUG_ON(FAN_ACCESS !=3D FS_ACCESS);
->         BUILD_BUG_ON(FAN_MODIFY !=3D FS_MODIFY);
-> @@ -921,6 +924,39 @@ static int fanotify_handle_event(struct fsnotify_gro=
-up *group, u32 mask,
->         pr_debug("%s: group=3D%p mask=3D%x report_mask=3D%x\n", __func__,
->                  group, mask, match_mask);
->
-> +       if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
-> +               fsid =3D fanotify_get_fsid(iter_info);
-> +
-> +#ifdef CONFIG_FANOTIFY_FILTER
-> +       filter_hook =3D srcu_dereference(group->fanotify_data.filter_hook=
-, &fsnotify_mark_srcu);
-
-Do we actually need the sleeping rcu protection for calling the hook?
-Can regular rcu read side be nested inside srcu read side?
-
-Jan,
-
-I don't remember why srcu is needed since we are not holding it
-when waiting for userspace anymore?
-
-> +       if (filter_hook) {
-> +               struct fanotify_filter_event filter_event =3D {
-> +                       .mask =3D mask,
-> +                       .data =3D data,
-> +                       .data_type =3D data_type,
-> +                       .dir =3D dir,
-> +                       .file_name =3D file_name,
-> +                       .fsid =3D &fsid,
-> +                       .match_mask =3D match_mask,
-> +               };
-> +
-> +               ret =3D filter_hook->ops->filter(group, filter_hook, &fil=
-ter_event);
-> +
-> +               /*
-> +                * The filter may return
-> +                * - FAN_FILTER_RET_SEND_TO_USERSPACE =3D> continue the r=
-est;
-> +                * - FAN_FILTER_RET_SKIP_EVENT =3D> return 0 now;
-> +                * - < 0 error =3D> return error now.
-> +                *
-> +                * For the latter two cases, we can just return ret.
-> +                */
-> +               BUILD_BUG_ON(FAN_FILTER_RET_SKIP_EVENT !=3D 0);
-> +
-> +               if (ret !=3D FAN_FILTER_RET_SEND_TO_USERSPACE)
-> +                       return ret;
-> +       }
-> +#endif
-> +
->         if (fanotify_is_perm_event(mask)) {
->                 /*
->                  * fsnotify_prepare_user_wait() fails if we race with mar=
-k
-> @@ -930,9 +966,6 @@ static int fanotify_handle_event(struct fsnotify_grou=
-p *group, u32 mask,
->                         return 0;
->         }
->
-> -       if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
-> -               fsid =3D fanotify_get_fsid(iter_info);
-> -
->         event =3D fanotify_alloc_event(group, mask, data, data_type, dir,
->                                      file_name, &fsid, match_mask);
->         ret =3D -ENOMEM;
-> @@ -976,6 +1009,11 @@ static void fanotify_free_group_priv(struct fsnotif=
-y_group *group)
->
->         if (mempool_initialized(&group->fanotify_data.error_events_pool))
->                 mempool_exit(&group->fanotify_data.error_events_pool);
-> +
-> +#ifdef CONFIG_FANOTIFY_FILTER
-> +       if (group->fanotify_data.filter_hook)
-> +               fanotify_filter_hook_free(group->fanotify_data.filter_hoo=
-k);
-> +#endif
->  }
->
->  static void fanotify_free_path_event(struct fanotify_event *event)
-> diff --git a/fs/notify/fanotify/fanotify_filter.c b/fs/notify/fanotify/fa=
-notify_filter.c
-> new file mode 100644
-> index 000000000000..9215612e2fcb
-> --- /dev/null
-> +++ b/fs/notify/fanotify/fanotify_filter.c
-> @@ -0,0 +1,289 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/fanotify.h>
-> +#include <linux/kobject.h>
-> +#include <linux/module.h>
-> +
-> +#include "fanotify.h"
-> +
-> +extern struct srcu_struct fsnotify_mark_srcu;
-> +
-> +static DEFINE_SPINLOCK(filter_list_lock);
-> +static LIST_HEAD(filter_list);
-> +
-> +static struct kobject *fan_filter_root_kobj;
-> +
-> +static struct {
-> +       enum fanotify_filter_flags flag;
-> +       const char *name;
-> +} fanotify_filter_flags_names[] =3D {
-> +       {
-> +               .flag =3D FAN_FILTER_F_SYS_ADMIN_ONLY,
-> +               .name =3D "SYS_ADMIN_ONLY",
-> +       }
-> +};
-> +
-> +static ssize_t flags_show(struct kobject *kobj,
-> +                         struct kobj_attribute *attr, char *buf)
-> +{
-> +       struct fanotify_filter_ops *ops;
-> +       ssize_t len =3D 0;
-> +       int i;
-> +
-> +       ops =3D container_of(kobj, struct fanotify_filter_ops, kobj);
-> +       for (i =3D 0; i < ARRAY_SIZE(fanotify_filter_flags_names); i++) {
-> +               if (ops->flags & fanotify_filter_flags_names[i].flag) {
-> +                       len +=3D sysfs_emit_at(buf, len, "%s%s", len ? " =
-" : "",
-> +                                            fanotify_filter_flags_names[=
-i].name);
-> +               }
-> +       }
-> +       len +=3D sysfs_emit_at(buf, len, "\n");
-> +       return len;
-> +}
-> +
-> +static ssize_t desc_show(struct kobject *kobj,
-> +                        struct kobj_attribute *attr, char *buf)
-> +{
-> +       struct fanotify_filter_ops *ops;
-> +
-> +       ops =3D container_of(kobj, struct fanotify_filter_ops, kobj);
-> +
-> +       return sysfs_emit(buf, "%s\n", ops->desc ?: "N/A");
-> +}
-> +
-> +static ssize_t init_args_show(struct kobject *kobj,
-> +                             struct kobj_attribute *attr, char *buf)
-> +{
-> +       struct fanotify_filter_ops *ops;
-> +
-> +       ops =3D container_of(kobj, struct fanotify_filter_ops, kobj);
-> +
-> +       return sysfs_emit(buf, "%s\n", ops->init_args ?: "N/A");
-> +}
-> +
-> +static struct kobj_attribute flags_kobj_attr =3D __ATTR_RO(flags);
-> +static struct kobj_attribute desc_kobj_attr =3D __ATTR_RO(desc);
-> +static struct kobj_attribute init_args_kobj_attr =3D __ATTR_RO(init_args=
-);
-> +
-> +static struct attribute *fan_filter_attrs[] =3D {
-> +       &flags_kobj_attr.attr,
-> +       &desc_kobj_attr.attr,
-> +       &init_args_kobj_attr.attr,
-> +       NULL,
-> +};
-> +ATTRIBUTE_GROUPS(fan_filter);
-> +
-> +static void fan_filter_kobj_release(struct kobject *kobj)
-> +{
-> +}
-> +
-> +static const struct kobj_type fan_filter_ktype =3D {
-> +       .release =3D fan_filter_kobj_release,
-> +       .sysfs_ops =3D &kobj_sysfs_ops,
-> +       .default_groups =3D fan_filter_groups,
-> +};
-> +
-> +static struct fanotify_filter_ops *fanotify_filter_find(const char *name=
-)
-> +{
-> +       struct fanotify_filter_ops *ops;
-> +
-> +       list_for_each_entry(ops, &filter_list, list) {
-> +               if (!strcmp(ops->name, name))
-> +                       return ops;
-> +       }
-> +       return NULL;
-> +}
-> +
-> +static void __fanotify_filter_unregister(struct fanotify_filter_ops *ops=
-)
-> +{
-> +       spin_lock(&filter_list_lock);
-> +       list_del_init(&ops->list);
-> +       spin_unlock(&filter_list_lock);
-> +}
-> +
-> +/*
-> + * fanotify_filter_register - Register a new filter.
-> + *
-> + * Add a filter to the filter_list. These filter are
-> + * available for all users in the system.
-> + *
-> + * @ops:       pointer to fanotify_filter_ops to add.
-> + *
-> + * Returns:
-> + *     0       - on success;
-> + *     -EEXIST - filter of the same name already exists.
-> + *     -ENODEV - fanotify filter was not properly initialized.
-> + */
-> +int fanotify_filter_register(struct fanotify_filter_ops *ops)
-> +{
-> +       int ret;
-> +
-> +       if (!fan_filter_root_kobj)
-> +               return -ENODEV;
-> +
-> +       spin_lock(&filter_list_lock);
-> +       if (fanotify_filter_find(ops->name)) {
-> +               /* cannot register two filters with the same name */
-> +               spin_unlock(&filter_list_lock);
-> +               return -EEXIST;
-> +       }
-> +       list_add_tail(&ops->list, &filter_list);
-> +       spin_unlock(&filter_list_lock);
-> +
-> +
-> +       kobject_init(&ops->kobj, &fan_filter_ktype);
-> +       ret =3D kobject_add(&ops->kobj, fan_filter_root_kobj, "%s", ops->=
-name);
-> +       if (ret) {
-> +               __fanotify_filter_unregister(ops);
-> +               return ret;
-> +       }
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(fanotify_filter_register);
-> +
-> +/*
-> + * fanotify_filter_unregister - Unregister a new filter.
-> + *
-> + * Remove a filter from filter_list.
-> + *
-> + * @ops:       pointer to fanotify_filter_ops to remove.
-> + */
-> +void fanotify_filter_unregister(struct fanotify_filter_ops *ops)
-> +{
-> +       kobject_put(&ops->kobj);
-> +       __fanotify_filter_unregister(ops);
-> +}
-> +EXPORT_SYMBOL_GPL(fanotify_filter_unregister);
-> +
-> +/*
-> + * fanotify_filter_add - Add a filter to fsnotify_group.
-> + *
-> + * Add a filter from filter_list to a fsnotify_group.
-> + *
-> + * @group:     fsnotify_group that will have add
-> + * @argp:      fanotify_filter_args that specifies the filter
-> + *             and the init arguments of the filter.
-> + *
-> + * Returns:
-> + *     0       - on success;
-> + *     -EEXIST - filter of the same name already exists.
-> + */
-> +int fanotify_filter_add(struct fsnotify_group *group,
-> +                       struct fanotify_filter_args __user *argp)
-> +{
-> +       struct fanotify_filter_hook *filter_hook;
-> +       struct fanotify_filter_ops *filter_ops;
-> +       struct fanotify_filter_args args;
-> +       void *init_args =3D NULL;
-> +       int ret =3D 0;
-> +
-> +       ret =3D copy_from_user(&args, argp, sizeof(args));
-> +       if (ret)
-> +               return -EFAULT;
-> +
-> +       if (args.init_args_size > FAN_FILTER_ARGS_MAX)
-> +               return -EINVAL;
-> +
-> +       args.name[FAN_FILTER_NAME_MAX - 1] =3D '\0';
-> +
-> +       fsnotify_group_lock(group);
-> +
-> +       if (rcu_access_pointer(group->fanotify_data.filter_hook)) {
-> +               fsnotify_group_unlock(group);
-> +               return -EBUSY;
-> +       }
-> +
-> +       filter_hook =3D kzalloc(sizeof(*filter_hook), GFP_KERNEL);
-> +       if (!filter_hook) {
-> +               ret =3D -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       spin_lock(&filter_list_lock);
-> +       filter_ops =3D fanotify_filter_find(args.name);
-> +       if (!filter_ops || !try_module_get(filter_ops->owner)) {
-> +               spin_unlock(&filter_list_lock);
-> +               ret =3D -ENOENT;
-> +               goto err_free_hook;
-> +       }
-> +       spin_unlock(&filter_list_lock);
-> +
-> +       if (!capable(CAP_SYS_ADMIN) && (filter_ops->flags & FAN_FILTER_F_=
-SYS_ADMIN_ONLY)) {
-
-1. feels better to opt-in for UNPRIV (and maybe later on) rather than
-make it the default.
-2. need to check that filter_ops->flags has only "known" flags
-3. probably need to add filter_ops->version check in case we want to
-change the ABI
-
-> +               ret =3D -EPERM;
-> +               goto err_module_put;
-> +       }
-> +
-> +       if (filter_ops->filter_init) {
-> +               if (args.init_args_size !=3D filter_ops->init_args_size) =
-{
-> +                       ret =3D -EINVAL;
-> +                       goto err_module_put;
-> +               }
-> +               if (args.init_args_size) {
-> +                       init_args =3D kzalloc(args.init_args_size, GFP_KE=
-RNEL);
-> +                       if (!init_args) {
-> +                               ret =3D -ENOMEM;
-> +                               goto err_module_put;
-> +                       }
-> +                       if (copy_from_user(init_args, (void __user *)args=
-.init_args,
-> +                                          args.init_args_size)) {
-> +                               ret =3D -EFAULT;
-> +                               goto err_free_args;
-> +                       }
-> +
-> +               }
-> +               ret =3D filter_ops->filter_init(group, filter_hook, init_=
-args);
-> +               if (ret)
-> +                       goto err_free_args;
-> +               kfree(init_args);
-> +       }
-> +       filter_hook->ops =3D filter_ops;
-> +       rcu_assign_pointer(group->fanotify_data.filter_hook, filter_hook)=
-;
-> +
-> +out:
-> +       fsnotify_group_unlock(group);
-> +       return ret;
-> +
-> +err_free_args:
-> +       kfree(init_args);
-> +err_module_put:
-> +       module_put(filter_ops->owner);
-> +err_free_hook:
-> +       kfree(filter_hook);
-> +       goto out;
-> +}
-> +
-> +void fanotify_filter_hook_free(struct fanotify_filter_hook *filter_hook)
-> +{
-> +       if (filter_hook->ops->filter_free)
-> +               filter_hook->ops->filter_free(filter_hook);
-> +
-> +       module_put(filter_hook->ops->owner);
-> +       kfree(filter_hook);
-> +}
-> +
-> +/*
-> + * fanotify_filter_del - Delete a filter from fsnotify_group.
-> + */
-> +void fanotify_filter_del(struct fsnotify_group *group)
-> +{
-> +       struct fanotify_filter_hook *filter_hook;
-> +
-> +       fsnotify_group_lock(group);
-> +       filter_hook =3D group->fanotify_data.filter_hook;
-> +       if (!filter_hook)
-> +               goto out;
-> +
-> +       rcu_assign_pointer(group->fanotify_data.filter_hook, NULL);
-> +       fanotify_filter_hook_free(filter_hook);
-
-The read side is protected with srcu and there is no srcu/rcu delay of free=
-ing.
-You will either need something along the lines of
-fsnotify_connector_destroy_workfn() with synchronize_srcu()
-or use regular rcu delay and read side (assuming that it can be nested insi=
-de
-srcu read side?).
-
-Thanks,
-Amir.
+VGhhbmtzIHRvIENocmlzdGlhbiBCcmF1bmVyIGZvciB0aGUgcmVtaW5kZXIgYW5kIEplZmYgTGF5
+dG9uIGZvciB0aGUgZml4IHN1Z2dlc3Rpb24uIEkgd2lsbCBiYXNlIG15IHBhdGNoIG9uIHZmcy5m
+aXhlcyBhbmQgcmVzZW5kIHRoZSBwYXRjaCB2NCBhZnRlciBmaXhpbmcgaXQuCgoKPiAtLS0tLeWO
+n+Wni+mDteS7ti0tLS0tCj4g55m85Lu25Lq6OiAiSmVmZiBMYXl0b24iIDxqbGF5dG9uQGtlcm5l
+bC5vcmc+Cj4g55m86YCB5pmC6ZaTOjIwMjQtMTEtMjMgMjI6MDE6MDggKOaYn+acn+WFrSkKPiDm
+lLbku7bkuro6ICJIYW8tcmFuIFpoZW5nIiA8emhlbmdoYW9yYW5AYnVhYS5lZHUuY24+LCB2aXJv
+QHplbml2LmxpbnV4Lm9yZy51aywgYnJhdW5lckBrZXJuZWwub3JnLCBqYWNrQHN1c2UuY3osIGxp
+bnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+Cj4g5oqE6YCBOiBiYWlqaWFqdTE5OTBAZ21haWwuY29tLCAyMTM3MTM2NUBidWFhLmVkdS5jbgo+
+IOS4u+mhjDogUmU6IFtQQVRDSCB2M10gZnM6IEZpeCBkYXRhIHJhY2UgaW4gaW5vZGVfc2V0X2N0
+aW1lX3RvX3RzCj4gCj4gT24gRnJpLCAyMDI0LTExLTIyIGF0IDIxOjA2ICswODAwLCBIYW8tcmFu
+IFpoZW5nIHdyb3RlOgo+ID4gQSBkYXRhIHJhY2UgbWF5IG9jY3VyIHdoZW4gdGhlIGZ1bmN0aW9u
+IGBpbm9kZV9zZXRfY3RpbWVfdG9fdHMoKWAgYW5kCj4gPiB0aGUgZnVuY3Rpb24gYGlub2RlX2dl
+dF9jdGltZV9zZWMoKWAgYXJlIGV4ZWN1dGVkIGNvbmN1cnJlbnRseS4gV2hlbgo+ID4gdHdvIHRo
+cmVhZHMgY2FsbCBgYWlvX3JlYWRgIGFuZCBgYWlvX3dyaXRlYCByZXNwZWN0aXZlbHksIHRoZXkg
+d2lsbAo+ID4gYmUgZGlzdHJpYnV0ZWQgdG8gdGhlIHJlYWQgYW5kIHdyaXRlIGZ1bmN0aW9ucyBv
+ZiB0aGUgY29ycmVzcG9uZGluZwo+ID4gZmlsZSBzeXN0ZW0gcmVzcGVjdGl2ZWx5LiBUYWtpbmcg
+dGhlIGJ0cmZzIGZpbGUgc3lzdGVtIGFzIGFuIGV4YW1wbGUsCj4gPiB0aGUgYGJ0cmZzX2ZpbGVf
+cmVhZF9pdGVyYCBhbmQgYGJ0cmZzX2ZpbGVfd3JpdGVfaXRlcmAgZnVuY3Rpb25zIGFyZQo+ID4g
+ZmluYWxseSBjYWxsZWQuIFRoZXNlIHR3byBmdW5jdGlvbnMgY3JlYXRlZCBhIGRhdGEgcmFjZSB3
+aGVuIHRoZXkKPiA+IGZpbmFsbHkgY2FsbGVkIGBpbm9kZV9nZXRfY3RpbWVfc2VjKClgIGFuZCBg
+aW5vZGVfc2V0X2N0aW1lX3RvX25zKClgLgo+ID4gVGhlIHNwZWNpZmljIGNhbGwgc3RhY2sgdGhh
+dCBhcHBlYXJzIGR1cmluZyB0ZXN0aW5nIGlzIGFzIGZvbGxvd3M6Cj4gPiAKPiA+ID09PT09PT09
+PT09PURBVEFfUkFDRT09PT09PT09PT09PQo+ID4gYnRyZnNfZGVsYXllZF91cGRhdGVfaW5vZGUr
+MHgxZjYxLzB4N2NlMCBbYnRyZnNdCj4gPiBidHJmc191cGRhdGVfaW5vZGUrMHg0NWUvMHhiYjAg
+W2J0cmZzXQo+ID4gYnRyZnNfZGlydHlfaW5vZGUrMHgyYjgvMHg1MzAgW2J0cmZzXQo+ID4gYnRy
+ZnNfdXBkYXRlX3RpbWUrMHgxYWQvMHgyMzAgW2J0cmZzXQo+ID4gdG91Y2hfYXRpbWUrMHgyMTEv
+MHg0NDAKPiA+IGZpbGVtYXBfcmVhZCsweDkwZi8weGEyMAo+ID4gYnRyZnNfZmlsZV9yZWFkX2l0
+ZXIrMHhlYi8weDU4MCBbYnRyZnNdCj4gPiBhaW9fcmVhZCsweDI3NS8weDNhMAo+ID4gaW9fc3Vi
+bWl0X29uZSsweGQyMi8weDFjZTAKPiA+IF9fc2Vfc3lzX2lvX3N1Ym1pdCsweGIzLzB4MjUwCj4g
+PiBkb19zeXNjYWxsXzY0KzB4YzEvMHgxOTAKPiA+IGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
+cmFtZSsweDc3LzB4N2YKPiA+ID09PT09PT09PT09PU9USEVSX0lORk89PT09PT09PT09PT0KPiA+
+IGJ0cmZzX3dyaXRlX2NoZWNrKzB4YTE1LzB4MTM5MCBbYnRyZnNdCj4gPiBidHJmc19idWZmZXJl
+ZF93cml0ZSsweDUyZi8weDI5ZDAgW2J0cmZzXQo+ID4gYnRyZnNfZG9fd3JpdGVfaXRlcisweDUz
+ZC8weDE1OTAgW2J0cmZzXQo+ID4gYnRyZnNfZmlsZV93cml0ZV9pdGVyKzB4NDEvMHg2MCBbYnRy
+ZnNdCj4gPiBhaW9fd3JpdGUrMHg0MWUvMHg1ZjAKPiA+IGlvX3N1Ym1pdF9vbmUrMHhkNDIvMHgx
+Y2UwCj4gPiBfX3NlX3N5c19pb19zdWJtaXQrMHhiMy8weDI1MAo+ID4gZG9fc3lzY2FsbF82NCsw
+eGMxLzB4MTkwCj4gPiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ny8weDdmCj4g
+PiAKPiA+IFRvIGFkZHJlc3MgdGhpcyBpc3N1ZSwgaXQgaXMgcmVjb21tZW5kZWQgdG8gYWRkIFdS
+SVRFX09OQ0UKPiA+IHdoZW4gd3JpdGluZyB0aGUgYGlub2RlLT5pX2N0aW1lX3NlY2AgdmFyaWFi
+bGUuYW5kIGFkZAo+ID4gUkVBRF9PTkNFIHdoZW4gcmVhZGluZyBpbiBmdW5jdGlvbiBgaW5vZGVf
+Z2V0X2N0aW1lX3NlYygpYAo+ID4gYW5kIGBpbm9kZV9nZXRfY3RpbWVfbnNlYygpYC4KPiA+IAo+
+ID4gU2lnbmVkLW9mZi1ieTogSGFvLXJhbiBaaGVuZyA8emhlbmdoYW9yYW5AYnVhYS5lZHUuY24+
+Cj4gPiAtLS0KPiA+IFYyIC0+IFYzOiBBZGRlZCBSRUFEX09OQ0UgaW4gaW5vZGVfZ2V0X2N0aW1l
+X25zZWMoKSBhbmQgYWRkcmVzc2VkIHJldmlldyBjb21tZW50cwo+ID4gVjEgLT4gVjI6IEFkZGVk
+IFJFQURfT05DRSBpbiBpbm9kZV9nZXRfY3RpbWVfc2VjKCkKPiA+IC0tLQo+ID4gIGluY2x1ZGUv
+bGludXgvZnMuaCB8IDggKysrKy0tLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
+KCspLCA0IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9m
+cy5oIGIvaW5jbHVkZS9saW51eC9mcy5oCj4gPiBpbmRleCAzNTU5NDQ2Mjc5YzEuLmMxOGY5YTll
+ZTVlNyAxMDA2NDQKPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvZnMuaAo+ID4gKysrIGIvaW5jbHVk
+ZS9saW51eC9mcy5oCj4gPiBAQCAtMTY1NSwxMiArMTY1NSwxMiBAQCBzdGF0aWMgaW5saW5lIHN0
+cnVjdCB0aW1lc3BlYzY0IGlub2RlX3NldF9tdGltZShzdHJ1Y3QgaW5vZGUgKmlub2RlLAo+ID4g
+IAo+ID4gIHN0YXRpYyBpbmxpbmUgdGltZTY0X3QgaW5vZGVfZ2V0X2N0aW1lX3NlYyhjb25zdCBz
+dHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4gIHsKPiA+IC0JcmV0dXJuIGlub2RlLT5pX2N0aW1lX3Nl
+YzsKPiA+ICsJcmV0dXJuIFJFQURfT05DRShpbm9kZS0+aV9jdGltZV9zZWMpOwo+ID4gIH0KPiA+
+ICAKPiA+ICBzdGF0aWMgaW5saW5lIGxvbmcgaW5vZGVfZ2V0X2N0aW1lX25zZWMoY29uc3Qgc3Ry
+dWN0IGlub2RlICppbm9kZSkKPiA+ICB7Cj4gPiAtCXJldHVybiBpbm9kZS0+aV9jdGltZV9uc2Vj
+Owo+ID4gKwlyZXR1cm4gUkVBRF9PTkNFKGlub2RlLT5pX2N0aW1lX25zZWMpOwo+ID4gIH0KPiA+
+ICAKPiA+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCB0aW1lc3BlYzY0IGlub2RlX2dldF9jdGltZShj
+b25zdCBzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4gQEAgLTE2NzQsOCArMTY3NCw4IEBAIHN0YXRp
+YyBpbmxpbmUgc3RydWN0IHRpbWVzcGVjNjQgaW5vZGVfZ2V0X2N0aW1lKGNvbnN0IHN0cnVjdCBp
+bm9kZSAqaW5vZGUpCj4gPiAgc3RhdGljIGlubGluZSBzdHJ1Y3QgdGltZXNwZWM2NCBpbm9kZV9z
+ZXRfY3RpbWVfdG9fdHMoc3RydWN0IGlub2RlICppbm9kZSwKPiA+ICAJCQkJCQkgICAgICBzdHJ1
+Y3QgdGltZXNwZWM2NCB0cykKPiA+ICB7Cj4gPiAtCWlub2RlLT5pX2N0aW1lX3NlYyA9IHRzLnR2
+X3NlYzsKPiA+IC0JaW5vZGUtPmlfY3RpbWVfbnNlYyA9IHRzLnR2X25zZWM7Cj4gPiArCVdSSVRF
+X09OQ0UoaW5vZGUtPmlfY3RpbWVfc2VjLCB0cy50dl9zZWMpOwo+ID4gKwlXUklURV9PTkNFKGlu
+b2RlLT5pX2N0aW1lX25zZWMsIHRzLnR2X25zZWMpOwo+ID4gIAlyZXR1cm4gdHM7Cj4gPiAgfQo+
+ID4gIAo+IAo+IExvb2tzIHJlYXNvbmFibGUuIFRoZXJlIGFyZSBhbHNvIGJhcmUgZmV0Y2hlcyBh
+bmQgc3RvcmVzIG9mIHRoZQo+IGlfY3RpbWVfc2VjIGZpZWxkIGluIGlub2RlX3NldF9jdGltZV9j
+dXJyZW50KCkuIERvIHdlIG5lZWQgc29tZXRoaW5nCj4gbGlrZSB0aGlzIGluIGFkZGl0aW9uIHRv
+IHRoZSBhYm92ZT8KPiAKPiAKPiBkaWZmIC0tZ2l0IGEvZnMvaW5vZGUuYyBiL2ZzL2lub2RlLmMK
+PiBpbmRleCBiMTNiNzc4MjU3YWUuLmQ4NjllZTZmMWM2YiAxMDA2NDQKPiAtLS0gYS9mcy9pbm9k
+ZS5jCj4gKysrIGIvZnMvaW5vZGUuYwo+IEBAIC0yNzg4LDcgKzI3ODgsNyBAQCBzdHJ1Y3QgdGlt
+ZXNwZWM2NCBpbm9kZV9zZXRfY3RpbWVfY3VycmVudChzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ICAJ
+ICovCj4gIAljbnMgPSBzbXBfbG9hZF9hY3F1aXJlKCZpbm9kZS0+aV9jdGltZV9uc2VjKTsKPiAg
+CWlmIChjbnMgJiBJX0NUSU1FX1FVRVJJRUQpIHsKPiAtCQlzdHJ1Y3QgdGltZXNwZWM2NCBjdGlt
+ZSA9IHsgLnR2X3NlYyA9IGlub2RlLT5pX2N0aW1lX3NlYywKPiArCQlzdHJ1Y3QgdGltZXNwZWM2
+NCBjdGltZSA9IHsgLnR2X3NlYyA9IFJFQURfT05DRShpbm9kZS0+aV9jdGltZV9zZWMpLAo+ICAJ
+CQkJCSAgICAudHZfbnNlYyA9IGNucyAmIH5JX0NUSU1FX1FVRVJJRUQgfTsKPiAgCj4gIAkJaWYg
+KHRpbWVzcGVjNjRfY29tcGFyZSgmbm93LCAmY3RpbWUpIDw9IDApIHsKPiBAQCAtMjgwOSw3ICsy
+ODA5LDcgQEAgc3RydWN0IHRpbWVzcGVjNjQgaW5vZGVfc2V0X2N0aW1lX2N1cnJlbnQoc3RydWN0
+IGlub2RlICppbm9kZSkKPiAgCS8qIFRyeSB0byBzd2FwIHRoZSBuc2VjIHZhbHVlIGludG8gcGxh
+Y2UuICovCj4gIAlpZiAodHJ5X2NtcHhjaGcoJmlub2RlLT5pX2N0aW1lX25zZWMsICZjdXIsIG5v
+dy50dl9uc2VjKSkgewo+ICAJCS8qIElmIHN3YXAgb2NjdXJyZWQsIHRoZW4gd2UncmUgKG1vc3Rs
+eSkgZG9uZSAqLwo+IC0JCWlub2RlLT5pX2N0aW1lX3NlYyA9IG5vdy50dl9zZWM7Cj4gKwkJV1JJ
+VEVfT05DRShpbm9kZS0+aV9jdGltZV9zZWMsIG5vdy50dl9zZWMpOwo+ICAJCXRyYWNlX2N0aW1l
+X25zX3hjaGcoaW5vZGUsIGNucywgbm93LnR2X25zZWMsIGN1cik7Cj4gIAkJbWd0aW1lX2NvdW50
+ZXJfaW5jKG1nX2N0aW1lX3N3YXBzKTsKPiAgCX0gZWxzZSB7Cj4gQEAgLTI4MjQsNyArMjgyNCw3
+IEBAIHN0cnVjdCB0aW1lc3BlYzY0IGlub2RlX3NldF9jdGltZV9jdXJyZW50KHN0cnVjdCBpbm9k
+ZSAqaW5vZGUpCj4gIAkJCWdvdG8gcmV0cnk7Cj4gIAkJfQo+ICAJCS8qIE90aGVyd2lzZSwga2Vl
+cCB0aGUgZXhpc3RpbmcgY3RpbWUgKi8KPiAtCQlub3cudHZfc2VjID0gaW5vZGUtPmlfY3RpbWVf
+c2VjOwo+ICsJCW5vdy50dl9zZWMgPSBSRUFEX09OQ0UoaW5vZGUtPmlfY3RpbWVfc2VjKTsKPiAg
+CQlub3cudHZfbnNlYyA9IGN1ciAmIH5JX0NUSU1FX1FVRVJJRUQ7Cj4gIAl9Cj4gIG91dDoK
 
