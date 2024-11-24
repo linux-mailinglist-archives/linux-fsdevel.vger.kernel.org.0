@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-35700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF119D7304
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:26:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009289D7308
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:26:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF6D1634B4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA36A284EF6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD593210185;
-	Sun, 24 Nov 2024 13:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B72212EE1;
+	Sun, 24 Nov 2024 13:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWLv1vUL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKIJhUru"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB8520FAA9;
-	Sun, 24 Nov 2024 13:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29A2101A4;
+	Sun, 24 Nov 2024 13:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455908; cv=none; b=JZiR1QCGJauHexkxBun2mxRPdAsmpmw7TzMhV/lJYTPVTa0Ci+P88P9eq8R+XYjW/WetrFSY0AggGDEJ7Yab0SEYxM0uffAeUcWgCcpznr0oROXIdPSTyQqeBI0piZWqZPWHjfKGPl4OjcLgoeJHI8LFjVy+jal9LaFrKpPsj1Y=
+	t=1732455910; cv=none; b=CTPeVtez4iK7nJ3Aiu5bHn1YvvHGXcOROn42J7XH+YW+b+kcDp0PPtufeu80+3Iaz19O6PsBULwG1KEHkixS+YqwILC5MwPYH7rqOsdSQ7N6WqjLf8uiI4f1jBAMZsQfp2PvlshUCQruRgeR2RAcpFR5FFi9kwxjY4xQ+PtCpV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455908; c=relaxed/simple;
-	bh=C8K04Vp01127KZpkH0Pi2MRdy+GUfirK+wsgK6Ynj00=;
+	s=arc-20240116; t=1732455910; c=relaxed/simple;
+	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qk02lL5dtjlpg33bS6iN+Mxsn1NdPpvUpsHnnUhKIgjpOMIehZDuRIUJFx+thciEdC1fBxAmYIvtTsFKMzZFKPv2iTIZycK6ZA7hE7WG19e28a38MGH2+Y/fn8nEBK68wr5SWO3uvQp2k5Y+lmsO71GCt1qi0SnYpxAcq2MeZDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWLv1vUL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318D7C4CECC;
-	Sun, 24 Nov 2024 13:45:06 +0000 (UTC)
+	 MIME-Version:Content-Type; b=h60lLVF5dW3VUU1chpeVNfKBugPosygoPTn5jVRLAHx98aH0SKYReov/1xfoQ8Q2KCrtiT/dbgRcG6KxXP0C+M+HPXAnnSeWf1F/ux8rIDsQxMcj4oU3iO6v5qPePl2E3e9GI7mkDttMhgLGbzjmWXS5wkYK55aY1tJlGWOpR6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKIJhUru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D452C4CECC;
+	Sun, 24 Nov 2024 13:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455907;
-	bh=C8K04Vp01127KZpkH0Pi2MRdy+GUfirK+wsgK6Ynj00=;
+	s=k20201202; t=1732455909;
+	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mWLv1vULgLXAeqWSKpTTGxkWezME6v58q/yB9NBbGKQw+BaFNWJa00R04hJI8hOo4
-	 +8bqXEQJ66iyflKznMpvOFiu7t3BWKmz8rzdBEr8lh4cF7rD3XnCyhqgkkKlwRYWTT
-	 /8Xn2HH0C8KE8f5RAmFxUgVKsk1Nt9WiS1TmhAlsUQGJCMLmBX+NOe/sFSZgGX9u0m
-	 oDnx1fD6sj0tGsNSqZeys3RUUTSP7jdDUGsTSahaz2VcwuFixixCfpgX+TtO6iO4xj
-	 zx4cvk2T9kwnzGRvfiVl8Z4PxF8astMfcXK/UwRzEMkcRQnqbtR0ZWOiU84/TzXkQf
-	 8vZI/EDmyZe4w==
+	b=iKIJhUruV9FeRFuGmVYkwumvyPUoLtWv3jgJYbB3e+J11oJiJU/NH3j6HndXFyElN
+	 gggNjGqrODywtdKxENqvzPTK5SYCKjggqaxDVVLtAK9nn0wcEZc7Lc/87TQt08IZBB
+	 SXhSYB9ZSH0WG0HddoUWcSRIqg02DVuVGq/av1EcGCD07GYw7EuGzZJ0XU/JQWIkFA
+	 thOBUYbLTACjB4qsh3IrvZmTHJT2rMiMulA9BTSykNKuYZuhfsKYsKgz/AaQFsIITK
+	 eFC500+kLaUDZjJzJLmPaczZwnBJLGNnw/h2ArEz6oGtO+65QNgD0GkldqzDwsnoI5
+	 B3BUaYR8qtlOQ==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -48,9 +48,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 25/26] trace: avoid pointless cred reference count bump
-Date: Sun, 24 Nov 2024 14:44:11 +0100
-Message-ID: <20241124-work-cred-v1-25-f352241c3970@kernel.org>
+Subject: [PATCH 26/26] dns_resolver: avoid pointless cred reference count bump
+Date: Sun, 24 Nov 2024 14:44:12 +0100
+Message-ID: <20241124-work-cred-v1-26-f352241c3970@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
 References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1000; i=brauner@kernel.org; h=from:subject:message-id; bh=C8K04Vp01127KZpkH0Pi2MRdy+GUfirK+wsgK6Ynj00=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ76y5mWP3QvUdMRPtSwzOjfSbWUxf/Ozw5TfHap+sFd yr2xnOe6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE9gQLk4BmMgrVUaGVdxlb2O/LBVfbujk dJ3Bbu5Fntk3E/7ZVb2JZI6seLrSiOE3m1MvwyXO0Iiezu6Gtsn5M3p+n20O25rpdn7J1x9W1tu YAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=brauner@kernel.org; h=from:subject:message-id; bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ76y6uD0w3PaB1pfvlnc1fYutrr73SVQszd1pi4PT09 OEvRyYt7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI6iiGP5xdam/3P0x4yZ3u kuNRXKslsrFcQnvazZPnuSwFRX4GmzH8zzmhtUhI5f5rtWLb96FdexnO/Dotl5nDkmky8ciyyTy cnAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -70,30 +70,25 @@ No need for the extra reference count bump.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/trace/trace_events_user.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/dns_resolver/dns_query.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index c54ae15f425c2c1dad3f8c776027beca2f00a0a5..1ec83a4f19ac038a8580391c291653ab822ce664 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -1469,7 +1469,7 @@ static int user_event_set_call_visible(struct user_event *user, bool visible)
+diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
+index 0b0789fe2194151102d5234aca3fc2dae9a1ed69..82b084cc1cc6349bb532d5ada555b0bcbb1cdbea 100644
+--- a/net/dns_resolver/dns_query.c
++++ b/net/dns_resolver/dns_query.c
+@@ -124,9 +124,9 @@ int dns_query(struct net *net,
+ 	/* make the upcall, using special credentials to prevent the use of
+ 	 * add_key() to preinstall malicious redirections
  	 */
- 	cred->fsuid = GLOBAL_ROOT_UID;
- 
--	old_cred = override_creds(get_new_cred(cred));
-+	old_cred = override_creds(cred);
- 
- 	if (visible)
- 		ret = trace_add_event_call(&user->call);
-@@ -1477,7 +1477,6 @@ static int user_event_set_call_visible(struct user_event *user, bool visible)
- 		ret = trace_remove_event_call(&user->call);
- 
- 	put_cred(revert_creds(old_cred));
--	put_cred(cred);
- 
- 	return ret;
- }
+-	saved_cred = override_creds(get_new_cred(dns_resolver_cache));
++	saved_cred = override_creds(dns_resolver_cache);
+ 	rkey = request_key_net(&key_type_dns_resolver, desc, net, options);
+-	put_cred(revert_creds(saved_cred));
++	revert_creds(saved_cred);
+ 	kfree(desc);
+ 	if (IS_ERR(rkey)) {
+ 		ret = PTR_ERR(rkey);
 
 -- 
 2.45.2
