@@ -1,88 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-35707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7999D75A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 17:02:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 175E89D776A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 19:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7C4FB379E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:42:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF7E9B2DC24
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 16:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6B12500CA;
-	Sun, 24 Nov 2024 15:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A4418859F;
+	Sun, 24 Nov 2024 16:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Uv+Nhptk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051932500A0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 15:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B462500C5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 16:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732462924; cv=none; b=eLsYPvUOT6yA5/kAwLPCZnGZJUi3+nwVWXhXmaLWEfIjmhLcCWOxTHB4RHhsdrC4b7kNVLt5YYeLdjo4zhABlTEvIKgigbKOs0Knyyl2k41m7Ky4Uuu0/5BujoPoIY4jlg7CONctynG7U2qXhuUZ+PHIG5Khfo8l9qe7ATP1RtA=
+	t=1732464070; cv=none; b=GL/+s15DBAtjnOan7ptSmukIFwKSaXGzi9VmAkKXuyjbC+aK0mKzR+H1dmE5CB2+qqKvfa+pCs6Ahjm86V4EsONx83+J6teqn4odMwgoVr+ZdtlOqX6S1iLIRS5TSsWTCyDMjM6EAJ5ge7OaJ/1kQfpjtKTVSUuJzh2nzJOgD08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732462924; c=relaxed/simple;
-	bh=Z/KQKu+c5WEklNo+Yt688x1xWLnf+a3nL7woaIVkYp8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cPhzDTV5gGG1FOw4YuoJDZg504GZ8V8aUhTXU1m+xo4xHKeFq5t0SQorzGW+z+PK/5+F2oQuP40bMfgrF5z3wXnockObnvGUyGN5SlKKS2vEvKVhxRuakfjAGp/VCDbTBr3JuipsFncGEzEPUrKGJEqhZa1nBg7+bjwDByOFVsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a75c23283cso30977415ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 07:42:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732462922; x=1733067722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=coRcVNZpynG+ZxE9nHIs5dACc/byHyLl4kWizERwmks=;
-        b=MSFZz7WaWeuFqZNY5m+Bx2DUNnXfdJOSh1bm802kEmCfZzYQE/1Kg9sr0HuDHwmCQh
-         jZCOdFMYYVRNEpM3geATt4e1EkwzqIosiOWCGWNnfG0r/0jYPchcPN3cw6kjjeuzKIXm
-         fUJeAO2DhjcRPrvy3+jtghLXDfgjBT6GJsiyj+hiumH8X9B92I+qYtHsQu9IHclda+pW
-         yOKe2hgcjCv7rq3kslLd3ZbxSgFq/QbFM78ksH0uoq7xJtKyLNGVIB7rfmYmpJv8EwE8
-         GYtoJB2isQSczOQCL0+MpJRX7bCFg9ziRJHLUYUMteR+7gGh6i6S9v5Jtk2Ug6YEPYHg
-         xIEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXVwdva6KOVDUPSavO4NDwjEqe1kPmDjtHJXlAj1VnTtCNDyy2Pu1RHEiz9VZ5GQMQYODFcrnEycAe0+Hj@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe5ozniBucXcQ2FmU5vFtZSJSAAZHXyZ5RGHyR6qmpN35gsnQh
-	qwMBYBoSlHQDOX2Nm7iyP63REgkoZ+CpQWlrB5XgsCLix0INTj0SSC4n08FJgr5yDaUiF6bYDKn
-	VqrHFdhWhWub5cSaM0clrGVycMeerKTXP37EjffO0QIAe1bnFvI+svBI=
-X-Google-Smtp-Source: AGHT+IHVizeF5m7kAeRVtJocK86791i3Jl+BSPmPJQC/yyO7LSgAuZfVEZxbxgS3AmzKG/QoMRGMAfCa1aWO1ZoTb6LsAKrTEJK5
+	s=arc-20240116; t=1732464070; c=relaxed/simple;
+	bh=Sf2MTihRGbCzA9KzLK1IO48wXW7JUnu8n4umANxIRQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uU9VFzlrqBOw6O8VgKMvBC45T7fxDI0Qgf96LvzkGhg71hp/PLqgWZs1LmGjtg+LEI2POUfc1W7IDHbQc63IzGOxmFhF3+3wYZ5fFGbc/ypa6NKEmlWZ3cx8sUsB1NKrkfn1bV3kPfGgi7lX1mIoRqnWaCOOcMavvE500FO9yS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Uv+Nhptk; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (syn-098-147-040-133.biz.spectrum.com [98.147.40.133])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AOFxtZw003163
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 10:59:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1732464000; bh=2w6rzDBqZDK836MybJ78ZxuL/o1JL2jaY8GwyU8vRy8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Uv+NhptkVd6SGZkhvfe2HViuBEf9uF44mw8F0pi4PmRyL/Pg0jVzXrdEoDha2NpNi
+	 csQYj2RWZJ2ZHgPDYWagfRuls1GA770238Pk4PInSwyEboeYs2Ww39D6egVkXxM/e4
+	 bvZW02uoU9v9MCMijuxLM7FJQSNXGcK2ubAKe2uEsKgmQQBLHDHLTINBAtZACYvMAp
+	 cw2B4ajAbiQP0XWP9MP9VMqmpdN4Usod06wQam5G7oJIifzcqgysjEdBOBNu1UXxPU
+	 Zd602lTPvWDmQyq2Z7J7jmXaAE7ts8r+6KG9dNrT7Ko+XoKMkrnhX/jE8NVN8QMywL
+	 awoa1+QKJuHvg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 2CD6C341253; Sun, 24 Nov 2024 10:59:55 -0500 (EST)
+Date: Sun, 24 Nov 2024 05:59:55 -1000
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: viro@zeniv.linux.org.uk, adobriyan@gmail.com, alexjlzheng@tencent.com,
+        brauner@kernel.org, flyingpeng@tencent.com, jack@suse.cz,
+        joel.granados@kernel.org, kees@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mcgrof@kernel.org
+Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and
+ fs.nr_open
+Message-ID: <20241124155955.GD3874922@mit.edu>
+References: <20241123193227.GT3387508@ZenIV>
+ <20241124094813.1021293-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8f:b0:3a7:a58b:557e with SMTP id
- e9e14a558f8ab-3a7a58b693bmr48683065ab.12.1732462922271; Sun, 24 Nov 2024
- 07:42:02 -0800 (PST)
-Date: Sun, 24 Nov 2024 07:42:02 -0800
-In-Reply-To: <tencent_C2474B031BD225AABA42BB7D33FC9E861B08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6743494a.050a0220.1cc393.0043.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] WARNING in hfsplus_unlink
-From: syzbot <syzbot+028180f480a74961919c@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124094813.1021293-1-alexjlzheng@tencent.com>
 
-Hello,
+On Sun, Nov 24, 2024 at 05:48:13PM +0800, Jinliang Zheng wrote:
+> > 
+> > Short version: there are 3 different notions -
+> > 	1) file as a collection of data kept by filesystem. Such things as
+> > contents, ownership, permissions, timestamps belong there.
+> > 	2) IO channel used to access one of (1).  open(2) creates such;
+> > things like current position in file, whether it's read-only or read-write
+> > open, etc. belong there.  It does not belong to a process - after fork(),
+> > ...
+>
+> I'm sorry that I don't know much about the implementation of UNIX, but
+> specific to the implementation of Linux, struct file is more like a
+> combination of what you said 1) and 2).
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This is incorrect.  In Linux (and historical implementations of Unix)
+struct file is precisely (2).  The struct file has a pointer to a
+struct dentry, which in turn has a pointer to a struct inode.  So a
+struct file *refers* to (1), but it is *not* (1).
 
-Reported-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         9f16d5e6 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162c375f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
-dashboard link: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=177319c0580000
-
-Note: testing is done by a robot and is best-effort only.
+       	    	     	     	       	     - Ted
 
