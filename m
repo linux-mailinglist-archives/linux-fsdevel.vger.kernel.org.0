@@ -1,295 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-35674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97F59D728F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:11:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC919D72B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:16:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC1D283727
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2168164FB5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA271D5149;
-	Sun, 24 Nov 2024 13:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE4C204081;
+	Sun, 24 Nov 2024 13:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUBCBmYH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkGpW6LN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC4B193403;
-	Sun, 24 Nov 2024 13:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3E6203714;
+	Sun, 24 Nov 2024 13:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455798; cv=none; b=cLzA8c7+/6M7Z6rt0a7hpxqBZ5eIx9kOZ8Lj2J042KGFICyT27O79MPD7XjjoripYawg8DAYX0yeZj2uEqLYNHzmMcf+6DswNBGB6vBpzjBEhMN6WJSXBa3wyeBDuCj9uTYRi8BLQg7Z8iPt/vtFaXlAicskvhn3Fr3BTLh1Yys=
+	t=1732455856; cv=none; b=o5EjI+MmnXX3ze0O6vEHFEKqIrjjBMU01/aApFOtTFuQzJh4GfYmo81R9tpmRNqiYMNJ5ElKGypRG/QKU8MQevixNd7vfBRTKmKN5whvjJZwnDo6hojMZ8mCwihYyZ1HKwutQlrKCABGZCaAbV9uZ/K2IAeLuAL9XBf/kSz+AYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455798; c=relaxed/simple;
-	bh=8cRxOKnKQqS7rwVJfn9hMIl/WdACZdEZhk5YktvN2T4=;
+	s=arc-20240116; t=1732455856; c=relaxed/simple;
+	bh=la7Wc/MGxbqIFRuxgyInEQAbaTw2/NE/TTj2rekSr28=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eGlMPeFPPS38NFia33jszASmhv37y9W/fyIwo4xPYO/4FU9ULmyP0gfmoD/2TDSYQu1ImdSl2xZqa+q0E1kcmnk0lrc3qzNLWSiMqoRPAkCi1FnsU9BNYdaf7BHGZPAIGdStMCj25PVF1cMuZErtHMnJyUwvF0ey1J9zz6hzFSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUBCBmYH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3DDC4CECC;
-	Sun, 24 Nov 2024 13:43:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=T4JbOYcCnHNAxoBRFekcVT3yQtnDWMTfv7vuuUrVn6+/dixGl8uNeFxu37iUD+j4r5GboK/Eg2RjJa4rSQSLR9/u8+L+j9IqPsMjNHqIMjkwIrd8DpjAXX79ocQkJNh+9182Bxp1nWeMx6qBRc+QQaMLwkX+w8C88zMPn4aRC6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkGpW6LN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76DA8C4CED3;
+	Sun, 24 Nov 2024 13:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455798;
-	bh=8cRxOKnKQqS7rwVJfn9hMIl/WdACZdEZhk5YktvN2T4=;
+	s=k20201202; t=1732455856;
+	bh=la7Wc/MGxbqIFRuxgyInEQAbaTw2/NE/TTj2rekSr28=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oUBCBmYHP3Gwa06ACc2fVX9xDC/9okdlJ8YAy6Tw55pnLIfKux1W3zMdmmqZGto2F
-	 1PIaXdZZkUHpVDRqV5zFkLr3BwAQekVAiLqhEfNHDIGAq/0hL63jP7SXXLSfeb1etX
-	 uKev1IpsuqaKmcy4VzHwbqKlH3mMBvCOXjnCyRL2gg7L7iDhnYxHO94joIcSzs0N1I
-	 n4iEfcKXrOm994d9dzSsYi8kAowDK630T4545YUtsAuN/hvcNAd+uouWIERRJjCZa5
-	 /c+uriLwXBHIKUEiddryuxPvhmuC7xRHf/CWoaJfbSCvYvlf9oj1iUGVc7yA67Ju1E
-	 rb3u3pAC0DPjw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Krishna Vivek Vitta <kvitta@microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Sasha Levin <sashal@kernel.org>,
+	b=AkGpW6LNCSORYqeIdVdI/r7zyL/i/jLU4ruSwPr5Gs8vS+z60HFxXHJ0l9Ef7++bE
+	 KnZMEwQmXZ3GWpr3ldVL79XbBbZ2mw3zujqffF6bPt/33q6/wVi5PxeRsvlXCD6tLl
+	 QEYhedS2MJt/JCOKjSPgQrjur9SxDm/rdt7Eexz/Hqkq6dptYLBzWf3XpJek6A82ej
+	 Ml9ef/EY81l5YfroOW4Z2/yQ6BtCNg/q3P+xaIb/X/YTSvqNJ2sfJ4pxRg1m2tx5Ef
+	 5NeEWZsINGOXZPscyh7VqsQHKsprwaxv21Ow+S/JEOvn3doOL74qEOb6AkNJsEzY9L
+	 bsw5+lUxXSKIw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 42/87] fanotify: allow reporting errors on failure to open fd
-Date: Sun, 24 Nov 2024 08:38:20 -0500
-Message-ID: <20241124134102.3344326-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124134102.3344326-1-sashal@kernel.org>
-References: <20241124134102.3344326-1-sashal@kernel.org>
+Subject: [PATCH 00/26] cred: rework {override,revert}_creds()
+Date: Sun, 24 Nov 2024 14:43:46 +0100
+Message-ID: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
+References: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.10
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20241124-work-cred-349b65450082
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3310; i=brauner@kernel.org; h=from:subject:message-id; bh=la7Wc/MGxbqIFRuxgyInEQAbaTw2/NE/TTj2rekSr28=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ7605vPbS1iufAqZtiql1TLRdr2PZMehbLzXLp4qelJ Zem5b3k7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI0UWMDG2zU9fM/v+AJ+6W pPukNXum7ZV0WKKn02Z2YfvR0r8341QZ/lms3vEhbgezfoyI83m5B69yEgM8+eyS3wS9b7C+9/l hPxsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-From: Amir Goldstein <amir73il@gmail.com>
+For the v6.13 cycle we switched overlayfs to a variant of
+override_creds() that doesn't take an extra reference. To this end I
+suggested introducing {override,revert}_creds_light() which overlayfs
+could use.
 
-[ Upstream commit 522249f05c5551aec9ec0ba9b6438f1ec19c138d ]
+This seems to work rather well. As Linus correctly points out that we
+should look into unifying both and simply make {override,revert}_creds()
+do what {override,revert}_creds_light() currently does. Caller's that
+really need the extra reference count can take it manually.
 
-When working in "fd mode", fanotify_read() needs to open an fd
-from a dentry to report event->fd to userspace.
+This series does all that. Afaict, most callers can be directly
+converted over and can avoid the extra reference count completely.
 
-Opening an fd from dentry can fail for several reasons.
-For example, when tasks are gone and we try to open their
-/proc files or we try to open a WRONLY file like in sysfs
-or when trying to open a file that was deleted on the
-remote network server.
+Lightly tested.
 
-Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
-For a group with FAN_REPORT_FD_ERROR, we will send the
-event with the error instead of the open fd, otherwise
-userspace may not get the error at all.
-
-For an overflow event, we report -EBADF to avoid confusing FAN_NOFD
-with -EPERM.  Similarly for pidfd open errors we report either -ESRCH
-or the open error instead of FAN_NOPIDFD and FAN_EPIDFD.
-
-In any case, userspace will not know which file failed to
-open, so add a debug print for further investigation.
-
-Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
-Link: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20241003142922.111539-1-amir73il@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/notify/fanotify/fanotify_user.c | 85 +++++++++++++++++-------------
- include/linux/fanotify.h           |  1 +
- include/uapi/linux/fanotify.h      |  1 +
- 3 files changed, 50 insertions(+), 37 deletions(-)
+Christian Brauner (26):
+      tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
+      cred: return old creds from revert_creds_light()
+      tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
+      cred: remove old {override,revert}_creds() helpers
+      tree-wide: s/override_creds_light()/override_creds()/g
+      tree-wide: s/revert_creds_light()/revert_creds()/g
+      firmware: avoid pointless reference count bump
+      sev-dev: avoid pointless cred reference count bump
+      target_core_configfs: avoid pointless cred reference count bump
+      aio: avoid pointless cred reference count bump
+      binfmt_misc: avoid pointless cred reference count bump
+      coredump: avoid pointless cred reference count bump
+      nfs/localio: avoid pointless cred reference count bumps
+      nfs/nfs4idmap: avoid pointless reference count bump
+      nfs/nfs4recover: avoid pointless cred reference count bump
+      nfsfh: avoid pointless cred reference count bump
+      open: avoid pointless cred reference count bump
+      ovl: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      smb: avoid pointless cred reference count bump
+      io_uring: avoid pointless cred reference count bump
+      acct: avoid pointless reference count bump
+      cgroup: avoid pointless cred reference count bump
+      trace: avoid pointless cred reference count bump
+      dns_resolver: avoid pointless cred reference count bump
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9ec313e9f6e19..a4978ec2faa19 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -266,13 +266,6 @@ static int create_fd(struct fsnotify_group *group, const struct path *path,
- 			       group->fanotify_data.f_flags | __FMODE_NONOTIFY,
- 			       current_cred());
- 	if (IS_ERR(new_file)) {
--		/*
--		 * we still send an event even if we can't open the file.  this
--		 * can happen when say tasks are gone and we try to open their
--		 * /proc files or we try to open a WRONLY file like in sysfs
--		 * we just send the errno to userspace since there isn't much
--		 * else we can do.
--		 */
- 		put_unused_fd(client_fd);
- 		client_fd = PTR_ERR(new_file);
- 	} else {
-@@ -663,7 +656,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
- 	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
- 	struct file *f = NULL, *pidfd_file = NULL;
--	int ret, pidfd = FAN_NOPIDFD, fd = FAN_NOFD;
-+	int ret, pidfd = -ESRCH, fd = -EBADF;
- 
- 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
- 
-@@ -691,10 +684,39 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
- 	    path && path->mnt && path->dentry) {
- 		fd = create_fd(group, path, &f);
--		if (fd < 0)
--			return fd;
-+		/*
-+		 * Opening an fd from dentry can fail for several reasons.
-+		 * For example, when tasks are gone and we try to open their
-+		 * /proc files or we try to open a WRONLY file like in sysfs
-+		 * or when trying to open a file that was deleted on the
-+		 * remote network server.
-+		 *
-+		 * For a group with FAN_REPORT_FD_ERROR, we will send the
-+		 * event with the error instead of the open fd, otherwise
-+		 * Userspace may not get the error at all.
-+		 * In any case, userspace will not know which file failed to
-+		 * open, so add a debug print for further investigation.
-+		 */
-+		if (fd < 0) {
-+			pr_debug("fanotify: create_fd(%pd2) failed err=%d\n",
-+				 path->dentry, fd);
-+			if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR)) {
-+				/*
-+				 * Historically, we've handled EOPENSTALE in a
-+				 * special way and silently dropped such
-+				 * events. Now we have to keep it to maintain
-+				 * backward compatibility...
-+				 */
-+				if (fd == -EOPENSTALE)
-+					fd = 0;
-+				return fd;
-+			}
-+		}
- 	}
--	metadata.fd = fd;
-+	if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR))
-+		metadata.fd = fd;
-+	else
-+		metadata.fd = fd >= 0 ? fd : FAN_NOFD;
- 
- 	if (pidfd_mode) {
- 		/*
-@@ -709,18 +731,16 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 		 * The PIDTYPE_TGID check for an event->pid is performed
- 		 * preemptively in an attempt to catch out cases where the event
- 		 * listener reads events after the event generating process has
--		 * already terminated. Report FAN_NOPIDFD to the event listener
--		 * in those cases, with all other pidfd creation errors being
--		 * reported as FAN_EPIDFD.
-+		 * already terminated.  Depending on flag FAN_REPORT_FD_ERROR,
-+		 * report either -ESRCH or FAN_NOPIDFD to the event listener in
-+		 * those cases with all other pidfd creation errors reported as
-+		 * the error code itself or as FAN_EPIDFD.
- 		 */
--		if (metadata.pid == 0 ||
--		    !pid_has_task(event->pid, PIDTYPE_TGID)) {
--			pidfd = FAN_NOPIDFD;
--		} else {
-+		if (metadata.pid && pid_has_task(event->pid, PIDTYPE_TGID))
- 			pidfd = pidfd_prepare(event->pid, 0, &pidfd_file);
--			if (pidfd < 0)
--				pidfd = FAN_EPIDFD;
--		}
-+
-+		if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR) && pidfd < 0)
-+			pidfd = pidfd == -ESRCH ? FAN_NOPIDFD : FAN_EPIDFD;
- 	}
- 
- 	ret = -EFAULT;
-@@ -737,9 +757,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	buf += FAN_EVENT_METADATA_LEN;
- 	count -= FAN_EVENT_METADATA_LEN;
- 
--	if (fanotify_is_perm_event(event->mask))
--		FANOTIFY_PERM(event)->fd = fd;
--
- 	if (info_mode) {
- 		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
- 						buf, count);
-@@ -753,15 +770,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (pidfd_file)
- 		fd_install(pidfd, pidfd_file);
- 
-+	if (fanotify_is_perm_event(event->mask))
-+		FANOTIFY_PERM(event)->fd = fd;
-+
- 	return metadata.event_len;
- 
- out_close_fd:
--	if (fd != FAN_NOFD) {
-+	if (f) {
- 		put_unused_fd(fd);
- 		fput(f);
- 	}
- 
--	if (pidfd >= 0) {
-+	if (pidfd_file) {
- 		put_unused_fd(pidfd);
- 		fput(pidfd_file);
- 	}
-@@ -828,15 +848,6 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
- 		}
- 
- 		ret = copy_event_to_user(group, event, buf, count);
--		if (unlikely(ret == -EOPENSTALE)) {
--			/*
--			 * We cannot report events with stale fd so drop it.
--			 * Setting ret to 0 will continue the event loop and
--			 * do the right thing if there are no more events to
--			 * read (i.e. return bytes read, -EAGAIN or wait).
--			 */
--			ret = 0;
--		}
- 
- 		/*
- 		 * Permission events get queued to wait for response.  Other
-@@ -845,7 +856,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
- 		if (!fanotify_is_perm_event(event->mask)) {
- 			fsnotify_destroy_event(group, &event->fse);
- 		} else {
--			if (ret <= 0) {
-+			if (ret <= 0 || FANOTIFY_PERM(event)->fd < 0) {
- 				spin_lock(&group->notification_lock);
- 				finish_permission_event(group,
- 					FANOTIFY_PERM(event), FAN_DENY, NULL);
-@@ -1954,7 +1965,7 @@ static int __init fanotify_user_setup(void)
- 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 13);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 4f1c4f6031180..89ff45bd6f01b 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -36,6 +36,7 @@
- #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
- 					 FAN_REPORT_TID | \
- 					 FAN_REPORT_PIDFD | \
-+					 FAN_REPORT_FD_ERROR | \
- 					 FAN_UNLIMITED_QUEUE | \
- 					 FAN_UNLIMITED_MARKS)
- 
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index a37de58ca571a..34f221d3a1b95 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -60,6 +60,7 @@
- #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
- #define FAN_REPORT_NAME		0x00000800	/* Report events with name */
- #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
-+#define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
- 
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
--- 
-2.43.0
+ drivers/base/firmware_loader/main.c   |  3 +--
+ drivers/crypto/ccp/sev-dev.c          |  2 +-
+ drivers/target/target_core_configfs.c |  3 +--
+ fs/aio.c                              |  3 +--
+ fs/backing-file.c                     | 20 +++++++-------
+ fs/cachefiles/internal.h              |  4 +--
+ fs/nfsd/auth.c                        |  4 +--
+ fs/nfsd/filecache.c                   |  2 +-
+ fs/nfsd/nfs4recover.c                 |  3 +--
+ fs/nfsd/nfsfh.c                       |  1 -
+ fs/open.c                             | 10 ++-----
+ fs/overlayfs/copy_up.c                |  6 ++---
+ fs/overlayfs/dir.c                    |  4 +--
+ fs/overlayfs/util.c                   |  4 +--
+ fs/smb/server/smb_common.c            |  4 +--
+ include/linux/cred.h                  | 14 ++++------
+ kernel/cred.c                         | 50 -----------------------------------
+ kernel/trace/trace_events_user.c      |  3 +--
+ 18 files changed, 35 insertions(+), 105 deletions(-)
+---
+base-commit: 228a1157fb9fec47eb135b51c0202b574e079ebf
+change-id: 20241124-work-cred-349b65450082
 
 
