@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-35738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAA09D7923
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 00:38:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB2B9D7927
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 00:41:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8110B2166A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 23:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A39162137
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 23:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E6D17C220;
-	Sun, 24 Nov 2024 23:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292E3183CC1;
+	Sun, 24 Nov 2024 23:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vGfOvAtH"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="c5MJCrnV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5B0F9F8;
-	Sun, 24 Nov 2024 23:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C90163;
+	Sun, 24 Nov 2024 23:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732491514; cv=none; b=G/GVHC5g9XZRvcchhRWnRgJ6fIX0HHQ+sdEop8VLId/q7p69QbFLlbd2FQcd+4/IOAe/qqF3WU/QtTEizrRpCq4ryC4YWt0HUiT0q5r+oW5lYeYrPIQdvX23evqyjrkXrlym2m6v9h+bGd3W1jAaWqHg/nzGzKCliDZhxsKcd5c=
+	t=1732491675; cv=none; b=eod9z6sRpWLxNDNCHpYmXHqU2pW62pNhucVRf/xtFLyQfNMqtmyUK0CbWGtlwLxetyQ257WFE+tkaMEvNJt1EiWlcn2XjPUsMO/0gFYp4vzCenMJNm0xNPLJXtUTq2fdJ31MTyEylE+tCuGzOO0g8ISX8afnF8eNixZ0neGq9k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732491514; c=relaxed/simple;
-	bh=46pt1LwJAI9ROlZ2qmARvK/oJzUUDN1RShpk7H8OMAE=;
+	s=arc-20240116; t=1732491675; c=relaxed/simple;
+	bh=K0zZybHwCF4UFEVzCmRHvPvZ9cNUH8z54PqJJ6KZjJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ2k91ktZIqBNbcfUMga/S6hznz5NAX7FtsgDx595tgJxG/RfnVhkNuZ3sQaP9h0YUgGSesKYOOoD/EI4DaqaRqzFSeRyuKY7aQxWdj7m7445qPfBEu2YJ0Gs/AARb4SL/b5XDzUxwCU9zcwbVrR373gsPdmaVsMzo0vNbUFS14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vGfOvAtH; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZ8bQVmuVNqVSgT+cMRNg1iGzCc/DynT57+6agNIAVsJKAjuTrIoJSTPqUFsRnpua3BfBGpgg+qPP6DCMz3h5Y3PToH9MP8XWqvMZ01oaSC/YV8u+b3mZCmHQ2eIVK2oHsdga0EHd7WTHUOs5QKt0RVSJGG9InwlnTCe8XRryoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=c5MJCrnV; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=hQpGXHofuyXCadOwcI6vhq8JseHMWJdwGGuZ+HibI/c=; b=vGfOvAtHkBLLixHmQhya+LDJXl
-	zLR/z1RZGhIw4a39iF8UQ77Y0EO2spB6RwYfhpWorrLGdQI4brkmcpJ40JL14+Bi8hvccS2O1KgPE
-	ttesZJXcgNBpHA50pkLwZ4gIxRjXJhJkQ03x79JIxFu+9Nf74zqTxF3EgBNotmyT09+kdq671rn65
-	Q5rQpbStKf1gLpCt2IjlcuMQyw0VUF5/EBQMh1HcdA8ozN/RkYxvtB+20EL83RC+UFA4e6wJiiXR2
-	rNLrSFO2CpxQXnwqCllmUA8saxFazcA42x2o5T6mOeQZXT+wBtbVI2A0a2iznE3eAkFxcq7B68umk
-	aR+6pmZQ==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TTlDzivjnoClKlYJp+m8Z0zDzGLZToGs5LN5qU2VPFw=; b=c5MJCrnVAKTsVAK/D/R4uukX+O
+	PSjM/lUYrOhZAeKqgE0U5gdEz3oqjId7Tp2GjBkF2kh1+5eEwbcsvdDHJn28FczY0uNvwcwZufu55
+	/EDtbzW3bDCYWYGJT60nTRV1qsNckda4aSuD0qttlDgNEl09A+q96P4w5oEj+Isy5EqiljA0HfxHy
+	epzubFVmCfkB2/QWTSfCY+rKTMfd9QcmkwYi6innYUjM1mO4peHuoHVUzPZ2mR1EAl4uMRZFHh2uC
+	mAYXMvhlUdKgVlirgv929ymmMXq5Kdk820PUElCKLZ7Tzj6iunaSdfuiSLh4xpNsU63pKMh+Dba59
+	ooKjF2fQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFMBQ-00000001Ldq-191F;
-	Sun, 24 Nov 2024 23:38:28 +0000
-Date: Sun, 24 Nov 2024 23:38:28 +0000
+	id 1tFME3-00000001LjJ-1eZU;
+	Sun, 24 Nov 2024 23:41:11 +0000
+Date: Sun, 24 Nov 2024 23:41:11 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -55,7 +55,7 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	21371365@buaa.edu.cn
 Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
  data race in inode_set_ctime_to_ts)
-Message-ID: <20241124233828.GC3387508@ZenIV>
+Message-ID: <20241124234111.GD3387508@ZenIV>
 References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
  <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
  <20241124174435.GB620578@frogsfrogsfrogs>
@@ -63,50 +63,37 @@ References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
  <20241124215014.GA3387508@ZenIV>
  <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
  <CAGudoHEqDaY3=KuV9CuPja8UgVBhiZVZ7ej5r1yoSxRZaMnknA@mail.gmail.com>
+ <CAGudoHGyBQMtfgpq3EzaZi+zWBOoTADVro+Gb27DRHFF1iijVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEqDaY3=KuV9CuPja8UgVBhiZVZ7ej5r1yoSxRZaMnknA@mail.gmail.com>
+In-Reply-To: <CAGudoHGyBQMtfgpq3EzaZi+zWBOoTADVro+Gb27DRHFF1iijVA@mail.gmail.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Nov 25, 2024 at 12:05:29AM +0100, Mateusz Guzik wrote:
-> On Sun, Nov 24, 2024 at 11:10 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > So I mention the "rename and extend i_size_seqcount" as a solution
-> > that I suspect might be acceptable if somebody has the motivation and
-> > energy, but honestly I also think "nobody can be bothered" is
-> > acceptable in practice.
-> >
+On Mon, Nov 25, 2024 at 12:19:44AM +0100, Mateusz Guzik wrote:
+
+> + *
+> + * DONTFIXME: no effort is put into ensuring a consistent snapshot of the
+> + * metadata read below. For example a call racing against parallel setattr()
+> + * can end up with a mixture of old and new attributes. This is not considered
+> + * enough to warrant fixing.
+>   */
+>  void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+>                       struct inode *inode, struct kstat *stat)
 > 
-> So happens recently the metadata ordeal also came up around getattr
-> where a submitter wanted to lock the inode around it.
+> not an actual patch submission, any party is free to take the comment
+> and tweak in whatever capacity without credit.
+> 
+> What I am after here is preventing more people from spotting the
+> problem and thinking it is new.
 
-The posting Linus had been replying to:
-https://lore.kernel.org/all/20241124215014.GA3387508@ZenIV/
-
-> Until the day comes when someone has way too much time on their hands
-> and patches it up (even that may encounter resistance though), I do
-> think it would make sense to nicely write it down somewhere so for
-> easy reference -- maybe as a comment above getattr and note around
-> other places like the timespec helpers to read that.
-
-See above.
-
-For those who'd missed the getattr thread - the approach proposed and
-NAKed there was to take ->i_rwsem (shared) in stat(2).  A non-starter
-for obvious reasons, IMO.  Seqcount avoids those, but it would need to
-be a pair of primitives used around the stores, with i_size_write()
-*not* usable inside such scope.  Potential problems would be the
-amount of time spent inside those scopes and amount of spinning it
-would cause on the stat(2) side + the inode bloat.
-
-All of that is modulo usefulness of such atomicity - nothing mentioned
-so far seems to be a good reason to bother with all of that in the
-first place...
+getattr() is not the only reader for those - permission() is *much*
+hotter; for uid/gid issues, if somebody can think of any scenario
+where it's a real problem, permission() would be the main source
+of headache.
 
