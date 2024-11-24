@@ -1,96 +1,295 @@
-Return-Path: <linux-fsdevel+bounces-35701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009289D7308
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D16F49D7377
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA36A284EF6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9872861E7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B72212EE1;
-	Sun, 24 Nov 2024 13:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ABD228D4E;
+	Sun, 24 Nov 2024 13:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKIJhUru"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfiSzlek"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29A2101A4;
-	Sun, 24 Nov 2024 13:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50005228D3D;
+	Sun, 24 Nov 2024 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455910; cv=none; b=CTPeVtez4iK7nJ3Aiu5bHn1YvvHGXcOROn42J7XH+YW+b+kcDp0PPtufeu80+3Iaz19O6PsBULwG1KEHkixS+YqwILC5MwPYH7rqOsdSQ7N6WqjLf8uiI4f1jBAMZsQfp2PvlshUCQruRgeR2RAcpFR5FFi9kwxjY4xQ+PtCpV4=
+	t=1732456065; cv=none; b=dD5dRBmgrqrl8bceSf4zWrcOVXIkjae7NBXzRXd7Iyd159gu1VLxrjyv4+dqsVgplesmKpvc+m+pXTmjEelRQpKvM95LR5CvcewmVqx5g64ANdXVZL2PY98Ok9xZUVZkI34DKu6puKU4+Y8BoUGX4LXWngUISm5V1oxpFvjuDi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455910; c=relaxed/simple;
-	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
+	s=arc-20240116; t=1732456065; c=relaxed/simple;
+	bh=Ms16FVjTTei8uBhQMpnA3qg+3wVqzqx8qwCOsycnKrE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h60lLVF5dW3VUU1chpeVNfKBugPosygoPTn5jVRLAHx98aH0SKYReov/1xfoQ8Q2KCrtiT/dbgRcG6KxXP0C+M+HPXAnnSeWf1F/ux8rIDsQxMcj4oU3iO6v5qPePl2E3e9GI7mkDttMhgLGbzjmWXS5wkYK55aY1tJlGWOpR6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKIJhUru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D452C4CECC;
-	Sun, 24 Nov 2024 13:45:08 +0000 (UTC)
+	 MIME-Version; b=XyItTi74ve0Ct1TBF3C99gFe5uLKGNMVxgYCwEX3TeumfU7S82PTaig7b7EzjYSTN9O2/gf8EdKy51GbPtq13Ieb3qDZhuAs9AsXQMpy5oLGu7ixRysmw4NLtoL4jt2fEaRRB90k9udTKmIwkSv4pc4M9TxLJrOeZuC/913/918=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfiSzlek; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1DAC4CECC;
+	Sun, 24 Nov 2024 13:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455909;
-	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
+	s=k20201202; t=1732456064;
+	bh=Ms16FVjTTei8uBhQMpnA3qg+3wVqzqx8qwCOsycnKrE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iKIJhUruV9FeRFuGmVYkwumvyPUoLtWv3jgJYbB3e+J11oJiJU/NH3j6HndXFyElN
-	 gggNjGqrODywtdKxENqvzPTK5SYCKjggqaxDVVLtAK9nn0wcEZc7Lc/87TQt08IZBB
-	 SXhSYB9ZSH0WG0HddoUWcSRIqg02DVuVGq/av1EcGCD07GYw7EuGzZJ0XU/JQWIkFA
-	 thOBUYbLTACjB4qsh3IrvZmTHJT2rMiMulA9BTSykNKuYZuhfsKYsKgz/AaQFsIITK
-	 eFC500+kLaUDZjJzJLmPaczZwnBJLGNnw/h2ArEz6oGtO+65QNgD0GkldqzDwsnoI5
-	 B3BUaYR8qtlOQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	linux-kernel@vger.kernel.org,
+	b=NfiSzlekjbYaxlB/BgEVdJCmE1fkAOuu8Ql30s70sv7grvf/lkdxRE1s/QwOcUs0/
+	 yOTOrE87f7wii3iYaALx6ek8MPOdi2nfom0RfyO5wH5tRkqPgHvpS1LFY71yEpvfX0
+	 G7J2NyyJmpdMz8UUig/PkAJWlJrEks50G3hsMDlg9EDsAgzxR8FsU993gdve3TWhKZ
+	 q1q46gdFlS3Kff/0Kmwbxy23rmLX0WSWJdIvF6e87t+e0HaN0IW7hYSZv8Cjc9YXNi
+	 fOr0nC8kplTO4NMwbb56KayUdwVjOQOpKpm3Es+NpOUkIX7kkReW6pm2BP3Tpcl3aE
+	 7p7fj8rCoKKIw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Krishna Vivek Vitta <kvitta@microsoft.com>,
+	Jan Kara <jack@suse.cz>,
+	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 26/26] dns_resolver: avoid pointless cred reference count bump
-Date: Sun, 24 Nov 2024 14:44:12 +0100
-Message-ID: <20241124-work-cred-v1-26-f352241c3970@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
-References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 28/61] fanotify: allow reporting errors on failure to open fd
+Date: Sun, 24 Nov 2024 08:45:03 -0500
+Message-ID: <20241124134637.3346391-28-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241124134637.3346391-1-sashal@kernel.org>
+References: <20241124134637.3346391-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=brauner@kernel.org; h=from:subject:message-id; bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ76y6uD0w3PaB1pfvlnc1fYutrr73SVQszd1pi4PT09 OEvRyYt7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI6iiGP5xdam/3P0x4yZ3u kuNRXKslsrFcQnvazZPnuSwFRX4GmzH8zzmhtUhI5f5rtWLb96FdexnO/Dotl5nDkmky8ciyyTy cnAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.63
 Content-Transfer-Encoding: 8bit
 
-No need for the extra reference count bump.
+From: Amir Goldstein <amir73il@gmail.com>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+[ Upstream commit 522249f05c5551aec9ec0ba9b6438f1ec19c138d ]
+
+When working in "fd mode", fanotify_read() needs to open an fd
+from a dentry to report event->fd to userspace.
+
+Opening an fd from dentry can fail for several reasons.
+For example, when tasks are gone and we try to open their
+/proc files or we try to open a WRONLY file like in sysfs
+or when trying to open a file that was deleted on the
+remote network server.
+
+Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
+For a group with FAN_REPORT_FD_ERROR, we will send the
+event with the error instead of the open fd, otherwise
+userspace may not get the error at all.
+
+For an overflow event, we report -EBADF to avoid confusing FAN_NOFD
+with -EPERM.  Similarly for pidfd open errors we report either -ESRCH
+or the open error instead of FAN_NOPIDFD and FAN_EPIDFD.
+
+In any case, userspace will not know which file failed to
+open, so add a debug print for further investigation.
+
+Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
+Link: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Link: https://patch.msgid.link/20241003142922.111539-1-amir73il@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/dns_resolver/dns_query.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 85 +++++++++++++++++-------------
+ include/linux/fanotify.h           |  1 +
+ include/uapi/linux/fanotify.h      |  1 +
+ 3 files changed, 50 insertions(+), 37 deletions(-)
 
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index 0b0789fe2194151102d5234aca3fc2dae9a1ed69..82b084cc1cc6349bb532d5ada555b0bcbb1cdbea 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -124,9 +124,9 @@ int dns_query(struct net *net,
- 	/* make the upcall, using special credentials to prevent the use of
- 	 * add_key() to preinstall malicious redirections
- 	 */
--	saved_cred = override_creds(get_new_cred(dns_resolver_cache));
-+	saved_cred = override_creds(dns_resolver_cache);
- 	rkey = request_key_net(&key_type_dns_resolver, desc, net, options);
--	put_cred(revert_creds(saved_cred));
-+	revert_creds(saved_cred);
- 	kfree(desc);
- 	if (IS_ERR(rkey)) {
- 		ret = PTR_ERR(rkey);
-
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 62fe0b679e586..f4798d613dc22 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -267,13 +267,6 @@ static int create_fd(struct fsnotify_group *group, const struct path *path,
+ 			       group->fanotify_data.f_flags | __FMODE_NONOTIFY,
+ 			       current_cred());
+ 	if (IS_ERR(new_file)) {
+-		/*
+-		 * we still send an event even if we can't open the file.  this
+-		 * can happen when say tasks are gone and we try to open their
+-		 * /proc files or we try to open a WRONLY file like in sysfs
+-		 * we just send the errno to userspace since there isn't much
+-		 * else we can do.
+-		 */
+ 		put_unused_fd(client_fd);
+ 		client_fd = PTR_ERR(new_file);
+ 	} else {
+@@ -664,7 +657,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
+ 	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
+ 	struct file *f = NULL, *pidfd_file = NULL;
+-	int ret, pidfd = FAN_NOPIDFD, fd = FAN_NOFD;
++	int ret, pidfd = -ESRCH, fd = -EBADF;
+ 
+ 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+ 
+@@ -692,10 +685,39 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+ 	    path && path->mnt && path->dentry) {
+ 		fd = create_fd(group, path, &f);
+-		if (fd < 0)
+-			return fd;
++		/*
++		 * Opening an fd from dentry can fail for several reasons.
++		 * For example, when tasks are gone and we try to open their
++		 * /proc files or we try to open a WRONLY file like in sysfs
++		 * or when trying to open a file that was deleted on the
++		 * remote network server.
++		 *
++		 * For a group with FAN_REPORT_FD_ERROR, we will send the
++		 * event with the error instead of the open fd, otherwise
++		 * Userspace may not get the error at all.
++		 * In any case, userspace will not know which file failed to
++		 * open, so add a debug print for further investigation.
++		 */
++		if (fd < 0) {
++			pr_debug("fanotify: create_fd(%pd2) failed err=%d\n",
++				 path->dentry, fd);
++			if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR)) {
++				/*
++				 * Historically, we've handled EOPENSTALE in a
++				 * special way and silently dropped such
++				 * events. Now we have to keep it to maintain
++				 * backward compatibility...
++				 */
++				if (fd == -EOPENSTALE)
++					fd = 0;
++				return fd;
++			}
++		}
+ 	}
+-	metadata.fd = fd;
++	if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR))
++		metadata.fd = fd;
++	else
++		metadata.fd = fd >= 0 ? fd : FAN_NOFD;
+ 
+ 	if (pidfd_mode) {
+ 		/*
+@@ -710,18 +732,16 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 		 * The PIDTYPE_TGID check for an event->pid is performed
+ 		 * preemptively in an attempt to catch out cases where the event
+ 		 * listener reads events after the event generating process has
+-		 * already terminated. Report FAN_NOPIDFD to the event listener
+-		 * in those cases, with all other pidfd creation errors being
+-		 * reported as FAN_EPIDFD.
++		 * already terminated.  Depending on flag FAN_REPORT_FD_ERROR,
++		 * report either -ESRCH or FAN_NOPIDFD to the event listener in
++		 * those cases with all other pidfd creation errors reported as
++		 * the error code itself or as FAN_EPIDFD.
+ 		 */
+-		if (metadata.pid == 0 ||
+-		    !pid_has_task(event->pid, PIDTYPE_TGID)) {
+-			pidfd = FAN_NOPIDFD;
+-		} else {
++		if (metadata.pid && pid_has_task(event->pid, PIDTYPE_TGID))
+ 			pidfd = pidfd_prepare(event->pid, 0, &pidfd_file);
+-			if (pidfd < 0)
+-				pidfd = FAN_EPIDFD;
+-		}
++
++		if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR) && pidfd < 0)
++			pidfd = pidfd == -ESRCH ? FAN_NOPIDFD : FAN_EPIDFD;
+ 	}
+ 
+ 	ret = -EFAULT;
+@@ -738,9 +758,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	buf += FAN_EVENT_METADATA_LEN;
+ 	count -= FAN_EVENT_METADATA_LEN;
+ 
+-	if (fanotify_is_perm_event(event->mask))
+-		FANOTIFY_PERM(event)->fd = fd;
+-
+ 	if (info_mode) {
+ 		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
+ 						buf, count);
+@@ -754,15 +771,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	if (pidfd_file)
+ 		fd_install(pidfd, pidfd_file);
+ 
++	if (fanotify_is_perm_event(event->mask))
++		FANOTIFY_PERM(event)->fd = fd;
++
+ 	return metadata.event_len;
+ 
+ out_close_fd:
+-	if (fd != FAN_NOFD) {
++	if (f) {
+ 		put_unused_fd(fd);
+ 		fput(f);
+ 	}
+ 
+-	if (pidfd >= 0) {
++	if (pidfd_file) {
+ 		put_unused_fd(pidfd);
+ 		fput(pidfd_file);
+ 	}
+@@ -829,15 +849,6 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+ 		}
+ 
+ 		ret = copy_event_to_user(group, event, buf, count);
+-		if (unlikely(ret == -EOPENSTALE)) {
+-			/*
+-			 * We cannot report events with stale fd so drop it.
+-			 * Setting ret to 0 will continue the event loop and
+-			 * do the right thing if there are no more events to
+-			 * read (i.e. return bytes read, -EAGAIN or wait).
+-			 */
+-			ret = 0;
+-		}
+ 
+ 		/*
+ 		 * Permission events get queued to wait for response.  Other
+@@ -846,7 +857,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+ 		if (!fanotify_is_perm_event(event->mask)) {
+ 			fsnotify_destroy_event(group, &event->fse);
+ 		} else {
+-			if (ret <= 0) {
++			if (ret <= 0 || FANOTIFY_PERM(event)->fd < 0) {
+ 				spin_lock(&group->notification_lock);
+ 				finish_permission_event(group,
+ 					FANOTIFY_PERM(event), FAN_DENY, NULL);
+@@ -1932,7 +1943,7 @@ static int __init fanotify_user_setup(void)
+ 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
+ 
+ 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+-	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
++	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 13);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
+ 
+ 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index 4f1c4f6031180..89ff45bd6f01b 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -36,6 +36,7 @@
+ #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
+ 					 FAN_REPORT_TID | \
+ 					 FAN_REPORT_PIDFD | \
++					 FAN_REPORT_FD_ERROR | \
+ 					 FAN_UNLIMITED_QUEUE | \
+ 					 FAN_UNLIMITED_MARKS)
+ 
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index cd14c94e9a1e0..2aae6dd706a91 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -60,6 +60,7 @@
+ #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
+ #define FAN_REPORT_NAME		0x00000800	/* Report events with name */
+ #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
++#define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
+ 
+ /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
+ #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
 -- 
-2.45.2
+2.43.0
 
 
