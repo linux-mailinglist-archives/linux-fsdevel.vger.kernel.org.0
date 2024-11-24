@@ -1,295 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-35673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44519D7406
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 15:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8057E9D70C2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 14:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F686B3044A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 13:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D86028241C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2024 13:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2C41DE4C6;
-	Sun, 24 Nov 2024 13:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB041BC063;
+	Sun, 24 Nov 2024 13:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO7JLWLD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axu04URF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8438A1DE2DA;
-	Sun, 24 Nov 2024 13:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099F18A6BC;
+	Sun, 24 Nov 2024 13:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455335; cv=none; b=NctgpX06Z0a4L0vVqy66VQv7TNbmb9lIvrd7wskZsapt9ZxLBX8Z3jGvc6BjvLIyQMGwjmGLxn0C9PS9W02rN5MQilfy9y+Y+C5mIKhewSfPnX45B4ifEhHZTU9eqg34kblxqFnPeRE3eifVD7Zam1BPvLMHDiZ8moo2Wune2f4=
+	t=1732455259; cv=none; b=IyTcXnvGBhnJd7TlCinHzwzJAGWvyHX27grVwjnkLA1yn6yTyew3fp+6hNFERTvH6pxwj+fM8oYpAdQiFfCoD45VFV8On24EA5MofPOnzf/HWJj92tZuSdI2jFxwvLB1O32+L6jtC5UngXiwA0SVPg2HSuutPqWlyBPzaPWD9YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455335; c=relaxed/simple;
-	bh=DGpl4AVnslnSf2FRe9DPV0UfV/JCfTiIj/Nifd9Vqo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UzTNMCpTZktY+mlxhDQBLypjZKvZVdg5Mb+KQQ21zjp16AQ9yaYTojfBKI7LcLZPgo5J8bIActgwxP42Ig/C/iFyytDeI9b5gRqkVjWDuoTf3yXqZ2/tNJX8aaQdmgx3WBNPXGBObHFCil6WQRb16/5GcL+WNw1q/JIHn0otNSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO7JLWLD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB3FC4CECC;
-	Sun, 24 Nov 2024 13:35:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455334;
-	bh=DGpl4AVnslnSf2FRe9DPV0UfV/JCfTiIj/Nifd9Vqo0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DO7JLWLDJR39zsXJ8C5F1pYjeOWJm0UQJxA/ke68QpgZEEhQ5vyHPe4btY70SHtiK
-	 CQ01a3BZjfwkVbq4Y8hxkuvLqf6xty38HS7SKiT35EYX20dVQ2SRmDXKtKned4XwOy
-	 oirbeHrCW733fWIZAVlDgABFzUdBWlb5FTj3IR6PuvrRwOyO9gJs+352xa1YLgTsOc
-	 eWMwxIARZhLuKRBKm/MiWuyDohAVjSW41R68Bom2nIR4sDKo2qTNAl5heou2t1iLKV
-	 r8Uq++EpJpQA2ChrgzP8LPAgb3IAJU/uqoiBKjcQYi+ss6b06EB4/+05G+41HrH7cs
-	 Ln0mr1HS59jAA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Krishna Vivek Vitta <kvitta@microsoft.com>,
-	Jan Kara <jack@suse.cz>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 048/107] fanotify: allow reporting errors on failure to open fd
-Date: Sun, 24 Nov 2024 08:29:08 -0500
-Message-ID: <20241124133301.3341829-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124133301.3341829-1-sashal@kernel.org>
-References: <20241124133301.3341829-1-sashal@kernel.org>
+	s=arc-20240116; t=1732455259; c=relaxed/simple;
+	bh=Uk6qoM3/bi3PrMVZDpuNfQE44d1ttBqWG2E468pnZ/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=cfbh0Sc0HF/osC9fWkzRZNzab1fhTeZnAkmQ6n+Otv4XIA/oCAo3R8QXoPmKQKO4cOJKFdx7sdRVugzIBIwOu1j+6VAU+Q+qUCoHfjRD8ewoCKK3aVuwYad7peaccE4hNCUjvUtp/yy5hi4ox6SMuO99CTXanZyBO7hGU4RlLpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axu04URF; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2126e293192so7039615ad.0;
+        Sun, 24 Nov 2024 05:34:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732455257; x=1733060057; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qtitWj7mwZUOuapDYi1rlQN8mBEo2KiG1ezv0q6gsEE=;
+        b=axu04URFhBpwR/Ea6AeSmDS8gwu7/uzyiYbLurQf9eCHnJGwc1lrHLryVF53eHvj0T
+         Qe4Mw1AF+DyfPQ/iJt/RnbXBHZV/vD2hceFnX9VEeYqehldovrGlwuI5CqvJxqOQRqgW
+         Ex9Bt8cmfQ8rydFLU6JM/4B/oVhrPFWc51xGTxrCbxzf5b5GpdGNuaQlUbCnL+OVjr93
+         YUXYdGxoKGW91ljazTcwVZZC9KE7xJHr0+csYMRFty84oSHWo7YTYekQr3NmiBpyJHDi
+         x5vMBg1aKop4TNyuAFDcxNNLUIY6gWWPq9yi0B5bPp7j1/f8YD88MXeu9dXdmmqRsClZ
+         yM8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732455257; x=1733060057;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtitWj7mwZUOuapDYi1rlQN8mBEo2KiG1ezv0q6gsEE=;
+        b=Q7bsBE/MmH+G9oEu7ZeovFPhry0X76W1eIHadFyJGNMD5nUOk1T6rQVVXhJWLYIfZk
+         8os1rATfHTYWVx2dDjqgIvawfFlJ1ikUXG25fEtAYI6Pq0edub8OVd89kB1UYBBC1baz
+         /HlS5n1yBxHGDMmP/CCAlu4JWnpkg52tKC2g60TogOZjAX+IJBFfk5/rsk15YI7b+MjZ
+         6cm8syA8n72O5C2x5IvJTBmhVcHYJLAFFBzkRsdNurCeAD9vaGaSX4jpDUP6FBlrMqq0
+         8P+LuT/DOlC/pHQ8/YB/xnivEfSH6vcBz3FRKIZHeKuc8Jy9+bXx2VYhtpHo5ZJXcAy1
+         Bdkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqUFv8VaDe6IYeaO2F43oLhfZ4VrFVlC1/hqafrLOmJHCJL451rLahhIIqu+CSkwycxRpeMCbuT7k2eg==@vger.kernel.org, AJvYcCUw6Bt7T6Bz0KEDqWwvT/z3HtqwXYe0t+7u0yLaS9sZEkYSy4sP/FBKbuPiDGA+MTILZ3SUmrDp/Q4sYMzFGQ==@vger.kernel.org, AJvYcCVrursYBu2zs+8Xq8RqZiieblCyjuJ9S86+uDkIo92ItJ0o24eCY+dSZuImIDftgg1cwJRuCjPutWrE@vger.kernel.org, AJvYcCXk97jTnGzcvP8hohvl8a6g/kfUFMtovfTPjdiY1wMjd3eAr0nh/yGpHYzea4eDyifMMvwaSq6Q8Lp7KQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGU6o+RjTW5PmTWn3c2EDr+jrmmg7yf/D3AIp4Yzl0TM8UKdDe
+	s8EJWaNMjp5pqRlIpkWFUEetTIX7d+GffowfJRoGLEkW8AuTT1y5
+X-Gm-Gg: ASbGncu9+4Ncxqj+r8otf815/jiPaqW7+TYQ4LXgluZ9kq7kuoaiZ2uHU3eKThUrien
+	FxNdLtZx7p37E1Kpz4EL75YRz3rII7m5OSCYkWi18thvCdSxOqfOu2yvI+QTiZjiAGWICRZPnxn
+	me0lSeBLCyf0oDnUz8y7fudxoPx7yjd3pfjCkW7q2Tsj6kHbkd/lZXi6zhXxYMaYhtBjWdCE9o2
+	czoE9M8BQYPvvfo5M7mzuc/s839WLcX6/HMrwcpzU2JhuHVoiBQUEeruGRxpQ==
+X-Google-Smtp-Source: AGHT+IHLvekYbaPwVuQbj7uVMH6+WJbm/aay5oOW+hS7R6I1jLZXbkDtIA8gi64je3notGAilm7kDw==
+X-Received: by 2002:a05:6a20:3d8d:b0:1dc:77fc:1cd1 with SMTP id adf61e73a8af0-1e09e4004cfmr5341156637.3.1732455256584;
+        Sun, 24 Nov 2024 05:34:16 -0800 (PST)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724ed55099asm3151173b3a.49.2024.11.24.05.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 05:34:16 -0800 (PST)
+Message-ID: <489d941f-c4e8-4d1f-92ee-02074c713dd1@gmail.com>
+Date: Sun, 24 Nov 2024 22:34:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 2/28] dept: Implement Dept(Dependency Tracker)
+To: Byungchul Park <byungchul@sk.com>
+References: <20240508094726.35754-3-byungchul@sk.com>
+Content-Language: en-US
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel_team@skhynix.com,
+ torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+ linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+ linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+ will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+ joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+ duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+ willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+ gregkh@linuxfoundation.org, kernel-team@lge.com, linux-mm@kvack.org,
+ akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
+ hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
+ jglisse@redhat.com, dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+ rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+ linux-block@vger.kernel.org, josef@toxicpanda.com,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, jlayton@kernel.org,
+ dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+ dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com,
+ chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+ max.byungchul.park@gmail.com, boqun.feng@gmail.com, longman@redhat.com,
+ hdanton@sina.com, her0gyugyu@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
+From: Yunseong Kim <yskelg@gmail.com>
+In-Reply-To: <20240508094726.35754-3-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Amir Goldstein <amir73il@gmail.com>
+Hi Byungchul,
 
-[ Upstream commit 522249f05c5551aec9ec0ba9b6438f1ec19c138d ]
+Thank you for the great feature. Currently, DEPT has a bug in the
+'dept_key_destroy()' function that must be fixed to ensure proper
+operation in the upstream Linux kernel.
 
-When working in "fd mode", fanotify_read() needs to open an fd
-from a dentry to report event->fd to userspace.
+On 5/8/24 6:46 오후, Byungchul Park wrote:
+> CURRENT STATUS
+> --------------
+> Lockdep tracks acquisition order of locks in order to detect deadlock,
+> and IRQ and IRQ enable/disable state as well to take accident
+> acquisitions into account.
+> 
+> Lockdep should be turned off once it detects and reports a deadlock
+> since the data structure and algorithm are not reusable after detection
+> because of the complex design.
+> 
+> PROBLEM
+> -------
+> *Waits* and their *events* that never reach eventually cause deadlock.
+> However, Lockdep is only interested in lock acquisition order, forcing
+> to emulate lock acqusition even for just waits and events that have
+> nothing to do with real lock.
+> 
+> Even worse, no one likes Lockdep's false positive detection because that
+> prevents further one that might be more valuable. That's why all the
+> kernel developers are sensitive to Lockdep's false positive.
+> 
+> Besides those, by tracking acquisition order, it cannot correctly deal
+> with read lock and cross-event e.g. wait_for_completion()/complete() for
+> deadlock detection. Lockdep is no longer a good tool for that purpose.
+> 
+> SOLUTION
+> --------
+> Again, *waits* and their *events* that never reach eventually cause
+> deadlock. The new solution, Dept(DEPendency Tracker), focuses on waits
+> and events themselves. Dept tracks waits and events and report it if
+> any event would be never reachable.
+> 
+> Dept does:
+>    . Works with read lock in the right way.
+>    . Works with any wait and event e.i. cross-event.
+>    . Continue to work even after reporting multiple times.
+>    . Provides simple and intuitive APIs.
+>    . Does exactly what dependency checker should do.
+> 
+> Q & A
+> -----
+> Q. Is this the first try ever to address the problem?
+> A. No. Cross-release feature (b09be676e0ff2 locking/lockdep: Implement
+>    the 'crossrelease' feature) addressed it 2 years ago that was a
+>    Lockdep extension and merged but reverted shortly because:
+> 
+>    Cross-release started to report valuable hidden problems but started
+>    to give report false positive reports as well. For sure, no one
+>    likes Lockdep's false positive reports since it makes Lockdep stop,
+>    preventing reporting further real problems.
+> 
+> Q. Why not Dept was developed as an extension of Lockdep?
+> A. Lockdep definitely includes all the efforts great developers have
+>    made for a long time so as to be quite stable enough. But I had to
+>    design and implement newly because of the following:
+> 
+>    1) Lockdep was designed to track lock acquisition order. The APIs and
+>       implementation do not fit on wait-event model.
+>    2) Lockdep is turned off on detection including false positive. Which
+>       is terrible and prevents developing any extension for stronger
+>       detection.
+> 
+> Q. Do you intend to totally replace Lockdep?
+> A. No. Lockdep also checks if lock usage is correct. Of course, the
+>    dependency check routine should be replaced but the other functions
+>    should be still there.
+> 
+> Q. Do you mean the dependency check routine should be replaced right
+>    away?
+> A. No. I admit Lockdep is stable enough thanks to great efforts kernel
+>    developers have made. Lockdep and Dept, both should be in the kernel
+>    until Dept gets considered stable.
+> 
+> Q. Stronger detection capability would give more false positive report.
+>    Which was a big problem when cross-release was introduced. Is it ok
+>    with Dept?
+> A. It's ok. Dept allows multiple reporting thanks to simple and quite
+>    generalized design. Of course, false positive reports should be fixed
+>    anyway but it's no longer as a critical problem as it was.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 
-Opening an fd from dentry can fail for several reasons.
-For example, when tasks are gone and we try to open their
-/proc files or we try to open a WRONLY file like in sysfs
-or when trying to open a file that was deleted on the
-remote network server.
+If a module previously checked for dependencies by DEPT is loaded and
+then would be unloaded, a kernel panic shall occur when the kernel
+reuses the corresponding memory area for other purposes. This issue must
+be addressed as a priority to enable the use of DEPT. Testing this patch
+on the Ubuntu kernel confirms the problem.
 
-Add a new flag FAN_REPORT_FD_ERROR for fanotify_init().
-For a group with FAN_REPORT_FD_ERROR, we will send the
-event with the error instead of the open fd, otherwise
-userspace may not get the error at all.
+> +void dept_key_destroy(struct dept_key *k)
+> +{
+> +	struct dept_task *dt = dept_task();
+> +	unsigned long flags;
+> +	int sub_id;
+> +
+> +	if (unlikely(!dept_working()))
+> +		return;
+> +
+> +	if (dt->recursive == 1 && dt->task_exit) {
+> +		/*
+> +		 * Need to allow to go ahead in this case where
+> +		 * ->recursive has been set to 1 by dept_off() in
+> +		 * dept_task_exit() and ->task_exit has been set to
+> +		 * true in dept_task_exit().
+> +		 */
+> +	} else if (dt->recursive) {
+> +		DEPT_STOP("Key destroying fails.\n");
+> +		return;
+> +	}
+> +
+> +	flags = dept_enter();
+> +
+> +	/*
+> +	 * dept_key_destroy() should not fail.
+> +	 *
+> +	 * FIXME: Should be fixed if dept_key_destroy() causes deadlock
+> +	 * with dept_lock().
+> +	 */
+> +	while (unlikely(!dept_lock()))
+> +		cpu_relax();
+> +
+> +	for (sub_id = 0; sub_id < DEPT_MAX_SUBCLASSES; sub_id++) {
+> +		struct dept_class *c;
+> +
+> +		c = lookup_class((unsigned long)k->base + sub_id);
+> +		if (!c)
+> +			continue;
+> +
+> +		hash_del_class(c);
+> +		disconnect_class(c);
+> +		list_del(&c->all_node);
+> +		invalidate_class(c);
+> +
+> +		/*
+> +		 * Actual deletion will happen on the rcu callback
+> +		 * that has been added in disconnect_class().
+> +		 */
+> +		del_class(c);
+> +	}
+> +
+> +	dept_unlock();
+> +	dept_exit(flags);
+> +
+> +	/*
+> +	 * Wait until even lockless hash_lookup_class() for the class
+> +	 * returns NULL.
+> +	 */
+> +	might_sleep();
+> +	synchronize_rcu();
+> +}
+> +EXPORT_SYMBOL_GPL(dept_key_destroy);
 
-For an overflow event, we report -EBADF to avoid confusing FAN_NOFD
-with -EPERM.  Similarly for pidfd open errors we report either -ESRCH
-or the open error instead of FAN_NOPIDFD and FAN_EPIDFD.
-
-In any case, userspace will not know which file failed to
-open, so add a debug print for further investigation.
-
-Reported-by: Krishna Vivek Vitta <kvitta@microsoft.com>
-Link: https://lore.kernel.org/linux-fsdevel/SI2P153MB07182F3424619EDDD1F393EED46D2@SI2P153MB0718.APCP153.PROD.OUTLOOK.COM/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20241003142922.111539-1-amir73il@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/notify/fanotify/fanotify_user.c | 85 +++++++++++++++++-------------
- include/linux/fanotify.h           |  1 +
- include/uapi/linux/fanotify.h      |  1 +
- 3 files changed, 50 insertions(+), 37 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9644bc72e4573..8e2d43fc6f7c1 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -266,13 +266,6 @@ static int create_fd(struct fsnotify_group *group, const struct path *path,
- 			       group->fanotify_data.f_flags | __FMODE_NONOTIFY,
- 			       current_cred());
- 	if (IS_ERR(new_file)) {
--		/*
--		 * we still send an event even if we can't open the file.  this
--		 * can happen when say tasks are gone and we try to open their
--		 * /proc files or we try to open a WRONLY file like in sysfs
--		 * we just send the errno to userspace since there isn't much
--		 * else we can do.
--		 */
- 		put_unused_fd(client_fd);
- 		client_fd = PTR_ERR(new_file);
- 	} else {
-@@ -663,7 +656,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
- 	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
- 	struct file *f = NULL, *pidfd_file = NULL;
--	int ret, pidfd = FAN_NOPIDFD, fd = FAN_NOFD;
-+	int ret, pidfd = -ESRCH, fd = -EBADF;
- 
- 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
- 
-@@ -691,10 +684,39 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
- 	    path && path->mnt && path->dentry) {
- 		fd = create_fd(group, path, &f);
--		if (fd < 0)
--			return fd;
-+		/*
-+		 * Opening an fd from dentry can fail for several reasons.
-+		 * For example, when tasks are gone and we try to open their
-+		 * /proc files or we try to open a WRONLY file like in sysfs
-+		 * or when trying to open a file that was deleted on the
-+		 * remote network server.
-+		 *
-+		 * For a group with FAN_REPORT_FD_ERROR, we will send the
-+		 * event with the error instead of the open fd, otherwise
-+		 * Userspace may not get the error at all.
-+		 * In any case, userspace will not know which file failed to
-+		 * open, so add a debug print for further investigation.
-+		 */
-+		if (fd < 0) {
-+			pr_debug("fanotify: create_fd(%pd2) failed err=%d\n",
-+				 path->dentry, fd);
-+			if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR)) {
-+				/*
-+				 * Historically, we've handled EOPENSTALE in a
-+				 * special way and silently dropped such
-+				 * events. Now we have to keep it to maintain
-+				 * backward compatibility...
-+				 */
-+				if (fd == -EOPENSTALE)
-+					fd = 0;
-+				return fd;
-+			}
-+		}
- 	}
--	metadata.fd = fd;
-+	if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR))
-+		metadata.fd = fd;
-+	else
-+		metadata.fd = fd >= 0 ? fd : FAN_NOFD;
- 
- 	if (pidfd_mode) {
- 		/*
-@@ -709,18 +731,16 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 		 * The PIDTYPE_TGID check for an event->pid is performed
- 		 * preemptively in an attempt to catch out cases where the event
- 		 * listener reads events after the event generating process has
--		 * already terminated. Report FAN_NOPIDFD to the event listener
--		 * in those cases, with all other pidfd creation errors being
--		 * reported as FAN_EPIDFD.
-+		 * already terminated.  Depending on flag FAN_REPORT_FD_ERROR,
-+		 * report either -ESRCH or FAN_NOPIDFD to the event listener in
-+		 * those cases with all other pidfd creation errors reported as
-+		 * the error code itself or as FAN_EPIDFD.
- 		 */
--		if (metadata.pid == 0 ||
--		    !pid_has_task(event->pid, PIDTYPE_TGID)) {
--			pidfd = FAN_NOPIDFD;
--		} else {
-+		if (metadata.pid && pid_has_task(event->pid, PIDTYPE_TGID))
- 			pidfd = pidfd_prepare(event->pid, 0, &pidfd_file);
--			if (pidfd < 0)
--				pidfd = FAN_EPIDFD;
--		}
-+
-+		if (!FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR) && pidfd < 0)
-+			pidfd = pidfd == -ESRCH ? FAN_NOPIDFD : FAN_EPIDFD;
- 	}
- 
- 	ret = -EFAULT;
-@@ -737,9 +757,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	buf += FAN_EVENT_METADATA_LEN;
- 	count -= FAN_EVENT_METADATA_LEN;
- 
--	if (fanotify_is_perm_event(event->mask))
--		FANOTIFY_PERM(event)->fd = fd;
--
- 	if (info_mode) {
- 		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
- 						buf, count);
-@@ -753,15 +770,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (pidfd_file)
- 		fd_install(pidfd, pidfd_file);
- 
-+	if (fanotify_is_perm_event(event->mask))
-+		FANOTIFY_PERM(event)->fd = fd;
-+
- 	return metadata.event_len;
- 
- out_close_fd:
--	if (fd != FAN_NOFD) {
-+	if (f) {
- 		put_unused_fd(fd);
- 		fput(f);
- 	}
- 
--	if (pidfd >= 0) {
-+	if (pidfd_file) {
- 		put_unused_fd(pidfd);
- 		fput(pidfd_file);
- 	}
-@@ -828,15 +848,6 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
- 		}
- 
- 		ret = copy_event_to_user(group, event, buf, count);
--		if (unlikely(ret == -EOPENSTALE)) {
--			/*
--			 * We cannot report events with stale fd so drop it.
--			 * Setting ret to 0 will continue the event loop and
--			 * do the right thing if there are no more events to
--			 * read (i.e. return bytes read, -EAGAIN or wait).
--			 */
--			ret = 0;
--		}
- 
- 		/*
- 		 * Permission events get queued to wait for response.  Other
-@@ -845,7 +856,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
- 		if (!fanotify_is_perm_event(event->mask)) {
- 			fsnotify_destroy_event(group, &event->fse);
- 		} else {
--			if (ret <= 0) {
-+			if (ret <= 0 || FANOTIFY_PERM(event)->fd < 0) {
- 				spin_lock(&group->notification_lock);
- 				finish_permission_event(group,
- 					FANOTIFY_PERM(event), FAN_DENY, NULL);
-@@ -1954,7 +1965,7 @@ static int __init fanotify_user_setup(void)
- 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 13);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 4f1c4f6031180..89ff45bd6f01b 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -36,6 +36,7 @@
- #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
- 					 FAN_REPORT_TID | \
- 					 FAN_REPORT_PIDFD | \
-+					 FAN_REPORT_FD_ERROR | \
- 					 FAN_UNLIMITED_QUEUE | \
- 					 FAN_UNLIMITED_MARKS)
- 
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index a37de58ca571a..34f221d3a1b95 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -60,6 +60,7 @@
- #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
- #define FAN_REPORT_NAME		0x00000800	/* Report events with name */
- #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
-+#define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
- 
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
--- 
-2.43.0
-
+Best regards,
+Yunseong Kim
 
