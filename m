@@ -1,307 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-35796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2D39D874C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:04:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916BF9D8768
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA6E2864CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB35284B5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392791AF0D1;
-	Mon, 25 Nov 2024 14:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B511AF0B7;
+	Mon, 25 Nov 2024 14:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PoxT73yp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYkJpU4f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0A61AF0C7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 14:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8969A192B7F;
+	Mon, 25 Nov 2024 14:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543483; cv=none; b=QaFTadKJcrcowUqcBtN/zITuroNIkEktWtl/cNJP1SBnTquH6tlgbL9virpXAC99v3tDJVWR6keEefUjqXNqOrZy3eN0u/1MO0oEWRY6hB4/RHUeBhUk2W4JdnKNSRuu8QYQETbhI2ne7u2LNIvl40T2W+EQ06CdJ0iszX7KEGk=
+	t=1732543821; cv=none; b=f/F/1A4x+rcVSXuMieDsoUYISazkXG68E0nilqkuLFR+s64IQRpy9mDXNi4MvukrPQhNtcPZqY9jp1Jg/1eRoyaXFBdk0S+2EuF/ab9oCiUjZCFQIC2UKVzDXyQWqIPcyvqKY1XJmQnkNIebp0aBJ0OZ3P0NXMrs+c9to6ksVx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543483; c=relaxed/simple;
-	bh=YtM653ja4KUJmPyqWieTI+e2Je9wpFU2u4c+8e45u2Q=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BxJOkVnzILBRSMOIQK49DPiLy5beS3R04+I9yLT80yyglultwNIMtj/FQfHO472u5nZd+Xz99yOSLWtkFql+avViqIKy94jp3qgLuCkyWzFHyMGdAcRQMsOdUVYOojhWdnHgNmMd4Ysn6HBRmEBPQuP6yEZ6cz2U9zH9iCaVf8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PoxT73yp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732543480;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6tH1NIzGo3EjoOVDhcrarKwMnaI4mL7jdvGCeNFaTCg=;
-	b=PoxT73yptcri35X+x04XYJpEFEdvbv4SauJMe5nYkagW+uGiK/TINkLVjkzbDy4a50apPK
-	9aihD3Hs7XN1gpTk9xfZTsL4ce7Y3eZbfUUK02kYKse4wW7PgZHOEOWJ9EuUfqoIfWATE8
-	eWMVrFoEgxQjv4x6jGVv2DOz7FxWh70=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-u6ElZTtNN3qHMhdUunii-g-1; Mon,
- 25 Nov 2024 09:04:39 -0500
-X-MC-Unique: u6ElZTtNN3qHMhdUunii-g-1
-X-Mimecast-MFC-AGG-ID: u6ElZTtNN3qHMhdUunii-g
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 73FA919560AB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 14:04:38 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.80.8])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0073D1956086
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 14:04:37 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC] iomap: more granular iteration
-Date: Mon, 25 Nov 2024 09:06:23 -0500
-Message-ID: <20241125140623.20633-1-bfoster@redhat.com>
+	s=arc-20240116; t=1732543821; c=relaxed/simple;
+	bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rsw0qYolE/TmOFk996JrfxfpTKhnkrOljJpnOhodR4+peJDwPkxlhsmsziRCiJlLanD6uQ9J1GEARdHSTL6KHo9tAacBOu6O49Bq3cWuWFl12B0WEaH0n2aZYg095Qzcel9mR29nF0sApilI8Dc9Q2XASWPNryT2Ek/S0Awn9RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYkJpU4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5948CC4CECE;
+	Mon, 25 Nov 2024 14:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732543821;
+	bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=WYkJpU4fOMfXxXSpHo5HCdil8kw2CZEmFPGhTEAAaLw1C8fXHLRRvukJaUGoX+77l
+	 oN2GpxyCMKa49aRTX6G6e8zTUk4QsEIOf6YedP20ytgtgkSUS+Ms/ZOwgNnZGkgUQ/
+	 FItudqn+mTJRjmQ29/FMvTorM2rtu3szyWSV4jm2sZT69R675NmS5kzd7X6IIoCzfr
+	 LyfFTGeofohlgCumrA+1ZzEY+uK6MTpRFzSlJVRzwzYbxGia3qkwnPqtguRxLFJye9
+	 ezhxbta/JurORZJKwMwchhzWMqvsnyYW2N8ytXTbrfj7VvkNc5Pr8UHDUIgWSfENBD
+	 ZONEWmZg45+UA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 00/29] cred: rework {override,revert}_creds()
+Date: Mon, 25 Nov 2024 15:09:56 +0100
+Message-Id: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADWFRGcC/22NwQ6CMBBEf8X07JJ2KSqe/A/DoZQFGrQ1W4Iaw
+ r/bcvb4MjNvVhGJHUVxPayCaXHRBZ8AjwdhR+MHAtclFihRK4Ua3oEnsEwdlLpuT5WupLygSP0
+ XU+8+u+veJG5NJGjZeDtmw9PEmbjIIlAKUOfN6OIc+LvfLyov/z0tCiT0ZYUpsWV9lreJ2NOjC
+ DyIZtu2H2SUPNDHAAAA
+X-Change-ID: 20241124-work-cred-349b65450082
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3601; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHqwli0uDjK8fPNkYxGflf1nO9nJt2+LaH7dFPFif
+ 8nXvZuvdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykYTojw8RLFXN8mTIt7+RP
+ N77u+2myZu+e8ob6nazCJ5+f++09+xrDP3uFrKB38ZovVs1cWaTnWa+vOO0r04uaP+73e5odHbW
+ 6GAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Not-Signed-off-by: Brian Foster <bfoster@redhat.com>
+For the v6.13 cycle we switched overlayfs to a variant of
+override_creds() that doesn't take an extra reference. To this end I
+suggested introducing {override,revert}_creds_light() which overlayfs
+could use.
+
+This seems to work rather well. This series follow Linus advice and
+unifies the separate helpers and simply makes {override,revert}_creds()
+do what {override,revert}_creds_light() currently does. Caller's that
+really need the extra reference count can take it manually.
+
 ---
+Changes in v2:
+- Remove confusion around dangling pointer.
+- Use the revert_creds(old) + put_cred(new) pattern instead of
+  put_cred(revert_creds(old)).
+- Fill in missing justifications in various commit message why not using
+  a separate reference count is safe.
+- Make get_new_cred() argument const to easily use it during the
+  conversion.
+- Get rid of get_new_cred() completely at the end of the series.
+- Link to v1: https://lore.kernel.org/r/20241124-work-cred-v1-0-f352241c3970@kernel.org
 
-Hi all,
+---
+Christian Brauner (29):
+      tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
+      cred: return old creds from revert_creds_light()
+      tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
+      cred: remove old {override,revert}_creds() helpers
+      tree-wide: s/override_creds_light()/override_creds()/g
+      tree-wide: s/revert_creds_light()/revert_creds()/g
+      firmware: avoid pointless reference count bump
+      sev-dev: avoid pointless cred reference count bump
+      target_core_configfs: avoid pointless cred reference count bump
+      aio: avoid pointless cred reference count bump
+      binfmt_misc: avoid pointless cred reference count bump
+      coredump: avoid pointless cred reference count bump
+      nfs/localio: avoid pointless cred reference count bumps
+      nfs/nfs4idmap: avoid pointless reference count bump
+      nfs/nfs4recover: avoid pointless cred reference count bump
+      nfsfh: avoid pointless cred reference count bump
+      open: avoid pointless cred reference count bump
+      ovl: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      smb: avoid pointless cred reference count bump
+      io_uring: avoid pointless cred reference count bump
+      acct: avoid pointless reference count bump
+      cgroup: avoid pointless cred reference count bump
+      trace: avoid pointless cred reference count bump
+      dns_resolver: avoid pointless cred reference count bump
+      cachefiles: avoid pointless cred reference count bump
+      nfsd: avoid pointless cred reference count bump
+      cred: remove unused get_new_cred()
 
-I just wanted to throw this against the wall for early
-thoughts/feedback. This relates to to the iomap folio batch support
-series, in particular pushing the batch handling code further down into
-the normal get folio path.
-
-Firstly for reference, this RFC is a squash of several logical changes
-that should be separate patches:
-
-1. Split off state clearing from iomap_advance_iter() into a separate
-helper.
-2. Add an iter_len field to iomap_iter to track per-iteration length.
-3. Update iomap_zero_iter() to use granular iteration instead of local
-variables for pos/len.
-
-The objective is I'm looking for a cleaner way to support a sparse range
-(based on a set of folios in a batch) beyond just turning pos/len into
-pointers. Most of the iomap iterators duplicate a lot of boilerplate
-around copying pos/len out of the iter, processing it locally in a loop
-based on length, and then passing state back into the iter via
-iter->processed.
-
-The idea here is to replace some of that with more granular iter state
-so the iteratora function can advance the iter on its own. In turn, this
-facilitates the ability of the write_begin() path to advance the
-iterator based on batched folio lookup if the folio set happens to be
-logically discontiguous.
-
-I still need to push some of the length/bytes chunking stuff further
-down closer to get_folio before this is possible, but the hope is we can
-end up with something like the following at the iterator level:
-
-	do {
-		/* iter->pos/iter_len advanced based on folio pos */
-		status = iomap_write_begin(iter, &folio);
-
-		... calc/process folio_[offset|bytes] ...
-
-		iomap_advance_iter(iter, folio_bytes);
-	} while (iter->iter_len > 0);
-	...
-	return 0;
-
-The one warty thing I have so far is marking the iomap stale on iter_len
-consumption to allow these types of iterators to return error/success
-(i.e. return 0 instead of a written count) without the higher level
-advance causing a loop termination. This could probably be done
-differently, but this should be a no-op for non-granular iterators so
-I'm not that worried about it as of yet.
-
-Thoughts/comments on any of this appreciated. Thanks.
-
-Brian
-
- fs/iomap/buffered-io.c | 22 ++++++++-------------
- fs/iomap/iter.c        | 45 +++++++++++++++++++++++++++++++-----------
- include/linux/iomap.h  |  2 ++
- 3 files changed, 43 insertions(+), 26 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 0708be776740..c479ec73dedd 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1352,18 +1352,14 @@ static inline int iomap_zero_iter_flush_and_stale(struct iomap_iter *i)
- 
- static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
--	loff_t pos = iter->pos;
--	loff_t length = iomap_length(iter);
--	loff_t written = 0;
--
- 	do {
- 		struct folio *folio;
- 		int status;
- 		size_t offset;
--		size_t bytes = min_t(u64, SIZE_MAX, length);
-+		size_t bytes = min_t(u64, SIZE_MAX, iter->iter_len);
- 		bool ret;
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
-+		status = iomap_write_begin(iter, iter->pos, bytes, &folio);
- 		if (status)
- 			return status;
- 		if (iter->iomap.flags & IOMAP_F_STALE)
-@@ -1371,26 +1367,24 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 
- 		/* warn about zeroing folios beyond eof that won't write back */
- 		WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
--		offset = offset_in_folio(folio, pos);
-+		offset = offset_in_folio(folio, iter->pos);
- 		if (bytes > folio_size(folio) - offset)
- 			bytes = folio_size(folio) - offset;
- 
- 		folio_zero_range(folio, offset, bytes);
- 		folio_mark_accessed(folio);
- 
--		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
--		__iomap_put_folio(iter, pos, bytes, folio);
-+		ret = iomap_write_end(iter, iter->pos, bytes, bytes, folio);
-+		__iomap_put_folio(iter, iter->pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
--		pos += bytes;
--		length -= bytes;
--		written += bytes;
--	} while (length > 0);
-+		iomap_iter_advance(iter, bytes);
-+	} while (iter->iter_len > 0);
- 
- 	if (did_zero)
- 		*did_zero = true;
--	return written;
-+	return 0;
- }
- 
- int
-diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-index 3790918646af..962f4b35d856 100644
---- a/fs/iomap/iter.c
-+++ b/fs/iomap/iter.c
-@@ -7,6 +7,14 @@
- #include <linux/iomap.h>
- #include "trace.h"
- 
-+/* clear out iomaps from the fs */
-+static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
-+{
-+	iter->processed = iter->iter_len = 0;
-+	memset(&iter->iomap, 0, sizeof(iter->iomap));
-+	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
-+}
-+
- /*
-  * Advance to the next range we need to map.
-  *
-@@ -19,30 +27,40 @@
-  * (processed = 0) meaning we are done and (processed = 0 && stale) meaning we
-  * need to remap the entire remaining range.
-  */
--static inline int iomap_iter_advance(struct iomap_iter *iter)
-+int iomap_iter_advance(struct iomap_iter *iter, s64 count)
- {
- 	bool stale = iter->iomap.flags & IOMAP_F_STALE;
- 	int ret = 1;
- 
- 	/* handle the previous iteration (if any) */
- 	if (iter->iomap.length) {
--		if (iter->processed < 0)
--			return iter->processed;
--		if (WARN_ON_ONCE(iter->processed > iomap_length(iter)))
-+		if (count < 0)
-+			return count;
-+		if (WARN_ON_ONCE(count > iter->iter_len))
- 			return -EIO;
--		iter->pos += iter->processed;
--		iter->len -= iter->processed;
--		if (!iter->len || (!iter->processed && !stale))
-+		iter->pos += count;
-+		iter->len -= count;
-+		if (!iter->len || (!count && !stale))
- 			ret = 0;
-+		iter->iter_len -= count;
-+		/*
-+		 * XXX: Stale the mapping on consuming iter_len to prevent
-+		 * interference from subsequent 0 byte (i.e. return success
-+		 * advance). Perhaps use a separate flag here for "incremental"
-+		 * iterators..?
-+		 */
-+		if (!iter->iter_len)
-+			iter->iomap.flags |= IOMAP_F_STALE;
- 	}
- 
--	/* clear the per iteration state */
--	iter->processed = 0;
--	memset(&iter->iomap, 0, sizeof(iter->iomap));
--	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
- 	return ret;
- }
- 
-+static inline int iomap_iter_advance_processed(struct iomap_iter *iter)
-+{
-+	return iomap_iter_advance(iter, iter->processed);
-+}
-+
- static inline void iomap_iter_done(struct iomap_iter *iter)
- {
- 	WARN_ON_ONCE(iter->iomap.offset > iter->pos);
-@@ -53,6 +71,8 @@ static inline void iomap_iter_done(struct iomap_iter *iter)
- 	trace_iomap_iter_dstmap(iter->inode, &iter->iomap);
- 	if (iter->srcmap.type != IOMAP_HOLE)
- 		trace_iomap_iter_srcmap(iter->inode, &iter->srcmap);
-+
-+	iter->iter_len = iomap_length(iter);
- }
- 
- /**
-@@ -83,7 +103,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
- 	}
- 
- 	trace_iomap_iter(iter, ops, _RET_IP_);
--	ret = iomap_iter_advance(iter);
-+	ret = iomap_iter_advance_processed(iter);
-+	iomap_iter_reset_iomap(iter);
- 	if (ret <= 0)
- 		return ret;
- 
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 27048ec10e1c..6fb7adc1f2c6 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -217,6 +217,7 @@ struct iomap_iter {
- 	struct inode *inode;
- 	loff_t pos;
- 	u64 len;
-+	u64 iter_len;
- 	s64 processed;
- 	unsigned flags;
- 	struct iomap iomap;
-@@ -225,6 +226,7 @@ struct iomap_iter {
- };
- 
- int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
-+int iomap_iter_advance(struct iomap_iter *iter, s64 count);
- 
- /**
-  * iomap_length - length of the current iomap iteration
--- 
-2.47.0
+ Documentation/security/credentials.rst |  5 ----
+ drivers/crypto/ccp/sev-dev.c           |  2 +-
+ fs/backing-file.c                      | 20 +++++++-------
+ fs/nfsd/auth.c                         |  3 +-
+ fs/nfsd/filecache.c                    |  2 +-
+ fs/nfsd/nfs4recover.c                  |  3 +-
+ fs/nfsd/nfsfh.c                        |  1 -
+ fs/open.c                              | 11 ++------
+ fs/overlayfs/dir.c                     |  4 +--
+ fs/overlayfs/util.c                    |  4 +--
+ fs/smb/server/smb_common.c             | 10 ++-----
+ include/linux/cred.h                   | 26 ++++--------------
+ kernel/cred.c                          | 50 ----------------------------------
+ 13 files changed, 27 insertions(+), 114 deletions(-)
+---
+base-commit: e7675238b9bf4db0b872d5dbcd53efa31914c98f
+change-id: 20241124-work-cred-349b65450082
 
 
