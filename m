@@ -1,135 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-35861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96FC9D8EF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 00:22:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1D316ABD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 23:22:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D9D196D9A;
-	Mon, 25 Nov 2024 23:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="hcZeOtsJ"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDDB9D8F41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 00:42:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69FE1CD2C;
-	Mon, 25 Nov 2024 23:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732576923; cv=none; b=G2scl7sPFUfj7zHgvglkek0NGrWp2k14afe3oaKouW2vvt4pQjbH5JkMDUBwaeImP06YDuREniDzx+6VBNlxi4M/WkBikBPUARhTvsfXigfmOxsFSHWi/JliBYiL2xE74808SfBBabw4upZLljBh+p41+IuELIYU+pKlTUSfPJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732576923; c=relaxed/simple;
-	bh=PnyEp5HDwkYdC+u2fYrcD9DZmakb7fsgFLTXkys5mYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AxIfGDZA6G1R1/yZzsm+TLUzRSLJo/M1tbk+nYq4jhKIFsMUOOidcmRENj3sXYfU3iA72Vow3aoWKjA1Vq2TnpAGuny1rmdHbcNA9ndyAIYyegtxXEe1t43mJhUs7MAvxRSFaooeJx4EzfzOSWOtjQhsL3csHVvDqM7tk0d/09s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=hcZeOtsJ; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xy1tx0rF8zlgVnN;
-	Mon, 25 Nov 2024 23:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1732576915; x=1735168916; bh=gYn7SNmvOgRtVyBpUwpt9+SL
-	l1/GKJuJp2r+ZPcDOn8=; b=hcZeOtsJw9MqKA073h8LluDpnwkJA8502Ny5K5xF
-	5PfmkXqYsr98J6k8bsoVBWRhGvfkc8AmRW/jDo1Bkx23NRvqBjqvo1+x3qCSF9KX
-	V1DsxVXZzyBgwsnE+LebnaFkNCluTDTt33itJcqDiVtQT5W4WCVezcse/lbJ2kpF
-	hueFUBl0hPqsa7JlnOJ/4Q/EFdNKAUAfnWBGZYntZngXkgtqKzBBT/NdITW9LzNx
-	5XMbsPPGsxYddl6z0XmbqEqeeMIRjdtL6M8cQM6IAJBqmeaA60Ja7AsV9Xz0wwIk
-	WNeXb7FqSUA7IOjgr6amIp0EtKAqVWbwD0H7uIS2/5AmMw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7mH7bJMGB4rO; Mon, 25 Nov 2024 23:21:55 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D03B24C9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 23:42:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E7B196D9A;
+	Mon, 25 Nov 2024 23:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fP8Jt5/E"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xy1tk4CG6zlgVXv;
-	Mon, 25 Nov 2024 23:21:50 +0000 (UTC)
-Message-ID: <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
-Date: Mon, 25 Nov 2024 15:21:47 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D743189F20;
+	Mon, 25 Nov 2024 23:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732578146; cv=none; b=ZVQcffh60TaS3malLc7khT2FUqenUqiRk2Qvy4J8Qvlll1AL5Ay2ThySgKxZoB4C13bbjDgYrjdNssLvore+Ur52gHmOMG3NbJDAqPiwuHlrWKEXjM1uZuTFTrapO8mtiMOykSdWZx7LLy5VpwVXDi2bHszA4eOr7tvUeXRs51o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732578146; c=relaxed/simple;
+	bh=4AW3HXF8Zss5Wgx8tbWXkPrXII0o3lYa5kk1FEwbCSo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ReWeeYOHKPrVp7dCL1xGEtmZj6hz54sPpYn0jDvjTpDJJ9iDA6koUuAsM0mwnL8JsjXBYXUK/bEIlGRZeoyrLFJEOPukfAh4O3pS0P+RxlkEIkORlcR6zpJl3s1k+UT46M9+Tuk84q+p1Z6oOE92KngfBKPCeeD8SoNmQCQDj4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fP8Jt5/E; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1732578130; bh=/KxuIDjoowTbqWmLpQV6jdh8esNO7ZyBc3NaxAGU4Fw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=fP8Jt5/Ewe0q/fhG5A2iHcp2hxYy2QbO+/XjOtRA4A/C47IpzojIudXYCzPneBz/A
+	 mOTNDgEbKTFkD7suGCes77w5lr753mpBhuaSLt7M2xTkM3Xo8mQHICsYztqJqjTV/p
+	 /ghfE3UiKJYRFfQGPQsyQOtDoRp6pRHNm2TeZhJo=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id A88B2EE5; Tue, 26 Nov 2024 07:42:08 +0800
+X-QQ-mid: xmsmtpt1732578128tfoslh9fx
+Message-ID: <tencent_4D663A3CE9374A970636084B0C75E3768D09@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8kfHQIj0j0buKXojWz+l7bwFvNjd7cBCyCODjlDN/FpPnLQeo9e
+	 ciFokYuteH6Kh9rR7DgaPmxfHhnrPqWfPmSXABKfEviMOBmJdqVfV+0nGnNULc5IfMyikKc1TYJW
+	 4sFxcyahsDOkDyqr7YDRbB5H4lNTjrnZrxoCogKrDckASdC/wyYArITCA/Afvxw6tjjkDc/66WtW
+	 eobyR/tZ+deQwKqGV/AmV29rqUECbjvRUCBMaiQgGwoOOat6D4UNwE/nV1Ws74Y83Rh01fcKx5nM
+	 MH021A7TU3kfJ9xyZCZ9+Lk7wc1ongITfyDUHrmJCWYKzvfb7H7ewtOFMZbhOGFx9LKawgTnTcBw
+	 7E9Fp9OAcmcTOGLvvfAvIVplPUoyzYuHq8cz3uq2Ydg5ZTFERzXGuhX32aC+mxJZtU37Vfuvy38x
+	 xbM5DoYEpARE4byT6rs2Sop53UI1Sk1eQBiGx7y0Ihae6nQBBfE8Tg1SiSeXigaineRttFNUrS4h
+	 gb42GBR1IeC/UHSXIw/xSpbJX5YCw5VDufizlLsy29ZpQY3WxyDJABTwVZSAPEwvrJXRibS0d8Wz
+	 2EiukS8YC9MXOWp+CAZGEN0RzVSL5Oe08rwyGgyn3rWWDTAj54cXHQjut75VK9aXfMaYUxUUKiN1
+	 J2mgiM0eYa7x0iipBDMWRnkWk6ShbdZo6V0VUxQry33u28gPGX0HhifD3Zl5ynf0PE89Nf9Df/Sc
+	 /E3yRG8SKogTC0PXQGgwM3jXa2ZCjLp4m78hbG+1NMV5z9BnTjyaR8h5Hc0EloZVFBq3utBw4c4F
+	 9cCxng2q5B6nnDL/HIi5ZzfQTVS44cHE/xsncNA5adhtIpFX8XA5ZPWPxKjVvUo2qioH6qW4Il4v
+	 S1EgReIDREwiQ+jUDsId7GxRiYAZDxkw==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] hfsplus: restore i_nlink and flags when rename_cat fails
+Date: Tue, 26 Nov 2024 07:42:09 +0800
+X-OQ-MSGID: <20241125234208.3901871-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <674305a3.050a0220.1cc393.003b.GAE@google.com>
+References: <674305a3.050a0220.1cc393.003b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
- <20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
- <CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
- <Zy5CSgNJtgUgBH3H@casper.infradead.org>
- <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
- <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
- <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
- <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+After the rename syscall fails, the unlink syscall triggers a warning in
+drop_nlink() because the i_nlink value is 0.
 
-On 11/18/24 6:03 PM, Martin K. Petersen wrote:
-> In my experience the payload-based approach was what made things work. I
-> tried many things before settling on that. Also note that to support
-> token-based SCSI devices, you inevitably need to separate the
-> read/copy_in operation from the write/copy_out ditto and carry the token
-> in the payload.
-> 
-> For "single copy command" devices, you can just synthesize the token in
-> the driver. Although I don't really know what the point of the token is
-> in that case because as far as I'm concerned, the only interesting
-> information is that the read/copy_in operation made it down the stack
-> without being split.
-Hi Martin,
+When unlink succeeds but rename_cat fails in rename, the i_nlink and flags
+values of the inode of the new dentry should be restored.
 
-There are some strong arguments in this thread from May 2024 in favor of
-representing the entire copy operation as a single REQ_OP_ operation:
-https://lore.kernel.org/linux-block/20240520102033.9361-1-nj.shetty@samsung.com/
+Reported-and-tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/hfsplus/dir.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Token-based copy offloading (called ODX by Microsoft) could be
-implemented by maintaining a state machine in the SCSI sd driver and
-using a single block layer request to submit the four following SCSI
-commands:
-* POPULATE TOKEN
-* RECEIVE ROD TOKEN INFORMATION
-* WRITE USING TOKEN
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index f5c4b3e31a1c..b489d22409e7 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -534,7 +534,7 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 			  struct inode *new_dir, struct dentry *new_dentry,
+ 			  unsigned int flags)
+ {
+-	int res;
++	int res, unlinked_new = 0;
+ 
+ 	if (flags & ~RENAME_NOREPLACE)
+ 		return -EINVAL;
+@@ -543,8 +543,10 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 	if (d_really_is_positive(new_dentry)) {
+ 		if (d_is_dir(new_dentry))
+ 			res = hfsplus_rmdir(new_dir, new_dentry);
+-		else
++		else {
+ 			res = hfsplus_unlink(new_dir, new_dentry);
++			unlinked_new = res == 0 && d_inode(new_dentry)->i_flags & S_DEAD;
++		}
+ 		if (res)
+ 			return res;
+ 	}
+@@ -554,6 +556,12 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 				 new_dir, &new_dentry->d_name);
+ 	if (!res)
+ 		new_dentry->d_fsdata = old_dentry->d_fsdata;
++	else if (unlinked_new) {
++		struct inode *inode = d_inode(new_dentry);
++		set_nlink(inode, inode->i_nlink + 1);
++		inode->i_flags &= ~S_DEAD;
++	}
++
+ 	return res;
+ }
+ 
+-- 
+2.43.0
 
-I'm assuming that the IMMED bit will be set to zero in the WRITE USING
-TOKEN command. Otherwise one or more additional RECEIVE ROD TOKEN
-INFORMATION commands would be required to poll for the WRITE USING TOKEN
-completion status.
-
-I guess that the block layer maintainer wouldn't be happy if all block
-drivers would have to deal with three or four phases for copy offloading
-just because ODX is this complicated.
-
-Thanks,
-
-Bart.
 
