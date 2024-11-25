@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-35808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DBA9D882B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58209D8783
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BFAAB32023
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8302884E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903A41B6D06;
-	Mon, 25 Nov 2024 14:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61921BBBF7;
+	Mon, 25 Nov 2024 14:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZwaE8c5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJQiMV5J"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8191B4F1A;
-	Mon, 25 Nov 2024 14:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FE21BB6BA;
+	Mon, 25 Nov 2024 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543847; cv=none; b=lMY8cDPJfqDC1csPUUzAaI+ygA5TAJyoVwrYG3Lnp6pEgHK8APGxjFZvCnIEguPk9phIxi9huh74wQ7cr7JDpJjXpRSXiZZ5SjSqDn3/LiCvUiW3p0toRFe5DHssDaGV5rs/oozppgNmVUam1FZiC8dJuQ2omBhKixLkawri0lk=
+	t=1732543849; cv=none; b=YjMn5qFgdk+yopGaah+voJMIW+yauLMyANKJ2Z8vUUpO3eewZrKH9to/zcyLBslG1Jk/UPAPyW244F4Y3q6qzjNRBOc6srTlz/b16zYIXIqU9ECfoA83FcV9RGEucvYbKXPnRRah15iSI3ytUwNnWdgjriRvjYyXuXS7NhNokEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543847; c=relaxed/simple;
-	bh=SOhlGmJ+FST7cLV7knRpvEsHg1d/XybMiJ0MpBSZ/Js=;
+	s=arc-20240116; t=1732543849; c=relaxed/simple;
+	bh=IFLM84NiqCXkwMMafq8E9pIDiDKUxCWKPeY0cpJ2rUw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bcxH5vMG4tTlq5Z7ZUl3pdKn5DO6BcLP/Rqy3NI7rthq/NUHRji6y1jujTe57waEJ4V7ZXxqBVWFaBI3zjArWR8vaM0KJlw9V+AoHf5tozsOMQF4UKUV5VaDI2P5K3pLZbh+KVy+9XWX3HXwtJvIpHNxRiE26hF9lw8sYcSZa/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZwaE8c5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E52C4CED2;
-	Mon, 25 Nov 2024 14:10:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=iZEa/GxNtkItM2qRyu+Epa/M3ZU29xzThmfPtO94aT27Pn9ZJGwJrZcQjigz+ePYsdryu9crU/0+bawjgtYft08KZQn0N2DrMLQiRZfxEotsTavMfw5b4clFchQsonMNWfudBDSvq99OWmHUlQWBgzVU8T1JtMeEqwNzZij20Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJQiMV5J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EE0C4CED3;
+	Mon, 25 Nov 2024 14:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732543846;
-	bh=SOhlGmJ+FST7cLV7knRpvEsHg1d/XybMiJ0MpBSZ/Js=;
+	s=k20201202; t=1732543848;
+	bh=IFLM84NiqCXkwMMafq8E9pIDiDKUxCWKPeY0cpJ2rUw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PZwaE8c52fA6NmHPVkrRztNJR13dvGbpfLoi66rIbdqlTUqoXi0McF/3o9P6GhlQM
-	 8o1iANloU59H3HYBIWSsKA2C6Z0iZN6BNNTxdarYGNkdBR4bt3dfvvgG7Vi2gOz0kh
-	 cmwE48UqDj4N8yeU8Aw6gQOfXZLr1Fr4iFjjnMvqb82V1/VqwohYvCVGThdXn1Nc5h
-	 F6kJrlVmZ4H7b9Q7Ppl4Ut54P+P0TQshJYLoAFogoIjJ+2NnCUrzkpd2TUQztoMvk1
-	 TvDhNtdZVR7uX7DuM6YI267L2hZjTk2fa6BOJpducGMqnL31ctWwVfyjfUFilkB2D5
-	 Os+pIf/QjdqUQ==
+	b=UJQiMV5JAOp/zBa2ro19c5jVETBKlkxuYKGDtBvNaK7H9IlEGoz1oKWQmUY8AiAma
+	 kh4aLXP5iCnsHEPtmh9tYVQpX/+AdLyrolYOZtlhp0BMsAmmPwS6diOILPAHBo8xCa
+	 E0HVWVMWvYfoFrtFlQPJdo2RhtmykHtEJVuxi7/x7wYgVAeGGUGl8jIYquxCCRR/U2
+	 Sx7mnI9v0HP7aG3H74gQEnK1NEVSm8Msn5bsDPm8e39OlIt23UFiaq8VkXZJbmqFVH
+	 mcIEiCv1JEZOwlUUv67GMnplTXEclCovXk5tTeZpHmdZTZ1RUKbxCO1ZwWlf27pdA4
+	 1kHDXMQqXB6RA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 25 Nov 2024 15:10:07 +0100
-Subject: [PATCH v2 11/29] binfmt_misc: avoid pointless cred reference count
+Date: Mon, 25 Nov 2024 15:10:08 +0100
+Subject: [PATCH v2 12/29] coredump: avoid pointless cred reference count
  bump
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-work-cred-v2-11-68b9d38bb5b2@kernel.org>
+Message-Id: <20241125-work-cred-v2-12-68b9d38bb5b2@kernel.org>
 References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -62,39 +62,45 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=brauner@kernel.org;
- h=from:subject:message-id; bh=SOhlGmJ+FST7cLV7knRpvEsHg1d/XybMiJ0MpBSZ/Js=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHruF00+wNhbpLNK2VFHp8L026PoL4+zE8znv5+RH
- 3Os+KVrRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERurmRkeHDiDv9zyZ86TSeO
- hsdYLS8QCs77919v0+o7flEC0n/Wz2H4zdaT0dPHsovneOjUPVN6TOfbuDhJKW18EjWN+9E9v+r
- djAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=929; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=IFLM84NiqCXkwMMafq8E9pIDiDKUxCWKPeY0cpJ2rUw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHr6qhRmdDsHZjjbfeU+sPD0rSxeHumzSkeL207Y+
+ Tn5bHvUUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBHb6YwMp+/UygqFvV0n8848
+ t0Y0S4lz9c2avqY55/98dP4XtMXgIsNv9uaZUiJ1zbUZXbq3xDLFb2iGddwqZSl8rSF9QU3qszs
+ PAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-file->f_cred already holds a reference count that is stable during the
-operation.
+The creds are allocated via prepare_creds() which has already taken a
+reference.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/binfmt_misc.c | 4 ++--
+ fs/coredump.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 5692c512b740bb8f11d5da89a2e5f388aafebc13..31660d8cc2c610bd42f00f1de7ed6c39618cc5db 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -826,9 +826,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 		 * didn't matter much as only a privileged process could open
- 		 * the register file.
- 		 */
--		old_cred = override_creds(get_new_cred(file->f_cred));
-+		old_cred = override_creds(file->f_cred);
- 		f = open_exec(e->interpreter);
--		put_cred(revert_creds(old_cred));
-+		revert_creds(old_cred);
- 		if (IS_ERR(f)) {
- 			pr_notice("register: failed to install interpreter file %s\n",
- 				 e->interpreter);
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 0d3a65cac546db6710eb1337b0a9c4ec0ffff679..d48edb37bc35c0896d97a2f6a6cc259d8812f936 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -576,7 +576,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	if (retval < 0)
+ 		goto fail_creds;
+ 
+-	old_cred = override_creds(get_new_cred(cred));
++	old_cred = override_creds(cred);
+ 
+ 	ispipe = format_corename(&cn, &cprm, &argv, &argc);
+ 
+@@ -781,7 +781,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	kfree(argv);
+ 	kfree(cn.corename);
+ 	coredump_finish(core_dumped);
+-	put_cred(revert_creds(old_cred));
++	revert_creds(old_cred);
+ fail_creds:
+ 	put_cred(cred);
+ fail:
 
 -- 
 2.45.2
