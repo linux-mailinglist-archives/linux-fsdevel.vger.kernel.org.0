@@ -1,305 +1,761 @@
-Return-Path: <linux-fsdevel+bounces-35766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2AB9D80D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 10:06:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1259D82C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 10:46:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B53FB28015
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 09:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBFE161F66
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 09:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8575518F2DD;
-	Mon, 25 Nov 2024 09:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB8B18F2E2;
+	Mon, 25 Nov 2024 09:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jXLymftc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DW4muBC5"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LkG1YseP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FE782877;
-	Mon, 25 Nov 2024 09:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525451; cv=fail; b=t8Fk5Y0Wg+wNDeYRa8mqxIuqeGtLSX/JyMNNP073BNlUplU6Eg3i+KuUsGOIu17jqybOO60pZxaQt/8oq/4cb11Cg0SnE9HWlVh5N7QxwEE7vtcogW6XSGpc9ea0QaxuDVQp/cFTAERPWIjDig5xA9C8Orz9rZegFMZxrHZrnfI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525451; c=relaxed/simple;
-	bh=y3NePkz5sZbuqRpwi6I2ed2QQUf/agf7c16qKV+EqcY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=vEMNRjsX+7iaokEf7y6vbfdYpUITQv4+gHCXHZydfdVwlfSnLrx1tESzazt9EemByH4f6yLU8C76t/JrFgH6BA3KQU2zLoS6TKF8+tyk2Vm5SfRl5Y6G4sIZBbHI7MhvrPC5xfwQPSWUhB8Yqe6qPHVQosfWiNhnT5Rvz5YrA/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jXLymftc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DW4muBC5; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP6gNZo011384;
-	Mon, 25 Nov 2024 09:03:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=vhcgQarsSiu0t7D75SZpYlPUJG/Sb53fpUh5m6FNW+0=; b=
-	jXLymftcs7IBEYQhqP8BzxFy0TH5aM9PI4OINp7p9OQCQHjsXPmOJx23EIWV6sYM
-	Os8jH4sEn+irvKXMGQdxe6YdsplyguvwANUhTPSEaYOD3cAtR0VnlLeVJww5gdpj
-	HcKKrcisOOHqj0s71FiP+j0cAPuYY7APoctQiPL+JijebCGcft2uxcX5cNahZmeM
-	od8eYPiDgT+/XOpVDaCbiZpslDeve2Mp5woKcKM9YLptMkMmT8OU5Q4efdbtTCK0
-	8ov3dnlTqpGtFow0PuCrOoD14LnZCy1AxmMR/9yzTcrASd8wLrSySXlBP+aT+bRh
-	U/e9FxXiDifAkc/DCHdTxw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 433869tn3v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 09:03:56 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP7OqXx004564;
-	Mon, 25 Nov 2024 09:03:55 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2043.outbound.protection.outlook.com [104.47.58.43])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4335g775ea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 09:03:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U6yiSrBhavnqcoF8lHlHieRlX7OqDc9SOnJL+JQ3aJXpiCJiuPOmrLn7YQ6p1lhTpwbsLTuQ1rVw9Rh8YHfMXkT5oWCl5IzRof1T3AIJHtsZJUAX6mbuI01d0R9sRaI17wLH7TXiUT+PUy5vrgNjgQbrP9g5DJILLbyp0jnXnp2kUunUOcPeLHPWSw5Hvl0d0Qst/WbAcHf+VIkHTveUTuISu0hRAwmsqMgiBNz4nlydBjjEwRIxYXZW58endlryizEds4abEa6STRnpn+jKoA46QURL766ykSInbyEIsADQ3STLjOmxDVe8dtVYZBNRcmrWWH5ovgTqyIbI/jH70A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vhcgQarsSiu0t7D75SZpYlPUJG/Sb53fpUh5m6FNW+0=;
- b=a8lbS8CVwiuGwXzIDgqwTaeG3i4j6+KDL/FLmLL9jrJSzgpuizOnuH9U6mzvYWaCaVRV+F1BWtvOi8BIVSV2YnhmXKpwZlla2ZCZ4HRuzjXztPgpbi58ac+vlNQGx/TIhwMP3g/MkjH5zs5JJL+WYSIF7Abx0tYNxyZYpQuLXMpVbv67yKPngXJrILLtV3sbIhcND512bz4ogv/LCfjMP8QDNQHPmLKx88oGCdDw267UHd37G71g14FhV9Qx3OOPqgf/r23FeO1VJaN5XpMThR/nHLB4iaNFDtra5TikCTzLiCZ4PChO1N43/jVZPDsQ8ZAQUwqUWdLhPZGxNW0JyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhcgQarsSiu0t7D75SZpYlPUJG/Sb53fpUh5m6FNW+0=;
- b=DW4muBC5yQsRJN9W2x8kvOVhgA3KGcGa5dFphrs89BqZpOPQUNpAAWRUhhB0HFR5DH9jrFLhx450gyR+jX8LqujvAiMkUMI7QGCDSZvorghoJysRJHz3RK3u6uJOn8IqXd5VzsvZQkZ74s7Vqb/FtsxX/BDD8qBkvnsXoZHkG6A=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by LV8PR10MB7822.namprd10.prod.outlook.com (2603:10b6:408:1e8::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
- 2024 09:03:53 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 09:03:53 +0000
-Message-ID: <aedc8625-a115-47b0-b3ab-1eec9653da42@oracle.com>
-Date: Mon, 25 Nov 2024 09:03:50 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] statx.2: Document STATX_SUBVOL
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>, linux-man@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20240311203221.2118219-1-kent.overstreet@linux.dev>
- <20240312021908.GC1182@sol.localdomain> <ZfRRaGMO2bngdFOs@debian>
- <019bae0e-ef9d-4678-80cf-ad9e1b42a1d8@oracle.com>
- <bjrixeb4yxanusxjn6w342bbpfp7vartr2hoo2n7ofwdbjztn4@dawohphne57h>
- <1d188d0e-d94d-4a49-ab88-23f6726b65c2@oracle.com>
- <7ljnlwwyvzfmfyl2uu726qvvawuedrnvg44jx75yeaeeyef63b@crgy3bn5w2nd>
- <20241124133515.cb7u64jccayt3deb@devuan>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20241124133515.cb7u64jccayt3deb@devuan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P123CA0037.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::25)
- To DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A290E18787F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 09:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732528003; cv=none; b=tawF3m2JV/gUQhOucCyaVWPt6hKD8SNKnlF5Iyt+mBautsJCuuBYoVfUjoD4Tu6a4KCgAbVc9bU1F2b1S0uhZ05emvvbnlzx3vbf3KWBj9IAsjKwmHidU1Q+EoXH/fQRT420MFvOucxF8sa0OrtB3nFSTiLF2XQlrDBu7fR+eJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732528003; c=relaxed/simple;
+	bh=5Jl0lJHaRyNNMK4r1g6P+m62NCj/3pm2P4NYqR51dQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oUN06PmRnULF4qFnmaiix1aJLHkcrHA5LZIPG9wzg2v1NnLuYdgSxXtjwYhuqy+qrgps8RUsXTNu/luFbAslAl74qDhcGgEKJt8KsH91VVTW/RNkLWvU00NCHLPaC89UCPI2/exEXucUdi3FiFcwvMG0MyIQZDi4GPZ8nK6mEPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LkG1YseP; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732527997; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=XvNAb63WzAexPqvTABQXIlEGimdNYzsY2ZQZYN+oRp4=;
+	b=LkG1YsePfllsZq21WjUJpQAXWaZKgYijEa1dA1SJOJfuhFQ4jl9ps6yrIiBqagS++TVDZ7p1xIAjDzfNJkq2xw1XLPWTS4G3yOdkaZBfo9uxLafYyrdCucFQsNpDNlsF9sjyPZz+udAoIy5Ue2N1i8U9PNU/iEx8lHVfXxXaUno=
+Received: from 30.221.145.181(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WK9vtUo_1732527995 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 25 Nov 2024 17:46:36 +0800
+Message-ID: <de9a9232-b261-46ac-bdfc-9b70509dde0e@linux.alibaba.com>
+Date: Mon, 25 Nov 2024 17:46:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|LV8PR10MB7822:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f820463-d4b0-49a1-7c2e-08dd0d30159d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2x1eXg3Mk9qWStWSGowR0pwUTVRVVMxYVJWRitXN0NQQkVKUU5JMHIyeU1O?=
- =?utf-8?B?UVZhRC9GN1pUaXhhTzk1TW5iNFNtdWoxRm1Ec2lub3dHa1kvbjhMUkVkZUdo?=
- =?utf-8?B?U05qdkQ5YlZxMzRyMkdJWEdHM0dyOG9oVWdPWFJvdDIyaXFSTEx5NWpQOHkx?=
- =?utf-8?B?eHFiaXNBUmxVV1drZGVxSXlVUnlHT04ra1BmRXhBeG9lTkxpZGY4b3FDRHhp?=
- =?utf-8?B?dzhFR1ZHcS83UUVsbE13aTFwOGdZREV5VkRXNmVDUStjVkQybHgvWTc4bWNx?=
- =?utf-8?B?VTVOYzNDZzVuTlhTbFRrZnpSTUxOb0d4bHh4MWIvNDhiWEIwY3Y4QkVIV0VJ?=
- =?utf-8?B?L0R6b3hIQUlxUXU1L2cwV05tS0JQRnAzeUtTRGtiRm42YStXVkdxSERSV0V2?=
- =?utf-8?B?TjZ3UlFBUXNlcG9WVVVRT2ZSK056YnFRYTkxbmJ6SW9MUnF4STV6YmREUlFY?=
- =?utf-8?B?U2ZlZ3NJT3JtWEJKbC9nbmt3Q1ZXeFFnNTZZNENDMzNHMTd4ZUxTOWJGMnlI?=
- =?utf-8?B?S1ozVWFkU3hxSnRrU0NSMGZjODVxTzFuTXh3b0pFaGgwN3IxczZqdTE2SE1l?=
- =?utf-8?B?a0VSL21rVTF5RFpibWNmUW5rSUNoWUpVay9wN1E3b3N3Y3IwY0w0RXE2V0dN?=
- =?utf-8?B?MWlHNmZFMk4wMGxhYjIyUDJEUnVBdnRwdnRoNjVIclM2L3VXUk9Ub3pKYmpZ?=
- =?utf-8?B?c2lMbWhOMnB4aTBGbitORUl1QkRJOExkMEtnVUhPaDViRDJxZWZiYjJjQnQ5?=
- =?utf-8?B?OWhPRTdieVhpakxSVEpzb3V6ZGVLbDk3OFQzV0tSVWpBcDl0aURhWGNrZmtj?=
- =?utf-8?B?THZkZExRQ01FS3FtMzhlZ0xocDJkSURpVW5Nb3NNZXRJNFRHWWF3NFdNR3NC?=
- =?utf-8?B?bms2K2E5aFd6QW9EQVJ1YUQ1VmllTEVES1k0cXVzdWtOQjJRY3l1d09FUXlv?=
- =?utf-8?B?dmg2YVJHV0MyTnFWeGhobGY4RzBIOU55REFqTjUrSjhYTWZjdWZxU1lEQ0l1?=
- =?utf-8?B?cTRSaFZ4S0lYUkgydkp4SUk4bkFFYng0UkZvU04wbHc2TW5qRzdkN0x0SFk1?=
- =?utf-8?B?WWdWSzBzb1N5ZW8wUktNWVBjNXBJWnczd0VQby9UQlVibnBiaGdrSkpPOWEr?=
- =?utf-8?B?anVaazFUWmJBbjdHMzZMNk44QVZpWFVQeEhKcjNPQzlUazAya2RYMWRWbGQ5?=
- =?utf-8?B?YTV2NitFVE1xVVAyT1JxS1I1MHhFZXRiOS9ubEVYREF1ME10TXVjR0lEbVYw?=
- =?utf-8?B?TDZya2Naa1JBODBXRndqYXhTZ2VDOXBsM0U5Y2lrSXgybDZiUDV0bUlkM2Zj?=
- =?utf-8?B?NENhNHJTUi91bjFJc0hyYVA2M0JMQkprTXdVbGRhNm5NSy9reUFOYjh6T2tR?=
- =?utf-8?B?MWh2SGpRVUNoeHFubWZuNU5yVzJIUE5TL3hTV2lMSnNpaWNsaEFPS3ZvY2NF?=
- =?utf-8?B?V0ppMkNrL25zczZ5WDc0YmtCYXA1RDF6dU41VXR2a3Q1elY0ZDl0YzJvaVll?=
- =?utf-8?B?Y0I1ckJ1SzhVYzBTeFBINHh1cjh2MkR0MTR1eGMrRmhtQk1WV0NucjlkUGZK?=
- =?utf-8?B?M3ZtYkprSGJQZHp5TVJQcStpcVBGWlp1Q3hIMFc0aEZyK1JYTWxmSjM3bkFk?=
- =?utf-8?B?MHU5WEpxak5HNGQ4aGNVd2wxd1UvNWhyQUJibmdjYWxqTG5MeXYrNDRBekZ6?=
- =?utf-8?B?Zm1jdkRWSmd5Wi9sVTVIeVdnUDJuWWhLeENUb01vUDBOWHdSeGZUMGJiTVRu?=
- =?utf-8?Q?enh+Iu2GxvxRY3GH5Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SU1rVjNHOThzSmNhNFYvMzYxcXUwQnJPZ0V3elZSLzhSdW4zZTF0QlBuRHkv?=
- =?utf-8?B?WXBvZkRmV2hjTHFaS0c0cHZvZXZIVjRPSlF1WjJkUWphUFM5VXJiRi96WTE3?=
- =?utf-8?B?RC9IRTRHeXdVdDFoallaa2xwVlEySEd6UVpvczdVclBremRueVpyRUF3QUJ1?=
- =?utf-8?B?MTBWOVVBWW5VK3JLRmNCWmplejE2K1A0Y1BSV2Y1TThjTmRVNzcvTVZJWm80?=
- =?utf-8?B?aHlPK25qZ1V2b0RVMTR5ZnhTSWhwMlFaRko3L1hkUGtDLzRMNFFadlo2WGdF?=
- =?utf-8?B?NzBVdHhKeWhFblc2czhxWnUxKzd4MFl3d0dkMXlDQ2FPZUxhY3hETytVSk5s?=
- =?utf-8?B?ODRxWXJrNFRjSnprTDdHWTdRWDByY0RzVFRzRGwvd0preFg2R2w3UDhoRWFo?=
- =?utf-8?B?QTRyMWY4WDlGSVlvckJXMXZQZFRheTRndVFET1VTb1NPWGVORkptSHN0b2Fj?=
- =?utf-8?B?M2QvR2NmdENKNy9wMnZMZStOekdZeGZra0tCOHdFVVhqczhFVmRaYXczSW1V?=
- =?utf-8?B?VG1LbWswaHAyTWlYbUx4eGY0OHZkOUp3cU5CeDFzcFB2amwwVk1jeVRGN20w?=
- =?utf-8?B?VXVVKzBQTzYzZEN4V1hOSElJNW85Yjk3WlRMUFg0bW9iWFc5ZTM4L0luM25z?=
- =?utf-8?B?RHlWd3pBTVdzT3AraDNScFdUL1JscDR5a3ZoTmhPd0ZrTzJ1UERnZXc3eDVa?=
- =?utf-8?B?MWlwd2RzMzdzMDJwTmkvbUNzRHVZOHN2dExDYjJFSUk2ZVRiNUxDY09GK2Ey?=
- =?utf-8?B?V05CM3VvbmNzdGNLT2JzUFEweUZHczI3cS9TYm5uaythQ081WHJvUE5nMEdU?=
- =?utf-8?B?bWoyZVBLZ2FINEJkMXFFZXlRdCtnUFJvV0F5SDJEWVJzR3I1eGxjZkpzbUl0?=
- =?utf-8?B?SzlJcGZrcFF6alVseld6cUwxUmVPSzgxOTE4ZGFxbjVxQ0hUb0V1UXk3NTZR?=
- =?utf-8?B?VmdyNy90cUJ3Wlk4MUQ3dEhxdTY3dzhZTCtKY2V2c1hxclVPS2Zoc3pOaGpB?=
- =?utf-8?B?SGR1a08vWUJ6WWFkM3ljeHIvTUFNTGprMlBiNlNhM1JrNnJQM0JmcC9jaHpz?=
- =?utf-8?B?SHdBZlV4cUFGTm00VVZ6Y1psanpEQWFWMmh0RWxiaVM5Mi9KMjFlQTh0Tjdl?=
- =?utf-8?B?VFVVSnNDOU5UNjViR1pWMU1hZENONkVPTCt1NjkydlpTTnVJMDJ3WXNOTXBa?=
- =?utf-8?B?UTJhbnhKbEhSWllTdWJSbVFxa3RFdUtWd3VkSkphNXlMcDRNVk9IUE1YQTNl?=
- =?utf-8?B?UlhYVTI4ZWRaYVMzRGRZaTcrN09GbTNHNnZMdldyS2ZxUTRCNFBNMWVpSHIr?=
- =?utf-8?B?dEUvLzdXd2hWREU0cENFZHkzNDFWQ0I3Z1JZTFBYMkFKWnlReHZ1UHlKNUJ1?=
- =?utf-8?B?TVlFa082OUZEZ1ozSStiV04vYllHQ0YwUEw1SU5IM1JvQ200WXBWcGJ3bUVs?=
- =?utf-8?B?TFVxbzRmRW9JR2dWallEemF0K1ZSa1UrSVl1Ymc2TzVONitrczFTUWFrOU9z?=
- =?utf-8?B?R1lkc3RwejQvZkhqdm13UkIxTS9yMzdqakpZSUgwVTlCYWpZUUhweTNiYUxS?=
- =?utf-8?B?YzNCUWxEVkkzZzhkS2VHcHZLaC84OUw2UGJ4a21tR09rbkUvWVpweFFJV055?=
- =?utf-8?B?eWhwQVI3OTJlaUpra2NZOEt2QVFjSjdYSWdHTTB6NndqejZDbnZmV2IzSFBT?=
- =?utf-8?B?VWFKV3VqYk1tNEpWSDlhN2NGUXdXeEhtWFZ1TU5BNisvOWR1RDB6WENhSmND?=
- =?utf-8?B?d2t2S2o0and4UzZaVC9yT0RYWWhZZG9EWGJJVTNiM3FvbjJoTWEvODRGZWN4?=
- =?utf-8?B?RTdMYUVGSU1JeC9SRUNyN3QxbWhUb2pWMlMzZWQrYkZwaGNhb2RoVHM4SlJa?=
- =?utf-8?B?bGF3UUNZZkd0UG03eXFCdmJYTSt6dzhDV2tYcVZvN295Y1l4L2RqcElqZU1o?=
- =?utf-8?B?Mm5rQTh4RkErV3B3T21jVlF1Q1djSjVoUVVSTmdpZW9KaWkrSFpXNVNrRExv?=
- =?utf-8?B?TmViR2xVejVGYzJkVkdvc2ZMUlFVcmVrQzJrckZ1aUZTcFhtTVhwK0xHcDAw?=
- =?utf-8?B?WUxyb2pLTm5sVk43MFBuS0t5M212MFovdldQa1ExRktYb1FiZEtEQzZOcVc4?=
- =?utf-8?B?U3RKVy9HWVlpT25CN3hHTlVzV0FDcHhMWEd6Y1IxRVpvUHJJQXYxbWFmbXgz?=
- =?utf-8?B?a1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	B9IQ/ctPaELVVXuq5JE6WpxJKiKKT5pivBakvEUlqsIQmk23icNvatuuay+bJflyaOlvxoZL2ZZoySvHVEAWm5yAuuuvCDDOKE3qcn8iThs0NFZsigeTM1AFRdjBImPQ3ixEua94c15Fix958l1Ir1UXKW4DzkA8FU/QZ6XySPUUgTqq8F1PyndYpdlup4n2AZJMd5Wvgs9LaFM2UFrM3KS3apBc+kkprEAqJrz81rdLNU0g7D0xkC7rRMP+RlWkCh7haxCLNxA+1OlznG7P6ldmQ1k3T3RZZE9AkylRPWPqJ+9o6TPx6mohhwCTdG3DN54GNhBN4IV7NqOg/r/4BDasK+/Czm8AhDb6aXTWCcGKMFy4RDGWKU/xJ2wy5Ed3IlT7jf4yQYfBvMKS9ZFtT0Mo+4LUDnFwGaunqrvPU5zMl02QUJFlhiJ3yEv7YtMEBnP32hzZp7WFMxaIAfZ9EhRi732SseRItG3DAy4rPgL0ikuQeQfvJNMo6cayfwUFY4EvIQYCZ6bTYTH7c03960kGlkEr8ZvIH0YHih9SjPDBxGaiMlQSAF+oaTCK2cxoxB+kRT4H6kTIZLyqE53GAS8BVZVJdat1d0z/jMCORY0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f820463-d4b0-49a1-7c2e-08dd0d30159d
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 09:03:53.0757
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ti6cY8+BLUYFWs8nB1S5BjyDCmNcCPSX9Ny7nB4uN3Uuy2QLrr2R7JDGUxi7Wj9YDFJQ2agHb12gXFcdY6In2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7822
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-25_06,2024-11-21_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 adultscore=0
- malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411250077
-X-Proofpoint-ORIG-GUID: A0HH-1fB5J0XUHMDgAsQSjYd2fUh7wXa
-X-Proofpoint-GUID: A0HH-1fB5J0XUHMDgAsQSjYd2fUh7wXa
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+Cc: shakeel.butt@linux.dev, josef@toxicpanda.com, bernd.schubert@fastmail.fm,
+ linux-mm@kvack.org, kernel-team@meta.com
+References: <20241122232359.429647-1-joannelkoong@gmail.com>
+ <20241122232359.429647-6-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20241122232359.429647-6-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24/11/2024 13:35, Alejandro Colomar wrote:
-> Hi Kent, Eric, John,
+
+
+On 11/23/24 7:23 AM, Joanne Koong wrote:
+> In the current FUSE writeback design (see commit 3be5a52b30aa
+> ("fuse: support writable mmap")), a temp page is allocated for every
+> dirty page to be written back, the contents of the dirty page are copied over
+> to the temp page, and the temp page gets handed to the server to write back.
 > 
-> Thread: <https://lore.kernel.org/linux-man/20240311203221.2118219-1-kent.overstreet@linux.dev/T/#u>
+> This is done so that writeback may be immediately cleared on the dirty page,
+> and this in turn is done for two reasons:
+> a) in order to mitigate the following deadlock scenario that may arise
+> if reclaim waits on writeback on the dirty page to complete:
+> * single-threaded FUSE server is in the middle of handling a request
+>   that needs a memory allocation
+> * memory allocation triggers direct reclaim
+> * direct reclaim waits on a folio under writeback
+> * the FUSE server can't write back the folio since it's stuck in
+>   direct reclaim
+> b) in order to unblock internal (eg sync, page compaction) waits on
+> writeback without needing the server to complete writing back to disk,
+> which may take an indeterminate amount of time.
 > 
-> I revisited this thread today and checked that there wasn't an updated
-> patch.  Would you like to send a revised version of the patch?
+> With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
+> the situations described above, FUSE writeback does not need to use
+> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
+> 
+> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
+> and removes the temporary pages + extra copying and the internal rb
+> tree.
+> 
+> fio benchmarks --
+> (using averages observed from 10 runs, throwing away outliers)
+> 
+> Setup:
+> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
+>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
+> 
+> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
+> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
+> 
+>         bs =  1k          4k            1M
+> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
+> After   341 MiB/s     2246 MiB/s     2685 MiB/s
+> % diff        -3%          23%         45%
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-Hi Alex,
+LGTM.
 
-Wasn't this done in the following:
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
-commit d0621648b4b5a356e86cea23e842f2591461f0cf
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Jun 20 13:00:17 2024 +0000
 
-    statx.2: Document STATX_SUBVOL
+> ---
+>  fs/fuse/file.c   | 360 ++++-------------------------------------------
+>  fs/fuse/fuse_i.h |   3 -
+>  2 files changed, 28 insertions(+), 335 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 88d0946b5bc9..1970d1a699a6 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -415,89 +415,11 @@ u64 fuse_lock_owner_id(struct fuse_conn *fc, fl_owner_t id)
+>  
+>  struct fuse_writepage_args {
+>  	struct fuse_io_args ia;
+> -	struct rb_node writepages_entry;
+>  	struct list_head queue_entry;
+> -	struct fuse_writepage_args *next;
+>  	struct inode *inode;
+>  	struct fuse_sync_bucket *bucket;
+>  };
+>  
+> -static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+> -					    pgoff_t idx_from, pgoff_t idx_to)
+> -{
+> -	struct rb_node *n;
+> -
+> -	n = fi->writepages.rb_node;
+> -
+> -	while (n) {
+> -		struct fuse_writepage_args *wpa;
+> -		pgoff_t curr_index;
+> -
+> -		wpa = rb_entry(n, struct fuse_writepage_args, writepages_entry);
+> -		WARN_ON(get_fuse_inode(wpa->inode) != fi);
+> -		curr_index = wpa->ia.write.in.offset >> PAGE_SHIFT;
+> -		if (idx_from >= curr_index + wpa->ia.ap.num_folios)
+> -			n = n->rb_right;
+> -		else if (idx_to < curr_index)
+> -			n = n->rb_left;
+> -		else
+> -			return wpa;
+> -	}
+> -	return NULL;
+> -}
+> -
+> -/*
+> - * Check if any page in a range is under writeback
+> - */
+> -static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> -				   pgoff_t idx_to)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -	bool found;
+> -
+> -	if (RB_EMPTY_ROOT(&fi->writepages))
+> -		return false;
+> -
+> -	spin_lock(&fi->lock);
+> -	found = fuse_find_writeback(fi, idx_from, idx_to);
+> -	spin_unlock(&fi->lock);
+> -
+> -	return found;
+> -}
+> -
+> -static inline bool fuse_page_is_writeback(struct inode *inode, pgoff_t index)
+> -{
+> -	return fuse_range_is_writeback(inode, index, index);
+> -}
+> -
+> -/*
+> - * Wait for page writeback to be completed.
+> - *
+> - * Since fuse doesn't rely on the VM writeback tracking, this has to
+> - * use some other means.
+> - */
+> -static void fuse_wait_on_page_writeback(struct inode *inode, pgoff_t index)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -
+> -	wait_event(fi->page_waitq, !fuse_page_is_writeback(inode, index));
+> -}
+> -
+> -static inline bool fuse_folio_is_writeback(struct inode *inode,
+> -					   struct folio *folio)
+> -{
+> -	pgoff_t last = folio_next_index(folio) - 1;
+> -	return fuse_range_is_writeback(inode, folio_index(folio), last);
+> -}
+> -
+> -static void fuse_wait_on_folio_writeback(struct inode *inode,
+> -					 struct folio *folio)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+> -
+> -	wait_event(fi->page_waitq, !fuse_folio_is_writeback(inode, folio));
+> -}
+> -
+>  /*
+>   * Wait for all pending writepages on the inode to finish.
+>   *
+> @@ -886,13 +808,6 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio)
+>  	ssize_t res;
+>  	u64 attr_ver;
+>  
+> -	/*
+> -	 * With the temporary pages that are used to complete writeback, we can
+> -	 * have writeback that extends beyond the lifetime of the folio.  So
+> -	 * make sure we read a properly synced folio.
+> -	 */
+> -	fuse_wait_on_folio_writeback(inode, folio);
+> -
+>  	attr_ver = fuse_get_attr_version(fm->fc);
+>  
+>  	/* Don't overflow end offset */
+> @@ -1003,17 +918,12 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+>  static void fuse_readahead(struct readahead_control *rac)
+>  {
+>  	struct inode *inode = rac->mapping->host;
+> -	struct fuse_inode *fi = get_fuse_inode(inode);
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	unsigned int max_pages, nr_pages;
+> -	pgoff_t first = readahead_index(rac);
+> -	pgoff_t last = first + readahead_count(rac) - 1;
+>  
+>  	if (fuse_is_bad(inode))
+>  		return;
+>  
+> -	wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first, last));
+> -
+>  	max_pages = min_t(unsigned int, fc->max_pages,
+>  			fc->max_read / PAGE_SIZE);
+>  
+> @@ -1172,7 +1082,7 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
+>  	int err;
+>  
+>  	for (i = 0; i < ap->num_folios; i++)
+> -		fuse_wait_on_folio_writeback(inode, ap->folios[i]);
+> +		folio_wait_writeback(ap->folios[i]);
+>  
+>  	fuse_write_args_fill(ia, ff, pos, count);
+>  	ia->write.in.flags = fuse_write_flags(iocb);
+> @@ -1622,7 +1532,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>  			return res;
+>  		}
+>  	}
+> -	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
+> +	if (!cuse && filemap_range_has_writeback(mapping, pos, (pos + count - 1))) {
+>  		if (!write)
+>  			inode_lock(inode);
+>  		fuse_sync_writes(inode);
+> @@ -1819,38 +1729,34 @@ static ssize_t fuse_splice_write(struct pipe_inode_info *pipe, struct file *out,
+>  static void fuse_writepage_free(struct fuse_writepage_args *wpa)
+>  {
+>  	struct fuse_args_pages *ap = &wpa->ia.ap;
+> -	int i;
+>  
+>  	if (wpa->bucket)
+>  		fuse_sync_bucket_dec(wpa->bucket);
+>  
+> -	for (i = 0; i < ap->num_folios; i++)
+> -		folio_put(ap->folios[i]);
+> -
+>  	fuse_file_put(wpa->ia.ff, false);
+>  
+>  	kfree(ap->folios);
+>  	kfree(wpa);
+>  }
+>  
+> -static void fuse_writepage_finish_stat(struct inode *inode, struct folio *folio)
+> -{
+> -	struct backing_dev_info *bdi = inode_to_bdi(inode);
+> -
+> -	dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+> -	node_stat_sub_folio(folio, NR_WRITEBACK_TEMP);
+> -	wb_writeout_inc(&bdi->wb);
+> -}
+> -
+>  static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
+>  {
+>  	struct fuse_args_pages *ap = &wpa->ia.ap;
+>  	struct inode *inode = wpa->inode;
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+> +	struct backing_dev_info *bdi = inode_to_bdi(inode);
+>  	int i;
+>  
+> -	for (i = 0; i < ap->num_folios; i++)
+> -		fuse_writepage_finish_stat(inode, ap->folios[i]);
+> +	for (i = 0; i < ap->num_folios; i++) {
+> +		/*
+> +		 * Benchmarks showed that ending writeback within the
+> +		 * scope of the fi->lock alleviates xarray lock
+> +		 * contention and noticeably improves performance.
+> +		 */
+> +		folio_end_writeback(ap->folios[i]);
+> +		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+> +		wb_writeout_inc(&bdi->wb);
+> +	}
+>  
+>  	wake_up(&fi->page_waitq);
+>  }
+> @@ -1861,7 +1767,6 @@ static void fuse_send_writepage(struct fuse_mount *fm,
+>  __releases(fi->lock)
+>  __acquires(fi->lock)
+>  {
+> -	struct fuse_writepage_args *aux, *next;
+>  	struct fuse_inode *fi = get_fuse_inode(wpa->inode);
+>  	struct fuse_write_in *inarg = &wpa->ia.write.in;
+>  	struct fuse_args *args = &wpa->ia.ap.args;
+> @@ -1898,19 +1803,8 @@ __acquires(fi->lock)
+>  
+>   out_free:
+>  	fi->writectr--;
+> -	rb_erase(&wpa->writepages_entry, &fi->writepages);
+>  	fuse_writepage_finish(wpa);
+>  	spin_unlock(&fi->lock);
+> -
+> -	/* After rb_erase() aux request list is private */
+> -	for (aux = wpa->next; aux; aux = next) {
+> -		next = aux->next;
+> -		aux->next = NULL;
+> -		fuse_writepage_finish_stat(aux->inode,
+> -					   aux->ia.ap.folios[0]);
+> -		fuse_writepage_free(aux);
+> -	}
+> -
+>  	fuse_writepage_free(wpa);
+>  	spin_lock(&fi->lock);
+>  }
+> @@ -1938,43 +1832,6 @@ __acquires(fi->lock)
+>  	}
+>  }
+>  
+> -static struct fuse_writepage_args *fuse_insert_writeback(struct rb_root *root,
+> -						struct fuse_writepage_args *wpa)
+> -{
+> -	pgoff_t idx_from = wpa->ia.write.in.offset >> PAGE_SHIFT;
+> -	pgoff_t idx_to = idx_from + wpa->ia.ap.num_folios - 1;
+> -	struct rb_node **p = &root->rb_node;
+> -	struct rb_node  *parent = NULL;
+> -
+> -	WARN_ON(!wpa->ia.ap.num_folios);
+> -	while (*p) {
+> -		struct fuse_writepage_args *curr;
+> -		pgoff_t curr_index;
+> -
+> -		parent = *p;
+> -		curr = rb_entry(parent, struct fuse_writepage_args,
+> -				writepages_entry);
+> -		WARN_ON(curr->inode != wpa->inode);
+> -		curr_index = curr->ia.write.in.offset >> PAGE_SHIFT;
+> -
+> -		if (idx_from >= curr_index + curr->ia.ap.num_folios)
+> -			p = &(*p)->rb_right;
+> -		else if (idx_to < curr_index)
+> -			p = &(*p)->rb_left;
+> -		else
+> -			return curr;
+> -	}
+> -
+> -	rb_link_node(&wpa->writepages_entry, parent, p);
+> -	rb_insert_color(&wpa->writepages_entry, root);
+> -	return NULL;
+> -}
+> -
+> -static void tree_insert(struct rb_root *root, struct fuse_writepage_args *wpa)
+> -{
+> -	WARN_ON(fuse_insert_writeback(root, wpa));
+> -}
+> -
+>  static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+>  			       int error)
+>  {
+> @@ -1994,41 +1851,6 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+>  	if (!fc->writeback_cache)
+>  		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODIFY);
+>  	spin_lock(&fi->lock);
+> -	rb_erase(&wpa->writepages_entry, &fi->writepages);
+> -	while (wpa->next) {
+> -		struct fuse_mount *fm = get_fuse_mount(inode);
+> -		struct fuse_write_in *inarg = &wpa->ia.write.in;
+> -		struct fuse_writepage_args *next = wpa->next;
+> -
+> -		wpa->next = next->next;
+> -		next->next = NULL;
+> -		tree_insert(&fi->writepages, next);
+> -
+> -		/*
+> -		 * Skip fuse_flush_writepages() to make it easy to crop requests
+> -		 * based on primary request size.
+> -		 *
+> -		 * 1st case (trivial): there are no concurrent activities using
+> -		 * fuse_set/release_nowrite.  Then we're on safe side because
+> -		 * fuse_flush_writepages() would call fuse_send_writepage()
+> -		 * anyway.
+> -		 *
+> -		 * 2nd case: someone called fuse_set_nowrite and it is waiting
+> -		 * now for completion of all in-flight requests.  This happens
+> -		 * rarely and no more than once per page, so this should be
+> -		 * okay.
+> -		 *
+> -		 * 3rd case: someone (e.g. fuse_do_setattr()) is in the middle
+> -		 * of fuse_set_nowrite..fuse_release_nowrite section.  The fact
+> -		 * that fuse_set_nowrite returned implies that all in-flight
+> -		 * requests were completed along with all of their secondary
+> -		 * requests.  Further primary requests are blocked by negative
+> -		 * writectr.  Hence there cannot be any in-flight requests and
+> -		 * no invocations of fuse_writepage_end() while we're in
+> -		 * fuse_set_nowrite..fuse_release_nowrite section.
+> -		 */
+> -		fuse_send_writepage(fm, next, inarg->offset + inarg->size);
+> -	}
+>  	fi->writectr--;
+>  	fuse_writepage_finish(wpa);
+>  	spin_unlock(&fi->lock);
+> @@ -2115,19 +1937,16 @@ static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
+>  }
+>  
+>  static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struct folio *folio,
+> -					  struct folio *tmp_folio, uint32_t folio_index)
+> +					  uint32_t folio_index)
+>  {
+>  	struct inode *inode = folio->mapping->host;
+>  	struct fuse_args_pages *ap = &wpa->ia.ap;
+>  
+> -	folio_copy(tmp_folio, folio);
+> -
+> -	ap->folios[folio_index] = tmp_folio;
+> +	ap->folios[folio_index] = folio;
+>  	ap->descs[folio_index].offset = 0;
+>  	ap->descs[folio_index].length = PAGE_SIZE;
+>  
+>  	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+> -	node_stat_add_folio(tmp_folio, NR_WRITEBACK_TEMP);
+>  }
+>  
+>  static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
+> @@ -2162,18 +1981,12 @@ static int fuse_writepage_locked(struct folio *folio)
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+>  	struct fuse_writepage_args *wpa;
+>  	struct fuse_args_pages *ap;
+> -	struct folio *tmp_folio;
+>  	struct fuse_file *ff;
+> -	int error = -ENOMEM;
+> +	int error = -EIO;
+>  
+> -	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
+> -	if (!tmp_folio)
+> -		goto err;
+> -
+> -	error = -EIO;
+>  	ff = fuse_write_file_get(fi);
+>  	if (!ff)
+> -		goto err_nofile;
+> +		goto err;
+>  
+>  	wpa = fuse_writepage_args_setup(folio, ff);
+>  	error = -ENOMEM;
+> @@ -2184,22 +1997,17 @@ static int fuse_writepage_locked(struct folio *folio)
+>  	ap->num_folios = 1;
+>  
+>  	folio_start_writeback(folio);
+> -	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, 0);
+> +	fuse_writepage_args_page_fill(wpa, folio, 0);
+>  
+>  	spin_lock(&fi->lock);
+> -	tree_insert(&fi->writepages, wpa);
+>  	list_add_tail(&wpa->queue_entry, &fi->queued_writes);
+>  	fuse_flush_writepages(inode);
+>  	spin_unlock(&fi->lock);
+>  
+> -	folio_end_writeback(folio);
+> -
+>  	return 0;
+>  
+>  err_writepage_args:
+>  	fuse_file_put(ff, false);
+> -err_nofile:
+> -	folio_put(tmp_folio);
+>  err:
+>  	mapping_set_error(folio->mapping, error);
+>  	return error;
+> @@ -2209,7 +2017,6 @@ struct fuse_fill_wb_data {
+>  	struct fuse_writepage_args *wpa;
+>  	struct fuse_file *ff;
+>  	struct inode *inode;
+> -	struct folio **orig_folios;
+>  	unsigned int max_folios;
+>  };
+>  
+> @@ -2244,69 +2051,11 @@ static void fuse_writepages_send(struct fuse_fill_wb_data *data)
+>  	struct fuse_writepage_args *wpa = data->wpa;
+>  	struct inode *inode = data->inode;
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+> -	int num_folios = wpa->ia.ap.num_folios;
+> -	int i;
+>  
+>  	spin_lock(&fi->lock);
+>  	list_add_tail(&wpa->queue_entry, &fi->queued_writes);
+>  	fuse_flush_writepages(inode);
+>  	spin_unlock(&fi->lock);
+> -
+> -	for (i = 0; i < num_folios; i++)
+> -		folio_end_writeback(data->orig_folios[i]);
+> -}
+> -
+> -/*
+> - * Check under fi->lock if the page is under writeback, and insert it onto the
+> - * rb_tree if not. Otherwise iterate auxiliary write requests, to see if there's
+> - * one already added for a page at this offset.  If there's none, then insert
+> - * this new request onto the auxiliary list, otherwise reuse the existing one by
+> - * swapping the new temp page with the old one.
+> - */
+> -static bool fuse_writepage_add(struct fuse_writepage_args *new_wpa,
+> -			       struct folio *folio)
+> -{
+> -	struct fuse_inode *fi = get_fuse_inode(new_wpa->inode);
+> -	struct fuse_writepage_args *tmp;
+> -	struct fuse_writepage_args *old_wpa;
+> -	struct fuse_args_pages *new_ap = &new_wpa->ia.ap;
+> -
+> -	WARN_ON(new_ap->num_folios != 0);
+> -	new_ap->num_folios = 1;
+> -
+> -	spin_lock(&fi->lock);
+> -	old_wpa = fuse_insert_writeback(&fi->writepages, new_wpa);
+> -	if (!old_wpa) {
+> -		spin_unlock(&fi->lock);
+> -		return true;
+> -	}
+> -
+> -	for (tmp = old_wpa->next; tmp; tmp = tmp->next) {
+> -		pgoff_t curr_index;
+> -
+> -		WARN_ON(tmp->inode != new_wpa->inode);
+> -		curr_index = tmp->ia.write.in.offset >> PAGE_SHIFT;
+> -		if (curr_index == folio->index) {
+> -			WARN_ON(tmp->ia.ap.num_folios != 1);
+> -			swap(tmp->ia.ap.folios[0], new_ap->folios[0]);
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (!tmp) {
+> -		new_wpa->next = old_wpa->next;
+> -		old_wpa->next = new_wpa;
+> -	}
+> -
+> -	spin_unlock(&fi->lock);
+> -
+> -	if (tmp) {
+> -		fuse_writepage_finish_stat(new_wpa->inode,
+> -					   folio);
+> -		fuse_writepage_free(new_wpa);
+> -	}
+> -
+> -	return false;
+>  }
+>  
+>  static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+> @@ -2315,15 +2064,6 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+>  {
+>  	WARN_ON(!ap->num_folios);
+>  
+> -	/*
+> -	 * Being under writeback is unlikely but possible.  For example direct
+> -	 * read to an mmaped fuse file will set the page dirty twice; once when
+> -	 * the pages are faulted with get_user_pages(), and then after the read
+> -	 * completed.
+> -	 */
+> -	if (fuse_folio_is_writeback(data->inode, folio))
+> -		return true;
+> -
+>  	/* Reached max pages */
+>  	if (ap->num_folios == fc->max_pages)
+>  		return true;
+> @@ -2333,7 +2073,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+>  		return true;
+>  
+>  	/* Discontinuity */
+> -	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
+> +	if (ap->folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
+>  		return true;
+>  
+>  	/* Need to grow the pages array?  If so, did the expansion fail? */
+> @@ -2352,7 +2092,6 @@ static int fuse_writepages_fill(struct folio *folio,
+>  	struct inode *inode = data->inode;
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+> -	struct folio *tmp_folio;
+>  	int err;
+>  
+>  	if (!data->ff) {
+> @@ -2367,54 +2106,23 @@ static int fuse_writepages_fill(struct folio *folio,
+>  		data->wpa = NULL;
+>  	}
+>  
+> -	err = -ENOMEM;
+> -	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
+> -	if (!tmp_folio)
+> -		goto out_unlock;
+> -
+> -	/*
+> -	 * The page must not be redirtied until the writeout is completed
+> -	 * (i.e. userspace has sent a reply to the write request).  Otherwise
+> -	 * there could be more than one temporary page instance for each real
+> -	 * page.
+> -	 *
+> -	 * This is ensured by holding the page lock in page_mkwrite() while
+> -	 * checking fuse_page_is_writeback().  We already hold the page lock
+> -	 * since clear_page_dirty_for_io() and keep it held until we add the
+> -	 * request to the fi->writepages list and increment ap->num_folios.
+> -	 * After this fuse_page_is_writeback() will indicate that the page is
+> -	 * under writeback, so we can release the page lock.
+> -	 */
+>  	if (data->wpa == NULL) {
+>  		err = -ENOMEM;
+>  		wpa = fuse_writepage_args_setup(folio, data->ff);
+> -		if (!wpa) {
+> -			folio_put(tmp_folio);
+> +		if (!wpa)
+>  			goto out_unlock;
+> -		}
+>  		fuse_file_get(wpa->ia.ff);
+>  		data->max_folios = 1;
+>  		ap = &wpa->ia.ap;
+>  	}
+>  	folio_start_writeback(folio);
+>  
+> -	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, ap->num_folios);
+> -	data->orig_folios[ap->num_folios] = folio;
+> +	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios);
+>  
+>  	err = 0;
+> -	if (data->wpa) {
+> -		/*
+> -		 * Protected by fi->lock against concurrent access by
+> -		 * fuse_page_is_writeback().
+> -		 */
+> -		spin_lock(&fi->lock);
+> -		ap->num_folios++;
+> -		spin_unlock(&fi->lock);
+> -	} else if (fuse_writepage_add(wpa, folio)) {
+> +	ap->num_folios++;
+> +	if (!data->wpa)
+>  		data->wpa = wpa;
+> -	} else {
+> -		folio_end_writeback(folio);
+> -	}
+>  out_unlock:
+>  	folio_unlock(folio);
+>  
+> @@ -2441,13 +2149,6 @@ static int fuse_writepages(struct address_space *mapping,
+>  	data.wpa = NULL;
+>  	data.ff = NULL;
+>  
+> -	err = -ENOMEM;
+> -	data.orig_folios = kcalloc(fc->max_pages,
+> -				   sizeof(struct folio *),
+> -				   GFP_NOFS);
+> -	if (!data.orig_folios)
+> -		goto out;
+> -
+>  	err = write_cache_pages(mapping, wbc, fuse_writepages_fill, &data);
+>  	if (data.wpa) {
+>  		WARN_ON(!data.wpa->ia.ap.num_folios);
+> @@ -2456,7 +2157,6 @@ static int fuse_writepages(struct address_space *mapping,
+>  	if (data.ff)
+>  		fuse_file_put(data.ff, false);
+>  
+> -	kfree(data.orig_folios);
+>  out:
+>  	return err;
+>  }
+> @@ -2481,8 +2181,6 @@ static int fuse_write_begin(struct file *file, struct address_space *mapping,
+>  	if (IS_ERR(folio))
+>  		goto error;
+>  
+> -	fuse_wait_on_page_writeback(mapping->host, folio->index);
+> -
+>  	if (folio_test_uptodate(folio) || len >= folio_size(folio))
+>  		goto success;
+>  	/*
+> @@ -2545,13 +2243,9 @@ static int fuse_launder_folio(struct folio *folio)
+>  {
+>  	int err = 0;
+>  	if (folio_clear_dirty_for_io(folio)) {
+> -		struct inode *inode = folio->mapping->host;
+> -
+> -		/* Serialize with pending writeback for the same page */
+> -		fuse_wait_on_page_writeback(inode, folio->index);
+>  		err = fuse_writepage_locked(folio);
+>  		if (!err)
+> -			fuse_wait_on_page_writeback(inode, folio->index);
+> +			folio_wait_writeback(folio);
+>  	}
+>  	return err;
+>  }
+> @@ -2595,7 +2289,7 @@ static vm_fault_t fuse_page_mkwrite(struct vm_fault *vmf)
+>  		return VM_FAULT_NOPAGE;
+>  	}
+>  
+> -	fuse_wait_on_folio_writeback(inode, folio);
+> +	folio_wait_writeback(folio);
+>  	return VM_FAULT_LOCKED;
+>  }
+>  
+> @@ -3413,9 +3107,12 @@ static const struct address_space_operations fuse_file_aops  = {
+>  void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+>  {
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+> +	struct fuse_conn *fc = get_fuse_conn(inode);
+>  
+>  	inode->i_fop = &fuse_file_operations;
+>  	inode->i_data.a_ops = &fuse_file_aops;
+> +	if (fc->writeback_cache)
+> +		mapping_set_writeback_indeterminate(&inode->i_data);
+>  
+>  	INIT_LIST_HEAD(&fi->write_files);
+>  	INIT_LIST_HEAD(&fi->queued_writes);
+> @@ -3423,7 +3120,6 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+>  	fi->iocachectr = 0;
+>  	init_waitqueue_head(&fi->page_waitq);
+>  	init_waitqueue_head(&fi->direct_io_waitq);
+> -	fi->writepages = RB_ROOT;
+>  
+>  	if (IS_ENABLED(CONFIG_FUSE_DAX))
+>  		fuse_dax_inode_init(inode, flags);
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 74744c6f2860..23736c5c64c1 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -141,9 +141,6 @@ struct fuse_inode {
+>  
+>  			/* waitq for direct-io completion */
+>  			wait_queue_head_t direct_io_waitq;
+> -
+> -			/* List of writepage requestst (pending or sent) */
+> -			struct rb_root writepages;
+>  		};
+>  
+>  		/* readdir cache (directory only) */
 
-    Document the new statx.stx_subvol field.
-
-    This would be clearer if we had a proper API for walking subvolumes that
-    we could refer to, but that's still coming.
-
-    Link: 
-https://urldefense.com/v3/__https://lore.kernel.org/linux-fsdevel/20240308022914.196982-1-kent.overstreet@linux.dev/__;!!ACWV5N9M2RV99hQ!JYMR3Qwb11MmwlhEqgGhq3ITse9gIJ2sfyZQHyiVMQsb77VfyLGvmdLonkpcrGymbqfkUZE0DnYahWZPrc-vZG1rkIHW$ 
-
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-    [jpg: mention supported FSes and formatting improvements]
-    Signed-off-by: John Garry <john.g.garry@oracle.com>
-    Cc: Eric Biggers <ebiggers@kernel.org>
-    Cc: <linux-fsdevel@vger.kernel.org>
-    Message-ID: <20240620130017.2686511-1-john.g.garry@oracle.com>
-    Signed-off-by: Alejandro Colomar <alx@kernel.org>
-
-BTW, on another totally separate topic, there is nothing for this:
-
-https://lore.kernel.org/linux-fsdevel/f20a786f-156a-4772-8633-66518bd09a02@oracle.com/
-
-right?
-
+-- 
 Thanks,
-John
-
-
-> 
-> Have a lovely day!
-> Alex
-> 
-> On Tue, Jun 18, 2024 at 02:14:46PM +0200, Alejandro Colomar wrote:
->> Hi John,
->>
->> On Tue, Jun 18, 2024 at 10:19:05AM GMT, John Garry wrote:
->>> Hi Alex,
->>>
->>>>
->>>> On Mon, Jun 17, 2024 at 08:36:34AM GMT, John Garry wrote:
->>>>> On 15/03/2024 13:47, Alejandro Colomar wrote:
->>>>>> Hi!
->>>>>
->>>>> Was there ever an updated version of this patch?
->>>>>
->>>>> I don't see anything for this in the man pages git yet.
->>>> When I pick a patch, I explicitly notify the author in a reply in the
->>>> same thread.  I haven't.  I commented some issues with the patch so that
->>>> the author sends some revised patch.
->>>>
->>>
->>> I wanted to send a rebased version of my series https://lore.kernel.org/linux-api/20240124112731.28579-1-john.g.garry@oracle.com/
->>>
->>> [it was an oversight to not cc you / linux-man@vger.kernel.org there]
->>>
->>> Anyway I would like to use a proper baseline, which includes STATX_SUBVOL
->>> info. So I will send an updated patch for STATX_SUBVOL if I don't see it
->>> soon.
->>
->> Thanks!  no problem.
->>
->> Have a lovely day!
->> Alex
->>
->>>
->>> Thanks,
->>> John
->>>
->>
->> -- 
->> <https://www.alejandro-colomar.es/>
-> 
-> 
-> 
-
+Jingbo
 
