@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-35774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BD79D847D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276119D8482
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936EB162EAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8ED316610B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB4D187555;
-	Mon, 25 Nov 2024 11:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2CA18FDDB;
+	Mon, 25 Nov 2024 11:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVBWqhOf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgzdBuf4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B2A10F7;
-	Mon, 25 Nov 2024 11:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F14610F7;
+	Mon, 25 Nov 2024 11:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534250; cv=none; b=ELKSprdAxmXKc8EwEhCPXmVmgUFs3f0RylPXP+/LOinFUZtNiAxpsYVGRNOdsdgB90TPrtV6/9Dpurf3wM4xi8oqjoE0RFzoeYLyfIUlkKT0VyLV6+/yqIGpJXimz5InQ21KqtIsfVsGeZJd0sQTZmT2HM5rFvLOZsYntOzyjpg=
+	t=1732534284; cv=none; b=XUVh9qFuPA1qoaIGjoF+7belg6eIUriB6Hec9goTY0hs3+cxYFnym6oFCQkNR41q/VgMMclFVstYnz83lrD5sAe9Pb4PKOFqWt9Y+sc/rTDEFUxlIM+YyRkQlYvr+NJThAm/jJ/4++Fe4WrVUPZWkIq9aCiyaCVVLinMYC0tsXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534250; c=relaxed/simple;
-	bh=5I7iOk6jgZYd0vq9ViLDLDnXfCsbptXPDnwrVU4rLko=;
+	s=arc-20240116; t=1732534284; c=relaxed/simple;
+	bh=9hJKJJYPLIrBQ+vYfIyHSAtFZ3S8XKYxSXw0zeY2XYA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BOqsyI+2UrqDWx4590fLMtnd8oFk+Ru+R4dRlTkooc/ifCa1CXy+6a7xHc/r1wTtGwxBeBGlyE5P4oa6olp1ZQMPJN5UcFSE5IGtkebSfOWmZHQfizHLHZ303MchDTp4JF4cJf8n+6R/2ncrQ4hB2H+JaThEKep3GssxW+eewxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVBWqhOf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AABCC4CECE;
-	Mon, 25 Nov 2024 11:30:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=n9VsRXi4lWlW4kxGB3Vh+IIfcr8AKBXPdw8e1yyKV4nzvOgPbo6QsJvzF0xPy4h5Ts04eU4HawmEOnXx4oTQxLmxdwpTtKF0A9Iq4/Rdg/RJKUVhytui9xWQRdU6/sFJFVt6CeOvmwzhkqDNE0MBuwJ5I0Ge4tzkc6vJvq637YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgzdBuf4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B397C4CECE;
+	Mon, 25 Nov 2024 11:31:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732534250;
-	bh=5I7iOk6jgZYd0vq9ViLDLDnXfCsbptXPDnwrVU4rLko=;
+	s=k20201202; t=1732534283;
+	bh=9hJKJJYPLIrBQ+vYfIyHSAtFZ3S8XKYxSXw0zeY2XYA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sVBWqhOfL4LZDVYIImXYBZc/b0smEHHfBl4N+u9iiRtQEUOWNjm64oeN2+JhmhS2s
-	 tDEjm70MZ+tubVQ1GBN8B4uXP2NRHoETUEmW8ELkCMUMq1TvlvK9DgHWlBlSGjv9PW
-	 Jmtk4dHEYtk8H6Bga4eIwaX6XEL+5QmliIgZC4VliFkvSJmy8BbN7/lWZ5Rcgz4qnS
-	 TWJdce/AORnrj8vWvz6zjTkEdFLkkISuU4+Y/l5tczjSDvXmNfc9o+YybbgGzIdAM6
-	 G1Ku3jPoMro3w55uIwsjJtV9NgV5C4Z0Zokrkx1Z2VMXec6f55m4KjQtpV7+Shk9Gv
-	 MJngs702k12cw==
-Date: Mon, 25 Nov 2024 12:30:45 +0100
+	b=FgzdBuf48rb0LrpH34QUDhFPe8FUeGdBwClCpSFNFHqgob0oTKki2tePlWcXYo8dO
+	 HAZW8HbEib0mEW3Is6S+KheH/4zfkut1yvR9qmgaZ0xBUS03HQmMHgF5efN8naz7gz
+	 xjqMbN1r1mK4VREdciCFUBWVFLtH0MiFVbGXWN423PXcpbhv3BmNOvz6wcqlxcuagB
+	 7vBnRn4rzQtlW+WW+Ik01IBT6QegBPwZ2nqigcq55XThsv38H1CcAjRlj+7xah+Qj8
+	 e7s/zc5mFBcn9mTUNNXi99yYnj62++CHgZLqtLTnpz8mvWIvpQFmPMqRoCDq8sinUH
+	 na6IM+/TiyciA==
+Date: Mon, 25 Nov 2024 12:31:19 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/26] ovl: avoid pointless cred reference count bump
-Message-ID: <20241125-pfand-lawinen-b1f6acd98342@brauner>
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 09/26] target_core_configfs: avoid pointless cred
+ reference count bump
+Message-ID: <20241125-braumeister-dorfbewohner-9d1caf8f56a1@brauner>
 References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
- <20241124-work-cred-v1-18-f352241c3970@kernel.org>
- <CAOQ4uxhmzShcqBjY-HhHH7JhSpxJ9BVGe1H6C3w-=FcH_fUJQg@mail.gmail.com>
+ <20241124-work-cred-v1-9-f352241c3970@kernel.org>
+ <20241124182612.GW3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,46 +61,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhmzShcqBjY-HhHH7JhSpxJ9BVGe1H6C3w-=FcH_fUJQg@mail.gmail.com>
+In-Reply-To: <20241124182612.GW3387508@ZenIV>
 
-On Sun, Nov 24, 2024 at 03:59:40PM +0100, Amir Goldstein wrote:
-> On Sun, Nov 24, 2024 at 2:44 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > No need for the extra reference count bump.
-> >
+On Sun, Nov 24, 2024 at 06:26:12PM +0000, Al Viro wrote:
+> On Sun, Nov 24, 2024 at 02:43:55PM +0100, Christian Brauner wrote:
+> > The creds are allocated via prepare_kernel_cred() which has already
+> > taken a reference.
+> > 
 > > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > > ---
-> >  fs/overlayfs/copy_up.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > index 439bd9a5ceecc4d2f4dc5dfda7cea14c3d9411ba..39f08531abc7e99c32e709a46988939f072a9abe 100644
-> > --- a/fs/overlayfs/copy_up.c
-> > +++ b/fs/overlayfs/copy_up.c
-> > @@ -741,17 +741,15 @@ static int ovl_prep_cu_creds(struct dentry *dentry, struct ovl_cu_creds *cc)
-> >                 return err;
-> >
-> >         if (cc->new)
-> > -               cc->old = override_creds(get_new_cred(cc->new));
-> > +               cc->old = override_creds(cc->new);
-> >
-> >         return 0;
-> >  }
-> >
-> >  static void ovl_revert_cu_creds(struct ovl_cu_creds *cc)
-> >  {
-> > -       if (cc->new) {
-> > +       if (cc->new)
-> >                 put_cred(revert_creds(cc->old));
-> > -               put_cred(cc->new);
-> > -       }
+> >  drivers/target/target_core_configfs.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+> > index ec7a5598719397da5cadfed12a05ca8eb81e46a9..d102ab79c56dd7977465f7455749e6e7a2c9fba1 100644
+> > --- a/drivers/target/target_core_configfs.c
+> > +++ b/drivers/target/target_core_configfs.c
+> > @@ -3756,10 +3756,9 @@ static int __init target_core_init_configfs(void)
+> >  		ret = -ENOMEM;
+> >  		goto out;
+> >  	}
+> > -	old_cred = override_creds(get_new_cred(kern_cred));
+> > +	old_cred = override_creds(kern_cred);
+> >  	target_init_dbroot();
+> >  	put_cred(revert_creds(old_cred));
+> > -	put_cred(kern_cred);
 > 
-> Same comment here, I think this will read more clearly as
->                revert_creds(cc->old));
->                put_cred(cc->new);
-> 
-> and better reflects the counterpart of ovl_prep_cu_creds().
+> FWIW, I agree with Amir - 
+>  	revert_creds(old_cred);
+> 	put_cred(kern_cred);
 
 Ok, done.
 
