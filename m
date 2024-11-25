@@ -1,105 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-35846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB5B9D8DAD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 22:04:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB521627A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 21:04:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66771C07C1;
-	Mon, 25 Nov 2024 21:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YhwAETQr"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DA39D8E3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 22:54:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FBA17557C;
-	Mon, 25 Nov 2024 21:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FDA0B22D54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 21:50:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550791C9DD8;
+	Mon, 25 Nov 2024 21:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DhWwfw4d"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED0D14F9CF;
+	Mon, 25 Nov 2024 21:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732568681; cv=none; b=kYEJpCX0rbTUf33eOVXcDsOAztGaqD0+df/V25hPB/x14nhAGC5aD2TsrMQcULR/BrLeFb7iE3KYJcFf7pKnfA4C9luk6rI4lijLbKYD3VoE7DwE619cLZtp+KUO6xEDBK+fGb8CfB1jb/9rjrA6bxyZRDeNhm9+XpEhLStIn5A=
+	t=1732571431; cv=none; b=TZ9k9J3BsOrIRKf7TboLzRb583c07ZLYXv5e3SC5sKxxHIK3MoBe7qtDCGTIY6vDaOQB7SUVehQsegQ2VmnTdwofVvADYkg+Ug55UWjsScJjqpOWH/quyx5F6pYf3v6O1GT3qj8QGUJ7Q11Plv1P38KIeIubCv7xrPLK7PMMXZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732568681; c=relaxed/simple;
-	bh=X/sAH1gvGBO5cJbUmKoelplAjOvfj+hleCFSjBiMvBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=W3C50oI+TZuOYYuos/OA3yBEsQokXWcxeJMVUatdGVlLPaGK05nATCHprhptozW6jrT81ThkpwvrJkjXGLj3aX1vx2+AlB3VLAW7ffQjofyfU9XWdEwkErDSqF1CX33gGlACi7OiAGqHUB1dNNCWwG/Nzm9s4BD1iU3AJCvMrrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YhwAETQr; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732568655; x=1733173455; i=markus.elfring@web.de;
-	bh=u0vETTB5T1hx/wbZtMoorZhHTLPe25PZBNpijxuojDs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YhwAETQrwyeWGuJK78rxLQGOy2BvbF/XeGU5xzP/3l6vACki3euZbSXYQDZJKb9X
-	 TzizoMqTHHaIxS+lIt6nP8cZ9zzJMGpkcNmrmShm4FfrCFwsc6lqYgNPuOoE6MGqV
-	 ROQkR9C2npOK10n7j7SRftklfZYvjQwTx+ovQzplqVWezdbSnm/gyX0weegvEbOGc
-	 GW6IIXyozKFvMEbrk5EVeJAe/sfUfaXjZ4K/4+jyo12xVyBJY0sfJqX2/iRuSd2Qt
-	 NnOjs+GdVfy0DEgU7y7UGoJwPyJQ/uEk2D9FYGdvpbHp2kM2FwyNmguTT31slVfM1
-	 mN3Ot9c2jL8YlGibDw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTOha-1t7skF25QS-00UAsM; Mon, 25
- Nov 2024 22:04:15 +0100
-Message-ID: <e9fc95c2-1891-45c3-bdf7-ec67426c0ddf@web.de>
-Date: Mon, 25 Nov 2024 22:04:12 +0100
+	s=arc-20240116; t=1732571431; c=relaxed/simple;
+	bh=Ho81cwI8Sw/bUh83arJ5JE5Z1llPVi4xgJbEuPe6ju0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u1q8/PMypWImzy0Y+LhcjVyzJ6QcSGcKOhwqdy2JCf0XoCzoALYcf1V/we/UIddg0NKnoWpjlygqY8Cs97+AYNuQMQWOTfCYvw5SWuSnYV6d4VtqJSOWC7g28crrd+x2lBf3gVcMGHOtCmPD76XxNYjUnPlLqzreS3kYAfqrjIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DhWwfw4d; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=PpZ+jkkcRHZq4GTxws+FtRb213eyx+uTZB3qAleBC50=; b=DhWwfw4dDuH6OERREKFR5Vt12Z
+	DY7CVXMxbdn99GEQ3sTapVYkVqkvCHc3bzSHMal10rN643MTGDlUHN58X68HFE1dGY4U/YiDzAsX6
+	1mDZm0LgV4w0jRMsxVjR/byo3+P8v+GUE4evwBtdy+i5F4p2G04VriGqMttEAGkr8zCfClsg4/r4M
+	BzqQjDz2IVDHiIrd47Y5WmpmGeCnpmfsJPAuSpaRNOOoXdJOP9ZwzY4Vot2rm9P39Nfug05u9RQRA
+	Q+wfI4DSE2s0kRRFHdSOtMrj8m3UeBZbRtBpQbMDpOBWE1WEulHGNUseZCDrdj5ifrGR5qQjI9b+J
+	3ZKSm3hQ==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFgyN-000000099yI-1uQP;
+	Mon, 25 Nov 2024 21:50:23 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Eric Sandeen <sandeen@redhat.com>,
+	David Howells <dhowells@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH] fs_parser: update mount_api doc to match function signature
+Date: Mon, 25 Nov 2024 13:50:21 -0800
+Message-ID: <20241125215021.231758-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Kunbo <zhangkunbo@huawei.com>, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, Liao Chang <liaochang1@huawei.com>,
- Zhang Jianhua <chris.zjh@huawei.com>
-References: <20241125123055.3306313-1-zhangkunbo@huawei.com>
-Subject: Re: [PATCH] x86: fix missing declartion of init_fs
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241125123055.3306313-1-zhangkunbo@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8TCPHq7GQfcGQuJ3K7cFYdTm4SPrbLaTRSc3elRZ2VFnH5/6Cet
- vAuPtSZd7Sc3jpyzAB/hB6jaELwuDyLkMy3dcmSVG5XtpNJXL+DVFWv4OWCjMT9kvUVn12d
- AtQ/s1c2AZ+OYwLC+DUZa1hksmNECFVF43UFjvTpC1tzFLxG1/dnfMbIaAqYb0p8lOCI2Ac
- O+g9cEJK5I5JK1R8UZ4Eg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+w4bEmmUlIE=;NRu6obdZE9jmQqkMj45l72f5Wv8
- eJtEsANUiKqu4zbbQEnAkwOgOUM5WOiwLgzGJoeGYVa5wD+ngLbEyyv/gv8eJKEydLFzo3LPf
- 17wTd4WuP7HXKmV/ubi4aBbnCSdYfKMts8575d8t/FLOItP8s6OfKaLGpQ41ZCRids53wPIVV
- pHoJF5US9aXNVFAAnJJ3b5lb184sjnEMt16BCq6lR8gCTmyJm4xMnMJ8OQb00eb1O8kRYMiW/
- 7Pj2jonFvjO4yUfxKTK5dZKsTuHOVwZ5H0Xw8NdC3SY9tTxFHxhBaywEw5uZzQOec9VHeVCoc
- tEmLJluqkHXBtoBsREAq9yBOuiD3InrJlis0dNFCWbr4XAZDC0+o9LEQZfo0PVUoQt7S/7TKY
- mK3OsJe2kmdR+6BapIoWTjRe1RMfwrHxIlh5/sQb0z99V+QXdlvxN4WTqbi+7bXHMdBVtXCBR
- lbkksSLYFLW718ex7jsdD0N1e7hhz78+/+R8GatGWmz9U7gZ2df8e505woVKz6uWeRTgn8s54
- 77Y9Y3jQnF1ByXxudAxR/hn2Lt31cjTx2IjMgzq7CxEHITU/+QAqDtAc3jk2b+i6ClL55Vsnn
- HdZrDrKY4wHVi06LXSKk6lfdln3sm6x4JIdDzSRYYCLUdlOF9N7RVRGtnwAPH/VP2DYaABYhq
- w4JqUlUOii3sRxR870zVl7YlFpj7x0G1YjuUOVqbAEvMO1jqVaM+jcn3FtQmhAxXB1WcI9SyJ
- 3Aqpoy8B5kBknzfXVs6OUC2ockz0EA29Nydgw9udvehzWHb5nKM0aTHtbv8z3fCCPty0B98f0
- hdeDQdjKiTaoap6Amsi8fgS+f9L2H5PHOZk6NdEvy2I9PeWzkByMfw4k5sM5041SfmSAj7wEO
- HiNmdgmb4lDfHJdGY2+w4EuqFoC3B45KODapxVSY8qZ0DZgl6d69w9vst
+Content-Transfer-Encoding: 8bit
 
-> fs/fs_struct.c should include include/linux/init_task.h
->  for declaration of init_fs. This fix the sparse warning:
-=E2=80=A6
+Add the missing 'name' parameter to the mount_api documentation for
+fs_validate_description().
 
-Please avoid a typo in the summary phrase accordingly.
+Fixes: 96cafb9ccb15 ("fs_parser: remove fs_parameter_description name field")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Eric Sandeen <sandeen@redhat.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/filesystems/mount_api.rst |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12#n94
-
-Regards,
-Markus
+--- linux-next-20241122.orig/Documentation/filesystems/mount_api.rst
++++ linux-next-20241122/Documentation/filesystems/mount_api.rst
+@@ -770,7 +770,8 @@ process the parameters it is given.
+ 
+    * ::
+ 
+-       bool fs_validate_description(const struct fs_parameter_description *desc);
++       bool fs_validate_description(const char *name,
++                                    const struct fs_parameter_description *desc);
+ 
+      This performs some validation checks on a parameter description.  It
+      returns true if the description is good and false if it is not.  It will
 
