@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-35812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBD99D8787
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:14:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A831F9D8837
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF0E286A96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1BCBB47004
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1901C07FA;
-	Mon, 25 Nov 2024 14:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F241C4A07;
+	Mon, 25 Nov 2024 14:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ik1/m3fc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElVqWXj6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A8C1C07C3;
-	Mon, 25 Nov 2024 14:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDF21C303E;
+	Mon, 25 Nov 2024 14:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543856; cv=none; b=GrhnTvY63z0ogM4gsHRbUhL7AR/jYSx1cEz/st8wLkpjJKabYHLxmEKYX45iqplEmBG7aFgw31I6jFmqF770D9Z98DWax3dStp2PGY+LsTNWKphwPGMcNnJDVuWtzg9mscaLCf1IjJBcFsxvnGQHMm8NZX3rZ6BPj3XZJdneg7w=
+	t=1732543858; cv=none; b=FuXbAS3G+tJYMhGEjGHPxUt79Lp/rvY1ErrfJf1OZ/8IK8wax/iCREbuH3Vu/eqvyAp+uLPgRW1tQIDQIDZIiz7d9KuvOk1cYvsjl+uAmZjE9kaCWBdoQPvtZB0GuYz19Wh4pmGdOsJuizFT95Ex8RzK8eXzPtyUSUYp++oXr84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543856; c=relaxed/simple;
-	bh=uashmBaEdR6fdQIQMHMq1Z3iv/S7f/OPHqwJBo/qsYM=;
+	s=arc-20240116; t=1732543858; c=relaxed/simple;
+	bh=E/xuZiaaXUS1dUjJCcyg4g+UNuKLiuXMKNRl4YbEaOM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qLlpmtQQlhQb43wlXVzSQ4Pp7mT/qdPxBmyumnCa/O1WxB3Ssu3+X4ang7TG+x997xV7JbSZFjX88I/hoA6JfPafJiWN3dfQli+YkfDGgAS3Ddnm/ADzfXYRUvKMlw0s925duYQXavKslBoMe8sqibaOqIG9tvcBqYdssY4RhBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ik1/m3fc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1777C4CECF;
-	Mon, 25 Nov 2024 14:10:53 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uMqQ5NmfuiETg7Le4xNc561sg5yVBW+vz36d2vYlfCl50qV0OOjzuwuVNQEk4MLEf3wDm7+lPvCJWwan4/RMKmKN9N/RQd7hqrdgcG38qWAK7RjxrqQAIv0wIeJn4o5GWhdUmoZbqY7FbznkSrnbyQnBdgLHd5BtDvYILZuBTZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElVqWXj6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24420C4CED2;
+	Mon, 25 Nov 2024 14:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732543855;
-	bh=uashmBaEdR6fdQIQMHMq1Z3iv/S7f/OPHqwJBo/qsYM=;
+	s=k20201202; t=1732543857;
+	bh=E/xuZiaaXUS1dUjJCcyg4g+UNuKLiuXMKNRl4YbEaOM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ik1/m3fc0xDCrDnuQVw29giCxgchwS4hCosOTnKiEAFcQAaMgpLoUPUGLmQiBhEMm
-	 tirRD52gohiFx2D1wS2A+kGs05Rx8JaR10drLDsgh/c2M30rpP8PA5c5+WHGOV2fyy
-	 VrcVAJZXM6Lg6n2l14qzddz4zw8ZTjxrFdQd5j/eLiHsnqKVa3Hl7B8d3OnB425v0A
-	 0bkY1s8UsD21wSZK2eOw/QatOqNQo4SRXJsI/tIQWPcmG49fO/91Dh+MleKEVMKF9V
-	 zAawf1ifJx4X+uWdVfqWVzLnhAau9EJkBWdCHJE47wOYXlkzZI/W51RXi2nF9lSNt1
-	 LsuSfB5RZXAUg==
+	b=ElVqWXj6qyF8vO59t7q5N8a9Tzd1B4KnsVDU2TDzOZ9A5Yft98+hWNPwMTRINW/h3
+	 wDe09MqwT4OGrMF90NAulb01ayXRrzfvdd+ZT18/taXZiC19ZiKTD/4B1e03p+Gr5H
+	 qKdP1FSVWtKoqJi1t4iCtLiwLbpQe4b9QVSq+HrAhAWYBtuihEV9exVrhr8j2qGnKY
+	 YoEhazeQfS5Uuaz0ZXH8bzQesKaPZmMBq51VjmyOXO7pUrkJZN+/5MXwQyN1XLDe0H
+	 6Ftsv7VJB1gDy6maKOvsYPvtCwzTHexOdZ5HoQwmGIfM3ud0v/WxwunL63SqdQJ1y+
+	 nTDw2MHhHMDEw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 25 Nov 2024 15:10:11 +0100
-Subject: [PATCH v2 15/29] nfs/nfs4recover: avoid pointless cred reference
- count bump
+Date: Mon, 25 Nov 2024 15:10:12 +0100
+Subject: [PATCH v2 16/29] nfsfh: avoid pointless cred reference count bump
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-work-cred-v2-15-68b9d38bb5b2@kernel.org>
+Message-Id: <20241125-work-cred-v2-16-68b9d38bb5b2@kernel.org>
 References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -62,12 +61,12 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=749; i=brauner@kernel.org;
- h=from:subject:message-id; bh=uashmBaEdR6fdQIQMHMq1Z3iv/S7f/OPHqwJBo/qsYM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHq+snzOVtuvmr1FlO83o+cZ3qiqOJ3wvN3/m4R22
- HewLXnbUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJEZTxkZdro5qazQy7vuEPuS
- Q/g6r1jE28xNpdLBG80fSfJEB3acYPhfqnDLdorv54cGtRqx3cpmgf/u/vui//LwL6uY1Qo7j6c
- xAQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=827; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=E/xuZiaaXUS1dUjJCcyg4g+UNuKLiuXMKNRl4YbEaOM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHrOfSSyj68hk6nAe579Ph+lxdpfX9c/CdJMY5O0b
+ Da9sOh5RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwER08hgZenZ8+X+pj7F7y+T5
+ fs3MC1d1q5m+zn0mXnr1v8QV5s9ZzxgZ7j96JLl4zjav15ddnz5929UVyTG54MpLsS11mRqzODK
+ cWAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -76,23 +75,23 @@ version of override_creds().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/nfsd/nfs4recover.c | 3 +--
+ fs/nfsd/nfsfh.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 2834091cc988b1403aa2908f69e336f2fe4e0922..5b1d36b26f93450bb14d1d922feeeb6c35399fd5 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -81,8 +81,7 @@ nfs4_save_creds(const struct cred **original_creds)
- 
- 	new->fsuid = GLOBAL_ROOT_UID;
- 	new->fsgid = GLOBAL_ROOT_GID;
--	*original_creds = override_creds(get_new_cred(new));
--	put_cred(new);
-+	*original_creds = override_creds(new);
- 	return 0;
- }
- 
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index 60b0275d5529d49ac87e8b89e4eb650ecd624f71..ef925d96078397a5bc0d0842dbafa44a5a49f358 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -221,8 +221,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, struct net *net,
+ 		new->cap_effective =
+ 			cap_raise_nfsd_set(new->cap_effective,
+ 					   new->cap_permitted);
+-		put_cred(override_creds(get_new_cred(new)));
+-		put_cred(new);
++		put_cred(override_creds(new));
+ 	} else {
+ 		error = nfsd_setuser_and_check_port(rqstp, cred, exp);
+ 		if (error)
 
 -- 
 2.45.2
