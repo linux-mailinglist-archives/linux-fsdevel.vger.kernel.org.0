@@ -1,131 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-35860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097609D8E4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 23:08:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96FC9D8EF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 00:22:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1D316ABD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 23:22:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D9D196D9A;
+	Mon, 25 Nov 2024 23:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="hcZeOtsJ"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B9E8B23BC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 22:06:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940631CD219;
-	Mon, 25 Nov 2024 22:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7giM3nf"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5A1CEAB4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 22:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69FE1CD2C;
+	Mon, 25 Nov 2024 23:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732572375; cv=none; b=l5iWLd5sEOmrOCThWhy9Oe0KO/yRVqc0OOzETSU2RPjpNbvLY9AkzZAppREbeLKb2dBFBU7PeLjEkLpDP5ebzqcHTBKyiyg88TmHzo4SOc8NJvfbZNhFcdHRKrx9ffdYe1sWoAp3dPIivJMUGlLS7fWy0d3kJzc2LGTMylmt5L8=
+	t=1732576923; cv=none; b=G2scl7sPFUfj7zHgvglkek0NGrWp2k14afe3oaKouW2vvt4pQjbH5JkMDUBwaeImP06YDuREniDzx+6VBNlxi4M/WkBikBPUARhTvsfXigfmOxsFSHWi/JliBYiL2xE74808SfBBabw4upZLljBh+p41+IuELIYU+pKlTUSfPJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732572375; c=relaxed/simple;
-	bh=mU2yOWacqm4aochUABwzvevW+gPKN7vO7SaINU3bDQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lMENw7UcIEHG0tE7TuVSJPsTfKa4wHVaoc7LNf5p92L7h+JuEpuk7xo5lCdW4Txu5pFIlkSRomHf14pp+Llp1ibkcXyB/75+WiT82JuBg0if9ZGtCNYiSAsMq/fRegK2fKd+UJq1fKGl7RjD2txVEs7ZlJXMGBl7ZgMcJ/xmayU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7giM3nf; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso4090216276.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 14:06:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732572372; x=1733177172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h3flqs/1oGaqZeRwYKdCfmq0tSLx0cLwL6PDx3Ge2z4=;
-        b=f7giM3nfkUE77skYUxU/Hxsit2oFw8rCSpPvzXH3pdVm/xT0W6H64ZAlCFv2Dk6aXu
-         s1cVOb6Ep7DbIDK6caCNgBqYlj9WlNQuChMwX/+WnvpcmA2dkLjJUTEFKjgD9dBGswx1
-         pNbGevKwvu6EdqXxJFV4cpEGEGfbQUr7vMGc150qTBFR/wq7p4SfvDFQRSqYYHSqV8B2
-         iRWiGLRMtLO/0abGYIzXDu5If5N45gw4u+ii2656mf1Eael0EvLBzZ4ovZQa3PH0zcyZ
-         Y54rRqKPnP08uGDTGTbI8hvtVWSisrZyfAs9WuQ5EjbB0+bi99Kt8k1lubMjXguIsHS8
-         U4IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732572372; x=1733177172;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h3flqs/1oGaqZeRwYKdCfmq0tSLx0cLwL6PDx3Ge2z4=;
-        b=Dp6j85MX3/6bX78RSF/E1SI3BPHvEPqgeRYqL3Cjy9wWPWswAjQe+W+q6of1+jHiYk
-         C8wxjteNx29bpxFIsDlJ4Vqb3olwlJgWhVdZcPHNRkTeSHtxS2aiEQABK/+ZQfsHqhMI
-         4o4LisF4PCg+MhwyvJMmsRcR8TQQOnD6GnMrVN9/j2jBZ8LccRpHkTKhIc4Q/sgOqRLk
-         op3jy7K9vvV4vYydgVt49eTnUcqkmRbkLTwZz4PAphV8vnIT52kkdH5LR3HYHbFQdUhF
-         EhYLxl0fQF2UwiUPbgMez8rpgSdvnYLC6pPvD11N/iNVGLC7LQ2H0Jtzzgt37lf8psNX
-         FNrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKYh++IdxcYkEsxZd0+oj/jY7rTX0lG9R3MdqFvdftmvnmpRhxTB5WPSnHO+ImUV9/gXo12bc73hyDs4zW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH4jnsYZmnfWi1rFLL6hyWMVDAXg6rIJrNCTlX1NwB2rfVLR0r
-	HQjlwwglAIGdeEljHTpSdTLzaBtcQX7k9+3aHDeXqud+34oTCwZj
-X-Gm-Gg: ASbGncsuNv23bbzI5TIpcmEvB9L4prLX9ydsG0gCHajU2F9pQ4XAxARyr27ER4Af4EO
-	loczjZjlrtC4p0ypySAmX1cNIZpi51Q98zCFLwpNniJW2qGZ7SnF9wNP2W3jQ8mYTd3RwHYITWP
-	DryHXCcg+7gac63FSN4cHE59ShGt4vEYTEdhEfplCpMzNTCtEEVU1p5y67GPoWpzS21jX7DHlIs
-	q16cjK4yJCR/QK39KD/zSL5KWHsfbVy8ZYhRjrdU5k4PW5jiIM8t1OVHK76iVlkYAyqAuMHLb34
-	SDqqof1pxw==
-X-Google-Smtp-Source: AGHT+IF1b59dEmsjXTtNsQAB02ulejfbryC79U5BfCVpaurDeQl6h4TUAAEs6t1E3vMJX8+LT056Kw==
-X-Received: by 2002:a05:6902:2303:b0:e38:d1e5:c247 with SMTP id 3f1490d57ef6-e38f8b0c24fmr12574929276.19.1732572372541;
-        Mon, 25 Nov 2024 14:06:12 -0800 (PST)
-Received: from localhost (fwdproxy-nha-114.fbsv.net. [2a03:2880:25ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f6378034sm2638618276.60.2024.11.25.14.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 14:06:12 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	jefflexu@linux.alibaba.com,
-	willy@infradead.org,
-	shakeel.butt@linux.dev,
-	kernel-team@meta.com
-Subject: [PATCH v2 12/12] fuse: enable large folios
-Date: Mon, 25 Nov 2024 14:05:37 -0800
-Message-ID: <20241125220537.3663725-13-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241125220537.3663725-1-joannelkoong@gmail.com>
-References: <20241125220537.3663725-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1732576923; c=relaxed/simple;
+	bh=PnyEp5HDwkYdC+u2fYrcD9DZmakb7fsgFLTXkys5mYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AxIfGDZA6G1R1/yZzsm+TLUzRSLJo/M1tbk+nYq4jhKIFsMUOOidcmRENj3sXYfU3iA72Vow3aoWKjA1Vq2TnpAGuny1rmdHbcNA9ndyAIYyegtxXEe1t43mJhUs7MAvxRSFaooeJx4EzfzOSWOtjQhsL3csHVvDqM7tk0d/09s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=hcZeOtsJ; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xy1tx0rF8zlgVnN;
+	Mon, 25 Nov 2024 23:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1732576915; x=1735168916; bh=gYn7SNmvOgRtVyBpUwpt9+SL
+	l1/GKJuJp2r+ZPcDOn8=; b=hcZeOtsJw9MqKA073h8LluDpnwkJA8502Ny5K5xF
+	5PfmkXqYsr98J6k8bsoVBWRhGvfkc8AmRW/jDo1Bkx23NRvqBjqvo1+x3qCSF9KX
+	V1DsxVXZzyBgwsnE+LebnaFkNCluTDTt33itJcqDiVtQT5W4WCVezcse/lbJ2kpF
+	hueFUBl0hPqsa7JlnOJ/4Q/EFdNKAUAfnWBGZYntZngXkgtqKzBBT/NdITW9LzNx
+	5XMbsPPGsxYddl6z0XmbqEqeeMIRjdtL6M8cQM6IAJBqmeaA60Ja7AsV9Xz0wwIk
+	WNeXb7FqSUA7IOjgr6amIp0EtKAqVWbwD0H7uIS2/5AmMw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 7mH7bJMGB4rO; Mon, 25 Nov 2024 23:21:55 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xy1tk4CG6zlgVXv;
+	Mon, 25 Nov 2024 23:21:50 +0000 (UTC)
+Message-ID: <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+Date: Mon, 25 Nov 2024 15:21:47 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
+ <20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
+ <CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
+ <Zy5CSgNJtgUgBH3H@casper.infradead.org>
+ <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+ <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+ <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+ <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable folios larger than one page size.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/fuse/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 11/18/24 6:03 PM, Martin K. Petersen wrote:
+> In my experience the payload-based approach was what made things work. I
+> tried many things before settling on that. Also note that to support
+> token-based SCSI devices, you inevitably need to separate the
+> read/copy_in operation from the write/copy_out ditto and carry the token
+> in the payload.
+> 
+> For "single copy command" devices, you can just synthesize the token in
+> the driver. Although I don't really know what the point of the token is
+> in that case because as far as I'm concerned, the only interesting
+> information is that the read/copy_in operation made it down the stack
+> without being split.
+Hi Martin,
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 487e68b59e1a..b4c4f3575c42 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3164,12 +3164,17 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	unsigned int max_pages, max_order;
- 
- 	inode->i_fop = &fuse_file_operations;
- 	inode->i_data.a_ops = &fuse_file_aops;
- 	if (fc->writeback_cache)
- 		mapping_set_writeback_may_block(&inode->i_data);
- 
-+	max_pages = min(fc->max_write >> PAGE_SHIFT, fc->max_pages);
-+	max_order = ilog2(max_pages);
-+	mapping_set_folio_order_range(inode->i_mapping, 0, max_order);
-+
- 	INIT_LIST_HEAD(&fi->write_files);
- 	INIT_LIST_HEAD(&fi->queued_writes);
- 	fi->writectr = 0;
--- 
-2.43.5
+There are some strong arguments in this thread from May 2024 in favor of
+representing the entire copy operation as a single REQ_OP_ operation:
+https://lore.kernel.org/linux-block/20240520102033.9361-1-nj.shetty@samsung.com/
 
+Token-based copy offloading (called ODX by Microsoft) could be
+implemented by maintaining a state machine in the SCSI sd driver and
+using a single block layer request to submit the four following SCSI
+commands:
+* POPULATE TOKEN
+* RECEIVE ROD TOKEN INFORMATION
+* WRITE USING TOKEN
+
+I'm assuming that the IMMED bit will be set to zero in the WRITE USING
+TOKEN command. Otherwise one or more additional RECEIVE ROD TOKEN
+INFORMATION commands would be required to poll for the WRITE USING TOKEN
+completion status.
+
+I guess that the block layer maintainer wouldn't be happy if all block
+drivers would have to deal with three or four phases for copy offloading
+just because ODX is this complicated.
+
+Thanks,
+
+Bart.
 
