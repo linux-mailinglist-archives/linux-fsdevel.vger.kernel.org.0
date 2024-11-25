@@ -1,93 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-35748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A79D7A1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 03:36:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA589D7A3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 04:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58D30281FAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 02:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA90B21EBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 03:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32F914293;
-	Mon, 25 Nov 2024 02:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D7A10A1F;
+	Mon, 25 Nov 2024 03:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="byQEvRGK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5647FD;
-	Mon, 25 Nov 2024 02:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B8D383
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 03:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732502184; cv=none; b=QrSvvoyuJ6nAXF9LtnlTUNcM8pUof7Ew6UxOqIC8kKDTVRFE5VMyGI53enNvrNwC9j8u6qvh3mroUf63JJS4ObH4R+P8QjNuyVCtCgYigJ1mqW7Oyta4XWDRCGeX4KuR5t/T6GD9JsdtMZPxa2L8ItDsddxnObngLbQ2RkREi4w=
+	t=1732503678; cv=none; b=p5qVunW+t2z4+YQ6jew8rxtpi+UIpX5JJ1Y1iO99DXjmQc0hScZtusYBr4h457s1H89D6QZb8+FNJq4hZrX1XU/x2T2GL53puhtNDBLYkh+oKPdu9bSOHM3rCSDPMP1hly120WcM8CCF/3w425ArCDRCofDFqhVHU5VgGwvtqFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732502184; c=relaxed/simple;
-	bh=ln2xQbsDgxry7xvsk4Jkh2KiNDjup73L+4tEY9llPmU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=luGDVGoH3v/Dd4bWWGM3l9MvBJ/2LA3RxNXwaQcNCb8e3DlFauasXAEk2QVVVNmB1pyzwTyCWc4+lW+MsTnd1b6xJCfM+fJK3ow2fEKqzeCp+oXkKiiNc+qDyVYODCgArVknySQYJJhCigJmZGVLczt14aVDDGSfqzmxAUjqIP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XxVC51j3Hz2GbhP;
-	Mon, 25 Nov 2024 10:34:09 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 32430180042;
-	Mon, 25 Nov 2024 10:36:14 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 25 Nov
- 2024 10:36:13 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: <brauner@kernel.org>, <djwong@kernel.org>, <cem@kernel.org>
-CC: <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <houtao1@huawei.com>, <leo.lilong@huawei.com>,
-	<yangerkun@huawei.com>
-Subject: [PATCH v4 2/2] xfs: clean up xfs_end_ioend() to reuse local variables
-Date: Mon, 25 Nov 2024 10:33:41 +0800
-Message-ID: <20241125023341.2816630-2-leo.lilong@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241125023341.2816630-1-leo.lilong@huawei.com>
-References: <20241125023341.2816630-1-leo.lilong@huawei.com>
+	s=arc-20240116; t=1732503678; c=relaxed/simple;
+	bh=GTXL8Ok3VoBTsoX3b+da91zTqZi8vFqDIx13OFRg/RQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHfcDMbVpuTAkz2w2lhH8uc7ip7ciW3GL/QwaQZ6oJh4ZyCvH/yCxhU/4mDr7WlsrJy/fGBhnPEpQAWj9U+o9PfAJqhoN/+kv8XKjafl8MFzLxJ+tGC9KugMTFwanFG5UnvfeTKfl3JlzUoW3nrEUD1N5uCUrRPE05/MiRnR5lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=byQEvRGK; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (syn-098-147-040-133.biz.spectrum.com [98.147.40.133])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AP30xkh008918
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 22:01:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1732503663; bh=PPt+wKM/h97jD1N6HKRy2W7YRkwKIcTc0NcIYKxzgw8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=byQEvRGKKJEwLixaCjQxllAyZY7L4d0W3OsK8OJpjRnG9JopN6Wb6+Fg0TQQ006p8
+	 YfH+zgCOwXooTr/sqt8ozDqCA9xcc/TGM1ojJxaAB45CfAOKVa41FoywTcddPV501C
+	 eENy+LZwxnJhfIMbLP3sxCaOWrS5vxmm562EP18pPfYYCodgWZUYuSGQ/cmZTQboaB
+	 UB51rVD4NgVamZSmVmrCUT54HKRe8ojPcAjib+4WewuIJD1kt+ZsPNKnWCgwy37Xyh
+	 rW7Di8f6LW225tthHWvEmXyTMji7gRFIoq1sGJEdw4YrdkOpwbsahSTRyRPWIeoy0j
+	 dDE2U+MTT0H9g==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 0477C34127F; Sun, 24 Nov 2024 22:00:59 -0500 (EST)
+Date: Sun, 24 Nov 2024 17:00:58 -1000
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: syzbot <syzbot+320c57a47bdabc1f294b@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] WARNING in minix_unlink
+Message-ID: <20241125030058.GE3874922@mit.edu>
+References: <CAHiZj8jbd9SQwKj6mvDQ3Kgi2z8rrCCwsqgjOgFtCzsk5MVPzQ@mail.gmail.com>
+ <6743814d.050a0220.1cc393.0049.GAE@google.com>
+ <20241124194701.GY3387508@ZenIV>
+ <20241124201009.GZ3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124201009.GZ3387508@ZenIV>
 
-Use already initialized local variables 'offset' and 'size' instead
-of accessing ioend members directly in xfs_setfilesize() call.
+On Sun, Nov 24, 2024 at 08:10:09PM +0000, Al Viro wrote:
+> > What happens there is that on a badly corrupt image we have an on-disk
+> > inode with link count below the actual number of links.  And after
+> > unlinks remove enough of those to drive the link count to 0, inode
+> > is freed.  After that point, all remaining links are pointing to a freed
+> > on-disk inode, which is discovered when they need to decrement of link
+> > count that is already 0.  Which does deserve a warning, probably without
+> > a stack trace.
+> > 
+> > There's nothing the kernel can do about that, short of scanning the entire
+> > filesystem at mount time and verifying that link counts are accurate...
+> 
+> Theoretically we could check if there's an associated dentry at the time of
+> decrement-to-0 and refuse to do that decrement in such case, marking the
+> in-core inode so that no extra dentries would be associated with it
+> from that point on.  Not sure if that'd make for a good mitigation strategy,
+> though - and it wouldn't help in case of extra links we hadn't seen by
+> that point; they would become dangling pointers and reuse of on-disk inode
+> would still be possible...
 
-This is just a code cleanup with no functional changes.
+Yeah, what we do with ext4 in that case is that we mark the file
+system as corrupted, and print an ext4_error() message, but we don't
+call WARN_ON.  At this point, you cam either (a) force a reboot, so
+that it can get fixed up at fsck time --- this might be appropriate if
+you have a failover setup, where bringing the system *down* so the
+backup system can do its thing without further corrupting user data,
+(b) remount the file system read-only, so that you don't actually do
+any further damage to the system, or (c) if the file system is marked
+"don't worry, be happy, continue running because some silly security
+policy says that bringing the system down is a denial of service
+attack and we can't have that (**sigh**), it might be a good idea to
+mark the block group as "corrupted" and refuse to do any further block
+or inode allocations out of that block group until the file system can
+be properly checked.
 
-Signed-off-by: Long Li <leo.lilong@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-v3->v4: No changes.
+Anyway, this is why I now ignore any syzkaller report that involves a
+badly corrupted file system being mounted.  That's not something I
+consider a valid threat model, and if someone wants to pay an engineer
+to work through all of those issues, *great*, but I don't have the
+time to deal with what I consider a super-low-priority issue.
 
- fs/xfs/xfs_aops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 559a3a577097..67877c36ed11 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -131,7 +131,7 @@ xfs_end_ioend(
- 		error = xfs_iomap_write_unwritten(ip, offset, size, false);
- 
- 	if (!error && xfs_ioend_is_append(ioend))
--		error = xfs_setfilesize(ip, ioend->io_offset, ioend->io_size);
-+		error = xfs_setfilesize(ip, offset, size);
- done:
- 	iomap_finish_ioends(ioend, error);
- 	memalloc_nofs_restore(nofs_flag);
--- 
-2.39.2
-
+					- Ted
 
