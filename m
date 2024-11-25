@@ -1,234 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-35771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1E09D8556
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 13:21:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7327E9D83FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95FDB39145
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 10:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D48D289C95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60E0193434;
-	Mon, 25 Nov 2024 10:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ADA195B33;
+	Mon, 25 Nov 2024 11:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMj66Qtp"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ekP2l7bX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E546218D65F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 10:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D46193086;
+	Mon, 25 Nov 2024 11:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531503; cv=none; b=JaWypmJnGPAxLuE/TLbxYFOQ3ANnomasIACjbkfGM8Oa/fBBzGai2x3g/fI/qGw7/0dOMKobePW4sFsbbo1EpnooBRBvMdiRgFgBmWb6Gs2rvKVWGxkjf5gM08J7FGe2vUrv5XoCkyA/1AKmIJkB5aSJQOi/I1iogpsrlg24Gzc=
+	t=1732532508; cv=none; b=eUSKVRObtuKTqKgaxL4Qbds7pNEupfPN1TgO7U5y3MDWZ7hHSvOSKsSiesQm1LpRPrK4uzu6Pot0vJjsjz/ViH+QJl/+1WmU0+ULBB0yF3ItBKS1N3a8d3dIsQVmYpPr8I333BpPijK3HSieSYxwjCoPkU2RBDSPcaLJrF/EBxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531503; c=relaxed/simple;
-	bh=kZdaHAQtCHnFnRq3H97r0Ug52tXwPXrGYKr2qs1glFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hwHY+qvAKZu+66OINEMJh/AGw537QytTqw6yF2591SF3GeS+nWfMYxmsCHkqV1e4n2/KGlEpI/LEU2/pdzQVcJ5F/081J1/P7cOfHDPRAZo5S8QpM6ulwma3D1OL9asZ2LQ+OnxKw3lvdZ9XkmtGNWHjI2gCc6Auk3j1OCJyMR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OMj66Qtp; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e600add5dcso2069312b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 02:45:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732531500; x=1733136300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o2ywDb4pqcHbTILd3FflHBb9fI4CP4o/IDmngu0zY28=;
-        b=OMj66QtpuQRD96RiRmlnRtpz/20HkvtwAbuKCpv1AjF9m47AE+iGCP0xfP0WWX12ch
-         3U6k2yVFD/d7+OX9VYMTTRgumU53tJSNZWa3bmL74xWb2RvjMHD3bBZVVABz5DDRf7s0
-         OmxlNhOsjHH8SOwgN3rtGXS4TyzIpyL7qYDuuN4RV8CT1niyL9K4clUfxHe8kzfnfBz3
-         gXjgphODpw8HTeSmxkffoppzobNgUXK8inS4MT/hYVYuPR0VmbAylnqOkFZCzlyZ9fjl
-         uItT5RhxjPrtRbV7jhW3n7nV2XJUlYbfjJ5gtuTpM1r/RZqcSA6oANW7T3gXsBVEKOMT
-         OPEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732531500; x=1733136300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o2ywDb4pqcHbTILd3FflHBb9fI4CP4o/IDmngu0zY28=;
-        b=ff4adI/4ADZhxRPrGY+H7v8DB7ul+muUXebWMZFWRH7YQwACjAZCneXYbcdoHVDAIx
-         5VPE9JrxnOlRyQiH1Pnw1h3QfpPf1FCmejXooxApGIhrtsGl7eBwogkxYkQmAt+zsP2M
-         QURRM4+sIo+Qn+ua8ifx/G7XbQeA9wVHUpYQYD11wZjLE0SMg7W0WrYTDV/1sQwNp8Go
-         0KKoYk7u+w0Mksggz7StBrx+u/YrkRBsb3OiUgs1KJcrOAfF6tduzroVvJSB9vq5i6mS
-         g4pWvM+4NC9dc2EsC2ud+Gnz9GCmxJklIp2Dh8p9USyK3PaLjH4apExp2q08q9GnQ429
-         bAfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvOHAZ1tabQbGa+HDe1o3nWD6Tg08M7PyQfxN4AV1bodz8oZ301qm5dr43N+wq2v0srCRJRaas6rYAwhCX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLJAPV6Cipzq+0WdQ9sqTewyfwcWIg/Me+H/AYSPiQqkIP5WGk
-	nIB2hOlm8aqK2vkfE/b1yDN9Ti6ljyXCTbCv+dVpr0jcNEl3YIOy4Y3PIU2ag3qcA6pZu8oXwNh
-	BuXaq5jCobgLM4x1DzClvS6l42QDG92gAGIZ/
-X-Gm-Gg: ASbGncvZeXbxhGhdcgl+/hsQxMcDypB/WNjK/H1MSK4m0OrLvWK/qGnvvIS7hOGmni+
-	XityV5FAi5lmjA/fGRbUdgN7Ufi49mvQN9e3bUT6i7g2SGAD9PJQZP7emZCAa3w==
-X-Google-Smtp-Source: AGHT+IH8TwjCvQn3Y6hEpYBfkn+q5l9OPxBB2DzQD1EFl2WttTCP0fZZCnC5hlT6wr5ifs2eGd9Q1HKmy9NrK+jFSMo=
-X-Received: by 2002:a05:6808:1882:b0:3e6:1057:21af with SMTP id
- 5614622812f47-3e915af0592mr8691789b6e.41.1732531499790; Mon, 25 Nov 2024
- 02:44:59 -0800 (PST)
+	s=arc-20240116; t=1732532508; c=relaxed/simple;
+	bh=T/UU+rrT+tPh3M85iNCZvELpys75SfWLzM9o42mtaR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dzaae57F+qE618vNQGWkS4S9E6QNqnyJRK5k3aTXEjhww99A1cJdLJgXJ9BUkorQe+sBQqC9Zov2pREkDKqFMyMkFPqJ18C9tobKgbO9uxQsU2L7t07nzAGL4bvY3V4NF4jkJ6i+P7CTRzMdcbGqyEpAm4i8PLSuhxIZIQgIZw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ekP2l7bX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732532506; x=1764068506;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T/UU+rrT+tPh3M85iNCZvELpys75SfWLzM9o42mtaR8=;
+  b=ekP2l7bXbpkxFP4gsRSxQU5T5VTPLO/iMgFXuUA3A16mlBMb4+2hH3kf
+   PNdUM2TvWdvubKn6VtK4Dn1TfZpQjijEb7WuUwp4h9uFp4RiGeye9saN0
+   3O3SyJmKbA9vh0AOiyLD4o8qXoTs1qTIhfj3/VSnn0Fsyn0niq+0npq8o
+   cTjqj0Mw1gLo0IfDgdbEC7X0omSfYcZeZaKiJYbKJUaIU+TOdl7IUfhhD
+   8gbsSVuhf72vL8nURQYy50fZCekCqbPyjZZJWgdNB2ltPp+K4e/5HT3rN
+   aJvkwSc0LjsS/RZt27SQgm8xv8PuaiNB1nf2spWcJTbeWrrnXQ5/+ELdI
+   A==;
+X-CSE-ConnectionGUID: ELFnvTxUTnCjVWuUJWQHvQ==
+X-CSE-MsgGUID: iBwx3q3pRPmTz9l+wkxv1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="43290717"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="43290717"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:01:46 -0800
+X-CSE-ConnectionGUID: WRgJmM8ETMW+viEZnd9lEA==
+X-CSE-MsgGUID: 4UuiGSoXQg+oFmbkppG6Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="96289499"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 25 Nov 2024 03:01:41 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFWqY-0006BI-01;
+	Mon, 25 Nov 2024 11:01:38 +0000
+Date: Mon, 25 Nov 2024 19:01:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+Message-ID: <202411251801.nLqLjFGW-lkp@intel.com>
+References: <20241122225958.1775625-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67432dee.050a0220.1cc393.0041.GAE@google.com> <Z0OaHcMWcRtohZfz@casper.infradead.org>
- <b57b3d18-7a70-4efa-a356-809c6ab29c02@suse.com>
-In-Reply-To: <b57b3d18-7a70-4efa-a356-809c6ab29c02@suse.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Mon, 25 Nov 2024 11:44:48 +0100
-Message-ID: <CANp29Y7KjqP9h1ONFG5LW=3Nc0RWgcdj4PmAszqze0azPpvdLg@mail.gmail.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-To: Qu Wenruo <wqu@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
 
-On Mon, Nov 25, 2024 at 1:30=E2=80=AFAM 'Qu Wenruo' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
->
->
-> =E5=9C=A8 2024/11/25 07:56, Matthew Wilcox =E5=86=99=E9=81=93:
-> > On Sun, Nov 24, 2024 at 05:45:18AM -0800, syzbot wrote:
-> >>
-> >>   __fput+0x5ba/0xa50 fs/file_table.c:458
-> >>   task_work_run+0x24f/0x310 kernel/task_work.c:239
-> >>   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> >>   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> >>   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-> >>   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >>   syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
-> >>   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-> >>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > This is:
-> >
-> >          VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-> >
-> > ie we've called __folio_start_writeback() on a folio which is already
-> > under writeback.
-> >
-> > Higher up in the trace, we have the useful information:
-> >
-> >   page: refcount:6 mapcount:0 mapping:ffff888077139710 index:0x3 pfn:0x=
-72ae5
-> >   memcg:ffff888140adc000
-> >   aops:btrfs_aops ino:105 dentry name(?):"file2"
-> >   flags: 0xfff000000040ab(locked|waiters|uptodate|lru|private|writeback=
-|node=3D0|zone=3D1|lastcpupid=3D0x7ff)
-> >   raw: 00fff000000040ab ffffea0001c8f408 ffffea0000939708 ffff888077139=
-710
-> >   raw: 0000000000000003 0000000000000001 00000006ffffffff ffff888140adc=
-000
-> >   page dumped because: VM_BUG_ON_FOLIO(folio_test_writeback(folio))
-> >   page_owner tracks the page as allocated
-> >
-> > The interesting part of the page_owner stacktrace is:
-> >
-> >    filemap_alloc_folio_noprof+0xdf/0x500
-> >    __filemap_get_folio+0x446/0xbd0
-> >    prepare_one_folio+0xb6/0xa20
-> >    btrfs_buffered_write+0x6bd/0x1150
-> >    btrfs_direct_write+0x52d/0xa30
-> >    btrfs_do_write_iter+0x2a0/0x760
-> >    do_iter_readv_writev+0x600/0x880
-> >    vfs_writev+0x376/0xba0
-> >
-> > (ie not very interesting)
-> >
-> >> Workqueue: btrfs-delalloc btrfs_work_helper
-> >> RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:311=
-9
-> >> Call Trace:
-> >>   <TASK>
-> >>   process_one_folio fs/btrfs/extent_io.c:187 [inline]
-> >>   __process_folios_contig+0x31c/0x540 fs/btrfs/extent_io.c:216
-> >>   submit_one_async_extent fs/btrfs/inode.c:1229 [inline]
-> >>   submit_compressed_extents+0xdb3/0x16e0 fs/btrfs/inode.c:1632
-> >>   run_ordered_work fs/btrfs/async-thread.c:245 [inline]
-> >>   btrfs_work_helper+0x56b/0xc50 fs/btrfs/async-thread.c:324
-> >>   process_one_work kernel/workqueue.c:3229 [inline]
-> >
-> > This looks like a race?
-> >
-> > process_one_folio() calls
-> > btrfs_folio_clamp_set_writeback calls
-> > btrfs_subpage_set_writeback:
-> >
-> >          spin_lock_irqsave(&subpage->lock, flags);
-> >          bitmap_set(subpage->bitmaps, start_bit, len >> fs_info->sector=
-size_bits)
-> > ;
-> >          if (!folio_test_writeback(folio))
-> >                  folio_start_writeback(folio);
-> >          spin_unlock_irqrestore(&subpage->lock, flags);
-> >
-> > so somebody else set writeback after we tested for writeback here.
->
-> The test VM is using X86_64, thus we won't go into the subpage routine,
-> but directly call folio_start_writeback().
->
-> >
-> > One thing that comes to mind is that _usually_ we take folio_lock()
-> > first, then start writeback, then call folio_unlock() and btrfs isn't
-> > doing that here (afaict).  Maybe that's not the source of the bug?
->
-> We still hold the folio locked, do submission then unlock.
->
-> You can check extent_writepage(), where at the entrance we check if the
-> folio is still locked.
-> Then inside extent_writepage_io() we do the submission, setting the
-> folio writeback inside submit_one_sector().
-> Eventually unlock the folio at the end of extent_writepage(), that's for
-> the uncompressed writes.
->
-> There are a lot of special handling for async submission (compression),
-> but it  still holds the folio locked, do compression and submission, and
-> unlock, just all in another thread (this case).
->
-> So it looks like something is wrong when transferring the ownership of
-> the page cache folios to the compression path, or some not properly
-> handled error path.
->
-> Unfortunately I'm not really able to reproduce the case using the
-> reproducer...
+Hi Song,
 
-I've just tried to reproduce locally using the downloadable assets and
-the kernel crashed ~ after 1 minute of running the attached C repro.
+kernel test robot noticed the following build warnings:
 
-[   87.616440][ T9044] ------------[ cut here ]------------
-[   87.617126][ T9044] kernel BUG at mm/page-writeback.c:3119!
-[   87.619308][ T9044] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PT=
-I
-[   87.620174][ T9044] CPU: 1 UID: 0 PID: 9044 Comm: kworker/u10:6 Not
-tainted 6.12.0-syzkaller-08446-g228a1157fb9f #0
+[auto build test WARNING on jack-fs/fsnotify]
+[also build test WARNING on linus/master v6.12 next-20241125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Here are the instructions I followed:
-https://github.com/google/syzkaller/blob/master/docs/syzbot_assets.md#run-a=
--c-reproducer
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fanotify-Introduce-fanotify-filter/20241125-110818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+patch link:    https://lore.kernel.org/r/20241122225958.1775625-2-song%40kernel.org
+patch subject: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+config: i386-randconfig-001-20241125 (https://download.01.org/0day-ci/archive/20241125/202411251801.nLqLjFGW-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251801.nLqLjFGW-lkp@intel.com/reproduce)
 
---=20
-Aleksandr
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411251801.nLqLjFGW-lkp@intel.com/
 
->
-> Thanks,
-> Qu
->
->
->
-> >
-> > If it is, should we have a VM_BUG_ON_FOLIO(!folio_test_locked(folio), f=
-olio)
-> > in __folio_start_writeback()?  Or is there somewhere that can't lock th=
-e
-> > folio before starting writeback?
-> >
->
+All warnings (new ones prefixed by >>):
+
+   fs/notify/fanotify/fanotify_filter.c: In function 'fanotify_filter_add':
+>> fs/notify/fanotify/fanotify_filter.c:226:55: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     226 |                         if (copy_from_user(init_args, (void __user *)args.init_args,
+         |                                                       ^
+
+
+vim +226 fs/notify/fanotify/fanotify_filter.c
+
+   156	
+   157	/*
+   158	 * fanotify_filter_add - Add a filter to fsnotify_group.
+   159	 *
+   160	 * Add a filter from filter_list to a fsnotify_group.
+   161	 *
+   162	 * @group:	fsnotify_group that will have add
+   163	 * @argp:	fanotify_filter_args that specifies the filter
+   164	 *		and the init arguments of the filter.
+   165	 *
+   166	 * Returns:
+   167	 *	0	- on success;
+   168	 *	-EEXIST	- filter of the same name already exists.
+   169	 */
+   170	int fanotify_filter_add(struct fsnotify_group *group,
+   171				struct fanotify_filter_args __user *argp)
+   172	{
+   173		struct fanotify_filter_hook *filter_hook;
+   174		struct fanotify_filter_ops *filter_ops;
+   175		struct fanotify_filter_args args;
+   176		void *init_args = NULL;
+   177		int ret = 0;
+   178	
+   179		ret = copy_from_user(&args, argp, sizeof(args));
+   180		if (ret)
+   181			return -EFAULT;
+   182	
+   183		if (args.init_args_size > FAN_FILTER_ARGS_MAX)
+   184			return -EINVAL;
+   185	
+   186		args.name[FAN_FILTER_NAME_MAX - 1] = '\0';
+   187	
+   188		fsnotify_group_lock(group);
+   189	
+   190		if (rcu_access_pointer(group->fanotify_data.filter_hook)) {
+   191			fsnotify_group_unlock(group);
+   192			return -EBUSY;
+   193		}
+   194	
+   195		filter_hook = kzalloc(sizeof(*filter_hook), GFP_KERNEL);
+   196		if (!filter_hook) {
+   197			ret = -ENOMEM;
+   198			goto out;
+   199		}
+   200	
+   201		spin_lock(&filter_list_lock);
+   202		filter_ops = fanotify_filter_find(args.name);
+   203		if (!filter_ops || !try_module_get(filter_ops->owner)) {
+   204			spin_unlock(&filter_list_lock);
+   205			ret = -ENOENT;
+   206			goto err_free_hook;
+   207		}
+   208		spin_unlock(&filter_list_lock);
+   209	
+   210		if (!capable(CAP_SYS_ADMIN) && (filter_ops->flags & FAN_FILTER_F_SYS_ADMIN_ONLY)) {
+   211			ret = -EPERM;
+   212			goto err_module_put;
+   213		}
+   214	
+   215		if (filter_ops->filter_init) {
+   216			if (args.init_args_size != filter_ops->init_args_size) {
+   217				ret = -EINVAL;
+   218				goto err_module_put;
+   219			}
+   220			if (args.init_args_size) {
+   221				init_args = kzalloc(args.init_args_size, GFP_KERNEL);
+   222				if (!init_args) {
+   223					ret = -ENOMEM;
+   224					goto err_module_put;
+   225				}
+ > 226				if (copy_from_user(init_args, (void __user *)args.init_args,
+   227						   args.init_args_size)) {
+   228					ret = -EFAULT;
+   229					goto err_free_args;
+   230				}
+   231	
+   232			}
+   233			ret = filter_ops->filter_init(group, filter_hook, init_args);
+   234			if (ret)
+   235				goto err_free_args;
+   236			kfree(init_args);
+   237		}
+   238		filter_hook->ops = filter_ops;
+   239		rcu_assign_pointer(group->fanotify_data.filter_hook, filter_hook);
+   240	
+   241	out:
+   242		fsnotify_group_unlock(group);
+   243		return ret;
+   244	
+   245	err_free_args:
+   246		kfree(init_args);
+   247	err_module_put:
+   248		module_put(filter_ops->owner);
+   249	err_free_hook:
+   250		kfree(filter_hook);
+   251		goto out;
+   252	}
+   253	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
