@@ -1,79 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-35788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748FF9D8550
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 13:20:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6251692CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:20:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E2E191499;
-	Mon, 25 Nov 2024 12:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nq3Ax0Ix"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6429D85F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:08:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891BD1552E3;
-	Mon, 25 Nov 2024 12:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BBA9B3365D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:40:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF0F1A0721;
+	Mon, 25 Nov 2024 12:40:02 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15CF1552E3;
+	Mon, 25 Nov 2024 12:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732537249; cv=none; b=lOsGc/oCnWgYbXKFTZIXseS6hNauTHnNRbECtI9lcdZDq2GxTq0bNlOYupM4Su9FGheKTvVqWZsyIEhl9YQmF7WtGelwGe/LmowgHEcJFkA1PUfwnDRRMR/VqUMPresM3eCpawLUfdj1yD6jfuMRe1c+R57w9xQe+RBmkuRCV5E=
+	t=1732538402; cv=none; b=Tc8bkdP7HtlQHxrbMTtR5mCiGk9fFrsmkVocqRitz1UdE5FjsfGe9ukggF4LYTn/7IusP/vN19QhHAjp6qNWnCbzYqLeaU2Cb4NWMLfGqieZEh2i1r6/30JANBMCBxe2wBqLEBi26eLdZ9QbaX6NmCXavTolufiHGhMxdu35wNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732537249; c=relaxed/simple;
-	bh=zf36PKbSDKogaaNy+/27WO9B5XfGKYZc6KeVxcE1eL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFVybZEVYjrBaA7RnPQt2nzMcZGMUP3N81+ypqmiu/pbJyN+AXbi8o9zKTvo1xK7g43dh2ffDyPj8TzbheCeEwU37Y9C3tNdEfQHqdTqAAxkOeCnZdIZa992nWpyKbGmYJuvMy3b1k+k4f9AYNY6+GWBRGgZz284z9VXsmVVmB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nq3Ax0Ix; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C285C4CECE;
-	Mon, 25 Nov 2024 12:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732537249;
-	bh=zf36PKbSDKogaaNy+/27WO9B5XfGKYZc6KeVxcE1eL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nq3Ax0Ix09pavfZaL84YwIyTZbspqn1m44vPLSXHmY9kICNLAqBjEk7r79u/Ph1gF
-	 RDS7UUulx7WdBtmQq3hj0hrPPO7l/VmZYDjBbzZSbrPIOo2d9i+YinY0t0/tnxgz63
-	 x5TMzOmBgofQykOPrNDesbxVkrJdy0si+E59sgqDAk8E+bbSIS9cihIB4ssJ0xD0JN
-	 yocenSfUMbLtowAQQ6kdCcP3HMw0dBet5Lw6YsKoXx8YxN/+XAMBa+9WzX0bLwXyRq
-	 gJrfmO4FeikYsYkQagNOcxlGmu0TMqrvjHwBiD1tmR9YpZVS4wu+0pNQ/QG/UkaSbZ
-	 gw994oCgK3PAQ==
-Date: Mon, 25 Nov 2024 13:20:44 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 
-	21371365@buaa.edu.cn
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-Message-ID: <20241125-bedacht-finte-f2ecdca1591f@brauner>
-References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
- <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
- <20241124174435.GB620578@frogsfrogsfrogs>
- <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
- <20241124215014.GA3387508@ZenIV>
- <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
+	s=arc-20240116; t=1732538402; c=relaxed/simple;
+	bh=xy97535/RdsSRXyaObPiLFIZayngr7F/JyF8wU1TQd8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mkr99HM33UG8uRUniJhNu8cYRCJ77SqYy5WsCBBDgNAC5I8SFLAHi860LxbDh3IyycvR0HuVS1YOJ1uqrJsuVQXiWBiYKctVobEXO4HXzETPo2O8G7MzK9V26VwwWXkKt1tBqAstUpV3R0o3sCPrNy9VskhtVtLP44Lfacq5tNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XxlZt1M3mzWfQJ;
+	Mon, 25 Nov 2024 20:37:10 +0800 (CST)
+Received: from kwepemh100007.china.huawei.com (unknown [7.202.181.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id E26F61800A7;
+	Mon, 25 Nov 2024 20:39:55 +0800 (CST)
+Received: from huawei.com (10.67.175.69) by kwepemh100007.china.huawei.com
+ (7.202.181.92) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 25 Nov
+ 2024 20:39:55 +0800
+From: Zhang Kunbo <zhangkunbo@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liaochang1@huawei.com>, <chris.zjh@huawei.com>
+Subject: [PATCH] x86: fix missing declartion of init_fs
+Date: Mon, 25 Nov 2024 12:30:55 +0000
+Message-ID: <20241125123055.3306313-1-zhangkunbo@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh100007.china.huawei.com (7.202.181.92)
 
-> So I mention the "rename and extend i_size_seqcount" as a solution
-> that I suspect might be acceptable if somebody has the motivation and
-> energy, but honestly I also think "nobody can be bothered" is
-> acceptable in practice.
+fs/fs_struct.c should include include/linux/init_task.h
+ for declaration of init_fs. This fix the sparse warning:
 
-I've said it before but I'm strongly on the "let's not care" side of
-this rather than complicating this code unnecessarily for some weird
-corner case. So I'd be pretty reluctant to exited about patches for
-this...
+fs/fs_struct.c:163:18: warning: symbol 'init_fs' was not declared. Should it be static?
+
+Signed-off-by: Zhang Kunbo <zhangkunbo@huawei.com>
+---
+ fs/fs_struct.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 64c2d0814ed6..100bd3474476 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -6,6 +6,7 @@
+ #include <linux/path.h>
+ #include <linux/slab.h>
+ #include <linux/fs_struct.h>
++#include <linux/init_task.h>
+ #include "internal.h"
+ 
+ /*
+-- 
+2.34.1
+
 
