@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-35783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA799D84BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:47:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5C99D857B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 13:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B83B28563B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:47:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08406B3E479
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37AE1AE01E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDDD1ADFEA;
 	Mon, 25 Nov 2024 11:46:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40C0199920;
-	Mon, 25 Nov 2024 11:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6ED199947;
+	Mon, 25 Nov 2024 11:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732535195; cv=none; b=QGxw0ldcfbQOE1rnGVG3k9aZLrTx0Jq/eF/RHmU1uvDan0hIMxc0u4IAhybRS97r3Nuk6uj2yQ0zSh+Q4vvdeQTZG6CCply1UP1h9vYkrbaDQaWrxYz6z3tJHEhCvXtj8dRY2tjymJhzqsHK3IezhK+0/jSmjgQ4q6RZY/QiF8Q=
+	t=1732535195; cv=none; b=Ofob12PAmkTcF/zI9zsTzpG8cNMQWW3z7MmaChN/B8Z3nDbUIN62OgTSbK8KlFrzWv5RS0V9mJ3jensoAtcnB1d14c+NR1U2+jJ3dQt5uWisQqCLIIpJ+9B6YkMwekxvhX7BmHNTjq2a6hAq8m2c4Z4idSTaqP5fMynZX4IiIKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732535195; c=relaxed/simple;
-	bh=k95u1rOfck9eBEYgj7sOPjTligZqXVqqiOiT22V5WD8=;
+	bh=/2j/eWlrAYGxOEIvn8+oQk9bo/y0Fur0VRbGnmnV0k0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ra07LMJcjc+TZ5qM1nYwlqEGHWJUIRR4GpoTGYvtzmv21TGgn7xoDqD51NsVAhMdpFnmaSj3z1mIiog2vW0ovIkyXkbTIw0xLhcHh/zk3QCPXTsAuzNOSPGTGVua+oNU4cQZf8ssJfOCIej3QIGwpDMcuzc9/uokYCXyPhLDv90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=LhGbm/diOgEDZrXW5uB83bEC6UUpnvjj10z95z6NVKSvVFSnMkhTKFhFTa7fXCzO2nUuQGA/6jndcJZqpzV9Nab6t2Ssw0esjVe2vBqJy12HD9EsYi3yxst8qx+Vp4+8EADnDdXkPqUnEOO2n9mcTr7hFIT7iXbDFDXaaK1GXGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XxkS30FB0z4f3jXJ;
-	Mon, 25 Nov 2024 19:46:11 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XxkS84dYxz4f3kq5;
+	Mon, 25 Nov 2024 19:46:16 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B4CB21A0568;
-	Mon, 25 Nov 2024 19:46:29 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 445851A0197;
+	Mon, 25 Nov 2024 19:46:30 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4eFY0RnNicrCw--.44046S9;
-	Mon, 25 Nov 2024 19:46:29 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4eFY0RnNicrCw--.44046S10;
+	Mon, 25 Nov 2024 19:46:30 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 5/9] ext4/jbd2: convert jbd2_journal_blocks_per_page() to support large folio
-Date: Mon, 25 Nov 2024 19:44:15 +0800
-Message-ID: <20241125114419.903270-6-yi.zhang@huaweicloud.com>
+Subject: [PATCH 6/9] ext4: correct the journal credits calculations of allocating blocks
+Date: Mon, 25 Nov 2024 19:44:16 +0800
+Message-ID: <20241125114419.903270-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241125114419.903270-1-yi.zhang@huaweicloud.com>
 References: <20241125114419.903270-1-yi.zhang@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4eFY0RnNicrCw--.44046S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4fJw17XFyDZrykAFyDGFg_yoWrWry3pF
-	WDCFyrCry8uFyDuFn2grsrZry29a4jkFWUWr9a9FnYqa9Fq34xtF1Dt3WayFyUtrWDGa10
-	vF45G3yDG3WUt3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCHY4eFY0RnNicrCw--.44046S10
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1DurW5Ww4rKrWrZFWDJwb_yoW8Ar1kp3
+	ZxCFW8Gr1rZw1UuFW8Ga1UXr18Wa1kGa17ZFWrAw1aqFZxJryfGrn8t3W0vFyFqFWxZF1Y
+	vF4rK34UJ3W5ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -87,107 +87,53 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-jbd2_journal_blocks_per_page() returns the number of blocks in a single
-page. Rename it to jbd2_journal_blocks_per_folio() and make it returns
-the number of blocks in the largest folio, preparing for the calculation
-of journal credits blocks when allocating blocks within a large folio in
-the writeback path.
+The journal credits calculation in ext4_ext_index_trans_blocks() is
+currently inadequate. It only multiplies the depth of the extents tree
+and doesn't account for the blocks that may be required for adding the
+leaf extents themselves.
+
+After enabling large folios, we can easily run out of handle credits,
+triggering a warning in jbd2_journal_dirty_metadata() on filesystems
+with a 1KB block size. This occurs because we may need more extents when
+iterating through each folio. Therefore, we should modify ext4_ext_index
+trans_blocks() to include a count of the leaf extents as well.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4_jbd2.h  | 4 ++--
- fs/ext4/inode.c      | 6 +++---
- fs/jbd2/journal.c    | 7 ++++---
- include/linux/jbd2.h | 2 +-
- 4 files changed, 10 insertions(+), 9 deletions(-)
+ fs/ext4/extents.c | 5 +++--
+ fs/ext4/inode.c   | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-index 0c77697d5e90..59df14547d26 100644
---- a/fs/ext4/ext4_jbd2.h
-+++ b/fs/ext4/ext4_jbd2.h
-@@ -403,10 +403,10 @@ static inline int ext4_journal_ensure_credits(handle_t *handle, int credits,
- 				revoke_creds, 0);
- }
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 34e25eee6521..1dbcf0cb8003 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -2405,9 +2405,10 @@ int ext4_ext_index_trans_blocks(struct inode *inode, int extents)
+ 	depth = ext_depth(inode);
  
--static inline int ext4_journal_blocks_per_page(struct inode *inode)
-+static inline int ext4_journal_blocks_per_folio(struct inode *inode)
- {
- 	if (EXT4_JOURNAL(inode) != NULL)
--		return jbd2_journal_blocks_per_page(inode);
-+		return jbd2_journal_blocks_per_folio(inode);
- 	return 0;
- }
+ 	if (extents <= 1)
+-		index = depth * 2;
++		index = depth * 2 + extents;
+ 	else
+-		index = depth * 3;
++		index = depth * 3 +
++			DIV_ROUND_UP(extents, ext4_ext_space_block(inode, 0));
  
+ 	return index;
+ }
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 38d33569c26e..e7b485b0f81b 100644
+index e7b485b0f81b..0ef41e264ee8 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -2346,7 +2346,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
-  */
- static int ext4_da_writepages_trans_blocks(struct inode *inode)
- {
--	int bpp = ext4_journal_blocks_per_page(inode);
-+	int bpp = ext4_journal_blocks_per_folio(inode);
- 
- 	return ext4_meta_trans_blocks(inode,
- 				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
-@@ -2424,7 +2424,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
- 	ext4_lblk_t lblk;
- 	struct buffer_head *head;
- 	handle_t *handle = NULL;
--	int bpp = ext4_journal_blocks_per_page(mpd->inode);
-+	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
- 
- 	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
- 		tag = PAGECACHE_TAG_TOWRITE;
-@@ -5715,7 +5715,7 @@ static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
-  */
- int ext4_writepage_trans_blocks(struct inode *inode)
- {
--	int bpp = ext4_journal_blocks_per_page(inode);
-+	int bpp = ext4_journal_blocks_per_folio(inode);
- 	int ret;
- 
- 	ret = ext4_meta_trans_blocks(inode, bpp, bpp);
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 97f487c3d8fc..a0b8662bc5d7 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -83,7 +83,7 @@ EXPORT_SYMBOL(jbd2_log_wait_commit);
- EXPORT_SYMBOL(jbd2_journal_start_commit);
- EXPORT_SYMBOL(jbd2_journal_force_commit_nested);
- EXPORT_SYMBOL(jbd2_journal_wipe);
--EXPORT_SYMBOL(jbd2_journal_blocks_per_page);
-+EXPORT_SYMBOL(jbd2_journal_blocks_per_folio);
- EXPORT_SYMBOL(jbd2_journal_invalidate_folio);
- EXPORT_SYMBOL(jbd2_journal_try_to_free_buffers);
- EXPORT_SYMBOL(jbd2_journal_force_commit);
-@@ -2680,9 +2680,10 @@ void jbd2_journal_ack_err(journal_t *journal)
- 	write_unlock(&journal->j_state_lock);
- }
- 
--int jbd2_journal_blocks_per_page(struct inode *inode)
-+int jbd2_journal_blocks_per_folio(struct inode *inode)
- {
--	return 1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
-+	return 1 << (PAGE_SHIFT + mapping_max_folio_order(inode->i_mapping) -
-+		     inode->i_sb->s_blocksize_bits);
- }
- 
- /*
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 8aef9bb6ad57..591f93ef7851 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1740,7 +1740,7 @@ static inline int tid_geq(tid_t x, tid_t y)
- 	return (difference >= 0);
- }
- 
--extern int jbd2_journal_blocks_per_page(struct inode *inode);
-+extern int jbd2_journal_blocks_per_folio(struct inode *inode);
- extern size_t journal_tag_bytes(journal_t *journal);
- 
- static inline bool jbd2_journal_has_csum_v2or3_feature(journal_t *j)
+@@ -5687,7 +5687,7 @@ static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
+ 	 * Now let's see how many group bitmaps and group descriptors need
+ 	 * to account
+ 	 */
+-	groups = idxblocks + pextents;
++	groups = idxblocks;
+ 	gdpblocks = groups;
+ 	if (groups > ngroups)
+ 		groups = ngroups;
 -- 
 2.46.1
 
