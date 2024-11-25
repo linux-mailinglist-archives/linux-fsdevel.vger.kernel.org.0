@@ -1,171 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-35831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582B49D8844
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6457D9D8861
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 15:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DB1167626
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD7B166979
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 14:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEA01B218F;
-	Mon, 25 Nov 2024 14:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA2B1B2188;
+	Mon, 25 Nov 2024 14:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gxPMeu9P"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="U/wK7U2m";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MEpTB44T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2FE1B0F25
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 14:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ABF1B2182;
+	Mon, 25 Nov 2024 14:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545722; cv=none; b=d+hH99WYq015FXXMLp0K59N1fGbbxJmNOUiQYe+ZIld/KjpTjmE8IkK3YYvW3Y4CggtfHzHbDS5NViyhCRA+vMH6gdROb6txW8E7/0Y1r6goWiRn5vCRvgHQJPLzfiM4mF4HjBNnEUdp5QP8AfjErh/6h4r+gylA7pbW8XuN/7I=
+	t=1732545968; cv=none; b=n6K9eoFwfBjxnJ3cILsD0EbGJ5MyL0vs/HaMLYDoTpz17hJasad718yOWVu8r31YpUk5n6TBoG1va+v2uz7cquCZZ3pNTPD7AXOmVZRNvVc3OTiYCdGbujXswamfE/XqOSHpZM48bdDLgpLSa9dM0fulFnyquEXkXddytLED52E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545722; c=relaxed/simple;
-	bh=Tr/cQ1TM/FF9xGvPfcuB0kYLT2zKMPvRvPes1SuHlCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRsOYd+MVSNj0+MTegriKmFmge1p3IfvMAfzXhYSy9c1p6yTDFiZ46NAcz5rLDTu3lNE/rRbu7BT5jsvxEe9+nWwQS03B1yOXMvMvvOLUwGB6Kcu12ttCMtzot0ZI8a3KUvC0j5TPutbJeOZH0sNfCI9/05ADsUMvgVAQp30rUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gxPMeu9P; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732545719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=46wCtS3Eh2MWHiDHvSqDOE0J1G+zlgwVIrX5wgmHpV8=;
-	b=gxPMeu9PHHjx6Oyw0VNLauLKzVKRu1D9xMcMQwofSnaL8kP9FkK6M8j+uTAMuCt9Z3AkpA
-	ho14xvXB/ZfQAoJnlcha+8azbdAvhKambU7YABobi0QP1WpVhmwcmz3ZozrdOoYMoh33v1
-	5D47O7PspPaBzeH6NQABUnBAULsRGDE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-bEyv-BAOPx6TDm6pRFxqBA-1; Mon,
- 25 Nov 2024 09:41:55 -0500
-X-MC-Unique: bEyv-BAOPx6TDm6pRFxqBA-1
-X-Mimecast-MFC-AGG-ID: bEyv-BAOPx6TDm6pRFxqBA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BFA41954B0A;
-	Mon, 25 Nov 2024 14:41:52 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28945195E483;
-	Mon, 25 Nov 2024 14:41:50 +0000 (UTC)
-Date: Mon, 25 Nov 2024 22:41:45 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications
- after the vmcore was opened
-Message-ID: <Z0SMqYX8gMvdiU4T@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-4-david@redhat.com>
- <Z0BL/UopaH5Xg5jS@MiWiFi-R3L-srv>
- <d29d7816-a3e5-4f34-bb0c-dd427931efb4@redhat.com>
+	s=arc-20240116; t=1732545968; c=relaxed/simple;
+	bh=j8WTzaLvOw9whoSAZSxh39tAF7nm/46SdyfK+BgRXFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MmpBHkl1CVxH1oNROdRCqheredNVlLKZWIF+OWyDcqzUyX8ecEriP+kIRAwmnA3PFdnK50/ce/g+xwBDV0w9d60dYRm+Aa2GBiDbREAjD2L9iLna3VG0fWeZPKJgglc6mo+MqhlRUpSD7DDPRwpikhNomDTV8c5EnhhqqMXwrRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=U/wK7U2m; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MEpTB44T; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id ECF541380444;
+	Mon, 25 Nov 2024 09:46:02 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 25 Nov 2024 09:46:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1732545962;
+	 x=1732632362; bh=ZzO4Ayzt9QRMmjLtmAvo63cJoNPvzQZtsba8yNiNm1s=; b=
+	U/wK7U2mVbh/6sigFrWl9Y5x+LjoiiZ8WPeMGJuTgTbUyOATuylqFNdiuQYost3l
+	eoXdriAdzSEgc5S1B2ncZDBLadMFcH6/GNMPqcLBlolDZ7AJb/hcclChfnn1jkSH
+	0VxeOyxhssMW3gmdK5wQRhh7YxYekPIKPfKO3pZPIVF5qPvVC70pnR8ifeHYWXmu
+	y5exwykUHN4/f2vXEvxDJST3czpswWOR+X1FBLr5vq8fUARxc9D39rML2Nmdhulx
+	Qnl5tdZiC0YRVK7wgP5LaUCHKh079VcwPd70ZiZ+n7+NGBPaCt2JN6HP+4wvX/fw
+	MJNEzGegNYeh5306hdJOQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732545962; x=
+	1732632362; bh=ZzO4Ayzt9QRMmjLtmAvo63cJoNPvzQZtsba8yNiNm1s=; b=M
+	EpTB44TsLU82wnnqfRomgNk3SdwFTPKRmBEzhHHYpdwvuuMfLUhrfTgGfF4U8xqM
+	vCZCcQUg9ZLLmQWR1X+PptORtTR8N5Fwn7MeX0b+r6engg8iLL0LgaNiGk7vZs+E
+	MQ/Nml2YGCp/0VHM2mtS5JzFrRQXhx/JLm7L3m7FqCxmuD/hObNG4I4cfHQRL8VH
+	j3+xuhNAuX+cT2+no9x1UOmZekCaw4dvHKxXGZBgVOLltPuPLDrGNjQm2eVqCz4G
+	xz817Ig48n40A6bVo6ArQubN6kPXLM0OoP2U3ROr8dMlYI1m2gZXE8KzWPFljZix
+	83b/IoF5lzKmrHNqeD4hg==
+X-ME-Sender: <xms:qY1EZ9qRqdV2iogJkdI8EwHPvfw2jDydfSnKETDc-Nq-KB04crB9NQ>
+    <xme:qY1EZ_oRKxsPFBJIoeUB8Uuz9Hsd757gTnGK2dKiqEngLUMnn9-z1VO8KE_gtHQgV
+    0NWDKWYhsSTRzg3>
+X-ME-Received: <xmr:qY1EZ6ObVZnPOyzw7F9srNPocSM8FPu2EtKtzuxZCFjGmRMLnRzSizsWM6b4AVOd5DKJqzEAE-uuVrpnEqMF7-TNcuB-V-4zHlyC1o89-wNavB02DheG>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgdeiiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
+    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
+    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
+    sghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnh
+    gvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtth
+    hopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopegrmhhirhej
+    fehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:qY1EZ44ib0x57I5hYn4Tfu_isayfoOR4Si9J_-DcvEuMvbSvZp0bhQ>
+    <xmx:qY1EZ84OiZ9sCWHHN0U9z6Yyg0KIBm8bMHEYVZOtgjysLaghCkMW3Q>
+    <xmx:qY1EZwj-dttGvGG_XENblLd6stloKdvwD_bkBZhN2U_r85rgmFpreg>
+    <xmx:qY1EZ-7q4uuhZOW6xkS-ubM-hzCTXdetMlYEoW4TrJDhbhCkZOrE4w>
+    <xmx:qo1EZ8yC9wREuqGVyh96Z7e-QgZZG2PH4irt7IEtS3mbQ9fQeZ2SXz_A>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Nov 2024 09:46:00 -0500 (EST)
+Message-ID: <6876e1cf-9bd2-483d-bd49-c52967c88397@fastmail.fm>
+Date: Mon, 25 Nov 2024 15:45:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d29d7816-a3e5-4f34-bb0c-dd427931efb4@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v6 05/16] fuse: make args->in_args[0] to be always the
+ header
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
+ David Wei <dw@davidwei.uk>, bernd@bsbernd.com
+References: <20241122-fuse-uring-for-6-10-rfc4-v6-0-28e6cdd0e914@ddn.com>
+ <20241122-fuse-uring-for-6-10-rfc4-v6-5-28e6cdd0e914@ddn.com>
+ <CAJfpeguPCUajx=LX-M2GFO4hzi6A2uc-8tijHEFVSipK7xFU5A@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpeguPCUajx=LX-M2GFO4hzi6A2uc-8tijHEFVSipK7xFU5A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/22/24 at 10:30am, David Hildenbrand wrote:
-> On 22.11.24 10:16, Baoquan He wrote:
-> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> > ......snip...
-> > > @@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
-> > >   		return -EINVAL;
-> > >   	}
-> > > +	/* We'll recheck under lock later. */
-> > > +	if (data_race(vmcore_opened))
-> > > +		return -EBUSY;
-> > 
-> 
-> Hi,
-> 
-> > As I commented to patch 7, if vmcore is opened and closed after
-> > checking, do we need to give up any chance to add device dumping
-> > as below?
-> > 
-> > fd = open(/proc/vmcore);
-> > ...do checking;
-> > close(fd);
-> > 
-> > quit any device dump adding;
-> > 
-> > run makedumpfile on s390;
-> >    ->fd = open(/proc/vmcore);
-> >      -> try to dump;
-> >    ->close(fd);
-> 
-> The only reasonable case where this could happen (with virtio_mem) would be
-> when you hotplug a virtio-mem device into a VM that is currently in the
-> kdump kernel. However, in this case, the device would not provide any memory
-> we want to dump:
-> 
-> (1) The memory was not available to the 1st (crashed) kernel, because
->     the device got hotplugged later.
-> (2) Hotplugged virtio-mem devices show up with "no plugged memory",
->     meaning there wouldn't be even something to dump.
-> 
-> Drivers will be loaded (as part of the kernel or as part of the initrd)
-> before any kdump action is happening. Similarly, just imagine your NIC
-> driver not being loaded when you start dumping to a network share ...
-> 
-> This should similarly apply to vmcoredd providers.
-> 
-> There is another concern I had at some point with changing the effective
-> /proc/vmcore size after someone already opened it, and might assume the size
-> will stay unmodified (IOW, the file was completely static before vmcoredd
-> showed up).
-> 
-> So unless there is a real use case that requires tracking whether the file
-> is no longer open, to support modifying the vmcore afterwards, we should
-> keep it simple.
-> 
-> I am not aware of any such cases, and my experiments with virtio_mem showed
-> that the driver get loaded extremely early from the initrd, compared to when
-> we actually start messing with /proc/vmcore from user space.
 
-Hmm, thanks for sharing your thoughts. I personally think if we could,
-we had better make code as robust as possible. Here, since we have
-already integrated the lock with one vmcore_mutex, whether the vmcoredd 
-is added before or after /proc/vmcore opening/closing, it won't harm.
-The benefit is it works well with the current kwown case, virtio-mem 
-probing, makedumpfile running. And it also works well with other
-possible cases, e.g if you doubt virtio-mem dumping and want to debug,
-you set rd.break or take any way to drop into emengency shell of kdump
-kernel, you can play it to poke virtio-mem module again and run makedumpfile
-manually or reversing the order or taking any testing. Then kernel
-implementation should not preset that user space have to run the
-makedumpfile after the much earlier virtio-mem probing. If we implement
-codes according to preset userspace scenario, that limit the future
-adapttion, IMHO.
 
+On 11/23/24 10:01, Miklos Szeredi wrote:
+> On Fri, 22 Nov 2024 at 00:44, Bernd Schubert <bschubert@ddn.com> wrote:
+> 
+>> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+>> index 12ef91d170bb3091ac35a33d2b9dc38330b00948..e459b8134ccb089f971bebf8da1f7fc5199c1271 100644
+>> --- a/fs/fuse/dax.c
+>> +++ b/fs/fuse/dax.c
+>> @@ -237,14 +237,17 @@ static int fuse_send_removemapping(struct inode *inode,
+>>         struct fuse_inode *fi = get_fuse_inode(inode);
+>>         struct fuse_mount *fm = get_fuse_mount(inode);
+>>         FUSE_ARGS(args);
+>> +       struct fuse_zero_in zero_arg;
+> 
+> I'd move this to global scope (i.e. just a single instance for all
+> uses) and rename to zero_header.
+> 
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index fd8898b0c1cca4d117982d5208d78078472b0dfb..6cb45b5332c45f322e9163469ffd114cbc07dc4f 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -1053,6 +1053,19 @@ static int fuse_copy_args(struct fuse_copy_state *cs, unsigned numargs,
+>>
+>>         for (i = 0; !err && i < numargs; i++)  {
+>>                 struct fuse_arg *arg = &args[i];
+>> +
+>> +               /* zero headers */
+>> +               if (arg->size == 0) {
+>> +                       if (WARN_ON_ONCE(i != 0)) {
+>> +                               if (cs->req)
+>> +                                       pr_err_once(
+>> +                                               "fuse: zero size header in opcode %d\n",
+>> +                                               cs->req->in.h.opcode);
+>> +                               return -EINVAL;
+>> +                       }
+> 
+> Just keep the WARN_ON_ONCE() and drop everything else, including
+> return -EINVAL.  The same thing should happen without the arg->size ==
+> 0 check
+
+I have to remove the WARN_ON_ONCE condition altogether, gets triggered by
+/dev/fuse read (i.e. with io-uring being disabled), in generic/062, 
+op code=39 (FUSE_IOCTL).
+Without the pr_err_once() and printing the op code it would have been impossible
+to see which op code that is - the trace does not help here.
+
+
+Thanks,
+Bernd
 
