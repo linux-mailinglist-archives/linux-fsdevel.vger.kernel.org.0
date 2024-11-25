@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-35742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97ADD9D798F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 01:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E539D79A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 02:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE8DEB2225B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 00:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D57C2281E49
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 01:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E967B64A;
-	Mon, 25 Nov 2024 00:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F8A539A;
+	Mon, 25 Nov 2024 01:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BbWtf/l/"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UK/LBF4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055DD4A28
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 00:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431310F9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2024 01:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732496042; cv=none; b=LbxkzHzSe0gFPZdVDZWHyHHRjof7My0kSqaOJwVBj623f6Z6vlTcvl0Enur1Du+eRJzIuz6iwQDeS01HRU/83aNnC3pvcCIUlSI4tGbFAhVtax7kUOZvJRV6wvLvVOjrS+f6meNhX7zDI1EIoQsZzUpVHxJxT7MGzzoAL7bjo2I=
+	t=1732496563; cv=none; b=P2VSGMHM4mlmNlbT/7//jCI6XM2X+iHHQyiDp8YgTQ7zI0n84nkIsUVq1LR0pgaIND/cgRMEjRGCCYV0LvFquijRCgSmeMyoJ2Y/bmCL/MVN3rPFCHOCGgerFbQaPLvESR8bf28s28h2scD1naDqSWC6vqR3YvixiJzaP4zcJ6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732496042; c=relaxed/simple;
-	bh=hV6b252LM7V4424h3/YzSAq24BYPWuAcF95EXgeanbo=;
+	s=arc-20240116; t=1732496563; c=relaxed/simple;
+	bh=XNnjvCac9bWvQR/zH0IRaOUupHheXR6b5klmQQutxzg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LKqFHpopMo+l40jxknKthDIbWAI+Ii6KHr8axkasVw22Av7kCQmfHCB8RtADFWJop0dNP0tbIrbX6maLydpRcQC99EMefdc1dObj6b5vkdK3hZCyTd4Cpof6lozxwRlLEhco5AFma02XWxcOAMogp41y+j2Wutb12O5Sj1Q5qGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BbWtf/l/; arc=none smtp.client-ip=209.85.208.54
+	 To:Cc:Content-Type; b=vDe3jDPqGrfcwGLQFFYzHOWCunEn1KGmP+PNhkpHRIPy9YUKaqIxZzFoHtfDc7pKc9qKoJKE9qeM/Slife2k7M9i+a/NHhDfp6ERUgf46NKk2wbLFQsgI+adEbcBEy7fFaH8tMWg+VDPYgbAvSnfKAamJbhE+R+n6sBbc9rcFTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UK/LBF4d; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso5088600a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 16:54:00 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa549f2fa32so101096666b.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 17:02:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732496039; x=1733100839; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1732496559; x=1733101359; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OaDErhfkpfqjfvyPli0HLvhV5o1yp7FB0uhP3zkxd5U=;
-        b=BbWtf/l/VaR/WxzScIxcK7XBHAstrQB4IL6LqX/H+lPfNuhhj39tLXu+TtZMTAnW65
-         1noc9VZI26WNbspicmtT5UWEAmhpRARgkUizHEvuNJhTtUT7z1ZaLbHZU4vOLFglAN8G
-         zSGjylSKgy6H7/Gw0ONdJ0cetPL8YAq09dwlw=
+        bh=3j9lfAM66cU/k+3UrceC9HJcVhxEaG6X/8s82jLLoQE=;
+        b=UK/LBF4dZJQXD2L6Rl+Imx8RzRQm63d1OYP3wJj+tsk7//+CClvV9h5bjQjAnHIJtO
+         bd8genmCfXhiRvdKJ0W90YE0nTbOMs4I3UGya9nSxYGfITL4E/HEQUzAIL9H30vfzB0l
+         zJ67XXT8psCOSPHpmi1pUlOfB5rf9HLr/PClI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732496039; x=1733100839;
+        d=1e100.net; s=20230601; t=1732496559; x=1733101359;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OaDErhfkpfqjfvyPli0HLvhV5o1yp7FB0uhP3zkxd5U=;
-        b=MPrIgxvrBIwV8wk9Z6OrOHVCXRj7KRWJyymlNmXNNl0i7N9hpNtxgtXyQqPhECaG50
-         J4QQ+CMBvJjZj+oEKPWDA0qZRncZ1AWxOklrwADymF2hAGyKEOP3mwji1JYqktQMerAY
-         oSoclJsP0Z2qafUdbaACg5TNh06a72qCeYReQi1z7YVbuo+AXZNUNEv5GzdwwhX8mXo+
-         tdL+yZCnI6S9cHD9WKn9YYrNf7UNOzww4egHrbAvGusQy20xaxpyoDRpMY/ZA8w2SzJG
-         hVwViQBBSvG0wzUE5gcrlB1Un6Y/HqMwehtdCbXKdNITKXVJSGqZSaj0TPC0XIWjsRgH
-         FI2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXAbimThAvHqHf5pQshxyiyUTI9VO1+treOGxefnoFIoqqV4+KGNa+EmSN73yxyDSX8dGS+HUeHVO/REEzf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTkdDG8+2HNmXwm7YZliLCOE78YQp9hkl6IIcr5gNpCUwtmfNY
-	Uc9XAiZdsWd3EsSeRTc7AatvUCEGMUv6BqLYSd00v2S5RZKgj2teJyxqHptgTiePL/gMrUd9gNy
-	+BIsenw==
-X-Gm-Gg: ASbGncu8E5y7OhaBmIKB9UTm1EjnWyBHUYTs9ChjpSFu4L4jGxrXnA0d+FieypsqEFF
-	EdxYEEGV0boDRnJSU8B5yoFGyeH4nP5pu3hOfAC/grN0nnubyCg0yzTS32Matbr/kZQ6fOoJ0fl
-	qYBSEHyXIlqsYezdA4UfpMn4CXRXhFJWAOP1YLhFExoiKM37CfmS4RKnhjSdtu7N3MSoC3KMjb6
-	yFWnAoH0DAqqpoumvDdX/KiLi69swHj3MP3qpHLBpuv1qgx8tLPI9bZCvp1RRszEO5XrbaLpRBL
-	h/6xJCSQMreJzcBVSH+ValD7
-X-Google-Smtp-Source: AGHT+IHHPpuaDheMry+pYphnLaTAHPDbG0jIwP0tRXtoqvvMzwNaSd8OMsy0WILkaBVjneljMbJSzA==
-X-Received: by 2002:a05:6402:518c:b0:5cf:abbb:5b4a with SMTP id 4fb4d7f45d1cf-5d020688560mr11154636a12.25.1732496039231;
-        Sun, 24 Nov 2024 16:53:59 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a23d7sm3566773a12.9.2024.11.24.16.53.56
+        bh=3j9lfAM66cU/k+3UrceC9HJcVhxEaG6X/8s82jLLoQE=;
+        b=lYtcoDBVAKKSv9Gyr4AvytqTt4OLBEmmO98jtYBaLQ/731C+v1ifoVa84p6uNKeGlz
+         Lsee5YuUcaDNQaUenUkecQlJRGGq0pVLrDL+hCWk4aqD+xJI3935EJOxNQZv0N+dKfeS
+         a2U+w0C3Ss3c6NO667YjZDwdzlgOwac4rfRjBxCagVxR6B1U0WRBfIfqgJCBBSSnA53K
+         poZD3aFaweegCWJ5/rxk0mDm22W466PbYd9azTfszhwf3hnDvSA+JeFpoOpo6Nk5/UH8
+         dn6q7hqmOgK2w9CE8LHYkMSQroVZCCvwc615FQedG3YEAfDwCvUwWUw7S5SwmuHG6N6R
+         YNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV64OByNEBK+ePnZNxuysLGov82a6V0BXEj9lEkBjjIO38MxsRYaQYcxI/WHeyZnqs5+SCxsiX+67PGNlK9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeoWIzzmkLp+vEfGaTMH3+CSIXWl2uZawXjXCloGfCFJmn5Jh4
+	HsslhRU6ujqodElcmptRFo9qU9dG4lL0wN1uk0C4dxs9f649pegpPtzC8vaGi4RNa4c7AEDHq9O
+	BkUFi/A==
+X-Gm-Gg: ASbGnctwx9YHCWAQHQwMe4qrGlLpyRLyH8rmpuVkxq+s8mOeCvk0FYwg3Tb7lIwPatG
+	jxPVUgrUQmbdYx9YSt6mBsM69wNS6j0Xi9rQfxmaamFFcQb4eUYTAjVLKoeSgu9LzEePl85H4MN
+	0ZhhOL9zGl6D7P7jVCkjYhng6JerR4f2Je5plnnglKT9mqF/ansX1x6BRQLS6cNMBzwrFGc9F/A
+	QPSbMyTxXfL/c5qnx5ijyyFl1GtrZTZChCyB37lgTnJgezL869N6prz9Su0trhtBYtIE35CjKNn
+	/14E/RBNVhC4hvxX9Z9UlJmC
+X-Google-Smtp-Source: AGHT+IFlhA7HFZIwrnmD5wMsF4i5esFiuHWv9obcB6kdPqQ03dMJr+QM6gyPlYZ4XGf+kDuXYu9OpA==
+X-Received: by 2002:a17:907:1b27:b0:a9e:c267:78c5 with SMTP id a640c23a62f3a-aa509c00bc8mr1192380666b.55.1732496559286;
+        Sun, 24 Nov 2024 17:02:39 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5be1c4sm398998166b.203.2024.11.24.17.02.37
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 16:53:57 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso5088550a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 16:53:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQgAjVQGLYQ70xhEF/NXb0Iz5DhPau0tKdBoq8wF4Hyd8bIPAOZRE3F0GU5FVHzht3DiZdodqv3XuKFpKP@vger.kernel.org
-X-Received: by 2002:a17:906:1daa:b0:aa5:3853:5531 with SMTP id
- a640c23a62f3a-aa53853579amr504011466b.33.1732496035955; Sun, 24 Nov 2024
- 16:53:55 -0800 (PST)
+        Sun, 24 Nov 2024 17:02:38 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso564380766b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2024 17:02:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWJiwIVDtrIOH+SyeOd03bhCvqUP3Fs3KIrdiOd9nl/MEioDVomRek3exj70pL8SAVnjd39g4VaJiPtTCzV@vger.kernel.org
+X-Received: by 2002:a17:906:3293:b0:aa3:49b6:243 with SMTP id
+ a640c23a62f3a-aa50990b336mr650184166b.9.1732496557620; Sun, 24 Nov 2024
+ 17:02:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,12 +87,13 @@ References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
  <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
  <20241124215014.GA3387508@ZenIV> <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
  <20241124222450.GB3387508@ZenIV> <Z0OqCmbGz0P7hrrA@casper.infradead.org>
- <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com> <Z0O8ZYHI_1KAXSBF@casper.infradead.org>
-In-Reply-To: <Z0O8ZYHI_1KAXSBF@casper.infradead.org>
+ <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com>
+ <Z0O8ZYHI_1KAXSBF@casper.infradead.org> <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 24 Nov 2024 16:53:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
-Message-ID: <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
+Date: Sun, 24 Nov 2024 17:02:21 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgECCWJvNiFURP-jCHFhsYSB3wS5suFLvfMC56OYxFJEg@mail.gmail.com>
+Message-ID: <CAHk-=wgECCWJvNiFURP-jCHFhsYSB3wS5suFLvfMC56OYxFJEg@mail.gmail.com>
 Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
  data race in inode_set_ctime_to_ts)
 To: Matthew Wilcox <willy@infradead.org>
@@ -102,49 +103,36 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>,
 	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 24 Nov 2024 at 15:53, Matthew Wilcox <willy@infradead.org> wrote:
+On Sun, 24 Nov 2024 at 16:53, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> a file time which is newer than the actual time of the file.  I tried
-> to construct an example, and I couldn't.  eg:
->
-> A:      WRITE_ONCE(inode->sec, 5)
-> A:      WRITE_ONCE(inode->nsec, 950)
-> A:      WRITE_ONCE(inode->sec, 6)
-> B:      READ_ONCE(inode->nsec)
-> B:      READ_ONCE(inode->sec)
-> A:      WRITE_ONCE(inode->sec, 170)
-> A:      WRITE_ONCE(inode->sec, 7)
-> A:      WRITE_ONCE(inode->sec, 950)
-> B:      READ_ONCE(inode->nsec)
+> and look how the reader is happy, because it got the same nanoseconds
+> twice. But the reader thinks it had a time of 6.000950, and AT NO
+> POINT was that actually a valid time.
 
-I assume those WRITE_ONCE(170/190) should be nsec.
+And let me clarify again that I don't actually personally think we
+should care deeply about any of this.
 
-Also note that as long as you insist on using READ_ONCE, your example
-is completely bogus due to memory ordering issues. It happens to work
-on x86 where all reads are ordered, but on other architectures you'd
-literally re-order the reads in question completely.
+I think the race is entirely theoretical and doesn't happen in
+practice (regardless of the "re-read nsec", which I don't think
+works), and I don't think anybody cares that deeply about nanoseconds
+anyway.
 
-So assuming we make the read_once be "smp_read_acquire()" to make them
-ordered wrt each other, and make the writes ordered with smp_wmb() or
-smp_store_release(), I think it still can fail.
+The "worst" that would happen is likely that some cache that depended
+on timestamps would get invalidated, there really aren't a ton of
+things that depend on exact time outside of that.
 
-Look, let's write 5.000950, 6.000150 and 7.000950, while there is a
-single reader (and let's assume these are all properly ordered reads
-and writes):
+Also, fixing it with the sequence count should be fairly low-cost, but
+is not entirely free.
 
-  W1.s 5
-  W1.ns 950
-  W2.s 6
-  R.ns (950)
-  R.s (6)
-  W2.ns 150
-  W3.s 7
-  W3.ns 950
-  R.ns (950)
+I wouldn't worry about the writer side, but the reader side ends up
+with a smp_read_acquire() on the first sequence count read, and a
+smp_rmb() before the final sequence count read.
 
-and look how the reader is happy, because it got the same nanoseconds
-twice. But the reader thinks it had a time of 6.000950, and AT NO
-POINT was that actually a valid time.
+That's free on x86 where all reads are ordered (well, "free" - you
+still need to actually do the sequence count read, but it is hopefully
+in the same cacheline as the hot data), but smp_rmb() can be fairly
+expensive on other architectures.
 
-                    Linus
+              Linus
 
