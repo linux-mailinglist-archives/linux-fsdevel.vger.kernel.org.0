@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-35784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDB19D84BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:48:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5746A9D84C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 12:48:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B66286ADF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC64C16A2D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 11:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB05E1B0F29;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBE1B140D;
 	Mon, 25 Nov 2024 11:46:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BEC19CC3C;
-	Mon, 25 Nov 2024 11:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD0A19F115;
+	Mon, 25 Nov 2024 11:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732535196; cv=none; b=KZjEtd18XT4vAvQOJdrkB0+UDweCtCdl0sXjP6pNyyZ5m9+yXr/xniMLb7MfARihPQg0floPu4QhhMdQdm6fDbsFeJfPikCDMkuPuN2FxvaHHDNmPtW+j5BMFCpnxELt16yJ6QzgB/iN2KXFkDwMFmSXaGsfig6OPI2UNBczo30=
+	t=1732535196; cv=none; b=ithBv8Ftos94A4Nx/Bhm88pkUYBPQqEberk2/e5Jvh3KuqU0PlVmYFd8AQXtcG0UKFnqSPC43Re4RhxoWpYyaLYVB2Qb2bInWWPk/+iJXv4G1NvTG4hEuZr5SprE4/U6LBbgkMkHuQWOo2LEUe44Sm9BnV7y8+npxfQuPWH6UtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732535196; c=relaxed/simple;
-	bh=l3E2kS7eB0hLq8m5j7Rz9jHUGZaSwRtqvXsOQM0KZZ4=;
+	bh=pGIoah6WPk88+P50bHQXwujmfYEsPCoQI8QvWd/9/eY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lUsi6nenhPFTxrfq/8GzrLzW6rxA+M8yOBW+cMeYlxHQcd19IXrKwbTbk/kFljFXqM2LwfMTxWghFl+eGvV2qrvidgAuSnNguz3ya6FCdLkm/QSGYCwBj7/ETHlxa1hoIzN2KaA9sB13sSEFG1g8IfczxDyGvNfBYT1l1sfp3Mw=
+	 MIME-Version; b=kGY1dkvA0amTyQtJyEk1BesMzNHAjmiWaorWMMxjpJX0t0vT6hHwnaE6vnTNxpAHUCqdPvM332gT0LS1E/2csc5Ltt8w8AX3qu2aT2P7Pb94OvqCywHo534yr6mmJ1iTwMh35NkHksW30hMAwRSUPr+dt841QY6JxW16dmytjc4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XxkS31PVJz4f3n6H;
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XxkS35Bm9z4f3n6V;
 	Mon, 25 Nov 2024 19:46:11 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CA3421A018D;
-	Mon, 25 Nov 2024 19:46:30 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 59B6D1A058E;
+	Mon, 25 Nov 2024 19:46:31 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4eFY0RnNicrCw--.44046S11;
-	Mon, 25 Nov 2024 19:46:30 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4eFY0RnNicrCw--.44046S12;
+	Mon, 25 Nov 2024 19:46:31 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 7/9] ext4: make the writeback path support large folios
-Date: Mon, 25 Nov 2024 19:44:17 +0800
-Message-ID: <20241125114419.903270-8-yi.zhang@huaweicloud.com>
+Subject: [PATCH 8/9] ext4: make online defragmentation support large folios
+Date: Mon, 25 Nov 2024 19:44:18 +0800
+Message-ID: <20241125114419.903270-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241125114419.903270-1-yi.zhang@huaweicloud.com>
 References: <20241125114419.903270-1-yi.zhang@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4eFY0RnNicrCw--.44046S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr18CrWxJF4fJF1fCw1UGFg_yoW8AFyxpr
-	W5K393CFs7Xr4akrsrtFn8Zr1xKayFgr47GFWxK39xXF15Jr1FkFyUt34vva1rJrZ7Gay8
-	Xr4kCryrWa47AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCHY4eFY0RnNicrCw--.44046S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr1fAryfKrW7WF4kJr13urg_yoW5XFW5pF
+	y7Crn8KrW8Jas3Wws7JF4DZrn5Kas3Wr4UGFWfZr9xZa4jyry0gFy8ta1rAayaqrZ7Ww1F
+	vFWjyrnrX3ZrJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -87,54 +87,64 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-In mpage_map_and_submit_buffers(), the 'lblk' is now aligned to
-PAGE_SIZE. Convert it to be aligned to folio size. Additionally, modify
-the wbc->nr_to_write update to reduce the number of pages in a single
-folio, ensuring that the entire writeback path can support large folios.
+move_extent_per_page() currently assumes that each folio is the size of
+PAGE_SIZE and only copies data for one page. ext4_move_extents() should
+call move_extent_per_page() for each page. To support larger folios,
+simply modify the calculations for the block start and end offsets
+within the folio based on the provided range of 'data_offset_in_page'
+and 'block_len_in_page'. This function will continue to handle PAGE_SIZE
+of data at a time and will not convert this function to manage an entire
+folio. Additionally, we use the source folio to copy data, so it doesn't
+matter if the source and dest folios are different in size.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/ext4/move_extent.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 0ef41e264ee8..c0179b07d753 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1927,7 +1927,7 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
- 		len = size & (len - 1);
- 	err = ext4_bio_write_folio(&mpd->io_submit, folio, len);
- 	if (!err)
--		mpd->wbc->nr_to_write--;
-+		mpd->wbc->nr_to_write -= folio_nr_pages(folio);
- 
- 	return err;
- }
-@@ -2150,7 +2150,6 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
- 
- 	start = mpd->map.m_lblk >> bpp_bits;
- 	end = (mpd->map.m_lblk + mpd->map.m_len - 1) >> bpp_bits;
--	lblk = start << bpp_bits;
- 	pblock = mpd->map.m_pblk;
- 
- 	folio_batch_init(&fbatch);
-@@ -2161,6 +2160,7 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
- 		for (i = 0; i < nr; i++) {
- 			struct folio *folio = fbatch.folios[i];
- 
-+			lblk = folio->index << bpp_bits;
- 			err = mpage_process_folio(mpd, folio, &lblk, &pblock,
- 						 &map_bh);
- 			/*
-@@ -2382,7 +2382,7 @@ static int mpage_journal_page_buffers(handle_t *handle,
- 	size_t len = folio_size(folio);
- 
- 	folio_clear_checked(folio);
--	mpd->wbc->nr_to_write--;
-+	mpd->wbc->nr_to_write -= folio_nr_pages(folio);
- 
- 	if (folio_pos(folio) + len > size &&
- 	    !ext4_verity_in_progress(inode))
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index b64661ea6e0e..ed0b21b2271c 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -269,7 +269,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+ 	unsigned int tmp_data_size, data_size, replaced_size;
+ 	int i, err2, jblocks, retries = 0;
+ 	int replaced_count = 0;
+-	int from = data_offset_in_page << orig_inode->i_blkbits;
++	int from;
+ 	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+ 	struct super_block *sb = orig_inode->i_sb;
+ 	struct buffer_head *bh = NULL;
+@@ -323,11 +323,6 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+ 	 * hold page's lock, if it is still the case data copy is not
+ 	 * necessary, just swap data blocks between orig and donor.
+ 	 */
+-
+-	VM_BUG_ON_FOLIO(folio_test_large(folio[0]), folio[0]);
+-	VM_BUG_ON_FOLIO(folio_test_large(folio[1]), folio[1]);
+-	VM_BUG_ON_FOLIO(folio_nr_pages(folio[0]) != folio_nr_pages(folio[1]), folio[1]);
+-
+ 	if (unwritten) {
+ 		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+ 		/* If any of extents in range became initialized we have to
+@@ -360,6 +355,8 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+ 		goto unlock_folios;
+ 	}
+ data_copy:
++	from = offset_in_folio(folio[0],
++			       orig_blk_offset << orig_inode->i_blkbits);
+ 	*err = mext_page_mkuptodate(folio[0], from, from + replaced_size);
+ 	if (*err)
+ 		goto unlock_folios;
+@@ -390,7 +387,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+ 	if (!bh)
+ 		bh = create_empty_buffers(folio[0],
+ 				1 << orig_inode->i_blkbits, 0);
+-	for (i = 0; i < data_offset_in_page; i++)
++	for (i = 0; i < from >> orig_inode->i_blkbits; i++)
+ 		bh = bh->b_this_page;
+ 	for (i = 0; i < block_len_in_page; i++) {
+ 		*err = ext4_get_block(orig_inode, orig_blk_offset + i, bh, 0);
 -- 
 2.46.1
 
