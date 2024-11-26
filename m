@@ -1,94 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-35883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA859D948C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 10:32:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E92164594
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:32:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B361B87DE;
-	Tue, 26 Nov 2024 09:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H14T9VEu"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326049D94E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 10:52:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD5E194C61;
-	Tue, 26 Nov 2024 09:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E57BB23037
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:33:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AD1BD4F7;
+	Tue, 26 Nov 2024 09:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kRHeVaY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnOK01oO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kRHeVaY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnOK01oO"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A701BCA0D;
+	Tue, 26 Nov 2024 09:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613568; cv=none; b=rRxaesnT3Qzf3rmIGA9jEg7sU+5q7QLC2AZRKE5D2fbAb21tQ2tT1byZAuGE/X9ktbKe9jhM/lWFxVJGMeCrR2kUV2mTpaI4gPLFUo8yfCLOJbiHgG0G01mShmeoyF/hKRNfs5LdVeO5gsN8JhWQnIynPCnQti4LmyuYSn1FtBQ=
+	t=1732613597; cv=none; b=iZqEq5aaUFCqOXZBOOXcALA0EVVlfyc1LzwzFYuIP+T8M3nlFBxfrHtQQt48NnqWlcY5Ph0+o5k2lAAznEEWARLl1aQkkofGJn8alPzUiuojzt4RUt/LAwE4ErCGPzXt1NFdp+YwrMnz1wAkF4dr9/wgpEiMNEUNgO89jyNXS4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613568; c=relaxed/simple;
-	bh=M7GZx/GsHt2BSXXlMMEKaM+QCfTjRb5JF4MRjL1QOQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MOYczGCEIlKL9ZaAD1sYBrjbwcRAebCtpbwl5K3/6MHdTYYCOEFiit1dtkoNnh1GYO1O2RmaWMwBydG+Q+y46AAFmmLP+1mMR3o3nL6Z3a7zOE8xMiazQNOhek/fuMUq5KX4qz2c7rkzlSJroS+0txiKGYeAhzfAvkthn+aEH7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H14T9VEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A075C4CECF;
-	Tue, 26 Nov 2024 09:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732613567;
-	bh=M7GZx/GsHt2BSXXlMMEKaM+QCfTjRb5JF4MRjL1QOQs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H14T9VEuMP1l1i5tDqTGs7fkgNaFW7goKkYHl7ACLQ8BXhOKG57ZZDjiNbVO0Lltx
-	 Fmf9vMOlrDmOHsUed07urt8SbaFS2oJumPEcN5xCwoFaIutAk91OHSIhRNe4uaotJb
-	 gvl2j786+7XEpA1zg3x7xTTHlnvLphR32owaXPIschbdr1FLLd2np72oUyx3R+40c/
-	 lL1U5r5/XUVy2c22NSDqWgHnnqy+zvcWL6VANBE2fSE3tzUmr0jOZVWWiIA5O/NJ6d
-	 iowdSNEHMsUZjnIaXGCzuYcB4REYvaTsYmZR5xqr7n8r6jOchvZWKY32zgrUrx2p2j
-	 lBEaeQCgmvOXA==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Sandeen <sandeen@redhat.com>,
-	David Howells <dhowells@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs_parser: update mount_api doc to match function signature
-Date: Tue, 26 Nov 2024 10:32:37 +0100
-Message-ID: <20241126-zahnmedizin-abwerben-bdbb0f91b373@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241125215021.231758-1-rdunlap@infradead.org>
-References: <20241125215021.231758-1-rdunlap@infradead.org>
+	s=arc-20240116; t=1732613597; c=relaxed/simple;
+	bh=Wbc0vvzr9PT5ZxEVvtI2ydNZZVXz5EN4F+RXZpsUZiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/tevB/t+SLKvoO0z2bMcstRUJUkEIlfWMUM30W97ay2fjUJpJ5CBv7HwLpiIDEUBxz61EMp15s7RQFD1genAYpmWsy0PKDEVAynzolvq5Cp7TI6PazCStc0mUlzY6NDAlMgYnKBOSFCweyQk0tKtJlwBzKCYo0TD+f3oFsYx+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kRHeVaY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnOK01oO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kRHeVaY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnOK01oO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DF981F45E;
+	Tue, 26 Nov 2024 09:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732613593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=0kRHeVaYBbzOAlXngQITnQbd3EdoBXaP+A0ortzEHiGZlcUb3Q/IRKY71ovjITR2kM2v1U
+	4voQw7C+mIwmqCwmkWDZgd/4vCOQWacu7lyU0ikpeiVe682VuPhy4AKR1MeCcQBvoQoves
+	ut2L4xNWMxzL4NkVOp2bP3ckv51YNwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732613593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=UnOK01oOMUBomYCFcj9NdcCrUb1m87naRo1+/JsfWUI76dE+LlwKt3TpnPa2yhlV08xajn
+	vl+v+IUMuNGfEDAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732613593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=0kRHeVaYBbzOAlXngQITnQbd3EdoBXaP+A0ortzEHiGZlcUb3Q/IRKY71ovjITR2kM2v1U
+	4voQw7C+mIwmqCwmkWDZgd/4vCOQWacu7lyU0ikpeiVe682VuPhy4AKR1MeCcQBvoQoves
+	ut2L4xNWMxzL4NkVOp2bP3ckv51YNwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732613593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=UnOK01oOMUBomYCFcj9NdcCrUb1m87naRo1+/JsfWUI76dE+LlwKt3TpnPa2yhlV08xajn
+	vl+v+IUMuNGfEDAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DD9013890;
+	Tue, 26 Nov 2024 09:33:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZYOOItmVRWeLCAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 09:33:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3CCD8A08CA; Tue, 26 Nov 2024 10:33:13 +0100 (CET)
+Date: Tue, 26 Nov 2024 10:33:13 +0100
+From: Jan Kara <jack@suse.cz>
+To: Leo Stone <leocstone@gmail.com>
+Cc: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
+	brauner@kernel.org, quic_jjohnson@quicinc.com, jack@suse.cz,
+	viro@zeniv.linux.org.uk, sandeen@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, shuah@kernel.org,
+	anupnewsmail@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] hfs: Sanity check the root record
+Message-ID: <20241126093313.2t7nu67e6cjvbe7b@quack3>
+References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+ <20241123194949.9243-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=940; i=brauner@kernel.org; h=from:subject:message-id; bh=M7GZx/GsHt2BSXXlMMEKaM+QCfTjRb5JF4MRjL1QOQs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7Tt1+d7N25rnGOJ8zz1zWP52+5IzV2w0pF+7Vpxw/c O7ZeomXpztKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmst+IkeH2dx42EbVflftv vY5qiVBx//1zx9uw95d/SvHFmV65Eb6X4X9JzNHrPDZhDx/9EE71l2ed+1duw+LL/bxmPBw6N94 sa+UHAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123194949.9243-1-leocstone@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[2db3c7526ba68f4ea776];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,kernel.org,quicinc.com,suse.cz,zeniv.linux.org.uk,redhat.com,vger.kernel.org,googlegroups.com,gmail.com,lists.linuxfoundation.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-On Mon, 25 Nov 2024 13:50:21 -0800, Randy Dunlap wrote:
-> Add the missing 'name' parameter to the mount_api documentation for
-> fs_validate_description().
+On Sat 23-11-24 11:49:47, Leo Stone wrote:
+> In the syzbot reproducer, the hfs_cat_rec for the root dir has type
+> HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
+> This indicates it should be used as an hfs_cat_file, which is 102 bytes.
+> Only the first 70 bytes of that struct are initialized, however,
+> because the entrylength passed into hfs_bnode_read() is still the length of
+> a directory record. This causes uninitialized values to be used later on,
+> when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
 > 
+> Add a check to make sure the retrieved record has the correct type
+> for the root directory (HFS_CDR_DIR).
+
+This certainly won't hurt but shouldn't we also add some stricter checks
+for entry length so that we know we've loaded enough data to have full info
+about the root dir?
+
+								Honza
+
 > 
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs_parser: update mount_api doc to match function signature
-      https://git.kernel.org/vfs/vfs/c/c66f759832a8
+> Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
+> Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> ---
+>  fs/hfs/super.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index 3bee9b5dba5e..02d78992eefd 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -354,6 +354,8 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  			goto bail_hfs_find;
+>  		}
+>  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> +		if (rec.type != HFS_CDR_DIR)
+> +			res = -EIO;
+>  	}
+>  	if (res)
+>  		goto bail_hfs_find;
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
