@@ -1,311 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-35885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C169B9D9511
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 11:03:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7D79D94F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 10:57:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79234164C5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:57:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5651BD9DC;
+	Tue, 26 Nov 2024 09:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivdsSqOk"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C03FDB278B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:47:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D7F1BD517;
-	Tue, 26 Nov 2024 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKPkOQvE"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBC15C96;
-	Tue, 26 Nov 2024 09:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB81A3042;
+	Tue, 26 Nov 2024 09:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732614468; cv=none; b=KIyyN/Yf3KM9udsPduXJ9fFDN3/+lTkzqzwGbsjyZgtGMZojF0Kw7Fr0rtj6C/FO1J77I5Sq6UqA0zeop1iavxbYepCBGzuxnyozFNBND2Cb4rc4VjosGhOiYcl6dw2k70yT5eW+xvONlmEK4yBL5ivozQ7KVhSumhfAd3KnyCw=
+	t=1732615065; cv=none; b=YOGS+AL7IVPHXy0kZyAw2uuFuPQvvDqJuGwtfzqcbf4EfjYj3ETHH6M/dXCLE3VAWuN54fL80LX6kygaGGifm93vB9cyfzQhq5oIKR34SeDci7qi3l25FTjUUiCQHTSGUllmjJ72und42gnwCIHku4E22w5C47WeX4Pykz/IfcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732614468; c=relaxed/simple;
-	bh=jC8gFsCCu/uZr3NUk3rOeyEFSgWSWYf9yt31kUIDsr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K1v1+x5isT7FiIx99y0DT53JfObj14+lgotuODTF6l14vG0r4UcG4ZqvC10jBIcCqPv7emU6kZXm3n09YVBhgDJFZC57H2tNjuTDCOkIbfuQgVXoLGpHa1JrzMD3MwEhTIgXDquacLxDh6ZiEAJfRUixylKcoZLCBST8rA1pJz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKPkOQvE; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53dede30436so256130e87.2;
-        Tue, 26 Nov 2024 01:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732614464; x=1733219264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQGkwLaBoqeNnLkNbHsiFkTqZPYYIv864btvDKK2Uw0=;
-        b=AKPkOQvEJh70nm2wY4eoT9/EtgklL54NKmoKLrcVD8LA/WkwJf01xqCBlknRA2MlcF
-         eQ6X5W4Gq+4YoI7PPD4Yp8qXCr+h3OzCYrvH5jnvBWUR9GkMVYUXEzL9NIsT34O4D/OU
-         DzE7us+QUpYeVRYHVQlS7rsQqHW3JCIF2zRJt5qoWqc2v7rnBttZCrOxc/4jxKRQKIwn
-         1Nksf/R3aSRatVRm5bc09hb2rxjrm8nq0nROqqEpLS9vLcLtH7n+VWDBckavboIt5Ic/
-         PQrUIfMCt2Z78xpHIyAhmDVJd4OliPLdigt4hXRuj1PZtxitfWOBCzEiUp66K3KAqxMd
-         TsIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732614464; x=1733219264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZQGkwLaBoqeNnLkNbHsiFkTqZPYYIv864btvDKK2Uw0=;
-        b=up9gBY6QnGM0dzmApd7uF84dtM5Cb/QQnM5UOPe3s167qNpQvYcMeGCYnyJXUcvTIl
-         4KXwLdFZISeqOuhBZTRZOYWswEHZEsIgoozcX2U3QlRtIrqXHIYnggTD7yNKQvatpokc
-         05G/B+oM7FAeW+XXtsfRUqPqjMAOWItMAfKxGMfBmIBMDCg4Kpw4OpEcnQbSVCSVxbEM
-         ZOk77Q4SbAmF+EUbua9bxu3wGDSONk8/wOyeLkRFPjAiJ0fkVqbcwwOSMZJud9vQvAL7
-         ksdqwkotu9QFYkXM/LyaBxYPhVfWq8WRWhH2fzIkgHl2xMIqiQSTqoFn9wEUl2VhyN3I
-         6WfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7pO0ZjUgHGFmMkr7GAS33vzJtKDyMIlas87KllcDpHv3zxP/EyuJzwImlnXyviryszcwxayimPRLO2dBgsg==@vger.kernel.org, AJvYcCX4ax0Q4b3u/xxctnGfI0+3uV+N8hauVah8XBF7DY8em/wntCDh4H6uM0FQnzrv5Hi4sTiYjti7vnXTrTue@vger.kernel.org, AJvYcCXZwtEnVQreDSy8j2AWUCuT0szCmAKHG9+iuyJ7NXh1+dOLyg0HhYf53mZ/iQzs65zPTv0I4GvdGzHRxgF1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfDXFY7RjxmYNd9/qCP0zV0YiNNOGdkHkOvwv5526fta1WPNL
-	UdKjQy1i2YV4IlymcxwXsu9rI+8a0Uyr5cR2Ws5cNXUnKOKFHDfTpQ1m7XdX7I4CDfeHLMUZXTA
-	egxVVbFX+xTFylaRe+0S5vHqe95c=
-X-Gm-Gg: ASbGncsPWv2pblBGK6fAXouG7EWSZx9JVxgpSY4q8yJtlxIWMrLmVhs7Oo+FABz9DWe
-	YDg5iYOiQFcPPT7+M5vevj+lMSIYVS9M=
-X-Google-Smtp-Source: AGHT+IGLWOWAJahf/CPPIkfrPTt2Tsmp7VmGgd0e4lBS0MKYAvNP3gRNBupDVLGuY4TMyEYStWhW3Mvh+9BH736FKZw=
-X-Received: by 2002:a05:6512:2382:b0:539:e85f:ba98 with SMTP id
- 2adb3069b0e04-53dd3babe78mr7220370e87.56.1732614463880; Tue, 26 Nov 2024
- 01:47:43 -0800 (PST)
+	s=arc-20240116; t=1732615065; c=relaxed/simple;
+	bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ohmnol0cHKf3xzriGIw8u0G4MaBxUEJ3mm8FWIr3An5FhwojDnk9quFColyvJ2UL46ckVsRVBCVTab1HO1WVCm3ELT72VWaxAiMHg2ldwWUvCubTD88SQFYSbwoPyNmMo6V/3q9sIOQwG6R9l97vYocvQdld+vK/Lr46aAguDlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivdsSqOk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498D5C4CED2;
+	Tue, 26 Nov 2024 09:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732615065;
+	bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ivdsSqOky2Zy6omW/jxIhPasjEkBEw+VS1nY9KjMyUXbob2KHuXDzcMf/2RY59p1i
+	 HTXTUqmmPmCmhuLNmh6wc4+JMNQETDdw7S/k0ZJecPxOCjHVOqiF+0Q+5GNFsAJgfz
+	 mFB0S6787IxHGCwwKTUcGQstVm52xvUDPLsyE2P5htLDVqO7KoX2qrPJTqesHXejj/
+	 9PLawAeW/Oms4X9L3ofnDiulHCcmJOmopIUiylKnkGI9RTCZLdB0ofPRKezehKI2Uk
+	 SLKmmzxOW7cgNlusy75UfjdnfH27rM3PhCx7Tj384PONgppNEg9aiSyhd25rXLbFc+
+	 266/Muf2ItRBA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/29] cred: rework {override,revert}_creds()
+Date: Tue, 26 Nov 2024 10:57:23 +0100
+Message-ID: <20241126-bedarf-klonen-fa5955090f83@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
+References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com>
- <20241106-mehrzahl-bezaubern-109237c971e3@brauner> <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
- <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
- <20241106.141100-patchy.noises.kissable.cannons-37UAyhH88iH@cyphar.com>
- <j7ngxuxqdwrq5o6zi2hmt3zfmh6s5mzrlvwjw6snqbv5oc5ggo@nqpr6wjec7go> <20241126.065751-glad.dagger.vile.lyrics-RJ5aGOKAtri@cyphar.com>
-In-Reply-To: <20241126.065751-glad.dagger.vile.lyrics-RJ5aGOKAtri@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 26 Nov 2024 10:47:32 +0100
-Message-ID: <CAOQ4uxj_jY36nJ9eTVv5VomSp+ne_yif-6JPZcQB1nXDdRC02w@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: port all superblock creation logging to fsopen logs
-To: Aleksa Sarai <cyphar@cyphar.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4590; i=brauner@kernel.org; h=from:subject:message-id; bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7zu43UPRby77Zk9Xnn1S9rn+D5eZlhjUT6+t8TS++8 trwVe9SRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQ+HGNkuH8yaNnn0EXJHh/N N+zZX7vEReB5MlPPwj2bulVajrQcdmdk+MoU2bF/XnXV+xqeyakOt/jbr62959051fniS3Vj1bu qPAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 8:25=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> wr=
-ote:
->
-> On 2024-11-13, Karel Zak <kzak@redhat.com> wrote:
-> > On Thu, Nov 07, 2024 at 02:09:19AM GMT, Aleksa Sarai wrote:
-> > > On 2024-11-06, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > On Wed, Nov 6, 2024 at 12:00=E2=80=AFPM Amir Goldstein <amir73il@gm=
-ail.com> wrote:
-> > > > >
-> > > > > On Wed, Nov 6, 2024 at 10:59=E2=80=AFAM Christian Brauner <braune=
-r@kernel.org> wrote:
-> > > > > >
-> > > > > > On Wed, Nov 06, 2024 at 02:09:58PM +1100, Aleksa Sarai wrote:
-> > > > > > > overlayfs helpfully provides a lot of of information when set=
-ting up a
-> > > > > > > mount, but unfortunately when using the fsopen(2) API, a lot =
-of this
-> > > > > > > information is mixed in with the general kernel log.
-> > > > > > >
-> > > > > > > In addition, some of the logs can become a source of spam if =
-programs
-> > > > > > > are creating many internal overlayfs mounts (in runc we use a=
-n internal
-> > > > > > > overlayfs mount to protect the runc binary against container =
-breakout
-> > > > > > > attacks like CVE-2019-5736, and xino_auto=3Don caused a lot o=
-f spam in
-> > > > > > > dmesg because we didn't explicitly disable xino[1]).
-> > > > > > >
-> > > > > > > By logging to the fs_context, userspace can get more accurate
-> > > > > > > information when using fsopen(2) and there is less dmesg spam=
- for
-> > > > > > > systems where a lot of programs are using fsopen("overlay"). =
-Legacy
-> > > > > > > mount(2) users will still see the same errors in dmesg as the=
-y did
-> > > > > > > before (though the prefix of the log messages will now be "ov=
-erlay"
-> > > > > > > rather than "overlayfs").
-> > > > >
-> > > > > I am not sure about the level of risk in this format change.
-> > > > > Miklos, WDYT?
-> > > > >
-> > > > > > >
-> > > > > > > [1]: https://bbs.archlinux.org/viewtopic.php?pid=3D2206551
-> > > > > > >
-> > > > > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > > > > ---
-> > > > > >
-> > > > > > To me this sounds inherently useful! So I'm all for it.
-> > > > > >
-> > > > >
-> > > > > [CC: Karel]
-> > > > >
-> > > > > I am quite concerned about this.
-> > > > > I have a memory that Christian suggested to make this change back=
- in
-> > > > > the original conversion to new mount API, but back then mount too=
-l
-> > > > > did not print out the errors to users properly and even if it doe=
-s
-> > > > > print out errors, some script could very well be ignoring them.
-> > >
-> > > I think Christian mentioned this at LSF/MM (or maybe LPC), but it see=
-ms
-> > > that util-linux does provide the log information now in the case of
-> > > fsconfig(2) errors:
-> > >
-> > >     % strace -e fsopen,fsconfig mount -t overlay -o userxattr=3Dstr x=
- /tmp/a
-> > >     fsopen("overlay", FSOPEN_CLOEXEC)       =3D 3
-> > >     fsconfig(3, FSCONFIG_SET_STRING, "source", "foo", 0) =3D 0
-> > >     fsconfig(3, FSCONFIG_SET_STRING, "userxattr", "str", 0) =3D -1 EI=
-NVAL (Invalid argument)
-> > >     mount: /tmp/a: fsconfig system call failed: overlay: Unexpected v=
-alue for 'userxattr'.
-> > >                dmesg(1) may have more information after failed mount =
-system call.
-> > >
-> > > (Using the current HEAD of util-linux -- openSUSE's util-linux isn't
-> > > compiled with support for fsopen apparently.)
-> >
-> > After failed mount-related syscalls, libmount reads messages prefixed
-> > with "e " from the file descriptor created by fdopen(). These messages
-> > are later printed by mount(8).
-> >
-> > mount(8) or libmount does not read anything from kmesg.
-> >
-> > > However, it doesn't output any of the info-level ancillary
-> > > information if there were no errors.
-> >
-> > This is the expected default behavior. mount(8) does not print any
-> > additional information.
-> >
-> > We can enhance libmount to read and print other messages on stdout if
-> > requested by the user. For example, the mount(8) command has a
-> > --verbose option that is currently only used by some /sbin/mount.<type>
-> > helpers, but not by mount(8) itself. We can improve this and use it in
-> > libmount to read and print info-level messages.
-> >
-> > I can prepare a libmount/mount(8) patch for this.
->
-> This sounds like a good idea to me.
->
-> > > So there will definitely be some loss of
-> > > information for pr_* logs that don't cause an actual error (which is =
-a
-> > > little unfortunate, since that is the exact dmesg spam that caused me=
- to
-> > > write this patch).
-> > >
-> > > I could take a look at sending a patch to get libmount to output that
-> > > information, but that won't help with the immediate issue, and this
-> > > doesn't help with the possible concern with some script that scrapes
-> > > dmesg. (Though I think it goes without saying that such scripts are k=
-ind
-> > > of broken by design -- since unprivileged users can create overlayfs
-> > > mounts and thus spam the kernel log with any message, there is no
-> > > practical way for a script to correctly get the right log information
-> > > without using the new mount API's logging facilities.)
-> >
-> > > I can adjust this patch to only include the log+return-an-error cases=
-,
-> > > but that doesn't really address your primary concern, I guess.
-> > >
-> > > > > My strong feeling is that suppressing legacy errors to kmsg shoul=
-d be opt-in
-> > > > > via the new mount API and that it should not be the default for l=
-ibmount.
-> > > > > IMO, it is certainly NOT enough that new mount API is used by use=
-rspace
-> > > > > as an indication for the kernel to suppress errors to kmsg.
-> >
-> > For me, it seems like we are mixing two things together.
-> >
-> > kmesg is a *log*, and tools like systemd read and save it. It is used
-> > for later issue debugging or by log analyzers. This means that all
-> > relevant information should be included.
-> >
-> > The stderr/stdout output from tools such as mount(8) is simply
-> > feedback for users or scripts, and informational messages are just
-> > hints. They should not be considered a replacement for system logging
-> > facilities. The same applies to messages read from the new mount API;
-> > they should not be a replacement for system logs.
-> >
-> > In my opinion, it is acceptable to suppress optional and unimportant
-> > messages and not save them into kmesg. However, all other relevant
-> > messages should be included regardless of the tool or API being used.
->
-> For warning or error messages, this makes sense -- though I think the
-> "least spammy" option would be that the logs are output to kmesg if
-> userspace closes the fscontext fd without reading the logs. That should
-> catch programs that miss log information, without affecting programs
-> that do read the logs (and do whatever they feel is appropriate with
-> them). That would be some reasonable default behaviour, and users could
-> explicitly opt into a verbose mode.
->
-> For informational or debug messages, I feel that the default should be
-> that we want to avoid outputting to kmesg when using the new mount API
-> since the information is non-critical and the only way of associating
-> the information is using the fscontext log. But if we had this "only log
-> on close if not read" behaviour, I think having the same behaviour for
-> all log messages would still work and would be more consistent.
->
-> > Additionally, it should be noted that mount(8)/libmount is only a
-> > userspace tool and is not necessary for mounting filesystems. The
-> > kernel should not rely on libmount behavior; there are other tools
-> > available such as busybox.
->
-> Sure, but by switching to the new mount API you are buying into
-> different behaviour for error logs (if only for the generic VFS ones),
-> regardless of what kind of program you are.
->
-> > > I can see an argument for some kind of MS_SILENT analogue for
-> > > fsconfig(), though it will make the spam problem worse until programs
-> > > migrate to setting this new flag.
-> >
-> > Yes, the ideal solution would be to have mount options that can
-> > control this behavior. This would allow users to have control over it
-> > and save their settings to fstab, as well as keep it specific to the
-> > mount node.
-> >
-> > > Also, as this is already an issue ever since libmount added support f=
-or
-> > > the new API (so since 2.39 I believe?), I think it would make just as
-> > > much sense for this flag to be opt-in -- so libmount could set the
-> > > "verbose" or "kmsglog" flag by default but most normal programs would
-> > > not get the spammy behaviour by default.
+On Mon, 25 Nov 2024 15:09:56 +0100, Christian Brauner wrote:
+> For the v6.13 cycle we switched overlayfs to a variant of
+> override_creds() that doesn't take an extra reference. To this end I
+> suggested introducing {override,revert}_creds_light() which overlayfs
+> could use.
+> 
+> This seems to work rather well. This series follow Linus advice and
+> unifies the separate helpers and simply makes {override,revert}_creds()
+> do what {override,revert}_creds_light() currently does. Caller's that
+> really need the extra reference count can take it manually.
+> 
+> [...]
 
-The "spammy" behavior is the legacy behavior, so we do not want to
-regress it without opt-in unless there is a good reason to do it.
-I may be slow, but I did not catch what that good reason is.
+Applied to the kernel.cred branch of the vfs/vfs.git tree.
+Patches in the kernel.cred branch should appear in linux-next soon.
 
-> >
-> > I prefer if the default behavior is defined by the kernel, rather than
-> > by userspace tools like libmount. If we were to automatically add any
-> > mount options through libmount, it would make it difficult to coexist
-> > with settings in fstab, etc. It's always better to have transparency
-> > and avoid any hidden factors in the process.
->
-> Right, my suggestion was that verbose should be opt-in precisely because
-> wanting to output to kmesg when using the new mount API is something
-> that only really makes sense for libmount and similar tools and so
-> should be opt-in rather than opt-out.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-My point was that kernel does not know which libmount version is used
-and there are clearly libmount versions out in the wild, that will remain
-out in the wild which by default, do not output all the legacy messages
-that are currently printed to kmsg.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-So I'm sorry, but I don't buy the argument for making the kernel default
-behavior silence those messages.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Maybe I have a misconception about how useful those messages are.
-I would love Miklos to chime in if he has an opinion.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: kernel.cred
 
-Thanks,
-Amir.
+[01/29] tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
+        https://git.kernel.org/vfs/vfs/c/166096e12ea2
+[02/29] cred: return old creds from revert_creds_light()
+        https://git.kernel.org/vfs/vfs/c/0f8b3bd1b3cc
+[03/29] tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
+        https://git.kernel.org/vfs/vfs/c/eb194f385c7a
+[04/29] cred: remove old {override,revert}_creds() helpers
+        https://git.kernel.org/vfs/vfs/c/eeb9c41696a9
+[05/29] tree-wide: s/override_creds_light()/override_creds()/g
+        https://git.kernel.org/vfs/vfs/c/8b9b75bc7a7f
+[06/29] tree-wide: s/revert_creds_light()/revert_creds()/g
+        https://git.kernel.org/vfs/vfs/c/5e0c1ca92141
+[07/29] firmware: avoid pointless reference count bump
+        https://git.kernel.org/vfs/vfs/c/0fc8b46c9698
+[08/29] sev-dev: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/6fb26cb0712b
+[09/29] target_core_configfs: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/2a7cf8f44396
+[10/29] aio: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/01d3402ff15e
+[11/29] binfmt_misc: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/0d80b0eeca95
+[12/29] coredump: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/1c51da6bee5b
+[13/29] nfs/localio: avoid pointless cred reference count bumps
+        https://git.kernel.org/vfs/vfs/c/b5c4d8852ca4
+[14/29] nfs/nfs4idmap: avoid pointless reference count bump
+        https://git.kernel.org/vfs/vfs/c/5549222d7969
+[15/29] nfs/nfs4recover: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/95c7b08dc110
+[16/29] nfsfh: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/9b7d4076e164
+[17/29] open: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/a58084535085
+[18/29] ovl: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/70545c2bb39e
+[19/29] cifs: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/2225ba3d36a0
+[20/29] cifs: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/2225ba3d36a0
+[21/29] smb: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/55545232890f
+[22/29] io_uring: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/bf8820866809
+[23/29] acct: avoid pointless reference count bump
+        https://git.kernel.org/vfs/vfs/c/11c99d734a22
+[24/29] cgroup: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/f9844cf85703
+[25/29] trace: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/5f10fe797c1d
+[26/29] dns_resolver: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/97f0beb2aa35
+[27/29] cachefiles: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/b25b2b31265a
+[28/29] nfsd: avoid pointless cred reference count bump
+        https://git.kernel.org/vfs/vfs/c/c45990a2e032
+[29/29] cred: remove unused get_new_cred()
+        https://git.kernel.org/vfs/vfs/c/d9bf032c76d9
 
