@@ -1,216 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-35908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1179D9878
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 14:24:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E341B9D98DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 14:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5F328412E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:24:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A903B22737
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987371D5140;
-	Tue, 26 Nov 2024 13:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871841CEE96;
+	Tue, 26 Nov 2024 13:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CE6yAvfP"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="m3fyimUG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219F6522F;
-	Tue, 26 Nov 2024 13:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F24D193408
+	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 13:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627451; cv=none; b=fRlQI0UaNrk2bvVXtH+/s1XJFedT5HKzYSTB/9svG3D1KtajPo1B0T8SCJtHbeMxbKD9D/7/EZgEXmowSc9ArpkraKwer0U0DN9IgEiK1jegskMGRGw8I/PqxApcqtkKfP6mZhsiGaxo/AG9dNsGH0kfI4beZ9DVPATqp98Vri4=
+	t=1732629048; cv=none; b=ZoTOxklp4XJHrBdHYpk54hGBMptAip8+V0f7gFHePU4MP0dK88nDnP/9X+QfQjE5m937j0ithOSTSsyoOSnAFhtTcbwIoW62XR0kvCtGJHAPYr20BUqwgk2Ba4wVKHcD8CYSGEr+czfedJhUtpVKKo71Xz2cp0SPMRDp5kTMSRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627451; c=relaxed/simple;
-	bh=iHYB7EKOxgthbbmnUN0jsVW2puY2PEYcKryO0GjDGFE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=luw/TG56yPwIc6PEKylNysjKa/YlgO3IHmJOTxJfUN+CYz7Eqyv0XRr2wCjI/WgzswJYSlAcZ3msxjzHDGAZI3CCtuBanc1Gq8AymVSVcU9vArLNJmRSNeK065EDb2LXw2XxGvaB83WtcJLUwhyCeJ6HPUjLJCBj+ElGo61SUdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CE6yAvfP; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da353eb2eso8747230e87.3;
-        Tue, 26 Nov 2024 05:24:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732627447; x=1733232247; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q1iBvzimN1iv1fee77YElBhVaU2CCj11UuGl0oezYDc=;
-        b=CE6yAvfPv24+sVn9wI1ku/V3hr+jGZTiqBEVj2uwzDB15THZdYTwASTAGiTWkLzSHJ
-         y1DDs7r8Zgu6x+HLxPSTGmwNMt1QPGiJWK9YuIVfh+yRWD21cKYutpClqrhjZgBxuqCs
-         jnk7SMmXhPC/5yuQS1PAwXUS0pNodr4dt7bVrJQQq0zHggFok9ZBngrawEm8aSWRX9p7
-         9496pjrOt3fPpQC+z/A+3cGYkTQrUl3tfmcg+Xn66NdjMXNyzEeY9/VbPA/gzd7lVMg4
-         VX8IuagqcvJQ0+a2iVPQOr8iuuB3OAT/0raP4EKvMh4XJfJeTUm8L2OaLGP2btrgxWIq
-         y5dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732627447; x=1733232247;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q1iBvzimN1iv1fee77YElBhVaU2CCj11UuGl0oezYDc=;
-        b=RnAIssaX5voxFpytEzM25zbYq986CDXXG1GEbzBD+TRPhcTlAEVRnByH+kqtSdRO3k
-         dWl6XICN+HncMAyJsNXh53C8Ejp52E3nMWjLZsDGug1z5RUqeZ6Io3rpZYNhJxVr3OP1
-         zG1MjWXzODJnAEK64HzqAYIgxc/8soJRPbnfRLy9JK70iWzJ0ALIGGyTyAxtyFMH/AGF
-         Qptv8znKsmqa79B7V0GbYpHgoQ17+Yhk93IuaSch8QqTkJBwF3E/R4/11GcFs2++WcHD
-         GuE2vQ+NTI2LT8+yZVSA6Cvto5WoMJUvJ5dsnZQHs8xu+McRKO7GjtA75yntBvv9nWIw
-         F8rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlDujBolR9hmsk/cSgqYVxDXu6S95WHa/lnwI0COfe8p1/1zGCCjjoaDUDZUTGxShU9khtIknZaTY07vFv@vger.kernel.org, AJvYcCX4ko8auY+psoRLquVvOd3YDnqR3Yvdf1Ru+NXURArspgrFDnL5GsDjZat9VGCnxjCI3m9kE3uFb0cCh7uf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkaYSdhHLdYsZWf2w75H2LApBvrRrHtmCktAqnDAXvOV+O5Xwl
-	a1+besjt3J6nMPvyRVcp0fo+4DQAOtnn0L7I9UsROhTef6BUY74M
-X-Gm-Gg: ASbGncuGbV2Uvb80hxIm5of2LDgDGj7mEgGw3A7U+lcWWhR5u4UndDdctfqZQe/UsbB
-	Jwd636aFLx/gtW/geGywmJJ8uxpVhvpKynl5g/9VFR4Rb7NUFLgCK/Vm3LYOyCSTHcTKqJM01YQ
-	lfV7M2wHaoIeRF+8nXEMIxZEbMN5GBE+GAY2PRX42I+tihRKR+U3WRaO9g7FgGSQAxOJS3++NC2
-	S7c1NXvzbH90uwW8Ry5ktYUiAYALd5I8WqoP0Hx/M+EntwqivvJvLvQwLyuALHkoIdDQQoAT/Op
-	dGZixvIM
-X-Google-Smtp-Source: AGHT+IEob9+z/w1hvogkiR/Kp//LkJYdHtQ9ArarJa3hPnE5n/peMRVpRUWIrYf7qSruTyw0ncGebA==
-X-Received: by 2002:a05:6512:2203:b0:53d:e592:5415 with SMTP id 2adb3069b0e04-53de5926f10mr5468823e87.34.1732627446804;
-        Tue, 26 Nov 2024 05:24:06 -0800 (PST)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53ddb348709sm1543432e87.100.2024.11.26.05.24.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 05:24:06 -0800 (PST)
-Message-ID: <fc8fca1c-d03e-4b11-84f4-5e7560086e42@gmail.com>
-Date: Tue, 26 Nov 2024 14:24:05 +0100
+	s=arc-20240116; t=1732629048; c=relaxed/simple;
+	bh=rHa2Pkh7li/QGEhGcNYZNveFmh5qRI5DCHiWMi+k3g8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=glxriliTVzdIo1R2q4SW1piYOXNNQl7G5H9zA322897sgA5oKMZrUNidqvNe9gL3EyajaTgjlxb31uSfA0VqU17WL0gekj39y+EhuQPybaa0kIk+NdEA7sKCIU4jL4Sg7wI2In2LqfY0eW9hPCFGaUdFnQ9Ds+EDXCQS+Sn/g6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=m3fyimUG; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=rHa2Pkh7li/QGEhGcNYZNveFmh5qRI5DCHiWMi+k3g8=;
+	t=1732629046; x=1733838646; b=m3fyimUGdmhmwFcydwceorK7Kd6u+aR3lJyiMANlTcCiDLd
+	H3FGJmNWFJXJ2nYoh4uwGEK0/hQn2ouG5fw3pFm1dxREXTvGAx5NttgtbBwbgRN30RNXd0U1gBee6
+	gAdPqNPe4IyKM/bVoshZ0VLZwmbUrMyhoX8EQoGRbO1UnTIikX8DUuPsYB9g/HXuQbA8nyRR8yfM9
+	3pJApPkMCizYqtZ7+HYazsAXcmojUG2vLmq7hQ8MVSdbxuzDlzl/BgUvsWvWa/6/hLfvwmHFsWbba
+	fwTjtgmyi+nqNQXQUU/2BYddFALNRnfkN3x6xDOq8whJcKMUecvLAbPzIAqWPOlw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tFvxe-0000000FT0O-3euF;
+	Tue, 26 Nov 2024 14:50:39 +0100
+Message-ID: <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
+Subject: Re: UML mount failure with Linux 6.11
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Karel Zak <kzak@redhat.com>, Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org, Christian
+ Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>,
+ rrs@debian.org
+Date: Tue, 26 Nov 2024 14:50:38 +0100
+In-Reply-To: <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
+References: <093e261c859cf20eecb04597dc3fd8f168402b5a.camel@debian.org>
+	 <3acd79d1111a845aed34ed283f278423d0015be3.camel@sipsolutions.net>
+	 <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+	 <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+	 <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+	 <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+	 <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+	 <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+	 <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
+	 <3d5e772c-7f13-4557-82ff-73e29a501466@huawei.com>
+	 <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-From: Anders Blomdell <anders.blomdell@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Philippe Troin <phil@fifi.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
-Content-Language: en-US
-In-Reply-To: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
+
+On Mon, 2024-11-25 at 18:43 +0100, Karel Zak wrote:
+>=20
+> The long-term solution would be to clean up hostfs and use named
+> variables, such as "mount -t hostfs none -o 'path=3D"/home/hostfs"'.
+
+That's what Hongbo's commit *did*, afaict, but it is a regression.
+
+Now most of the regression is that with fsconfig() call it was no longer
+possible to specify a bare folder, and then we got discussing what
+happens if the folder name actually contains a comma...
+
+But this is still a regression, so we need to figure out what to do
+short term?
+
+Ignoring the "path with comma" issue, because we can't even fix that in
+the kernel given what you describe changed in userspace, we can probably
+only
+
+ 1) revert the hostfs conversion to the new API, or
+ 2) somehow not require the hostfs=3D key?
+
+I don't know if either of those are even possible
 
 
+Fixing the regression fully (including for paths containing commas)
+probably also requires userspace changes. If you don't want to make
+those we can only point to your workarounds instead, since we can't do
+anything on the kernel side.
 
-On 2024-11-26 13:49, Anders Blomdell wrote:
-> 
-> 
-> On 2024-11-26 11:37, Jan Kara wrote:
->> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
->>> On 2024-11-26 02:48, Philippe Troin wrote:
->>>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
->>>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
->>>>> we got terrible performance (lots of nfs: server x.x.x.x not
->>>>> responding).
->>>>> What triggered this problem was virtual machines with NFS-mounted
->>>>> qcow2 disks
->>>>> that often triggered large readaheads that generates long streaks of
->>>>> disk I/O
->>>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
->>>>> area of the
->>>>> machine.
->>>>>
->>>>> A git bisect gave the following suspect:
->>>>>
->>>>> git bisect start
->>>>
->>>> 8< snip >8
->>>>
->>>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
->>>>> readahead: properly shorten readahead when falling back to
->>>>> do_page_cache_ra()
->>>>
->>>> Thank you for taking the time to bisect, this issue has been bugging
->>>> me, but it's been non-deterministic, and hence hard to bisect.
->>>>
->>>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
->>>> slightly different setups:
->>>>
->>>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
->>>> "nfs server XXX not responding, still trying" that never recovers
->>>> (while the server remains pingable and other NFSv3 volumes from the
->>>> hanging server can be mounted).
->>>>
->>>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
->>>> several minutes) on random I/O. These stalls eventually recover.
->>>>
->>>> I've built a 6.11.10 kernel with
->>>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
->>>> normal (no more NFS hangs, no more VM stalls).
->>>>
->>> Some printk debugging, seems to indicate that the problem
->>> is that the entity 'ra->size - (index - start)' goes
->>> negative, which then gets cast to a very large unsigned
->>> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
->>> bug is still eludes me, though.
->>
->> Thanks for the report, bisection and debugging! I think I see what's going
->> on. read_pages() can go and reduce ra->size when ->readahead() callback
->> failed to read all folios prepared for reading and apparently that's what
->> happens with NFS and what can lead to negative argument to
->> do_page_cache_ra(). Now at this point I'm of the opinion that updating
->> ra->size / ra->async_size does more harm than good (because those values
->> show *desired* readahead to happen, not exact number of pages read),
->> furthermore it is problematic because ra can be shared by multiple
->> processes and so updates are inherently racy. If we indeed need to store
->> number of read pages, we could do it through ractl which is call-site local
->> and used for communication between readahead generic functions and callers.
->> But I have to do some more history digging and code reading to understand
->> what is using this logic in read_pages().
->>
->>                                 Honza
-> Good, look forward to a quick revert, and don't forget to CC GKH, so I get kernels recent  that work ASAP.
-BTW, here is the output of the problematic reads from my printk modified kernel, all the good ones omitted:
+I don't know the fsconfig() API, is it possible to have key-less or
+value-less calls? What does happen=20
 
-nov 13:49:11 fay-02 kernel: mm/readahead.c:490 000000002cdf0a09: nr_to_read=-3 size=8 index=173952 mark=173947 start=173941 async=5 err=-17
-nov 13:49:12 fay-02 kernel: mm/readahead.c:490 000000002cdf0a09: nr_to_read=-7 size=20 index=4158252 mark=4158225 start=4158225 async=20 err=-17
-nov 13:49:16 fay-02 kernel: mm/readahead.c:490 0000000036189388: nr_to_read=-8 size=4 index=17978832 mark=17978820 start=17978820 async=4 err=-17
-nov 13:49:19 fay-02 kernel: mm/readahead.c:490 00000000ce741f0d: nr_to_read=-5 size=8 index=3074784 mark=3074771 start=3074771 async=8 err=-17
-nov 13:49:21 fay-02 kernel: mm/readahead.c:490 00000000ce741f0d: nr_to_read=-4 size=6 index=3087040 mark=3087030 start=3087030 async=6 err=-17
-nov 13:49:23 fay-02 kernel: mm/readahead.c:490 0000000036189388: nr_to_read=-2 size=16 index=16118408 mark=16118405 start=16118390 async=10 err=-17
-nov 13:49:24 fay-02 kernel: mm/readahead.c:490 0000000036189388: nr_to_read=-10 size=16 index=20781128 mark=20781118 start=20781102 async=16 err=-17
-nov 13:49:24 fay-02 kernel: mm/readahead.c:490 0000000036189388: nr_to_read=-13 size=16 index=20679424 mark=20679411 start=20679395 async=10 err=-17
-nov 13:49:25 fay-02 kernel: mm/readahead.c:490 0000000036189388: nr_to_read=-9 size=4 index=20792116 mark=20792103 start=20792103 async=4 err=-17
-nov 13:50:22 fay-02 kernel: mm/readahead.c:490 000000009b8f0763: nr_to_read=-7 size=4 index=4172 mark=4167 start=4161 async=1 err=-17
-nov 13:50:24 fay-02 kernel: mm/readahead.c:490 00000000295f3a99: nr_to_read=-7 size=4 index=4108 mark=4097 start=4097 async=1 err=-17
-nov 13:50:24 fay-02 kernel: mm/readahead.c:490 00000000295f3a99: nr_to_read=-7 size=4 index=4428 mark=4417 start=4417 async=4 err=-17
-nov 13:56:48 fay-02 kernel: mm/readahead.c:490 000000009b8f0763: nr_to_read=-10 size=18 index=85071484 mark=85071456 start=85071456 async=18 err=-17
-
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -485,7 +485,21 @@ void page_cache_ra_order(struct readahead_control *ractl,
-         if (!err)
-                 return;
-  fallback:
--       do_page_cache_ra(ractl, ra->size - (index - start), ra->async_size);
-+       long nr_to_read = ra->size - (index - start);
-+       if (index > mark) {
-+         printk("%s:%d %p: "
-+                "nr_to_read=%ld "
-+                "size=%d index=%ld mark=%ld start=%ld async=%d err=%d",
-+                __FILE__, __LINE__,
-+                ractl->mapping->host,
-+                nr_to_read,
-+                ra->size, index, mark, start, ra->async_size, err);
-+       }
-+       if (nr_to_read < 0) {
-+         printk("SKIP");
-+         return;
-+       }
-+       do_page_cache_ra(ractl, nr_to_read, ra->async_size);
-  }
-  
-  static unsigned long ractl_max_pages(struct readahead_control *ractl,
-
-Regards
-
-/Anders
+johannes
 
