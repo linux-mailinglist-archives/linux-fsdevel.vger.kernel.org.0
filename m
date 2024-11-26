@@ -1,101 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-35926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B3B9D9AFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 17:04:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D669D9B5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 17:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F9C283176
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98F4F2822E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB9A1D47BB;
-	Tue, 26 Nov 2024 16:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D971D8E18;
+	Tue, 26 Nov 2024 16:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DjLmNYfg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB/METiC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69F43EA9A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 16:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CAE1D88BF;
+	Tue, 26 Nov 2024 16:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732637073; cv=none; b=PSheH/ZA8YqZGQ0YwwT/j0WHvwwA+CTmpZpygvLdpmuwABp6TMeGyfw/VDfsK24++89wBpGI24NxwSb6m0f1/HfztMilzZQ1wnrzZx1imSC77GBNC/JBxGPHjbizF/jkz5bBie/NQD2k7RvT8y18cUOhtnGrkDCNdGDYlNkFUHg=
+	t=1732638271; cv=none; b=U9C+3fGHIax6s6zel3PTNvG6OcSOcZetY+sKQqOELoTzkgbPm+JrsDvyPJ0ucvg7fNjXseivKG4JXLTpS64LebgwggeXLZjASpYhfy+3TeglSyC1nS144VNVSVD5u03SEYAwS0iFO8YyvCGqXpjEEZmrB98LPp6UUBNlT8IMB3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732637073; c=relaxed/simple;
-	bh=AKSDaqx/4etPljZDMYK33mkBXajknuN6+uRkb/9oKtE=;
+	s=arc-20240116; t=1732638271; c=relaxed/simple;
+	bh=VTz2UQ7ausAAK2tcdveUzXDQ/SYHAuU4ohVoNjE4v9c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m7T13LEX1oA8wBtofvAd6MoSlSuSdv0ILBpB/PGnkpPgO61gRetj6WVUFBEDRLu2EBbthQoKTB2crpvEZjWRQr96ebv7nGALoguf9LSZ/9X/347tGJULdSGUDEjtkXm1fDUOr2ubwH7Kqa967yN40VNqfnN5mpahk8WM6IlAas8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=DjLmNYfg; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46686a258c2so23374451cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 08:04:29 -0800 (PST)
+	 To:Cc:Content-Type; b=bJJdSlisAf80Ni+FrU5ZzTUyZ96+ho/MJAfFCVxLv8U6upqa0a7U2BQTzDoyW5jRyb0+aRrMk4r265vYfn+z39BdT7/hjT1LxfnEk0yPV7shGldT3epJGUgdjSy5bHR2S6jI89CzyTbJb+pOB3pvVsieLZlh0HF2qbjepgIWU4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bB/METiC; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so7553876a12.2;
+        Tue, 26 Nov 2024 08:24:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1732637069; x=1733241869; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AKSDaqx/4etPljZDMYK33mkBXajknuN6+uRkb/9oKtE=;
-        b=DjLmNYfgBp9eXmZ0IpkPAwPJbOrm0VOoPfMEPjZgEOYaXq9qmkSErebO0i6jtgXLiz
-         4X1FYOrv2TFPxLAxjJygJ5DdCAW8pDDWl8Or6SzJEO5gdVedCu3ppxHEl9EDTVIFnqM9
-         Ii2bnliA74K09rkY33kDh1KStXTvp6mz2X7LA=
+        d=gmail.com; s=20230601; t=1732638268; x=1733243068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1SSHykmofa5yR6Vyw9fXrh2uc6s5eUP4tdQH2TzvHr4=;
+        b=bB/METiCT78B5X762VdeARRkHmDVNFdfGCmvLBLxM2riaBxQXSp0Nh0mf2BGwyfUim
+         SW9SBNT4vhKMyuS9X4TMnEdopj2kKWeJHuplfpbvn69VpRUuf0uTKRRVXRT8wdROV5P5
+         ZhgZnP3pNgHYQaAy2cU56NnCILGP+8CE5sAsqgYJiJ5imJszPL5EvZ9G2iGd/+N2p50T
+         5BS6llNDUphq4yNbwHo7hBoYm3C3rZHFDtZCanLs32sdxlz4EI4z2Pqkkz1e0t0umUV+
+         OTDkToHTU+2/WadPzdKfulrqSzliq5cpVSXJsx+F+8/OT8djvUdPr7U5iAuGIpbuGICJ
+         Nu/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732637069; x=1733241869;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AKSDaqx/4etPljZDMYK33mkBXajknuN6+uRkb/9oKtE=;
-        b=So3xjBd1ybE42eyaCJB0v+RUoT3b/82tMrr+Bsxkm4mzQWon49b8BkIj5Sv0pYHnuP
-         /x1X9iE366surC3+qexUIVlBUcITtDmem1stkS0RDPRlZ7N7KxSFhsohKcaxQJG1OYRI
-         IEKoH+fA7CW7wD8AectaP/Na8ei6ylSm9PY8FNFeMXbp4jfO4Err/ax5Dj5gPz4aW5wO
-         jrG+BtFkdk28V5FQNc2/UI/X5NuJqtgC/kaoUQmbBPg6SX7faTbPdb+ohfnGXMfXws+y
-         gnyWtqgmGc4LTmsRSB+EnDELQeTN53Ma6pBGlPaEH9L5HrU+nWGs+UwoXOOGTD21mMib
-         qcRg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/HGcklACEwj5OmqAiRG82zGZmR5bAgGzwQjKp9SUTGqCwaiCPKtpe03rugSqEADdPWi6pzC6/RNH70WaM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJtwOdht+naAkAjXo0miNI/xve0VTuRfmNTaUkdBYZNHavnIG1
-	/WjufknEQM20fhqqtiA1wlnqXBon4GfGCsDnSSSsE9k/hJ43R+ojqGThuXT9aS/TbboA0Fkj2H4
-	+4Xwgcl04vgHOBii/30miKMQLbXGR0UQDmWF1fQ==
-X-Gm-Gg: ASbGncvWR8ITbNiECWfagCpmK6crLUHvGyQ4VTxqOlj99PzP+FHL1ngNDFq7DH8vrI/
-	6CZ9TWLLkVMMgTkZsdeA4574kMPmPiJxznQ==
-X-Google-Smtp-Source: AGHT+IHZjgV4CkWJV0BjmzxHkmZyvhwVqQFY/zZXrMjjUEuaIMDUaghocl8+HGtVr63vyHCOCtQZlVnlXZB5NV2JqBo=
-X-Received: by 2002:ac8:5746:0:b0:460:ad52:ab0d with SMTP id
- d75a77b69052e-4653d5687ccmr242641021cf.16.1732637069116; Tue, 26 Nov 2024
- 08:04:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732638268; x=1733243068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1SSHykmofa5yR6Vyw9fXrh2uc6s5eUP4tdQH2TzvHr4=;
+        b=jgfY6hULbTZ9FIQwC+K8JCPqm2ZE9bVVgwYHtHEddcOgukuKnuhXHP3psdPMHYYES/
+         t/67ie7vEV6u+9jhBIyiXCWxwiuTaKGZDQ9J4GTSlUuYaNsLtqw4w9a3lwIfbgHOO6fU
+         Z4UP2yZWyEWbrk+wC7ab9Hb1GYlbejgBB4ICE2HQODIzbTgIE+7mSC5P/rX69GhfKO/D
+         TFD7cEA0j5/yLp/ByCg0hHCWDUzxj+Twm5mfzayi0JPuHKXBnuU/zlbJNrNLZNkFjFm3
+         kRMrcikfT1F5HhMBxkVRsbkh4I+9NjpvByoz94X/1i74PU5fkXh09amUzfA8hP9y/8RL
+         Mn8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYSTiA7jLuf0wQr8ZvN5yxHLrJqphm41BfBzmK+jFycc5Uc3lT6drG0ceqsq0QVPN/Jp5JzpMru2XUfzEdBg==@vger.kernel.org, AJvYcCUYrhZT+Qtqdd+oyDkgk/45fP9V2mKJlM2PdarVv7NEUlhp5nLdcFK96+e2gWEZIXAt8NwKvl1H1c7T9Q==@vger.kernel.org, AJvYcCV79mN3Z1VXZk4TSwKaNeRKFelcHLyguZ9yg+GXbj+PKUwXsqqYdDqCNCpRCugPI/n+0yZPJILq/opxpXo=@vger.kernel.org, AJvYcCXM6L4tjU94GHk1rLEcnU5wgdFmS6KSCHOUhWVDMX2qhu+T7+n/OGP1EdLqtvsr7bx89oKpAjrlOQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZaKavWEMsWJZgwmdz1Lney7wR6kfAT3msyRrC8wSN5YCug948
+	sZ4D222TTRdfD7e5wsKMW0Ke+9yiEpDYnkAXT2K6Wf7D30CUpPtXkcD6hqkGStn/c66WTvT/HEv
+	Tv6wytCBb4tt9gkDcJB0evg2ebQ==
+X-Gm-Gg: ASbGncs4oKNV5t8a0Nqz4MoJ07K8oJdaX2KQMtOHhl/B6MUEO7BnQWmsbbh+Ys8X0XQ
+	Gug/qpkIkq+Og921K1ZTs/fG1dSU/3HDCwM+T0lC+Y5rAH+2jmND9EmXSgD9f8Q==
+X-Google-Smtp-Source: AGHT+IEh+egU5r+E38GEVvMrAItGqOuNyV0IAyzdCyASKTwVbSpUev9AcXCnHID80AFjxWCtKJHJF+gu99Vy1r/Grt0=
+X-Received: by 2002:a17:906:d511:b0:a9a:1437:3175 with SMTP id
+ a640c23a62f3a-aa509d6c7cfmr1244797866b.51.1732638267654; Tue, 26 Nov 2024
+ 08:24:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126145342.364869-1-amir73il@gmail.com>
-In-Reply-To: <20241126145342.364869-1-amir73il@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 26 Nov 2024 17:04:18 +0100
-Message-ID: <CAJfpegszebgkN+vGJrzPTbdmkebQmAa0_921KSxa2QOTkbaSsg@mail.gmail.com>
-Subject: Re: [PATCH] fs/backing_file: fix wrong argument in callback
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, 
-	syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
+References: <20241125070633.8042-1-anuj20.g@samsung.com> <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
+ <20241125070633.8042-7-anuj20.g@samsung.com> <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
+ <20241126135423.GB22537@green245> <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
+In-Reply-To: <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Tue, 26 Nov 2024 21:53:50 +0530
+Message-ID: <CACzX3AtBc-Vio1H28MM2tRvcLzTYBTFJt8CKgF5NeGTniKFUbQ@mail.gmail.com>
+Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
+ and PI support
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, 
+	martin.petersen@oracle.com, brauner@kernel.org, jack@suse.cz, 
+	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, 
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com, 
+	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Nov 2024 at 15:53, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Nov 26, 2024 at 9:14=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
 >
-> Commit 48b50624aec4 ("backing-file: clean up the API") unintentionally
-> changed the argument in the ->accessed() callback from the user file to
-> the backing file.
+> On 11/26/24 13:54, Anuj Gupta wrote:
+> > On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
+> >> On 11/25/24 07:06, Anuj Gupta wrote:
+> >> ...
+> >>> +   /* type specific struct here */
+> >>> +   struct io_uring_attr_pi pi;
+> >>> +};
+> >>
+> >> This also looks PI specific but with a generic name. Or are
+> >> attribute structures are supposed to be unionised?
+> >
+> > Yes, attribute structures would be unionised here. This is done so that
+> > "attr_type" always remains at the top. When there are multiple attribut=
+es
+> > this structure would look something like this:
+> >
+> > /* attribute information along with type */
+> > struct io_uring_attr {
+> >       enum io_uring_attr_type attr_type;
+> >       /* type specific struct here */
+> >       union {
+> >               struct io_uring_attr_pi pi;
+> >               struct io_uring_attr_x  x;
+> >               struct io_uring_attr_y  y;
+> >       };
+> > };
+> >
+> > And then on the application side for sending attribute x, one would do:
+> >
+> > io_uring_attr attr;
+> > attr.type =3D TYPE_X;
+> > prepare_attr(&attr.x);
 >
-> Fixes: 48b50624aec4 ("backing-file: clean up the API")
-> Reported-by: syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-unionfs/67447b3c.050a0220.1cc393.0085.GAE@google.com/
-> Tested-by: syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Hmm, I have doubts it's going to work well because the union
+> members have different sizes. Adding a new type could grow
+> struct io_uring_attr, which is already bad for uapi. And it
+> can't be stacked:
+>
+> io_uring_attr attrs[2] =3D {..., ...}
+> sqe->attr_ptr =3D &attrs;
+> ...
+>
+> This example would be incorrect. Even if it's just one attribute
+> the user would be wasting space on stack. The only use for it I
+> see is having ephemeral pointers during parsing, ala
+>
+> void parse(voud *attributes, offset) {
+>         struct io_uring_attr *attr =3D attributes + offset;
+>
+>         if (attr->type =3D=3D PI) {
+>                 process_pi(&attr->pi);
+>                 // or potentially fill_pi() in userspace
+>         }
+> }
+>
+> But I don't think it's worth it. I'd say, if you're leaving
+> the structure, let's rename it to struct io_uring_attr_type_pi
+> or something similar. We can always add a new one later, it
+> doesn't change the ABI.
+>
 
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+In that case I can just drop the io_uring_attr_pi structure then. We can
+keep the mask version where we won't need the type and attributes would go
+in the array in order of their types as you suggested here [1]. Does that
+sound fine?
 
-Thanks for fixing.
-
-Miklos
+[1] https://lore.kernel.org/io-uring/37ba07f6-27a5-45bc-86c4-df9c63908ef9@g=
+mail.com/
 
