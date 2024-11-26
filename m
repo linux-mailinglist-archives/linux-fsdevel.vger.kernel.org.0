@@ -1,195 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-35904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCD29D97CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:58:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C552A9D97DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 14:00:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADCD163395
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89ABF285D8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FD71D45E5;
-	Tue, 26 Nov 2024 12:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9111D47C3;
+	Tue, 26 Nov 2024 13:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yHJDejV+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OVNsP/rF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yHJDejV+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OVNsP/rF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6UmYTTc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A931D4169
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 12:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2422C95;
+	Tue, 26 Nov 2024 13:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625934; cv=none; b=ackJ/GIX4utJsoLM4Wrj/PJ7exEdePkIupG5RpyPyUnNXbND6fAG4YMVCsQWqblMCcTVVGMmAXUoaYiNG89w8566g4nxvvaqW5S7nvN9dMvBxOpGcj8kH+J/OZzcZmUe3MLvZDZE457HiReKV90seztAOpP4ljnL1M1aXx8/J+8=
+	t=1732626021; cv=none; b=AgriG2yo4JTLFAhBL3ETJNjTRseO33JBhrOFTgKkgSniTScCU6PCPuUPe4/DlV03BJFBCE2ASG7aVxzk9OyVCA2ZtIg4jY9BCiNho82wjGzUYzuZmZB09WHICanVdtBsHhmk/pgwY+FfhXeY0w98KzJkC+sdmREI5u9hUqQIyu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625934; c=relaxed/simple;
-	bh=CYyviQiAYsjw6vztQngBsxN8YG0NlaB8XY23Kcg/Yl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fF+C1T3dar2oXAFVDfF+Cm9ayjgl5v+N/fPA/7gx7i9zOb5akW9jaRwutfsA8w5DQrEnvaw83jPtZV4bS6UoNjt+Rdue63BdADvKaeiZye4TloG9yk0nxuq2Bqw7GAX/CpR1UhLhGGTEaaw6K3riZYrDXhbQuxI6ZCCNaYZjXks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yHJDejV+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OVNsP/rF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yHJDejV+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OVNsP/rF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 604361F747;
-	Tue, 26 Nov 2024 12:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732625930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqS5/2BoA76EnxgFcDba1/oZ+7WJvZnx6YYqVLaJZCU=;
-	b=yHJDejV+0HzTAvySiOZFX5tEpsk7ibsNoLFwFMLGFpVay2q2izevXjS0DsHRAsWMPH40+O
-	MDCdN1d8+7MVja+dtWVB5Jy++KxvYM0whsn0L+HjlOCBOZjVW0IbOgsDSizypAhTGPLdIR
-	wpgHD/uUPilfZYxz63CJFKYXsypwOMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732625930;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqS5/2BoA76EnxgFcDba1/oZ+7WJvZnx6YYqVLaJZCU=;
-	b=OVNsP/rFii3ZAFiIPhSY644BiT82u+7N4zWx5B76M5f5WSbGlcfLyB7vO4NZF+LVUUn/iA
-	Nc9MIteHvbVwxVDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732625930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqS5/2BoA76EnxgFcDba1/oZ+7WJvZnx6YYqVLaJZCU=;
-	b=yHJDejV+0HzTAvySiOZFX5tEpsk7ibsNoLFwFMLGFpVay2q2izevXjS0DsHRAsWMPH40+O
-	MDCdN1d8+7MVja+dtWVB5Jy++KxvYM0whsn0L+HjlOCBOZjVW0IbOgsDSizypAhTGPLdIR
-	wpgHD/uUPilfZYxz63CJFKYXsypwOMI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732625930;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqS5/2BoA76EnxgFcDba1/oZ+7WJvZnx6YYqVLaJZCU=;
-	b=OVNsP/rFii3ZAFiIPhSY644BiT82u+7N4zWx5B76M5f5WSbGlcfLyB7vO4NZF+LVUUn/iA
-	Nc9MIteHvbVwxVDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 549F913890;
-	Tue, 26 Nov 2024 12:58:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cbWfFArGRWeyWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 12:58:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0F523A08CA; Tue, 26 Nov 2024 13:58:50 +0100 (CET)
-Date: Tue, 26 Nov 2024 13:58:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] isofs: Partially convert zisofs_read_folio to use a folio
-Message-ID: <20241126125850.l7o74nstlv37u3xl@quack3>
-References: <20241125180117.2914311-1-willy@infradead.org>
+	s=arc-20240116; t=1732626021; c=relaxed/simple;
+	bh=G34qdhCAqH9iqyq5N1T9gpB25ZjHSNbvW52DdTDvZ9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XYPabFYfYRZ6Q7W89XG3PBh3vivs27npBJYkjwLz0VV6o7NyoczmLgVeCmdcnhoboURGcd9GNFsCmUoS87RWFG43p3SwPx5cSHAtFVXLE2+2bxxmGHPrOMl5BQ3/WbsPO05mlbO3ACzoaSaSn/YXZNkVt8p/R7xDn24NVz1KWWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6UmYTTc; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d036963a6eso4164646a12.3;
+        Tue, 26 Nov 2024 05:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732626017; x=1733230817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
+        b=F6UmYTTcvKp1KTv/srMZduhW9D/++BIH+agxVpGbfayV6Smh/1FmrjPnc/iVtmK1cd
+         TOPiiwnzbPoLyKw8hvOT8/E1Sqhy3vum7zxQi33HI+KfUYelFBRmn4ENeP5mTfUruz49
+         RCLTOz1QdxQWEqXZ/FJmW7NpRwFNIhwIAiCulj/yOztLXiB/4tVGrjymaT6ed7f/7oK7
+         fQ4akDBDPNLMt9esHTkJXdJOXhA/VEKiTVj2fnaivqi3zdrmnPwLXiXapO2fSDM49ZUG
+         yVmgitCq9/kcWfoqjZGdnwVTA+bQHwMRGFAo3HrESvtpsZTnnBVcf8SpcPtF1suzV3ns
+         Kl/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732626017; x=1733230817;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
+        b=UbNnGMmzUrk9nrSe1zH5Emk2v1Yni+CNyUXK0HrSRu3a6ySHHJQYaL5Cj7SoiUHGHh
+         gszYPZ5j8qgtQRGQ+je7ld73Ta+K69q+d22SzZmZ0tJXc3TgQtMOjb1Bjf59SPuNHDNq
+         JbzElAQkxlZiJ90EFCsp8GnL54ASNILP6aDFKvD+PHir1izuqrVq6n0mMBn7Mh8VmX3c
+         6U89J0kh3Zmbd5kKdAd0UQ/8ZKFkLYR8XCKhRHgz8YKqfUtPntkvyoUaHVc4/ETfzuqt
+         4PAcpZFMAA4YRUJjGzXvrd7BeT96+9cC4InfeuC9WqV5BC7NtqBApfRVRhzVcG+9qndb
+         7oZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBumcCC5Bjw/SI53GGIn4eFU4L0mIKIBTiBEN4e82uuUqAvxsJOyCXEsUKmWTR9S37o8h6BCpeRooEA==@vger.kernel.org, AJvYcCVoVhgCP6BCDCw1TR+nD+dK9JgJRdzvdtqHkBtql8xZavZfTvZ7SCDdMvdx39sjK+vWOPJ5OMdiJEaMoQ==@vger.kernel.org, AJvYcCXUFg/s0QTcgmbZoICuFm/MNETQOH7d3ZcKN42s5rn0lb/xXtvZPzzrRsbqU0EOQEjiHMzp0/0Fs92jINz1bw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+Ysh89eYw3IXipcVCuMeyn1AR1tcspNO/5KFy2//jX2bU6pv
+	GOhVt960N06YJv5ewlD3RecmoBCtGBZYj2k4pWZqqBBD4PZdY4PP
+X-Gm-Gg: ASbGncsioyxleTHmGw9VXrixQbEtW8QFAkgwJmZwfKSQFNX1zPuSrPmf/Q9+RWhRDk+
+	DsSu/jtR5IBlgVIw1G+73yH994KPca2owuqYRbnxiMhLsZqSqP93XdER0OgzzN1wDNOZy89aiJk
+	oS72/0cBQ0X4KNpR3WlJxHD7gdNvfITp8fIfv5PEH4ZGScYAaCydUsNconfZr0kNyvwDBFVWFP2
+	Scfo0+FWsgqKM0HWjDAPrXAZhu9Xh219HwDDWd9wvkRLa1k6KHyL4B8t+VkbQ==
+X-Google-Smtp-Source: AGHT+IEP82AjkuoW0ZVsrpYLJBWQ9XK9zYr9tk2OCe5t4oYFiJxerefDCiqo9eMqXwn0bVG+EkwlPA==
+X-Received: by 2002:a17:907:770d:b0:aa5:29ef:3aa6 with SMTP id a640c23a62f3a-aa529ef3b9fmr1061664966b.23.1732626016527;
+        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
+Received: from [192.168.42.208] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa52e45391dsm480198366b.60.2024.11.26.05.00.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
+Message-ID: <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
+Date: Tue, 26 Nov 2024 13:01:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125180117.2914311-1-willy@infradead.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
+ and PI support
+To: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de,
+ kbusch@kernel.org, martin.petersen@oracle.com, anuj1072538@gmail.com,
+ brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk
+Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-block@vger.kernel.org, gost.dev@samsung.com,
+ linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241125070633.8042-1-anuj20.g@samsung.com>
+ <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
+ <20241125070633.8042-7-anuj20.g@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241125070633.8042-7-anuj20.g@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 25-11-24 18:01:14, Matthew Wilcox (Oracle) wrote:
-> Remove several hidden calls to compound_head() and references
-> to page->index.  More needs to be done to use folios throughout
-> the zisofs code.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On 11/25/24 07:06, Anuj Gupta wrote:
+...
+> +/* sqe->attr_type_mask flags */
+> +#define ATTR_FLAG_PI	(1U << ATTR_TYPE_PI)
+> +/* PI attribute information */
+> +struct io_uring_attr_pi {
+> +		__u16	flags;
+> +		__u16	app_tag;
+> +		__u32	len;
+> +		__u64	addr;
+> +		__u64	seed;
+> +		__u64	rsvd;
+> +};
+> +
+> +/* attribute information along with type */
+> +struct io_uring_attr {
+> +	enum io_uring_attr_type	attr_type;
 
-Thanks! Added to my tree.
+Hmm, I think there will be implicit padding, we need to deal
+with it.
 
-								Honza
+> +	/* type specific struct here */
+> +	struct io_uring_attr_pi	pi;
+> +};
 
-> ---
->  fs/isofs/compress.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/isofs/compress.c b/fs/isofs/compress.c
-> index 34d5baa5d88a..5f3b6da0e022 100644
-> --- a/fs/isofs/compress.c
-> +++ b/fs/isofs/compress.c
-> @@ -301,7 +301,6 @@ static int zisofs_fill_pages(struct inode *inode, int full_page, int pcount,
->   */
->  static int zisofs_read_folio(struct file *file, struct folio *folio)
->  {
-> -	struct page *page = &folio->page;
->  	struct inode *inode = file_inode(file);
->  	struct address_space *mapping = inode->i_mapping;
->  	int err;
-> @@ -311,16 +310,15 @@ static int zisofs_read_folio(struct file *file, struct folio *folio)
->  		PAGE_SHIFT <= zisofs_block_shift ?
->  		(1 << (zisofs_block_shift - PAGE_SHIFT)) : 0;
->  	struct page **pages;
-> -	pgoff_t index = page->index, end_index;
-> +	pgoff_t index = folio->index, end_index;
->  
->  	end_index = (inode->i_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
->  	/*
-> -	 * If this page is wholly outside i_size we just return zero;
-> +	 * If this folio is wholly outside i_size we just return zero;
->  	 * do_generic_file_read() will handle this for us
->  	 */
->  	if (index >= end_index) {
-> -		SetPageUptodate(page);
-> -		unlock_page(page);
-> +		folio_end_read(folio, true);
->  		return 0;
->  	}
->  
-> @@ -338,10 +336,10 @@ static int zisofs_read_folio(struct file *file, struct folio *folio)
->  	pages = kcalloc(max_t(unsigned int, zisofs_pages_per_cblock, 1),
->  					sizeof(*pages), GFP_KERNEL);
->  	if (!pages) {
-> -		unlock_page(page);
-> +		folio_unlock(folio);
->  		return -ENOMEM;
->  	}
-> -	pages[full_page] = page;
-> +	pages[full_page] = &folio->page;
->  
->  	for (i = 0; i < pcount; i++, index++) {
->  		if (i != full_page)
-> -- 
-> 2.45.2
-> 
+This also looks PI specific but with a generic name. Or are
+attribute structures are supposed to be unionised?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
 
