@@ -1,128 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-35913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B919D9A00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:54:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C839D9A0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:00:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D32EFB24354
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 14:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F97716681A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E881D61A4;
-	Tue, 26 Nov 2024 14:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5231D61B7;
+	Tue, 26 Nov 2024 15:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQyPDqZJ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C4E1D5CE3;
-	Tue, 26 Nov 2024 14:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A84282F4;
+	Tue, 26 Nov 2024 15:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632830; cv=none; b=L2hSk60K6zKzrUsl+G4n8fnZpPucirCQMXL4nQchpapScKJK/CjikUaxEjrquinotzrQnCbfBguBy4Mk0P906F8a7DOaAnkBi6yfcGftnGM/ie7VxZzUcBriVUnfa6qhG2AnMqlSfmDT+VoAYipAGM6u47SjiO7H5m/mxitcTf8=
+	t=1732633207; cv=none; b=S/iekmv8tW65qtZR1ogoTZmOpyiNWMJRULojznUaSsizshBq1zbOYVlofOvQ0NmPy0BQrWIFYtVNUWF4kDKS6r5hNaBhoc+etwNKV1W7F89mrO+TSM9H2Xxxc0MN8Rt2HolrFXBuxkAnOE7HZwobPCXxIXWcVJbYX/HUOYRCEcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632830; c=relaxed/simple;
-	bh=KSEVBZ/G7JYMF9cZqi5u8cLDXg26TGry99x5UGOUcQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dWWVcjvjE3wlomsy8X3QC1v6MBOfPmVXzu3QgQ5fVXMealJxTixaOFFw13tuOtxhqP6cafLMZ4Y5W+mPEGc2YMcIPiozbaulta2fGN5g+iZhA7+fxUBRbjNmzYzk1sFVXNZYeyP44ar7JuP27zV4U9nQnKAG0ZWmrDy8S+50XQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQyPDqZJ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43169902057so50044275e9.0;
-        Tue, 26 Nov 2024 06:53:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732632827; x=1733237627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Coi5uCvYLyf9BjKpQmReIjNPyxHK+7AsbkxIjGq+vUM=;
-        b=iQyPDqZJ1urniUTVZ8GjSXH3/pc6vCamt44hc4adDWQqZTSbZIsaTRvHDVcLC4X27k
-         vBeOpTFuANvVKIFvpo/5793iqoH8PweHjdmImCCh85Dv5VxEMDHFZiM0SDDqkBp6V2Lo
-         kTE4DCFjhP6U5T0HuhndWUil0WXE4VqvDt0fa1ROtvTuqyJeZCDgy4b47F8OU11nVdxq
-         2WXLKGvhJx4jqYdppXjWMZjIRbJ7BrUm2N309U046jPVwhQS+O8PLwoC7J/VMr5lm29a
-         TaNsMpLCFt8upjgS4MmaOwj0rNARwAm9FR0P6AOVu5/yuLRvSqjF0rI9d/HBiShTyFkF
-         pjSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732632827; x=1733237627;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Coi5uCvYLyf9BjKpQmReIjNPyxHK+7AsbkxIjGq+vUM=;
-        b=vLpxTcWou+ovByghXiorc6VOhdbbialq9dGfdDqtTDTmKkUNB1sa/YTlVCNjU1Wn5b
-         9V3jUKb0J7sIQa053ZzulQ6kVKAWdxCBbm8k8cRdCPHLwdUolsTf2O6uY5YhlpfPayeq
-         D48mxUwfCWs2ae5snuXGTred5jKypZul8619fyYS6mrDI7eL7ihdNMtrA5zs/fqIVfA9
-         12V7A2SSqE0Tp5Nb9smWF9znn1Fsd2/xlN0ENQqj3CE+wW36UzbkCu1miChWlWHwRLIG
-         QGpuRrYqZVZRuOSDMrNOVnzJlcOY71Zkld03t5jPyvQme/SzUnfn2e6/3fLJkQoaZ1WH
-         jhaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAXTQOi2788p4lPx78fRqXXWQIXOw60PfUEKVelrkk7DqkToDxvlyxBx65eEEe6D2kHm7ovBRha3ZdKSEV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTyEfH7b1QFKvIYOst9idTatdrqIGkOldxccVYtJWkOJ4/KsrQ
-	SMx7C9sg0t1iGpvACtwDurl1nR22ueCK142xNIvkQKiTDmrZ8VrU
-X-Gm-Gg: ASbGnctbEnAoz1I0nty9kG5JUuqgPpImkOSSBmeoAKtG9lCEC3r2Ntlybz1sGcn8xZn
-	8eeo1/ALKWncRDqGum+MY2h8Cnkcf4R8Ct6UbuCyar+9m1eND1FPvmQ19etfHK2P4PYKKDDJ8oD
-	IZQ5Pqz38i9C2hiTXc1GbMMfzhtK+zg+jbAifrCLyFy9UOQEpwJUF42wy4+gW+shunq9mvUuAXR
-	p2yNCgvQpDFkmgrH3JPazJreyizFXPBvElvB3qiDdY3NmGTwSD0NIgXhDlxgKvIjq5AdsFCExoa
-	nCvjueOcB3oJ/BTh9boXa6kKbHz8WfDFjWN/TMitherQYyo=
-X-Google-Smtp-Source: AGHT+IG4vVII1X339eVM9tDO9PrABmKn+C7lHU3NxImmxVqBCrKEHOuyeqJvyHrkyNbbXXZOEObfiA==
-X-Received: by 2002:a05:600c:3b97:b0:431:60ec:7a91 with SMTP id 5b1f17b1804b1-433ce418036mr157138015e9.2.1732632826508;
-        Tue, 26 Nov 2024 06:53:46 -0800 (PST)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b464320csm229143345e9.38.2024.11.26.06.53.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 06:53:46 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
-Subject: [PATCH] fs/backing_file: fix wrong argument in callback
-Date: Tue, 26 Nov 2024 15:53:42 +0100
-Message-Id: <20241126145342.364869-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732633207; c=relaxed/simple;
+	bh=DoiGgy2GMpffChB6xoMC8Rr15TKbfFL7c12ogdkKVuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTTaxvl90C0a9aMsy1PW8W0SknMAKUlhpQU39ZtFRX8YpAKzNrBqXfs2DzqMQeVSDbvc1eEEIo6zGWyA+517CRCckDh1lpwD8w3FV3jd2ymcXynlTFT+TgaSRWnAtCkmfpUBSh6DTELcW8HYwEsIAL38iCfFEy+Te3wCzBtjWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 42BE81F74C;
+	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
+	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
+	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
+	sYVGnnm+Rw2KvOBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TChG3feU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3Sqpc3IL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
+	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
+	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
+	sYVGnnm+Rw2KvOBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36F5813890;
+	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ymBnDXPiRWesAwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 15:00:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DE02BA08CA; Tue, 26 Nov 2024 16:00:02 +0100 (CET)
+Date: Tue, 26 Nov 2024 16:00:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: Anders Blomdell <anders.blomdell@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+Message-ID: <20241126150002.o6fbe4yei4fwsehz@quack3>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+ <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
+X-Rspamd-Queue-Id: 42BE81F74C
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Commit 48b50624aec4 ("backing-file: clean up the API") unintentionally
-changed the argument in the ->accessed() callback from the user file to
-the backing file.
+On Tue 26-11-24 13:49:09, Anders Blomdell wrote:
+> 
+> 
+> On 2024-11-26 11:37, Jan Kara wrote:
+> > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > > responding).
+> > > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > > qcow2 disks
+> > > > > that often triggered large readaheads that generates long streaks of
+> > > > > disk I/O
+> > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > > area of the
+> > > > > machine.
+> > > > > 
+> > > > > A git bisect gave the following suspect:
+> > > > > 
+> > > > > git bisect start
+> > > > 
+> > > > 8< snip >8
+> > > > 
+> > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > > readahead: properly shorten readahead when falling back to
+> > > > > do_page_cache_ra()
+> > > > 
+> > > > Thank you for taking the time to bisect, this issue has been bugging
+> > > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > > 
+> > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > > slightly different setups:
+> > > > 
+> > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > > "nfs server XXX not responding, still trying" that never recovers
+> > > > (while the server remains pingable and other NFSv3 volumes from the
+> > > > hanging server can be mounted).
+> > > > 
+> > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > > several minutes) on random I/O. These stalls eventually recover.
+> > > > 
+> > > > I've built a 6.11.10 kernel with
+> > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > > normal (no more NFS hangs, no more VM stalls).
+> > > > 
+> > > Some printk debugging, seems to indicate that the problem
+> > > is that the entity 'ra->size - (index - start)' goes
+> > > negative, which then gets cast to a very large unsigned
+> > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > > bug is still eludes me, though.
+> > 
+> > Thanks for the report, bisection and debugging! I think I see what's going
+> > on. read_pages() can go and reduce ra->size when ->readahead() callback
+> > failed to read all folios prepared for reading and apparently that's what
+> > happens with NFS and what can lead to negative argument to
+> > do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> > ra->size / ra->async_size does more harm than good (because those values
+> > show *desired* readahead to happen, not exact number of pages read),
+> > furthermore it is problematic because ra can be shared by multiple
+> > processes and so updates are inherently racy. If we indeed need to store
+> > number of read pages, we could do it through ractl which is call-site local
+> > and used for communication between readahead generic functions and callers.
+> > But I have to do some more history digging and code reading to understand
+> > what is using this logic in read_pages().
+> > 
+> > 								Honza
+> Good, look forward to a quick revert, and don't forget to CC GKH, so I
+> get kernels recent  that work ASAP.
 
-Fixes: 48b50624aec4 ("backing-file: clean up the API")
-Reported-by: syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-unionfs/67447b3c.050a0220.1cc393.0085.GAE@google.com/
-Tested-by: syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/backing-file.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Well, Greg won't merge any patch until it gets upstream. I've sent the
+revert now to Andrew (MM maintainer), once it lands in Linus' tree, Greg
+will take it since stable tree is CCed.
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 526ddb4d6f76..cbdad8b68474 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -327,6 +327,7 @@ int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
- 		      struct backing_file_ctx *ctx)
- {
- 	const struct cred *old_cred;
-+	struct file *user_file = vma->vm_file;
- 	int ret;
- 
- 	if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)))
-@@ -342,7 +343,7 @@ int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
- 	revert_creds_light(old_cred);
- 
- 	if (ctx->accessed)
--		ctx->accessed(vma->vm_file);
-+		ctx->accessed(user_file);
- 
- 	return ret;
- }
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
