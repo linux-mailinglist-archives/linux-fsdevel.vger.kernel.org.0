@@ -1,132 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-35862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDDB9D8F41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 00:42:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8031D9D8F6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 01:06:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D03B24C9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2024 23:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485DB164869
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 00:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E7B196D9A;
-	Mon, 25 Nov 2024 23:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD90F2107;
+	Tue, 26 Nov 2024 00:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fP8Jt5/E"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHtWPsj3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D743189F20;
-	Mon, 25 Nov 2024 23:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1394B161;
+	Tue, 26 Nov 2024 00:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578146; cv=none; b=ZVQcffh60TaS3malLc7khT2FUqenUqiRk2Qvy4J8Qvlll1AL5Ay2ThySgKxZoB4C13bbjDgYrjdNssLvore+Ur52gHmOMG3NbJDAqPiwuHlrWKEXjM1uZuTFTrapO8mtiMOykSdWZx7LLy5VpwVXDi2bHszA4eOr7tvUeXRs51o=
+	t=1732579575; cv=none; b=siBkNM+N3L3AS2Fww9k8Iww+OR1ih7PBvuWkxP/HlyPtoLHbnCh8sPbt1LDimCTS71RZXdfx6KzZzIHEGg6APz+BvT4w+lbdBcHmLYac3vVoSWx97RZ+FfSRth91rBOJZTC5eM3hR0mQZxChOyfLFedGOFZ1uRDhTM3Z/bMOzyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578146; c=relaxed/simple;
-	bh=4AW3HXF8Zss5Wgx8tbWXkPrXII0o3lYa5kk1FEwbCSo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ReWeeYOHKPrVp7dCL1xGEtmZj6hz54sPpYn0jDvjTpDJJ9iDA6koUuAsM0mwnL8JsjXBYXUK/bEIlGRZeoyrLFJEOPukfAh4O3pS0P+RxlkEIkORlcR6zpJl3s1k+UT46M9+Tuk84q+p1Z6oOE92KngfBKPCeeD8SoNmQCQDj4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fP8Jt5/E; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732578130; bh=/KxuIDjoowTbqWmLpQV6jdh8esNO7ZyBc3NaxAGU4Fw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fP8Jt5/Ewe0q/fhG5A2iHcp2hxYy2QbO+/XjOtRA4A/C47IpzojIudXYCzPneBz/A
-	 mOTNDgEbKTFkD7suGCes77w5lr753mpBhuaSLt7M2xTkM3Xo8mQHICsYztqJqjTV/p
-	 /ghfE3UiKJYRFfQGPQsyQOtDoRp6pRHNm2TeZhJo=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id A88B2EE5; Tue, 26 Nov 2024 07:42:08 +0800
-X-QQ-mid: xmsmtpt1732578128tfoslh9fx
-Message-ID: <tencent_4D663A3CE9374A970636084B0C75E3768D09@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8kfHQIj0j0buKXojWz+l7bwFvNjd7cBCyCODjlDN/FpPnLQeo9e
-	 ciFokYuteH6Kh9rR7DgaPmxfHhnrPqWfPmSXABKfEviMOBmJdqVfV+0nGnNULc5IfMyikKc1TYJW
-	 4sFxcyahsDOkDyqr7YDRbB5H4lNTjrnZrxoCogKrDckASdC/wyYArITCA/Afvxw6tjjkDc/66WtW
-	 eobyR/tZ+deQwKqGV/AmV29rqUECbjvRUCBMaiQgGwoOOat6D4UNwE/nV1Ws74Y83Rh01fcKx5nM
-	 MH021A7TU3kfJ9xyZCZ9+Lk7wc1ongITfyDUHrmJCWYKzvfb7H7ewtOFMZbhOGFx9LKawgTnTcBw
-	 7E9Fp9OAcmcTOGLvvfAvIVplPUoyzYuHq8cz3uq2Ydg5ZTFERzXGuhX32aC+mxJZtU37Vfuvy38x
-	 xbM5DoYEpARE4byT6rs2Sop53UI1Sk1eQBiGx7y0Ihae6nQBBfE8Tg1SiSeXigaineRttFNUrS4h
-	 gb42GBR1IeC/UHSXIw/xSpbJX5YCw5VDufizlLsy29ZpQY3WxyDJABTwVZSAPEwvrJXRibS0d8Wz
-	 2EiukS8YC9MXOWp+CAZGEN0RzVSL5Oe08rwyGgyn3rWWDTAj54cXHQjut75VK9aXfMaYUxUUKiN1
-	 J2mgiM0eYa7x0iipBDMWRnkWk6ShbdZo6V0VUxQry33u28gPGX0HhifD3Zl5ynf0PE89Nf9Df/Sc
-	 /E3yRG8SKogTC0PXQGgwM3jXa2ZCjLp4m78hbG+1NMV5z9BnTjyaR8h5Hc0EloZVFBq3utBw4c4F
-	 9cCxng2q5B6nnDL/HIi5ZzfQTVS44cHE/xsncNA5adhtIpFX8XA5ZPWPxKjVvUo2qioH6qW4Il4v
-	 S1EgReIDREwiQ+jUDsId7GxRiYAZDxkw==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] hfsplus: restore i_nlink and flags when rename_cat fails
-Date: Tue, 26 Nov 2024 07:42:09 +0800
-X-OQ-MSGID: <20241125234208.3901871-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <674305a3.050a0220.1cc393.003b.GAE@google.com>
-References: <674305a3.050a0220.1cc393.003b.GAE@google.com>
+	s=arc-20240116; t=1732579575; c=relaxed/simple;
+	bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJfS4l2cSMDpUOS5TH6P7hLNaRnWRXaVqydrqc/PYxg+QcZ6l+/NmpeobpQ4Z7R8N/pSXP4ZqglgMXnzpRjZYqM2C18QWn6fZYwz6yWt/Y+6jdGFQittyEq93mgqebA/Wn1HzaH6+Ynx2wfhLThOvo5/qhIecJDrxY0AzX0RJ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHtWPsj3; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732579573; x=1764115573;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
+  b=NHtWPsj36I/MZ0WmrAF81YgBt76PvNXen6HCvJoolNNO9QS8xxSPbBcN
+   z9Gy1sZd+VpFrLLJKQd5+/cNoQ81LH+T9g6oHmX0bqpjVle63JOX4Zc1k
+   g74u0kPRKzvfstE8t2ZW6h/cXPiVmOtbmfqEVuBi+NaQ/UXZ1cKkEmIdO
+   buhi165psLTrntOGrcZMzigARK+ZEiS+ihJMwmvPE9Dsf3NEjDcpIRkzR
+   dJRP3MDbkgf+29qFiB68feh9o9wfUrkOprFCtzeoEFYeeukf6kEMUsd9N
+   nKPUxbHYuCmocYZcTpMfenqUSTFTZGfZI/HDNbH9emprsVW5SJPN6up0y
+   Q==;
+X-CSE-ConnectionGUID: GhhPh86rSqeaLRRc8Rec3w==
+X-CSE-MsgGUID: Zh3/kPVeTmWyZ7M4juQ8Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="35567880"
+X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
+   d="scan'208";a="35567880"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 16:06:12 -0800
+X-CSE-ConnectionGUID: za6kESCNSF+4W0HO68MYwQ==
+X-CSE-MsgGUID: 1wPFI6ZMQsy74p/HsKNWwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
+   d="scan'208";a="122286713"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 25 Nov 2024 16:06:07 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFj5f-0006ur-2T;
+	Tue, 26 Nov 2024 00:06:03 +0000
+Date: Tue, 26 Nov 2024 08:06:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+Message-ID: <202411260746.XEdTrLMj-lkp@intel.com>
+References: <20241122225958.1775625-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
 
-After the rename syscall fails, the unlink syscall triggers a warning in
-drop_nlink() because the i_nlink value is 0.
+Hi Song,
 
-When unlink succeeds but rename_cat fails in rename, the i_nlink and flags
-values of the inode of the new dentry should be restored.
+kernel test robot noticed the following build warnings:
 
-Reported-and-tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/hfsplus/dir.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+[auto build test WARNING on jack-fs/fsnotify]
+[also build test WARNING on linus/master v6.12 next-20241125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index f5c4b3e31a1c..b489d22409e7 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -534,7 +534,7 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 			  struct inode *new_dir, struct dentry *new_dentry,
- 			  unsigned int flags)
- {
--	int res;
-+	int res, unlinked_new = 0;
- 
- 	if (flags & ~RENAME_NOREPLACE)
- 		return -EINVAL;
-@@ -543,8 +543,10 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 	if (d_really_is_positive(new_dentry)) {
- 		if (d_is_dir(new_dentry))
- 			res = hfsplus_rmdir(new_dir, new_dentry);
--		else
-+		else {
- 			res = hfsplus_unlink(new_dir, new_dentry);
-+			unlinked_new = res == 0 && d_inode(new_dentry)->i_flags & S_DEAD;
-+		}
- 		if (res)
- 			return res;
- 	}
-@@ -554,6 +556,12 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 				 new_dir, &new_dentry->d_name);
- 	if (!res)
- 		new_dentry->d_fsdata = old_dentry->d_fsdata;
-+	else if (unlinked_new) {
-+		struct inode *inode = d_inode(new_dentry);
-+		set_nlink(inode, inode->i_nlink + 1);
-+		inode->i_flags &= ~S_DEAD;
-+	}
-+
- 	return res;
- }
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fanotify-Introduce-fanotify-filter/20241125-110818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+patch link:    https://lore.kernel.org/r/20241122225958.1775625-2-song%40kernel.org
+patch subject: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+config: x86_64-randconfig-123-20241125 (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411260746.XEdTrLMj-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/notify/fanotify/fanotify_filter.c:271:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
+   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     expected struct fanotify_filter_hook *filter_hook
+   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
+   fs/notify/fanotify/fanotify_filter.c: note: in included file (through include/linux/kobject.h, include/linux/fanotify.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+--
+>> fs/notify/fanotify/fanotify.c:1015:63: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
+   fs/notify/fanotify/fanotify.c:1015:63: sparse:     expected struct fanotify_filter_hook *filter_hook
+   fs/notify/fanotify/fanotify.c:1015:63: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
+
+vim +271 fs/notify/fanotify/fanotify_filter.c
+
+   262	
+   263	/*
+   264	 * fanotify_filter_del - Delete a filter from fsnotify_group.
+   265	 */
+   266	void fanotify_filter_del(struct fsnotify_group *group)
+   267	{
+   268		struct fanotify_filter_hook *filter_hook;
+   269	
+   270		fsnotify_group_lock(group);
+ > 271		filter_hook = group->fanotify_data.filter_hook;
+   272		if (!filter_hook)
+   273			goto out;
+   274	
+   275		rcu_assign_pointer(group->fanotify_data.filter_hook, NULL);
+   276		fanotify_filter_hook_free(filter_hook);
+   277	
+   278	out:
+   279		fsnotify_group_unlock(group);
+   280	}
+   281	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
