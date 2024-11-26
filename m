@@ -1,100 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-35865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5919D902D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 02:56:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0259D907E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 03:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716A1169A35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 01:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BC216749C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 02:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E785F14A90;
-	Tue, 26 Nov 2024 01:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346183B7A8;
+	Tue, 26 Nov 2024 02:54:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from granite.fifsource.com (granite.fifsource.com [173.255.216.206])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D7EDDA9;
-	Tue, 26 Nov 2024 01:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.255.216.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4519D26D;
+	Tue, 26 Nov 2024 02:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732586159; cv=none; b=FhtgjUxdPHPHM0ZSKcE6jZ9JdoKXBocV139HXsD6tqkPpyNfIaWSAueI97e2KBEatQUxcIWLyI+/zx+JV87enLsZQkpVmXZYVqz0oQz4F1T7VDoJJb/jbhPRV35VssfihohgZ3elkmM2roJVyQuri+wkvzv1D99RhbfxAzRmmrc=
+	t=1732589651; cv=none; b=iHWmU0kv4O/0kTVL2Fohu+NYpZgUqquwa9PRUYRPm3raqQX+i3kbE7K0f9/eBtLwHKGIfax0WLFx/dX7tyjdinOrGPc94x7wXcF+587S3DJxXjUdk5mw+7Fr+oTLuy4W1IPn76ZztPqpIESb9SbcxlPXGNReTTgM+MDChOUMXLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732586159; c=relaxed/simple;
-	bh=x1Q1jqiMb0qZANI1diCAbnUoCUvWMoZSXXu1B14MoLE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iQGl0khTMGj0AFcvY4M6lFph0l3HqKA5h1BmCFqdjKjd+TS5SVm4ZkbW5dHvY2aJ9/t4xYL1mqkVjkf2jIvO9J+qymWvh7Hw0AxohZI/NSYhpIRclfOd1yWrCmSqDh+S8O60Ct3ldcs3kp4r8F/s3ywJcyKaCnE+VQ9Mi+0BRCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fifi.org; spf=pass smtp.mailfrom=fifi.org; arc=none smtp.client-ip=173.255.216.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fifi.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fifi.org
-Received: from ceramic.fifi.org (107-142-44-66.lightspeed.sntcca.sbcglobal.net [107.142.44.66])
-	(using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-	(Client did not present a certificate)
-	by granite.fifsource.com (Postfix) with ESMTPSA id 345DC4076;
-	Mon, 25 Nov 2024 17:48:49 -0800 (PST)
-Message-ID: <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
-Subject: Re: Regression in NFS probably due to very large amounts of
- readahead
-From: Philippe Troin <phil@fifi.org>
-To: Anders Blomdell <anders.blomdell@gmail.com>, Jan Kara <jack@suse.cz>, 
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>,  linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>
-Date: Mon, 25 Nov 2024 17:48:48 -0800
-In-Reply-To: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732589651; c=relaxed/simple;
+	bh=XGo044VhXgUmO3tjubguzk60LcgtF5i9X7oZHx/tNNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J5/sT15li68qxgdfxoavUmNzzNR0q7sHFwIqxhJFMLynmlp13Q5UmmWBf9xh5s/Kb0YLUOTr9m9KHfZa5hcBgtpk/RaNbYwoQWnC+0/CYvB2SeSCLrCbglSdD7uFc87+XOyS23U7R0VJK0zvJWKIlXYQsVOTMzwpbA0jBTYrrPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xy6XS2Y2lz1V4l2;
+	Tue, 26 Nov 2024 10:51:20 +0800 (CST)
+Received: from kwepemh100007.china.huawei.com (unknown [7.202.181.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id 05F231401F4;
+	Tue, 26 Nov 2024 10:54:06 +0800 (CST)
+Received: from huawei.com (10.67.175.69) by kwepemh100007.china.huawei.com
+ (7.202.181.92) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Nov
+ 2024 10:54:05 +0800
+From: Zhang Kunbo <zhangkunbo@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liaochang1@huawei.com>, <chris.zjh@huawei.com>
+Subject: [PATCH v2] x86: fix missing declaration of init_fs
+Date: Tue, 26 Nov 2024 02:45:32 +0000
+Message-ID: <20241126024532.3465039-1-zhangkunbo@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100007.china.huawei.com (7.202.181.92)
 
-On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
-> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
-> we got terrible performance (lots of nfs: server x.x.x.x not
-> responding).
-> What triggered this problem was virtual machines with NFS-mounted
-> qcow2 disks
-> that often triggered large readaheads that generates long streaks of
-> disk I/O
-> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
-> area of the
-> machine.
->=20
-> A git bisect gave the following suspect:
->=20
-> git bisect start
+fs/fs_struct.c should include include/linux/init_task.h
+ for declaration of init_fs. This fixes the sparse warning:
 
-8< snip >8
+fs/fs_struct.c:163:18: warning: symbol 'init_fs' was not declared. Should it be static?
 
-> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
-> readahead: properly shorten readahead when falling back to
-> do_page_cache_ra()
+Signed-off-by: Zhang Kunbo <zhangkunbo@huawei.com>
+---
+v2:
+- fix some typos
+ fs/fs_struct.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thank you for taking the time to bisect, this issue has been bugging
-me, but it's been non-deterministic, and hence hard to bisect.
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 64c2d0814ed6..100bd3474476 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -6,6 +6,7 @@
+ #include <linux/path.h>
+ #include <linux/slab.h>
+ #include <linux/fs_struct.h>
++#include <linux/init_task.h>
+ #include "internal.h"
+ 
+ /*
+-- 
+2.34.1
 
-I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
-slightly different setups:
-
-(1) On machines mounting NFSv3 shared drives. The symptom here is a
-"nfs server XXX not responding, still trying" that never recovers
-(while the server remains pingable and other NFSv3 volumes from the
-hanging server can be mounted).
-
-(2) On VMs running over qemu-kvm, I see very long stalls (can be up to
-several minutes) on random I/O. These stalls eventually recover.
-
-I've built a 6.11.10 kernel with
-7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
-normal (no more NFS hangs, no more VM stalls).
-
-Phil.
 
