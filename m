@@ -1,185 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-35901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265779D975C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4BD9D976C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23FA2855E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69042285B4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460071D27B2;
-	Tue, 26 Nov 2024 12:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2B61CDFBE;
+	Tue, 26 Nov 2024 12:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aGmmZvTk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b20KNGKv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601327442;
-	Tue, 26 Nov 2024 12:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EE36C;
+	Tue, 26 Nov 2024 12:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732624893; cv=none; b=N0OBmAttwardYfsScDN+SDXQBYyK0ZG1BU/Yr78+u7NyFkbdHeZYvC/FxeYuOzhk7dj1Km3qe7/3vGxAMU+guTgiQOzQ9bQ9Nkf2FD2DJEamVeFBRdjKM7xI+qXTOHP8IpIRbI+MzFsUZphO5BuukSS3N1TBcz/bIQgXcaIkUMY=
+	t=1732625356; cv=none; b=RXc5BbjSIcVxka9D54dbTOP/NdTr68dqqWiF4NmelXYbACIG3X0D+mxhkcjNre9lyO3ooY7NW5+7MArlLff0+m76nVZDyeLQb/Gm08JRoc66CGEcBMVA5jWBktUCKttC7hyh2Nvwn2ZE8csD8UgpTHHM5XJm8xtLiKOQvIRWx44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732624893; c=relaxed/simple;
-	bh=3++F0CPGlSPV7VHDSu5UkQCDjvkmtFv4Il2HnX9bZow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfUjxrwnKYportvkN11gBCUec35kr72OSMK7R3/YQRih0+m7BfwyhPbyqGw6Z5KzePb6BPMWN//bIrOYlQc8Bug+8oQra9A72UIwigiRzbfpUywZk+49GJkCtUim7vX6zI54/+oawsO5i4XGPgGvM8+ZR9qih4xtUdMU4fs7Stg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aGmmZvTk; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ8eBha018106;
-	Tue, 26 Nov 2024 12:41:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=gI7lf1d2YuHEgZ8p/4OjqQ4L7QiJ9z
-	JUd/FwFOMA2p4=; b=aGmmZvTkHQ3RUf99D8ivAqhfnNj/XKEP1pBfJJplCLW0WC
-	8bG2e/0J3GC5mMhobFMpQWtCtNnedwwC77iMkmw6YQiBA3iiiz3dlxlYZp2ebhpX
-	/pJIWwrfJd2KCmhm9Yup/ts3tS65OJuPbuAXF4PcaZYxqUtfrJMMAuVYd0sex+Hd
-	SV8P4bj8gthDhHebz5ys/WzjVuRt1cRDYvjzvvvPaKYJOsNDfrDTmn1z4K17UjhF
-	dYMUElBvYicTHEbsLb/aI240PW8urn0GR9hcBZNWnYT4Z7Er0dTsP6B3CRYyMpNv
-	YBXC9c5Oqo36Ptss2QEmHRmPaRokXEW7EuV5INqA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwje3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQCZ0Yo028031;
-	Tue, 26 Nov 2024 12:41:21 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwjdx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ79qF9012370;
-	Tue, 26 Nov 2024 12:41:20 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 433scrvg77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:20 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQCfJmk17170736
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Nov 2024 12:41:19 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15A7D2004E;
-	Tue, 26 Nov 2024 12:41:19 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A44AC2005A;
-	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
-Date: Tue, 26 Nov 2024 18:11:14 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
-Message-ID: <Z0XB6uLUkwDWLV8E@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
- <20241121123855.645335-3-ojaswin@linux.ibm.com>
- <20241126090452.ohggr3daqskllxjk@quack3>
+	s=arc-20240116; t=1732625356; c=relaxed/simple;
+	bh=VUoMqXVLY+GmVKqlO0TpKf0FJrvF6KvhdzOUouz0N/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBtBeQL1E3WnOzIaJKgraXwLmG8rDsLFSgyTJFMflsOFet/6FiaWmxmIMeg7Q+JXF1lOP9Q1wbgepZbgl4CHFvyx3ywDBVMuVZn13SE5u40HG/70yHdd5K/NkRCU2vMZhJqsY3joxPkix2XeKrH6wmhee8K6DT/0YH0UUzZwHtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b20KNGKv; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so2734321e87.0;
+        Tue, 26 Nov 2024 04:49:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732625353; x=1733230153; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
+        b=b20KNGKvaT0M0cznNB5nOBRBUQXvLMT20fOPWbmihLSHqVLqBDCjh4PmEeTNGcweqd
+         kGES+YRYm5zYBVNad0j2T4qiaV8+RI/nr7OKlNe2ADerbVJeu/4gj/UjCocBJAjpDFW9
+         itzhhvnYaXuy/QVncyIM4Uuys2N1Cj4ugt+8sWjx7NQDgljOVZm1BUKohulHzRhe9caF
+         HAqLRWL6ZOJn6Fh3PQQl5uztZPCACCTOvd6MVG5p4aFl5RH+BLRZ7EnsMnZlLLu+kykX
+         bMkoaEf/N1njLdf9IN/pjw31EMFCsXkjxjO4nvNTPUKGY86ZHV4Wp2OwepR/qC9kOiqq
+         ZthA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732625353; x=1733230153;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
+        b=Gjxc0pbf7QWOWkJntiXMtuSES+kUbxJCW3D2mqr9M99bPa5Vm+sLMHQT8eY6x2CTfo
+         CQoL+Fxt4KcHCGLTPxAEl0XabtNevOlmd1dpvYCNcGq+Jt4xXi0pl83B6gC1210dLksD
+         z2kL4u5PagiCPLVrT69DizzQVgrHUX1osB1UlQvq5Xbrv4zmIcatMl4os6FfFe2nzs16
+         S2nJjG/AsZLEbAoXsZCz+hsgDP18pmkOMaq7ifAHyNLuS9ZwcPFgmlAzEaBtsIhG0yh+
+         8eqXVt/DbuO3upKHBgdzqJUC7kogZVcRvnOX7bOk7X2E5OA/RtSsh6AGSWReMky3tZU0
+         n3nw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6A0s9NKQ8jxdbhSAOKgT/trffxDyzmL1Igp61R+7c5Y2dkJZtNqOwmBIWuMRcQuiIvpmtQwg0SkcgW/E1@vger.kernel.org, AJvYcCWlsZ1FYZDoXHiECtQs6/NVdnuoyv+yYJ1MTcUX30+kQAwAIoAHpQltDNZInXoUOt3fn+BKzKXLvVsKCdDy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv44NCwrGkgiPFbhIyC1OVnygqsooA1EeFYBsEg05aEm2tjOjs
+	5Xlk3cyCLlcrntTztfDiEgHaWOG+/G7HVOtsw7i62PWsDkVQ6aOKB01i7EbO
+X-Gm-Gg: ASbGncstkfTc28YFUhuz68o4C8xkX61cIzWTubcIUBrJqP+2U5HVo+suTdZjyrM9qan
+	G9HdNFdZ8Jr+80rpu9PTk8X8F2t57UUYm6lDgWS5NlsixSSXk3h8I6BMcZ3Htm6lgZcAvoa3TyN
+	zZZc0q/9Xyq1MARou54IUfyHK5gFqlHuhyk8ElIIgS+sVLBEYg9+F8enfga65U2pY8WHDrxIl+0
+	pX5gEc0XCQHXwZq55NKO0T55Dd3A8ijEUw7fDXKsuHZzD5hYveDSQz/p01fdGEIzn08PLQhL4HU
+	vx9+mwpq
+X-Google-Smtp-Source: AGHT+IFVpS4FmtsdmagtZddlo7pfwq3eSDGmyAJK0KYwfojtIIFI/sDvVOq140czgbRRX3zvdTroeA==
+X-Received: by 2002:a05:6512:3b06:b0:53d:d06c:cdf8 with SMTP id 2adb3069b0e04-53de8800269mr1074256e87.1.1732625352549;
+        Tue, 26 Nov 2024 04:49:12 -0800 (PST)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2497e60sm2004772e87.256.2024.11.26.04.49.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 04:49:11 -0800 (PST)
+Message-ID: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
+Date: Tue, 26 Nov 2024 13:49:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126090452.ohggr3daqskllxjk@quack3>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1nRQjSqdA0HDfy838ABRw0pKv6Qm4RYg
-X-Proofpoint-GUID: SZz5FBwk32IcPVu-fs9KsAnJtaIjJpxp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxlogscore=817 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260101
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+To: Jan Kara <jack@suse.cz>
+Cc: Philippe Troin <phil@fifi.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <20241126103719.bvd2umwarh26pmb3@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 10:04:52AM +0100, Jan Kara wrote:
-> On Thu 21-11-24 18:08:55, Ojaswin Mujoo wrote:
-> > Protect ext4_release_dquot against freezing so that we
-> > don't try to start a transaction when FS is frozen, leading
-> > to warnings.
-> > 
-> > Further, avoid taking the freeze protection if a transaction
-> > is already running so that we don't need end up in a deadlock
-> > as described in
-> > 
-> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
-> > 
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+
+On 2024-11-26 11:37, Jan Kara wrote:
+> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+>> On 2024-11-26 02:48, Philippe Troin wrote:
+>>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+>>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+>>>> we got terrible performance (lots of nfs: server x.x.x.x not
+>>>> responding).
+>>>> What triggered this problem was virtual machines with NFS-mounted
+>>>> qcow2 disks
+>>>> that often triggered large readaheads that generates long streaks of
+>>>> disk I/O
+>>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+>>>> area of the
+>>>> machine.
+>>>>
+>>>> A git bisect gave the following suspect:
+>>>>
+>>>> git bisect start
+>>>
+>>> 8< snip >8
+>>>
+>>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+>>>> readahead: properly shorten readahead when falling back to
+>>>> do_page_cache_ra()
+>>>
+>>> Thank you for taking the time to bisect, this issue has been bugging
+>>> me, but it's been non-deterministic, and hence hard to bisect.
+>>>
+>>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+>>> slightly different setups:
+>>>
+>>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
+>>> "nfs server XXX not responding, still trying" that never recovers
+>>> (while the server remains pingable and other NFSv3 volumes from the
+>>> hanging server can be mounted).
+>>>
+>>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+>>> several minutes) on random I/O. These stalls eventually recover.
+>>>
+>>> I've built a 6.11.10 kernel with
+>>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+>>> normal (no more NFS hangs, no more VM stalls).
+>>>
+>> Some printk debugging, seems to indicate that the problem
+>> is that the entity 'ra->size - (index - start)' goes
+>> negative, which then gets cast to a very large unsigned
+>> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+>> bug is still eludes me, though.
 > 
-> Looks good to me (the 0-day reports seem to be due to wrong merge). Feel
-> free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Thanks for the report, bisection and debugging! I think I see what's going
+> on. read_pages() can go and reduce ra->size when ->readahead() callback
+> failed to read all folios prepared for reading and apparently that's what
+> happens with NFS and what can lead to negative argument to
+> do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> ra->size / ra->async_size does more harm than good (because those values
+> show *desired* readahead to happen, not exact number of pages read),
+> furthermore it is problematic because ra can be shared by multiple
+> processes and so updates are inherently racy. If we indeed need to store
+> number of read pages, we could do it through ractl which is call-site local
+> and used for communication between readahead generic functions and callers.
+> But I have to do some more history digging and code reading to understand
+> what is using this logic in read_pages().
 > 
 > 								Honza
+Good, look forward to a quick revert, and don't forget to CC GKH, so I get kernels recent  that work ASAP.
 
-Thanks Jan, yes it does seem like an incorrect merge.
+Regards
 
-> 
-> > ---
-> >  fs/ext4/super.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 16a4ce704460..f7437a592359 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
-> >  {
-> >  	int ret, err;
-> >  	handle_t *handle;
-> > +	bool freeze_protected = false;
-> > +
-> > +	/*
-> > +	 * Trying to sb_start_intwrite() in a running transaction
-> > +	 * can result in a deadlock. Further, running transactions
-> > +	 * are already protected from freezing.
-> > +	 */
-> > +	if (!ext4_journal_current_handle()) {
-> > +		sb_start_intwrite(dquot->dq_sb);
-> > +		freeze_protected = true;
-> > +	}
-> >  
-> >  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
-> >  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
-> >  	if (IS_ERR(handle)) {
-> >  		/* Release dquot anyway to avoid endless cycle in dqput() */
-> >  		dquot_release(dquot);
-> > +		if (freeze_protected)
-> > +			sb_end_intwrite(dquot->dq_sb);
-> >  		return PTR_ERR(handle);
-> >  	}
-> >  	ret = dquot_release(dquot);
-> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
-> >  	err = ext4_journal_stop(handle);
-> >  	if (!ret)
-> >  		ret = err;
-> > +
-> > +	if (freeze_protected)
-> > +		sb_end_intwrite(dquot->dq_sb);
-> > +
-> >  	return ret;
-> >  }
-> >  
-> > -- 
-> > 2.43.5
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+/Anders
+
 
