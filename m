@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-35941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21CD9D9F1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 23:15:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEFA9D9F2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 23:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F06116681F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 22:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D032B166AEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 22:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A611DFE08;
-	Tue, 26 Nov 2024 22:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E061DFE06;
+	Tue, 26 Nov 2024 22:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NbjGDwPl"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DVC4tF9T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03olkn2077.outbound.protection.outlook.com [40.92.58.77])
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03olkn2096.outbound.protection.outlook.com [40.92.58.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCD01DB377;
-	Tue, 26 Nov 2024 22:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.58.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656E61DA632;
+	Tue, 26 Nov 2024 22:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.58.96
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732659316; cv=fail; b=ltMX7EzKV6iXWcFRpHs9v7jHDHqWBHrdtTASSMyVNpFiZ3z4K+SvhAiTS5CZGeOvysxjFfeW6ABvg/9ejT5F5tTf4sI28U9Nr+9JcTbfKfI3lYwu1P/HINQHPmOreH4Jzxmlpg+kfJnfbuqjKEIjZPlgt2Bw6v5WKIjWNapjc4A=
+	t=1732659854; cv=fail; b=I7CMx9x10LVo0T0Rwo6MVihCO8eCEXz4U/I5ZWBe7kwY5MWI2uIhNtr7L9IQd7vhKakoAkn504V+8bFmK/Lall9Vo5JXFwXCCKvMTcsCnJeqjoyKmZ9xnMtC9th24+BV6cKc9hpEKqB2JWfXQ1WsGP7JFf0QzD9UnzgM+KnsSw8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732659316; c=relaxed/simple;
-	bh=KvrYyJy1016M4Le8B9vCF2xz6WR80nf/byvx2HDFdSM=;
+	s=arc-20240116; t=1732659854; c=relaxed/simple;
+	bh=97gNRAvgJoZvShIYJ3v0FQ3GhUvXDs49qCioysFNNvI=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=P7m210AN8aHB4HSOKzJ0DD9LcqFKNCOxpC/l7j9Lm8avI6mYcJmt4T6TgD95ANBI6XANx722dkNoU/IVDdEY0RoelqYoAzR/FfXM9JFRhlnCxO5NXK3vxD4GiMi3gQeH1ZG/aKMqo6k9MhPO44kUK5H51QnJK+f3WYs5NQ4JqYE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NbjGDwPl; arc=fail smtp.client-ip=40.92.58.77
+	 Content-Type:MIME-Version; b=P5tml+mznTiJxWktcBGqq0UFKH3N3Y7GZEq4G/0okRn6229Nb8TByUCvZRAcdLzpzisaeanLPVlO5l7WpvXyZfjbeoe/z3jJE2tJ+E3usQaJCJ5Ptf44m87M81FE7ZfZokER3UOHfhrk3qnizq4SFZ/nC73xvv15T+2ZOzsmRzE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DVC4tF9T; arc=fail smtp.client-ip=40.92.58.96
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K4N5FPUIPJOjJKHq5vA2+vlM363Oy4P0xml67gOOuYrX5bCPEuX04FF2/hpCftpPBVxAOKloei0qz+cKaIOzeeqaheVlWXnRu927bqgUoaqKzqNeebEiaDmF64fDxSslGSaiadOKH+XmryFUCzN+DqkhMbZiL3wC53p1eCBeW3eBz9NZoI6DbRRm2K0HZIeeArH1j0wAIghwLmCS4NHqrZnolMlwjeunB3JozBqGmCGN/tV1GSjJVO6/fpUITtFSrJdAH/TLNgLdbT0ExaLE5AaSIKROsvX+NlJuz3jnElGhIr3uzzHkh/6ndd1B5QuCoj2T2b/7PBSg2/wdF/vBAA==
+ b=AGt5ivBqO1sH3FleU1KuloZET+qPzb3IA78QZSrK9tuG/RzcZPL74/+QPz/xfy1kFvUWzMtb/Fzu2I6xWuis2xpHA99xupnAm5lbl17g3SDgHnDyKOQNCoPANF5sn3HlOPljG1Xc6p1TPBWfysl91BPDclHcObFjm9qtbtEUbfBHwP3SJ0Zk5H7zgXbS1oyPilOsO3JTF9iFGhhKQQw/rsym/K5O6aCT78BdrCiEjtlzUUpq6x4zZRrk2shr5E8vRsIIbU1FYQ3fOag4q0P1E+umanpMOIMrVP/6epUPrLg1kuDy+AePwjJqjoyEsBNU5H7D2jBltO/LRiKVaZDgZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=399vdkEDxCH5PFTmP+56RZNmBkjj6Rg6rcyf0MGxxTs=;
- b=R+y437H8hR9qlDgM0kWIYOl9MVnRTigIPAtQgVgypSQyChxUd2qWKOrDc0zyEKCOjceH8rNyywbCLgfKyJlyjE46dzOBklQzsZm21IvI97I4vjg+SAw3ttG0uSjcFhWvXUUNDGOyBu4A8y7xcmP6yaG2Kj19beXNHl2f+RVqt6e6+GHCW8kc0Y72soBBnonTVA9iJk8pW8vgOeGHN7eKNVjTG3maeTrhQxPd5Vidz2/wtU82N5FIRDFRHRU31Emp2YxzYxivGMfdKWgB/7/ASQO25BnyaCErSHieY03Iq8LD6SzJ4y0QyHFMaYn8VUVa9PGcVf0eeDCnLSZd7IV4bQ==
+ bh=9o8qUDMy6DQ+9Jduomwkyp6ZFjPvvLAk5PxM582oRAs=;
+ b=F7sWIYtKREUCDJ0IAXKhndmkYyWScu38vzp/GOcSDqtUyPZh2JSKc8W6CGgRwOaSx/SzjLzkN3rxCPwL3BWbl135Hf2q/lXm6y9ld2xu0ajnEetQLVnA2EZgnbzL/RywjG2R1qiZa88D/ow3pXgcQDFKk5RlWYi5ESk6NXlvayYUc4DEpFAUuAQV5LTGFvdTRuQNS9NeOb3JzQcaHDW017Ipru4FJu60y22JWvY2zhTh2suOvym5S31mlWk8KPEzVLVFocMgZflTB/lbrspziS9FK5NG0dOTotpuKhKWUesy3HVqBrKw3u9p4QS4pjr0jLV3yARpZnDTSGHYCrSuCw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=399vdkEDxCH5PFTmP+56RZNmBkjj6Rg6rcyf0MGxxTs=;
- b=NbjGDwPln2oh7vXHsQlIRVWvcRjj9u81T+q+u2vsoTjA3JBYJlCVXGSP/QBfMkOMcSQ8RD9oK1ezZHPEfYGb2JFmFcThAAz5MTzBw6J59wRobKxHR6r272BxHe7Ck3IYPwbzNDykAQkBW589SvfMzaSAJmDApSF7NptzBccKaufIPUKKbsN4nB2xSiadvQdCdHB1Zx+x/ztdXHck7bOYPzRz0s/7m8ouJYHTH9BWx8JF3tfLPwt3bHkdDkIhTVPDDckNYGmS/fxGJnuY1dWlxikSVZNwzbhzW7+mwc05HJyjytax3nC8MA/nCdrMgRWThsIS6kqzAIkw4thvjVfZkA==
+ bh=9o8qUDMy6DQ+9Jduomwkyp6ZFjPvvLAk5PxM582oRAs=;
+ b=DVC4tF9TpyYzl1sleZNOT83vme+Q1wRwx9EQ+hUn3Glc9nfDySm/q/sOB6prdMaLxRMTspMbXWs4TLaiVsaHAFSQS4V/OxLnb6mdJotQIC4O/F8uwDRxXd6xP5M2Ini938bZ8vUvaFgE/dTPTIsU9gsDP3QaSr1ZDqjf1vKgDNbc9PQ14LwNoBTiQHyjYTjQNdaNQK9tCvnLhimh4BEm3JGb2agi+3ejfQ3rUf1Ub/7wZkTs1hW0Ndf9Lforp86YyfcTJTseB+QnPH0a0mNiwsBWIx2i1aaLNXA8qQJ3Y0TA1rZZBK9Br7q7JovcwczWeZM23Z1IjEXQ/F5AeyVIdQ==
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
  by GVXPR03MB10245.eurprd03.prod.outlook.com (2603:10a6:150:151::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Tue, 26 Nov
- 2024 22:15:11 +0000
+ 2024 22:24:08 +0000
 Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
  ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8182.018; Tue, 26 Nov 2024
- 22:15:10 +0000
+ 22:24:08 +0000
 Message-ID:
- <AM6PR03MB50804262BBB1A50C254A506D992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Tue, 26 Nov 2024 22:15:07 +0000
+ <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+Date: Tue, 26 Nov 2024 22:24:07 +0000
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 0/5] bpf: Add open-coded style process file
- iterator and bpf_fget_task() kfunc
-To: Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH bpf-next v4 2/5] selftests/bpf: Add tests for open-coded
+ style process file iterator
+To: Jiri Olsa <olsajiri@gmail.com>
 Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
  andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
  yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com,
+ haoluo@google.com, memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org,
  bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-fsdevel@vger.kernel.org
 References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080BCAC62436057A03B334499202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <20241120-campieren-thermal-a2587b7b01f5@brauner>
+ <AM6PR03MB50809E5CD1B8DE0225A85B6B99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Zz3HjT24glXY-8AF@krava>
 Content-Language: en-US
 From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <20241120-campieren-thermal-a2587b7b01f5@brauner>
+In-Reply-To: <Zz3HjT24glXY-8AF@krava>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0096.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:191::11) To AM6PR03MB5080.eurprd03.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0214.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::9) To AM6PR03MB5080.eurprd03.prod.outlook.com
  (2603:10a6:20b:90::20)
 X-Microsoft-Original-Message-ID:
- <49ab7507-a8ce-4e8d-aa24-9dbcde39ce55@outlook.com>
+ <fad8939c-91c0-4c88-886b-c98a25adb139@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,70 +89,70 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|GVXPR03MB10245:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7eb556ae-5916-4ca8-fb54-08dd0e67c94e
+X-MS-Office365-Filtering-Correlation-Id: 75b162f2-7296-4364-ee00-08dd0e690b83
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|15080799006|6090799003|19110799003|5072599009|440099028|3412199025;
+	BCL:0;ARA:14566002|6090799003|15080799006|19110799003|5072599009|461199028|8060799006|3412199025|440099028;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWsxM2lnQlA1Tk9iUE0yZ0p4eFJwL0hMT3pEU2krWWlMNkJOcjF0T1hGdXFk?=
- =?utf-8?B?T3NzaHI1RkI4bDMyZGswNzVPSFNkU2RYWGw5cG9wb3BpZjZhU09OYzgveTVt?=
- =?utf-8?B?VTdhNU5UT3p6M0REY0FPWGJzNXBIVDNHb1g2U2FOSXIydTBrOS9wNVFTc05y?=
- =?utf-8?B?eGVDT0pMRUZTYWNad3J5ZVJHQkNQUTd1TW1RMHEyM01wZHRzZEFvSjEyZ2l4?=
- =?utf-8?B?eEt1dnJEaUZ1SnREejRLTjk0d3ZGQjc2bUkzQkFQbHN1QnUzTFJOa2dWYzM2?=
- =?utf-8?B?VzBmQjRPM0ZZTFEyb20rRVk2VEdaVnZxQVFWYVBTZ3hwNm5VMzdDbXprV2hk?=
- =?utf-8?B?TUtLK0lDQ3VManlXdkpJTnBUNVcwREprdlZxbTY1S3dFNWMrWDdJS2hicndJ?=
- =?utf-8?B?allSdHYrZHdsem9kUExYK0dnZElhMjg3QVU5NTBEajllWGM1MTA5Q1NJeHRI?=
- =?utf-8?B?eHZpVUdhcytSVXB4NzIwRXFvMFlPcXJBdEFodzhkYU82NUZIbER2OG5ybmor?=
- =?utf-8?B?ZkhwYURjb1lTWXJsaFBCNFZmd1RYWm5ySFVkMnYydnNaR0c1Zlh0ZXk4R3JC?=
- =?utf-8?B?azNGU2ZCNnVFZGh1UFRQQkdzNGMvTDFUSGF4QkxJdVdCT091ejJ6TWlDSHNm?=
- =?utf-8?B?dTVMbGEyQnl1UU8rVWtHaHFlalRqT3p5b3ZsSk96ZldROXdJd1VSeTMwTUYv?=
- =?utf-8?B?cUxlakkvTUYwaXFocjM1SGpVTm1Pd2VQaGRVaWpwUFgrczZZT3l0aGd4TlR5?=
- =?utf-8?B?SkVUWlc0RzBwYTFBQ3ZUUWRUaldIM05FTFp2L21zVWt2R0J0VXdXU3lJWEli?=
- =?utf-8?B?Y3pSRC82OGRIOG5XTWFNZkljaklyS1pndlI4SzZxNFIrbGhnMG1FTzBhMjlD?=
- =?utf-8?B?NFV0VWIrczE1bVhnUk52cTk1ZUgya3JyZWU0MmpXS0R3L2lzeXFOSklDellP?=
- =?utf-8?B?a3dUdVEreUMva25RVjM0ZUZXODZza3RUMUxodkNrcitCdC9BM2V4Smg0VkxJ?=
- =?utf-8?B?VU9LZVRiL25MT3YyTzNCdG9BMjA3dHpjVWgwQldtWFpxa203OGNEeGtUM0hj?=
- =?utf-8?B?YXdUQ0VWY2tJWFVzN1hmSUUvQnNuQ0tDa3htS0dySExpUVZDbE5ja3VMeGVZ?=
- =?utf-8?B?My9iZ1Z5U0s2RTY0K0Z0M3VSblBKYTY0cmNETnowT1pRaHlCSGRGbGVRRm5L?=
- =?utf-8?B?cGx1ZFMvYWlKMUNsQ3p6ZkM5WGxxQmJlLzhyNjh3RHhNU0FzeXBId0Z0eURZ?=
- =?utf-8?B?bVJiR1BtUnNraUFSZFE1ZVdsaCtraXVyKzVhbldqTFZOcnc3L1BjVi9uWHI0?=
- =?utf-8?B?T2FQQlpEWUsyemVxY1R5Vm5LT2VJQ2tUc0RYRm52aERza3FpcHdCNFBJQVNN?=
- =?utf-8?Q?aPjd3PC8jxScBk6RgX1P6bB0ERYU35W4=3D?=
+	=?utf-8?B?bGNRanZqMS9ob2VkYzk0RkMvYktRVVJJeTBjZDRtL2dnQnRVNlF3a3hqNkZ4?=
+ =?utf-8?B?TFJVdzFkWVFWN0dpWTNkczgvNG92NFFTTGdiZjgvS2lhQk1MQ094UTg4NVJk?=
+ =?utf-8?B?Z2J4UkZhV0k3OUpVajROVkJTM2FPS1kxaGpzZHRRcDlvYmxGZUw2UUZiN1pF?=
+ =?utf-8?B?bE4ydERkK29aQTAxVkR0NFpxY3phdUdKMnJ2UjkrRnpMdk5GVm5CMzRUSkVh?=
+ =?utf-8?B?ZG9KSkltVFY3YytnNjFqTTNmWkloUjhyNkpwZ0Z2Zy9PQStkT0diRWxISU1l?=
+ =?utf-8?B?c1F5Nm9UZEs3RjdVM2lwbDhWVnd2K0k3d1BJOE9WK2VuZ3QvaWppb2hjWlZY?=
+ =?utf-8?B?NXJFNzAybk5YblFMRnVjbXlDQmpwQTBESnZmT3Y0SG1SY3FkNVBmOXM3cUk3?=
+ =?utf-8?B?QVdQcnpQLzRzZHA2WHlTcGUzT3lhVzBRZm8xMDYyMHdranZha3VLWUp3TmRn?=
+ =?utf-8?B?WDZvcjJqQmx4dnoreXRFdnpBUzJFazFwRHM5TFNzRHJmZ0dKVitpUy93WkNn?=
+ =?utf-8?B?NXgveUtxZ2E5bnFvNlVRc1B5bFlERlBNTVZVb3F5dnRqazYxSlk4c2pwalJD?=
+ =?utf-8?B?S2V4UndvNTBISlhhOWZjdlFkYXBrc0NabmJYeGxpUlMxY3R5eHk1QTU5NERS?=
+ =?utf-8?B?OW1ud2ZCWlZJOWZMMTNTM3dRWjdSOUFzVFJBeU1vOU1EMktISUFOTnFJQjdP?=
+ =?utf-8?B?c3dmaGY5cnV0U2pEZUdaVjcyMU9mcHBucmUrV2U0SStNamkzR3l6cVZkN3do?=
+ =?utf-8?B?LzczdEY4aHBUSnFWWUx3cDFQYjNURDhsQ2s2SGhHSlVuaGorV2R6RlJIa2Fp?=
+ =?utf-8?B?NFliNmsxOHN4SmZNREJNUkJYbjVlKzlvb3J2SHhRbm9MQm40WEhiZFNUdEtS?=
+ =?utf-8?B?YVF0ZHQ1ZWdxQ3JoRG94b3M2d3lvUllVcmNJZFI5OGpTa2s5LzczejJ5MXBq?=
+ =?utf-8?B?Y1pzNlNCdXEzbDA1encvbEhMNUdSWGhmOG5idVVOazFNeUM2OUYyeWNVNGQz?=
+ =?utf-8?B?RG9XTXdaM1JGNFlsdjk0emw3VjVKaUt0bE5oaFc5cUZ0R1p0RW1lSFN1YkVQ?=
+ =?utf-8?B?M2JXazJHdWE1THRUY0JudkxCT2lOZ3BweDRmSGFaU1FzZnhVeExEam8yZXdF?=
+ =?utf-8?B?cVhhVWw0OFN0dnlRTi9PWlpFVGhRTy9wMGxEenBrMWV4dkVpZHp4SzZEdGJH?=
+ =?utf-8?B?RXVQbDFBSTZGU0R3YjJONlNBZXV0MTEyNFF2d0ZGMU1meXJJZ3VHTEZRMmtv?=
+ =?utf-8?B?b1RqWEJKeGNPVnJhSDhoKzc1Z2xXQmE4bTVoYm96T1pEQng4WHNWRUNxWkR5?=
+ =?utf-8?B?T3pGZi9vR21aYnZXZEEzaCtFNEorMmdKKzQ0OHkwb01vYmZwTHBvaThKblVJ?=
+ =?utf-8?Q?+m+YykwmdHN8mN2i6S9X/3UXidhaYa8E=3D?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N05NVVVOanl4ZUJZRVh6R1FzdW5vempJNlRSS2pGSkl3eUpsRndtSkdnUW05?=
- =?utf-8?B?VEt3WnR5b3RGVXg3ZGhNN29Md2Y3KzIxL1BiVU1EemNIUU1QOFVyR3B4SE9v?=
- =?utf-8?B?dTcxOTFvS1hhNGtZRnp3TTZXbHVNN2hsOHlHYVg5WDJNZGc5S01GTGRsZStx?=
- =?utf-8?B?aDNEalRualBjNWVTM1lCN2xiV25IY1hGRGJ5SFNIZnhaVjQ2TnNNbDlJQmV3?=
- =?utf-8?B?Y3V5QWZEN2RIWmdIVW5VK2h0SzZ6bFUyUXR6TyszVmVVOWh2dkg5NFp0U3Fv?=
- =?utf-8?B?ZitvZW81K3JyUHBnRXM4cDhwRWRxdm1rZ3dGZ202UUltZnhVUEd6NmprU1RX?=
- =?utf-8?B?RWNKWHBBQXhhM25MZmZobklOOFA5T2VNN21XaGtXc2xOQyttcUZDUmYwbElU?=
- =?utf-8?B?Q3lDbXBGRGxnOWdsSXkwMlhkSU1hejdHb1R3Q0ZmUWJzeDgwSHpnQmJGNDJE?=
- =?utf-8?B?R2dZUkkzM0FKZ2FYVzRnSXlLcmtpd3hrQXVkSkZVMkxWVngxVkRRSHhnVDdJ?=
- =?utf-8?B?V1R6RmZuaU9yaE1kUktqSUVxQ0V1bDE1dmk3eEhYVDJPbHlMQituZVBjaHNz?=
- =?utf-8?B?UWs0RU92eGpBS0lzS0pyMUZuYUk4ckxvaW1WVjZ3V2JjSjVIUEt4czJqWGdF?=
- =?utf-8?B?TFBqZXlIcXBWTDlFVTdnMGtpbXVWWFFvRlVpanQ4VWdGSWE3MWxaQks0eXpN?=
- =?utf-8?B?RVhkMGlMTzVOMHpoR3EySDZCWTJYU1hYZUtzbnBqTEJLTnh5WXcwek1PWUMy?=
- =?utf-8?B?WjgrcTYrME8xYU9PcFNWN1FwSHZPVzJ4NFhmOWRJdDQrK3BBYVYzdGY5eVVI?=
- =?utf-8?B?VGRwYy90eHBPRVprb21RY2UybHo1SWJ0N3VwM0t0M2psVTRhMWZZTWdDQkVH?=
- =?utf-8?B?dkJ6b3M1NWlzTEErb0ZTczlFWXplSHFhTWJoYk52cXcrcTRqUmFBTGxnLy96?=
- =?utf-8?B?YjFZWEFwNG51Y09sL0ZndWF3N3UwZ2RKYWVxdksyS0x4NDJYaHFDL3hmanFC?=
- =?utf-8?B?WlZ6L09KSVk1eVdqQ3pzQ252dDdYdW1TV0N0dG93SFZNb0xpZVlwem1kamRO?=
- =?utf-8?B?TXNpWU5sUUJJRjkxdXIxV3dlcER5N1YxQWRmK0N2ZU1qbzJXRHpaNU5BbEs3?=
- =?utf-8?B?WEZUeHJpdW5JV3hVbmozWWxTaWE0K0lZRmd6dnNsMUlETjI5NnVCclorOVBl?=
- =?utf-8?B?Qy9tM29DY3V4Yk11Y3ZIQWRBcDdaYnRpZ280ZklzdVh6Vk53WlRBSHkvNlh5?=
- =?utf-8?B?WisrRFVqZEQydXNjUkFrdUV0TUNXUmFUVUVMRlp6SDJoakhlR0JydjJyUW50?=
- =?utf-8?B?d2R4b2N0cUJML1FjUDlySXFQOWVicWkvQ2lLWm9FYzFmcnZuNWhjSkk4Q3dI?=
- =?utf-8?B?YUhLbEczZUFSSkZ1NVVUNFlRZkxWcFd1VGhPUVlhWnBhU2VUdkttYkhCNUda?=
- =?utf-8?B?Y1dTQWllSmJWZTVJU1QzUnNuTEw5MnZ0NzRFanl6UmYyckN3M1gyYzQvV1dx?=
- =?utf-8?B?c1YzWTdxWFcyN1hZT0JnN3IwWDVJSFNKYWVSY01BQXg3S3NuY3l6SzVaVnJ5?=
- =?utf-8?B?ZCtWRmd2MWo1ZDgrMDZTcVVUcUFsUTczQmNBamhKeDBFUnF0aFBkYk5BTTU2?=
- =?utf-8?B?eU1TWmc0K3BUVWNxeUZQMGo0bFZONWlIVFFNZ2ZlUUlPRU53eFpjZWEzMC9X?=
- =?utf-8?Q?RXNMDDmqPrnrX1bArIa/?=
+	=?utf-8?B?OXVETldlenA2a29iQjRDWFRwZ1NkdkFwWW5RVUZ1VTE1ZUZqVUhHRmZnZlJU?=
+ =?utf-8?B?bWhaR2dMU2FONnpKeEZieXVhZXZ2STZQeitKTVFOYnRQS2MxVEprOHYxc01G?=
+ =?utf-8?B?R3V6eUhFbjA3NGN0RktqVXJwMFZaMUhPUDZnNXZITnA4WTF0amYwOUJnbjZB?=
+ =?utf-8?B?c0RreUsxd3pzWnkxTU1jcGxWa0JNanlTUGo3UzV2ODF5c1hhSWlTSGg0Y1Zn?=
+ =?utf-8?B?WjNaWjI0SWluSm1XT1V4N3ViSERpNFc4Vng4WG92eVdaamtwdW4veC9LWlcv?=
+ =?utf-8?B?TzEvNkhNa0VOOTlnZmREalMzSkM4aXFveTl6dzBUcC9yQnRwdW5aeEc3WTJo?=
+ =?utf-8?B?Rk93OGpadGdzc3RWUGw4bk5oSzZ1RzZHem1DQi9OOWRxNVNiY2dqTjYxaWpo?=
+ =?utf-8?B?Wk5xT1pNV1lZdzB6dmZrWjdFV1FrR2hSd0R4NS9XbmlPTHBmWEhsdGUyMzMz?=
+ =?utf-8?B?bjJmNStCMUM1RTF1S2ZTVngrWVhMY1pNV2ZPVU8rQ0Q0REZiWUdhdVdnL2lO?=
+ =?utf-8?B?M3RlRmx2WnNkTnlsTHVyT29lRGwrTjBlcGJLb1ZMeW12c1JDSTRnNVNkZjd4?=
+ =?utf-8?B?TmNFczVrSGZ1dCtISG1GZURCN1Q0clVCVWdCR3IydlBWZ0p4TG84TnIxTTJD?=
+ =?utf-8?B?WEw1RzRzeGhpNzA3QmFIMHJRQ3hZZ3ZzdzA4OEo5YWx1K2grOUhxNWNweXBx?=
+ =?utf-8?B?ek54WVpENnI4NFMxU1ZwajRicGVwK0FJMFFZNWsreHByamlGdkxNckczK1JO?=
+ =?utf-8?B?dyszcnNYcUFPeVJiRFk1Z2tXbTNvZDNPZFFKd0VPOUVZT3Nlc3p4bjR0NlI0?=
+ =?utf-8?B?TUhYM0dUdVRNcVBxKzhDb1RyS1l0ZnRnbU5qczdaTGMvQ2pxVS9rNzRmZGVt?=
+ =?utf-8?B?aC8rYTVNUXdhblZvRHE0aEE2WUxlbnBueGRVV0JCMnF5N0pVbW01bXhkREEz?=
+ =?utf-8?B?N3NwQkgwbzh0SUx3N243QnVrWE9Db1Q3WEFPLzdhd0IwZHhqRWQyVnhLQWx0?=
+ =?utf-8?B?QXdyVTV3a2tia09Vc2FjQVd0ZUNIZEFwcWV4OU5rSFNuYW91QU5uN3plZ3pn?=
+ =?utf-8?B?QkYvVnY3Zzl1cGJXbUc3bnRKbUhmYmt4R0F6SEhtamg3Z0x0L1RqM3M2ZTcr?=
+ =?utf-8?B?RXl2NFJwNmFhL29zQjRkTGEyVXF1YXhST0hmaWM1bUlDMDMra0pDMjBFZ256?=
+ =?utf-8?B?TUlEdkhubWNvak9FTFBlZnVnTHdaUzNTaUxOeHFvekFlblhmK2VrN2I0ZjBN?=
+ =?utf-8?B?MmQ5dGw3TGdoNldtQTVKTms0Nzkya1dhYXBCeC85L254RzY4VUViVlM5VEFp?=
+ =?utf-8?B?ekovUW5iRnNpMC9kdTJIam9DaG9laWNFK1JzQkJManZUUytIRU1TREhidzAy?=
+ =?utf-8?B?dmpUdXBUQnVhaERsK05tL3g5b29tY1dwdlZFOTZpbXJvWjNJK2ZqSG5lMHZD?=
+ =?utf-8?B?ZWFmRVJVb0dveHFLSmIxYzU5Q2VJTk1vN1lqUkMvVEpldTJ4czVDcU9wclo1?=
+ =?utf-8?B?RFl0Y3dMTmpDeDJoS3ZGM2V2ZzlkZmRxMWIyZ2JWTlZua0lRRU5aUFJKbDZO?=
+ =?utf-8?B?dVZ1aSs0clQ0eC9CQnJHV241TFpseWVKVGUxMkZoSWY1bWZnYks3V1Nzc3o1?=
+ =?utf-8?B?WnVZeGNlS3l1QzFVRXhmNHNER3U3bkNnQmRGbUdCc28wUHJwczhNVGF5UGlV?=
+ =?utf-8?Q?uLwyVxD23dNiRaHnrTMA?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7eb556ae-5916-4ca8-fb54-08dd0e67c94e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75b162f2-7296-4364-ee00-08dd0e690b83
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 22:15:08.9062
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 22:24:08.6393
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -160,18 +160,322 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR03MB10245
 
-On 2024/11/20 09:12, Christian Brauner wrote:
-> On Tue, Nov 19, 2024 at 06:40:12PM +0000, Juntong Deng wrote:
->> I noticed that the path_d_path_kfunc_non_lsm test case failed in BPF CI,
->> I will fix it in the next version.
->>
->> But before that, I would like to get some feedback. :)
+On 2024/11/20 11:27, Jiri Olsa wrote:
+> On Tue, Nov 19, 2024 at 05:53:59PM +0000, Juntong Deng wrote:
 > 
-> Please resend once -rc1 is out and rebased to upstream where - as you
-> noticed - all fdget_rcu() variants are gone.
+> SNIP
+> 
+>> +static void subtest_task_file_iters(void)
+>> +{
+>> +	int prog_fd, child_pid, wstatus, err = 0;
+>> +	const int stack_size = 1024 * 1024;
+>> +	struct iters_task_file *skel;
+>> +	struct files_test_args args;
+>> +	struct bpf_program *prog;
+>> +	bool setup_end, test_end;
+>> +	char *stack;
+>> +
+>> +	skel = iters_task_file__open_and_load();
+>> +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
+>> +		return;
+>> +
+>> +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
+>> +		goto cleanup_skel;
+>> +
+>> +	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_iter_task_file");
+>> +	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
+>> +		goto cleanup_skel;
+>> +
+>> +	prog_fd = bpf_program__fd(prog);
+>> +	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
+>> +		goto cleanup_skel;
+> 
+> I don't think you need to check on this once we did iters_task_file__open_and_load
+> 
+>> +
+>> +	stack = (char *)malloc(stack_size);
+>> +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
+>> +		goto cleanup_skel;
+>> +
+>> +	setup_end = false;
+>> +	test_end = false;
+>> +
+>> +	args.setup_end = &setup_end;
+>> +	args.test_end = &test_end;
+>> +
+>> +	/* Note that there is no CLONE_FILES */
+>> +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, &args);
+>> +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
+>> +		goto cleanup_stack;
+>> +
+>> +	while (!setup_end)
+>> +		;
+> 
+> I thin kthe preferred way is to synchronize through pipe,
+> you can check prog_tests/uprobe_multi_test.c
+> 
 
 Thanks for your reply.
 
-I will rebase in the next version.
+Do we really need to use pipe? Currently this test is very simple.
+
+In this test, all files opened by the test process will be closed first
+so that there is an empty file description table, and then open the
+test files.
+
+This way the test process has only 3 newly opened files and the file
+descriptors are always 0, 1, 2.
+
+Although using pipe is feasible, this test will become more complicated
+than it is now.
+
+>> +
+>> +	skel->bss->pid = child_pid;
+>> +
+>> +	err = bpf_prog_test_run_opts(prog_fd, NULL);
+>> +	if (!ASSERT_OK(err, "prog_test_run"))
+>> +		goto cleanup_stack;
+>> +
+>> +	test_end = true;
+>> +
+>> +	if (!ASSERT_GT(waitpid(child_pid, &wstatus, 0), -1, "waitpid"))
+>> +		goto cleanup_stack;
+>> +
+>> +	if (!ASSERT_OK(WEXITSTATUS(wstatus), "run_task_file_iters_test_err"))
+>> +		goto cleanup_stack;
+>> +
+>> +	ASSERT_OK(skel->bss->err, "run_task_file_iters_test_failure");
+> 
+> could the test check on that the iterated files were (or contained) the ones we expected?
+> 
+
+Yes, that is the purpose of this test, to check if the iterated process
+files exactly match the files opened by the process.
+
+If you mean further checking what exactly the file is, e.g. whether the
+file is a pipe or a socket, then I can add that in the next version.
+
+> thanks,
+> jirka
+> 
+> 
+>> +cleanup_stack:
+>> +	free(stack);
+>> +cleanup_skel:
+>> +	iters_task_file__destroy(skel);
+>> +}
+>> +
+>>   void test_iters(void)
+>>   {
+>>   	RUN_TESTS(iters_state_safety);
+>> @@ -315,5 +417,8 @@ void test_iters(void)
+>>   		subtest_css_task_iters();
+>>   	if (test__start_subtest("css"))
+>>   		subtest_css_iters();
+>> +	if (test__start_subtest("task_file"))
+>> +		subtest_task_file_iters();
+>>   	RUN_TESTS(iters_task_failure);
+>> +	RUN_TESTS(iters_task_file_failure);
+>>   }
+>> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file.c b/tools/testing/selftests/bpf/progs/iters_task_file.c
+>> new file mode 100644
+>> index 000000000000..f14b473936c7
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/progs/iters_task_file.c
+>> @@ -0,0 +1,71 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include "vmlinux.h"
+>> +#include <bpf/bpf_tracing.h>
+>> +#include <bpf/bpf_helpers.h>
+>> +#include "bpf_misc.h"
+>> +#include "bpf_experimental.h"
+>> +#include "task_kfunc_common.h"
+>> +
+>> +char _license[] SEC("license") = "GPL";
+>> +
+>> +int err, pid;
+>> +
+>> +SEC("syscall")
+>> +int test_bpf_iter_task_file(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct bpf_iter_task_file_item *item;
+>> +	struct task_struct *task;
+>> +
+>> +	task = bpf_task_from_vpid(pid);
+>> +	if (task == NULL) {
+>> +		err = 1;
+>> +		return 0;
+>> +	}
+>> +
+>> +	bpf_rcu_read_lock();
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	item = bpf_iter_task_file_next(&task_file_it);
+>> +	if (item == NULL) {
+>> +		err = 2;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (item->fd != 0) {
+>> +		err = 3;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	item = bpf_iter_task_file_next(&task_file_it);
+>> +	if (item == NULL) {
+>> +		err = 4;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (item->fd != 1) {
+>> +		err = 5;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	item = bpf_iter_task_file_next(&task_file_it);
+>> +	if (item == NULL) {
+>> +		err = 6;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (item->fd != 2) {
+>> +		err = 7;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	item = bpf_iter_task_file_next(&task_file_it);
+>> +	if (item != NULL)
+>> +		err = 8;
+>> +cleanup:
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +	bpf_rcu_read_unlock();
+>> +	bpf_task_release(task);
+>> +	return 0;
+>> +}
+>> diff --git a/tools/testing/selftests/bpf/progs/iters_task_file_failure.c b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+>> new file mode 100644
+>> index 000000000000..c3de9235b888
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/progs/iters_task_file_failure.c
+>> @@ -0,0 +1,114 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include "vmlinux.h"
+>> +#include <bpf/bpf_tracing.h>
+>> +#include <bpf/bpf_helpers.h>
+>> +#include "bpf_misc.h"
+>> +#include "bpf_experimental.h"
+>> +#include "task_kfunc_common.h"
+>> +
+>> +char _license[] SEC("license") = "GPL";
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("expected an RCU CS when using bpf_iter_task_file")
+>> +int bpf_iter_task_file_new_without_rcu_lock(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct task_struct *task;
+>> +
+>> +	task = bpf_get_current_task_btf();
+>> +
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("expected uninitialized iter_task_file as arg #1")
+>> +int bpf_iter_task_file_new_inited_iter(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct task_struct *task;
+>> +
+>> +	task = bpf_get_current_task_btf();
+>> +
+>> +	bpf_rcu_read_lock();
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +	bpf_rcu_read_unlock();
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("Possibly NULL pointer passed to trusted arg1")
+>> +int bpf_iter_task_file_new_null_task(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct task_struct *task = NULL;
+>> +
+>> +	bpf_rcu_read_lock();
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +	bpf_rcu_read_unlock();
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("R2 must be referenced or trusted")
+>> +int bpf_iter_task_file_new_untrusted_task(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct task_struct *task;
+>> +
+>> +	task = bpf_get_current_task_btf()->parent;
+>> +
+>> +	bpf_rcu_read_lock();
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +	bpf_rcu_read_unlock();
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("Unreleased reference")
+>> +int bpf_iter_task_file_no_destory(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +	struct task_struct *task;
+>> +
+>> +	task = bpf_get_current_task_btf();
+>> +
+>> +	bpf_rcu_read_lock();
+>> +	bpf_iter_task_file_new(&task_file_it, task);
+>> +
+>> +	bpf_rcu_read_unlock();
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("expected an initialized iter_task_file as arg #1")
+>> +int bpf_iter_task_file_next_uninit_iter(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +
+>> +	bpf_iter_task_file_next(&task_file_it);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +SEC("syscall")
+>> +__failure __msg("expected an initialized iter_task_file as arg #1")
+>> +int bpf_iter_task_file_destroy_uninit_iter(void *ctx)
+>> +{
+>> +	struct bpf_iter_task_file task_file_it;
+>> +
+>> +	bpf_iter_task_file_destroy(&task_file_it);
+>> +
+>> +	return 0;
+>> +}
+>> -- 
+>> 2.39.5
+>>
 
 
