@@ -1,45 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-35920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB849D9B12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 17:10:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8FA9D9ACF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:56:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CA15B2904E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCBE6165D7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099FC1D88C4;
-	Tue, 26 Nov 2024 15:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257B51DA309;
+	Tue, 26 Nov 2024 15:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxVVjKpe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIAh4dxF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF001D0DEC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 15:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA8E1D0DEC;
+	Tue, 26 Nov 2024 15:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732636493; cv=none; b=r1qR9z/bhlItkkeTcRggsAIwoJsmdMXbNgM/O48+2XqwFfj6ya3wdYmgCXFAOR+tnWBPVvGzmL78DlLAgOCFrfiQeM8CvCI6L93CL7p/HUNcUPPR65BUWdTRkMgTlT6yBJ3XeQNrd6Eef81ql5n1qjmV2Ncx0XqmqzxjTu9cp0Q=
+	t=1732636494; cv=none; b=SipUpyGtzosK1QBLCvm9xfFXcU4jIE/ND/OTvniwb/vrlDVXmXQXShCc0W4fBtgLUbCBR7C9kXrasMImFbZDtZ/V9jWakYevZDdnDgGQFpy10ZemVHBov9BQGlmn8RQyVXT+ch8SJP4QYzm4BG598Kq0lkgmf5c3jzcAPGCDVYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732636493; c=relaxed/simple;
-	bh=8e8Q8/YtSaVAdENoI1U6mbj2xfawBpxlEtPJSKzh+B0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b+SIfuixF2VxICbPWfpEbQrBcia5RoMR8D8IVxIhul0TEQMmwHtiRX65mBq5NyZqjv83Lh72TjIq071Lx+cprjQ5k+I/NueX4i3e18Nn880d8miKh9NJ+R2luO4gzs5K8xuSRBGtTOlu5Ze0Q6FIJzOKjJGZr3Ak+bVmGFIO3zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxVVjKpe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CC9BC4CECF;
-	Tue, 26 Nov 2024 15:54:52 +0000 (UTC)
+	s=arc-20240116; t=1732636494; c=relaxed/simple;
+	bh=uhgh93plhiFV1pHFjFAu6nt5SYYT8N+YCq9mpcqsLXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FuACKR/E1Hjm/mHhx/bX1tYf9Iv/VEMv3WZs0B2VFL4+zSv8BCOveH2TLiyKQ1DDoCrX/J701whnKLGiCdZ0zA/SjEyrWwLBDVqEdgeVb+wgrOU39P+LfFnPFzrxkasqMdm3fz6fKTBu/gf7HvtgAbGwsDQEGoBDuD/2jt3J8II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIAh4dxF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345EFC4CED0;
+	Tue, 26 Nov 2024 15:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732636493;
-	bh=8e8Q8/YtSaVAdENoI1U6mbj2xfawBpxlEtPJSKzh+B0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lxVVjKpeNBqXWucQV4DimWxB2ihN/uWsYVVnf1r99Fn0ggsevGLLNxDX/llUnuVB5
-	 Y2Cn5AyufHhlE+IIlXMUno6OzZAIci1PuRgIZw7vwhALOa4zfu+QyNiolbbWCiogh8
-	 Urgu0egXgOwkxTm6Fupx1V/kWvD3hDOvArR/H31CPueV4/XaMxm2yEdwI1DjrPoG6a
-	 Ac/q1VqjgtgaW/Tl6hm+EbDJ+CHGHTBxc9WpvOuTXXhiwKTYyP883HKKmsByFI0bIs
-	 tv3GkuEdQj0OnhSb36uIfZJvAm0uDWo0YSEwC2qNUbZGdPZ9tgl6F3hg0aDZlEOpC+
-	 L1PC121YliNyw==
+	s=k20201202; t=1732636494;
+	bh=uhgh93plhiFV1pHFjFAu6nt5SYYT8N+YCq9mpcqsLXk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fIAh4dxF+U4xexzovtB/7kPFGF35L5IKVEm3YrWxmpi09Xhg+s3Q6xBHA+BEOKxM6
+	 01c8Ahzm2uaKRidP1kBlNetkAHbGcVjfgSZQcMQsSVcnkzT0DMkz1+VBNapdeMsbVW
+	 ggHJdbDQPhH5XARuL9TLITKoR450QibdFfJ4W/Xn+OhcLvlvPGY8eNqgc66lmwXcem
+	 RlTQItF+ZF8mUqqa7lJxN0dnHSjampVwpgtBVUukrEZkV10plMr9XHU9RyWafi/DGu
+	 Mmqs1R8Ie5cshvo6L+ztqqUnOPCJWlkOhaXYEp1Aaci3D1uCUKchh4g1N9J1OOlxuO
+	 KmFZcPfEyEVEg==
 From: cel@kernel.org
 To: Hugh Dickens <hughd@google.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -48,11 +49,14 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>,
 	yukuai3@huawei.com,
 	yangerkun@huaweicloud.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [RFC PATCH v2 0/5] Improve simple directory offset wrap behavior
-Date: Tue, 26 Nov 2024 10:54:39 -0500
-Message-ID: <20241126155444.2556-1-cel@kernel.org>
+	Chuck Lever <chuck.lever@oracle.com>,
+	stable@vger.kernel.org
+Subject: [RFC PATCH v2 1/5] libfs: Return ENOSPC when the directory offset range is exhausted
+Date: Tue, 26 Nov 2024 10:54:40 -0500
+Message-ID: <20241126155444.2556-2-cel@kernel.org>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241126155444.2556-1-cel@kernel.org>
+References: <20241126155444.2556-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,43 +67,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-This series attempts to narrow some gaps in the current tmpfs
-directory offset mechanism that relate to misbehaviors reported by
-Yu Kuai <yukuai3@huawei.com> and Yang Erkun <yangerkun@huawei.com>.
+Testing shows that the EBUSY error return from mtree_alloc_cyclic()
+leaks into user space. The ERRORS section of "man creat(2)" says:
 
-This series replaces the v1 mechanism I posted last week. It
-reverts offset_readdir() to use the directory's d_children list,
-instead of its mtree, for finding the next entry, as readdir did
-before v6.6. Directory offset values continue to be allocated via
-an mtree.
+>	EBUSY	O_EXCL was specified in flags and pathname refers
+>		to a block device that is in use by the system
+>		(e.g., it is mounted).
 
-The purpose of this change is to enable readdir results to continue
-to appear after a directory offset/cookie value wrap, while not
-regressing generic/736. That should enable this fix to be
-backported (manually) to v6.6 to address CVE-2024-46701.
+ENOSPC is closer to what applications expect in this situation.
 
-These are still a little unpolished. I expect review to find
-opportunities for further code reuse.
+Note that the normal range of simple directory offset values is
+2..2^63, so hitting this error is going to be rare to impossible.
 
-These patches pass xfstests except for generic/013, generic/637, and
-generic/650. There appears to be a problem with WHITEOUT renames
-which I am still looking into.
+Fixes: 6faddda69f62 ("libfs: Add directory operations for stable offsets")
+Cc: <stable@vger.kernel.org> # v6.9+
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/libfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-The series has been pushed to:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/log/?h=tmpfs-fixes
-
-Chuck Lever (5):
-  libfs: Return ENOSPC when the directory offset range is exhausted
-  libfs: Check dentry before locking in simple_offset_empty()
-  Revert "libfs: fix infinite directory reads for offset dir"
-  libfs: Refactor end-of-directory detection for simple_offset
-    directories
-  libfs: Refactor offset_iterate_dir()
-
- fs/libfs.c | 145 ++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 109 insertions(+), 36 deletions(-)
-
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 46966fd8bcf9..bf67954b525b 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -288,7 +288,9 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+ 
+ 	ret = mtree_alloc_cyclic(&octx->mt, &offset, dentry, DIR_OFFSET_MIN,
+ 				 LONG_MAX, &octx->next_offset, GFP_KERNEL);
+-	if (ret < 0)
++	if (unlikely(ret == -EBUSY))
++		return -ENOSPC;
++	if (unlikely(ret < 0))
+ 		return ret;
+ 
+ 	offset_set(dentry, offset);
 -- 
 2.47.0
 
