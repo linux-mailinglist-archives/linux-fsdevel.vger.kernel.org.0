@@ -1,79 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-35918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFB39D9A6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:28:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326099D9A98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 16:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9EC165AF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED3C71656A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 15:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CC21D63C5;
-	Tue, 26 Nov 2024 15:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF831D63DE;
+	Tue, 26 Nov 2024 15:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIDPG36Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpzRVcYr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7391D45E5;
-	Tue, 26 Nov 2024 15:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B11D7E4A;
+	Tue, 26 Nov 2024 15:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634889; cv=none; b=CSCXxstL9HULe9169w+Y6LunHbUOdW6cabFsuiqPJcgN5Ud+fZG2DhLjh620mwxNSxtxm6NXFfVhvYVxHN4nnIX1vFBbacXtMbX+kNMQmKGLF7GExCaJ2gfEElJ2Kc/t5ZjfbRQBgqKEowzDzLs+5hSR1uCKx0AZy0MiXq8U6f8=
+	t=1732635866; cv=none; b=BJI127WUi51YyfhEQEkSBQKBfKM5Y8GskB6e/6e11V1C3FQzwToNdIoVHUjmrqDAe6/HXHT6VRtf5JAiZL1PINgUjppQqcgvGKVwp1cWoIrIMPIpZTgx2FTa5FFPmmZNj1AuK/Nu0PhrLTByLi8QtQUleUSxzmnSgRKE4XXsLi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634889; c=relaxed/simple;
-	bh=HOpoppkXfOx5jjRlXowirkrqsPFmSBTHZJ4g/BkEY10=;
+	s=arc-20240116; t=1732635866; c=relaxed/simple;
+	bh=TAw7U5vFpAcrO4h1WG+4U3ymUEZ4YD3HUDBY13jUiLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=etDJHZrYYC73UVq5qnuZprQbtEOD1DbD17grjfGKQgPhbOsSAH62kUxiUSkbiEELeaW6K6WU/MmyuvQZoXB1MOYZ+v9bWJsmbJNl3RFGq5j/IW4CKO3QpCr7znBtI//m+DeQHhp3J0Vr7x+24pUEgOAWmFGMP4Wp/0xEl0p6b6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIDPG36Y; arc=none smtp.client-ip=209.85.208.174
+	 In-Reply-To:Content-Type; b=WbzPTHikRI2Uw/eJg4L6sFL0cZk/JKwefpXhnX8pvWsv+zdP2N5EnW0BSlEFB4+Xp8N9sXQaTMl41ClhWcOK1pM7S/P7kHmTLqp0ky03H68mNaEhF7REC8wIhBEEe0/pA04wldQ/BscZdUn/w5hLrUYUrnEifslCtEP340sas0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpzRVcYr; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffc81cee68so19707461fa.0;
-        Tue, 26 Nov 2024 07:28:07 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53deeb6d986so604033e87.0;
+        Tue, 26 Nov 2024 07:44:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732634886; x=1733239686; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732635863; x=1733240663; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hL92joE2utUXDrWBWHIFKxahnMA5d997Re4iaT4oJkY=;
-        b=IIDPG36Y/jlZFqchNL3UVIw44ysZsPXtUYPyjRddN9hv21i9DpXwTV0duDN2nAPlip
-         /sjlq1RN/L19+GHMX/18Qv/8/a+wVf2peZs3qCBryPySILpvH3rfcfzMSzu20t709onq
-         X6u8jwnytUyaOem5bhtLxuh7cdE5dggWcH9VXHSvnbDVW0czPFUBpYVhNdekBpt3dxpZ
-         86SD8+V+qKAkjUXSvFVtT82ac93y/etYB50TjwP3SStio5ZDCySisZbJ0+7H4nhsWgFK
-         vQ3aOpvpJ41YuqnU23FekbK+oBZDUAihoyxJnfAcFfEGsCNMbGAXaExexglwfFhmMVwH
-         p/nA==
+        bh=yVDOYNO+iQ6ZhvMztIaukFD/X8oZpaR2llnamKczTuE=;
+        b=cpzRVcYruggUWQfXA37VSuH33y9te0s09KqCtMOsm6Yu5Y95ePmnH/ssvN9CbotelK
+         F0izLVsirlxI/yBsqrLM3auxrCoUF1GTI8L13spP306lVAyDrcpL4AOb6SJBnSjF5U1P
+         75Zrqekl9ONbDjKoGcriDRJ0+7ZB9l/uPdtjNhrT9LTczhRe7G48nCHPKBOD4D7FofQV
+         NvVMA42UccTg2+DVzFwnIEZz05PoXfvWCaVV3VUjp0XpjnV7gcbJ1lNqxZmpm0GBsyV0
+         66XRH2pMq9Ll/4PdXh0PsHAE6Jti/ua4RtYFxbbdI+Y7EzVY6ROSN1HtBOcUibXHhK1D
+         1Kdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732634886; x=1733239686;
+        d=1e100.net; s=20230601; t=1732635863; x=1733240663;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hL92joE2utUXDrWBWHIFKxahnMA5d997Re4iaT4oJkY=;
-        b=XCRphnRCmfkwpCKiOsHMtSXbwBo5T1XhEVLSoXVeUDlMIRtmL3shS/OkyfbENCuWct
-         aCvx38fdzFF1FOUfhlMF5vXu/BiLgR9cLJBAZ+KHRoRebcA56Ctcjhw33ePCfC+4owRA
-         y4hiSD0DLDihaMMIgWDe59SPuVhZQggMPbYPSMAzQpBtNBmxpDe4GpLppDQlthaXcLpf
-         mOGkFyuspwL+EDpkt7RfhP1jqfS3vgSsQOBVTaZt775kKruE2cjegJnBTzMHSChefz0i
-         FVaKeRTKZTjyxLRGnLJC59J89X2MzZ0NgJ7otOH3ptP5DO0xhO0BxrizQ2i1sVNSWkS4
-         rY3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVmG2+zGTLeIpsiXF1/k8ppW8MyQDYd4DDrMuqzh56TOkN2AXDsvoHvJgKFO1IJjf9xfUGeaTB8wR5qHaY5@vger.kernel.org, AJvYcCXsCTdCzeuEqbdDyKUO1//MnBAxKGcyCbAoY6JjbOAhp34wpYNcVSI+mWNVofMw08/qLzTc1q0KFBpBe9zu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl4TxFdBwtH5YzEiWSX1vNkHworxU3qD9c82LL3ad6mDhkgF29
-	3G4+ikq785PmP8FXwgWly1k+rHwSI62npTXGCp0QpBeITEVJ9Zbq
-X-Gm-Gg: ASbGncvC/yQ/fCxItfowP4udUyC9OAnGbw+ZOq7uj6xnkY/re1mEp2vRecOsCLmmDMI
-	iBN3IdP9UX4mutQ8MneYSYgq4aTivKjCG5EBKhdhveChQDPe6QagYqGdQWoADxQfPzefxdjZIFc
-	d4Hjv2KcVGpGkh/PSEOjMKVKO7awqm0Qd8DJeuaataEoVZT1DUHZRI7peko2RrBV7e6KKWCSUqf
-	Ou4cAQBhNPFOz64LTOhzm63fuYicjerx4+u3BbASLZDdhTQOK2HxLaVzLonnokPiKw8U7aW2YKz
-	x0O+giXu
-X-Google-Smtp-Source: AGHT+IF3odjqvL+3f50N+hGfNnykpAnmeU9HNEIgrF/jthnjL150g9fKJV14VNDDx4LXOZ5E9j/TEg==
-X-Received: by 2002:a05:651c:199f:b0:2ff:d15d:649 with SMTP id 38308e7fff4ca-2ffd15d06ddmr12400911fa.31.1732634886074;
-        Tue, 26 Nov 2024 07:28:06 -0800 (PST)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d171absm18923671fa.15.2024.11.26.07.28.04
+        bh=yVDOYNO+iQ6ZhvMztIaukFD/X8oZpaR2llnamKczTuE=;
+        b=OOkwriAFb0CVkdqlPINmd9tEA7sLFEWDD8aaKWcTXZYLafqs9Jkv2k5jV+hjEEkn0z
+         /xYGtJx8f4vWHaMYG9ZKgBx69I2bPjscSW7s2G4hXpp8yaJ4c4G17tPQqYTE6fVHPIc7
+         lRBnvzlOGrwvwXeotNgq9uknH+mA72oOgbhmYiuIR+zFZwzF8p01AO6VZ4Wlj09DHXKs
+         Pe4xkpccLRbkVCdM5wSPQyVEfUaldybaL7Fx6S57iyDze6yMDZEHlpe2xfdGmw61JZIj
+         hL4qxx0vfWeddoCjcEwjLYYJIHcxvuLOXMzHD4H1z0Od2z+Va0rGp/qVR2NPzMD9MDzN
+         sOfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoEj1b0a6Ta/o90zoUm7/JaKfGIQ6jNUGdl2O7dVDBdckfaVYbfKzAHSmEREPFwrbGvKWDeoe9G5TCruU=@vger.kernel.org, AJvYcCWJs9zhxB1P2nYYkAbq5c7YyPSNZ+nOXUHUv/RSKnuLBG5cYv7dJbP4Q2cYyy67fe8jxabhEqbM6pvHdA==@vger.kernel.org, AJvYcCWUtRFo0pbDqJAMbJ5IDK7X6y0pPEeqU4OPo6KES7CvUgV4cU4kYIB1ro8klQGoA0HQ6UgqlDHZKg==@vger.kernel.org, AJvYcCWkTMsmW7/v828hwcHw3qFhXmwk444FnvIxmrJiwhUZeUKbUKCC7Pb35sFF2FGn4P0H5hlZwTxnproXjQyHNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw01YOmR40yBeG8B6LCMlnOX582WFzgV3lCJaWM/CltCGyFS3YY
+	l23xNAZnqlHeyeUlcxFgkXSA0yJYpi5qTYY+ZpHvp8hwUac7wtR2
+X-Gm-Gg: ASbGncv6+n/6759ewgo6IXm6uCl8E0vIagmTFvsKH+E6UeJBbWVX+LJgZd5K8VF1oT+
+	kMEVMTRnc1NMjcuf3RuF954FlqEPETOSipp40iLpAEWXSD4nTpp1SQOyKSGTj5KQARZUmYL3ECU
+	twe5AsT4So7PwoBZsLc7CAC58p0MbQNdoD2chUVq82v4LxBadvuULD7DVUY3oiRNgnmLr+sk63G
+	i6wBiCqkLqrDedTWjGJx649qzYjCH8QnRB8FgLxE1EycRmwm7Wh+2T+lGBA
+X-Google-Smtp-Source: AGHT+IGWo3MB+7Gb6yHS+bWnq0pFj0SiM5AqaPTVwcxWz0pNUpAyD9lUojQtu9SrCdednPlE58PNpA==
+X-Received: by 2002:a05:6512:400c:b0:53d:eefc:2b48 with SMTP id 2adb3069b0e04-53deefc2f0amr555039e87.33.1732635862546;
+        Tue, 26 Nov 2024 07:44:22 -0800 (PST)
+Received: from [192.168.42.58] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28fe55sm602396866b.4.2024.11.26.07.44.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 07:28:04 -0800 (PST)
-Message-ID: <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
-Date: Tue, 26 Nov 2024 16:28:04 +0100
+        Tue, 26 Nov 2024 07:44:22 -0800 (PST)
+Message-ID: <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
+Date: Tue, 26 Nov 2024 15:45:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,112 +80,85 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-To: Jan Kara <jack@suse.cz>
-Cc: Philippe Troin <phil@fifi.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <20241126150613.a4b57y2qmolapsuc@quack3>
+Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
+ and PI support
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+ martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+ jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241125070633.8042-1-anuj20.g@samsung.com>
+ <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
+ <20241125070633.8042-7-anuj20.g@samsung.com>
+ <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
+ <20241126135423.GB22537@green245>
 Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <20241126150613.a4b57y2qmolapsuc@quack3>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241126135423.GB22537@green245>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024-11-26 16:06, Jan Kara wrote:
-> On Tue 26-11-24 11:37:19, Jan Kara wrote:
->> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
->>> On 2024-11-26 02:48, Philippe Troin wrote:
->>>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
->>>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
->>>>> we got terrible performance (lots of nfs: server x.x.x.x not
->>>>> responding).
->>>>> What triggered this problem was virtual machines with NFS-mounted
->>>>> qcow2 disks
->>>>> that often triggered large readaheads that generates long streaks of
->>>>> disk I/O
->>>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
->>>>> area of the
->>>>> machine.
->>>>>
->>>>> A git bisect gave the following suspect:
->>>>>
->>>>> git bisect start
->>>>
->>>> 8< snip >8
->>>>
->>>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
->>>>> readahead: properly shorten readahead when falling back to
->>>>> do_page_cache_ra()
->>>>
->>>> Thank you for taking the time to bisect, this issue has been bugging
->>>> me, but it's been non-deterministic, and hence hard to bisect.
->>>>
->>>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
->>>> slightly different setups:
->>>>
->>>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
->>>> "nfs server XXX not responding, still trying" that never recovers
->>>> (while the server remains pingable and other NFSv3 volumes from the
->>>> hanging server can be mounted).
->>>>
->>>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
->>>> several minutes) on random I/O. These stalls eventually recover.
->>>>
->>>> I've built a 6.11.10 kernel with
->>>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
->>>> normal (no more NFS hangs, no more VM stalls).
->>>>
->>> Some printk debugging, seems to indicate that the problem
->>> is that the entity 'ra->size - (index - start)' goes
->>> negative, which then gets cast to a very large unsigned
->>> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
->>> bug is still eludes me, though.
+On 11/26/24 13:54, Anuj Gupta wrote:
+> On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
+>> On 11/25/24 07:06, Anuj Gupta wrote:
+>> ...
+>>> +	/* type specific struct here */
+>>> +	struct io_uring_attr_pi	pi;
+>>> +};
 >>
->> Thanks for the report, bisection and debugging! I think I see what's going
->> on. read_pages() can go and reduce ra->size when ->readahead() callback
->> failed to read all folios prepared for reading and apparently that's what
->> happens with NFS and what can lead to negative argument to
->> do_page_cache_ra(). Now at this point I'm of the opinion that updating
->> ra->size / ra->async_size does more harm than good (because those values
->> show *desired* readahead to happen, not exact number of pages read),
->> furthermore it is problematic because ra can be shared by multiple
->> processes and so updates are inherently racy. If we indeed need to store
->> number of read pages, we could do it through ractl which is call-site local
->> and used for communication between readahead generic functions and callers.
->> But I have to do some more history digging and code reading to understand
->> what is using this logic in read_pages().
+>> This also looks PI specific but with a generic name. Or are
+>> attribute structures are supposed to be unionised?
 > 
-> Hum, checking the history the update of ra->size has been added by Neil two
-> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
-> process all pages"). Neil, the changelog seems as there was some real
-> motivation behind updating of ra->size in read_pages(). What was it? Now I
-> somewhat disagree with reducing ra->size in read_pages() because it seems
-> like a wrong place to do that and if we do need something like that,
-> readahead window sizing logic should rather be changed to take that into
-> account? But it all depends on what was the real rationale behind reducing
-> ra->size in read_pages()...
+> Yes, attribute structures would be unionised here. This is done so that
+> "attr_type" always remains at the top. When there are multiple attributes
+> this structure would look something like this:
 > 
-> 								Honza
-My (rather limited) understanding of the patch is that it was intended to read those pages
-that didn't get read because the allocation of a bigger folio failed, while not redoing what
-readpages already did; how it was actually going to accomplish that is still unclear to me,
-but I even don't even quite understand the comment...
+> /* attribute information along with type */
+> struct io_uring_attr {
+> 	enum io_uring_attr_type attr_type;
+> 	/* type specific struct here */
+> 	union {
+> 		struct io_uring_attr_pi	pi;
+> 		struct io_uring_attr_x	x;
+> 		struct io_uring_attr_y	y;
+> 	};
+> };
+> 
+> And then on the application side for sending attribute x, one would do:
+> 
+> io_uring_attr attr;
+> attr.type = TYPE_X;
+> prepare_attr(&attr.x);
 
-	/*
-	 * If there were already pages in the page cache, then we may have
-	 * left some gaps.  Let the regular readahead code take care of this
-	 * situation.
-	 */
+Hmm, I have doubts it's going to work well because the union
+members have different sizes. Adding a new type could grow
+struct io_uring_attr, which is already bad for uapi. And it
+can't be stacked:
 
-the reason for an unchanged async_size is also beyond my understanding.
+io_uring_attr attrs[2] = {..., ...}
+sqe->attr_ptr = &attrs;
+...
 
-/Anders
+This example would be incorrect. Even if it's just one attribute
+the user would be wasting space on stack. The only use for it I
+see is having ephemeral pointers during parsing, ala
+
+void parse(voud *attributes, offset) {
+	struct io_uring_attr *attr = attributes + offset;
+	
+	if (attr->type == PI) {
+		process_pi(&attr->pi);
+		// or potentially fill_pi() in userspace
+	}
+}
+
+But I don't think it's worth it. I'd say, if you're leaving
+the structure, let's rename it to struct io_uring_attr_type_pi
+or something similar. We can always add a new one later, it
+doesn't change the ABI.
+
+-- 
+Pavel Begunkov
 
