@@ -1,220 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-35888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C8F9D9524
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 11:08:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2682F9D95AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 11:37:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B80D16633C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 10:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB448285041
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 10:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791061C4A3D;
-	Tue, 26 Nov 2024 10:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BA81CD210;
+	Tue, 26 Nov 2024 10:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rfiP8Yxh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+XCtD2e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rfiP8Yxh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+XCtD2e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8299F19340F;
-	Tue, 26 Nov 2024 10:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D642B1B87E1;
+	Tue, 26 Nov 2024 10:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615722; cv=none; b=q/0SOyTNvfexWAAWgmnWuoE+aIc39k5TP+op85qz1er4O9iBrm7ASY4eF2Y85ZX8sTLPSsdIUvYYgxNnjmyluLtj/0qIf9mzabPsRcq3feg/LKz4HyTBfZINHIk1nm9nDSkExycBTfhunWT4zIBBPQeIlM05m9NE1YsNKuKwdTs=
+	t=1732617449; cv=none; b=Vv4Ru3EdGgxfP3PEBE7Dw3bZ9H1y3iZPxLOPDnI9osJUwXf5eqM+LPxJIvaYOTrrUfXxm3tR2pDUbi6gibma8/V6ZGGglmRRpZnrpK/S7AXZWxNWZcYK6j2xzXrFz4HltIx3pZrqaC5XkVlu6HL4me2MoLwx3Y8iHQrTJyxExV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615722; c=relaxed/simple;
-	bh=pIt8Uh7XfClRERpzHEdF1fpO0FNx1DOyLTgTCn5QUQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AJWfZw/BMDhxKrM66J8tv8eZraCksi9tqEngh77TEdip9jV5CzjdnqACKUqb8R3lYMHvi6OXZKN5WqOCHbcGWM1Bh6/hIMor6iLmESz5ikdTI9nLQMZby/6SNaBZCTk0qzb5ZWypmF8b1iQTkwTPOzscmoj8HHczviMTit0EDoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D90021682;
-	Tue, 26 Nov 2024 02:09:08 -0800 (PST)
-Received: from [10.57.89.250] (unknown [10.57.89.250])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 002A03F5A1;
-	Tue, 26 Nov 2024 02:08:34 -0800 (PST)
-Message-ID: <7a674595-5392-4b5b-9614-79a3e9fd2773@arm.com>
-Date: Tue, 26 Nov 2024 10:08:33 +0000
+	s=arc-20240116; t=1732617449; c=relaxed/simple;
+	bh=9ThnDP1v7dyLT6f20id/Djbtem9d/7q/+o/s3bWhPfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r96VPjVxFD8flllMTyKV6OC0gmuYjfT8JyKKgprmwXlEPQ1nQG+zyEDwJaPcmJBHQpukPjoRigf1gm+AwcDo0V5kF3iibGnfpx5cd8Sx2+qLS2Ltw1EgtE2wt+MW9ejBSoj7nKmGXUq4qpFd/zC2dz2VzPeVpeYqCMfRyRl5ewA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rfiP8Yxh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+XCtD2e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rfiP8Yxh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+XCtD2e; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B1F21F45E;
+	Tue, 26 Nov 2024 10:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732617439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
+	b=rfiP8YxhK+69HUCUmk7T3SqRPQ8XO+Awe2UviO4G7H4atvkCI2CfZOUJNteet+tz4Iq19W
+	JanDkwWnP3Ky7LyyQFLznK8e53/tBOK3zlOdmQpWjS+R2USwOfPw+Br1iTV8Q96YRgegrM
+	2RJYYENsME9kIY+u6W5+TqXdg6Zv5ik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732617439;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
+	b=G+XCtD2ebUyOCoetbKyPdjBM0EOVsy/mHtPI2+zaEOjGcok9uSyzqQaO8m3XR8EyNmKekD
+	T+b/7U6yQlaimDCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rfiP8Yxh;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=G+XCtD2e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732617439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
+	b=rfiP8YxhK+69HUCUmk7T3SqRPQ8XO+Awe2UviO4G7H4atvkCI2CfZOUJNteet+tz4Iq19W
+	JanDkwWnP3Ky7LyyQFLznK8e53/tBOK3zlOdmQpWjS+R2USwOfPw+Br1iTV8Q96YRgegrM
+	2RJYYENsME9kIY+u6W5+TqXdg6Zv5ik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732617439;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
+	b=G+XCtD2ebUyOCoetbKyPdjBM0EOVsy/mHtPI2+zaEOjGcok9uSyzqQaO8m3XR8EyNmKekD
+	T+b/7U6yQlaimDCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73C96139AA;
+	Tue, 26 Nov 2024 10:37:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wbs9HN+kRWcMKQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 10:37:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 24CA6A08CA; Tue, 26 Nov 2024 11:37:19 +0100 (CET)
+Date: Tue, 26 Nov 2024 11:37:19 +0100
+From: Jan Kara <jack@suse.cz>
+To: Anders Blomdell <anders.blomdell@gmail.com>
+Cc: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+Message-ID: <20241126103719.bvd2umwarh26pmb3@quack3>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 06/57] mm: Remove PAGE_SIZE compile-time constant
- assumption
-Content-Language: en-GB
-To: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Christoph Lameter <cl@linux.com>, David Hildenbrand <david@redhat.com>,
- David Rientjes <rientjes@google.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Michal Hocko <mhocko@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Miroslav Benes <mbenes@suse.cz>, Pekka Enberg <penberg@kernel.org>,
- Richard Weinberger <richard@nod.at>, Shakeel Butt <shakeel.butt@linux.dev>,
- Vignesh Raghavendra <vigneshr@ti.com>, Will Deacon <will@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-6-ryan.roberts@arm.com>
- <d9089ef0-3abd-4148-949c-cab66890b98b@suse.cz>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <d9089ef0-3abd-4148-949c-cab66890b98b@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+X-Rspamd-Queue-Id: 8B1F21F45E
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Vlastimil,
+On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> On 2024-11-26 02:48, Philippe Troin wrote:
+> > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > responding).
+> > > What triggered this problem was virtual machines with NFS-mounted
+> > > qcow2 disks
+> > > that often triggered large readaheads that generates long streaks of
+> > > disk I/O
+> > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > area of the
+> > > machine.
+> > > 
+> > > A git bisect gave the following suspect:
+> > > 
+> > > git bisect start
+> > 
+> > 8< snip >8
+> > 
+> > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > readahead: properly shorten readahead when falling back to
+> > > do_page_cache_ra()
+> > 
+> > Thank you for taking the time to bisect, this issue has been bugging
+> > me, but it's been non-deterministic, and hence hard to bisect.
+> > 
+> > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > slightly different setups:
+> > 
+> > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > "nfs server XXX not responding, still trying" that never recovers
+> > (while the server remains pingable and other NFSv3 volumes from the
+> > hanging server can be mounted).
+> > 
+> > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > several minutes) on random I/O. These stalls eventually recover.
+> > 
+> > I've built a 6.11.10 kernel with
+> > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > normal (no more NFS hangs, no more VM stalls).
+> > 
+> Some printk debugging, seems to indicate that the problem
+> is that the entity 'ra->size - (index - start)' goes
+> negative, which then gets cast to a very large unsigned
+> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> bug is still eludes me, though.
 
-Sorry about the slow response to your review of this series - I'm just getting
-to it now. Comment's below...
+Thanks for the report, bisection and debugging! I think I see what's going
+on. read_pages() can go and reduce ra->size when ->readahead() callback
+failed to read all folios prepared for reading and apparently that's what
+happens with NFS and what can lead to negative argument to
+do_page_cache_ra(). Now at this point I'm of the opinion that updating
+ra->size / ra->async_size does more harm than good (because those values
+show *desired* readahead to happen, not exact number of pages read),
+furthermore it is problematic because ra can be shared by multiple
+processes and so updates are inherently racy. If we indeed need to store
+number of read pages, we could do it through ractl which is call-site local
+and used for communication between readahead generic functions and callers.
+But I have to do some more history digging and code reading to understand
+what is using this logic in read_pages().
 
-On 14/11/2024 10:17, Vlastimil Babka wrote:
-> On 10/14/24 12:58, Ryan Roberts wrote:
->> To prepare for supporting boot-time page size selection, refactor code
->> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->> intended to be equivalent when compile-time page size is active.
->>
->> Refactor "struct vmap_block" to use a flexible array for used_mmap since
->> VMAP_BBMAP_BITS is not a compile time constant for the boot-time page
->> size case.
->>
->> Update various BUILD_BUG_ON() instances to check against appropriate
->> page size limit.
->>
->> Re-define "union swap_header" so that it's no longer exactly page-sized.
->> Instead define a flexible "magic" array with a define which tells the
->> offset to where the magic signature begins.
->>
->> Consider page size limit in some CPP condditionals.
->>
->> Wrap global variables that are initialized with PAGE_SIZE derived values
->> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
->> deferred for boot-time page size builds.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>
->>  drivers/mtd/mtdswap.c         |  4 ++--
->>  include/linux/mm.h            |  2 +-
->>  include/linux/mm_types_task.h |  2 +-
->>  include/linux/mmzone.h        |  3 ++-
->>  include/linux/slab.h          |  7 ++++---
->>  include/linux/swap.h          | 17 ++++++++++++-----
->>  include/linux/swapops.h       |  6 +++++-
->>  mm/memcontrol.c               |  2 +-
->>  mm/memory.c                   |  4 ++--
->>  mm/mmap.c                     |  2 +-
->>  mm/page-writeback.c           |  2 +-
->>  mm/slub.c                     |  2 +-
->>  mm/sparse.c                   |  2 +-
->>  mm/swapfile.c                 |  2 +-
->>  mm/vmalloc.c                  |  7 ++++---
->>  15 files changed, 39 insertions(+), 25 deletions(-)
->>
-> 
->> --- a/include/linux/swap.h
->> +++ b/include/linux/swap.h
->> @@ -132,10 +132,17 @@ static inline int current_is_kswapd(void)
->>   * bootbits...
->>   */
->>  union swap_header {
->> -	struct {
->> -		char reserved[PAGE_SIZE - 10];
->> -		char magic[10];			/* SWAP-SPACE or SWAPSPACE2 */
->> -	} magic;
->> +	/*
->> +	 * Exists conceptually, but since PAGE_SIZE may not be known at compile
->> +	 * time, we must access through pointer arithmetic at run time.
->> +	 *
->> +	 * struct {
->> +	 * 	char reserved[PAGE_SIZE - 10];
->> +	 * 	char magic[10];			   SWAP-SPACE or SWAPSPACE2
->> +	 * } magic;
->> +	 */
->> +#define SWAP_HEADER_MAGIC	(PAGE_SIZE - 10)
->> +	char magic[1];
-> 
-> I wonder if it makes sense to even keep this magic field anymore.
-> 
->>  	struct {
->>  		char		bootbits[1024];	/* Space for disklabel etc. */
->>  		__u32		version;
->> @@ -201,7 +208,7 @@ struct swap_extent {
->>   * Max bad pages in the new format..
->>   */
->>  #define MAX_SWAP_BADPAGES \
->> -	((offsetof(union swap_header, magic.magic) - \
->> +	((SWAP_HEADER_MAGIC - \
->>  	  offsetof(union swap_header, info.badpages)) / sizeof(int))
->>  
->>  enum {
-> 
-> <snip>
-> 
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->> @@ -2931,7 +2931,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
->>  	unsigned long swapfilepages;
->>  	unsigned long last_page;
->>  
->> -	if (memcmp("SWAPSPACE2", swap_header->magic.magic, 10)) {
->> +	if (memcmp("SWAPSPACE2", &swap_header->magic[SWAP_HEADER_MAGIC], 10)) {
-> 
-> I'd expect static checkers to scream here because we overflow the magic[1]
-> both due to copying 10 bytes into 1 byte array and also with the insane
-> offset. Hence my suggestion to drop the field and use purely pointer arithmetic.
-
-Yeah, good point. I'll remove magic[] and use pointer arithmetic.
-
-> 
->>  		pr_err("Unable to find swap-space signature\n");
->>  		return 0;
->>  	}
->> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->> index a0df1e2e155a8..b4fbba204603c 100644
-> 
-> Hm I'm actually looking at yourwip branch which also has:
-> 
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -969,7 +969,7 @@ static inline int get_order_from_str(const char *size_str)
->         return -EINVAL;
->  }
-> 
-> -static char str_dup[PAGE_SIZE] __initdata;
-> +static char str_dup[PAGE_SIZE_MAX] __initdata;
->  static int __init setup_thp_anon(char *str)
->  {
->         char *token, *range, *policy, *subtoken;
-> 
-> Why PAGE_SIZE_MAX? Isn't this the same case as "mm/memcontrol: Fix seq_buf
-> size to save memory when PAGE_SIZE is large"
-
-Hmm, you're probably right. I had a vague notion that "str", as passed into the
-function, was guarranteed to be no bigger than PAGE_SIZE (perhaps I'm wrong). So
-assumed that's where the original definition of str_dup[PAGE_SIZE] was coming from.
-
-But I think your real question is "should the max size of str be a function of
-PAGE_SIZE?". I think it could; there are more page orders that can legitimately
-be described when the page size is bigger (at least for arm64). But in practice,
-I'd expect any sane string for any page size to be easily within 4K.
-
-So on that basis, I'll take your advice; changing this buffer to be 4K always.
-
-Thanks,
-Ryan
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
