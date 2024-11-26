@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-35895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B360D9D968F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:53:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC819D96BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:55:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4424F163FC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 11:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A1A281188
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 11:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729821CDFDE;
-	Tue, 26 Nov 2024 11:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F3C1CDA15;
+	Tue, 26 Nov 2024 11:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcKzmmqf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn9TJLI7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D152E17B506;
-	Tue, 26 Nov 2024 11:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA01E1CEAD4;
+	Tue, 26 Nov 2024 11:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621980; cv=none; b=h4gPg1PYWRRExB906NABRtKEoiifRfxKiN0vSzmH2+wHkULIZLfn8jv1CJQhciBzJi14NzTubHRA9SCiBY5wRg6ngeHDoUNsoY9mpcerXZRoYgXlg/MW6z7S89neozUy58Yyc8OCY4x4X9lSjmhktWwEYO1N8srma70HoQIlBJ4=
+	t=1732622115; cv=none; b=UTxZA6BJfx+k93BacuqTuO9OE8aCS/50XviyYaM5djtv9suG+An476qU8mjUPg7Umqtjr8NIULdy+jLNLTx5WMN30Px4+OzvJzL9anhgkVGn0pp0hYCDKqczV1y8tWGZ3YmFa/c0ruxoMFAC0KOxFNMp+tEleFBb76NHDHSYF3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621980; c=relaxed/simple;
-	bh=m+Fon3EC0XStbI0qN8vcP5jsqZTOv4n+rTBn8bBdjdM=;
+	s=arc-20240116; t=1732622115; c=relaxed/simple;
+	bh=VvdJkXuaM32ucNjZ52HMD3LKsA7tWOycv44JwvlpCPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7voD4rFYZqy2T3oaBdh+rKobXAN80xAa3hoTOcH5ZmKtAozFXS2fhcHd9f9QObo+H9zesZiIK8TNDGKLbEV00gspUHS9x19AwjHGmq0tyd0MR4CpLZssz4ALik9a7wIBFSUtDkioZU3Q9FYONvffiIwjudVwSrwibaQ4yPELug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcKzmmqf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33BFFC4CECF;
-	Tue, 26 Nov 2024 11:52:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=klzEGmh4q1m/137hkrxD+eYifNVykcqbszkQwEGkSLciFsa6Y7C4Ak6jh+pgyE1AlHRCWG4ROL9ZPHArwd6+N2LsjpqtdVxhqaFS43riqfTb5zX/yUxvtJUw782HvrmvjppP2VoowDQYiLitf3t+Hr/V7tXCYp3niiA+Fkdye6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn9TJLI7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395F7C4CECF;
+	Tue, 26 Nov 2024 11:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732621980;
-	bh=m+Fon3EC0XStbI0qN8vcP5jsqZTOv4n+rTBn8bBdjdM=;
+	s=k20201202; t=1732622114;
+	bh=VvdJkXuaM32ucNjZ52HMD3LKsA7tWOycv44JwvlpCPY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jcKzmmqfzhywtXURq1jDsFkUd0tEAuN/nIHkdOep9BxiVxds4T+kBZrbin2VG0Qm5
-	 JrPvSOJgmaswUFyzDk7D51sIBDnZvUKjDR/lwFPQNSy1xJcjUJ4EtyzNGSuYnerFVf
-	 uqNKP2bqjqNGQPTDGyFqmPE0zYC6awSvaJ7MHStRt3UyrJARBGVI74MkLizW2eQxfT
-	 Ue0+FJlorde6VDCFPU/rs9iJnfO3b/LCkZQX2qd+fzv9IrQbOHmJb3Q/JALMfr6Ugt
-	 cKyTa4mIR/f3JMMhs0w8lHGG9jPlX5xfwZ3sebt5zT15IFdKeZ7bvRL34BYlJc0biT
-	 /MKl/Y/+6G5vQ==
-Date: Tue, 26 Nov 2024 12:52:57 +0100
+	b=hn9TJLI7a0l/uwfGcwIzkGNk/b/HJcIXuATxgyzDkmJTzKCIu4wENIA74arjlmDk+
+	 uuBq3v5Vo7DSnQuK54M8xlFnSVbKm/PQxzVWvVZcRLsSRn7XtTNewVYtTt23C9lLy/
+	 OX48dT2/SSPgYziYwfBsIKpxk3tsmXXbt0x4zT/EhDaHvU5Z+0toFyywFW0n015Qqx
+	 MhRC4h4GF0CTC4fI55LFSufCWFTiVYL7RnARYyoNnT1zPy6v/gXNCOrZVhVkGxWyck
+	 cs28PphgbjC3xrxGPpBdaSHVXS8GpbP/qQwlmcCB4gKKy/DnxSg1tgByBkl11RC8T/
+	 aPn8BtYrW5DPw==
+Date: Tue, 26 Nov 2024 12:55:11 +0100
 From: Alejandro Colomar <alx@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	dalias@libc.org, brauner@kernel.org
-Subject: Re: [PATCH 1/2] readv.2: Document RWF_NOAPPEND flag
-Message-ID: <20241126115257.r4riru6oot5nn6x6@devuan>
+Subject: Re: [PATCH 2/2] io_submit.2: Document RWF_NOAPPEND flag
+Message-ID: <20241126115511.aw4igyvlrd2ak7dz@devuan>
 References: <20241126090847.297371-1-john.g.garry@oracle.com>
- <20241126090847.297371-2-john.g.garry@oracle.com>
+ <20241126090847.297371-3-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,71 +57,59 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dpxysf623xg355uw"
+	protocol="application/pgp-signature"; boundary="ua5qad3vdrn6s7xp"
 Content-Disposition: inline
-In-Reply-To: <20241126090847.297371-2-john.g.garry@oracle.com>
+In-Reply-To: <20241126090847.297371-3-john.g.garry@oracle.com>
 
 
---dpxysf623xg355uw
+--ua5qad3vdrn6s7xp
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] readv.2: Document RWF_NOAPPEND flag
+Subject: Re: [PATCH 2/2] io_submit.2: Document RWF_NOAPPEND flag
 MIME-Version: 1.0
 
 Hi John,
 
-On Tue, Nov 26, 2024 at 09:08:46AM +0000, John Garry wrote:
+On Tue, Nov 26, 2024 at 09:08:47AM +0000, John Garry wrote:
 > Document flag introduced in Linux v6.9
 >=20
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
+
+Please add the Cc:s also to the patch trailer section.  (That means less
+work for me pasting them.:)
+
 > ---
->  man/man2/readv.2 | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  man/man2/io_submit.2 | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >=20
-> diff --git a/man/man2/readv.2 b/man/man2/readv.2
-> index 78232c19f..836612bbe 100644
-> --- a/man/man2/readv.2
-> +++ b/man/man2/readv.2
-> @@ -238,6 +238,26 @@ However, if the
->  .I offset
->  argument is \-1, the current file offset is updated.
+> diff --git a/man/man2/io_submit.2 b/man/man2/io_submit.2
+> index c3d86b4c4..64292037d 100644
+> --- a/man/man2/io_submit.2
+> +++ b/man/man2/io_submit.2
+> @@ -141,6 +141,16 @@ as well the description of
+>  in
+>  .BR open (2).
 >  .TP
 > +.BR RWF_NOAPPEND " (since Linux 6.9)"
-> +The
-> +.BR pwritev2 ()
-> +system call does not honor the
+> +Do not honor
+> +.B O_APPEND
+> +.BR open (2)
+> +flag.
+> +See the description of
+> +.B RWF_NOAPPEND
+> +in
+> +.BR pwritev2 (2).
 
-The other surrounding paragraphs talk in imperative (e.g., "Do not
-wait").  This should be consistent with them.  How about this?:
-
-	Do not honor the O_APPEND open(2) flag.  This flag is meaningful
-	only for pwritev2().  ...
-
-Thanks for the patch!
+LGTM.  Thanks!  I'll wait to apply it once patch 1/2 is applied.
 
 Have a lovely day!
 Alex
 
-> +.B O_APPEND
-> +.BR open (2)
-> +flag.
-> +Historically Linux honored
-> +.B O_APPEND
-> +flag if set and ignored the offset argument, which is a bug.
-> +For
-> +.BR pwritev2 (),
-> +the
-> +.I offset
-> +argument is honored as expected if
-> +.BR RWF_NOAPPEND
-> +flag is set, the same as if
-> +.B O_APPEND
-> +flag were not set.
 > +.TP
 >  .BR RWF_ATOMIC " (since Linux 6.11)"
->  Requires that
->  writes to regular files in block-based filesystems
+>  Write a block of data such that
+>  a write will never be torn from power fail or similar.
 > --=20
 > 2.31.1
 >=20
@@ -129,25 +117,25 @@ Alex
 --=20
 <https://www.alejandro-colomar.es/>
 
---dpxysf623xg355uw
+--ua5qad3vdrn6s7xp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdFtpgACgkQnowa+77/
-2zIFVQ//Ww7fVUap+NnlF/pr0nV8zGeol+ViuwerEJ5Yh/GZrOn5PVI0auKuvRQl
-1t+ViaVKnXv2oACv0VawVhkPHT8rvKINmNMiH2/NvmeVzplTbA3pWUQHs2hs4iKM
-L0pMp41kZwZKsOU7HqHLdet2dvu8+08AyUyT0xxdq3Vs0ColZMYcymeaCu26LneT
-A9AyGq8OgK0DpEwEnSi3qa5oF/799flWHsu9DAvarAb6UvFxj/it5w54MWqaPUc4
-IvjxLSb46jv4Y6KeocXamf8pQrlhCzE7Zi3rqacvDKdb+4lYhos0WnxiYE4CmeN5
-160i12tzgn7JFf3xzb/47RxHnts4GCpQ2xljNz+q+ROBoBI1zTMksKEEb0APQE3I
-gep7HrbH/slWyRRNwXJH3hhMPIoMdErU+6d/Syp6Bnx1hMuz12xSIkgzHFqgwukp
-/J0Xu+rHXVYssD1QJN27+84+hBYQZ3c1qOrvJle/C4V2cVop455TJtOmEj+DS1fF
-W628uvU5Mtq+zCUhHijnqP7KOWvERhWAqim7ybfGJwZIfMFXeLUdxocHxnq2LU3+
-oGvtt4KZ+1Nd9Kpmu/vz/x+OvCxqcpGQUu5feqnC4hvR2pUcdx1wwRb7P8eSd/ge
-LPPun8WHyERBEaSTC0/jA10veso8ZV6yXWNBtLLmAAeEKf3FCIg=
-=/Rd3
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdFtx4ACgkQnowa+77/
+2zKf6BAApkVdk4mq6MRXaqIkFWYVOwt6IzpahPQTjKRJ4uw0g5p4tu2FH2QQCcQl
+N6vIvFxgJgf838BCSEqcouUqL9U60SpnI3nM65Ymh45QAgz64nn4uwLVTTG6/ISy
+NxiS94xpa3v4yBed4JINdEqY8rjN6r+OEEOjJ6VYNwLRwl2+t3yuScII0M6fYXaj
+2K0CxObF+rueGPnvsacMmMy3WJmxXoH+T8M/PLGHhPAsTF36GFsg25hyglnACnzA
+OOB3ARGcM9/LZq+c2pw1cRDlcAELBoMsGVsgu+VRLKvyXoXPPFcTtR5MJ8OLAv9F
+jrjWD/59G2JqAdyHynCxqBAJJ5iCh842FY9FsBnn4E8/83GAHuscSvWIXV6rVu+x
+xS24sHEBBXXDLbvOJymSIjuy2UwcAFY4KXoQ5xnqM2ESQPrGJ4dYzI7WXbMaVa7E
+XiP7aXn2npAhJ35yxg95I4MeHLHb3Jeb8ElCKrugYQWz5M1ffxbU5bIgQ97O20ja
+CL5o1UD+xMbod9m5qwcJ2tXtlijyDOgeXu3bZpHPtS9CPdvIRY+YSCSeqCdtB4F/
+GIukFRy1gM7jP6RApDf/OioZ8ZLzpDsQxQXzaaSmeFaM9icKLPVlt5Z139eSJfui
+i6eCKx28IqXxjljUH8GxEWtsgRnJOMbn/d4g6bQxZ9sumbdaoJs=
+=yNbH
 -----END PGP SIGNATURE-----
 
---dpxysf623xg355uw--
+--ua5qad3vdrn6s7xp--
 
