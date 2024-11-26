@@ -1,191 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-35877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CFE9D9387
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:47:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FAA9D938D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 09:49:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D945165F52
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 08:49:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DCD1ABEBB;
+	Tue, 26 Nov 2024 08:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UVEQYXXF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CWerTH+a"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867E02844E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 08:47:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135DF1AF0CA;
-	Tue, 26 Nov 2024 08:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YUfPyeqU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WI9DSH9W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YUfPyeqU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WI9DSH9W"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9D917BA0;
-	Tue, 26 Nov 2024 08:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F246613C3F6;
+	Tue, 26 Nov 2024 08:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732610869; cv=none; b=LiAuGmwbRPT02Qp+guVRcOjHvDDRRAEaXjaGAblHsS05k6y9Epb18UXPXsa4T0uOGfAXuQq5nOm45dZNJu2lQGf8CAfQdr1Oi7xQJQlu5rPehZR2EwerJHFcguceWvP9DOu/vb9URT1Y8fTkMJgHywgkHAug4jJpEgATx0Bf3cs=
+	t=1732610970; cv=none; b=a7ZyMvjKif3UjxX2uSSIWIajtmNt0Wg9PAMJTPhY1/QqvPt6xg5paxNUnmbIAfEKRwT9jftUKAW1ANRn+rHIA0UhuTxxdyN2urz25JZ9lh9Xg1QZ7xI/HM0WIyU5+ZNzVYcTdWHWWarLeEhYaYMZT5gEOysVdpzo0tq7DV7t1Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732610869; c=relaxed/simple;
-	bh=bM7I5pk4wqPLNuFim9xANyoe5nNSDxH6zY2FUULVkRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tU6vpzskHHeKB7YKKvt2wclKKmt3dQmbo6Q2hSATyAi4mFdPuL3+kBX+NTrooSXsksS0j/2MR7+oVGNXXSWdy6l2Xvk2JFh8YUD96xNtAciJSCPiHbJrZQmOossgqqLzJSpGN6+ySkHhxLxT56athXRJyO9oNnSksoao0rF6nM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YUfPyeqU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WI9DSH9W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YUfPyeqU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WI9DSH9W; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 50EB52115E;
-	Tue, 26 Nov 2024 08:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732610865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
-	b=YUfPyeqUPB0xkCkB/eRR2TXB9+TQmwSL+HfmTMDLYlQ0RaBQvTWTkGs4vbtqIQesHrA+xS
-	L8nNzo7V8gbYvCjm574nVFZJXnKBjQ+YzmeUEsQ4gy+/VoYwwZX22/7JFXCqL9HQbouRJq
-	pPUJjbJSVOiOSh9yYyZ8vF0xoueZAWw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732610865;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
-	b=WI9DSH9WJOUdIyRvLuIVVy21zix30ELZ5Zpi1kiwu5IjEJn72x/jj7vtyYxQSUo/YrntT0
-	n2aPwwFjJJUFt2CA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YUfPyeqU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WI9DSH9W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732610865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
-	b=YUfPyeqUPB0xkCkB/eRR2TXB9+TQmwSL+HfmTMDLYlQ0RaBQvTWTkGs4vbtqIQesHrA+xS
-	L8nNzo7V8gbYvCjm574nVFZJXnKBjQ+YzmeUEsQ4gy+/VoYwwZX22/7JFXCqL9HQbouRJq
-	pPUJjbJSVOiOSh9yYyZ8vF0xoueZAWw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732610865;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
-	b=WI9DSH9WJOUdIyRvLuIVVy21zix30ELZ5Zpi1kiwu5IjEJn72x/jj7vtyYxQSUo/YrntT0
-	n2aPwwFjJJUFt2CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45FFC139AA;
-	Tue, 26 Nov 2024 08:47:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e2oTETGLRWeEeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 08:47:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E0897A08CA; Tue, 26 Nov 2024 09:47:44 +0100 (CET)
-Date: Tue, 26 Nov 2024 09:47:44 +0100
-From: Jan Kara <jack@suse.cz>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Baokun Li <libaokun1@huawei.com>,
-	Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] quota: flush quota_release_work upon quota
- writeback
-Message-ID: <20241126084744.fjnl3mmgme2mqhh2@quack3>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
- <20241121123855.645335-2-ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1732610970; c=relaxed/simple;
+	bh=QgA2V39K+nI8Yw0kGgHn1G1xYlFo87d/nEmMPnhMCyA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UGnCnikDhoGzB09+HEuj02h4n7ILDKkY2tT2Y8WO3WITAaVHBjezdg7acgO7GvYQiN9Pkun2+MdjPCHpgCmRPYlYpoiCbKIApo6GyJempPl1F0aK8JV65NUAdV6E/nICuOYWNOOiVoVfBRGVij+wpOXotCnKpYjtNfX+YoSLETI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UVEQYXXF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CWerTH+a; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id A8B1E1140158;
+	Tue, 26 Nov 2024 03:49:26 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 26 Nov 2024 03:49:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732610966;
+	 x=1732697366; bh=Qd19FLub09m9YC9jkC4e0DUGqBo/39uXk/01+azJUEw=; b=
+	UVEQYXXFLYQlQl6Yh66OTYGqna8PXeYwTCRT8WL9kNMgsIwTvyefqnfMrrDMd4rJ
+	r3NUGxuaIO4qJS2T93hszme5BWugzpVMtKA4eJqwPFFAWjWkwmcA/uAhW6BomRXF
+	jU0NrCMknn3SiJ9TF5sqco36KmxyxBNd7DgLNOr16tsbcL46EWpEXecHBiHinh1p
+	y7k9uYbB6tyJ6Jd5jVm6WwhbC2foNOtkYGD5RUwENYCdbRTFJyTfbZReHIZvu+zg
+	R+HHQdtFHUVO+sK4klY6vgKYXj7Um5VhPEcVHYFTHdd9qZdl/9merOl3ScBn2/O9
+	+8TEH0o9Zual2f3d68J+mQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732610966; x=
+	1732697366; bh=Qd19FLub09m9YC9jkC4e0DUGqBo/39uXk/01+azJUEw=; b=C
+	WerTH+aenqwR0jH4udCVgVcMLi8Xfsilp2tqUwNqllEHT+pLGpA/dg9Bk/31UfZW
+	7bEKaisgV5yVXkZteN80MefY1gkS16HZGjLbExE8CD9PBHEk3IwxctEg8WIFgdPm
+	88KefC+bZl5xPMxIwOnGNCkz13+6JIpyI6aYdyJvMT1HgVQmSdtmqhmlhI+XbKNz
+	nj8O18iDCFb2y4Vp+Ij08zYHZjbx+YaQQI1QaLAMwe8280j4HpnKG3L9lx1JPYXn
+	0QYDYsIHHYBkSGND+qjfUO9llxiI+CbX6meYT+i1mzbQkLNfW4eruMzXBLPzMyBu
+	460VfEJltg9jRKVV+Aq0w==
+X-ME-Sender: <xms:lotFZ8Kiql7C8tgUlsvXeFeyyNy7J0Uv5rm-vj1bPA3PHCzzEqCrJQ>
+    <xme:lotFZ8K0rytf1gGFiE7ekf7PuDOGhNUAEvxQ694-k7SW8xeoW4plSpAKUJfeWfXyS
+    a8xIx4s1REEAXSlt9o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeeigdduvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhg
+    pdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtg
+    hpthhtohepnhgrrhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdprhgtphht
+    thhopehlkhhfthdqthhrihgrghgvsehlihhsthhsrdhlihhnrghrohdrohhrghdprhgtph
+    htthhopehnvghtfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepughh
+    ohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvg
+    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgv
+    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:lotFZ8uabkzTD6kHjDKiBwYtmUbgYIp6AtoBDgAV73Bx_9y0y5YHCg>
+    <xmx:lotFZ5a2MexPC4-BtuXuMHqZVH2-jmJDzIxqE04h14VFDKAEmT8rMw>
+    <xmx:lotFZzZGwd3CkOcjVBMDMrKZuq1QlsEf4k2FYnENYik5uxlhs4Vhmw>
+    <xmx:lotFZ1AFDh-wbJ9_Byyv1yFrHm5Q1h5X7VAB9S3sUMUcDIX6xsrBGA>
+    <xmx:lotFZxPM9cAUgqeyOZJTWHiVMxoZE7qbhH5anYVDdfs7KEZp693-H58x>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1B8832220071; Tue, 26 Nov 2024 03:49:25 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121123855.645335-2-ojaswin@linux.ibm.com>
-X-Rspamd-Queue-Id: 50EB52115E
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,suse.com,gmail.com,huawei.com,linux.ibm.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Date: Tue, 26 Nov 2024 09:49:05 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, "open list" <linux-kernel@vger.kernel.org>,
+ lkft-triage@lists.linaro.org
+Cc: "Jeff Layton" <jlayton@kernel.org>, "David Howells" <dhowells@redhat.com>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>
+Message-Id: <b55d1f04-aadc-490e-a8b5-fe1588f3c9c0@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
+References: 
+ <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
+Subject: Re: fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialized
+ when used here [-Werror,-Wuninitialized]
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu 21-11-24 18:08:54, Ojaswin Mujoo wrote:
-> One of the paths quota writeback is called from is:
-> 
-> freeze_super()
->   sync_filesystem()
->     ext4_sync_fs()
->       dquot_writeback_dquots()
-> 
-> Since we currently don't always flush the quota_release_work queue in
-> this path, we can end up with the following race:
-> 
->  1. dquot are added to releasing_dquots list during regular operations.
->  2. FS Freeze starts, however, this does not flush the quota_release_work queue.
->  3. Freeze completes.
->  4. Kernel eventually tries to flush the workqueue while FS is frozen which
->     hits a WARN_ON since transaction gets started during frozen state:
-> 
->   ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
->   __ext4_journal_start_sb+0x64/0x1c0 [ext4]
->   ext4_release_dquot+0x90/0x1d0 [ext4]
->   quota_release_workfn+0x43c/0x4d0
-> 
-> Which is the following line:
-> 
->   WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
-> 
-> Which ultimately results in generic/390 failing due to dmesg
-> noise. This was detected on powerpc machine 15 cores.
-> 
-> To avoid this, make sure to flush the workqueue during
-> dquot_writeback_dquots() so we dont have any pending workitems after
-> freeze.
-> 
-> Reported-by: Disha Goel <disgoel@linux.ibm.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+On Tue, Nov 26, 2024, at 09:25, Naresh Kamboju wrote:
+> The x86_64 builds failed with clang-19 and clang-nightly on the Linux
+> next-20241125 tag.
+> Same build pass with gcc-13.
 
-Thanks. Since this patch is independent, I've picked it up into my tree
-(will push it to Linus for rc2).
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Build error:
+> ---------
+> fs/netfs/read_retry.c:235:20: error: variable 'subreq' is
+> uninitialized when used here [-Werror,-Wuninitialized]
+>   235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequests))
+>       |                           ^~~~~~
+> fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to
+> silence this warning
+>    28 |         struct netfs_io_subrequest *subreq;
+>       |                                           ^
+>       |                                            = NULL
+> 1 error generated.
+> make[5]: *** [scripts/Makefile.build:194: fs/netfs/read_retry.o] Error 1
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+This broke in 1bd9011ee163 ("netfs: Change the read result
+collector to only use one work item"), which introduced an
+extra "subreq" variable in the "do {} while()" loop that
+shadows the one in the function body.
+
+The one pointed out by the compiler is not initialized
+anywhere. My best guess is that the extra declaration should
+just be removed here:
+
+--- a/fs/netfs/read_retry.c
++++ b/fs/netfs/read_retry.c
+@@ -72,7 +72,7 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
+        next = stream->subrequests.next;
+ 
+        do {
+-               struct netfs_io_subrequest *subreq = NULL, *from, *to, *tmp;
++               struct netfs_io_subrequest *from, *to, *tmp;
+                struct iov_iter source;
+                unsigned long long start, len;
+                size_t part;
+
+This also removes an initialization to NULL, but I think
+that was not needed regardless.
+
+       Arnd
 
