@@ -1,184 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-35900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EFF9D9751
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:34:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265779D975C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 13:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5C7B236B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23FA2855E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2024 12:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632F21D2B22;
-	Tue, 26 Nov 2024 12:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460071D27B2;
+	Tue, 26 Nov 2024 12:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKzBRPKI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tL9iBoWY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKzBRPKI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tL9iBoWY"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aGmmZvTk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B25527442
-	for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2024 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601327442;
+	Tue, 26 Nov 2024 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732624442; cv=none; b=d3dwnyIvJis60Khfof8ILitbg2onbQZqb3Qgs6KPXITpzD3dtEhchedm0PZ5jI8PN/VgEebQL26cEFx3PLo4XshXDyJl0pIDaae1ZUpFPpFBndUapIjuD6GTK/LlciLn58DaAzD6X0heZLyqETsZueOSmdsv1PBHdGnpJdopNlA=
+	t=1732624893; cv=none; b=N0OBmAttwardYfsScDN+SDXQBYyK0ZG1BU/Yr78+u7NyFkbdHeZYvC/FxeYuOzhk7dj1Km3qe7/3vGxAMU+guTgiQOzQ9bQ9Nkf2FD2DJEamVeFBRdjKM7xI+qXTOHP8IpIRbI+MzFsUZphO5BuukSS3N1TBcz/bIQgXcaIkUMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732624442; c=relaxed/simple;
-	bh=EwKrdYK/wuwy4Lq8gR/dyraqGdVWk+4V2eTIlbC8jMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jA0uUjvCZMX3x0H7qCiwVfSmUSzM+mniYNaQv9Hhy7btOW77fKwmF6P195mTb5NY+A7PoqAMUavTn1JdgQWuECksHi+5S0a3+Nr391BOhcgdqE+kbnxlDj8Sz6/2Eieamts9TGt1msVqRy2pcfhOUnzIR4MNzflMZPfQiFClRSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKzBRPKI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tL9iBoWY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKzBRPKI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tL9iBoWY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3CF371F745;
-	Tue, 26 Nov 2024 12:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732624438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMuYAwb1imuEU4MhwhHruanvqPLAeJY1EvyYvhCTLdU=;
-	b=TKzBRPKI/5wmBOuyUh/pXHI2KQxLVoV/JuPDuoKt81LB05bJFBUrLA1BtEnXeG/TQHdBRv
-	X/C68qv1pvYReZYwBGuchbAFWF7M5vxAeC5t7I3+DZfDlv2qgaRHXSaFSScfMt2+/RVRDb
-	7X104gUHWxKZSCHE1RkemCSeeuctyJ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732624438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMuYAwb1imuEU4MhwhHruanvqPLAeJY1EvyYvhCTLdU=;
-	b=tL9iBoWY1xf2jWfxPtfR5hI/qhBOiSwOEwhr7UNTpJ03k+lDobv0WL8/Mm1qWrbTCtiuhi
-	5meD4pxEErdkdaBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TKzBRPKI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tL9iBoWY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732624438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMuYAwb1imuEU4MhwhHruanvqPLAeJY1EvyYvhCTLdU=;
-	b=TKzBRPKI/5wmBOuyUh/pXHI2KQxLVoV/JuPDuoKt81LB05bJFBUrLA1BtEnXeG/TQHdBRv
-	X/C68qv1pvYReZYwBGuchbAFWF7M5vxAeC5t7I3+DZfDlv2qgaRHXSaFSScfMt2+/RVRDb
-	7X104gUHWxKZSCHE1RkemCSeeuctyJ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732624438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMuYAwb1imuEU4MhwhHruanvqPLAeJY1EvyYvhCTLdU=;
-	b=tL9iBoWY1xf2jWfxPtfR5hI/qhBOiSwOEwhr7UNTpJ03k+lDobv0WL8/Mm1qWrbTCtiuhi
-	5meD4pxEErdkdaBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D03913A27;
-	Tue, 26 Nov 2024 12:33:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WGn6CjbARWfLUAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 12:33:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CBB72A0901; Tue, 26 Nov 2024 13:33:57 +0100 (CET)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	syzbot+3ff7365dc04a6bcafa66@syzkaller.appspotmail.com
-Subject: [PATCH 2/2] udf: Verify inode link counts before performing rename
-Date: Tue, 26 Nov 2024 13:33:49 +0100
-Message-Id: <20241126123349.24798-3-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20241126123349.24798-1-jack@suse.cz>
-References: <20241126123349.24798-1-jack@suse.cz>
+	s=arc-20240116; t=1732624893; c=relaxed/simple;
+	bh=3++F0CPGlSPV7VHDSu5UkQCDjvkmtFv4Il2HnX9bZow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HfUjxrwnKYportvkN11gBCUec35kr72OSMK7R3/YQRih0+m7BfwyhPbyqGw6Z5KzePb6BPMWN//bIrOYlQc8Bug+8oQra9A72UIwigiRzbfpUywZk+49GJkCtUim7vX6zI54/+oawsO5i4XGPgGvM8+ZR9qih4xtUdMU4fs7Stg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aGmmZvTk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ8eBha018106;
+	Tue, 26 Nov 2024 12:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gI7lf1d2YuHEgZ8p/4OjqQ4L7QiJ9z
+	JUd/FwFOMA2p4=; b=aGmmZvTkHQ3RUf99D8ivAqhfnNj/XKEP1pBfJJplCLW0WC
+	8bG2e/0J3GC5mMhobFMpQWtCtNnedwwC77iMkmw6YQiBA3iiiz3dlxlYZp2ebhpX
+	/pJIWwrfJd2KCmhm9Yup/ts3tS65OJuPbuAXF4PcaZYxqUtfrJMMAuVYd0sex+Hd
+	SV8P4bj8gthDhHebz5ys/WzjVuRt1cRDYvjzvvvPaKYJOsNDfrDTmn1z4K17UjhF
+	dYMUElBvYicTHEbsLb/aI240PW8urn0GR9hcBZNWnYT4Z7Er0dTsP6B3CRYyMpNv
+	YBXC9c5Oqo36Ptss2QEmHRmPaRokXEW7EuV5INqA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwje3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQCZ0Yo028031;
+	Tue, 26 Nov 2024 12:41:21 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwjdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ79qF9012370;
+	Tue, 26 Nov 2024 12:41:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 433scrvg77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:20 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQCfJmk17170736
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 12:41:19 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15A7D2004E;
+	Tue, 26 Nov 2024 12:41:19 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A44AC2005A;
+	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
+Date: Tue, 26 Nov 2024 18:11:14 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <Z0XB6uLUkwDWLV8E@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <20241126090452.ohggr3daqskllxjk@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1122; i=jack@suse.cz; h=from:subject; bh=EwKrdYK/wuwy4Lq8gR/dyraqGdVWk+4V2eTIlbC8jMQ=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBnRcAsNONEPnjIYZJxMwC3QPUvsDGHSjzQeC8rYCHl 095SkHiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZ0XALAAKCRCcnaoHP2RA2QLAB/ 0RLd9lgptKwyBvdabFVG/6fXWcJKhlEV5NKrDkOhzdi8Kj7Jl8egwno5l5uz0hcq0DAMbNsL1EbqGg cUwq/xHpAllhNrrSUdDq7gk8tp8nd1ViVamb1C40Se4qmrfikf04PBu3sQqJ0kwE4WEtFXxpAnhCI8 fgkVuzfuLLDD3XgRFiWhwJ0CLN2LA8HHjNqNMh1flFH8ROaBXCrDw3fKwEJvbf5Rir73YyssQ/0Sck mdwcf/lvcCoNIHDJsPCcHFJjSO7l74c4btoIZ3uuYE6uEVLG15rptaemRS7X05DVxyCGkv6MW0VATL U1wItvuLtJDDcX4+uaW1ddfTjrHESP
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 3CF371F745
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[3ff7365dc04a6bcafa66];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126090452.ohggr3daqskllxjk@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1nRQjSqdA0HDfy838ABRw0pKv6Qm4RYg
+X-Proofpoint-GUID: SZz5FBwk32IcPVu-fs9KsAnJtaIjJpxp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=817 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260101
 
-During rename, we are updating link counts of various inodes either when
-rename deletes target or when moving directory across directories.
-Verify involved link counts are sane so that we don't trip warnings in
-VFS.
+On Tue, Nov 26, 2024 at 10:04:52AM +0100, Jan Kara wrote:
+> On Thu 21-11-24 18:08:55, Ojaswin Mujoo wrote:
+> > Protect ext4_release_dquot against freezing so that we
+> > don't try to start a transaction when FS is frozen, leading
+> > to warnings.
+> > 
+> > Further, avoid taking the freeze protection if a transaction
+> > is already running so that we don't need end up in a deadlock
+> > as described in
+> > 
+> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+> > 
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> 
+> Looks good to me (the 0-day reports seem to be due to wrong merge). Feel
+> free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
 
-Reported-by: syzbot+3ff7365dc04a6bcafa66@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/udf/namei.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks Jan, yes it does seem like an incorrect merge.
 
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index 2be775d30ac1..2cb49b6b0716 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -791,8 +791,18 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			retval = -ENOTEMPTY;
- 			if (!empty_dir(new_inode))
- 				goto out_oiter;
-+			retval = -EFSCORRUPTED;
-+			if (new_inode->i_nlink != 2)
-+				goto out_oiter;
- 		}
-+		retval = -EFSCORRUPTED;
-+		if (old_dir->i_nlink < 3)
-+			goto out_oiter;
- 		is_dir = true;
-+	} else if (new_inode) {
-+		retval = -EFSCORRUPTED;
-+		if (new_inode->i_nlink < 1)
-+			goto out_oiter;
- 	}
- 	if (is_dir && old_dir != new_dir) {
- 		retval = udf_fiiter_find_entry(old_inode, &dotdot_name,
--- 
-2.35.3
-
+> 
+> > ---
+> >  fs/ext4/super.c | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 16a4ce704460..f7437a592359 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+> >  {
+> >  	int ret, err;
+> >  	handle_t *handle;
+> > +	bool freeze_protected = false;
+> > +
+> > +	/*
+> > +	 * Trying to sb_start_intwrite() in a running transaction
+> > +	 * can result in a deadlock. Further, running transactions
+> > +	 * are already protected from freezing.
+> > +	 */
+> > +	if (!ext4_journal_current_handle()) {
+> > +		sb_start_intwrite(dquot->dq_sb);
+> > +		freeze_protected = true;
+> > +	}
+> >  
+> >  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+> >  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+> >  	if (IS_ERR(handle)) {
+> >  		/* Release dquot anyway to avoid endless cycle in dqput() */
+> >  		dquot_release(dquot);
+> > +		if (freeze_protected)
+> > +			sb_end_intwrite(dquot->dq_sb);
+> >  		return PTR_ERR(handle);
+> >  	}
+> >  	ret = dquot_release(dquot);
+> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+> >  	err = ext4_journal_stop(handle);
+> >  	if (!ret)
+> >  		ret = err;
+> > +
+> > +	if (freeze_protected)
+> > +		sb_end_intwrite(dquot->dq_sb);
+> > +
+> >  	return ret;
+> >  }
+> >  
+> > -- 
+> > 2.43.5
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
