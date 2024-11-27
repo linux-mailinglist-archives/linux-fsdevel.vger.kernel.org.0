@@ -1,178 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-36019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9597C9DAAE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 16:41:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB569DAB22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 16:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E29164964
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 15:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847E816445A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 15:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10E020010E;
-	Wed, 27 Nov 2024 15:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8F3200B8B;
+	Wed, 27 Nov 2024 15:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOGo769g"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TM9pcc84"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48420328B6;
-	Wed, 27 Nov 2024 15:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437DA200121
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 15:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732722079; cv=none; b=c9cIYrkBiROqViO2SGKzHLizF9Mwc6bGkctNYpwBPCU7A5bt9I+wHWlnmjcCZURkF0DHEtA+iWNiDP1xqRoiKHPX9jG6MW1WYtWHEX32F2YSZTYCk8KqXVHeKm7l4cV3n1nxkg7u6XlBDuFc0Ky5nVYg7QpXzsoBSE6olY9up/c=
+	t=1732722912; cv=none; b=XZQqMW204FYX6h/wvYe7ci/u9h15Qwr3hxm4kNukJslgLATjOHOdozx0HcrRjfHeh5MOYg8zg1Wj+2p+Cbltz52s9GV1WVz7x6LxrwX08C79rpcFBo7lLWgodlMgDTcuSywFDM2gvBqsk2VlvGg0d85ngAEpMKdsgJPHRyF9ywM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732722079; c=relaxed/simple;
-	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUAI6D7TfZWTiebUZ3ij2EtxKosZjKUcACsxc7bBecZcr8ijjwOeUFocUMVMTk/y8XaXhpOEVGKcOgovlc3Gg8o2kMqg28fQI+rjmrpoHnobtj5UYhpEzWgdY3oOgtWemeGXjOAksIx+3/9gGEs56MqSaxrAU26tv49Qxgl9fH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOGo769g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5ADC4CECC;
-	Wed, 27 Nov 2024 15:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732722078;
-	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IOGo769gRF6NaThfG/aRem8w6lMd6q3TVKX7KTAre+QIMv8oQIu7CFwTN/RGYB/p8
-	 BcfVMajnUjipgemFOEfrlQozVn8n2oHVUezC3xXJLcoLbzplrJYS6DO1GgkTt9oSk5
-	 YY+0kUx2brcTjWciQNZizNxvhFcpX22laSewEW2bRmPISm1OPb0hC7HDppTuUgnnyg
-	 m3bNRA6iBbr1cE1RLOwjSa3gjq6rqpF3rYXR0PMcKaH7u9yoTb7P9JeMazcL4xioHx
-	 wwwAxg/f2dGlQWyuErlr3KIXNKoj5QqJQZj/z6PhoFKZKuTD+mGJQbbdoS4vIA5Ews
-	 mBVd8jVCmU74A==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Wed, 27 Nov 2024 16:41:03 +0100
-Message-ID: <20241127-vfs-fixes-08465cd270d3@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732722912; c=relaxed/simple;
+	bh=hYOF5+CSvFGGwMZxoKhXQ5ulU8SpkTAOXD2Ro2loI+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKeZq+CuW+pBsg81LgVxixsoDIZdiDbUcpBy8vX2jCBrSAJq16VLDCWxcl/oZG5bg2XO2uvMfOAZIhOoj1D0KuXUStmKRadmqrC73/B/N5maTqILhYI1lvrThiejYMthKr4GRY5IRc8sLgVdcd49o1fzs6w+NaKYFnbZDWtuvgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TM9pcc84; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd59a2bc1so6477029e87.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 07:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732722908; x=1733327708; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAr4TZdsOU6XWFX8oKIJY4uIFZASuI0VfNTDSWNUv0Q=;
+        b=TM9pcc84VjQNA9/tfEhI7RjZXq9vNbDTfVzZVMFEIa0BqaJk1GfVm/UIHsKOC01dJn
+         lSCmOrKLq3jcVeFJVE3iuP9jjr4zojir86sdGnrG18TVlvuU8uj9prtF5esDyP9YOukf
+         tkEZ0JbiPQXixC4LfjBiqifpe4OoErBOKLdQo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732722908; x=1733327708;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hAr4TZdsOU6XWFX8oKIJY4uIFZASuI0VfNTDSWNUv0Q=;
+        b=s4PifnV+G3PUWXKiCXn/Lzo8IIR5Ye37pGenNiRKJhC3FSwz6lPXn5qYf1NixwsAOt
+         xsrhwcMLFukU+hIwj0z9f5e16UiyEMHXFhe5hLSLP7X8ruHU0eSmcmEoA+ubyQM/0bbM
+         +OG6stkec4fc6Ywcnop67RGeCdfBYH6OOXSYJh1PAmbzyegE+HIPl5/GorX2HNYG3iKm
+         TyG7abORhSWSDFmcl9MidhTlDNgrxCblvlVNCvj7DMu236OSI2PJVr98r7c6kdAijptc
+         mzg3XsoTC7vOLye1aMjOCM4InDlYw/kNBBNVB9AuZaKq9h2jzLKjQqElZmJe58cMQRUj
+         +06Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUgP5AvnJvvEcKx7bO3GLYMuOv82Pv8i6tbX6XX4gXTMZ7vhTNEBoZvRV0m2z4dD716SWBqrXL8r7JItBoe@vger.kernel.org
+X-Gm-Message-State: AOJu0YykjI9tn42gVBKqwEAFs5J7/oxaNUCKUKUZ+7g8svg2gwds3zaL
+	p12/00Z2gzF10eOeI14vW9iVEFiDSKpul0iUG+14WrUtt1iRCwQ/pWL0DC4oFgpT1u5qm5tZCfY
+	MKhK9OA==
+X-Gm-Gg: ASbGnctPk/eNhprIegkyLInQPvH2Eb7uf4q2WnUm3UB7i4Hh05EGTX7hJkIRJ4XnA1m
+	feGEZzfaifGVZd4B5g+Nx01t/NZIHOeTeSTtNNr8Vj1cNYBkZpn71eRzeaSkkbQP0o33Ml9NKPS
+	/Y2IjUYot+ZakBn1XaUATRIJMxYpQCDAeJkXqmhfrio/IZ/6cZFy1D8+AS2XenfYqjj9ax6yA3a
+	1+1shLMItFrlXaKlqPoZZD6uS18Lw2vaHpdLSeoJHkwh0L/jjBytqmOjvWLLi7k3T46T1boqj/3
+	BWh7bSaMsRjN2zQ20sBRUZ+E
+X-Google-Smtp-Source: AGHT+IHsoZiEtJftVqj0DBLfjUtwEwxtIB2KgrpSVBXiJGEj/R4DfyvMb6CN9DCUaNpvOyUDFl1Z5w==
+X-Received: by 2002:a05:6512:39d0:b0:53d:ec93:fbb7 with SMTP id 2adb3069b0e04-53df00a9782mr2406273e87.9.1732722908131;
+        Wed, 27 Nov 2024 07:55:08 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fe50sm730418766b.102.2024.11.27.07.55.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 07:55:06 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa5325af6a0so644270566b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 07:55:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2LA0xZtc0BfmFR82dcHMR7L05HOGy9WFxUJQOqbugBEQ7nfsJOxZ/Va6kY+s6cVHmQYFoRW638KW06Sv+@vger.kernel.org
+X-Received: by 2002:a17:906:30c5:b0:aa5:1b7a:5579 with SMTP id
+ a640c23a62f3a-aa580f202d9mr211472566b.21.1732722905907; Wed, 27 Nov 2024
+ 07:55:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3804; i=brauner@kernel.org; h=from:subject:message-id; bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS720649Haj5NJ7K4IuCnFJ3mjnt8k9w+9a7/6Kw0GoS XUT1562jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIns+8fI0MCpYmU/q1VwRtyZ rFsGprs91A+dm5/frjTnhJpEqOEMJUaGrdMsVjHPmad9SOk913Qm7Z7e8yd/Lt85RS/x+puv7iK b2QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <CACKH++YAtEMYu2nTLUyfmxZoGO37fqogKMDkBpddmNaz5HE6ng@mail.gmail.com>
+ <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info> <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
+ <20241127-frisst-anekdote-3e6d724cb311@brauner>
+In-Reply-To: <20241127-frisst-anekdote-3e6d724cb311@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 27 Nov 2024 07:54:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi+3qEU9S9sgRLesCMKJ1w_e6zwEt0f30=8NSKhN+2LjA@mail.gmail.com>
+Message-ID: <CAHk-=wi+3qEU9S9sgRLesCMKJ1w_e6zwEt0f30=8NSKhN+2LjA@mail.gmail.com>
+Subject: Re: [REGRESSION] mold linker depends on ETXTBSY, but open(2) no
+ longer returns it
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Thorsten Leemhuis <regressions@leemhuis.info>, regressions@lists.linux.dev, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Rui Ueyama <rui314@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Linus,
+On Wed, 27 Nov 2024 at 04:11, Christian Brauner <brauner@kernel.org> wrote:
+>
+> Linus, it seems that the mold linker relies on the deny_write_access()
+> mechanism for executables. The mold linker tries to open a file for
+> writing and if ETXTBSY is returned mold falls back to creating a new
+> file.
 
-I was sent a bug fix for the backing file rework that relied on the
-overlayfs pull request. The vfs.fixes branch used an earlier mainline
-commit as base. So I thought how to resolve this and my solution was to
-create a new ovl.fixes branch which contained the overlayfs changes for
-v6.13 and then apply the fix on top of it. That branch was then merged
-into vfs.fixes with an explanation why. Let me know if I should do this
-differently next time.
+Uhhuh. Ok, unfortunate, but this is clearly a real use case, so of
+course we'll revert the kernel change.
 
-/* Summary */
-
-This contains various fixes for this cycle:
-
-- Fix a few iomap bugs.
-
-- Fix a wrong argument in backing file callback.
-
-- Fix security mount option retrieval in statmount().
-
-- Cleanup how statmount() handles unescaped options.
-
-- Add a missing inode_owner_or_capable() check for setting write hints.
-
-- Clear the return value in read_kcore_iter() after a successful
-  iov_iter_zero().
-
-- Fix a mount_setattr() selftest.
-
-- Fix function signature in mount api documentation.
-
-- Remove duplicate include header in the fscache code.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit e7675238b9bf4db0b872d5dbcd53efa31914c98f:
-
-  Merge tag 'ovl-update-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs (2024-11-22 20:55:42 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13-rc1.fixes
-
-for you to fetch changes up to cf87766dd6f9ddcceaa8ee26e3cbd7538e42dd19:
-
-  Merge branch 'ovl.fixes' (2024-11-26 18:15:06 +0100)
-
-Please consider pulling these changes from the signed vfs-6.13-rc1.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.13-rc1.fixes
-
-----------------------------------------------------------------
-Amir Goldstein (1):
-      fs/backing_file: fix wrong argument in callback
-
-Brian Foster (4):
-      iomap: warn on zero range of a post-eof folio
-      iomap: reset per-iter state on non-error iter advances
-      iomap: lift zeroed mapping handling into iomap_zero_range()
-      iomap: elide flush from partial eof zero range
-
-Christian Brauner (3):
-      Merge patch series "iomap: zero range flush fixes"
-      statmount: fix security option retrieval
-      Merge branch 'ovl.fixes'
-
-Christoph Hellwig (1):
-      fs: require inode_owner_or_capable for F_SET_RW_HINT
-
-Jiri Olsa (1):
-      fs/proc/kcore.c: Clear ret value in read_kcore_iter after successful iov_iter_zero
-
-Michael Ellerman (1):
-      selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
-
-Miklos Szeredi (1):
-      statmount: clean up unescaped option handling
-
-Randy Dunlap (1):
-      fs_parser: update mount_api doc to match function signature
-
-Thorsten Blum (1):
-      fscache: Remove duplicate included header
-
- Documentation/filesystems/mount_api.rst            |  3 +-
- fs/backing-file.c                                  |  3 +-
- fs/fcntl.c                                         |  3 +
- fs/iomap/buffered-io.c                             | 90 +++++++++++-----------
- fs/iomap/iter.c                                    | 11 ++-
- fs/namespace.c                                     | 46 +++++------
- fs/netfs/fscache_io.c                              |  1 -
- fs/proc/kcore.c                                    |  1 +
- .../selftests/mount_setattr/mount_setattr_test.c   |  2 +-
- 9 files changed, 81 insertions(+), 79 deletions(-)
+           Linus
 
