@@ -1,180 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-35962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646639DA361
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 08:55:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C5F9DA408
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 09:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25262284AB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 07:55:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAFBAB2209A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 08:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79015575C;
-	Wed, 27 Nov 2024 07:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gf+7vW/n"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CB818C008;
+	Wed, 27 Nov 2024 08:37:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD7B18E0E;
-	Wed, 27 Nov 2024 07:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3497E1114;
+	Wed, 27 Nov 2024 08:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694122; cv=none; b=fdFDIJM3ERW8KxZLuOeH4vnL0CTYFt3PV54CRr7VcGGdb/dX16kZpSx7CaPnbAMQFgDxkF7bHPZFZtxJKYJsKXKjsmqNf/NScAtlBc2flp+kpUAiQhg4dWNMbM2plJVQxoFi25EuM6uStwfrBE6D5dnHQqdvIlELYuI3cFkODEI=
+	t=1732696646; cv=none; b=GrzU5VYbJt6HvX+tp4J/ptIwCCQRrYC1TQJyWaXlA3ldqtOBDeAbb6HIzyEYm9m8V7Z9V2vweZ+L07owf4M4hEt6Ln2FTc/AnZYjN17QkBg8GxVmacwrBNvnb8EEcKEUy0718VDe+wSKSGXZhPQtgaPiGCU5cQZSF9KGHygrZpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694122; c=relaxed/simple;
-	bh=xOk9bVQYlvfAagAJYPtlh5kIoSLygT//cNWYNEnbMQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emA9pKqPuRViwkZdz9HhvfawkA9NK+UVvYjHuIadIibDuKx7XJ5HXmVqiAMQZS8EyISXbpS9IAby7VXngwJ66rOJNkyHGpzh9M1uc4VdeuxPFpli8W1qjQ7QkZhyWqcPcjZ6vho6sfZhwzygcs0Tl+HB5yEI7nPdYLMIrgo+sSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gf+7vW/n; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53df1e063d8so175731e87.3;
-        Tue, 26 Nov 2024 23:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732694116; x=1733298916; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yGWQ1sChWGYzmBoNIP5bk9GE7YFe+i1tuP3FVoV5U5Y=;
-        b=Gf+7vW/nHGQJB7zP+xcbJZ8lBx6Zl4lebArroZZgqSoIEp3yli8ELpqbiV/lSQT5sT
-         DFmZgyy3BJQDSiaVAZhPxDUSAOcuAE6juKyoZTF8ODoepIF/l63lHCsSm3sHMOTpm/Rs
-         4Mr/loVXTqd7Ibtk7AA1XT5NfNN8awzKrgMRsx0yeN+b0/u53AXg3Kt8xeUgqqq8S64C
-         /mbBNcWrVeSWAiWH9sdbgRe9BfCahnvgsh0H6pEvNh3HgXvdASkz5vRqsXh712EGRzJO
-         P8Ki5Xy/bZ+LKBveo8D0ThuOuAcRW5aZfz697AjOmOygjXTqP3/DF3u3AP5QWdjP89BN
-         MIog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732694116; x=1733298916;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGWQ1sChWGYzmBoNIP5bk9GE7YFe+i1tuP3FVoV5U5Y=;
-        b=KnMAgq31GYicgRNlF+ddvrhwImYDwirOgBqgb+/JMusbefTu9Nk9ab4Y7MusMLXXFz
-         QGLnAf18UwJO62kDINv5/QRb/P9qzjbAKByPOtztoryNYdhLbvMLg5QCOxqdxpYgTbHE
-         9+pnwawgBQ0TVV055H69yn+IsvLXO41UiYVvvikIWa4MFj/jppczK7LX8EBmN1hSJRhc
-         SJnpq+Ne+e5cmVaAMrdZDFBQeqOTTaHIt3NTpOIXm+//Z7Yhj8l6F0N4ZIr40lsGlvaG
-         SWb1Bwgg5tje27gllmdNTXn3LoGMHQrbNpeY0uRUDouazwF6Db96TBaOTSYfQPD82Zw2
-         Ut7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwLYEAF/vzArl4M9bhpEBzR/CjsTJwo9Rb7yAG+xuNkdwRGeM4dF/hm+1t+DoJMPvfo5Q3Cauienr2tW9S@vger.kernel.org, AJvYcCWw+jLfLBj6VTG/rdhmv+rzxluBN+GSJIkUgx9pkXpi8E2QDB/UFnISmHPTtDoPG6ixfFHc6jkCxew6/3AJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg30Td63mXjOTePvyQIopYkSVuoINFZIOwqTkjZDkg2OSU41dM
-	E+aaSvOnGzWHGoc4Vk4prik6brb2CJnM+GJk08WpRH3gtyaaWtyx
-X-Gm-Gg: ASbGncsMHa2hyLrCLkZzRgM98hTStELYcGsf4Pnc+kBVMWfAodx8aSPGeMqKQvsdslx
-	Pp8+7tNLsiicedA7hDhNOwZrXK4XdxtxsdGsIc+lZoptS6T1b9pLIQ/GHsjy/A1GFXPepVDLatP
-	xnxsu3lA+XOEaqXvhg+fJeciDtnxSygxcOaIaqGr9/e8+V20uUp/YbPJRyQrhlg+VuH6DC8jYb8
-	LarZmnF4zPTsjxjgFqfz3GJ/XZ9TzY4/wz2MpyQRav5+v+8PWGXfS4bKmIE0SxfPxQvnNmEuAE6
-	tey5GWEQ
-X-Google-Smtp-Source: AGHT+IEbbPe1I6HmGXbu5iMcKg85RnC3++SP4n4FvFu2rBZ9au0a2KeUhuG+RffetELROIKre6q4kA==
-X-Received: by 2002:a05:6512:3a8c:b0:53d:e5fc:83c8 with SMTP id 2adb3069b0e04-53df0104707mr1023581e87.45.1732694115897;
-        Tue, 26 Nov 2024 23:55:15 -0800 (PST)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53de0c3ce8bsm1241799e87.116.2024.11.26.23.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 23:55:14 -0800 (PST)
-Message-ID: <6d4cfb7b-b1c4-4307-a090-c5fd0b895a7b@gmail.com>
-Date: Wed, 27 Nov 2024 08:55:12 +0100
+	s=arc-20240116; t=1732696646; c=relaxed/simple;
+	bh=r/4spSDsO2Eq03HHcRzuwsSHv01JdyKPJ0trxriIq2s=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Uh9A7gbLcPbgPiUY5kixOc/TNzCafT3kuB9U7L2rOXKo1mPS2axYZnOcGFjm3lYCSMKvAJIU9kfkIoULCyA+ttGMpDOm6IPl9pH8aDQl8Vl2qtq4GaMNwwvkvGVEUCSZfGz9cFlO4U4sAvQNZKRzQS+XQLetjAYG299uJuADvQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 67ECD1F74D;
+	Wed, 27 Nov 2024 08:37:22 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2067813941;
+	Wed, 27 Nov 2024 08:37:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Vl/SLT7aRmfsLAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 27 Nov 2024 08:37:18 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+From: "NeilBrown" <neilb@suse.de>
+To: "Jan Kara" <jack@suse.cz>
+Cc: "Anders Blomdell" <anders.blomdell@gmail.com>,
+ "Philippe Troin" <phil@fifi.org>, "Jan Kara" <jack@suse.cz>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Subject: Re: Regression in NFS probably due to very large amounts of readahead
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <20241126150613.a4b57y2qmolapsuc@quack3>
- <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
- <Z0X9hnjBEWXcVms-@casper.infradead.org>
- <569d0df0-71d5-4227-aa28-e57cd60bc9f1@gmail.com>
- <Z0YWrvnz5rYcYrjV@casper.infradead.org>
-Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <Z0YWrvnz5rYcYrjV@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-reply-to: <20241126150613.a4b57y2qmolapsuc@quack3>
+References: <>, <20241126150613.a4b57y2qmolapsuc@quack3>
+Date: Wed, 27 Nov 2024 19:37:10 +1100
+Message-id: <173269663098.1734440.13407516531783940860@noble.neil.brown.name>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 67ECD1F74D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
 
+On Wed, 27 Nov 2024, Jan Kara wrote:
+> On Tue 26-11-24 11:37:19, Jan Kara wrote:
+> > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > > responding).
+> > > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > > qcow2 disks
+> > > > > that often triggered large readaheads that generates long streaks of
+> > > > > disk I/O
+> > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > > area of the
+> > > > > machine.
+> > > > >=20
+> > > > > A git bisect gave the following suspect:
+> > > > >=20
+> > > > > git bisect start
+> > > >=20
+> > > > 8< snip >8
+> > > >=20
+> > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > > readahead: properly shorten readahead when falling back to
+> > > > > do_page_cache_ra()
+> > > >=20
+> > > > Thank you for taking the time to bisect, this issue has been bugging
+> > > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > >=20
+> > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > > slightly different setups:
+> > > >=20
+> > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > > "nfs server XXX not responding, still trying" that never recovers
+> > > > (while the server remains pingable and other NFSv3 volumes from the
+> > > > hanging server can be mounted).
+> > > >=20
+> > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > > several minutes) on random I/O. These stalls eventually recover.
+> > > >=20
+> > > > I've built a 6.11.10 kernel with
+> > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > > normal (no more NFS hangs, no more VM stalls).
+> > > >=20
+> > > Some printk debugging, seems to indicate that the problem
+> > > is that the entity 'ra->size - (index - start)' goes
+> > > negative, which then gets cast to a very large unsigned
+> > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > > bug is still eludes me, though.
+> >=20
+> > Thanks for the report, bisection and debugging! I think I see what's going
+> > on. read_pages() can go and reduce ra->size when ->readahead() callback
+> > failed to read all folios prepared for reading and apparently that's what
+> > happens with NFS and what can lead to negative argument to
+> > do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> > ra->size / ra->async_size does more harm than good (because those values
+> > show *desired* readahead to happen, not exact number of pages read),
+> > furthermore it is problematic because ra can be shared by multiple
+> > processes and so updates are inherently racy. If we indeed need to store
+> > number of read pages, we could do it through ractl which is call-site loc=
+al
+> > and used for communication between readahead generic functions and caller=
+s.
+> > But I have to do some more history digging and code reading to understand
+> > what is using this logic in read_pages().
+>=20
+> Hum, checking the history the update of ra->size has been added by Neil two
+> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+> process all pages"). Neil, the changelog seems as there was some real
+> motivation behind updating of ra->size in read_pages(). What was it? Now I
+> somewhat disagree with reducing ra->size in read_pages() because it seems
+> like a wrong place to do that and if we do need something like that,
+> readahead window sizing logic should rather be changed to take that into
+> account? But it all depends on what was the real rationale behind reducing
+> ra->size in read_pages()...
+>=20
 
+I cannot tell you much more than what the commit itself says.
+If there are any pages still in the rac, then we didn't try read-ahead
+and shouldn't pretend that we did. Else the numbers will be wrong.
 
-On 2024-11-26 19:42, Matthew Wilcox wrote:
-> On Tue, Nov 26, 2024 at 06:26:13PM +0100, Anders Blomdell wrote:
->> On 2024-11-26 17:55, Matthew Wilcox wrote:
->>> On Tue, Nov 26, 2024 at 04:28:04PM +0100, Anders Blomdell wrote:
->>>> On 2024-11-26 16:06, Jan Kara wrote:
->>>>> Hum, checking the history the update of ra->size has been added by Neil two
->>>>> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
->>>>> process all pages"). Neil, the changelog seems as there was some real
->>>>> motivation behind updating of ra->size in read_pages(). What was it? Now I
->>>>> somewhat disagree with reducing ra->size in read_pages() because it seems
->>>>> like a wrong place to do that and if we do need something like that,
->>>>> readahead window sizing logic should rather be changed to take that into
->>>>> account? But it all depends on what was the real rationale behind reducing
->>>>> ra->size in read_pages()...
->>>>
->>>> My (rather limited) understanding of the patch is that it was intended to read those pages
->>>> that didn't get read because the allocation of a bigger folio failed, while not redoing what
->>>> readpages already did; how it was actually going to accomplish that is still unclear to me,
->>>> but I even don't even quite understand the comment...
->>>>
->>>> 	/*
->>>> 	 * If there were already pages in the page cache, then we may have
->>>> 	 * left some gaps.  Let the regular readahead code take care of this
->>>> 	 * situation.
->>>> 	 */
->>>>
->>>> the reason for an unchanged async_size is also beyond my understanding.
->>>
->>> This isn't because we couldn't allocate a folio, this is when we
->>> allocated folios, tried to read them and we failed to submit the I/O.
->>> This is a pretty rare occurrence under normal conditions.
->>
->> I beg to differ, the code is reached when there is
->> no folio support or ra->size < 4 (not considered in
->> this discussion) or falling throug when !err, err
->> is set by:
->>
->>          err = ra_alloc_folio(ractl, index, mark, order, gfp);
->>                  if (err)
->>                          break;
->>
->> isn't the reading done by:
->>
->>          read_pages(ractl);
->>
->> which does not set err!
-> 
-> You're misunderstanding.  Yes, read_pages() is called when we fail to
-> allocate a fresh folio; either because there's already one in the
-> page cache, or because -ENOMEM (or if we raced to install one), but
-> it's also called when all folios are normally allocated.  Here:
-> 
->          /*
->           * Now start the IO.  We ignore I/O errors - if the folio is not
->           * uptodate then the caller will launch read_folio again, and
->           * will then handle the error.
->           */
->          read_pages(ractl);
-> 
-> So at the point that read_pages() is called, all folios that ractl
-> describes are present in the page cache, locked and !uptodate.
-> 
-> After calling aops->readahead() in read_pages(), most filesystems will
-> have consumed all folios described by ractl.  It seems that NFS is
-> choosing not to submit some folios, so rather than leave them sitting
-> around in the page cache, Neil decided that we should remove them from
-> the page cache.
-More like me not reading the comments properly, sorry. What I thought I
-said, was that the problematic code in the call to do_page_cache_ra was
-reached when the folio alloction returned an error. Sorry for not being
-clear, and thanks for your patience.
+I think the important part of the patch was the
+delete_from_page_cache().
+Leaving pages in the page cache which we didn't try to read will cause
+a future read-ahead to skip those pages and they can only be read
+synchronously.
 
-/Anders
+But maybe you are right that ra, being shared, shouldn't be modified
+like this.
 
+Thanks,
+NeilBrown
 
