@@ -1,403 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-35966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D1A9DA537
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 10:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C39259DA512
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 10:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75FC31652E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 09:56:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645E21628E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 09:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD701946BA;
-	Wed, 27 Nov 2024 09:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D8Cqm9a/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584581946A1;
+	Wed, 27 Nov 2024 09:48:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C7718FC81
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 09:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4DC1514CE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 09:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701368; cv=none; b=UoSiLNgF9nB2FLJ6MgzdAXLbtmWAdWZ5Dh6LmrrrbrIBub77fUdFpgPXkZpHE2WlvnDd3Pbg4it5uC5q9BONMOmgXCSGweuWT7ZFaEsSXDDrLQHUbDYy/wUwgA/QpOthoKntRbsZPF9r917xtocqvKtZFcEzrNiuUJcUZ+isbCk=
+	t=1732700914; cv=none; b=LUq4HK96HUxkMtDnaxgdLFd00IAcO2F0JXboANHRqzf860rJGdoeGBRkCcgpJFJuYwNUhjL6DUbyTJTgnCpHZksuqxVex0x5vNRvIHDHXcgD4lx/9TcUaxXGvjm/YZsv2bQilncClPxxxO7UIvyDxP/OunrneZ2kZXMI8S0+8lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701368; c=relaxed/simple;
-	bh=o1aTpgq+Kwgof7NEZghTHVseLUnno05u+LFGhp6paGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=ikV9pLwsEMbLB1/jBylX5EJ5U59x1DKq4D5MIkmI9R9vP1dxBEYSgh9vDCqRWrvtDYK4I53tLY4D/ST0LctIOqlvytFimt2AHsaG0uDjFbgbQHwn2Qd/333uwSjTOrxDYWLu8ghFEKDCzXymhni/S0KJlqySRi/lGbUtH5ZYjjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D8Cqm9a/; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241127095602epoutp034b874172b891675eb0aed6499f3ad84c~LyrWBAZHk0285902859epoutp03g
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 09:56:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241127095602epoutp034b874172b891675eb0aed6499f3ad84c~LyrWBAZHk0285902859epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1732701362;
-	bh=tcZjopI8nRXI1BfE2ti01zn+hHScLrloRClWVO3P6/Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D8Cqm9a/PuPiQ4PNGXKx87US1yg6DOb8vPfVY60htQiNE8xZ0eliNdU1hs7exGAHl
-	 JKUOPvXiynP2XDOPfTLx2T6eKoaa053r6FYIScZp/6z/+CXjaUi+0ziYY1Om4MkDVJ
-	 hM88tR3y8cg5mjrBo6UsWScFmXKxQlFKDXdpp7e0=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241127095601epcas5p3ccb628fbc6370e944e496159c91a9938~LyrVNIlgu2583125831epcas5p3P;
-	Wed, 27 Nov 2024 09:56:01 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Xyvvz3zqsz4x9Ps; Wed, 27 Nov
-	2024 09:55:59 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	85.9F.19710.FACE6476; Wed, 27 Nov 2024 18:55:59 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241127095442epcas5p4b40afe66e1de6ec8a8c51c15a09c4ac1~LyqLKYZC83053130531epcas5p4q;
-	Wed, 27 Nov 2024 09:54:42 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241127095442epsmtrp2c7efc407039027319e74116e66cb2b4d~LyqLJc91q0601006010epsmtrp2D;
-	Wed, 27 Nov 2024 09:54:42 +0000 (GMT)
-X-AuditID: b6c32a44-363dc70000004cfe-6c-6746ecafda98
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.E8.33707.16CE6476; Wed, 27 Nov 2024 18:54:42 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241127095433epsmtip11cdcf18ec779b197ac01f35c37f488f9~LyqC9f0Pn1161011610epsmtip1E;
-	Wed, 27 Nov 2024 09:54:32 +0000 (GMT)
-Date: Wed, 27 Nov 2024 15:16:44 +0530
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-	martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
-	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <20241127094644.GC22537@green245>
+	s=arc-20240116; t=1732700914; c=relaxed/simple;
+	bh=EUjuDcDDQ7HPtObF2f8PcaVhXjo6b5keBz6dvzR2I2I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QfJXlY8PQRgJY4P55+C3Isu2rYEkmKjyHSkj+JqlN0TPGmqTXm14SHzTrYJYxTFW1XDXUPONt4C1vfonoXxSY0UUhsrlAbjlXl6VuyKPCCDNaFUQQ+zftJVDVeTkUz3QlXG71x+zow9zOapRR3Q7I7Uy9wFumOAzK3YnmPcY0Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a77fad574cso62401875ab.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 01:48:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732700911; x=1733305711;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XkV5MT59LrGQIDrUcEwF8zFHyzSE9f1cTn2gUDzImaU=;
+        b=Xyetw4UzYWS7y25Lj2YrsudvhMan0qkDGC9izrfy78Ax/5vCcD/3YB2JgOA6bu8Oso
+         XA+bfwzbstgfOzV5RhnP5BvnM8WmmumzdYG2Z8Cqk79SC4k9MYVfBRytSAda2bA/mByx
+         Cga9UJS+Scra6J1E72502roJiZOrSX6ZsyYKC1Qc/8ot/dP6Yxp2WUOMlNMKS4Y1xhRT
+         5Q4XZynoOt7ONrdsP3DMbWk2NRrVkUKNqfCxnVrmV+OAbxz0Gm8S8NZ0y631ltngndyw
+         xOsPAVty8c1nAboehYFx7s6F+pz6lm0p3Te5V9djdElcPMeA+t70f9sMMvAaxwU6HEcx
+         PKcw==
+X-Gm-Message-State: AOJu0YzuRgAFhF1tRJDCXP/9BpIwTK2npfDhUB9KSwXAjF9dXTVGHzmK
+	JyFYKK1UE3B8EJtl7iYzK6Qp+MaKdhkxO3DxZ7PquIL1FsYG42cO/B/Lu5WLGn+8d3Vscm6YHI9
+	SpSX41UPmp24nWOs/h+DRFcY+CVmB7G1Ohs3dXI+/wriIPIMn99eystQ=
+X-Google-Smtp-Source: AGHT+IHMGPI2lxO19IAe1JnHuHOdSwz5jXcdGxAhz5ytMercXDLm5ej0Q+hGVeJKYHRy0o8NhszNf0YNeXNWXb603IQMNNICBpnW
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKJsWRmVeSWpSXmKPExsWy7bCmpu76N27pBisWyVp8/PqbxWLOqm2M
-	Fqvv9rNZvD78idHi5oGdTBYrVx9lsnjXeo7FYvb0ZiaLo//fsllMOnSN0WLvLW2LPXtPsljM
-	X/aU3aL7+g42i+XH/zFZnP97nNXi/Kw57A6CHjtn3WX3uHy21GPTqk42j81L6j1232xg8/j4
-	9BaLR9+WVYweZxYcYff4vEnOY9OTt0wBXFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaG
-	uoaWFuZKCnmJuam2Si4+AbpumTlA7ygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1Jy
-	CkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjN63n1jLLhvW/H/4wrmBsZuoy5GTg4JAROJT1v3
-	MXUxcnEICexmlPixqJsRwvnEKPH0+FQWOKe57TMTTMu6CSegEjsZJfrf7YDqf8Yo8X/demaQ
-	KhYBVYnuJ+dYQGw2AXWJI89bGUFsEQFtidfXD7GDNDAL9DJLbP7RAzZWWCBWYtm3p2BFvAK6
-	Eqe/T2CBsAUlTs58AmZzCthKrJ6wA6xeVEBZ4sC241AnPeCQuPAzGMJ2kdi++SojhC0s8er4
-	FnYIW0ri87u9bBB2usSPy0+hegskmo/tg6q3l2g91Q/2ALNAhsScHw1QNbISU0+tY4KI80n0
-	/n4CFeeV2DEPxlaSaF85B8qWkNh7DqbXQ+LE8j3Q4DrKJPHvxxmWCYzys5D8NgvJPghbR2LB
-	7k9ssxg5gGxpieX/OCBMTYn1u/QXMLKuYpRMLSjOTU9NNi0wzEsth0d5cn7uJkZwetdy2cF4
-	Y/4/vUOMTByMhxglOJiVRHj5xJ3ThXhTEiurUovy44tKc1KLDzGaAiNrIrOUaHI+MMPklcQb
-	mlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXAdP1wgmBvjmHd+8odyod/
-	HL5q1Zu7/qPV+mPtU4+pTK/+rpM/zTt6f4KPhWXnE51rUk7HI/x1GtctU5BcUfzsGIN3kFjt
-	wlVSqtpMl4UOTHF9clnGhDN5sdy09ZEalq8KNI9Vxf1JKauKFCsPnrwy+XlPeoi4L6Mpf2DP
-	ZImKmzuW8PUedBOdNT3Mo2z1lTUK94Wbsz588764fdljN9mwK6qMmW831cy1dXqwsHB7gtvd
-	pa7TdlvMl22b8Xx6WfpbzRemz7MuhYk68i7aP8HHsbuRh/9/7/RvqdfWHfmzyGX1a/fD5ium
-	LVEV8lpRviox+ZYo74bYzSoyh3pDfmqLBST4uFi31rhvr/bViT6vxFKckWioxVxUnAgAfwRQ
-	gHgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSnG7SG7d0gy+zmSw+fv3NYjFn1TZG
-	i9V3+9ksXh/+xGhx88BOJouVq48yWbxrPcdiMXt6M5PF0f9v2SwmHbrGaLH3lrbFnr0nWSzm
-	L3vKbtF9fQebxfLj/5gszv89zmpxftYcdgdBj52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweXx8
-	eovFo2/LKkaPMwuOsHt83iTnsenJW6YArigum5TUnMyy1CJ9uwSujNlrOlgK5ltXvFs7j7WB
-	8Yl+FyMnh4SAicS6CSdYuhi5OIQEtjNKXHy2nh0iISFx6uUyRghbWGLlv+fsEEVPGCXuXr8D
-	VsQioCrR/eQcC4jNJqAuceR5K1iDiIC2xOvrh8AamAX6mSX2frvPBJIQFoiVWPbtKVgRr4Cu
-	xOnvE8CahQSOMkl0P9aFiAtKnJz5BCzOLKAlcePfS6BeDiBbWmL5Pw6QMKeArcTqCTvARooK
-	KEsc2HacaQKj4Cwk3bOQdM9C6F7AyLyKUTS1oDg3PTe5wFCvODG3uDQvXS85P3cTIzgatYJ2
-	MC5b/1fvECMTB+MhRgkOZiURXj5x53Qh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJ
-	JanZqakFqUUwWSYOTqkGJifXu1+fZ0RODfz0W2vVpiN+qh+sSyo3Ckz6tYL/7lRbZbVgrZAn
-	T0JsNOMyud5O/n3KPPRQx/5zV9WqX98Js9bJYk6oWnXZZMI0z4+p7cfCl27bGnN3EcdTZa6m
-	RW9PxX9k515zOPaY9DJ/u+CM8Os2N9sEj/021lLcrspkFCqzIGe5gtVP1zfbUi+FN84tdK5Y
-	Mak4LO6mRKPh2gT79sZ/qyab28x95Pn6PdOCA4J+Rk2M84MeR/JdjH4We0vI70DtZAX+M21X
-	7padv6XW2OerdzrYeWbftNqW+NXffO+7/30etfDMuuWVD04wGNe5pdX+vLa8LUpj1ez1oZ55
-	0gG6OnNV9FN6zrAx+LR1KbEUZyQaajEXFScCAPKtico1AwAA
-X-CMS-MailID: 20241127095442epcas5p4b40afe66e1de6ec8a8c51c15a09c4ac1
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----K2gkAqOuxZFCoC8EFRwgD_6KeXKZsv69xmv6PgBjcdVDR2et=_391f6_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241125071502epcas5p46c373574219a958b565f20732797893f
-References: <20241125070633.8042-1-anuj20.g@samsung.com>
-	<CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
-	<20241125070633.8042-7-anuj20.g@samsung.com>
-	<2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
-	<20241126135423.GB22537@green245>
-	<a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
+X-Received: by 2002:a05:6e02:216a:b0:3a7:6d14:cc18 with SMTP id
+ e9e14a558f8ab-3a7c55eb991mr25749275ab.23.1732700911538; Wed, 27 Nov 2024
+ 01:48:31 -0800 (PST)
+Date: Wed, 27 Nov 2024 01:48:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6746eaef.050a0220.21d33d.0020.GAE@google.com>
+Subject: [syzbot] [hfs?] KASAN: slab-out-of-bounds Write in hfs_bnode_read
+From: syzbot <syzbot+c6811fc2262cec1e6266@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-------K2gkAqOuxZFCoC8EFRwgD_6KeXKZsv69xmv6PgBjcdVDR2et=_391f6_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Hello,
 
-On Tue, Nov 26, 2024 at 03:45:09PM +0000, Pavel Begunkov wrote:
-> On 11/26/24 13:54, Anuj Gupta wrote:
-> > On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
-> > > On 11/25/24 07:06, Anuj Gupta wrote:
-> 
-> Hmm, I have doubts it's going to work well because the union
-> members have different sizes. Adding a new type could grow
-> struct io_uring_attr, which is already bad for uapi. And it
-> can't be stacked:
-> 
+syzbot found the following issue on:
 
-How about something like this [1]. I have removed the io_uring_attr
-structure, and with the mask scheme the user would pass attributes in
-order of their types. Do you still see some cracks?
+HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1511975f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=461a3713d88227a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6811fc2262cec1e6266
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140e7b78580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129181c0580000
 
-[1]
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d7a02c7a344e/disk-06afb0f3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fde64ce8ab66/vmlinux-06afb0f3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/434a8f870801/bzImage-06afb0f3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3ff5f1d4d4fc/mount_0.gz
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index aac9a4f8fa9a..38f0d6b10eaf 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -98,6 +98,10 @@ struct io_uring_sqe {
- 			__u64	addr3;
- 			__u64	__pad2[1];
- 		};
-+		struct {
-+			__u64	attr_ptr; /* pointer to attribute information */
-+			__u64	attr_type_mask; /* bit mask of attributes */
-+		};
- 		__u64	optval;
- 		/*
- 		 * If the ring is initialized with IORING_SETUP_SQE128, then
-@@ -107,6 +111,18 @@ struct io_uring_sqe {
- 	};
- };
- 
-+/* sqe->attr_type_mask flags */
-+#define IORING_RW_ATTR_FLAG_PI	(1U << 0)
-+/* PI attribute information */
-+struct io_uring_attr_pi {
-+		__u16	flags;
-+		__u16	app_tag;
-+		__u32	len;
-+		__u64	addr;
-+		__u64	seed;
-+		__u64	rsvd;
-+};
-+
- /*
-  * If sqe->file_index is set to this for opcodes that instantiate a new
-  * direct descriptor (like openat/openat2/accept), then io_uring will allocate
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c3a7d0197636..02291ea679fb 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3889,6 +3889,8 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_SQE_ELEM(46, __u16,  __pad3[0]);
- 	BUILD_BUG_SQE_ELEM(48, __u64,  addr3);
- 	BUILD_BUG_SQE_ELEM_SIZE(48, 0, cmd);
-+	BUILD_BUG_SQE_ELEM(48, __u64, attr_ptr);
-+	BUILD_BUG_SQE_ELEM(56, __u64, attr_type_mask);
- 	BUILD_BUG_SQE_ELEM(56, __u64,  __pad2);
- 
- 	BUILD_BUG_ON(sizeof(struct io_uring_files_update) !=
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 0bcb83e4ce3c..8d2ec89fd76b 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -257,11 +257,53 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
- 	return 0;
- }
- 
-+static inline void io_meta_save_state(struct io_async_rw *io)
-+{
-+	io->meta_state.seed = io->meta.seed;
-+	iov_iter_save_state(&io->meta.iter, &io->meta_state.iter_meta);
-+}
-+
-+static inline void io_meta_restore(struct io_async_rw *io, struct kiocb *kiocb)
-+{
-+	if (kiocb->ki_flags & IOCB_HAS_METADATA) {
-+		io->meta.seed = io->meta_state.seed;
-+		iov_iter_restore(&io->meta.iter, &io->meta_state.iter_meta);
-+	}
-+}
-+
-+static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
-+			 u64 attr_ptr, u64 attr_type_mask)
-+{
-+	struct io_uring_attr_pi pi_attr;
-+	struct io_async_rw *io;
-+	int ret;
-+
-+	if (copy_from_user(&pi_attr, u64_to_user_ptr(attr_ptr),
-+	    sizeof(pi_attr)))
-+		return -EFAULT;
-+
-+	if (pi_attr.rsvd)
-+		return -EINVAL;
-+
-+	io = req->async_data;
-+	io->meta.flags = pi_attr.flags;
-+	io->meta.app_tag = pi_attr.app_tag;
-+	io->meta.seed = READ_ONCE(pi_attr.seed);
-+	ret = import_ubuf(ddir, u64_to_user_ptr(pi_attr.addr),
-+			  pi_attr.len, &io->meta.iter);
-+	if (unlikely(ret < 0))
-+		return ret;
-+	rw->kiocb.ki_flags |= IOCB_HAS_METADATA;
-+	io_meta_save_state(io);
-+	return ret;
-+}
-+
- static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		      int ddir, bool do_import)
- {
- 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
- 	unsigned ioprio;
-+	u64 attr_type_mask;
- 	int ret;
- 
- 	rw->kiocb.ki_pos = READ_ONCE(sqe->off);
-@@ -279,11 +321,28 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		rw->kiocb.ki_ioprio = get_current_ioprio();
- 	}
- 	rw->kiocb.dio_complete = NULL;
-+	rw->kiocb.ki_flags = 0;
- 
- 	rw->addr = READ_ONCE(sqe->addr);
- 	rw->len = READ_ONCE(sqe->len);
- 	rw->flags = READ_ONCE(sqe->rw_flags);
--	return io_prep_rw_setup(req, ddir, do_import);
-+	ret = io_prep_rw_setup(req, ddir, do_import);
-+
-+	if (unlikely(ret))
-+		return ret;
-+
-+	attr_type_mask = READ_ONCE(sqe->attr_type_mask);
-+	if (attr_type_mask) {
-+		u64 attr_ptr;
-+
-+		/* only PI attribute is supported currently */
-+		if (attr_type_mask != IORING_RW_ATTR_FLAG_PI)
-+			return -EINVAL;
-+
-+		attr_ptr = READ_ONCE(sqe->attr_ptr);
-+		ret = io_prep_rw_pi(req, rw, ddir, attr_ptr, attr_type_mask);
-+	}
-+	return ret;
- }
- 
- int io_prep_read(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -409,7 +468,9 @@ static inline loff_t *io_kiocb_update_pos(struct io_kiocb *req)
- static void io_resubmit_prep(struct io_kiocb *req)
- {
- 	struct io_async_rw *io = req->async_data;
-+	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
- 
-+	io_meta_restore(io, &rw->kiocb);
- 	iov_iter_restore(&io->iter, &io->iter_state);
- }
- 
-@@ -744,6 +805,10 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	if (kiocb->ki_flags & (IOCB_DIRECT | IOCB_HIPRI))
- 		return false;
- 
-+	/* never retry for meta io */
-+	if (kiocb->ki_flags & IOCB_HAS_METADATA)
-+		return false;
-+
- 	/*
- 	 * just use poll if we can, and don't attempt if the fs doesn't
- 	 * support callback based unlocks
-@@ -794,7 +859,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- 	if (!(req->flags & REQ_F_FIXED_FILE))
- 		req->flags |= io_file_get_flags(file);
- 
--	kiocb->ki_flags = file->f_iocb_flags;
-+	kiocb->ki_flags |= file->f_iocb_flags;
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
- 	if (unlikely(ret))
- 		return ret;
-@@ -828,6 +893,18 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- 		kiocb->ki_complete = io_complete_rw;
- 	}
- 
-+	if (kiocb->ki_flags & IOCB_HAS_METADATA) {
-+		struct io_async_rw *io = req->async_data;
-+
-+		/*
-+		 * We have a union of meta fields with wpq used for buffered-io
-+		 * in io_async_rw, so fail it here.
-+		 */
-+		if (!(req->file->f_flags & O_DIRECT))
-+			return -EOPNOTSUPP;
-+		kiocb->private = &io->meta;
-+	}
-+
- 	return 0;
- }
- 
-@@ -902,6 +979,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
- 	 * manually if we need to.
- 	 */
- 	iov_iter_restore(&io->iter, &io->iter_state);
-+	io_meta_restore(io, kiocb);
- 
- 	do {
- 		/*
-@@ -1125,6 +1203,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 	} else {
- ret_eagain:
- 		iov_iter_restore(&io->iter, &io->iter_state);
-+		io_meta_restore(io, kiocb);
- 		if (kiocb->ki_flags & IOCB_WRITE)
- 			io_req_end_write(req);
- 		return -EAGAIN;
-diff --git a/io_uring/rw.h b/io_uring/rw.h
-index 3f432dc75441..2d7656bd268d 100644
---- a/io_uring/rw.h
-+++ b/io_uring/rw.h
-@@ -2,6 +2,11 @@
- 
- #include <linux/pagemap.h>
- 
-+struct io_meta_state {
-+	u32			seed;
-+	struct iov_iter_state	iter_meta;
-+};
-+
- struct io_async_rw {
- 	size_t				bytes_done;
- 	struct iov_iter			iter;
-@@ -9,7 +14,14 @@ struct io_async_rw {
- 	struct iovec			fast_iov;
- 	struct iovec			*free_iovec;
- 	int				free_iov_nr;
--	struct wait_page_queue		wpq;
-+	/* wpq is for buffered io, while meta fields are used with direct io */
-+	union {
-+		struct wait_page_queue		wpq;
-+		struct {
-+			struct uio_meta			meta;
-+			struct io_meta_state		meta_state;
-+		};
-+	};
- };
- 
- int io_prep_read_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe);
--- 
-2.25.1
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-------K2gkAqOuxZFCoC8EFRwgD_6KeXKZsv69xmv6PgBjcdVDR2et=_391f6_
-Content-Type: text/plain; charset="utf-8"
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=146c575f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=166c575f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=126c575f980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c6811fc2262cec1e6266@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 64
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read+0xbc/0x220 fs/hfs/bnode.c:35
+Write of size 94 at addr ffff888141376a80 by task syz-executor396/5845
+
+CPU: 0 UID: 0 PID: 5845 Comm: syz-executor396 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ __asan_memcpy+0x3c/0x60 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:423 [inline]
+ hfs_bnode_read+0xbc/0x220 fs/hfs/bnode.c:35
+ hfs_bnode_read_key+0x14e/0x1f0 fs/hfs/bnode.c:70
+ hfs_brec_insert+0x66b/0xb90 fs/hfs/brec.c:159
+ hfs_cat_move+0x3f0/0x7e0 fs/hfs/catalog.c:336
+ hfs_rename+0xe8/0x200 fs/hfs/dir.c:299
+ vfs_rename+0xf8b/0x21f0 fs/namei.c:5067
+ do_renameat2+0xc5f/0xdd0 fs/namei.c:5224
+ __do_sys_renameat2 fs/namei.c:5258 [inline]
+ __se_sys_renameat2 fs/namei.c:5255 [inline]
+ __x64_sys_renameat2+0xe7/0x130 fs/namei.c:5255
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff2c46adad9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff22f2dbd8 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff2c46adad9
+RDX: 0000000000000004 RSI: 0000000020000380 RDI: 0000000000000004
+RBP: 00007ff2c47215f0 R08: 0000000000000000 R09: 000055557c7724c0
+R10: 0000000020000200 R11: 0000000000000246 R12: 00007fff22f2dc00
+R13: 00007fff22f2de28 R14: 431bde82d7b634db R15: 00007ff2c46f603b
+ </TASK>
+
+Allocated by task 5845:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x1e8/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:883 [inline]
+ hfs_find_init+0x95/0x220 fs/hfs/bfind.c:21
+ hfs_cat_move+0x15a/0x7e0 fs/hfs/catalog.c:301
+ hfs_rename+0xe8/0x200 fs/hfs/dir.c:299
+ vfs_rename+0xf8b/0x21f0 fs/namei.c:5067
+ do_renameat2+0xc5f/0xdd0 fs/namei.c:5224
+ __do_sys_renameat2 fs/namei.c:5258 [inline]
+ __se_sys_renameat2 fs/namei.c:5255 [inline]
+ __x64_sys_renameat2+0xe7/0x130 fs/namei.c:5255
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888141376a80
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 0 bytes inside of
+ allocated 78-byte region [ffff888141376a80, ffff888141376ace)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x141376
+flags: 0x57ff00000000000(node=1|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 057ff00000000000 ffff88801b041280 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 20294449508, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:879 [inline]
+ kzalloc_noprof include/linux/slab.h:1015 [inline]
+ dev_pm_qos_expose_flags+0x96/0x310 drivers/base/power/qos.c:783
+ usb_hub_create_port_device+0x8fd/0xde0 drivers/usb/core/port.c:812
+ hub_configure drivers/usb/core/hub.c:1710 [inline]
+ hub_probe+0x1e1f/0x3200 drivers/usb/core/hub.c:1965
+ usb_probe_interface+0x30c/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888141376980: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff888141376a00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>ffff888141376a80: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
+                                              ^
+ ffff888141376b00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+ ffff888141376b80: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
 
 
-------K2gkAqOuxZFCoC8EFRwgD_6KeXKZsv69xmv6PgBjcdVDR2et=_391f6_--
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
