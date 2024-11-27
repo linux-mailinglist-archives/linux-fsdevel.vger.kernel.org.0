@@ -1,200 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-35954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B389DA1D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 06:48:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0589DA1F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 07:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73740B2269D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 05:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA16B25254
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 06:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD8F145B07;
-	Wed, 27 Nov 2024 05:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4229A1494D9;
+	Wed, 27 Nov 2024 06:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v2Ut/Ie0"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tRcMe2OE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2077.outbound.protection.outlook.com [40.107.96.77])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFC613CFA5;
-	Wed, 27 Nov 2024 05:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732686516; cv=fail; b=L25TwVLEhuDgx7P46k/3LJQ7bbyH9FoWbmMRDtB1T+kukVy3dL7U+vDI1rqvX1LMnEFuJhcyU1CJz9ZG8n4opsZ3eJCoofF+DoL6rsFxkygXPaDWgqNXroaAqJs0sBsibHBZXxvu2knyRovh5Hec5sw01B4GP1krQ/f7BycSWZg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732686516; c=relaxed/simple;
-	bh=Jq9GyLsbmhf0E4AdbtjbClU+NXZAKeKhBPg9uGWKYw4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qsr/s3nvgEBTJsW1ZYD3weY6GoJxuQQn2A799vOtjy1OyjpEo1I9wpTsSrqA9V4334dZU2mxo72Oj0j/yeWxDI+Tpt0X0ssGRBwW8ES0q2iCwJF5JXDWc0RKTUjRxqpQLh0wfkjzuKwZf3Y0C5Edpq0E5j3ncQ81W0BOjfTLpdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=v2Ut/Ie0; arc=fail smtp.client-ip=40.107.96.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=flKorirD8/GBQS/+EuMxtA2oFJ79MYBAwVV0hPVamv9ActuAevIYO3xl0Prg5uqc1qXgggLBkHnpH1xhiC4PMMqJwEoRL1J/ZQfTSLE1mQZ1mjwphgHxvj0ABt7nE42hzF57AUyFvKEMu9Lxs0Q7iq4gDymTNTN5JGDYkFravjgEYGYFnuMjC5O97KvWDpsMByPvtIQa7aw2aCQvUSME/iTrNDiUzAHyNOXdQ3PX0Pzss2/irnFBZV8rWxMkk5xy6QAXMDGYwt3q0nbWUtDSofmL8Au7yvJHDn9yvcvrLG4D8BzFsiVV8Fa6JHSlqWudt4i0I6Rdf6fr77Ujj+N3Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=52GXtxbgPZDYGiSzCy2z3eNOxOPwtwkTj6mpZG710AA=;
- b=iwQGrX6XY4hY7SCosUaU0ouPDzta9/bZksgvcCJVG0V4YYd2W/546jL9OCNRoI2T1XHWPQjP++FS8hcWNMQm+D4y5sb5O01W6/t8cV7EftOpBeFGUlgE48FkqPDd1/A7830I7FX/fLkScOYLJKsEq+QSA3jqHyk1ujYagCFtWOmwoxllo3FesLETb6jCGSG9aLoXxFDXNF4kZcYtV8SChgrqZdds/FTJoR/lwypisb/5/pID61Tso07Pi4NLN6Vu/uhU7gfZITOejB8RmNo/DSa2lRRZFfdbKBVaONmo0FLN1W0M0P8Izl+DAEPmdF7gwRmkHruJzMCcw9y+f0QcnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=52GXtxbgPZDYGiSzCy2z3eNOxOPwtwkTj6mpZG710AA=;
- b=v2Ut/Ie0eurqrVUJwKsxTjalur46BqPYbuO9QiRsPA6zmR/zHqEWsR0evymekwKid1f0JOedYqPE6lrB/oVn1stcz26XGFffEeDVFcYXLb0FLVwwcA0DMop83yeJvXRiSHrcTFp2wWlSNI48ibLZ/B+FUTVOh+aPeBuVXMCVa2U=
-Received: from MW4PR04CA0223.namprd04.prod.outlook.com (2603:10b6:303:87::18)
- by CH3PR12MB8355.namprd12.prod.outlook.com (2603:10b6:610:131::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.23; Wed, 27 Nov
- 2024 05:48:29 +0000
-Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
- (2603:10b6:303:87:cafe::d9) by MW4PR04CA0223.outlook.office365.com
- (2603:10b6:303:87::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.12 via Frontend Transport; Wed,
- 27 Nov 2024 05:48:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.12 via Frontend Transport; Wed, 27 Nov 2024 05:48:28 +0000
-Received: from BLR-L-BHARARAO.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Nov
- 2024 23:48:22 -0600
-From: Bharata B Rao <bharata@amd.com>
-To: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-CC: <nikunj@amd.com>, <willy@infradead.org>, <vbabka@suse.cz>,
-	<david@redhat.com>, <akpm@linux-foundation.org>, <yuzhao@google.com>,
-	<mjguzik@gmail.com>, <axboe@kernel.dk>, <viro@zeniv.linux.org.uk>,
-	<brauner@kernel.org>, <jack@suse.cz>, <joshdon@google.com>, <clm@meta.com>,
-	Bharata B Rao <bharata@amd.com>
-Subject: [RFC PATCH 1/1] block/ioctl: Add an ioctl to enable large folios for block buffered IO path
-Date: Wed, 27 Nov 2024 11:17:37 +0530
-Message-ID: <20241127054737.33351-2-bharata@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241127054737.33351-1-bharata@amd.com>
-References: <20241127054737.33351-1-bharata@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF3F1494A8;
+	Wed, 27 Nov 2024 06:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732687337; cv=none; b=VTWTTffTTJLz0OwIWqK9DFD0mrlpJvc9UFzHeKN9Qu3vmkuKnq9NjEsdqZoJka6WAj5bCx3riAS8TYgblvMN804mUBIOALwLgLyGDQ/2tPwtfXNFlCt4TRNqiGmTtNMkYGY/rO9wcrD8p67Ggend2jWin0ntBL7FSF9fsRtWC0c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732687337; c=relaxed/simple;
+	bh=uQMGWqVTJqjQQWzVswtQz3zjEjLqDGeAktSQRm+f8Fc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVIVD/VSRTIzTIWa+PmUrgRMT5x4PIk+MZuPctr5jECjoykI9NdDPYBHNLUg0lMik+O5Pgz4l49T2jO0OzHlsscM+IUvbYvcCrb6uBcZU2bffZmsWXgctAJ/JFJNFUQ/nL+5hXoZCY1ks5V0KLedtMWEShRBewOB2B74V55nSno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tRcMe2OE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR1hSuX004613;
+	Wed, 27 Nov 2024 06:01:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=XJ6LzKjtN2bLHXbwSg28WI93OyPeUO
+	hhYjzJZY/BJHw=; b=tRcMe2OEolxS0cnhxne3kbAC7V7rxR6j1HExDEH0F7vCd6
+	R7K27YF7fso/SHRgdyFB5Vu749Z8JsfBtgZqfa/0VpOft6wj50VFyuJMEs5rmGz3
+	nj1pqDiioRv115bg3InPN04PgxgIB5aZ5OTJdt+502zzR5eMdBrzuQ0vRAmh1gqp
+	av5z68gfW+RzJYrYHQbEoHSv/7JEQ86z5cUSQnIYkW/9myvId0j2YNhHnnw6AXyH
+	5nakWEzGnZ6uvY+7LMRSkQPKuTm9BuUcB4qyHfWfoTEdI4HysehKhw6907oAq/2l
+	72oEUBa9WkEjAb4Qb1/qhQuZ8pPecLtoBPZmUY8g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4350rhqgjt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 06:01:56 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AR5ltSY031242;
+	Wed, 27 Nov 2024 06:01:56 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4350rhqgjp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 06:01:56 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR5ARhC024910;
+	Wed, 27 Nov 2024 06:01:55 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 433tvkjraa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 06:01:55 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AR61rso17891620
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Nov 2024 06:01:53 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84AB320040;
+	Wed, 27 Nov 2024 06:01:53 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 99F8B2004B;
+	Wed, 27 Nov 2024 06:01:51 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.21.251])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 27 Nov 2024 06:01:51 +0000 (GMT)
+Date: Wed, 27 Nov 2024 11:31:43 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <Z0a1x7yksOE4Jsha@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <cc2fcc33-9024-4ce8-bd52-cdcd23f6b455@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|CH3PR12MB8355:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71a54189-ff83-4cd6-d561-08dd0ea71e24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OPGsxL+FfzQhlmDxWhzEL9jbs2Z6hnxcYkFPCrb0ecwaUdKTx5fzk86wo7Ex?=
- =?us-ascii?Q?a9J1RIzZ2XGXvz1B7OfnkeH9niQQbToe0fRx5Ne5VAtB+RA3Tre84ICiLy4F?=
- =?us-ascii?Q?iTfKShqNg88DUOxokN07isIgZsNDyRVU1H4kVpHTGg7QX3+jSLAE6bUMRvpf?=
- =?us-ascii?Q?lxg/OoV34/06mbvO7eYrfJoxGl3zPe87jXDDDWsdOZN1VEthknJvuekQ4Vbv?=
- =?us-ascii?Q?35btKnGr02HmIT3x2vdmc3VvBQfn9SHNmh0M1TZtn5UqGozJA7uTKprYKAdO?=
- =?us-ascii?Q?A+qqeVbOrqViu20oV7wp0RnlNpfJltCHS5rCEKPT4v1hFsddKN+gMp/VldaH?=
- =?us-ascii?Q?K1hFKZD2OiDlVJpoXiLiane+5zye4wiJlpDBDzmtphuZ1KIK0p6tW8OwZDKH?=
- =?us-ascii?Q?FoRV9W5yX5KP4kGPcz9vaGIvyOWSq7vtE0G0M5iYNqYdK1HwWDWTkDOHLHko?=
- =?us-ascii?Q?LD4JvKN91BVvtnxTd3wAuHWBOTew3EjF0zp8j+V3mfECQbcGPGJOVVd5+GBT?=
- =?us-ascii?Q?yTrgdOyAAS4/ydCimZEciHsinAE77ZJWkbeGJ1i1ypxlsGp1mbG/DC3Q1f2m?=
- =?us-ascii?Q?TibhkP0G3+GZIxtxH6BqeDag941G6QTmiNPGFGhFfiKYkMt950+3FfshRuCl?=
- =?us-ascii?Q?jrsiMv6y+lOwzVjKgeOcoKYMsq1sFjqu+ZpwfzUfUXJN/spN2L9FyZU5iMPm?=
- =?us-ascii?Q?HzLGEoIjSW7DQJ+BFGcQm9j8VzhHk2kAcz0bMC8IqNMZUHxM0joHLPS/fvkI?=
- =?us-ascii?Q?7gCFr4hkegUqXSP8JAUdtj46KM5Aop/cZNcybx4dfFfSJX8Qn3osAuef4k9f?=
- =?us-ascii?Q?ykue/W8x64G3Zki63O6FUOyDIxnTUG76tuBFpfNBDm4d1aFkqj3HAfZGPWr2?=
- =?us-ascii?Q?eu2oBwJH2ArhBctZYxLkP0MXYZi3/EM5kBXsEy69aKkM2123/pTrOwnPKgU9?=
- =?us-ascii?Q?hnN11Wxd0OfSe+9W8u0NwFxuLm3CKVvhnqpmi+afERkq/S+ZP8smECSCJdYu?=
- =?us-ascii?Q?gL7OPmPUtrpwccWL19JPAr0rPyab58wmUs8pWGI0HYKBb2YTtFgsQb5ZG3Jv?=
- =?us-ascii?Q?sKj67pqP6lTl86MYJrcpKICGaZpDseg3RPhqxUBO/gdzrz5o+Tf+R0B8JnG3?=
- =?us-ascii?Q?kypPnbcovHxNv6v9NslXmdoiH+2You7LSS5tTLqDLnhH3Zws0kupyhP2KZr2?=
- =?us-ascii?Q?5ffDrYHH4ktZI2RvjtpeVA0Bev7/piyCKu2dlyIGwiD4sNAoYVBmSqdlh8QN?=
- =?us-ascii?Q?5jQ0tHu/DosdXDcHttf798eYA0N92K0hvO1/RWyQ45isTjK3Jci7kH8v/q3h?=
- =?us-ascii?Q?mZ3fERapdXUbQ3ev26ozeqAZutFZrxLnHoIcAPLEXUpNhABDYMiy3PlP/AEX?=
- =?us-ascii?Q?4zBSFUijLWrE4buaflRkNcSO8qc4eTna8MFtdqRnkVdlsDYHTSbOWaKcOQjN?=
- =?us-ascii?Q?KhyWsRz61PYgQQLTWB6q4j6D0aitGuSW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 05:48:28.2973
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71a54189-ff83-4cd6-d561-08dd0ea71e24
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8355
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc2fcc33-9024-4ce8-bd52-cdcd23f6b455@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: cWYwE0OfKJvpEkLNsCzp0p6KH-lQBOae
+X-Proofpoint-ORIG-GUID: twrRtpAhTi5S9HXIl5QCrYnDCy4En_F8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 impostorscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ adultscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270048
 
-In order to experiment using large folios for block devices read/write
-operations, expose an ioctl that userspace can selectively use on the
-raw block devices.
+On Tue, Nov 26, 2024 at 10:49:14PM +0800, Baokun Li wrote:
+> On 2024/11/21 20:38, Ojaswin Mujoo wrote:
+> > Protect ext4_release_dquot against freezing so that we
+> > don't try to start a transaction when FS is frozen, leading
+> > to warnings.
+> > 
+> > Further, avoid taking the freeze protection if a transaction
+> > is already running so that we don't need end up in a deadlock
+> > as described in
+> > 
+> >    46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+> > 
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >   fs/ext4/super.c | 17 +++++++++++++++++
+> >   1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 16a4ce704460..f7437a592359 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+> >   {
+> >   	int ret, err;
+> >   	handle_t *handle;
+> > +	bool freeze_protected = false;
+> > +
+> > +	/*
+> > +	 * Trying to sb_start_intwrite() in a running transaction
+> > +	 * can result in a deadlock. Further, running transactions
+> > +	 * are already protected from freezing.
+> > +	 */
+> > +	if (!ext4_journal_current_handle()) {
+> > +		sb_start_intwrite(dquot->dq_sb);
+> > +		freeze_protected = true;
+> > +	}
+> >   	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+> >   				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+> >   	if (IS_ERR(handle)) {
+> >   		/* Release dquot anyway to avoid endless cycle in dqput() */
+> >   		dquot_release(dquot);
+> > +		if (freeze_protected)
+> > +			sb_end_intwrite(dquot->dq_sb);
+> >   		return PTR_ERR(handle);
+> >   	}
+> >   	ret = dquot_release(dquot);
+> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+> The `git am` command looks for the following context code from line 6903
+> to apply the changes. But there are many functions in fs/ext4/super.c that
+> have similar code, such as ext4_write_dquot() and ext4_acquire_dquot().
 
-For the write path, this forces iomap layer to provision large
-folios (via iomap_file_buffered_write()).
+Oh that's strange, shouldn't it match the complete line like:
 
-Signed-off-by: Bharata B Rao <bharata@amd.com>
----
- block/ioctl.c           | 8 ++++++++
- include/uapi/linux/fs.h | 2 ++
- 2 files changed, 10 insertions(+)
+> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 6554b728bae6..6af26a08ef34 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -548,6 +548,12 @@ static int blkdev_bszset(struct file *file, blk_mode_t mode,
- 	return ret;
- }
- 
-+static int blkdev_set_large_folio(struct block_device *bdev)
-+{
-+	mapping_set_large_folios(bdev->bd_mapping);
-+	return 0;
-+}
-+
- /*
-  * Common commands that are handled the same way on native and compat
-  * user space. Note the separate arg/argp parameters that are needed
-@@ -632,6 +638,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
- 		return blkdev_pr_preempt(bdev, mode, argp, true);
- 	case IOC_PR_CLEAR:
- 		return blkdev_pr_clear(bdev, mode, argp);
-+	case BLKSETLFOLIO:
-+		return blkdev_set_large_folio(bdev);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 753971770733..5c8a326b68a1 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -203,6 +203,8 @@ struct fsxattr {
- #define BLKROTATIONAL _IO(0x12,126)
- #define BLKZEROOUT _IO(0x12,127)
- #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
-+#define BLKSETLFOLIO _IO(0x12, 129)
-+
- /*
-  * A jump here: 130-136 are reserved for zoned block devices
-  * (see uapi/linux/blkzoned.h)
--- 
-2.34.1
+That should only have one occurence around line 6903? Or does it try to
+fuzzy match which ends up matching ext4_write_dquot etc?
 
+> 
+> So when the code before ext4_release_dquot() is added, the first matching
+> context found could be in ext4_write_dquot() or ext4_acquire_dquot().
+> >   	err = ext4_journal_stop(handle);
+> >   	if (!ret)
+> >   		ret = err;
+> > +
+> > +	if (freeze_protected)
+> > +		sb_end_intwrite(dquot->dq_sb);
+> > +
+> >   	return ret;
+> >   }
+> 
+> Thus this is actually a bug in `git am`, which can be avoided by increasing
+> the number of context lines with `git format-patch -U8 -1`.
+> 
+> Otherwise it looks good. Feel free to add:
+> 
+> Reviewed-by: Baokun Li <libaokun1@huawei.com>
+
+Thanks Baokun!
+
+Regards,
+ojaswin
+> 
 
