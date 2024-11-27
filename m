@@ -1,178 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-35972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A179DA6C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 12:22:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978989DA6DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 12:26:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE6B164AD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 11:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21C68B23CC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 11:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE291F6675;
-	Wed, 27 Nov 2024 11:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7951F6690;
+	Wed, 27 Nov 2024 11:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRn4FAAc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNBxFTZH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337F1EE012;
-	Wed, 27 Nov 2024 11:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187A41F6664;
+	Wed, 27 Nov 2024 11:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732706517; cv=none; b=VD66z1jje1+igg59a1wnPBpyCJgwgjziFtdbRBDvKmNCUs8mUK+bF/IeDXi1OkY3GVmYFLfKmAxg5XIe2sgM1Poa3zMn6bp8Fu5gxDVgm0L3Mv1CHerNxe69wM+bqxrH8DjfYP/QCBuH26MyP4KE8eC5FT4DF9Tvh5dNcj0dHHY=
+	t=1732706600; cv=none; b=qyIzL5yLZ8EuIA6dJNUfvv5JnnsXvWMfge08s8cUUHbpdParKmLkpRKLjnCQsKaWWKuEvk9GU0yICGyhstffYgdqr2YNE3O+E+hL/WAHojY0ikasUQh+eDa52xGLMtBzyj7UFn9ojq/wy2qPwyHBtsPVrwHV/u9Thx7PnU9pFSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732706517; c=relaxed/simple;
-	bh=8+jxdjMxeCxAwzyVZxUV+2/WcnmyC99hPA5a29GYKl8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMYnuId7M954m1WArLPc/c0A9rtdXApYPjsTujGTBMigCTj1xEkCUzh3/4yn7uNDp6UsfYSaPthMaOXMK4WJWa2miYonTiPlFrnFuNrY4tx2p0nqG6UORPuiENpTHorKB4ZO8dt80f2V0seE2S+N8zbk1C0tq+/qKd334ATifcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRn4FAAc; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1732706600; c=relaxed/simple;
+	bh=jPYE7nUJ0PQxj0TL68kBGwrZJwMQjdjzfszDvmh33UA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c4b8aDiURTydIf/fCd1M8Gd82aPpg78091vZg1YT1S/sqiBAgWFxeuXPTgpJBHlElTPj01yPOsdbbQdNeCKyPmGm83pliNLkReE+wb0fAl0k9cZ1hwuSmUytg88NNwoFl8wxrw8EQ+VJizLoz2/uDSCxOOTlvRipB0FMwc7/FmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNBxFTZH; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a68480164so909049366b.3;
-        Wed, 27 Nov 2024 03:21:55 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1068462566b.1;
+        Wed, 27 Nov 2024 03:23:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732706514; x=1733311314; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=elVChWAOghJtOr2/9ffIty1GUC4j4pc0XNnLNMpNrcU=;
-        b=nRn4FAAcgu6pKlL93uzV2g2lvtDzfMEkgJFRIxeR/X4C80vY4MmTzwZ/mYl1FzyBpn
-         n1ssAB+B8qj39gOTKtSlawRTwwZCJ0RaNgL5+RIIPeg/Lk/1Y1XC7gHZBZphSwSLOCj1
-         YpNwZruFCKfQ/GwuE8BLHdSGCg/zGfsCfkqdGOYVHEudRHdsIh4qu6aE8vZzbz44LtB4
-         zAsxdTMalFCwWpLbLiG/KmX0SyoFPsbJ5qqJIiu7lYmmjHasJsK/QAoejwCWy4ytrJox
-         +q5FztfNd8ANZFXyJ0jfBZzFHTKypE1EgnQdai4x8jJj8Vig9x1SVtwnD0TecgHR15eR
-         KnLw==
+        d=gmail.com; s=20230601; t=1732706597; x=1733311397; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
+        b=BNBxFTZHRkZxBfRsrWIJ9cKC4dPepDwljBsZMoCnC/zw8HQt6vRWT2K4oCAl9yHxHF
+         EBvWo4BPgZeAaLk1r5nSof/WniACOXhk6AkY3z7fVpbo7mEtfRaVghKoAY9MBfzfvyXL
+         5RYio4fVQz8e1FCupMskX1ZP1h3X254VB/vsFVHQD9QKridV6kLRAHf+2y+VcObdVFA9
+         w2xJ3HNEgY9gREEACXk+odOYQtXBUSq7zgOwub3aqNPAutrY91wsFraPRNT0dfb9OhB4
+         yJktSKZ6k5pR6BAvMf28lpQozJEIl3T1dSDwu1HsEb1cjkt2ziGpqIxFuDj/KVqSjo+0
+         uQXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732706514; x=1733311314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=elVChWAOghJtOr2/9ffIty1GUC4j4pc0XNnLNMpNrcU=;
-        b=qZepVaIMgUdAaELQ2xMHeXAvFsaUQRjYXyAflRYfJusFoiaDeycZFvucJcrGFW3tJ4
-         NbSQBbva4/q44kN8+73KJ35P3EYRtTqLLWOdbQxi2bDrq/AT2wJQ/8JkqP7kEl6tfMsm
-         HEKu95aD+Ld+BTIPkZpMUNaWpCnE4lNQC/APHB3LrsI0NIal63Ot+nf0d3lMHVX7oq8R
-         r6WSk5g1nPMWgDIrg/EeYSRv7f99xZ/Q5LxGHSS4j3gnOJCErEioYHmxB/2b/jsjy8e1
-         eIRtAL23640gZMCD0pyfe+OBS+mPsCxYDBD2Cp1o3xEs8P+slNN2au1YHYDPXute8KEC
-         eCrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiuldWss8Tmv+wVOohADbfoyVYTMTsmM+bcTvC7lLjhKwg0Q9KkO8fxDeDr+iNyAL4PF6PZfDM1087PZzDPg==@vger.kernel.org, AJvYcCVelMaoEn5++KT3/NxDC8MAm+F/u3xvdsfbTjUm0N+bOdDSphHvCNHG6AakorWuVQ7jY3jAs3m8xIlLVv5R@vger.kernel.org, AJvYcCXojN+T12ne6EXYXYy36RnMzNNM7+v+b0/zhqEzx55lUn9tfV5LdACErQil1lGTEwOBu7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVPlXSBHKpv/sl04y9gBXtwVKP+qnXafg5YtAm617Mo7N8EqUv
-	nS5HzEmIYk/IQppl1BULleTnDcYyo4ZOuq3E16zAVtlxcnw7rQpE
-X-Gm-Gg: ASbGncuKnNMZEx7micJGkyAmwnWajfi8whpTj43Yc63qBQmBZKahNXG+Dg9CduVCo6X
-	MecdD8G9dNILppUZEZSu1UThJGjezI3EPSo5FcpX0Fbo1Zf2SQAVZzFmmaofZjRwX/6CgQnUqY2
-	VR7wiP18df3srFxZbmCZHqj7IZyam/kOsOTyvCPgdUGlz8iaaYfojGsiAxvQMbpoCob+Efy3WUT
-	GY1/qYCdoCk8e9nSsnic0baNIZ5BuJqhXUNORRPzYWcju1Eft52HPkBRJff8WJ5ebGyJpZlNoym
-	A8GGmDmioXODuthmdrkrug8=
-X-Google-Smtp-Source: AGHT+IFRBr5mN/dgP2KN/EIsb6j1zyc0+OcOueX2C2ho08DvnIw4RstkuXnVlQQq3zOGoyXDEmtlqA==
-X-Received: by 2002:a17:907:618f:b0:a9a:c651:e7d9 with SMTP id a640c23a62f3a-aa581057f6fmr128727366b.46.1732706513796;
-        Wed, 27 Nov 2024 03:21:53 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54a6db906sm414525466b.41.2024.11.27.03.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 03:21:53 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 27 Nov 2024 12:21:51 +0100
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 2/5] selftests/bpf: Add tests for open-coded
- style process file iterator
-Message-ID: <Z0cAz3uOGRcl36Eu@krava>
-References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB50809E5CD1B8DE0225A85B6B99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Zz3HjT24glXY-8AF@krava>
- <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1732706597; x=1733311397;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
+        b=nwyUnEL0q8v7AVovDKn8fwyyG5PosKhRZCN63VjE6b+/3uxZBjdRM6hS9620VSJWVL
+         j5TCrXBy28O6TxmqLjuclcYih8rOawUhabd7ZEN4LAYcc04DAELgPGTqgIKUn/6C5gPA
+         EmqPMoW8d/96Cz4JRVViTOevH14h1/vvuPL50GHkkENxbwSAL5slUIu0AX+w4cBaQykI
+         C/k/hSu4tRO00CxsYLBN5fIxJO1yg4sl5HXeXZMg3P2A7xHInQ1fnGOgL+J9s3M82ElS
+         7g1ZwfKeyBMIwlwnhJF0IZa/m9EyDUX+GA5+V3F3okHEhaQxyTNthiFMHbUCOw3thyIq
+         5m7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbTqGpPgImuTR1QVS1xzPjQGZlt/6xbPSRkVyuuP8ygsaTHzHYnzZVCgJqmQ04lZVE4l9JlKkkY2FWQifzFA==@vger.kernel.org, AJvYcCUt3yYZfzQgNC6ft9dx7ZPedssoX/YSK3q7hiawkHozztDFUkiHAkllZtOWSvk4/xNkmC+YKKV+vPwMlg==@vger.kernel.org, AJvYcCW+ZlibOMZVMUKQRrwW3ciW7OfvC2d7UdKOl5w2wOhmcaXpeKrKIA1HY5spis6l0rP/5UnPkM3nudzjDpI=@vger.kernel.org, AJvYcCXvudKq0MDdYKXIWd8Sc/11s/OoCjSxfZM9uSJJa3Gkkcp7M4Jp5K5yVZjaXG5Ik3UgI0wV7TwOzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLv5BPQ2dp8BJ8jLZaVuVFMBuKoJ/IhNAN4M+QAWgxAiFZjR4E
+	F254AVM7v0yxI8DYFIAyqm4pu76ioZbLOmIWY/KEdXEb+jYkNpjx
+X-Gm-Gg: ASbGncuDYF9896DyuCBg5rZfpi8/pJLDwDc1B1NL4EVWMQj9yuH6XR+pKA6PNo52+yu
+	TU4I8JlSPRhN3i2mS041Xf3TPowEtBgyYfM8JWTXRus1aTmUSNedAKO94fS33/6YBkublrrfdAM
+	7aLFOpMsICb5iqzKgzvl8FPpiByFf+VYK+/cFaYjz0sZUIIPR5/owcPlyFEwOOreE/Ae99s0ssM
+	8ZxN0zbHDESiKBPw0eDjjWAAZqHEgjUW/9SnUB4RHWSHkFHoO7WstsToBPajQ==
+X-Google-Smtp-Source: AGHT+IFsufWWnsFArYdPuvs9Ad81sVtZ17075H7eNLYpimFeYT75Kvd58Sonb/NBCuJN36c+6qQFJg==
+X-Received: by 2002:a17:906:1da9:b0:aa5:274b:60e9 with SMTP id a640c23a62f3a-aa580f4df12mr158891366b.33.1732706597304;
+        Wed, 27 Nov 2024 03:23:17 -0800 (PST)
+Received: from [192.168.42.127] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5372002aasm536402466b.66.2024.11.27.03.23.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 03:23:16 -0800 (PST)
+Message-ID: <6c870f8d-6293-4d4b-be2b-f0e221cd103f@gmail.com>
+Date: Wed, 27 Nov 2024 11:24:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
+ and PI support
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+ martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+ jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241125070633.8042-1-anuj20.g@samsung.com>
+ <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
+ <20241125070633.8042-7-anuj20.g@samsung.com>
+ <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
+ <20241126135423.GB22537@green245>
+ <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
+ <20241127094644.GC22537@green245>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241127094644.GC22537@green245>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 10:24:07PM +0000, Juntong Deng wrote:
-> On 2024/11/20 11:27, Jiri Olsa wrote:
-> > On Tue, Nov 19, 2024 at 05:53:59PM +0000, Juntong Deng wrote:
-> > 
-> > SNIP
-> > 
-> > > +static void subtest_task_file_iters(void)
-> > > +{
-> > > +	int prog_fd, child_pid, wstatus, err = 0;
-> > > +	const int stack_size = 1024 * 1024;
-> > > +	struct iters_task_file *skel;
-> > > +	struct files_test_args args;
-> > > +	struct bpf_program *prog;
-> > > +	bool setup_end, test_end;
-> > > +	char *stack;
-> > > +
-> > > +	skel = iters_task_file__open_and_load();
-> > > +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-> > > +		return;
-> > > +
-> > > +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
-> > > +		goto cleanup_skel;
-> > > +
-> > > +	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_iter_task_file");
-> > > +	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
-> > > +		goto cleanup_skel;
-> > > +
-> > > +	prog_fd = bpf_program__fd(prog);
-> > > +	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
-> > > +		goto cleanup_skel;
-> > 
-> > I don't think you need to check on this once we did iters_task_file__open_and_load
-> > 
-> > > +
-> > > +	stack = (char *)malloc(stack_size);
-> > > +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
-> > > +		goto cleanup_skel;
-> > > +
-> > > +	setup_end = false;
-> > > +	test_end = false;
-> > > +
-> > > +	args.setup_end = &setup_end;
-> > > +	args.test_end = &test_end;
-> > > +
-> > > +	/* Note that there is no CLONE_FILES */
-> > > +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, &args);
-> > > +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
-> > > +		goto cleanup_stack;
-> > > +
-> > > +	while (!setup_end)
-> > > +		;
-> > 
-> > I thin kthe preferred way is to synchronize through pipe,
-> > you can check prog_tests/uprobe_multi_test.c
-> > 
+On 11/27/24 09:46, Anuj Gupta wrote:
+> On Tue, Nov 26, 2024 at 03:45:09PM +0000, Pavel Begunkov wrote:
+>> On 11/26/24 13:54, Anuj Gupta wrote:
+>>> On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
+>>>> On 11/25/24 07:06, Anuj Gupta wrote:
+>>
+>> Hmm, I have doubts it's going to work well because the union
+>> members have different sizes. Adding a new type could grow
+>> struct io_uring_attr, which is already bad for uapi. And it
+>> can't be stacked:
+>>
 > 
-> Thanks for your reply.
-> 
-> Do we really need to use pipe? Currently this test is very simple.
-> 
-> In this test, all files opened by the test process will be closed first
-> so that there is an empty file description table, and then open the
-> test files.
-> 
-> This way the test process has only 3 newly opened files and the file
-> descriptors are always 0, 1, 2.
-> 
-> Although using pipe is feasible, this test will become more complicated
-> than it is now.
+> How about something like this [1]. I have removed the io_uring_attr
+> structure, and with the mask scheme the user would pass attributes in
+> order of their types. Do you still see some cracks?
 
-I see, I missed the close_range call.. anyway I'd still prefer pipe to busy waiting
+Looks good to me
 
-perhaps you could use fentry probe triggered by the task_file_test_process
-and do the fd/file iteration in there? that way there'be no need for the sync
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+...
+> +static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
+> +			 u64 attr_ptr, u64 attr_type_mask)
+> +{
+> +	struct io_uring_attr_pi pi_attr;
+> +	struct io_async_rw *io;
+> +	int ret;
+> +
+> +	if (copy_from_user(&pi_attr, u64_to_user_ptr(attr_ptr),
+> +	    sizeof(pi_attr)))
+> +		return -EFAULT;
+> +
+> +	if (pi_attr.rsvd)
+> +		return -EINVAL;
+> +
+> +	io = req->async_data;
+> +	io->meta.flags = pi_attr.flags;
+> +	io->meta.app_tag = pi_attr.app_tag;
+> +	io->meta.seed = READ_ONCE(pi_attr.seed);
 
-jirka
+Seems an unnecessary READ_ONCE slipped here
+
+> +	ret = import_ubuf(ddir, u64_to_user_ptr(pi_attr.addr),
+> +			  pi_attr.len, &io->meta.iter);
+> +	if (unlikely(ret < 0))
+> +		return ret;
+> +	rw->kiocb.ki_flags |= IOCB_HAS_METADATA;
+> +	io_meta_save_state(io);
+> +	return ret;
+> +}
+...
+
+-- 
+Pavel Begunkov
 
