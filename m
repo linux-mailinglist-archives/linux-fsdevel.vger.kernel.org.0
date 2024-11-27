@@ -1,97 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-36005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032719DA8F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 14:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDE39DA96C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 14:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 729D5B23650
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42868B23356
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60241FCF57;
-	Wed, 27 Nov 2024 13:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ls0XdH9n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1KKakUS3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7236D1FCFC2;
+	Wed, 27 Nov 2024 13:55:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2728F1DFDE;
-	Wed, 27 Nov 2024 13:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED41FA165
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 13:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732715144; cv=none; b=Cypk9noUQc90o3sYF9RQjdSsFXkp4sB3EOW0Fz2OcfBGy92w0T73SJfSTFIUmqp4b+NsAa66E9d42/S15umIS0uviyD06Qo8pxMTe1RsKmzOs1S1hjLnCCAusfnJNB2S41KsWmqt9E9RpdQ5VnpQ5hNZ0XkKgcW5cJTfnI/j1LM=
+	t=1732715749; cv=none; b=p0j40Wa9s/ZH7iH0xSqAq+3t/0YIQqfJmYQp4/ik1Zw3S/qATgICqY1jWi9CdNRWcDAYO8/7eVwSf3ccei3qFwJRV294hFEvwy7LVq1LCeknYxfCB3Z9sas+aiQlDCFdZjWZZ5zLcof7bKQd65SLrLeE4leBlLwGc5qOraMfwx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732715144; c=relaxed/simple;
-	bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvCpK+Kb52PPAu5e+odnQfSQsnw4uheG/ZbfrPdaOK1UFZj15OJbK7MlAu5BRAbcopVpgxKMVf93J2myBOP9pmabsHhb9bngP9wifBf02m/TDyL9yotAhSUIGh9mCL4YoOq1BTe3DRXaC0ZJeqgqcz5P75nry/yPhG0pbUMLu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ls0XdH9n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1KKakUS3; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1E5DF1140176;
-	Wed, 27 Nov 2024 08:45:41 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 27 Nov 2024 08:45:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1732715141;
-	 x=1732801541; bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=; b=
-	ls0XdH9nMrnVo4q23xg4eN6u9OvcFHMVLANpmjWNt/FhRrUcigL2BAXRfLXUjM1y
-	bsVeCIt0GgphkhpLCjxuRKcFkdC2uIPWZygQ3D/eSLS+iawptOl01D5OnI4oM+77
-	ainM754U3IXlvGvhMPJK/7nOcIkkRCowARStT8yIxJ4VU2uAfK9R4mikzkp5nhJp
-	QfBBVAzauEL2IALfTS8I6zJAOgkuc6SjYuvWYQb+C2zkxd96bMAmFW0Tr4mmYOsl
-	Ao2MWIJEC7EIFYeYbWiedwOE47VuRugloXE0OFm2b6IBRaY5/LVymqo1V5ybtIKC
-	CYdGbJV2wQffUvb2nrTsLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732715141; x=
-	1732801541; bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=; b=1
-	KKakUS3x7pr08JKrmEHxjhuEnH1Tb0GGXY0OqmUWu981UuHsV7GH1dF7r6jLU2pX
-	ADJbks1qGZQB1di+YlotTMaYJpwOM6XCT2VVl3pVq75oYZks59YKVs3jRPe5BYP/
-	XUaVM/ucuW4HjvUpRPcB4PiMLWIroVKEmL5S6py12kRYk6R2nQC4TXVRkTDZAhVG
-	vygpeOjFaiAr/M5NfCfCvGZZTKkjfgTf9sMcUiABFfCL+syn57hTD01/g3j+WPTd
-	jxLB9aqG98wU/NbNwSX9ebW/u5zUEFmLXEamGBS4n+AznomgkKQoMgUMsdfITgsV
-	KU0PobM6u8wyIZbsXo11Q==
-X-ME-Sender: <xms:hCJHZ8_gjzhFAOA_ZiIC2rWgY0d7TPVjwHvuTYv8Gm8o7XgeL7Zuug>
-    <xme:hCJHZ0vOBmIKpykQh69737ctQ5uABO45CwJ677Oj0VTbpGAYCZ1IUhZoBm3qT3d8v
-    az3OrIsa2VVezKF>
-X-ME-Received: <xmr:hCJHZyCQwQgA6NKgmwrjBi6JDGM-lrA-UWv6oB7NSct1sM093rgKvdu0Q7XkGK7cOMPSHLIqUpO_Io114bmDGmpu1V5m7kkEpxNlLernYAcOXFWVFmNx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdehvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
-    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
-    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
-    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohep
-    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnh
-    gvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtth
-    hopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopegrmhhirhej
-    fehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:hCJHZ8eJSoQa65jLX3Sz1rmcZepTGDbyGDirymdx2q60qKK56v3LjQ>
-    <xmx:hCJHZxM4PR16H1lIwKHyLOaUTo246KngNdGmihf97P7Qs8TVdRxtjg>
-    <xmx:hCJHZ2mO3B-srq6zK2pCAqQejNMrmjm21kR1pJFpO1UQ7zPMG4yocQ>
-    <xmx:hCJHZzuKRII2NrQ0jbP11dliVard0_b_3kmalnc4I8C_JeCPr-Rk1w>
-    <xmx:hSJHZ1mP4wXp--MdfTTQ9lcSCBzqWlJccRFeJHUUSa_IyQ-0EYlq3-vB>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Nov 2024 08:45:38 -0500 (EST)
-Message-ID: <821bcf94-4e95-4be7-9136-f5839c18009f@fastmail.fm>
-Date: Wed, 27 Nov 2024 14:45:37 +0100
+	s=arc-20240116; t=1732715749; c=relaxed/simple;
+	bh=gcf5dqFnJqlnQXl77MZDDkROdrbMCR+Pi0upIFJqN6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pVcMEmlePWljFw/xEzhSL3w8/ndqEbkDDfmvawvrM9E+uHr1v9YqEBxUHOgY+/Nis0YuGOvUseROogBdgS31qMyuXKuYpcB5kVrhY8MEpfek/HLL9vT/UwA3optXrRqYgy+wkkhng+VY7Nn79JwFxFWJ/cGsX1Pz6HudP7G57Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xz19G15C8z11LqD;
+	Wed, 27 Nov 2024 21:52:50 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06F9B1800A1;
+	Wed, 27 Nov 2024 21:55:38 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 27 Nov 2024 21:55:37 +0800
+Message-ID: <992a1e43-67c5-4686-b10c-f82c9942daac@huawei.com>
+Date: Wed, 27 Nov 2024 21:55:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,27 +48,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
- David Wei <dw@davidwei.uk>, bernd@bsbernd.com
-References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: UML mount failure with Linux 6.11
+To: Karel Zak <kzak@redhat.com>, Johannes Berg <johannes@sipsolutions.net>
+CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>, Christian
+ Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>,
+	<rrs@debian.org>
+References: <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+ <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+ <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+ <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+ <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+ <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
+ <3d5e772c-7f13-4557-82ff-73e29a501466@huawei.com>
+ <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
+ <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
+ <5e5e465e-0380-4fbf-915d-69be5a8e0b65@huawei.com>
+ <uppzc2p5bn6fhrdlzzkbdrkoigurkii5ockigngknm4waewl5z@z2a6c6iivu7s>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <uppzc2p5bn6fhrdlzzkbdrkoigurkii5ockigngknm4waewl5z@z2a6c6iivu7s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
 
 
-On 11/27/24 14:40, Bernd Schubert wrote:
-> [I removed RFC status as the design should be in place now
-> and as xfstests pass. I still reviewing patches myself, though
-> and also repeatings tests with different queue sizes.]
+On 2024/11/27 20:02, Karel Zak wrote:
+> On Wed, Nov 27, 2024 at 09:26:46AM GMT, Hongbo Li wrote:
+>>
+>>
+>> On 2024/11/26 21:50, Johannes Berg wrote:
+>>> On Mon, 2024-11-25 at 18:43 +0100, Karel Zak wrote:
+>>>>
+>>>> The long-term solution would be to clean up hostfs and use named
+>>>> variables, such as "mount -t hostfs none -o 'path="/home/hostfs"'.
+>>>
+>>> That's what Hongbo's commit *did*, afaict, but it is a regression.
+>>>
+>>> Now most of the regression is that with fsconfig() call it was no longer
+>>> possible to specify a bare folder, and then we got discussing what
+>>> happens if the folder name actually contains a comma...
+>>>
+>>> But this is still a regression, so we need to figure out what to do
+>>> short term?
+>>>
+>> So for short term, even long term, can we consider handling the hostfs
+>> situation specially within libmount?
+> 
+> Yes (see reply to Johannes ).
+> 
+>> Such as treat the whole option as one
+>> key(also may be with comma, even with equal)
+> 
+> There could be userspace specific options, VFS flags, etc.
+> 
+>    -o /home/hostfs,ro,noexec
+> 
+> Is it one path or path and two options?
+> 
+Interesting!
+Perhaps more documentation is needed. VFS flags is filtered, but for 
+hostfs, it is a valid path. The semantics seems not very complete. :)
 
-Sorry, my intend was to remove RFC status, but then forgot to
-actually unset it :/
+Thanks,
+Hongbo
+
+>> in this case, libmount will
+>> use it as FSCONFIG_SET_FLAG. We can do that because for hostfs, it only has
+>> one mount option, and no need for extension.
+> 
+> We can automatically add a key (e.g. hostfs=) and use FSCONFIG_SET_FLAG.
+> The goal should be to get the path as a value, because key is limited to
+> 256 bytes.
+> 
+>      Karel
+> 
 
