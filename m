@@ -1,234 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-36018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B8D9DAAC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 16:28:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9597C9DAAE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 16:41:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9753C28160D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 15:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E29164964
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 15:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5D01FF7D6;
-	Wed, 27 Nov 2024 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10E020010E;
+	Wed, 27 Nov 2024 15:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAQrJMwO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOGo769g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1FD20012E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48420328B6;
+	Wed, 27 Nov 2024 15:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732721304; cv=none; b=M6UTaRVkN8NxKYmSXqJHjSCBbsIlQ6U7gF5vRgGIhanKAjPo8He1YKepIquogckg3x7+cFXG4IyRewARIdL3/RBBX09yYVAtyieYVR3TajgAO6L4EjCMg6nYTsRiNTA1KJFpoxGtIS1x8FKFFptLsW97lMhWVz93D/0VOdR+izo=
+	t=1732722079; cv=none; b=c9cIYrkBiROqViO2SGKzHLizF9Mwc6bGkctNYpwBPCU7A5bt9I+wHWlnmjcCZURkF0DHEtA+iWNiDP1xqRoiKHPX9jG6MW1WYtWHEX32F2YSZTYCk8KqXVHeKm7l4cV3n1nxkg7u6XlBDuFc0Ky5nVYg7QpXzsoBSE6olY9up/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732721304; c=relaxed/simple;
-	bh=cm3XNveZKUOxWBzRqaJXCYdMMoTxeTEl5G9Suuio1jg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LFct24M6tZF4/Q/MQKrQroFe7SK5M6tIREWE/Xlnp/wi676TNC4kjYCPIOU7okc0uYOsdwJCVYiVFtXWSXn0ncdMLmgG/KHn2eflz7u3ZdH6LrkM/3QctBmEP/eW0IU8wX9yEJimZMV/GJXcWCTN4MkThr+qiSbzMJKNIrk3xdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAQrJMwO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 338BBC4CED8;
-	Wed, 27 Nov 2024 15:28:23 +0000 (UTC)
+	s=arc-20240116; t=1732722079; c=relaxed/simple;
+	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUAI6D7TfZWTiebUZ3ij2EtxKosZjKUcACsxc7bBecZcr8ijjwOeUFocUMVMTk/y8XaXhpOEVGKcOgovlc3Gg8o2kMqg28fQI+rjmrpoHnobtj5UYhpEzWgdY3oOgtWemeGXjOAksIx+3/9gGEs56MqSaxrAU26tv49Qxgl9fH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOGo769g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5ADC4CECC;
+	Wed, 27 Nov 2024 15:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732721303;
-	bh=cm3XNveZKUOxWBzRqaJXCYdMMoTxeTEl5G9Suuio1jg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BAQrJMwO3HcTBcQJtl9J0sN0/3Y2EaWG1HoGPOJVdXnlxSk8tgna/zSNZUpzF60BQ
-	 3dRUcDoFH67L8gUn89drpvzoZcl7it2YQwMoAFiks5/PUQxhDyxKmxYM+O6WWJEWlc
-	 FQIyCfAcqppQ5YYaKu+sco2Dy80Ug5cJOo/6T5axaEkQ0ldr4nCmcLxGs/KcL9CdM5
-	 BlWKRM9OkdVQQzbHH6nPFhE7I9pZ907/6bqzK6KGTHGDpC9RAkEXw7UyaOuPFGjwcU
-	 SCblQFp8y4T4FtLnBq7x0hIIAL/rlW8ih3aD8uw47R+heJXIeKxMQXLr0mcP36v18G
-	 g0Y5KKEt0904g==
-From: cel@kernel.org
-To: Hugh Dickens <hughd@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	yukuai3@huawei.com,
-	yangerkun@huaweicloud.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [RFC PATCH v3 5/5] libfs: Refactor offset_iterate_dir()
-Date: Wed, 27 Nov 2024 10:28:15 -0500
-Message-ID: <20241127152815.151781-6-cel@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241127152815.151781-1-cel@kernel.org>
-References: <20241127152815.151781-1-cel@kernel.org>
+	s=k20201202; t=1732722078;
+	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IOGo769gRF6NaThfG/aRem8w6lMd6q3TVKX7KTAre+QIMv8oQIu7CFwTN/RGYB/p8
+	 BcfVMajnUjipgemFOEfrlQozVn8n2oHVUezC3xXJLcoLbzplrJYS6DO1GgkTt9oSk5
+	 YY+0kUx2brcTjWciQNZizNxvhFcpX22laSewEW2bRmPISm1OPb0hC7HDppTuUgnnyg
+	 m3bNRA6iBbr1cE1RLOwjSa3gjq6rqpF3rYXR0PMcKaH7u9yoTb7P9JeMazcL4xioHx
+	 wwwAxg/f2dGlQWyuErlr3KIXNKoj5QqJQZj/z6PhoFKZKuTD+mGJQbbdoS4vIA5Ews
+	 mBVd8jVCmU74A==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Wed, 27 Nov 2024 16:41:03 +0100
+Message-ID: <20241127-vfs-fixes-08465cd270d3@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3804; i=brauner@kernel.org; h=from:subject:message-id; bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS720649Haj5NJ7K4IuCnFJ3mjnt8k9w+9a7/6Kw0GoS XUT1562jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIns+8fI0MCpYmU/q1VwRtyZ rFsGprs91A+dm5/frjTnhJpEqOEMJUaGrdMsVjHPmad9SOk913Qm7Z7e8yd/Lt85RS/x+puv7iK b2QA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
+Hey Linus,
 
-This line in offset_iterate_dir():
+I was sent a bug fix for the backing file rework that relied on the
+overlayfs pull request. The vfs.fixes branch used an earlier mainline
+commit as base. So I thought how to resolve this and my solution was to
+create a new ovl.fixes branch which contained the overlayfs changes for
+v6.13 and then apply the fix on top of it. That branch was then merged
+into vfs.fixes with an explanation why. Let me know if I should do this
+differently next time.
 
-		ctx->pos = dentry2offset(dentry) + 1;
+/* Summary */
 
-assumes that the next child entry has an offset value that is
-greater than the current child entry. Since directory offsets are
-actually cookies, this heuristic is not always correct.
+This contains various fixes for this cycle:
 
-We have tested the current code with a limited offset range to see
-if this is an operational problem. It doesn't seem to be, but doing
-a "+ 1" on what is supposed to be an opaque cookie is very likely
-wrong and brittle.
+- Fix a few iomap bugs.
 
-Instead of using the mtree to emit entries in the order of their
-offset values, use it only to map the initial ctx->pos to a starting
-entry. Then use the directory's d_children list, which is already
-maintained by the dcache, to find the next child to emit, as the
-simple cursor-based implementation still does.
+- Fix a wrong argument in backing file callback.
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c | 95 ++++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 74 insertions(+), 21 deletions(-)
+- Fix security mount option retrieval in statmount().
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 0deff5390abb..2616421bbe0e 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -241,9 +241,9 @@ const struct inode_operations simple_dir_inode_operations = {
- };
- EXPORT_SYMBOL(simple_dir_inode_operations);
- 
--/* 0 is '.', 1 is '..', so always start with offset 2 or more */
- enum {
--	DIR_OFFSET_MIN	= 2,
-+	DIR_OFFSET_FIRST	= 2,	/* seek to the first real entry */
-+	DIR_OFFSET_MIN		= 3,	/* minimum allocated offset value */
- };
- 
- static void offset_set(struct dentry *dentry, long offset)
-@@ -507,19 +507,53 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
--static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
-+/* Cf. find_next_child() */
-+static struct dentry *find_next_sibling_locked(struct dentry *dentry)
- {
--	MA_STATE(mas, &octx->mt, offset, offset);
-+	struct dentry *found = NULL;
-+
-+	hlist_for_each_entry_from(dentry, d_sib) {
-+		if (!simple_positive(dentry))
-+			continue;
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		if (simple_positive(dentry))
-+			found = dget_dlock(dentry);
-+		spin_unlock(&dentry->d_lock);
-+		if (likely(found))
-+			break;
-+	}
-+	return found;
-+}
-+
-+static noinline_for_stack struct dentry *offset_dir_first(struct file *file)
-+{
-+	struct dentry *parent = file->f_path.dentry;
-+	struct dentry *found;
-+
-+	spin_lock(&parent->d_lock);
-+	found = find_next_sibling_locked(d_first_child(parent));
-+	spin_unlock(&parent->d_lock);
-+	return found;
-+}
-+
-+static noinline_for_stack struct dentry *
-+offset_dir_lookup(struct file *file, loff_t offset)
-+{
-+	struct dentry *parent = file->f_path.dentry;
- 	struct dentry *child, *found = NULL;
-+	struct inode *inode = d_inode(parent);
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+
-+	MA_STATE(mas, &octx->mt, offset, offset);
- 
- 	rcu_read_lock();
- 	child = mas_find(&mas, LONG_MAX);
- 	if (!child)
- 		goto out;
--	spin_lock(&child->d_lock);
--	if (simple_positive(child))
--		found = dget_dlock(child);
--	spin_unlock(&child->d_lock);
-+
-+	spin_lock(&parent->d_lock);
-+	found = find_next_sibling_locked(child);
-+	spin_unlock(&parent->d_lock);
- out:
- 	rcu_read_unlock();
- 	return found;
-@@ -534,29 +568,48 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
-+static struct dentry *offset_dir_next(struct dentry *child)
-+{
-+	struct dentry *parent = child->d_parent;
-+	struct dentry *found;
-+
-+	spin_lock(&parent->d_lock);
-+	found = find_next_sibling_locked(d_next_sibling(child));
-+	spin_unlock(&parent->d_lock);
-+	return found;
-+}
-+
- static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
- {
--	struct dentry *dir = file->f_path.dentry;
--	struct inode *inode = d_inode(dir);
--	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
--	struct dentry *dentry;
-+	struct dentry *dentry, *next = NULL;
-+
-+	if (ctx->pos == DIR_OFFSET_FIRST)
-+		dentry = offset_dir_first(file);
-+	else
-+		dentry = offset_dir_lookup(file, ctx->pos);
-+	if (!dentry) {
-+		/* ->private_data is protected by f_pos_lock */
-+		offset_set_eod(file);
-+		return;
-+	}
- 
- 	while (true) {
--		dentry = offset_find_next(octx, ctx->pos);
--		if (!dentry) {
--			/* ->private_data is protected by f_pos_lock */
--			offset_set_eod(file);
--			return;
--		}
--
- 		if (!offset_dir_emit(ctx, dentry)) {
--			dput(dentry);
-+			ctx->pos = dentry2offset(dentry);
-+			break;
-+		}
-+
-+		next = offset_dir_next(dentry);
-+		if (!next) {
-+			offset_set_eod(file);
- 			break;
- 		}
- 
--		ctx->pos = dentry2offset(dentry) + 1;
- 		dput(dentry);
-+		dentry = next;
- 	}
-+
-+	dput(dentry);
- }
- 
- /**
--- 
-2.47.0
+- Cleanup how statmount() handles unescaped options.
 
+- Add a missing inode_owner_or_capable() check for setting write hints.
+
+- Clear the return value in read_kcore_iter() after a successful
+  iov_iter_zero().
+
+- Fix a mount_setattr() selftest.
+
+- Fix function signature in mount api documentation.
+
+- Remove duplicate include header in the fscache code.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+All patches have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit e7675238b9bf4db0b872d5dbcd53efa31914c98f:
+
+  Merge tag 'ovl-update-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs (2024-11-22 20:55:42 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13-rc1.fixes
+
+for you to fetch changes up to cf87766dd6f9ddcceaa8ee26e3cbd7538e42dd19:
+
+  Merge branch 'ovl.fixes' (2024-11-26 18:15:06 +0100)
+
+Please consider pulling these changes from the signed vfs-6.13-rc1.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.13-rc1.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      fs/backing_file: fix wrong argument in callback
+
+Brian Foster (4):
+      iomap: warn on zero range of a post-eof folio
+      iomap: reset per-iter state on non-error iter advances
+      iomap: lift zeroed mapping handling into iomap_zero_range()
+      iomap: elide flush from partial eof zero range
+
+Christian Brauner (3):
+      Merge patch series "iomap: zero range flush fixes"
+      statmount: fix security option retrieval
+      Merge branch 'ovl.fixes'
+
+Christoph Hellwig (1):
+      fs: require inode_owner_or_capable for F_SET_RW_HINT
+
+Jiri Olsa (1):
+      fs/proc/kcore.c: Clear ret value in read_kcore_iter after successful iov_iter_zero
+
+Michael Ellerman (1):
+      selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
+
+Miklos Szeredi (1):
+      statmount: clean up unescaped option handling
+
+Randy Dunlap (1):
+      fs_parser: update mount_api doc to match function signature
+
+Thorsten Blum (1):
+      fscache: Remove duplicate included header
+
+ Documentation/filesystems/mount_api.rst            |  3 +-
+ fs/backing-file.c                                  |  3 +-
+ fs/fcntl.c                                         |  3 +
+ fs/iomap/buffered-io.c                             | 90 +++++++++++-----------
+ fs/iomap/iter.c                                    | 11 ++-
+ fs/namespace.c                                     | 46 +++++------
+ fs/netfs/fscache_io.c                              |  1 -
+ fs/proc/kcore.c                                    |  1 +
+ .../selftests/mount_setattr/mount_setattr_test.c   |  2 +-
+ 9 files changed, 81 insertions(+), 79 deletions(-)
 
