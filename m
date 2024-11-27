@@ -1,127 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-36006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDE39DA96C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 14:55:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5009DA9D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 15:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42868B23356
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6EF2818E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 14:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7236D1FCFC2;
-	Wed, 27 Nov 2024 13:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5E31FF617;
+	Wed, 27 Nov 2024 14:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/CxOYee"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED41FA165
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 13:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA6A1FCF63;
+	Wed, 27 Nov 2024 14:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732715749; cv=none; b=p0j40Wa9s/ZH7iH0xSqAq+3t/0YIQqfJmYQp4/ik1Zw3S/qATgICqY1jWi9CdNRWcDAYO8/7eVwSf3ccei3qFwJRV294hFEvwy7LVq1LCeknYxfCB3Z9sas+aiQlDCFdZjWZZ5zLcof7bKQd65SLrLeE4leBlLwGc5qOraMfwx0=
+	t=1732717545; cv=none; b=VIK+2uf+X+HWSGkB+iRU3GZIOvnx626frXKgf6QZxh1VfrA/cgmBMMHWcOCtqL91nxZf2/HTCSM6DfnhvQGw2Ga30pOAKJThXkHX6U9tPUjtamTeHTPdxP1Tjq//ih8/s7qv406c93fT5x3YlsWBUPvxSw3kP/V5hSG1WE7rXN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732715749; c=relaxed/simple;
-	bh=gcf5dqFnJqlnQXl77MZDDkROdrbMCR+Pi0upIFJqN6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pVcMEmlePWljFw/xEzhSL3w8/ndqEbkDDfmvawvrM9E+uHr1v9YqEBxUHOgY+/Nis0YuGOvUseROogBdgS31qMyuXKuYpcB5kVrhY8MEpfek/HLL9vT/UwA3optXrRqYgy+wkkhng+VY7Nn79JwFxFWJ/cGsX1Pz6HudP7G57Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xz19G15C8z11LqD;
-	Wed, 27 Nov 2024 21:52:50 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 06F9B1800A1;
-	Wed, 27 Nov 2024 21:55:38 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 27 Nov 2024 21:55:37 +0800
-Message-ID: <992a1e43-67c5-4686-b10c-f82c9942daac@huawei.com>
-Date: Wed, 27 Nov 2024 21:55:36 +0800
+	s=arc-20240116; t=1732717545; c=relaxed/simple;
+	bh=3uPc2P+OMkq0tXJoXSIRKXPVE6RqrMCTk1ytqMl3lAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0Ge3p7GKlgBky7bmUihc+5EHi7Oa9TyyqjZamZosn7/ioN0pTMQRl/aVpSKYTuF4E/CHEiWni6gAv2x2BI3ESh7WTW1nWZCVZnH4dV3OJD5k1hXO0p81hX5HOg+VIJJ83c+PVn3yr6S9E3sWDem53OO/b8cJntQde76zki2y7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/CxOYee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B3E3C4CECC;
+	Wed, 27 Nov 2024 14:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732717544;
+	bh=3uPc2P+OMkq0tXJoXSIRKXPVE6RqrMCTk1ytqMl3lAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/CxOYee/L/uMwKD0fpEyp0kPE4JBauzNby4cW6ObYNdPktSTMFgrtJTjoO13bG30
+	 1tUV1u66y1qT/rWLyR/mO4Q4C0EdZqow3DdvwbiSr+Ck1nAzQaHxqwdRJAQ545bHKF
+	 p8plZD905aI4oC3ZSXSLB8ePmQP4lRhhnp7NAtMlKcxkLCRnc3DETLhIRXMZic12/e
+	 Kv+EOWuWmk9lXGoWkejzwulU2dzM0QVHhDLXTQ1l0RbWI/3JErz4TX6ECY7oRVaCes
+	 NT0ZUPL87lxM8khD1ePECi5Q5tGEjqQhzlZbCeA/z9hFdwuGiQSWgRDo8IfIKl/LI/
+	 i7tXZ0V9I2zFw==
+Date: Wed, 27 Nov 2024 14:25:29 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>
+Subject: Re: [PATCH 2/2] selftests/exec: add a test for execveat()'s comm
+Message-ID: <6c68dddb-84f3-4b73-987c-8334b2301d9b@sirena.org.uk>
+References: <20241030203732.248767-1-tycho@tycho.pizza>
+ <20241030203732.248767-2-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: UML mount failure with Linux 6.11
-To: Karel Zak <kzak@redhat.com>, Johannes Berg <johannes@sipsolutions.net>
-CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>, Christian
- Brauner <brauner@kernel.org>, Benjamin Berg <benjamin@sipsolutions.net>,
-	<rrs@debian.org>
-References: <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
- <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
- <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
- <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
- <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
- <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
- <3d5e772c-7f13-4557-82ff-73e29a501466@huawei.com>
- <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
- <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
- <5e5e465e-0380-4fbf-915d-69be5a8e0b65@huawei.com>
- <uppzc2p5bn6fhrdlzzkbdrkoigurkii5ockigngknm4waewl5z@z2a6c6iivu7s>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <uppzc2p5bn6fhrdlzzkbdrkoigurkii5ockigngknm4waewl5z@z2a6c6iivu7s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cxLCvAJhB4t1mXeM"
+Content-Disposition: inline
+In-Reply-To: <20241030203732.248767-2-tycho@tycho.pizza>
+X-Cookie: With your bare hands?!?
 
 
+--cxLCvAJhB4t1mXeM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/11/27 20:02, Karel Zak wrote:
-> On Wed, Nov 27, 2024 at 09:26:46AM GMT, Hongbo Li wrote:
->>
->>
->> On 2024/11/26 21:50, Johannes Berg wrote:
->>> On Mon, 2024-11-25 at 18:43 +0100, Karel Zak wrote:
->>>>
->>>> The long-term solution would be to clean up hostfs and use named
->>>> variables, such as "mount -t hostfs none -o 'path="/home/hostfs"'.
->>>
->>> That's what Hongbo's commit *did*, afaict, but it is a regression.
->>>
->>> Now most of the regression is that with fsconfig() call it was no longer
->>> possible to specify a bare folder, and then we got discussing what
->>> happens if the folder name actually contains a comma...
->>>
->>> But this is still a regression, so we need to figure out what to do
->>> short term?
->>>
->> So for short term, even long term, can we consider handling the hostfs
->> situation specially within libmount?
-> 
-> Yes (see reply to Johannes ).
-> 
->> Such as treat the whole option as one
->> key(also may be with comma, even with equal)
-> 
-> There could be userspace specific options, VFS flags, etc.
-> 
->    -o /home/hostfs,ro,noexec
-> 
-> Is it one path or path and two options?
-> 
-Interesting!
-Perhaps more documentation is needed. VFS flags is filtered, but for 
-hostfs, it is a valid path. The semantics seems not very complete. :)
+On Wed, Oct 30, 2024 at 02:37:32PM -0600, Tycho Andersen wrote:
+> From: Tycho Andersen <tandersen@netflix.com>
+>=20
+> In the previous patch we've defined a couple behaviors:
+>=20
+> 1. execveat(fd, AT_EMPTY_PATH, {"foo"}, ...) should render argv[0] as
+>    /proc/pid/comm
+> 2. execveat(fd, AT_EMPTY_PATH, {NULL}, ...) should keep the old behavior =
+of
+>    rendering the fd as /proc/pid/comm
+>=20
+> and just to be sure keeps working with symlinks, which was a concern in
+> [1], I've added a test for that as well.
+>=20
+> The test itself is a bit ugly, because the existing check_execveat_fail()
+> helpers use a hardcoded envp and argv, and we want to "pass" things via t=
+he
+> environment to test various argument values, but it seemed cleaner than
+> passing one in everywhere in all the existing tests.
 
-Thanks,
-Hongbo
+This test doesn't pass in my CI, running on an i.MX8MP Verdin board.
+This is an arm64 system and I'm running the tests on NFS.
 
->> in this case, libmount will
->> use it as FSCONFIG_SET_FLAG. We can do that because for hostfs, it only has
->> one mount option, and no need for extension.
-> 
-> We can automatically add a key (e.g. hostfs=) and use FSCONFIG_SET_FLAG.
-> The goal should be to get the path as a value, because key is limited to
-> 256 bytes.
-> 
->      Karel
-> 
+> Output looks like:
+
+>     ok 51 Check success of execveat(6, 'home/tycho/packages/...yyyyyyyyyy=
+yyyyyyyyyy', 0)...
+>     # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
+>     ok 52 Check success of execveat(9, '', 4096)...
+>     # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
+>     ok 53 Check success of execveat(11, '', 4096)...
+>     # Check execveat(AT_EMPTY_PATH)'s comm is 9
+>     [   25.579272] process 'execveat' launched '/dev/fd/9' with NULL argv=
+: empty string added
+>     ok 54 Check success of execveat(9, '', 4096)...
+
+The output when things fail is:
+
+# # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
+# # bad comm, got: 11 expected: sentinel# child 8257 exited with 1 neither =
+0 nor 0
+# not ok 52 Check success of execveat(11, '', 4096)...=20
+# # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
+# # bad comm, got: 13 expected: sentinel# child 8258 exited with 1 neither =
+0 nor 0
+# not ok 53 Check success of execveat(13, '', 4096)...=20
+
+Full log from a failing job at:
+
+   https://lava.sirena.org.uk/scheduler/job/993508
+
+I didn't do any investigation beyond this.
+
+--cxLCvAJhB4t1mXeM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHK9kACgkQJNaLcl1U
+h9C2gwf+N5c+vZrIomxF6ng0FWDkSyPW8c5Ey2j5IGpsPBg4/Vv0mxv6z0vlH+mf
+EtchjFZfuht9PgmGwB38eWQanuc9NTKyi/K6xpGe1meJ+5iv/CHZ2kzisyL20koA
+N4U7MRNQAcbEGrpHDd96w9x7NZNaellM7UmVrG32wT7H+I8v24LKphJYlJnYs/sm
+ygkkLVuRo1Ez4YhvSUmT1lraYuPQzkKEzRVKHbku/qLsTIk6VUGhSaUsjaZETvg+
+YtzILqFza8bD5lvogKfBHrsGsnDN1wtFVwDAvlGkbj3qu0rXDFRGKq/e92n6MnvG
+Xm1CkvsFtR/wvTTZY0OAPGL0xRKEZg==
+=s3fS
+-----END PGP SIGNATURE-----
+
+--cxLCvAJhB4t1mXeM--
 
