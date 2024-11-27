@@ -1,159 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-35973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978989DA6DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 12:26:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8162F9DA78F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21C68B23CC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 11:23:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F314B239BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 11:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7951F6690;
-	Wed, 27 Nov 2024 11:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2FF1F9EB4;
+	Wed, 27 Nov 2024 11:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNBxFTZH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b2R4VYZh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187A41F6664;
-	Wed, 27 Nov 2024 11:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636E51F9EAD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 11:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732706600; cv=none; b=qyIzL5yLZ8EuIA6dJNUfvv5JnnsXvWMfge08s8cUUHbpdParKmLkpRKLjnCQsKaWWKuEvk9GU0yICGyhstffYgdqr2YNE3O+E+hL/WAHojY0ikasUQh+eDa52xGLMtBzyj7UFn9ojq/wy2qPwyHBtsPVrwHV/u9Thx7PnU9pFSc=
+	t=1732708560; cv=none; b=nahLYTeZVRMq0zoHmoT4JtbsSQBlAXKdhjyOjt5GHQ4jPY0dKrmrI902QiPe+DiBdR0CzVo1dKiIFhyhihzEj7YdxF80FOlaK9HfzuFCJ42OB12fLvI9c4gpMvxiUD4bLJTEGEWBBAyktHTeE8+7wlTNtuNlrKtXhvPJk05avFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732706600; c=relaxed/simple;
-	bh=jPYE7nUJ0PQxj0TL68kBGwrZJwMQjdjzfszDvmh33UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c4b8aDiURTydIf/fCd1M8Gd82aPpg78091vZg1YT1S/sqiBAgWFxeuXPTgpJBHlElTPj01yPOsdbbQdNeCKyPmGm83pliNLkReE+wb0fAl0k9cZ1hwuSmUytg88NNwoFl8wxrw8EQ+VJizLoz2/uDSCxOOTlvRipB0FMwc7/FmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNBxFTZH; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1068462566b.1;
-        Wed, 27 Nov 2024 03:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732706597; x=1733311397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
-        b=BNBxFTZHRkZxBfRsrWIJ9cKC4dPepDwljBsZMoCnC/zw8HQt6vRWT2K4oCAl9yHxHF
-         EBvWo4BPgZeAaLk1r5nSof/WniACOXhk6AkY3z7fVpbo7mEtfRaVghKoAY9MBfzfvyXL
-         5RYio4fVQz8e1FCupMskX1ZP1h3X254VB/vsFVHQD9QKridV6kLRAHf+2y+VcObdVFA9
-         w2xJ3HNEgY9gREEACXk+odOYQtXBUSq7zgOwub3aqNPAutrY91wsFraPRNT0dfb9OhB4
-         yJktSKZ6k5pR6BAvMf28lpQozJEIl3T1dSDwu1HsEb1cjkt2ziGpqIxFuDj/KVqSjo+0
-         uQXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732706597; x=1733311397;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
-        b=nwyUnEL0q8v7AVovDKn8fwyyG5PosKhRZCN63VjE6b+/3uxZBjdRM6hS9620VSJWVL
-         j5TCrXBy28O6TxmqLjuclcYih8rOawUhabd7ZEN4LAYcc04DAELgPGTqgIKUn/6C5gPA
-         EmqPMoW8d/96Cz4JRVViTOevH14h1/vvuPL50GHkkENxbwSAL5slUIu0AX+w4cBaQykI
-         C/k/hSu4tRO00CxsYLBN5fIxJO1yg4sl5HXeXZMg3P2A7xHInQ1fnGOgL+J9s3M82ElS
-         7g1ZwfKeyBMIwlwnhJF0IZa/m9EyDUX+GA5+V3F3okHEhaQxyTNthiFMHbUCOw3thyIq
-         5m7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbTqGpPgImuTR1QVS1xzPjQGZlt/6xbPSRkVyuuP8ygsaTHzHYnzZVCgJqmQ04lZVE4l9JlKkkY2FWQifzFA==@vger.kernel.org, AJvYcCUt3yYZfzQgNC6ft9dx7ZPedssoX/YSK3q7hiawkHozztDFUkiHAkllZtOWSvk4/xNkmC+YKKV+vPwMlg==@vger.kernel.org, AJvYcCW+ZlibOMZVMUKQRrwW3ciW7OfvC2d7UdKOl5w2wOhmcaXpeKrKIA1HY5spis6l0rP/5UnPkM3nudzjDpI=@vger.kernel.org, AJvYcCXvudKq0MDdYKXIWd8Sc/11s/OoCjSxfZM9uSJJa3Gkkcp7M4Jp5K5yVZjaXG5Ik3UgI0wV7TwOzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLv5BPQ2dp8BJ8jLZaVuVFMBuKoJ/IhNAN4M+QAWgxAiFZjR4E
-	F254AVM7v0yxI8DYFIAyqm4pu76ioZbLOmIWY/KEdXEb+jYkNpjx
-X-Gm-Gg: ASbGncuDYF9896DyuCBg5rZfpi8/pJLDwDc1B1NL4EVWMQj9yuH6XR+pKA6PNo52+yu
-	TU4I8JlSPRhN3i2mS041Xf3TPowEtBgyYfM8JWTXRus1aTmUSNedAKO94fS33/6YBkublrrfdAM
-	7aLFOpMsICb5iqzKgzvl8FPpiByFf+VYK+/cFaYjz0sZUIIPR5/owcPlyFEwOOreE/Ae99s0ssM
-	8ZxN0zbHDESiKBPw0eDjjWAAZqHEgjUW/9SnUB4RHWSHkFHoO7WstsToBPajQ==
-X-Google-Smtp-Source: AGHT+IFsufWWnsFArYdPuvs9Ad81sVtZ17075H7eNLYpimFeYT75Kvd58Sonb/NBCuJN36c+6qQFJg==
-X-Received: by 2002:a17:906:1da9:b0:aa5:274b:60e9 with SMTP id a640c23a62f3a-aa580f4df12mr158891366b.33.1732706597304;
-        Wed, 27 Nov 2024 03:23:17 -0800 (PST)
-Received: from [192.168.42.127] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5372002aasm536402466b.66.2024.11.27.03.23.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 03:23:16 -0800 (PST)
-Message-ID: <6c870f8d-6293-4d4b-be2b-f0e221cd103f@gmail.com>
-Date: Wed, 27 Nov 2024 11:24:03 +0000
+	s=arc-20240116; t=1732708560; c=relaxed/simple;
+	bh=AS0fqCpZez9MQZoP17NfqIvBNcLyWvTeUem59mtncb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIlDd1cF2+3MOwdPmdBOdBrvj+De20/1e/rLunAjIrIvCHOJDenZjaZaBRzQ6dl00ILq2mLRloQfEqEMZCJkqK2BiyCvsDuL1nCJFPJ0cjwqnqpwD6I+3/M1hnjlTEcosrCoOWLwcVZQO9aShrxVisEaYBYICBumrcV7hp3XeWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b2R4VYZh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732708557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EAuGY7uo2VzmKZwEMUSolagvh7kfqhqchgraIgCqyKk=;
+	b=b2R4VYZhvRhzdlMCn8Nd+BnqifvNjdTBGDKFMxHCemeUjN6NqdMgfVlYLVONc+XqgjQ8kD
+	djT7GMAgEjyLGokd69Klj304GYagV9NysgoXt71YQ4Rz23QjY6f/8VL62GkBMJ1IrQHxmu
+	etHDuv3+FHuN1NggVgfDdB9FFQJEqJo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-IvGzQ0E8Nua4bG8MX5F6qA-1; Wed,
+ 27 Nov 2024 06:55:55 -0500
+X-MC-Unique: IvGzQ0E8Nua4bG8MX5F6qA-1
+X-Mimecast-MFC-AGG-ID: IvGzQ0E8Nua4bG8MX5F6qA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0B9B19560BD;
+	Wed, 27 Nov 2024 11:55:53 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.225.12])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 194B11956086;
+	Wed, 27 Nov 2024 11:55:50 +0000 (UTC)
+Date: Wed, 27 Nov 2024 12:55:47 +0100
+From: Karel Zak <kzak@redhat.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Hongbo Li <lihongbo22@huawei.com>, linux-um@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Benjamin Berg <benjamin@sipsolutions.net>, rrs@debian.org
+Subject: Re: UML mount failure with Linux 6.11
+Message-ID: <dywzjfeburew25fitcwspay7i4ckynhehpuvtmsi2k6b4ip7wd@xfcbztze47q6>
+References: <0ce95bbf-5e83-44a3-8d1a-b8c61141c0a7@huawei.com>
+ <420d651a262e62a15d28d9b28a8dbc503fec5677.camel@sipsolutions.net>
+ <f562158e-a113-4272-8be7-69b66a3ac343@huawei.com>
+ <ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+ <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+ <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+ <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
+ <3d5e772c-7f13-4557-82ff-73e29a501466@huawei.com>
+ <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
+ <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
- and PI support
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
- martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
- jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241125070633.8042-1-anuj20.g@samsung.com>
- <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
- <20241125070633.8042-7-anuj20.g@samsung.com>
- <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
- <20241126135423.GB22537@green245>
- <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
- <20241127094644.GC22537@green245>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241127094644.GC22537@green245>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 11/27/24 09:46, Anuj Gupta wrote:
-> On Tue, Nov 26, 2024 at 03:45:09PM +0000, Pavel Begunkov wrote:
->> On 11/26/24 13:54, Anuj Gupta wrote:
->>> On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
->>>> On 11/25/24 07:06, Anuj Gupta wrote:
->>
->> Hmm, I have doubts it's going to work well because the union
->> members have different sizes. Adding a new type could grow
->> struct io_uring_attr, which is already bad for uapi. And it
->> can't be stacked:
->>
+On Tue, Nov 26, 2024 at 02:50:38PM GMT, Johannes Berg wrote:
+> On Mon, 2024-11-25 at 18:43 +0100, Karel Zak wrote:
+> > 
+> > The long-term solution would be to clean up hostfs and use named
+> > variables, such as "mount -t hostfs none -o 'path="/home/hostfs"'.
 > 
-> How about something like this [1]. I have removed the io_uring_attr
-> structure, and with the mask scheme the user would pass attributes in
-> order of their types. Do you still see some cracks?
+> That's what Hongbo's commit *did*, afaict, but it is a regression.
+> 
+> Now most of the regression is that with fsconfig() call it was no longer
+> possible to specify a bare folder, and then we got discussing what
+> happens if the folder name actually contains a comma...
+> 
+> But this is still a regression, so we need to figure out what to do
+> short term?
 
-Looks good to me
+I will add support for quotes for unnamed options, so that
+"/home/hostfs,dir" will be treated as a single option for libmount.
 
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-...
-> +static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
-> +			 u64 attr_ptr, u64 attr_type_mask)
-> +{
-> +	struct io_uring_attr_pi pi_attr;
-> +	struct io_async_rw *io;
-> +	int ret;
-> +
-> +	if (copy_from_user(&pi_attr, u64_to_user_ptr(attr_ptr),
-> +	    sizeof(pi_attr)))
-> +		return -EFAULT;
-> +
-> +	if (pi_attr.rsvd)
-> +		return -EINVAL;
-> +
-> +	io = req->async_data;
-> +	io->meta.flags = pi_attr.flags;
-> +	io->meta.app_tag = pi_attr.app_tag;
-> +	io->meta.seed = READ_ONCE(pi_attr.seed);
+I am unsure how to resolve this issue without using quotes, as we need
+a method to distinguish between a path with a comma and other options.
 
-Seems an unnecessary READ_ONCE slipped here
+> Ignoring the "path with comma" issue, because we can't even fix that in
+> the kernel given what you describe changed in userspace, we can probably
+> only
+> 
+>  1) revert the hostfs conversion to the new API, or
+>  2) somehow not require the hostfs= key?
 
-> +	ret = import_ubuf(ddir, u64_to_user_ptr(pi_attr.addr),
-> +			  pi_attr.len, &io->meta.iter);
-> +	if (unlikely(ret < 0))
-> +		return ret;
-> +	rw->kiocb.ki_flags |= IOCB_HAS_METADATA;
-> +	io_meta_save_state(io);
-> +	return ret;
-> +}
-...
+The hostfs= key is likely the most reliable method to use fsconfig().
+The goal should be to get from userspace:
+
+    fsconfig(fs, FSCONFIG_SET_STRING, "hostfs", "/home/hostfs,dir");
+
+I can add a temporary workaround to libmount for hostfs, which will
+automatically add the hostfs= key for unnamed paths. This will allow
+you to receive the expected fsconfig() data from userspace.
+
+If we will go this way, then it would be nice to update hostfs docs to
+motivate users to use hostfs="" in configuration, and I will probably
+add later a warning to mount(8) to force users to use hostfs="" key.
+
+Does it make sense?
+
+> Fixing the regression fully (including for paths containing commas)
+> probably also requires userspace changes. If you don't want to make
+> those we can only point to your workarounds instead, since we can't do
+> anything on the kernel side.
+
+I am open to temporary FS-specific libmount workarounds, but I would
+like to see a long-term solution and plan on how to encourage users to
+use it.
+
+> I don't know the fsconfig() API, is it possible to have key-less or
+> value-less calls? What does happen 
+
+The key is always required; otherwise, you will receive an -EINVAL error.
+https://github.com/torvalds/linux/blob/master/fs/fsopen.c#L369
+
+    Karel
 
 -- 
-Pavel Begunkov
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
 
