@@ -1,85 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-35978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-35979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630049DA771
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:10:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11893164F34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 12:10:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209651FBC82;
-	Wed, 27 Nov 2024 12:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="z1nDNSfD"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8C89DA79C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 13:18:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D438E1FA829
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2024 12:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CE52B2BF34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2024 12:11:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003021FBC93;
+	Wed, 27 Nov 2024 12:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7iGE4Bp"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A7A1FAC33;
+	Wed, 27 Nov 2024 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709414; cv=none; b=P5XrL0f7I2i7L8OXkpsfEH9phXnY3+duQ5RomNpAnmx7yKjuEVcuvIB6g31LaksETQm27JeTveU/hSmSAAnBn+VjSZ8raRH62jbp5RXMsE5s1HgzpnlR6p3OIbViC/nQ1M0Eqy1ZiGH4o6DAWl/uf7UM77RfHsKAaKg6AcjHrSY=
+	t=1732709489; cv=none; b=E3AmP+srXjPhiUOv6rl3KCN9HGOhGS8HEaMpMSKWFxCSPH2HJLuunVxvM146NahuMf84m3jN0sFLO+ayXmr+SqrqgSHkB0Ka+vn2CpEz6B9an2bRIGeLJaV3HeeF+SZSlNqLszRiUBTVgopdtYsXVsHBaVeJ45FGLIMwL/wAkYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709414; c=relaxed/simple;
-	bh=iL9L2yvqBC7QBxFr60b9hN1d56U3FPt5NB22f54JlZE=;
+	s=arc-20240116; t=1732709489; c=relaxed/simple;
+	bh=dqWgDeXEGSRxykq4pDLI8kHlq98XWyHJixML/bBW9a0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sILv6f8RohCmGHPaOty1N/Z3YJgEC5is/Vo5LWjQxBmtvkT1SMnoZLmmT/Rcs3qk+6ZW5Q8+yq6u7QOaIOTS+68ubupRdawGcgEFg3i56/Qg+rzy/b8iMu9yiz6YM6Uz5rd8YWRczjaFR6XeCO0JwiQ6FyyjtpxfAD413kHG2GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=z1nDNSfD; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xyyth2dkrz41Z;
-	Wed, 27 Nov 2024 13:10:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732709404;
-	bh=eaKW65KI9A4QWlkoj9p8ZqojNDFsLmXT/WQoZnFsFi4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzhohFRjnk8pBJQU2sxFRWpJnson68vn7afbdWFBX4q8S1sPfbfjkjntcY4iR8lfBdmEM5VFMlTATYp+txKOso5umkthyGS5nIaF/r6inI6rocxDfS5QAQw977HJmBzhnej1FUxLBhgIfRpqnA9U6eGCRdxJngcSR6qIroPAXUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7iGE4Bp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CF6C4CECC;
+	Wed, 27 Nov 2024 12:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732709488;
+	bh=dqWgDeXEGSRxykq4pDLI8kHlq98XWyHJixML/bBW9a0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=z1nDNSfDg8/hBzUqX3ND2eBcdGPY0I9VFQ7uecWNWsXIjKccfI9h5bzk/YwjONaUY
-	 F6ZVNzQLzkfp8vDEcetAyqgAdma7/LWhN950mzLoaG/ViuhXt0nFJUuAuvOCupiWmr
-	 2456DcNFx8quafajuekQEQoGZa5dDLRuchrtSIFk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xyytg25xszfTJ;
-	Wed, 27 Nov 2024 13:10:03 +0100 (CET)
-Date: Wed, 27 Nov 2024 13:10:01 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
- interpreter and 28 tests
-Message-ID: <20241127.Ob8DaeR9xaul@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
- <20241112191858.162021-7-mic@digikod.net>
- <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
- <20241122.ahY1pooz1ing@digikod.net>
- <623f89b4de41ac14e0e48e106b846abc9e9d70cf.camel@linux.ibm.com>
+	b=m7iGE4BpYB+iIEUPgptl983fxACfuA9gJgPj8pBHlXtKbxhREiwmi4DjeIPYbaXF0
+	 EPCFXJ/AaqlooFbYtzYZflSKOviGNU1IVQir63r/iOgN8s9sp6UfZvh6RzCcmPGOh5
+	 ZfvwuiGkwDRZHIwOmh8h2Ik5jpRnXNKZEHnwF+9M9Zlk+jeTOturk6LpkqTB66rUNn
+	 wJYSdG3cMLljO+xRjooflTGnk4MV70YZZPbaBo4Sjaq3bFGRKQZWxFnpzy0Xb1ZXwd
+	 Max0GHx3mC9gUiRm4iKaJc6BI67wf7udPoi6cr7ZW6tizaEPP/w7TBkgi4RCYxFe7R
+	 uomR120OYghzw==
+Date: Wed, 27 Nov 2024 13:11:23 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, 
+	regressions@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>, 
+	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Rui Ueyama <rui314@gmail.com>
+Subject: Re: [REGRESSION] mold linker depends on ETXTBSY, but open(2) no
+ longer returns it
+Message-ID: <20241127-frisst-anekdote-3e6d724cb311@brauner>
+References: <CACKH++YAtEMYu2nTLUyfmxZoGO37fqogKMDkBpddmNaz5HE6ng@mail.gmail.com>
+ <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info>
+ <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,69 +65,109 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <623f89b4de41ac14e0e48e106b846abc9e9d70cf.camel@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
 
-On Tue, Nov 26, 2024 at 12:41:45PM -0500, Mimi Zohar wrote:
-> On Fri, 2024-11-22 at 15:50 +0100, Mickaël Salaün wrote:
-> > On Thu, Nov 21, 2024 at 03:34:47PM -0500, Mimi Zohar wrote:
-> > > Hi Mickaël,
-> > > 
-> > > On Tue, 2024-11-12 at 20:18 +0100, Mickaël Salaün wrote:
-> > > > 
-> > > > +
-> > > > +/* Returns 1 on error, 0 otherwise. */
-> > > > +static int interpret_stream(FILE *script, char *const script_name,
-> > > > +			    char *const *const envp, const bool restrict_stream)
-> > > > +{
-> > > > +	int err;
-> > > > +	char *const script_argv[] = { script_name, NULL };
-> > > > +	char buf[128] = {};
-> > > > +	size_t buf_size = sizeof(buf);
-> > > > +
-> > > > +	/*
-> > > > +	 * We pass a valid argv and envp to the kernel to emulate a native
-> > > > +	 * script execution.  We must use the script file descriptor instead of
-> > > > +	 * the script path name to avoid race conditions.
-> > > > +	 */
-> > > > +	err = execveat(fileno(script), "", script_argv, envp,
-> > > > +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> > > 
-> > > At least with v20, the AT_CHECK always was being set, independent of whether
-> > > set-exec.c set it.  I'll re-test with v21.
-> > 
-> > AT_EXECVE_CEHCK should always be set, only the interpretation of the
-> > result should be relative to securebits.  This is highlighted in the
-> > documentation.
-> 
-> Sure, that sounds correct.  With an IMA-appraisal policy, any unsigned script
-> with the is_check flag set now emits an "cause=IMA-signature-required" audit
-> message.  However since IMA-appraisal isn't enforcing file signatures, this
-> sounds wrong.
-> 
-> New audit messages like "IMA-signature-required-by-interpreter" and "IMA-
-> signature-not-required-by-interpreter" would need to be defined based on the
-> SECBIT_EXEC_RESTRICT_FILE.
+On Wed, Nov 27, 2024 at 07:33:53AM +0900, Rui Ueyama wrote:
+> On Mon, Nov 11, 2024 at 9:02 PM Thorsten Leemhuis
+> <regressions@leemhuis.info> wrote:
+> >
+> > [adding a few CCs, dropping stable]
+> >
+> > On 28.10.24 12:15, Rui Ueyama wrote:
+> > > I'm the creator and the maintainer of the mold linker
+> > > (https://github.com/rui314/mold). Recently, we discovered that mold
+> > > started causing process crashes in certain situations due to a change
+> > > in the Linux kernel. Here are the details:
+> > >
+> > > - In general, overwriting an existing file is much faster than
+> > > creating an empty file and writing to it on Linux, so mold attempts to
+> > > reuse an existing executable file if it exists.
+> > >
+> > > - If a program is running, opening the executable file for writing
+> > > previously failed with ETXTBSY. If that happens, mold falls back to
+> > > creating a new file.
+> > >
+> > > - However, the Linux kernel recently changed the behavior so that
+> > > writing to an executable file is now always permitted
+> > > (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2a010c412853).
+> >
+> > FWIW, that is 2a010c41285345 ("fs: don't block i_writecount during
+> > exec") [v6.11-rc1] from Christian Brauner.
+> >
+> > > That caused mold to write to an executable file even if there's a
+> > > process running that file. Since changes to mmap'ed files are
+> > > immediately visible to other processes, any processes running that
+> > > file would almost certainly crash in a very mysterious way.
+> > > Identifying the cause of these random crashes took us a few days.
+> > >
+> > > Rejecting writes to an executable file that is currently running is a
+> > > well-known behavior, and Linux had operated that way for a very long
+> > > time. So, I don’t believe relying on this behavior was our mistake;
+> > > rather, I see this as a regression in the Linux kernel.
+> > >
+> > > Here is a bug report to the mold linker:
+> > > https://github.com/rui314/mold/issues/1361
+> >
+> > Thx for the report. I might be missing something, but from here it looks
+> > like nothing happened. So please allow me to ask:
+> >
+> > What's the status? Did anyone look into this? Is this sill happening?
 
-It makes sense.  Could you please send a patch for these
-IMA-*-interpreter changes?  I'll include it in the next series.
+Linus, it seems that the mold linker relies on the deny_write_access()
+mechanism for executables. The mold linker tries to open a file for
+writing and if ETXTBSY is returned mold falls back to creating a new
+file.
 
-> 
-> 
-> > > 
-> > > > +	if (err && restrict_stream) {
-> > > > +		perror("ERROR: Script execution check");
-> > > > +		return 1;
-> > > > +	}
-> > > > +
-> > > > +	/* Reads script. */
-> > > > +	buf_size = fread(buf, 1, buf_size - 1, script);
-> > > > +	return interpret_buffer(buf, buf_size);
-> > > > +}
-> > > > +
-> > > 
-> > > 
-> > 
-> 
-> 
+There is now a fix in mold upstream in
+https://github.com/rui314/mold/commit/8e4f7b53832d8af4f48a633a8385cbc932d1944e
+
+However, mold upstream still insists on a revert (no judgement on my
+part in case that sentence is misinterpreted).
+
+Note, that the revert will cause issues for the fanotify pre-content
+hook patch series in [1] which was the cause for the removal of the
+deny_write_access() protection for executables so that on page faults
+the contents of executables could be filled-in by userspace. This is
+useful when dealing with very large executables and is apparently used
+by Meta.
+
+[1]: https://lore.kernel.org/r/20241121112218.8249-1-jack@suse.cz
+
+While Amir tells me that they may have a way around this I expect this
+to be hacky.
+
+This will also trigger a revert/rework of the LTP testsuite which has
+adapted various tests to the deny_write_access() removal for
+executables.
+
+There's been some delay in responding to this after my initial comment
+on Github because I entered into a month of sickness. So I just got
+reminded of this issue now. In any case, here's a tag that you can pull
+if you agree with the revert. 
+
+The following changes since commit 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5:
+
+  Merge tag 'for-6.13/dm-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm (2024-11-25 18:54:00 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.exec.deny_write_access.revert
+
+for you to fetch changes up to 3b832035387ff508fdcf0fba66701afc78f79e3d:
+
+  Revert "fs: don't block i_writecount during exec" (2024-11-27 12:51:30 +0100)
+
+----------------------------------------------------------------
+vfs-6.13.exec.deny_write_access.revert
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Revert "fs: don't block i_writecount during exec"
+
+ fs/binfmt_elf.c       |  2 ++
+ fs/binfmt_elf_fdpic.c |  5 ++++-
+ fs/binfmt_misc.c      |  7 +++++--
+ fs/exec.c             | 23 +++++++++++++++--------
+ kernel/fork.c         | 26 +++++++++++++++++++++++---
+ 5 files changed, 49 insertions(+), 14 deletions(-)
 
