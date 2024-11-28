@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-36058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AFC9DB554
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 11:08:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB17D9DB55A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 11:09:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97695283129
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372C0169B34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34806196C7C;
-	Thu, 28 Nov 2024 10:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BA5199FBF;
+	Thu, 28 Nov 2024 10:07:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1683D18B495;
-	Thu, 28 Nov 2024 10:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71BF1922FA;
+	Thu, 28 Nov 2024 10:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732788474; cv=none; b=OLvAavUzi4rCLcX08tIlB9zsKrToDP0JNEoxnvLUYbCsQQT4/TIcoIbZAwiLBCeNc913LIR+asnflgkjbvrBmzo3C90H0LWPr/PYZvn+iQxwsYcAwK9pLVzvFnJZO+yQL5nT3u6AgUgZZSpZBcc2IGV9QEAH6tY1SeUWV1ub/sE=
+	t=1732788477; cv=none; b=M17pRloEyiQmdywkm+lWC2vRvavYCtKmD9mo9fvqoBakHmbSWg02BHL0JCF7bjNoBYcVxJMbTus0FWPgVCiocxcIQClZ/pnhxIjEYoJLzbsQGiqRsta6lJkrQG1i2HDqfv2Uf5R5ITXuR18F7x/Ocmj7twcPAkSrAeBl/5PSBaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732788474; c=relaxed/simple;
-	bh=xRRIuZ9kFkonOepYI1GvHgFa5dc2Ba237bKKwbLQHgo=;
+	s=arc-20240116; t=1732788477; c=relaxed/simple;
+	bh=F/+paQrCzgnUEe9H/qWGDdTSwyqz6J+WBIAfJTb6Gt0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eY7lWRlOrUpSWH7dHVZ+ZqGCadcO3DVxla2NNoqFO/wg12UirK51S0uJ+N8/y9KJFLHdg/YAQfZ9s012s3DHyYyWK7c9WK2ISbcKNTIsJI81IyZV3JWvhBcYjg4iAQ5WsKDXTIoJKpJ/C4P1t2Icq2bdpx3Ke4Z3+dTTm1iaL0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+	 MIME-Version; b=arffmYJLi3gLmyuQPcp/VzcoLGWHBsb3VQ6UmSBZGBIY0R1h1vVg66mAanGlGRQQrRZy9KJtPQTsV7qLkQFuW3MexdRcEvw1V7xLwKTdGaLmUyfmnzOJ6UJF4ZZm8IgS59WVKHQJ1/0HQwnLQdbz1GTXnzKfWrd/A09N55lEt8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XzWfv1J8pz9v7NM;
-	Thu, 28 Nov 2024 17:46:47 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XzWWZ24zQz9v7JQ;
+	Thu, 28 Nov 2024 17:40:26 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id B9B0C140393;
-	Thu, 28 Nov 2024 18:07:44 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id E92AE1402C4;
+	Thu, 28 Nov 2024 18:07:52 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAnj365QEhn6eNzAg--.15234S8;
-	Thu, 28 Nov 2024 11:07:44 +0100 (CET)
+	by APP2 (Coremail) with SMTP id GxC2BwAnj365QEhn6eNzAg--.15234S9;
+	Thu, 28 Nov 2024 11:07:52 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -54,9 +54,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	stable@vger.kernel.org
-Subject: [PATCH v2 6/7] ima: Discard files opened with O_PATH
-Date: Thu, 28 Nov 2024 11:06:19 +0100
-Message-ID: <20241128100621.461743-7-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v2 7/7] ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
+Date: Thu, 28 Nov 2024 11:06:20 +0100
+Message-ID: <20241128100621.461743-8-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.47.0.118.gfd3785337b
 In-Reply-To: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
 References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
@@ -67,10 +67,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwAnj365QEhn6eNzAg--.15234S8
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFyUArWDJw15CrykJr48Xrb_yoW8Wr4xpa
-	9xWa4rKr95JFy0kFs5Gay2kayrKFWxKr4Uuan5WanIv3ZxXr9Ygr4fJr1UuFyfJFyYyr40
-	vr1akrWaya1qy3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:GxC2BwAnj365QEhn6eNzAg--.15234S9
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zry8Zw1xXF4xGw18Ary7ZFb_yoW5Jr17pa
+	9a9FyUGr40qFyIkrn3JF1aka48K3y29FWUXa15Cw1vyFsxXr1UZFyDtr17CF98Wr1SkFy2
+	qF9Iq34Yva1qyaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -85,48 +85,59 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7CFyUArWDJw15CrykJr48Xrb_yoW8Wr4xpa
 	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
 	AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
 	pf9x07jhXo7UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGdH1TUCnAAAsa
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBGdH1XMCrAABsu
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-According to man open.2, files opened with O_PATH are not really opened. The
-obtained file descriptor is used to indicate a location in the filesystem
-tree and to perform operations that act purely at the file descriptor
-level.
+Commit 11c60f23ed13 ("integrity: Remove unused macro
+IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
+not being used after commit 0d73a55208e9 ("ima: re-introduce own integrity
+cache lock").
 
-Thus, ignore open() syscalls with O_PATH, since IMA cares about file data.
+However, it seems that the latter commit mistakenly used the wrong mask
+when moving the code from ima_inode_post_setattr() to
+process_measurement(). There is no mention in the commit message about this
+change and it looks quite important, since changing from IMA_ACTIONS_FLAGS
+(later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done by
+commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
 
-Cc: stable@vger.kernel.org # v2.6.39.x
-Fixes: 1abf0c718f15a ("New kind of open files - "location only".")
+Restore the original change, but with new mask 0xfb000000 since the
+policy-specific flags changed meanwhile, and rename IMA_ACTION_RULE_FLAGS
+to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
+
+Cc: stable@vger.kernel.org # v4.16.x
+Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAGS")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima.h      | 1 +
+ security/integrity/ima/ima_main.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 22c3b87cfcac..32ffef2cc92a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -141,6 +141,7 @@ struct ima_kexec_hdr {
+ 
+ /* IMA iint policy rule cache flags */
+ #define IMA_NONACTION_FLAGS	0xff000000
++#define IMA_NONACTION_RULE_FLAGS	0xfb000000
+ #define IMA_DIGSIG_REQUIRED	0x01000000
+ #define IMA_PERMIT_DIRECTIO	0x02000000
+ #define IMA_NEW_FILE		0x04000000
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 50b37420ea2c..712c3a522e6c 100644
+index 712c3a522e6c..83e467ad18d4 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -202,7 +202,8 @@ static void ima_file_free(struct file *file)
- 	struct inode *inode = file_inode(file);
- 	struct ima_iint_cache *iint;
+@@ -277,7 +277,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 		/* reset appraisal flags if ima_inode_post_setattr was called */
+ 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+ 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+-				 IMA_NONACTION_FLAGS);
++				 IMA_NONACTION_RULE_FLAGS);
  
--	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-+	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-+	    (file->f_flags & O_PATH))
- 		return;
- 
- 	iint = ima_iint_find(inode);
-@@ -232,7 +233,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	enum hash_algo hash_algo;
- 	unsigned int allowed_algos = 0;
- 
--	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-+	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-+	    (file->f_flags & O_PATH))
- 		return 0;
- 
- 	/* Return an IMA_MEASURE, IMA_APPRAISE, IMA_AUDIT action
+ 	/*
+ 	 * Re-evaulate the file if either the xattr has changed or the
 -- 
 2.47.0.118.gfd3785337b
 
