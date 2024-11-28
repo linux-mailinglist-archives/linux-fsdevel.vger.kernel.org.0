@@ -1,54 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-36037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1499DB1DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 04:24:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4AA9DB1F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 04:34:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264FC2825FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 03:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5F816731A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 03:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD9A13AD05;
-	Thu, 28 Nov 2024 03:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2954884A5E;
+	Thu, 28 Nov 2024 03:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QFqkrrqv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B87D136347;
-	Thu, 28 Nov 2024 03:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F52B2CAB;
+	Thu, 28 Nov 2024 03:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732764253; cv=none; b=SUVtALjmEhjUyuqel/mm/U6L9lNoBdK/EhwPn8cosbnHvdtjylvfA7cIzti4buiBcfCdgrzTBxmcsKdidoavF9dnBZ8DIr8X2d95fjG44mNhM9KDe8EhXEv9Liiemm4h4Ybx1sijWgEcnksd9QmFgiQ2P8UG8tykbgg2DrqZanY=
+	t=1732764835; cv=none; b=Xxhg9CGON9rEHUw2b0DsPXLLF+T5jv79kAYcahJdQzV5xf4wC6poPa8oCf5nxS5Oir3ivitSuw3Am9YF4DmonYuphjdUw7TcdUVcKwwnhMN3UgF5dqqVeC9RNvDU9oyfAPlXC/vzGkx2kwv4wwacVP+v3SyWqDG0CS/ZI80ZBkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732764253; c=relaxed/simple;
-	bh=GjrYbIqDLjzEu/3MrAlo7GkbrNx154BJtAs7kIh4PFA=;
+	s=arc-20240116; t=1732764835; c=relaxed/simple;
+	bh=dvbIFmLuqxy4v7rEGoU4I+r+KUMkEgIFQflgiBhS1aE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjR/+syu0g3+3Y2BuPaJQCtLB552Pg8qm0ZReQ3xWZoxrjz32B/FP6xSAJNXbws3qGjmQozUYswGq2wnlm2417dARhQ++GgAKxWHu8sTbY6a+vN7+fUyk+LB7cklJE2Y8RaKOjK190U5q0GnPz4EWmwzMtUOHpGh4g6BgO04B7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8037868D05; Thu, 28 Nov 2024 04:24:04 +0100 (CET)
-Date: Thu, 28 Nov 2024 04:24:04 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Nitesh Shetty <nj.shetty@samsung.com>,
-	Javier Gonzalez <javier.gonz@samsung.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@meta.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"joshi.k@samsung.com" <joshi.k@samsung.com>
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-Message-ID: <20241128032404.GA12440@lst.de>
-References: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local> <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org> <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local> <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org> <20241112135233.2iwgwe443rnuivyb@ubuntu> <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com> <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org> <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com> <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org> <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnkwuHQNmUFXaWIfYN/MXCcr430Zy1J7ZO6qKcgcU0rMRMqDaUmJ0jhR4VfEwjwv3ciVMvbIkJQOltwsROMsOfYZNGcMR6GkKyUGfD7JMgd6Eg//ERC59xPba8avd2ANlGvErJLlGSn2m4U7p5N3yTi50NvIQptKLtuWd8QTsDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QFqkrrqv; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dvbIFmLuqxy4v7rEGoU4I+r+KUMkEgIFQflgiBhS1aE=; b=QFqkrrqvp/sEjh7cTW7atHCRxE
+	vNm8sixG8c/y86eCL6dwNBCbnQWKioR6hDVm0bPWMNv/ipW60jU+w6oBVfg18Kvk7T3u9Cb8+BrUa
+	191zwAJdijD+bvOrRv+BZuQ7EM8gdTRs2ijP0wvFA6Bgq6QFv0u5SZOfYHKpXiVCcdjzjTQZGIMQh
+	muYFmXzBV9BLZU7e7sZpNTHwQb1NUF481gQ7zae+DVXTfFGiFCh16fdo5xJMyfzPhkupDvSLoiX8c
+	JcDUEaeSXNCNygSj2FbW8ppM6/UCt+c3ItbwXCbVOhcb46N68//goqaGxxNxrFp36j/8FT2pFw0n3
+	cUt0PYGw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGVHr-0000000Ed3K-4B0A;
+	Thu, 28 Nov 2024 03:33:51 +0000
+Date: Wed, 27 Nov 2024 19:33:51 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Long Li <leo.lilong@huawei.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z0fknwDTlm55XeTg@infradead.org>
+References: <20241127063503.2200005-1-leo.lilong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,17 +62,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241127063503.2200005-1-leo.lilong@huawei.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Nov 27, 2024 at 03:14:09PM -0500, Martin K. Petersen wrote:
-> How do you copy a block range without offload? You perform a READ to
-> read the data into memory. And once the READ completes, you do a WRITE
-> of the data to the new location.
+I agree with Darrick that the graphic comment would be nice to keep,
+but otherwise this looks good:
 
-Yes.  I.e. this is code that makes this pattern very clearm and for
-which I'd love to be able to use copy offload when available:
-
-http://git.infradead.org/?p=users/hch/xfs.git;a=blob;f=fs/xfs/xfs_zone_gc.c;h=ed8aa08b3c18d50afe79326e697d83e09542a9b6;hb=refs/heads/xfs-zoned#l820
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
