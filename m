@@ -1,205 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-36104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA369DBBA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 18:07:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199FA9DBBA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 18:10:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C412B20E93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 17:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A4201640F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 17:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978FD1C07E2;
-	Thu, 28 Nov 2024 17:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016001C07EA;
+	Thu, 28 Nov 2024 17:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWANCEqQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNT7+kf+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LmQcOHXA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNT7+kf+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LmQcOHXA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3D9463;
-	Thu, 28 Nov 2024 17:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3113C9463;
+	Thu, 28 Nov 2024 17:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732813619; cv=none; b=NqvefSNeUvqHlG6Bsgp9XfR30hSgeBx1a8rX95YVa2tf1pGrKO6isQr9PTZ3PxS84UN/Ely8sFDmkalfAUvK3qG1uD0XJkJSXXxa5RYo3vXMZeY4hvQt6JhHlnRsdr3H9aaaDPDrXGLyaATH7GLEL50zyQuWCgN9dxCXFVLrgHU=
+	t=1732813810; cv=none; b=s6Qb9bkDiK6TjX7Y5rCQy3v074mbdM+5fybZ/P7hCjS8H3t4o6oakiZeBCYUJuzHWmypk9g/9feW4hAG3EwuC2QOdw55ZRVhOq4WpIm2TV0SafDWvd9ZcZ8fmLVrQdQQx3XrNCt3XHbpJrmwp1x2rbXIE24j+ybsqAjpS78TuFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732813619; c=relaxed/simple;
-	bh=SEHlJifrN0Cs6lY+UEiGhN9+PywenO1OmSKs5+KtEpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dKp1aNoZXqCvW7lwJg3Dpzr5ussPHgFzOV7pP2RjDKx5N4ZLR0pvypewpYtkmdEbHXlyVR7USJyELV+nmvsXuYOA4JXPHwhEpPTKtDU27OxlOec9OGwoY3a+fb8k4mrzDLiNtW0gm8a2aViDF0gkgaMz9ebQlOHtUPDHMP2J9qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWANCEqQ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa53a971480so133976566b.1;
-        Thu, 28 Nov 2024 09:06:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732813615; x=1733418415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWQ8VbEdvjXMUcHdgYXIjQKdG5RqS9Dcs74tC/QMmZ0=;
-        b=PWANCEqQXl6sTrA9NAshVRxNSVDRU+klDQIWhnnJK6Smc+R2egG2WXugFgnQq7MKWO
-         pT4ATw9aNqNaZJsvkMwjjFkFfOjGR/+gWwGAiZ0/3lDHPv1vSfhRiW5oLrf0pWx8ToXr
-         RfG0pGBtO5fTWEBWwBg3dwpEIRxIC7YWQbZbRvYfATJYb0AlC76jOKPOBRBLy2UyI/hZ
-         P/fEMhyYHjWGU5H33b2cXNGzGk84Kf5vNPanfXfWHdHtuC5m8QkDL+iKgtQJcgsldUL0
-         ZPfer3NKdOiR5iH77vw/H2MKG582C4wp43LVMeQe8YowVnAnwYTQy+Fp5XZI00YImh3X
-         udrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732813615; x=1733418415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWQ8VbEdvjXMUcHdgYXIjQKdG5RqS9Dcs74tC/QMmZ0=;
-        b=cfbt58NVWHQou+5IuMwS2aXNMonPNdfWgtsWQNougGIjZ2v9Tf52HMXKBlAaWQ9SdH
-         TwnhGodvZVHPXhQZWISk9iPS37fK40DKVX2Uak330nH7/u/O7+LTIixeyUsB/yTG9Xen
-         5OsJbTdaGojFgPw8D9lEjlRyXr3gL6RCg4dnIaIkEwRkPH4Dmh5TOzppO93+fkKqaEe8
-         AWBMbg3nHYRNWHL6NmQQB9Y+LjtD7pLOLwoduxG0KLAoq/djzPqoFPtKHWbvgkcg7EEc
-         skYG6vZzy/xtj0SUUklLDLcCNaGdaldR3Oum43q9c9nVu5hLQWKlPTUWfst/HUdwBSgG
-         gf0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUb4Gi5VYqiiYb6Fv8OS2svrffkjoD4nfaKzJL1hKZU9rCrN7LL8FXMjGS9W1PkRyQ8djWo8VgrqnzkM2Ew@vger.kernel.org, AJvYcCV8ZV2BVf7EPqgf/u6tljOP50wEVlnylcwNQvBQHPTy0il3iR4rOQ7Gi5kZ6pPZvBe+GBu98oCEBRwv@vger.kernel.org, AJvYcCWjtoVLOQeYkCVFG6cwqojokPZ80pOO515IE/a7iPbrojrFEteVzeQ5pKTfNeQG7a/zW7GoThAY/s/yPbNU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Hj/fjtOYYHRGZAl/HIyr4KTBjS2Ple/Dq454WrDA0IY1UEEm
-	JmHrn2Tnj+naRHRWgp/8sDqwjzyltCxmicYsfA1PxitdXJ/jD+sIMVprZuGCoXs/pqUiaPwoaSi
-	X8Nt1k3DZyO2B1tfl5H/A6gpjGF4=
-X-Gm-Gg: ASbGncsx/Kv1HBq0K0MAGBSzuIqfR/yovXS/UC8gjDeFhrxLAEut9fxxl/N8K3VPJVl
-	50GW+Cl0mqMyoaQBj/HfpNgk/MtHPAf4=
-X-Google-Smtp-Source: AGHT+IFZsoGNSDYLQa6vTS2JV4JwQxRJDWlRt4KfY3J5QfCjMg2n66+/Idb7fucFkckCWow14kxWTN8GyDRosH2HYJI=
-X-Received: by 2002:a17:906:3103:b0:aa5:2c5f:95b0 with SMTP id
- a640c23a62f3a-aa580ef327amr515350766b.8.1732813615124; Thu, 28 Nov 2024
- 09:06:55 -0800 (PST)
+	s=arc-20240116; t=1732813810; c=relaxed/simple;
+	bh=KUzfRDAw+eKIdbSDnrFEicUiHLYpy+wYbsQCTwmp2Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ch4mYjcnuPu3sUK6NdIFqqO4rrC4AFt92izkIHv+jv8+7+hvRQbPXJeBPKZObKWfloMMPSqmQqAcPYu/2SazofYsxO2ngifySJLUro4BCz1h92Pm55TytH9tg0jiErptxLi7EklmqtKXifNghXv/ABFaA5DAd3cbtURmW/ghJSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNT7+kf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LmQcOHXA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNT7+kf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LmQcOHXA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E9F31F79F;
+	Thu, 28 Nov 2024 17:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732813806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
+	b=rNT7+kf+c4whS7Ersp6pzCq5sH1bNKadavpZ7JcdPSX/T2nGBrfakfdd/36moybua5Mc8t
+	nlQx64ILVXBAx37kGDgvmoH469kyjWI24Z5smG7Wo6iS5BTUfn8DYR64uROJ7JCDadlOmD
+	unfkT+mOQyfKnHrrfxx9kdvL+RjJc60=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732813806;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
+	b=LmQcOHXAEYLMJR6vdXY3s14HZb+8txfTm7o4gPaUnHVf1nz1LUghV5dKbECIA20tvb4MMw
+	oFmG6J8CKf4nIfBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732813806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
+	b=rNT7+kf+c4whS7Ersp6pzCq5sH1bNKadavpZ7JcdPSX/T2nGBrfakfdd/36moybua5Mc8t
+	nlQx64ILVXBAx37kGDgvmoH469kyjWI24Z5smG7Wo6iS5BTUfn8DYR64uROJ7JCDadlOmD
+	unfkT+mOQyfKnHrrfxx9kdvL+RjJc60=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732813806;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
+	b=LmQcOHXAEYLMJR6vdXY3s14HZb+8txfTm7o4gPaUnHVf1nz1LUghV5dKbECIA20tvb4MMw
+	oFmG6J8CKf4nIfBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3AC1C13690;
+	Thu, 28 Nov 2024 17:10:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TcNNDu6jSGc2SgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 28 Nov 2024 17:10:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DFCCDA075D; Thu, 28 Nov 2024 18:10:01 +0100 (CET)
+Date: Thu, 28 Nov 2024 18:10:01 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <songliubraving@meta.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Amir Goldstein <amir73il@gmail.com>, Song Liu <song@kernel.org>,
+	bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	LSM List <linux-security-module@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	"repnop@google.com" <repnop@google.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	"gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
+ fiter
+Message-ID: <20241128171001.xamzdpqlumqdqdkl@quack3>
+References: <20241122225958.1775625-1-song@kernel.org>
+ <20241122225958.1775625-3-song@kernel.org>
+ <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
+ <CAADnVQK-6MFdwD_0j-3x2-t8VUjbNJUuGrTXEWJ0ttdpHvtLOA@mail.gmail.com>
+ <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-fragt-rohre-28b21496ecbc@brauner> <20241128-work-pidfs-v1-0-80f267639d98@kernel.org>
-In-Reply-To: <20241128-work-pidfs-v1-0-80f267639d98@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 28 Nov 2024 18:06:44 +0100
-Message-ID: <CAOQ4uxj7-kxT-OrhYuCHr7hCQVwrExTVDrg5SXwZdDnx-wJoSA@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/2] pidfs: file handle preliminaries
-To: Christian Brauner <brauner@kernel.org>
-Cc: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,vger.kernel.org,meta.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,toxicpanda.com,digikod.net];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Nov 28, 2024 at 1:34=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Hey,
->
-> This reworks the inode number allocation for pidfs in order to support
-> file handles properly.
->
-> Recently we received a patchset that aims to enable file handle encoding
-> and decoding via name_to_handle_at(2) and open_by_handle_at(2).
->
-> A crucical step in the patch series is how to go from inode number to
-> struct pid without leaking information into unprivileged contexts. The
-> issue is that in order to find a struct pid the pid number in the
-> initial pid namespace must be encoded into the file handle via
-> name_to_handle_at(2). This can be used by containers using a separate
-> pid namespace to learn what the pid number of a given process in the
-> initial pid namespace is. While this is a weak information leak it could
-> be used in various exploits and in general is an ugly wart in the
-> design.
->
-> To solve this problem a new way is needed to lookup a struct pid based
-> on the inode number allocated for that struct pid. The other part is to
-> remove the custom inode number allocation on 32bit systems that is also
-> an ugly wart that should go away.
->
-> So, a new scheme is used that I was discusssing with Tejun some time
-> back. A cyclic ida is used for the lower 32 bits and a the high 32 bits
-> are used for the generation number. This gives a 64 bit inode number
-> that is unique on both 32 bit and 64 bit. The lower 32 bit number is
-> recycled slowly and can be used to lookup struct pids.
->
-> So after applying the pidfs file handle series at
-> https://lore.kernel.org/r/20241101135452.19359-1-erin.shepherd@e43.eu on
-> top of the patches here we should be able to simplify encoding and
-> decoding to something like:
->
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index e71294d3d607..a38b833a2d38 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -78,7 +78,7 @@ void pidfs_remove_pid(struct pid *pid)
->  }
->
->  /* Find a struct pid based on the inode number. */
-> -static __maybe_unused struct pid *pidfs_ino_get_pid(u64 ino)
-> +static struct pid *pidfs_ino_get_pid(u64 ino)
->  {
->         ino_t pid_ino =3D pidfs_ino(ino);
->         u32 gen =3D pidfs_gen(ino);
-> @@ -475,49 +475,37 @@ static const struct dentry_operations pidfs_dentry_=
-operations =3D {
->         .d_prune        =3D stashed_dentry_prune,
->  };
->
-> -#define PIDFD_FID_LEN 3
-> -
-> -struct pidfd_fid {
-> -       u64 ino;
-> -       s32 pid;
-> -} __packed;
-> -
-> -static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-> +static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
->                            struct inode *parent)
->  {
->         struct pid *pid =3D inode->i_private;
-> -       struct pidfd_fid *fid =3D (struct pidfd_fid *)fh;
->
-> -       if (*max_len < PIDFD_FID_LEN) {
-> -               *max_len =3D PIDFD_FID_LEN;
-> +       if (*max_len < 2) {
-> +               *max_len =3D 2;
->                 return FILEID_INVALID;
->         }
->
-> -       fid->ino =3D pid->ino;
-> -       fid->pid =3D pid_nr(pid);
-> -       *max_len =3D PIDFD_FID_LEN;
-> +       *max_len =3D 2;
-> +       *(u64 *)fh =3D pid->ino;
->         return FILEID_INO64_GEN;
+On Wed 27-11-24 02:16:09, Song Liu wrote:
+> > On Nov 26, 2024, at 4:50 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> > 
+> 
+> [...]
+> 
+> >>> +
+> >>> +static void sample_filter_free(struct fanotify_filter_hook *filter_hook)
+> >>> +{
+> >>> +       struct fan_filter_sample_data *data = filter_hook->data;
+> >>> +
+> >>> +       path_put(&data->subtree_path);
+> >>> +       kfree(data);
+> >>> +}
+> >>> +
+> >> 
+> >> Hi Song,
+> >> 
+> >> This example looks fine but it raises a question.
+> >> This filter will keep the mount of subtree_path busy until the group is closed
+> >> or the filter is detached.
+> >> This is probably fine for many services that keep the mount busy anyway.
+> >> 
+> >> But what if this wasn't the intention?
+> >> What if an Anti-malware engine that watches all mounts wanted to use that
+> >> for configuring some ignore/block subtree filters?
+> >> 
+> >> One way would be to use a is_subtree() variant that looks for a
+> >> subtree root inode
+> >> number and then verifies it with a subtree root fid.
+> >> A production subtree filter will need to use a variant of is_subtree()
+> >> anyway that
+> >> looks for a set of subtree root inodes, because doing a loop of is_subtree() for
+> >> multiple paths is a no go.
+> >> 
+> >> Don't need to change anything in the example, unless other people
+> >> think that we do need to set a better example to begin with...
+> > 
+> > I think we have to treat this patch as a real filter and not as an example
+> > to make sure that the whole approach is workable end to end.
+> > The point about not holding path/dentry is very valid.
+> > The algorithm needs to support that.
+> 
+> Hmm.. I am not sure whether we cannot hold a refcount. If that is a 
+> requirement, the algorithm will be more complex. 
 
-Semantic remark:
-        /*
-         * 64 bit inode number, 32 bit generation number.
-         */
-        FILEID_INO64_GEN =3D 0x81,
+Well, for production use that would certainly be a requirement. Many years
+ago dnotify (the first fs notification subsystem) was preventing
+filesystems from being unmounted because it required open file and it was a
+pain.
 
-filesystems are free to abuse the constants and return whatever id they wan=
-t
-(e.g. shmem_encode_fh()), but if you want to play by the rules, this would =
-be
-either:
-        /*
-         * 64 bit unique kernfs id
-         */
-        FILEID_KERNFS =3D 0xfe,
+> IIUC, fsnotify_mark on a inode does not hold a refcount to inode. 
 
-or:
-        /*
-         * 32bit inode number, 32 bit generation number.
-         */
-        FILEID_INO32_GEN =3D 1,
+The connector (head of the mark list) does hold inode reference. But we
+have a hook in the unmount path (fsnotify_unmount_inodes()) which drops all
+the marks and connectors for the filesystem.
 
-which is at least sometimes correct.
-or define:
-        /*
-         * 64 bit inode number.
-         */
-        FILEID_INO64 =3D 0x80,
+> And when the inode is evicted, the mark is freed. I guess this 
+> requires the user space, the AntiVirus scanner for example, to 
+> hold a reference to the inode? If this is the case, I think it 
+> is OK for the filter, either bpf or kernel module, to hold a 
+> reference to the subtree root.
 
+No, fsnotify pins the inodes in memory (which if fine) but releases them
+when unmount should happen. Userspace doesn't need to pin anything.
 
-Thanks,
-Amir.
+> > It may very well turn out that the logic of handling many filters
+> > without a loop and not grabbing a path refcnt is too complex for bpf.
+> > Then this subtree filtering would have to stay as a kernel module
+> > or extra flag/feature for fanotify.
+> 
+> Handling multiple subtrees is indeed an issue. Since we rely on 
+> the mark in the SB, multiple subtrees under the same SB will share
+> that mark. Unless we use some cache, accessing a file will 
+> trigger multiple is_subdir() calls. 
+> 
+> One possible solution is that have a new helper that checks
+> is_subdir() for a list of parent subtrees with a single series
+> of dentry walk. IOW, something like:
+> 
+> bool is_subdir_of_any(struct dentry *new_dentry, 
+>                       struct list_head *list_of_dentry).
+> 
+> For BPF, one possible solution is to walk the dentry tree 
+> up to the root, under bpf_rcu_read_lock().
+
+I can see two possible issues with this. Firstly, you don't have list_head
+in a dentry you could easily use to pass dentries to a function like this.
+Probably you'll need an external array with dentry pointers or something
+like that.
+
+Second issue is more inherent in the BPF filter approach - if there would
+be more notification groups each watching for some subtree (like users
+watching their home dirs, apps watching their subtrees with data etc.), then
+we'd still end up traversing the directory tree for each such notification
+group. That seems suboptimal but I have to think how much we care how we
+could possibly avoid that.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
