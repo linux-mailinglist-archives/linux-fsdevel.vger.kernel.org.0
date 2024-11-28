@@ -1,162 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-36051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE9C9DB491
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:07:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352889DB540
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 11:07:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F3C1680A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:07:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33271946A0;
+	Thu, 28 Nov 2024 10:07:17 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECB9AB21242
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 09:07:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F46155389;
-	Thu, 28 Nov 2024 09:07:26 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372CD1547E4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 09:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13ED192D82;
+	Thu, 28 Nov 2024 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732784845; cv=none; b=gNSouPFooP3qdcH6lgy46KZFArsWpjfn/NTarajlAgLVQ9O1ceMlDmFtqxuk3gMWh9WuGAbFlg7P89Wc+acTUswhAo8Z81pKG7Ef/+uSR+O1cc7MH6e9szhogZm2h1MpKoMOiY9bod/DbYOckuTVU1dIZfswyhsVDM+sYiPMkq0=
+	t=1732788437; cv=none; b=Y0mwtCJOXyctAx6z3FT5UqelT7IhrDbnbp5KJQf6u4oMfMnd3/J0UOdhuNB+2gx0CqlAYRAzS3sopL4JjOdsuBu1fAxN9lYweCgxF+ymse3lIqmVd1vvEQOHR7Bylj4g6M2yRqjAMLdbe05dqyRbda0Uxt+PQH4vrEFFFXlYxJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732784845; c=relaxed/simple;
-	bh=SPXbvgRpSUPKNeuCmCZ4GEbx9xuC0Y9jezQfKH53BTc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bGadwoISiIrG9f6XXNe9xPPgRULKZZt7pxHaOlyFS9QlkofrAV1k4Ll6qcPcstI8G8m2JryKmibPY+10TVFBWQ/hZYol4SYg69uEbUMb+s7XLi/tbAUlOR9IkmmQksq867XZzCyEym5rMMXFcp3yJiZ5WksGXFlMlg80zMwdhT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a787d32003so6212835ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 01:07:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732784843; x=1733389643;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L6TE4e4Bb5OrTmbFbuc0RLRJY6XYdoSFPb2NDKZfHFA=;
-        b=td9DUE/GghrHf7RuTOUDRAiSMOq1kkn2Coj8fiSbYzRhd+gFNXBB8/ouhRyNsbCxff
-         KPDa9CVm3Zib5F4BjwrVcCA09EDU7lr62TD4rls3fNn4axFza8v0fJUE7tmF30VBre7p
-         q3Idedey2yYlgHUKODQzvvHvhemntXHaAXdxpd/N7iXO8HejpjPyAOKY0uqE7EP1iGNA
-         k3IYD1i9sm5CteYu8TsYpLidum7czdGtKVG77oxxQAkD1fqv6xM4d5DKr8Kf4u2OYnzu
-         ib2Vc+vFuUFcsZX8PB0pHgSp5NaSnjRTNPy7jKh5NcZ1w1xYjgJ4j7dCSI+QCW1GsX/Q
-         maCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlBop4xcPRtHDcdOuSpi8H9EvSXWC37+jfiVsr2S4ryHxVqE0n+GDONptH6Pd0QQz3w5ZGTItMGfFE2emt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHWsEaTJtJQTBCcnsvcAWLczEMM0X0vxef2nmXZ8nbnxdYUr38
-	i5zUHjjWZz3qy0PO0uqGaajM743XA7pFXavwRvzVpktIP+DCN/yNK+RzNKNnSBlT4R9ZqEZirff
-	Kejsswn0zF53dda7iH0W+Cz8HOdhmor8aCzT6u2UoGWuMLXX+VPWTCMQ=
-X-Google-Smtp-Source: AGHT+IGl4NsuasVX4CbzS7/Pe1vbj3ipLwcVldBd2NiLWYDrblcA4ibVU7akFLUQYOZfzOGEWFcXG4q5HcnQ35CN/HzSEDayr92b
+	s=arc-20240116; t=1732788437; c=relaxed/simple;
+	bh=wswVD2zp4CCUaT6ZSlru+V4x0SVt/us+3geDqb0tYP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wr1VnfI3vZ1D9FsO+xi0ABgdMXILCrKqaW2CVoDg8YXjoFS9A0cXAqFe043Lz9UHGSC+LghhaPfpsNUrQfkS07f131kh/JdAkHmkrkXwys623W1xUN/KWpndvEyDRygwRcQWKjLPgILhgl41ef8n9q9wtjkffe8DCq4ZGW7Yxxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XzWf05XKhz9v7Vp;
+	Thu, 28 Nov 2024 17:46:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 5103F140535;
+	Thu, 28 Nov 2024 18:06:58 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAnj365QEhn6eNzAg--.15234S2;
+	Thu, 28 Nov 2024 11:06:57 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 0/7] ima: Remove unnecessary inode locks
+Date: Thu, 28 Nov 2024 11:06:13 +0100
+Message-ID: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.47.0.118.gfd3785337b
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3702:b0:3a7:c5ca:ac9f with SMTP id
- e9e14a558f8ab-3a7c5caad62mr72505205ab.6.1732784843472; Thu, 28 Nov 2024
- 01:07:23 -0800 (PST)
-Date: Thu, 28 Nov 2024 01:07:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674832cb.050a0220.253251.007a.GAE@google.com>
-Subject: [syzbot] [ocfs2?] WARNING in poll_select_finish
-From: syzbot <syzbot+15f68436afaf0cc3af11@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAnj365QEhn6eNzAg--.15234S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWfKr1fKF4DXFy3tw4fKrg_yoWrCw1kpa
+	9Yg3W5Gr1DAryxurZaka13uaySkayrW3yUWwsxJw1UZF98ZF10qr4rCr1UuryxKr95C3Wq
+	qr1agrn8u3WqyrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
+	0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
+	F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
+	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7Cj
+	xVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+	6r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2
+	IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUxGNtDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGdH1TUCmAAAse
 
-Hello,
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-syzbot found the following issue on:
+A recent syzbot report [1] showed a possible lock inversion between the
+mmap lock and the inode lock. Paul Moore suggested to remove the inode lock
+in IMA as a possible solution. A first patch set was made [2] to fulfill
+that request, although incomplete due to not removing the inode lock around
+the ima_appraise_measurement() call.
 
-HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=127619c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
-dashboard link: https://syzkaller.appspot.com/bug?extid=15f68436afaf0cc3af11
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12368530580000
+While the original report was fixed in a different way, by calling the
+security_mmap_file() hook outside the mmap lock critical region in the
+remap_file_pages() system call [3], the IMA patch set has benefits on its
+own, since it merges two critical sections in one in process_measurement(),
+and make the latter and __ima_inode_hash() compete for the same lock.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/354fe38e2935/disk-7b1d1d4c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f12e0b1ef3fd/vmlinux-7b1d1d4c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/291dbc519bb3/Image-7b1d1d4c.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c8d5f19b6cc3/mount_0.gz
+Remove the inode lock in three phases (except from ima_update_xattr(), when
+setting security.ima).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+15f68436afaf0cc3af11@syzkaller.appspotmail.com
+First, remove the S_IMA inode flag and the IS_IMA() macro, since S_IMA
+needs to be set under the inode lock, and it is going to be removed. There
+is no performance penalty in doing that, since the pointer of the inode
+integrity metadata has been moved to the inode security blob when IMA was
+made as a regular LSM [4], and retrieving such metadata can be done in
+constant time (patch 1).
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6595 at include/linux/sched/signal.h:548 restore_saved_sigmask_unless include/linux/sched/signal.h:548 [inline]
-WARNING: CPU: 0 PID: 6595 at include/linux/sched/signal.h:548 poll_select_finish+0x71c/0x7e0 fs/select.c:301
-Modules linked in:
-CPU: 0 UID: 0 PID: 6595 Comm: syz.0.15 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : restore_saved_sigmask_unless include/linux/sched/signal.h:548 [inline]
-pc : poll_select_finish+0x71c/0x7e0 fs/select.c:301
-lr : restore_saved_sigmask_unless include/linux/sched/signal.h:548 [inline]
-lr : poll_select_finish+0x71c/0x7e0 fs/select.c:301
-sp : ffff8000a02e7b20
-x29: ffff8000a02e7c20 x28: dfff800000000000 x27: 0000000000000000
-x26: ffff70001405cf6c x25: 0000000000000002 x24: ffff8000a02e7ce0
-x23: 0000000000000008 x22: ffff8000a02e7ba0 x21: ffff0000d55cbc80
-x20: 0000000000000008 x19: 00000000fffffdfe x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff80008b3edfc8 x15: 0000000000000002
-x14: 1ffff0001405cf74 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff70001405cf76 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d55cbc80 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000000 x3 : 0000000000000010
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- restore_saved_sigmask_unless include/linux/sched/signal.h:548 [inline] (P)
- poll_select_finish+0x71c/0x7e0 fs/select.c:301 (P)
- restore_saved_sigmask_unless include/linux/sched/signal.h:548 [inline] (L)
- poll_select_finish+0x71c/0x7e0 fs/select.c:301 (L)
- __do_sys_ppoll fs/select.c:1122 [inline]
- __se_sys_ppoll fs/select.c:1101 [inline]
- __arm64_sys_ppoll+0x2d8/0x358 fs/select.c:1101
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 796
-hardirqs last  enabled at (795): [<ffff80008b4b56a4>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
-hardirqs last  enabled at (795): [<ffff80008b4b56a4>] exit_to_kernel_mode+0xdc/0x10c arch/arm64/kernel/entry-common.c:95
-hardirqs last disabled at (796): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (752): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (750): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+Second, move the mutex from the inode integrity metadata to the inode
+security blob, so that the lock can be taken regardless of whether or not
+the inode integrity metadata was allocated for that inode (patch 2).
 
+Consequently, remove the inode lock just after the policy evaluation and
+extend the critical region previously guarded by the integrity inode
+metadata mutex to where the inode lock was.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Also, make sure that ima_inode_get() is called with the new mutex lock
+held, to avoid non-atomic check/assignment of the integrity metadata in the
+inode security blob (patch 3), and mark the pointer of inode integrity
+metadata as a shared resource with READ_ONCE() and WRITE_ONCE() (patch 4).
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Second, remove the inode lock around ima_appraise_measurement() by
+postponing setting security.ima when IMA-Appraisal is in fix mode, to when
+the file is closed (patch 5).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+While testing the new functionality, two bugs were found and corrected.
+Discard in IMA files opened with the O_PATH open flags, since no data are
+accessed (the file descriptor is used for different purposes). Otherwise,
+IMA ended up trying to read the files anyway, causing a kernel warning to
+be printed in the kernel log (patch 6).
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Do not reset the IMA_NEW_FILE flag as a result of setting inode attributes,
+as it was before the patch to reintroduce the inode integrity metadata
+mutex. By resetting the flag, IMA was not able to appraise new files with
+modified metadata before security.ima was written to the disk (patch 7).
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+[1] https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
+[2] https://lore.kernel.org/linux-security-module/20241008165732.2603647-1-roberto.sassu@huaweicloud.com/
+[3] https://lore.kernel.org/linux-security-module/20241018161415.3845146-1-roberto.sassu@huaweicloud.com/
+[4] https://lore.kernel.org/linux-security-module/20240215103113.2369171-1-roberto.sassu@huaweicloud.com/
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+v1:
+- New patches (1 suggested by Shu Han, 4-6)
+- Remove ima_inode_get_iint() and ima_inode_set_iint() and access inode
+  integrity metadata from the new ima_iint_cache_lock structure directly
+- Return immediately in ima_inode_get() if the inode does not have a
+  security blob (suggested by Paul Moore)
 
-If you want to undo deduplication, reply with:
-#syz undup
+Roberto Sassu (7):
+  fs: ima: Remove S_IMA and IS_IMA()
+  ima: Remove inode lock
+  ima: Ensure lock is held when setting iint pointer in inode security
+    blob
+  ima: Mark concurrent accesses to the iint pointer in the inode
+    security blob
+  ima: Set security.ima on file close when ima_appraise=fix
+  ima: Discard files opened with O_PATH
+  ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
+
+ include/linux/fs.h                    |  3 +-
+ security/integrity/ima/ima.h          | 33 ++++------
+ security/integrity/ima/ima_api.c      |  4 +-
+ security/integrity/ima/ima_appraise.c |  7 +-
+ security/integrity/ima/ima_iint.c     | 95 ++++++++++++++++++++++-----
+ security/integrity/ima/ima_main.c     | 81 +++++++++++++----------
+ 6 files changed, 146 insertions(+), 77 deletions(-)
+
+-- 
+2.47.0.118.gfd3785337b
+
 
