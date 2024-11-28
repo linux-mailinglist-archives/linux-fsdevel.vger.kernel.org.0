@@ -1,95 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-36047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD27A9DB296
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 06:43:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156FB9DB2D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 07:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C4A9B22FAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 05:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDC42813CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 06:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0062D140E2E;
-	Thu, 28 Nov 2024 05:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SHB88Wus"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A22E145B0F;
+	Thu, 28 Nov 2024 06:41:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708D212C7FD;
-	Thu, 28 Nov 2024 05:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A08041C94;
+	Thu, 28 Nov 2024 06:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732772625; cv=none; b=lf9A7m3teIazZyR+lNaG1DhDCw6IohBY9Tsag0nUykS9pp8RLss5l5BPoaVQb380Yr16Ndiq24cOXDSkcpXWWv8OnGJEX4I8DzBBTuKP9F6uCFldY67/x1m3Fh/7KP3QDqb2MoR0qSAHN25aA60isNIElJC6ICyq8BcPb+IWkqk=
+	t=1732776066; cv=none; b=ot0giO4x1AjFAANlTyZ770sYhm/yVUmJ6JHkpYmHCPoz89uo7wcyQU+UZYqkT5vd0cH1AxmCkp+qN83D/1Uf+fSvVAKBjmfY/UodGE9O7MgyidTWkEgb63WHj0VDeDktvzFztsZdgVJznRkXhvrGSY+3T2NVMMJq6rJcO1rFJ+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732772625; c=relaxed/simple;
-	bh=KwOilkyvsWRIg+rSVQRJ19Fkv2nNhKGizjf472lxEeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSLhvdu+QFtHARpOVEt5bVsr95JANYQ5qs8oCUiO3iSiOeMuobz4ag4Epyn5GtsgCCwao82mnnHzAinno6//vNBW/6/EONVEMGtldIHJv4jZBMPW7+7bT7GdAoOmUuEwD6RnIFy9Cg7WAe9h9ymzZXyNK7AxBmoSU7KDevQB4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SHB88Wus; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KwOilkyvsWRIg+rSVQRJ19Fkv2nNhKGizjf472lxEeI=; b=SHB88WushSxBQxj/5ON4lFxtYR
-	tfms5WkfuGvdo3JjMsH7iSj5QgIN4oNJdiru1ljGniVmIac+TTSUhmK3iLd/kPzNErN+otaaYgQ8M
-	QDFlTYMxWhMB1bkPrxABPGVzjxUIOzp2VNjZn75V6Un72GqvVz6GnWQEr58wYkmDosHqnBviJfUCQ
-	vrBtDm8sGgNPvYn+/6be4pxJM7dofCkHUIoQiu4aRYejIE2ibVM1Cgkm8j4nXem3l2HXrUfi3V0Tr
-	wFbeJ+XNAi3fik+am5fZaImsYWVwUVldjYV/9WcydkXrF8TZWpSl9adqkXlez27JJ28ltzSHCsl/R
-	3WT172xQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGXJT-0000000EkGL-1rWv;
-	Thu, 28 Nov 2024 05:43:39 +0000
-Date: Wed, 27 Nov 2024 21:43:39 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Bharata B Rao <bharata@amd.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, nikunj@amd.com, willy@infradead.org,
-	vbabka@suse.cz, david@redhat.com, akpm@linux-foundation.org,
-	yuzhao@google.com, mjguzik@gmail.com, axboe@kernel.dk,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	joshdon@google.com, clm@meta.com
-Subject: Re: [RFC PATCH 1/1] block/ioctl: Add an ioctl to enable large folios
- for block buffered IO path
-Message-ID: <Z0gDCxiv2VLQkCR_@infradead.org>
-References: <20241127054737.33351-1-bharata@amd.com>
- <20241127054737.33351-2-bharata@amd.com>
- <Z0a7f9T5lRPO_sEC@infradead.org>
- <c3b1b233-841f-482b-b269-7445d9f541c2@amd.com>
+	s=arc-20240116; t=1732776066; c=relaxed/simple;
+	bh=yjLyfcn2g5HdR7a1Axwb8+PqkeslJtyagwiXrAJwYFU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uc9UDoYw32jrep3bKMjxJag5wbrOB1fslxvk66u+k1a87B2eNYrtEVue4uWqbwJaYlo7WDUTDZyAzxmYxz+waTncAIHmIb6GBck6qM8ZlBNwO+eg4mP4cmXWmv7C3sLZUnsAGoPnKbIraUdL2SpNsDDpFK0e0mEi+tIT2VRkaYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XzRTw20zYz1T5yZ;
+	Thu, 28 Nov 2024 14:38:44 +0800 (CST)
+Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
+	by mail.maildlp.com (Postfix) with ESMTPS id D5D7D1400CB;
+	Thu, 28 Nov 2024 14:40:53 +0800 (CST)
+Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
+ (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 28 Nov
+ 2024 14:40:53 +0800
+Date: Thu, 28 Nov 2024 14:38:50 +0800
+From: Long Li <leo.lilong@huawei.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <brauner@kernel.org>, <cem@kernel.org>, <linux-xfs@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>, <houtao1@huawei.com>,
+	<yangerkun@huawei.com>
+Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z0gP-peky2Se-YIy@localhost.localdomain>
+References: <20241127063503.2200005-1-leo.lilong@huawei.com>
+ <20241127162829.GY1926309@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <c3b1b233-841f-482b-b269-7445d9f541c2@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20241127162829.GY1926309@frogsfrogsfrogs>
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf500017.china.huawei.com (7.185.36.126)
 
-On Wed, Nov 27, 2024 at 04:07:02PM +0530, Bharata B Rao wrote:
-> I believe you are referring to the patchset that enables bs > ps for block
-> devices - https://lore.kernel.org/linux-fsdevel/20241113094727.1497722-1-mcgrof@kernel.org/
+On Wed, Nov 27, 2024 at 08:28:29AM -0800, Darrick J. Wong wrote:
+> > @@ -1789,7 +1790,16 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+> >  
+> >  	if (ifs)
+> >  		atomic_add(len, &ifs->write_bytes_pending);
+> > +
+> > +	/*
+> > +	 * If the ioend spans i_size, trim io_size to the former to provide
+> > +	 * the fs with more accurate size information. This is useful for
+> > +	 * completion time on-disk size updates.
+> 
+> I think it's useful to preserve the diagram showing exactly what problem
+> you're solving:
+> 
+> 	/*
+> 	 * Clamp io_offset and io_size to the incore EOF so that ondisk
+> 	 * file size updates in the ioend completion are byte-accurate.
+> 	 * This avoids recovering files with zeroed tail regions when
+> 	 * writeback races with appending writes:
+> 	 *
+> 	 *    Thread 1:                  Thread 2:
+> 	 *    ------------               -----------
+> 	 *    write [A, A+B]
+> 	 *    update inode size to A+B
+> 	 *    submit I/O [A, A+BS]
+> 	 *                               write [A+B, A+B+C]
+> 	 *                               update inode size to A+B+C
+> 	 *    <I/O completes, updates disk size to min(A+B+C, A+BS)>
+> 	 *    <power failure>
+> 	 *
+> 	 *  After reboot:
+> 	 *    1) with A+B+C < A+BS, the file has zero padding in range
+> 	 *       [A+B, A+B+C]
+> 	 *
+> 	 *    |<     Block Size (BS)    >|
+> 	 *    |DDDDDDDDDDDD00000000000000|
+> 	 *    ^           ^        ^
+> 	 *    A          A+B     A+B+C
+> 	 *                       (EOF)
+> 	 *
+> 	 *    2) with A+B+C > A+BS, the file has zero padding in range
+> 	 *       [A+B, A+BS]
+> 	 *
+> 	 *    |<     Block Size (BS)    >|<      Block Size (BS)    >|
+> 	 *    |DDDDDDDDDDDD00000000000000|000000000000000000000000000|
+> 	 *    ^           ^              ^           ^
+> 	 *    A          A+B            A+BS       A+B+C
+> 	 *                              (EOF)
+> 	 *
+> 	 *    D = Valid Data
+> 	 *    0 = Zero Padding
+> 	 *
+> 	 * Note that this defeats the ability to chain the ioends of
+> 	 * appending writes.
+> 	 */
+> 
+> (I reduced the blocksize a bit for wrapping purposes)
 
-I actually thought of:
+Ok, I will update it.
 
-https://www.spinics.net/lists/linux-ext4/msg98151.html
+> 
+> The logic looks ok, but I'm curious about how you landed at 2.6.12-rc
+> for the fixes tag.
+> 
+> --D
 
-but yes, the one you pointed to is more relevant.
+I see that io_size was introduced in version 2.6. It's quite difficult
+to determine the exact version where the issue was introduced, but I can
+confirm it was before version 4.19, as I can reproduce the issue in 4.19.
+It should before introduce iomap infrastructure, how about using the
+following fix tag?
 
-> In fact I was trying to see if it is possible to advertise large folio
-> support in bdev mapping only for those block devices which don't have FS
-> mounted on them. But apparently it was not so straight forward and my
-> initial attempt at this resulted in FS corruption. Hence I resorted to the
-> current ioctl approach as a way to showcase the problem and the potential
-> benefit.
+Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure") # goes further back than this
 
-Well, if you use the ioctl and then later mount a file system, you'll
-still see the same corruption.
-
+Thanks, 
+Long Li
 
