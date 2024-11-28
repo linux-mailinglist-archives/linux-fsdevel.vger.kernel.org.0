@@ -1,141 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-36049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156FB9DB2D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 07:41:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6FB9DB447
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 09:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDC42813CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 06:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F9BB23B25
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 08:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A22E145B0F;
-	Thu, 28 Nov 2024 06:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0049A153838;
+	Thu, 28 Nov 2024 08:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huPUraNV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A08041C94;
-	Thu, 28 Nov 2024 06:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAE014BF92;
+	Thu, 28 Nov 2024 08:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732776066; cv=none; b=ot0giO4x1AjFAANlTyZ770sYhm/yVUmJ6JHkpYmHCPoz89uo7wcyQU+UZYqkT5vd0cH1AxmCkp+qN83D/1Uf+fSvVAKBjmfY/UodGE9O7MgyidTWkEgb63WHj0VDeDktvzFztsZdgVJznRkXhvrGSY+3T2NVMMJq6rJcO1rFJ+0=
+	t=1732783916; cv=none; b=LbogJqZF67/rrMTVF5XX0i0F3CB9SJsL3YPYaVCherYApewDtofP2SP8AVj5//E4xKdn5pDSdvgAGpc6QWbFcfsDYsXcjeBmeGPdVbkApLQna6lrpFPpet2s8IzqSnJ1FXSZ4kwFopRNCnnmUKbI6r5G3CB5RtaTrFjYTtLX7n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732776066; c=relaxed/simple;
-	bh=yjLyfcn2g5HdR7a1Axwb8+PqkeslJtyagwiXrAJwYFU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uc9UDoYw32jrep3bKMjxJag5wbrOB1fslxvk66u+k1a87B2eNYrtEVue4uWqbwJaYlo7WDUTDZyAzxmYxz+waTncAIHmIb6GBck6qM8ZlBNwO+eg4mP4cmXWmv7C3sLZUnsAGoPnKbIraUdL2SpNsDDpFK0e0mEi+tIT2VRkaYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XzRTw20zYz1T5yZ;
-	Thu, 28 Nov 2024 14:38:44 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id D5D7D1400CB;
-	Thu, 28 Nov 2024 14:40:53 +0800 (CST)
-Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 28 Nov
- 2024 14:40:53 +0800
-Date: Thu, 28 Nov 2024 14:38:50 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-CC: <brauner@kernel.org>, <cem@kernel.org>, <linux-xfs@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>, <houtao1@huawei.com>,
-	<yangerkun@huawei.com>
-Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
- append writes
-Message-ID: <Z0gP-peky2Se-YIy@localhost.localdomain>
-References: <20241127063503.2200005-1-leo.lilong@huawei.com>
- <20241127162829.GY1926309@frogsfrogsfrogs>
+	s=arc-20240116; t=1732783916; c=relaxed/simple;
+	bh=IvK1zy/sYlcAsuAagh9WHWt5pI9LVrBWaIhMoNQD9O4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iGcWJ+DduiJJ7YnagSbbDXEAVdwu2frrAnzIJJW1TFsciwt6rHH+Zy6dHc5eYWK6CPNlwmZmNf+qT9phMhsShHNCQLfQHOrC8jDYaaBA/L3C7Gf8WWJtqZreIbYNJZQz2DufJPHfzej3+2RI+Z+Bp/LSUTsXuNT3lRBf7ABOWK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huPUraNV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FE4C4CECE;
+	Thu, 28 Nov 2024 08:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732783915;
+	bh=IvK1zy/sYlcAsuAagh9WHWt5pI9LVrBWaIhMoNQD9O4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=huPUraNVdlRnc/8SRCQCbFMy8iYIjMB3PAVtxdtrPxXEKBIuk8JVyvQSXKpsyKWuo
+	 SvcCUUNE7HC9Ow0pgQqrcSsjRWVD1P/g2f9kgyvtxjXhKVQQl/WoCSjhSVqKvly84z
+	 +qbNSYVsjzMQgKzuLerNaymQkOu7/fWI3nFulGMiuFWVjbrMT24B6c3AJbjRYBI9+k
+	 2CtCUhK0Q8s7rUZJyzmT8ZAu2XK9xcYNoRWhvchpzCiitbGPplCghEKZHDly179oyw
+	 92xIUGP8xGw+tApw4velQg0xPNtB+McQCWkzpwfXXOLdLYy+5+ZsUJFbkvIjOuZIee
+	 lCIVOIxNTujeQ==
+Message-ID: <9e9ca761-6356-4a97-a314-d08bd5ea0916@kernel.org>
+Date: Thu, 28 Nov 2024 17:51:52 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20241127162829.GY1926309@frogsfrogsfrogs>
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Bart Van Assche <bvanassche@acm.org>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>,
+ Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
+ <20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
+ <CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
+ <Zy5CSgNJtgUgBH3H@casper.infradead.org>
+ <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+ <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+ <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+ <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <7835e7e2-2209-4727-ad74-57db09e4530f@acm.org>
+ <yq1ed2wupli.fsf@ca-mkp.ca.oracle.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <yq1ed2wupli.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 08:28:29AM -0800, Darrick J. Wong wrote:
-> > @@ -1789,7 +1790,16 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
-> >  
-> >  	if (ifs)
-> >  		atomic_add(len, &ifs->write_bytes_pending);
-> > +
-> > +	/*
-> > +	 * If the ioend spans i_size, trim io_size to the former to provide
-> > +	 * the fs with more accurate size information. This is useful for
-> > +	 * completion time on-disk size updates.
+On 11/28/24 11:09, Martin K. Petersen wrote:
 > 
-> I think it's useful to preserve the diagram showing exactly what problem
-> you're solving:
+> Bart,
 > 
-> 	/*
-> 	 * Clamp io_offset and io_size to the incore EOF so that ondisk
-> 	 * file size updates in the ioend completion are byte-accurate.
-> 	 * This avoids recovering files with zeroed tail regions when
-> 	 * writeback races with appending writes:
-> 	 *
-> 	 *    Thread 1:                  Thread 2:
-> 	 *    ------------               -----------
-> 	 *    write [A, A+B]
-> 	 *    update inode size to A+B
-> 	 *    submit I/O [A, A+BS]
-> 	 *                               write [A+B, A+B+C]
-> 	 *                               update inode size to A+B+C
-> 	 *    <I/O completes, updates disk size to min(A+B+C, A+BS)>
-> 	 *    <power failure>
-> 	 *
-> 	 *  After reboot:
-> 	 *    1) with A+B+C < A+BS, the file has zero padding in range
-> 	 *       [A+B, A+B+C]
-> 	 *
-> 	 *    |<     Block Size (BS)    >|
-> 	 *    |DDDDDDDDDDDD00000000000000|
-> 	 *    ^           ^        ^
-> 	 *    A          A+B     A+B+C
-> 	 *                       (EOF)
-> 	 *
-> 	 *    2) with A+B+C > A+BS, the file has zero padding in range
-> 	 *       [A+B, A+BS]
-> 	 *
-> 	 *    |<     Block Size (BS)    >|<      Block Size (BS)    >|
-> 	 *    |DDDDDDDDDDDD00000000000000|000000000000000000000000000|
-> 	 *    ^           ^              ^           ^
-> 	 *    A          A+B            A+BS       A+B+C
-> 	 *                              (EOF)
-> 	 *
-> 	 *    D = Valid Data
-> 	 *    0 = Zero Padding
-> 	 *
-> 	 * Note that this defeats the ability to chain the ioends of
-> 	 * appending writes.
-> 	 */
+>> What if the source LBA range does not require splitting but the
+>> destination LBA range requires splitting, e.g. because it crosses a
+>> chunk_sectors boundary? Will the REQ_OP_COPY_IN operation succeed in
+>> this case and the REQ_OP_COPY_OUT operation fail?
 > 
-> (I reduced the blocksize a bit for wrapping purposes)
+> Yes.
+> 
+> I experimented with approaching splitting in an iterative fashion. And
+> thus, if there was a split halfway through the COPY_IN I/O, we'd issue a
+> corresponding COPY_OUT up to the split point and hope that the write
+> subsequently didn't need a split. And then deal with the next segment.
+> 
+> However, given that copy offload offers diminishing returns for small
+> I/Os, it was not worth the hassle for the devices I used for
+> development. It was cleaner and faster to just fall back to regular
+> read/write when a split was required.
+> 
+>> Does this mean that a third operation is needed to cancel
+>> REQ_OP_COPY_IN operations if the REQ_OP_COPY_OUT operation fails?
+> 
+> No. The device times out the token.
+> 
+>> Additionally, how to handle bugs in REQ_OP_COPY_* submitters where a
+>> large number of REQ_OP_COPY_IN operations is submitted without
+>> corresponding REQ_OP_COPY_OUT operation? Is perhaps a mechanism
+>> required to discard unmatched REQ_OP_COPY_IN operations after a
+>> certain time?
+> 
+> See above.
+> 
+> For your EXTENDED COPY use case there is no token and thus the COPY_IN
+> completes immediately.
+> 
+> And for the token case, if you populate a million tokens and don't use
+> them before they time out, it sounds like your submitting code is badly
+> broken. But it doesn't matter because there are no I/Os in flight and
+> thus nothing to discard.
+> 
+>> Hmm ... we may each have a different opinion about whether or not the
+>> COPY_IN/COPY_OUT semantics are a requirement for token-based copy
+>> offloading.
+> 
+> Maybe. But you'll have a hard time convincing me to add any kind of
+> state machine or bio matching magic to the SCSI stack when the simplest
+> solution is to treat copying like a read followed by a write. There is
+> no concurrency, no kernel state, no dependency between two commands, nor
+> two scsi_disk/scsi_device object lifetimes to manage.
 
-Ok, I will update it.
+And that also would allow supporting a fake copy offload with regular read/write
+BIOs very easily, I think. So all block devices can be presented as supporting
+"copy offload". That is nice for FSes.
 
 > 
-> The logic looks ok, but I'm curious about how you landed at 2.6.12-rc
-> for the fixes tag.
+>> Additionally, I'm not convinced that implementing COPY_IN/COPY_OUT for
+>> ODX devices is that simple. The COPY_IN and COPY_OUT operations have
+>> to be translated into three SCSI commands, isn't it? I'm referring to
+>> the POPULATE TOKEN, RECEIVE ROD TOKEN INFORMATION and WRITE USING
+>> TOKEN commands. What is your opinion about how to translate the two
+>> block layer operations into these three SCSI commands?
 > 
-> --D
+> COPY_IN is translated to a NOP for devices implementing EXTENDED COPY
+> and a POPULATE TOKEN for devices using tokens.
+> 
+> COPY_OUT is translated to an EXTENDED COPY (or NVMe Copy) for devices
+> using a single command approach and WRITE USING TOKEN for devices using
+> tokens.
 
-I see that io_size was introduced in version 2.6. It's quite difficult
-to determine the exact version where the issue was introduced, but I can
-confirm it was before version 4.19, as I can reproduce the issue in 4.19.
-It should before introduce iomap infrastructure, how about using the
-following fix tag?
+ATA WRITE GATHERED command is also a single copy command. That matches and while
+I have not checked SAT, translation would likely work.
 
-Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure") # goes further back than this
+While I was initially worried that the 2 BIO based approach would be overly
+complicated, it seems that I was wrong :)
 
-Thanks, 
-Long Li
+> 
+> There is no need for RECEIVE ROD TOKEN INFORMATION.
+> 
+> I am not aware of UFS devices using the token-based approach. And for
+> EXTENDED COPY there is only a single command sent to the device. If you
+> want to do power management while that command is being processed,
+> please deal with that in UFS. The block layer doesn't deal with the
+> async variants of any of the other SCSI commands either...
+>
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
