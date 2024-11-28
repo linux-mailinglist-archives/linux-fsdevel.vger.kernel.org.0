@@ -1,197 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-36048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B799DB29D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 06:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD27A9DB296
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 06:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AD6AB2283F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 05:50:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C4A9B22FAB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 05:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D923C142624;
-	Thu, 28 Nov 2024 05:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0062D140E2E;
+	Thu, 28 Nov 2024 05:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZF5ATNJ7"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SHB88Wus"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1356134BD;
-	Thu, 28 Nov 2024 05:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708D212C7FD;
+	Thu, 28 Nov 2024 05:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732773036; cv=none; b=IbNhNxRY7hMTihUrv7BuNbiDsXHGf39UHpXa5rduJ5j7ynY5h6WhLuHz9arxNoz+xa3bGr3jvepl7oHihJqakCuuNgUZ8YqerFb5TLnKUDWi7EI36A9WLrSi6BHCUt9ZdCU7FAoj2hLPzAqKsGyjfrkZZCHfGowZ6Gc3ozE7fdY=
+	t=1732772625; cv=none; b=lf9A7m3teIazZyR+lNaG1DhDCw6IohBY9Tsag0nUykS9pp8RLss5l5BPoaVQb380Yr16Ndiq24cOXDSkcpXWWv8OnGJEX4I8DzBBTuKP9F6uCFldY67/x1m3Fh/7KP3QDqb2MoR0qSAHN25aA60isNIElJC6ICyq8BcPb+IWkqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732773036; c=relaxed/simple;
-	bh=jy02W4fUSO/ynBhM1FmXmxBPyqudopqiVK8oLXZwHgY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-version:Content-type; b=Uu16RnZ9wzWHSmfGjQpm2F06NOuXieJTcdAxW5+VeUyQh3kqzAUvvcdYOtPq2LL9kwKwBHTeNxPOjtF0VninVIJS2z0fJPp+iGq3sFwvb6fHrswK8uDDKECO6f5O833Xzm+MV7fZg48o4neeF//Id7PEnzggZhAbebgChjJPKR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZF5ATNJ7; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2eb1433958dso352003a91.2;
-        Wed, 27 Nov 2024 21:50:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732773034; x=1733377834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JLjeQx75L3lYmciLRB+c43uodhAABK8j/Hm5E1oeO90=;
-        b=ZF5ATNJ7vivdlYfQlTUkIEigKH4qkCiW7aoX1AVt6N28sFMqTwNzAwsrwPtTm3cR4F
-         0uv2olTsxREnCg5v9V30ptbMQybhrUXPr9K19lNbxa9EKm9xGXiswRbUsP4tK7N54ycv
-         5lf+QlxsMLBcBeMy/HqsdFy5dT2w+OYidO5qSy+AYrToGDOHZXSiTFRsxX6FZ5N4kFdp
-         XGNcVil/+XXLRYw5BR5KINCvMXBWH9DxxdWpvstgB27O4izcBLn/rXV8+SLHjXAAx7k2
-         +pKqgdjtFp5akFjIY+oY99PiQXXjRvZ6lc81G2KiUmjjWY/a5PRCfvzlAkoBVhfcF6Gg
-         Z5hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732773034; x=1733377834;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JLjeQx75L3lYmciLRB+c43uodhAABK8j/Hm5E1oeO90=;
-        b=kFGdU+6v6b+ObHoQc6h9hQGbhCBC0dLolrAoRkLBG1WJzWW5+zsPkSjRY/ooninF7o
-         F22z/s0hIZN3PwPB32UIWBW8smxBYakREFfZdNsUmwG8zCVzeSK6mFlejycKMFNYmPh3
-         a+Rxo13FC3aVK/slJpBPJxnddp1ezdQNSIGD9USuihVcHIQzPtU1rjo9NLhZKoDLBz2G
-         dqOlNc6GY0dHZk2fYpUOPTkcEh3Kwcj/hkO8akzeNTcHaC6Ai2CYKgYnpHWOC2tBA26k
-         WhUcvP4xUK9GRdLOQiIfK4qMf+wIdZ5vigNCm1NsQgDEzVrVkB4P1eGZNYL+2mCtk/Wb
-         9uPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUD6GnKTwsC2ATMjK8JZGXScEn8EikyMspCw8pLyT1YfRB/akyxeFM0EUKAMzZuKz1A6BacEqg9CxXyPDMG@vger.kernel.org, AJvYcCUYYbupx0JUr+OHtT0V7lLwIIas0/4h4lwIIjfrKg47L/pJYS1a9Vt3KcKV4WBUkud+nAJKCLFRfCwISg==@vger.kernel.org, AJvYcCVU78qt0RIccRNDXBKd6/yw8PKYXlWqX4rb+Qf+z6hwXNCR5urku0SzeI7hq3eBSrMRuRSC6DVVdEg+Nyc2CA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh/0DraHbpDjQHVqeBFfZ/fssKGzxWLfeg9I8Z0mM6QRSzDzJd
-	Tcy9n7/tqEyOmdeXxCf4ds7avMP1sE63iFVeZkwpd1YfsN5pS6VD
-X-Gm-Gg: ASbGncsnE+V6uZw1DyMoLVzzy3tE0PW9Tx/CCH8Kynxn6Td80Y7T6WcGpPJe2fLUSqC
-	sONv2sq+esH1MyBpjD1FpYQFu5u/VIklxfgqwoNi4zk5UNS9QvVQ+1j7FuCJvRVTtlkSc0RP5Ze
-	JUYo4d9GZ6zTyDHP5mSUmXlqlPTtZsZHfrV17X68evV8cBKchRhSjaJwF9BNjIpPsT211QA5fPR
-	paG6M6XM80KBaaSUshjCKGFa7JAR4VlhvpR3LNZg0U=
-X-Google-Smtp-Source: AGHT+IGvcaRwwg7Z6lX7Dj/twWMoZA67eSUPjEvK6r1tl4fqPwjizLPoPiL2oxPD3RSEg5ww+ZcLUQ==
-X-Received: by 2002:a17:90b:4b82:b0:2ea:7329:46 with SMTP id 98e67ed59e1d1-2ee08e9f0c6mr8602080a91.5.1732773033915;
-        Wed, 27 Nov 2024 21:50:33 -0800 (PST)
-Received: from dw-tp ([171.76.82.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b22dd01sm588999a91.27.2024.11.27.21.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 21:50:33 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: Bharata B Rao <bharata@amd.com>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, willy@infradead.org, vbabka@suse.cz, david@redhat.com, akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, clm@meta.com
-Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
-In-Reply-To: <20241127120235.ejpvpks3fosbzbkr@quack3>
-Date: Thu, 28 Nov 2024 11:10:35 +0530
-Message-ID: <87plmf3oh8.fsf@gmail.com>
-References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com> <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com> <20241127120235.ejpvpks3fosbzbkr@quack3>
+	s=arc-20240116; t=1732772625; c=relaxed/simple;
+	bh=KwOilkyvsWRIg+rSVQRJ19Fkv2nNhKGizjf472lxEeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSLhvdu+QFtHARpOVEt5bVsr95JANYQ5qs8oCUiO3iSiOeMuobz4ag4Epyn5GtsgCCwao82mnnHzAinno6//vNBW/6/EONVEMGtldIHJv4jZBMPW7+7bT7GdAoOmUuEwD6RnIFy9Cg7WAe9h9ymzZXyNK7AxBmoSU7KDevQB4Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SHB88Wus; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KwOilkyvsWRIg+rSVQRJ19Fkv2nNhKGizjf472lxEeI=; b=SHB88WushSxBQxj/5ON4lFxtYR
+	tfms5WkfuGvdo3JjMsH7iSj5QgIN4oNJdiru1ljGniVmIac+TTSUhmK3iLd/kPzNErN+otaaYgQ8M
+	QDFlTYMxWhMB1bkPrxABPGVzjxUIOzp2VNjZn75V6Un72GqvVz6GnWQEr58wYkmDosHqnBviJfUCQ
+	vrBtDm8sGgNPvYn+/6be4pxJM7dofCkHUIoQiu4aRYejIE2ibVM1Cgkm8j4nXem3l2HXrUfi3V0Tr
+	wFbeJ+XNAi3fik+am5fZaImsYWVwUVldjYV/9WcydkXrF8TZWpSl9adqkXlez27JJ28ltzSHCsl/R
+	3WT172xQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGXJT-0000000EkGL-1rWv;
+	Thu, 28 Nov 2024 05:43:39 +0000
+Date: Wed, 27 Nov 2024 21:43:39 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Bharata B Rao <bharata@amd.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, nikunj@amd.com, willy@infradead.org,
+	vbabka@suse.cz, david@redhat.com, akpm@linux-foundation.org,
+	yuzhao@google.com, mjguzik@gmail.com, axboe@kernel.dk,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	joshdon@google.com, clm@meta.com
+Subject: Re: [RFC PATCH 1/1] block/ioctl: Add an ioctl to enable large folios
+ for block buffered IO path
+Message-ID: <Z0gDCxiv2VLQkCR_@infradead.org>
+References: <20241127054737.33351-1-bharata@amd.com>
+ <20241127054737.33351-2-bharata@amd.com>
+ <Z0a7f9T5lRPO_sEC@infradead.org>
+ <c3b1b233-841f-482b-b269-7445d9f541c2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3b1b233-841f-482b-b269-7445d9f541c2@amd.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Jan Kara <jack@suse.cz> writes:
+On Wed, Nov 27, 2024 at 04:07:02PM +0530, Bharata B Rao wrote:
+> I believe you are referring to the patchset that enables bs > ps for block
+> devices - https://lore.kernel.org/linux-fsdevel/20241113094727.1497722-1-mcgrof@kernel.org/
 
-> On Wed 27-11-24 07:19:59, Mateusz Guzik wrote:
->> On Wed, Nov 27, 2024 at 7:13 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
->> >
->> > On Wed, Nov 27, 2024 at 6:48 AM Bharata B Rao <bharata@amd.com> wrote:
->> > >
->> > > Recently we discussed the scalability issues while running large
->> > > instances of FIO with buffered IO option on NVME block devices here:
->> > >
->> > > https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
->> > >
->> > > One of the suggestions Chris Mason gave (during private discussions) was
->> > > to enable large folios in block buffered IO path as that could
->> > > improve the scalability problems and improve the lock contention
->> > > scenarios.
->> > >
->> >
->> > I have no basis to comment on the idea.
->> >
->> > However, it is pretty apparent whatever the situation it is being
->> > heavily disfigured by lock contention in blkdev_llseek:
->> >
->> > > perf-lock contention output
->> > > ---------------------------
->> > > The lock contention data doesn't look all that conclusive but for 30% rwmixwrite
->> > > mix it looks like this:
->> > >
->> > > perf-lock contention default
->> > >  contended   total wait     max wait     avg wait         type   caller
->> > >
->> > > 1337359017     64.69 h     769.04 us    174.14 us     spinlock   rwsem_wake.isra.0+0x42
->> > >                         0xffffffff903f60a3  native_queued_spin_lock_slowpath+0x1f3
->> > >                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
->> > >                         0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
->> > >                         0xffffffff8f39e88f  up_write+0x4f
->> > >                         0xffffffff8f9d598e  blkdev_llseek+0x4e
->> > >                         0xffffffff8f703322  ksys_lseek+0x72
->> > >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
->> > >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
->> > >    2665573     64.38 h       1.98 s      86.95 ms      rwsem:W   blkdev_llseek+0x31
->> > >                         0xffffffff903f15bc  rwsem_down_write_slowpath+0x36c
->> > >                         0xffffffff903f18fb  down_write+0x5b
->> > >                         0xffffffff8f9d5971  blkdev_llseek+0x31
->> > >                         0xffffffff8f703322  ksys_lseek+0x72
->> > >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
->> > >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
->> > >                         0xffffffff903dce5e  do_syscall_64+0x7e
->> > >                         0xffffffff9040012b  entry_SYSCALL_64_after_hwframe+0x76
->> >
->> > Admittedly I'm not familiar with this code, but at a quick glance the
->> > lock can be just straight up removed here?
->> >
->> >   534 static loff_t blkdev_llseek(struct file *file, loff_t offset, int whence)
->> >   535 {
->> >   536 │       struct inode *bd_inode = bdev_file_inode(file);
->> >   537 │       loff_t retval;
->> >   538 │
->> >   539 │       inode_lock(bd_inode);
->> >   540 │       retval = fixed_size_llseek(file, offset, whence,
->> > i_size_read(bd_inode));
->> >   541 │       inode_unlock(bd_inode);
->> >   542 │       return retval;
->> >   543 }
->> >
->> > At best it stabilizes the size for the duration of the call. Sounds
->> > like it helps nothing since if the size can change, the file offset
->> > will still be altered as if there was no locking?
->> >
->> > Suppose this cannot be avoided to grab the size for whatever reason.
->> >
->> > While the above fio invocation did not work for me, I ran some crapper
->> > which I had in my shell history and according to strace:
->> > [pid 271829] lseek(7, 0, SEEK_SET)      = 0
->> > [pid 271829] lseek(7, 0, SEEK_SET)      = 0
->> > [pid 271830] lseek(7, 0, SEEK_SET)      = 0
->> >
->> > ... the lseeks just rewind to the beginning, *definitely* not needing
->> > to know the size. One would have to check but this is most likely the
->> > case in your test as well.
->> >
->> > And for that there is 0 need to grab the size, and consequently the inode lock.
->> 
->> That is to say bare minimum this needs to be benchmarked before/after
->> with the lock removed from the picture, like so:
->
-> Yeah, I've noticed this in the locking profiles as well and I agree
-> bd_inode locking seems unnecessary here. Even some filesystems (e.g. ext4)
-> get away without using inode lock in their llseek handler...
->
+I actually thought of:
 
-Right, we don't need an inode_lock() for i_size_read(). i_size_write()
-still needs locking for serialization, mainly for 32bit SMP case, due
-to use of seqcounts.
-I guess it would be good to maybe add this in Documentation too rather
-than this info just hanging on top of i_size_write()?
+https://www.spinics.net/lists/linux-ext4/msg98151.html
 
-References
-===========
-[1]:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/filesystems/locking.rst#n557
-[2]:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/fs.h#n932
-[3]: https://lore.kernel.org/all/20061016162729.176738000@szeredi.hu/
+but yes, the one you pointed to is more relevant.
 
--ritesh
+> In fact I was trying to see if it is possible to advertise large folio
+> support in bdev mapping only for those block devices which don't have FS
+> mounted on them. But apparently it was not so straight forward and my
+> initial attempt at this resulted in FS corruption. Hence I resorted to the
+> current ioctl approach as a way to showcase the problem and the potential
+> benefit.
+
+Well, if you use the ioctl and then later mount a file system, you'll
+still see the same corruption.
+
 
