@@ -1,161 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-36088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCD39DB7C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 13:34:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840929DB805
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 13:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE53286FD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 12:34:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11850B21436
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 12:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487991A9B4C;
-	Thu, 28 Nov 2024 12:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A369C1A2C04;
+	Thu, 28 Nov 2024 12:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9MViOGT"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="w9GAH5iZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBCA1A9B26;
-	Thu, 28 Nov 2024 12:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374F319F127
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 12:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732797246; cv=none; b=kWlHBauuJ5XIMSGsT3QJjFm6+8JapkY+ybnC68BjzOv6hpnMWP8yUGTMOHW30S7jk4+ZiGawxg+LCneq7eoJwBWTR2FgKEQe+ZeyRXuT0XPvOq1ZFN2baiuxvlaNtmPRJZID4oaEOB6HxZC7cjJkByCei0mVmhnhUIMzBtSyYT4=
+	t=1732798559; cv=none; b=STgP9bKxdTHe48LUGUaY7xuI8B4VQIfVRHAhyUzszo5IZ+u7CP/FaSvsET/2WL99TwGSsT8xNlTGw1sHScw5Qs2i2IDyYhPvwduEu2qrF0KZdcF5HV+ihQta6pqpV8Psgt/pT56QsWPpWKstXHP0dZOFG/JKbVUz5pvsAOZwojA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732797246; c=relaxed/simple;
-	bh=EEW4Cdyc4h8c2gh3EbxdsQJkmYgdPEEWnE0d9G+UEoY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HJnHLUI8beVexv9znof2o7BYyhJGJYf9+qbP6XEknNS2WZL8aaYZ9rSiz9AxTfOII/QBQy+3EAv5bGRSBDrwezWBXYpI4gTDTjZJ9bp9FNQHBYSfa3+Dd9LKAfEYlgqIiKppxsLOrUK442+W1eO9SHJ10EXUPdi15AFDO3ajDeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9MViOGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B32C4CEDB;
-	Thu, 28 Nov 2024 12:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732797246;
-	bh=EEW4Cdyc4h8c2gh3EbxdsQJkmYgdPEEWnE0d9G+UEoY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K9MViOGTFAdy2/BsrZaujMwNR2PgO8NjqKmmGVd+f5Vrf5HRHy9+S/LOKENuBjYaW
-	 LkuNXMydD/9qs9BlkX7E/jYNBpzMF2hNSbQxYiHqnT42QZcw9Sry9R9lVP2U2eYCsk
-	 kT4jWctyArBV1h00zRMMgeQBID4iAKY29/3BcTbcF6iBRGZLxZJB4xtkwnCXHwTDBb
-	 IdE4QcF8DcidYNb2gBKI/QXUksOVwFrKVYxck1llRwQ6VQ25Jxc48yiBiUlcY8hB7P
-	 UJMxJiII+TyLyrxZH++dsFcgdo8d3hPWC9IqaIgdWWQ2yNIvI3H6Uw+qN/5izZpwwT
-	 EB4z6kW8lBjNg==
-From: Christian Brauner <brauner@kernel.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH RFC 2/2] pidfs: remove 32bit inode number handling
-Date: Thu, 28 Nov 2024 13:33:38 +0100
-Message-ID: <20241128-work-pidfs-v1-2-80f267639d98@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241128-work-pidfs-v1-0-80f267639d98@kernel.org>
-References: <20241128-work-pidfs-v1-0-80f267639d98@kernel.org>
+	s=arc-20240116; t=1732798559; c=relaxed/simple;
+	bh=F+F1O+2xp5yPSB2suDMDLml7ERto8lgniFtXwEg5xwM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nZQZRmZAIE6dPn1hNmMN8Qh077u/ZoUclCo7tWOjH6cf7R6VBVvS4i97qXFFwpU7di9d9OF+pRsh+Fm8fDBH8hIhVDcC+XcgBwkWwzMKD/tWnXexQWHZ8oLWwbBQIsRR03dh8hOpO7gWKNONkxin1wwBgocjEOpmSS+bq5/ItKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=w9GAH5iZ; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=1fdMBII0YIecx9BgjS6+RL2RExw4PaItvLvWv4UXsTU=;
+	t=1732798557; x=1734008157; b=w9GAH5iZ9zaD7ubAxCh2hvKJEftsLFOhHsIrG6wqx4OPiOy
+	bZ5mzhHhj298s8iooWxiRBOHJsN3U2Cyry9bYlmj4oXUOOY5DUjun8REnpl2NXE2L/wVj1BO6PqRd
+	VAAKtDIPoeaLMX+O4U3Ot4AzOrafBlJOs7JPS9KrEFmJv9rwNhdRF94DrSgN0FsCIBnEilqHfmKvD
+	XJKDThO9sBxLssHGLpeCD2Alwet1DjOLjBJwGWOWCuATbSXlvYiGi8p/UxgpJF06JkGVzKSRNjI4i
+	YQnu4ABTmmMStyCL8TO/C6Z2jLS/jp2en/7dy9Dz+ggzK+p9tmsSjxh0jwQ6h+ag==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tGe3g-00000000D12-1x0E;
+	Thu, 28 Nov 2024 13:55:48 +0100
+Message-ID: <2fb819b00563afbeb69c156b463dd41335c430b6.camel@sipsolutions.net>
+Subject: Re: UML mount failure with Linux 6.11
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Karel Zak <kzak@redhat.com>
+Cc: Hongbo Li <lihongbo22@huawei.com>, linux-um@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+ Benjamin Berg <benjamin@sipsolutions.net>, rrs@debian.org
+Date: Thu, 28 Nov 2024 13:55:47 +0100
+In-Reply-To: <c7hrptra3k6g6jwemz3h5gp4syyz4bttpnepdhpa33htnrltxu@iuusct5yzaso>
+References: 
+	<ac1b8ddd62ab22e6311ddba0c07c65b389a1c5df.camel@sipsolutions.net>
+	 <b0acfbdf-339b-4f7b-9fbd-8d864217366b@huawei.com>
+	 <buizu3navazyzdg23dsphmdi26iuf5mothe3l4ods4rbqwqfnh@rgnqbq7n4j4g>
+	 <9f56df34-68d4-4cb1-9b47-b8669b16ed28@huawei.com>
+	 <3d5e772c-7f13-4557-82ff-73e29a501466@huawei.com>
+	 <ykwlncqgbsv7xilipxjs2xoxjpkdhss4gb5tssah7pjd76iqxf@o2vkkrjh2mgd>
+	 <6e6ccc76005d8c53370d8bdcb0e520e10b2b7193.camel@sipsolutions.net>
+	 <5e5e465e-0380-4fbf-915d-69be5a8e0b65@huawei.com>
+	 <uppzc2p5bn6fhrdlzzkbdrkoigurkii5ockigngknm4waewl5z@z2a6c6iivu7s>
+	 <f565e434afc84090ffd7bff69ce9cf5643302233.camel@sipsolutions.net>
+	 <c7hrptra3k6g6jwemz3h5gp4syyz4bttpnepdhpa33htnrltxu@iuusct5yzaso>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2419; i=brauner@kernel.org; h=from:subject:message-id; bh=EEW4Cdyc4h8c2gh3EbxdsQJkmYgdPEEWnE0d9G+UEoY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR7JKuerI9KTzHWz1GevvJ9m9KBo1PDXontVX1Tl7/5T NcPw41NHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPp387wh7fef/7sbc4qk0qr vJhkdmv823GoVtpugqXI5qkurb6lsxkZTndNi+D1qY5+aHXE8Kl6VtDDU6vFy31fHn1V+KAooHE 3EwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
-Now that we have a unified inode number handling model remove the custom
-ida-based allocation for 32bit.
+Hi,
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/pidfs.c | 46 +++++-----------------------------------------
- 1 file changed, 5 insertions(+), 41 deletions(-)
+> > I'd argue though that this doesn't count as fixing the regression, sinc=
+e
+> > the kernel was fine before the changes there (even before porting hostf=
+s
+> > to the new API) with _any_ version of userspace. Except perhaps for whe=
+n
+> > there's a comma in the path, which I suppose would've broken one way or
+> > the other by mount(8) moving to the new API?
+>=20
+> Another option is to hardcode a libmount exception that, for hostfs,
+> the default behavior should be to use the classic mount(2) syscall if
+> the hostfs=3D option is not present.
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 09a0c8ac805301927a94758b3f7d1e513826daf9..334d2fc3f01ee6f219dc3e52309bfe00726885ca 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -400,40 +400,6 @@ struct pid *pidfd_pid(const struct file *file)
- 
- static struct vfsmount *pidfs_mnt __ro_after_init;
- 
--#if BITS_PER_LONG == 32
--/*
-- * Provide a fallback mechanism for 32-bit systems so processes remain
-- * reliably comparable by inode number even on those systems.
-- */
--static DEFINE_IDA(pidfd_inum_ida);
--
--static int pidfs_inum(struct pid *pid, unsigned long *ino)
--{
--	int ret;
--
--	ret = ida_alloc_range(&pidfd_inum_ida, RESERVED_PIDS + 1,
--			      UINT_MAX, GFP_ATOMIC);
--	if (ret < 0)
--		return -ENOSPC;
--
--	*ino = ret;
--	return 0;
--}
--
--static inline void pidfs_free_inum(unsigned long ino)
--{
--	if (ino > 0)
--		ida_free(&pidfd_inum_ida, ino);
--}
--#else
--static inline int pidfs_inum(struct pid *pid, unsigned long *ino)
--{
--	*ino = pid->ino;
--	return 0;
--}
--#define pidfs_free_inum(ino) ((void)(ino))
--#endif
--
- /*
-  * The vfs falls back to simple_setattr() if i_op->setattr() isn't
-  * implemented. Let's reject it completely until we have a clean
-@@ -485,7 +451,6 @@ static void pidfs_evict_inode(struct inode *inode)
- 
- 	clear_inode(inode);
- 	put_pid(pid);
--	pidfs_free_inum(inode->i_ino);
- }
- 
- static const struct super_operations pidfs_sops = {
-@@ -511,17 +476,16 @@ static const struct dentry_operations pidfs_dentry_operations = {
- 
- static int pidfs_init_inode(struct inode *inode, void *data)
- {
-+	struct pid *pid = data;
-+
- 	inode->i_private = data;
- 	inode->i_flags |= S_PRIVATE;
- 	inode->i_mode |= S_IRWXU;
- 	inode->i_op = &pidfs_inode_operations;
- 	inode->i_fop = &pidfs_file_operations;
--	/*
--	 * Inode numbering for pidfs start at RESERVED_PIDS + 1. This
--	 * avoids collisions with the root inode which is 1 for pseudo
--	 * filesystems.
--	 */
--	return pidfs_inum(data, &inode->i_ino);
-+	inode->i_ino = pidfs_ino(pid->ino);
-+	inode->i_generation = pidfs_gen(pid->ino);
-+	return 0;
- }
- 
- static void pidfs_put_data(void *data)
+I'm not sure using the old mount API would work because the kernel
+converted internally to the new one now. Anyway it'd still be a kernel
+regression if we have to fix it in userspace, no? :)
 
--- 
-2.45.2
+> > Assuming no commas, would mount(8) today send the path as the key to a
+> > flag option?=20
+>=20
+>  Yes, (I have no hostfs here, so example with ext4):
+>=20
+>  # strace -e fsconfig mount -t ext4 -o /home/hostfs none /mnt/test
+>=20
+>  fsconfig(3, FSCONFIG_SET_STRING, "source", "none", 0) =3D 0
+>  fsconfig(3, FSCONFIG_SET_FLAG, "/home/hostfs", NULL, 0) =3D -1 EINVAL (I=
+nvalid argument)
 
+So I guess that means for paths without comma (almost certainly the
+overwhelming majority) we could somehow work around it in the kernel.
+Hongbo, what do you think?
+
+> > We could perhaps find a way to handle that in the kernel,
+> > and then just do the longer-term plan of moving users to hostfs=3D"..."
+> > (by documentation/warning) in the future?
+>=20
+> The question is whether investing time in using the path-as-key
+> approach makes sense. Perhaps it would be better to stick with the old
+> mount(2)
+
+I think it's a matter of not regressing for users, if they just update
+the kernel and have old or existing mount tools. And I'm not convinced
+using the old API will actually fix the issue, I think maybe the kernel
+itself would break that too by parsing it now for the new API?
+
+> and focus on developing a new API that does not have any
+> legacy issues. Users who choose to use the hostfs=3D option and the new
+> kernel will be able to utilize the new API.
+
+Right, but we already have that - you can specify hostfs=3D"quoted path"
+when everything is new and it'll work just fine?
+
+Question is more around the regression, to me.
+
+johannes
 
