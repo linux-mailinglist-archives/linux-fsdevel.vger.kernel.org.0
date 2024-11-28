@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-36062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BA19DB5EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 11:46:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC949DB5E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 11:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D9BB27FDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:44:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E58B28177
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 10:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D9F191F79;
-	Thu, 28 Nov 2024 10:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88EC192D95;
+	Thu, 28 Nov 2024 10:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c3lCeq9R"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QQYoUpnm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86F11459F6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 10:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3A41369BC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 10:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732790684; cv=none; b=KpzvJLTcP5zS3RT8LPe59KpOFJtLCY0dvLw/Z4E2jfrP2lVhovSCGsrPSZ17gn/mRwoMYQgqRLPo7HkvrBrYJIN7NClkM6Wvj9vochh3xHa7NxXNdh4E6v86jx7cQ40ioUH9q8faeVtnE+rJNeYirxhoufyCZD9FYwrsvtOmZTo=
+	t=1732790720; cv=none; b=bYpKxJEflI+DKhreiacfTZl3suJ3mW+/R40gh8NsOoJPc2w/9qZNraab3vXxj3IQHZIwD5+PEhly5tWHEiN7BUgEo+3pda3+GblpjKbki2YsARobQXRZ1EUrkhcpnULgusfi1A7TFQOQLRKtORibIOM/ehEcutmaFPMmTrUyta8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732790684; c=relaxed/simple;
-	bh=eI+vJ+1Nc2t3LXrGlA474JxhWSRgmiqQE9xrhvMjhEY=;
+	s=arc-20240116; t=1732790720; c=relaxed/simple;
+	bh=ioO9MGJ8RFcxU0OEleMWJT4fb8p5fWpDnbkoHKnnrbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLgfibeREh++Yn8XP1JMDdlzpINFxi/8r61GIm59tfn17DPO6zDbAAdo2RPyxy0zibXcYQfB0b7J1v3sBq4/d7C5XS/2LTqCkgpV10vBi1Mt90Z9eEgDPdOc9PiZeWJ5RL/ICJhnrIDQvBJSJd9vcNAzH+b+QMq8xrOWtKyMC6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c3lCeq9R; arc=none smtp.client-ip=209.85.215.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=QG5b7eF+M5a9C4ewQcau8WPi2AAHRBidEjL+pWC1TO9scuScFMVtyFVueHs9R4uLo0rn5n9aJ6mNTdW/ILaOx+vfExYctm38H/QmJJNWGuoRN8syyhdu6+7FDtodB+2sH/h3UxjQAuZ0Ao6MVmA8JodZKC28rv/OJkrZJhrWb2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QQYoUpnm; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fbc29b3145so1355760a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 02:44:42 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso571912b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 02:45:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732790682; x=1733395482; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1732790718; x=1733395518; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttG0vWeu1Joq31iBiY9HQi0brxn5SNFc+Fjhdmas1Ss=;
-        b=c3lCeq9RGljgD4p390Z4aMfplWEMMao3T22LWUJWY1DXTsJEY+0qzEFqQUTzO4xBsI
-         LfKWUIvh2/Lamy1jPEe25PG33+cz+B+Hvp3tlZMHCP0bs4pryTZUpLxk6qFBYbV9u82t
-         fhgY2nku+86R2bC8zx1UWyheg5DKNIj1/uxlc=
+        bh=ra+nPWwa1InJSk6iw9XH2tYRQj9xj6wEO3y2HewRSbM=;
+        b=QQYoUpnmlTCFd1u2im0ISl4NP9yDQ5ZWpms4Rl3qjXIRSe9LhyiVIoC1LV1lEIQceE
+         xNj9/efmvqPTLLmuKlTssKmKKH3o0XCe4ZXFVpMzPiicJu6D8NdhncrTaYYHNVJtsJda
+         zu0w8Uq0uK1q7Zsdo3O5uuGHK3zXnJIOV/aew=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732790682; x=1733395482;
+        d=1e100.net; s=20230601; t=1732790718; x=1733395518;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ttG0vWeu1Joq31iBiY9HQi0brxn5SNFc+Fjhdmas1Ss=;
-        b=B/6EZ1oy7lUhhRUWgNBFn1zVfVPrjQbLife4/p3jTYCv6kjW0xdZug6ct7w0JhsCSa
-         HlFwJKvKZN7uUHSTZTABgyWkTKXiShlXlnCuYoFKGsziJfOC1lMczfOjrEb9LCLDTdL7
-         PxJkJjZuuyNhTPV5KvOm0Hd8dFdlykdybiBXAwqFiohpCfEo3aKgisI08Zcl+X3o+usv
-         hgTM4HmjWRHXZx9a3Nu3zaqc8vwFsDCaTeonyyjRkmmN9ExJBF+WFyI+68gNOQ1mANCw
-         zeYrKYP8btApcrg4GeTyQk7ltHo0SFxrIBWrib3dNlYxp8D+4IYMliFPP+wMgSu9MtaR
-         5oSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyTd1P/+6gBZ3p1RNgY06YnDM/BBtJUjmZ0uvkngIMdzBGdBkE5v6/4znUW+gn3bo+G4BmUQHN/GAm4t6d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Rp/wwlH+fodnMzPMGJe6u0T7ykB0bKybdbh7BPLqUVrt9QWK
-	W3jTXMGR73pYiOIG++M7+Qab5GD7A9alY3AWTtRldzRMq+tzwt9MyUbajPGgcQ==
-X-Gm-Gg: ASbGncvDFefqhmhpebNvWBjIPehy06VWDVImLgxpj0smfOQZXguBpdGdJFjSwT2CnO0
-	pKMPwaDqeQQO94aAl7+Akdc2GGyQGPf5DNcFbAtlOvi5v2T482iHOk94tB7s6J2AY4RanJ8kK7Z
-	7m2hfYX5AObN6g5QmatT2ADkV1LzjBh0+MCsakHJWnnUlXSx5UIeJGCXXvX18c5PfTN4+VwGl4D
-	p9s8pKr8HKXks9KvaMbKo7XPY46b5J0y18dp5mZZ+jPWkAwUxls2A==
-X-Google-Smtp-Source: AGHT+IE4a0VHtXouYAcZqlbu2VMGsDppVzHLdJzsqmrF2oHzFQOMuwCwXrLtOKKTuG6v/t4KV1s/Ag==
-X-Received: by 2002:a17:90b:28cb:b0:2ea:696d:732d with SMTP id 98e67ed59e1d1-2ee25b0411dmr4361086a91.13.1732790682000;
-        Thu, 28 Nov 2024 02:44:42 -0800 (PST)
+        bh=ra+nPWwa1InJSk6iw9XH2tYRQj9xj6wEO3y2HewRSbM=;
+        b=BvDiSVs4lSfjBjXaJgRAgv9kZH1iOoPhONvcqnADzJreeImNOVC/uPjCsCh78VduZP
+         TlPDAU3ptfsEgqFXONelcN9tkWQ8Ztor0qi7oI+tvNMNfogtWcSobjpIn1Mj4LdfScOi
+         Mr9AubWIS+yRGWuZvq+x7IIgUtdoOSmYw1wL1Q9XBJBuURb/bK28TyE/UmausEi0SNWM
+         AM+kXwYifwMKh5W7ZGHUkaE7+dCalJ5pjGNo9zYt/E9rT4MWxu3l0Wo/q7iHJEyRI350
+         +42JAMYMfHbm3rxCBB0Keuveb1/NU2M6JS8bKALJNsIxSwK6PCS7wWwXd5FKdr/KQNHQ
+         K19Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7hmviMTvIDqezlVNupKPFag45lc1kOd5nS9ucSKbVuGiud40zFzhJafO1qQoqc1JHGhfd7j/6I7M8bqQ7@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvl3KAOppqLtNRLwTCLXR4fxyvOkjbNex7pDcXEhdavHUgHC4V
+	qd57tDcihGw6X7hgdOq4Qi6qATJc137XOztwIPaje7OqZoVacuqg8A6wYnZrpvYDLqUGgxgTld0
+	=
+X-Gm-Gg: ASbGncumqqk0z7Csgc9tmJwsw8BwOEVAhHoau7PUJ7faYsJoujUO+bSlZ45mdqVjoxU
+	BF4YyTkuRrqJuBzAie+ezGeygJZOHBhJnTqTwcbWGt+zVXT6gqz3WpZS86hF046ZYmqM9TD7Y2m
+	MPwZVA2TGGTdfCe1BVvIrQ/jUwO/HCv41c8VbbUA2I6/YVYVHi0mMo5BqmooA2114glhpEi6/ve
+	yBU92iriPTuwPXpkxkskvrdUzMWw6QmLEFP0AalVO3iVB7qSSsXHg==
+X-Google-Smtp-Source: AGHT+IEIQGcWD1j2zqd9Z7eniwrjeF+M26Y7kRStHyL6ZBIdiQ4WELp7bX7g43tSEb4fQEtQElvAIw==
+X-Received: by 2002:a05:6a00:228b:b0:724:d511:3d60 with SMTP id d2e1a72fcca58-7252ffc9399mr9280355b3a.2.1732790718058;
+        Thu, 28 Nov 2024 02:45:18 -0800 (PST)
 Received: from google.com ([2401:fa00:8f:203:e87e:5233:193f:13e1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa47fbasm3187806a91.13.2024.11.28.02.44.39
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541848b4dsm1238011b3a.186.2024.11.28.02.45.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 02:44:41 -0800 (PST)
-Date: Thu, 28 Nov 2024 19:44:37 +0900
+        Thu, 28 Nov 2024 02:45:17 -0800 (PST)
+Date: Thu, 28 Nov 2024 19:45:14 +0900
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com, kernel-team@meta.com,
-	Bernd Schubert <bschubert@ddn.com>
-Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
- for requests
-Message-ID: <20241128104437.GB10431@google.com>
-References: <20241114191332.669127-1-joannelkoong@gmail.com>
- <20241114191332.669127-3-joannelkoong@gmail.com>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Tomasz Figa <tfiga@chromium.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: fuse: fuse semantics wrt stalled requests
+Message-ID: <20241128104514.GC10431@google.com>
+References: <20241128035401.GA10431@google.com>
+ <45da8248-d694-4220-a120-3d85a463c0cf@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,69 +87,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241114191332.669127-3-joannelkoong@gmail.com>
+In-Reply-To: <45da8248-d694-4220-a120-3d85a463c0cf@fastmail.fm>
 
-Hi Joanne,
+On (24/11/28 11:29), Bernd Schubert wrote:
+> On 11/28/24 04:54, Sergey Senozhatsky wrote:
+> > Hello Miklos,
+> > 
+> > A question: does fuse define any semantics for stalled requests handling?
+> > 
+> > We are currently looking at a number of hung_task watchdog crashes with
+> > tasks waiting forever in d_wait_lookup() for dentries to lose PAR_LOOKUP
+> > state, and we suspect that those dentries are from fuse mount point
+> > (we also sometimes see hung_tasks in fuse_lookup()->fuse_simple_request()).
+> > Supposedly (a theory) some tasks are in request_wait_answer() under
+> > PAR_LOOKUP, and the rest of tasks are waiting for them to finish and clear
+> > PAR_LOOKUP bit.
+> > 
+> > request_wait_answer() waits indefinitely, however, the interesting
+> > thing is that it uses wait_event_interruptible() (when we wait for
+> > !fc->no_interrupt request to be processed).  What is the idea behind
+> > interruptible wait?  Is this, may be, for stall requests handling?
+> > Does fuse expect user-space to watchdog or monitor its processes/threads
+> > that issue syscalls on fuse mount points and, e.g., SIGKILL stalled ones?
+> > 
+> > To make things even more complex, in our particular case fuse mount
+> > point mounts a remote google driver, so it become a network fs in
+> > some sense, which adds a whole new dimension of possibilities for
+> > stalled/failed requests.  How those are expected to be handled?  Should
+> > fuse still wait indefinitely or would it make sense to add a timeout
+> > to request_wait_answer() and FR_INTERRUPTED timeout-ed requests?
+> > 
+> 
+> Please see here
+> 
+> https://lore.kernel.org/all/20241114191332.669127-1-joannelkoong@gmail.com/
 
-On (24/11/14 11:13), Joanne Koong wrote:
-> There are situations where fuse servers can become unresponsive or
-> stuck, for example if the server is deadlocked. Currently, there's no
-> good way to detect if a server is stuck and needs to be killed manually.
->
-> This commit adds an option for enforcing a timeout (in minutes) for
-> requests where if the timeout elapses without the server responding to
-> the request, the connection will be automatically aborted.
-
-Does it make sense to configure timeout in seconds?  hung-task watchdog
-operates in seconds and can be set to anything, e.g. 45 seconds, so it
-panic the system before fuse timeout has a chance to trigger.
-
-Another question is: this will terminate the connection.  Does it
-make sense to run timeout per request and just "abort" individual
-requests?  What I'm currently playing with here on our side is
-something like this:
-
-----
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 8573d79ef29c..82e071cecafd 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -21,6 +21,7 @@
- #include <linux/swap.h>
- #include <linux/splice.h>
- #include <linux/sched.h>
-+#include <linux/sched/sysctl.h>
- 
- MODULE_ALIAS_MISCDEV(FUSE_MINOR);
- MODULE_ALIAS("devname:fuse");
-@@ -368,11 +369,24 @@ static void request_wait_answer(struct fuse_req *req)
-        int err;
- 
-        if (!fc->no_interrupt) {
--               /* Any signal may interrupt this */
--               err = wait_event_interruptible(req->waitq,
-+               /* We can use CONFIG_DEFAULT_HUNG_TASK_TIMEOUT here */
-+               unsigned long hang_check = sysctl_hung_task_timeout_secs;
-+
-+               if (hang_check) {
-+                       /* Any signal or timeout may interrupt this */
-+                       err = wait_event_interruptible_timeout(req->waitq,
-+                                       test_bit(FR_FINISHED, &req->flags),
-+                                       hang_check * (HZ / 2));
-+                       if (err > 0)
-+                               return;
-+               } else {
-+                       /* Any signal may interrupt this */
-+                       err = wait_event_interruptible(req->waitq,
-                                        test_bit(FR_FINISHED, &req->flags));
--               if (!err)
--                       return;
-+
-+                       if (!err)
-+                               return;
-+               }
- 
-                set_bit(FR_INTERRUPTED, &req->flags);
-                /* matches barrier in fuse_dev_do_read() */
+Thanks for the pointers!
 
