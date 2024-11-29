@@ -1,112 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-36122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4799DBF79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 07:24:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079BC164AE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 06:24:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C703A157A72;
-	Fri, 29 Nov 2024 06:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qz5iEpZN"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856589DBF97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 08:00:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E6333C5;
-	Fri, 29 Nov 2024 06:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121D3B211ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 07:00:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C511C15853A;
+	Fri, 29 Nov 2024 07:00:05 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089C158520
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 07:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732861434; cv=none; b=sLbDFcNLMunJkQtzVmguPHM5jycRtJb0BePy/SOHtx5UMRBFjbgw6lOndOa7KxTP30fvmVhqq4uBwMO96jo4N0nO3nl8FTJSJAJC4s1qRR93FHFfPyFp3za1DO0IsGxMpfm616EnWT/ZhSkIehwc8zkkU0imvnDbqLVhHT7H4VQ=
+	t=1732863605; cv=none; b=DgXAnlQRriPE5Uk5GAXjfg8EXHSobVTnqXL6fgdasVH78yxscTSRqtTaA4ThUKUObYrORufzZJ9ueGi89avWdZ/itYOMFp6tJcZqkajCn7q45FS9cOgLUjnIAaj95h9jela7dYWg2Zz0XeuN4ndfjW+BkFfXenZe5yGrGBeFpKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732861434; c=relaxed/simple;
-	bh=WmYOGV7eRRjGkSe/aBe/GEkoJ5Km7HN7iZg6KEnDfzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0ir8Oyvc7wEr3gN0B0dI50i9ovZ81PbUK16A75/288gsN3ScFVMh/JXgfxoVLnElAJpyVlN0WDEGX3eHaUpWPdC8/kaL89DJdVjL5V7XdfdcVTa6GYnywQfd786PFGb+OPhFVJjE7zzdtTyYIUtCNbgWSbrR1imBSi/YA58NrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qz5iEpZN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7BADC4CECF;
-	Fri, 29 Nov 2024 06:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732861433;
-	bh=WmYOGV7eRRjGkSe/aBe/GEkoJ5Km7HN7iZg6KEnDfzM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qz5iEpZNXkFhwZjMRhPi7DcRLoutFcyNz/qjrjMC2vseJRbH8d6OHCKGmVmKb3aZy
-	 mHyNtYmrHB4k+w/BSsBSwrJpy3V3oEDfw3I220Pow7lLNipl/sSaSy463JThA2irQc
-	 ofof19ssKDakuESSyOKDtKLixQiXT4a23SvGb7oaQgaOwaUHIbHCjkayusyiLfi2vU
-	 MqOggfrIeD6MD/+NThWFOoO1zmUTMMQ2DFFcmuzWmWUC11ATrC7o6ReTseqxtfoTj1
-	 PW446eKbhD2NYyDtEtcRqgaHl3dLWp2KaEx2A7Otxpg/2So1pLJLMZA/XRHBuLRAGu
-	 wWFU53NdI7x4g==
-Message-ID: <f029f618-7ca1-4f97-8f05-675709312785@kernel.org>
-Date: Fri, 29 Nov 2024 15:23:50 +0900
+	s=arc-20240116; t=1732863605; c=relaxed/simple;
+	bh=OTnsXcTFOSk4pX6ATOXr/FBbB1ZGPiO0Bg7kRdMMFOk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SajYO9hBLWRrpTN/pHDXtqEDk/AVreJLBM9pRFxtYZ1EMWUdaq0zu5AqWQmce7BzS4o8tjTkFBztDKvWrGmhccEQpKK4Vi4XCa/nqJfx8/L3fiyC8Gwt8s161wWsezb1xc34+3bxH7/mgNiICUqJzEZplLxFgWOci830HSGuoEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7ace5dd02so18224305ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 23:00:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732863603; x=1733468403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/uFra0YN+yna+dFAYGRTHBlUgOuZ/rd2jDdrEmkswmo=;
+        b=wNUhJVLre5dH92fYef2uYQmYdYeaFeBqjrDMPHBrP2+pKbn0gr1RJQo+B77S2hr5lS
+         Fuzz74y2A+RS8ZHvppT3bVm2IPXRHwy9gVOVriaQO3Bg8alE4RVWPwj8WfPbimK2VbhG
+         OCee0aAqUk1bCDGPWNYQciPXj+krpGYGKGI+LNKcIvzS6pfq+varc5iZroL6VgHJJr3R
+         eB01Jo5CS777EfZcR9vNHL3JumkZWmcfAvwcZNVfifeD8uxZFrhTSvXuii34RXwHdpIG
+         8b6OdGiD/bYlmCWqTLXWSVUNT0Di1Xl8XMFHUbglsaXaEjS7O45bUW53k+fK8m5mt5Mb
+         Z+EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVinISZzFsD1FhrYFIreHHlYK4RIY/6ppDxFKtODaGR5qhvU2I+CnvmgLKAEo2Ffh8FeUpsxTdEm8o9k0FG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYgqKEoNuSJ/lNepSwlKDpOVUwN7OW2OqsCXwPrvZVNdeMTZxz
+	7SYhd8J6GhM8QBoziaX3Xc7voydanIvBPG+j8vvefr6uD/ZETp1mzVcJihIKyC7pYdGCdSYKxTV
+	OwFx8fJADCym/53ING3xM2QcnnNoMkDx2Us+H6Q7FH5NjY8HaW+5VA9E=
+X-Google-Smtp-Source: AGHT+IFdiUwM6usNyDCkLi/if2XisD6w3B0PUJMgYfQwjzXBmtMFTye+l/jlLwYTFAMwLA9+B7LxNQeBaYvKgU653zSV2doKUl21
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
- Bart Van Assche <bvanassche@acm.org>, Nitesh Shetty <nj.shetty@samsung.com>,
- Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <7835e7e2-2209-4727-ad74-57db09e4530f@acm.org>
- <yq1ed2wupli.fsf@ca-mkp.ca.oracle.com>
- <9e9ca761-6356-4a97-a314-d08bd5ea0916@kernel.org>
- <20241129061941.GA2545@lst.de>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241129061941.GA2545@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1b05:b0:3a7:8270:4050 with SMTP id
+ e9e14a558f8ab-3a7c55d49dcmr113095305ab.18.1732863603171; Thu, 28 Nov 2024
+ 23:00:03 -0800 (PST)
+Date: Thu, 28 Nov 2024 23:00:03 -0800
+In-Reply-To: <67475f25.050a0220.253251.005b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67496673.050a0220.253251.00a4.GAE@google.com>
+Subject: Re: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_do
+From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
+To: joannelkoong@gmail.com, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, mszeredi@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/29/24 15:19, Christoph Hellwig wrote:
-> On Thu, Nov 28, 2024 at 05:51:52PM +0900, Damien Le Moal wrote:
->>> Maybe. But you'll have a hard time convincing me to add any kind of
->>> state machine or bio matching magic to the SCSI stack when the simplest
->>> solution is to treat copying like a read followed by a write. There is
->>> no concurrency, no kernel state, no dependency between two commands, nor
->>> two scsi_disk/scsi_device object lifetimes to manage.
->>
->> And that also would allow supporting a fake copy offload with regular
->> read/write BIOs very easily, I think. So all block devices can be
->> presented as supporting "copy offload". That is nice for FSes.
-> 
-> Just as when that showed up in one of the last copy offload series
-> I'm still very critical of a stateless copy offload emulation.  The
-> reason for that is that a host based copy helper needs scratch space
-> to read into, and doing these large allocation on every copy puts a
-> lot of pressure onto the allocator.  Allocating the buffer once at
-> mount time and the just cycling through it is generally a lot more
-> efficient.
+syzbot has bisected this issue to:
 
-Sure, that sounds good. My point was that it seems that a token based copy
-offload design makes it relatively easy to emulate copy in software for devices
-that do not support copy offload in hardware. That emulation can certainly be
-implemented using a single buffer like you suggest.
+commit 3b97c3652d9128ab7f8c9b8adec6108611fdb153
+Author: Joanne Koong <joannelkoong@gmail.com>
+Date:   Thu Oct 24 17:18:08 2024 +0000
 
--- 
-Damien Le Moal
-Western Digital Research
+    fuse: convert direct io to use folios
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1648df5f980000
+start commit:   445d9f05fa14 Merge tag 'nfsd-6.13' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1548df5f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1148df5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c44a32edb32752c
+dashboard link: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fd43c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cf2f5f980000
+
+Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
