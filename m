@@ -1,93 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-36123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856589DBF97
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 08:00:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A049DBFA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 08:10:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121D3B211ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 07:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4441164C5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 07:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C511C15853A;
-	Fri, 29 Nov 2024 07:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E267B157495;
+	Fri, 29 Nov 2024 07:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="m71nhJFf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089C158520
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 07:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3601386DA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 07:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732863605; cv=none; b=DgXAnlQRriPE5Uk5GAXjfg8EXHSobVTnqXL6fgdasVH78yxscTSRqtTaA4ThUKUObYrORufzZJ9ueGi89avWdZ/itYOMFp6tJcZqkajCn7q45FS9cOgLUjnIAaj95h9jela7dYWg2Zz0XeuN4ndfjW+BkFfXenZe5yGrGBeFpKU=
+	t=1732864228; cv=none; b=r6TCrltw8FEOFQv/82t6oDw4VRs4c1PJpymxc8U1ibJXirL5di8wQY6Sk+h2gaGFV9BEC46nzjKYgpZQKhcZjM1l3jPC4nWMvTE1Np9tf/VTLDgW/0XtOD2krzGnD+1e66KCi5NgUftqxgdZU84kRulbuDsONZWoPz5AgzCr1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732863605; c=relaxed/simple;
-	bh=OTnsXcTFOSk4pX6ATOXr/FBbB1ZGPiO0Bg7kRdMMFOk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SajYO9hBLWRrpTN/pHDXtqEDk/AVreJLBM9pRFxtYZ1EMWUdaq0zu5AqWQmce7BzS4o8tjTkFBztDKvWrGmhccEQpKK4Vi4XCa/nqJfx8/L3fiyC8Gwt8s161wWsezb1xc34+3bxH7/mgNiICUqJzEZplLxFgWOci830HSGuoEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7ace5dd02so18224305ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 23:00:03 -0800 (PST)
+	s=arc-20240116; t=1732864228; c=relaxed/simple;
+	bh=JEz0II3wPUIUF/fSqaCmDTV//sAnwzm12kigaIvKJMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZX8UzC18b/3XyooLS942ttxdqTcWMqAQ6gY/vbyCThYIZNBOjVbF+C88FO96QkLVNwER7z8+JF6fS9ea57ajjS4W9vOnRd4X9ADfXn8L2oZThsKivgCOvBkjlCZXBcM8mLYAu2AqBxVD5DIZ6kIDtLBzC09ANFQebRzuITU3mEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=m71nhJFf; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46695dd02e8so14835001cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2024 23:10:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1732864224; x=1733469024; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ldFcKDY051HIaSZokdZT8WNnme66AjUBwgdxm61ahfA=;
+        b=m71nhJFficx66lSn7flq+4lOYYivkCQqk+kB4ORPD7KvOOHn6zUfRe6c+LIwH/aDf6
+         DWN388q9LqDrCQyMTONScrkyr532f64SDgOHKxuxYu8Qcx94gUaSmzscZ4DYYV7M+Zw8
+         HqUdObVW178FggxyVEmCbykpNjTCc8QTfsThk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732863603; x=1733468403;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/uFra0YN+yna+dFAYGRTHBlUgOuZ/rd2jDdrEmkswmo=;
-        b=wNUhJVLre5dH92fYef2uYQmYdYeaFeBqjrDMPHBrP2+pKbn0gr1RJQo+B77S2hr5lS
-         Fuzz74y2A+RS8ZHvppT3bVm2IPXRHwy9gVOVriaQO3Bg8alE4RVWPwj8WfPbimK2VbhG
-         OCee0aAqUk1bCDGPWNYQciPXj+krpGYGKGI+LNKcIvzS6pfq+varc5iZroL6VgHJJr3R
-         eB01Jo5CS777EfZcR9vNHL3JumkZWmcfAvwcZNVfifeD8uxZFrhTSvXuii34RXwHdpIG
-         8b6OdGiD/bYlmCWqTLXWSVUNT0Di1Xl8XMFHUbglsaXaEjS7O45bUW53k+fK8m5mt5Mb
-         Z+EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVinISZzFsD1FhrYFIreHHlYK4RIY/6ppDxFKtODaGR5qhvU2I+CnvmgLKAEo2Ffh8FeUpsxTdEm8o9k0FG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYgqKEoNuSJ/lNepSwlKDpOVUwN7OW2OqsCXwPrvZVNdeMTZxz
-	7SYhd8J6GhM8QBoziaX3Xc7voydanIvBPG+j8vvefr6uD/ZETp1mzVcJihIKyC7pYdGCdSYKxTV
-	OwFx8fJADCym/53ING3xM2QcnnNoMkDx2Us+H6Q7FH5NjY8HaW+5VA9E=
-X-Google-Smtp-Source: AGHT+IFdiUwM6usNyDCkLi/if2XisD6w3B0PUJMgYfQwjzXBmtMFTye+l/jlLwYTFAMwLA9+B7LxNQeBaYvKgU653zSV2doKUl21
+        d=1e100.net; s=20230601; t=1732864224; x=1733469024;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ldFcKDY051HIaSZokdZT8WNnme66AjUBwgdxm61ahfA=;
+        b=cgksl3yN8i6nHrHvZVu6yJdXdgLNr++3tdxrd0vok7N1HdfQgkKmihyHO6ESdBilmy
+         VDet/E+7avBcG1QyEfa9QAWlxLOcwSrKYA1CAuD6AjzXg7wgeSos+UD712Y1ZywH47AU
+         QUNmROSckWZ+vEYJfnLXyrsHC3fr4agXuE/btWL7zakFMXfHhYWuwcbD/CUOaCUJI1NU
+         rPi0uQsAabg/PipzTELm+LjLV5OL5ISfc+95QuuAKaqWbg8yJ0B6EpgW6IjV0PWwq2V3
+         LnPFNlJmiPmTdcMnbXDjEnX/qe+KFzBz/9uefRp9aGUSfIMyijhaYRc/Y6bsyjdkzQfv
+         b2bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJmRHzNdU5htCNnZwpSVMhSmADR/IIYnXEmOPpi0UEP8N0WDMdTsB3MhBUNQ5Sz5h8pPSi8y4yNEdkUKlb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzvUyfjm7iI6vsyS6daHhgPv8fukbyGbR8+FaJ7y0DwP7BamgR
+	GW0DDksknPFUnEXM6aTKKmT5wWC/s1wuw3M9AwGJd14jTtCAd33F+sCm0HUlfJMDV9AbdBs2vxh
+	/Wc5qdsT3dCf7QKMpPy84cMdIPry3KmaGCYI6ww==
+X-Gm-Gg: ASbGncvETx+qyNewcMQv8OxK6TsVAq16EqYCqJFWIBuAJ/oN8dbBExbpa/9jgwCfQFc
+	GAo6LIr+7hQZvq77UkNBS3BSfv6puuwIzvQ==
+X-Google-Smtp-Source: AGHT+IH0Sd3pQYTKTVGdScb2/HSUzM3Ujrly8IxVM26kUOiWNoxlsQkfmYIPT59L0RqP87NWYDQCblDaLahnNU0S59U=
+X-Received: by 2002:a05:622a:1801:b0:462:a7d1:8e19 with SMTP id
+ d75a77b69052e-466b359cc6dmr167906631cf.13.1732864224215; Thu, 28 Nov 2024
+ 23:10:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b05:b0:3a7:8270:4050 with SMTP id
- e9e14a558f8ab-3a7c55d49dcmr113095305ab.18.1732863603171; Thu, 28 Nov 2024
- 23:00:03 -0800 (PST)
-Date: Thu, 28 Nov 2024 23:00:03 -0800
-In-Reply-To: <67475f25.050a0220.253251.005b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67496673.050a0220.253251.00a4.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_do
-From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
-To: joannelkoong@gmail.com, josef@toxicpanda.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, mszeredi@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20241128144002.42121-1-mszeredi@redhat.com> <20241128195738.GG3387508@ZenIV>
+In-Reply-To: <20241128195738.GG3387508@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 29 Nov 2024 08:10:13 +0100
+Message-ID: <CAJfpegvCHFwEf=sy56EPABv8BFVJA+HTjT26U_bOzHukwgBk5w@mail.gmail.com>
+Subject: Re: [RFC PATCH] fanotify: notify on mount attach and detach
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+On Thu, 28 Nov 2024 at 20:57, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-commit 3b97c3652d9128ab7f8c9b8adec6108611fdb153
-Author: Joanne Koong <joannelkoong@gmail.com>
-Date:   Thu Oct 24 17:18:08 2024 +0000
+> So... why is it not a DoS?
 
-    fuse: convert direct io to use folios
+Certainly looks like one.  I intentionally didn't give too much
+thought to the hook placement to be able to send out a quick proof of
+concept patch.   Will move them outside of mount_lock.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1648df5f980000
-start commit:   445d9f05fa14 Merge tag 'nfsd-6.13' of git://git.kernel.org..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1548df5f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1148df5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c44a32edb32752c
-dashboard link: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fd43c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cf2f5f980000
-
-Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks,
+Mikos
 
