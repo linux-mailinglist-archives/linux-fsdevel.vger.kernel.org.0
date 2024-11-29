@@ -1,84 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-36114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4795F9DBE2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 00:57:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB6D9DBF3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 06:51:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C377E164DF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2024 23:57:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA44B164E17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 05:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8941C4A28;
-	Thu, 28 Nov 2024 23:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26CB1581EE;
+	Fri, 29 Nov 2024 05:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NVeH6hxn"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YK0YbkG3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77365211C;
-	Thu, 28 Nov 2024 23:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C878156C70;
+	Fri, 29 Nov 2024 05:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732838242; cv=none; b=KDApxuQ6WDjaH+hvxHSqn2ocMDvwspQ7f1Afd5McPuNCFdkRnDZU0D9XFB6XG741ZyIna0V0Gw1zh29yLwKk2SIegdqM0dG2wvGoEOXsJRTJ9HwjTCYgkYnwGeTJQ5V4xtNykgQdFziW+ZpKpmG2Lvzr+3xEvTDgDX3qlHGiHlo=
+	t=1732859467; cv=none; b=kH/c+FK8iSnTOUW4b/7H0JPl14P/cPKIXqxZ96DiigJvlKDWeW9kd2hobRKWdYBTlVFzKWfIHXXVcmIF6tsqRd4l5YB5NyUj72TDjZTVZY9XjQGadMi4wwz0+HNkVfIqRXimG1gvun+qgMdeqjgb/HA76e+fKkZbZri7OQx0uVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732838242; c=relaxed/simple;
-	bh=9ji3H8fVHUjH72z/Rew8W0jSVxV2FEfIPTBs/eVMFjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EeHPXFfIFFkh+/vALVLnDfh66RDo7bOu70PC+EMxnmrRQa/QLYy8fZiRTL6LCbcSwG/R9hbay68ZfjfSZryhVVbXjkTtSIYOI4B5aVA3myqgMQjiDEwulTj+F9kU9MN1ECFM6PriT9oVDo7dVc81kqgKjXe06WRNd5VgHCzRwQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NVeH6hxn; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1732859467; c=relaxed/simple;
+	bh=klqu7Dw7BJeUOQJFRrsSl4cxebKvqKXtsYWE6Cr1hAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SFpn5nRVv7ax+PMC5tiSZJhG6/2slv6s9yJYgBhaf+JFRwkdW6exfyw6y+70fRHGSwxOypIDjQmP08b4Ngn1HYDFu9tPANqHxUJsPJdlFzhgYlwkww8I6T/q41m/uTni9lKwA3wDdEdV/xBI1+AMJl2mQFzaYZezYo4BGz6RP60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YK0YbkG3; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=n5TzocNg5NSMR/EMBC9MaqP0bB5Vs+X18ru/ZYSehlg=; b=NVeH6hxn/aRlD0e0Tsx+goBKac
-	XZ3mNsUUfAD7UxJGfUsaJZBZlFf0mo9HwddjDwKC9TqK6TCtl+qt8sbxiQMgiCap1IvXyc7PhHf9G
-	YjVowoOEYQF3NJUGIhQG54GSJBfodIxFdlYdcIcoTZEW57AThHJCh/UoEJ4iHjEOn19F0COJuI5/5
-	KZEl//ULOvdxunN9yysC2lTLatv+lFX5PjqGlmPBNsh3sNKr2XgW+UMdhA6VhlitebIFxSc8g0Bck
-	fG+AE/EhlMnxI8bd+ATgWFcNhnX6LSjoX80i+mh+Mw+mGdEDBq6HIEvtVKu+zaVdGAU0skOaWxjNz
-	nzvQUFhw==;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=sC8uQpivIY6+LG64nGDIb2BW/qZcysAW7q2qQBZuVhM=; b=YK0YbkG3xJ5ab5yNbts/iX1wLA
+	9VlQ5PIcKv/e418Rku7VyOiIzLeelIuo9zxUzEmiYNznp+KaEUds5UXuk/c5gCN48YEISFAv51WMu
+	jIK5lfInMKmGL6zHE7OLL77PvBkLkMpbSGBJx2Ggpwg5ALKTHiiMw7pEjia1drtwqvMk4aNyutsGv
+	bAaJszTkPKZtJEfVIuvr/fr2PfBNdlYl4IE9CF+CBwSac5Y2/FuMgK9CXIe1PLbVfF602LHYtyB34
+	v6g7YxlOo9SHKDK2tvPip+FlEy57jyaDQvT1kZrM2Llq1FeyO7VGTYnjxXihSe1WAtT73s7sCYWeH
+	pi2wPLQw==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGoNm-00000003GRQ-1N8k;
-	Thu, 28 Nov 2024 23:57:14 +0000
-Date: Thu, 28 Nov 2024 23:57:14 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jann Horn <jannh@google.com>
-Cc: syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
-Message-ID: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
-References: <673c1643.050a0220.87769.0066.GAE@google.com>
- <CAG48ez0uhdGNCopX2nspLzWZKfuZp0XLyUk90kYku=sP7wsWfg@mail.gmail.com>
+	id 1tGtu9-00000003bS6-0Led;
+	Fri, 29 Nov 2024 05:51:01 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Xiubo Li <xiubli@redhat.com>,
+	ceph-devel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH 0/5] Remove accesses to page->index from ceph
+Date: Fri, 29 Nov 2024 05:50:51 +0000
+Message-ID: <20241129055058.858940-1-willy@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez0uhdGNCopX2nspLzWZKfuZp0XLyUk90kYku=sP7wsWfg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
-> 
-> This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
-> Jens pointed out, this was triggered after error injection caused a
-> memory allocation inside xa_store() to fail.
-> 
-> Is there maybe an issue where xa_store() can fail midway through while
-> allocating memory for the xarray, so that xa_empty() is no longer true
-> even though there is nothing in the xarray? (And if yes, is that
-> working as intended?)
+I know Dave Howells is working on a more comprehensive cleanup of ceph,
+but I need either his work or these patches in the next merge window,
+and it's possible he won't be done in time.
 
-Yes, that's a known possibility.  We have similar problems when people
-use error injection with mapping->i_pages.  The effort to fix it seems
-disproportionate to the severity of the problem.
+The first patch is a bugfix.  I'm not quite clear on the consequences
+of looking at the wrong index; possibly some pages get written back
+that shouldn't be, or some pages don't get written back that should be.
+Anyway, I think it deserves to go in and get backported.
+
+The other four patches I would like to see merged for v6.14.  Unless
+Dave finishes his rewrite first.  I have only compile tested this,
+but it's _mostly_ a one-to-one transformation.
+
+Matthew Wilcox (Oracle) (5):
+  ceph: Do not look at the index of an encrypted page
+  ceph: Use a folio in ceph_page_mkwrite()
+  ceph: Convert ceph_readdir_cache_control to store a folio
+  ceph: Use a folio throughout writepage_nounlock()
+  ceph: Use a folio in ceph_writepages_start()
+
+ fs/ceph/addr.c   | 136 ++++++++++++++++++++++++-----------------------
+ fs/ceph/crypto.h |   7 +++
+ fs/ceph/dir.c    |  12 ++---
+ fs/ceph/inode.c  |  26 ++++-----
+ fs/ceph/super.h  |   2 +-
+ 5 files changed, 97 insertions(+), 86 deletions(-)
+
+-- 
+2.45.2
+
 
