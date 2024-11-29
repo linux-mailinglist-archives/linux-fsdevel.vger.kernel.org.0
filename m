@@ -1,281 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-36150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EBE9DE7D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 14:41:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0433B9DE7DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 14:42:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DCA2809A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 13:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C875162134
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2024 13:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7ED1AA1EC;
-	Fri, 29 Nov 2024 13:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83A719F424;
+	Fri, 29 Nov 2024 13:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnbMI3Hh"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Ngk+Hi0X";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ABysHRM4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC851A9B2A;
-	Fri, 29 Nov 2024 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAF219CCEC;
+	Fri, 29 Nov 2024 13:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887577; cv=none; b=dDaZn3BC8pjB6xLnhh3kNQC6VimiEkloYDr+EmZ4xQlhBfPZFsGpLJJ3gdCufnH+/zxnEvzMXDhdp5whNApzyqXvl9Mk9x0b/F8Tde49l+b/0/2cxnyd7z6bx9YO2/GYJbrWNGPGWAoJkuB0cv4ovJQOqDsaEmPBVX9eNVydvvw=
+	t=1732887643; cv=none; b=oc8gcXvn+gYKw4bMlDGftT1FmoJIZbykt/bsR9yWDU+O0Kh+VIJ7mPbVGX6pty+hDpdkEMy9GrShgFg8a6xYyp5lRA82a+KUlbdjWpokWIXKuH20LB1B6+VS865x/9dy2XUMZq6cKdd38/EmAuq/jNX8PHDzFwc7zJX/e817hBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887577; c=relaxed/simple;
-	bh=WEQD5GD1MRTw0uQNZQTK0HL8w7OgRdr07MVKxiGGaVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GQmLMmYOiXN9LchzHwW/elg8Jt4mP4sLD+0t6MNxgDcleGZCBS7ekARnc+ZxhfdsjnHz9Ve+2c9hC99sSKDmHJYfoLIN6SOhEz1o73ggZEJV8bQt/AloUGwbeXF+d5R8cfANQJ+xwpy0oeiqCp+TnI1PkPIA/qIDSN4JGHmCAvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnbMI3Hh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 528E4C4CECF;
-	Fri, 29 Nov 2024 13:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732887576;
-	bh=WEQD5GD1MRTw0uQNZQTK0HL8w7OgRdr07MVKxiGGaVU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hnbMI3Hh65KedCuSDpx1x/cPkl0mAhCkn/nu2JShAr8jMYY678SDVxkUd+89fxbQd
-	 NNZQKDegYEf0hbQkMFSs3IEL0kpM+h6AbZQ0Z3ULUkYYLWleVH5PjHozlX2ty6kkF3
-	 v1HSmI+jZRd3kA37N6C33CGN1PgLhPMgx4WgajwgF8W7jEGCAlHPYYji6pDRwNgA1T
-	 5f2Cjy8O4VdQwaWaxfs4upTu/V6PjNsCbj2dCjlv1YGyrVgynmda7i9JIlBwf4jred
-	 whHUsRi6Vur+9v/O2zeZLQk8kfMKLo7bCWWYhDIBEy0xN6odJOyKR0ITqLWIQXqmzP
-	 6I2NA+4DKQLLQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Erin Shepherd <erin.shepherd@e43.eu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH RFC 6/6] pidfs: implement file handle support
-Date: Fri, 29 Nov 2024 14:38:05 +0100
-Message-ID: <20241129-work-pidfs-file_handle-v1-6-87d803a42495@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
-References: <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+	s=arc-20240116; t=1732887643; c=relaxed/simple;
+	bh=dFpk9+Oi8CaTJlXtBdCrQJEm0FQh2/JS7AzsTZ1GUcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyyNj7uSaYyJ9q7ATDNOzpL0Mg1Okh3DDt8pI4x+zK78JA3pw4WuYPUMW4Zci8kzL6cPul99e02x994UMBHlGT4rlTDxd48mFHe65YAkvTcjjwQtzq1Og5BmMkJqTA/JBFp29OEyB5ua3ODys2tckMyrtbaFj1c6nH7G0rTwHOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Ngk+Hi0X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ABysHRM4; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D5FAD1380679;
+	Fri, 29 Nov 2024 08:40:37 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 29 Nov 2024 08:40:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732887637; x=
+	1732974037; bh=h46sUWkmGOYezCFJtOC5vKVOrSkLwYy7bd1paRuMmx4=; b=N
+	gk+Hi0X85vWgyt65XNrWgjZNvRWl9o6tt+R63M+CGmXij/Y5biOzwgu7GL1Bg1SN
+	FnhSqeYfpCY5oBiYYOT2UXWR7LssANB2KFQAetoSX3nl7y7CqTPJj+q93SaPSqB7
+	BE3oOxoeS/peOsuCEb1oeaPiHODlDvV0fbAcj4Wfr01p8QUXVb4ySmfvgDiuUYYR
+	+NhMNTOmRdUTWVNKdBNmjqmd850b37cOqZ+GXbPIcKnqzYMFJCBcbH7EwaH46eoM
+	WgwCrg6lc/FbrcbKYdwRj+YjwBzIxOizPzF1qOZ/xerquDKbKEjsx1PKMYoCIwnx
+	GT8CSJRllH2YhYrC/AR2Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732887637; x=1732974037; bh=h46sUWkmGOYezCFJtOC5vKVOrSkLwYy7bd1
+	paRuMmx4=; b=ABysHRM4mlKrqpp/V50m4xqjyx8b8YDyk0e5rbq+I2A5I2Gl3Qe
+	1K/4iX4j8rUxAsRdm9YEKYBYmt2LM5jqXAJY640Ov3/bv1Jn2YXAkbrV2V1bIL91
+	zd1lbEEwlujMfz2RtNpErqorsNhN6cBcCWoSTBXZ4FV1BZOODxZBj9PhVVIoeCku
+	70Q6g9euYTYs/Lla+ty/tyvL9nsYNGw8t0mQMV+tziQug+gsIKKcErXdl/QAO1Vu
+	o9l1t92KOgsZjG6KMY0xEEWxhywEGASoCBlX66zE6kunFHdTk+WrEwjkO1gCaiZk
+	Y1SzezHPRnTxnU/AO9A5soTc2jT/ds3UNGQ==
+X-ME-Sender: <xms:VMRJZysEK7njFXfPZPT4DgTUOO60QaJPiquOE_wwwSvA061a8n-MeA>
+    <xme:VMRJZ3eEqeZtGXbDhnNeYTteOMxIk23lrJCz3c6k5NC5eAzn8tidk1Qr-nNw0-OoX
+    AYmGbaUE-74LifqsKg>
+X-ME-Received: <xmr:VMRJZ9yoRMoptZf8V8l7R6QsWG2j1f2jiwB2vYeN5X33uIcSjVFGn_5iEssNu5c_oPnouQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdehfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepleetudegtdfgheduudfh
+    teelieeuvddtheeijeejudefjeefgeettedutdeggfdunecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtoheple
+    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtph
+    htthhopehshiiisghothdolehflegrjehfjeeffhgstdejlegsvdefkeejrgeisehshiii
+    khgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepfihilhhlhi
+    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhho
+    uhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepkhhirhhilhhlrdhshhhuthgvmhhovh
+    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggrnhhtohhnsehsihhn
+    rgdrtghomh
+X-ME-Proxy: <xmx:VMRJZ9P5pIY_pWc98BnmQXaanJLdbcrbCFXDW2VkEDq6eKEFiEsd_A>
+    <xmx:VMRJZy-1eREtLVml4Npi1-AmohyWzF-VlSCnfiztMHJc6DDzx_CkmA>
+    <xmx:VMRJZ1X71BPSEkrh-gRVyES_BgDuXyFdDnECcPTc-yFT3soq8u57mA>
+    <xmx:VMRJZ7fydqbW0_HYs5EcZlyGeqWsA8XKEifHukyQr7NngQdGGttF_g>
+    <xmx:VcRJZ1Y1iOpIh6JgnvalbtOJz5q9fPocmTlQ1Ds3Pg5g0nJJMdbp-vEY>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 29 Nov 2024 08:40:33 -0500 (EST)
+Date: Fri, 29 Nov 2024 15:40:29 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH v1] mm/filemap: don't call folio_test_locked() without a
+ reference in next_uptodate_folio()
+Message-ID: <2r2suyel6m6ngntarnxwtobicwignmmm3lfivvp5goufzis56e@rwtncfi7nxxn>
+References: <20241129125303.4033164-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6382; i=brauner@kernel.org; h=from:subject:message-id; bh=WEQD5GD1MRTw0uQNZQTK0HL8w7OgRdr07MVKxiGGaVU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR7Hj5kuS/k0ZmFdU8Fzod/z0yvli1vL6m226l/lM9n9 mvxYP4vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZvJ6RYZHprYiLbcsWptXF XkmbdbQxkre2ojnt3/5YMVeuZY/5kxgZ1p2JcJj6gq8gdlmU/ISSWIXLn6p3ck+snOFd0+/2Wew QCwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129125303.4033164-1-david@redhat.com>
 
-On 64-bit platforms, userspace can read the pidfd's inode in order to
-get a never-repeated PID identifier. On 32-bit platforms this identifier
-is not exposed, as inodes are limited to 32 bits. Instead expose the
-identifier via export_fh, which makes it available to userspace via
-name_to_handle_at.
+On Fri, Nov 29, 2024 at 01:53:03PM +0100, David Hildenbrand wrote:
+> The folio can get freed + buddy-merged + reallocated in the meantime,
+> resulting in us calling folio_test_locked() possibly on a tail page.
+> 
+> This makes const_folio_flags VM_BUG_ON_PGFLAGS() when stumbling over
+> the tail page.
+> 
+> Could this result in other issues? Doesn't look like it. False positives
+> and false negatives don't really matter, because this folio would get
+> skipped either way when detecting that they have been reallocated in
+> the meantime.
+> 
+> Fix it by performing the folio_test_locked() checked after grabbing a
+> reference. If this ever becomes a real problem, we could add a special
+> helper that racily checks if the bit is set even on tail pages ... but
+> let's hope that's not required so we can just handle it cleaner:
+> work on the folio after we hold a reference.
+> 
+> Do we really need the folio_test_locked() check if we are going to
+> trylock briefly after? Well, we can at least avoid a xas_reload().
+> 
+> It's a bit unclear which exact change introduced that issue. Likely,
+> ever since we made PG_locked obey to the PF_NO_TAIL policy it could have
+> been triggered in some way.
+> 
+> Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/674184c9.050a0220.1cc393.0001.GAE@google.com/
+> Fixes: 48c935ad88f5 ("page-flags: define PG_locked behavior on compound pages")
+> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Hillf Danton <hdanton@sina.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-In addition we implement fh_to_dentry, which allows userspace to
-recover a pidfd from a pidfs file handle.
+Looks reasonable:
 
-Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-[brauner: patch heavily rewritten]
-Co-Developed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/fhandle.c | 34 +++++++++++----------
- fs/pidfs.c   | 96 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 115 insertions(+), 15 deletions(-)
-
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 23491094032ec037066a271873ea8ff794616bee..4c847ca16fabe31d51ff5698b0c9c355c3e2fb67 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -268,20 +268,6 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
- 	return 0;
- }
- 
--/*
-- * Allow relaxed permissions of file handles if the caller has the
-- * ability to mount the filesystem or create a bind-mount of the
-- * provided @mountdirfd.
-- *
-- * In both cases the caller may be able to get an unobstructed way to
-- * the encoded file handle. If the caller is only able to create a
-- * bind-mount we need to verify that there are no locked mounts on top
-- * of it that could prevent us from getting to the encoded file.
-- *
-- * In principle, locked mounts can prevent the caller from mounting the
-- * filesystem but that only applies to procfs and sysfs neither of which
-- * support decoding file handles.
-- */
- static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
- 				 unsigned int o_flags)
- {
-@@ -291,6 +277,19 @@ static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
- 		return true;
- 
- 	/*
-+	 * Allow relaxed permissions of file handles if the caller has the
-+	 * ability to mount the filesystem or create a bind-mount of the
-+	 * provided @mountdirfd.
-+	 *
-+	 * In both cases the caller may be able to get an unobstructed way to
-+	 * the encoded file handle. If the caller is only able to create a
-+	 * bind-mount we need to verify that there are no locked mounts on top
-+	 * of it that could prevent us from getting to the encoded file.
-+	 *
-+	 * In principle, locked mounts can prevent the caller from mounting the
-+	 * filesystem but that only applies to procfs and sysfs neither of which
-+	 * support decoding file handles.
-+	 *
- 	 * Restrict to O_DIRECTORY to provide a deterministic API that avoids a
- 	 * confusing api in the face of disconnected non-dir dentries.
- 	 *
-@@ -397,6 +396,7 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
- 	long retval = 0;
- 	struct path path __free(path_put) = {};
- 	struct file *file;
-+	const struct export_operations *eops;
- 
- 	retval = handle_to_path(mountdirfd, ufh, &path, open_flag);
- 	if (retval)
-@@ -406,7 +406,11 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
- 	if (fd < 0)
- 		return fd;
- 
--	file = file_open_root(&path, "", open_flag, 0);
-+	eops = path.mnt->mnt_sb->s_export_op;
-+	if (eops->open)
-+		file = eops->open(&path, open_flag);
-+	else
-+		file = file_open_root(&path, "", open_flag, 0);
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index f73a47e1d8379df886a90a044fb887f8d06f7c0b..f09af08a4abe4a9100ed972bee8f5c5d7ab33d84 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/anon_inodes.h>
-+#include <linux/exportfs.h>
- #include <linux/file.h>
- #include <linux/fs.h>
- #include <linux/cgroup.h>
-@@ -454,6 +455,100 @@ static const struct dentry_operations pidfs_dentry_operations = {
- 	.d_prune	= stashed_dentry_prune,
- };
- 
-+static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-+			   struct inode *parent)
-+{
-+	struct pid *pid = inode->i_private;
-+
-+	if (*max_len < 2) {
-+		*max_len = 2;
-+		return FILEID_INVALID;
-+	}
-+
-+	*max_len = 2;
-+	*(u64 *)fh = pid->ino;
-+	return FILEID_KERNFS;
-+}
-+
-+/* Find a struct pid based on the inode number. */
-+static struct pid *pidfs_ino_get_pid(u64 ino)
-+{
-+	ino_t pid_ino = pidfs_ino(ino);
-+	u32 gen = pidfs_gen(ino);
-+	struct pid *pid;
-+
-+	guard(rcu)();
-+
-+	/* Handle @pid lookup carefully so there's no risk of UAF. */
-+	pid = idr_find(&pidfs_ino_idr, (u32)pid_ino);
-+	if (!pid)
-+		return NULL;
-+
-+	if (sizeof(ino_t) < sizeof(u64)) {
-+		if (gen && pidfs_gen(pid->ino) != gen)
-+			pid = NULL;
-+	} else {
-+		if (pidfs_ino(pid->ino) != pid_ino)
-+			pid = NULL;
-+	}
-+
-+	/* Within our pid namespace hierarchy? */
-+	if (pid_vnr(pid) == 0)
-+		pid = NULL;
-+
-+	return get_pid(pid);
-+}
-+
-+static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-+					 struct fid *fid, int fh_len,
-+					 int fh_type)
-+{
-+	int ret;
-+	u64 pid_ino;
-+	struct path path;
-+	struct pid *pid;
-+
-+	if (fh_len < 2)
-+		return NULL;
-+
-+	switch (fh_type) {
-+	case FILEID_KERNFS:
-+		pid_ino = *(u64 *)fid;
-+		break;
-+	default:
-+		return NULL;
-+	}
-+
-+	pid = pidfs_ino_get_pid(pid_ino);
-+	if (!pid)
-+		return NULL;
-+
-+	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	mntput(path.mnt);
-+	return path.dentry;
-+}
-+
-+static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
-+				   unsigned int oflags)
-+{
-+	return 0;
-+}
-+
-+static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
-+{
-+	return dentry_open(path, oflags | O_RDWR, current_cred());
-+}
-+
-+static const struct export_operations pidfs_export_operations = {
-+	.encode_fh	= pidfs_encode_fh,
-+	.fh_to_dentry	= pidfs_fh_to_dentry,
-+	.open		= pidfs_export_open,
-+	.permission	= pidfs_export_permission,
-+};
-+
- static int pidfs_init_inode(struct inode *inode, void *data)
- {
- 	struct pid *pid = data;
-@@ -488,6 +583,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
- 		return -ENOMEM;
- 
- 	ctx->ops = &pidfs_sops;
-+	ctx->eops = &pidfs_export_operations;
- 	ctx->dops = &pidfs_dentry_operations;
- 	fc->s_fs_info = (void *)&pidfs_stashed_ops;
- 	return 0;
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
-2.45.2
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
