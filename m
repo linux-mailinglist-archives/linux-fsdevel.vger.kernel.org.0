@@ -1,178 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-36171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEA09DEEEE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 05:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D546A9DEEFF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 05:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B9D163A75
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 04:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B90163A03
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 04:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E10913AA2F;
-	Sat, 30 Nov 2024 04:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FC313C695;
+	Sat, 30 Nov 2024 04:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CYfmZo9p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI1wQ/YJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C376137930
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 04:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC1F29A0;
+	Sat, 30 Nov 2024 04:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732940889; cv=none; b=owbhuY6w/e1WcNI1CVESv6RSHMdTV4BM1tiF86YCfNwn6iv7KOCuZVAanX75qYxnhIedWRiI6SDdxIUrHfGHqs6yInPdPoC0Il+fI9IRFUoxsjlNYaXgUxPVcppJ71GjCXIJpw5cxht5jHt9NNrFJb7iFVQU8MfwaJfctzmTyfI=
+	t=1732942160; cv=none; b=aUDL8DZr9WfknPQW+e6htdl/O3kmSOWBzx5FLYESSmn52fJBvGL/RrNLQz1kSItjFsWjMtdpGuHIvgvCejVLohwLZELnREuc3zjvhRdJIAFLaDrwozUGKvQVgv3TkRGDzwfx3P0hL6sgEr31DA9DZOe0frzsO8g8oQfWPk7EwdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732940889; c=relaxed/simple;
-	bh=3fVPjAMLcPc8W9XHxCKejFdtJstDJyDr5I/dm5BmSG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=drCg0lLZry+SNblN/8ovoXF28YqjKQJDkiIjyA/oRhZ7MjIuWyDLqXEWhUpLJ6VmgcQ64ueySgBFi+I/XhFz+EWF9tLRdqN7VrhqIk8QPpWcOisvgasw2ec8TsKsIXBmNL6P9Fa4XCKi640Pv++WsjKAAyntxR1/fTx/XT/X1Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CYfmZo9p; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a1639637so23102195e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 20:28:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732940886; x=1733545686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=59D7wKw+lCrKikwTGg+Ep/tt5Aq7umJy0reSeHNByL4=;
-        b=CYfmZo9pn7t2p0Du+sUkwzlE8cxodAvbflPB+PziTqhEVWAk5GSYSlGTNyNwHfy8bt
-         oaRLxUR6xOOjPPjndw/TefADj5RaxYJsVIKK0QLYOAltcOW/2eGoqZgLBHyuzDSGWSP9
-         dy2GV9JnZDLxsGzKmpseSKg9lH2jRTvMXljUWF+aZeqmQzzH18LAxX/FG2MoABIg2ymT
-         8i4rVFrfjWgZnq/sNxlFQtxb3RgYMw2t2Yddne0W1NBR2jjE6TqsU9loZ6S6QCz5LmZ4
-         6sL8GONVSLwVGa5mL/Me3Co35t18Yxm+bVi7VqaP1TM0EWcRKazWH3LREfQRh/8PmW7U
-         ALbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732940886; x=1733545686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=59D7wKw+lCrKikwTGg+Ep/tt5Aq7umJy0reSeHNByL4=;
-        b=q/p1TMUXioaRxxHxwtGHhznhUUgqgEjM2yT+fZ9YOUo+EWJGFezFhIwDcudILH4kNi
-         9AlDfV2BlHgMtNM91JCX3KZTSNiSpTO39f7rMIoTjOQGHGEO5bRq9zBgkZSQP6wKZHAR
-         LKv6hCCiEya/3vNTKpPYylT4zywrTNlnZ9Nv9HDalFqTc1hTM77ofm1rG/Rcvoh5ZDNh
-         Di65OrVQ7jg/S7ZtL3Mjt0CfyhdXderjQCX3oB7XO2dtYBivuGMwNfzuV1NKTbMUgmYx
-         dZd04rS2/qkPJJJdcG2wGAzUD0DmP/VbH2+RNPna77GRVIyNGfnwyUwrm/eDyVma07hh
-         AJzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAyBkyA3T0GDbizJM0BCHhQdgGjL5YyXC6atu2qjazH0B+239XBVX/um6RpKGFIungHyymNneBr1LmbvFm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLQ/nMcW8yOW6hCCW3tRkHyHnHZeNRj6t9MOXwwR67cKiMN86s
-	CoXnMyzkyBnQ1xGc0aJHe04sSR0ffxlbmfqGlBjt0roHk9ZVwbiIa1r6RKqrN8A=
-X-Gm-Gg: ASbGnct865Rlv3FOs6jQ6kIA+EEw6AtHjtTgtwEfa7O7ARvlQvaqpm6CKv2KPt+rBak
-	bOCTpBFdxFUvwwnkGhKoRxucnTgDy12A2FqnvrX6Xhg20GRRdSvFF/q59KrlKyUGqun1j31RJ6R
-	BamUFmmrM62bJEJ/Y0nh2c5d5DEQGRwgER8IL5j/Be4ecA52+HhNBCgzbXV2UutTyAMjE7c5ZhN
-	9enGV3vYFKayJRnjT3JUWKQWTR7360V9bhayGHPPKWvq/9oF9TRwwR5KN1IGw3fa4XtTakWIlA1
-	CQ==
-X-Google-Smtp-Source: AGHT+IFIR4lZurAZoQSAFf9RPCbGkRc4iM4JBekXOV1R5tl1fM/SR9MYYfnBI8F2iWQTnPk9eayFBw==
-X-Received: by 2002:a05:6000:1448:b0:382:41ad:d8f0 with SMTP id ffacd0b85a97d-385c6ec0e2emr12419437f8f.34.1732940885462;
-        Fri, 29 Nov 2024 20:28:05 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215478976e3sm17340845ad.58.2024.11.29.20.28.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 20:28:04 -0800 (PST)
-Message-ID: <15a3a0ec-78fa-4992-a98f-6b82b5a387a5@suse.com>
-Date: Sat, 30 Nov 2024 14:57:59 +1030
+	s=arc-20240116; t=1732942160; c=relaxed/simple;
+	bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cqOHN5yG8sbpqD5HIJj8xSr0eqW3CTm4xAS0Gsjrl9da/slCdeBrvooWE/HijI21FHos1bAQgnr/Mciu66qpsy9nns2+Qr6CUhBKu91J7r144oZaf/S3QZ/E6o23NtLl5KaJk4zlB5VhYXq+avCAmneF6pmNax+EQOMv42qDNaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI1wQ/YJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B319DC4CECC;
+	Sat, 30 Nov 2024 04:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732942159;
+	bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GI1wQ/YJnVYzohfA+pkUBuCpZ7wmxmedH3w63YwPYzewyxYdEl0OgB6j0OpKX69kP
+	 gHCQDqAsGzSlc7cSAnQx4/T++rPZOCA6VXS8vFoTxin2qWiLmfxBWIB4M0ggiKzcwG
+	 EALQDbzN0Gk3lZ8JTYwgfGYA/+FefzNwcO4MTFw1dSOceBPmUVLOHrPmalQ62C9l6i
+	 QUe4V2BmgIriWzUlbuc2osu6jamacQ4TlSkrNsWVvBZHm8vWf3GWqF5SwZl9GJzF2u
+	 b+fAt858jkaIDXPzS7VoWh+9H/2aWNuInIscckjflwohp4CUaA3Sjm72pUc6hot48/
+	 W3imNrwytJ5sA==
+From: Kees Cook <kees@kernel.org>
+To: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: Make sure task->comm is always NUL-terminated
+Date: Fri, 29 Nov 2024 20:49:14 -0800
+Message-Id: <20241130044909.work.541-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-To: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
- josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
-References: <674a6f87.050a0220.253251.00d5.GAE@google.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <674a6f87.050a0220.253251.00d5.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4500; i=kees@kernel.org; h=from:subject:message-id; bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=; b=owGbwMvMwCVmps19z/KJym7G02pJDOleM738HBLK3jN2iE/6eH1DywlDV//zrlOz/B20zoSrF TcWRqh2lLIwiHExyIopsgTZuce5eLxtD3efqwgzh5UJZAgDF6cATKSmnZFhhnD59S3JD5jX3D1Q mbmj6tqU1GW6Zs+WWgddMvkW5bPjByPDewHbf9LBK0Ic3Q08T3n7tfyLWvl1wUbxiKnnNR5G8O7 iAAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
+Using strscpy() meant that the final character in task->comm may be
+non-NUL for a moment before the "string too long" truncation happens.
 
+Instead of adding a new use of the ambiguous strncpy(), we'd want to
+use memtostr_pad() which enforces being able to check at compile time
+that sizes are sensible, but this requires being able to see string
+buffer lengths. Instead of trying to inline __set_task_comm() (which
+needs to call trace and perf functions), just open-code it. But to
+make sure we're always safe, add compile-time checking like we already
+do for get_task_comm().
 
-在 2024/11/30 12:21, syzbot 写道:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> BUG: MAX_LOCKDEP_KEYS too low!
-> 
-> BUG: MAX_LOCKDEP_KEYS too low!
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
 
-Hi Syzbot guys,
+Here's what I'd prefer to use to clean up set_task_comm(). I merged
+Linus and Eric's suggestions and open-coded memtostr_pad().
+---
+ fs/exec.c             | 12 ++++++------
+ include/linux/sched.h |  9 ++++-----
+ io_uring/io-wq.c      |  2 +-
+ io_uring/sqpoll.c     |  2 +-
+ kernel/kthread.c      |  3 ++-
+ 5 files changed, 14 insertions(+), 14 deletions(-)
 
-Syzbot is great, but I'm wondering if it's possible to disable lockdep 
-for this particular test?
-Or just let it re-run the test again?
-
-If the test doesn't crash with my fix, but only lockdep warnings on 
-certain too low values, I'd call it fixed.
-
-BTW, I'm not seeing where I can changed the MAX_LCKDEP_KEYS values in 
-the kernel...
-
-Thanks,
-Qu
-
-> turning off the locking correctness validator.
-> CPU: 1 UID: 0 PID: 11728 Comm: kworker/u8:10 Not tainted 6.12.0-rc7-syzkaller-00133-g17a4e91a431b #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: btrfs-cache btrfs_work_helper
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->   register_lock_class+0x827/0x980 kernel/locking/lockdep.c:1328
->   __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5077
->   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
->   process_one_work kernel/workqueue.c:3204 [inline]
->   process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
->   worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> 
-> 
-> Tested on:
-> 
-> commit:         17a4e91a btrfs: test if we need to wait the writeback ..
-> git tree:       https://github.com/adam900710/linux.git writeback_fix
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12c5ad30580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa4954ad2c62b915
-> dashboard link: https://syzkaller.appspot.com/bug?extid=aac7bff85be224de5156
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Note: no patches were applied.
+diff --git a/fs/exec.c b/fs/exec.c
+index e0435b31a811..5f16500ac325 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1200,16 +1200,16 @@ char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+ EXPORT_SYMBOL_GPL(__get_task_comm);
+ 
+ /*
+- * These functions flushes out all traces of the currently running executable
+- * so that a new one can be started
++ * This is unlocked -- the string will always be NUL-terminated, but
++ * may show overlapping contents if racing concurrent reads.
+  */
+-
+ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ {
+-	task_lock(tsk);
++	size_t len = min(strlen(buf), sizeof(tsk->comm) - 1);
++
+ 	trace_task_rename(tsk, buf);
+-	strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
+-	task_unlock(tsk);
++	memcpy(tsk->comm, buf, len);
++	memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
+ 	perf_event_comm(tsk, exec);
+ }
+ 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e6ee4258169a..ac9f429ddc17 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1932,11 +1932,10 @@ static inline void kick_process(struct task_struct *tsk) { }
+ #endif
+ 
+ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
+-
+-static inline void set_task_comm(struct task_struct *tsk, const char *from)
+-{
+-	__set_task_comm(tsk, from, false);
+-}
++#define set_task_comm(tsk, from) ({			\
++	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
++	__set_task_comm(tsk, from, false);		\
++})
+ 
+ extern char *__get_task_comm(char *to, size_t len, struct task_struct *tsk);
+ #define get_task_comm(buf, tsk) ({			\
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index a38f36b68060..5d0928f37471 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -634,7 +634,7 @@ static int io_wq_worker(void *data)
+ 	struct io_wq_acct *acct = io_wq_get_acct(worker);
+ 	struct io_wq *wq = worker->wq;
+ 	bool exit_mask = false, last_timeout = false;
+-	char buf[TASK_COMM_LEN];
++	char buf[TASK_COMM_LEN] = {};
+ 
+ 	set_mask_bits(&worker->flags, 0,
+ 		      BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING));
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index a26593979887..90011f06c7fb 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -271,7 +271,7 @@ static int io_sq_thread(void *data)
+ 	struct io_ring_ctx *ctx;
+ 	struct rusage start;
+ 	unsigned long timeout = 0;
+-	char buf[TASK_COMM_LEN];
++	char buf[TASK_COMM_LEN] = {};
+ 	DEFINE_WAIT(wait);
+ 
+ 	/* offload context creation failed, just exit */
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index db4ceb0f503c..162d55811744 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -736,10 +736,11 @@ EXPORT_SYMBOL(kthread_stop_put);
+ 
+ int kthreadd(void *unused)
+ {
++	static const char comm[TASK_COMM_LEN] = "kthreadd";
+ 	struct task_struct *tsk = current;
+ 
+ 	/* Setup a clean context for our children to inherit. */
+-	set_task_comm(tsk, "kthreadd");
++	set_task_comm(tsk, comm);
+ 	ignore_signals(tsk);
+ 	set_cpus_allowed_ptr(tsk, housekeeping_cpumask(HK_TYPE_KTHREAD));
+ 	set_mems_allowed(node_states[N_MEMORY]);
+-- 
+2.34.1
 
 
