@@ -1,139 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-36177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87399DEF2F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 08:01:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570ED9DEF35
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 08:16:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1932818EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 07:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02130162FBC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 07:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256F148855;
-	Sat, 30 Nov 2024 07:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A166F142E6F;
+	Sat, 30 Nov 2024 07:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gv0kQ7vU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C9B49652
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 07:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A923F9C5
+	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 07:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732950064; cv=none; b=t8Mr3Ss6hFbjZ0ZGsszxABDsM/5vR9pUDz8amrWEBSkzQODfxWDJ1AE6YqFWXoP0fzo3oNqeLIlHf+DUv8I/2VqTZcr03AYIX4CNMXsRQBHBeiocmhwWPy0n2rodqViugAe6a7VgQVUq+mOkwcK07FzyOOYcwEapEPWpIHMtX8w=
+	t=1732950968; cv=none; b=CigTGixojUnEuMpU0r82nx7faMDWFp/QVzbZS7z37FHBoY6tXrnXmJtdW/l26h+6nyuyhzH+2Q8GCECL6VKVYv21LwhTjPzSRc6nalgYTSqDMFShcmGH4XUdjVgCGt7uz7SCW69/DomPuz01aC5v2MWLsud9/Qo+a9YRJxF0JOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732950064; c=relaxed/simple;
-	bh=OY1eKMfzylYTtl4grnVqMabv/V9aIK9uPXcUUo8Mm1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EDNTmzdQAsOK4lg0qc34+x2ouCKFuekA+LaOwewUt7JF6iiRNcSxYQZzBTL9DtcjjZMsyZvbPeN8DB5ff+xc0tbnaKI/E3vGfhKAt4lbACPn+Q2UIm3Zuwms7XtR6l434qD90e1GSCflUw3khPODVsxReHYSKFr+dYdOtHuVinc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a76690f813so28693385ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 23:01:02 -0800 (PST)
+	s=arc-20240116; t=1732950968; c=relaxed/simple;
+	bh=ZuGzMu1cAhdhKnxWmpQYt48/+C2Q2jjl167J8oEkP9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KxOEIH5Es765MtPjZTbsLEkWuMaWFtzoPHQc9sUqBoh+yJXafUzk1IYyqvnzrP4DtutZDe3KU+UUoqqgU+kg3zA+Kw1jkYbvjPaX08CV1pMJhcfcMtiiFqX3R/hrLDHG5CisTSJ8gW3iPlXn7WYm9NKje9vT5s4ciUau02knvl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gv0kQ7vU; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa549f2fa32so368462366b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 23:16:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732950962; x=1733555762; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjT13Cv4AdQa2fEkQJmI8w/5/0E5OcwQAJoY5vQggB4=;
+        b=Gv0kQ7vU6hmQflHVz7EP454on0ZMSTK06hYpQ5lWQiPje8cB7uKzJ/ngkJjHLmIDaz
+         nqbmnZazIg4ZEDU6XCKFbPSOnGNqDgvLI0FFL+y42tLBHFiBMuOriFVEfRO4zVAcxxiw
+         Q466Z+MUGIgTOW6nUGvvZntetrZ9Cjdy1XKGA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732950062; x=1733554862;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+zxhPd1B69/sIFMXZtn9rBj6FwpaUPCmD+eIHTPevA=;
-        b=itqZiJZpfcIU4aK1onoXbxkJd5NRbWCgmWVZSEg+KzFPmHqmjk6cFndGx03BVmh1tQ
-         h521mHoJgRjLhzywO0X/Sa9pSp+eTp4k2gO3hVIPP6s9IIeym2hL0AttOjxOKSba55XC
-         suMMic7+zbWPM/8c1LS+aaX25s/x38Zmrxfmh8wWqICZ5lLweS6se9v/zAOrnm+vm3Kk
-         hhWOqkv8t0DhCTcRdY8bdrXnLzh2deOF5jvRovLr3irpXgMbTuJU1j9SnjSRY6q6BQ+i
-         6/jJ+06imSW+FOJoUHbzlEkDnMDvR4SOAFIitQWwLQJdIXLpZX2yiq6X8hF/B5ukhgnn
-         zuqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU628mq3FuvdtA8vAVY8Os9c+ym8X17sAMJYI1rUI7GV5JKYHETKpO4o9dZIUftH9lrV2vex4fTGEqv7f/H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywy3nyLTvIuliZjMZf3zhnUSmvydYxdYPZQ2M/rYHPjDUJT6d4
-	x6PERbofluXoO910BGTiX66wMAUvZhAbVe8aSflXmfD6uo3HlDu9ZOAfNShB4BKRi7gER9P6y5E
-	oXwqe6WssNo7fDuaiG+VP4qiGnb1dsxDz+0LJhLpIBv5CmiNFGmTCPyI=
-X-Google-Smtp-Source: AGHT+IHeoGfoPkw3PRfOf8JHtKOi73u9Fp0HDvkM6xnHnj1HrU8duhBqWbHVCBhIBjL2qSoU8NcACDtbz5LDXUShrDGYkO3D2GnC
+        d=1e100.net; s=20230601; t=1732950962; x=1733555762;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SjT13Cv4AdQa2fEkQJmI8w/5/0E5OcwQAJoY5vQggB4=;
+        b=QtEko7pG/yl8FyRr9rjeuPFUQ2pEDNQPJcAertcp7zef6joJ33UISV6zH77CMWbH0k
+         9UIe1p6RMnfKKVsFJz8AssovrxIwyYLtc/GpHbJMdlEAo7WFkozMaLplR/hSMIe3ILYr
+         YUdsBoLG4dVBGcnSpRycw/oWamkbuI3mZm+iZ+3MQQFl+7wm8rNSBKWG629PPXZx0mIo
+         zZA/+0gCRDiMPyDERRXFcuKczX8awvQj6S9hoHB1EJCqaHRyhF6ikzgCTpKtpHE64HTx
+         8R29IeDXcDce7XtRePKKTOcv01DdN1Nn0ZpNXYwqXh00d+SJ/SmbcQIfSjiV+pedrA9C
+         vMSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUep9lt3C7cZv0Cwb5xPWuqPpqn6WAe3OQMJhQy2ZownJ73xbUkybZVXhJST4LQadW0mkEx6El6sE+0QNR7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLtM49jSb81ztTva9npGE+6Sdnt4X1Z3Oox1EjalmUYXykqQZO
+	IfnoyP+PtpX9+0EIj9Go6obJhq7X/d8a2k5Muxob/pMe4+4cBMKD0bTMbhqb5nZDQ2R7EOGdFBE
+	7nFZIqg==
+X-Gm-Gg: ASbGncu23laAR+KCrH6oppZ1+X3kTKxl8CPqQwXlHoH7ZnsTbyQqJpgPvxgNULI2Omx
+	U98/EafLHRVXqZqF6P3N7lAk6SlZb4A6i7el4bgOtW9rfe3oAEC3/Pl1QxX8gV/nHL6mTGgATch
+	3MUeRfip0Q1UfN5qidbR5UrvsfYynOnZuwjre+BAaCMOLL/FX1Nvq6O8FtQvgjy5vOGQPsGS4EN
+	m5v+4UESe103V5saJfqnCzIYpDnT3jV8Jv07EZiEhT4V2ePhOPQtY+GCJ8hGwxmXqgYvtYnqBsB
+	mD/Zzhfgs0Ilp67pwvCSmtbc
+X-Google-Smtp-Source: AGHT+IEgP5y0IwSpTQtaTzuoTPIj09BOUgo+MUypOGO3HGXcyK53akP52/iYcWtNlQbUhjMZP/mE/Q==
+X-Received: by 2002:a17:906:318c:b0:a99:7bc0:bca9 with SMTP id a640c23a62f3a-aa580ef0e02mr1136245666b.3.1732950962303;
+        Fri, 29 Nov 2024 23:16:02 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a8f0sm250647566b.160.2024.11.29.23.16.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 23:16:01 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa535eed875so378475766b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 23:16:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWso5kmqD8UZTk66Yz3GGYWLqy0No/Ub93PILs6Rmgkej1SztJTffY8XiGERtNt8m7XIBeoDeQPjXSqrXcJ@vger.kernel.org
+X-Received: by 2002:a17:907:7758:b0:aa5:3d75:f419 with SMTP id
+ a640c23a62f3a-aa580f2af8bmr1208100366b.13.1732950961012; Fri, 29 Nov 2024
+ 23:16:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148e:b0:3a7:e047:733f with SMTP id
- e9e14a558f8ab-3a7e0477ab5mr40974295ab.1.1732950061919; Fri, 29 Nov 2024
- 23:01:01 -0800 (PST)
-Date: Fri, 29 Nov 2024 23:01:01 -0800
-In-Reply-To: <7a8955d4-4283-426f-8bbf-8f81787fb08e@suse.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674ab82d.050a0220.253251.00d8.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-From: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, 
-	wqu@suse.com
+References: <20241130044909.work.541-kees@kernel.org>
+In-Reply-To: <20241130044909.work.541-kees@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 29 Nov 2024 23:15:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
+Message-ID: <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
+Subject: Re: [PATCH] exec: Make sure task->comm is always NUL-terminated
+To: Kees Cook <kees@kernel.org>
+Cc: Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chen Yu <yu.c.chen@intel.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: multipart/mixed; boundary="0000000000007218e906281c16e8"
+
+--0000000000007218e906281c16e8
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Edited down to just the end result:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: MAX_LOCKDEP_KEYS too low!
+On Fri, 29 Nov 2024 at 20:49, Kees Cook <kees@kernel.org> wrote:
+>
+>  void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+>  {
+>         size_t len = min(strlen(buf), sizeof(tsk->comm) - 1);
+>
+>         trace_task_rename(tsk, buf);
+>         memcpy(tsk->comm, buf, len);
+>         memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
+>         perf_event_comm(tsk, exec);
+>  }
 
-BUG: MAX_LOCKDEP_KEYS too low!
-turning off the locking correctness validator.
-CPU: 1 UID: 0 PID: 18394 Comm: syz-executor388 Not tainted 6.12.0-rc7-syzkaller-00133-g17a4e91a431b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- register_lock_class+0x827/0x980 kernel/locking/lockdep.c:1328
- __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5077
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- touch_wq_lockdep_map+0xc7/0x170 kernel/workqueue.c:3880
- __flush_workqueue+0x14f/0x1600 kernel/workqueue.c:3922
- drain_workqueue+0xc9/0x3a0 kernel/workqueue.c:4086
- destroy_workqueue+0xba/0xc40 kernel/workqueue.c:5830
- btrfs_stop_all_workers+0xbb/0x2a0 fs/btrfs/disk-io.c:1782
- close_ctree+0x6bb/0xd60 fs/btrfs/disk-io.c:4360
- generic_shutdown_super+0x139/0x2d0 fs/super.c:642
- kill_anon_super+0x3b/0x70 fs/super.c:1237
- btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2112
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f378bf8c357
-Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffd4c441108 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f378bf8c357
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd4c4411c0
-RBP: 00007ffd4c4411c0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffd4c442280
-R13: 00005555591197d0 R14: 431bde82d7b634db R15: 00007ffd4c442224
- </TASK>
-BTRFS info (device loop2): last unmount of filesystem bf719321-eb1f-43c1-9145-be0044cdbc04
-BTRFS info (device loop2): last unmount of filesystem 454c899b-20f1-4098-b6bd-9b424eb38c60
-BTRFS info (device loop2): last unmount of filesystem e789dab4-7b2e-44bb-bb97-19a8dd7be099
-BTRFS info (device loop2): last unmount of filesystem a11fd0de-3a92-4478-af85-4e70dfb2fb44
-BTRFS info (device loop2): last unmount of filesystem 85ccfa0b-566f-4eb9-b1a6-ea2fe97ca044
-BTRFS info (device loop2): last unmount of filesystem 5a8c012e-dba3-4ff5-a22f-46e4b5bb2f55
-BTRFS info (device loop2): last unmount of filesystem 2fe685f2-8834-419b-bd91-466d40ccece7
-BTRFS info (device loop2): last unmount of filesystem fc366aaa-c1c0-4d55-9034-d39fce006f22
-BTRFS info (device loop2): last unmount of filesystem 364312bb-b5a2-487f-aaa2-e36f3a1b701f
-BTRFS info (device loop2): last unmount of filesystem 14d642db-7b15-43e4-81e6-4b8fac6a25f8
+I actually don't think that's super-safe either. Yeah, it works in
+practice, and the last byte is certainly always going to be 0, but it
+might not be reliably padded.
 
+Why? It walks over the source twice. First at strlen() time, then at
+memcpy. So if the source isn't stable, the end result might have odd
+results with NUL characters in the middle.
 
-Tested on:
+And strscpy() really was *supposed* to be safe even in this case, and
+I thought it was until I looked closer.
 
-commit:         17a4e91a btrfs: test if we need to wait the writeback ..
-git tree:       https://github.com/adam900710/linux.git writeback_fix
-console output: https://syzkaller.appspot.com/x/log.txt?x=1501b9e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa4954ad2c62b915
-dashboard link: https://syzkaller.appspot.com/bug?extid=aac7bff85be224de5156
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+But I think strscpy() can be saved.
 
-Note: no patches were applied.
+Something (UNTESTED!) like the attached I think does the right thing.
+I added a couple of "READ_ONCE()" things to make it really super-clear
+that strscpy() reads the source exactly once, and to not allow any
+compiler re-materialization of the reads (although I think that when I
+asked people, it turns out neither gcc nor clang rematerialize memory
+accesses, so that READ_ONCE is likely more a documentation ad
+theoretical thing than a real thing).
+
+And yes, we could make the word-at-a-time case also know about masking
+the last word, but it's kind of annoying and depends on byte ordering.
+
+Hmm? I don't think your version is wrong, but I also think we'd be
+better off making our 'strscpy()' infrastructure explicitly safe wrt
+unstable source strings.
+
+          Linus
+
+--0000000000007218e906281c16e8
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m43u8l1f0>
+X-Attachment-Id: f_m43u8l1f0
+
+IGxpYi9zdHJpbmcuYyB8IDE0ICsrKysrKystLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNl
+cnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2xpYi9zdHJpbmcuYyBiL2xp
+Yi9zdHJpbmcuYwppbmRleCA3NjMyN2I1MWUzNmYuLmEyYTY3OGU0NTM4OSAxMDA2NDQKLS0tIGEv
+bGliL3N0cmluZy5jCisrKyBiL2xpYi9zdHJpbmcuYwpAQCAtMTM3LDcgKzEzNyw3IEBAIHNzaXpl
+X3Qgc2l6ZWRfc3Ryc2NweShjaGFyICpkZXN0LCBjb25zdCBjaGFyICpzcmMsIHNpemVfdCBjb3Vu
+dCkKIAlpZiAoSVNfRU5BQkxFRChDT05GSUdfS01TQU4pKQogCQltYXggPSAwOwogCi0Jd2hpbGUg
+KG1heCA+PSBzaXplb2YodW5zaWduZWQgbG9uZykpIHsKKwl3aGlsZSAobWF4ID4gc2l6ZW9mKHVu
+c2lnbmVkIGxvbmcpKSB7CiAJCXVuc2lnbmVkIGxvbmcgYywgZGF0YTsKIAogCQljID0gcmVhZF93
+b3JkX2F0X2FfdGltZShzcmMrcmVzKTsKQEAgLTE1MywxMCArMTUzLDEwIEBAIHNzaXplX3Qgc2l6
+ZWRfc3Ryc2NweShjaGFyICpkZXN0LCBjb25zdCBjaGFyICpzcmMsIHNpemVfdCBjb3VudCkKIAkJ
+bWF4IC09IHNpemVvZih1bnNpZ25lZCBsb25nKTsKIAl9CiAKLQl3aGlsZSAoY291bnQpIHsKKwl3
+aGlsZSAoY291bnQgPiAwKSB7CiAJCWNoYXIgYzsKIAotCQljID0gc3JjW3Jlc107CisJCWMgPSBS
+RUFEX09OQ0Uoc3JjW3Jlc10pOwogCQlkZXN0W3Jlc10gPSBjOwogCQlpZiAoIWMpCiAJCQlyZXR1
+cm4gcmVzOwpAQCAtMTY0LDExICsxNjQsMTEgQEAgc3NpemVfdCBzaXplZF9zdHJzY3B5KGNoYXIg
+KmRlc3QsIGNvbnN0IGNoYXIgKnNyYywgc2l6ZV90IGNvdW50KQogCQljb3VudC0tOwogCX0KIAot
+CS8qIEhpdCBidWZmZXIgbGVuZ3RoIHdpdGhvdXQgZmluZGluZyBhIE5VTDsgZm9yY2UgTlVMLXRl
+cm1pbmF0aW9uLiAqLwotCWlmIChyZXMpCi0JCWRlc3RbcmVzLTFdID0gJ1wwJzsKKwkvKiBGaW5h
+bCBieXRlIC0gZm9yY2UgTlVMIHRlcm1pbmF0aW9uICovCisJZGVzdFtyZXNdID0gMDsKIAotCXJl
+dHVybiAtRTJCSUc7CisJLyogUmV0dXJuIC1FMkJJRyBpZiB0aGUgc291cmNlIGNvbnRpbnVlZC4u
+ICovCisJcmV0dXJuIFJFQURfT05DRShzcmNbcmVzXSkgPyAtRTJCSUcgOiByZXM7CiB9CiBFWFBP
+UlRfU1lNQk9MKHNpemVkX3N0cnNjcHkpOwogCg==
+--0000000000007218e906281c16e8--
 
