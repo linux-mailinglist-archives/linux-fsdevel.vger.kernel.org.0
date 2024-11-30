@@ -1,123 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-36178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64A49DEF32
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 08:02:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87399DEF2F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 08:01:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E4E3B216C2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 07:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1932818EC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 07:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1949D1474D3;
-	Sat, 30 Nov 2024 07:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeknYd83"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256F148855;
+	Sat, 30 Nov 2024 07:01:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B9943179;
-	Sat, 30 Nov 2024 07:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C9B49652
+	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 07:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732950136; cv=none; b=ZNkTrEuu55E+JDR9MuhrgRaa1IZVfa2uVvWDUK3U4dvSIWB8oa/pRDkU2qOEn2WIvQb2JN1HNTm8P6nDRUXDiv7SGjgqsGQFM2AlBUgCrasFyXOKhzPLyYTGlV8HKwnK9gjMxykjRh6LAhv3WhZhzZjnUulrR9bd/dSFNBFCWgI=
+	t=1732950064; cv=none; b=t8Mr3Ss6hFbjZ0ZGsszxABDsM/5vR9pUDz8amrWEBSkzQODfxWDJ1AE6YqFWXoP0fzo3oNqeLIlHf+DUv8I/2VqTZcr03AYIX4CNMXsRQBHBeiocmhwWPy0n2rodqViugAe6a7VgQVUq+mOkwcK07FzyOOYcwEapEPWpIHMtX8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732950136; c=relaxed/simple;
-	bh=s6I9pZtLYg0a8BYNA80JWka6T3igQ0OocnU70AC+NzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SlU0G0mK+aaxzuQniT4q53YUzitlcpXVzyVMGT/YgJi41SU6ebhTsem6dt+PRJPIbaA/qWdt3NXkOJtn6O9afQrBK7Ubuyve7zczpMzRhxmzhbEcwRRKmLUSBawVJr155LVO3vq2p6x7JAhxawr1bBPS6BFovV1NAoYd05eElZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TeknYd83; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-214d5f7b1b8so1671365ad.2;
-        Fri, 29 Nov 2024 23:02:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732950134; x=1733554934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RReSnjb52ei54+X/8PT9gkRCEQgRrEutq4HeExShp1w=;
-        b=TeknYd83iA1Ajl+YFaTNrDtUjtwLye5MX5J1Q7lfg13o72jSDUDNEBjNQUNTacCj0d
-         GdPNncMsALgWNPRcBy0f4gZOIrGmcFymRjUP4xHJAdbUSi5qStwJY7HRv2shk5v4FMWU
-         +Wj11/kPWOtgLM7Pv+eyJxpwsAwmWRPcbSknPAcgQwxrANRLUv2ve3dz+7/AxFy5rd7k
-         pbHBRZ3vD36volV1QP3EIr0mQUjjFXCl5lfuEYK6etgYfe2x0pLFQmDl1bgSZHDmbMDH
-         GVNck7GdGp9f3vXjbgpcZ1qmLRSxBhZeUXo1VYv+0cTzOqYioxVblgSxpKhIO1lPcFn6
-         FXbQ==
+	s=arc-20240116; t=1732950064; c=relaxed/simple;
+	bh=OY1eKMfzylYTtl4grnVqMabv/V9aIK9uPXcUUo8Mm1I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EDNTmzdQAsOK4lg0qc34+x2ouCKFuekA+LaOwewUt7JF6iiRNcSxYQZzBTL9DtcjjZMsyZvbPeN8DB5ff+xc0tbnaKI/E3vGfhKAt4lbACPn+Q2UIm3Zuwms7XtR6l434qD90e1GSCflUw3khPODVsxReHYSKFr+dYdOtHuVinc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a76690f813so28693385ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2024 23:01:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732950134; x=1733554934;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RReSnjb52ei54+X/8PT9gkRCEQgRrEutq4HeExShp1w=;
-        b=dTvZn0XzS8UZaWy1LcnTpQiLDtpPIXrqsEuH5xCYQtfSG0S6YoH7V3EIrmeQRevLmO
-         DIGiegAWJ+5f0fiNU3X2/rqeoDK69AC7WU1g2aig6hMUWz7dXoD3j1xvO72iQkGRfAJd
-         PvnPbC8t6WPf0fwNyJaMt4iVVkISpvUs3m8tlIC9xsPH+pith+DeW+l7jjgeHwtUMibL
-         gL3wqOHzHOmcEIGDHTrxU/R/ExWTH1s0J0LKaB1sOtcmtmRQ8hpLQUEOFlzY+ghJ26WO
-         Ap5XjEdeMN+43X96vRbda/bya3HhSBRmPjZgyTXZ8I/r4Bs/wGnEYT4y7qy/pTw5CUsJ
-         zHNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBI88p3CCzzC8S8cBNue5Yw7vE81QmN0VtsZX2DLZdQFx7EJ84099FMT5q8f/rVrLSALU219084XGCyTjz@vger.kernel.org, AJvYcCWCtdr24Nh5SrQeD0/usgvH5ybhUygbkHuPbWTvHtRPkPKcM9CHZKdjdV7tqIDoGNUdIo0F12bwKtVZZPVf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2dzh/v102tLDoSd6z6jcr+NVY80NrtsiJrSRH8+fqHq9qWalZ
-	wZCSqRmvfy0sjWXebTUXEYrdks8ZFLfHyEqT7/E6p9jg47bfZaI6
-X-Gm-Gg: ASbGncuDdG1t/xxdvaUvHtZ01IiVm+Q4c4PQP7zqQy2QBMY0GvD0DfrdeNhSNy1uMjL
-	fBwwjTs3xhZLXvUHA0eyqPk72hazAisKtMnB/PYihqwg5vmzJshI+wnvsYcu9T0a1uW7efM8RZG
-	OEog0JNsEdN257UbfUXwQkngJkF+e2B08kSINo7tPeZnGrcu08uuwHbGASLAk041sBvIkF+2PMk
-	77ws3Sn33Bhy4zWxCVq+a8vmMWfluQueUB2lqA8WjcxC4k6
-X-Google-Smtp-Source: AGHT+IE+rk+0oE1+HoPqqDCHwez7ZXRIUpYDajQIhyaPV716hdvJj9I4kdcwZ8DyI65UWS0m/REF/w==
-X-Received: by 2002:a17:903:191:b0:20c:a63e:b678 with SMTP id d9443c01a7336-21501e655b0mr78985985ad.14.1732950134310;
-        Fri, 29 Nov 2024 23:02:14 -0800 (PST)
-Received: from ice.. ([171.76.83.153])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2152d2cf14esm34830485ad.207.2024.11.29.23.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 23:02:13 -0800 (PST)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: miklos@szeredi.hu
-Cc: joannelkoong@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>,
-	syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-Subject: [PATCH] fuse: add a null-ptr check
-Date: Sat, 30 Nov 2024 12:21:22 +0530
-Message-Id: <20241130065118.539620-1-niharchaithanya@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1732950062; x=1733554862;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+zxhPd1B69/sIFMXZtn9rBj6FwpaUPCmD+eIHTPevA=;
+        b=itqZiJZpfcIU4aK1onoXbxkJd5NRbWCgmWVZSEg+KzFPmHqmjk6cFndGx03BVmh1tQ
+         h521mHoJgRjLhzywO0X/Sa9pSp+eTp4k2gO3hVIPP6s9IIeym2hL0AttOjxOKSba55XC
+         suMMic7+zbWPM/8c1LS+aaX25s/x38Zmrxfmh8wWqICZ5lLweS6se9v/zAOrnm+vm3Kk
+         hhWOqkv8t0DhCTcRdY8bdrXnLzh2deOF5jvRovLr3irpXgMbTuJU1j9SnjSRY6q6BQ+i
+         6/jJ+06imSW+FOJoUHbzlEkDnMDvR4SOAFIitQWwLQJdIXLpZX2yiq6X8hF/B5ukhgnn
+         zuqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU628mq3FuvdtA8vAVY8Os9c+ym8X17sAMJYI1rUI7GV5JKYHETKpO4o9dZIUftH9lrV2vex4fTGEqv7f/H@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywy3nyLTvIuliZjMZf3zhnUSmvydYxdYPZQ2M/rYHPjDUJT6d4
+	x6PERbofluXoO910BGTiX66wMAUvZhAbVe8aSflXmfD6uo3HlDu9ZOAfNShB4BKRi7gER9P6y5E
+	oXwqe6WssNo7fDuaiG+VP4qiGnb1dsxDz+0LJhLpIBv5CmiNFGmTCPyI=
+X-Google-Smtp-Source: AGHT+IHeoGfoPkw3PRfOf8JHtKOi73u9Fp0HDvkM6xnHnj1HrU8duhBqWbHVCBhIBjL2qSoU8NcACDtbz5LDXUShrDGYkO3D2GnC
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:148e:b0:3a7:e047:733f with SMTP id
+ e9e14a558f8ab-3a7e0477ab5mr40974295ab.1.1732950061919; Fri, 29 Nov 2024
+ 23:01:01 -0800 (PST)
+Date: Fri, 29 Nov 2024 23:01:01 -0800
+In-Reply-To: <7a8955d4-4283-426f-8bbf-8f81787fb08e@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ab82d.050a0220.253251.00d8.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
+From: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com, 
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org, 
+	wqu@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-The bug KASAN: null-ptr-deref is triggered due to *val being
-dereferenced when it is null in fuse_copy_do() when performing
-memcpy().
-Add a check in fuse_copy_one() to prevent this.
+Hello,
 
-Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
-Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
-Tested-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
----
- fs/fuse/dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: MAX_LOCKDEP_KEYS too low!
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 563a0bfa0e95..9c93759ac14b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1070,6 +1070,9 @@ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
- /* Copy a single argument in the request to/from userspace buffer */
- static int fuse_copy_one(struct fuse_copy_state *cs, void *val, unsigned size)
- {
-+	if (!val)
-+		return -EINVAL;
-+
- 	while (size) {
- 		if (!cs->len) {
- 			int err = fuse_copy_fill(cs);
--- 
-2.34.1
+BUG: MAX_LOCKDEP_KEYS too low!
+turning off the locking correctness validator.
+CPU: 1 UID: 0 PID: 18394 Comm: syz-executor388 Not tainted 6.12.0-rc7-syzkaller-00133-g17a4e91a431b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ register_lock_class+0x827/0x980 kernel/locking/lockdep.c:1328
+ __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5077
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ touch_wq_lockdep_map+0xc7/0x170 kernel/workqueue.c:3880
+ __flush_workqueue+0x14f/0x1600 kernel/workqueue.c:3922
+ drain_workqueue+0xc9/0x3a0 kernel/workqueue.c:4086
+ destroy_workqueue+0xba/0xc40 kernel/workqueue.c:5830
+ btrfs_stop_all_workers+0xbb/0x2a0 fs/btrfs/disk-io.c:1782
+ close_ctree+0x6bb/0xd60 fs/btrfs/disk-io.c:4360
+ generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+ kill_anon_super+0x3b/0x70 fs/super.c:1237
+ btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2112
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f378bf8c357
+Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffd4c441108 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f378bf8c357
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd4c4411c0
+RBP: 00007ffd4c4411c0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffd4c442280
+R13: 00005555591197d0 R14: 431bde82d7b634db R15: 00007ffd4c442224
+ </TASK>
+BTRFS info (device loop2): last unmount of filesystem bf719321-eb1f-43c1-9145-be0044cdbc04
+BTRFS info (device loop2): last unmount of filesystem 454c899b-20f1-4098-b6bd-9b424eb38c60
+BTRFS info (device loop2): last unmount of filesystem e789dab4-7b2e-44bb-bb97-19a8dd7be099
+BTRFS info (device loop2): last unmount of filesystem a11fd0de-3a92-4478-af85-4e70dfb2fb44
+BTRFS info (device loop2): last unmount of filesystem 85ccfa0b-566f-4eb9-b1a6-ea2fe97ca044
+BTRFS info (device loop2): last unmount of filesystem 5a8c012e-dba3-4ff5-a22f-46e4b5bb2f55
+BTRFS info (device loop2): last unmount of filesystem 2fe685f2-8834-419b-bd91-466d40ccece7
+BTRFS info (device loop2): last unmount of filesystem fc366aaa-c1c0-4d55-9034-d39fce006f22
+BTRFS info (device loop2): last unmount of filesystem 364312bb-b5a2-487f-aaa2-e36f3a1b701f
+BTRFS info (device loop2): last unmount of filesystem 14d642db-7b15-43e4-81e6-4b8fac6a25f8
 
+
+Tested on:
+
+commit:         17a4e91a btrfs: test if we need to wait the writeback ..
+git tree:       https://github.com/adam900710/linux.git writeback_fix
+console output: https://syzkaller.appspot.com/x/log.txt?x=1501b9e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa4954ad2c62b915
+dashboard link: https://syzkaller.appspot.com/bug?extid=aac7bff85be224de5156
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
