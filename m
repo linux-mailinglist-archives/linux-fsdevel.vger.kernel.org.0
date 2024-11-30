@@ -1,130 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-36183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D259DF053
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 13:30:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E74C71633D4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 12:30:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796BD198E77;
-	Sat, 30 Nov 2024 12:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoBByyPm"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ECD9DF098
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 14:41:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE925156F30;
-	Sat, 30 Nov 2024 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAAA2818DD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 13:41:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891E719AD7D;
+	Sat, 30 Nov 2024 13:41:52 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A66322066;
+	Sat, 30 Nov 2024 13:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732969798; cv=none; b=OWab6rFBhak9OX5BSAt3uk9uJLH2GxmMnftpySaJjQU4+oyvul+Xg1VjwTih4J846PYtKA+lXVZir426HrbR6Bl8cGfYp6vMR8BRlw3wX/1TqXj84fT7AMZ9qzXnfB8YQG9593+VEI9XTDIhtQjsmbUF2AWC479ltkuB8ZFX4wk=
+	t=1732974112; cv=none; b=m8Q9xS2h+jd8YtJARIgBoiu9bpRtLD2IRtldOwzMKkI7gYXhCugh0G85vGnzkYQXs0kfw1dsFZhAq+0bymtcJY2q+Je1oa0X4OM0HoneKUuLwZUSDElY+PeCZe8+0rai7VPLdxzqJj5S4zU7CO5/TZYQfa5pjLks6JzmSSLqm68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732969798; c=relaxed/simple;
-	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4KJ5aD3uLubNDjpFd3oxVVKbuVUgOID4IVbut67kmJ1F4wTjm+DHEys/eVRNKShr6bXv3l0O6fFodoFXA9di2QJIh0EaArUDFKRqMNzIZkenA2KjtAUPXLYnePnmS3nBIS3jNnovobuNnzp33Jxpx2KC5UfToZczUHnaydZg0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoBByyPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBAEC4CECC;
-	Sat, 30 Nov 2024 12:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732969798;
-	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uoBByyPmW9thOAgNMA++sY/TzO60gZgiNi8cCqo6Y5MAS9aKZwVs7+iOD5Ojmo+1N
-	 zKpmYi5jn5hDP1U52B+D8AQWxi7wF27LyIHkRE2Q6Y9o+tBq5NJgEYxiok4AY3Jak4
-	 JRu1DjANRWU8+4bC1v/cqplcZbmS2FqXxotV3mAPU7rJPaaBiqLkHEQNoB6jrL+czB
-	 nUVAT/PzU+UkvGhC1yyCcycdrUk/C96IYKN3nHAxGD3b2Um8J6jbmgd6ylBKX5K/QS
-	 4+9cYYIZP/bpSaoddmNZL6n1ES6fq80OIB0zONDx2dmDE7LrAcFHytYMxoz/DahKxv
-	 sOFYd13zcUSWw==
-Date: Sat, 30 Nov 2024 13:29:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Tycho Andersen <tandersen@netflix.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
- execveat(AT_EMPTY_PATH) case
-Message-ID: <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
-References: <20241130045437.work.390-kees@kernel.org>
+	s=arc-20240116; t=1732974112; c=relaxed/simple;
+	bh=8yHA58RnBcqJ4iTh2+b2D7RTyLJDCG+KrfLJXsRle+4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvOj9FCheqE8r8uq/8V2eCI7ravEYfE0PG6wmmPc6oBjgbrmRPp1Ps9sxZYGC1nOxor+S25S5Xd4Tu238hLGFZFtmEYjYqFpG86MUreDIDVnWSnOmxAxV4vjpoBp62qE2xFgIS9U59MjipV3BzkVTKG2HGBRROEDuSoSE3gQ0gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y0rjh33XRzxSPS;
+	Sat, 30 Nov 2024 21:38:48 +0800 (CST)
+Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2E904180106;
+	Sat, 30 Nov 2024 21:41:40 +0800 (CST)
+Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
+ (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Nov
+ 2024 21:41:39 +0800
+Date: Sat, 30 Nov 2024 21:39:29 +0800
+From: Long Li <leo.lilong@huawei.com>
+To: <brauner@kernel.org>, <djwong@kernel.org>, <cem@kernel.org>
+CC: <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<yi.zhang@huawei.com>, <houtao1@huawei.com>, <yangerkun@huawei.com>
+Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z0sVkSXzxUDReow7@localhost.localdomain>
+References: <20241127063503.2200005-1-leo.lilong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241130045437.work.390-kees@kernel.org>
+In-Reply-To: <20241127063503.2200005-1-leo.lilong@huawei.com>
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500017.china.huawei.com (7.185.36.126)
 
-On Fri, Nov 29, 2024 at 08:54:38PM -0800, Kees Cook wrote:
-> Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> switching to execveat() for service execution, but can't, because the
-> contents of /proc/pid/comm are the file descriptor which was used,
-> instead of the path to the binary. This makes the output of tools like
-> top and ps useless, especially in a world where most fds are opened
-> CLOEXEC so the number is truly meaningless.
+On Wed, Nov 27, 2024 at 02:35:02PM +0800, Long Li wrote:
+> During concurrent append writes to XFS filesystem, zero padding data
+> may appear in the file after power failure. This happens due to imprecise
+> disk size updates when handling write completion.
 > 
-> When the filename passed in is empty (e.g. with AT_EMPTY_PATH), use the
-> dentry's filename for "comm" instead of using the useless numeral from
-> the synthetic fdpath construction. This way the actual exec machinery
-> is unchanged, but cosmetically the comm looks reasonable to admins
-> investigating things.
+> Consider this scenario with concurrent append writes same file:
 > 
-> Instead of adding TASK_COMM_LEN more bytes to bprm, use one of the unused
-> flag bits to indicate that we need to set "comm" from the dentry.
+>   Thread 1:                  Thread 2:
+>   ------------               -----------
+>   write [A, A+B]
+>   update inode size to A+B
+>   submit I/O [A, A+BS]
+>                              write [A+B, A+B+C]
+>                              update inode size to A+B+C
+>   <I/O completes, updates disk size to min(A+B+C, A+BS)>
+>   <power failure>
 > 
-> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-> Suggested-by: Tycho Andersen <tandersen@netflix.com>
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> CC: Aleksa Sarai <cyphar@cyphar.com>
-> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> After reboot:
+>   1) with A+B+C < A+BS, the file has zero padding in range [A+B, A+B+C]
+> 
+>   |<         Block Size (BS)      >|
+>   |DDDDDDDDDDDDDDDD0000000000000000|
+>   ^               ^        ^
+>   A              A+B     A+B+C
+>                          (EOF)
+> 
+>   2) with A+B+C > A+BS, the file has zero padding in range [A+B, A+BS]
+> 
+>   |<         Block Size (BS)      >|<           Block Size (BS)    >|
+>   |DDDDDDDDDDDDDDDD0000000000000000|00000000000000000000000000000000|
+>   ^               ^                ^               ^
+>   A              A+B              A+BS           A+B+C
+>                                   (EOF)
+> 
+>   D = Valid Data
+>   0 = Zero Padding
+> 
+> The issue stems from disk size being set to min(io_offset + io_size,
+> inode->i_size) at I/O completion. Since io_offset+io_size is block
+> size granularity, it may exceed the actual valid file data size. In
+> the case of concurrent append writes, inode->i_size may be larger
+> than the actual range of valid file data written to disk, leading to
+> inaccurate disk size updates.
+> 
+> This patch modifies the meaning of io_size to represent the size of
+> valid data within EOF in an ioend. If the ioend spans beyond i_size,
+> io_size will be trimmed to provide the file with more accurate size
+> information. This is particularly useful for on-disk size updates
+> at completion time.
+> 
+> After this change, ioends that span i_size will not grow or merge with
+> other ioends in concurrent scenarios. However, these cases that need
+> growth/merging rarely occur and it seems no noticeable performance impact.
+> Although rounding up io_size could enable ioend growth/merging in these
+> scenarios, we decided to keep the code simple after discussion [1].
+> 
+> Another benefit is that it makes the xfs_ioend_is_append() check more
+> accurate, which can reduce unnecessary end bio callbacks of xfs_end_bio()
+> in certain scenarios, such as repeated writes at the file tail without
+> extending the file size.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Link[1]: https://patchwork.kernel.org/project/xfs/patch/20241113091907.56937-1-leo.lilong@huawei.com
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> Reviewed-by: Brian Foster <bfoster@redhat.com>
 > ---
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
-> Cc: linux-fsdevel@vger.kernel.org
+> v4->v5: remove iomap_ioend_size_aligned() and don't round up io_size for
+> 	ioend growth/merging to keep the code simple. 
+>  fs/iomap/buffered-io.c | 10 ++++++++++
+>  include/linux/iomap.h  |  2 +-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
 > 
-> Here's what I've put together from the various suggestions. I didn't
-> want to needlessly grow bprm, so I just added a flag instead. Otherwise,
-> this is very similar to what Linus and Al suggested.
-> ---
->  fs/exec.c               | 22 +++++++++++++++++++---
->  include/linux/binfmts.h |  4 +++-
->  2 files changed, 22 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 5f16500ac325..d897d60ca5c2 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1347,7 +1347,21 @@ int begin_new_exec(struct linux_binprm * bprm)
->  		set_dumpable(current->mm, SUID_DUMP_USER);
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index d42f01e0fc1c..dc360c8e5641 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1774,6 +1774,7 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+>  {
+>  	struct iomap_folio_state *ifs = folio->private;
+>  	size_t poff = offset_in_folio(folio, pos);
+> +	loff_t isize = i_size_read(inode);
+>  	int error;
 >  
->  	perf_event_exec();
-> -	__set_task_comm(me, kbasename(bprm->filename), true);
+>  	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
+> @@ -1789,7 +1790,16 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+>  
+>  	if (ifs)
+>  		atomic_add(len, &ifs->write_bytes_pending);
 > +
 > +	/*
-> +	 * If the original filename was empty, alloc_bprm() made up a path
-> +	 * that will probably not be useful to admins running ps or similar.
-> +	 * Let's fix it up to be something reasonable.
+> +	 * If the ioend spans i_size, trim io_size to the former to provide
+> +	 * the fs with more accurate size information. This is useful for
+> +	 * completion time on-disk size updates.
 > +	 */
-> +	if (bprm->comm_from_dentry) {
-> +		rcu_read_lock();
-> +		/* The dentry name won't change while we hold the rcu read lock. */
-> +		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+>  	wpc->ioend->io_size += len;
+> +	if (wpc->ioend->io_offset + wpc->ioend->io_size > isize)
+> +		wpc->ioend->io_size = isize - wpc->ioend->io_offset;
+> +
+ 
+When performing fsstress test with this patch set, there is a very low probability of
+encountering an issue where isize is less than ioend->io_offset in iomap_add_to_ioend.
+After investigation, this was found to be caused by concurrent with truncate operations.
+Consider a scenario with 4K block size and a file size of 12K.
 
-What does the smp_load_acquire() pair with?
+//write back [8K, 12K]           //truncate file to 4K
+----------------------          ----------------------
+iomap_writepage_map             xfs_setattr_size
+  iomap_writepage_handle_eof
+                                  truncate_setsize
+				    i_size_write(inode, newsize)  //update inode size to 4K
+  iomap_writepage_map_blocks
+    iomap_add_to_ioend
+           < iszie < ioend->io_offset>
+	   <iszie = 4K,  ioend->io_offset=8K>
+
+It appears that in extreme cases, folios beyond EOF might be written back,
+resulting in situations where isize is less than pos. In such cases,
+maybe we should not trim the io_size further.
+
+Long Li
+
 
