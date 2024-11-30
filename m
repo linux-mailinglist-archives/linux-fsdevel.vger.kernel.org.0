@@ -1,96 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-36181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806F39DF043
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 13:08:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065A39DF049
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 13:22:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0525B21BC5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 12:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A083C1633E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 12:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EE5194ACC;
-	Sat, 30 Nov 2024 12:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C889D197531;
+	Sat, 30 Nov 2024 12:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKaU5JWP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfJvP2z1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D27DAD23;
-	Sat, 30 Nov 2024 12:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8381474D3;
+	Sat, 30 Nov 2024 12:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732968516; cv=none; b=gEfGAPR5ejBntbB973c3/1q4AmL+Qt7aKFrenXY0bKMPabl8ajU/QC6UNxJGuOWttgBvAxxdMtuFxkDGYq/Xj8K8hE+iPezjy/wPsaACmeX32LzPGNdv/+YABpd+FF442KtgWmzCLBzriG2OyrtVI7jH88U8JMA7sR+jgj9Uoas=
+	t=1732969340; cv=none; b=lIqJr+ZMn2SX0YPMiAnab3/JX+1oKD05UZ+StEEkBSjg3lpLTShHyY/wGePPQhmFzwQgyKWowJDxrXewYrvkEkM06/D9VV0907E+2o7xcsMMLoFKNhBdmFBBJbk9/3yNk4uWluiY5oiocQc9V386ihgpg3lEOzISGNq++PcY+qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732968516; c=relaxed/simple;
-	bh=CezsRKzPhE3iwg1foiuIEu7w92XM5wn9vMFdnQMVbFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oGcqLqJQG7MyreVrBLAGpIG6ff4u6uLc68JS/STVjyHbCPJIHEZeLtBLEfuFMKyj8MosR9dPw5WOiOlFsPqU5wvoxDn5S9vK1afUyXjIUn0MbMsZUbl1be1DoxtRr23dhy5APmFxjDad6C3Srn1mMNvEEMgj4aY8cWDd9OQ5ZPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKaU5JWP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC589C4CECC;
-	Sat, 30 Nov 2024 12:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732968515;
-	bh=CezsRKzPhE3iwg1foiuIEu7w92XM5wn9vMFdnQMVbFo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OKaU5JWPPyie7Tfy5t7xSjZIuc/7v5/dlJ96drAxOgGl2aPZZ67HuYJ0+jJy9u9zT
-	 9gkvTDC0zvpg+Xfrd5vg2hyRWtAmcgDrnzIJ8CHT9wGBQuC+etDSQKPQFpapF8/VCp
-	 ZH3XAAm9l5DL7CjIxcPkDwDjFd1sRwYhnHQgjsTNsVrxpC80Z+n/75yVlJX1KhpUS6
-	 vnY7c9ZMqzLIEaO1KwGQIlEngzmr2dvEB4Ox+zTWK/RMsBAy2NVOdmciXcV5XVB0EC
-	 +OyElNN9jWJvTwmmTUZ9TYUQfWzof4Gy3+Pd3/PPe12PLWief6dBYRj1zMnygRSCwx
-	 pTJw5HO4r/tYQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use a consume fence in mnt_idmap()
-Date: Sat, 30 Nov 2024 13:08:27 +0100
-Message-ID: <20241130-sessel-banditen-096d668b1fc6@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241130051712.1036527-1-mjguzik@gmail.com>
-References: <20241130051712.1036527-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1732969340; c=relaxed/simple;
+	bh=C49EjLtQSVvotvQ7l1FJmOzGw4tfqiQPXKNC30ME6hI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ex8ul2Sd0WWianyF74Ddd3eeCDRp6xH2vZRGYuEEXscbUgFM68zY2riMjCZl/P4xHhxZ1NufmX+sPri3nf/JcL5UDCaP5BZaTivOix7zQNH65zzGpojywBzHhsBpjwTTq/CliOLJ3urWUjC09n+d7C6Nr4LRcJMUPakSelevaK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfJvP2z1; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so6526634a12.1;
+        Sat, 30 Nov 2024 04:22:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732969337; x=1733574137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C49EjLtQSVvotvQ7l1FJmOzGw4tfqiQPXKNC30ME6hI=;
+        b=hfJvP2z1FaDsy6oMfUbdAf9C39Jm3EwLzexdrvgAReMyfU6KRZ2QDwLGzjO2umDgBe
+         vCDJQdV5GQkrJj2VHuraX0hcmNEBC4fjZoUg/KergitU7jtrYfgrQOnt3Yn3N6Sb1hGw
+         oYISFgfZzGIyRZ4ncaFer4Cc0GzWybj4I7dcrVBWaD/b5ri+h9TPQm+v35zLPtvQ5wcw
+         gJEv986ObUTG8Vo6qVuePVNeIK9CqJlHkpTPmkMPCsTnzTykIIgRwuLb0kAwddA2Mm/g
+         pOCfGZBkZak9Ix1MGWHwUCjZ8mqnazXExYxMpm4vRZoOgQvjJb/cZl2DQBn5aKo4aG24
+         qSAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732969337; x=1733574137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C49EjLtQSVvotvQ7l1FJmOzGw4tfqiQPXKNC30ME6hI=;
+        b=jUzAr41dbZf/wrmoystkcxZOTEZpf1OaSNclIB205Zb/i/AajoOZV2AvEK3jomKKyj
+         r6WZaDqW/IjiPjPSe7RX0zp1HOy5PoafyKlQMVlUR+cLb6Xlk/JgKOFBXwzx8tLn2CRd
+         miCzlzLoyIndt8MJQErmS1RYMmYdfLqv/xDWEUjkOzz4IA/RUTx58ZPrnGaS8Ump6Gya
+         IIIPel0tsZ0gOmn50D7naC0nggFfbBpvS9RwBx07fU7UAVrnyHskonOodLp6UY4nWYch
+         W2ewrJdpallEKNZNCBLWWyDrns7Nce3hbdNMlJ+fC2nJUXH7Mb5b1RfJN2x+OoWvn8Oj
+         vz3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPSP1LaQ0389VO0yI/qgl5uuuFIC7aUArq8Gzzm46FvwAoshV4BNLnZRgzZ4dNZAOo4apbCjI3y2b1@vger.kernel.org, AJvYcCXFTo69PyM8aDMvaBD0W8InOgDhysz8APlL25ZWYUtTRI/QJysKiEVYu/mclYgpR9H2xB9uM0LYH+vFcF4u@vger.kernel.org, AJvYcCXw8ebEWok8VB3MaQ2GpNAU7EvQJu3nJSFnkpudpZ8gakK8JqgR3AdMRMmmRwVy301I6/ejwO5pacsJW6U9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvwYM9/F5hr3+gmn0F/E5WiXT1IngsYP3B7k8JlwCXmZsmbsR9
+	Vd7aIs+ZHUcCkeg0Rerdgx7TA4vi/tPJyiVZx5jqk2eQGzm5jmw4DUBtVs23gFKT5j5LS80l5e8
+	QY3y+m9tCGwr3pwn/gFeANr2tYJM=
+X-Gm-Gg: ASbGncu+QnMVHPfMusgdDvtd2/V5aHUvLkPGeOGc8WwEiLjoMEAfe0vyrAd4pfEaI1b
+	CzFwE7ODQwJmAA1lh+5nqJ3nJ69goy98=
+X-Google-Smtp-Source: AGHT+IF2FJ83y+mjkZXinRb9AUncGssgOTm6MhRbk4on0wq2m8yrBNc76xWxasrUcQhSLWqoPU2fV2BaZZX4PYSIKUo=
+X-Received: by 2002:a17:907:9485:b0:aa5:3c18:eedc with SMTP id
+ a640c23a62f3a-aa5944eaabcmr1524599366b.3.1732969336434; Sat, 30 Nov 2024
+ 04:22:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1107; i=brauner@kernel.org; h=from:subject:message-id; bh=CezsRKzPhE3iwg1foiuIEu7w92XM5wn9vMFdnQMVbFo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR7M9jcfM3SPnHHyQTfDdLNIVP9Juxr3VQ7SeJ7Y4bz/ IXcHVXFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPh3M/wm1Xbc3vPIgsVhoad bD//7/H6zperd/x6x5Zn/to5vxt+ujP8r/18UO+UGTfn/j+rE+cpXqpo43whupXjZFXqtYiwDzF f2QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org> <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+In-Reply-To: <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 30 Nov 2024 13:22:05 +0100
+Message-ID: <CAOQ4uxhKVkaWm_Vv=0zsytmvT0jCq1pZ84dmrQ_buhxXi2KEhw@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/6] pidfs: implement file handle support
+To: Christian Brauner <brauner@kernel.org>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 30 Nov 2024 06:17:11 +0100, Mateusz Guzik wrote:
-> The routine is used in link_path_walk() for every path component.
-> 
-> To my reading the entire point of the fence was to grab a fully
-> populated mnt_idmap, but that's already going to happen with mere
-> consume fence.
-> 
-> Eliminates an actual fence on arm64.
-> 
-> [...]
+On Fri, Nov 29, 2024 at 2:39=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> Hey,
+>
+> Now that we have the preliminaries to lookup struct pid based on its
+> inode number alone we can implement file handle support.
+>
+> This is based on custom export operation methods which allows pidfs to
+> implement permission checking and opening of pidfs file handles cleanly
+> without hacking around in the core file handle code too much.
+>
+> This is lightly tested.
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+With my comments addressed as you pushed to vfs-6.14.pidfs branch
+in your tree, you may add to the patches posted:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+HOWEVER,
+IMO there is still one thing that has to be addressed before merge -
+We must make sure that nfsd cannot export pidfs.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+In principal, SB_NOUSER filesystems should not be accessible to
+userspace paths, so exportfs should not be able to configure nfsd
+export of pidfs, but maybe this limitation can be worked around by
+using magic link paths?
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
+I think it may be worth explicitly disallowing nfsd export of SB_NOUSER
+filesystems and we could also consider blocking SB_KERNMOUNT,
+but may there are users exporting ramfs?
 
-[1/1] fs: use a consume fence in mnt_idmap()
-      https://git.kernel.org/vfs/vfs/c/e448a60956bc
+Jeff has mentioned that he thinks we are blocking export of cgroupfs
+by nfsd, but I really don't see where that is being enforced.
+The requirement for FS_REQUIRES_DEV in check_export() is weak
+because user can overrule it with manual fsid argument to exportfs.
+
+So maybe we disallow nfsd export of kernfs and backport to stable kernels
+to be on the safe side?
+
+On top of that, we may also want to reject nfsd export of any fs
+with custom ->open() or ->permission() export ops, on the grounds
+that nfsd does not call these ops?
+
+Regarding the two other kernel users of exportfs, namely,
+overlayfs and fanotify -
+
+For overlayfs, I think that in ovl_can_decode_fh() we can safely
+opt-out of SB_NOUSER and SB_KERNMOUNT filesystems,
+to not allow nfs exporting of overlayfs over those lower fs.
+
+For fanotify, there is already a check in fanotify_events_supported()
+to disallow sb/mount marks on SB_NOUSER and a comment that
+questions the value of allowing them for SB_KERNMOUNT.
+So for pidfs there is no risk wrt fanotify and it does not look like pidfs
+is going to generate any fanotify events anyway.
+
+Thanks,
+Amir.
 
