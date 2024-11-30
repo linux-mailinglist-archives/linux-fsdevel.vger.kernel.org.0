@@ -1,184 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-36184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ECD9DF098
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 14:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0129DF13F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 15:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAAA2818DD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 13:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB6802812DA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2024 14:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891E719AD7D;
-	Sat, 30 Nov 2024 13:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED72619E971;
+	Sat, 30 Nov 2024 14:44:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A66322066;
-	Sat, 30 Nov 2024 13:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7ED19B3C5
+	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 14:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732974112; cv=none; b=m8Q9xS2h+jd8YtJARIgBoiu9bpRtLD2IRtldOwzMKkI7gYXhCugh0G85vGnzkYQXs0kfw1dsFZhAq+0bymtcJY2q+Je1oa0X4OM0HoneKUuLwZUSDElY+PeCZe8+0rai7VPLdxzqJj5S4zU7CO5/TZYQfa5pjLks6JzmSSLqm68=
+	t=1732977845; cv=none; b=ECD2rHj58cLXL48FvhU2nue3o5zmuk3pi6H8QYZJZuJ2UR4V+EARJ1ZIsFXk0oaeFKppYCbNfrgwP3LY7Lee1oamwa4SgngLcz9dTSyul0m0veJq9F6JGl4uS5URp01K9I+7mGPBpr9qwGG89KZumLp0kTBCQF4QBZadR6VnfRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732974112; c=relaxed/simple;
-	bh=8yHA58RnBcqJ4iTh2+b2D7RTyLJDCG+KrfLJXsRle+4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvOj9FCheqE8r8uq/8V2eCI7ravEYfE0PG6wmmPc6oBjgbrmRPp1Ps9sxZYGC1nOxor+S25S5Xd4Tu238hLGFZFtmEYjYqFpG86MUreDIDVnWSnOmxAxV4vjpoBp62qE2xFgIS9U59MjipV3BzkVTKG2HGBRROEDuSoSE3gQ0gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y0rjh33XRzxSPS;
-	Sat, 30 Nov 2024 21:38:48 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E904180106;
-	Sat, 30 Nov 2024 21:41:40 +0800 (CST)
-Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Nov
- 2024 21:41:39 +0800
-Date: Sat, 30 Nov 2024 21:39:29 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: <brauner@kernel.org>, <djwong@kernel.org>, <cem@kernel.org>
-CC: <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <houtao1@huawei.com>, <yangerkun@huawei.com>
-Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
- append writes
-Message-ID: <Z0sVkSXzxUDReow7@localhost.localdomain>
-References: <20241127063503.2200005-1-leo.lilong@huawei.com>
+	s=arc-20240116; t=1732977845; c=relaxed/simple;
+	bh=/2me3GlS88an3RLsz+gmPqqJsjFVKRchDVf0XYxw0yA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aaO0A48CPT/ET77ihaBYNMJvgHTeqGj6OXzTHPUEiUDv8s9cIt41ded7blnQhDP5FaxbCmDhziBFFjCbZIjEGhuHPZUG934G6Gr/MBJE99OJ3qeYys7pBlvHYCsI8nyo7mZqq3ErK3e/nrh27bz7jJ9fmThgyhNttBcvN8Bx5gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a79088e7abso23566575ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2024 06:44:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732977843; x=1733582643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NLpCxVWUm+FLHYgY6UmUs8QAXQBwFoHMQc5QOpBkoP4=;
+        b=HWkm9g1etqIw+2t1G6MxnGKKDAVddOFdTHKboeZycjg6w1nMKNSn0QRl8vy2RQEevC
+         A9/B15M4YEsbLEiV/iJA57TwCZ0x13/62a94zS1aY8+2USo7zrAVwSKExTpyhO5ZGn7h
+         n6rgK3farL9tGphFD6xwSo34shnLr4c7V+VtpFLaAz6Hrs8GMEcngM62IbMBgbKR9ZA/
+         ndkFkZ+PyygGAqM/iS0joKcZF/Ngh54e4ZNj2oST5zGuIK0MaElDB++vTEbjA6RL0enP
+         uUf7jK0tg5xEMCPeldz+5T+StXJy4l632eaC9jeheod44odpRNv7uM7zRkQt7qnnswoB
+         BidA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9TLXYm084d6tHHlGCYCw/brm420PTPjp0+FjOsh8POmpGSC/IPb4V9w2bXjjTDpuh0+qeMbhY3iWKTrIy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAGH4u6du6gMYMqutyYPA7/hdJtIn9+nj8OKavwC1EupWsCCUW
+	dIr/kPECt6poFYRw7ft2ik1xUx69VoYh0pZcdxs3fuEwIz6ftKMf3vHfleTQnpxy1RHlU5yTjD/
+	AtlLUeF9DKoXm+zyLG3FXn2oQRmi9abeU999fVQ5jH5CJ/YYbliTevSg=
+X-Google-Smtp-Source: AGHT+IGKM3IQM8HG3HSI7urzSPpJKTU55OY0Q6Z5kYb4DXB4yN+jXJMypP7rSsTOQ4NnPvpsotgixPfEKNRfhZjHxhSEQLvvMk5g
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20241127063503.2200005-1-leo.lilong@huawei.com>
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+X-Received: by 2002:a05:6e02:4405:10b0:3a7:c5ff:e698 with SMTP id
+ e9e14a558f8ab-3a7c5ffe892mr96045695ab.0.1732977843441; Sat, 30 Nov 2024
+ 06:44:03 -0800 (PST)
+Date: Sat, 30 Nov 2024 06:44:03 -0800
+In-Reply-To: <67238110.050a0220.35b515.015e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674b24b3.050a0220.253251.00dd.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
+From: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, dmantipov@yandex.ru, jlayton@kernel.org, 
+	joannelkoong@gmail.com, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, miklos@szeredi.hu, 
+	mszeredi@redhat.com, netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 27, 2024 at 02:35:02PM +0800, Long Li wrote:
-> During concurrent append writes to XFS filesystem, zero padding data
-> may appear in the file after power failure. This happens due to imprecise
-> disk size updates when handling write completion.
-> 
-> Consider this scenario with concurrent append writes same file:
-> 
->   Thread 1:                  Thread 2:
->   ------------               -----------
->   write [A, A+B]
->   update inode size to A+B
->   submit I/O [A, A+BS]
->                              write [A+B, A+B+C]
->                              update inode size to A+B+C
->   <I/O completes, updates disk size to min(A+B+C, A+BS)>
->   <power failure>
-> 
-> After reboot:
->   1) with A+B+C < A+BS, the file has zero padding in range [A+B, A+B+C]
-> 
->   |<         Block Size (BS)      >|
->   |DDDDDDDDDDDDDDDD0000000000000000|
->   ^               ^        ^
->   A              A+B     A+B+C
->                          (EOF)
-> 
->   2) with A+B+C > A+BS, the file has zero padding in range [A+B, A+BS]
-> 
->   |<         Block Size (BS)      >|<           Block Size (BS)    >|
->   |DDDDDDDDDDDDDDDD0000000000000000|00000000000000000000000000000000|
->   ^               ^                ^               ^
->   A              A+B              A+BS           A+B+C
->                                   (EOF)
-> 
->   D = Valid Data
->   0 = Zero Padding
-> 
-> The issue stems from disk size being set to min(io_offset + io_size,
-> inode->i_size) at I/O completion. Since io_offset+io_size is block
-> size granularity, it may exceed the actual valid file data size. In
-> the case of concurrent append writes, inode->i_size may be larger
-> than the actual range of valid file data written to disk, leading to
-> inaccurate disk size updates.
-> 
-> This patch modifies the meaning of io_size to represent the size of
-> valid data within EOF in an ioend. If the ioend spans beyond i_size,
-> io_size will be trimmed to provide the file with more accurate size
-> information. This is particularly useful for on-disk size updates
-> at completion time.
-> 
-> After this change, ioends that span i_size will not grow or merge with
-> other ioends in concurrent scenarios. However, these cases that need
-> growth/merging rarely occur and it seems no noticeable performance impact.
-> Although rounding up io_size could enable ioend growth/merging in these
-> scenarios, we decided to keep the code simple after discussion [1].
-> 
-> Another benefit is that it makes the xfs_ioend_is_append() check more
-> accurate, which can reduce unnecessary end bio callbacks of xfs_end_bio()
-> in certain scenarios, such as repeated writes at the file tail without
-> extending the file size.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Link[1]: https://patchwork.kernel.org/project/xfs/patch/20241113091907.56937-1-leo.lilong@huawei.com
-> Signed-off-by: Long Li <leo.lilong@huawei.com>
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
-> ---
-> v4->v5: remove iomap_ioend_size_aligned() and don't round up io_size for
-> 	ioend growth/merging to keep the code simple. 
->  fs/iomap/buffered-io.c | 10 ++++++++++
->  include/linux/iomap.h  |  2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index d42f01e0fc1c..dc360c8e5641 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1774,6 +1774,7 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
->  {
->  	struct iomap_folio_state *ifs = folio->private;
->  	size_t poff = offset_in_folio(folio, pos);
-> +	loff_t isize = i_size_read(inode);
->  	int error;
->  
->  	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
-> @@ -1789,7 +1790,16 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
->  
->  	if (ifs)
->  		atomic_add(len, &ifs->write_bytes_pending);
-> +
-> +	/*
-> +	 * If the ioend spans i_size, trim io_size to the former to provide
-> +	 * the fs with more accurate size information. This is useful for
-> +	 * completion time on-disk size updates.
-> +	 */
->  	wpc->ioend->io_size += len;
-> +	if (wpc->ioend->io_offset + wpc->ioend->io_size > isize)
-> +		wpc->ioend->io_size = isize - wpc->ioend->io_offset;
-> +
- 
-When performing fsstress test with this patch set, there is a very low probability of
-encountering an issue where isize is less than ioend->io_offset in iomap_add_to_ioend.
-After investigation, this was found to be caused by concurrent with truncate operations.
-Consider a scenario with 4K block size and a file size of 12K.
+syzbot has bisected this issue to:
 
-//write back [8K, 12K]           //truncate file to 4K
-----------------------          ----------------------
-iomap_writepage_map             xfs_setattr_size
-  iomap_writepage_handle_eof
-                                  truncate_setsize
-				    i_size_write(inode, newsize)  //update inode size to 4K
-  iomap_writepage_map_blocks
-    iomap_add_to_ioend
-           < iszie < ioend->io_offset>
-	   <iszie = 4K,  ioend->io_offset=8K>
+commit 3b97c3652d9128ab7f8c9b8adec6108611fdb153
+Author: Joanne Koong <joannelkoong@gmail.com>
+Date:   Thu Oct 24 17:18:08 2024 +0000
 
-It appears that in extreme cases, folios beyond EOF might be written back,
-resulting in situations where isize is less than pos. In such cases,
-maybe we should not trim the io_size further.
+    fuse: convert direct io to use folios
 
-Long Li
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13e29f78580000
+start commit:   f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10129f78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e29f78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=404b4b745080b6210c6c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131f71e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12bc200f980000
 
+Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
+Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
