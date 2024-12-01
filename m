@@ -1,118 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-36206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD8D9DF5DC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 14:45:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AE69DF5EE
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 15:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33033281A48
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 13:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C234281BB0
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 14:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E0B1D12E9;
-	Sun,  1 Dec 2024 13:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECD01D5CDD;
+	Sun,  1 Dec 2024 14:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPjAwfcc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOtUuIMd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376021D0E2B;
-	Sun,  1 Dec 2024 13:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7218E4D8A3;
+	Sun,  1 Dec 2024 14:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733060695; cv=none; b=EYFaTDGnqiwFLBntN1n0Gr1nb97emwBRdxAzwnzjca5n90kQBzKISjeaqMsGbEGBOhbGTqegl01fm7i9kvL+ZrcAX4eQbvEZ3BqDLTI1iHlqYQYEhf7VHmXQcw49JHwdVbmzkVbyV+n8KyJIvzItpPCr+KYJx90tTCy5rxgFUmQ=
+	t=1733062640; cv=none; b=OUezD1K9dHf4QwCpHATWRwnJIKOO2rTYwjmt6SiBa38ZX37ZKvkafiibem4rQVwC0/luRJz/mBr6cpgJAvlizC70k6VXAS4oDl/ODdGVuFa0CWgH4sZkdkukOgZksndXIMKmvMxGkWav0D6D8K+JaMC0PAe8jlbFcOxvyOmIxFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733060695; c=relaxed/simple;
-	bh=/yn0wzxjN0cmJXgeAMJb+GrHSfXq3krz0+bt1dsLauQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5b0+E/j1RW4/8He0Ot0scnS3xaQ4ZnRU9YbEcOzT8NP5TtXzf0fFtxjBd8OR5oLVtn32Oq5QwkQoCyvDZZJS3rJE/w0NcFTezpAvToBy2K6MjsMpxoHjchIqLIzuRrRkL8qdAIe25L7bRuMi8X9cLmG+qBsnfLDHBF8QAbgGlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPjAwfcc; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa5500f7a75so549389266b.0;
-        Sun, 01 Dec 2024 05:44:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733060692; x=1733665492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/yn0wzxjN0cmJXgeAMJb+GrHSfXq3krz0+bt1dsLauQ=;
-        b=KPjAwfccbCR82wCfqxs9rlqskJwsB0DD9S8EMzmeaBdUp6PjC6O0AFYnQpE7Xz+G5i
-         f5p5wPm+EJBnjwNOsvKUTQtK0ji6G7Imh3hq0zZCsvEZhUf8AFLiZ1dHXOr3q0R+Lzcl
-         cHtlwrj4CCiYdlwLHSGIRKAdD0uMIK1hAncAb0V+9VmEhfpDtOQPSzUTc+99y97gIzSk
-         f2wvymLH9IG1XHxvHHJ+mpDY6h5isJFMOpbetsJLW5j7t/1a99suvSs1AKWsmBZtuXCt
-         3icrt+dc+3RPudz/kLWRaICFZXLifHmJP5yH3Z/yYdik1KoiGHx4KyxR+Zz1veSb9o8f
-         31ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733060692; x=1733665492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/yn0wzxjN0cmJXgeAMJb+GrHSfXq3krz0+bt1dsLauQ=;
-        b=Icm3B0gioaHYPPmXztX+UIAq9GAWFV9zpRRCBk7DxAWLFlX08n4a78QuP0JoIgicTs
-         F2TTzGv8MKsWmoiSH9WNN6PpjZj1bdIyzUrxZvlO/VSmd6IfMLM0s84sZLHFW4aCc3+U
-         BxDg4PtQ7uONvTR5v1gLUjwveTLpH3e3G8IHHiYS0F8hyteCfeF2Otv9FOXLsbNYH+S4
-         C3rcMeFjZfX/8fj8/QfgRoEXr3ICLSnVafiynGiUd45ZvGw72axVxfAkTwTEWFs95oUL
-         PnChMscA+SxbJwnC9zULs+vROZ8oTIUhyCfONR5UE65xUHwbrxg0M9U01I1iUaWPsWsx
-         1rug==
-X-Forwarded-Encrypted: i=1; AJvYcCUuKpmNbp7a574x5EdK3gsRmr3pk1wB7MardS0aYLd1TVrJb8aGWv3GoYFdXToMz5Yhie+RWAEYva/V+0pI@vger.kernel.org, AJvYcCVqIJyChEJZmhJkautrQaCiB6pEJwiCIquAq0LJ0VpEqboIf0nzzLgtNaeCUUjgoHYdf/dtf1vVFCZV@vger.kernel.org, AJvYcCXaeoEaAD2YaBmv7U4N6Odv8eS7LBTADaaGNwMDnshW23ufhbz+lstDGgjL8RgFwi4UBEIMtfhfTF4kuHN3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyelXfY7NZrzt3iRA7s4rMiZnV4NYXPlsuZWZFcivwScs8FfwrK
-	eI0l7uc0WoLQA5Jyr8RRRGDQImGD1YEtHgx7DQkmtfgYHzrHictr9xXSikUvS5yWTV4ykbAUqvb
-	i2X7kSCumm6eFc5vThjIYCQCuM/I=
-X-Gm-Gg: ASbGnctC9gnZmmfLdWW7SzQKZJLZsBJVOm8ByhTQfuOfLlw0G1sGf89bth4Ac9zHXEA
-	gyA49E6lLrgpvypzK3yqOHX5auhJUyfI=
-X-Google-Smtp-Source: AGHT+IE8ktqTmWmitN2gm1HOsLcRDsx1CtpYrdD+9z2jySWMuixmlI+8l45DDQ/lsrmbcZVIINA4AgEnnWvLFZSPjKw=
-X-Received: by 2002:a17:907:77cc:b0:aa5:4cc1:1967 with SMTP id
- a640c23a62f3a-aa580eede36mr1456499466b.9.1733060692184; Sun, 01 Dec 2024
- 05:44:52 -0800 (PST)
+	s=arc-20240116; t=1733062640; c=relaxed/simple;
+	bh=DrUsAqQ1VrrITAmnB41RxEst13PDZyHTTGTu987L3I4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZVASd0gItAiM7GVlMAkrB7tOSwENo4+JuPksJHr+KRhWYxHvPVcnjBxNPa91uehpEkIk/lHVf7YEukHdKwv0ARh4BSH3Ev6iHcRpVd4xb/ZHc53OOUMPJ7DrY4vRaUVRNeuXXpQkc9ocKNdk4q7pniJteESaFUHYGRktPhKHMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOtUuIMd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE64AC4CECF;
+	Sun,  1 Dec 2024 14:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733062638;
+	bh=DrUsAqQ1VrrITAmnB41RxEst13PDZyHTTGTu987L3I4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HOtUuIMdEEw18pth+jDSDXBhMnHYQV3c2/DFCEfBfNjvCipuNZVg+ugdDAp69fWZF
+	 epvlPebS+SFeG9qNVTlgj89hCHlXQnRQeM095gK5AYX6epWSuwpWb6weIjk9FX4XG/
+	 3Y+5plX7utoay2eD1LKNH6u8fxqWKWf7y6Zdh+b3Ftvhu51+rHhdfPfUMFSb0WV71E
+	 0LWycyytBlD71Qm5nk1Q1F2tQo5aaBNlUCXT5W+a9n/z8MrVgRlE3e9pDKfEUJcNTL
+	 KRiXrC7dtrl4rnY8YD8LnAyVnb8U8rygRCRnuq5rG4DJcmXfWxaxubf+FQXa4tdQxN
+	 3sUH+M+K+h6yA==
+Date: Sun, 1 Dec 2024 15:17:13 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Tycho Andersen <tandersen@netflix.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <20241201-konglomerat-genial-c1344842c88b@brauner>
+References: <20241130045437.work.390-kees@kernel.org>
+ <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
+ <CAHk-=wi=uOYxfCp+fDT0qoQnvTEb91T25thpZQYw1vkifNVvMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
-In-Reply-To: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 1 Dec 2024 14:44:41 +0100
-Message-ID: <CAOQ4uxjNEDZHwyUd2k8OLYH9x4xyrsFUnSSrH0E-QnMsHoqmvw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export operations
- as only supporting file handles
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable <stable@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi=uOYxfCp+fDT0qoQnvTEb91T25thpZQYw1vkifNVvMQ@mail.gmail.com>
 
-On Sun, Dec 1, 2024 at 2:12=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> Hey,
->
-> Some filesystems like kernfs and pidfs support file handles as a
-> convenience to enable the use of name_to_handle_at(2) and
-> open_by_handle_at(2) but don't want to and cannot be reliably exported.
-> Add a flag that allows them to mark their export operations accordingly
-> and make NFS check for its presence.
->
-> @Amir, I'll reorder the patches such that this series comes prior to the
-> pidfs file handle series. Doing it that way will mean that there's never
-> a state where pidfs supports file handles while also being exportable.
-> It's probably not a big deal but it's definitely cleaner. It also means
-> the last patch in this series to mark pidfs as non-exportable can be
-> dropped. Instead pidfs export operations will be marked as
-> non-exportable in the patch that they are added in.
+On Sat, Nov 30, 2024 at 10:02:38AM -0800, Linus Torvalds wrote:
+> On Sat, 30 Nov 2024 at 04:30, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > What does the smp_load_acquire() pair with?
+> 
+> I'm not sure we have them everywhere, but at least this one at dentry
+> creation time.
+> 
+> __d_alloc():
+>         /* Make sure we always see the terminating NUL character */
+>         smp_store_release(&dentry->d_name.name, dname); /* ^^^ */
+> 
+> so even at rename time, when we swap the d_name.name pointers
+> (*without* using a store-release at that time), both of the dentry
+> names had memory orderings before.
+> 
+> That said, looking at swap_name() at the non-"swap just the pointers"
+> case, there we do just "memcpy()" the name, and it would probably be
+> good to update the target d_name.name with a smp_store_release.
+> 
+> In practice, none of this ever matters. Anybody who uses the dentry
+> name without locking either doesn't care enough (like comm[]) or will
+> use the sequence number thing to serialize at a much higher level. So
+> the smp_load_acquire() could probably be a READ_ONCE(), and nobody
+> would ever see the difference.
 
-Yeh, looks good!
+Right now it's confusing. So no matter if we do READ_ONCE() or
+smp_load_acquire() there'd please be a comment explaing why so we don't
+pointlessly leave everyone wondering about that barrier.
 
-Apart from missing update to exporting.rst
+/*
+ * Hold rcu lock to keep the name from being freed behind our back.
+ * Use cquire semantics to make sure the terminating NUL from
+ * __d_alloc() is seen.
+ *
+ * Note, we're deliberately sloppy here. We don't need to care about
+ * detecting a concurrent rename and just want a sensible name.
+ */
+rcu_read_lock();
+__set_task_comm(me, smp_load_acquire(&file_dentry(bprm->file)->d_name.name), true);
+rcu_read_unlock();
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
+or something better.
 
