@@ -1,126 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-36214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51419DF73A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 22:50:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3089DF765
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 00:03:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A969EB2132B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 21:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC3D162A6A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 23:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643CB1D9329;
-	Sun,  1 Dec 2024 21:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="L39OeohB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD61D8E06;
+	Sun,  1 Dec 2024 23:03:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177FD1D7E21
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Dec 2024 21:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A205A13635C
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Dec 2024 23:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733089792; cv=none; b=DprvBEZyrpTB1RyA26l0MlIGk5ix8RMPKQgfAQAlwYFOIIT6LuE/E70CwKtC0Yl0iPuLtF2m2Kw8t+32XBkRt85fS/6PEY2wHkhC+SGwC9Pp1VouXW759yNoR4L4l54kD/w4s1yrCkEmndozZ+SsioqQ3McIVXPalReCcZcjr+k=
+	t=1733094212; cv=none; b=b4E9lcJAHU8fpYsStpL8Z79m8ugCQ2a/wLJ5BAneXfMXstgLxTsTaKwGftR2SSMCdcAYo/HjCxwT7ifPuGBl1V50ubbwOTE4z/J0cfZ1jBsOiFwwxRDnpTOrskSi8WbsVhxBYjDoxXcq1hiE1gctZjds0ko+DzKXDhUGa/LDhLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733089792; c=relaxed/simple;
-	bh=xXJPQ6YbYgc+LsntidKKs/X461vEK6auxVARRMkPIzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GSSObRdxILo2vBwMnL1UmPfxXsJtqspS823k8WhuIYNPaOEiTVA/I7sxL+zdxwopluxwr+9G/NeKYiu5Ydpeen60mXDkcpX5BtnPGhWKyeylwsCW9hmgETSoGL/h3ZLBEnGxrzLY3rVUOAwS8Eg0fDTbQF8HfVvsFy3tcWci8oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=L39OeohB; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7256dc42176so398826b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 13:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733089790; x=1733694590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
-        b=L39OeohBrATyQzBYGf4B7mSuB61Oo0AczOununI4eMr8/Gj9jeHZBzWs1oNGBjKx+D
-         ua80OZzaYqPz6BU8mNGMuySjhC4CSBohfAdtGmF8UWCn6Fx5dcvmc+bBCT70E+WGLCiH
-         s3YOJs2DPvrTgCpbJwonNarS8FcZs+FUgL8/7/tGI6PcdGBz2n8N91qpcJvT8Ef6dyKb
-         X3Eb0AOls8Ht5mMSgJxNqf0s0sEmO/WqMknhI866IgFD9pXnVemKaTsqqQ+a2MBUAKcF
-         wl6fiGw5DQJ95TvmeZFRRqjoNEncPdB4E3ODCFY8dDbwn0ueD0nmc0QhKOhkUJ5pN4LT
-         z7LQ==
+	s=arc-20240116; t=1733094212; c=relaxed/simple;
+	bh=kN3XJ+YVWB3V0ClvNdf6urdu9EM49Bphm3/PuaiIGlI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hm0RDbaBA75nPfuYkYek3YmtDgRhP1gMLNOWXOotqQJhbbbKusmXCHPCnVRPnS8hHZRBR4C8mwtVxK9RCUwlFd+5+gK8E+N9FZ/rReGl+R///6WYG/8Lu19zte4CJ/pLvab1k6IpctXx3NxlB7BOktQ5t9t8/3y1+yWO8NhiNHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-84193bb7ed1so341124939f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 15:03:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733089790; x=1733694590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
-        b=KdAKn5eKNIZgv9DBaLakFKT3YL4w27xKwoUo7bVGDDChKPIoTRdOIHo4TwPHOoR0qo
-         NC2793KtiWWRmVcSDQ5Lutarm7MSKlf113oQ9NlYlmKCSrQHCmcVCH7zJjV+6w5Qw0Zl
-         mg0a2WbVUKnaGC9G6z13QEmJHJs6pBByyZpKDZlT7F7L1HtKBkHB7Ce+3sKSDWRAsCw2
-         mZQM5OtiIrkpmlSFpNuhdCG3c+9DG8ddBNfCyH4xjqxt9hgFZv2C4WBb+0aedUF8dcAX
-         WIYJ3INGVHHj5y0ECsCLFNTKk14QKiq5gl0itwOtRojyEgZiR1gUFaUgLebzU8WQTomx
-         1UWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3pSa2GHK/GjRivUjCCqSPuGtfdC4B3Ggq8dPkOLE91fmBzl4Q93UHnQsrx9c7A0CcosktZCaoCUx0UGfW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhQ1qtiDsKTbN5dQv+43k58dhj25ASDaXlJ/pIeKkDlw0Umils
-	yXA/X2QT2TSF8xLoVOdtCYJdVBu8Hz3zp8KPjzeNSDJ3s0Q2drV0zzNaneJlOAKs5E2w/l4FAfY
-	Y
-X-Gm-Gg: ASbGncu04VtysfLVA00Z+s73+lGbQ7TvvdSx+yTciGTXWWMU4mGp6vC5flmENYIlqfK
-	Bnm5uudeHMF9tMZ3ylRqgH6YNfW1KvDP1LCu0bT2Wfco48p8YLjiClF/SpaFhBhFao8r2ZBJMp8
-	Fmf2GJK/np2Th92n09w8+KcmqegQSXEltEIrdFwW5IIGjBuEyaQkjfimz3hvZhP2jdw5PUoEkJ1
-	Yn4utgsJgF2OnXX12Rt2evdkcZsZYtdQnXsgCEfZjdtSqU=
-X-Google-Smtp-Source: AGHT+IEJ8i/d4RS5aNUgb0ZzcIBRhjMpR8RaWqdw3iTHbi813IFT7He4V5pwrlQ+TjGvCu78jA5zjQ==
-X-Received: by 2002:a05:6a00:2381:b0:71e:5d1d:1aa2 with SMTP id d2e1a72fcca58-7253000347emr24970119b3a.7.1733089790310;
-        Sun, 01 Dec 2024 13:49:50 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417725e9sm7069306b3a.80.2024.12.01.13.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Dec 2024 13:49:49 -0800 (PST)
-Message-ID: <be3a3bd5-0991-480e-8190-010faa5b4727@kernel.dk>
-Date: Sun, 1 Dec 2024 14:49:47 -0700
+        d=1e100.net; s=20230601; t=1733094210; x=1733699010;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+3R5a1sE3BXqMiRu972WSrKfBX8E5WH/+BDgc03Tyhk=;
+        b=A9BTdmiKI1ZJ8qoeUKhUzImi2sXrTmgYfvKnpSgBg4ZklZEd9DDAyt6nV1AVkQO/kG
+         P3QfttNeu+WHI93W8UXxjLNhG7zfVXhTVzC+HwDxwZ4Yd95SzRI0PrkP+gsgjpH9wk6p
+         ES/M7w3Fz6iC3DMUn6cIJYiT9KJMbNlIeTMKE85xyxr6Ysp5jYaVm/e1+3PcX3a9JiEK
+         XhEI4KqX8VvoUA4kKh2KWkrWeOsIcktltOUg4F0irJclVLDcf1ALGnjpMCrM9wTvqG/M
+         D+TZi7e65mt7L5w5lOlkR3Jpk2NybkPvSNU8Y/beugmBFNUIjNmzgfWIMJmSlg/PUfAl
+         P9yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzTCMA5bD4Wq4hyvKTl9yDYzLllet3uHv3yGdjAaDtrewc5hBj557DfVEG86DrRBSEvDfECFSCTv3CJRJ1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAFGs94MSqdkjqmO2Ci/zuN4d8g/8cQIAnKBtGz0r2+8+Wdbgd
+	DFr2owSYYA8dLVsaC9iUuq8ekRp1rFZGjqYCKeILYWe+360UggHAdFxwRt4/2+YWrLst/jW/+bP
+	HgF5LgOgVzknvVrTd5zNel9izOwPqMBXaz7+rfbGu9Px6SQDzLRZ9HOw=
+X-Google-Smtp-Source: AGHT+IEXOUSRAc2bVsgYzsYZDpc7piCvXxGewwr3QfRbFthdHfZ7joMwbFjSQ9OUs6LBErKOhyFJ09LurCnOg++2l6xwSs+mzJTf
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] exec: Make sure task->comm is always NUL-terminated
-To: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Pavel Begunkov <asml.silence@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20241130044909.work.541-kees@kernel.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241130044909.work.541-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca0e:0:b0:3a7:c378:3bab with SMTP id
+ e9e14a558f8ab-3a7c5445d3amr222449275ab.0.1733094209853; Sun, 01 Dec 2024
+ 15:03:29 -0800 (PST)
+Date: Sun, 01 Dec 2024 15:03:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ceb41.050a0220.48a03.0018.GAE@google.com>
+Subject: [syzbot] [exfat?] general protection fault in exfat_init_ext_entry
+From: syzbot <syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, daniel.palmer@sony.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	wataru.aoyama@sony.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/29/24 9:49 PM, Kees Cook wrote:
-> Using strscpy() meant that the final character in task->comm may be
-> non-NUL for a moment before the "string too long" truncation happens.
-> 
-> Instead of adding a new use of the ambiguous strncpy(), we'd want to
-> use memtostr_pad() which enforces being able to check at compile time
-> that sizes are sensible, but this requires being able to see string
-> buffer lengths. Instead of trying to inline __set_task_comm() (which
-> needs to call trace and perf functions), just open-code it. But to
-> make sure we're always safe, add compile-time checking like we already
-> do for get_task_comm().
+Hello,
 
-In terms of the io_uring changes, both of those looks fine to me. Feel
-free to bundle it with something else. If you're still changing things,
-then I do prefer = { }; rather than no space...
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1549f530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f6c9397e0078ef60bce
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1443ef5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349f530580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/792711885a74/mount_0.gz
+
+The issue was bisected to:
+
+commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Thu Sep 12 08:57:06 2024 +0000
+
+    exfat: reduce FAT chain traversal
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1145cf78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1345cf78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1545cf78580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com
+Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
+
+syz-executor166: attempt to access beyond end of device
+loop3: rw=524288, sector=167, nr_sectors = 1 limit=64
+syz-executor166: attempt to access beyond end of device
+loop3: rw=0, sector=161, nr_sectors = 1 limit=64
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 UID: 0 PID: 5890 Comm: syz-executor166 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_ext_entry+0x3fd/0x990 fs/exfat/dir.c:498
+Code: 48 98 49 8d 1c c6 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 01 26 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 e4 25 89 ff 4c 8b 33 43 80 7c 3d
+RSP: 0018:ffffc900041ff318 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 0000000000000200 R08: ffffffff8281406f R09: 0000000000000002
+R10: ffff88805d092022 R11: ffffed100ba12407 R12: ffffc900041ff700
+R13: 1ffff9200083fee0 R14: ffffc900041ff710 R15: dffffc0000000000
+FS:  00007fb6d86536c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb6d8653d58 CR3: 000000002fc0c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ exfat_add_entry+0x529/0xaa0 fs/exfat/namei.c:517
+ exfat_create+0x1c7/0x570 fs/exfat/namei.c:565
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_creat fs/open.c:1495 [inline]
+ __se_sys_creat fs/open.c:1489 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1489
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb6d86c4099
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb6d8653218 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007fb6d87534b8 RCX: 00007fb6d86c4099
+RDX: 00007fb6d869bc26 RSI: 0000000000000000 RDI: 0000000020000e00
+RBP: 00007fb6d87534b0 R08: 00007ffed34fd087 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb6d8718d84
+R13: 00007fb6d8717880 R14: 0032656c69662f2e R15: 6f6f6c2f7665642f
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_ext_entry+0x3fd/0x990 fs/exfat/dir.c:498
+Code: 48 98 49 8d 1c c6 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 01 26 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 e4 25 89 ff 4c 8b 33 43 80 7c 3d
+RSP: 0018:ffffc900041ff318 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 0000000000000200 R08: ffffffff8281406f R09: 0000000000000002
+R10: ffff88805d092022 R11: ffffed100ba12407 R12: ffffc900041ff700
+R13: 1ffff9200083fee0 R14: ffffc900041ff710 R15: dffffc0000000000
+FS:  00007fb6d86536c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055bc85806ca8 CR3: 000000002fc0c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 98                	cltq
+   2:	49 8d 1c c6          	lea    (%r14,%rax,8),%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 01 26 89 ff       	call   0xff89261d
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 28          	add    $0x28,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 e4 25 89 ff       	call   0xff89261d
+  39:	4c 8b 33             	mov    (%rbx),%r14
+  3c:	43                   	rex.XB
+  3d:	80                   	.byte 0x80
+  3e:	7c 3d                	jl     0x7d
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
