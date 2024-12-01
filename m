@@ -1,150 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-36213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F334D9DF713
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 21:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C51419DF73A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 22:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F645B215BA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 20:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A969EB2132B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2024 21:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABE41D90CD;
-	Sun,  1 Dec 2024 20:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643CB1D9329;
+	Sun,  1 Dec 2024 21:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SwJotehU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="L39OeohB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED341D86C3
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Dec 2024 20:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177FD1D7E21
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Dec 2024 21:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733084630; cv=none; b=oG1+R9NlSZEoOx38LQygk65RLWWDeJQHqjqxeJ088cIuNiZXsrGWdz2tilXfrPzfaAyc9rBUtR7zuZS2ZCa4OuMZddYaDhMFsthTo41Qg2LD0Q1PBzmYUe7zUqvL0w3jgm9yRfnmru+wD2gm9K/XxP7rEZ2ZzjJRqW5xcfTErv0=
+	t=1733089792; cv=none; b=DprvBEZyrpTB1RyA26l0MlIGk5ix8RMPKQgfAQAlwYFOIIT6LuE/E70CwKtC0Yl0iPuLtF2m2Kw8t+32XBkRt85fS/6PEY2wHkhC+SGwC9Pp1VouXW759yNoR4L4l54kD/w4s1yrCkEmndozZ+SsioqQ3McIVXPalReCcZcjr+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733084630; c=relaxed/simple;
-	bh=4xGNzN9Wp70Q9GgcCs1b92wuOYHLnPfSc5E75h7FS04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JBA0z7J7gfCN4Lyec67mS+Fo79k4Qu+t8Yhr9+KIanuBiyqLU4To8z8R36l8pCf3AO0UYJUq6sqdpvf5YwQ5WEgaDXiPGjWjNSmaEnkz+yEiC2ZKBxcPspL9x1HZkos/GuZQL30uL5heuC+4nFyI9v+cNM2ukXbWW92jGFB9DSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SwJotehU; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d0c8ba475bso2044157a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 12:23:48 -0800 (PST)
+	s=arc-20240116; t=1733089792; c=relaxed/simple;
+	bh=xXJPQ6YbYgc+LsntidKKs/X461vEK6auxVARRMkPIzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GSSObRdxILo2vBwMnL1UmPfxXsJtqspS823k8WhuIYNPaOEiTVA/I7sxL+zdxwopluxwr+9G/NeKYiu5Ydpeen60mXDkcpX5BtnPGhWKyeylwsCW9hmgETSoGL/h3ZLBEnGxrzLY3rVUOAwS8Eg0fDTbQF8HfVvsFy3tcWci8oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=L39OeohB; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7256dc42176so398826b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 13:49:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733084627; x=1733689427; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0PBRuUNrVMG3jWkuVgZ+alnShpvbiX+xpV3R8jGwMw=;
-        b=SwJotehUo7tgTiDD3jJ6uEyXPyF0+fo2O0fv5nx0TvQp3LH4IOXDHDdxlDrlTsSq3M
-         FZocGm3vD5cXk9uu3iMTpOl3w+Q/QDnOr2VSaHX2qJW/6+7FHGOr03YKQ6Jq/xQ96cHM
-         lvb68nEI0gIH/pfPJ5zJcBxrfli/AJLjb/RSA=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733089790; x=1733694590; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
+        b=L39OeohBrATyQzBYGf4B7mSuB61Oo0AczOununI4eMr8/Gj9jeHZBzWs1oNGBjKx+D
+         ua80OZzaYqPz6BU8mNGMuySjhC4CSBohfAdtGmF8UWCn6Fx5dcvmc+bBCT70E+WGLCiH
+         s3YOJs2DPvrTgCpbJwonNarS8FcZs+FUgL8/7/tGI6PcdGBz2n8N91qpcJvT8Ef6dyKb
+         X3Eb0AOls8Ht5mMSgJxNqf0s0sEmO/WqMknhI866IgFD9pXnVemKaTsqqQ+a2MBUAKcF
+         wl6fiGw5DQJ95TvmeZFRRqjoNEncPdB4E3ODCFY8dDbwn0ueD0nmc0QhKOhkUJ5pN4LT
+         z7LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733084627; x=1733689427;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N0PBRuUNrVMG3jWkuVgZ+alnShpvbiX+xpV3R8jGwMw=;
-        b=vapnyAf/xiKgwXiVkKmBYqAhE3TO7sW+pEF7SUUYvkBk01IwGuSZoLV/aI8ZKmhiZX
-         OLYkWgoF4ROK5f8TRhM3K8gwpIGz/bNlLr8PqrklIPj+8kCK6yhJp3vsr0ovtZPpM1N0
-         Y/AGpvcMgjq10Bnv5bRWbF0X1F4vNUT0vIQYUWNJf1rfFq3w9HA6KCDy+iqK+hmdc0h8
-         i9CTwEWhU7I1W/j0IILolC3d0ccRXJGhg8EP/T84ZkpDyDEffOC3JDe84V+w7euqMDmQ
-         HWY6lQFeVCZQolgAxleGo//c+fKsBhah1EcI2TYk153+9j/0pVeweDxrrSPVV9XJjXeV
-         VodA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2gr5EXJdh5NV83VZF3EbeF0mWaYcTPI6GUU2b++Q6oye2Z0GbICX9REl7O9juvxtqp/H1UZWKy3r+gs4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhYNsCbaDJFW6UK/oTKS5hXgOUj70YUibiRirHbwXHwFMNFgaF
-	t/0MpYuqlNELa0kjQMK9Ro9GtQmZ2MOrJypTerGd+NSJcgRG6U06zH2ePsorg65GjGvkppC1RrS
-	FVUAImA==
-X-Gm-Gg: ASbGncvdOFNIbVAR1859iR80PQ1/z3KoHdPPMtL69xc+txM+PY6WGuHCyS2R4DGfp68
-	LFvxSKR84bNLsW1Wmxi7wnyPRyDUBWl+4Yu0o+MX8l2mC1qtaTWGvxmYX+i2IEnzPAhivku2Uff
-	06qmDApmEnxENa+I7CQwCWMorjXygE1vKAwZyxsjASOCZLLK6HsHSojTAvdeD6NJy4G/djQlvx/
-	xi4SVFLHdHb3bQpyVqOmOXWfMCoMRZZDkP1eBc9AE5RVU68scjLayLVISLKc6zKNrrIKOx4BdRD
-	x2leYOFCb02n6hqSAAvwh/6N
-X-Google-Smtp-Source: AGHT+IHH9yhWXbIkZl78DfAcUOwt4jHgPKsdQj4YTarf3XmJISs7AIerPC/P0xxy0cDh6SdCiOdZ+g==
-X-Received: by 2002:a05:6402:3219:b0:5d0:b74f:6422 with SMTP id 4fb4d7f45d1cf-5d0b74f66b8mr13166672a12.32.1733084626934;
-        Sun, 01 Dec 2024 12:23:46 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097db0bbesm4169894a12.29.2024.12.01.12.23.43
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1733089790; x=1733694590;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
+        b=KdAKn5eKNIZgv9DBaLakFKT3YL4w27xKwoUo7bVGDDChKPIoTRdOIHo4TwPHOoR0qo
+         NC2793KtiWWRmVcSDQ5Lutarm7MSKlf113oQ9NlYlmKCSrQHCmcVCH7zJjV+6w5Qw0Zl
+         mg0a2WbVUKnaGC9G6z13QEmJHJs6pBByyZpKDZlT7F7L1HtKBkHB7Ce+3sKSDWRAsCw2
+         mZQM5OtiIrkpmlSFpNuhdCG3c+9DG8ddBNfCyH4xjqxt9hgFZv2C4WBb+0aedUF8dcAX
+         WIYJ3INGVHHj5y0ECsCLFNTKk14QKiq5gl0itwOtRojyEgZiR1gUFaUgLebzU8WQTomx
+         1UWw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3pSa2GHK/GjRivUjCCqSPuGtfdC4B3Ggq8dPkOLE91fmBzl4Q93UHnQsrx9c7A0CcosktZCaoCUx0UGfW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhQ1qtiDsKTbN5dQv+43k58dhj25ASDaXlJ/pIeKkDlw0Umils
+	yXA/X2QT2TSF8xLoVOdtCYJdVBu8Hz3zp8KPjzeNSDJ3s0Q2drV0zzNaneJlOAKs5E2w/l4FAfY
+	Y
+X-Gm-Gg: ASbGncu04VtysfLVA00Z+s73+lGbQ7TvvdSx+yTciGTXWWMU4mGp6vC5flmENYIlqfK
+	Bnm5uudeHMF9tMZ3ylRqgH6YNfW1KvDP1LCu0bT2Wfco48p8YLjiClF/SpaFhBhFao8r2ZBJMp8
+	Fmf2GJK/np2Th92n09w8+KcmqegQSXEltEIrdFwW5IIGjBuEyaQkjfimz3hvZhP2jdw5PUoEkJ1
+	Yn4utgsJgF2OnXX12Rt2evdkcZsZYtdQnXsgCEfZjdtSqU=
+X-Google-Smtp-Source: AGHT+IEJ8i/d4RS5aNUgb0ZzcIBRhjMpR8RaWqdw3iTHbi813IFT7He4V5pwrlQ+TjGvCu78jA5zjQ==
+X-Received: by 2002:a05:6a00:2381:b0:71e:5d1d:1aa2 with SMTP id d2e1a72fcca58-7253000347emr24970119b3a.7.1733089790310;
+        Sun, 01 Dec 2024 13:49:50 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417725e9sm7069306b3a.80.2024.12.01.13.49.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Dec 2024 12:23:44 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso599061866b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 12:23:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXF9XSscz4R09q8h+p7Q9ITe1VQvHhdM091Q7XYsYq+Y1wG9vrmg63IPDYH/Mrb7IDUe1JhYcNh26t0WZvB@vger.kernel.org
-X-Received: by 2002:a17:906:3090:b0:aa5:1585:ef33 with SMTP id
- a640c23a62f3a-aa580f1ae0emr1684398666b.23.1733084623092; Sun, 01 Dec 2024
- 12:23:43 -0800 (PST)
+        Sun, 01 Dec 2024 13:49:49 -0800 (PST)
+Message-ID: <be3a3bd5-0991-480e-8190-010faa5b4727@kernel.dk>
+Date: Sun, 1 Dec 2024 14:49:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130044909.work.541-kees@kernel.org> <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 1 Dec 2024 12:23:26 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiGWbU-MpmrXnHdqey5kDkyXnPxQ-ZsGVGBkZQ5d5g0mw@mail.gmail.com>
-Message-ID: <CAHk-=wiGWbU-MpmrXnHdqey5kDkyXnPxQ-ZsGVGBkZQ5d5g0mw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] exec: Make sure task->comm is always NUL-terminated
-To: Kees Cook <kees@kernel.org>
-Cc: Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chen Yu <yu.c.chen@intel.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>,
+ Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20241130044909.work.541-kees@kernel.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241130044909.work.541-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Nov 2024 at 23:15, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> And yes, we could make the word-at-a-time case also know about masking
-> the last word, but it's kind of annoying and depends on byte ordering.
+On 11/29/24 9:49 PM, Kees Cook wrote:
+> Using strscpy() meant that the final character in task->comm may be
+> non-NUL for a moment before the "string too long" truncation happens.
+> 
+> Instead of adding a new use of the ambiguous strncpy(), we'd want to
+> use memtostr_pad() which enforces being able to check at compile time
+> that sizes are sensible, but this requires being able to see string
+> buffer lengths. Instead of trying to inline __set_task_comm() (which
+> needs to call trace and perf functions), just open-code it. But to
+> make sure we're always safe, add compile-time checking like we already
+> do for get_task_comm().
 
-Actually, it turned out to be really trivial to do. It does depend on
-byte order, but not in a very complex way.
+In terms of the io_uring changes, both of those looks fine to me. Feel
+free to bundle it with something else. If you're still changing things,
+then I do prefer = { }; rather than no space...
 
-Also, doing the memory accesses with READ_ONCE() might be good for
-clarity, but it makes gcc have conniptions and makes the code
-generation noticeably worse.
-
-I'm not sure why, but gcc stops doing address generation in the memory
-instruction for volatile accesses. I've seen that before, but
-completely forgot about how odd the code generation becomes.
-
-This actually generates quite good code - apart from the later
-'memset()' by strscpy_pad().  Kind of sad, since the word-at-a-time
-code by 'strscpy()' actually handles comm[] really well (the buffer is
-a nice multiple of the word length), and extending it to padding would
-be trivial.
-
-The whole sized_strscpy_pad() macro is in fact all kinds of stupid. It does
-
-        __wrote = sized_strscpy(__dst, __src, __count);
-        if (__wrote >= 0 && __wrote < __count)
-
-and that '__wrote' name is actively misleading, and the "__wrote <
-__count" test is pointless.
-
-The underlying sized_strscpy() function doesn't return how many
-characters it wrote, it returns the length of the resulting string (or
-error if it truncated it), so the return value is *always* smaller
-than __count.
-
-That's the whole point of the function, after all.
-
-Oh well. I'll just commit my strscpy() improvement as a fix.
-
-And I'll think about how to do the "pad" version better too. Just because.
-
-                Linus
+-- 
+Jens Axboe
 
