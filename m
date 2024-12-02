@@ -1,125 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-36217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A1D9DF78D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 02:05:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A369DF89D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 02:48:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E7B01629D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 01:05:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA38FB213BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 01:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AE010A3E;
-	Mon,  2 Dec 2024 01:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB021CAA4;
+	Mon,  2 Dec 2024 01:48:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A1C3D81
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 01:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7878D17C68
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 01:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733101530; cv=none; b=iqly1TTL9siLZN4ZpLD6f8EXDlIKd6cPM9VSS1xFgsuEFk2ifd6zWW+UA8FycrATR28jJfpHnJ/2CUjNST4nVdg6uQw1KduGt60M/Cr3VE1Be9lLsNzXvT6gtiCtB3yalagfOZIoOzwfJGoZgdjF++4y9IDrd/D+cW5WDJnfTsU=
+	t=1733104111; cv=none; b=lxEtQ/WwhLHrY0EP8Ik/N+HIhll92jrkZJbNwHO0f4wWeyttNpm+5tlvCxRt+LH/pyJgrU4GVXuvHSrQvtkcgNBN/EW+OpmDDp3qTJdhtHTObu2kT8KXF2+1jnvL6Qs2E+XQ13bV8N1bZCDgXkMzKRR12vtIKnkdyX3YwDU2bY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733101530; c=relaxed/simple;
-	bh=ayvb5VSMhLWGhFEYk9sAyHoNKijFyuBCKVo9njMvBTw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HdU1U4SKZyUpyPBLhgtOSDY5IyIUs+Jo5TGjYytr9MWMMf/IlGVugJKnx3bK0H9Zt+o94dN+pPId2V3s5aWjGuUvGb/OWfk7fyF2zp6p/sSHoXbeIOWmff/LpGrj5MF6YyhHPR+gM6z8iKy/fRzWpXqmNaHT9CmS432rgxm4gT4=
+	s=arc-20240116; t=1733104111; c=relaxed/simple;
+	bh=9PjllhJm7+CnRDBO7Wnq4qwf6c89AiFMHLsT4Gquj6w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UWNgba2/H1oGwHnVWrF7fQJDtsS5k0x7N9cvzQ8JZEVsMVbchO0IS3UBTq+vWFVVEQ7jXP5/zeXl/YKfPrtMhL3wkIJwVXmIiguHZ9jrBgCZ7KaPK3fOaZ74weoVcSnGmoXw0TIe8SCCIwvdvNlHHRjr8pw/4wOJvCOQzpFpeUU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7c8259214so37673715ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 17:05:27 -0800 (PST)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7a1e95f19so36033385ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2024 17:48:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733101526; x=1733706326;
+        d=1e100.net; s=20230601; t=1733104108; x=1733708908;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=y+NBA3cSHRoEnXkJH9br5XKoQtNBWJygrejEDmNiKwc=;
-        b=R8TyfpCTGxiUNRdnmMmYW31lkeDfqAHHPyr4A4BBjRHHLTi3IfSRiX2A+JFFZdTvnx
-         BL/yDbpm9Qzs5H61EGrfy0TzbWWgW9UJ28OMSIUsaPPPmvOSiZqhBRrHhQJeSaUYWXsp
-         nz5NXDFMRTL7X88y8qvk3Wf4Aksy73R5XT0KhZSNOuz9k1ZOrH59LEtQGBH3cI+7aERC
-         XhkKKJJETrpKaRIw4F+/SyQHYbyCkpZWchxlI75f83mHBSoEtN1Fw7hmd4nrAokQlu8s
-         GPCG5YoZVyMJkQ//qgJhbI+SBqiBz2y37H2Mo3bUCAJ8W5GHt0FhqgZ5TwbYC4qGzoy9
-         m1RA==
-X-Gm-Message-State: AOJu0YxhwmCqhe4rrdpyquddiWSt4ySJL0lN3JrVIG4Dl9VFEPlSLpI2
-	pqKc1wXo3xfhYUFNcNFgtdlUUnnrvcLCH1z/8O15f289H7/1J84QylP6tsXlR0DwGwhi/+gyg4l
-	2QubPs/zoD9BHPb/cIhPySG8buoULdQ6f8JTkl/sO/o76rCMQ8f4HGkKD+Q==
-X-Google-Smtp-Source: AGHT+IElKtGqK2Sz1z+Jz+bU0XT7VBm/Bjaq6HS1EPIbjgM2nlEDcz8w1i4cbwXzrDsf8Tt9sDuAtMCcNYCUnykuNlMCtmaC5lMC
+        bh=pdw3pLOY/4L13DYwYHkr5SY7BMmdZN4rlTp/ll+Zuhg=;
+        b=kH1aTBe0mxk6qHsnXrIntV86mnIOjwLKBFPh7a3LEevoNM+GBJaUKhpZosz/80lyL8
+         4FKmpxgA63onLqGOGvO8KYy2+0J+t1yB9ZtBuU8KXvnc92Xjj+LpxKs73H2n3pxbvISn
+         UJ0p6SZZbzEfj4rde7MMhF9CEREKUnwaZBoblaelQCQ9kvLRz5wqeaihvvOAwuB/GH8e
+         Sq+9zP3n8HHEeQYUpnLsL4sQL6PiWGVr0vbRlC2GrhY31SUvvErlJzx97f9sBDNUc4JF
+         UVbe1fw1gmJrkV7OsbmSAgO1lEhCOjvrtFyegmSEf0y9maHxk2ChC2CZn9ZhSYeUz1Qj
+         ZVCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWcJX/tFNKe6E+BnFcPKwAs1KhY/36Wd5wH5Aet29+8KEPLGRbJFfdKODxC2om+3uTynhNoPq8Rk+DG5JC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxncvws7KnqjzDw30uM17Cb0HtHhyj5EJoMzKyf+2/Oz4g+Wspi
+	mN2obTrCFRonC25tP9S0+tY25hyuvvsiIShyQLDQhLIoaqb7RyVrWtP2WNfvTEt/mCXMZCDXii6
+	p4RobbCXKI9tP50wBnigmr2Fk8lYkHWT8F8Jz7weA8xu1HSoLoLOIees=
+X-Google-Smtp-Source: AGHT+IHlK5e6az1KCVW1n7qcXsi4eC/QWGZwwqJfJHtAzIjEiFTIAYNNKxDBollBwVyEwxzO9lR8azPmx8EkPhIIy5hJEgwFIGmq
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0f:0:b0:3a7:98c4:86a9 with SMTP id
- e9e14a558f8ab-3a7c55ec83amr239656195ab.20.1733101526657; Sun, 01 Dec 2024
- 17:05:26 -0800 (PST)
-Date: Sun, 01 Dec 2024 17:05:26 -0800
+X-Received: by 2002:a05:6e02:1a26:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3a7c55e297bmr217700045ab.24.1733104108727; Sun, 01 Dec 2024
+ 17:48:28 -0800 (PST)
+Date: Sun, 01 Dec 2024 17:48:28 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674d07d6.050a0220.ad585.0040.GAE@google.com>
-Subject: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_args
-From: syzbot <syzbot+63ba511937b4080e2ff3@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Message-ID: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+Subject: [syzbot] [iomap?] WARNING in iomap_zero_iter
+From: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>
+To: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    bcc8eda6d349 Merge tag 'turbostat-2024.11.30' of git://git..
+HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ad15e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53ebff8e07a0ee6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=63ba511937b4080e2ff3
+console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/63b4b090e8f0/disk-bcc8eda6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c1f37f73b54c/vmlinux-bcc8eda6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c076d69bc6d/bzImage-bcc8eda6.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+63ba511937b4080e2ff3@syzkaller.appspotmail.com
+Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: null-ptr-deref in fuse_copy_one fs/fuse/dev.c:1065 [inline]
-BUG: KASAN: null-ptr-deref in fuse_copy_args+0x2d8/0x9c0 fs/fuse/dev.c:1083
-Read of size 1 at addr 0000000000000000 by task syz.4.900/10122
-
-CPU: 1 UID: 0 PID: 10122 Comm: syz.4.900 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+loop0: detected capacity change from 0 to 32768
+gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
+gfs2: fsid=syz:syz.0: first mount done, others may mount
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+Modules linked in:
+CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
+RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
+RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
+RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
+RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
+R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
+R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
+FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_report+0xe8/0x550 mm/kasan/report.c:492
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
- fuse_copy_one fs/fuse/dev.c:1065 [inline]
- fuse_copy_args+0x2d8/0x9c0 fs/fuse/dev.c:1083
- fuse_dev_do_read+0xcbd/0x11e0 fs/fuse/dev.c:1357
- fuse_dev_read+0x170/0x220 fs/fuse/dev.c:1424
- new_sync_read fs/read_write.c:484 [inline]
- vfs_read+0x991/0xb70 fs/read_write.c:565
- ksys_read+0x18f/0x2b0 fs/read_write.c:708
+ iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
+ gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
+ __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
+ gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
+ vfs_fallocate+0x569/0x6e0 fs/open.c:327
+ do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
+ __do_sys_ioctl fs/ioctl.c:904 [inline]
+ __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff6ba57f25c
-Code: ec 28 48 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 99 8e 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 48 89 44 24 08 e8 ef 8e 02 00 48
-RSP: 002b:00007ff6bb396fd0 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000020002100 RCX: 00007ff6ba57f25c
-RDX: 0000000000002000 RSI: 0000000020002100 RDI: 0000000000000003
-RBP: 00007ff6ba5f3986 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000020000c80 R14: 00007ff6ba745fa0 R15: 00007ffecabbe838
+RIP: 0033:0x7efeb7f80809
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
+RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
+RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
  </TASK>
-==================================================================
 
 
 ---
