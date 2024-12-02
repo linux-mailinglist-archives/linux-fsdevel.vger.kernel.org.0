@@ -1,193 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-36232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE8E9DFF68
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 11:54:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94FB9DFF62
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 11:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47198B23CA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96F45B2205A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F62C1FCFC2;
-	Mon,  2 Dec 2024 10:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E8D1FCFC2;
+	Mon,  2 Dec 2024 10:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="E5uGDr9f"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P3JefoIp";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ryxBraHB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C81FC0EB;
-	Mon,  2 Dec 2024 10:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733136614; cv=none; b=AeowuT7iCIIJhYE/9LjKTxQDLPk8kwJhiOW2tKbcy2zXEbTWwKo+GrZfbGN87jjUlWebqV3//xTVGj610UrtSlt2dnr0emYq3ZIoqSZgOTUYc2rOhNg8UdzZPgK6y8HLiMM6LfjVqFZ103pnjQYfhtPH4qwU38+qPIU3r6yJzE4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733136614; c=relaxed/simple;
-	bh=nWj9kVjFkA/uzz5o+psqx7pHEdWGVkcXfYTvTuBT39A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rthC+TutTRxIMJHm32ThbmjWfk/e1Tk6ycR/aVgGnruJb2zi4h6aXXLSI/czKig+f257hY03av3ic++30Hz5JyKegyjXq0RVB2cexYP4/4sFWO8bD9ANylj+FSTTbYa/xgkhcdCBsVH32Dhmx3KeHavetjzVtHxdUdoFzVe8WAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=E5uGDr9f; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1733136274;
-	bh=yq8INn4zbqzqDhdWCGdL8z+1i1zAqXBLUq6KmP1JVYM=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=E5uGDr9fYjfHo3lHmuz4fFFchfOz5KOxDw6oDLr7hssldy12vEJyZFgxGPbEZbkPr
-	 rboK6KdiyWavWJFdNZUq5qKRp3TXNLjF1TyCLrRw3Kj0FM6HwjXYvmoNJnqNjUIgnu
-	 huitjDunqC3Gf6IedTFVl+G2Z1QugCGmMdfHh7z8=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE9B1FC0E5;
+	Mon,  2 Dec 2024 10:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733136764; cv=fail; b=eGYQMLuqS3tQsxyYbaiYJyiboFv+0GKt6yjK9D6Zo9+emi/0mqWYE9VcufdS9mphllvI0kq8ABgU1twsWZTDjVMH3Vtiz6xpVaqKdERUiJ9/a54K587zjUDLP2DwOCHZ5ejbSnPfbSTrAY1+A7UztM5xm5qennb59YG80wdPuC0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733136764; c=relaxed/simple;
+	bh=RRWYOB0/QwEOL4piObNiH8Pjc5ETGUWyhYRppMzLPts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=h3JaMc9s0+D8o5IlhWFslDHtyMf07cVTuWVFNAijVoTL2u9G88ev7jGbb318/ThiQJT5nWJiSn8/ll8upPZBoT4uJcetzmQfRSRbvaX1g/7c1CsFbf8n78XOzOQAF12HCJHeU8tgh77sMAnAXLUfbsrJz/BkefvQ/yCIaPpsNWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P3JefoIp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ryxBraHB; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26WvlH006615;
+	Mon, 2 Dec 2024 10:52:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=T7nXkd9sgPhJovRioW
+	TDvtM5c2sTKGrDWlpZP12lDfQ=; b=P3JefoIpFH0h4L4oAP+6w2kyQmJmPEggIY
+	Sq2g8I4M+rN8QBuPiVdtHN5ai7avVD8p0LW+ZzvfQlfdoKH9+4ZjSNvgPiu4j7yF
+	RB5KtYk1rJwjra40eWibNBmTKW6aiNS48tSFWKR0xhrL2rOqkbRiT8wnjAuHdDL5
+	KXbYSMILXUW98XRnGUJJemhvuNVl1vCzhfufKs9YtMvv5iwdLB5ADvaN+r3G0boF
+	TNqCXDbVxftccuUOFOj2od/RRmcLv+iC+iDSuBkpfhKgBDNF3XqHbIQadEI01qL7
+	DMTZXfGqcBujqV9wehOI6psJwfPRKhvx7KQnpTd3clXZSjr350Hg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tas2m99-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 10:52:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29jvrU031053;
+	Mon, 2 Dec 2024 10:52:24 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2047.outbound.protection.outlook.com [104.47.51.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437wjaufdg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 10:52:24 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qlh4Lu0GE8Xzf0N9S+j/1GoUdjYIpWXjaVup3brWj0JI/MBjOsIPP5MDf2ES7XDnnw+JViclC+IsGkMi8GrzOi72kgcBDPQoxMxVSrJdtNXYvzLwjCduqnBfK0lXT/dHjx+fvrkWCHAKkT5oIWY/qMr5qX3Y9OflQCVVEQ+TbYF4X4+5JxEzE/6z2JPA4GxMDs20XLFJjIpw3T/b9SRaVl+S5j7Y9aQL1Q518AC2c20R+Ls2QppKmhYBRHxeUPSIz52JwCm2NQIuEfvXpnSZbZfFlLE0E6OkTVDzDx6E9Fz7/pcXWNgl5hdxfeU2tSMR/fk0SO8FZ+OVKXnaOzCG0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T7nXkd9sgPhJovRioWTDvtM5c2sTKGrDWlpZP12lDfQ=;
+ b=B8Yb2gEr0YdrVDB3v0mmNuX7VRLpd8vN7HiwhW5Q4PieflG+dYW2uTJi5wo1bDS1ZCJU7IbkK/JhvNZcEG/BECmtFeDhThW2QIrrC/9Hjs9ab3MlXp61KAu07v0bPPIss5OspC1BX4GbK6HxWoyb0gUkdtr3pDoQJvX/2eQ2aGFpslFB323J2Gurreat0WF8QgqD4YzFjeLc2ycdEFfTxpvIItDPZJUxBQ0Cc7JRXTBuSM2lMLpH6sYj8NL2KbM3lv2TbSDiwHm0akWMgBR4fFSDFi6OcVGQKBMH5W9lMk9uScKDT9aKzqOMsAwfOQvqDNcL2cy4riOWa7zaC3GV2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T7nXkd9sgPhJovRioWTDvtM5c2sTKGrDWlpZP12lDfQ=;
+ b=ryxBraHBqIyT2TAw5iC/awKmkJEr2WSQCpKwlPkCal6Y1e80K6kV09dNcHkYs3p7miqH8PclmwThOHmfaUI08rn68ey/nsmTUhAy3gRkUt+A8UUscv7jXKy6IqfGVjQvedz8jZZWRlCzoJ4jNRiIOhpuZSVSdV6EdVw4SGrOFFg=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by SA2PR10MB4812.namprd10.prod.outlook.com (2603:10b6:806:115::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 10:52:21 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 10:52:20 +0000
+Date: Mon, 2 Dec 2024 10:52:13 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Christian Brauner <christian@brauner.io>,
+        Shuah Khan <shuah@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
+ thread/process
+Message-ID: <fbcea328-9545-4f3e-9f99-2e2057ce32df@lucifer.local>
+References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
+ <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
+ <20241028-gesoffen-drehmoment-5314faba9731@brauner>
+ <c96df57a-fa1b-4301-9556-94a6b8c93a31@lucifer.local>
+ <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
+ <55764300-1b53-4d14-99cc-e735d3704713@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55764300-1b53-4d14-99cc-e735d3704713@lucifer.local>
+X-ClientProxiedBy: LO2P265CA0388.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:f::16) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-Date: Mon, 2 Dec 2024 11:44:11 +0100
-Cc: Chris Mason <clm@meta.com>,
- Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <48D7686C-6BD4-4439-B7FD-411530802161@flyingcircus.io>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
- <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
- <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
- <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com>
- <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
- <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io>
- <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
- <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
- <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|SA2PR10MB4812:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c1bdf84-80cf-4312-e588-08dd12bf6566
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?p8A3j89/8cxWUrFpHVQp1A/Z+vlBjbYzyG7hJWH/fPRWlGMQiEzl16bqujcv?=
+ =?us-ascii?Q?hZpvPvDgi3q1ClhG8hB6VGYcFUiTlbyysxFdcVaAJfofEHlXW8BxEUrExfmI?=
+ =?us-ascii?Q?RIM1lZ34xv26/fh0n7kGmvEqL8GkYdaRf26HF3uAVVaQQ4JsNpToTsqKxGeQ?=
+ =?us-ascii?Q?HuytUK0olQr/k1i/oxGrfl3gPXkNM78Aa1V+lSjDQ+B5FfvdjL9M7d7h2nK0?=
+ =?us-ascii?Q?o6QLDdzVWya9Mj+7b/unOBYTlMmNtOoSOFKVtG/abGcOnBLcG+IXhEz2z9F/?=
+ =?us-ascii?Q?M4SSOT/y+xi2l6V3Srqw7/VAREop+wPv3E3+hxWxqUB5m24qEHcGUJZLSGnE?=
+ =?us-ascii?Q?GJn3EhK/PpjrdJxJpWgEuiwifQniuz9ohwpmQWqg/ZBO7mEu0wbPMvPaFsKS?=
+ =?us-ascii?Q?H77Y9B2odgGoAoJiayeuws4VUDCmdZtGSTUnIKZ0kTHOHWNVoKjleShzyosK?=
+ =?us-ascii?Q?uUXR+/yjvW0lqZBiEYqUQP/VzihIX8urY9fQFPCZWO1KqR0oH8arE3DlPHLK?=
+ =?us-ascii?Q?25iNVyv4tLZ34yKBpktDdYlXbGI7mOp3++gPNn6v/+w/chSRjGBCuX6fSaA1?=
+ =?us-ascii?Q?HoiEwlrv9jjbrOHp2ch+ucImmqrvF0DP4X7xAhPef8rURAaj/+AN9F7/WX+K?=
+ =?us-ascii?Q?GQS9Q/HVUNmEXLSM6HTky9+x0phl+Xvr1ZwVD3kd3HvLGHOPqvYVg+DaIb3L?=
+ =?us-ascii?Q?1GPgUroHWXf5dVLVynItwxL/50qkZfd0Do9Cxj64XQeA2D0QRiTvmydu7c02?=
+ =?us-ascii?Q?KgqICCf49rOmMgbxbVU+hsvuqnH9oNQMfsvwhVzzdaDuxypDnYZ/+qICmZE5?=
+ =?us-ascii?Q?gRBaHxAGVv3rBK8vJsc4LmNHG4O53KcbPPxUp7ZCMGE9pmKq/PG5lyzIdqIy?=
+ =?us-ascii?Q?7VANkf5CGGV6qbm9SOunJ04AakIjPTvwx/QGYdfG96ZM3Gj9fm6SIfLk9PHz?=
+ =?us-ascii?Q?EswkfQsnQDsQ9Jt/h0VIVe4R4Mq/FTUEGhqpfctUwCAEZJH6v2VaCCU2f5gc?=
+ =?us-ascii?Q?oeXEZoo/Yu4UfcNaK67rURyrR8oUiSKUcRzWa8Ya9K+qBnxOhzP2N0IMORKz?=
+ =?us-ascii?Q?7fRRxCzSO6mGRxMZK49n/OGrEJfbIbZyHhrLcsbUjgQMknrCJI3FIIbtdcQ1?=
+ =?us-ascii?Q?21zyehf41QdM/bfp0xybUI5BZuukomNpbzAm5RD5ZptQUElXlW3FToxpDGe7?=
+ =?us-ascii?Q?nJaMZTvetJZqVSBj/88gdekAP0ouBKoVUmsmK2SwdeVhfG9GTNbB2N211xDf?=
+ =?us-ascii?Q?933L75GZ8YZq2lEvBM3DU7kdveqpe72v30LX59U+xOfXNF1AvNsLg66rny9l?=
+ =?us-ascii?Q?Ve4RRtG5AFNoAPNZ9NK+WFSYUJ/fXyWKWXFbGlOb/fFMXw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ENw5bcA8cajfqnL4J+dV45oD8iKDt9wfKXheOkzFE8DWqJpBJtafTPRaiZXa?=
+ =?us-ascii?Q?gH+TRcPKCT/qUdX/vwLdZN8xhZz6aUWytLlqNp3m3MWVNP7QNK2iH/piwone?=
+ =?us-ascii?Q?S6gwb+njgoGZPJrC0IK10/zspqGn6C65JrdFMAU2JznLyxMN0RPBdC02pOMt?=
+ =?us-ascii?Q?793S9niBOCyTb8C5gz0ZcM9GtEDaAgejVnM7V9nUxLvfrNnzWnWQ0NIqu1nH?=
+ =?us-ascii?Q?Oxp2thmvjIneCc1bggM2rKTDopOhW2BB9fHH01jVXvI8D62r3Py4iiNOPOL+?=
+ =?us-ascii?Q?41B4E1DCaeacV2Hy20TaqMpO2utWXbS0Dp3b3EfPKMG1zmi46p+SAbwNwPGu?=
+ =?us-ascii?Q?7fK3iKlmKihneTlzg130Yo/9T5DLANmaoDjX0KGV9bYr75TAMmlXxnnupszl?=
+ =?us-ascii?Q?DG13meGtne/YycQPkkCoSAShcK/dWQ6YXZGmCvKFhQcAsqtKxogTFtNSznZO?=
+ =?us-ascii?Q?olF8gIZoOuD2sqhM//ycaHg81FQBlIwsM9xEjPyyU5SqgVgC7W+R32hKQFXE?=
+ =?us-ascii?Q?soBThsVX49ZDJ0moZNO9lXR+Rm8WmTWNKBWjPgSWFdnmy3FbF4MfJ8zYzlFY?=
+ =?us-ascii?Q?LqBrtc2B4x6AdJ75y1RMbEcebbTsmF9LiWEC7TApj67IGkWHbA+4TndqUeiX?=
+ =?us-ascii?Q?vAKZgMo3IXkKAq2PMxAmhmAB2Xp3VnhURjc1ppDi/TJBOdLM9jr/mzP0wTib?=
+ =?us-ascii?Q?RDsQWo29/O1qvzRygNceY2XQhLnSPEdgrAF5wjrn0ur7Te+MHPgVPYoOVoVZ?=
+ =?us-ascii?Q?uW+fg9JxPFbz90Saed4hVDTWBnQBwzzRtPsXLi4N8QyC035CPj0ZLp67BArn?=
+ =?us-ascii?Q?uIGgoPABepDidQNVbbZLzos2qHKH/sn+yIp6VNjUb4iRcJhbRB5iwLOIXKX7?=
+ =?us-ascii?Q?IG+JZ1+focEkbFEn6uTo2I7G1GaZI/sIomBJuVZIf8UeXP5uTDVFcvCd7HE8?=
+ =?us-ascii?Q?sGGKFAER4WOXVcRX4g/8eetn/CuNTSureHVZwwzihe1f9yN/rO5Vf265KjZa?=
+ =?us-ascii?Q?EAogh3yUKAFmKzRYBCH1SRsHUK4kW9IPsf/Z4a93gmtjFiR4jMpGDm6wn7mT?=
+ =?us-ascii?Q?WwK2dt29i442JFjb9SupAM60VlcB/5QaI99g4nQAbp1EablE38WZfg4K6UtT?=
+ =?us-ascii?Q?bPZDaEDRDGAkoyyYMpmCy4lYXmZDVw3cJHueSjk7Y6o0+YnwGKskLy0xDzhk?=
+ =?us-ascii?Q?0wvsEJ/cZipVsNtqugzCKTWoiNKeeDXazP82O2/hMc3Cq52xx/IK0FvhHOkz?=
+ =?us-ascii?Q?xGHaWXMMi7tUiA9PTgrSxs10/KEcz3YRzimvMcu1qF+3sZHylpfxN58eD/x/?=
+ =?us-ascii?Q?GrKU/SvZah6ory0bY8+3HSEjA1NJd2kIETWHbbAcRCvEiFcGlynWqCu8w9rN?=
+ =?us-ascii?Q?+SX/N+6CFMRlMEKE3VUqjJXkvDWSnuTYfAiDL5a6nKnBKNqc2j9DNRarOFO1?=
+ =?us-ascii?Q?k9DPxnFuwYsk8Fqum7dCfvn8cPJB8WQ4j/sz4Fjd8o3n1oWnTl7UCLmqzNK8?=
+ =?us-ascii?Q?I+0pfGfLld/iSr2GGqL/3osL3PjHPQWjWAxa3C4livNqf3nmmgO9ZGHSfX9O?=
+ =?us-ascii?Q?rWT1T8nCEEExYrC1lagkDiBmGB6gII5iAi0CwuIeH6jFSiGZZFwIBQhyeZwx?=
+ =?us-ascii?Q?dw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	YXD1J0S3vaUaI8ri7S12aQ8+y/e1vqNjvF6Sjpc7KFyRXgGeGSsp/enLEszwEsCpl1gWz2iV/EqmcC3bPI3pbKbbVFWKEu7L06gxMiUnwPfSnwe12jjYRDsqlnzH9Gs+DNB9YC+wDcEpMu4G5z7DfagFnET3cd4Uf2xUW5++fe8lyYNXMxhwzS9cnOsM3s27U7/WzFlEOBshV9BNCwFsPLnOhIFLkv4vIwABJL/9mEhofn2cQ9sy3OvkRgxJyfZyXljwG8w885EciVrHkpv9myDkp6F1BgKulbPD8yhAOi4xFXdIsSDbiScCn1YmIISKq+shy5nfXBz32W6F1IAbargoBJn8y2vLeZFIwXSzs29E5IT7G6zL+ed5cQquYw58dgHMS7Aoef9vSt/FIF5htaKjjUP170N2xLeR9G6eLV55Bw/ETJNU3Q8NWEKpFO7KF8tqHAG0NVJR6FxzCufy+fRI/+vtilJt1TTIbx/VeOdc0PSvWhyHFlvcnNV8clstyI+V3RY1mLnVFU03pvf5QW7ZUpFCF9z6qB2ZynVL5e7LSSm93xtgi7AMQCy293tXvWz3NTkKaSKdD+fxttJsRl33C18yVB7TjYucW0RnX9o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c1bdf84-80cf-4312-e588-08dd12bf6566
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 10:52:20.8559
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1tTTqjVFBsCBjuuFnbJaqwf0OCvXBxQX9hmjK24AS9xKSWndNLS8Jk7yDCumOTyVyTW2TQCV4qAnIsiDZQkNO3LhBQlUGGkR2VUzkPT3fYw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4812
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-02_06,2024-12-02_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412020095
+X-Proofpoint-GUID: nGZMd7VC42b5mTJfAnZh0WD5sQ-URIe2
+X-Proofpoint-ORIG-GUID: nGZMd7VC42b5mTJfAnZh0WD5sQ-URIe2
 
-Hi,
+On Fri, Nov 08, 2024 at 02:28:14PM +0000, Lorenzo Stoakes wrote:
+> On Wed, Oct 30, 2024 at 04:37:37PM +0000, Lorenzo Stoakes wrote:
+> > On Mon, Oct 28, 2024 at 04:06:07PM +0000, Lorenzo Stoakes wrote:
+> > > I guess I'll try to adapt that and respin a v7 when I get a chance.
+> >
+> > Hm looking at this draft patch, it seems like a total rework of pidfd's
+> > across the board right (now all pidfd's will need to be converted to
+> > pid_fd)? Correct me if I'm wrong.
+> >
+> > If only for the signal case, it seems like overkill to define a whole
+> > pid_fd and to use this CLASS() wrapper just for this one instance.
+> >
+> > If the intent is to convert _all_ pidfd's to use this type, it feels really
+> > out of scope for this series and I think we'd probably instead want to go
+> > off and do that as a separate series and put this on hold until that is
+> > done.
+> >
+> > If instead you mean that we ought to do something like this just for the
+> > signal case, it feels like it'd be quite a bit of extra abstraction just
+> > used in this one case but nowhere else, I think if you did an abstraction
+> > like this it would _have_ to be across the board right?
+> >
+> > I agree that the issue is with this one signal case that pins only the fd
+> > (rather than this pid) where this 'pinning' doesn't _necessary_ mess around
+> > with reference counts.
+> >
+> > So we definitely must address this, but the issue you had with the first
+> > approach was that I think (correct me if I'm wrong) I was passing a pointer
+> > to a struct fd which is not permitted right?
+> >
+> > Could we pass the struct fd by value to avoid this? I think we'd have to
+> > unfortunately special-case this and probably duplicate some code which is a
+> > pity as I liked the idea of abstracting everything to one place, but we can
+> > obviously do that.
+> >
+> > So I guess to TL;DR it, the options are:
+> >
+> > 1. Implement pid_fd everywhere, in which case I will leave off on
+> >    this series and I guess, if I have time I could look at trying to
+> >    implement that or perhaps you'd prefer to?
+> >
+> > 2. We are good for the sake of this series to special-case a pidfd_to_pid()
+> >    implementation (used only by the pidfd_send_signal() syscall)
+> >
+> > 3. Something else, or I am misunderstanding your point :)
+> >
+> > Let me know how you want me to proceed on this as we're at v6 already and I
+> > want to be _really_ sure I'm doing what you want here.
+> >
+> > Thanks!
+>
+> Hi Christian,
+>
+> Just a gentle nudge on this - as I need some guidance in order to know how
+> to move the series forwards.
+>
+> Obviously no rush if your workload is high at the moment as this is pretty
+> low priority, but just in case you missed it :)
+>
+> Thanks, Lorenzo
 
-waking this thread up again: we=E2=80=99ve been running the original fix =
-on top of 6.11 for roughly 8 weeks now and have not had a single =
-occurence of this. I=E2=80=99d be willing to call this as fixed.=20
+Hi Christian,
 
-@Linus: we didn=E2=80=99t specify an actual deadline, but I guess 8 week =
-without any hit is good enough?
+Just a ping on this now we're past the merge window and it's been over a
+month.
 
-My plan would be to migrate our fleet to 6.6 now. AFAICT the relevant =
-patch series is the one in
-https://lore.kernel.org/all/20240415171857.19244-4-ryncsn@gmail.com/T/#u =
-and was released in 6.6.54.
+It'd be good to at least get a polite ack to indicate you're aware even if
+you don't have the time to respond right now.
 
-I=E2=80=99d like to revive the discussion on the second issue, though, =
-as it ended with Linus=E2=80=99 last post
-and I couldn=E2=80=99t find whether this may have been followed up =
-elsewhere or still needs to be worked on?
+If you'd prefer this series not to go ahead just let me know, but
+unfortunately I really require your input to know how to move forward
+otherwise I risk doing work that you might then reject.
 
-Christian
-
-> On 12. Oct 2024, at 19:01, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> On Fri, 11 Oct 2024 at 06:06, Chris Mason <clm@meta.com> wrote:
->>=20
->> - Linus's starvation observation.  It doesn't feel like there's =
-enough
->> load to cause this, especially given us sitting in truncate, where it
->> should be pretty unlikely to have multiple procs banging on the page =
-in
->> question.
->=20
-> Yeah, I think the starvation can only possibly happen in
-> fdatasync-like paths where it's waiting for existing writeback without
-> holding the page lock. And while Christian has had those backtraces
-> too, the truncate path is not one of them.
->=20
-> That said, just because I wanted to see how nasty it is, I looked into
-> changing the rules for folio_wake_bit().
->=20
-> Christian, just to clarify, this is not for  you to test - this is
-> very experimental - but maybe Willy has comments on it.
->=20
-> Because it *might* be possible to do something like the attached,
-> where we do the page flags changes atomically but without any locks if
-> there are no waiters, but if there is a waiter on the page, we always
-> clear the page flag bit atomically under the waitqueue lock as we wake
-> up the waiter.
->=20
-> I changed the name (and the return value) of the
-> folio_xor_flags_has_waiters() function to just not have any
-> possibility of semantic mixup, but basically instead of doing the xor
-> atomically and unconditionally (and returning whether we had waiters),
-> it now does it conditionally only if we do *not* have waiters, and
-> returns true if successful.
->=20
-> And if there were waiters, it moves the flag clearing into the wakeup =
-function.
->=20
-> That in turn means that the "while whiteback" loop can go back to be
-> just a non-looping "if writeback", and folio_wait_writeback() can't
-> get into any starvation with new writebacks always showing up.
->=20
-> The reason I say it *might* be possible to do something like this is
-> that it changes __folio_end_writeback() to no longer necessarily clear
-> the writeback bit under the XA lock. If there are waiters, we'll clear
-> it later (after releasing the lock) in the caller.
->=20
-> Willy? What do you think? Clearly this now makes PG_writeback not
-> synchronized with the PAGECACHE_TAG_WRITEBACK tag, but the reason I
-> think it might be ok is that the code that *sets* the PG_writeback bit
-> in __folio_start_writeback() only ever starts with a page that isn't
-> under writeback, and has a
->=20
->        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
->=20
-> at the top of the function even outside the XA lock. So I don't think
-> these *need* to be synchronized under the XA lock, and I think the
-> folio flag wakeup atomicity might be more important than the XA
-> writeback tag vs folio writeback bit.
->=20
-> But I'm not going to really argue for this patch at all - I wanted to
-> look at how bad it was, I wrote it, I'm actually running it on my
-> machine now and it didn't *immediately* blow up in my face, so it
-> *may* work just fine.
->=20
-> The patch is fairly simple, and apart from the XA tagging issue is
-> seems very straightforward. I'm just not sure it's worth synchronizing
-> one part just to at the same time de-synchronize another..
->=20
->                   Linus
-> <0001-Test-atomic-folio-bit-waiting.patch>
-
-Liebe Gr=C3=BC=C3=9Fe,
-Christian Theune
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+Thanks, Lorenzo
 
