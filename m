@@ -1,140 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-36231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DB69DFEA0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 11:17:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE8E9DFF68
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 11:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FCBB293DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:11:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47198B23CA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9761FC7CC;
-	Mon,  2 Dec 2024 10:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F62C1FCFC2;
+	Mon,  2 Dec 2024 10:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEJGHqZT"
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="E5uGDr9f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A21FBEB7;
-	Mon,  2 Dec 2024 10:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C81FC0EB;
+	Mon,  2 Dec 2024 10:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134144; cv=none; b=kPHSKX5YtZTUpDdPT/PQmgtqk9WdqsXtA2thVTAequiRZI3Py8EjwVos5eeTAbuaKldek4ivT22lC6QpU/Oco07+fX3U0V9QAWrtFRQki8BqWFdUr/viX4+vCvhkUBex+CjRtaVmX+0fKJvUG4U4dQ1GswrJo170T+KNCHLVbJ4=
+	t=1733136614; cv=none; b=AeowuT7iCIIJhYE/9LjKTxQDLPk8kwJhiOW2tKbcy2zXEbTWwKo+GrZfbGN87jjUlWebqV3//xTVGj610UrtSlt2dnr0emYq3ZIoqSZgOTUYc2rOhNg8UdzZPgK6y8HLiMM6LfjVqFZ103pnjQYfhtPH4qwU38+qPIU3r6yJzE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134144; c=relaxed/simple;
-	bh=ajyrKmGV561uwWTJ/tDNEYu+vUAXYt5wPMCzkc3ibJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tessqezndE32+h+XTWwNvZ5gLtZpS0QGtoeM9RZbC1OmUmZhwCoEqz0l1wITUG9kkX8shkSw2a0XYmm/Jfkw/k0TrOcDEXGMeaI0f1rM8g2SohHshXnYXXuJ/sVsf/9S/CAP55t+fRLNnOPLPdPzcJJMLXEuPr/H7vuz9Mv0ulw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEJGHqZT; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso40120261fa.2;
-        Mon, 02 Dec 2024 02:09:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733134141; x=1733738941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R4NNvOJJAFb7gWh45cMCB0OahqHzhiov+bSRfiIxLhM=;
-        b=ZEJGHqZTfYTBe3cXcs9glQj0NHmuxUQCeIWM5aiEHKofUjJsD0MtseWrAoWq6lr3F9
-         jLHAyY8s+0IkZuqBh57moVNXgLVIJBG5E/e0Y8Y657jmQDpaubnSmwMsp+/J3jWxb44c
-         unje8GA6sdcZua1V1pXBAR/FMZuut0rkuNrORTsJWiD48YQPsjJoeVvCo6FN/xyvv3IN
-         0CRJy7g/1xv5CBldrITgw+I5Qkpswc9ISK8W8/U9Ixeo3eUadUw66lCwEqeaee1GLGnW
-         OTDL5wKMXdVZIp3h32samlV+b1Im2bkIE/P7nQNTmgyU2QFHC860NLKY/7f89oqhGJfS
-         ZCSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733134141; x=1733738941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R4NNvOJJAFb7gWh45cMCB0OahqHzhiov+bSRfiIxLhM=;
-        b=AqtPQwTj+c3YDPOhVHQZnLJRRd7PUkGJ7GOywL66d1lprMM3Ynrm7Qvrwh56Crwmor
-         dBkqy8W6go30Fpwq6hxifplS/vrgfeSWTBfz/o+DvoVfOyI1ioC8IXCWTOtIwL9KP1IL
-         6IgOEapdGcDa00VWUxwkDOhbtAqGGw7qWCkl2ojzEp6R0X2MtrqTlUeytOm+OB4L5Hm/
-         KQYJYpUHLOVgTsPHGcKMIbSMxiJ212hDuh9ZCxvF7FdijVhQlC9rJ7da+k29RgEwktya
-         crAEJ3+DQxT9LaOgjzIAs99Vo9YM9VO5ThZZKyTVqzeJwLIKSwG19SfUE6Yg4p7SgpTu
-         KPqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsqO3M51G7ySfGEhI/GkCRmSXbnuq9UrDMYOcJRZtD/XDOZfRvMFvD4i+ikj9dfhibGa1dlB9o9dyy5G3e@vger.kernel.org, AJvYcCXJ/tAfpdKOtTXf41vZMdX/ie/yuTOq6cxi2f7xqlkQv+z3qnuyQrXg2RGJlzbUmZ9+zJxDyWxKloHiUQsf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/mEyeGVFlzR8S6ZwekUyCyJ36JsayiB9JWD70/k2EDVe9wb9x
-	/NawvrH7pZSvGXOMtfUSfnIOPYfZLbKpvEohYjxn2YQLcwaUUgDMlTGYHaM9kBj+zU1d0DPpO2T
-	7Z8c6vQJaeqsHsafz+iYZ35yYj2c5LA==
-X-Gm-Gg: ASbGncv+0C530mjYip/fqq7O6gy41hC8tMxc3AM7aaYLi8TXME41TK0IsP8raQKPHQk
-	Q/Tmx10gLWz/6X4QKQIbaj+mijgVXBZs=
-X-Google-Smtp-Source: AGHT+IG26j68pI4k1yVg7x/t1okfJCIfJVjhCHEFTgI6YjHyL8yJfau7Pddyfxa2H15uxcTjc35rs/eZZYLehrc/xQI=
-X-Received: by 2002:a05:651c:2225:b0:2fb:45cf:5eef with SMTP id
- 38308e7fff4ca-2ffd6120fa0mr118846671fa.30.1733134140934; Mon, 02 Dec 2024
- 02:09:00 -0800 (PST)
+	s=arc-20240116; t=1733136614; c=relaxed/simple;
+	bh=nWj9kVjFkA/uzz5o+psqx7pHEdWGVkcXfYTvTuBT39A=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rthC+TutTRxIMJHm32ThbmjWfk/e1Tk6ycR/aVgGnruJb2zi4h6aXXLSI/czKig+f257hY03av3ic++30Hz5JyKegyjXq0RVB2cexYP4/4sFWO8bD9ANylj+FSTTbYa/xgkhcdCBsVH32Dhmx3KeHavetjzVtHxdUdoFzVe8WAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=E5uGDr9f; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1733136274;
+	bh=yq8INn4zbqzqDhdWCGdL8z+1i1zAqXBLUq6KmP1JVYM=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=E5uGDr9fYjfHo3lHmuz4fFFchfOz5KOxDw6oDLr7hssldy12vEJyZFgxGPbEZbkPr
+	 rboK6KdiyWavWJFdNZUq5qKRp3TXNLjF1TyCLrRw3Kj0FM6HwjXYvmoNJnqNjUIgnu
+	 huitjDunqC3Gf6IedTFVl+G2Z1QugCGmMdfHh7z8=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
- <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
- <3947869f-90d4-4912-a42f-197147fe64f0@amd.com> <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
- <5a517b3a-51b2-45d6-bea3-4a64b75dfd30@amd.com> <CAGudoHHBu663RSjQUwi14_d+Ln6mw_ESvYCc6dTec-O0Wi1-Eg@mail.gmail.com>
- <CAGudoHHo4sLNpoVw-WTGVCc-gL0xguYWfUWfV1CSsQo6-bGnFg@mail.gmail.com> <2220e327-5587-4d3c-917d-d0a2728a0f73@amd.com>
-In-Reply-To: <2220e327-5587-4d3c-917d-d0a2728a0f73@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 2 Dec 2024 11:08:47 +0100
-Message-ID: <CAGudoHFSUoLXjEh8bvULXe2bysiW8S6yTcpgzCAgkuPuJxD6_Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
-	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
-	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
-	clm@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
+Date: Mon, 2 Dec 2024 11:44:11 +0100
+Cc: Chris Mason <clm@meta.com>,
+ Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <48D7686C-6BD4-4439-B7FD-411530802161@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com>
+ <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
+ <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io>
+ <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
+ <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
+ <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 
-On Mon, Dec 2, 2024 at 10:37=E2=80=AFAM Bharata B Rao <bharata@amd.com> wro=
-te:
->
-> On 28-Nov-24 10:01 AM, Mateusz Guzik wrote:
->
-> > WIlly mentioned the folio wait queue hash table could be grown, you
-> > can find it in mm/filemap.c:
-> >    1062 #define PAGE_WAIT_TABLE_BITS 8
-> >    1063 #define PAGE_WAIT_TABLE_SIZE (1 << PAGE_WAIT_TABLE_BITS)
-> >    1064 static wait_queue_head_t folio_wait_table[PAGE_WAIT_TABLE_SIZE]
-> > __cacheline_aligned;
-> >    1065
-> >    1066 static wait_queue_head_t *folio_waitqueue(struct folio *folio)
-> >    1067 {
-> >    1068 =E2=94=82       return &folio_wait_table[hash_ptr(folio, PAGE_W=
-AIT_TABLE_BITS)];
-> >    1069 }
-> >
-> > Can you collect off cpu time? offcputime-bpfcc -K > /tmp/out
->
-> Flamegraph for "perf record --off-cpu -F 99 -a -g --all-kernel
-> --kernel-callchains -- sleep 120" is attached.
->
-> Off-cpu samples were collected for 120s at around 45th minute run of the
-> FIO benchmark that actually runs for 1hr. This run was with kernel that
-> had your inode_lock fix but no changes to PAGE_WAIT_TABLE_BITS.
->
-> Hopefully this captures the representative sample of the scalability
-> issue with folio lock.
->
+Hi,
 
-I'm not familiar with the off-cpu option, fwiw does not look like any
-of that time got graphed. The thing that I know to work is
-offcputime-bpfcc.
+waking this thread up again: we=E2=80=99ve been running the original fix =
+on top of 6.11 for roughly 8 weeks now and have not had a single =
+occurence of this. I=E2=80=99d be willing to call this as fixed.=20
 
-Regardless, per your own graph over half the *on* cpu  time is spent
-spinning on the folio hash table locks.
+@Linus: we didn=E2=80=99t specify an actual deadline, but I guess 8 week =
+without any hit is good enough?
 
-If bumping the size does not resolve the problem, the most likely
-contention shifts again to something else. So what we need is some
-profiling data from that state.
+My plan would be to migrate our fleet to 6.6 now. AFAICT the relevant =
+patch series is the one in
+https://lore.kernel.org/all/20240415171857.19244-4-ryncsn@gmail.com/T/#u =
+and was released in 6.6.54.
+
+I=E2=80=99d like to revive the discussion on the second issue, though, =
+as it ended with Linus=E2=80=99 last post
+and I couldn=E2=80=99t find whether this may have been followed up =
+elsewhere or still needs to be worked on?
+
+Christian
+
+> On 12. Oct 2024, at 19:01, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> On Fri, 11 Oct 2024 at 06:06, Chris Mason <clm@meta.com> wrote:
+>>=20
+>> - Linus's starvation observation.  It doesn't feel like there's =
+enough
+>> load to cause this, especially given us sitting in truncate, where it
+>> should be pretty unlikely to have multiple procs banging on the page =
+in
+>> question.
+>=20
+> Yeah, I think the starvation can only possibly happen in
+> fdatasync-like paths where it's waiting for existing writeback without
+> holding the page lock. And while Christian has had those backtraces
+> too, the truncate path is not one of them.
+>=20
+> That said, just because I wanted to see how nasty it is, I looked into
+> changing the rules for folio_wake_bit().
+>=20
+> Christian, just to clarify, this is not for  you to test - this is
+> very experimental - but maybe Willy has comments on it.
+>=20
+> Because it *might* be possible to do something like the attached,
+> where we do the page flags changes atomically but without any locks if
+> there are no waiters, but if there is a waiter on the page, we always
+> clear the page flag bit atomically under the waitqueue lock as we wake
+> up the waiter.
+>=20
+> I changed the name (and the return value) of the
+> folio_xor_flags_has_waiters() function to just not have any
+> possibility of semantic mixup, but basically instead of doing the xor
+> atomically and unconditionally (and returning whether we had waiters),
+> it now does it conditionally only if we do *not* have waiters, and
+> returns true if successful.
+>=20
+> And if there were waiters, it moves the flag clearing into the wakeup =
+function.
+>=20
+> That in turn means that the "while whiteback" loop can go back to be
+> just a non-looping "if writeback", and folio_wait_writeback() can't
+> get into any starvation with new writebacks always showing up.
+>=20
+> The reason I say it *might* be possible to do something like this is
+> that it changes __folio_end_writeback() to no longer necessarily clear
+> the writeback bit under the XA lock. If there are waiters, we'll clear
+> it later (after releasing the lock) in the caller.
+>=20
+> Willy? What do you think? Clearly this now makes PG_writeback not
+> synchronized with the PAGECACHE_TAG_WRITEBACK tag, but the reason I
+> think it might be ok is that the code that *sets* the PG_writeback bit
+> in __folio_start_writeback() only ever starts with a page that isn't
+> under writeback, and has a
+>=20
+>        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+>=20
+> at the top of the function even outside the XA lock. So I don't think
+> these *need* to be synchronized under the XA lock, and I think the
+> folio flag wakeup atomicity might be more important than the XA
+> writeback tag vs folio writeback bit.
+>=20
+> But I'm not going to really argue for this patch at all - I wanted to
+> look at how bad it was, I wrote it, I'm actually running it on my
+> machine now and it didn't *immediately* blow up in my face, so it
+> *may* work just fine.
+>=20
+> The patch is fairly simple, and apart from the XA tagging issue is
+> seems very straightforward. I'm just not sure it's worth synchronizing
+> one part just to at the same time de-synchronize another..
+>=20
+>                   Linus
+> <0001-Test-atomic-folio-bit-waiting.patch>
+
+Liebe Gr=C3=BC=C3=9Fe,
+Christian Theune
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
