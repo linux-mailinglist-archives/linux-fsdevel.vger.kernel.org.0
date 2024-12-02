@@ -1,205 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-36229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F419DFD83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:45:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DB69DFEA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 11:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D915B282B01
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 09:45:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FCBB293DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6C1FBEA1;
-	Mon,  2 Dec 2024 09:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9761FC7CC;
+	Mon,  2 Dec 2024 10:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nzQRWmaX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEJGHqZT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E7B1FBE91
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 09:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A21FBEB7;
+	Mon,  2 Dec 2024 10:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132732; cv=none; b=HsjNrNhGK/bWuvNbjn+WhgkpyI5sArWSTcXsf8D1pNwF9xxUW8BgbWcuxNb1gnDQ1s+Yu3z5yiX/9VDPJnJJPowrpKx5XZ4tVO+X+FJ3XHmpOTGXEZfu1/Pa6ojpIVL+xhsBJszgdQQQzwHIsw9uYaZm+G+6lDQLqlng+Pi7qpQ=
+	t=1733134144; cv=none; b=kPHSKX5YtZTUpDdPT/PQmgtqk9WdqsXtA2thVTAequiRZI3Py8EjwVos5eeTAbuaKldek4ivT22lC6QpU/Oco07+fX3U0V9QAWrtFRQki8BqWFdUr/viX4+vCvhkUBex+CjRtaVmX+0fKJvUG4U4dQ1GswrJo170T+KNCHLVbJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132732; c=relaxed/simple;
-	bh=e/crmDZ5A8X10+tJcJNy1NwuSFl77VnTElSQXT3A1Oc=;
+	s=arc-20240116; t=1733134144; c=relaxed/simple;
+	bh=ajyrKmGV561uwWTJ/tDNEYu+vUAXYt5wPMCzkc3ibJk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j5I/TezVl5Wg12ODqq8TTEYQ+bez4ERr/l9SpTJiyCT5KefZVnGdin96B1fRr+dO8nJD9Xfio0CjL9pg7cwZOlP06SKl33P14TFfZQvtHJT5dV558MCCLbMjIHAYlu3erSoKvoWz+zGOwc53i0WaFnUy6I9hxN6I39+cCD1b7qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nzQRWmaX; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so4909024a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 01:45:30 -0800 (PST)
+	 To:Cc:Content-Type; b=tessqezndE32+h+XTWwNvZ5gLtZpS0QGtoeM9RZbC1OmUmZhwCoEqz0l1wITUG9kkX8shkSw2a0XYmm/Jfkw/k0TrOcDEXGMeaI0f1rM8g2SohHshXnYXXuJ/sVsf/9S/CAP55t+fRLNnOPLPdPzcJJMLXEuPr/H7vuz9Mv0ulw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEJGHqZT; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso40120261fa.2;
+        Mon, 02 Dec 2024 02:09:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733132729; x=1733737529; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733134141; x=1733738941; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cE2iQ9UBMwsTpNrARZHZF06rdwbNTQTKZL/vG7/23ys=;
-        b=nzQRWmaXPLHlXpnpXXgd8VmuhEhBntDnR94MLMwrR3QqeyL9NdI8z2raYWWL2NKHNq
-         RjNy7ZvEMKzL6cZAZVgDj+cQelDMsWpucFbUST0TOjEdwgKgR16+MDu8vIlE6FWVIMMO
-         f9OH9jBSFBlXW7Y2DI/eEt0Z132XfwpSr7GVs=
+        bh=R4NNvOJJAFb7gWh45cMCB0OahqHzhiov+bSRfiIxLhM=;
+        b=ZEJGHqZTfYTBe3cXcs9glQj0NHmuxUQCeIWM5aiEHKofUjJsD0MtseWrAoWq6lr3F9
+         jLHAyY8s+0IkZuqBh57moVNXgLVIJBG5E/e0Y8Y657jmQDpaubnSmwMsp+/J3jWxb44c
+         unje8GA6sdcZua1V1pXBAR/FMZuut0rkuNrORTsJWiD48YQPsjJoeVvCo6FN/xyvv3IN
+         0CRJy7g/1xv5CBldrITgw+I5Qkpswc9ISK8W8/U9Ixeo3eUadUw66lCwEqeaee1GLGnW
+         OTDL5wKMXdVZIp3h32samlV+b1Im2bkIE/P7nQNTmgyU2QFHC860NLKY/7f89oqhGJfS
+         ZCSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733132729; x=1733737529;
+        d=1e100.net; s=20230601; t=1733134141; x=1733738941;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cE2iQ9UBMwsTpNrARZHZF06rdwbNTQTKZL/vG7/23ys=;
-        b=DPM0unmLZoo+Y6vHK2bTNW9dAy9nlAJDzx3txcv8AM1j7z+IJtOHbQNh8Q/wFvVQqb
-         +Q6HOHIGqy7HtjR8n4ZQGsh9a1TBIy7bR48767NlCMMQNaDGGAcNXNBv7Hi1RiwsnN3V
-         h1JSC9RulAkz+EXei59LOL03AwkItKECWaZhIbMO2gZPNdjf6GHMuViY3KCkUhkCt0Bb
-         wH62AePLj1ZMkbJTj9cFx9mT7bQC5ntWz1JD+l8IwxxPDRYy45xzEriZAHNSED+/vOtE
-         98cXdHL0wqMCLMUsA6efftQdfvvyOQY7XiwakV3YDvS8dcwGD2GxXdFjyqKgf0wGkKD+
-         LSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2YHmMLSrRJdIsknn2ocE53wH0jiAYDLZH837u5HzX94SEk/UwHF6Cd6hXjR8EZ1du/tcYr/qJlsmzCIcy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5su5Wlscy4wxTWljoZEwwlm/y8HuJcgH0yiQ/LBkiIBAVyERu
-	1IAVZ2GonV7Awe77s84Eld2G7uhkrgC7aNecebGz2IOQ/8RtLoBsV3BgozvylC2rdOIkONU5kmV
-	bQw==
-X-Gm-Gg: ASbGncsaTuc43YFWVWcLTWBJylc9acNnUXWlCLTMQIqct6VngHs0cZfmTy0df65Qm/B
-	cBqQJceEcj6OgAtZW0p5hDf68fw4V/qTDN9MFWBGE9R+z8M47rRekLL4tWiGh9nybvEqMN3Fn+K
-	a3Beh0qL8vhmTyNN2NzVG0gkpF9K2n8yaF0Qp2s04PbQxUDkHg5zbdLUZ3ydzk7gtlhhYc0g1w5
-	1P2dQcyN+tzdlJXaCv9QjnCXV1Skluo0DJsm+2S220WQdzhpzLvYNc1drjYo4pYQBM/pvWutwEg
-	ZfYxFlJmGQ==
-X-Google-Smtp-Source: AGHT+IHySP1t5TddtS+8W6HBRtqUX+5QHrgWD26btSUL5385Pf1/LHeW4M84x3FbOsAjbbTJ/kiK+w==
-X-Received: by 2002:a05:6402:2491:b0:5cf:d19c:e21c with SMTP id 4fb4d7f45d1cf-5d080bd3fe6mr22819732a12.20.1733132728630;
-        Mon, 02 Dec 2024 01:45:28 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b264f0d2sm3769309a12.72.2024.12.02.01.45.27
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 01:45:27 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0c939ab78so9618a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 01:45:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVO0G19BxoGFm/OSWMZUxadafMJ+ZMsjsDs7jSsbQpWMJOD5rQWBcqdoOQsMZNh8dIuQUUPeTSCeIMk/nvY@vger.kernel.org
-X-Received: by 2002:a05:6402:292:b0:5d0:b20c:2063 with SMTP id
- 4fb4d7f45d1cf-5d0b20c21b4mr143815a12.7.1733132727177; Mon, 02 Dec 2024
- 01:45:27 -0800 (PST)
+        bh=R4NNvOJJAFb7gWh45cMCB0OahqHzhiov+bSRfiIxLhM=;
+        b=AqtPQwTj+c3YDPOhVHQZnLJRRd7PUkGJ7GOywL66d1lprMM3Ynrm7Qvrwh56Crwmor
+         dBkqy8W6go30Fpwq6hxifplS/vrgfeSWTBfz/o+DvoVfOyI1ioC8IXCWTOtIwL9KP1IL
+         6IgOEapdGcDa00VWUxwkDOhbtAqGGw7qWCkl2ojzEp6R0X2MtrqTlUeytOm+OB4L5Hm/
+         KQYJYpUHLOVgTsPHGcKMIbSMxiJ212hDuh9ZCxvF7FdijVhQlC9rJ7da+k29RgEwktya
+         crAEJ3+DQxT9LaOgjzIAs99Vo9YM9VO5ThZZKyTVqzeJwLIKSwG19SfUE6Yg4p7SgpTu
+         KPqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsqO3M51G7ySfGEhI/GkCRmSXbnuq9UrDMYOcJRZtD/XDOZfRvMFvD4i+ikj9dfhibGa1dlB9o9dyy5G3e@vger.kernel.org, AJvYcCXJ/tAfpdKOtTXf41vZMdX/ie/yuTOq6cxi2f7xqlkQv+z3qnuyQrXg2RGJlzbUmZ9+zJxDyWxKloHiUQsf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/mEyeGVFlzR8S6ZwekUyCyJ36JsayiB9JWD70/k2EDVe9wb9x
+	/NawvrH7pZSvGXOMtfUSfnIOPYfZLbKpvEohYjxn2YQLcwaUUgDMlTGYHaM9kBj+zU1d0DPpO2T
+	7Z8c6vQJaeqsHsafz+iYZ35yYj2c5LA==
+X-Gm-Gg: ASbGncv+0C530mjYip/fqq7O6gy41hC8tMxc3AM7aaYLi8TXME41TK0IsP8raQKPHQk
+	Q/Tmx10gLWz/6X4QKQIbaj+mijgVXBZs=
+X-Google-Smtp-Source: AGHT+IG26j68pI4k1yVg7x/t1okfJCIfJVjhCHEFTgI6YjHyL8yJfau7Pddyfxa2H15uxcTjc35rs/eZZYLehrc/xQI=
+X-Received: by 2002:a05:651c:2225:b0:2fb:45cf:5eef with SMTP id
+ 38308e7fff4ca-2ffd6120fa0mr118846671fa.30.1733134140934; Mon, 02 Dec 2024
+ 02:09:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114191332.669127-1-joannelkoong@gmail.com>
- <20241114191332.669127-3-joannelkoong@gmail.com> <20241128104437.GB10431@google.com>
- <25e0e716-a4e8-4f72-ad52-29c5d15e1d61@fastmail.fm> <20241128110942.GD10431@google.com>
- <8c5d292f-b343-435f-862e-a98910b6a150@ddn.com> <20241128115455.GG10431@google.com>
-In-Reply-To: <20241128115455.GG10431@google.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Mon, 2 Dec 2024 18:45:10 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
-Message-ID: <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
- for requests
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Bernd Schubert <bschubert@ddn.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Joanne Koong <joannelkoong@gmail.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>, "laoar.shao@gmail.com" <laoar.shao@gmail.com>, 
-	"kernel-team@meta.com" <kernel-team@meta.com>
+References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
+ <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
+ <3947869f-90d4-4912-a42f-197147fe64f0@amd.com> <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
+ <5a517b3a-51b2-45d6-bea3-4a64b75dfd30@amd.com> <CAGudoHHBu663RSjQUwi14_d+Ln6mw_ESvYCc6dTec-O0Wi1-Eg@mail.gmail.com>
+ <CAGudoHHo4sLNpoVw-WTGVCc-gL0xguYWfUWfV1CSsQo6-bGnFg@mail.gmail.com> <2220e327-5587-4d3c-917d-d0a2728a0f73@amd.com>
+In-Reply-To: <2220e327-5587-4d3c-917d-d0a2728a0f73@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 2 Dec 2024 11:08:47 +0100
+Message-ID: <CAGudoHFSUoLXjEh8bvULXe2bysiW8S6yTcpgzCAgkuPuJxD6_Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+To: Bharata B Rao <bharata@amd.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
+	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
+	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
+	clm@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi everyone,
-
-On Thu, Nov 28, 2024 at 8:55=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
+On Mon, Dec 2, 2024 at 10:37=E2=80=AFAM Bharata B Rao <bharata@amd.com> wro=
+te:
 >
-> Cc-ing Tomasz
+> On 28-Nov-24 10:01 AM, Mateusz Guzik wrote:
 >
-> On (24/11/28 11:23), Bernd Schubert wrote:
-> > > Thanks for the pointers again, Bernd.
-> > >
-> > >> Miklos had asked for to abort the connection in v4
-> > >> https://lore.kernel.org/all/CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACF=
-dgJJ_b8FdHw@mail.gmail.com/raw
-> > >
-> > > OK, sounds reasonable. I'll try to give the series some testing in th=
-e
-> > > coming days.
-> > >
-> > > // I still would probably prefer "seconds" timeout granularity.
-> > > // Unless this also has been discussed already and Bernd has a link ;=
-)
+> > WIlly mentioned the folio wait queue hash table could be grown, you
+> > can find it in mm/filemap.c:
+> >    1062 #define PAGE_WAIT_TABLE_BITS 8
+> >    1063 #define PAGE_WAIT_TABLE_SIZE (1 << PAGE_WAIT_TABLE_BITS)
+> >    1064 static wait_queue_head_t folio_wait_table[PAGE_WAIT_TABLE_SIZE]
+> > __cacheline_aligned;
+> >    1065
+> >    1066 static wait_queue_head_t *folio_waitqueue(struct folio *folio)
+> >    1067 {
+> >    1068 =E2=94=82       return &folio_wait_table[hash_ptr(folio, PAGE_W=
+AIT_TABLE_BITS)];
+> >    1069 }
 > >
-> >
-> > The issue is that is currently iterating through 256 hash lists +
-> > pending + bg.
-> >
-> > https://lore.kernel.org/all/CAJnrk1b7bfAWWq_pFP=3D4XH3ddc_9GtAM2mE7EgWn=
-x2Od+UUUjQ@mail.gmail.com/raw
+> > Can you collect off cpu time? offcputime-bpfcc -K > /tmp/out
 >
-> Oh, I see.
+> Flamegraph for "perf record --off-cpu -F 99 -a -g --all-kernel
+> --kernel-callchains -- sleep 120" is attached.
 >
-> > Personally I would prefer a second list to avoid the check spike and la=
-tency
-> > https://lore.kernel.org/linux-fsdevel/9ba4eaf4-b9f0-483f-90e5-9512aded4=
-19e@fastmail.fm/raw
+> Off-cpu samples were collected for 120s at around 45th minute run of the
+> FIO benchmark that actually runs for 1hr. This run was with kernel that
+> had your inode_lock fix but no changes to PAGE_WAIT_TABLE_BITS.
 >
-> That's good to know.  I like the idea of less CPU usage in general,
-> our devices a battery powered so everything counts, to some extent.
+> Hopefully this captures the representative sample of the scalability
+> issue with folio lock.
 >
-> > What is your opinion about that? I guess android and chromium have an
-> > interest low latencies and avoiding cpu spikes?
->
-> Good question.
->
-> Can't speak for android, in chromeos we probably will keep it at 1 minute=
-,
-> but this is because our DEFAULT_HUNG_TASK_TIMEOUT is larger than that (we
-> use default value of 120 sec). There are setups that might use lower
-> values, or even re-define default value, e.g.:
->
-> arch/arc/configs/axs101_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
-> arch/arc/configs/axs103_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
-> arch/arc/configs/axs103_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D=
-10
-> arch/arc/configs/hsdk_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
-> arch/arc/configs/vdk_hs38_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
-> arch/arc/configs/vdk_hs38_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
-=3D10
-> arch/powerpc/configs/mvme5100_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
-=3D20
->
-> In those cases 1 minute fuse timeout will overshot HUNG_TASK_TIMEOUT
-> and then the question is whether HUNG_TASK_PANIC is set.
->
-> On the other hand, setups that set much lower timeout than
-> DEFAULT_HUNG_TASK_TIMEOUT=3D120 will have extra CPU activities regardless=
-,
-> just because watchdogs will run more often.
->
-> Tomasz, any opinions?
 
-First of all, thanks everyone for looking into this.
+I'm not familiar with the off-cpu option, fwiw does not look like any
+of that time got graphed. The thing that I know to work is
+offcputime-bpfcc.
 
-How about keeping a list of requests in the FIFO order (in other
-words: first entry is the first to timeout) and whenever the first
-entry is being removed from the list (aka the request actually
-completes), re-arming the timer to the timeout of the next request in
-the list? This way we don't really have any timer firing unless there
-is really a request that timed out.
+Regardless, per your own graph over half the *on* cpu  time is spent
+spinning on the folio hash table locks.
 
-(In fact, we could optimize it even further by opportunistically
-scheduling a timer slightly later and opportunistically handling timed
-out requests when other requests are being completed, but this would
-be optimizing for the slow path, so probably an overkill.)
+If bumping the size does not resolve the problem, the most likely
+contention shifts again to something else. So what we need is some
+profiling data from that state.
 
-As for the length of the request timeout vs the hung task watchdog
-timeout, my opinion is that we should make sure that the hung task
-watchdog doesn't hit in any case, simply because a misbehaving
-userspace process must not be able to panic the kernel. In the
-blk-core, the blk_io_schedule() function [1] uses
-sysctl_hung_task_timeout_secs to determine the maximum length of a
-single uninterruptible sleep. I suppose we could use the same
-calculation to obtain our timeout number. What does everyone think?
-
-[1] https://elixir.bootlin.com/linux/v6.12.1/source/block/blk-core.c#L1232
-
-Best regards,
-Tomasz
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
