@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-36283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AAE69E0DAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 22:21:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0E69E0DAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 22:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC0EB2F04A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 20:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C74D2814CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 21:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EEF1DF250;
-	Mon,  2 Dec 2024 20:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657821DF739;
+	Mon,  2 Dec 2024 21:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="P9VOKuYf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mo8cPG1Y"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="FS3Koocm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YG6TDZSN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70111DEFF9;
-	Mon,  2 Dec 2024 20:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480611DEFE5;
+	Mon,  2 Dec 2024 21:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733172796; cv=none; b=j4HZ0ulJVR+8+3Zx4x8u8zeiyR9jIOA/US/AhP9OZCKfxP1huTf185rlPUuRVf7b6BzQ4n65oDmDvNkXWCgtZDj6iNG1o8/28MGsa28gM/YDD0T9L2902WRTjDJIMQmFrSLSZ9vs9TeaU9ZRsttmRnpCo139D+DLl5do7zjcOGA=
+	t=1733174244; cv=none; b=j6p8X3Oyq2SvjpmN1capXba9YGKXymDKmoNRwn4TsIxd+UT+7m9c/nKMjmty9U3EposQJhE+NBsCbEeYSBOS8fb6QaJk741zzxR2KM/RRnuATn9RRl/zqND7d9U9pEyTmprfF/RUWg2QF7Ff2NdDG4mKLBiPY8UH/1jAHwVMVps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733172796; c=relaxed/simple;
-	bh=0N9VBhddveSL3a2gaQZps88kMklVuSxD7m3oq+4MVt8=;
+	s=arc-20240116; t=1733174244; c=relaxed/simple;
+	bh=V8E3CAoZ+eoyH5qb5Q7b9xEpiN/FXQZ/mmLitihRQiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rbFhQDQEKZIpMjspTyQ1mM+8J3tOvX+H3Hcl+OXUee0Z4BydlgRqG6mZLv0D5b2zuSMVrSNY9ZqtyXA0+ojpetxvpFuL+8vQzJ/ktqOZKoAAnI7MyyYmPxPbpUCc+eExKfesqduQyp5B2vysJEnLAbpBKaWdHguDC+8nA+YvYpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=P9VOKuYf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mo8cPG1Y; arc=none smtp.client-ip=103.168.172.148
+	 In-Reply-To:Content-Type; b=JGZTIAwjbUc/B5FqiETIbcyKkYQk6xSJANkiMooqDt5H2TqfH1VlBj7ksi4oWAhJNBqUpCuw5oqHeWh5AbJFMojteYZFHhNYaQq8PyJwReOywwDbu8sqvEXTiUgidFzdaiAHBODsJU1Bp9h79RC2g8GuUj5Fi1sO4p/JhFwqqdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=FS3Koocm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YG6TDZSN; arc=none smtp.client-ip=103.168.172.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
 Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id F20891380499;
-	Mon,  2 Dec 2024 15:53:12 -0500 (EST)
+	by mailfout.phl.internal (Postfix) with ESMTP id 5034113801CD;
+	Mon,  2 Dec 2024 16:17:21 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 02 Dec 2024 15:53:12 -0500
+  by phl-compute-01.internal (MEProxy); Mon, 02 Dec 2024 16:17:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733172792;
-	 x=1733259192; bh=7VAlCDOK003uVLBxoIfDpdqLjFbQJQ6ytHMYDJC/IHs=; b=
-	P9VOKuYfI0KPEOUEB0mdEf38ICzkYNr1zMC53xCiyK/LRdgKnlk3kKXQdJ4x6XqV
-	LJCbPNQG4xvJ1PJmYL9W328UJ3Ik2m84YR9sG6ET94a9nJTWq13mYAx0yy0h80TZ
-	Imr1jZgi29ch2znGqGQXvLFT4+F8Aesnvr26c0oxUw0R5LmMBK3P6/lF6mDfu0K6
-	U5UvDkmDW+A3ij1LMD98RF0jKBKVCIArJrvBLs/S2oOGbIacWXkpyXedwQcX7FkC
-	sGZa+onV2mEbWNpEi5tw1llSQXkel3XLGypAg7lTI8Kc+Mdp2sg+c2GWDup/KNWU
-	IGLCE0xLNpEKI2UjQbi8gA==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733174241;
+	 x=1733260641; bh=koGFzRxfP6P2j6KWMMaHEsaD9wq7yXqj55bBgEKSlhg=; b=
+	FS3Koocm4A6dr1QP03hTwazvp2asg4xHUTLpFqWzcgYS97a5SM8BH3uBWjwa/rDL
+	+uQpYB8K7nByoKWY5cahvznLbuvNUHSKBWZpKibsK6o/PaL3u4OEoZHS5sJtJYGy
+	zbawQZDZpjZ/vOeMwqfh5F69Omqjgm3R0wcRWQ0NmJI2wOcBM+ZF8p3ld0LS1Adv
+	wIWbxOwQ0T6ZLRGL9pwteIosavXtlqcv5GvjRHzNtrqEVrIqGGB6+CYVM30I6fP3
+	3Mw8fkjOTc72I+/r/81hn4vmKgbMIVIBGJpmOuOGauJXGqlUG+KvxHhEGeq7nDk4
+	BYGtItPvRz3aRuJ+7xz0xA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733172792; x=
-	1733259192; bh=7VAlCDOK003uVLBxoIfDpdqLjFbQJQ6ytHMYDJC/IHs=; b=M
-	o8cPG1YrF6u7vG/bS94E/ao71DRmUYLSnDcqJvH/qBp1TGS8dlNzrDsI2YdORmuP
-	QjUCx4KPhn9SFOksTf5f4/DbxSoRdJ6Jevq+JB36g1TuBHiBixihiPENz7ewqsvt
-	xThCg/t/0AKoiZj8IUL+pF/2trvSQSGYW8bx6pEzZmjaCRcn48NR40MnTmkwjsD0
-	4ldmnRGPjaxky0HJ6U5jIdYvpo5SGE9rY8O4lEWbFJKaQ1PWBpE0uEwz0KNsSakj
-	AqR1or0tdc6MtSSqdWNiBGBLrfnFZD+bfApOJBtWS+jU0meIFaiPVp7zxsLp1ZYf
-	RISj0OHG1RxOxhOIOhO9A==
-X-ME-Sender: <xms:OB5OZ0JaR6N8OrSv0qYVzinqnbMfIOiwwdGIH9s_CjidUh1wpQbPaQ>
-    <xme:OB5OZ0LWRlkEWxCGZlzEgvgwUeD7153_SRqmf8e5fPGYtRynAyGS8XTb-_YTowsBe
-    xt07c9MgNNPkXWy>
-X-ME-Received: <xmr:OB5OZ0ve4F8tg_2DJOkhcQMgMGNAhHscjqZAaCGBxNIOoPK5MRgSZpvQ7YnZLp3v-WQVu1bVNynKHKqWSrlAC2himp3nTD7rB2JrJzr3rsgQFP3PlNP->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgddugeduucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733174241; x=
+	1733260641; bh=koGFzRxfP6P2j6KWMMaHEsaD9wq7yXqj55bBgEKSlhg=; b=Y
+	G6TDZSNTjZldQHX/8CHbBKeu+5Huxyjy5qnl9wl0qcsahZ/EeTGuXm1fcePBbI7F
+	kl5UkUzUDWRwk4ccV/OrI4xd3rc0Egf29av9Jd26l5R8fk/HQWo3brMf9koPy6by
+	5jLDaG4gfF0LQHPA4sfdRM7PgtBpjuGw1VLbh8VVgUwwcrteP3KCe/GrPtIHat9U
+	TZx3qDw3GZkAbKdAaJlDZprfyv4BQi8X7tvCN85rda3dVbs+xunE/lCkzR9NHhBH
+	3XsIWx57A3ebPXWuB0psEROIfcGUDu0ELiLGuhaonzGzH+nTiX/eF//2BerfwDYL
+	eWtVVDUtLDjxHV13CcHUw==
+X-ME-Sender: <xms:4SNOZ4j-d4qZdRaHC1GrfSAogLKhVy1YQ8gi2ILu-IUXNd6GUmvABg>
+    <xme:4SNOZxCsG6FUikksopcKuF2C-jQbzl2Us9tg-PQ1uuUh9jmxbCA6V-Z5_LrzxWxab
+    DJrU8qw6NeEDCL_>
+X-ME-Received: <xmr:4SNOZwH7fuuBoCfqwNK3o6ZAol6JM_Hvh5CvjnjlPT0hdw3U_OE9PrOKQW46gvC7J-GPihqh5hVclHfZv_UbcdvB7XuNTGutPmaSZzKYCCVvP_mMn-pz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgddugeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
     necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudev
-    leegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuih
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
     iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
     sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
     huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
@@ -82,16 +82,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgddugeduucetufdoteggod
     nheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehshiiisghoth
     dokeejsgekvgeivgguvdehuggstgegudejheelfhejsehshiiikhgrlhhlvghrrdgrphhp
     shhpohhtmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:OB5OZxZ0fRbamb5qG4FN0HxlZJzvyg2104wluEcqm0CsAZ6DVrPN5Q>
-    <xmx:OB5OZ7b1QZ6BE1v5-F8s1La7pTR6vyy-f194SX1sZdcD9_kamjzw7w>
-    <xmx:OB5OZ9C-hX0UpT8j0-VuRxB9t5o_8msyDmxu-icZHiZg4EfU8aSh0Q>
-    <xmx:OB5OZxawvlUaCTbTdUsbNFIaSFjx9mh3RDQoTE6nZpNXM0v9qrPLvQ>
-    <xmx:OB5OZ_50-gDj4gji2f5tQ85HNAFFZFFXTBqsx_WJ2kM-AKovUFoDGVZg>
+X-ME-Proxy: <xmx:4SNOZ5QxY-JLqdoWmCsOzLTKsIaJiHQJ5dBf-k0ujg_EuIL8tHCjyA>
+    <xmx:4SNOZ1zYesvkHww5E3mf5BiU0-S2UAAK09gFPxK_GCVlZcCl-JxlUg>
+    <xmx:4SNOZ35jZ7_asUgI-badqLi3BeJsv6Emtk6bzvT2_zZ9hzJf2avylw>
+    <xmx:4SNOZywiLtEmoQ9kOz6qslOgKS0ErNrRQ9nIs23Bi-ap10tAziLpNA>
+    <xmx:4SNOZ0xaCAkiJNoQvPeI90ChJO0mFIE4Iz9uvbX5lOovWzWINMXtwPNX>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Dec 2024 15:53:11 -0500 (EST)
-Message-ID: <ee94604f-a912-4d5c-a2b8-e45cb7bf9e37@fastmail.fm>
-Date: Mon, 2 Dec 2024 21:53:09 +0100
+ 2 Dec 2024 16:17:20 -0500 (EST)
+Message-ID: <364da8c4-7559-4c6e-afc4-d1b59a297d51@fastmail.fm>
+Date: Mon, 2 Dec 2024 22:17:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -112,83 +112,33 @@ From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US, de-DE, fr
 In-Reply-To: <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Joanne,
+Btw, totally unrelated to the report, but related to what the C 
+reproducer does, killing it sometimes results in
 
-On 12/2/24 21:40, Joanne Koong wrote:
-> On Sat, Nov 30, 2024 at 12:22 AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->> On 11/30/24 07:51, Nihar Chaithanya wrote:
-> 
-> Hi Nihar and Bernd,
-> 
->>> The bug KASAN: null-ptr-deref is triggered due to *val being
->>> dereferenced when it is null in fuse_copy_do() when performing
->>> memcpy().
-> 
-> It's not clear to me that syzbot's "null-ptr-deref" complaint is about
-> *val being dereferenced when val is NULL.
-> 
-> The stack trace [1] points to the 2nd memcpy in fuse_copy_do():
-> 
-> /* Do as much copy to/from userspace buffer as we can */
-> static int fuse_copy_do(struct fuse_copy_state *cs, void **val, unsigned *size)
-> {
->         unsigned ncpy = min(*size, cs->len);
->         if (val) {
->                 void *pgaddr = kmap_local_page(cs->pg);
->                 void *buf = pgaddr + cs->offset;
-> 
->                 if (cs->write)
->                         memcpy(buf, *val, ncpy);
->                 else
->                         memcpy(*val, buf, ncpy);
-> 
->                 kunmap_local(pgaddr);
->                 *val += ncpy;
->         }
-> ...
-> }
-> 
-> but AFAICT, if val is NULL then we never try to deref val since it's
-> guarded by the "if (val)" check.
-
-The function takes &val in fuse_copy_one(). The NULL check is more for
-passing NULL from fuse_copy_page().
+  12563 pts/1    Zl     0:00 [syzkaller] <defunct>
 
 
-> 
-> It seems like syzbot is either complaining about buf being NULL / *val
-> being NULL and then trying to deference those inside the memcpy call,
-> or maybe it actually is (mistakenly) complaining about val being NULL.
-
-I don't think it is 'buf', because of 
-
-==> Write of size 5 at addr 0000000000000000 
-
-If it would be buf, it would be a read. With the knowledge that the line
-number is correct, as it goes through fuse_dev_write(). Although I have
-to admit that cs->write is really confusing - just the other way
-around of fuse_dev_do_write  / fuse_dev_do_read.
+[   46.018014] mount.nfs (1163) used greatest stack depth: 23944 bytes left
+[ 9929.865478] syzkaller (12313) used greatest stack depth: 23216 bytes left
+[10159.658915] INFO: task syzkaller:12312 blocked for more than 120 seconds.
+[10159.663075]       Not tainted 6.13.0-rc1+ #92
+[10159.665618] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[10159.673650] task:syzkaller       state:D stack:28944 pid:12312 tgid:12307 ppid:1      flags:0x00004006
+[10159.681276] Call Trace:
+[10159.683004]  <TASK>
+[10159.685636]  __schedule+0x1b42/0x25b0
+[10159.688521]  schedule+0xb5/0x260
+[10159.690415]  __fuse_simple_request+0xc49/0x1350 [fuse]
+[10159.694677]  ? wake_bit_function+0x210/0x210
+[10159.697145]  fuse_do_getattr+0x2cb/0x600 [fuse]
 
 
 
-> 
-> It's not clear to me either how the "fuse: convert direct io to use
-> folios" patch (on the fuse tree, it's commit 3b97c36) [2] directly
-> causes this.
-> 
-> If I'm remembering correctly, it's possible to add debug printks to a
-> patch and syzbot will print out the debug messages as it triggers the
-> issue? It'd be interesting to see which request opcode triggers this,
-> and what exactly is being deref-ed here that is NULL. I need to look
-> at this more deeply but so far, nothing stands out as to what could be
-> the culprit.
-
-Yeah, I was just thinking the same and just reading through syzbot doku. 
-I had tried to reproduce in my lokal VM on master/6.13 - no luck.
+Aborting the connection(s) 'fixes' that, but looks like it triggers
+another issue. Timeouts would certainly help, but it still should
+work automatically.
 
 
 Thanks,
