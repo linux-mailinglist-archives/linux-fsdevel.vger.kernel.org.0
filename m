@@ -1,116 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-36225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804179DFBAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 09:12:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1E29DFCE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D8EB213BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 08:12:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18387B21172
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 09:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097931F9ABC;
-	Mon,  2 Dec 2024 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB651FA27C;
+	Mon,  2 Dec 2024 09:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMIkt7BF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4BtJDz9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227301F8AEA;
-	Mon,  2 Dec 2024 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102E41F9F63;
+	Mon,  2 Dec 2024 09:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733127125; cv=none; b=sgPnJog+tNPbkSC4UdljfDsH21LI2bIrkZAj7nIhX2Cdz6vj+h6xveuTHfJOOpNXXsvORLDut2l19+3r9MgKbPTnpob3CxkbFl9Cu4BYp1X2LQGp+9ULOk6NcOc6EOv55hnaAlZkjmJZG1Uul9Cm/NKC2KMr9RRnQUN7AKy/azo=
+	t=1733131155; cv=none; b=KuTCTqY+VY3NuttHvyScYRT6FOSxDmb+vwghXJ/PLg1qj/XxEUhKDizjKkSo3mmR+nOpyATWkYlKOMtpU3skBTqURuvJctUzlD7tQDNyKfM7/2ghSavKfqN7TrLU2lT85XTdti569ZQWAXCOCp9/oZjJqcVPGDhtWhDORygC9aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733127125; c=relaxed/simple;
-	bh=VSUjNizr/1GTzlmCcQz8331y/PCGwzGRf2PuxJ6n7DA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L/s+AmmhtiJUK8zf/woM5/wda1EJiqs/ws0o4PeEOVHw87llghbBjFckRm0e8aLWsrQ7dKpXTOndwEElA7jhKahTN7kHXgUZkyOdplAUxVbmeuaqLVoV14T5Zvz4AzGlj5diBzA6Yj4miRWfySoRA3rSwomQKzDXZ6zb/4CW9Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMIkt7BF; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2156e078563so9256205ad.2;
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733127123; x=1733731923; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
-        b=BMIkt7BF9MA9zAJWPu2YYufYI1H5OeEug+Va8zHvtyn9PexVUjlHC4DV6DCbT2sMYC
-         P9j6OKeCzzg/eI75ibooJL87AO9cLPZdGKL976O6gQOIhEMxgKkQx7oaqq9ubg0lDsby
-         YpnmZAMKTCUrSgarCaeRDe3yR3NghRmW4uEqgis2KvKYP8heWjr/kHq4o3rWqNDdjTTA
-         /HJ+/y2t8qSvTPGcYzpUX5YpYEJM/+pSm2SA3xYjXhw8uXHdO/FkNAsAsHt/PWrOFJqN
-         gYbpCIGemh6FXp0Z5Wjo3j9a40I/6Z0ZmhZADXfW+i89MixVghajyH9VeGHPBSHl8o41
-         +dVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733127123; x=1733731923;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
-        b=DgvH//xwV5Wht/skHO8UERjqInfzBdtz5qbrmIkYezPU4awtVoJNHEfN0wwYl9Fb4I
-         05x/zxcK90Inb0CLY3iXLNLKNCY5AWncjdBvpK6ooTO+WYumiUNvgVneWeSZ9NFMMj32
-         JpKvxuvF6Zr389G1l3bK/fSQU3J67EWFpJDUmG27aZkZ5q26PFyn0KPMnWPXkyQ8RLC1
-         DK69Yei0zKtHpcl+0ACscV6wBrTW/Z+NjQdANIEtIUDlOHxjsSdwdzquiPFrF2ZhiDzC
-         67HRvY/KRpwIvTvIch6tmh1mGwo6yZbBCnXbrTuKfJ1ALhprkKzbKdhzbyo8sbBP4OOx
-         TLBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV61XswLtp3ra+NKodpFaBRbCGdxxl/uD/ksliqFVJDnhSamhnMU9msMT3QPKPtJoG+v3sjtAmTTM/tvYBL@vger.kernel.org, AJvYcCVN/BJ85EdS+RW4jUMBsFLSONva5lCpM1W1S3RxaCvtiufomIGcMnZrPo6xbmpdYu4RhrLdhsEeiFIcC4tB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLS1JhYuK5l8LaOoVkKbmML/pSQtw3ddgM3wELIQYfUp9qbHBr
-	uO6btmncw4yvz7evVzyk6eCW+Ng69utPy3GTPfkQiwhTdqjEsJtN
-X-Gm-Gg: ASbGnct8e+91sJvE5baGL+e7ioxvTzflxDC8ALQM4mevcbssK19V2I411M16XGGzte4
-	ekO1k1F/KxNP6Vw1VcRQy1NV46blSGje8ASjTnyZMBW2dHmFwXdutbQ3TqiuEfcdib9eWTtcSYO
-	pBHDUUFOV8+ChUYkDvLiFsGqeOsTCkvcmy2cRlrd0/A54tsxpEqm4i7gVHjdEbeYRrEaQvM/0Dd
-	t2iXS2CU9XvdRCZ5Z+Kp/N7TyQEnMlmlu3w1Vv/KbOzUKbSINmgdXYAz7eeRd9SYexZaK0YGQ==
-X-Google-Smtp-Source: AGHT+IEuUbONqs8zxBj3T/WQhEm8JRiFYXFVrrZ0qaCD6pVq7HPF7oqFAtRt4C8+IUp4BKeTLb/CsA==
-X-Received: by 2002:a17:903:2344:b0:215:711d:d59 with SMTP id d9443c01a7336-215711d0fa0mr97535105ad.2.1733127123344;
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-Received: from localhost.localdomain ([36.110.106.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2153d61aabfsm55517385ad.136.2024.12.02.00.12.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-From: Guo Weikang <guoweikang.kernel@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: Guo Weikang <guoweikang.kernel@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs:fc_log replace magic number 7 with ARRAY_SIZE()
-Date: Mon,  2 Dec 2024 16:11:45 +0800
-Message-Id: <20241202081146.1031780-1-guoweikang.kernel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733131155; c=relaxed/simple;
+	bh=MK5G0zxP8zA/OoPHL7AWEIh4OCB2UGd/11e3UiMV2cQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekOkfSQGVtfuC3kdcMXNUAzwrIKYbIvfHi2V0pRcYNT0aX7VxiUnA8oyAz+Czymx9OTtm9yDcxd36SdWhTL93Qz8yqRScQA0ch0SLw92rzGi+0CbuV7UWVamnSRTQhfb6dTyZdRqgfnBQcbuWsSj7DYWGau5LnXrvxYDqMb1UJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4BtJDz9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DEFC4CED2;
+	Mon,  2 Dec 2024 09:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733131154;
+	bh=MK5G0zxP8zA/OoPHL7AWEIh4OCB2UGd/11e3UiMV2cQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c4BtJDz9IEZ25s9kQROzHxcBLzxX42qxUjw55etrmFvE92WkYzG3OM4GfWYucznta
+	 HqeINYdJeQEQWn75c/wXme2XyUOLpbEAVo5lKYthKFurg2r2GNiNOVn9sjAwywx+KM
+	 SbhfveOjpECQGJDVnj+F1fBGdXZH0z5M1XYXeFOaEvYLy/Eyh6xXuZE5gY2JgMBciw
+	 VQd2QVLHJIql6B3/ZkTsU0ZIHgvEpbhL99kpLvxr/X+PilYILM0X7rwZVHbQwaljP7
+	 5AYl7h2LMdKncP9ILeX/wy4/FAgZUN7IXlYrNXp+Ie32z5M7SsiW40SU4e7B9rZfMp
+	 ZUYqgUDZ3z2Dg==
+Date: Mon, 2 Dec 2024 10:19:09 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	Erin Shepherd <erin.shepherd@e43.eu>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	stable <stable@kernel.org>
+Subject: Re: [PATCH 1/4] exportfs: add flag to indicate local file handles
+Message-ID: <20241202-aufpeppen-parolen-a17bf56086e2@brauner>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <20241201-work-exportfs-v1-1-b850dda4502a@kernel.org>
+ <Z0ztcToKjCY05xq9@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z0ztcToKjCY05xq9@dread.disaster.area>
 
-Replace the hardcoded value `7` in `put_fc_log()` with `ARRAY_SIZE`.
-This improves maintainability by ensuring the loop adapts to changes
-in the buffer size.
+On Mon, Dec 02, 2024 at 10:12:49AM +1100, Dave Chinner wrote:
+> On Sun, Dec 01, 2024 at 02:12:25PM +0100, Christian Brauner wrote:
+> > Some filesystems like kernfs and pidfs support file handles as a
+> > convenience to use name_to_handle_at(2) and open_by_handle_at(2) but
+> > don't want to and cannot be reliably exported. Add a flag that allows
+> > them to mark their export operations accordingly.
+> > 
+> > Fixes: aa8188253474 ("kernfs: add exportfs operations")
+> > Cc: stable <stable@kernel.org> # >= 4.14
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/nfsd/export.c         | 8 +++++++-
+> >  include/linux/exportfs.h | 1 +
+> >  2 files changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> > index eacafe46e3b673cb306bd3c7caabd3283a1e54b1..786551595cc1c2043e8c195c00ca72ef93c769d6 100644
+> > --- a/fs/nfsd/export.c
+> > +++ b/fs/nfsd/export.c
+> > @@ -417,6 +417,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
+> >  static int check_export(struct path *path, int *flags, unsigned char *uuid)
+> >  {
+> >  	struct inode *inode = d_inode(path->dentry);
+> > +	const struct export_operations *nop;
+> >  
+> >  	/*
+> >  	 * We currently export only dirs, regular files, and (for v4
+> > @@ -449,11 +450,16 @@ static int check_export(struct path *path, int *flags, unsigned char *uuid)
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
+> > +	if (!exportfs_can_decode_fh(nop)) {
+> 
+> Where is nop initialised?
 
-Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
----
- fs/fs_context.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yep, already fixed in tree yesterday. Thanks for catching this though!
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 98589aae5208..582d33e81117 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -493,7 +493,7 @@ static void put_fc_log(struct fs_context *fc)
- 	if (log) {
- 		if (refcount_dec_and_test(&log->usage)) {
- 			fc->log.log = NULL;
--			for (i = 0; i <= 7; i++)
-+			for (i = 0; i < ARRAY_SIZE(log->buffer) ; i++)
- 				if (log->need_free & (1 << i))
- 					kfree(log->buffer[i]);
- 			kfree(log);
--- 
-2.25.1
+> 
+> >  		dprintk("exp_export: export of invalid fs type.\n");
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > +	if (nop && nop->flags & EXPORT_OP_LOCAL_FILE_HANDLE) {
+> 
+> Also, please use () around & operations so we can understand that
+> this is not an accidental typo. i.e:
+> 
+> 	if (nop && (nop->flags & EXPORT_OP_LOCAL_FILE_HANDLE)) {
+> 
+> clearly expresses the intent of the code, and now it is obviously
+> correct at a glance.
 
+Done.
 
