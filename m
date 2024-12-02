@@ -1,233 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-36230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4C89DFD87
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F419DFD83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 10:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4A4282C67
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 09:46:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D915B282B01
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 09:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5EE1FA84A;
-	Mon,  2 Dec 2024 09:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6C1FBEA1;
+	Mon,  2 Dec 2024 09:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="qjrOpDKi"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nzQRWmaX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from forward203a.mail.yandex.net (forward203a.mail.yandex.net [178.154.239.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D801F949
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 09:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E7B1FBE91
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132800; cv=none; b=tgUOR50/vaSxSRwrw0/1GX2vEZ/so7DFZG45wpfG1ZuPiEiNnKHWTn6jQx95zvBKbIGferjX1JRu1jiLFB+lBqwg3Jp1+jEeVFmQxEEXW7dYH3t+goTkPRjXW0M5vyPPURKQLwSZVLpWZ/z1AEaRGF1IWfi6IH2776oJwLdU3fQ=
+	t=1733132732; cv=none; b=HsjNrNhGK/bWuvNbjn+WhgkpyI5sArWSTcXsf8D1pNwF9xxUW8BgbWcuxNb1gnDQ1s+Yu3z5yiX/9VDPJnJJPowrpKx5XZ4tVO+X+FJ3XHmpOTGXEZfu1/Pa6ojpIVL+xhsBJszgdQQQzwHIsw9uYaZm+G+6lDQLqlng+Pi7qpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132800; c=relaxed/simple;
-	bh=vh0ec8OjidZYnLyILeTGDgFfc8qn2Z/5TwVnzPPs0gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pF1EeEzs/kXi8FcSqjDOGS/oPrE7lkiZZ+4QwaHlt+9wIenvy6LzEsWY/dkKrD7NOovf+2nEebZhdZ+29PnctMs00+DTpDd1bbQZhaWOdXNHmghcqiGIdOl7izy9McxGlYe+SIu6kGoHXnaN+qGIY0XSpXwmGWXXdNaV+G01t3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=qjrOpDKi; arc=none smtp.client-ip=178.154.239.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward103a.mail.yandex.net (forward103a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d103])
-	by forward203a.mail.yandex.net (Yandex) with ESMTPS id B7FA064172
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 12:40:23 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:26bf:0:640:efa0:0])
-	by forward103a.mail.yandex.net (Yandex) with ESMTPS id 05E6360E4B;
-	Mon,  2 Dec 2024 12:40:16 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id Eeajf1qOiiE0-7bIeXwt2;
-	Mon, 02 Dec 2024 12:40:15 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1733132415; bh=+3eoasJ2+W8u4jDRwthmE7pkDtyyD8cK4MURm1Ha7p4=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=qjrOpDKipEUoscpB18mBZog7XbHx5ciz20b1uMoJZ17eva85dcR4llP2C3jzbqmqK
-	 gXrFjVAh6b/vCTF94V2MrLvPUMjpDF92kgOQLiU+gmJJ+G/PWzl4r2YDTbiIh75Ve0
-	 lJAkGjYvKSvuOTTy2zykpeXRXAPUDO5ThXNBhOGg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Subject: [PATCH v2] netfs: fix kernel BUG in iov_iter_revert()
-Date: Mon,  2 Dec 2024 12:39:43 +0300
-Message-ID: <20241202093943.227786-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733132732; c=relaxed/simple;
+	bh=e/crmDZ5A8X10+tJcJNy1NwuSFl77VnTElSQXT3A1Oc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j5I/TezVl5Wg12ODqq8TTEYQ+bez4ERr/l9SpTJiyCT5KefZVnGdin96B1fRr+dO8nJD9Xfio0CjL9pg7cwZOlP06SKl33P14TFfZQvtHJT5dV558MCCLbMjIHAYlu3erSoKvoWz+zGOwc53i0WaFnUy6I9hxN6I39+cCD1b7qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nzQRWmaX; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so4909024a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 01:45:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733132729; x=1733737529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cE2iQ9UBMwsTpNrARZHZF06rdwbNTQTKZL/vG7/23ys=;
+        b=nzQRWmaXPLHlXpnpXXgd8VmuhEhBntDnR94MLMwrR3QqeyL9NdI8z2raYWWL2NKHNq
+         RjNy7ZvEMKzL6cZAZVgDj+cQelDMsWpucFbUST0TOjEdwgKgR16+MDu8vIlE6FWVIMMO
+         f9OH9jBSFBlXW7Y2DI/eEt0Z132XfwpSr7GVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733132729; x=1733737529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cE2iQ9UBMwsTpNrARZHZF06rdwbNTQTKZL/vG7/23ys=;
+        b=DPM0unmLZoo+Y6vHK2bTNW9dAy9nlAJDzx3txcv8AM1j7z+IJtOHbQNh8Q/wFvVQqb
+         +Q6HOHIGqy7HtjR8n4ZQGsh9a1TBIy7bR48767NlCMMQNaDGGAcNXNBv7Hi1RiwsnN3V
+         h1JSC9RulAkz+EXei59LOL03AwkItKECWaZhIbMO2gZPNdjf6GHMuViY3KCkUhkCt0Bb
+         wH62AePLj1ZMkbJTj9cFx9mT7bQC5ntWz1JD+l8IwxxPDRYy45xzEriZAHNSED+/vOtE
+         98cXdHL0wqMCLMUsA6efftQdfvvyOQY7XiwakV3YDvS8dcwGD2GxXdFjyqKgf0wGkKD+
+         LSBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YHmMLSrRJdIsknn2ocE53wH0jiAYDLZH837u5HzX94SEk/UwHF6Cd6hXjR8EZ1du/tcYr/qJlsmzCIcy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5su5Wlscy4wxTWljoZEwwlm/y8HuJcgH0yiQ/LBkiIBAVyERu
+	1IAVZ2GonV7Awe77s84Eld2G7uhkrgC7aNecebGz2IOQ/8RtLoBsV3BgozvylC2rdOIkONU5kmV
+	bQw==
+X-Gm-Gg: ASbGncsaTuc43YFWVWcLTWBJylc9acNnUXWlCLTMQIqct6VngHs0cZfmTy0df65Qm/B
+	cBqQJceEcj6OgAtZW0p5hDf68fw4V/qTDN9MFWBGE9R+z8M47rRekLL4tWiGh9nybvEqMN3Fn+K
+	a3Beh0qL8vhmTyNN2NzVG0gkpF9K2n8yaF0Qp2s04PbQxUDkHg5zbdLUZ3ydzk7gtlhhYc0g1w5
+	1P2dQcyN+tzdlJXaCv9QjnCXV1Skluo0DJsm+2S220WQdzhpzLvYNc1drjYo4pYQBM/pvWutwEg
+	ZfYxFlJmGQ==
+X-Google-Smtp-Source: AGHT+IHySP1t5TddtS+8W6HBRtqUX+5QHrgWD26btSUL5385Pf1/LHeW4M84x3FbOsAjbbTJ/kiK+w==
+X-Received: by 2002:a05:6402:2491:b0:5cf:d19c:e21c with SMTP id 4fb4d7f45d1cf-5d080bd3fe6mr22819732a12.20.1733132728630;
+        Mon, 02 Dec 2024 01:45:28 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b264f0d2sm3769309a12.72.2024.12.02.01.45.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 01:45:27 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0c939ab78so9618a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 01:45:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVO0G19BxoGFm/OSWMZUxadafMJ+ZMsjsDs7jSsbQpWMJOD5rQWBcqdoOQsMZNh8dIuQUUPeTSCeIMk/nvY@vger.kernel.org
+X-Received: by 2002:a05:6402:292:b0:5d0:b20c:2063 with SMTP id
+ 4fb4d7f45d1cf-5d0b20c21b4mr143815a12.7.1733132727177; Mon, 02 Dec 2024
+ 01:45:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241114191332.669127-1-joannelkoong@gmail.com>
+ <20241114191332.669127-3-joannelkoong@gmail.com> <20241128104437.GB10431@google.com>
+ <25e0e716-a4e8-4f72-ad52-29c5d15e1d61@fastmail.fm> <20241128110942.GD10431@google.com>
+ <8c5d292f-b343-435f-862e-a98910b6a150@ddn.com> <20241128115455.GG10431@google.com>
+In-Reply-To: <20241128115455.GG10431@google.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Mon, 2 Dec 2024 18:45:10 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
+Message-ID: <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
+ for requests
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Bernd Schubert <bschubert@ddn.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Joanne Koong <joannelkoong@gmail.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>, "laoar.shao@gmail.com" <laoar.shao@gmail.com>, 
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Syzbot has reported the following splat triggered by fault injection:
+Hi everyone,
 
-kernel BUG at lib/iov_iter.c:624!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5767 Comm: repro Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
-RIP: 0010:iov_iter_revert+0x420/0x590
-Code: 42 80 3c 20 00 48 8b 1c 24 74 08 48 89 df e8 17 07 43 fd 4c 89 2b e9 04 01 00 00 45 85 ed 48 8b 3c 24 75 16 e8 41 48 d9 fc 90 <0f> 0b 41 83 fd 05 48 8b 3c 24 0f 84 58 01 00 00 48 89 f8 48 c1 e8
-RSP: 0018:ffffc90002f4f740 EFLAGS: 00010293
-RAX: ffffffff84bba22f RBX: 000000000001e098 RCX: ffff888026309cc0
-RDX: 0000000000000000 RSI: ffffffff8f098180 RDI: ffff888024f92df0
-RBP: 0000000000000000 R08: 0000000000000001 R09: ffffffff84bb9f14
-R10: 0000000000000004 R11: ffff888026309cc0 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffff888024f92de0 R15: fffffffffffe1f68
-FS:  00007f2c11757600(0000) GS:ffff888062800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000557cafd1eb48 CR3: 0000000024e1a000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- ? __die_body+0x5f/0xb0
- ? die+0x9e/0xc0
- ? do_trap+0x15a/0x3a0
- ? iov_iter_revert+0x420/0x590
- ? do_error_trap+0x1dc/0x2c0
- ? iov_iter_revert+0x420/0x590
- ? __pfx_do_error_trap+0x10/0x10
- ? handle_invalid_op+0x34/0x40
- ? iov_iter_revert+0x420/0x590
- ? exc_invalid_op+0x38/0x50
- ? asm_exc_invalid_op+0x1a/0x20
- ? iov_iter_revert+0x104/0x590
- ? iov_iter_revert+0x41f/0x590
- ? iov_iter_revert+0x420/0x590
- netfs_reset_iter+0xce/0x130
- netfs_read_subreq_terminated+0x1fe/0xad0
- netfs_read_to_pagecache+0x628/0x900
- netfs_readahead+0x7e9/0x9d0
- ? __pfx_netfs_readahead+0x10/0x10
- ? blk_start_plug+0x70/0x1b0
- read_pages+0x180/0x840
- ? __pfx_read_pages+0x10/0x10
- ? filemap_add_folio+0x26d/0x650
- ? __pfx_filemap_add_folio+0x10/0x10
- ? rcu_read_lock_any_held+0xb7/0x160
- ? __pfx_rcu_read_lock_any_held+0x10/0x10
- ? __pfx_proc_fail_nth_write+0x10/0x10
- page_cache_ra_unbounded+0x774/0x8a0
- force_page_cache_ra+0x280/0x2f0
- generic_fadvise+0x522/0x830
- ? __pfx_generic_fadvise+0x10/0x10
- ? lockdep_hardirqs_on_prepare+0x43d/0x780
- ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
- ? vfs_fadvise+0x99/0xc0
- __x64_sys_readahead+0x1ac/0x230
- do_syscall_64+0xf3/0x230
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2c116736a9
-Code: 5c c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 4f 37 0d 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffc78181c88 EFLAGS: 00000246 ORIG_RAX: 00000000000000bb
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f2c116736a9
-RDX: 000800000000000d RSI: 0000000000000005 RDI: 0000000000000006
-RBP: 00000000004029d8 R08: 00007ffc78181658 R09: 00007f0038363735
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc78181cb0
-R13: 00007ffc78181ec8 R14: 0000000000401120 R15: 00007f2c1178ca80
- </TASK>
+On Thu, Nov 28, 2024 at 8:55=E2=80=AFPM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> Cc-ing Tomasz
+>
+> On (24/11/28 11:23), Bernd Schubert wrote:
+> > > Thanks for the pointers again, Bernd.
+> > >
+> > >> Miklos had asked for to abort the connection in v4
+> > >> https://lore.kernel.org/all/CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACF=
+dgJJ_b8FdHw@mail.gmail.com/raw
+> > >
+> > > OK, sounds reasonable. I'll try to give the series some testing in th=
+e
+> > > coming days.
+> > >
+> > > // I still would probably prefer "seconds" timeout granularity.
+> > > // Unless this also has been discussed already and Bernd has a link ;=
+)
+> >
+> >
+> > The issue is that is currently iterating through 256 hash lists +
+> > pending + bg.
+> >
+> > https://lore.kernel.org/all/CAJnrk1b7bfAWWq_pFP=3D4XH3ddc_9GtAM2mE7EgWn=
+x2Od+UUUjQ@mail.gmail.com/raw
+>
+> Oh, I see.
+>
+> > Personally I would prefer a second list to avoid the check spike and la=
+tency
+> > https://lore.kernel.org/linux-fsdevel/9ba4eaf4-b9f0-483f-90e5-9512aded4=
+19e@fastmail.fm/raw
+>
+> That's good to know.  I like the idea of less CPU usage in general,
+> our devices a battery powered so everything counts, to some extent.
+>
+> > What is your opinion about that? I guess android and chromium have an
+> > interest low latencies and avoiding cpu spikes?
+>
+> Good question.
+>
+> Can't speak for android, in chromeos we probably will keep it at 1 minute=
+,
+> but this is because our DEFAULT_HUNG_TASK_TIMEOUT is larger than that (we
+> use default value of 120 sec). There are setups that might use lower
+> values, or even re-define default value, e.g.:
+>
+> arch/arc/configs/axs101_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
+> arch/arc/configs/axs103_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
+> arch/arc/configs/axs103_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D=
+10
+> arch/arc/configs/hsdk_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
+> arch/arc/configs/vdk_hs38_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=3D10
+> arch/arc/configs/vdk_hs38_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
+=3D10
+> arch/powerpc/configs/mvme5100_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
+=3D20
+>
+> In those cases 1 minute fuse timeout will overshot HUNG_TASK_TIMEOUT
+> and then the question is whether HUNG_TASK_PANIC is set.
+>
+> On the other hand, setups that set much lower timeout than
+> DEFAULT_HUNG_TASK_TIMEOUT=3D120 will have extra CPU activities regardless=
+,
+> just because watchdogs will run more often.
+>
+> Tomasz, any opinions?
 
-This happens just because 'netfs_prepare_read_iterator()' may return
--ENOMEM (which is actually triggered by the fault injection) but such
-a cases are not consistently handled in 'netfs_read_to_pagecache()'.
-So wrap 'netfs_prepare_read_iterator()' to handle all possible
--ENOMEM cases and mark the corresponding subrequest as cancelled.
+First of all, thanks everyone for looking into this.
 
-Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=404b4b745080b6210c6c
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Tested-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
----
-v2: adjusted to match 6.13.0-rc1
----
- fs/netfs/buffered_read.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+How about keeping a list of requests in the FIFO order (in other
+words: first entry is the first to timeout) and whenever the first
+entry is being removed from the list (aka the request actually
+completes), re-arming the timer to the timeout of the next request in
+the list? This way we don't really have any timer firing unless there
+is really a request that timed out.
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 7ac34550c403..4404f3c6ec3e 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -95,7 +95,7 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_request *rreq,
- }
- 
- /*
-- * netfs_prepare_read_iterator - Prepare the subreq iterator for I/O
-+ * __netfs_prepare_read_iterator - Prepare the subreq iterator for I/O
-  * @subreq: The subrequest to be set up
-  *
-  * Prepare the I/O iterator representing the read buffer on a subrequest for
-@@ -109,7 +109,7 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_request *rreq,
-  * [!] NOTE: This must be run in the same thread as ->issue_read() was called
-  * in as we access the readahead_control struct.
-  */
--static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
-+static ssize_t __netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
- 	size_t rsize = subreq->len;
-@@ -174,6 +174,21 @@ static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
- 	return subreq->len;
- }
- 
-+/* Wrap the above by handling possible -ENOMEM and
-+ * marking the corresponding subrequest as cancelled.
-+ */
-+static inline ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
-+{
-+	struct netfs_io_request *rreq = subreq->rreq;
-+	ssize_t slice = __netfs_prepare_read_iterator(subreq);
-+
-+	if (unlikely(slice < 0)) {
-+		atomic_dec(&rreq->nr_outstanding);
-+		netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
-+	}
-+	return slice;
-+}
-+
- static enum netfs_io_source netfs_cache_prepare_read(struct netfs_io_request *rreq,
- 						     struct netfs_io_subrequest *subreq,
- 						     loff_t i_size)
-@@ -285,9 +300,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 			}
- 
- 			slice = netfs_prepare_read_iterator(subreq);
--			if (slice < 0) {
--				atomic_dec(&rreq->nr_outstanding);
--				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
-+			if (unlikely(slice < 0)) {
- 				ret = slice;
- 				break;
- 			}
-@@ -302,6 +315,10 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 			netfs_stat(&netfs_n_rh_zero);
- 			slice = netfs_prepare_read_iterator(subreq);
-+			if (unlikely(slice < 0)) {
-+				ret = slice;
-+				break;
-+			}
- 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 			netfs_read_subreq_terminated(subreq, 0, false);
- 			goto done;
-@@ -310,6 +327,10 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 		if (source == NETFS_READ_FROM_CACHE) {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 			slice = netfs_prepare_read_iterator(subreq);
-+			if (unlikely(slice < 0)) {
-+				ret = slice;
-+				break;
-+			}
- 			netfs_read_cache_to_pagecache(rreq, subreq);
- 			goto done;
- 		}
--- 
-2.47.1
+(In fact, we could optimize it even further by opportunistically
+scheduling a timer slightly later and opportunistically handling timed
+out requests when other requests are being completed, but this would
+be optimizing for the slow path, so probably an overkill.)
 
+As for the length of the request timeout vs the hung task watchdog
+timeout, my opinion is that we should make sure that the hung task
+watchdog doesn't hit in any case, simply because a misbehaving
+userspace process must not be able to panic the kernel. In the
+blk-core, the blk_io_schedule() function [1] uses
+sysctl_hung_task_timeout_secs to determine the maximum length of a
+single uninterruptible sleep. I suppose we could use the same
+calculation to obtain our timeout number. What does everyone think?
+
+[1] https://elixir.bootlin.com/linux/v6.12.1/source/block/blk-core.c#L1232
+
+Best regards,
+Tomasz
 
