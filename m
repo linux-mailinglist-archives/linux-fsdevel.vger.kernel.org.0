@@ -1,308 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-36260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F259E052C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 15:37:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91170167377
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 14:32:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F282205E2F;
-	Mon,  2 Dec 2024 14:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPfnKFDv"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E519E0581
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 15:50:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74644205E0C;
-	Mon,  2 Dec 2024 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF5D281A14
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 14:50:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A175E20B7EF;
+	Mon,  2 Dec 2024 14:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTEXGDHB"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548F120B20E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 14:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149883; cv=none; b=brsKwAY2Bi8aKgCe/QFzFBkn9aEbJehNppDy+kqULg8o3k1pdVPmFVmY07+GqQRP6CsdYPOmiYZFVMJT7ncWs4RtOJ+4qAsb/1HKRhhj001EJMCVFd72/T7XKFoZCRmiUySEQBV5suz2TDyZRamcCYONas86CshIUQdOo4uhGzk=
+	t=1733150498; cv=none; b=S5h2x+mgM2j9XnlvE+MnnZKgHemTRnt/C8DGrniCXVDLvQLXrJQeIT0lMJROXx0kGpKHMJbi5LAkT7NRBf3uCBxBtTgqNVM3Nyw0jLH5hSuXDHLfqZ2iHKGs+AipCP9Ae77ibM2Hv05ZcifGeowUe49mWn75Mv5epL8dA4iuhBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149883; c=relaxed/simple;
-	bh=ZtGu6SK5aFdAysupqz7NhzQdEnEBx5d8JsncaclV628=;
+	s=arc-20240116; t=1733150498; c=relaxed/simple;
+	bh=LC7a4IadXDSBG+FPlnSGhFh+gxKKCByBUescMabMaOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFDGZyg4ejqhroyWC8YaByzXn2O3/TFbWXxHupd2Qz7n2szaIpN/eTIOtBAaNfFnhEwGZ7YEG7aVV6N+Vnvh55UGfzry9vkUT9unz/HRyYwEPO90egAreoHDNvPP9PDorWMygFxnTIx8ohWn6ZMDbhpvkgiirJ58kGhIcJl4yZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPfnKFDv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E961C4CED2;
-	Mon,  2 Dec 2024 14:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733149883;
-	bh=ZtGu6SK5aFdAysupqz7NhzQdEnEBx5d8JsncaclV628=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BPfnKFDvxZ8vA6jFBhYtrwkOi+RmM6F3HfRS7e8R+fjzPQ0G6pX7hqSlqjNexBJdP
-	 kLhua83Sb3v8k1JGVAU+kmGvQCH0YgzOhObmI11ZJ0Pw3n64slRqA70YrowK54qM+K
-	 eWnyxl4kVUdhxevMp7hLqFu2qr9vP5NLdKYkzxainIXOpjvSEXjHAiJvr8/mwCQnvO
-	 FlCRqDqOZpK0ho/hECjl7tdWFM8F2UVs6p/fpGfILPJJvO86FnPUnTCrpSRjgpfEo3
-	 AM1L0ijv+lSidizSMfnMlgLjsZDsz9EPwFsoiUgp+T7llYXsihPCE8FRO81T2UeH/Y
-	 tXtmDr6i2/z0w==
-Date: Mon, 2 Dec 2024 15:31:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, 
-	John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <20241202-wahrnehmen-mitten-e330cbd1eaf0@brauner>
-References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
- <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
- <20241028-gesoffen-drehmoment-5314faba9731@brauner>
- <c96df57a-fa1b-4301-9556-94a6b8c93a31@lucifer.local>
- <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaHWdfSfeMDZrGZm/JXgQgFqNF4yx5XjK1fZJY8Up5aH3npewavzBq6CKiPf9DjeLc08XsF/DvHKsmDGMFrm8XRMB2w8Oh6Iy6WC4ERUvnzOoJiED93GP5CPZmbK596yfriQNRS9usHYuLN/wq7uaKMNcs5q5Qvrx6hqLsZn0B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTEXGDHB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733150495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lUvIdNYn/fqF9K6BoxsffOp47UHQFllLU+FnZQWOnJs=;
+	b=bTEXGDHBroAxQ6pBPjN0kMov7k4Je6GpkGTpIFV+GX6JAXcuHH+DQC1d+AJ3hoLBywzPg2
+	HUEL99tWl4CCDDtrYCc1CChwh9I4pLQaRC27sJreKKCXUUZ/C9736EzbL0gS52EKfqcxcT
+	BsvBlovTJd0BioNpFUnnd5gLjebLO7c=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-dGxSDJsqNb6Lbe3LF1xgNQ-1; Mon,
+ 02 Dec 2024 09:41:30 -0500
+X-MC-Unique: dGxSDJsqNb6Lbe3LF1xgNQ-1
+X-Mimecast-MFC-AGG-ID: dGxSDJsqNb6Lbe3LF1xgNQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 746FC1954197;
+	Mon,  2 Dec 2024 14:41:28 +0000 (UTC)
+Received: from bfoster (unknown [10.22.65.140])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C601E30000DF;
+	Mon,  2 Dec 2024 14:41:26 +0000 (UTC)
+Date: Mon, 2 Dec 2024 09:43:13 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, gfs2@lists.linux.dev
+Subject: Re: [syzbot] [iomap?] WARNING in iomap_zero_iter
+Message-ID: <Z03HgRGByNi1spE0@bfoster>
+References: <674d11ec.050a0220.48a03.001c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
+In-Reply-To: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Oct 30, 2024 at 04:37:37PM +0000, Lorenzo Stoakes wrote:
-> On Mon, Oct 28, 2024 at 04:06:07PM +0000, Lorenzo Stoakes wrote:
-> > I guess I'll try to adapt that and respin a v7 when I get a chance.
-> 
-> Hm looking at this draft patch, it seems like a total rework of pidfd's
-> across the board right (now all pidfd's will need to be converted to
-> pid_fd)? Correct me if I'm wrong.
-> 
-> If only for the signal case, it seems like overkill to define a whole
-> pid_fd and to use this CLASS() wrapper just for this one instance.
-> 
-> If the intent is to convert _all_ pidfd's to use this type, it feels really
-> out of scope for this series and I think we'd probably instead want to go
-> off and do that as a separate series and put this on hold until that is
-> done.
-> 
-> If instead you mean that we ought to do something like this just for the
-> signal case, it feels like it'd be quite a bit of extra abstraction just
-> used in this one case but nowhere else, I think if you did an abstraction
-> like this it would _have_ to be across the board right?
-> 
-> I agree that the issue is with this one signal case that pins only the fd
-> (rather than this pid) where this 'pinning' doesn't _necessary_ mess around
-> with reference counts.
-> 
-> So we definitely must address this, but the issue you had with the first
-> approach was that I think (correct me if I'm wrong) I was passing a pointer
-> to a struct fd which is not permitted right?
-> 
-> Could we pass the struct fd by value to avoid this? I think we'd have to
-> unfortunately special-case this and probably duplicate some code which is a
-> pity as I liked the idea of abstracting everything to one place, but we can
-> obviously do that.
-> 
-> So I guess to TL;DR it, the options are:
-> 
-> 1. Implement pid_fd everywhere, in which case I will leave off on
->    this series and I guess, if I have time I could look at trying to
->    implement that or perhaps you'd prefer to?
-> 
-> 2. We are good for the sake of this series to special-case a pidfd_to_pid()
->    implementation (used only by the pidfd_send_signal() syscall)
-> 
-> 3. Something else, or I am misunderstanding your point :)
-> 
-> Let me know how you want me to proceed on this as we're at v6 already and I
-> want to be _really_ sure I'm doing what you want here.
+CC'd gfs2@lists.linux.dev.
 
-I don't think we get away with abstracting it in one place without this
-ending up a pretty janky api. I need to go back and think about calling
-conventions for all this stuff. For now I think I'm fine with something
-like the below that abstracts the api to handle mm/ cleanly and then a
-special-case for pidfd_send_signal():
+On Sun, Dec 01, 2024 at 05:48:28PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+> dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
+> 
+> loop0: detected capacity change from 0 to 32768
+> gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+> gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+> gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
+> gfs2: fsid=syz:syz.0: first mount done, others may mount
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 6131543e7c09..c1857c44d1a3 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -564,15 +564,29 @@ struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
-  */
- struct task_struct *pidfd_get_task(int pidfd, unsigned int *flags)
- {
--       unsigned int f_flags;
-+       unsigned int f_flags = 0;
-        struct pid *pid;
-        struct task_struct *task;
-+       enum pid_type type;
+This is the recently added warning for zeroing folios that start beyond
+i_size:
 
--       pid = pidfd_get_pid(pidfd, &f_flags);
--       if (IS_ERR(pid))
--               return ERR_CAST(pid);
-+       switch (pidfd) {
-+       case PIDFD_SELF_THREAD:
-+               type = PIDTYPE_PID;
-+               pid = get_task_pid(current, type);
-+               break;
-+       case PIDFD_SELF_THREAD_GROUP:
-+               type = PIDTYPE_TGID;
-+               pid = get_task_pid(current, type);
-+               break;
-+       default:
-+               pid = pidfd_get_pid(pidfd, &f_flags);
-+               if (IS_ERR(pid))
-+                       return ERR_CAST(pid);
-+               type = PIDTYPE_TGID;
-+               break;
-+       }
+	WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
 
--       task = get_pid_task(pid, PIDTYPE_TGID);
-+       task = get_pid_task(pid, type);
-        put_pid(pid);
-        if (!task)
-                return ERR_PTR(-ESRCH);
+This was added because iomap zero range was somewhat recently changed to
+no longer update i_size, which means such writes are at risk of being
+thrown away. A quick look at the gfs2_fallocate() -> __gfs2_punch_hole()
+path below shows we make a couple zero range calls around block
+unaligned boundaries and immediately follow that with a flush of the
+entire range. If a portion of this starts beyond i_size then writeback
+will simply throw those folios away.
 
-That would get you support for PIDFD_SELF_THREAD and
-PIDFD_SELF_THREAD_GROUP for process_madvise() and process_mrelease().
+I think the main question here is whether there is some known/legitimate
+use case for post-eof zeroing in GFS2 that requires behavior to be
+revisited on one side or the other, or otherwise if there is an issue
+with the warning check being racy and thus causing a false positive.
 
-And for pidfd_send_signal() we could just open code this for now:
+GFS2 folks,
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 989b1cc9116a..a2e4e3a5ee42 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3990,6 +3990,45 @@ static struct pid *pidfd_to_pid(const struct file *file)
- 	(PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
- 	 PIDFD_SIGNAL_PROCESS_GROUP)
- 
-+static int do_pidfd_send_signal(struct pid *pid, int sig, enum pid_type type,
-+				siginfo_t __user *info, unsigned int flags)
-+{
-+	kernel_siginfo_t kinfo;
-+
-+	switch (flags) {
-+	case PIDFD_SIGNAL_THREAD:
-+		type = PIDTYPE_PID;
-+		break;
-+	case PIDFD_SIGNAL_THREAD_GROUP:
-+		type = PIDTYPE_TGID;
-+		break;
-+	case PIDFD_SIGNAL_PROCESS_GROUP:
-+		type = PIDTYPE_PGID;
-+		break;
-+	}
-+
-+	if (info) {
-+		int ret = copy_siginfo_from_user_any(&kinfo, info);
-+		if (unlikely(ret))
-+			return ret;
-+
-+		if (unlikely(sig != kinfo.si_signo))
-+			return -EINVAL;
-+
-+		/* Only allow sending arbitrary signals to yourself. */
-+		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
-+		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
-+			return -EPERM;
-+	} else {
-+		prepare_kill_siginfo(sig, &kinfo, type);
-+	}
-+
-+	if (type == PIDTYPE_PGID)
-+		return kill_pgrp_info(sig, &kinfo, pid);
-+
-+	return kill_pid_info_type(sig, &kinfo, pid, type);
-+}
-+
- /**
-  * sys_pidfd_send_signal - Signal a process through a pidfd
-  * @pidfd:  file descriptor of the process
-@@ -4009,7 +4048,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- {
- 	int ret;
- 	struct pid *pid;
--	kernel_siginfo_t kinfo;
- 	enum pid_type type;
- 
- 	/* Enforce flags be set to 0 until we add an extension. */
-@@ -4021,56 +4059,39 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 		return -EINVAL;
- 
- 	CLASS(fd, f)(pidfd);
--	if (fd_empty(f))
--		return -EBADF;
- 
--	/* Is this a pidfd? */
--	pid = pidfd_to_pid(fd_file(f));
--	if (IS_ERR(pid))
--		return PTR_ERR(pid);
-+	switch (pidfd) {
-+	case PIDFD_SELF_THREAD:
-+		pid = get_task_pid(current, PIDTYPE_PID);
-+		type = PIDTYPE_PID;
-+		break;
-+	case PIDFD_SELF_THREAD_GROUP:
-+		pid = get_task_pid(current, PIDTYPE_TGID);
-+		type = PIDTYPE_TGID;
-+		break;
-+	default:
-+		if (fd_empty(f))
-+			return -EBADF;
- 
--	if (!access_pidfd_pidns(pid))
--		return -EINVAL;
-+		/* Is this a pidfd? */
-+		pid = pidfd_to_pid(fd_file(f));
-+		if (IS_ERR(pid))
-+			return PTR_ERR(pid);
- 
--	switch (flags) {
--	case 0:
-+		if (!access_pidfd_pidns(pid))
-+			return -EINVAL;
- 		/* Infer scope from the type of pidfd. */
- 		if (fd_file(f)->f_flags & PIDFD_THREAD)
- 			type = PIDTYPE_PID;
- 		else
- 			type = PIDTYPE_TGID;
- 		break;
--	case PIDFD_SIGNAL_THREAD:
--		type = PIDTYPE_PID;
--		break;
--	case PIDFD_SIGNAL_THREAD_GROUP:
--		type = PIDTYPE_TGID;
--		break;
--	case PIDFD_SIGNAL_PROCESS_GROUP:
--		type = PIDTYPE_PGID;
--		break;
- 	}
- 
--	if (info) {
--		ret = copy_siginfo_from_user_any(&kinfo, info);
--		if (unlikely(ret))
--			return ret;
--
--		if (unlikely(sig != kinfo.si_signo))
--			return -EINVAL;
--
--		/* Only allow sending arbitrary signals to yourself. */
--		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
--		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
--			return -EPERM;
--	} else {
--		prepare_kill_siginfo(sig, &kinfo, type);
--	}
--
--	if (type == PIDTYPE_PGID)
--		return kill_pgrp_info(sig, &kinfo, pid);
--	else
--		return kill_pid_info_type(sig, &kinfo, pid, type);
-+	ret = do_pidfd_send_signal(pid, sig, type, info, flags);
-+	if (fd_empty(f))
-+		put_pid(pid);
-+	return ret;
- }
- 
- static int
+Could you comment on the above wrt GFS2 and post-eof zeroing?
+
+If this isn't some obvious case, hopefully syzbot can spit out a
+reproducer soon to help get to the bottom of it. Thanks.
+
+Brian
+
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+> Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
+> RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
+> RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
+> RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
+> RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
+> R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
+> R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
+> FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
+>  gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
+>  __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
+>  gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
+>  vfs_fallocate+0x569/0x6e0 fs/open.c:327
+>  do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
+>  __do_sys_ioctl fs/ioctl.c:904 [inline]
+>  __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7efeb7f80809
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
+> RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
+> RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
+
 
