@@ -1,775 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-36290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36EA29E0EFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 23:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B520F9E0F31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 00:01:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D97161F74
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 22:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76EB6164865
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2024 23:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF071DFD99;
-	Mon,  2 Dec 2024 22:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B0E1DF98E;
+	Mon,  2 Dec 2024 23:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7Kekg6+"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="cvQfpfHV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877F11DFD84
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 22:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733179506; cv=none; b=t/s2yuR49fibuvdlAk9qL7PvHvfASnH6VYBxmHt6I5V42SjBLnca6qmNrMqFTdpcDJrEFSi9duFbfz0kTQqxc6qp1s3reIkHT00p09zJrVsqMQmnK9gAlW9vL2H9161EAbFCDUiPIzWQwXEWYY7WPawYN+XPfDzHbd0V8/G/3U0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733179506; c=relaxed/simple;
-	bh=lI2yAuDvFp9kwiSkP9u2uAmZvhjNDEMpvmeefWPbuSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eTvO4prxF2BNH+cZoL+7xynpghNy9psCZJJriM5066A7T4hO+KlmKgVYyMWaVnJzxvnGDLLfgTnb3mESJkngAna6m/6ZFaWSwXyXbQrWptb8Sopof1RD/MpDrLiQW5sgTkdQ8P9afQqPWXEeiYOmhhuxRJ54LS6gEqzSYhz/ev4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7Kekg6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40109C4CED1;
-	Mon,  2 Dec 2024 22:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733179506;
-	bh=lI2yAuDvFp9kwiSkP9u2uAmZvhjNDEMpvmeefWPbuSM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X7Kekg6+qDdi+EWzIZ64fAilrAC55YN+IUw8OO/o9jaxqIBcaa6SN6EvUo15oLtiY
-	 eFw4W4YbD6j6PinZquchZYqE50yiXmRGOIX9igpXuEriwtJZ7DQUS8ux+mt3+X1pIY
-	 VjwakipRjSwoa4jFjAroSEI242KG++306OgD9rbP7acKl1/Idifk5xAeVVDHAWNhvs
-	 VL4L/62ScFMJssQEHeUDwbxyOE8PBTRqGmgPhRfWDYNmBwYzOscokM1z0YkbxjaxlX
-	 1isLhkMrXaTe7a/lo+r/XJEQnfAoC9QlL3Mg4q0tXxTIZ8+kwPXip4jbfDYmPSko04
-	 0O79MsOakn21A==
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] selftests/pidfd: add pidfs file handle selftests
-Date: Mon,  2 Dec 2024 23:44:52 +0100
-Message-ID: <20241202-imstande-einsicht-d78753e1c632@brauner>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3FE1DEFC2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Dec 2024 23:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733180494; cv=fail; b=S9btoKbv8ce6604UnVPZSwmzTCZQaAmEMiJFmkm7BbMDtk4oV9mEIsEnhombcU0Nl+U+zr+koh9JUje1o70DqD+Q0O0xgX2/+ENE2Sww3OlMsoWHqP0OT8pyWUVmtynuKW9tw5o7BGXuzmPFZ27/VVOlVFeZzlUUOBh9zidtksA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733180494; c=relaxed/simple;
+	bh=loI3oMCh7Ogj+v4RoKuM6QoI7SMYTi3JSoFqPETKiEw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vBDZkAS7yIvmU7dJnkQmcVbZ8drIz3Zr4pj+iOESky0W37woIcoDhP96vx6/Am9ab2tVUIyYGrthJA8iCAZH/e088CK0BR09OlyNZo788lKsHR404kuXZRHATqJv3wRONVUOF/6Py5pqqY0I6gvopVQhPChQo4dLg5RsvDgTRjQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=cvQfpfHV; arc=fail smtp.client-ip=209.222.82.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2045.outbound.protection.outlook.com [104.47.56.45]) by mx-outbound21-90.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 02 Dec 2024 23:01:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ru2adyy75ZhriFeAE8EWgt9jIn+BVkI2q6W1fQcJ4/oTQYoPGJ7MVkhQ2iM/Oj/jap5XWeDkt/0DtWiZ0Lmp9Fhl5Euz77BiwlhN0ZnZC3ujK1xEbhCyvapDPF9BiiXkFz9yVHrS7ILc6Q1JFjXfC71ITXWu3WLc3Bq7ifHgDwxigQZcknFKus+ztgtxMUpKnMLT4UxJlSjKYHesVGBv4Nn2EnWliZNzbtvHkdEQO55maUlUDkqJcwQ9VJZ1Pa4nrQYI2UwqSEz6UHsQV5laIbWcqOb09T5juHEQKyeXx2mY5N3SiBjKT/2VUF21jopwG+Z5QbjwqTmRBG8Wd3iJag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3VB7NwbozzRJz1HQfIPyYMp+uILgFWnRA5aJ3BdVgQk=;
+ b=vPnV8vljsyG/CTGiPXqd+ls0inufgB+2lQJu785liRKBnRcZjq8vDRm7/O3W9crHnjveZLt633Nag568GKVHyKG0rYnIRgphqEzf0SBVuQFtMtzSCbuy8Y8A4nhex6C0W56JCY5VS79zSae/n2+V76WKFyHKbrjWGV+t8HS5QgzrZCQH/Gu+YP5lELW3Pq5VhPFReudpoLLO2NxKVO9/lPVn8A7qrpy0G3jD2QH0XqDQex5em8Q/dRjrbPlDagAF4FT93nyam/II9eD25TNNWegegArt3uQfCbDr5jGtvDsZPR4phzQ3hCPZQ1BHvEC9swCNDz4/AcsYXbMhMfyzbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3VB7NwbozzRJz1HQfIPyYMp+uILgFWnRA5aJ3BdVgQk=;
+ b=cvQfpfHVE1YZP2sxyAQSd2LhXEQUlrGDgrYDIH9e1PGstmtanYPSrt8tSysNJndm0nZxydp3PyvSsHZTZBTTSRSwtmPIjXVopU4/WCBfopUpUsHtFkgid84AL1+lw0p7TiY0LmDK1qtjMunxmCc77U30FtsR0lsvAEZf15e9VkA=
+Received: from BYAPR21CA0008.namprd21.prod.outlook.com (2603:10b6:a03:114::18)
+ by CO6PR19MB5338.namprd19.prod.outlook.com (2603:10b6:303:135::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Mon, 2 Dec
+ 2024 23:01:15 +0000
+Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com
+ (2603:10b6:a03:114:cafe::27) by BYAPR21CA0008.outlook.office365.com
+ (2603:10b6:a03:114::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.8 via Frontend Transport; Mon, 2
+ Dec 2024 23:01:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.7
+ via Frontend Transport; Mon, 2 Dec 2024 23:01:15 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 20F9255;
+	Mon,  2 Dec 2024 23:01:13 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Date: Tue, 03 Dec 2024 00:01:10 +0100
+Subject: [PATCH v2] fuse: Set *nbytesp=0 in fuse_get_user_pages on
+ allocation failure
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=20598; i=brauner@kernel.org; h=from:subject:message-id; bh=lI2yAuDvFp9kwiSkP9u2uAmZvhjNDEMpvmeefWPbuSM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT7WaTcZb57zyX0UevsizJ2mklSyWvb1c4U2VT+1L30s Hgrs6hwRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwES6ljIyzNC59UFnzbFjn88s q2OdGm9tO/nCT520GXmVk91PRpq8VmP4HzibpVHq0vabCv4zDiYcX7ZKcOOV7sW/DHMKNXU3OB8 6wgQA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com>
+X-B4-Tracking: v=1; b=H4sIADU8TmcC/4WNTQ6CQAxGr0K6tmZmAgZdeQ9DyPyUoQsHMoNEQ
+ 7i7lQu4afO+fH3doFBmKnCrNsi0cuEpCZhTBX60KRJyEAajTK1l4MBvHF6F+khLLzv3s41U8GK
+ vRnmnat3WINdzJqke5kcnPHJZpvw5Hq36l/53rho1tq7x3tuhcY7uIaSzn57Q7fv+BVRSaEO8A
+ AAA
+X-Change-ID: 20241202-fix-fuse_get_user_pages-6a920cb04184
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+Cc: Nihar Chaithanya <niharchaithanya@gmail.com>, 
+ Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+ syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733180473; l=2168;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=loI3oMCh7Ogj+v4RoKuM6QoI7SMYTi3JSoFqPETKiEw=;
+ b=+LG0K8d01U3s/dG820A8LNJZLFDZLKjZ9PKSUbLDsBN5pA6y0blGHaN8U+pKvCyegn0Nfh3oU
+ uS5TcfS9QQ5CAoNKwdkBaf+QTmpPxqvU+Auk5Ksy77ZUKx5+7lvqcgi
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|CO6PR19MB5338:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2807ab4-1f73-4da2-5fb1-08dd13253935
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SlJlajRCU3cralEvOGw0d3ZuN25oQ1VPeTVYSHdZSFZMSFVsWXlueEZXeXk0?=
+ =?utf-8?B?ZVdWY2VZU3BvZjRFUXp1ZzdHdE1LbkpjVUM1S3Bkb05NaGJKR2xjcGVTdTRI?=
+ =?utf-8?B?L2hiZWZ1NW4xYXBLdHNyVEVTU3pOaE9iN2dCQk54RHhEaTBEZ2xsemc0Yk5S?=
+ =?utf-8?B?b21IRWpKdzVRaElPb0xaays1Ulkwd0U1SHErSUxYdU8rNDNHNlUyamZ5WUE4?=
+ =?utf-8?B?WWREMm0vd090NWQvSFVpa2dOTUhPd2Y1RW1PSkVCb0x3SG41UmpXTDhob1U4?=
+ =?utf-8?B?ZE92TXVtWm51clQ3cHJQZEZEY0x6ZnV5bGNISnkwamJyR3kxVTZreXl6TUIv?=
+ =?utf-8?B?cExFbVFlajljMWRJZ2NJNWMwOVhsVmpjQktkK3J2SFFyNC83bHVVa1dUaVdl?=
+ =?utf-8?B?RkpCVy83NHlhaVJwd2x1NFFFS0JmcHJ5a29MbVdIbjFwOGprVGZhMmx5ZVlR?=
+ =?utf-8?B?V0tqdFpucHJ5TDlmQlZzdk9WNU9xZmFDcUxjOHVsbmFsbXlrZ0ZJeURXY0hE?=
+ =?utf-8?B?SE1HU1YwZGhTbzZqMDJ3eFpER0YydkxQMDRYc2RVSmpUeUJsTkJGTER3UmpI?=
+ =?utf-8?B?U2VxNGVYMHFtcTl5MkNxdGU3SUJNalFMOVJEQXU0ZEdxWU5HbkgwbVJvb29U?=
+ =?utf-8?B?cFY2LzZlRnBMYjgydmFQbXVNdmJ5SkpvNDBOUVAxUTJoSmwwTWpqNCtCbWFx?=
+ =?utf-8?B?QlhqQTlidmdsYmNnQnYyVDkvZXhDVS9lNDB3MndIK01VUjFwa2t4S0FHbEhZ?=
+ =?utf-8?B?UVhETUZxenYvd2xNN1RNZVBMMVc1MGgvc0Jad3RkVTk3RlM1S0tlZUZUVG1Z?=
+ =?utf-8?B?TjNXNytYcUZPSGNHL1lIQk11dzJvdHA3MmUxbm1lNFkxanBZYU5IazZFSHYz?=
+ =?utf-8?B?YkMyMkVHWHl6MFoyZk9QUzRWcVF4eEVWVUxSQ2dDK3J2MHZLUVIvM1ZOODNT?=
+ =?utf-8?B?RS9uZ3kvbUs4SSs2TmJyMU02V3BtMHdGWVIxeG5GODNGK1JneFFGMXRYNk9a?=
+ =?utf-8?B?WVZJR1lHblFaZVZUQmJmcWlSUHBGelFiM3VqTk16dktaYXU2eFZtS2dDUEhR?=
+ =?utf-8?B?VXRsNzYzSjUra05qNFRvRDczL2hORitFdzFuYkViZHNKR2tpYWpOL0hGRjBR?=
+ =?utf-8?B?alYybWZHdDFkcG5PMmNZM2Y2N0dCT2FCUWZvdVZZV3FLU2t4RmlzRHFtVE9o?=
+ =?utf-8?B?Rm5rSlRzQXE4RmNrSGlkcnV0YWw3WnU3b2NUTEtkUmcyRzZ4NzFuTFkxUm1Q?=
+ =?utf-8?B?Wkl0Tmg4N1A4UjhDazNKREN0V1piSC9EVC9YRXVvSnZ5ampwcUtNek1qVW5P?=
+ =?utf-8?B?SnIxRlpMR0RCSFdQUExINFgwY3Y1OFUrZG9xaVp5UVl1R3hNNWFvME9pemkr?=
+ =?utf-8?B?R2VpQVdWak4xU1RPWHJ3ZFBFV3pRb3RZSWVNZ1E5K29RZCsxbmxtc0Y3OE5O?=
+ =?utf-8?B?NFBOZ3RBakxTcVl6TkJua2duRitYYTdjTElwRWpBbTNsNHVwcmdSVEJXT0dl?=
+ =?utf-8?B?NmZJMkxyNTdzekY4bHJIZjN3ejVQck95Z3IyWmZhakx1TDhuQTRsREhMTVpX?=
+ =?utf-8?B?WWZpdGszUXIvNk81M3E0ZXREb3dyQTV0Z3J4d0dZeWtvSmt5cmk4TG5idmNG?=
+ =?utf-8?B?WDFFQ1ZKQTBuQXhYU3cvNWVrT2Q5cEhCTDBkVTNLaWtrVGY3YUFvb01uLzVU?=
+ =?utf-8?B?MmZMeWY2RTFrUjJXaHNvL3RUNlpNRlF4MTd2ZDJWTE8xRWEvQWVWRWg4c2xh?=
+ =?utf-8?B?b25Jdm9ZdkNVOHQvd0JGazJyK0dKTUQ1Wk04OG9IMEp2Wktld0FPczBSa05h?=
+ =?utf-8?B?UnBFZlFnYlBLRVh4UnJBbDdZYXBVMjlpdE0xd2tlNGorcXhDclRuL0ZZUUZa?=
+ =?utf-8?B?Mm9jZHk0YXdLemIyNElYaDVJb2hOaDhHc04wNW9MdjV2Y3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	EusL1IcQaiwm9eeHy4vKx8XV2m65HC7CU1+BbiI63rINhjlVxeip78wgVkVfHMPIKxb4cwqMM8WPtYMDKUYIEB4a/d3h7oWLAOYCbrvOnzp7HRpRChz6KI2owwjpCCfC+Itx7PKBhNaBOoR1/8M9iV+KcWqu3PVVZP7YjFHDwVPR8mSAyu+HvogBvMuqLbgwNBdzFUszK/yQYBMjMnh49GKeKCOvtZ3ckyLOb59tYouaEcepVJufagXvSuWOfKLa4cOzOiycAH/11QwKx5kADZQQDDBFVVuCeYT9NCLmxE0etEhsMvb3dNHBiBnGH5TnNHUoJZJASQCXbVGH0OCDoPq8QMyHUtQzHFqEeZI10g9qdp2yARo32+QPyroX3Mi7aMPaNCTDjGdenbdKLGV/Tlt6CtDHN1GlnH2SY9zj/pjgvBE8zYvYUEZqeyzOQE6RAIX11QmztvjWoeENZAS3QDgQ+rRtNL2p04UO4MaJPhnXb7ijlpx3k5qKVXdxATCXurCNefPWc74wSvTy2fZTHKcal9emtrJiX6/2txRAjOOpC1NHfzDUr9/L3VNx2y7jEsuz6+ErgNbQU0UKK9mc9+NfDJGo/NOHVgNNOU8iFnCYXYH6DOxfEwVnpAGzeDknEDxW5P32zl/mpBNNua/vwg==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 23:01:15.0057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2807ab4-1f73-4da2-5fb1-08dd13253935
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR19MB5338
+X-BESS-ID: 1733180477-105466-1669-14111-1
+X-BESS-VER: 2019.1_20241126.2220
+X-BESS-Apparent-Source-IP: 104.47.56.45
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaGhgZAVgZQ0NLAMs3SJDXJ0i
+	TZNCXN2DTN2DjJ3Ngy1SDZ0ijV0jRFqTYWAPY/vDtBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.260846 [from 
+	cloudscan9-186.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-Add selftests for pidfs file handles.
+In fuse_get_user_pages(), set *nbytesp to 0 when struct page **pages
+allocation fails. This prevents the caller (fuse_direct_io) from making
+incorrect assumptions that could lead to NULL pointer dereferences
+when processing the request reply.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Previously, *nbytesp was left unmodified on allocation failure, which
+could cause issues if the caller assumed pages had been added to
+ap->descs[] when they hadn't.
+
+Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
+Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- tools/testing/selftests/pidfd/.gitignore      |   1 +
- tools/testing/selftests/pidfd/Makefile        |   3 +-
- tools/testing/selftests/pidfd/pidfd.h         |  39 ++
- .../selftests/pidfd/pidfd_file_handle_test.c  | 352 ++++++++++++++++++
- .../selftests/pidfd/pidfd_setns_test.c        |  47 +--
- tools/testing/selftests/pidfd/pidfd_wait.c    |  47 +--
- 6 files changed, 416 insertions(+), 73 deletions(-)
- create mode 100644 tools/testing/selftests/pidfd/pidfd_file_handle_test.c
+Changes in v2:
+- Set ret in the (!pages) condition only to avoid returning
+  ENOMEM when the while loop would not do anything
+- Remove the error check in fuse_copy_do(), that is a bit debatable.
+  I had added it to prevent kernel crashes on fuse error, but then
+  it causes 'visual clutter' (Joanne)
+- Link to v1: https://lore.kernel.org/r/20241202-fix-fuse_get_user_pages-v1-1-8b5cccaf5bbe@ddn.com
+---
+ fs/fuse/file.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index 973198a3ec3d..224260e1a4a2 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -6,3 +6,4 @@ pidfd_wait
- pidfd_fdinfo_test
- pidfd_getfd_test
- pidfd_setns_test
-+pidfd_file_handle_test
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index d731e3e76d5b..3c16d8e77684 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -2,7 +2,8 @@
- CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
- 
- TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
--	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test
-+	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
-+	pidfd_file_handle_test
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index 88d6830ee004..28a471c88c51 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -17,6 +17,7 @@
- #include <sys/wait.h>
- 
- #include "../kselftest.h"
-+#include "../clone3/clone3_selftests.h"
- 
- #ifndef P_PIDFD
- #define P_PIDFD 3
-@@ -68,6 +69,11 @@
- #define PIDFD_SKIP 3
- #define PIDFD_XFAIL 4
- 
-+static inline int sys_waitid(int which, pid_t pid, siginfo_t *info, int options)
-+{
-+	return syscall(__NR_waitid, which, pid, info, options, NULL);
-+}
-+
- static inline int wait_for_pid(pid_t pid)
- {
- 	int status, ret;
-@@ -114,4 +120,37 @@ static inline int sys_memfd_create(const char *name, unsigned int flags)
- 	return syscall(__NR_memfd_create, name, flags);
- }
- 
-+static inline pid_t create_child(int *pidfd, unsigned flags)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | flags,
-+		.exit_signal	= SIGCHLD,
-+		.pidfd		= ptr_to_u64(pidfd),
-+	};
-+
-+	return sys_clone3(&args, sizeof(struct __clone_args));
-+}
-+
-+static inline ssize_t read_nointr(int fd, void *buf, size_t count)
-+{
-+	ssize_t ret;
-+
-+	do {
-+		ret = read(fd, buf, count);
-+	} while (ret < 0 && errno == EINTR);
-+
-+	return ret;
-+}
-+
-+static inline ssize_t write_nointr(int fd, const void *buf, size_t count)
-+{
-+	ssize_t ret;
-+
-+	do {
-+		ret = write(fd, buf, count);
-+	} while (ret < 0 && errno == EINTR);
-+
-+	return ret;
-+}
-+
- #endif /* __PIDFD_H */
-diff --git a/tools/testing/selftests/pidfd/pidfd_file_handle_test.c b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
-new file mode 100644
-index 000000000000..08af47a599cd
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
-@@ -0,0 +1,352 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <linux/types.h>
-+#include <poll.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <linux/kcmp.h>
-+#include <sys/stat.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest_harness.h"
-+
-+FIXTURE(file_handle)
-+{
-+	pid_t pid;
-+	int pidfd;
-+
-+	pid_t child_pid1;
-+	int child_pidfd1;
-+
-+	pid_t child_pid2;
-+	int child_pidfd2;
-+
-+	pid_t child_pid3;
-+	int child_pidfd3;
-+};
-+
-+FIXTURE_SETUP(file_handle)
-+{
-+	int ret;
-+	int ipc_sockets[2];
-+	char c;
-+
-+	self->pid = getpid();
-+	self->pidfd = sys_pidfd_open(self->pid, 0);
-+	ASSERT_GE(self->pidfd, 0);
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	self->child_pid1 = create_child(&self->child_pidfd1, CLONE_NEWUSER);
-+	EXPECT_GE(self->child_pid1, 0);
-+
-+	if (self->child_pid1 == 0) {
-+		close(ipc_sockets[0]);
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		close(ipc_sockets[1]);
-+
-+		pause();
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	close(ipc_sockets[1]);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	close(ipc_sockets[0]);
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	self->child_pid2 = create_child(&self->child_pidfd2, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid2, 0);
-+
-+	if (self->child_pid2 == 0) {
-+		close(ipc_sockets[0]);
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		close(ipc_sockets[1]);
-+
-+		pause();
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	close(ipc_sockets[1]);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	close(ipc_sockets[0]);
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	self->child_pid3 = create_child(&self->child_pidfd3, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid3, 0);
-+
-+	if (self->child_pid3 == 0) {
-+		close(ipc_sockets[0]);
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		close(ipc_sockets[1]);
-+
-+		pause();
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	close(ipc_sockets[1]);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	close(ipc_sockets[0]);
-+}
-+
-+FIXTURE_TEARDOWN(file_handle)
-+{
-+	EXPECT_EQ(close(self->pidfd), 0);
-+
-+	EXPECT_EQ(sys_pidfd_send_signal(self->child_pidfd1, SIGKILL, NULL, 0), 0);
-+	if (self->child_pidfd1 >= 0)
-+		EXPECT_EQ(0, close(self->child_pidfd1));
-+
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid1, NULL, WEXITED), 0);
-+
-+	EXPECT_EQ(sys_pidfd_send_signal(self->child_pidfd2, SIGKILL, NULL, 0), 0);
-+	if (self->child_pidfd2 >= 0)
-+		EXPECT_EQ(0, close(self->child_pidfd2));
-+
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid2, NULL, WEXITED), 0);
-+
-+	if (self->child_pidfd3 >= 0) {
-+		EXPECT_EQ(sys_pidfd_send_signal(self->child_pidfd3, SIGKILL, NULL, 0), 0);
-+		EXPECT_EQ(0, close(self->child_pidfd3));
-+		EXPECT_EQ(sys_waitid(P_PID, self->child_pid3, NULL, WEXITED), 0);
-+	}
-+}
-+
-+/*
-+ * Test that we can decode a pidfs file handle in the same pid
-+ * namespace.
-+ */
-+TEST_F(file_handle, file_handle_same_pidns)
-+{
-+	int mnt_id;
-+	struct file_handle *fh;
-+	int pidfd = -EBADF;
-+	struct stat st1, st2;
-+
-+	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(fh, NULL);
-+	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	fh->handle_bytes = MAX_HANDLE_SZ;
-+
-+	ASSERT_EQ(name_to_handle_at(self->child_pidfd1, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-+
-+	ASSERT_EQ(fstat(self->child_pidfd1, &st1), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_PATH);
-+	ASSERT_LT(pidfd, 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_CLOEXEC);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_NONBLOCK);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	free(fh);
-+}
-+
-+/*
-+ * Test that we can decode a pidfs file handle from a child pid
-+ * namespace.
-+ */
-+TEST_F(file_handle, file_handle_child_pidns)
-+{
-+	int mnt_id;
-+	struct file_handle *fh;
-+	int pidfd = -EBADF;
-+	struct stat st1, st2;
-+
-+	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(fh, NULL);
-+	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	fh->handle_bytes = MAX_HANDLE_SZ;
-+
-+	ASSERT_EQ(name_to_handle_at(self->child_pidfd2, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-+
-+	ASSERT_EQ(fstat(self->child_pidfd2, &st1), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_PATH);
-+	ASSERT_LT(pidfd, 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_CLOEXEC);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, O_NONBLOCK);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	free(fh);
-+}
-+
-+/*
-+ * Test that we fail to decode a pidfs file handle from an ancestor
-+ * child pid namespace.
-+ */
-+TEST_F(file_handle, file_handle_foreign_pidns)
-+{
-+	int mnt_id;
-+	struct file_handle *fh;
-+	pid_t pid;
-+
-+	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(fh, NULL);
-+	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	fh->handle_bytes = MAX_HANDLE_SZ;
-+
-+	ASSERT_EQ(name_to_handle_at(self->pidfd, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-+
-+	ASSERT_EQ(setns(self->child_pidfd2, CLONE_NEWUSER | CLONE_NEWPID), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		int pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+		if (pidfd >= 0) {
-+			TH_LOG("Managed to open pidfd outside of the caller's pid namespace hierarchy");
-+			_exit(1);
-+		}
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(wait_for_pid(pid), 0);
-+
-+	free(fh);
-+}
-+
-+/*
-+ * Test that we can decode a pidfs file handle of a process who has
-+ * exited but not been reaped.
-+ */
-+TEST_F(file_handle, pid_has_exited)
-+{
-+	int mnt_id, pidfd, child_pidfd3;
-+	struct file_handle *fh;
-+	struct stat st1, st2;
-+
-+	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(fh, NULL);
-+	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	fh->handle_bytes = MAX_HANDLE_SZ;
-+
-+	ASSERT_EQ(name_to_handle_at(self->child_pidfd3, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-+
-+	ASSERT_EQ(fstat(self->child_pidfd3, &st1), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	child_pidfd3 = self->child_pidfd3;
-+	self->child_pidfd3 = -EBADF;
-+	EXPECT_EQ(sys_pidfd_send_signal(child_pidfd3, SIGKILL, NULL, 0), 0);
-+	EXPECT_EQ(close(child_pidfd3), 0);
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid3, NULL, WEXITED | WNOWAIT), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid3, NULL, WEXITED), 0);
-+}
-+
-+/*
-+ * Test that we fail to decode a pidfs file handle of a process who has
-+ * already been reaped.
-+ */
-+TEST_F(file_handle, pid_has_been_reaped)
-+{
-+	int mnt_id, pidfd, child_pidfd3;
-+	struct file_handle *fh;
-+	struct stat st1, st2;
-+
-+	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(fh, NULL);
-+	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-+	fh->handle_bytes = MAX_HANDLE_SZ;
-+
-+	ASSERT_EQ(name_to_handle_at(self->child_pidfd3, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-+
-+	ASSERT_EQ(fstat(self->child_pidfd3, &st1), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ASSERT_EQ(fstat(pidfd, &st2), 0);
-+	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-+
-+	ASSERT_EQ(close(pidfd), 0);
-+
-+	child_pidfd3 = self->child_pidfd3;
-+	self->child_pidfd3 = -EBADF;
-+	EXPECT_EQ(sys_pidfd_send_signal(child_pidfd3, SIGKILL, NULL, 0), 0);
-+	EXPECT_EQ(close(child_pidfd3), 0);
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid3, NULL, WEXITED), 0);
-+
-+	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-+	ASSERT_LT(pidfd, 0);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-index 7c2a4349170a..222f8131283b 100644
---- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-@@ -19,7 +19,6 @@
- #include <linux/ioctl.h>
- 
- #include "pidfd.h"
--#include "../clone3/clone3_selftests.h"
- #include "../kselftest_harness.h"
- 
- #ifndef PIDFS_IOCTL_MAGIC
-@@ -118,22 +117,6 @@ FIXTURE(current_nsset)
- 	int child_pidfd_derived_nsfds2[PIDFD_NS_MAX];
- };
- 
--static int sys_waitid(int which, pid_t pid, int options)
--{
--	return syscall(__NR_waitid, which, pid, NULL, options, NULL);
--}
--
--pid_t create_child(int *pidfd, unsigned flags)
--{
--	struct __clone_args args = {
--		.flags		= CLONE_PIDFD | flags,
--		.exit_signal	= SIGCHLD,
--		.pidfd		= ptr_to_u64(pidfd),
--	};
--
--	return sys_clone3(&args, sizeof(struct clone_args));
--}
--
- static bool switch_timens(void)
- {
- 	int fd, ret;
-@@ -150,28 +133,6 @@ static bool switch_timens(void)
- 	return ret == 0;
- }
- 
--static ssize_t read_nointr(int fd, void *buf, size_t count)
--{
--	ssize_t ret;
--
--	do {
--		ret = read(fd, buf, count);
--	} while (ret < 0 && errno == EINTR);
--
--	return ret;
--}
--
--static ssize_t write_nointr(int fd, const void *buf, size_t count)
--{
--	ssize_t ret;
--
--	do {
--		ret = write(fd, buf, count);
--	} while (ret < 0 && errno == EINTR);
--
--	return ret;
--}
--
- FIXTURE_SETUP(current_nsset)
- {
- 	int i, proc_fd, ret;
-@@ -229,7 +190,7 @@ FIXTURE_SETUP(current_nsset)
- 		_exit(EXIT_SUCCESS);
- 	}
- 
--	ASSERT_EQ(sys_waitid(P_PID, self->child_pid_exited, WEXITED | WNOWAIT), 0);
-+	ASSERT_EQ(sys_waitid(P_PID, self->child_pid_exited, NULL, WEXITED | WNOWAIT), 0);
- 
- 	self->pidfd = sys_pidfd_open(self->pid, 0);
- 	EXPECT_GE(self->pidfd, 0) {
-@@ -432,9 +393,9 @@ FIXTURE_TEARDOWN(current_nsset)
- 		EXPECT_EQ(0, close(self->child_pidfd1));
- 	if (self->child_pidfd2 >= 0)
- 		EXPECT_EQ(0, close(self->child_pidfd2));
--	ASSERT_EQ(sys_waitid(P_PID, self->child_pid_exited, WEXITED), 0);
--	ASSERT_EQ(sys_waitid(P_PID, self->child_pid1, WEXITED), 0);
--	ASSERT_EQ(sys_waitid(P_PID, self->child_pid2, WEXITED), 0);
-+	ASSERT_EQ(sys_waitid(P_PID, self->child_pid_exited, NULL, WEXITED), 0);
-+	ASSERT_EQ(sys_waitid(P_PID, self->child_pid1, NULL, WEXITED), 0);
-+	ASSERT_EQ(sys_waitid(P_PID, self->child_pid2, NULL, WEXITED), 0);
- }
- 
- static int preserve_ns(const int pid, const char *ns)
-diff --git a/tools/testing/selftests/pidfd/pidfd_wait.c b/tools/testing/selftests/pidfd/pidfd_wait.c
-index 0dcb8365ddc3..1e2d49751cde 100644
---- a/tools/testing/selftests/pidfd/pidfd_wait.c
-+++ b/tools/testing/selftests/pidfd/pidfd_wait.c
-@@ -26,22 +26,11 @@
- #define SKIP(s, ...)	XFAIL(s, ##__VA_ARGS__)
- #endif
- 
--static pid_t sys_clone3(struct clone_args *args)
--{
--	return syscall(__NR_clone3, args, sizeof(struct clone_args));
--}
--
--static int sys_waitid(int which, pid_t pid, siginfo_t *info, int options,
--		      struct rusage *ru)
--{
--	return syscall(__NR_waitid, which, pid, info, options, ru);
--}
--
- TEST(wait_simple)
- {
- 	int pidfd = -1;
- 	pid_t parent_tid = -1;
--	struct clone_args args = {
-+	struct __clone_args args = {
- 		.parent_tid = ptr_to_u64(&parent_tid),
- 		.pidfd = ptr_to_u64(&pidfd),
- 		.flags = CLONE_PIDFD | CLONE_PARENT_SETTID,
-@@ -55,7 +44,7 @@ TEST(wait_simple)
- 	pidfd = open("/proc/self", O_DIRECTORY | O_RDONLY | O_CLOEXEC);
- 	ASSERT_GE(pidfd, 0);
- 
--	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL);
-+	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED);
- 	ASSERT_NE(pid, 0);
- 	EXPECT_EQ(close(pidfd), 0);
- 	pidfd = -1;
-@@ -63,18 +52,18 @@ TEST(wait_simple)
- 	pidfd = open("/dev/null", O_RDONLY | O_CLOEXEC);
- 	ASSERT_GE(pidfd, 0);
- 
--	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL);
-+	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED);
- 	ASSERT_NE(pid, 0);
- 	EXPECT_EQ(close(pidfd), 0);
- 	pidfd = -1;
- 
--	pid = sys_clone3(&args);
-+	pid = sys_clone3(&args, sizeof(args));
- 	ASSERT_GE(pid, 0);
- 
- 	if (pid == 0)
- 		exit(EXIT_SUCCESS);
- 
--	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL);
-+	pid = sys_waitid(P_PIDFD, pidfd, &info, WEXITED);
- 	ASSERT_GE(pid, 0);
- 	ASSERT_EQ(WIFEXITED(info.si_status), true);
- 	ASSERT_EQ(WEXITSTATUS(info.si_status), 0);
-@@ -89,7 +78,7 @@ TEST(wait_states)
- {
- 	int pidfd = -1;
- 	pid_t parent_tid = -1;
--	struct clone_args args = {
-+	struct __clone_args args = {
- 		.parent_tid = ptr_to_u64(&parent_tid),
- 		.pidfd = ptr_to_u64(&pidfd),
- 		.flags = CLONE_PIDFD | CLONE_PARENT_SETTID,
-@@ -102,7 +91,7 @@ TEST(wait_states)
- 	};
- 
- 	ASSERT_EQ(pipe(pfd), 0);
--	pid = sys_clone3(&args);
-+	pid = sys_clone3(&args, sizeof(args));
- 	ASSERT_GE(pid, 0);
- 
- 	if (pid == 0) {
-@@ -117,28 +106,28 @@ TEST(wait_states)
- 	}
- 
- 	close(pfd[0]);
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WSTOPPED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WSTOPPED), 0);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_STOPPED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
- 
- 	ASSERT_EQ(sys_pidfd_send_signal(pidfd, SIGCONT, NULL, 0), 0);
- 
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WCONTINUED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WCONTINUED), 0);
- 	ASSERT_EQ(write(pfd[1], "C", 1), 1);
- 	close(pfd[1]);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_CONTINUED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
- 
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WUNTRACED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WUNTRACED), 0);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_STOPPED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
- 
- 	ASSERT_EQ(sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0), 0);
- 
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WEXITED), 0);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_KILLED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
-@@ -151,7 +140,7 @@ TEST(wait_nonblock)
- 	int pidfd;
- 	unsigned int flags = 0;
- 	pid_t parent_tid = -1;
--	struct clone_args args = {
-+	struct __clone_args args = {
- 		.parent_tid = ptr_to_u64(&parent_tid),
- 		.flags = CLONE_PARENT_SETTID,
- 		.exit_signal = SIGCHLD,
-@@ -173,12 +162,12 @@ TEST(wait_nonblock)
- 		SKIP(return, "Skipping PIDFD_NONBLOCK test");
- 	}
- 
--	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL);
-+	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED);
- 	ASSERT_LT(ret, 0);
- 	ASSERT_EQ(errno, ECHILD);
- 	EXPECT_EQ(close(pidfd), 0);
- 
--	pid = sys_clone3(&args);
-+	pid = sys_clone3(&args, sizeof(args));
- 	ASSERT_GE(pid, 0);
- 
- 	if (pid == 0) {
-@@ -201,7 +190,7 @@ TEST(wait_nonblock)
- 	 * Callers need to see EAGAIN/EWOULDBLOCK with non-blocking pidfd when
- 	 * child processes exist but none have exited.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 88d0946b5bc98705e0d895bc798aa4d9df080c3c..ae74d2b7ad5be14e4d157495e7c00fcf3fc40625 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1541,8 +1541,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
  	 */
--	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL);
-+	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED);
- 	ASSERT_LT(ret, 0);
- 	ASSERT_EQ(errno, EAGAIN);
+ 	struct page **pages = kzalloc(max_pages * sizeof(struct page *),
+ 				      GFP_KERNEL);
+-	if (!pages)
+-		return -ENOMEM;
++	if (!pages) {
++		ret = -ENOMEM;
++		goto out;
++	}
  
-@@ -210,19 +199,19 @@ TEST(wait_nonblock)
- 	 * WNOHANG raised explicitly when child processes exist but none have
- 	 * exited.
- 	 */
--	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED | WNOHANG, NULL);
-+	ret = sys_waitid(P_PIDFD, pidfd, &info, WEXITED | WNOHANG);
- 	ASSERT_EQ(ret, 0);
+ 	while (nbytes < *nbytesp && nr_pages < max_pages) {
+ 		unsigned nfolios, i;
+@@ -1584,6 +1586,7 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 	else
+ 		ap->args.out_pages = true;
  
- 	ASSERT_EQ(fcntl(pidfd, F_SETFL, (flags & ~O_NONBLOCK)), 0);
++out:
+ 	*nbytesp = nbytes;
  
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WSTOPPED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WSTOPPED), 0);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_STOPPED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
- 
- 	ASSERT_EQ(sys_pidfd_send_signal(pidfd, SIGCONT, NULL, 0), 0);
- 
--	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WEXITED, NULL), 0);
-+	ASSERT_EQ(sys_waitid(P_PIDFD, pidfd, &info, WEXITED), 0);
- 	ASSERT_EQ(info.si_signo, SIGCHLD);
- 	ASSERT_EQ(info.si_code, CLD_EXITED);
- 	ASSERT_EQ(info.si_pid, parent_tid);
+ 	return ret < 0 ? ret : 0;
+
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241202-fix-fuse_get_user_pages-6a920cb04184
+
+Best regards,
 -- 
-2.45.2
+Bernd Schubert <bschubert@ddn.com>
 
 
