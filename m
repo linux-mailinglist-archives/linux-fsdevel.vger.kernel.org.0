@@ -1,216 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-36385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1334D9E2E00
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:22:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7961610FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 21:22:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50320A5C8;
-	Tue,  3 Dec 2024 21:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="L9I59bjh"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779009E2DDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:12:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A050204F89;
-	Tue,  3 Dec 2024 21:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E27283B9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 21:12:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70C4208990;
+	Tue,  3 Dec 2024 21:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="uVAtYIn3"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DC11F7547
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 21:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260885; cv=none; b=rUIhrXEsJFH8dtTEYZlmbh93qZYuh/W9sWjw9/5Ndl+Q13TdnJF06GdBxRXS099tL3okOQ0uqYXd+S5vk3chKyzjvpE+EUi8nAUFIUJWsOpGtie+z5H/1hSpsjqs0JZuTa8suG76ykwJ6S7WXSeDHLW166YwBgYfMWigmCtUeSE=
+	t=1733260332; cv=none; b=l5INT3lm8zhmvawX/NTaJd28TJqTbGYkPg0Y3D+z2W2KzGmF9XuL9OhKtXlX032N2Iv+ZtWMpRHxEsiq9rRcVfW1DtEYKuO/6oXa3snUiOU2Uyz/DZA27ta+OWWyEDgQAl+wQZL2kujAFV7HomfQhP2w9Ghb1KyksSA4lhtFAU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260885; c=relaxed/simple;
-	bh=kTLMKEkMHsNkJ1dNvZM2CqRxYRI12AdCF29gHHsyoQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDIq+Xej7uy6ZDcCTr5z5+fwyrTe9AC7JeS11quU0nuem5wGr5Jrz5obAwjLW2QYILrn21sI2od3EZGmd6asLPve/wUCxGKGYQxsH3RK+7A7QYncvHVoSRe/wvDSLpBdca5+9sfPEHtIICDLtaC1XirKL24CU6cPFSBaS+ehc+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=L9I59bjh; arc=none smtp.client-ip=213.240.239.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-	s=default; h=Content-Transfer-Encoding:Message-ID:Date:Subject:To:From:
-	Content-Type:Reply-To:Sender; bh=YibmFRXSsQ6h1u9JRjweqc/uxZpoOBFSIk8GiWn4mDI=
-	; b=L9I59bjh8i1CbxXdOXdHpoMdNxcV1l1hrkvm8zzuwAGES29h4OtKYlGZNwatLdbElZB1zG0OY
-	RtcO2aOdL/yKD2smTFMfGy4yI463bCYNmOKnAr0U/8b/qd5wJ4ljFbru+BUSAEGP8AEcD7bAFBjKU
-	sOEwsXFF2RXexV0hVprSoCmCiObB/71od6NfrlA0lkQUigZx7V/uu3GtT4lRN0xYkshM5dN81GVxy
-	80NAWTHnzPIbDLkiT1hLxMfVRJSGh8SyZNqzUS+F/N3FdA8RrLW8Md0V0UmuUYuQIDue38TsvYOGU
-	sHTh2TYws8zj1Id/e080UAKFWXpOZI4sF41SD4A2OAzji7IhWORVZtID8/H1m+UOXCCnZ4JhAAhxv
-	IQD6dZEiOJZYWOtACwAXmAhYScsRq30KuXxNUOTrh2ufdIbjrwx5p8WMx0n7iNGUwuhsmJUrwgw+5
-	a1RPKAYOB5XYNPtLPStDBTB66QsIJwfk7NkwNtlXdr1wvTsok1EsYc5IfHHii4lc6Fp/eDpc338l3
-	MfLsTqbpPJZwC152CsdJTSjUlT0hmx4et+GZ0ZtP2RqnzOsQ+LuzLjnYvECMwqC1DJ7VOUrsdfKxK
-	O1U5ThH07HXH3eSfNJlCeBGpPINC/scTz/uPmN4SnEhS4GYiwgMuu72hUvDgKy2yYV9AfXs=;
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-	by a1-bg02.venev.name with esmtps
-	id 1tIZu6-0000000103f-1si5
-	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	(envelope-from <hristo@venev.name>);
-	Tue, 03 Dec 2024 20:53:54 +0000
-Received: from venev.name ([213.240.239.49])
-	by pmx1.venev.name with ESMTPSA
-	id j69LKeBvT2fXowMAT9YxdQ
-	(envelope-from <hristo@venev.name>); Tue, 03 Dec 2024 20:53:54 +0000
-From: Hristo Venev <hristo@venev.name>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Hristo Venev <hristo@venev.name>
-Subject: [PATCH] initramfs: Protect the built-in initramfs from the external one
-Date: Tue,  3 Dec 2024 22:52:48 +0200
-Message-ID: <20241203205318.238364-1-hristo@venev.name>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733260332; c=relaxed/simple;
+	bh=5sQ+r+gbaqUsvU0ZrDznyVUb0oZpkSP9jGY029J7Grc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjpPszgKBiOVnXalIxOFsa4MGvb3JGvh14vrFerw+CidttXTPEszfyjtgd/AvsaSwdVIUDvwhtTlo5WFDlg+bfDAVyqNAD9YG1dZHmh1hCSqzd2xU7Tg7L+P2DRzaYVazQsY3R3rTk1H3q3IT7gZEEnPeP+POfNpNloamQy4gP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=uVAtYIn3; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-215666ea06aso1800125ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 13:12:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733260329; x=1733865129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+ODrYc33qbZzhbzDaQ4IUD7ZD8/LSAYfpty7Q0W2PI=;
+        b=uVAtYIn31bZs1eqet+AO3VkNAKhBwjFLEi6sXX0yQpWURq/rQIc+KUKsX09d/hL8C9
+         qZeK0HhydbdS58L8QiimOP5roGmhGp9sPsHkeURVhxfXwGjyzHlwh4sXRy0qIhYy9iTu
+         F9oXT6+RvJqwCSAHiAZbdLcdCmWYufNidsR2hLmkqJrHqpqUfgxMdXRifc5D01UZEmql
+         HcGBkTgJk6CMfOVkMJ19qSUp8JPREGPH/22w5BYIXe20aywKiIPN0a1RGhpjzzr2cts4
+         DVXuc0MEq39FZPgqiz0jOjVCXbX7XmSB8l/g0kK+JpGNjBA/dU6W2RtQqwA9g7MuBQvk
+         lC2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733260329; x=1733865129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2+ODrYc33qbZzhbzDaQ4IUD7ZD8/LSAYfpty7Q0W2PI=;
+        b=piiQHIGNcKaWFEFQRU31TijZho79OOSMFBEeIC2SYP331oCM3TeAu/TzHtdvVvF54y
+         vfeTWqJeQNRzFQDcfV9/j0sOoo8UYv4AfnbCDRiBh9iihHXeLJMGJyc0dl0ooB8Ywbw6
+         sU+WTQc38M+5VhRBL4D/BzwMiLk/S6Dsx0czGx5orbtSgKRmTANReG+6AKrXqYjmLjyt
+         S2DLfF7371QZ/Yc63teBfL0oEplVPLXpbsfRpEH1bAjEX+s2Lp8NVRfuPqpSX6bG1zJ9
+         XXMtTN7P3yWJOdqcIobehQgXqVMKmKSos+JLiFcnG8LKljFWRqNzBcJcaSW0Qrld/vZo
+         D6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+ZQdO+wo8sDKkIWyaYMf93WDZ8eTRW215ebDj2MQgJb9f2ZuCG4mEeb3ysZY1OfBD1jDIMaLeoumnnMa4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1dADj67xdb0ROba+qCJq5byhm6j4SdQlUjt6Mh+o3xe4/0h26
+	/Fx0RkCEyCxO88+DmxrSstJUtbfyg+L7SE0FohXgEcLhEVeeZd0tHjGJzkBj2fI=
+X-Gm-Gg: ASbGncvN/iPUvBFY5MitEYQ9HGQO5XKIZFUHtj8fTlcudGhYzJoGPuwpi2VADSJRT2X
+	BKRwHbcTd7cYnmRGNawZXLR2h+qs3YlTQyNz6ZrrflRfd2HLk4W5k9Q6SVgWufZ9p9mDm4hcNDH
+	d6930sLtrGeGGkTLYINRW6oRnTNHqonW49RjNR7PpEcLL9KFe2242vt3Hxum6rGXpzZEKKqgkJV
+	xmtfjgPCk2CejIeegcF3TqO3aORTtG2+nSi8yhdZgut7MP6Xyooc4sp8Wqm7Y+aILMcdttVJ9q8
+	tN40lKEfjw0eZKG/9zNav2S+xw==
+X-Google-Smtp-Source: AGHT+IHFTpAHjz3EovSN28pXHU1iJT+oStk7lktwtXwZ4u08NHEMzBz0zDgs2fVQX/+3WWAVHowaRw==
+X-Received: by 2002:a17:903:1d2:b0:215:b01a:6288 with SMTP id d9443c01a7336-215be5fd866mr64834825ad.21.1733260328811;
+        Tue, 03 Dec 2024 13:12:08 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21548aec039sm78008175ad.113.2024.12.03.13.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 13:12:08 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tIaBh-00000006HX4-1lgM;
+	Wed, 04 Dec 2024 08:12:05 +1100
+Date: Wed, 4 Dec 2024 08:12:05 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Long Li <leo.lilong@huawei.com>, brauner@kernel.org, djwong@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, yi.zhang@huawei.com,
+	houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z090Jd06yjgh_Q-y@dread.disaster.area>
+References: <20241127063503.2200005-1-leo.lilong@huawei.com>
+ <Z0sVkSXzxUDReow7@localhost.localdomain>
+ <Z03RlpfdJgsJ_glO@bfoster>
+ <Z05oJqT7983ifKqv@dread.disaster.area>
+ <Z08bsQ07cilOsUKi@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z08bsQ07cilOsUKi@bfoster>
 
-In a typical Secure Boot setup the kernel image is signed, but the
-initramfs provided by the bootloader is not. This reduces the usefulness
-of Secure Boot because an attacker can overwrite the initramfs without
-detection.
+On Tue, Dec 03, 2024 at 09:54:41AM -0500, Brian Foster wrote:
+> On Tue, Dec 03, 2024 at 01:08:38PM +1100, Dave Chinner wrote:
+> > On Mon, Dec 02, 2024 at 10:26:14AM -0500, Brian Foster wrote:
+> > > On Sat, Nov 30, 2024 at 09:39:29PM +0800, Long Li wrote:
+> > We hold the MMAP_LOCK (filemap_invalidate_lock()) so no new pages
+> > can be instantiated over the range whilst we are running
+> > xfs_itruncate_extents(). hence once truncate_setsize() returns, we
+> > are guaranteed that there will be no IO in progress or can be
+> > started over the range we are removing.
+> > 
+> > Really, the issue is that writeback mappings have to be able to
+> > handle the range being mapped suddenly appear to be beyond EOF.
+> > This behaviour is a longstanding writeback constraint, and is what
+> > iomap_writepage_handle_eof() is attempting to handle.
+> > 
+> > We handle this by only sampling i_size_read() whilst we have the
+> > folio locked and can determine the action we should take with that
+> > folio (i.e. nothing, partial zeroing, or skip altogether). Once
+> > we've made the decision that the folio is within EOF and taken
+> > action on it (i.e. moved the folio to writeback state), we cannot
+> > then resample the inode size because a truncate may have started
+> > and changed the inode size.
+> > 
+> > We have to complete the mapping of the folio to disk blocks - the
+> > disk block mapping is guaranteed to be valid for the life of the IO
+> > because the folio is locked and under writeback - and submit the IO
+> > so that truncate_pagecache() will unblock and invalidate the folio
+> > when the IO completes.
+> > 
+> > Hence writeback vs truncate serialisation is really dependent on
+> > only sampling the inode size -once- whilst the dirty folio we are
+> > writing back is locked.
+> > 
+> 
+> Not sure I see how this is a serialization dependency given that
+> writeback completion also samples i_size.
 
-With this change, when a built-in initramfs is used, the kernel can be
-configured to extract the initramfs provided by the bootloader into a
-subdirectory, ensuring it cannot overwrite the built-in one.
+Ah, I didn't explain what I meant very clearly, did I?
 
-Userspace can implement a verification scheme. One simple approach is
-to embed all executables in the built-in initramfs and use the external
-one for the (signed) kernel modules necessary for the system to boot.
+What I mean was we can't sample i_size in the IO path without
+specific checking/serialisation against truncate operations. And
+that means once we have partially zeroed the contents of a EOF
+straddling folio, we can't then sample the EOF again to determine
+the length of valid data in the folio as this can race with truncate
+and result in a different size for the data in the folio than we
+prepared it for.
 
-Signed-off-by: Hristo Venev <hristo@venev.name>
----
- init/initramfs.c | 38 +++++++++++++++++++++++++++++++++++++-
- usr/Kconfig      | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+), 1 deletion(-)
+> But no matter, it seems a
+> reasonable implementation to me to make the submission path consistent
+> in handling eof.
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index b2f7583bb1f5c..97eec8a6db07b 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -5,6 +5,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/fcntl.h>
-+#include <linux/fs_struct.h>
- #include <linux/delay.h>
- #include <linux/string.h>
- #include <linux/dirent.h>
-@@ -355,6 +356,7 @@ static int __init maybe_link(void)
- 
- static __initdata struct file *wfile;
- static __initdata loff_t wfile_pos;
-+static bool skip_special __initdata;
- 
- static int __init do_name(void)
- {
-@@ -399,7 +401,7 @@ static int __init do_name(void)
- 		dir_add(collected, mtime);
- 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
- 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
--		if (maybe_link() == 0) {
-+		if (!skip_special && maybe_link() == 0) {
- 			init_mknod(collected, mode, rdev);
- 			init_chown(collected, uid, gid, 0);
- 			init_chmod(collected, mode);
-@@ -705,6 +707,11 @@ static void __init populate_initrd_image(char *err)
- 
- static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- {
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	int r;
-+	struct path orig_root, sub_root;
-+#endif
-+
- 	/* Load the built in initramfs */
- 	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
- 	if (err)
-@@ -718,6 +725,28 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- 	else
- 		printk(KERN_INFO "Unpacking initramfs...\n");
- 
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	/*
-+	 * Switch the root so that the external initramfs is extracted there.
-+	 * Use chroot so that paths under absolute symlinks resolve properly.
-+	 */
-+	get_fs_root(current->fs, &orig_root);
-+
-+	/*
-+	 * Don't allow the creation of device nodes. Otherwise duplicate entries
-+	 * may result in writes to devices.
-+	 */
-+	skip_special = true;
-+
-+	r = init_chdir(CONFIG_INITRAMFS_EXTERNAL_PATH);
-+	if (r < 0)
-+		panic_show_mem("Failed to open switch to external initramfs directory (%s): %d",
-+			       CONFIG_INITRAMFS_EXTERNAL_PATH, r);
-+	get_fs_pwd(current->fs, &sub_root);
-+	set_fs_root(current->fs, &sub_root);
-+	path_put(&sub_root);
-+#endif
-+
- 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
- 	if (err) {
- #ifdef CONFIG_BLK_DEV_RAM
-@@ -727,6 +756,13 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- #endif
- 	}
- 
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	/* Restore the original root now that the external initramfs is extracted. */
-+	set_fs_root(current->fs, &orig_root);
-+	set_fs_pwd(current->fs, &orig_root);
-+	path_put(&orig_root);
-+#endif
-+
- done:
- 	security_initramfs_populated();
- 
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 9279a2893ab0e..b781db0603903 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -32,6 +32,32 @@ config INITRAMFS_FORCE
- 	  and is useful if you cannot or don't want to change the image
- 	  your bootloader passes to the kernel.
- 
-+config INITRAMFS_EXTERNAL_PATH
-+	string "External initramfs extraction path"
-+	default "/"
-+	depends on INITRAMFS_SOURCE!=""
-+	depends on !INITRAMFS_FORCE
-+	help
-+	  This option causes the kernel to extract the initramfs image(s)
-+	  provided by the bootloader into a subdirectory under the root
-+	  directory. The subdirectory must exist in the built-in initramfs.
-+
-+	  This enables the built-in initramfs to check the integrity of the
-+	  external one.
-+
-+	  If this option is used, any special nodes (device/fifo/socket) in the
-+	  external initramfs are ignored. Symlinks, including ones pointing
-+	  outside the subdirectory, are allowed.
-+
-+	  If your built-in initramfs is not capable of dealing with this, leave
-+	  this option set to "/".
-+
-+config INITRAMFS_EXTERNAL_IS_SUBDIR
-+	bool
-+	default y
-+	depends on INITRAMFS_EXTERNAL_PATH!=""
-+	depends on INITRAMFS_EXTERNAL_PATH!="/"
-+
- config INITRAMFS_ROOT_UID
- 	int "User ID to map to 0 (user root)"
- 	depends on INITRAMFS_SOURCE!=""
+Yes, the IO completion path does sample it again via xfs_new_eof().
+However, as per above, it has specific checking for truncate down
+races and handles them:
+
+/*
+ * If this I/O goes past the on-disk inode size update it unless it would
+ * be past the current in-core inode size.
+ */
+static inline xfs_fsize_t
+xfs_new_eof(struct xfs_inode *ip, xfs_fsize_t new_size)
+{
+        xfs_fsize_t i_size = i_size_read(VFS_I(ip));
+
+>>>>    if (new_size > i_size || new_size < 0)
+>>>>            new_size = i_size;
+        return new_size > ip->i_disk_size ? new_size : 0;
+}
+
+If we have a truncate_setsize() called for a truncate down whilst
+this IO is in progress, then xfs_new_eof() will see the new, smaller
+inode isize. The clamp on new_size handles this situation, and we
+then only triggers an update if the on-disk size is still smaller
+than the new truncated size (i.e. the IO being completed is still
+partially within the new EOF from the truncate down).
+
+So I don't think there's an issue here at all at IO completion;
+it handles truncate down races cleanly...
+
+> I wonder if this could just use end_pos returned from
+> iomap_writepage_handle_eof()?
+
+Yeah, that was what I was thinking, but I haven't looked at the code
+for long enough to have any real idea of whether that is sufficient
+or not.
+
+Cheers,
+
+Dave.
 -- 
-2.47.1
-
+Dave Chinner
+david@fromorbit.com
 
