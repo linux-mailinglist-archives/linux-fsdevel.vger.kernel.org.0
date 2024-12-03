@@ -1,79 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-36381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8519E2C82
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 20:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C58D89E2D96
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 21:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E2FB2A8C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 19:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB199B322FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 19:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2771FECB8;
-	Tue,  3 Dec 2024 19:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE519204081;
+	Tue,  3 Dec 2024 19:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZJjSdZs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ErvReudg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6B1FCFF5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 19:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39E913DDAA;
+	Tue,  3 Dec 2024 19:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733252786; cv=none; b=ddZoV03sPI74EbTNNBjoQ8/FIJAuJNsxbk0M7i7RZ9EfwsFtZJx+FPQzpzqGaeIJmFfF/FEpHWZohOcB9bOlj0Ii/JG/K6/UhoBoJ6mervBNO5518BnEpeFHnQSUIFDd0fyQ+q/ZtM+3RveZX30bRgFzH8kv2/EAi2oiPlJmpwE=
+	t=1733255488; cv=none; b=MEfwRJ44ZWpi/YznfpGX1fQdCeBnpNkA+hR/ZnBvrVEZR0YlE7X26TssZcQgiQo5PK6t8Tzxv7s+FxQ2iBTGvY4mXrULb9Rn35KBc/ih/4cxokhCbHAQgKSgucCPnpybMszX7gviqdewrO4wsTmhM6X+FjOc4Yj1fxQT0LkwBdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733252786; c=relaxed/simple;
-	bh=rijHm9OZP4ggBudYA9ybZjXtnVk8wZHYbsRSpUPd8+4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ccBGIDHhs/OdeJLRJyJjhNHrzOv/pYLs298dS7liUhyjxsMX9EXDybumlpldngqUeP87gZ2EtympVgzhnkGqu/+Sw3Ie7y6mqe/iGofskWejPIyfLdqNR7Nl09J5aDSS3sFMUxcOcEIqHd6nSix2IkTQBp8uQcJEPTiukrv/6Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZJjSdZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FF9C4CECF;
-	Tue,  3 Dec 2024 19:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733252785;
-	bh=rijHm9OZP4ggBudYA9ybZjXtnVk8wZHYbsRSpUPd8+4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=uZJjSdZsmjOa0lt+e/tkxNXe5KMxps/RiPLNHzHz6MfeOx4olZ5lyd3k9IgVGW1/t
-	 E1cx+DCm+fdMm1F5y8mAFCsrK4WExqlbBDtTSsBD7O+27y0VpzQt+Yw62jnddf05h3
-	 lAFN1mgCX6xZad1M+cwOPLYzypuE2nvP00FH/kXGROm2hOnimOppwr60p3QxBAg+iq
-	 htGTMMJ5IhdoBc0qlsbxNAory5bJm2QSd15vhDZXF4Ya+8Cf5pvuzbx5wWutGiAshw
-	 s6K09dnMKi/MGsrzXcX8a+GHioAe/ICAHPjMCyXvUMjMFmQ8+DS2IhsRZUqgK7ojot
-	 LrABgIP5rYiUQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714E43806656;
-	Tue,  3 Dec 2024 19:06:41 +0000 (UTC)
-Subject: Re: [GIT PULL] Quota and udf fixes for 6.13-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241203124941.nstt3sjl7ohygkrb@quack3>
-References: <20241203124941.nstt3sjl7ohygkrb@quack3>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241203124941.nstt3sjl7ohygkrb@quack3>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.13-rc2
-X-PR-Tracked-Commit-Id: 6756af923e06aa33ad8894aaecbf9060953ba00f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3d2469490912122b1e619c46b720d9cde047b2a7
-Message-Id: <173325280016.214632.5195555088039744165.pr-tracker-bot@kernel.org>
-Date: Tue, 03 Dec 2024 19:06:40 +0000
-To: Jan Kara <jack@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
+	s=arc-20240116; t=1733255488; c=relaxed/simple;
+	bh=jhDHHtOwTo80jIZU+Onb0RlkAEK7W9fBks6zoN161z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l07DpX6pXPIloIDDHAslCnFWaJ3McQi8HsXkQ+mMu0SpO2SXmkv18lck1KRDuhzY71nNFoxqzbhZDZe+zqjVHVETraDsQFe38aoccTXa3JiTepAd6pVWDk8bwSzZq0quwmcvIjXQPMoeibqoPZQpHyIeGBfaG+qe95F91bvP6Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ErvReudg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=jH4yBcVS3NQ7YkkW1qJk55K1usaBZKjmOXquBiHvrjw=; b=ErvReudgtvG3n8VmPJznERacAO
+	gk4Pf7scNBorVKH+1cqmdv4JTXWzGWn6Z7UR3F+AKQQdw5sW9CvvuH/qyFrioEEHA9EXYAkTIpFlQ
+	4WwWrH5W42VQ9qww9hisV7KI/8I3kNMbEaIQ12EtZV1tXER59AzgH9QeQfKzG1jPWWvSGwNHrkhy+
+	jqL9McfbrBzW114zT7FxBIpz7GluKjAaN93e/oqUNJKo71VCXXzMQiSsU3aNx/CW9v8HgxwgesSiP
+	NGnPSE6o75ToxpjENiORz5dboTDi0j4hnCTHJ0gawMr82M86Twip69sZ+Wpt2o10YUCyVFDXRsfdc
+	dil90xNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIYvb-0000000A9oE-25ro;
+	Tue, 03 Dec 2024 19:51:23 +0000
+Date: Tue, 3 Dec 2024 19:51:23 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-s390@vger.kernel.org
+Subject: Removing page->index
+Message-ID: <Z09hOy-UY9KC8WMb@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The pull request you sent on Tue, 3 Dec 2024 13:49:41 +0100:
+I've pushed out a new tree to
+git://git.infradead.org/users/willy/pagecache.git shrunk-page
+aka
+http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.13-rc2
+The observant will notice that it doesn't actually shrink struct page
+yet.  However, we're getting close.  What it does do is rename
+page->index to page->__folio_index to prevent new users of page->index
+from showing up.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3d2469490912122b1e619c46b720d9cde047b2a7
+There are (I believe) three build failures in that tree:
 
-Thank you!
+ - fb_defio
+ - fbtft
+ - s390's gmap (and vsie?  is that the same thing?)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Other than that, allmodconfig builds on x86 and I'm convinced the build
+bots will tell me about anything else I missed.
+
+Lorenzo is working on fb_defio and fbtft will come along for the ride
+(it's a debug printk, so could just be deleted).
+
+s390 is complicated.  I'd really appreciate some help.
+
+The next step is to feed most of the patches through the appropriate
+subsystems.  Some have already gone into various maintainer trees
+(thanks!)
+
+
+There are still many more steps to go after this; eliminating memcg_data
+is closest to complete, and after that will come (in some order)
+eliminating ->lru, ->mapping, ->refcount and ->mapcount.  We also need
+to move page_pool out into its own structure.
 
