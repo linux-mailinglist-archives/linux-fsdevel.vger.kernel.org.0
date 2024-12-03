@@ -1,133 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-36383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B89E2DCC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:06:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1334D9E2E00
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:22:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7961610FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 21:22:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50320A5C8;
+	Tue,  3 Dec 2024 21:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="L9I59bjh"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A848283562
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 21:06:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF49C20898C;
-	Tue,  3 Dec 2024 21:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lveP4p6C"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98470207A01
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 21:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A050204F89;
+	Tue,  3 Dec 2024 21:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733259993; cv=none; b=mrsyr/aztEG/LD7w5IV/QEqRrVBrNF67tK1c1oRvyWvuLKNyuWyI8BBYx+S9bQkl0Ntfwfw4ea2Qq4jdKn7UUNScjPC+dy0amk8pAh2X5CyVCalDtxdl/HfFPPKvwlgO5062H6VZcd30FQjLtuOPfV+9kKELObeebpqvgGMMP2E=
+	t=1733260885; cv=none; b=rUIhrXEsJFH8dtTEYZlmbh93qZYuh/W9sWjw9/5Ndl+Q13TdnJF06GdBxRXS099tL3okOQ0uqYXd+S5vk3chKyzjvpE+EUi8nAUFIUJWsOpGtie+z5H/1hSpsjqs0JZuTa8suG76ykwJ6S7WXSeDHLW166YwBgYfMWigmCtUeSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733259993; c=relaxed/simple;
-	bh=IHe0rZTsCmUdSNMZvoPfQP7hyC0VY5l+g+ZM4qZAzX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mx5wpSXf6HEYBIwSeVTfBfyuQ5CdMUQ2IAqwaLiXrJaB8L3ke2vcoYjxHWqecGfXyhm2aWxcEeCoOmVtXUPFKdQTKRAJao/c+d0e6it4AmPM7X0ljZz60GKNShJz4DoM+bSgvO9OsB4Rq9+NmAbHXSHJsm8tDTFJvVcPOJQShIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lveP4p6C; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fcfac22a30so71854a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 13:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733259989; x=1733864789; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jnzGgkEaIO1YU5OTIUHBDrM4xb3yDtLiV8SeTTeyAUc=;
-        b=lveP4p6CTxyII5OIveJEHKip8+1p9IX42naG6hsO81jKHerm3wsQkbDPdR89JgrWuj
-         qYLb7x8Hc/tZQ7mKm8kZKtInLWdVKd+0UtsuJbMYJ/AnPJ6fMj9k3wKvNDd0i0P8bHvK
-         WHVj6mJ0H4yZunYKfjo/kY0O8yjVnLZ+V9iL2ohpIALzJwYDkso519MVdNHdrxyzIvlw
-         TS52cYftp6Id8NFTCJUZb2Wdfi48DlL9nAt5RvlNlnzfGZC7P5BfGAVxjlEh+MCyzNls
-         l6bTlgqg6jvllam629oYNJewJi8+mnXwXJlO69QrNXnnO8b5UlLHgjvue+bcZUA/f62X
-         EuoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733259989; x=1733864789;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnzGgkEaIO1YU5OTIUHBDrM4xb3yDtLiV8SeTTeyAUc=;
-        b=bSHCQxRKHFdt28as1HAwU4Y8wSbWexzyyD4DEuTDNu27GjnrPNEIYdfWixfEE164ke
-         cJLfDlG3FBxJD1W2A5ZEbqRDBwvq0b/n9TCY1byAgQQ2yw4zINU7187EsApFe5fc3cJl
-         zeO0gP2dUIQyWiI9ej5ffypXCvFmMVIAnYF4f04aROe9t94tj5RsjhWLoi8lPLDQFW+N
-         Z3dzKpvX1nQ4QnZmNCtSevpCtNyB7n0M/XTSOE57xXXW/rMjhN9u6sx0LkRgvIjoTVF0
-         FpIv1vTpP1tvwpqOUZsusZgC9+tQT0P89e/zsIHdp0/mbymTih2Aoyh+Jhq0kJ35zeNN
-         WjKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfV1nU0rFsG4xYp0L467b31EpHfBGNe7HZVZ+vYMNExTTWp6rBVjfuCU/H1m4Agrh3KayEqQBetRdMy9F7@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuDPM3RuVZEr4lc05pY7V1uTQ7Dj0xLIo9dMpBQdbUpfuGnjdK
-	fjcxd2AzvVknP/fmEFGcUxEm+ZJEsjMfdNb7qEI4fN6R36kwVGu9iIQOvA1DCmE=
-X-Gm-Gg: ASbGncsYJzogSDejksNpLdetRblJWBlP6GDSl7sNcWH5pt50KLOIbnV8QQVpEM64yIw
-	eHFK1MkjgMrXkCnE3345+juobsobozRV88YHRjD6K3HkfDosK45vwMrwDKyTrK7kV31TOyImAVn
-	lZ+Od0n3p6iQP1eKu/RLaz8hhwsrQQZFbBuxE4sNGDX/RmLLt3qGz5ViSo/BXwn0kKMOoW991Ki
-	dFHGrpJ9KFCln0uLU5+IYsY04Muc9cVxE/a693ffNRjmiv5AyLk9g==
-X-Google-Smtp-Source: AGHT+IHLtUhYOP8x/EeNOo7mxbflhPk2h0afAiOBUuwFAjptj9RoE9EE7f69nEAnj73i4fSUgDgpaw==
-X-Received: by 2002:a17:90b:52c6:b0:2ea:8d1e:a85f with SMTP id 98e67ed59e1d1-2ef0120fa31mr6447628a91.17.1733259989471;
-        Tue, 03 Dec 2024 13:06:29 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:18a::47e? ([2620:10d:c090:600::1:fe53])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee90748a61sm6341601a91.52.2024.12.03.13.06.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 13:06:28 -0800 (PST)
-Message-ID: <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
-Date: Tue, 3 Dec 2024 14:06:27 -0700
+	s=arc-20240116; t=1733260885; c=relaxed/simple;
+	bh=kTLMKEkMHsNkJ1dNvZM2CqRxYRI12AdCF29gHHsyoQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDIq+Xej7uy6ZDcCTr5z5+fwyrTe9AC7JeS11quU0nuem5wGr5Jrz5obAwjLW2QYILrn21sI2od3EZGmd6asLPve/wUCxGKGYQxsH3RK+7A7QYncvHVoSRe/wvDSLpBdca5+9sfPEHtIICDLtaC1XirKL24CU6cPFSBaS+ehc+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=L9I59bjh; arc=none smtp.client-ip=213.240.239.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+	s=default; h=Content-Transfer-Encoding:Message-ID:Date:Subject:To:From:
+	Content-Type:Reply-To:Sender; bh=YibmFRXSsQ6h1u9JRjweqc/uxZpoOBFSIk8GiWn4mDI=
+	; b=L9I59bjh8i1CbxXdOXdHpoMdNxcV1l1hrkvm8zzuwAGES29h4OtKYlGZNwatLdbElZB1zG0OY
+	RtcO2aOdL/yKD2smTFMfGy4yI463bCYNmOKnAr0U/8b/qd5wJ4ljFbru+BUSAEGP8AEcD7bAFBjKU
+	sOEwsXFF2RXexV0hVprSoCmCiObB/71od6NfrlA0lkQUigZx7V/uu3GtT4lRN0xYkshM5dN81GVxy
+	80NAWTHnzPIbDLkiT1hLxMfVRJSGh8SyZNqzUS+F/N3FdA8RrLW8Md0V0UmuUYuQIDue38TsvYOGU
+	sHTh2TYws8zj1Id/e080UAKFWXpOZI4sF41SD4A2OAzji7IhWORVZtID8/H1m+UOXCCnZ4JhAAhxv
+	IQD6dZEiOJZYWOtACwAXmAhYScsRq30KuXxNUOTrh2ufdIbjrwx5p8WMx0n7iNGUwuhsmJUrwgw+5
+	a1RPKAYOB5XYNPtLPStDBTB66QsIJwfk7NkwNtlXdr1wvTsok1EsYc5IfHHii4lc6Fp/eDpc338l3
+	MfLsTqbpPJZwC152CsdJTSjUlT0hmx4et+GZ0ZtP2RqnzOsQ+LuzLjnYvECMwqC1DJ7VOUrsdfKxK
+	O1U5ThH07HXH3eSfNJlCeBGpPINC/scTz/uPmN4SnEhS4GYiwgMuu72hUvDgKy2yYV9AfXs=;
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+	by a1-bg02.venev.name with esmtps
+	id 1tIZu6-0000000103f-1si5
+	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	(envelope-from <hristo@venev.name>);
+	Tue, 03 Dec 2024 20:53:54 +0000
+Received: from venev.name ([213.240.239.49])
+	by pmx1.venev.name with ESMTPSA
+	id j69LKeBvT2fXowMAT9YxdQ
+	(envelope-from <hristo@venev.name>); Tue, 03 Dec 2024 20:53:54 +0000
+From: Hristo Venev <hristo@venev.name>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hristo Venev <hristo@venev.name>
+Subject: [PATCH] initramfs: Protect the built-in initramfs from the external one
+Date: Tue,  3 Dec 2024 22:52:48 +0200
+Message-ID: <20241203205318.238364-1-hristo@venev.name>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/3/24 11:23 AM, Christoph Lameter (Ampere) wrote:
-> On Tue, 3 Dec 2024, Jens Axboe wrote:
-> 
->>
->> So here's a new approach to the same concent, but using the page cache
->> as synchronization. That makes RWF_UNCACHED less special, in that it's
->> just page cache IO, except it prunes the ranges once IO is completed.
-> 
-> 
-> Great idea and someting that is really important these days.
-> 
-> However, one nit that I have is the use of the term "uncached" for a
-> folio/page. An uncached "page frame" refers to a page frame that requires
-> accesses not  going through the cpu cache. I.e. device mappings. This is
-> an established mm/cpu term as far as I can tell.
-> 
-> So maybe be a bit more specific about which cache this is?
-> 
-> PAGE_CACHE_UNCACHED?
-> 
-> or use a different term. It is cached after all but only for a brief
-> period. So this may be a "TEMPORAL_PAGE" or so? (Similar to the x86
-> "non-temporal" stores).
+In a typical Secure Boot setup the kernel image is signed, but the
+initramfs provided by the bootloader is not. This reduces the usefulness
+of Secure Boot because an attacker can overwrite the initramfs without
+detection.
 
-I actually did consider using some form of temporal, as it's the only
-other name I liked. But I do think cached_uncached becomes pretty
-unwieldy. Which is why I just stuck with uncached. Yes I know it means
-different things in different circles, but probably mostly an overlap
-with deeper technical things like that. An honestly almost impossible to
-avoid overlap these days, everything has been used already :-)
+With this change, when a built-in initramfs is used, the kernel can be
+configured to extract the initramfs provided by the bootloader into a
+subdirectory, ensuring it cannot overwrite the built-in one.
 
-IOW, I think uncached is probably still the most descriptive thing out
-there, even if I'm certainly open to entertaining other names. Just not
-anything yet that has really resonated with me.
+Userspace can implement a verification scheme. One simple approach is
+to embed all executables in the built-in initramfs and use the external
+one for the (signed) kernel modules necessary for the system to boot.
 
+Signed-off-by: Hristo Venev <hristo@venev.name>
+---
+ init/initramfs.c | 38 +++++++++++++++++++++++++++++++++++++-
+ usr/Kconfig      | 26 ++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+), 1 deletion(-)
+
+diff --git a/init/initramfs.c b/init/initramfs.c
+index b2f7583bb1f5c..97eec8a6db07b 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -5,6 +5,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/fcntl.h>
++#include <linux/fs_struct.h>
+ #include <linux/delay.h>
+ #include <linux/string.h>
+ #include <linux/dirent.h>
+@@ -355,6 +356,7 @@ static int __init maybe_link(void)
+ 
+ static __initdata struct file *wfile;
+ static __initdata loff_t wfile_pos;
++static bool skip_special __initdata;
+ 
+ static int __init do_name(void)
+ {
+@@ -399,7 +401,7 @@ static int __init do_name(void)
+ 		dir_add(collected, mtime);
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+-		if (maybe_link() == 0) {
++		if (!skip_special && maybe_link() == 0) {
+ 			init_mknod(collected, mode, rdev);
+ 			init_chown(collected, uid, gid, 0);
+ 			init_chmod(collected, mode);
+@@ -705,6 +707,11 @@ static void __init populate_initrd_image(char *err)
+ 
+ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ {
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	int r;
++	struct path orig_root, sub_root;
++#endif
++
+ 	/* Load the built in initramfs */
+ 	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
+ 	if (err)
+@@ -718,6 +725,28 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ 	else
+ 		printk(KERN_INFO "Unpacking initramfs...\n");
+ 
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	/*
++	 * Switch the root so that the external initramfs is extracted there.
++	 * Use chroot so that paths under absolute symlinks resolve properly.
++	 */
++	get_fs_root(current->fs, &orig_root);
++
++	/*
++	 * Don't allow the creation of device nodes. Otherwise duplicate entries
++	 * may result in writes to devices.
++	 */
++	skip_special = true;
++
++	r = init_chdir(CONFIG_INITRAMFS_EXTERNAL_PATH);
++	if (r < 0)
++		panic_show_mem("Failed to open switch to external initramfs directory (%s): %d",
++			       CONFIG_INITRAMFS_EXTERNAL_PATH, r);
++	get_fs_pwd(current->fs, &sub_root);
++	set_fs_root(current->fs, &sub_root);
++	path_put(&sub_root);
++#endif
++
+ 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
+ 	if (err) {
+ #ifdef CONFIG_BLK_DEV_RAM
+@@ -727,6 +756,13 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ #endif
+ 	}
+ 
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	/* Restore the original root now that the external initramfs is extracted. */
++	set_fs_root(current->fs, &orig_root);
++	set_fs_pwd(current->fs, &orig_root);
++	path_put(&orig_root);
++#endif
++
+ done:
+ 	security_initramfs_populated();
+ 
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 9279a2893ab0e..b781db0603903 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -32,6 +32,32 @@ config INITRAMFS_FORCE
+ 	  and is useful if you cannot or don't want to change the image
+ 	  your bootloader passes to the kernel.
+ 
++config INITRAMFS_EXTERNAL_PATH
++	string "External initramfs extraction path"
++	default "/"
++	depends on INITRAMFS_SOURCE!=""
++	depends on !INITRAMFS_FORCE
++	help
++	  This option causes the kernel to extract the initramfs image(s)
++	  provided by the bootloader into a subdirectory under the root
++	  directory. The subdirectory must exist in the built-in initramfs.
++
++	  This enables the built-in initramfs to check the integrity of the
++	  external one.
++
++	  If this option is used, any special nodes (device/fifo/socket) in the
++	  external initramfs are ignored. Symlinks, including ones pointing
++	  outside the subdirectory, are allowed.
++
++	  If your built-in initramfs is not capable of dealing with this, leave
++	  this option set to "/".
++
++config INITRAMFS_EXTERNAL_IS_SUBDIR
++	bool
++	default y
++	depends on INITRAMFS_EXTERNAL_PATH!=""
++	depends on INITRAMFS_EXTERNAL_PATH!="/"
++
+ config INITRAMFS_ROOT_UID
+ 	int "User ID to map to 0 (user root)"
+ 	depends on INITRAMFS_SOURCE!=""
 -- 
-Jens Axboe
+2.47.1
+
 
