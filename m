@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-36338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105DD9E1FBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:41:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78F09E1E1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7BD1B2C059
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 13:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A572832F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 13:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DB91F12E3;
-	Tue,  3 Dec 2024 13:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC05C1F1302;
+	Tue,  3 Dec 2024 13:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CR5Ki5Gg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsVpHKAA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4849A192D98;
-	Tue,  3 Dec 2024 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8374B1E0E12;
+	Tue,  3 Dec 2024 13:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233038; cv=none; b=BFFzIaSUFwrYR8xeiAvUb3HABuCgUtZ1Zl4kKKeNSxg7IEePdm0QedlQUa1iJBM8kzHdQFNZDeKPF1fDmwDbq8ujytuHQYLOrnTGjUvF1f2FttLzYEhL0T9e0Edi06KjfBUajC1rNRXPszKquulsjpleJx06ibU9eIv/HQZIFrE=
+	t=1733233613; cv=none; b=i06DdEbyXUGfSfGMQ1g+VBb5AK8Eq1TIAvga7573yDXDCDHuPXxJ6cvq9vnppJeWgSbjk6SD9DQcfdyfoFo6zr2cc/la1xoZBAbqbmGnuEufsuRfAFvC58MBnsf4ULXZmCzXT9sCXnfaThvUj8/Q59kKDC2wnLYAzbfrsWXHUYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233038; c=relaxed/simple;
-	bh=ma99hyrZiITfCBCvtbX3djutK4ofuTTwRjCoH+7CJQY=;
+	s=arc-20240116; t=1733233613; c=relaxed/simple;
+	bh=tcWzjpxqWNgbgEDLSBkQH0YXLSNLYXAlu6btqLwbbBo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ArKLh2exEmhhwe2PvM8BeNGvzyAdSPHVa4mIPpZZJfb86I4t9xfYVOqDHDdWLwOpckrKsyV91wCIgn3X+T4mwwg20XrbSaoOwnVMyPlcoZPfQktwFXQ4SHzImxk/3ClCAF+vsIiKbDcFmbWBC0ToCFhzegKBKkaFL8aQY8ggXDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CR5Ki5Gg; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:Content-Type; b=Xkno05TKm7iQoOqvOeUES2FA+dQ8m+mnPUt1zwLLaQXqga9uJ4Z+neLu6ap+bTRCFRB37kflTdpmS2eCJFHlLh1d1eBR2ee+S5sBl/jR5ltO/h53yoxcbSpir6uUToFGjQPCWnzrrYgTC2iTpaXQYldK2YudSDy54JBrSdVnd6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsVpHKAA; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so330385366b.3;
-        Tue, 03 Dec 2024 05:37:16 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d0b922a637so5367907a12.1;
+        Tue, 03 Dec 2024 05:46:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733233035; x=1733837835; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733233610; x=1733838410; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jeL57cvkaPTgZDxyDQAE4fTxCdYBo9rZbJ3ATzfcHRc=;
-        b=CR5Ki5GgIPQaYDFwpHqp9EHWvCnvMX2zJfaMoD4bGZYMgKvxinnJ1/29XABN1jJhg6
-         Jiw8VgG5cXFYNClwqa6SCRcAAJNFPHBI7pddcFM5QR5Mx3+4MD+AtDL7aD3u58/D4Z3F
-         dCCrhbVJ1203atAXp5CcwQ1Rk/jDlK2abGYgMoAsmj9DTvPIAlqbWO2KJXP86VSdy9SG
-         4KcwnJrEjSt0BHM5Jft4JemxNTeyufstmpP8E1Tad7bKO5kKCNAjMII9ZIFgFXjvjXrI
-         ZesEp3Nl2ejGyyIehL5nUD3fvTbwkvY1EfqTkg9ph55uvH7Pa9gvL53Unj3+x8jiWbBI
-         pukw==
+        bh=OtQtGdm2qxcHHDtKUbbuhDBQOpZ5gw84uBRHgBHBz+I=;
+        b=EsVpHKAA8SFyhhnKmhKIo59IaSdqro+ZT7xlp65D0GhkigyG/noFIvf6z7tE6hVFSS
+         ORCHd9lF8/bOoLEwQeugf829WJ7iQwyDdMkzOV/vT9/P1MjixkTqKxvISLFzOa8pf07r
+         qe1RTnsOOnZRDD60SpiPgdpuYbEfNelcBS9sOp2xYjAW4ZDbm9z58f1rzw0Yb9FSNsUW
+         X0k2n/G7hW5n/serw55y5/ihpiCh0UuC3fuX/AU6kxvLsL9i900rIrCmx7Jg1ijDkOoz
+         cuxC4zQzOMVIazkjrg2llei4L1S6whaeubxBfgtQLZ20Wa0KEB/9pxJoaME3ABoymoPA
+         5VfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233035; x=1733837835;
+        d=1e100.net; s=20230601; t=1733233610; x=1733838410;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jeL57cvkaPTgZDxyDQAE4fTxCdYBo9rZbJ3ATzfcHRc=;
-        b=a4oozj66ITyMWBgS7MtbPudxKICv6iS3wNKwDa1FWyCKmDDzrvfNCFDowXtBNzgRBE
-         5xkCcBz3EXYdU+UeGN9msGpHyzhKpyp6w4EFVwXFx2UVjG8G9+OCf2kYnVW61kAleTP2
-         C3am4B0Pu/jhFwK/UmaFlKS5FfaZoO/yLt8CdkkktQYBtwFJC43NG3pvMy5hGFZj5OEu
-         JMhQaoyQ3OdJHtXcI2pBaXY61tFzF6hJUJOSdXkpzSGsVGaUQP0ohuAOcZ4Net6vxnR9
-         leNLcce3mQYxQdthTMxSfDpa7SUkZBVoYwUyHheqWlZXJolDwkriGJeTqxfbvp8qxyoY
-         J7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCULvBqxBHG3bpqpGcKL8zWDpQYBFGdOe107cYKRLxnKJ99+HtnoTPc0DB6MMGJVRCFMrum7tLNF0g==@vger.kernel.org, AJvYcCX1xqVPWX+sHDHSGlwSDWd4AY7cstqRX7kJsdOexHGjJvukan0dOxbVtKNjPMysPRxsojhKkqt6jtNmhxqMFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOdIhg+CXFBNEpOj5IUtJ+QmmufQPzKAr9z9/LrXcWtcZb6K2n
-	dt+OWtM1sOhIPDQmEiLprgj0zhXBMQeHts/4cxhKGLVo4gAT/9r2G/uyxw==
-X-Gm-Gg: ASbGncvLjd23oZYCcLVwJCbJWXUfrbGslBOcBPmz0tifYs5NvV8I1Vd7kY5Y3J+qS4W
-	UWpWs+m8q5dZcG4m1XzhE9xbsZK9mHu/GFKz8Rz843aZ37v+tVNjrkq+kFhb1ZDNin8Enj3wtvF
-	+ZmIzxm5Y1Z/tAtphmPNyRd5VRDcPdfyvskIa6YRANyEUKMT871mmqdU/eFF9gNyTRYaq4dJpvD
-	egHDmRxt0+WzONL8lWyqSqRdG0j1VNkAwOOZsCLTBxy/XmcFq1ONLdZpP7uVQ==
-X-Google-Smtp-Source: AGHT+IG/BbpX5CHVXnI1sHJE+eWGAu+2AfgziP/YR4PmGqAzQuif7TiLYbLlZRrcgaeTm9t1vhG1EA==
-X-Received: by 2002:a05:6402:2554:b0:5d0:abb8:7a3 with SMTP id 4fb4d7f45d1cf-5d10cb4e69amr2212563a12.6.1733233035379;
-        Tue, 03 Dec 2024 05:37:15 -0800 (PST)
+        bh=OtQtGdm2qxcHHDtKUbbuhDBQOpZ5gw84uBRHgBHBz+I=;
+        b=G5KwdjXHsREj5yM2wY6AvnXHaPsK8XYPI8rViujGcwx8C91LiwrBVEBETTNznQkrbF
+         1yXaaWOieE0WXq0tVJqrMkzc8CowAi2WzT3ZqgLPf4cdENQmChr8x2c2in6rbuohGYE1
+         480RQedMjh4LdQJJxMzjPN9wVnKGtyhXqkS4XpocEhdHwOibuP3kTs6y/P6+cJ4jt42R
+         P1F1cG43YmqSxu1EMBFk67LfvTYtkww/V1s7BxJb+3wYri5opVzeRs7NEn3UOLzR9g4+
+         MT5TjIgtQJFKnDyfBWn1uhfKGQxopUMjOj7ze696V0D3f4Ssc1tZNlbKqhZxLStLT/ow
+         h/cA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+v+e8oPC+mrp3yKVBOYYgUNiK300WwIuQk6JgN46mgG3d6ssUvOYmvWsqhzgGgKBBMa8i7jBjLgv0utnRBg==@vger.kernel.org, AJvYcCW4bKmieZe8KQH01JaJH+zx8G8Bi/nelPK8D4YitlUlca231law55Q/N573w6CPgSBGZ8DZAN5clw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgDS4YcKQPEohF7EcW0spf5E9KS7zlvIA4OJTozbp0sQB/1WAD
+	N8NkEJaTB5AW/ujQbd/fw7D6D7bJ7zQY9MshriPBI2e6M6UxU3mw
+X-Gm-Gg: ASbGncugAD0uvjdx5Lq5YD1vf1Gk37kxwZuGHrfnkMBHY8p4L9IttEUDmqQl1uIRmD+
+	vcP7ynfnBe29Wwa1vU47xPhXPG5thDVG6FDWQzgPaR9tKCIIFvUZ+8N0AuvILRqY4GDnpNx/nuy
+	aqOcaBRBp7shnVQsFTgSiHAm6kyj/BUot4MMqdeXlOpHr+hRSqJ0admlkH0jo/iLRErpHeyyDZb
+	mj03IGqPdBbTcv4iqcg0ksX693XxQV0rdZQiX8ZaEm49QnAyUmVTSSirzjYBg==
+X-Google-Smtp-Source: AGHT+IG1amz/IzU2dNt1TZrDlWFgXpLcVIHtvYqImiXKXZmqkXunLbWj6eMXvPhWpTWRXlWCL/K/7A==
+X-Received: by 2002:a17:907:7806:b0:aa5:3b1c:77a7 with SMTP id a640c23a62f3a-aa5f7cce469mr188190166b.6.1733233609393;
+        Tue, 03 Dec 2024 05:46:49 -0800 (PST)
 Received: from [192.168.42.149] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b264f0d2sm5044174a12.72.2024.12.03.05.37.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599801591sm615327366b.91.2024.12.03.05.46.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 05:37:15 -0800 (PST)
-Message-ID: <efb34163-9498-4020-bbf3-d669932b24a6@gmail.com>
-Date: Tue, 3 Dec 2024 13:38:11 +0000
+        Tue, 03 Dec 2024 05:46:49 -0800 (PST)
+Message-ID: <b9a7308a-19d0-40d7-8f00-5b95404936b4@gmail.com>
+Date: Tue, 3 Dec 2024 13:47:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,8 +80,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 06/16] fuse: {uring} Handle SQEs - register
- commands
+Subject: Re: [PATCH RFC v7 09/16] fuse: {uring} Add uring sqe commit and fetch
+ support
 To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
 Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
  io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
@@ -89,57 +89,105 @@ Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
  Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
  bernd@bsbernd.com
 References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
- <20241127-fuse-uring-for-6-10-rfc4-v7-6-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-9-934b3a69baca@ddn.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-6-934b3a69baca@ddn.com>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-9-934b3a69baca@ddn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 11/27/24 13:40, Bernd Schubert wrote:
+> This adds support for fuse request completion through ring SQEs
+> (FUSE_URING_REQ_COMMIT_AND_FETCH handling). After committing
+> the ring entry it becomes available for new fuse requests.
+> Handling of requests through the ring (SQE/CQE handling)
+> is complete now.
+> 
+> Fuse request data are copied through the mmaped ring buffer,
+> there is no support for any zero copy yet.
+> 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
 ...
-> +static int fuse_uring_fetch(struct io_uring_cmd *cmd, unsigned int issue_flags,
-> +			    struct fuse_conn *fc)
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index af9c5f116ba1dcf6c01d0359d1a06491c92c32f9..7bb07f5ba436fcb89537f0821f08a7167da52902 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -24,6 +24,19 @@ bool fuse_uring_enabled(void)
+...
+> +/*
+> + * Write data to the ring buffer and send the request to userspace,
+> + * userspace will read it
+> + * This is comparable with classical read(/dev/fuse)
+> + */
+> +static int fuse_uring_send_next_to_ring(struct fuse_ring_ent *ring_ent)
+> +{
+> +	int err = 0;
+> +	struct fuse_ring_queue *queue = ring_ent->queue;
+> +
+> +	err = fuse_uring_prepare_send(ring_ent);
+> +	if (err)
+> +		goto err;
+> +
+> +	spin_lock(&queue->lock);
+> +	ring_ent->state = FRRS_USERSPACE;
+> +	list_move(&ring_ent->list, &queue->ent_in_userspace);
+> +	spin_unlock(&queue->lock);
+> +
+> +	io_uring_cmd_complete_in_task(ring_ent->cmd,
+> +				      fuse_uring_async_send_to_ring);
+
+Just io_uring_cmd_done should be enough.
+
+io_uring_cmd_done(cmd, 0, 0, issue_flags);
+
+
+> +	return 0;
+> +
+> +err:
+> +	return err;
+> +}
+> +
+>   /*
+>    * Make a ring entry available for fuse_req assignment
+>    */
+> @@ -148,6 +385,189 @@ static void fuse_uring_ent_avail(struct fuse_ring_ent *ring_ent,
+>   	ring_ent->state = FRRS_WAIT;
+>   }
+>   
+...
+> +
+> +/* FUSE_URING_REQ_COMMIT_AND_FETCH handler */
+> +static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
+> +				   struct fuse_conn *fc)
 > +{
 > +	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-> +	struct fuse_ring *ring = fc->ring;
-> +	struct fuse_ring_queue *queue;
+
+Same comment about checking SQE128, fuse_uring_cmd() sounds like a good
+place for it.
+
+
 > +	struct fuse_ring_ent *ring_ent;
 > +	int err;
-> +	struct iovec iov[FUSE_URING_IOV_SEGS];
+> +	struct fuse_ring *ring = fc->ring;
+> +	struct fuse_ring_queue *queue;
+> +	uint64_t commit_id = cmd_req->commit_id;
+> +	struct fuse_pqueue fpq;
+> +	struct fuse_req *req;
 > +
-> +	err = fuse_uring_get_iovec_from_sqe(cmd->sqe, iov);
-> +	if (err) {
-> +		pr_info_ratelimited("Failed to get iovec from sqe, err=%d\n",
-> +				    err);
+> +	err = -ENOTCONN;
+> +	if (!ring)
 > +		return err;
-> +	}
-> +
-> +	err = -ENOMEM;
-> +	if (!ring) {
-> +		ring = fuse_uring_create(fc);
-> +		if (!ring)
-> +			return err;
-> +	}
 > +
 > +	queue = ring->queues[cmd_req->qid];
 
-cmd_req points into an SQE, which can be modified by user at any moment.
-All reads should be READ_ONCE(). And unless you can tolerate getting
-different values you must avoid reading it twice. It shouldn't
-normally happen unless the user is buggy / malicious.
+READ_ONCE()
 
-> +	if (!queue) {
-> +		queue = fuse_uring_create_queue(ring, cmd_req->qid);
-> +		if (!queue)
-> +			return err;
-> +	}
+> +	if (!queue)
+> +		return err;
+> +	fpq = queue->fpq;
 > +
-> +	/*
-> +	 * The created queue above does not need to be destructed in
-> +	 * case of entry errors below, will be done at ring destruction time.
-> +	 */
-> +
+
 -- 
 Pavel Begunkov
 
