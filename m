@@ -1,157 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-36366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CEC9E236C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 16:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 530229E23C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 16:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F07286D4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1808528745C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006C20A5DA;
-	Tue,  3 Dec 2024 15:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DED1205AA9;
+	Tue,  3 Dec 2024 15:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QOc0N/NU"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="E8nTwZil"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0041F892A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 15:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A12204F78
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 15:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239985; cv=none; b=aHYnBlVneWc+ApLd6/rzmNzi1AiL6J9T0w/VdHluEVqY9liu32DjIdt6rn7ModslhzhYw21hIhjCy/oLLtxetzNV+Sx2ZFkfc0ZKiKudHSO3R0y4SCdbgArypodufzU1loJL0TWHI+HXC1l1L1fH23I+ZS9IwjDD/oLiqsExJPs=
+	t=1733240227; cv=none; b=BX3w0gL5nJI9CJ91WzAa3HB5qMDwTvg0aams1Y5XwKsXUZj4qoAQhzZgF4m1QEb+mHihcNklH8NA4nAjB/OTkWY9KiMz38Z3fXX3pgxgWshJ+l60XjNWcX740tct00xt1dmadCu7Uwq6sUhlk61uDR6bTsLtTpjR3EvbHZo2S5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239985; c=relaxed/simple;
-	bh=uuqM4dJdCE0QCImMtNfF8QapqPv5QHbWROfY8tXB1So=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j2jAM7LNZAJlDVC0/kLWgvTBT1DKFgWrf9BVED7Jr0z6Eqq57MfUm40a+QUPZPGfAt+6u4/e8qy8EJBOfOkTIIEtlVgr3AMx04j6sdxaxGLOsU7JZAVjcoCXDZKNxoy/sXvd6vNXsvsSXEnZnUCWGd9b8ojVhOYR3u5GUL1pJUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QOc0N/NU; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3ea5a7a5e48so2650385b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 07:33:03 -0800 (PST)
+	s=arc-20240116; t=1733240227; c=relaxed/simple;
+	bh=4wVfCguqrdWqBXAEz4ZHcmtSOxLUsDiwfTSEfuhFWjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DXk5Cn0ueTB3uWTORBm8MY0aN45CcJvAafsf4YJdntJvyQYrIaCzJNn8M6BPR5BB7NC3vh9pJgsLLVonXkGK99S3kofcvczMj7jZ6dAV9NDAmiEGM6lDdSeQzS4OXAYMokNLlzvBacffVXKOVl84qtbhqAcZc9WL5seS6KLUEWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=E8nTwZil; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4667931f14bso56966071cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 07:37:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733239983; x=1733844783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=45ZT5fvdDImmdgAdnvc6z/+AzY3WZJ2Fl5NYIbZiSAo=;
-        b=QOc0N/NUqzgyQBFL3YcsFrekttyd/1YnrV1H2WXWVqq8rRuDr/fMbYTz0t0nSvjZsZ
-         PM0IJhaPyr1XFGkB+CgN5rJGrQo594jDOQh7cePyS+sg/JBAs1GtxQqcsovONgFLy5Op
-         1+ljoiONKHAsiMjXtSjgd+p1IUQBCGfFdjwWv68j6hNyma/YiG/+fSzPcVvx21A7TXKZ
-         J8YTAo4MNYwj2TozO7JRy9v50QYghtb7lOuUhpepBkAbV48PxgCkaesFHij5OlaLIewn
-         r6GeI3nXSYx2eMFHBv35VFSCGjE7XwwK8w5vv5wtuIXoUTRr94mCjgtrTWpg37lX2KUa
-         Jc9w==
+        d=szeredi.hu; s=google; t=1733240223; x=1733845023; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rz/swkd6wgpIBELDO/y+jOBNzes6ryd6W5fip1m+6M=;
+        b=E8nTwZilqKJ3BcHzwfWP3MlsXZEOv+UBnaznTEwqTVghx3kL0oFbQaEJqsJVF0Tru3
+         BSVlLSK4AA0Gk96UhYezWtPklTmSWXAN44OqNCs2SXzWU5K2z4+u8dAEpVR96E0bcBJ7
+         ByejZZpAV/DmGoLo+8xSVCHHiv3vyayfpbn5M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733239983; x=1733844783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=45ZT5fvdDImmdgAdnvc6z/+AzY3WZJ2Fl5NYIbZiSAo=;
-        b=OwzzHzMLyCEr/ibjz3BDlk8OQAxo6mdW+E7Xtx0I7RZ6hwG40dK98lEiTJ59s/Y7gN
-         NzyQ8J2hu+qpum7U3F60XMy6PKNO2sAKezW0IFb1hoJAbWiSoX6sKLOgF0hiVUp4gK0w
-         mGyvnC0aA1ZmBYRwqpchHKPnAX2LhaE5/2f8PYTdgy27J/jGO8aAMSU2fmSoqUNrgnWb
-         AFpkUQo9sZQPhDXOs9kcYnnx9Rgg+BzNrbykAfblPQNXyeMC6puAG29304aNF5jboBWO
-         f6F7KU+SnsJ5FDCx9LcswO+GcJ4kl5hFzV2oFU4cSHIuzk0tP15Cr23+PTp63Lh+oLi9
-         tLww==
-X-Forwarded-Encrypted: i=1; AJvYcCVL7v4lHM5MENimCxKcUQU7l6b1sZhsknA+tANe+pkEXNq6vY+KTE7QXXSMT0u5BKr1UU3Uh3GxhhL16PvP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU7w44qEbYu3Jx44IEX8UahGYa75DqLHiB3wXeufuNNke97nsb
-	gU0c6fI4AJ3wRrLsAaJpwTuZq3m5zXpBicBILaqjxuqRAA476DAJyqKhdTxOxVA=
-X-Gm-Gg: ASbGncsvFJvGJVFhMPqHY5uJutzzoT7raavTMqLyZy/DTLRqNmDONG9hjkRs2ABWB2g
-	QK29RtVHjxZmuS3P0ZpiMDCj5Rqi9XK3m250kF97PQIu43GVdJ+SHRyfLgPt89+virMUqdCWp5V
-	Gx25juLbeh8Z/lWYDonFyZHbHojymO1SsntuniCqc8svfvluqNb5Q0JKopSfkG8JxIQtzYsonPQ
-	BwoUd2BK7xpgTju8kQDLJ+b8fDUJNqfxp/cniBGvU0hFdOpa667Sc32KkA=
-X-Google-Smtp-Source: AGHT+IFgNffB59kRtGSa279D+oxFDG6GGmZlBVzfslJYY485yS6Rp8valFBlgcp9p+EP83czXVtQIg==
-X-Received: by 2002:a05:6808:199e:b0:3ea:6533:f19d with SMTP id 5614622812f47-3eae505a0femr2960000b6e.30.1733239982974;
-        Tue, 03 Dec 2024 07:33:02 -0800 (PST)
-Received: from localhost.localdomain ([130.250.255.163])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86036cbbsm2891878b6e.8.2024.12.03.07.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:33:02 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org,
-	clm@meta.com,
-	linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	kirill@shutemov.name,
-	bfoster@redhat.com,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 12/12] mm: add FGP_UNCACHED folio creation flag
-Date: Tue,  3 Dec 2024 08:31:48 -0700
-Message-ID: <20241203153232.92224-14-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241203153232.92224-2-axboe@kernel.dk>
-References: <20241203153232.92224-2-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1733240223; x=1733845023;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7rz/swkd6wgpIBELDO/y+jOBNzes6ryd6W5fip1m+6M=;
+        b=WCeLek4ekixxrGLFq79OBjGcFowbkYOxHlMDPfn1NIzmGeymkRm7ojU5JUKOrdd8Aq
+         4N5/8HU7h7dAYara1UuhdRuZgDLvWXjE425YXRox+GehxHnPxayYE/so/okBV8Da8DMj
+         Q/peRHLRVZ2zj3cENsIQsbcfTTC2a63F+XLR8yDNbeuiYbjFeaVbtwIG+E7ROo6Trz6g
+         wQLsimqMwIEidT+ffbUJo1p/lHh6yLcQx4YXZv8URnIM97JcuYtLYpGNfdb9zFyJTqCz
+         hcljRiL8IOwKyWNY+4U9FIQiyWWCwDDNTACb4PC6uUneDSDoRpAyTJhukHu8YNCErI8o
+         hUfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrNlXJnoXn0nqsqX1EohL0B9fiowSIVd9c7n6TzRET+Z5bBQW2DsNdG4mJCDnefMgSisZ03tCaAUIueNTL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5dRe5aI8HksXls3f2hAqcqIgaupBeQfkH1f569iEA4mciTmqg
+	Ue7ZzkhBv8XqkiCmiuzvZBDXvsMGX5I5Q1EnNV/CppmYCJOG72fIcd+GOzUeWmkad5r+0KpqD7u
+	oIutivMZAR0mv+YMeqjna5jPDpSRU2gYQXdXh4A==
+X-Gm-Gg: ASbGncsFh/k6t0Vjt7j6HNOgVRoxTDNf1wJb9eoJT96WGrTcBurLN0YBdLoEGVq2dGi
+	c531ffaiX2fE80gVyU1xOA6WKlVpMQDo=
+X-Google-Smtp-Source: AGHT+IEUum0ZndSVIMPqXbijEbyB0VTTc1ZOueQ809/udOOG1uhmvER8TVw9oYhIlrPJMH92NpvTCmrGlWBr1Z3Xz08=
+X-Received: by 2002:a05:622a:11c1:b0:466:b382:a78a with SMTP id
+ d75a77b69052e-4670c372edcmr39861541cf.29.1733240223089; Tue, 03 Dec 2024
+ 07:37:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241128144002.42121-1-mszeredi@redhat.com> <CAOQ4uxjAvpOnGp32OnsOKujivECgY1iV+UiBF_woDsxNSyJN_A@mail.gmail.com>
+ <CAJfpegvaq5LAF+z9+AUXZiR5ZB4VOPTa0Svb33e-Y8Q=135h+A@mail.gmail.com> <CAOQ4uxhbW=r9dZtkAx1ogoEmEKQh9f3g_WLh8jf+0o-rURCprQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhbW=r9dZtkAx1ogoEmEKQh9f3g_WLh8jf+0o-rURCprQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 3 Dec 2024 16:36:51 +0100
+Message-ID: <CAJfpegsKEZG+CJuaPkYipYZA0Jxzfk7Mz0h6S+Z3uAK6YD8MAg@mail.gmail.com>
+Subject: Re: [RFC PATCH] fanotify: notify on mount attach and detach
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Callers can pass this in for uncached folio creation, in which case if
-a folio is newly created it gets marked as uncached. If a folio exists
-for this index and lookup succeeds, then it will not get marked as
-uncached. If an !uncached lookup finds a cached folio, clear the flag.
-For that case, there are competeting uncached and cached users of the
-folio, and it should not get pruned.
+On Fri, 29 Nov 2024 at 11:23, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/pagemap.h | 2 ++
- mm/filemap.c            | 5 +++++
- 2 files changed, 7 insertions(+)
+> Currently, watching a sb/mount requires capable(SYS_ADMIN),
+> but I have a pretty simple patchset [1] to require ns_capable(SYS_ADMIN).
+> Thing is, I never got feedback from userspace that this is needed [2].
+> Seeing that statmount/listmount() requires at most ns_capable(SYS_ADMIN),
+> I am guessing that you would also want mount monitor to require
+> at most ns_capable(SYS_ADMIN) rather than capable(SYS_ADMIN)?
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index e49587c40157..374872acbe1d 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -721,6 +721,7 @@ pgoff_t page_cache_prev_miss(struct address_space *mapping,
-  * * %FGP_NOFS - __GFP_FS will get cleared in gfp.
-  * * %FGP_NOWAIT - Don't block on the folio lock.
-  * * %FGP_STABLE - Wait for the folio to be stable (finished writeback)
-+ * * %FGP_UNCACHED - Uncached buffered IO
-  * * %FGP_WRITEBEGIN - The flags to use in a filesystem write_begin()
-  *   implementation.
-  */
-@@ -734,6 +735,7 @@ typedef unsigned int __bitwise fgf_t;
- #define FGP_NOWAIT		((__force fgf_t)0x00000020)
- #define FGP_FOR_MMAP		((__force fgf_t)0x00000040)
- #define FGP_STABLE		((__force fgf_t)0x00000080)
-+#define FGP_UNCACHED		((__force fgf_t)0x00000100)
- #define FGF_GET_ORDER(fgf)	(((__force unsigned)fgf) >> 26)	/* top 6 bits */
- 
- #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 00f3c6c58629..a03a9b9127b8 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2001,6 +2001,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 			/* Init accessed so avoid atomic mark_page_accessed later */
- 			if (fgp_flags & FGP_ACCESSED)
- 				__folio_set_referenced(folio);
-+			if (fgp_flags & FGP_UNCACHED)
-+				__folio_set_uncached(folio);
- 
- 			err = filemap_add_folio(mapping, folio, index, gfp);
- 			if (!err)
-@@ -2023,6 +2025,9 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 
- 	if (!folio)
- 		return ERR_PTR(-ENOENT);
-+	/* not an uncached lookup, clear uncached if set */
-+	if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
-+		folio_clear_uncached(folio);
- 	return folio;
- }
- EXPORT_SYMBOL(__filemap_get_folio);
--- 
-2.45.2
+Yes, allowing this to work in a userns makes sense.
 
+> Option #1: do not allow setting FAN_MNT_ events on inode marks (for now)
+> Option #2: apply the same requirement for sb mark from fanotify_userns patch
+> to inode mark on group with FAN_REPORT_MNTID.
+
+Let's go with #1, as that gives the simplest interface.  We can extend
+that later if needed.
+
+Thanks,
+Miklos
 
