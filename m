@@ -1,220 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-36297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F34B9E1123
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 03:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D2869E1129
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 03:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4BE16488C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 02:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBFE61647E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 02:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF7413B2B8;
-	Tue,  3 Dec 2024 02:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966B5558BB;
+	Tue,  3 Dec 2024 02:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AVYSoxZR";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HQepNAQK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6Lv1YjY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604AB17555;
-	Tue,  3 Dec 2024 02:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733192017; cv=fail; b=W3xkiSYB+rWsE/DaGT2wwitxQeHJb1xNKcIVAnCeVg3XOwf0smtJGSfgSmrVG96S0Phs91zBon4v5qVuJ8r0EvNIcIghqv8dF0fUb3gADZ283TfrseG8GvtCMk7vjSpegpLl9Wtai9zh5QXPrK0BnXziGC3A2SfhUQmagA5GEsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733192017; c=relaxed/simple;
-	bh=jDGjLot+qRPK06B1y+fpkomJw5gjZ0aKGwonGyvJeQw=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=kBCoS8CPn+IqPeccp+1tR3aANrsDo9MJiZmgo1xslOp6BFifbC7dMnYPgA35wHm0zaxxCpKSrYoJzWJHibkLTFEsjpNjsaQb+I+DMpAxNH3AfSksj312QJd93b4AzZfMDRL0My07F/jkzl49FLza/H7izqTkq48JbR4CiF5cDoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AVYSoxZR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HQepNAQK; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2MtbIW028545;
-	Tue, 3 Dec 2024 02:13:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=gCAWLvvQppmXku66Hz
-	VFhu1/HwL3K6iIsAuNiopaV20=; b=AVYSoxZRciVtEG2jv6zMKOvTszvL889QuU
-	4bbaEFUB2OLavsc5QMDV65HunGfuytI/dhF8/zQxhNyUYXSCjLHe+4PmXdX3Fbjv
-	yfgEbucZ18epRtnUYzqGPTkA/5sPJpqlQOwxAJoiE4qBehYusbz2/Y47dQfgdI7m
-	wF39J0fJGVxvpL/oZsS/kiAS4R2tYZF1pib8jQareReCTyJ6vfuEAn4SklKum3r9
-	Gfm+9vsC4OyPn5Yi2cznS/9MrbkW7j22orPokdDVVASyZpyadEqMadqNJFvUXVDp
-	h4Zfv5vrcy7/hQYvJLIzV2MT5WmGfNET9EdjVZGz1wVoUUK1Y0Cg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437sg25450-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Dec 2024 02:13:19 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B30f3Pm000836;
-	Tue, 3 Dec 2024 02:13:18 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s57a9qt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Dec 2024 02:13:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EIG2HM2YkdXqFlBrpOs2+Zi4kKUbdPiS7y/5eCspqk2OMOxkaO+wvW01+qifrQ+tunzVBJfeBE8Qy8Lmee3fojITk23fDrS5onpbSddu0lbHHN8KZ8Urxwf5rIDOrmxhRXsrI+1/pBwMWhib+Lqdlln6/IOBo2vEtiP3UmXHPWDnbsPJvM3od0+sQzCAyQ1PeUxAdUuygAAoqgH2t70RN1OY8li1ua+vm6c4iBd8HuvU3ag+/eRAEnGtM/xp//P0+kr03t0/KcBjAw49kAjxIntB/L6X7AKKhE8wKH4/mM/hz6Muq2igi1a9NluDOYmoNwIn87h8T1bkv+zq00lh7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gCAWLvvQppmXku66HzVFhu1/HwL3K6iIsAuNiopaV20=;
- b=TNQ4co0GDP3u8kQK/eJkwMhS4hpH4sDIBqY0q8ty6PCrhQok3roPFAESlLMIYSlrzdjYpB0YZPnQl9EB8Da8jeQSObF1tKL+ZTtol0klcLQp6eTlywKqkrwYna2PXC4cEtEtKzEB/PlDnBdpt1+FgWlOMSEme7IUcMY8nUIFUMT88px4mzHQD4M5dGg81CGt60E6mRBgWfPIMD8F03SJoAgLAhaXsPxVkoY4QFVQLPTfnwD1iGzpOBAY45PQRGeiwYs0FPygXBxMEUPrSK649FRlSn21U496XtSMlMlaUyFmUpespTiundoDXoYpSoBYes2Xa5xnrkC4eAOWeipjQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A5B33CFC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 02:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733192130; cv=none; b=mfH1UhkK7gqKxdL4yl05N7cjKedcQHNgRhoyR0/exs59WiOi4hEKDc7ox15j5kHF4kWMtVF0mB/iCIcDjUXhOjklfCX+jd/gnOndXGNEAroEoWFaSbousR3FMHvGY+Zw2S+r7hz41o5J2dRAGxcvznHuCwCrhvfYUblwMGzWvzA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733192130; c=relaxed/simple;
+	bh=hSIw31BHDv5TDglVjAhNL9kAbbpjGpqfBEq/VofFTIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mf0w1k658+7KS+Ppft06AAUGpRNHWAHrtnHxin3q2TnvwyZDW4Le4UGj1BHFzxv+AvidRoGTBi5S0AjaMBv2OrwNgObFuNcLnw3uicnMS4hsDCcoWpECQf/aDAiSy4/0r1vV5k+Av9QsGYZXUnqoNq7BzH8hRmRntfebRLKggKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6Lv1YjY; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b68e73188cso258573385a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 18:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gCAWLvvQppmXku66HzVFhu1/HwL3K6iIsAuNiopaV20=;
- b=HQepNAQKybCwhh5RtRuz+gyZPL33TE+IzvZPV1QceQMCkk7XZQp0zLmP96i7ZyoLq12YsqUjzpiSORTEFZ6lYgiNG2XgxTzegHg1e5s0QwMhRN+I52FwVzO8F5SghJH0H3rTD3Rt8Bf5ZD52mwHvzklrk0FxynkxgwhqiFWbljw=
-Received: from SN6PR10MB2957.namprd10.prod.outlook.com (2603:10b6:805:cb::19)
- by SA1PR10MB7593.namprd10.prod.outlook.com (2603:10b6:806:385::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 02:13:16 +0000
-Received: from SN6PR10MB2957.namprd10.prod.outlook.com
- ([fe80::72ff:b8f4:e34b:18c]) by SN6PR10MB2957.namprd10.prod.outlook.com
- ([fe80::72ff:b8f4:e34b:18c%4]) with mapi id 15.20.8182.018; Tue, 3 Dec 2024
- 02:13:16 +0000
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, martin.petersen@oracle.com,
-        asml.silence@gmail.com, anuj1072538@gmail.com, brauner@kernel.org,
-        jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-        linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v11 06/10] io_uring: introduce attributes for read/write
- and PI support
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20241128112240.8867-7-anuj20.g@samsung.com> (Anuj Gupta's
-	message of "Thu, 28 Nov 2024 16:52:36 +0530")
-Organization: Oracle Corporation
-Message-ID: <yq1r06psey3.fsf@ca-mkp.ca.oracle.com>
-References: <20241128112240.8867-1-anuj20.g@samsung.com>
-	<CGME20241128113109epcas5p46022c85174da65853c85a8848b32f164@epcas5p4.samsung.com>
-	<20241128112240.8867-7-anuj20.g@samsung.com>
-Date: Mon, 02 Dec 2024 21:13:14 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR15CA0019.namprd15.prod.outlook.com
- (2603:10b6:208:1b4::32) To SN6PR10MB2957.namprd10.prod.outlook.com
- (2603:10b6:805:cb::19)
+        d=gmail.com; s=20230601; t=1733192127; x=1733796927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfSMydoRR81hJZsdUfsBGe1AdHbNuc2ffXIxCy0+80c=;
+        b=O6Lv1YjYww0kskIlE+X3cA4m8QViunsqBZBBVdwa2JiLiyruB1iUpRHbNLuSVrhh3n
+         19ixhhrh5GvQnPp+iV+82PUbPyiA4VjMfuShTpocHi0AZ0oKLywu5v5EttvxSjt1gz8w
+         7v7zzeXuyM+YllLW2LO8LMttX2DaRDjCar4Szzy3b57Jd6/lwUlaInzdDj1aYxH4o3Ri
+         phIyFXWJa9cn599/SM+sekjLaCVCGNTEDd1In5UpXKC+SbpNyKEwt5Rnz4SrKSW6IDV1
+         3tAdexczoFZE7fKAEPpD2uIMyTwhPls48mKBXFPkdRlaB4cCORZgEMMpQmH1XKf66s0w
+         zqoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733192127; x=1733796927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mfSMydoRR81hJZsdUfsBGe1AdHbNuc2ffXIxCy0+80c=;
+        b=CGMbxT2UDnXqIzcVqxEa5L/U2MHwHGxbfH9alHtEbt+h4/WB1UQGL94GMX3SsF39c7
+         xCykUw/QYhdjkBfDWF61bECE7z2S0P1QKbIwNaKl7om5Zp6Hj/fkXFAp0ctLx1ynbOBr
+         AHiEY+643zBG535hyQpCjm928MbSIreArfE/Zx4WZbjwFLguNync9sftX8i+cvJ9rErU
+         ElrWOqeWc8qyWsEncIv+26TbBXEz9yge5F0RmawzrfWupZ2zDW8gQfVcuVLK17fMf1X3
+         RH2lHZutp09DpwapontUVWro8PRbyeZ/q53sdzohscXXGV3CCbpPUvvqYGc2zjGwE1d/
+         a97g==
+X-Forwarded-Encrypted: i=1; AJvYcCXt72I2kBjArAM4jF0M82n0V9o+ko4Bl91DTOvapxL7kqnMc6dFG+RYISDpIw9i03MEer4r4CXB/44U7sQn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLtagybEabWGeYTIr563AyGhysQuhxdK1K+JxzrPiBpS/v+XTW
+	TRgY4Rqg7u81+wyfYO5WAjFbq3rZM0sWws1eGctnPm5IbKN41sUrhQZGNur7ucjDCuMqCRAzsIS
+	Il950j8K/qIiAVO68lZXrfbY6S86jmL3LBSgFM6AZ
+X-Gm-Gg: ASbGncth76iKu9ECzkPoURErM+UjYO9z59iEkfeoWJiI8jU7G7iU2HuRqfySPISx0zb
+	sm6FIHlKDkN6OG3sf7XuAz1kuSSkOow3nKg==
+X-Google-Smtp-Source: AGHT+IFR60pEpkbdMDdZM7tLfYiB/vuUYepSXg1KltBZZ1T8gRqBdXDal4Z77VibByzkK5V7O3cfMfwFbTFQxWTzFCo=
+X-Received: by 2002:ad4:5f85:0:b0:6d4:142d:8119 with SMTP id
+ 6a1803df08f44-6d8b7423a21mr15525506d6.42.1733192126691; Mon, 02 Dec 2024
+ 18:15:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR10MB2957:EE_|SA1PR10MB7593:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe96473b-6cb8-4489-28b2-08dd13400c43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2rYycSbXI0htiY2viRsw8IHcd+EaUkf8rzIqFWareuJ2NGMAiCRYZ8MWpHX6?=
- =?us-ascii?Q?1aHsMxSTlmRdYFHEnPBzoE+mDEujMAwFqzR9ObpN/9QdQ7AgC+KuX/YEmIfY?=
- =?us-ascii?Q?+BjpykxnCfxY6KjVr2aSjxb2YrsvWFwKG0JRk3ubnfcu9dxSl2lZLgfVHSaY?=
- =?us-ascii?Q?M35mFGu69Qk7a0/ntRH/8tJwYipo7M9WnvRy1bB3iFXfaC5qSyqBYWgluJDT?=
- =?us-ascii?Q?sF4Ko5pTIlK/TEZHuWu1TMdRh9zQnoU7xytciLnO4bUWkq4v2q3fJSR4yq9M?=
- =?us-ascii?Q?NZRy0eyRkYhPEa9SkCZ/C0FoQtT7ZN6XGI4sKn5VZLv/XvasZ+vgeMoaF3Wf?=
- =?us-ascii?Q?176aEoW+Mmh/yTr1AuC3ewtP6kGsQdnAF2JyoDPc3r23gTOgdqe2cLKlASAV?=
- =?us-ascii?Q?bFnjtDThLuq3h5CSwPCRMSJAZHY4MlrFdI9iBXlydqQm66knnOG04hWqsK07?=
- =?us-ascii?Q?5xE78YdDMklKwKf/wLxtolGbR+yRVpLnJHx7qw/mPg8GUowFotMaGY/MCyYE?=
- =?us-ascii?Q?f+ln4/kER7VTdSupClI9aTmN9XMiiKb/oR5JPjKsVJZLTwd0NekvOU5NxOMT?=
- =?us-ascii?Q?mhkqGyCbvIvEts84vqNevApLSjHv8eTKK5s1RGK88TRfPoIvwucC9kzsCbJ+?=
- =?us-ascii?Q?hz2ea7baJmssvNI93YxH4dRtxayBbcae8rA1gPWrEZGGW6KQpCPhKw99+m5I?=
- =?us-ascii?Q?mQxma411OQhOZrkr2cYMd7l3c2thMsSpHrwpumKbJ2pXzuO99cqpT7Q76Wu2?=
- =?us-ascii?Q?BHyzOEGBFf4B85WOVbXRlth/i9ongyO3OIKi7GcW5ZUJ2xPdAuQ061DR9mvB?=
- =?us-ascii?Q?jgti+zwjOb/EdZUuN1o3YaXiiZxoX/uJB3jL+L3V8UjV86fkmuVmGPiqGUp/?=
- =?us-ascii?Q?lpTqtTe4sTqy7fQVFxxUHuSy7Ck+yIS+T2ER4h2E4Sku2ZUkAYFxxQfe8dhI?=
- =?us-ascii?Q?b7VNGeasfUx3XHPVM8ekFUw3i90bLFh2uzkbAaz/1rESzH9fQcCF4VOmf7mn?=
- =?us-ascii?Q?rfW4rQX8P9uPoSB+fGt0soSlhcpQzrezwMNCL3sZ6P754mk0bre4OOF2mE63?=
- =?us-ascii?Q?He+9IQScDfkY31Ik6Em/6HyFxucG2tnvFtNgR4qByGuM1BC+iTjzaBpaCdQ7?=
- =?us-ascii?Q?wrWVwCJCD9M9fFnL6j9FqyNdLZIN66EjRbt2tSi8OXIz/NIPDukoeldGz1ou?=
- =?us-ascii?Q?xgvsr1IiCEyYbbqqcS205HcH/L/FO+w7n/2Adg07VoiUfPYafM/eXHfqc+Pu?=
- =?us-ascii?Q?GxunMLvxPQKi1h9gpPoLchRN0qURsNi+/NTEeptZfKXqYprBx/bg5ZYDArfa?=
- =?us-ascii?Q?UAUdlrvlJAX3F3+IlUC1XETfScWo12FfX2L/KLcC6cmGjA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB2957.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IbcfjOVZPvd3+o9O/xJB1smmKzqb1KS/aSgq47ZTvjRaOKwLCqtmaLi9mE/y?=
- =?us-ascii?Q?morYXtRrojfhmXLONXi4onriEmWYGd+0n4G8Sh7I5TMbDuhGlN+01cr8CN0M?=
- =?us-ascii?Q?TyUP1bYHck8sItMbYU5Q+IngWseJy0naSNClL2vhJLaqBKwP5iaduv7Z1Ybn?=
- =?us-ascii?Q?GbQjByKzc90y2Uqocn/0oy5deNP3Vg7AJWpJkmJPl04y71g4yqkrnxce7n83?=
- =?us-ascii?Q?luHgLTWyL7ngaRWKHloWP7mS51M33H60lYr+oO0o3cMkgf+n1NvpcHq4B+ik?=
- =?us-ascii?Q?GFKO21CF1JPHwG7pNTbtSKy046m/4MPq6gOhO/0y809nwnqWknFWFzaspkwc?=
- =?us-ascii?Q?ohljnbKH8XCa3DNYaCiQWdA2HCSjz7jGU0kkDOE0Pm4TdORF4EgMKFetGO6N?=
- =?us-ascii?Q?HTU+TfZ9P+zQBR1NIYFULtklWnCMN9WVPgco/I5cAy6xvEoe7CK3r+aKck6I?=
- =?us-ascii?Q?RH6jUpAmoWXQH60hIbNVi2feiu/gww7kw9JPGMMWTaO07AeWxyiI9MmarsLO?=
- =?us-ascii?Q?geI1UXOHRilb2zBrJZtLqPPxWDUoLK9Ta7Fb+hr1yLavp/StoaY3aXwbYOb6?=
- =?us-ascii?Q?NWG9ImOA4c+yfHzeT04UTMAFu8uGsK0X2uSbJYoczKlaEJ/eDQF85oITLqQ5?=
- =?us-ascii?Q?GsEO0I43WrIgUshYsFRBfMMqL7G72p9RZGwLXwDkflWtGf57/0cC7/6GvrQT?=
- =?us-ascii?Q?JQsHoDt2DOJ49J9KuaBABfxKZH04JmvjINepc1qeYfKBLgfkfVyoCJnMgjX1?=
- =?us-ascii?Q?QONGyfc7wJv+1zeu1YClylDU82hS24BnlNGuIFa7eoyPqMQcDRd/N6J62qiy?=
- =?us-ascii?Q?JHPWt+8vw5OJNbzpvU1ZTQ0clcDjKvyIJoMGiIoPYdyP2EBPODfKEle1u483?=
- =?us-ascii?Q?+NgpODl4lIOt9XXU+UsQVVxmGIWz903Gzs4KeDr9xl84BfZiycnNik36Kgub?=
- =?us-ascii?Q?ZQKbmSUCeULVy+H49S1gUXXdjlOb62UeQQvbItVs4QonxvwsHV8g7gz23abA?=
- =?us-ascii?Q?YjM1m6wZ0ETyUtD29htzBELlrzRPlFVA4UxWlkpIQ5lDLee89uueYNPGuTap?=
- =?us-ascii?Q?XWeoE99w4QXDhfvv9BdGgpli8E0z/5Ziz7ZQPk/EJLBhR8MAGX5VzstfXtlr?=
- =?us-ascii?Q?38MqoTCv/todgbaiPrcrVM+oOTmv8DE7O2ROjTif8F4JNr+vYZiwkpMIZl8B?=
- =?us-ascii?Q?pwXCN4HMtILzgchsV6g1OdcRdtv5yU7xb18yZzLWF8LMGgMd8fxBHxIZybPh?=
- =?us-ascii?Q?dwrmmKkb8kPttERCw+rM+V4vmLDKhH7fL/5xDK0o1BcC7VgHVhebiTWzXj01?=
- =?us-ascii?Q?AWXh1SFpTIYywxm4SHHiCYR9dWsgjVmyiYROAes4s/t9fw+OYR/ks9hUyUQ6?=
- =?us-ascii?Q?NeeRip9FnrgHrbgK+uGXZC3Zuu5DwtTq9fKNn6A6MSQ/rsI8nu4Z1dqgisr1?=
- =?us-ascii?Q?UFsLalLo2G2qfNie+XChzQGYKQTKM0YJQcV67N7FTI3sz4j5AUH2Ej+CyIbN?=
- =?us-ascii?Q?3otpNc557rnC7eTS/KyM31EgyBBTcSVd0HzCQBRKYw3TUi7Gh4xTjsUcHrEY?=
- =?us-ascii?Q?R0H8gdZm9OMPeRGvvK0EUMSQg2DGNvz7EFkvbPNXjAjQX5mHIkw77/+HLEX7?=
- =?us-ascii?Q?HQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hToOVxp2/ZhJNkWQQI7b8dRKdZwDw4+cW0y2b1dF9xycDfaCWtiDqXaclTgOrvouCIi6gvtpdf0pA0OXX/cXJ8uMynXd24WdBxAfJF2klnysEMtEYDnqiDBfSS+9Axi/p5dpmkv8vYvLhTLZX5gPJKSYt2GOLVRlHALkPot1FURIF/WPjlbIjom2gT+ZeuvZQBnEvF4G4WzcIDAUG7nuChwecuBhPLoLKX1o/6Dc3dF74xr2NgNmPeA7rswHAAEPJcxpLM5q+knlvhQhKA3DCxHk00wkwNdhWvDx4UrXa74yFPE2bUmPipbsHB/E8xOjvcpIRkrbOLn0bI5fZp1s4RNJOTWyirs0xX36tzK8dcOOdINx7gRcibOnXce/ZI16HrrTsry4rXU4FjZRu8WQbTcTJou3T2Y5ITx6SMFLmFxGPoZtZ/BQM4vHUP0SPtcyLGmX6t9WviL1VwOddw4iLKTgegx8gs8sCi+DG2tq7iAXBLO7W+TBRNr4lL1oHz6UFFHiG/xa5QtbGh8vjYeUqJZZSD3Vqp9MEIblRAlqczlLtXjZBSRg6YKjndOutC+U102d0Y2Jz5z3WgO/SMvsa2T6o6qQIMp2V9nYanZYbOk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe96473b-6cb8-4489-28b2-08dd13400c43
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB2957.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 02:13:16.3199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5HpMUHD4GXqnKz054pE3XRASsyZ80Uv/W3cWbipDksShsO18zbLIxmcxfKKesShUHvxYGEVMHN6LSheBC5erI9o+V0AKPWWkkAQZ2F78OK0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7593
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-02_14,2024-12-02_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412030017
-X-Proofpoint-ORIG-GUID: gfFO5Ow3fn5peyRi8LqCitFRkbK9Qq_n
-X-Proofpoint-GUID: gfFO5Ow3fn5peyRi8LqCitFRkbK9Qq_n
+References: <202411292300.61edbd37-lkp@intel.com>
+In-Reply-To: <202411292300.61edbd37-lkp@intel.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 3 Dec 2024 10:14:50 +0800
+Message-ID: <CALOAHbABe2DFLWboZ7KF-=d643keJYBx0Es=+aF-J=GxqLXHAA@mail.gmail.com>
+Subject: Re: [linux-next:master] [mm/readahead] 13da30d6f9: BUG:soft_lockup-CPU##stuck_for#s![usemem:#]
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-Anuj,
-
-> Add the ability to pass additional attributes along with read/write.
-> Application can prepare attibute specific information and pass its
-> address using the SQE field:
-> 	__u64	attr_ptr;
+On Fri, Nov 29, 2024 at 11:19=E2=80=AFPM kernel test robot
+<oliver.sang@intel.com> wrote:
 >
-> Along with setting a mask indicating attributes being passed:
-> 	__u64	attr_type_mask;
 >
-> Overall 64 attributes are allowed and currently one attribute
-> 'IORING_RW_ATTR_FLAG_PI' is supported.
+>
+> Hello,
+>
+> kernel test robot noticed "BUG:soft_lockup-CPU##stuck_for#s![usemem:#]" o=
+n:
+>
+> commit: 13da30d6f9150dff876f94a3f32d555e484ad04f ("mm/readahead: fix larg=
+e folio support in async readahead")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>
+> [test failed on linux-next/master cfba9f07a1d6aeca38f47f1f472cfb0ba133d34=
+1]
+>
+> in testcase: vm-scalability
+> version: vm-scalability-x86_64-6f4ef16-0_20241103
+> with following parameters:
+>
+>         runtime: 300s
+>         test: mmap-xread-seq-mt
+>         cpufreq_governor: performance
+>
+>
+>
+> config: x86_64-rhel-9.4
+> compiler: gcc-12
+> test machine: 224 threads 4 sockets Intel(R) Xeon(R) Platinum 8380H CPU @=
+ 2.90GHz (Cooper Lake) with 192G memory
+>
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202411292300.61edbd37-lkp@intel.=
+com
+>
+>
+> [  133.054592][    C1] watchdog: BUG: soft lockup - CPU#1 stuck for 22s! =
+[usemem:5463]
+> [  133.062611][    C1] Modules linked in: xfs intel_rapl_msr intel_rapl_c=
+ommon intel_uncore_frequency intel_uncore_frequency_common isst_if_mbox_msr=
+ isst_if_common skx_edac skx_edac_common nfit libnvdimm x86_pkg_temp_therma=
+l coretemp btrfs blake2b_generic xor kvm_intel raid6_pq libcrc32c kvm crct1=
+0dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sd_mod rapl sg in=
+tel_cstate ipmi_ssif acpi_power_meter binfmt_misc snd_pcm dax_hmem cxl_acpi=
+ snd_timer cxl_port snd ast ahci mei_me cxl_core libahci soundcore drm_shme=
+m_helper ioatdma i2c_i801 intel_uncore einj pcspkr libata megaraid_sas drm_=
+kms_helper mei ipmi_si acpi_ipmi i2c_smbus dca intel_pch_thermal wmi ipmi_d=
+evintf ipmi_msghandler joydev drm fuse loop dm_mod ip_tables
+> [  133.127927][    C1] CPU: 1 UID: 0 PID: 5463 Comm: usemem Not tainted 6=
+.12.0-rc6-00041-g13da30d6f915 #1
+> [  133.137519][    C1] Hardware name: Inspur NF8260M6/NF8260M6, BIOS 06.0=
+0.01 04/22/2022
+> [ 133.145595][ C1] RIP: 0010:memset_orig (arch/x86/lib/memset_64.S:71)
+> [ 133.150781][ C1] Code: c1 41 89 f9 41 83 e1 07 75 70 48 89 d1 48 c1 e9 =
+06 74 35 0f 1f 44 00 00 48 ff c9 48 89 07 48 89 47 08 48 89 47 10 48 89 47 =
+18 <48> 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d8
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   c1 41 89 f9             roll   $0xf9,-0x77(%rcx)
+>    4:   41 83 e1 07             and    $0x7,%r9d
+>    8:   75 70                   jne    0x7a
+>    a:   48 89 d1                mov    %rdx,%rcx
+>    d:   48 c1 e9 06             shr    $0x6,%rcx
+>   11:   74 35                   je     0x48
+>   13:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+>   18:   48 ff c9                dec    %rcx
+>   1b:   48 89 07                mov    %rax,(%rdi)
+>   1e:   48 89 47 08             mov    %rax,0x8(%rdi)
+>   22:   48 89 47 10             mov    %rax,0x10(%rdi)
+>   26:   48 89 47 18             mov    %rax,0x18(%rdi)
+>   2a:*  48 89 47 20             mov    %rax,0x20(%rdi)          <-- trapp=
+ing instruction
+>   2e:   48 89 47 28             mov    %rax,0x28(%rdi)
+>   32:   48 89 47 30             mov    %rax,0x30(%rdi)
+>   36:   48 89 47 38             mov    %rax,0x38(%rdi)
+>   3a:   48 8d 7f 40             lea    0x40(%rdi),%rdi
+>   3e:   75 d8                   jne    0x18
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   48 89 47 20             mov    %rax,0x20(%rdi)
+>    4:   48 89 47 28             mov    %rax,0x28(%rdi)
+>    8:   48 89 47 30             mov    %rax,0x30(%rdi)
+>    c:   48 89 47 38             mov    %rax,0x38(%rdi)
+>   10:   48 8d 7f 40             lea    0x40(%rdi),%rdi
+>   14:   75 d8                   jne    0xffffffffffffffee
+> [  133.170775][    C1] RSP: 0018:ffffc900126efa20 EFLAGS: 00000206
+> [  133.177015][    C1] RAX: 0000000000000000 RBX: ffffea00a7c878c0 RCX: 0=
+000000000000030
+> [  133.185139][    C1] RDX: 0000000000001000 RSI: 0000000000000000 RDI: f=
+fff88a9f21e33c0
+> [  133.193229][    C1] RBP: ffff88a9f21e3000 R08: 0000000000000000 R09: 0=
+000000000000000
+> [  133.201373][    C1] R10: ffff88a9f21e3000 R11: 0000000000001000 R12: 0=
+000000000000000
+> [  133.209522][    C1] R13: 0000000000000000 R14: 0000000000000000 R15: 0=
+0000026b5fdf000
+> [  133.217642][    C1] FS:  00007f21a47e86c0(0000) GS:ffff888c0f680000(00=
+00) knlGS:0000000000000000
+> [  133.226703][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  133.233410][    C1] CR2: 00005641d476a000 CR3: 0000000c4b6b6003 CR4: 0=
+0000000007726f0
+> [  133.241514][    C1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0=
+000000000000000
+> [  133.249679][    C1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0=
+000000000000400
+> [  133.257776][    C1] PKRU: 55555554
+> [  133.261446][    C1] Call Trace:
+> [  133.264848][    C1]  <IRQ>
+> [ 133.267875][ C1] ? watchdog_timer_fn (kernel/watchdog.c:762)
+> [ 133.273139][ C1] ? __pfx_watchdog_timer_fn (kernel/watchdog.c:677)
+> [ 133.278704][ C1] ? __hrtimer_run_queues (kernel/time/hrtimer.c:1691 ker=
+nel/time/hrtimer.c:1755)
+> [ 133.284250][ C1] ? hrtimer_interrupt (kernel/time/hrtimer.c:1820)
+> [ 133.289443][ C1] ? __sysvec_apic_timer_interrupt (arch/x86/kernel/apic/=
+apic.c:1038 arch/x86/kernel/apic/apic.c:1055)
+> [ 133.295587][ C1] ? sysvec_apic_timer_interrupt (arch/x86/kernel/apic/ap=
+ic.c:1049 arch/x86/kernel/apic/apic.c:1049)
+> [  133.301543][    C1]  </IRQ>
+> [  133.304608][    C1]  <TASK>
+> [ 133.307641][ C1] ? asm_sysvec_apic_timer_interrupt (arch/x86/include/as=
+m/idtentry.h:702)
+> [ 133.313886][ C1] ? memset_orig (arch/x86/lib/memset_64.S:71)
+> [ 133.318457][ C1] zero_user_segments (include/linux/highmem.h:280)
+> [ 133.323465][ C1] iomap_readpage_iter (fs/iomap/buffered-io.c:392)
+> [ 133.328698][ C1] ? xas_load (include/linux/xarray.h:175 include/linux/x=
+array.h:1264 lib/xarray.c:240)
+> [ 133.332919][ C1] iomap_readahead (fs/iomap/buffered-io.c:514 fs/iomap/b=
+uffered-io.c:550)
+> [ 133.337765][ C1] read_pages (mm/readahead.c:160)
+> [ 133.342137][ C1] ? alloc_pages_mpol_noprof (mm/mempolicy.c:2267)
+> [ 133.347774][ C1] page_cache_ra_unbounded (include/linux/fs.h:882 mm/rea=
+dahead.c:291)
+> [ 133.353303][ C1] filemap_fault (mm/filemap.c:3230 mm/filemap.c:3329)
+> [ 133.357982][ C1] __do_fault (mm/memory.c:4882)
+> [ 133.362292][ C1] do_read_fault (mm/memory.c:5297)
+> [ 133.366985][ C1] do_pte_missing (mm/memory.c:5431 mm/memory.c:3965)
+> [ 133.371754][ C1] __handle_mm_fault (mm/memory.c:5909)
+> [ 133.376818][ C1] handle_mm_fault (mm/memory.c:6077)
+> [ 133.381717][ C1] do_user_addr_fault (arch/x86/mm/fault.c:1339)
+> [ 133.386820][ C1] exc_page_fault (arch/x86/include/asm/irqflags.h:37 arc=
+h/x86/include/asm/irqflags.h:92 arch/x86/mm/fault.c:1489 arch/x86/mm/fault.=
+c:1539)
+> [ 133.391500][ C1] asm_exc_page_fault (arch/x86/include/asm/idtentry.h:62=
+3)
+> [  133.396396][    C1] RIP: 0033:0x55578aeb9acc
+> [ 133.400849][ C1] Code: 00 00 e8 b7 f8 ff ff bf 01 00 00 00 e8 0d f9 ff =
+ff 89 c7 e8 6c ff ff ff bf 00 00 00 00 e8 fc f8 ff ff 85 d2 74 08 48 8d 04 =
+f7 <48> 8b 00 c3 48 8d 04 f7 48 89 30 b8 00 00 00 00 c3 41 54 55 53 48
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   00 00                   add    %al,(%rax)
+>    2:   e8 b7 f8 ff ff          call   0xfffffffffffff8be
+>    7:   bf 01 00 00 00          mov    $0x1,%edi
+>    c:   e8 0d f9 ff ff          call   0xfffffffffffff91e
+>   11:   89 c7                   mov    %eax,%edi
+>   13:   e8 6c ff ff ff          call   0xffffffffffffff84
+>   18:   bf 00 00 00 00          mov    $0x0,%edi
+>   1d:   e8 fc f8 ff ff          call   0xfffffffffffff91e
+>   22:   85 d2                   test   %edx,%edx
+>   24:   74 08                   je     0x2e
+>   26:   48 8d 04 f7             lea    (%rdi,%rsi,8),%rax
+>   2a:*  48 8b 00                mov    (%rax),%rax              <-- trapp=
+ing instruction
+>   2d:   c3                      ret
+>   2e:   48 8d 04 f7             lea    (%rdi,%rsi,8),%rax
+>   32:   48 89 30                mov    %rsi,(%rax)
+>   35:   b8 00 00 00 00          mov    $0x0,%eax
+>   3a:   c3                      ret
+>   3b:   41 54                   push   %r12
+>   3d:   55                      push   %rbp
+>   3e:   53                      push   %rbx
+>   3f:   48                      rex.W
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   48 8b 00                mov    (%rax),%rax
+>    3:   c3                      ret
+>    4:   48 8d 04 f7             lea    (%rdi,%rsi,8),%rax
+>    8:   48 89 30                mov    %rsi,(%rax)
+>    b:   b8 00 00 00 00          mov    $0x0,%eax
+>   10:   c3                      ret
+>   11:   41 54                   push   %r12
+>   13:   55                      push   %rbp
+>   14:   53                      push   %rbx
+>   15:   48                      rex.W
 
-I have things running on my end on top of Jens' tree (without error
-injection, that's to come).
+Is this issue consistently reproducible?
+I attempted to reproduce it using the mmap-xread-seq-mt test case but
+was unsuccessful.
 
-One question, though: How am I to determine that the kernel supports
-attr_ptr and IORING_RW_ATTR_FLAG_PI? Now that we no longer have separate
-IORING_OP_{READ,WRITE}_META commands I can't use IO_URING_OP_SUPPORTED
-to find out whether the running kernel supports PI passthrough.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+--
+Regards
+Yafang
 
