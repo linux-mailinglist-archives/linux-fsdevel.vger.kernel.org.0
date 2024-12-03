@@ -1,97 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-36347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141A79E1F3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:33:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29301166BDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:32:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924401F470B;
-	Tue,  3 Dec 2024 14:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="O4N+koOL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bKz3Rzqk"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607949E1FC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:42:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5CE1F12FC;
-	Tue,  3 Dec 2024 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C56284970
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:42:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256111F4734;
+	Tue,  3 Dec 2024 14:42:33 +0000 (UTC)
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6FE1E25E4;
+	Tue,  3 Dec 2024 14:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733236352; cv=none; b=tYAxZWndVYzFff2GkUWxSuJiFJBZlUSgLj+I3mFAq32i4qYT3F7OB0G66r2Kyfr4G4rxXOOmGMfKOrCeCcBnkdqpYQElpOdx6kkuY2jUomR47rByMvbES4sJgpDgSMzhrq4fCZzlfLNz4iaooX7Q0a1/qHT5rlWXMyiaW0nq4qE=
+	t=1733236952; cv=none; b=RDtpN74qb1B7SxxnlIYJuJTZWAXLEF5+QZRv/P14K6hAKNf+EEQy+PePhHx/1Hb7QSd7qaq9JwBpya7rDKk/HjyDV4DcSwCUJ3FVWSu20KRAFzou3CSbX3x+2CNv/MIPu1vqi4ILzCJ9W2hWmmc+vLftoKQ18CnPZRU0dTojKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733236352; c=relaxed/simple;
-	bh=qjcjegiCrCJyE0TckIR4VqwsXl2CzR6BLkr1q9tzGRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaBdYpKDCZ2jZD/hzzQAAleuVMDymNpKUPjtI1CXhJ9g0rWxPHtbSfkLHZGKWIBAe61Bj+jXfd+ZUHQzCUcLA+2fdcxfZuS+EAhglUGfkHAA9zxU7dbOCsrL/LuURVzyTLtjmlUOTB5hRpAzEYmYs3RrpM/oWfRJQlztKzm7tZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=O4N+koOL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bKz3Rzqk; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6E1CE1140114;
-	Tue,  3 Dec 2024 09:32:29 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 03 Dec 2024 09:32:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733236349;
-	 x=1733322749; bh=Y4CnRTDogXXvhGarRROw/9wryFul2e5EkKqSMWzM6iQ=; b=
-	O4N+koOLDfSO/xFHsPfr01VMYxUrZdFsNLbatQHAWJdINpSO8wy/i6hZ537XH3Iq
-	EiWOL7+xPZUdiU1gNTc+4QpA2KIC09MC8DRYzRyvLXEI7Ch0ZXD68kwwWm38mubB
-	U6RU9jAv77N4eFoX4UFS1saJcHQF4zB3fMl9NjxnzSrRIfqr9tfleiMi6hkivwoo
-	6lWTHntPVKIYpOiHw584srKsEPwqMo1kusScohVYikVg5jkELGvgpXLJzWBD47wI
-	f0Cj1JRc81jlHJkaN6BkO+WVxi5lsFAOwRa+HuenSogNab9N3hlTQJyahaMfgeGn
-	zn/Rgx7ZC2Jzz5fNaACwQA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733236349; x=
-	1733322749; bh=Y4CnRTDogXXvhGarRROw/9wryFul2e5EkKqSMWzM6iQ=; b=b
-	Kz3RzqkQFfWFVkAPaYbiFP0jl93Ev/bY+AEkV/dtfCc1NKHBvfwu/HUvjaxV5jLO
-	f0gLZ0M9BK2KpOcVJvd7oUus/ApjvaVhDobMzIukXJxGsZKAMTQfm3jatyXfW+iw
-	lA/57U4n7hUvUobSpy9tv+hod4tH3C2mjMNMMYs0DGN5sDlZOGOEoUR85CgXxzzC
-	XvJAm7bgPRZqBPZwJljDMvbrCIRturnamnHRkLxNH6/3UTI3Ox3cxZ2GFn/yTiVn
-	oawE4S0DUtB3M73kjN5Xw9z+gxkl+cmcJox+EX+rIUJjcDqUtIkbBtAMynYJKHbm
-	/RPviEKasWI6ERIRWZrSw==
-X-ME-Sender: <xms:fBZPZ3Dc7oW5bLaFjyrXo7YxToEKKCjoA2KfiWqwnhkO9JqEOzvKoQ>
-    <xme:fBZPZ9iX9j9jPtQ_eMD1_Hwfohg0a61cBRGze13AZffO9tQ6rTiPKO6m_Tf4s19Rb
-    UgIfOiZWUnSbfWE>
-X-ME-Received: <xmr:fBZPZykP6wouguJV4Rd4G_eue3pAMb6a1iHsnIWr08dbiowceL8CZLOMVq9aqB-mtT_vznmn1r_a-qz3qMXBtXJUKSGh814ycEGxGvmV7jkbjnE6DqWV>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieefgdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
-    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
-    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
-    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgt
-    phhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhloh
-    hssehsiigvrhgvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughk
-    pdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtth
-    hopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopegrmhhirhej
-    fehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:fBZPZ5y2Y6LOzbb6S0-60G7TCMZFoU55MZaGh1fh53BZDK4ErYug4g>
-    <xmx:fBZPZ8SsmJbPHv_VYBsTizANQf4ykYIfLs5SL4jwMZXoF_FHOZSUJA>
-    <xmx:fBZPZ8ZD0Af_8f2jEfr1N3wBTVEXP2RAwQH-8mYKRvhJi3sVmwbKbA>
-    <xmx:fBZPZ9RQthETPLdGKImnBugMtV9MJ_Y3PjKaWc97F_4zgAgyBHv9wQ>
-    <xmx:fRZPZzIuqLI7n4y2v0C6o4WaSTSD1aNf4oJA9kwdCvmfllRo-UE1KfT9>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Dec 2024 09:32:26 -0500 (EST)
-Message-ID: <a7b291db-90eb-4b16-a1a4-3bf31d251174@fastmail.fm>
-Date: Tue, 3 Dec 2024 15:32:25 +0100
+	s=arc-20240116; t=1733236952; c=relaxed/simple;
+	bh=a1sv7yNgLfruuxtj7ruwGgaD5fU0gF2JQ7MMM+qelH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PmLz7h0hh9Mj0/FvGTm97EApSp2q6FZyZ51uPNcSsgIsT8rddhtaAhDdWDj9jXRZyCyxGC2J2D5vAyMGaGiurE+F9eAWEx35PlpMQHjXjeG1e4FSe3WlGReKixRlo1j5W4L1PyQX4oyHXb3A/BT7L9Ie7E+X4hWe+wjAh+bl7wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A46D2FEC;
+	Tue,  3 Dec 2024 06:42:57 -0800 (PST)
+Received: from [10.57.90.133] (unknown [10.57.90.133])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64AD63F71E;
+	Tue,  3 Dec 2024 06:42:27 -0800 (PST)
+Message-ID: <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
+Date: Tue, 3 Dec 2024 14:42:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,44 +42,71 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
- bernd@bsbernd.com
-References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
- <57546d3d-1f62-4776-ba0c-f6a8271ee612@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <57546d3d-1f62-4776-ba0c-f6a8271ee612@gmail.com>
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Wenchao Hao
+ <haowenchao22@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
+ Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+ <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 12/3/24 15:24, Pavel Begunkov wrote:
-> On 11/27/24 13:40, Bernd Schubert wrote:
->> [I removed RFC status as the design should be in place now
->> and as xfstests pass. I still reviewing patches myself, though
->> and also repeatings tests with different queue sizes.]
+On 03/12/2024 14:17, David Hildenbrand wrote:
+> On 03.12.24 14:49, Wenchao Hao wrote:
+>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+>> each VMA, but it does not include large pages smaller than PMD size.
+>>
+>> This patch adds the statistics of anonymous huge pages allocated by
+>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>>
+>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>> ---
+>>   fs/proc/task_mmu.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 38a5a3e9cba2..b655011627d8 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
+>> struct page *page,
+>>           if (!folio_test_swapbacked(folio) && !dirty &&
+>>               !folio_test_dirty(folio))
+>>               mss->lazyfree += size;
+>> +
+>> +        /*
+>> +         * Count large pages smaller than PMD size to anonymous_thp
+>> +         */
+>> +        if (!compound && PageHead(page) && folio_order(folio))
+>> +            mss->anonymous_thp += folio_size(folio);
+>>       }
+>>         if (folio_test_ksm(folio))
 > 
-> I left a few comments, but it looks sane. At least on the io_uring
-> side nothing weird caught my eye. Cancellations might be a bit
-> worrisome as usual, so would be nice to give it a good run with
-> sanitizers.
+> 
+> I think we decided to leave this (and /proc/meminfo) be one of the last
+> interfaces where this is only concerned with PMD-sized ones:
+> 
+> Documentation/admin-guide/mm/transhuge.rst:
+> 
+> The number of PMD-sized anonymous transparent huge pages currently used by the
+> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+> To identify what applications are using PMD-sized anonymous transparent huge
+> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+> fields for each mapping. (Note that AnonHugePages only applies to traditional
+> PMD-sized THP for historical reasons and should have been called
+> AnonHugePmdMapped).
+> 
 
-Thanks a lot for your reviews, new series is in preparation, will 
-send it out tomorrow to give a test run over night. I'm 
-running xfstests on a kernel that has lockdep and ASAN enabled, which
-is why it takes around 15 hours (with/without FOPEN_DIRECT_IO).
+Agreed. If you need per-process metrics for mTHP, we have a python script at
+tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
+you all the options.
 
-And definitely, cancellation/teardown is the part that I spent most
-time on.
-
-
-Thanks,
-Bernd
 
