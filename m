@@ -1,204 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-36368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D569C9E2894
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 18:04:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C159E2851
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 17:56:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE85B831C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 16:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9F2289BA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 16:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4FF1F8AE6;
-	Tue,  3 Dec 2024 16:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8154E1FA270;
+	Tue,  3 Dec 2024 16:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yFRTUmL8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V3E5Ks4X";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yFRTUmL8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V3E5Ks4X"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DwSKULEr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DB62BD1D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1661F9F6B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 16:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244128; cv=none; b=gRAzEIH12YKM1XGCUCCpOGFcgWGaby2PoGMyMTRvfV8epleXv88pjS9DXGOPsz9CaGWvFX4So+JBDWXzjH4TaXKFexaW3v/ZylksL9OazR6LMkA/zl+1/d7XW+yQjlX8G+EdQKRI27ZGltfSxV8W9lrjVv2X0n4AH+NT555QMGA=
+	t=1733244969; cv=none; b=F845eVq/GOnCBJcQnm881KdrpvGEaybYpboyp0s8Rm2RBWSj54TVaJ7oOjILeMDmFaJuOlRc7F2kRwvbnjcnqUdyw+sUH98zV93fo4MlVW/6A17y4cjMonZos+asCm1NvLXv1FjWJPdaoisqbKF/ZydIdeW2+fdsETAQV8P8OL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244128; c=relaxed/simple;
-	bh=VKhqfWbw7lZY62m8nZ/HZPzAt0pTHMbldEq13Oco5qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7CoXEUcGlDEBJDs5YZu/33xXY5Zc+KbdSlHHpdXii0UaYsDgdzSXfKYA2gOpsQB7ZuU1ZZ03QrsozDs5WkNgfibml6vrFuBm6K+20wJTxVjdeHwg5u20s9yu4km/B7xqSEAmNZvc5NNLg8F7wEDeyqE0J89DG0+whWR9NOS8zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yFRTUmL8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V3E5Ks4X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yFRTUmL8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V3E5Ks4X; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1733244969; c=relaxed/simple;
+	bh=7Gx75QDlyoDonl8gsJEr0X4zw3xiB1g1IW3hMV6K+3U=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=T5Ss5haI0rCDe2bjQeT6hYdqTmkdmMlBRCIRI/tg2ShJgARGMsVF7QiZRyIsN03C7/J2usMivlsjqngXdcp/JzvUkFR6dkAy0us99TjRQ6FMmqko6zZc7F6iP3HbLBSMBvQ3182Bc9/DEhfX2LJ9DqF1XRgzOKt88YKt0E9ErBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DwSKULEr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733244965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DV9CirJEkNvuIp9vIxKxT+t7dtJcsduQ7RHNpTrXiWQ=;
+	b=DwSKULEr+iRfMpURP4LWpuwomYutnYNbmjj6d7c7PGsbRnnEJ8ZYdIQznqiCrOYA7ORhzu
+	V1V8np1r2ekRwxlnDu575dQwkid2xYBvx805qiVHH6FHT6WpkAtoKdnB1C3wt1nMkbxQmz
+	pxFoZgEHPfeXGF4cJ2HkYyBxAs8JNDw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-423-BLyc-I2_PU6o9ocECVBXbg-1; Tue,
+ 03 Dec 2024 11:56:00 -0500
+X-MC-Unique: BLyc-I2_PU6o9ocECVBXbg-1
+X-Mimecast-MFC-AGG-ID: BLyc-I2_PU6o9ocECVBXbg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1530C21119;
-	Tue,  3 Dec 2024 16:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733244125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEieebZ3Li6BEjcsDNktj7Z+m2y3mxtuPYupMnb1MhA=;
-	b=yFRTUmL8VZsFeoLch2XkUqAOMfoA42F7nz5tSlDImO6NvtzgBAkRPO9zHBxPx9wdDlzC4n
-	pA3Xpgiv83Zn/DpdaHyWbKLK65+UUWvYqA0u4b5G6ZVmaHh8YfWokrelbVB5E9L94z0NFJ
-	VSdyuGBT58xcvjD9px3sGLhpb1pObNs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733244125;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEieebZ3Li6BEjcsDNktj7Z+m2y3mxtuPYupMnb1MhA=;
-	b=V3E5Ks4XvZwYwDiBpSxtPLkLnALVNWmwdhkMbNeZzbLJjbLhDUJug1TVswEmm8jCxSIa92
-	1GtmpP7HHhEN/wAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yFRTUmL8;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=V3E5Ks4X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733244125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEieebZ3Li6BEjcsDNktj7Z+m2y3mxtuPYupMnb1MhA=;
-	b=yFRTUmL8VZsFeoLch2XkUqAOMfoA42F7nz5tSlDImO6NvtzgBAkRPO9zHBxPx9wdDlzC4n
-	pA3Xpgiv83Zn/DpdaHyWbKLK65+UUWvYqA0u4b5G6ZVmaHh8YfWokrelbVB5E9L94z0NFJ
-	VSdyuGBT58xcvjD9px3sGLhpb1pObNs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733244125;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iEieebZ3Li6BEjcsDNktj7Z+m2y3mxtuPYupMnb1MhA=;
-	b=V3E5Ks4XvZwYwDiBpSxtPLkLnALVNWmwdhkMbNeZzbLJjbLhDUJug1TVswEmm8jCxSIa92
-	1GtmpP7HHhEN/wAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0652E139C2;
-	Tue,  3 Dec 2024 16:42:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A5BEAd00T2cRYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Dec 2024 16:42:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9B736A08FB; Tue,  3 Dec 2024 17:42:04 +0100 (CET)
-Date: Tue, 3 Dec 2024 17:42:04 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Karel Zak <kzak@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>,
-	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Lennart Poettering <lennart@poettering.net>,
-	Ian Kent <raven@themaw.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC PATCH] fanotify: notify on mount attach and detach
-Message-ID: <20241203164204.nfscpnxbfwvfpmts@quack3>
-References: <20241128144002.42121-1-mszeredi@redhat.com>
- <dqeiphslkdqyxevprnv7rb6l5baj32euh3v3drdq4db56cpgu3@oalgjntkdgol>
- <CAOQ4uxh0QevMgHur1MOOL2uXjivGEneyW2UfD+QOWj1Ozz5B1g@mail.gmail.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 377AF1955D96;
+	Tue,  3 Dec 2024 16:55:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BAACA19560A3;
+	Tue,  3 Dec 2024 16:55:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
+References: <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: dhowells@redhat.com, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org,
+    open list <linux-kernel@vger.kernel.org>,
+    lkft-triage@lists.linaro.org, Jeff Layton <jlayton@kernel.org>,
+    Dan Carpenter <dan.carpenter@linaro.org>,
+    Anders Roxell <anders.roxell@linaro.org>,
+    Arnd Bergmann <arnd@arndb.de>
+Subject: Re: fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialized when used here [-Werror,-Wuninitialized]
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxh0QevMgHur1MOOL2uXjivGEneyW2UfD+QOWj1Ozz5B1g@mail.gmail.com>
-X-Rspamd-Queue-Id: 1530C21119
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <589334.1733244955.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Dec 2024 16:55:55 +0000
+Message-ID: <589335.1733244955@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue 03-12-24 14:03:24, Amir Goldstein wrote:
-> On Tue, Dec 3, 2024 at 12:40 PM Karel Zak <kzak@redhat.com> wrote:
-> > Thank you for working on this.
-> >
-> > On Thu, Nov 28, 2024 at 03:39:59PM GMT, Miklos Szeredi wrote:
-> > > To monitor an entire mount namespace with this new interface, watches need
-> > > to be added to all existing mounts.  This can be done by performing
-> > > listmount()/statmount() recursively at startup and when a new mount is
-> > > added.
-> >
-> > It seems that maintaining a complete tree of nodes on large systems
-> > with thousands of mountpoints is quite costly for userspace. It also
-> > appears to be fragile, as any missed new node (due to a race or other
-> > reason) would result in the loss of the ability to monitor that part
-> > of the hierarchy. Let's imagine that there are new mount nodes added
-> > between the listmount() and fanotify_mark() calls. These nodes
-> > will be invisible.
-> 
-> That should not happen if the monitor does:
-> 1. set fanotify_mark() on parent mount to get notified on new child mounts
-> 2. listmount() on parent mount to list existing children mounts
+Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 
-Right, that works in principle. But it will have all those headaches as
-trying to do recursive subtree watching with inotify directory watches
-(mounts can also be moved, added, removed, etc. while we are trying to
-capture them). It is possible to do but properly handling all the possible
-races was challenging to say the least. That's why I have my doubts whether
-this is really the interface we want to offer to userspace...
+> Build error:
+> ---------
+> fs/netfs/read_retry.c:235:20: error: variable 'subreq' is
+> uninitialized when used here [-Werror,-Wuninitialized]
+>   235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequest=
+s))
+>       |                           ^~~~~~
+> fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to
+> silence this warning
+>    28 |         struct netfs_io_subrequest *subreq;
+>       |                                           ^
+>       |                                            =3D NULL
+> 1 error generated.
+> make[5]: *** [scripts/Makefile.build:194: fs/netfs/read_retry.o] Error 1
+> =
 
-> > It would be beneficial to have a "recursive" flag that would allow for
-> > opening only one mount node and receiving notifications for the entire
-> > hierarchy. (I have no knowledge about fanotify, so it is possible that
-> > this may not be feasible due to the internal design of fanotify.)
-> 
-> This can be challenging, but if it is acceptable to hold the namespace
-> mutex while setting all the marks (?) then maybe.
+> Build image:
+> -----------
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202411=
+26/testrun/26060810/suite/build/test/clang-19-lkftconfig/log
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202411=
+26/testrun/26060810/suite/build/test/clang-19-lkftconfig/details/
+> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjvChfT6aOW=
+plZaZeQzbYCX/
+> =
 
-So for mounts, given the relative rarity of mount / umount events and depth
-of a mount tree (compared to the situation with ordinary inodes and
-standard fanotify events), I think it might be even acceptable to walk up
-the mount tree and notify everybody along that path.
+> Steps to reproduce:
+> ------------
+> - tuxmake --runtime podman --target-arch x86_64 --toolchain clang-19
+> --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjv=
+ChfT6aOWplZaZeQzbYCX/config
+> LLVM=3D1 LLVM_IAS=3D1
+> =
 
-> What should be possible is to set a mark on the mount namespace
-> to get all the mount attach/detach events in the mount namespace
-> and let userspace filter out the events that are not relevant to the
-> subtree of interest.
+> The git log shows
+> $ git log --oneline  next-20241122..next-20241125 -- fs/netfs/read_retry=
+.c
+> 1bd9011ee163e netfs: Change the read result collector to only use one wo=
+rk item
+> 5c962f9982cd9 netfs: Don't use bh spinlock
+> 3c8a83f74e0ea netfs: Drop the was_async arg from netfs_read_subreq_termi=
+nated()
+> 2029a747a14d2 netfs: Abstract out a rolling folio buffer implementation
+> =
 
-Or this.
+> metadata:
+> ----
+>   git describe: next-20241125 and next-20241126
+>   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-n=
+ext.git
+>   git sha: ed9a4ad6e5bd3a443e81446476718abebee47e82
+>   kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjvChfT6aOWpl=
+ZaZeQzbYCX/config
 
-								Honza
+That should be fixed on my branch now:
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+   https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/l=
+og/?h=3Dnetfs-writeback
+
+I'm just moving the branch to v6.13-rc1 and fixing reported issues before
+asking Christian to repull it.
+
+David
+
 
