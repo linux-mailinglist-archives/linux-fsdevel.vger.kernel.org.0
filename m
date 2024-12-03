@@ -1,78 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-36343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E018D9E1ECD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:15:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF539E1F60
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:35:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF9816383B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:15:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A34D1B634E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ACC1F4280;
-	Tue,  3 Dec 2024 14:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04851F4711;
+	Tue,  3 Dec 2024 14:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OCddm43y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aiTjhfFy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C561EF08E;
-	Tue,  3 Dec 2024 14:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D021E32C0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 14:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733235339; cv=none; b=RSBh0SQ9n954YIeR6arLIueFBroEKyrkcY0GZnBYKT705whYNdLRzFTHChGrI0SuYViAIUx3WaMwOxHMzwOBZITa0pdIPiytWrolcxNORgdXq0tamQ7VYDQbDjOMQabRF98ZewVqT+Yovo1EagJ8jiPoUhytFFYjjKri/NNoCHE=
+	t=1733235450; cv=none; b=ljBD1LEUj5cGC91dH/gSOtz7ZPmBUHuRtMFxBuWpLE+SFbfk+y43GFIGLG5QM4kRrNYFv+4ecYpx/RTiMBJjHLEbnDvK1zStirYYF+TFvPzK49Mzioubhma/7Z1xpx+jZWnEM17w60eSExjwDNnssYyYk+DEb+esSh0158YZ9Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733235339; c=relaxed/simple;
-	bh=zSTDCrhl39CkrMGYnZe8NnPuB1bxR1LQTwoiWSUEBgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jsp6lsCR5wx846IJ2cloyhjaBXvi5azcM8TBDg2T81Z66M3NOTRJLLouikWA+BNVeZj6ydhaICoYlq+Gxa2azajFdIrWGVasvl1oaTUKOJfIExInDe2zkbvCSkpiQnxbF8j7tnVeC1mk5kmYGsGv6VboiPkzZ4UhjOqQW1KyaSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OCddm43y; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa5366d3b47so889718766b.0;
-        Tue, 03 Dec 2024 06:15:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733235336; x=1733840136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K8TjMXXYvtLriLWmwQ310C6UlMQ9PVqAXnSPL0N7z4c=;
-        b=OCddm43ygU7oqKcO4h0J94/oRVMTWuIESCEMF4mKQBuwB75ZoRGKqx+ELqcS8lDMHQ
-         AtaSJfXBvF5c1LhXgBjgjJnwW9lkDtl9q/IR3w3GjZcpJayVNRwUMqByTejKxEJLgW5L
-         A+2OC+oVxYUIgJKjH58aWKCEGFywbZARU9AajZaaPFjjDBsAlmBTIWnkjLtlEuSzcppQ
-         nSDXe8xvdTCYWSyZb8xHetH7yub/iFikUrpvlIOAUdGzj4zHlui5zUshiFrPpaRnK5W7
-         7yuAGdmndfDMW5APPhE0dW5Lyle66LIn9XyRlBdkagMIorjoX7h2rH55g+l8045+inZU
-         K7CA==
+	s=arc-20240116; t=1733235450; c=relaxed/simple;
+	bh=WOU4zX0IZYv+rrDs32UCT/CmDrz8X+8OFHdl5Lpr4kQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=obwH5e2Tayqf8tiijdoyCEXeGDojrpZTIspnBYwpTMR2UqVzeXnQUEIQ+EAK6ZbRQ+NkAy4OrSU0boZ0Hh6LDYC91nS5FBuu0oHYazCS/6aayL1BSCHxdKdEeODLPY4pRHkGfeznA4zumA2bwhF4NAXSwNfNUlJrwQn55UfguUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aiTjhfFy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733235446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g0UJPIXjVniWobB5oSIOB8j5neo8aFF+B6iIK+MqXr4=;
+	b=aiTjhfFyid9rLP4cYZqzQJH1YHSP1biymJ60P43U2butvYKnTkgIgt4VzkfKDZ0a8Gucz5
+	N/rD0ix/xI+ivAYafl8ae22KwBVOpJukwqYGy9JJFZ52hcW6XlgXi53RGCZ60kJF1NpZYi
+	OCZUxNqSysPDAocOsSHdfv0l5YW5z0w=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-_MOD5L5gNK-KWGzvOENWgw-1; Tue, 03 Dec 2024 09:17:25 -0500
+X-MC-Unique: _MOD5L5gNK-KWGzvOENWgw-1
+X-Mimecast-MFC-AGG-ID: _MOD5L5gNK-KWGzvOENWgw
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434a4ad78a1so45851725e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 06:17:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733235336; x=1733840136;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8TjMXXYvtLriLWmwQ310C6UlMQ9PVqAXnSPL0N7z4c=;
-        b=LbFHEDR3d3pczPkpCgL7enPlgApMdJ/WXaYgKlZH40J93wF3EiDKccBGDvCAHzHmbr
-         kC/Cf/CIsX6ghbXBnk7JdEQlUDobF9bkTKTtO8iHO4UzLKTasfSZ7eOg8LbgykfJwKDv
-         Ug7BWygKI9rOxN8Y7GXYMsESiLBxx5Mtruu2fYoRjQeMiKMAtCQaJux+Yh2zX7jzG6Sw
-         USAEmT/KffAnC+l2DBq5XTbEU7/rn5diHt20HG7p/MPvRVz7e9BxJHJcgI806lNokJ5K
-         YNBo9drxlz5DyxHR92mX6YavAi+RnrfdK/+nnbs/86eF3kIBOcHG1NxZESdYHnu6YAMW
-         V5oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnFFj2Pj7pGRkimRj2H+XlxQUX7gtIIAOKm6K2AHC407HlpRbdccDeAj1vIcVNks3R5iga3CdJpw==@vger.kernel.org, AJvYcCXAmh/0P9oCUgW0gXv2sUjJow0xjY8yLkJmYpt8kfC5gJ2Ah3R3n9IjSS+uw6swP6XpNUEkeoICyuo9DDYwzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyawrhJAWImNk3bGMx9njGbuyKqYHkX+R8X+Z8M9tfY2eIJhIGV
-	Q+lu/HRy39QFyC8zckCgtLDoRFt+UzONdzzFM4CyED/5YJVLZMfq7/wTSg==
-X-Gm-Gg: ASbGnctLqjq4C/BNc0G0AmP1Po7ri82JRyGpgk5gQ18DIjMe/iK/YCmAq11uVsE1rET
-	PJOEeBHunYZlHjAH/6QnTmmwrpWV3Ga2gkvaa0xBfGnyn3izwy44MptzxWeBik5KG+Lh8eyVDz3
-	fljrgMtolmVEal8sT1xvT0BAu5nMzhGg/9qf5W8IH/WB4S43MLGeMus5TOgYTvaH94td8J5xai9
-	c7ekTczLu5EXNmD9Z9qAYRRIbs288h9JcHaH7hMUhPhC5S+cHoOHVpsPqNjNw==
-X-Google-Smtp-Source: AGHT+IHVfay3h+psid9ShXen/yKdzf+4BTxfb7xDl8My6jgUanUzUoxyDVIlqKBrIQ8vX4NOlWBlWQ==
-X-Received: by 2002:a17:906:318e:b0:aa5:274b:60ee with SMTP id a640c23a62f3a-aa5f7ee66c5mr220987866b.39.1733235336171;
-        Tue, 03 Dec 2024 06:15:36 -0800 (PST)
-Received: from [192.168.42.182] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5a44f10c5sm551341466b.166.2024.12.03.06.15.35
+        d=1e100.net; s=20230601; t=1733235444; x=1733840244;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g0UJPIXjVniWobB5oSIOB8j5neo8aFF+B6iIK+MqXr4=;
+        b=WKaSjrd93tPZSSLhhuj+mtaaQEX5neQzbgO+kCJx/HfLoZF9980x5YTJ/8alO5lvNP
+         a+5w6UQ5JqpmXijkN+FBTPtFvU7dzpdH8KeiCa08jrnYVgkZOlSK5d1PWkLM7fvEZZea
+         aaTQWMNATNb3Rnvlpm9SDBLGyjd6qHJznwqp7/82Pr5Nt/iCnQiFjaAzVD8FSQA5Ko+l
+         E0wEFcS6UFwgMXt56lqaSyZ+x9WhvF+eeNA7f5CqHY83zgMrEumkjgxKn6kyLSX/SBxi
+         QXVZE/LNSie3V3fLd9iZGXRAGtxdo4sqxGEj3WTkkwGumNVWckkEE66mvRGayAuHIIJ+
+         WvoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWypUbm/3QP458cKZMN4el7jjjMvbH/tVMHxwrF7OgaDK04wMH7a5Td/ZQaWVARWNlBVt7N9ID4PB1pQ4UP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU9mYb+E34BVQJRU53c/eMeXJu0+qnjcE9EasuK1tRyP+HqTsW
+	Wv2HCrGqiqAHeNQHAE+oHFE9uRbpRxyeCgIBeFhCqazUmsO9HQS1jsdXbs2a0lhifxDoGKt+h39
+	WCaQV9eOHGqh/9au/8sNqXmo6X8VnjV4bU433s6T0pelyixzoYoTEe61OiUHehXU=
+X-Gm-Gg: ASbGncs++p9yYcpVxqorc9BDj6lQCdlSfOOSrsA2B5GZr3NgIosrUbYOIgPdU8QfAb/
+	eJjcBWV/ZbSlizR799DoqeZIMqQ4H/g/wZjkfH5QjsKClg2eU+R7Iltj+SrQXa9AY2K8jIMnpZZ
+	LEJhPW4+EABHFZYKFXZy5PCe+KAER+DWrvf5f4tXXuew3FBN40IFvI2cJAut5mzA9fnCbkWsg+w
+	+P4Xso8KSMmw48QKI1CP3vDCXVnCeZxUU4mXFOpifdIpG6sF8HxUxxhu9FFT+t2fTJUYBh9SxLd
+	NrgG3UbRjmmV0g6Ck4ibqBKF7M1W6Oa7AfCko9r9IHcAVKIevOZ3NxzG4S35qNQnpsMmxoFA4To
+	rCw==
+X-Received: by 2002:a05:6000:480a:b0:385:f638:c68a with SMTP id ffacd0b85a97d-385fd3f1977mr2515547f8f.30.1733235444166;
+        Tue, 03 Dec 2024 06:17:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGhcUleiGCjb0A8/C4qqTKwVZtO0c2SrVd/eJu0hedjuQq3Mrw7NR6qnhgdPIt2KyefdK9MXQ==
+X-Received: by 2002:a05:6000:480a:b0:385:f638:c68a with SMTP id ffacd0b85a97d-385fd3f1977mr2515526f8f.30.1733235443794;
+        Tue, 03 Dec 2024 06:17:23 -0800 (PST)
+Received: from ?IPV6:2003:cb:c746:1b00:fd9e:c26c:c552:1de7? (p200300cbc7461b00fd9ec26cc5521de7.dip0.t-ipconnect.de. [2003:cb:c746:1b00:fd9e:c26c:c552:1de7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbe4e6sm189502935e9.14.2024.12.03.06.17.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 06:15:35 -0800 (PST)
-Message-ID: <152e54a9-b54a-4aa7-be24-7adfed06de11@gmail.com>
-Date: Tue, 3 Dec 2024 14:16:31 +0000
+        Tue, 03 Dec 2024 06:17:22 -0800 (PST)
+Message-ID: <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+Date: Tue, 3 Dec 2024 15:17:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,76 +90,117 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 06/16] fuse: {uring} Handle SQEs - register
- commands
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
- bernd@bsbernd.com
-References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
- <20241127-fuse-uring-for-6-10-rfc4-v7-6-934b3a69baca@ddn.com>
- <42d5cd02-a1b9-4cd9-ae92-99bdcac65305@gmail.com>
- <07e4b270-f6f5-471a-b2b7-4fb5027fdb20@ddn.com>
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+To: Wenchao Hao <haowenchao22@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Peter Xu <peterx@redhat.com>, Barry Song <21cnbao@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <07e4b270-f6f5-471a-b2b7-4fb5027fdb20@ddn.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241203134949.2588947-1-haowenchao22@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 12/3/24 13:49, Bernd Schubert wrote:
-> On 12/3/24 14:24, Pavel Begunkov wrote:
->> On 11/27/24 13:40, Bernd Schubert wrote:
->>> This adds basic support for ring SQEs (with opcode=IORING_OP_URING_CMD).
->>> For now only FUSE_URING_REQ_FETCH is handled to register queue entries.
-...
->>> +    /*
->>> +     * Direction for buffer access will actually be READ and WRITE,
->>> +     * using write for the import should include READ access as well.
->>> +     */
->>> +    ret = import_iovec(WRITE, uiov, FUSE_URING_IOV_SEGS,
->>> +               FUSE_URING_IOV_SEGS, &iov, &iter);
->>
->> You're throwing away the iterator, I'd be a bit cautious about it.
->> FUSE_URING_IOV_SEGS is 2, so it should avoid ITER_UBUF, but Jens
->> can say if it's abuse of the API or not.
->>
->> Fwiw, it's not the first place I know of that just want to get
->> an iovec avoiding playing games with different iterator modes.
+On 03.12.24 14:49, Wenchao Hao wrote:
+> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+> each VMA, but it does not include large pages smaller than PMD size.
 > 
+> This patch adds the statistics of anonymous huge pages allocated by
+> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
 > 
-> Shall I create new exported function like import_iovec_from_user()
-> that duplicates all the parts from __import_iovec()? I could also
-> let __import_iovec() use that new function, although there will be
-> less inlining with -02.
+> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+> ---
+>   fs/proc/task_mmu.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 38a5a3e9cba2..b655011627d8 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+>   		if (!folio_test_swapbacked(folio) && !dirty &&
+>   		    !folio_test_dirty(folio))
+>   			mss->lazyfree += size;
+> +
+> +		/*
+> +		 * Count large pages smaller than PMD size to anonymous_thp
+> +		 */
+> +		if (!compound && PageHead(page) && folio_order(folio))
+> +			mss->anonymous_thp += folio_size(folio);
+>   	}
+>   
+>   	if (folio_test_ksm(folio))
 
-I'd say we can just leave it as is for now and deal later. That is
-unless someone complains.
 
->>> +int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
->>> +{
->>> +    struct fuse_dev *fud;
->>> +    struct fuse_conn *fc;
->>> +    u32 cmd_op = cmd->cmd_op;
->>> +    int err;
->>> +
->>> +    /* Disabled for now, especially as teardown is not implemented
->>> yet */
->>> +    pr_info_ratelimited("fuse-io-uring is not enabled yet\n");
->>> +    return -EOPNOTSUPP;
->>
->> Do compilers give warnings about such things? Unreachable code, maybe.
->> I don't care much, but if they do to avoid breaking CONFIG_WERROR you
->> might want to do sth about it. E.g. I'd usually mark the function
->> __maybe_unused and not set it into fops until a later patch.
-> 
-> 
-> I don't get any warning, but I can also do what you suggest.
+I think we decided to leave this (and /proc/meminfo) be one of the last
+interfaces where this is only concerned with PMD-sized ones:
 
-Got it, no preference then.
+Documentation/admin-guide/mm/transhuge.rst:
+
+The number of PMD-sized anonymous transparent huge pages currently used by the
+system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+To identify what applications are using PMD-sized anonymous transparent huge
+pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+fields for each mapping. (Note that AnonHugePages only applies to traditional
+PMD-sized THP for historical reasons and should have been called
+AnonHugePmdMapped).
+
+
 
 -- 
-Pavel Begunkov
+Cheers,
+
+David / dhildenb
 
 
