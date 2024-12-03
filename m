@@ -1,129 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-36341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2069E1E2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 855F19E1EB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 15:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D012B2852C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 13:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4489F28426C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 14:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4EE1F12F5;
-	Tue,  3 Dec 2024 13:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223571F4290;
+	Tue,  3 Dec 2024 14:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZWc3wLs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtgwvIz5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503CC2AD02;
-	Tue,  3 Dec 2024 13:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FE71F4261;
+	Tue,  3 Dec 2024 14:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233801; cv=none; b=EPBymPPOPTZUo02LOEZHCqKMN/JCYUjiYE6RsP7RLleN5E0Eik7Ksqd2kwZD0ChjN0z2zlp3JWlmxsYeXrvtfYyllyQtaBzC8uH7nLo9RWUbf2ev7lwzNflBZKqe4eX9LSToEXQOGoTUsY4Cf8bzVb+B+KIp06oa7z8KYTbrK68=
+	t=1733234943; cv=none; b=YTMpvpRCbwDj6Egqcc+OZ3zdps1E55/sz5B2Ah4ZJY5v+/NaTxRDCR3wFHOB2UvmrSpfZ9BpudNLCaUzPMlJHAo7Lfqa/Z8NFrCujoh6X0Yo2dmDyBoC/wzGalyqsooxIezS2nhK9Qd6wI1HvGau6jYQw6AuIZ7fo8jm5hpGTWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233801; c=relaxed/simple;
-	bh=Cxe/k9iCkaQjBBgRvDmHIpPIPMbe7bhm0ofM7w3fC4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bRJ6/p2Og8oPCDaQNdEwQFKPLpOCu8oNoR4+grCX7F0BV6smgB+MTj+zF9SN685vJcf4syOC09D3KezKkiT5pSV0/Umexkq9HrhidFIh+sLuwUU7KaxhSKrYkAVUPTexyfv4bvVuo9yy9iW8B3rLzgT5qCI2/++AGFCPW2nOdrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZWc3wLs; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1733234943; c=relaxed/simple;
+	bh=S4gu4KfPFGxVbBdupOv1zTwnkwzetiWkP1iFzfNHjvI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pkZHFbjcnyeCKBRD8sI6A8ESQkRYb/OB5BqFLcGAsAbDAqudSw7rpNEx1ZAzDvyY3fFfTPix9nSNt+HiZZw4G9v5drBQ0/jmZuiJmU0o53aGNPbMvIXafy14xLXAdaYY5lIRuAPOxEdnuLB5PKq1QZrARt4DCNINjf/qwldFBns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtgwvIz5; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215cc7b0c56so3172775ad.3;
-        Tue, 03 Dec 2024 05:50:00 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dd9e853ccso5901279e87.1;
+        Tue, 03 Dec 2024 06:09:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733233799; x=1733838599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wrWeEjYD6C32kDH9Wy7fR9BLzK2OqNy/5AsIIlJG/qg=;
-        b=dZWc3wLslhqhIiSY9KvR3vDVBzOn2pYBBo0rnivSnapKK+kIHGh4ycT2kgzJORObja
-         Y3m0YLEiCDn6sZJVCTIKsiShRxOD1qN95DMZEzDnfvU+J4vFeWZRKf7rJ2b9npVkuQYp
-         sHgsblV7RuO/f/G5IXgZZxC2+zzka6XHGJNH5gSB7GkZpvS1ZcjaUl3cfV6xCOao/Ujn
-         DksW3igGAwRW3lzbjNdSSmNYjm8sz6G9VMxG9H+saMnvhm1Tlm2tarCgMWXzIVsZUNKy
-         f1ZZJ0OCm3h0aNGdI4y/coYZLnUP/2vbcQySLdeyBkwQNUDrQQTzpz5B/AjvPgU++Mg3
-         BBnw==
+        d=gmail.com; s=20230601; t=1733234940; x=1733839740; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KDCCoUXxqVtFnrM2w00z7NKGBbRdLRY3uZHXLSTBT7g=;
+        b=JtgwvIz5TQE687Q8SbYzMcTHzBUZO+rMyBjLOG58MahHfdypsRwscgN77LEBVNFOAA
+         HNJbiy2PxszK0fOQ+C66StLbKkxDWM1VOcCf8VqKGT905IGW0AfsTnNPjRxv2AIQEy50
+         EmCcJAuQDGWb4QU5ev+oa3rjkOFyEmQ6CCdF4AUPunG631qZkARhSmT5m/bvUsJlIGnU
+         ABl7hlBQdhL4mXeO9nMGcobz+4bUbAODqWPWs0FDbEzUSp/FzMN6c9cOqVPEqk5+LZKF
+         832hm20yJCjj0B4aQOPPZUakCHsTAVk2fBsj7k36BsXlVo01NoHS5vKCTjV2fYmhHTh6
+         NxfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233799; x=1733838599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wrWeEjYD6C32kDH9Wy7fR9BLzK2OqNy/5AsIIlJG/qg=;
-        b=aycaHDULyXJ+uiEIHcMI90lQIOCJrT5KbtT7Jmvqq/tMTyAFwhuTS9qLnH0GfiqgMQ
-         EgayiUeaMvlaon04n5sORLc1ans3tdmXph30pDEvFVgU0Z9UGu7VWL5SkPReAhkCH0/5
-         Gy6YTn9UfdO0EXLol8fsC7Zsq4pyeniY3lxOj1KkZCdL4FNJiS/1McS/SDRwJMUWREaq
-         c9+29E6BXhmBwjsSyq0zthEaiyhcHwG/UB9xyO7faK9JRV3XnknOBHLgmkuzKj7I082i
-         gEFzCZIwx8cPztvJ25fYSIwTMuQCBqQFMlc5o3m9mqB4wUJglXJf14u3QKbKITjURiU/
-         kBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIDvC24HP93i4Lap/qxK1HZ1Mv1/L+4eQOf/Kn/uxQ7s6CvrX6xC9GThuK0qyDTWXRhNLspiFI18fgt1T4@vger.kernel.org, AJvYcCVv03rb05JMGW2pTxXAkTOauPw5j00JCHSbjhF1K+Oawk88dbqAFTFMeC2fGgKCCVAYPakIGr7Ra85+hM2c@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7PT8ZtvxbNFCDOYvaEGjuM4V3aPfCPk6HfqegK354rb6aleN
-	QNTiExEEZJITMWN5JJa331AecwCFGtjnqDuJFBiRP55CDi2MGjuG
-X-Gm-Gg: ASbGncuzL8nPABsSY2VoFLsR2koORO/gLTdNIYeseU3j67XfyrA4xnvnIW8JL5LlMnd
-	h2PAk+qNMdDG3vgsbWj/UPy/6yxIINFufpw4C6bDVuKfr7IU8OJ262Vr3IMYVRL2EQ4td1ScPgw
-	7EW05eECZV+Lvy+fJvx9RoIUA1x8268YBk7k2+pwnqTheiNBdciQfua2xflgwSNJMf8IqmGRG7w
-	GC5CVku5MXGzxhXrnhQWO9+Nm5b0H61Sr5UHX0DtnTWKxarx6X7Al4CTYMS8m2MwKI=
-X-Google-Smtp-Source: AGHT+IGIJBbhiflV+C90jpzpvrzchfkyMrxi/56fWyyZnzCIcxngq76SpJzowglJgC/KJ6dWDnW05g==
-X-Received: by 2002:a17:902:d2c9:b0:215:681d:7a52 with SMTP id d9443c01a7336-215bd17a76cmr25562285ad.55.1733233799585;
-        Tue, 03 Dec 2024 05:49:59 -0800 (PST)
-Received: from localhost.localdomain ([43.224.245.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215b46e99edsm16990065ad.80.2024.12.03.05.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:49:59 -0800 (PST)
-From: Wenchao Hao <haowenchao22@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Peter Xu <peterx@redhat.com>,
-	Barry Song <21cnbao@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Wenchao Hao <haowenchao22@gmail.com>
-Subject: [PATCH] smaps: count large pages smaller than PMD size to anonymous_thp
-Date: Tue,  3 Dec 2024 21:49:49 +0800
-Message-ID: <20241203134949.2588947-1-haowenchao22@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1733234940; x=1733839740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDCCoUXxqVtFnrM2w00z7NKGBbRdLRY3uZHXLSTBT7g=;
+        b=p7H+wZSlizm08s7EmAUG4e1B0Aje7oWth16kqRfxNdTNn9nuaKI/k9YxQIaH5sCooR
+         y3919WOy83pM5zAf6HuxNBPrAWolzvcc/aQEMWUDoZGzdvoGIcv42tenFdj3DYgwn+JS
+         oQ5i9FulKRXfdaNNicKNNDF2u9DLbGt5kmYlTRjgV8sKWSrKcp7JwcH3DhUG4EdnNwbI
+         24SP6EHxFecpv/S7OX9gb90PdfO7hsrMWJiDFVE4qvIwsBnfE9QHZSIWEl4EpviCsns6
+         n6w+Oxkm/D2p75El9NFgbw3M8yQRIJ5ZWzXomyt1JT2XEXfUwpkEREnMOn9BQp2tLRxe
+         wiGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/s0bBGRfbViJEYfu76pLHZewa6ZRT5dTg+a6HkMwU4TagWac6qcOnZFiT8RFuQpOg2gOmrJ0SIA==@vger.kernel.org, AJvYcCWEEWRITe6nqFObLqJ4ClpTQf2i4QeC4WYN1pHT6fxLijBk+kJVhLAI7ZHq/qN4j+UI0Cs4u63Ge3npgpSPgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe8yRq+amDX0J37Mgg75TcQY9zw/1oXwVdq1GtQmmNhlWlRDyp
+	eUtm065Ff4lqKdIfMRnooxmKpOGzm25H+fSUtxQWQPpk+TsZKRZeEyREnQ==
+X-Gm-Gg: ASbGncst4WnXjoUyxmSHGmyOv4CQ8DXeaqRGi8SKWxJPt0Karckhi6ok9VLx82K4q7z
+	+Mq3LG+/pmwiUTdeHLkRG/n1yIECYfhBYUdnueRYs7wY0P7vebSSrlCH07p4gITtzAX6D7KWXIb
+	fiHUQVh5FjXLmO+lk30KEh3gyU+qygHsJ19MTRqYLeEA+bWq03nSc4B4tf5Do/NsjDCHm2al4Jq
+	yxSgTL8ElBgSVCes/NBu5PBijgajU9blnMSsfkcAMs3OsxkpIOH162k/9adxw==
+X-Google-Smtp-Source: AGHT+IFy2THbeTfHT7j7RGlD3wBo4Z0wRl2kH2MTFF7POkT8qxme7MkNBSwHzuW9m8sggxXigKKxMg==
+X-Received: by 2002:a05:6512:b14:b0:53d:ed4e:e5af with SMTP id 2adb3069b0e04-53e12a0590emr1700097e87.33.1733234939715;
+        Tue, 03 Dec 2024 06:08:59 -0800 (PST)
+Received: from [192.168.42.182] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599943614sm616531866b.175.2024.12.03.06.08.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 06:08:59 -0800 (PST)
+Message-ID: <01f65cf0-19a3-4df1-9fcc-6b0fbc18e536@gmail.com>
+Date: Tue, 3 Dec 2024 14:09:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 11/16] fuse: {uring} Allow to queue fg requests
+ through io-uring
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-11-934b3a69baca@ddn.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-11-934b3a69baca@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
-each VMA, but it does not include large pages smaller than PMD size.
+On 11/27/24 13:40, Bernd Schubert wrote:
+> This prepares queueing and sending foreground requests through
+> io-uring.
+> 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>   fs/fuse/dev.c         |   5 +-
+>   fs/fuse/dev_uring.c   | 159 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>   fs/fuse/dev_uring_i.h |   8 +++
+>   fs/fuse/fuse_dev_i.h  |   5 ++
+>   4 files changed, 175 insertions(+), 2 deletions(-)
+> 
+...
+> +
+> +/*
+> + * This prepares and sends the ring request in fuse-uring task context.
+> + * User buffers are not mapped yet - the application does not have permission
+> + * to write to it - this has to be executed in ring task context.
+> + */
+> +static void
+> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+> +			    unsigned int issue_flags)
+> +{
+> +	struct fuse_uring_cmd_pdu *pdu = (struct fuse_uring_cmd_pdu *)cmd->pdu;
+> +	struct fuse_ring_ent *ring_ent = pdu->ring_ent;
+> +	struct fuse_ring_queue *queue = ring_ent->queue;
+> +	int err;
+> +
+> +	BUILD_BUG_ON(sizeof(pdu) > sizeof(cmd->pdu));
+> +
+> +	err = fuse_uring_prepare_send(ring_ent);
+> +	if (err)
+> +		goto err;
+> +
+> +	io_uring_cmd_done(cmd, 0, 0, issue_flags);
+> +
+> +	spin_lock(&queue->lock);
+> +	ring_ent->state = FRRS_USERSPACE;
 
-This patch adds the statistics of anonymous huge pages allocated by
-mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+I haven't followed the cancellation/teardown path well, but don't
+you need to set FRRS_USERSPACE before io_uring_cmd_done()?
 
-Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
----
- fs/proc/task_mmu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+E.g. while we're just before the spin_lock above here, can
+fuse_uring_stop_list_entries() find the request, see that the state
+is not FRRS_USERSPACE
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 38a5a3e9cba2..b655011627d8 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
- 		if (!folio_test_swapbacked(folio) && !dirty &&
- 		    !folio_test_dirty(folio))
- 			mss->lazyfree += size;
-+
-+		/*
-+		 * Count large pages smaller than PMD size to anonymous_thp
-+		 */
-+		if (!compound && PageHead(page) && folio_order(folio))
-+			mss->anonymous_thp += folio_size(folio);
- 	}
- 
- 	if (folio_test_ksm(folio))
+bool need_cmd_done = ent->state != FRRS_USERSPACE;
+
+and call io_uring_cmd_done a second time?
+
+
 -- 
-2.45.0
+Pavel Begunkov
 
 
