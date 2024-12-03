@@ -1,45 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-36316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BE89E1423
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 08:29:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B519E16BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 10:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06993B2280F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 07:29:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033F3B27E9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 08:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBDD18B484;
-	Tue,  3 Dec 2024 07:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8641D79A0;
+	Tue,  3 Dec 2024 08:29:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B7B18B494;
-	Tue,  3 Dec 2024 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2540D1BD50C;
+	Tue,  3 Dec 2024 08:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210682; cv=none; b=FNjwy6YFx3yqIGqdTSWy+rsPtkfbQ7/mmLP2Slyx+byMbUynkX6VEB10oPqJKV3+4sVEMgD7Ew5kfYcur8AV5ZHXDUM4f9yx1DxY75UsYAEY4cGAdovQAtw1BXDCq66F6HMqZ5q8No+Oy0piF2KP5Vysll/FQKngO5dOhf6sE8U=
+	t=1733214579; cv=none; b=s3w5GJQs6WpyNwMjJLTddJ8bvLjFruwk/q22JCZx34w8P4qBECi0SS2PQCkmy1lxsmiyK6CrSUXM4bmAoAGefkrvKYbzxxBh0IYUqyD9CF6h2LkW8j9d+eNBn1TC6nuwDLevKOD/5jbZuumNYK1p4ApMJiIcqyf3zgbimBW5J/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210682; c=relaxed/simple;
-	bh=wZDhPDXNvUjoFpCisQxrnEojAHLpQWqiRYE+KJYhNYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXUD5FqkVYoME4Jc436SyIapFGXnodx3mFdADuiKKnEbG7L3NyX7X+8e68u5y4Eu0XS0M5/uU1i5EzVQiABp3/jn0s9t0s/bd7/myb6ExP1Mc7dW+qcpZELdDcejxmHORBr0CauIwJL6jQyXaUpPc8vaOVFMCGbRBjFBYkehr+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y2XG01Xs4z4f3lVb;
-	Tue,  3 Dec 2024 15:24:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2A8031A0359;
-	Tue,  3 Dec 2024 15:24:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4cqsk5ne0saDg--.52485S3;
-	Tue, 03 Dec 2024 15:24:27 +0800 (CST)
-Message-ID: <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
-Date: Tue, 3 Dec 2024 15:24:26 +0800
+	s=arc-20240116; t=1733214579; c=relaxed/simple;
+	bh=sPKy8bm3yUTC0HZtHiV+Cvibp3LmuP/kWLgsBwu6c2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FbAJRXb9Vju15G/J7AdW2YnZaOEhGB3m4TArbUUmAL3v/sZI6nvOpV3UoESAaSh/JEbrkn6Ayp058Xabr2wAQCvpAf9x5SBNcJJGvRLvPeLlVCu3FI+mPZLqo6G6R7vvsW/dYEIzUrafhiR+XrbBNuL3xcPi910gSu0Nf/AsOa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y2Yfs69TQz1k19C;
+	Tue,  3 Dec 2024 16:27:17 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 214F718001B;
+	Tue,  3 Dec 2024 16:29:33 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Dec
+ 2024 16:29:32 +0800
+Message-ID: <8885691f-b977-409f-90f8-b24c41a49de0@huawei.com>
+Date: Tue, 3 Dec 2024 16:29:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,87 +48,106 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
- sequence
-To: Kemeng Shi <shikemeng@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
- <20241203014407.805916-3-yi.zhang@huaweicloud.com>
- <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.com>, Ritesh Harjani
+	<ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <cc2fcc33-9024-4ce8-bd52-cdcd23f6b455@huawei.com>
+ <Z0a1x7yksOE4Jsha@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHY4cqsk5ne0saDg--.52485S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF13Zr47Gw4DWw47Aw43Jrb_yoW8Zw45pF
-	y8Ca4jyrWkZF4UCFn7tF48XFW7XFWqya48WFyDCrnagw4qqwn3KFW3trySgr1jyr1F9w48
-	Xr4Iqa4qg34jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <Z0a1x7yksOE4Jsha@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On 2024/12/3 14:53, Kemeng Shi wrote:
-> 
-> 
-> on 12/3/2024 9:44 AM, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When committing transaction in jbd2_journal_commit_transaction(), the
->> disk caches for the filesystem device should be flushed before updating
->> the journal tail sequence. However, this step is missed if the journal
->> is not located on the filesystem device. As a result, the filesystem may
->> become inconsistent following a power failure or system crash. Fix it by
->> ensuring that the filesystem device is flushed appropriately.
->>
->> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/jbd2/commit.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
->> index 4305a1ac808a..f95cf272a1b5 100644
->> --- a/fs/jbd2/commit.c
->> +++ b/fs/jbd2/commit.c
->> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->>  	/*
->>  	 * If the journal is not located on the file system device,
->>  	 * then we must flush the file system device before we issue
->> -	 * the commit record
->> +	 * the commit record and update the journal tail sequence.
->>  	 */
->> -	if (commit_transaction->t_need_data_flush &&
->> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
->>  	    (journal->j_fs_dev != journal->j_dev) &&
->>  	    (journal->j_flags & JBD2_BARRIER))
->>  		blkdev_issue_flush(journal->j_fs_dev);
->>
-> In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
-> which is supposed to ensure disk cache is flushed before writing commit block.
-> So I think the current code is fine.
-> Please correct me if I miss anything.
-> 
+On 2024/11/27 14:01, Ojaswin Mujoo wrote:
+> On Tue, Nov 26, 2024 at 10:49:14PM +0800, Baokun Li wrote:
+>> On 2024/11/21 20:38, Ojaswin Mujoo wrote:
+>>> Protect ext4_release_dquot against freezing so that we
+>>> don't try to start a transaction when FS is frozen, leading
+>>> to warnings.
+>>>
+>>> Further, avoid taking the freeze protection if a transaction
+>>> is already running so that we don't need end up in a deadlock
+>>> as described in
+>>>
+>>>     46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+>>>
+>>> Suggested-by: Jan Kara <jack@suse.cz>
+>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>>> ---
+>>>    fs/ext4/super.c | 17 +++++++++++++++++
+>>>    1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>>> index 16a4ce704460..f7437a592359 100644
+>>> --- a/fs/ext4/super.c
+>>> +++ b/fs/ext4/super.c
+>>> @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+>>>    {
+>>>    	int ret, err;
+>>>    	handle_t *handle;
+>>> +	bool freeze_protected = false;
+>>> +
+>>> +	/*
+>>> +	 * Trying to sb_start_intwrite() in a running transaction
+>>> +	 * can result in a deadlock. Further, running transactions
+>>> +	 * are already protected from freezing.
+>>> +	 */
+>>> +	if (!ext4_journal_current_handle()) {
+>>> +		sb_start_intwrite(dquot->dq_sb);
+>>> +		freeze_protected = true;
+>>> +	}
+>>>    	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+>>>    				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+>>>    	if (IS_ERR(handle)) {
+>>>    		/* Release dquot anyway to avoid endless cycle in dqput() */
+>>>    		dquot_release(dquot);
+>>> +		if (freeze_protected)
+>>> +			sb_end_intwrite(dquot->dq_sb);
+>>>    		return PTR_ERR(handle);
+>>>    	}
+>>>    	ret = dquot_release(dquot);
+>>> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+>> The `git am` command looks for the following context code from line 6903
+>> to apply the changes. But there are many functions in fs/ext4/super.c that
+>> have similar code, such as ext4_write_dquot() and ext4_acquire_dquot().
+> Oh that's strange, shouldn't it match the complete line like:
+A rough look at the `git am` source code looks like it only focuses on
+line numbers between two ‘@@’.
 
-The commit I/O with REQ_PREFLUSH only flushes 'journal->j_dev', not
-'journal->j_fs_dev'. We need to flush journal->j_fs_dev to ensure that all
-written metadata has been persisted to the filesystem disk, Until then, we
-cannot update the tail sequence.
+am_run
+  run_apply
+   apply_all_patches
+    apply_patch
+     parse_chunk
+      find_header
+       parse_fragment_header
+     check_patch_list
+      check_patch
+       apply_data
+        load_preimage
+        apply_fragments
+         apply_one_fragment
+          find_pos
+           match_fragment
+>>> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+> That should only have one occurence around line 6903? Or does it try to
+> fuzzy match which ends up matching ext4_write_dquot etc?
+In find_pos(), start from line 6903, compare the hash value of each line
+of code line by line in forward direction, if it can't match, then match
+the hash value of each line of code line by line in reverse direction from
+line 6903. Fuzzy matching is used if some whitespace characters should be
+ignored.
 
-Thanks,
-Yi.
+
+Regards,
+Baokun
 
 
