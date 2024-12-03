@@ -1,134 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-36303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B0F9E121D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2228C9E1225
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 05:02:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED8B2829D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 03:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F9D282D29
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3D1D4348;
-	Tue,  3 Dec 2024 03:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED33148FED;
+	Tue,  3 Dec 2024 04:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPQS33jM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dm5ybSjs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DE61B3959;
-	Tue,  3 Dec 2024 03:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CED224F0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 04:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733198037; cv=none; b=Cjxny0RTTkBENYooWqEKzM7Q3TgVussMuXCXzjCeTfFc0zTJiXYIRAoQilSQYCbaHAfOObFQ2i5O+L1Ex3MELMqnigbp7WJyQdXFmLH910zToa3M1Zs24GX9beYncvHaR8FQBEdESmY1lhO7QhvwQqTtFjJVKPtoOkU2wKr5IAo=
+	t=1733198524; cv=none; b=eERy9jCk6GC7VbabgwMS+b2OREVnZA9L6sllzOYchRL+d6EfPcjk9Tx4nXczKAlGFiUHVzSQvynsRxnTMr7Qmoi15eE5zWFwPuq93c8JIpm0XiYFfuZ3KZ7N69XkfdByZd+FUKr+il5tKOAggKq4m12SiyPs2NSWxIrzSw4aL/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733198037; c=relaxed/simple;
-	bh=BQm/1aP/K8xvjEddkH1/orrgM/dsPMVCSgObmtMyX8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mTMhQL9eFkrMAgfkek0YkgKWO6Pu8FWoRNMb+3RsVoFw+DJqTvEFnDswUNkydB2Tl1EumC/JxdT7erDHNDLKJwgET7cuSUDzFZPyl4/DnBYQ9eGv9ViDRfizamrMES0zRyey/SF9PNeSUHtvm3mKVqGjGy5/wvJUo6QKmoFxKU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPQS33jM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2521DC4CEE3;
-	Tue,  3 Dec 2024 03:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733198037;
-	bh=BQm/1aP/K8xvjEddkH1/orrgM/dsPMVCSgObmtMyX8s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IPQS33jM0NIJL+o45Z8vwy4uo23P0YfyCHf+fV/dkterpOJglAFiJZ0VIUWd0fMHT
-	 8Nz1JsMVOq+jXyKCamqLy90zKm1LAwd7sU1Qu+jMCg7pK94nALz2jYr0LrNc+1V6uv
-	 fsSRyZ+PxY3LMUKpqQuHrd9D6ppdq/NOrI5WAqf/UWAmceFtw9jIijUexEv2/dlDDE
-	 pSNcQxpcI4ou2vMBppcEHZjilroM+DWBjXN89McaVYq02xkCP5g2s4pFrYWZNExGtK
-	 mXQXj4XeWBEjpCU36r2vP0iZP5kRaI4l5M5TCFr42MAD/rlB2UrSLHn3WFuoSckhvF
-	 m+Zb7Uz2GdNGQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/11] tools headers: Sync uapi/linux/mount.h with the kernel sources
-Date: Mon,  2 Dec 2024 19:53:47 -0800
-Message-ID: <20241203035349.1901262-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-In-Reply-To: <20241203035349.1901262-1-namhyung@kernel.org>
-References: <20241203035349.1901262-1-namhyung@kernel.org>
+	s=arc-20240116; t=1733198524; c=relaxed/simple;
+	bh=Tm/yEmz3IrLylog3g/nFD1HOP3ktclopH8zdPWsSzeY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ojYvSOaOSqYgkaa20wmdCHXQPYvlec9wX0bVE77CxXoClyS4ccAtdkGMxL0xIIFZ+dohbXkT1K1sJMmP6A4qtgAdvJesKL62Kf64bF5JplMta+xmXwdRoT3boI+cAtgqg029v+c0xPrvhqcXp1xgkKvAwEU94EWCeQrcYPIbxEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dm5ybSjs; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d8970e899eso16574236d6.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 20:02:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733198522; x=1733803322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2X8Y07U9yxHamIdypE6q792whpe9/ZxQOzclBHHAZOQ=;
+        b=Dm5ybSjskdSHAtPA9HF9ThGngzA3Y+p3JQ/AhZ8EwwIazH/kjB5GwL/sFmo1cmVddL
+         h/LVi7/Hps9rLkF46Jp/7dziFTdy2SqQZVdjHaO2/+VqLrglB0/v9gGJvlowuAhMOLZV
+         Q4uXJcUSO5GKtvYp66SSBx5qJv/sx+L6lySl0hJtzg0so8vv3UGx64xvHqPjvlYqtxch
+         m1+i4ZZS8KaMJVaNUsFk92YXH8ehs2FBF4Qv8PIHno4xAtDxApwFVSt6BZSLPOAgt4LP
+         gR/bwDm4vIHpOQ1/TSqvfVUa/Ue+WxuXiCOkCXqVj6BYT8sNKFKuK7wT+t7QaCyGkYDV
+         q6Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733198522; x=1733803322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2X8Y07U9yxHamIdypE6q792whpe9/ZxQOzclBHHAZOQ=;
+        b=LCUeICe+CUfmevA8+w/flgZhg3j9tWe7reYuIYEElmT9suEp7DgXhzS3z2ULIWn3ot
+         gdw/T1F8Xoa0YYcpm+fpKPmJylacbCUxINl3rGP8VyiGrAgGco3qomgbDnSC4FzUj+o+
+         S1XTpQ6wxvgCDye/tX9NYQM4tkzdNS4ixnttH2O/WifagU1jS4SjGlY1cQ/FvcYa1sDS
+         OfKTAnCmnVSAc1ts3hc98A2PpszHrUhivJqIMRRzTTppWt16nSlbeR4IJfPVwAK5R9eN
+         gET32UfzS0ftIMxKEjzqhZLxyFViVucAEMNa6mMvIHyAnRJSGxZjAwm/J3XEkuypxh5f
+         PLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGoEIKW3aEW/Qz8+UsUikwfEjvBOL4fUBFkvcTJJVCPO2J9pk4/v8VRYGi3kI/v3MbzML0cqWdYHJhimrb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXFjGg+6QeS7vAW4Epaa/NQwqtUxdYWWijfFy4lJxN2zxA8UgQ
+	Xano+Od2J02kjUVyetTIkl3msxdkGdhrChjxWZIVJWzKVAsvsQ8koRbbbyk63eY6aC7aWKxjh5G
+	CBKVNLGzLTeZVsPUBbbH5kdE230zv7vMbXSGJejhF
+X-Gm-Gg: ASbGncufoSoqtZr9wqvZmE8cIdUq+VtkAX1fKVHdBjSczvHpfH9e/zkD7vZhrJY6Ukx
+	HfrxrxlzY31F6btTucxfBBaAfKikSrdAXKQ==
+X-Google-Smtp-Source: AGHT+IEXBzm/tLO6RiqlhAJPHmbaD0LqRdtH35Qzpu3o4ZsoXCeFufIruh3si7nzifKpNcQnj6YSveHdkgzbLwaGRY4=
+X-Received: by 2002:a05:6214:518e:b0:6d8:ae2c:503a with SMTP id
+ 6a1803df08f44-6d8b74320ebmr16394506d6.48.1733198522190; Mon, 02 Dec 2024
+ 20:02:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202411292300.61edbd37-lkp@intel.com> <CALOAHbABe2DFLWboZ7KF-=d643keJYBx0Es=+aF-J=GxqLXHAA@mail.gmail.com>
+ <Z051LzN/qkrHrAMh@xsang-OptiPlex-9020>
+In-Reply-To: <Z051LzN/qkrHrAMh@xsang-OptiPlex-9020>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 3 Dec 2024 12:01:26 +0800
+Message-ID: <CALOAHbADgrzykLPHqukZB1mtT10=fNm41hb0k_ONKJHqw3To_A@mail.gmail.com>
+Subject: Re: [linux-next:master] [mm/readahead] 13da30d6f9: BUG:soft_lockup-CPU##stuck_for#s![usemem:#]
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To pick up the changes in this cset:
+On Tue, Dec 3, 2024 at 11:04=E2=80=AFAM Oliver Sang <oliver.sang@intel.com>=
+ wrote:
+>
+> hi, Yafang,
+>
+> On Tue, Dec 03, 2024 at 10:14:50AM +0800, Yafang Shao wrote:
+> > On Fri, Nov 29, 2024 at 11:19=E2=80=AFPM kernel test robot
+> > <oliver.sang@intel.com> wrote:
+> > >
+> > >
+> > >
+> > > Hello,
+> > >
+> > > kernel test robot noticed "BUG:soft_lockup-CPU##stuck_for#s![usemem:#=
+]" on:
+> > >
+> > > commit: 13da30d6f9150dff876f94a3f32d555e484ad04f ("mm/readahead: fix =
+large folio support in async readahead")
+> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git mast=
+er
+> > >
+> > > [test failed on linux-next/master cfba9f07a1d6aeca38f47f1f472cfb0ba13=
+3d341]
+> > >
+> > > in testcase: vm-scalability
+> > > version: vm-scalability-x86_64-6f4ef16-0_20241103
+> > > with following parameters:
+> > >
+> > >         runtime: 300s
+> > >         test: mmap-xread-seq-mt
+> > >         cpufreq_governor: performance
+> > >
+> > >
+> > >
+> > > config: x86_64-rhel-9.4
+> > > compiler: gcc-12
+> > > test machine: 224 threads 4 sockets Intel(R) Xeon(R) Platinum 8380H C=
+PU @ 2.90GHz (Cooper Lake) with 192G memory
+> > >
+> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> > >
+> > >
+> > >
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-lkp/202411292300.61edbd37-lkp@in=
+tel.com
+> > >
+> > >
+>
+> [...]
+>
+> >
+> > Is this issue consistently reproducible?
+> > I attempted to reproduce it using the mmap-xread-seq-mt test case but
+> > was unsuccessful.
+>
+> in our tests, the issue is quite persistent. as below, 100% reproduced in=
+ all
+> 8 runs, keeps clean on parent.
+>
+> d1aa0c04294e2988 13da30d6f9150dff876f94a3f32
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :8          100%           8:8     dmesg.BUG:soft_lockup-CPU##=
+stuck_for#s![usemem:#]
+>            :8          100%           8:8     dmesg.Kernel_panic-not_sync=
+ing:softlockup:hung_tasks
+>
+> to avoid any env issue, we rebuild kernel and rerun more to check. if sti=
+ll
+> consistently reproduced, we will follow your further requests. thanks
 
-  aefff51e1c2986e1 statmount: retrieve security mount options
-  2f4d4503e9e5ab76 statmount: add flag to retrieve unescaped options
-  44010543fc8bedad fs: add the ability for statmount() to report the sb_source
-  ed9d95f691c29748 fs: add the ability for statmount() to report the fs_subtype
+In your environment, can this issue be reproduced using the following
+simple command?
 
-This addresses these perf build warnings:
+ vm-scalability/run -c case-mmap-xread-seq-mt
 
-  Warning: Kernel ABI header differences:
-    diff -u tools/perf/trace/beauty/include/uapi/linux/mount.h include/uapi/linux/mount.h
 
-Please see tools/include/uapi/README for further details.
 
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/trace/beauty/include/uapi/linux/mount.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/mount.h b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-index 225bc366ffcbf031..c07008816acae89c 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/mount.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-@@ -154,7 +154,7 @@ struct mount_attr {
-  */
- struct statmount {
- 	__u32 size;		/* Total size, including strings */
--	__u32 mnt_opts;		/* [str] Mount options of the mount */
-+	__u32 mnt_opts;		/* [str] Options (comma separated, escaped) */
- 	__u64 mask;		/* What results were written */
- 	__u32 sb_dev_major;	/* Device ID */
- 	__u32 sb_dev_minor;
-@@ -173,7 +173,13 @@ struct statmount {
- 	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
- 	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
- 	__u64 mnt_ns_id;	/* ID of the mount namespace */
--	__u64 __spare2[49];
-+	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
-+	__u32 sb_source;	/* [str] Source string of the mount */
-+	__u32 opt_num;		/* Number of fs options */
-+	__u32 opt_array;	/* [str] Array of nul terminated fs options */
-+	__u32 opt_sec_num;	/* Number of security options */
-+	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-+	__u64 __spare2[46];
- 	char str[];		/* Variable size part containing strings */
- };
- 
-@@ -207,6 +213,10 @@ struct mnt_id_req {
- #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
- #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
- #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
-+#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-+#define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
-+#define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-+#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
- 
- /*
-  * Special @mnt_id values that can be passed to listmount
--- 
-2.47.0.338.g60cca15819-goog
-
+--
+Regards
+Yafang
 
