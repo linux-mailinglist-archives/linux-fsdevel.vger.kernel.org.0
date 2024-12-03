@@ -1,89 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-36301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886029E119A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:10:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7E09E121B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083EAB222B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 03:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64BA282C2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 03:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DFC1547F0;
-	Tue,  3 Dec 2024 03:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204651BDA99;
+	Tue,  3 Dec 2024 03:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/JoMdXQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C2C1FC3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 03:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7232E17BEB7;
+	Tue,  3 Dec 2024 03:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733195404; cv=none; b=ejgPNBhMdrQWb1Xz5ik5AjlR/QW/+SZRrg49fWylAhgQAGVlVrYU7USFme8Sg2BV4oprICh1HPb5mDb5rGSdB3kV2LO1mIacMcDpm8OZViRc7/OUqDaCpdiW1jAPblpTtt8b5TTBwnqcwqMvQSinTGeZwPZgk+xH67UsgWABx38=
+	t=1733198037; cv=none; b=hedOBEdM5fJTEn/Jacn9KS9blJtrPIz9MYsRaJ8j3mJElIzu5K0DB7zg7LkAU3XIg6vJLb2oPhzkNP5p2+C2Z1/hNtY2l1qS/TUs8Q4gQy72JLwIH5rTktuLs3PcTgTymLxk1WTSvMShASUssUi+735l164gOPyxjwTIYznviVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733195404; c=relaxed/simple;
-	bh=dUJO12D9XJ50QVcP4tnHZQjEgG7fwLFweIIApvfiUiQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DmBIiJAFWU/D56wXo7HSuer2ER/H5l3AJ9gPvI1aqL/BuI9sz2rxkRrgWgfV/47frfGCiCgQXlqgvkedNVvBS+rOYV/ojSZee89FHFz7yrrEpXWH5Co8QeqUICf6RJqXHm15Bs5q5761c7pgVejiz/iiCQmYhgsTSbFEWekGcNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a77fad574cso44744385ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 19:10:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733195402; x=1733800202;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dsqlgTS+ltLHskkFc17ghIGhtDEg6fOZTOy6NapKTYA=;
-        b=mPxcoqxdT04zf/NoffW7fdFcnUVbptk+1h2OWS8p/R4lnAAaeENMGKOARXQkBOwgQa
-         tmkfY+e9WykOcDR93EvygWhhqHpQWTdw1mVb8YClLxxE/Gg7S2EetPh4EIqoB1MGGNSz
-         sU509SoN1xKJvNbhk6GwJTmIj+z/tQKCqO+bfkGeESwsLu0Y6+RitKpD7B4aBNyGfWlI
-         xlw9/yn8RcL5rX/44aWePXXDcYrfv9PJb09tfCrPjcKEMEhvhbsmQKfwx7pPWgXQu17M
-         mOEQ4WxlJWwi8G7ST4FCDAW6c7TVCjHz1ddndyygvbqBgSBIxm6W/YSc8z046tovcRlb
-         Gr0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVnF+BwWr9xDrDSHcq+p3E8H1LrLfO6TfF3M+IDJF70za7VR/QdP9IsJDjY6TPuGJmMbQ/j2wyf91TuquI3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0lEzACMXczomIyL3tRpFFvKwpjBVBgVZHnjDBBrnWGRnwzepU
-	GNrub9oe8Zcs2q6GPcwEcQNrx4DhX+/btllh+6RRIDrTtjtViPehTaDd4DzFzm68RJjhSdXiNOM
-	DxLcbO0R+AxJw9ZJCkH1bPT1ZBUecI3cpbv6RhFQPsKPFDI/3DhiTt0Y=
-X-Google-Smtp-Source: AGHT+IEmvwdk/IWR1IE9jKRTNexDguMVmLfjZ3Mzl//VCSLA5eIjz6/kjzGkRs4NOg0HaUH9YEKoELKu26Ww5mB8VnmBoXt3h7Pk
+	s=arc-20240116; t=1733198037; c=relaxed/simple;
+	bh=MdSpb8Nh8lIFO2WMQT06WzxMitSj54UmfgKQ2YobRQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NVJkbRx8xENktGLQnEno0qZTFxVfTe3y+5++yUZx9nXiczRZFk98gM0WjdoF054+CKPe828LRY3QvWxKwlP8F7wVz59UYR2Ypib6fseAp99rcWkz+NMUlK9KCsPEsnl1jCgaWNgrO5xK7/omXIdwwhun02Rg9FGkLxhBdHpR+uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/JoMdXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8915BC4CEDA;
+	Tue,  3 Dec 2024 03:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733198037;
+	bh=MdSpb8Nh8lIFO2WMQT06WzxMitSj54UmfgKQ2YobRQc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M/JoMdXQykTedPN8hEuuVEyL88J4xxZT98mHVHEA2+tEpZaZg5jOFOALAiYzZYznU
+	 yEdTZPWS4J5A6X6OnRZAM3eMit8nNJftJWASS1mlryNO7b7TiI/P4My3tv/Tafy2Hx
+	 zPXRDUZ28awthWR/XwwsNP7fJ/UONvJr1lB8nH5GZHDCwVitMEyJdwiecDuwD9MXJv
+	 iRKphMaCqltI3kBviknatQHCmkT7LXYLVQvd6f656ZDaaRxjw9yw+lOPto5D0+7cH7
+	 s+xlXWrNn9bcN8bLk+GDUE/i78SEICnEYmmRrN6dLbUkZ3GNwTUVUnUklDjjgBhSji
+	 wO5j0NDcR9huw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 08/11] tools headers: Sync uapi/linux/fcntl.h with the kernel sources
+Date: Mon,  2 Dec 2024 19:53:46 -0800
+Message-ID: <20241203035349.1901262-9-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+In-Reply-To: <20241203035349.1901262-1-namhyung@kernel.org>
+References: <20241203035349.1901262-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2164:b0:3a7:7ded:5219 with SMTP id
- e9e14a558f8ab-3a7f9aa3b72mr13967695ab.21.1733195402426; Mon, 02 Dec 2024
- 19:10:02 -0800 (PST)
-Date: Mon, 02 Dec 2024 19:10:02 -0800
-In-Reply-To: <PUZPR04MB63168009E64846094D5BE10B81362@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674e768a.050a0220.48a03.002b.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] general protection fault in exfat_init_ext_entry
-From: syzbot <syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+To pick up the changes in this cset:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+  c374196b2b9f4b80 ("fs: name_to_handle_at() support for "explicit connectable" file handles")
+  95f567f81e43a1bc ("fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag")
 
-Reported-by: syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com
-Tested-by: syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com
+This addresses these perf build warnings:
 
-Tested on:
+  Warning: Kernel ABI header differences:
+    diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
 
-commit:         f486c8aa Add linux-next specific files for 20241128
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14eab0df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=6f6c9397e0078ef60bce
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17e30330580000
+Please see tools/include/uapi/README for further details.
 
-Note: testing is done by a robot and is best-effort only.
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+index 87e2dec79fea4ef2..6e6907e63bfc2b4d 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+@@ -153,9 +153,6 @@
+ 					   object identity and may not be
+ 					   usable with open_by_handle_at(2). */
+ #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+-
+-#if defined(__KERNEL__)
+-#define AT_GETATTR_NOSEC	0x80000000
+-#endif
++#define AT_HANDLE_CONNECTABLE	0x002	/* Request a connectable file handle */
+ 
+ #endif /* _UAPI_LINUX_FCNTL_H */
+-- 
+2.47.0.338.g60cca15819-goog
+
 
