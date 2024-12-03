@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-36328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BA69E1B84
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 12:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B0D9E1BD2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 13:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F7621674B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 11:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6CF161AFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 12:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BC21E47DA;
-	Tue,  3 Dec 2024 11:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76741E5721;
+	Tue,  3 Dec 2024 12:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IN/x506m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fzgcehbx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585A26FC3;
-	Tue,  3 Dec 2024 11:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42161E570D;
+	Tue,  3 Dec 2024 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227188; cv=none; b=NMydsAGsljvqLVaTc5nC0VOKsac2A9Dr8oHk959iuCEcQeerqIKsb54thzuTNVKLQ8KkklAGmA7aMJZYrFdPQ0BRi+/n14+7jxwZfpLl85qaQ/hwO1BMTgb59IboJrTvJR/2SwamACJO4W/WhPabbPU8wjCUQEvPmxD3Rm8Xi8g=
+	t=1733228052; cv=none; b=pz3M9AiDbpUkfmMQ63/QgMu9W+3VS3OB83mCaTLNj1YdcYypwYm6LjHKEzNdkUCH6S+p9f7vVyQiWmvwJ+KULhMqYdb/J1CL37QH96qFko+gv/5rPJwRUDENH3vbfXTAZdNspwrJWNvLfkUdPJjwOH8KqWuNQHXDyEKaBZz8c3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227188; c=relaxed/simple;
-	bh=5f7uC9CEMYhOatLZfF783ior1u8CO4DdxN0J/XgPd+w=;
+	s=arc-20240116; t=1733228052; c=relaxed/simple;
+	bh=tAO0ZeRGqCmiIAKdtHt4tYNfmovaSCv8wWfWgBeLvH0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KeWOKdxxJ7xue1A3CIbrZEVWuEykftFuKDfnEQjIM/0FM6aT20eJebRQzZgidxTeynYt4iocL+LIrVr8Ls6htZrm4y4yKvhQPYw35i2/E0XbLILSb9ocL6H5rC27UaDgxm5yxalrNKfU53zCAwNv15ILvmjaYjEjGnATdXZA5mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IN/x506m; arc=none smtp.client-ip=209.85.218.47
+	 In-Reply-To:Content-Type; b=l96ugr3lTkzDsbP4/EjsuKY6rARZFUagnakO0xlGFMr06YQPd4d+Uf6++8/aCCXO+HGy3TPDaSdRCBWO3yL53MLdQI7bdiMHL1jG30Akb5/aVPNkncMJ7W12NnVGl9UPC5UngkRA05VA8Y1oPoL3/m/GRuCSA0ypGMs90NNaHTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fzgcehbx; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa5500f7a75so850678766b.0;
-        Tue, 03 Dec 2024 03:59:47 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d0be79e7e7so4943523a12.0;
+        Tue, 03 Dec 2024 04:14:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733227186; x=1733831986; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733228049; x=1733832849; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wrpw/gEIImhg5C05XMjsYpabyaleC2cQZtMyShGtK8A=;
-        b=IN/x506mhVwHF1Qi9PZrYjU89q+0UbAJU+23B6rIZ8dbO3HywuwXxh2SufNLRMK2wE
-         jihhFSRToujKVT5gSImhcNzw2AicdK09hoiZ4BPPY50fb2GIvNGfwNQE2BOEKr1i7lcu
-         2gfI/Vyh8jXqS5UHXs4FgjSHmdFZwxst2SFsxoNClQnaJauqBhfgVgcWYA+Qgu3nq38A
-         8ujEcWz0qpXf2GenuexK3PHikGL/lGzuWfJUbVp7GL7lZNDugvROysNE4q3Aj5c5E0Wc
-         L8+QRdBzOo+Y9AQmfkx1cIaNQFso+ZbAB3xkibc5kWaLG0VlSjIYAW1PEqOb/B8c9cn4
-         VRzg==
+        bh=aYa41I3tMLsmNfstYOxMKi/+Fg9Ns9dKhwH3u1EbE6g=;
+        b=Fzgcehbxc5865TMJS4MEfjbvTxSLhboxjfNoc83ux3m4y5ohiBHaGzxNOWRMQoKX52
+         uuHnhRa0BAo0Udfg9+pH5yI6MV7mFUvfiF+X0cX11IvUGpjTrAfs4stj1fgU0BHJNX/o
+         4ucOfjBCLI+NnmAXDPMGHbzV2tCczf4VBdo49cypllJmWyrpkro5gBe4D5MbV5lAUHW5
+         A6b/T4G8YwLVB1hFGcZEz1sUZc2UEw7/262eLYmNZvp3cJRIUhHTKPCNimKpFfISd4Ug
+         VqSggmfZAIH1Kc+LpesCiBZNujs+L0sTxGiR2Idy+MkkNjOj69/giRkSDESd99uu+wSV
+         pCJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227186; x=1733831986;
+        d=1e100.net; s=20230601; t=1733228049; x=1733832849;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wrpw/gEIImhg5C05XMjsYpabyaleC2cQZtMyShGtK8A=;
-        b=GyZHsXOriMd0DwgXoHUyaQGMjkJ1Tlk9J6LfUywRPkEQ2A4RLfAr1DyFPYdWAHK0b1
-         +NnIRlXGOXeycIPaUNU4KskJXDKyOLefzdd36HDgQnHDW0ixJrnO5GW60vQ4aj9GOdpu
-         dj16h0stFjSECkgnr+O3xNXR1NZgSw/9nLTyhC+1TvvaFw+4vXIcTX5RO47ZyCGH0w4Q
-         kd2whAsehVjjtb3m5O3/a0gtKWUtBk6C7wL26JS/K+xa/EbTUbZPdsYbgPDKrautAA/C
-         B63Yj/JF8CRijEnHqOaUUFILSgMjwd7F+GhLA1IpyV3wjw+cFH9Apr3BgEH50W34nkz0
-         +Mdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVY+L2Vbo/CUMFYHOTz4v+W8sFTPHyzAQG905oneOA4JsUZXJhRabBwDPeyQbyFTk6s4kcG4gwZrScn8w==@vger.kernel.org, AJvYcCX1ougLJK+81c3ybFd21Fu+eVyQfoJ1EePRIqYZ+wE9T9bSAfBfhWxGu0zeiVzYfMdraa8VsQFSNvO447sCRA==@vger.kernel.org, AJvYcCXPr33tD5q8iFqO4Y0FIXSzcPlEpl2gXFZvw52nrRMeJhLCo9UG/91bqzrpoQLPAFyVmIPrMYXCdJRvHXw=@vger.kernel.org, AJvYcCXug9OwHMNQ98db0RYsAtSzRj2us187VX7FKWEjce0zwnH+4k2c6r1spXfCc8PT7hNKqckz+EtD6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8BYXWO5UOWnGHc+Zp7eTgcCixoz1cDBPkBFdFQiqxt+SSD8fO
-	w1NAns2zPdz1WwnC7PG0bSG4+vRXjjVvnBkwuc7pIhaw1vlhKSNa
-X-Gm-Gg: ASbGncvgyWBEYcUMX8x1RDvLaajy4ByFSKXbrUAfTe37VRKRLOIEq+X0D7GdN1pxKF0
-	UpqA23VsOedIi33dWsZWMwn8Rj8AqA+zVWpa1srHIVBvCH8eR0l3LGonqdgtvZfSFORKat9y6iB
-	fK2Aaqw3vtN66oW9ZF/Sr9Vha6KIXbv3aikzFdzhOkph+jsnYPlSJJecZWx5vIPi7ixztJaaONY
-	ppx0YY8w/3TRbymtYcm8Vsn5xZf7svY2reTbVe0vIHTyYy6hkFKiOGlRsOjFg==
-X-Google-Smtp-Source: AGHT+IG4y9LGZwq9NfK9cdHd+NVO7Xgo2sU20E7rmPmT2a1si682Vjey0TVrQO9Z6X+iYPB4Df14SQ==
-X-Received: by 2002:a17:906:4c9:b0:aa5:44cf:3ea7 with SMTP id a640c23a62f3a-aa5f7f4773dmr171377066b.56.1733227185269;
-        Tue, 03 Dec 2024 03:59:45 -0800 (PST)
+        bh=aYa41I3tMLsmNfstYOxMKi/+Fg9Ns9dKhwH3u1EbE6g=;
+        b=T2KaZp1xXUC4ku9GJMDLrQUn+HDNhyaFEKNKKdixTKSEKUl2nqRRdsSecpiSictEWG
+         mwmK9b3YYwnHRSdEOXz2duCV+lbN9TOfhy7zlxNCl5bMwft3MXHTSw9Zmw6nHLInizBK
+         UcpRvlOxwsVleE0THhCRDvTdvgByhSwCNsbGrLbU/is7lmhqxdGpP5iSatg/mjBVBZ2a
+         kOlSTHFe3Ox7EpzXwMFaYcT4BQNExFLerC/kOXlxjxmows3oy+w8P83/NKc5EHXVXXa1
+         wxFAXzC6WcCouW29ZPwAlI9aF6wI07w3Sj2KknhkHimxUwrqH7gMCedtbbsEzQHJXDzX
+         3Wug==
+X-Forwarded-Encrypted: i=1; AJvYcCVpZ8BW3w/vuJzH51V9tasF31yZJBI2ou00KZieuks1dJQVIm7cG50tPVnh/Ty8BgEJiBcTD50HVPy6jRCCDA==@vger.kernel.org, AJvYcCWNIj4vzg+RNVhmY78cx1IQqJcqtCC7sxPutyrHeAtcXmTgVhtJ6s/980+xczQgXa0ee27YeDUSUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWiMS9qvsJLDrnKRLFalPhZ/708u6WSj9mMq+NqrVht0o78rjZ
+	oeytTjvnACtPZg8fKNbm8AqCoX2Q37Byo3+rbY4fHZgSWB2P8dHnlD7USQ==
+X-Gm-Gg: ASbGncvhLCPBIt/UHK3Ankrx5tGRqIffshXBWotuFjGUb4K1BAHxIOZIweF8WJYVI9y
+	X9jjjqFgHy/5fj2Q56VzREHa9uqiA0600sDpKqKq+hm4cvmj2YBj/Hlk2Rg56/rvB6NoEEOkSmC
+	yb4uf5NjMw8QKx/VywZPmElCUNUjjweyquwZXK09ABNuyD//ACP8TzwNEHVCBDFRlGpxJ2LVViA
+	Ly1FsfnVMqNhjSCqsBgUYaI8MbsxBBz9ZFfwfQ/DJh7vO6XQ76dhxtpL5dYZw==
+X-Google-Smtp-Source: AGHT+IFkUm6A9sR4sJL2tWNsExNALXeHj8sXuW+Op8uDwwRc1e/kSYJE816Fi9ms5GgmtPIoWY1dEA==
+X-Received: by 2002:a05:6402:34d4:b0:5d0:ac78:57 with SMTP id 4fb4d7f45d1cf-5d10cb9a204mr1506296a12.30.1733228048921;
+        Tue, 03 Dec 2024 04:14:08 -0800 (PST)
 Received: from [192.168.42.213] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599801591sm605350766b.91.2024.12.03.03.59.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0d49fc12bsm3269535a12.73.2024.12.03.04.14.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 03:59:44 -0800 (PST)
-Message-ID: <b8574010-e2fc-4566-9df8-80046fec2845@gmail.com>
-Date: Tue, 3 Dec 2024 12:00:41 +0000
+        Tue, 03 Dec 2024 04:14:08 -0800 (PST)
+Message-ID: <2d156fde-117d-45c1-9216-eafbd437cfae@gmail.com>
+Date: Tue, 3 Dec 2024 12:15:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,73 +80,34 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 06/10] io_uring: introduce attributes for read/write
- and PI support
-To: Anuj Gupta <anuj20.g@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, anuj1072538@gmail.com,
- brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
- io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-block@vger.kernel.org, gost.dev@samsung.com,
- linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241128112240.8867-1-anuj20.g@samsung.com>
- <CGME20241128113109epcas5p46022c85174da65853c85a8848b32f164@epcas5p4.samsung.com>
- <20241128112240.8867-7-anuj20.g@samsung.com>
- <yq1r06psey3.fsf@ca-mkp.ca.oracle.com> <20241203065645.GA19359@green245>
+Subject: Re: [PATCH RFC v7 13/16] io_uring/cmd: let cmds to know about dying
+ task
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-13-934b3a69baca@ddn.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241203065645.GA19359@green245>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-13-934b3a69baca@ddn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/3/24 06:56, Anuj Gupta wrote:
-> On Mon, Dec 02, 2024 at 09:13:14PM -0500, Martin K. Petersen wrote:
->>
->> I have things running on my end on top of Jens' tree (without error
->> injection, that's to come).
->>
->> One question, though: How am I to determine that the kernel supports
->> attr_ptr and IORING_RW_ATTR_FLAG_PI? Now that we no longer have separate
->> IORING_OP_{READ,WRITE}_META commands I can't use IO_URING_OP_SUPPORTED
->> to find out whether the running kernel supports PI passthrough.
+On 11/27/24 13:40, Bernd Schubert wrote:
+> From: Pavel Begunkov <asml.silence@gmail.com>
 > 
-> Martin, right currently there is no way to probe whether the kernel
-> supports read/write attributes or not.
-> 
-> Jens, Pavel how about introducing a new IO_URING_OP_* flag (something
-> like IO_URING_OP_RW_ATTR_SUPPORTED) to probe whether read/write attributes
-> are supported or not. Something like this [*]
+> When the taks that submitted a request is dying, a task work for that
+> request might get run by a kernel thread or even worse by a half
+> dismantled task. We can't just cancel the task work without running the
+> callback as the cmd might need to do some clean up, so pass a flag
+> instead. If set, it's not safe to access any task resources and the
+> callback is expected to cancel the cmd ASAP.
 
-An IORING_FEAT_ flag might be simpler for now. Or is it in plans to
-somehow support IORING_OP_READ_MULTISHOT as well?
-
-I have to say Adding a good probing infra is long overdue. For example a
-user might want to know which attributes are supported. And beyond
-io_uring it might be interesting to probe whether a particular file
-supports it.
-
-
-> [*]
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 38f0d6b10eaf..787a2df8037f 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -723,6 +723,7 @@ struct io_uring_rsrc_update2 {
->   #define IORING_REGISTER_FILES_SKIP	(-2)
->   
->   #define IO_URING_OP_SUPPORTED	(1U << 0)
-> +#define IO_URING_OP_RW_ATTR_SUPPORTED	(1U << 1)
->   
->   struct io_uring_probe_op {
->   	__u8 op;
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 3de75eca1c92..64e1e5d48dec 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -67,6 +67,7 @@ const struct io_issue_def io_issue_defs[] = {
-
-io_cold_defs would be better
+It was merged through btrfs tree, so when you rebase patches onto
+something branching off v6.13-rc1 it should already be there.
 
 -- 
 Pavel Begunkov
