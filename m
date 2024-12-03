@@ -1,78 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-36387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73DA9E2F8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 00:11:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA639E2FC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 00:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 784EFB2F323
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C4AB34168
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 22:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C241E209F38;
-	Tue,  3 Dec 2024 22:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E86D20A5CA;
+	Tue,  3 Dec 2024 22:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rJ6q74F0"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="pXMoRmnp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A5bd26M2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B5C1D8E1E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 22:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1671362;
+	Tue,  3 Dec 2024 22:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733265718; cv=none; b=uyvRRp3xJ5knq1ByCvAdqmTL7sihG8+2kiOmUiyv6imnkj1dWmHitPA793eelPdRUfx/OGjUHNBr1qUGdxn2Jhbi6qetCzY9iSaCe0pHMyBcH6bTlwXeGplTYci4wnHR26KNT01LihQA81A9oroawOV0ZKt676JgcapnZcIkQqA=
+	t=1733265983; cv=none; b=ljuAN/vx6ILJJRvsniJjodgOO7uv5mjpU/xH4OczDSzVrxAct/wTiDUiCaqQHesPhwk3GIjipySVHvKOCMpTLmUmtsxwYMmg/0Ec8vuuFF/2p8vWvS2hkikeujaYBSr07X6ymSUoj5QR9OSAba86XCXSel0Fxy4cKN7FXOCFXsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733265718; c=relaxed/simple;
-	bh=B/liPQIb4IzDwgFk2HZsoN0QEq45CrAM90ifIAL3cls=;
+	s=arc-20240116; t=1733265983; c=relaxed/simple;
+	bh=Pw4Tpjfbr4a7L3MyfK+RcgG3t6ueLZjQVrtRZfJWFRs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jRMNGqKTNNgB4BIxNMccjyiwhxf41eagB/gRvEsQEoWpkyUmatoyXMNrx3sUpDqHd3Om1Jp8dXvuMXkthl6t/BblqMxhQIaSdaINGkv73orjekdVRUzGE8y26cBkgFsnYAN22jk9k0aU5fXh+NSdq93fknANzPfLRzJQkIGVdj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rJ6q74F0; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7258bce5289so264743b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 14:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733265715; x=1733870515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aYz4wZQ4ozLWoz6WcLIf1w2/FEfERq16Hm/9zLb1izY=;
-        b=rJ6q74F0a1GtpeslnPcoTa6X1rlURgz9WJ410a5qU5btiNFQ1bI1tEkf381woZxx5t
-         86HTGbkhIvWSxI2xGkaTBrQj/EtD5L4d6cWVv0Ugj9qqqQpMQJeQ1nNIzghXVXI70E5u
-         4YvuMGk/oBvuFOEmqwBbP5Z5htteuX9fWOEW73pg6wnc0vm4FpuPP7iuFspTy19R2NAk
-         KK/VqAN+1dGwLdxFeNlJWbT0i0/2yMuJbwPWV4l+98yC2Eb1okNNK5iNIeU0uaIbzo7p
-         PG8M/fitP0f/NMYFeLy5ekX4jHlNVCOu5tVul6YgiSXLnDmToTDxcWBFABSf+L82AugO
-         jjYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733265715; x=1733870515;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aYz4wZQ4ozLWoz6WcLIf1w2/FEfERq16Hm/9zLb1izY=;
-        b=D8bAhhCkVv3Ai4A7HpP4IaVkn8e7a4tBOussfEZcW0dwQjaxbo7prN5qgz8bFy4bHH
-         ldrKr+4KBSaCxmgDiX3ECp7HMUpl3qEA1X6HGHPttDVqE9vJ8roocXN4NkXvhMOUVKY2
-         asaM/LSKSn+USxjc9b/UtyTnDaqD5ms0DPI5UqFH7JXx5JP1P1toMxKIvqnXPPbVB49F
-         kcFgFNDUHYNQ2YuEhUl34rR0u31IXJMQm80RHKq2udP1Av50zGfrIrZbIS4EFZH9itnj
-         Gbi5YeaKlFvEnb9V2Ku1RWZQnnT/95RWClsDdMRWCvebu+LCDEhMBum49sjE7q9HBRUV
-         sBcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1PEJ3UPhQkVfs6tpGJICZR3c0J8+BAqsQ8gisPJ3i7s1fuAFfk2HuYr/RQYs1MznNBzwlTCn04j3gPqyw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOcGLUt7ksHTUMs30H8tymre1WCieDIEl1PDVoo0w9rbOpR74E
-	2lPvSSbYSnjKD5MfGWhdLn6HTcXvT9cL/y5j97xJTVVoJD0v3eb0FiVcG7p3Fx0=
-X-Gm-Gg: ASbGnctj4ZSeB6qL1UWpi8xXegEGnxuT0LQjLXn4pSoDkjztq1OoZ/UWQtogmRnpSWP
-	65tUIGK1/lWpLzRKxvxzJqJAREzYUDslkf23JjKBHDMx6FYs1pgPpZeUsxgEucE1d0Gqw1k+Eq6
-	d7fkIm4cH89cKq5o9TvTsir0oXnAnhHdl830RaVTVHwJwSjvYhEPVoCAGVKFe5Ppyxo/ZZn3STx
-	+5QT6qoLczHh986/M0tXzHy0pUNELBixVxz4LOrFb7SUHP+/XKdAQ==
-X-Google-Smtp-Source: AGHT+IE8Dqnok8jV5g7L3OmAsLx6cL87LuT/Gjx6JQItfNyi0KdCrRDg1xS89T6jOLdCSXuSD9q10w==
-X-Received: by 2002:a05:6a00:3a04:b0:724:5815:62c1 with SMTP id d2e1a72fcca58-72587f6c48emr3492918b3a.19.1733265714946;
-        Tue, 03 Dec 2024 14:41:54 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:18a::47e? ([2620:10d:c090:600::1:fe53])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417616ddsm11083162b3a.13.2024.12.03.14.41.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 14:41:54 -0800 (PST)
-Message-ID: <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
-Date: Tue, 3 Dec 2024 15:41:53 -0700
+	 In-Reply-To:Content-Type; b=mHOiufAp7TacNp9ztRHcdtuILEIHK64HZA3z1vbtqO4V7cDDzS8tnUWsGdnYnqSOg5MoTNYOxFgfVZNa9W/fN3fMWetPk1xNlb3Lf8p9qgtMA73/xiwBJ62i1F4/Q6hoojHoNOLQTb6DV1ts/bJcaXPyrIlIHOFZ2sLOLKBmvOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=pXMoRmnp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A5bd26M2; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C0DA62540176;
+	Tue,  3 Dec 2024 17:46:19 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 03 Dec 2024 17:46:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733265979;
+	 x=1733352379; bh=htbklwOwRf4CH+LSsKIEyTCk4UorTDrkjXku6ATDiFo=; b=
+	pXMoRmnpssJZqb0BQzDUrwcT2qv4IjMNXbqH/aGSk34WIHe0PncMgEsOlD1Eet9W
+	5ZrPscPmHtk3NFYHBsld3qaHzBIcNwqv246o1s6dtpQWkVscQJHJy8aqfVPhKhkS
+	SZgrja4MhQGb/YugfIkJUu8g+vmLax66oPiDm01aHcwYRL4e1aW1D40WmXwnG1sa
+	XE0a7WWOsAD51yli5Yio741NuAckQweLxt0jedHHEO/8JWxIdPJMNT5qYXMHn06n
+	66jxl+NB++t6A8RSZC+i0wiH2es9h2cDUrx8cSwV0PlyzQgFitVOZgG+rQ+uzv6E
+	858xFh7vCNwmmeUvt7OwLg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733265979; x=
+	1733352379; bh=htbklwOwRf4CH+LSsKIEyTCk4UorTDrkjXku6ATDiFo=; b=A
+	5bd26M2EzTBrdsnYgZ9VQ1iXmdJNztsZNaR++jRiDNGv5drtEDdh+igImbWSwHzn
+	G2mEqfS0BHV0oOH5R5CETiEQngLVKrUPF0TrhKBTN1sebuKZ2FMdm5bw7VAsqaBt
+	YcztAWwegdxpf5mOPfO+NcrkB9ALqFeswAY+yZpZ/Pps9vea7xAJJISevFCAywYC
+	HDoe8HnN48fXkCEHoN+xYwBz3cxY/SWdN10NUFC4FuzNBP5kFj4X3azWhHoYlh2x
+	zD2WTDYmlMNpR3QqdFXz+OgPk1weqXTyR2HOzW9wA69RUihuLJIxpIMUT1rpa1DR
+	q5X7ObPojndCmwYyY9YJA==
+X-ME-Sender: <xms:OopPZ8JpchBcZiO2ItmyAYThZsFyfSTYsBGB5KG70ZgtEHU9JkeWfA>
+    <xme:OopPZ8Jvic7LrUXsGTLU23NVUfBcjnQDULJ1TsGHJ16lI1kPoK4_4e4GTo2kxcbpy
+    Oc4fLEMvBnI58zU>
+X-ME-Received: <xmr:OopPZ8s5JaWUMA1pCpqPh8c8ZwG8zyM5vZ5FOHDW6Nbj_2zr62e7js-OszXlb9-AcqrZqnU3yShMnBSQKxL9EnTfAQBLExbZ_qmjckOw_E8Lu1nNIQxM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieegucetufdoteggodetrfdotffvucfrrh
+    hofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfurfetoffk
+    rfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculd
+    dquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhr
+    ohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfh
+    grshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudevudevleegleff
+    ffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghs
+    thhmrghilhdrfhhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklhhoshessh
+    iivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgt
+    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjh
+    hoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtoheprghmihhrjeefihhl
+    sehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:OopPZ5ZpzVhnx475poYFzpnEzKFudPdmIxEw9G8F5XAuoPYTc9c3DA>
+    <xmx:OopPZzZ93gITFTogq_4GMszY086G_kyXIgy2_RqjfRpJOO78m03Blg>
+    <xmx:OopPZ1Bw6N92TksAlA1REPFhzP7H-byUpdecd9uQ1aS15pg-syE02Q>
+    <xmx:OopPZ5ZDPYdwI-P0PSRAFdApa7koEM5E0dPYi4lFdMShypakjkemdA>
+    <xmx:O4pPZ3RVuVfWf6AeiLy5rRy8xOhHa5RXq49ecx8fvRu8ibXad3Wca_aS>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Dec 2024 17:46:17 -0500 (EST)
+Message-ID: <b54f700c-9c26-4226-bfcf-c121bd9eee7a@fastmail.fm>
+Date: Tue, 3 Dec 2024 23:46:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,48 +99,89 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
+Subject: Re: [PATCH RFC v7 11/16] fuse: {uring} Allow to queue fg requests
+ through io-uring
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-11-934b3a69baca@ddn.com>
+ <01f65cf0-19a3-4df1-9fcc-6b0fbc18e536@gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <01f65cf0-19a3-4df1-9fcc-6b0fbc18e536@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/3/24 3:16 PM, Christoph Lameter (Ampere) wrote:
-> On Tue, 3 Dec 2024, Jens Axboe wrote:
-> 
->> I actually did consider using some form of temporal, as it's the only
->> other name I liked. But I do think cached_uncached becomes pretty
->> unwieldy. Which is why I just stuck with uncached. Yes I know it means
->> different things in different circles, but probably mostly an overlap
->> with deeper technical things like that. An honestly almost impossible to
->> avoid overlap these days, everything has been used already :-)
+
+
+On 12/3/24 15:09, Pavel Begunkov wrote:
+> On 11/27/24 13:40, Bernd Schubert wrote:
+>> This prepares queueing and sending foreground requests through
+>> io-uring.
 >>
->> IOW, I think uncached is probably still the most descriptive thing out
->> there, even if I'm certainly open to entertaining other names. Just not
->> anything yet that has really resonated with me.
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>> ---
+>>   fs/fuse/dev.c         |   5 +-
+>>   fs/fuse/dev_uring.c   | 159 ++++++++++++++++++++++++++++++++++++++++
+>> ++++++++++
+>>   fs/fuse/dev_uring_i.h |   8 +++
+>>   fs/fuse/fuse_dev_i.h  |   5 ++
+>>   4 files changed, 175 insertions(+), 2 deletions(-)
+>>
+> ...
+>> +
+>> +/*
+>> + * This prepares and sends the ring request in fuse-uring task context.
+>> + * User buffers are not mapped yet - the application does not have
+>> permission
+>> + * to write to it - this has to be executed in ring task context.
+>> + */
+>> +static void
+>> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+>> +                unsigned int issue_flags)
+>> +{
+>> +    struct fuse_uring_cmd_pdu *pdu = (struct fuse_uring_cmd_pdu
+>> *)cmd->pdu;
+>> +    struct fuse_ring_ent *ring_ent = pdu->ring_ent;
+>> +    struct fuse_ring_queue *queue = ring_ent->queue;
+>> +    int err;
+>> +
+>> +    BUILD_BUG_ON(sizeof(pdu) > sizeof(cmd->pdu));
+>> +
+>> +    err = fuse_uring_prepare_send(ring_ent);
+>> +    if (err)
+>> +        goto err;
+>> +
+>> +    io_uring_cmd_done(cmd, 0, 0, issue_flags);
+>> +
+>> +    spin_lock(&queue->lock);
+>> +    ring_ent->state = FRRS_USERSPACE;
 > 
-> How about calling this a "transitory" page? It means fleeting, not
-> persistent and I think we have not used that term with a page/folio yet.
+> I haven't followed the cancellation/teardown path well, but don't
+> you need to set FRRS_USERSPACE before io_uring_cmd_done()?
+> 
+> E.g. while we're just before the spin_lock above here, can
+> fuse_uring_stop_list_entries() find the request, see that the state
+> is not FRRS_USERSPACE
+> 
+> bool need_cmd_done = ent->state != FRRS_USERSPACE;
+> 
+> and call io_uring_cmd_done a second time?
 
-I also hit the thesaurus ;-)
+Sorry about the confusion, I had actually already fixed it in patch 14, 
+the one that added handling of IO_URING_F_TASK_DEAD and that you asked
+to merge into this patch here. Obviously at least that part should have
+been part of this patch here.
 
-I'm honestly not too worried about the internal name, as developers can
-figure that out. It's more about presenting an external name that sys
-developers will not need a lot of explaining to know what it's about.
-And something that isn't too long. BRIEFLY_CACHED? TRANSIENT_CACHE?
 
-Dunno, I keep going back to uncached as it's pretty easy to grok!
+Thanks again for your thorough review!
 
--- 
-Jens Axboe
 
+Bernd
+Bernd
 
