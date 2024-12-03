@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-36293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3644B9E10EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 02:46:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6174C9E10F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 02:47:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD70216400B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 01:46:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D53D5B22627
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 01:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3984D02;
-	Tue,  3 Dec 2024 01:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEE214B942;
+	Tue,  3 Dec 2024 01:46:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49061CFA9;
-	Tue,  3 Dec 2024 01:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E30F17555;
+	Tue,  3 Dec 2024 01:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733190406; cv=none; b=mFbTbf1egJSNwjxt2TImoT06htlrknBh7fKP7SU8GQi+HYnN9XlUX7PwEtQDVLo8g720JSfaFyvxwqK4rzFP+6DwhqJtRefw9ZOwhaKKSj1oNvBBs2HNYZPul24myJAGzt8RXe++PL7yO78TSfy6qCi3zowK5eeQ6EXgbt29z48=
+	t=1733190406; cv=none; b=Cwp4oIVZidqGTWxgwCu3/cRAfw6m1JBKhAzprpJnAQob4gB6ftCJUD90G7fF8Lz0gHPTvxf0143oI7L3mp4qopM/QcmklrZsqPM+xd+6Pn4b+pidtj8ZDsHwuj2suPHIj8vx8nE1O2FaSZOwSVXacIb52cL7n5imo3TbtGou4RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733190406; c=relaxed/simple;
-	bh=bQqgd4fdNou8e1VGFUVHXTUD1jRmZDVrUOyJA1SeZu4=;
+	bh=d+D3m06N+vCRhsLBvE6+zrOUn6PBZHagyKoLe6KTMzg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FZ+0ZS/QhgyP9HMLE4ybFds2NF65+lnZujmiUDZyy5RnHvjFKC08WzSBpxdM7eE6eOAb75qjejL2Vefo5hM7ATy3dqNc8PzSetRg06MvdRE/+xHNBjBFlG8IITL9HJ+4ALKR1NSV6H3A2peAVuZMpuNjCGXIkL6ILJ5ex8H9/4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Ftdy7ObGzNcce70JEisXf8tYZlCHIlwioVRJenp7YbYRswGV/UxCqA4+9SM1kumBwfXdoT3RVMmfcSwS8nJDWZiJ7mNjbIXSrf1c/JSyfKdaxffuKr+PvwgVfY2tTzwP+COVB4XB12yhvmQHd1nqzg+sTlaP3sZUSt8w/mQMdJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y2NmD25z3z4f3kv7;
-	Tue,  3 Dec 2024 09:46:20 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y2NmL6NHLz4f3jkk;
+	Tue,  3 Dec 2024 09:46:26 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 380581A0196;
+	by mail.maildlp.com (Postfix) with ESMTP id C56C81A0196;
 	Tue,  3 Dec 2024 09:46:40 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4fyYk5ng34DDg--.44162S5;
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4fyYk5ng34DDg--.44162S6;
 	Tue, 03 Dec 2024 09:46:40 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 1/2] jbd2: increase IO priority for writing revoke records
-Date: Tue,  3 Dec 2024 09:44:06 +0800
-Message-ID: <20241203014407.805916-2-yi.zhang@huaweicloud.com>
+Subject: [PATCH 2/2] jbd2: flush filesystem device before updating tail sequence
+Date: Tue,  3 Dec 2024 09:44:07 +0800
+Message-ID: <20241203014407.805916-3-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
 References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
@@ -63,52 +63,57 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4fyYk5ng34DDg--.44162S5
-X-Coremail-Antispam: 1UD129KBjvdXoW7JryrJr4kuryUKFWxZrWkJFb_yoWftFg_WF
-	Wj9rW5Z3yfJr4jvF40vw45ZF4SkayfWF1xGwn5tw18Gr9rGas8GFZrtr98Xrn5JFZFgrZ5
-	Gr1IqFWrGrsayjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbQ8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-	0Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84
-	ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I2
-	62IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
-	AFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
-	0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_
-	Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUnZXrUUUUU
+X-CM-TRANSID:gCh0CgCHY4fyYk5ng34DDg--.44162S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFyfJF18AF4fJrWkWrW8tFb_yoW8GF15pF
+	yUC3WjyrWkCa18CF18XF4xXFW7XFWvka4UWFyqkFn3Wa1UXwnakrW3t34Sgr90yr4Fkw4r
+	Xr10g34qg34jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQq14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6rxdM2
+	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
+	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
+	vE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
+	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
+	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v2
+	6r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1c18PUUUUU==
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Commit '6a3afb6ac6df ("jbd2: increase the journal IO's priority")'
-increases the priority of journal I/O by marking I/O with the
-JBD2_JOURNAL_REQ_FLAGS. However, that commit missed the revoke buffers,
-so also addresses that kind of I/Os.
+When committing transaction in jbd2_journal_commit_transaction(), the
+disk caches for the filesystem device should be flushed before updating
+the journal tail sequence. However, this step is missed if the journal
+is not located on the filesystem device. As a result, the filesystem may
+become inconsistent following a power failure or system crash. Fix it by
+ensuring that the filesystem device is flushed appropriately.
 
-Fixes: 6a3afb6ac6df ("jbd2: increase the journal IO's priority")
+Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/jbd2/revoke.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jbd2/commit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
-index 4556e4689024..ce63d5fde9c3 100644
---- a/fs/jbd2/revoke.c
-+++ b/fs/jbd2/revoke.c
-@@ -654,7 +654,7 @@ static void flush_descriptor(journal_t *journal,
- 	set_buffer_jwrite(descriptor);
- 	BUFFER_TRACE(descriptor, "write");
- 	set_buffer_dirty(descriptor);
--	write_dirty_buffer(descriptor, REQ_SYNC);
-+	write_dirty_buffer(descriptor, JBD2_JOURNAL_REQ_FLAGS);
- }
- #endif
- 
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 4305a1ac808a..f95cf272a1b5 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 	/*
+ 	 * If the journal is not located on the file system device,
+ 	 * then we must flush the file system device before we issue
+-	 * the commit record
++	 * the commit record and update the journal tail sequence.
+ 	 */
+-	if (commit_transaction->t_need_data_flush &&
++	if ((commit_transaction->t_need_data_flush || update_tail) &&
+ 	    (journal->j_fs_dev != journal->j_dev) &&
+ 	    (journal->j_flags & JBD2_BARRIER))
+ 		blkdev_issue_flush(journal->j_fs_dev);
 -- 
 2.46.1
 
