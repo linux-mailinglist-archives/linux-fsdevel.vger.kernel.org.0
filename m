@@ -1,176 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-36304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2228C9E1225
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 05:02:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E31DA9E1263
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 05:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F9D282D29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AA2282ABF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2024 04:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED33148FED;
-	Tue,  3 Dec 2024 04:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EE014B941;
+	Tue,  3 Dec 2024 04:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dm5ybSjs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWm7AiaZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CED224F0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 04:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D462BD1D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Dec 2024 04:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733198524; cv=none; b=eERy9jCk6GC7VbabgwMS+b2OREVnZA9L6sllzOYchRL+d6EfPcjk9Tx4nXczKAlGFiUHVzSQvynsRxnTMr7Qmoi15eE5zWFwPuq93c8JIpm0XiYFfuZ3KZ7N69XkfdByZd+FUKr+il5tKOAggKq4m12SiyPs2NSWxIrzSw4aL/A=
+	t=1733199808; cv=none; b=h0u+M4EeEjJkRunX9W07Hmu+uGl3OmGJPtj9n7rF0RsQlg+cVevOFC2MgP+3UzFZcKnZ/XG+km+TgyxSVKldB/cqZefnEekOMegoT7+X0LdltW1laS6bGOf4ryJEUX+wIKgA/rCm3/KaPuK26+xrbBbi9NmfAp/gy1JzA7ksnhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733198524; c=relaxed/simple;
-	bh=Tm/yEmz3IrLylog3g/nFD1HOP3ktclopH8zdPWsSzeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ojYvSOaOSqYgkaa20wmdCHXQPYvlec9wX0bVE77CxXoClyS4ccAtdkGMxL0xIIFZ+dohbXkT1K1sJMmP6A4qtgAdvJesKL62Kf64bF5JplMta+xmXwdRoT3boI+cAtgqg029v+c0xPrvhqcXp1xgkKvAwEU94EWCeQrcYPIbxEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dm5ybSjs; arc=none smtp.client-ip=209.85.219.49
+	s=arc-20240116; t=1733199808; c=relaxed/simple;
+	bh=VnAijWycY27v/ZEoUwG9XDvgf4fiUkPZp0Ki0GmZ+Zw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QAtGiCoT2FbZiKlEywz7myExpDxZL0HAtOZWYw2MobLU7efSSglsY56rYT85SHWB1icCXEpEBaVd8Pepurs/zsUGiADYJWW2vjqOXzUfENlbnffHp8FqF4mDntqZ6prAwuseGUbrZsW19IZ+6TLUfleCrW3oVF8Lnw311+cxiOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWm7AiaZ; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d8970e899eso16574236d6.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 20:02:02 -0800 (PST)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724e6c53fe2so3760022b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2024 20:23:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733198522; x=1733803322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733199805; x=1733804605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2X8Y07U9yxHamIdypE6q792whpe9/ZxQOzclBHHAZOQ=;
-        b=Dm5ybSjskdSHAtPA9HF9ThGngzA3Y+p3JQ/AhZ8EwwIazH/kjB5GwL/sFmo1cmVddL
-         h/LVi7/Hps9rLkF46Jp/7dziFTdy2SqQZVdjHaO2/+VqLrglB0/v9gGJvlowuAhMOLZV
-         Q4uXJcUSO5GKtvYp66SSBx5qJv/sx+L6lySl0hJtzg0so8vv3UGx64xvHqPjvlYqtxch
-         m1+i4ZZS8KaMJVaNUsFk92YXH8ehs2FBF4Qv8PIHno4xAtDxApwFVSt6BZSLPOAgt4LP
-         gR/bwDm4vIHpOQ1/TSqvfVUa/Ue+WxuXiCOkCXqVj6BYT8sNKFKuK7wT+t7QaCyGkYDV
-         q6Ew==
+        bh=JZLXAGKXJsQaUwHOfGxb1XieHVDcZBF9xpfXO7H06r4=;
+        b=ZWm7AiaZEhNEH8TXea3xkGydRYXm4WIR0UMe0+SVwdsuSFdTzjJUEM9QQFRt96LlJ8
+         1wgs1Rua4S4I+g8Ih7ff5NAJl5w6GehCGKtgjTyh19CiTJTCSBzjrGXk1er3fV1Uq6gS
+         4YKe0LBGDlAoEOIb8Cmb2b3n+7CjOjcZTquhZ17uH4t2x7Go385BfS8gO2n4zoZxTQYP
+         4YTuqNIxuhi45qNWBlBpPChs9hhvTugbfwqnug+JB2W4/3Dkwwo2K0Xzxu7oesasbYir
+         Eq6FoyusTMjdi4yObzoy6c0KlEE9ZiZQPWe0ThBM3mM7YOs4fFqgRbIV9ksTf+UWToVG
+         qHqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733198522; x=1733803322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733199805; x=1733804605;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2X8Y07U9yxHamIdypE6q792whpe9/ZxQOzclBHHAZOQ=;
-        b=LCUeICe+CUfmevA8+w/flgZhg3j9tWe7reYuIYEElmT9suEp7DgXhzS3z2ULIWn3ot
-         gdw/T1F8Xoa0YYcpm+fpKPmJylacbCUxINl3rGP8VyiGrAgGco3qomgbDnSC4FzUj+o+
-         S1XTpQ6wxvgCDye/tX9NYQM4tkzdNS4ixnttH2O/WifagU1jS4SjGlY1cQ/FvcYa1sDS
-         OfKTAnCmnVSAc1ts3hc98A2PpszHrUhivJqIMRRzTTppWt16nSlbeR4IJfPVwAK5R9eN
-         gET32UfzS0ftIMxKEjzqhZLxyFViVucAEMNa6mMvIHyAnRJSGxZjAwm/J3XEkuypxh5f
-         PLlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGoEIKW3aEW/Qz8+UsUikwfEjvBOL4fUBFkvcTJJVCPO2J9pk4/v8VRYGi3kI/v3MbzML0cqWdYHJhimrb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXFjGg+6QeS7vAW4Epaa/NQwqtUxdYWWijfFy4lJxN2zxA8UgQ
-	Xano+Od2J02kjUVyetTIkl3msxdkGdhrChjxWZIVJWzKVAsvsQ8koRbbbyk63eY6aC7aWKxjh5G
-	CBKVNLGzLTeZVsPUBbbH5kdE230zv7vMbXSGJejhF
-X-Gm-Gg: ASbGncufoSoqtZr9wqvZmE8cIdUq+VtkAX1fKVHdBjSczvHpfH9e/zkD7vZhrJY6Ukx
-	HfrxrxlzY31F6btTucxfBBaAfKikSrdAXKQ==
-X-Google-Smtp-Source: AGHT+IEXBzm/tLO6RiqlhAJPHmbaD0LqRdtH35Qzpu3o4ZsoXCeFufIruh3si7nzifKpNcQnj6YSveHdkgzbLwaGRY4=
-X-Received: by 2002:a05:6214:518e:b0:6d8:ae2c:503a with SMTP id
- 6a1803df08f44-6d8b74320ebmr16394506d6.48.1733198522190; Mon, 02 Dec 2024
- 20:02:02 -0800 (PST)
+        bh=JZLXAGKXJsQaUwHOfGxb1XieHVDcZBF9xpfXO7H06r4=;
+        b=VTxkeUpc36/NOrCVut9qMzSRcEN9tUjOIHyec65dMjchwx/eGm3YU0ckiXTsYPaxXJ
+         810weUC4aTEzHUM0gCRAU1Vkf2gCXIg0fltmBVq3t3WpbhnIQToyjMaGJ6fZopsm6JEI
+         9QmqSswfmQ3kRCx9MuKhbG49wg9H5Kkz7cuAFRKDx6b+/lLd4LBw899InXakphXkBKxJ
+         EfWLgzYnjmcf3LA0Mc0QVCJn9fLtXd0VjlcGE9bwXK0v8ZUNFrOzAf7eU3biAC/p5+M7
+         zikS6YkgXrnCHhllnhBrjf+cjhNVbtccFI9cAiRESkdW1NgWw/elEMBZr9L74HO4eMFd
+         Ewkg==
+X-Forwarded-Encrypted: i=1; AJvYcCURJZn1SmQLMsNEkxe3PzvhBZVY+QsWEt5DvRC0btKNSRL3Yc3RvNnPvSlmT8AQRVe5FKXbQ2J24zCLA0MV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4u5/DSu6wVt2RivZ+/qdmxHIjaNjzGxwY2eMfGTNvFkE3IMpQ
+	V+u7BOi/uqZdKpji+nZukfIsIEirnz5gDe0Iha+YYXqJvwdhEIRL
+X-Gm-Gg: ASbGncsnwoj5k+QDEfir9WZbsFiioWNH/YxR4ciHV2pYOjKdqj1dFJZEgyfTd+s0AFQ
+	2Cf65AIE7flwsm8Rns6ULiS98IU0tei3VE0VliwyIIlE1BSq7FVvVhvHts/rVPiQd2yXQqlxoPB
+	mIytXiUWxwycdH2v6ALqfxTEmV0lUhekk8hhnNzGdAJo2Wrb9Z+ZOQv6AvaK7vDyRXNFfdxiXVv
+	6HoII+nb/pJck5AKSGdU822N8H+kXRZ0YvR/wBk5t7jMxrKWScngPtPcUh1FUklPz2Cg6liVmO6
+	ILuvr4Vw/KTLh3eV2tJl
+X-Google-Smtp-Source: AGHT+IEnZhvotlCjjz+IuKEwK7J+M5+ZOMsyE8W8PZJgKuTfhkpQKEsccmo0ddOI+80XWjCWIaLEfg==
+X-Received: by 2002:a05:6a00:a02:b0:71e:7174:3ae with SMTP id d2e1a72fcca58-7257fa7272dmr1565478b3a.11.1733199805137;
+        Mon, 02 Dec 2024 20:23:25 -0800 (PST)
+Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176121asm9369077b3a.39.2024.12.02.20.23.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 20:23:24 -0800 (PST)
+Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
+	id CFF0EDD39F9; Tue,  3 Dec 2024 13:23:22 +0900 (JST)
+From: Hajime Tazaki <thehajime@gmail.com>
+To: linux-um@lists.infradead.org
+Cc: thehajime@gmail.com,
+	ricarkol@google.com,
+	Liam.Howlett@oracle.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v3 01/13] fs: binfmt_elf_efpic: add architecture hook elf_arch_finalize_exec
+Date: Tue,  3 Dec 2024 13:23:00 +0900
+Message-ID: <564f58c6c893f8817b07cb192b254f760c256580.1733199769.git.thehajime@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1733199769.git.thehajime@gmail.com>
+References: <cover.1733199769.git.thehajime@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411292300.61edbd37-lkp@intel.com> <CALOAHbABe2DFLWboZ7KF-=d643keJYBx0Es=+aF-J=GxqLXHAA@mail.gmail.com>
- <Z051LzN/qkrHrAMh@xsang-OptiPlex-9020>
-In-Reply-To: <Z051LzN/qkrHrAMh@xsang-OptiPlex-9020>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 3 Dec 2024 12:01:26 +0800
-Message-ID: <CALOAHbADgrzykLPHqukZB1mtT10=fNm41hb0k_ONKJHqw3To_A@mail.gmail.com>
-Subject: Re: [linux-next:master] [mm/readahead] 13da30d6f9: BUG:soft_lockup-CPU##stuck_for#s![usemem:#]
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 3, 2024 at 11:04=E2=80=AFAM Oliver Sang <oliver.sang@intel.com>=
- wrote:
->
-> hi, Yafang,
->
-> On Tue, Dec 03, 2024 at 10:14:50AM +0800, Yafang Shao wrote:
-> > On Fri, Nov 29, 2024 at 11:19=E2=80=AFPM kernel test robot
-> > <oliver.sang@intel.com> wrote:
-> > >
-> > >
-> > >
-> > > Hello,
-> > >
-> > > kernel test robot noticed "BUG:soft_lockup-CPU##stuck_for#s![usemem:#=
-]" on:
-> > >
-> > > commit: 13da30d6f9150dff876f94a3f32d555e484ad04f ("mm/readahead: fix =
-large folio support in async readahead")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git mast=
-er
-> > >
-> > > [test failed on linux-next/master cfba9f07a1d6aeca38f47f1f472cfb0ba13=
-3d341]
-> > >
-> > > in testcase: vm-scalability
-> > > version: vm-scalability-x86_64-6f4ef16-0_20241103
-> > > with following parameters:
-> > >
-> > >         runtime: 300s
-> > >         test: mmap-xread-seq-mt
-> > >         cpufreq_governor: performance
-> > >
-> > >
-> > >
-> > > config: x86_64-rhel-9.4
-> > > compiler: gcc-12
-> > > test machine: 224 threads 4 sockets Intel(R) Xeon(R) Platinum 8380H C=
-PU @ 2.90GHz (Cooper Lake) with 192G memory
-> > >
-> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > >
-> > >
-> > >
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-lkp/202411292300.61edbd37-lkp@in=
-tel.com
-> > >
-> > >
->
-> [...]
->
-> >
-> > Is this issue consistently reproducible?
-> > I attempted to reproduce it using the mmap-xread-seq-mt test case but
-> > was unsuccessful.
->
-> in our tests, the issue is quite persistent. as below, 100% reproduced in=
- all
-> 8 runs, keeps clean on parent.
->
-> d1aa0c04294e2988 13da30d6f9150dff876f94a3f32
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->            :8          100%           8:8     dmesg.BUG:soft_lockup-CPU##=
-stuck_for#s![usemem:#]
->            :8          100%           8:8     dmesg.Kernel_panic-not_sync=
-ing:softlockup:hung_tasks
->
-> to avoid any env issue, we rebuild kernel and rerun more to check. if sti=
-ll
-> consistently reproduced, we will follow your further requests. thanks
+FDPIC ELF loader adds an architecture hook at the end of loading
+binaries to finalize the mapped memory before moving toward exec
+function.  The hook is used by UML under !MMU when translating
+syscall/sysenter instructions before calling execve.
 
-In your environment, can this issue be reproduced using the following
-simple command?
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
+---
+ fs/binfmt_elf_fdpic.c     | 10 ++++++++++
+ include/linux/elf-fdpic.h |  3 +++
+ 2 files changed, 13 insertions(+)
 
- vm-scalability/run -c case-mmap-xread-seq-mt
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index 4fe5bb9f1b1f..ab16fdf475b0 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -175,6 +175,12 @@ static int elf_fdpic_fetch_phdrs(struct elf_fdpic_params *params,
+ 	return 0;
+ }
+ 
++int __weak elf_arch_finalize_exec(struct elf_fdpic_params *exec_params,
++				  struct elf_fdpic_params *interp_params)
++{
++	return 0;
++}
++
+ /*****************************************************************************/
+ /*
+  * load an fdpic binary into various bits of memory
+@@ -457,6 +463,10 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
+ 			    dynaddr);
+ #endif
+ 
++	retval = elf_arch_finalize_exec(&exec_params, &interp_params);
++	if (retval)
++		goto error;
++
+ 	finalize_exec(bprm);
+ 	/* everything is now ready... get the userspace context ready to roll */
+ 	entryaddr = interp_params.entry_addr ?: exec_params.entry_addr;
+diff --git a/include/linux/elf-fdpic.h b/include/linux/elf-fdpic.h
+index e533f4513194..e7fd85a1d10f 100644
+--- a/include/linux/elf-fdpic.h
++++ b/include/linux/elf-fdpic.h
+@@ -56,4 +56,7 @@ extern void elf_fdpic_arch_lay_out_mm(struct elf_fdpic_params *exec_params,
+ 				      unsigned long *start_brk);
+ #endif
+ 
++extern int elf_arch_finalize_exec(struct elf_fdpic_params *exec_params,
++				  struct elf_fdpic_params *interp_params);
++
+ #endif /* _LINUX_ELF_FDPIC_H */
+-- 
+2.43.0
 
-
-
---
-Regards
-Yafang
 
