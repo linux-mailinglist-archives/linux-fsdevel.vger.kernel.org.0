@@ -1,106 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-36433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB549E3A08
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 13:33:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44C39E39AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 13:16:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B662A161065
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 12:16:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257871B415A;
+	Wed,  4 Dec 2024 12:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WNUYGaEv"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29FE7B2E24E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 12:16:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09031B87C4;
-	Wed,  4 Dec 2024 12:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZjSyxQDB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aIlOAOVW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cJFusa5M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rPvzw9NX"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783421B3944;
-	Wed,  4 Dec 2024 12:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31611B3944
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 12:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733314610; cv=none; b=pKdgIotmIG22DIGeLiDtq4UH8T/AyamDpc8bdBpmeG1i6s/rJu00f5g+8X3Yqm55s3XORjZfXq+yHadRbHNjrbciLT3i5zU7iFyx/li1iHsnu7mFea5+bYhvg1r80yAY5438rire1R+/PbB1zNcEBZE75Wx4+US532QThJIjAt4=
+	t=1733314577; cv=none; b=FJS7pjWBRJo9t1L0XXwH6yX8kac23utsAq7HLeVE8fsZMbRKhLiog5dnCTMUCM6ldwLc8/mtPtfPsg3Py/mloHHgV6sVYfNiVVPOo+d7gsDDwEhepskBLepGVLPl8b0L4j0uPIfl+DoC2b9nLuRsf7Fi4X5K8lCJkc1ZfWc9a1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733314610; c=relaxed/simple;
-	bh=mbqm05QsLtfH1zcVtdC0Ew81ktpfdl9KOf/MRMKnyXI=;
+	s=arc-20240116; t=1733314577; c=relaxed/simple;
+	bh=yH2lc1vOe1dJ+S33MXmQsrWY+8omxVkp+Y6IgmuTGDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LO4RdCLhWu0NZzYA8GTB9nCME+9y3x8vsHnX8lSdwfNmakZTTy9iDYEslPM+DZnvl4pwd8Utr0oPWcsUCdsLF9eSyruVzNIJPbbbdxo+TTWIEPyD9YpwDFxbV9lXBrfvB3edPLU41Th+kSPV2RanKSXRPuW4XHCj5+X2Zte2L0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZjSyxQDB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aIlOAOVW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cJFusa5M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rPvzw9NX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=tN+3QrDk2xDIrco5N303HjAcDov6OzE8U3Q/Y4otzf0ou2DHtyMbNGYBbqKbyz+L3PuiUm9W7zbIPgSYoDHtq0bc5hQEnWaswjS3NU7Mh8aRkc33NMxltHrHxQCZeUvyghw6nve23OE4jKLVS4swq3HGWN73YyyokAbGs8CtwZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WNUYGaEv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733314574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JG4ZxK8EE+KOPLX0iJwVt0KTiBtaXP/QySllgx3ZpBc=;
+	b=WNUYGaEv3eh7VMXKMzPCQjeSA7EFNo6UWAahCNJR69Thcpf3byuwTsz7SHxjrt4mExiwe/
+	zICw0HrbtteD68WCRQ/mtwEHs3+dg/j5XV+m3YLoPN4R8s1C0/dV+onKxUAXXNU86ITfpt
+	mpFhM9RH4OVIAXsSooB9E7CjJQSanDQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-b9tGxvbgMY-ms-LQwysJlA-1; Wed,
+ 04 Dec 2024 07:16:03 -0500
+X-MC-Unique: b9tGxvbgMY-ms-LQwysJlA-1
+X-Mimecast-MFC-AGG-ID: b9tGxvbgMY-ms-LQwysJlA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5798F21162;
-	Wed,  4 Dec 2024 12:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733314606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2CWmtwh9QDdiKDXT51AR1IHK70deMQtHJlD1duRpLYE=;
-	b=ZjSyxQDBDQ7csz+EUu3wpLLrykzNrhbtsGSOz5BPgQoU7f/03rXVDLHlQGib5aBLs/BFlG
-	tJWCbl5w0Tr+8R3XK3Ru9/U3yMC3Cpf+TWoVd5282WqwYObZGfkKaKj4ff1XIKY9UyQ+MD
-	4rH39sDmuXeRBX1TUMx0j/sUykDLpmQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733314606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2CWmtwh9QDdiKDXT51AR1IHK70deMQtHJlD1duRpLYE=;
-	b=aIlOAOVWTTrZcqd6qXfna+SBg86sPLFms81vrFl4t1dn/LRQwTHSbnppZtGOWCe0xaG3Br
-	JMlIU7KtFDCcq1Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cJFusa5M;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rPvzw9NX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733314605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2CWmtwh9QDdiKDXT51AR1IHK70deMQtHJlD1duRpLYE=;
-	b=cJFusa5MUae0u0qtKl+UX6I0S4h9YSj8y0lTVZMzBog0t4pFf/wiNH8CocVYRcwShy62zo
-	7POEqbXKzq/YJ0xNAl4Oq/QFmh2mOhJixcNYg1utnSB+NnEvWkGZsVguEKL8fMKhjxUkAj
-	dXPdagVFRl6tlfW3DkZTV8BATv+t23s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733314605;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2CWmtwh9QDdiKDXT51AR1IHK70deMQtHJlD1duRpLYE=;
-	b=rPvzw9NXSqIB6FCpMrwtPhhDPzUmGUVkOYf6BjdCfennjDD9cNecD35x2Nhvp6ayTlZS9j
-	HQih+LF7ZsMsO+Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45F391396E;
-	Wed,  4 Dec 2024 12:16:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zezGEC1IUGcEIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 12:16:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E90E6A0918; Wed,  4 Dec 2024 13:16:44 +0100 (CET)
-Date: Wed, 4 Dec 2024 13:16:44 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 11/27] ext4: use reserved metadata blocks when splitting
- extent on endio
-Message-ID: <20241204121644.gmflmc4u3u34vltt@quack3>
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-12-yi.zhang@huaweicloud.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CB7B1955F39;
+	Wed,  4 Dec 2024 12:16:02 +0000 (UTC)
+Received: from bfoster (unknown [10.22.90.12])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCC391956048;
+	Wed,  4 Dec 2024 12:15:59 +0000 (UTC)
+Date: Wed, 4 Dec 2024 07:17:45 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Long Li <leo.lilong@huawei.com>
+Cc: Dave Chinner <david@fromorbit.com>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, yi.zhang@huawei.com,
+	houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v5 1/2] iomap: fix zero padding data issue in concurrent
+ append writes
+Message-ID: <Z1BIab8G3KmXuyfS@bfoster>
+References: <20241127063503.2200005-1-leo.lilong@huawei.com>
+ <Z0sVkSXzxUDReow7@localhost.localdomain>
+ <Z03RlpfdJgsJ_glO@bfoster>
+ <Z05oJqT7983ifKqv@dread.disaster.area>
+ <Z1AaPNoN_z5EQxFQ@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -109,104 +79,165 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022111059.2566137-12-yi.zhang@huaweicloud.com>
-X-Rspamd-Queue-Id: 5798F21162
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+In-Reply-To: <Z1AaPNoN_z5EQxFQ@localhost.localdomain>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue 22-10-24 19:10:42, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Dec 04, 2024 at 05:00:44PM +0800, Long Li wrote:
+> On Tue, Dec 03, 2024 at 01:08:38PM +1100, Dave Chinner wrote:
+> > On Mon, Dec 02, 2024 at 10:26:14AM -0500, Brian Foster wrote:
+> > > On Sat, Nov 30, 2024 at 09:39:29PM +0800, Long Li wrote:
+> > > > When performing fsstress test with this patch set, there is a very low probability of
+> > > > encountering an issue where isize is less than ioend->io_offset in iomap_add_to_ioend.
+> > > > After investigation, this was found to be caused by concurrent with truncate operations.
+> > > > Consider a scenario with 4K block size and a file size of 12K.
+> > > > 
+> > > > //write back [8K, 12K]           //truncate file to 4K
+> > > > ----------------------          ----------------------
+> > > > iomap_writepage_map             xfs_setattr_size
+> > 
+> > folio is locked here
+> > 
+> > > >   iomap_writepage_handle_eof
+> > > >                                   truncate_setsize
+> > > > 				    i_size_write(inode, newsize)  //update inode size to 4K
+> > 
+> > truncate_setsize() is supposed to invalidate whole pages beyond
+> > EOF before completing, yes?
+> > 
+> > /**
+> >  * truncate_setsize - update inode and pagecache for a new file size
+> >  * @inode: inode
+> >  * @newsize: new file size
+> >  *
+> >  * truncate_setsize updates i_size and performs pagecache truncation (if
+> >  * necessary) to @newsize. It will be typically be called from the filesystem's
+> >  * setattr function when ATTR_SIZE is passed in.
+> >  *
+> >  * Must be called with a lock serializing truncates and writes (generally
+> >  * i_rwsem but e.g. xfs uses a different lock) and before all filesystem
+> >  * specific block truncation has been performed.
+> >  */
+> > void truncate_setsize(struct inode *inode, loff_t newsize)
+> > {
+> >         loff_t oldsize = inode->i_size;
+> > 
+> >         i_size_write(inode, newsize);
+> >         if (newsize > oldsize)
+> >                 pagecache_isize_extended(inode, oldsize, newsize);
+> >         truncate_pagecache(inode, newsize);
+> > }
+> > EXPORT_SYMBOL(truncate_setsize);
+> > 
+> > Note that this says "serialising truncates and writes" - the
+> > emphasis needs to be placed on "writes" here, not "writeback". The
+> > comment about XFS is also stale - it uses the i_rwsem here like
+> > all other filesystems now.
+> > 
+> > The issue demonstrated above is -write back- racing against
+> > truncate_setsize(), not writes. And -write back- is only serialised
+> > against truncate_pagecache() by folio locks and state, not inode
+> > locks. hence any change to the inode size in truncate can and will
+> > race with writeback in progress.
+> > 
+> > Hence writeback needs to be able to handle folios end up beyond
+> > EOF at any time during writeback. i.e. once we have a folio locked
+> > in writeback and we've checked against i_size_read() for validity,
+> > it needs to be considered a valid offset all the way through to
+> > IO completion.
+> > 
+> > 
+> > > >   iomap_writepage_map_blocks
+> > > >     iomap_add_to_ioend
+> > > >            < iszie < ioend->io_offset>
+> > > > 	   <iszie = 4K,  ioend->io_offset=8K>
+> > 
+> > Ah, so the bug fix adds a new call to i_size_read() in the IO
+> > submission path? I suspect that is the underlying problem leading
+> > to the observed behaviour....
+> > 
+> > > > 
+> > > > It appears that in extreme cases, folios beyond EOF might be written back,
+> > > > resulting in situations where isize is less than pos. In such cases,
+> > > > maybe we should not trim the io_size further.
+> > > > 
+> > > 
+> > > Hmm.. it might be wise to characterize this further to determine whether
+> > > there are potentially larger problems to address before committing to
+> > > anything. For example, assuming truncate acquires ilock and does
+> > > xfs_itruncate_extents() and whatnot before this ioend submits/completes,
+> > 
+> > I don't think xfs_itruncate_extents() is the concern here - that
+> > happens after the page cache and writeback has been sorted out and
+> > the ILOCK has been taken and the page cache state should
+> > have already been sorted out. truncate_setsize() does that for us;
+> > it guarantees that all writeback in the truncate down range has
+> > been completed and the page cache invalidated.
+> > 
+> > We hold the MMAP_LOCK (filemap_invalidate_lock()) so no new pages
+> > can be instantiated over the range whilst we are running
+> > xfs_itruncate_extents(). hence once truncate_setsize() returns, we
+> > are guaranteed that there will be no IO in progress or can be
+> > started over the range we are removing.
+> > 
+> > Really, the issue is that writeback mappings have to be able to
+> > handle the range being mapped suddenly appear to be beyond EOF.
+> > This behaviour is a longstanding writeback constraint, and is what
+> > iomap_writepage_handle_eof() is attempting to handle.
+> > 
+> > We handle this by only sampling i_size_read() whilst we have the
+> > folio locked and can determine the action we should take with that
+> > folio (i.e. nothing, partial zeroing, or skip altogether). Once
+> > we've made the decision that the folio is within EOF and taken
+> > action on it (i.e. moved the folio to writeback state), we cannot
+> > then resample the inode size because a truncate may have started
+> > and changed the inode size.
+> > 
 > 
-> When performing buffered writes, we may need to split and convert an
-> unwritten extent into a written one during the end I/O process. However,
-> we do not reserve space specifically for these metadata changes, we only
-> reserve 2% of space or 4096 blocks. To address this, we use
-> EXT4_GET_BLOCKS_PRE_IO to potentially split extents in advance and
-> EXT4_GET_BLOCKS_METADATA_NOFAIL to utilize reserved space if necessary.
+> My understanding is the issue isn't that we can't sample the inode size. 
+> The key point is that writeback mapping must be able to handle cases where
+> the mapped range suddenly appears beyond EOF. If we can handle such
+> cases properly, wouldn't sampling still be possible?
 > 
-> These two approaches can reduce the likelihood of running out of space
-> and losing data. However, these methods are merely best efforts, we
-> could still run out of space, and there is not much difference between
-> converting an extent during the writeback process and the end I/O
-> process, it won't increase the rick of losing data if we postpone the
-> conversion.
-> 
-> Therefore, also use EXT4_GET_BLOCKS_METADATA_NOFAIL in
-> ext4_convert_unwritten_extents_endio() to prepare for the buffered I/O
-> iomap conversion, which may perform extent conversion during the end I/O
-> process.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Yeah, I agree. Feel free to add:
+I think so. I wouldn't harp too much on this as I think we're tripping
+over words. ISTM the critical thing is that the folio is handled
+properly wrt the truncate operation, which should be facilitated by the
+folio lock.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Coming back to our current issue, during writeback mapping, we sample
+> the inode size to determine if the ioend is within EOF and attempt to
+> trim io_size. Concurrent truncate operations may update the inode size,
+> causing the pos of write back beyond EOF. In such cases, we simply don't
+> trim io_size, which seems like a viable approach.
 > 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index d5067d5aa449..33bc2cc5aff4 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3767,6 +3767,8 @@ ext4_convert_unwritten_extents_endio(handle_t *handle, struct inode *inode,
->  	 * illegal.
->  	 */
->  	if (ee_block != map->m_lblk || ee_len > map->m_len) {
-> +		int flags = EXT4_GET_BLOCKS_CONVERT |
-> +			    EXT4_GET_BLOCKS_METADATA_NOFAIL;
->  #ifdef CONFIG_EXT4_DEBUG
->  		ext4_warning(inode->i_sb, "Inode (%ld) finished: extent logical block %llu,"
->  			     " len %u; IO logical block %llu, len %u",
-> @@ -3774,7 +3776,7 @@ ext4_convert_unwritten_extents_endio(handle_t *handle, struct inode *inode,
->  			     (unsigned long long)map->m_lblk, map->m_len);
->  #endif
->  		path = ext4_split_convert_extents(handle, inode, map, path,
-> -						EXT4_GET_BLOCKS_CONVERT, NULL);
-> +						  flags, NULL);
->  		if (IS_ERR(path))
->  			return path;
->  
-> -- 
-> 2.46.1
+
+Perhaps. I'm not claiming it isn't functional. But to Dave's (more
+elaborated) point and in light of the racy i_size issue you've
+uncovered, what bugs me also about this is that this creates an internal
+inconsistency in the submission codepath.
+
+I.e., the top level code does one thing based on one value of i_size,
+then the ioend construction does another, and the logic is not directly
+correlated so there is no real guarantee changes in one area correlate
+to the other. IME, this increases potential for future bugs and adds
+maintenance burden.
+
+A simple example to consider might be.. suppose sometime in the future
+we determine there is a selective case where we do want to allow a
+post-eof writeback. As of right now, all that really requires is
+adjustment to the "handle_eof()" logic and the rest of the codepath does
+the right thing agnostic to outside operations like truncate. I think
+there's value if we can preserve that invariant going forward.
+
+FWIW, I'm not objecting to the alternative if something in the above
+reasoning is wrong. I'm just trying to prioritize keeping things simple
+and maintainable, particularly since truncate is kind of a complicated
+beast as it is.
+
+Brian
+
+> Thanks,
+> Long Li
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
 
