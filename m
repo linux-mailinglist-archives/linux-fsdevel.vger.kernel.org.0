@@ -1,187 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-36461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848DF9E3C56
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:12:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C766A9E3D41
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447DC2813A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 14:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D200CB29A93
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 14:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6251FA16B;
-	Wed,  4 Dec 2024 14:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C900D1FDE2A;
+	Wed,  4 Dec 2024 14:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMgHRE3B"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QwVOoBAr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+LOObUuD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QwVOoBAr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+LOObUuD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F111F7096
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 14:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCC7198A05;
+	Wed,  4 Dec 2024 14:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321496; cv=none; b=jq+1d5A/cFVNyK8Iecd4FMclSj5XBwnecNPHrsMui7S/OfD649TApriQ6jjFq8R0L3WwzNXKwWvqbMqoQXsiMMGaFbuq0LHrlnPf4OQu6ge9UfrDKFRMFPnPP1pEntepw9awH0CHel4HUQoi7EvltogDCvtFE2n+8sUjdhZfOpo=
+	t=1733321789; cv=none; b=J2YdmHIrArro6Z8mo1wEQHR4xLjkuQs41GeoaQSOfLQLOJfaFIIDBcO1WsJzJJ5F+1d98mbX/+q9mP1I7ewSCatA5NQzz/jpKvgcALD+KdoPMUletJwkUZpJbwOeH40ng2mPbi1WEpupjCx021d39eu3+coz9pKuvBjakWW0ec0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321496; c=relaxed/simple;
-	bh=Olq8n9V/c4ByFTjwghd3RJxLHgwGeb1Qki0jTylZSXg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=hgdIUnFJK5y0jqtpJhD15zm+M1WFOgdVbHPFBqxremyEOlHJ++saLtgBZRhBs5S/fPjGte11n1IAbPeMJMlFDuhxe5l4N2T68c5S3EoR5XAP6Whzh3oQEyTjOvD1rkfpKSWiLGCqrv7QhP87+KYHe5lxU5ZSwvaJuwomvQezGMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMgHRE3B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733321492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bC3keQdTl30q+RF/rmG2+pay8wGwfywBaMyPdC8zJk=;
-	b=EMgHRE3BiDb1ZUSyDvQIbcI4UGeFUIIpC5Fi9dcq1DKYuYnCKMAXwjT4s1owS0yp5Xls+U
-	jqyK0zFXFYtuVOClGb0C4Egi11yT4VoPBwjSGZT2g/YCW+8BmEsZ4VJCklWYt63oDenAUa
-	tFOFIeCgwi5Q9+wIhgd2YvX6KfX3+MY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-kpMovubyMEK9BYAP0K7I0w-1; Wed,
- 04 Dec 2024 09:11:31 -0500
-X-MC-Unique: kpMovubyMEK9BYAP0K7I0w-1
-X-Mimecast-MFC-AGG-ID: kpMovubyMEK9BYAP0K7I0w
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1733321789; c=relaxed/simple;
+	bh=2NphvdYGP+L8TFS0HvJb+8sv55gVIVlXhNiYd4mpN4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXD+i8jANayF4sRu8Ap0se7QnGfZXBB7URbolGgBUOpNA7Q14LIgQa65K1AN51iOdEzkpy6GNlwvY5DTiIw3deY+NIPDF0y8AAVnWx6xQcxFtjWLJNF2fvB/stYsheDuHqakTZ/qrhL5jSSGpeWf769TRF3oRdNDz/zh/SSUIsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QwVOoBAr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+LOObUuD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QwVOoBAr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+LOObUuD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3B571955F40;
-	Wed,  4 Dec 2024 14:11:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA46D19560A2;
-	Wed,  4 Dec 2024 14:11:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <67238110.050a0220.35b515.015e.GAE@google.com>
-References: <67238110.050a0220.35b515.015e.GAE@google.com>
-To: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, jlayton@kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2EBC21F45E;
+	Wed,  4 Dec 2024 14:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733321785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RVkF49mdhG2bNkwqIFQoszmuhSLJBjghgd/zVPLuZAk=;
+	b=QwVOoBArMEYC4SsZ8VqzQpiUpwxzfI5bGUtLBplUQnKzf3DYAkGo+i4oIVIlnum0o7NWTI
+	iATaeaXNdPz0QMKOJiX+589fT7gIWpG1swRwRXr+IWejfqiIbbapgROiKnmhpwiWJurr1D
+	3oV/O2qCDuaYAHVby7dcb6/vvdsI4IU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733321785;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RVkF49mdhG2bNkwqIFQoszmuhSLJBjghgd/zVPLuZAk=;
+	b=+LOObUuDLjZ5NFPY3efFduuyFwRPImtJAH+iKR7BVOhkXpKkIICA1QEwDcZMZz1hzFnQN8
+	+nLSy+NDGepJ/2AQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QwVOoBAr;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+LOObUuD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733321785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RVkF49mdhG2bNkwqIFQoszmuhSLJBjghgd/zVPLuZAk=;
+	b=QwVOoBArMEYC4SsZ8VqzQpiUpwxzfI5bGUtLBplUQnKzf3DYAkGo+i4oIVIlnum0o7NWTI
+	iATaeaXNdPz0QMKOJiX+589fT7gIWpG1swRwRXr+IWejfqiIbbapgROiKnmhpwiWJurr1D
+	3oV/O2qCDuaYAHVby7dcb6/vvdsI4IU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733321785;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RVkF49mdhG2bNkwqIFQoszmuhSLJBjghgd/zVPLuZAk=;
+	b=+LOObUuDLjZ5NFPY3efFduuyFwRPImtJAH+iKR7BVOhkXpKkIICA1QEwDcZMZz1hzFnQN8
+	+nLSy+NDGepJ/2AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A0CB1396E;
+	Wed,  4 Dec 2024 14:16:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W8TiBTlkUGcPSQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 14:16:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id ADEECA0918; Wed,  4 Dec 2024 15:16:20 +0100 (CET)
+Date: Wed, 4 Dec 2024 15:16:20 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+	linux-block@vger.kernel.org, agruenba@redhat.com,
+	gfs2@lists.linux.dev, amir73il@gmail.com, mic@digikod.net,
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-security-module@vger.kernel.org,
+	yebin10@huawei.com, zhangxiaoxu5@huawei.com,
+	Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 10/11] fs: fix hungtask due to repeated traversal of
+ inodes list
+Message-ID: <20241204141620.vgklclfh5guezcvb@quack3>
+References: <20241118114508.1405494-1-yebin@huaweicloud.com>
+ <20241118114508.1405494-11-yebin@huaweicloud.com>
+ <20241204-worden-tontechnik-3ce77e9f3bad@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1129890.1733321485.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Dec 2024 14:11:25 +0000
-Message-ID: <1129891.1733321485@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-worden-tontechnik-3ce77e9f3bad@brauner>
+X-Rspamd-Queue-Id: 2EBC21F45E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[huaweicloud.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org,kernel.dk,redhat.com,lists.linux.dev,gmail.com,digikod.net,google.com,paul-moore.com,namei.org,hallyn.com,huawei.com,fromorbit.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t v6.13-rc1
+On Wed 04-12-24 12:17:49, Christian Brauner wrote:
+> On Mon, Nov 18, 2024 at 07:45:07PM +0800, Ye Bin wrote:
+> > From: Ye Bin <yebin10@huawei.com>
+> > 
+> > There's a issue when remove scsi disk, the invalidate_inodes() function
+> > cannot exit for a long time, then trigger hungtask:
+> > INFO: task kworker/56:0:1391396 blocked for more than 122 seconds.
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > Workqueue: events_freezable virtscsi_handle_event [virtio_scsi]
+> > Call Trace:
+> >  __schedule+0x33c/0x7f0
+> >  schedule+0x46/0xb0
+> >  schedule_preempt_disabled+0xa/0x10
+> >  __mutex_lock.constprop.0+0x22b/0x490
+> >  mutex_lock+0x52/0x70
+> >  scsi_scan_target+0x6d/0xf0
+> >  virtscsi_handle_event+0x152/0x1a0 [virtio_scsi]
+> >  process_one_work+0x1b2/0x350
+> >  worker_thread+0x49/0x310
+> >  kthread+0xfb/0x140
+> >  ret_from_fork+0x1f/0x30
+> > 
+> > PID: 540499  TASK: ffff9b15e504c080  CPU: 44  COMMAND: "kworker/44:0"
+> > Call trace:
+> >  invalidate_inodes at ffffffff8f3b4784
+> >  __invalidate_device at ffffffff8f3dfea3
+> >  invalidate_partition at ffffffff8f526b49
+> >  del_gendisk at ffffffff8f5280fb
+> >  sd_remove at ffffffffc0186455 [sd_mod]
+> >  __device_release_driver at ffffffff8f738ab2
+> >  device_release_driver at ffffffff8f738bc4
+> >  bus_remove_device at ffffffff8f737f66
+> >  device_del at ffffffff8f73341b
+> >  __scsi_remove_device at ffffffff8f780340
+> >  scsi_remove_device at ffffffff8f7803a2
+> >  virtscsi_handle_event at ffffffffc017204f [virtio_scsi]
+> >  process_one_work at ffffffff8f1041f2
+> >  worker_thread at ffffffff8f104789
+> >  kthread at ffffffff8f109abb
+> >  ret_from_fork at ffffffff8f001d6f
+> > 
+> > As commit 04646aebd30b ("fs: avoid softlockups in s_inodes iterators")
+> > introduces the retry logic. In the problem environment, the 'i_count'
+> > of millions of files is not zero. As a result, the time slice for each
+> > traversal to the matching inode process is almost used up, and then the
+> > traversal is started from scratch. The worst-case scenario is that only
+> > one inode can be processed after each wakeup. Because this process holds
+> > a lock, other processes will be stuck for a long time, causing a series
+> > of problems.
+> > To solve the problem of repeated traversal from the beginning, each time
+> > the CPU needs to be freed, a cursor is inserted into the linked list, and
+> > the traversal continues from the cursor next time.
+> > 
+> > Fixes: 04646aebd30b ("fs: avoid softlockups in s_inodes iterators")
+> > Signed-off-by: Ye Bin <yebin10@huawei.com>
+> > ---
+> >  fs/inode.c | 22 ++++++++++++++++++++--
+> >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index dc966990bda6..b78895af8779 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -857,11 +857,16 @@ static void dispose_list(struct list_head *head)
+> >  void evict_inodes(struct super_block *sb)
+> >  {
+> >  	struct inode *inode, *next;
+> > +	struct inode cursor;
+> 
+> It seems pretty adventurous to me to just add in a random inode whose
+> only fiels that is initialized is i_state. That would need a proper
+> analysis and argument that this is safe to do and won't cause trouble
+> for any filesystem.
+> 
+> Jan, do you have thoughts on this?
 
-netfs: Fix enomem handling in buffered reads
+Yeah, I think in the current state where there are several instances of
+hand-crafted inode iteration code it is somewhat fragile to use the cursor
+approach. I was staying silent because I was hoping Dave Chinner's patches
+to clean up inode iteration get to a more ready state. Then either we have
+well consolidated inode iteration code so additions like this can be easily
+verified for correctness or we could even get as far as removing
+sb->s_inodes list altogether as Dave outlined [1] which would nicely deal
+with the issue solved here as well. Sadly that patch series seems to have
+lost traction. Hopefully we can either revive it or at least scavenge the
+nice preparatory cleanups...
 
-If netfs_read_to_pagecache() gets an error from either ->prepare_read() or
-from netfs_prepare_read_iterator(), it needs to decrement ->nr_outstanding=
-,
-cancel the subrequest and break out of the issuing loop.  Currently, it
-only does this for two of the cases, but there are two more that aren't
-handled.
+								Honza
 
-Fix this by moving the handling to a common place and jumping to it from
-all four places.  This is in preference to inserting a wrapper around
-netfs_prepare_read_iterator() as proposed by Dmitry Antipov[1].
-
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3D404b4b745080b6210c6c
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Dmitry Antipov <dmantipov@yandex.ru>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20241202093943.227786-1-dmantipov@yandex.r=
-u/ [1]
----
- fs/netfs/buffered_read.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 7ac34550c403..4dc9b8286355 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -275,22 +275,14 @@ static void netfs_read_to_pagecache(struct netfs_io_=
-request *rreq)
- 			netfs_stat(&netfs_n_rh_download);
- 			if (rreq->netfs_ops->prepare_read) {
- 				ret =3D rreq->netfs_ops->prepare_read(subreq);
--				if (ret < 0) {
--					atomic_dec(&rreq->nr_outstanding);
--					netfs_put_subrequest(subreq, false,
--							     netfs_sreq_trace_put_cancel);
--					break;
--				}
-+				if (ret < 0)
-+					goto prep_failed;
- 				trace_netfs_sreq(subreq, netfs_sreq_trace_prepare);
- 			}
- =
-
- 			slice =3D netfs_prepare_read_iterator(subreq);
--			if (slice < 0) {
--				atomic_dec(&rreq->nr_outstanding);
--				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
--				ret =3D slice;
--				break;
--			}
-+			if (slice < 0)
-+				goto prep_iter_failed;
- =
-
- 			rreq->netfs_ops->issue_read(subreq);
- 			goto done;
-@@ -302,6 +294,8 @@ static void netfs_read_to_pagecache(struct netfs_io_re=
-quest *rreq)
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 			netfs_stat(&netfs_n_rh_zero);
- 			slice =3D netfs_prepare_read_iterator(subreq);
-+			if (slice < 0)
-+				goto prep_iter_failed;
- 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 			netfs_read_subreq_terminated(subreq, 0, false);
- 			goto done;
-@@ -310,6 +304,8 @@ static void netfs_read_to_pagecache(struct netfs_io_re=
-quest *rreq)
- 		if (source =3D=3D NETFS_READ_FROM_CACHE) {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 			slice =3D netfs_prepare_read_iterator(subreq);
-+			if (slice < 0)
-+				goto prep_iter_failed;
- 			netfs_read_cache_to_pagecache(rreq, subreq);
- 			goto done;
- 		}
-@@ -318,6 +314,14 @@ static void netfs_read_to_pagecache(struct netfs_io_r=
-equest *rreq)
- 		WARN_ON_ONCE(1);
- 		break;
- =
-
-+	prep_iter_failed:
-+		ret =3D slice;
-+	prep_failed:
-+		subreq->error =3D ret;
-+		atomic_dec(&rreq->nr_outstanding);
-+		netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
-+		break;
-+
- 	done:
- 		size -=3D slice;
- 		start +=3D slice;
-
+[1] https://lore.kernel.org/all/ZwRvshM65rxXTwxd@dread.disaster.area
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
