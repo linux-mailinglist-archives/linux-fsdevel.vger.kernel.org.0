@@ -1,94 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-36499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC0C9E461A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 21:51:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A4C9E460D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 21:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6B5B2D8C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 20:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572982825BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 20:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264011F1316;
-	Wed,  4 Dec 2024 20:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915CA18FDCE;
+	Wed,  4 Dec 2024 20:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPiQo1I8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5976C1F03D1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 20:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE9C17DFF2;
+	Wed,  4 Dec 2024 20:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733343485; cv=none; b=BLk+hENuciVuR03+sjDxjZ3aeoylApKuiLkPdu01HoDZCLf3TrborGFdd4k9krbb8l3vrA5reucL5fyPEuIkyIZRwtOYZrSs2Kk1ltsDf8uq6HlSaHHHyZCVrEOHjT10ReZZIALa4JrvRCw/Ge50uY3rqMqb3/yPRWEagUbd1s8=
+	t=1733345157; cv=none; b=OsW0w8trE76SaJEg6LOyT5Z3j4Og1UrVfZSHClv2wyt5hehduFapuavzKP1sbsXM08sSg7zoaE48T7H4zb8xnTWz5qoYEeUaQ0z2PaLmSZqiQpqzVtfzSwHjVEcSRHxyyvOaCpxwf7wB2ie6XkMLH6v/lGxV4JkKbm6byPfbVak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733343485; c=relaxed/simple;
-	bh=NNeyfjKy8ZGP7PYgviKBfqCS/QI22FJoxQGC4XnQdu0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m9D9rCzQ1NH3Q4uuYGK6PlujMoI8arXbznqp2W2aXdzSKgnso6XuG2Lou0CtZLYdrmLWqiu/V2RH7GKASpuK9zQvK75Db+QWeXkUA1CvG+Xs8KzJlWb9gCqFssUynDwabAo5Ja9FJ9Iz/TKt94bGdcBzUWEvGVgH0y4Xv9HuLHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so973275ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 12:18:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733343483; x=1733948283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvYz/F16WGhbDx4cNvT6lI6TdEMFQnM9OQcYijyTMAI=;
-        b=vF0/0eHzVrgSgrFe2Hgs5HaxpF/pIIZ8H3Cdi1okslpKbNKQf4uhg3/thEsBU2xoZR
-         DvKghcm/6wTN7kYaqYTGqByycfI3bNj8rmhGL2SWP07XWntlJI+sqvgn6mf9jRvbYXlX
-         nb53gzSteniIDyVBDrmxvSEu3FRXLwM1ITlL7QbsjMrQSg8/2xi8mNeZZHJz7lBZioWa
-         ZsoBI3VMTPzI6BEidKLLNRQ0++dt+qz+C2gks5OcKGbyfIzinX6+YgnPeXifnN4g/jo4
-         vq+4bP6xNGeSPT1U2Iy6ELADnXMck1ZsDc3AR4MmZXbCvbGAxQ1MsQu03dERdlf9gn25
-         Pr4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXhKFUBkxhkcin+xW93LVI49NUVXqzcw+DJjBfQ4HeXXd0o6NjcYLdBiJ1JTPY0Q3Ptdb0j2WBbKQD5p21b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx8FeHRg+faJxSByj8X6M6kpmp5vbTgiO4IlxcvLCNB28pMCXg
-	o9hyySyLe54Muj8CFKxpReDvY1YhrYKEXGUTCejylW3Sx47gIlMpUorvi/0m6nzCsFPyo9MURL3
-	V/FJxVGlJ7ULzN/LYWEoxv7VwoflgNcdpISohVotREMYqIe4ZXTYGqPs=
-X-Google-Smtp-Source: AGHT+IEhH0cr5PTn2QWjKnJaTq5+Nve/ysWwfEdZrM2AyUkDS34xX+n3rmiLxI7NpJNwWzFqTBe2/YDMHcnDgWJGHKQ6KXm6TTL+
+	s=arc-20240116; t=1733345157; c=relaxed/simple;
+	bh=EWO25zStvwqvY8x085whXcbEi1yvwOa+EsXR6CmVVYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdK6EQ6+IyIi5Yu7RlcPKj7Lg2jny930lbdZoO4nUBD47dalVY7yl8J9d0Ga19NwNinWHAwAgtD+LlvmosyqqgV8Biof3iI/JERKEmYzwxPwr2Qkn39IMcq1A0m2Cx0dXB5aGP+Kr+UrbRLUHbrxoiba1Gkndiw4nUcs/OSDFdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPiQo1I8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 466BEC4CEDF;
+	Wed,  4 Dec 2024 20:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733345156;
+	bh=EWO25zStvwqvY8x085whXcbEi1yvwOa+EsXR6CmVVYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HPiQo1I8Xf3jgDQoSYPcvPZ8wG6SWrNChu2boQuxIidjla7AnUWm0wY8UxC9EwrbI
+	 E5ng/HnAEq9wY6pGdxUb0/wpFU4NxRsoTUKFiy8fM/YjFPHo4epSFQ0IBLuAVChVZ0
+	 85nBeF3Pne7AACfETobhQAcWksnnJfbl9l9jD5ibHbcj7WR/YdigE1xr/dBOstZgsf
+	 RKz5GRQgARFpIPONOP6V3Qg+7XQVifX5kkaHSJCbhHH8P4Sium6vOWAWiPB9BjdCmn
+	 Gjouu4Urf0P17ely55TA8geuGhSvATHuL0+ZEb+s7movA9aWZyw3kBy3uU+YdJN32M
+	 FaGc5yvFPlVHA==
+Date: Wed, 4 Dec 2024 21:45:53 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, ritesh.list@gmail.com
+Subject: Re: [PATCH] statx.2: Update STATX_WRITE_ATOMIC filesystem support
+Message-ID: <20241204204553.j7e3nzcbkqzeikou@devuan>
+References: <20241203145359.2691972-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2d:b0:3a7:c5cb:8bf3 with SMTP id
- e9e14a558f8ab-3a7f9a3ba65mr102881145ab.9.1733343483592; Wed, 04 Dec 2024
- 12:18:03 -0800 (PST)
-Date: Wed, 04 Dec 2024 12:18:03 -0800
-In-Reply-To: <67505f88.050a0220.17bd51.0069.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6750b8fb.050a0220.17bd51.0074.GAE@google.com>
-Subject: Re: [syzbot] [mm] KASAN: null-ptr-deref Write in sys_io_uring_register
-From: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, tamird@gmail.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x67sanwd52hvirny"
+Content-Disposition: inline
+In-Reply-To: <20241203145359.2691972-1-john.g.garry@oracle.com>
 
-syzbot has bisected this issue to:
 
-commit d2e88c71bdb07f1e5ccffbcc80d747ccd6144b75
-Author: Tamir Duberstein <tamird@gmail.com>
-Date:   Tue Nov 12 19:25:37 2024 +0000
+--x67sanwd52hvirny
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] statx.2: Update STATX_WRITE_ATOMIC filesystem support
+MIME-Version: 1.0
 
-    xarray: extract helper from __xa_{insert,cmpxchg}
+Hi John,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17435fc0580000
-start commit:   c245a7a79602 Add linux-next specific files for 20241203
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14c35fc0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c35fc0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
+On Tue, Dec 03, 2024 at 02:53:59PM +0000, John Garry wrote:
+> Linux v6.13 will
 
-Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
-Fixes: d2e88c71bdb0 ("xarray: extract helper from __xa_{insert,cmpxchg}")
+Is this already in Linus's tree?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> include atomic write support for xfs and ext4, so update
+> STATX_WRITE_ATOMIC commentary to mention that.
+>=20
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+
+Thanks for the patch!  Please see some small comment below.
+
+Have a lovely night!
+Alex
+
+>=20
+> diff --git a/man/man2/statx.2 b/man/man2/statx.2
+> index c5b5a28ec..2d33998c5 100644
+> --- a/man/man2/statx.2
+> +++ b/man/man2/statx.2
+> @@ -482,6 +482,15 @@ The minimum and maximum sizes (in bytes) supported f=
+or direct I/O
+>  .RB ( O_DIRECT )
+>  on the file to be written with torn-write protection.
+>  These values are each guaranteed to be a power-of-2.
+> +.IP
+> +.B STATX_WRITE_ATOMIC
+> +.RI ( stx_atomic_write_unit_min,
+> +.RI stx_atomic_write_unit_max,
+
+There should be a space before the ','.
+
+> +and
+> +.IR stx_atomic_write_segments_max )
+> +is supported on block devices since Linux 6.11.
+> +The support on regular files varies by filesystem;
+> +it is supported by xfs and ext4 since Linux 6.13.
+>  .TP
+>  .I stx_atomic_write_segments_max
+>  The maximum number of elements in an array of vectors
+> --=20
+> 2.31.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--x67sanwd52hvirny
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdQv4AACgkQnowa+77/
+2zIW2Q/9F6awyCOWuLbuC9fyPIP/9h5zqmfOcpkHdiQ3eXbQMFKvY+IgvuSAQMq2
+R6LEAszjKabh+Pi9MmNdHWxv3fq+zQSmzVw2mOJbatDevcBMGTpYdv9+oO6eYYqM
+vQhfDSnvW5JI6K3Xf9sPbvVneK7GR+h6VUGA9+VmiD41s8E3r70Dn3lvrFMpefHR
+AnUtTdM9sj/GhLLYPVMx+T6+KdHhYVHCMubrOfIpRgHoo0DkNdIa4zBmdfMXAjG9
+98KhMV14k5tSBtsd83qNSqvyu0oIIb/8E5KeHZcfqxN01k+qq02PJhYh43zzX0AZ
+a2JmC1xGqS+SKdfE+Z2ibevVW+rTn7T4IZVknJ5sWNx2MbJ6UmslI61mzg/1U3QW
+/s9/p4xgkCmp2LeFiZ7rnuTvMdbIZ3sDA74QUyMxtj3e11ii1drdaYUL/wJ6ORp/
+JbypDC/pqwuD3B/MybU+keY/uIO/dkKo3ZxzYO9Sn/fDae0j/OUT76b0C6+LyA8b
+be1j9YjVZSzmhz+fpBRR9yIY3p/lRJA2WVFVSUY4Kjr6rdMo2KxCfqksH02y+CrQ
++iZtYZp39xIyrWEBmrJ9Nd0G+0KqCrpqZGKKCioA0BDoKqlK8nx4cZDEI9g3AG2f
+nnL20aGiEH+2bEAKyIwRnfbzBqLGwFsEjAfVODl0qtaJrYDNsQc=
+=pDM3
+-----END PGP SIGNATURE-----
+
+--x67sanwd52hvirny--
 
