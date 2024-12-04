@@ -1,231 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-36486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBBB9E3EB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:53:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6B69E3F20
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 17:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98621283367
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:53:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F86A2817A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8814220C47B;
-	Wed,  4 Dec 2024 15:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C953210189;
+	Wed,  4 Dec 2024 15:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfMP5EMF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L9iuDnc8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EAF20CCF5
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 15:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7498D20CCCC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 15:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327588; cv=none; b=bY79VeniSROqntzzJcKB4uaVBsSctEUf+w1P806rZz5Hakz7nUcKCJItidexGaRN0AIbqkRj4TEzXKF7L7Mr4iv5IBAsJgQZchBAbiel0sm47mYM0O7PME66dF3x/FXfNGhlZRdIQ/0li7KdCMYbwYUw/iehRXg1PAoEQSr5xVQ=
+	t=1733327942; cv=none; b=H2LzdxROOiW81WSF51BiGySh/CRpBY46mOUOk1YaHdULP9HNi3WmHCKkCLbDsntqaImaMVB7BF9fKMbxpw+uutzpICPRqhRzLs3JaS6CzUIRPWFh8I8eY6X047zo7BDB9jom9Z/z/ZyqxTV7MO70SxBIof8838uPs2cNJahg9pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327588; c=relaxed/simple;
-	bh=uvo1HVcXQPvOFc+Tys1OpqZ+zabfYR8WnzY6RxmyeLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dzRtvvZJu13T5zInoiHnG/iicish37KxwJBFX4ZbycOOdlUUr/QFrQJmLmyzCOD0TbwNjIzSKoANZDOF0z8kSg6ddF2ADlfeZR7J9Qf3INFDY589Rb7FbtgVyWxCOw7ax4h/rxSWgxyHKveXlsR11gJUKTaQOG9TquoCZnW/YCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfMP5EMF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0DFC4CEDF;
-	Wed,  4 Dec 2024 15:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733327587;
-	bh=uvo1HVcXQPvOFc+Tys1OpqZ+zabfYR8WnzY6RxmyeLw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FfMP5EMFpAz6PQ9Cece/cfrswMGjeexM20kMaqoYqE76POVWpZCG0qVk7E/WxkBUW
-	 qYytJOTAKTZwUXhNfqVNydYqn+YQYz/30IALiV0Lm71vw5Ngfl5tvh8YpsMFRDcBck
-	 S4Ju5KlZSgq6lQAevI0+FLKrOCQk5Lx9W0WZyQMOHWS7abB729iS/H7JU1epZE9xQ5
-	 RnzkOykEvT+xUv3uAQoZLDWXIZ+SZrF0EDdrWDThwntBXSaw6gccKJzT/rAW1KVVwV
-	 6EDlv7bivXJ3bqgDZ3eFB02qvqc9+kT0g0OUff0la0HYoGAUObBmoUv5iqB0EDB044
-	 5I6Jf7s9pIxDA==
-From: cel@kernel.org
-To: Hugh Dickens <hughd@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	yukuai3@huawei.com,
-	yangerkun@huaweicloud.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v4 5/5] libfs: Use d_children list to iterate simple_offset directories
-Date: Wed,  4 Dec 2024 10:52:56 -0500
-Message-ID: <20241204155257.1110338-6-cel@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204155257.1110338-1-cel@kernel.org>
-References: <20241204155257.1110338-1-cel@kernel.org>
+	s=arc-20240116; t=1733327942; c=relaxed/simple;
+	bh=MkIX+0Q7uVANQn1tUXSoOXDigaq3pzGNPuLxZollUPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fadCUDw4iloq1Oxj6ogdmpngAb9urK0MIvYizUrZYV66KYNyjA/2XQb6KTfB0LIWbug5hTD5MrwdtSBF/jC0NKOPBPfnmStCVnHGr+DYDqISLS5aYHTeBtFIx/+Vb9biNk+2Kp7fDmRDdgLzYHsLlVIq2WRGK7Yc8GcGXtYBCH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L9iuDnc8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733327938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PKbyfYlEzsBujPEJXUvTgJm5gyk4gXBwn1S2KY6PxE0=;
+	b=L9iuDnc8SdhvbPBYy/7F5qniOwSf7SbrFE0ZBFzdXaDToPjcmlOHVFme+asyEKjWziI05T
+	T97sEsfQqNqqLcIN6wuL4Tkge7MHFIeuMMdaPsLMamlE0vCnZQPxi8YQnrNGOlTtI3RBfL
+	NHE6DcGPMHyPCy8C/9xGO6U1BDXczZY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-WATwtdgNOEyNejTVLC8PNA-1; Wed, 04 Dec 2024 10:58:57 -0500
+X-MC-Unique: WATwtdgNOEyNejTVLC8PNA-1
+X-Mimecast-MFC-AGG-ID: WATwtdgNOEyNejTVLC8PNA
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a37a57dfso57184045e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 07:58:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733327936; x=1733932736;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PKbyfYlEzsBujPEJXUvTgJm5gyk4gXBwn1S2KY6PxE0=;
+        b=SB58k3hrd6A9vsayOSYzg/l184GebtoJ+K2b9jljPdKMPSEXBecEjTB5TzC/vWhIFC
+         TwU2E3cUQjbKmk98Gv9b+sqBDLbGUntKqVz3sSY0AVnbT0CD+gkIfY27iDz4h6QyOqpq
+         FJAEhXTk9JhgTFRm3bABMNXY5aTUwCVRnTuRnNztO1xpsLZTcJmQmXGKMFsnfa7/Ta9u
+         nV9TvTIiBwLgcB0XV2RhETfeW/zcZ0wO05V/BXr3y44antWxcwUW0sp5TezoZ/K/1L/d
+         P0Fb+gdBhFWJJGbjQmReJjzxxuP7ENi8cQHYVBo0eTWDW+cNWk0hWf761cnbzOF1AyeP
+         +qUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzHP2TDuHw7fTkiQMuqf/HwgIf/rtLm77Abrd73sR1HH0mN4k0Z10yXqPLLW39ROWscfvB9Cm4kpV0kdI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2AaTzRChYVEx3MT/iHjw0M5izL8f1V+J0up+khk2Gz+4WfcAm
+	cPdLuhGUUcInn075EL4lbwS2DFYOFy7vjf5Iyp8HW4J7G03DZ8N056VEDcpnEnHcy3Yh2xmlQnj
+	xytU81xOyrViLqpxCB7x8b4e34u157jagYLiASi0DCyKCV0fNWLlWUadhKdSyJVB5a3WX1lAU2g
+	==
+X-Gm-Gg: ASbGncsSOvrAThdixNrjLzcP8DO4yW0eabQ001b1qnTNqAY3JBbY4WmT6zPAoEQECOp
+	Mpiaw8acDwh+6+zftKZraL1kxZG5b7LrvUgzJFxa/IbhVNgx/vSITOZkVWt9nBTbVUUX8+GlCCW
+	XvAdBwGqaMlpd4XTpJPqCMtR7YoTvKqGrVBs3etBzaYKBnSGS5bQ5IXgIZQNp8wVBHDD9heBMTH
+	xdP52LvQ922De7zorrEn8mZsyl33K7NGGIfNCpvvv7WMwHKvLKEA+hEwU7Zm0ygQn4vdsWwBGaD
+	0kD/Ni0WFzFtij+CmuuEDJAXdXQzt3ltvj1JhUCdobeMTEX/xn3LJKD3IQszcgEDNH4g1QdpRNO
+	QLg==
+X-Received: by 2002:a5d:6d0a:0:b0:385:df87:28de with SMTP id ffacd0b85a97d-385fd433607mr5947951f8f.56.1733327936064;
+        Wed, 04 Dec 2024 07:58:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFdOQUBULKzvFzkHWqPRGxc1LuUQ7T34ds9Ipq4JMMTeGrEwEobbTL5YAOMuZklHAw/mSdAhw==
+X-Received: by 2002:a5d:6d0a:0:b0:385:df87:28de with SMTP id ffacd0b85a97d-385fd433607mr5947932f8f.56.1733327935659;
+        Wed, 04 Dec 2024 07:58:55 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70b:e100:38d6:8aa1:11b0:a20a? (p200300cbc70be10038d68aa111b0a20a.dip0.t-ipconnect.de. [2003:cb:c70b:e100:38d6:8aa1:11b0:a20a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385faec0c9dsm6142889f8f.20.2024.12.04.07.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 07:58:54 -0800 (PST)
+Message-ID: <cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
+Date: Wed, 4 Dec 2024 16:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Removing page->index
+To: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-s390@vger.kernel.org, Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z09hOy-UY9KC8WMb@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On 03.12.24 20:51, Matthew Wilcox wrote:
+> I've pushed out a new tree to
+> git://git.infradead.org/users/willy/pagecache.git shrunk-page
+> aka
+> http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
+> 
+> The observant will notice that it doesn't actually shrink struct page
+> yet.  However, we're getting close.  What it does do is rename
+> page->index to page->__folio_index to prevent new users of page->index
+> from showing up.
 
-The mtree mechanism has been effective at creating directory offsets
-that are stable over multiple opendir instances. However, it has not
-been able to handle the subtleties of renames that are concurrent
-with readdir.
+BTW, I was wondering how often we convert a page to a folio to then 
+access folio->index / folio->mapping and not actually having a folio (in 
+the future).
 
-Instead of using the mtree to emit entries in the order of their
-offset values, use it only to map incoming ctx->pos to a starting
-entry. Then use the directory's d_children list, which is already
-maintained properly by the dcache, to find the next child to emit.
+I suspect this will need quite some changes to get it right, and I would 
+count that as "less obvious".
 
-One of the sneaky things about this is that when the mtree-allocated
-offset value wraps (which is very rare), looking up ctx->pos++ is
-not going to find the next entry; it will return NULL. Instead, by
-following the d_children list, the offset values can appear in any
-order but all of the entries in the directory will be visited
-eventually.
+Calling PageAnon() on anything mapped into user space page tables might 
+be one such case, for example.
 
-Note also that the readdir() is guaranteed to reach the tail of this
-list. Entries are added only at the head of d_children, and readdir
-walks from its current position in that list towards its tail.
+> 
+> There are (I believe) three build failures in that tree:
+> 
+>   - fb_defio
+>   - fbtft
+>   - s390's gmap (and vsie?  is that the same thing?)
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c | 77 ++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 20 deletions(-)
+Not completely (vsie (nested VMs) uses shadow gmap, ordinary VMs use 
+ordinary gmap) , but they are very related (-> KVM implementation on s390x).
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index fcb2cdf6e3f3..398eac385094 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -243,12 +243,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
- 
- /* simple_offset_add() allocation range */
- enum {
--	DIR_OFFSET_MIN		= 2,
-+	DIR_OFFSET_MIN		= 3,
- 	DIR_OFFSET_MAX		= LONG_MAX - 1,
- };
- 
- /* simple_offset_add() never assigns these to a dentry */
- enum {
-+	DIR_OFFSET_FIRST	= 2,		/* Find first real entry */
- 	DIR_OFFSET_EOD		= LONG_MAX,	/* Marks EOD */
- 
- };
-@@ -456,19 +457,43 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
--static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
-+/* Cf. find_next_child() */
-+static struct dentry *find_next_sibling_locked(struct dentry *parent,
-+					       struct dentry *dentry)
- {
--	MA_STATE(mas, &octx->mt, offset, offset);
-+	struct dentry *found = NULL;
-+
-+	hlist_for_each_entry_from(dentry, d_sib) {
-+		if (!simple_positive(dentry))
-+			continue;
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		if (simple_positive(dentry))
-+			found = dget_dlock(dentry);
-+		spin_unlock(&dentry->d_lock);
-+		if (likely(found))
-+			break;
-+	}
-+	return found;
-+}
-+
-+static noinline_for_stack struct dentry *
-+offset_dir_lookup(struct file *file, loff_t offset)
-+{
-+	struct dentry *parent = file->f_path.dentry;
- 	struct dentry *child, *found = NULL;
-+	struct inode *inode = d_inode(parent);
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+
-+	MA_STATE(mas, &octx->mt, offset, offset);
- 
- 	rcu_read_lock();
- 	child = mas_find(&mas, DIR_OFFSET_MAX);
- 	if (!child)
- 		goto out;
--	spin_lock(&child->d_lock);
--	if (simple_positive(child))
--		found = dget_dlock(child);
--	spin_unlock(&child->d_lock);
-+
-+	spin_lock(&parent->d_lock);
-+	found = find_next_sibling_locked(parent, child);
-+	spin_unlock(&parent->d_lock);
- out:
- 	rcu_read_unlock();
- 	return found;
-@@ -477,30 +502,42 @@ static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
- 	struct inode *inode = d_inode(dentry);
--	long offset = dentry2offset(dentry);
- 
--	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
--			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-+	return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
-+			inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
- {
--	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+	struct dentry *dir = file->f_path.dentry;
- 	struct dentry *dentry;
- 
-+	if (ctx->pos == DIR_OFFSET_FIRST) {
-+		spin_lock(&dir->d_lock);
-+		dentry = find_next_sibling_locked(dir, d_first_child(dir));
-+		spin_unlock(&dir->d_lock);
-+	} else
-+		dentry = offset_dir_lookup(file, ctx->pos);
-+	if (!dentry)
-+		goto out_eod;
-+
- 	while (true) {
--		dentry = offset_find_next(octx, ctx->pos);
--		if (!dentry)
--			goto out_eod;
-+		struct dentry *next;
- 
--		if (!offset_dir_emit(ctx, dentry)) {
--			dput(dentry);
-+		ctx->pos = dentry2offset(dentry);
-+		if (!offset_dir_emit(ctx, dentry))
- 			break;
--		}
- 
--		ctx->pos = dentry2offset(dentry) + 1;
-+		spin_lock(&dir->d_lock);
-+		next = find_next_sibling_locked(dir, d_next_sibling(dentry));
-+		spin_unlock(&dir->d_lock);
- 		dput(dentry);
-+
-+		if (!next)
-+			goto out_eod;
-+		dentry = next;
- 	}
-+	dput(dentry);
- 	return;
- 
- out_eod:
-@@ -539,7 +576,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 	if (ctx->pos != DIR_OFFSET_EOD)
--		offset_iterate_dir(d_inode(dir), ctx);
-+		offset_iterate_dir(file, ctx);
- 	return 0;
- }
- 
+I know that Claudio is working on some changes, but not sure how that 
+would affect gmap's usage of page->index.
+
+s390x gmap is 64bit only, so we have to store stuff in 8byte. gmap page 
+tables are
+
+Maybew e could simply switch from page->index to page->private? But I 
+lost track if that will also be gone in the near future :)
+
+> 
+> Other than that, allmodconfig builds on x86 and I'm convinced the build
+> bots will tell me about anything else I missed.
+> 
+> Lorenzo is working on fb_defio and fbtft will come along for the ride
+> (it's a debug printk, so could just be deleted).
+> 
+> s390 is complicated.  I'd really appreciate some help.
+> 
+> The next step is to feed most of the patches through the appropriate
+> subsystems.  Some have already gone into various maintainer trees
+> (thanks!)
+> 
+> 
+> There are still many more steps to go after this; eliminating memcg_data
+> is closest to complete, and after that will come (in some order)
+> eliminating ->lru, ->mapping, ->refcount and ->mapcount. 
+
+Will continue working on the latter ;)
+
 -- 
-2.47.0
+Cheers,
+
+David / dhildenb
 
 
