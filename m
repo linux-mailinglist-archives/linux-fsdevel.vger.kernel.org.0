@@ -1,156 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-36389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CE29E3090
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 01:56:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C2D9E30F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 02:51:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4791283439
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 00:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82534167388
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 01:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E73D4C6E;
-	Wed,  4 Dec 2024 00:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RNfxo4BL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5C72C181;
+	Wed,  4 Dec 2024 01:51:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EA07F9;
-	Wed,  4 Dec 2024 00:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BABE22094
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 01:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733273804; cv=none; b=hva9o6KPd2aw2B3EOBM8tMZUNi+PKk8DBzoExrRs3N17erzC//eUZHD5wTuz4fvm9ueE8V9fl1mE1fCZGZVu2Z4qjlAflybkg2+sgCkk5b0iAeRaWYTDczYe+2rwUClcGs1dDer/awDYSNq/iPinWBh85/pT5ytwQxEdEEQDJr0=
+	t=1733277066; cv=none; b=a19gG/92FpikAw5276pPIAUWQVxxXvowBPM+9JsR02Gf50Ji5J/87mcY33UPnwDp/yyB95dx0eXRfOB86PLHBtuS6MjI8p8guA5qlxjzILGuBSNvQiyFckQAVkT6eypbXTfh64tlYLhxsgRXGuRuy8bAgUaO9krz6QVLfp6jK5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733273804; c=relaxed/simple;
-	bh=HnvD9nA5AHCdsg9zPRJracg67gYt4epRVs62bCOVlMA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RtyijWDWfQTbn9gnEU0YXDyEznzg3rnd3ETJ3ne/pvHQtXwXo4qwXhApJAF2eLE2K/UohgztBXCyA06WJtyUc+0wcweBSslLfHQ8FBk6MNjnWWLsko+x0qhCkaHDrKouHTkc8hX/B0NCYk0NIBdX/mW9QOpsomLIOMv82GNj1M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RNfxo4BL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B322CC4CEDC;
-	Wed,  4 Dec 2024 00:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1733273804;
-	bh=HnvD9nA5AHCdsg9zPRJracg67gYt4epRVs62bCOVlMA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RNfxo4BLUORttXowEY/7Lb2NtXEKxZtj3iKtvpYt/poJyguBqduECGWz1N8tINRAc
-	 WFjnTjrJKroELMzVPc8mYFNNl19IFv9ErROqnFh+NvfCVS3OKh8glphGPD9Q2t9Rwf
-	 kuaYEet47sLB+XbLGaCrMymvQZSx5TIoN6cnPVsg=
-Date: Tue, 3 Dec 2024 16:56:43 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: <xu.xin16@zte.com.cn>
-Cc: <david@redhat.com>, <linux-kernel@vger.kernel.org>,
- <wang.yaxin@zte.com.cn>, <linux-mm@kvack.org>,
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH linux-next v4] ksm: add ksm involvement information for
- each process
-Message-Id: <20241203165643.729e6c5fe58f59adc7ee098f@linux-foundation.org>
-In-Reply-To: <20241203192633836RVHhkoK1Amnqjt84D4Ryd@zte.com.cn>
-References: <20241203192633836RVHhkoK1Amnqjt84D4Ryd@zte.com.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733277066; c=relaxed/simple;
+	bh=rWtZF8Dus1RjbJZaZTLBXSr66OIKeFm9TueYUIt7Zoc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SUas8ZbS3VBVeZI+2DUiKae6wptuE+6BITssHgo1MotXj7F8QhkSofAhaEe+H9IqjVSWS2M8rl6uaF//uXOyCUDVfANknF/ODwF5citdGKkxZ8NHAIGC/GKLa836bEMO677+suyKNR9NUpNECsVcahsCYz95eIfTDIPuAjD/RSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso95117135ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Dec 2024 17:51:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733277062; x=1733881862;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ojyRDzOs4L5r1zvt5rLALFwRhgSLoRI+YAka9dryW2U=;
+        b=s+CXkE91SWYduGm//4HLBNOoutM/AaqJE2P5oSSFCCgfbGAa0bMzFqgM8SVlj/DbEM
+         eRwgiMH/IjHBz+J97YCpM8CbwSuDOtmcK48ecwTg5oh4eCY5nYQh0NXfIxhRfAHu2Qy4
+         n/qBCF0UbyS4rKcjM4rU9VTWETcpZr0tJFlOd9/FStUBVw5ZHjuiqNcRMj8G962ymfcG
+         SV3Dn/hU3xjKArq+SDmy06uaicRpXVkz2cwPCCCLXYmTInQtkBy7F+LzTjHHHijJvJrR
+         tiRtZtbdOrF/iLB42voxmffR+i5mIEYYF389j8t2D7c4ycn9RBkAwQn9g9A3wf9AfBdX
+         xPEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpOt44++grSCdtoy+OxzzVgBDHEo19vNBH2A0Usr4t2Q1T2xT3nxSL/mecPGbulU9x/Ag/sTaM58D2+qFs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWkRAuKcX14JBq7toJLjxsAOs7dhqd9TV046ORmW4Z/AwSXkjR
+	ibroTW6LpKNp6EZK1z3qfDBIKfJVR5sHy5Spp4aMXa9aJe5x2Ch/uGVcUJLtTNuMhFJT2d/xNhP
+	VCWOYNzLsAhV7hskuKm0JU+BG6UpRcGFdrd8UWtFNF8KFHV8CNtRXLXQ=
+X-Google-Smtp-Source: AGHT+IGmDky9ubXMdmWEyJvsqWfLs/KF8vdb5UnF3UfBT6VPtkSCq7Mi1MPMv2mpAS+sZb0fM/xrpgyQuWJKEeTuR3Zk+AqaSlPn
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1fce:b0:3a7:21ad:72a9 with SMTP id
+ e9e14a558f8ab-3a7fed5f51amr26749215ab.17.1733277062597; Tue, 03 Dec 2024
+ 17:51:02 -0800 (PST)
+Date: Tue, 03 Dec 2024 17:51:02 -0800
+In-Reply-To: <589149.1733244622@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674fb586.050a0220.17bd51.0057.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] WARNING in netfs_retry_reads (2)
+From: syzbot <syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, bharathsm@microsoft.com, brauner@kernel.org, 
+	dhowells@redhat.com, ericvh@kernel.org, jlayton@kernel.org, 
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
+	netfs@lists.linux.dev, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	rostedt@goodmis.org, samba-technical@lists.samba.org, sfrench@samba.org, 
+	sprasad@microsoft.com, syzkaller-bugs@googlegroups.com, tom@talpey.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 3 Dec 2024 19:26:33 +0800 (CST) <xu.xin16@zte.com.cn> wrote:
+Hello,
 
-> From: xu xin <xu.xin16@zte.com.cn>
-> 
-> In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
-> KSM_mergeable and KSM_merge_any. It helps administrators to
-> better know the system's KSM behavior at process level.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It's hard for me to judge the usefulness of this.  Please tell us more:
-usage examples, what actions have been taken using this information, etc.
+Reported-by: syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com
+Tested-by: syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com
 
-> KSM_mergeable: yes/no
-> 	whether any VMAs of the process'mm are currently applicable to KSM.
+Tested on:
 
-Could we simply display VM_MERGEABLE in /proc/<pid>/maps?
+commit:         12588c3f netfs: Fix hang in synchronous read due to fa..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git netfs-writeback
+console output: https://syzkaller.appspot.com/x/log.txt?x=135e1fc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=5621e2baf492be382fa9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> KSM_merge_any: yes/no
-> 	whether the process'mm is added by prctl() into the candidate list
-> 	of KSM or not, and fully enabled at process level.
-> 
-> ...
->
->  fs/proc/base.c      | 11 +++++++++++
->  include/linux/ksm.h |  1 +
->  mm/ksm.c            | 19 +++++++++++++++++++
-
-Documentation/admin-guide/mm/ksm.rst will require an update please.
-
->
-> ...
->
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3269,6 +3269,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->  				struct pid *pid, struct task_struct *task)
->  {
->  	struct mm_struct *mm;
-> +	int ret = 0;
-> 
->  	mm = get_task_mm(task);
->  	if (mm) {
-> @@ -3276,6 +3277,16 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->  		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
->  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
-> +		seq_printf(m, "ksm_merge_any: %s\n",
-> +				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
-> +		ret = mmap_read_lock_killable(mm);
-
-Could do the locking in ksm_process_mergeable()?
-
-> +		if (ret) {
-> +			mmput(mm);
-> +			return ret;
-> +		}
-> +		seq_printf(m, "ksm_mergeable: %s\n",
-> +				ksm_process_mergeable(mm) ? "yes" : "no");
-
-Calling seq_printf() after the mmap_read_unlock() would be a little
-more scalable.
-
-> +		mmap_read_unlock(mm);
->  		mmput(mm);
->  	}
->
-> ...
->
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -3263,6 +3263,25 @@ static void wait_while_offlining(void)
->  #endif /* CONFIG_MEMORY_HOTREMOVE */
-> 
->  #ifdef CONFIG_PROC_FS
-> +/*
-> + * The process is mergeable only if any VMA (and which) is currently
-> + * applicable to KSM.
-
-That sentence needs revisiting, please.
-
-> + * The mmap lock must be held in read mode.
-> + */
-> +bool ksm_process_mergeable(struct mm_struct *mm)
-> +{
-> +	struct vm_area_struct *vma;
-> +
-> +	mmap_assert_locked(mm);
-> +	VMA_ITERATOR(vmi, mm, 0);
-> +	for_each_vma(vmi, vma)
-> +		if (vma->vm_flags & VM_MERGEABLE)
-> +			return true;
-> +
-> +	return false;
-> +}
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
