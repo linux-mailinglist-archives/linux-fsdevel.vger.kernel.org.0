@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-36485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3A59E3EB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:53:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBBB9E3EB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:53:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93695163B71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98621283367
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEFD20C499;
-	Wed,  4 Dec 2024 15:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8814220C47B;
+	Wed,  4 Dec 2024 15:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0AZ2/Kj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfMP5EMF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0026C20C47E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 15:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EAF20CCF5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 15:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327587; cv=none; b=V+XRwS+Zz0JJ4eIfPtqLK5Ly+amM16rcOk3SqNV469N0fTFMeip+qb5VQGXSnQMcUZR6n4/jMk7sAN813y+qrM9Af7GsWLRfrH3iT7u7/ycpFyzJtOdrcuZK1SWsL4eun08/TdY+K4bH5JSqpeEUYI2nOT8R6ATipPMBt5Ah4QM=
+	t=1733327588; cv=none; b=bY79VeniSROqntzzJcKB4uaVBsSctEUf+w1P806rZz5Hakz7nUcKCJItidexGaRN0AIbqkRj4TEzXKF7L7Mr4iv5IBAsJgQZchBAbiel0sm47mYM0O7PME66dF3x/FXfNGhlZRdIQ/0li7KdCMYbwYUw/iehRXg1PAoEQSr5xVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327587; c=relaxed/simple;
-	bh=fRN9vGJ7LROdP4ek3V8O3+9HR95gl8BzVkAX4o0+JlY=;
+	s=arc-20240116; t=1733327588; c=relaxed/simple;
+	bh=uvo1HVcXQPvOFc+Tys1OpqZ+zabfYR8WnzY6RxmyeLw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JLKaG2nIUlgifO1FGqA9CRX7OxKT6s1HxioC4tAt3HDurY1mtNyunC7eL7ETSsYzBYLuzYLqCXcKlMbe/9BpEh6xAjU0d2wEj1j36rGjLp2Kxdghqt0yjhCn88PecXut0nSPYC+8rdBeiR00MVkENuCNLK1QJPq8PU4XOzVpzrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0AZ2/Kj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D28C4CED1;
-	Wed,  4 Dec 2024 15:53:05 +0000 (UTC)
+	 MIME-Version; b=dzRtvvZJu13T5zInoiHnG/iicish37KxwJBFX4ZbycOOdlUUr/QFrQJmLmyzCOD0TbwNjIzSKoANZDOF0z8kSg6ddF2ADlfeZR7J9Qf3INFDY589Rb7FbtgVyWxCOw7ax4h/rxSWgxyHKveXlsR11gJUKTaQOG9TquoCZnW/YCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfMP5EMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0DFC4CEDF;
+	Wed,  4 Dec 2024 15:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733327586;
-	bh=fRN9vGJ7LROdP4ek3V8O3+9HR95gl8BzVkAX4o0+JlY=;
+	s=k20201202; t=1733327587;
+	bh=uvo1HVcXQPvOFc+Tys1OpqZ+zabfYR8WnzY6RxmyeLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q0AZ2/KjCsuROd6V7x56n3hoEBUBchfYFAuCF0++umRnEOWMv1+sbIet4cMY14itF
-	 CkKZCOq38eR6EpzttfTgzJxVeu4h+0skR0eQYD8Uy9XDds3uM7zFubgpceYxrri4FQ
-	 pgaSr49+I+W9cbchnRNbxPOGAPx6VvfzQ9NcuOqaZ2Wu5dZrTtfAjCgDvd7jMj0vE4
-	 kFHhIY3GM7CKMEvGUB+D7RZpa0hvZ1UekvVZJMU5Qcp6tOyr9CqbqwhUpYKSepqKw1
-	 5vtvTPM/y5JDwPHkU9ZMMxg0leBr/36t8gvxufaTUrzb+tbrDvButD4IMg3wmrbo4K
-	 M/7DW3b5h+rUw==
+	b=FfMP5EMFpAz6PQ9Cece/cfrswMGjeexM20kMaqoYqE76POVWpZCG0qVk7E/WxkBUW
+	 qYytJOTAKTZwUXhNfqVNydYqn+YQYz/30IALiV0Lm71vw5Ngfl5tvh8YpsMFRDcBck
+	 S4Ju5KlZSgq6lQAevI0+FLKrOCQk5Lx9W0WZyQMOHWS7abB729iS/H7JU1epZE9xQ5
+	 RnzkOykEvT+xUv3uAQoZLDWXIZ+SZrF0EDdrWDThwntBXSaw6gccKJzT/rAW1KVVwV
+	 6EDlv7bivXJ3bqgDZ3eFB02qvqc9+kT0g0OUff0la0HYoGAUObBmoUv5iqB0EDB044
+	 5I6Jf7s9pIxDA==
 From: cel@kernel.org
 To: Hugh Dickens <hughd@google.com>,
 	Christian Brauner <brauner@kernel.org>,
@@ -50,9 +50,9 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	yukuai3@huawei.com,
 	yangerkun@huaweicloud.com,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v4 4/5] libfs: Replace simple_offset end-of-directory detection
-Date: Wed,  4 Dec 2024 10:52:55 -0500
-Message-ID: <20241204155257.1110338-5-cel@kernel.org>
+Subject: [PATCH v4 5/5] libfs: Use d_children list to iterate simple_offset directories
+Date: Wed,  4 Dec 2024 10:52:56 -0500
+Message-ID: <20241204155257.1110338-6-cel@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241204155257.1110338-1-cel@kernel.org>
 References: <20241204155257.1110338-1-cel@kernel.org>
@@ -66,141 +66,162 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-According to getdents(3), the d_off field in each returned directory
-entry points to the next entry in the directory. The d_off field in
-the last returned entry in the readdir buffer must contain a valid
-offset value, but if it points to an actual directory entry, then
-readdir/getdents can loop.
+The mtree mechanism has been effective at creating directory offsets
+that are stable over multiple opendir instances. However, it has not
+been able to handle the subtleties of renames that are concurrent
+with readdir.
 
-This patch introduces a specific fixed offset value that is placed
-in the d_off field of the last entry in a directory. Some user space
-applications assume that the EOD offset value is larger than the
-offsets of real directory entries, so the largest possible offset
-value is reserved for this purpose. This new value is never
-allocated by simple_offset_add().
+Instead of using the mtree to emit entries in the order of their
+offset values, use it only to map incoming ctx->pos to a starting
+entry. Then use the directory's d_children list, which is already
+maintained properly by the dcache, to find the next child to emit.
 
-When ->iterate_dir() returns, getdents{64} inserts the ctx->pos
-value into the d_off field of the last valid entry in the readdir
-buffer. When it hits EOD, offset_readdir() sets ctx->pos to the EOD
-offset value so the last entry is updated to point to the EOD marker.
+One of the sneaky things about this is that when the mtree-allocated
+offset value wraps (which is very rare), looking up ctx->pos++ is
+not going to find the next entry; it will return NULL. Instead, by
+following the d_children list, the offset values can appear in any
+order but all of the entries in the directory will be visited
+eventually.
 
-When trying to read the entry at the EOD offset, offset_readdir()
-terminates immediately.
+Note also that the readdir() is guaranteed to reach the tail of this
+list. Entries are added only at the head of d_children, and readdir
+walks from its current position in that list towards its tail.
 
-It is worth noting that using a Maple tree for directory offset
-value allocation does not guarantee a 63-bit range of values --
-on platforms where "long" is a 32-bit type, the directory offset
-value range is still 0..(2^31 - 1).
-
-Fixes: 796432efab1e ("libfs: getdents() should return 0 after reaching EOD")
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/libfs.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ fs/libfs.c | 77 ++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 57 insertions(+), 20 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 461384fb6119..fcb2cdf6e3f3 100644
+index fcb2cdf6e3f3..398eac385094 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -241,9 +241,16 @@ const struct inode_operations simple_dir_inode_operations = {
- };
- EXPORT_SYMBOL(simple_dir_inode_operations);
+@@ -243,12 +243,13 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
  
--/* 0 is '.', 1 is '..', so always start with offset 2 or more */
-+/* simple_offset_add() allocation range */
+ /* simple_offset_add() allocation range */
  enum {
--	DIR_OFFSET_MIN	= 2,
-+	DIR_OFFSET_MIN		= 2,
-+	DIR_OFFSET_MAX		= LONG_MAX - 1,
-+};
-+
-+/* simple_offset_add() never assigns these to a dentry */
-+enum {
-+	DIR_OFFSET_EOD		= LONG_MAX,	/* Marks EOD */
-+
+-	DIR_OFFSET_MIN		= 2,
++	DIR_OFFSET_MIN		= 3,
+ 	DIR_OFFSET_MAX		= LONG_MAX - 1,
  };
  
- static void offset_set(struct dentry *dentry, long offset)
-@@ -287,7 +294,8 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
- 		return -EBUSY;
+ /* simple_offset_add() never assigns these to a dentry */
+ enum {
++	DIR_OFFSET_FIRST	= 2,		/* Find first real entry */
+ 	DIR_OFFSET_EOD		= LONG_MAX,	/* Marks EOD */
  
- 	ret = mtree_alloc_cyclic(&octx->mt, &offset, dentry, DIR_OFFSET_MIN,
--				 LONG_MAX, &octx->next_offset, GFP_KERNEL);
-+				 DIR_OFFSET_MAX, &octx->next_offset,
-+				 GFP_KERNEL);
- 	if (unlikely(ret == -EBUSY))
- 		return -ENOSPC;
- 	if (unlikely(ret < 0))
-@@ -445,8 +453,6 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 		return -EINVAL;
- 	}
- 
--	/* In this case, ->private_data is protected by f_pos_lock */
--	file->private_data = NULL;
+ };
+@@ -456,19 +457,43 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
  	return vfs_setpos(file, offset, LONG_MAX);
  }
  
-@@ -456,7 +462,7 @@ static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
+-static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
++/* Cf. find_next_child() */
++static struct dentry *find_next_sibling_locked(struct dentry *parent,
++					       struct dentry *dentry)
+ {
+-	MA_STATE(mas, &octx->mt, offset, offset);
++	struct dentry *found = NULL;
++
++	hlist_for_each_entry_from(dentry, d_sib) {
++		if (!simple_positive(dentry))
++			continue;
++		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
++		if (simple_positive(dentry))
++			found = dget_dlock(dentry);
++		spin_unlock(&dentry->d_lock);
++		if (likely(found))
++			break;
++	}
++	return found;
++}
++
++static noinline_for_stack struct dentry *
++offset_dir_lookup(struct file *file, loff_t offset)
++{
++	struct dentry *parent = file->f_path.dentry;
  	struct dentry *child, *found = NULL;
++	struct inode *inode = d_inode(parent);
++	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
++
++	MA_STATE(mas, &octx->mt, offset, offset);
  
  	rcu_read_lock();
--	child = mas_find(&mas, LONG_MAX);
-+	child = mas_find(&mas, DIR_OFFSET_MAX);
+ 	child = mas_find(&mas, DIR_OFFSET_MAX);
  	if (!child)
  		goto out;
- 	spin_lock(&child->d_lock);
-@@ -477,7 +483,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- {
- 	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
- 	struct dentry *dentry;
-@@ -485,7 +491,7 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 	while (true) {
- 		dentry = offset_find_next(octx, ctx->pos);
- 		if (!dentry)
--			return ERR_PTR(-ENOENT);
-+			goto out_eod;
- 
- 		if (!offset_dir_emit(ctx, dentry)) {
- 			dput(dentry);
-@@ -495,7 +501,10 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 		ctx->pos = dentry2offset(dentry) + 1;
- 		dput(dentry);
- 	}
--	return NULL;
-+	return;
+-	spin_lock(&child->d_lock);
+-	if (simple_positive(child))
+-		found = dget_dlock(child);
+-	spin_unlock(&child->d_lock);
 +
-+out_eod:
-+	ctx->pos = DIR_OFFSET_EOD;
++	spin_lock(&parent->d_lock);
++	found = find_next_sibling_locked(parent, child);
++	spin_unlock(&parent->d_lock);
+ out:
+ 	rcu_read_unlock();
+ 	return found;
+@@ -477,30 +502,42 @@ static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
+ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_inode(dentry);
+-	long offset = dentry2offset(dentry);
+ 
+-	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
+-			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
++	return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
++			inode->i_ino, fs_umode_to_dtype(inode->i_mode));
  }
  
- /**
-@@ -515,6 +524,8 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-  *
-  * On return, @ctx->pos contains an offset that will read the next entry
-  * in this directory when offset_readdir() is called again with @ctx.
-+ * Caller places this value in the d_off field of the last entry in the
-+ * user's buffer.
-  *
-  * Return values:
-  *   %0 - Complete
-@@ -527,13 +538,8 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
+-static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
++static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
+ {
+-	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
++	struct dentry *dir = file->f_path.dentry;
+ 	struct dentry *dentry;
  
++	if (ctx->pos == DIR_OFFSET_FIRST) {
++		spin_lock(&dir->d_lock);
++		dentry = find_next_sibling_locked(dir, d_first_child(dir));
++		spin_unlock(&dir->d_lock);
++	} else
++		dentry = offset_dir_lookup(file, ctx->pos);
++	if (!dentry)
++		goto out_eod;
++
+ 	while (true) {
+-		dentry = offset_find_next(octx, ctx->pos);
+-		if (!dentry)
+-			goto out_eod;
++		struct dentry *next;
+ 
+-		if (!offset_dir_emit(ctx, dentry)) {
+-			dput(dentry);
++		ctx->pos = dentry2offset(dentry);
++		if (!offset_dir_emit(ctx, dentry))
+ 			break;
+-		}
+ 
+-		ctx->pos = dentry2offset(dentry) + 1;
++		spin_lock(&dir->d_lock);
++		next = find_next_sibling_locked(dir, d_next_sibling(dentry));
++		spin_unlock(&dir->d_lock);
+ 		dput(dentry);
++
++		if (!next)
++			goto out_eod;
++		dentry = next;
+ 	}
++	dput(dentry);
+ 	return;
+ 
+ out_eod:
+@@ -539,7 +576,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
  	if (!dir_emit_dots(file, ctx))
  		return 0;
--
--	/* In this case, ->private_data is protected by f_pos_lock */
--	if (ctx->pos == DIR_OFFSET_MIN)
--		file->private_data = NULL;
--	else if (file->private_data == ERR_PTR(-ENOENT))
--		return 0;
--	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
-+	if (ctx->pos != DIR_OFFSET_EOD)
-+		offset_iterate_dir(d_inode(dir), ctx);
+ 	if (ctx->pos != DIR_OFFSET_EOD)
+-		offset_iterate_dir(d_inode(dir), ctx);
++		offset_iterate_dir(file, ctx);
  	return 0;
  }
  
