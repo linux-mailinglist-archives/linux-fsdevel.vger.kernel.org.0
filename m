@@ -1,78 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-36472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC899E3E58
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:31:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF439E3DD8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 16:09:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF19163CD8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:09:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EBB20B20E;
+	Wed,  4 Dec 2024 15:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="FDUUTF6X";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="flotd3Rz"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A6AB3C9D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 14:48:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA5620ADEB;
-	Wed,  4 Dec 2024 14:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UfdWr3pI"
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9162D205AB3;
-	Wed,  4 Dec 2024 14:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16926199B8
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 15:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323632; cv=none; b=L4OQ+QkPIi+37HoN2KznF6o+rUVe/NccWw3Vs6WbytDLVsgbOF/f3i8DGg3PBQfYD+JO6h8a7//jKokBa+AW9DbxQL8q91/mGme8jMKAqKhWj3MZMddUJ2dbzfKQldzl0s++dQ5bywOK8mMsgeYV+2JHtskmaQw8f8CryPQ4Od0=
+	t=1733324968; cv=none; b=KPTLOG+C4iCkHwWn8r2LcVOiBmWOBmBc90oYX0hmyauynaaCQ7U4iKcx9t5VqNs6j4PzCpSeJLJuVXObSQvMBKUsp2EcNI8CbN3az2stMWTxwIJ9ovPvW4IYryCCgkpzvgtPNZ998y2RqX8+nujss+XSqp599mPJLyv9V4y6Skk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323632; c=relaxed/simple;
-	bh=caoMhs0rBOaQ8T+4bg1B4Frs1kuXaZQjsYJdNpinrn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BRHsmTN7uUSE4GfNVMF3T/PaNBNpupVd6LqaS0ZWKZSiUEdJDt2E/sx9Y+EWRx1jVBKN3ybgFORYXO1giQzlUC992YIAKx7O2b30AyjK+0S84snx/lKAXUBavV6FP10K0WOJuRJA2rby/oJiAEypkls7cujmCwTRwq9mvCl0d28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UfdWr3pI; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2154e3af730so43706245ad.3;
-        Wed, 04 Dec 2024 06:47:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733323630; x=1733928430; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZXL3lr2/xb1av06HROoqFP+hEFOheIHsOAZhVg1QF4w=;
-        b=UfdWr3pI1DWB8ecFk3rSUjfyeyOz8sIhybLWGbrI2zZTntaYkkJ3oUxmqnoW7jZPb2
-         KK9QfSOzXfzdB/bBWxEOkdsdwHoqZdW7cAxa3ogtka6PbmI/vT1hfyPxiCOItFEk4c3c
-         D0S9fAJwO1obVzo+pLK2t1atlv4p7mfMElVBS9K1jJF5tIgfPRXMpTBqLOzGfYHlxBfg
-         BYwp7pjEgCpeyxLVnXRy0EfJ65+syDePuiXw+vCiGYS8JXG1Cq9p5GJgmk2GoVyNwGSA
-         vWPclD8WuR9d1+A3oaHqOf6666HatvQ5Xb1jwZziaKAQ5addKoeEE/4gJKCVY3xFCSzv
-         EZIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733323630; x=1733928430;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXL3lr2/xb1av06HROoqFP+hEFOheIHsOAZhVg1QF4w=;
-        b=ey/FQTWDTMcqmzRnPIbAmlu1L3aO32wcclbicVT8xBcn4PC6QVo//nnnU/q4VXDucw
-         VoTcVQ7I67NaDhTsAV/I3Y6oqighZSBb3oSYObs8+Xi6PAGP6T2PIdkp0uSZxSsojqT3
-         zrfSURVPr548i6t65KUxRHpcq7FgbDTVeOy8MVYX9tTEKNPu9Sth8phgKaspUnad/f3R
-         Z3Ui5j7OsP9i+Fa9yWM+N6RsxXKWfQTZo7USNE6dSJ2rhpa3NnyBgfFNybsUuEL0fMEV
-         RJdg2QrR0eIfx1MEayqiQuBBcREvl9JmUp9Rrd9kbzIy1fU9dZTw+mmMQKR3sBc+epzn
-         GT/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdQZdBvji23W+j2KLTMWDLp30i0fDBIru1xk4m3gs6MbfczkaqCe/MA6OnyUHOzXiUnfqeYmxTWU9cXHLh@vger.kernel.org, AJvYcCWthm4294EjsLn7qILH2viUeYSL/e48yq/8tYRNqqdCHnQCirg1mkxvgeX1Y9izyKx7fFvXSwJXrMqlaAzl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRQ2qEz5mFJtKUxN1kT/2iHtiqc8/4vKg5xMeXPcROnU8WU8iF
-	dikWPSTF8LsVbveLpZF4GJT4sscLxDtbbf1akaDrDPfCs0CyNho7
-X-Gm-Gg: ASbGncv64RuTQTAmRs7fgJxaotyER9m/fSYOIQynrT4IfM9qI9Ce2xH+iizc0INJ2KT
-	rebnItJMLiiaxyHF44pl6jdM9+4FR357+pW118raYbK7ltZ7hqTG8LQ0MEyGBXOBTAy/eI3BJO2
-	I8xEiUg/f45clG0WkyFPFWdr6Sgv/D1Jh1K0FlkkGQq9gUrXf/T0kKorg6Ad8/Xm7aSmmyE/DoD
-	Vxh22BOWg9IFvmuHZCsBVROn09qTRgmBMHEEjSR1qi8Uj91Ie3Lnn7bHXM=
-X-Google-Smtp-Source: AGHT+IEf8AURcCKrmVMH+suyut8NUqPd6mYZzY8B7a/jkx/LPgrSN1NEodCLukf6DgsTLlCThZ6nsg==
-X-Received: by 2002:a17:902:f712:b0:215:b9a7:526c with SMTP id d9443c01a7336-215d0050c00mr68142695ad.25.1733323629616;
-        Wed, 04 Dec 2024 06:47:09 -0800 (PST)
-Received: from [10.239.15.156] ([43.224.245.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2152191dcc9sm112802355ad.112.2024.12.04.06.47.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 06:47:09 -0800 (PST)
-Message-ID: <605e5e98-863f-41fe-9a84-071c1843d684@gmail.com>
-Date: Wed, 4 Dec 2024 22:47:04 +0800
+	s=arc-20240116; t=1733324968; c=relaxed/simple;
+	bh=irrIn2djsbgjRy4V2nep6JU8h4ZMCfHS30lZVDzTNAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nZrNV9rC2EgEmh9q4VEXZHzws+oLA18Dx9v8XTKklsYvGIbzo4mYbrmBqm46lopDgFKRd7rWbPSGwyzwMrbubGrmK8g2Q/zpRXXU2rTzI8NtfKQc7Be1mps5HpMohpLy3vJ5odFeFUXCg5lfPhUVOa6ZNs+Xtigy2pX+ZnKRfac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=FDUUTF6X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=flotd3Rz; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id ED3C41140135;
+	Wed,  4 Dec 2024 10:09:23 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 04 Dec 2024 10:09:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733324963;
+	 x=1733411363; bh=HO9hOzt6qYw608V0EKb9wqxjyEkagZpuQ7+/gaLh/xM=; b=
+	FDUUTF6X/9asGOKECWtvW3SiZLvqyNjK5cBeLW0tnD24cr6cQboovq2rRrbg4e+9
+	j7BupAD5i+Y0WDMRbpKTbSxGdduNGetmuHcH2lDvqqUQcCjYWkxNTf+UuJv1hv5P
+	hRdrSFx6Bg4uMTj1S5HHVdvezWvso6ougyuzVjkj+3c17r9/nm5jUR/WYPVnEG+s
+	kIhnfOKAf2eUvUoCljsB610FK5Akk6pbjf5SzjtllRWyys6RbTNv84mc3FmfcjgD
+	Iwp9w2WyRsqx2Ttl2D/B+h2lJh75/I7LYkpdUIqKSxJwVPKFtnmu31p5zepmXi3t
+	7c3op52JpA36OHCIpkOs4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733324963; x=
+	1733411363; bh=HO9hOzt6qYw608V0EKb9wqxjyEkagZpuQ7+/gaLh/xM=; b=f
+	lotd3RzsXm1vQPXOg04HdVLLjt6ao8KuF1Vhc81x/DHJFdIGoLzakWMV9qHGr+5s
+	CrasSLuNW0N2A2lhKIWR6Wm6px5xf2UF3CaJD6dxNpFirUbBv03PWw5hJxK/F/xj
+	5+tea52nIh7hV/aS4rcF+knx8ntpPhfVufn0ZkGJLY4ukYCocrYJnNYSFuAndjoC
+	jf30nJKeUpVRmA1FjRkJ3mN41hhUM9uceo+pchaUmD+YLI8LzbpRIzpAVjnHpl65
+	X9j0ktsb38JnNSwpQCKRCirqhZ3DUyWI41h6wkUs0AkjCUnBqnfijo3SNSRZSxkh
+	yp3eladbJsh3Q7yQC+PJg==
+X-ME-Sender: <xms:onBQZ3A_vwTRXhAQOlJXceOS3OxgW3NcilRq1ALVBUgF8T78UWmKdg>
+    <xme:onBQZ9i-orthWn3eldKFWd17CLhuhSazAwWEUqYIJjCWkD3WjPzqf8-hzCwJJftJF
+    cG-99SkoXMlBO1Z>
+X-ME-Received: <xmr:onBQZymqQVKpMtzQidWhOex1W_nrFI3BGu-gKnr_nTTMUJDB6qjxTM1Yu3LSNwXXp-C-5yf_ovJhfd__vkis7gTBEr9yNWcmw5Mobo7fA_edOw1NmeCi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdeilecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevgfeukedtfeeugfek
+    ueeikeeileejheffjeehleduieefteeufefhteeuhefhfeenucffohhmrghinhepkhgvrh
+    hnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsggprh
+    gtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghgvghffhho
+    nhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhfihhgrgestghhrhhomhhiuhhmrd
+    horhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepshgvnhhoiihhrghtshhkhiestghhrhhomhhiuhhmrdhorhhgpdhrtghpth
+    htohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklhhoshes
+    shiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgu
+    rgdrtghomhdprhgtphhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrg
+    drtghomh
+X-ME-Proxy: <xmx:onBQZ5y1hbWXEU8uhqkv3lZybyv1lF6iBhHFBUBEnBH9UksN_yrDpQ>
+    <xmx:onBQZ8Q_LFtnJLB2hq3wkRKPwmqWrPV_tgn70YSDzfwKcnzgb0Lcrw>
+    <xmx:onBQZ8bat9ShRk8Zhje0jasHWifUi4f5SigWQ75vjZmGi4Ms2ek45A>
+    <xmx:onBQZ9Sb-5WlJIk5hrXgcPa6rpF0_5u2rR87uw0331CX731eUOnvdQ>
+    <xmx:o3BQZwYrshKRB2aXm8VhSqUD-uOx5RX-dbzmGCW6lkflUwNTWBqBN6yV>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Dec 2024 10:09:21 -0500 (EST)
+Message-ID: <217fe49e-d6b2-4bff-86ae-463eb9724995@fastmail.fm>
+Date: Wed, 4 Dec 2024 16:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,109 +100,116 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
- anonymous_thp
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Peter Xu <peterx@redhat.com>, Barry Song <21cnbao@gmail.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
- <e6199ca4-1f87-4ec5-b886-11482b082931@gmail.com>
- <f002188e-8990-4c72-ad84-966518279dce@redhat.com>
-Content-Language: en-US
-From: Wenchao Hao <haowenchao22@gmail.com>
-In-Reply-To: <f002188e-8990-4c72-ad84-966518279dce@redhat.com>
+Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
+ for requests
+To: Brian Geffon <bgeffon@google.com>, Tomasz Figa <tfiga@chromium.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Bernd Schubert <bschubert@ddn.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "josef@toxicpanda.com" <josef@toxicpanda.com>,
+ "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
+ "laoar.shao@gmail.com" <laoar.shao@gmail.com>,
+ "kernel-team@meta.com" <kernel-team@meta.com>
+References: <20241114191332.669127-1-joannelkoong@gmail.com>
+ <20241114191332.669127-3-joannelkoong@gmail.com>
+ <20241128104437.GB10431@google.com>
+ <25e0e716-a4e8-4f72-ad52-29c5d15e1d61@fastmail.fm>
+ <20241128110942.GD10431@google.com>
+ <8c5d292f-b343-435f-862e-a98910b6a150@ddn.com>
+ <20241128115455.GG10431@google.com>
+ <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
+ <ab0c3519-2664-4a23-adfa-d179164e038d@fastmail.fm>
+ <CAJnrk1b3n7z3wfbZzUB_zVi3PTfjbZFbiUTfFMfAu61-t-W7Ug@mail.gmail.com>
+ <CAAFQd5B+CkvZDSa+tZ0_ZpF0fQRC9ryXsGqm2R-ofvVqNnAJ1Q@mail.gmail.com>
+ <CADyq12xSgHVFf4-bxk_9uN5-KJWnCohz1VAZKH4QEKJLJpcUEA@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CADyq12xSgHVFf4-bxk_9uN5-KJWnCohz1VAZKH4QEKJLJpcUEA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2024/12/4 22:37, David Hildenbrand wrote:
-> On 04.12.24 15:30, Wenchao Hao wrote:
->> On 2024/12/3 22:17, David Hildenbrand wrote:
->>> On 03.12.24 14:49, Wenchao Hao wrote:
->>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
->>>> each VMA, but it does not include large pages smaller than PMD size.
+
+
+On 12/4/24 15:51, Brian Geffon wrote:
+> On Wed, Dec 4, 2024 at 9:40 AM Tomasz Figa <tfiga@chromium.org> wrote:
+>>
+>> On Tue, Dec 3, 2024 at 4:29 AM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>>
+>>> On Mon, Dec 2, 2024 at 6:43 AM Bernd Schubert
+>>> <bernd.schubert@fastmail.fm> wrote:
 >>>>
->>>> This patch adds the statistics of anonymous huge pages allocated by
->>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
->>>>
->>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->>>> ---
->>>>    fs/proc/task_mmu.c | 6 ++++++
->>>>    1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>> index 38a5a3e9cba2..b655011627d8 100644
->>>> --- a/fs/proc/task_mmu.c
->>>> +++ b/vim @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
->>>>            if (!folio_test_swapbacked(folio) && !dirty &&
->>>>                !folio_test_dirty(folio))
->>>>                mss->lazyfree += size;
->>>> +
->>>> +        /*
->>>> +         * Count large pages smaller than PMD size to anonymous_thp
->>>> +         */
->>>> +        if (!compound && PageHead(page) && folio_order(folio))
->>>> +            mss->anonymous_thp += folio_size(folio);
->>>>        }
->>>>          if (folio_test_ksm(folio))
->>>
->>>
->>> I think we decided to leave this (and /proc/meminfo) be one of the last
->>> interfaces where this is only concerned with PMD-sized ones:
->>>
->>
->> Could you explain why?
->>
->> When analyzing the impact of mTHP on performance, we need to understand
->> how many pages in the process are actually present as large pages.
->> By comparing this value with the actual memory usage of the process,
->> we can analyze the large page allocation success rate of the process,
->> and further investigate the situation of khugepaged. If the actual
->> proportion of large pages is low, the performance of the process may
->> be affected, which could be directly reflected in the high number of
->> TLB misses and page faults.
->>
->> However, currently, only PMD-sized large pages are being counted,
->> which is insufficient.
+>>>> On 12/2/24 10:45, Tomasz Figa wrote:
+>>>>> Hi everyone,
+>>>>>
+>>>>> On Thu, Nov 28, 2024 at 8:55 PM Sergey Senozhatsky
+>>>>> <senozhatsky@chromium.org> wrote:
+>>>>>>
+>>>>>> Cc-ing Tomasz
+>>>>>>
+>>>>>> On (24/11/28 11:23), Bernd Schubert wrote:
+>>>>>>>> Thanks for the pointers again, Bernd.
+>>>>>>>>
+>>>>>>>>> Miklos had asked for to abort the connection in v4
+>>>>>>>>> https://lore.kernel.org/all/CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACFdgJJ_b8FdHw@mail.gmail.com/raw
+>>>>>>>>
+>>>>>>>> OK, sounds reasonable. I'll try to give the series some testing in the
+>>>>>>>> coming days.
+>>>>>>>>
+>>>>>>>> // I still would probably prefer "seconds" timeout granularity.
+>>>>>>>> // Unless this also has been discussed already and Bernd has a link ;)
+>>>>>>>
+>>>>>>>
+>>>>>>> The issue is that is currently iterating through 256 hash lists +
+>>>>>>> pending + bg.
+>>>>>>>
+>>>>>>> https://lore.kernel.org/all/CAJnrk1b7bfAWWq_pFP=4XH3ddc_9GtAM2mE7EgWnx2Od+UUUjQ@mail.gmail.com/raw
+>>>>>>
+>>>>>> Oh, I see.
+>>>>>>
+>>>>>>> Personally I would prefer a second list to avoid the check spike and latency
+>>>>>>> https://lore.kernel.org/linux-fsdevel/9ba4eaf4-b9f0-483f-90e5-9512aded419e@fastmail.fm/raw
+>>>>>>
+>>>>>> That's good to know.  I like the idea of less CPU usage in general,
+>>>>>> our devices a battery powered so everything counts, to some extent.
+>>>>>>
+>>>>>>> What is your opinion about that? I guess android and chromium have an
+>>>>>>> interest low latencies and avoiding cpu spikes?
+>>>>>>
+>>>>>> Good question.
+>>>>>>
+>>>>>> Can't speak for android, in chromeos we probably will keep it at 1 minute,
+>>>>>> but this is because our DEFAULT_HUNG_TASK_TIMEOUT is larger than that (we
+>>>>>> use default value of 120 sec). There are setups that might use lower
+>>>>>> values, or even re-define default value, e.g.:
+>>>>>>
+>>>>>> arch/arc/configs/axs101_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/arc/configs/axs103_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/arc/configs/axs103_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/arc/configs/hsdk_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/arc/configs/vdk_hs38_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/arc/configs/vdk_hs38_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
+>>>>>> arch/powerpc/configs/mvme5100_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=20
+>>>>>>
+>>>>>> In those cases 1 minute fuse timeout will overshot HUNG_TASK_TIMEOUT
+>>>>>> and then the question is whether HUNG_TASK_PANIC is set.
 > 
-> As Ryan said, we have scripts to analyze that. We did not come to a conclusion yet how to handle smaps stats differently -- and whether we want to at all.
-> 
+> In my opinion this is a good argument for having the hung task timeout
+> and a fuse timeout independent. The hung task timeout is for hung
+> kernel threads, in this situation we're potentially taking too long in
+> userspace but that doesn't necessarily mean the system is hung. I
+> think a loop which does an interruptible wait with a timeout of 1/2
+> the hung task timeout would make sense to ensure the hung task timeout
+> doesn't hit. There might be situations where we want a fuse timeout
+> which is larger than the hung task timeout, perhaps a file system
+> being read over a satellite internet connection?
 
-Hi David,
 
-I replied Ryan about few disadvantages of the scripts. The scripts
-is not helpful for my scenario.
+For a network file system the remote server also might just hang and
+one might want to wait much longer than  1/2 hung task timeout for 
+recovery.
 
->>
->>> Documentation/admin-guide/mm/transhuge.rst:
->>>
->>> The number of PMD-sized anonymous transparent huge pages currently used by the
->>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
->>> To identify what applications are using PMD-sized anonymous transparent huge
->>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
->>> fields for each mapping. (Note that AnonHugePages only applies to traditional
->>> PMD-sized THP for historical reasons and should have been called
->>> AnonHugePmdMapped).
->>>
->>
->> Maybe rename this field, then AnonHugePages contains huge page of mTHP?
-> 
-> It has the potential of breaking existing user space, which is why we didn't look into that yet.
-> 
 
-Got it.
-
-> AnonHugePmdMapped would be a lot cleaner, and could be added independently. It would be required as a first step.
-> 
-
-While, if the meaning of AnonHugePages remains unchanged, simply adding a new field doesn't
-seem to have any practical significance.
-
-Thanks
-
+Thanks,
+Bernd
 
