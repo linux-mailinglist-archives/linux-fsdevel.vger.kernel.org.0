@@ -1,243 +1,288 @@
-Return-Path: <linux-fsdevel+bounces-36471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B347F9E3D04
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A309F9E3D50
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 15:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB4F1638F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 14:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0A8160873
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 14:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F4120A5ED;
-	Wed,  4 Dec 2024 14:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39A820ADDD;
+	Wed,  4 Dec 2024 14:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L0U3yzt/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PrlUmf72"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E020A5D8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 14:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBF920ADC3
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 14:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323406; cv=none; b=DI+aj7YLAi3sC2aS/KA7k9veL2s2EaF3jcS+SdgT1NKAJ1ZemvFMLKfvQuslhYDWLehXKdB3Gg7GE1SiAieogjARaqzD4nx0+Pp/tmdunbF9qZOs7gtgO2aZyfswfgvJRgSMQv+zv/DRf6Z8/sJySq+H0V7zfbdtF4f7vGbX2Cg=
+	t=1733323952; cv=none; b=Q3HIflh9Lc/XfsZv52pHwr9WGjDnIx/eaKFbVSekTglsk74caqU2s+o93jcoREc3dmVsiQX5gUDc8X6h+0M63kXuRL03k8dmILgKy6DbDa85jZD/9STrbz/Vbde5dn2dxcHieHLgeDNb8Kam6/fa3cN4tzNfhgH3TD5UO31T7WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323406; c=relaxed/simple;
-	bh=kvFdArL1ZY74UgL0StTd3arSWzQkhQzPAtiY5apGJKg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ajphMMGxmsAfrYKZmB95O14st1+XEzxyn1opM1lTTPngo2df0TzzRWh/4y2+DDWBI468Q5MHrDLgz3E9//IcdDhHE8VDwP4Bb6ebGqaeJiO54WzS1LagNQsiVJcrQKaykNzlWP+ZUWCGtKJisz4hHj8jRxRAcnG8cCfe8mm0Zho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L0U3yzt/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733323403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS0GUTcXAW8C5l6NDquyV5IGiwNX/D1m1BEkvfj9tDg=;
-	b=L0U3yzt/YJDkB+aS2qUrglgg53uEm+SQRt7ADaODQEAyg3EggsBxL2AuPFfFg2mgQ9ccQ2
-	cm555irM/yCKSBmIEH74dJjS7S6yNubuUBVX1A03THUbGGulL9uaPMQMhOLajbAE4xf9UC
-	v/MDjNcIVP3NuUn8l9ItWUwWHkgzL4g=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-eKNXhUbnNBiYHoyN_JsVJg-1; Wed,
- 04 Dec 2024 09:43:22 -0500
-X-MC-Unique: eKNXhUbnNBiYHoyN_JsVJg-1
-X-Mimecast-MFC-AGG-ID: eKNXhUbnNBiYHoyN_JsVJg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F1311955DA4;
-	Wed,  4 Dec 2024 14:43:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59466195609D;
-	Wed,  4 Dec 2024 14:43:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <67506987.050a0220.17bd51.006f.GAE@google.com>
-References: <67506987.050a0220.17bd51.006f.GAE@google.com>
-To: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, jlayton@kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
+	s=arc-20240116; t=1733323952; c=relaxed/simple;
+	bh=QTXNPwIjFQ8kJ0dyyTbJcq9WG6V2T/qt9MHUJI8Dn1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oc848UOsfX30WuwNRJR2SLPX2ej4TlwcHfTnOj9KSudMbsVN7USMzLzmxepwNIU67fNcGgqD7BZ11E03oxoL/AxdoEy0O7pkrF8EVVeUAzPEGh103ozv2o/ZVdwcFBLi36yI7JVgRhgMD46R9H2OLDC65S7e9EKgThN+xoIZZ1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PrlUmf72; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2154dc36907so152525ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 06:52:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733323950; x=1733928750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xem8jZCC8L+7nU9TYzFYsBjXOPSnRgjkBiWRHx3L9cA=;
+        b=PrlUmf721oqGPElBht8iBCUHncFrnZUG6e34BTmSvBZt3GowmykA7ew+l6UdQIw768
+         Zkujb5669STeYq51qFo7XwvWYYra51Xzn18R56Y98GwJThEBsv3LWtZLKwER5zjvGIa6
+         Gy1FFXUyGxIfxeLTi7vt693Kg8m/hOvvEyZw//UFpz6mGBcjyqb43d3eabS1SjeaZkAl
+         Nfie2YWjLp7iyHHGnKCpNuf5/nXv8A++2HTy/rwlQWnFSqrSsFdsqLe60l4uWlSLhgkW
+         ydQuVnovTr6HtBsTw/x/rAgQyDiJVkINw8yKN6dIFo71TLyMhEDUviSVofFjytjQDpfx
+         AaQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733323950; x=1733928750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xem8jZCC8L+7nU9TYzFYsBjXOPSnRgjkBiWRHx3L9cA=;
+        b=XXPv4U1d+XMdqkNQE1A2cDmQQJ4YVg8l84A5dDCiaWYMSOnVaeCIeI2+KArYZIhcxz
+         iMtzGfWqCIyvJclc/pmCjcScR4hYqsLs3wSrvlIwmqo2Lgz5bQ5uvTp0sUeR+9yw5eoG
+         Fpc1SBs6yqpUW1zwmyawFtLQ2uDKXPw6AWmkVw0jtxMp8AgtxF0tKuxI+bf3wAZGEin9
+         F8EC6UW/dOaUx4YmlDJJ0x/JhaUL30hlf43+YrCKqEbgVGattugjWn7l5K5aIwSvMGpN
+         Tfs0Hri81vkigcdBtKl1hmmF1so+auvIOXXUAS8CH4XIP1gq/VNCw+G6/QcStXyVz1Tw
+         maVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ8nzCVRExcG4hU6fqJw9rjmeC17HZigfSP39TYa4054m1681H5pP+sS8aWp1rwpHB/bdlhRZlojOIFEt1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh4N3QbJBkYq6MGuRl+m6FrwkRpMym/MxWajGlnuEsAPAJ57tK
+	mCuYWkINERFaiujkoyULLv5TkosY5abVcFNImo/Le/b3FQChMGIbmu/LzkbjaYdypBLSgEPwUGf
+	aamcYNt21Tfa4DCGU6QWzVJYB7Bt0vOKbIQUK
+X-Gm-Gg: ASbGncufNaDNXqlEKRnv13TEErFbwtQRWSRmDwAagJTJadol2rwCoFtNTD4OjANRhlq
+	7OOSFwWYBcUei4exyHkyQJsflEbNpSg==
+X-Google-Smtp-Source: AGHT+IGuYDbYOFbt/URo5ueRt2R1arcvzh9Jy44eip/ZIK8luMgQkrLNNnl1suOUXJ0CqVfVIyslvub69BEF9WR64gk=
+X-Received: by 2002:a17:902:850a:b0:215:79b5:aa7e with SMTP id
+ d9443c01a7336-215d9b76154mr2030845ad.13.1733323949904; Wed, 04 Dec 2024
+ 06:52:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1203229.1733323398.1@warthog.procyon.org.uk>
+References: <20241114191332.669127-1-joannelkoong@gmail.com>
+ <20241114191332.669127-3-joannelkoong@gmail.com> <20241128104437.GB10431@google.com>
+ <25e0e716-a4e8-4f72-ad52-29c5d15e1d61@fastmail.fm> <20241128110942.GD10431@google.com>
+ <8c5d292f-b343-435f-862e-a98910b6a150@ddn.com> <20241128115455.GG10431@google.com>
+ <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
+ <ab0c3519-2664-4a23-adfa-d179164e038d@fastmail.fm> <CAJnrk1b3n7z3wfbZzUB_zVi3PTfjbZFbiUTfFMfAu61-t-W7Ug@mail.gmail.com>
+ <CAAFQd5B+CkvZDSa+tZ0_ZpF0fQRC9ryXsGqm2R-ofvVqNnAJ1Q@mail.gmail.com>
+In-Reply-To: <CAAFQd5B+CkvZDSa+tZ0_ZpF0fQRC9ryXsGqm2R-ofvVqNnAJ1Q@mail.gmail.com>
+From: Brian Geffon <bgeffon@google.com>
+Date: Wed, 4 Dec 2024 09:51:53 -0500
+Message-ID: <CADyq12xSgHVFf4-bxk_9uN5-KJWnCohz1VAZKH4QEKJLJpcUEA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
+ for requests
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Bernd Schubert <bschubert@ddn.com>, 
+	"miklos@szeredi.hu" <miklos@szeredi.hu>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>, "laoar.shao@gmail.com" <laoar.shao@gmail.com>, 
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Dec 2024 14:43:18 +0000
-Message-ID: <1203250.1733323398@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-This looks like it's probably a separate bug.
+On Wed, Dec 4, 2024 at 9:40=E2=80=AFAM Tomasz Figa <tfiga@chromium.org> wro=
+te:
+>
+> On Tue, Dec 3, 2024 at 4:29=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+> >
+> > On Mon, Dec 2, 2024 at 6:43=E2=80=AFAM Bernd Schubert
+> > <bernd.schubert@fastmail.fm> wrote:
+> > >
+> > > On 12/2/24 10:45, Tomasz Figa wrote:
+> > > > Hi everyone,
+> > > >
+> > > > On Thu, Nov 28, 2024 at 8:55=E2=80=AFPM Sergey Senozhatsky
+> > > > <senozhatsky@chromium.org> wrote:
+> > > >>
+> > > >> Cc-ing Tomasz
+> > > >>
+> > > >> On (24/11/28 11:23), Bernd Schubert wrote:
+> > > >>>> Thanks for the pointers again, Bernd.
+> > > >>>>
+> > > >>>>> Miklos had asked for to abort the connection in v4
+> > > >>>>> https://lore.kernel.org/all/CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S=
+2JACFdgJJ_b8FdHw@mail.gmail.com/raw
+> > > >>>>
+> > > >>>> OK, sounds reasonable. I'll try to give the series some testing =
+in the
+> > > >>>> coming days.
+> > > >>>>
+> > > >>>> // I still would probably prefer "seconds" timeout granularity.
+> > > >>>> // Unless this also has been discussed already and Bernd has a l=
+ink ;)
+> > > >>>
+> > > >>>
+> > > >>> The issue is that is currently iterating through 256 hash lists +
+> > > >>> pending + bg.
+> > > >>>
+> > > >>> https://lore.kernel.org/all/CAJnrk1b7bfAWWq_pFP=3D4XH3ddc_9GtAM2m=
+E7EgWnx2Od+UUUjQ@mail.gmail.com/raw
+> > > >>
+> > > >> Oh, I see.
+> > > >>
+> > > >>> Personally I would prefer a second list to avoid the check spike =
+and latency
+> > > >>> https://lore.kernel.org/linux-fsdevel/9ba4eaf4-b9f0-483f-90e5-951=
+2aded419e@fastmail.fm/raw
+> > > >>
+> > > >> That's good to know.  I like the idea of less CPU usage in general=
+,
+> > > >> our devices a battery powered so everything counts, to some extent=
+.
+> > > >>
+> > > >>> What is your opinion about that? I guess android and chromium hav=
+e an
+> > > >>> interest low latencies and avoiding cpu spikes?
+> > > >>
+> > > >> Good question.
+> > > >>
+> > > >> Can't speak for android, in chromeos we probably will keep it at 1=
+ minute,
+> > > >> but this is because our DEFAULT_HUNG_TASK_TIMEOUT is larger than t=
+hat (we
+> > > >> use default value of 120 sec). There are setups that might use low=
+er
+> > > >> values, or even re-define default value, e.g.:
+> > > >>
+> > > >> arch/arc/configs/axs101_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
+=3D10
+> > > >> arch/arc/configs/axs103_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
+=3D10
+> > > >> arch/arc/configs/axs103_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIM=
+EOUT=3D10
+> > > >> arch/arc/configs/hsdk_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=
+=3D10
+> > > >> arch/arc/configs/vdk_hs38_defconfig:CONFIG_DEFAULT_HUNG_TASK_TIMEO=
+UT=3D10
+> > > >> arch/arc/configs/vdk_hs38_smp_defconfig:CONFIG_DEFAULT_HUNG_TASK_T=
+IMEOUT=3D10
+> > > >> arch/powerpc/configs/mvme5100_defconfig:CONFIG_DEFAULT_HUNG_TASK_T=
+IMEOUT=3D20
+> > > >>
+> > > >> In those cases 1 minute fuse timeout will overshot HUNG_TASK_TIMEO=
+UT
+> > > >> and then the question is whether HUNG_TASK_PANIC is set.
 
-David
+In my opinion this is a good argument for having the hung task timeout
+and a fuse timeout independent. The hung task timeout is for hung
+kernel threads, in this situation we're potentially taking too long in
+userspace but that doesn't necessarily mean the system is hung. I
+think a loop which does an interruptible wait with a timeout of 1/2
+the hung task timeout would make sense to ensure the hung task timeout
+doesn't hit. There might be situations where we want a fuse timeout
+which is larger than the hung task timeout, perhaps a file system
+being read over a satellite internet connection?
 
-syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com> wrote:
-
-> syzbot has tested the proposed patch but the reproducer is still trigger=
-ing an issue:
-> possible deadlock in __submit_bio
-> =
-
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.13.0-rc1-syzkaller-dirty #0 Not tainted
-> ------------------------------------------------------
-> kswapd0/75 is trying to acquire lock:
-> ffff888034c41438 (&q->q_usage_counter(io)#37){++++}-{0:0}, at: __submit_=
-bio+0x2c6/0x560 block/blk-core.c:629
-> =
-
-> but task is already holding lock:
-> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c=
-:6864 [inline]
-> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 mm/vm=
-scan.c:7246
-> =
-
-> which lock already depends on the new lock.
-> =
-
-> =
-
-> the existing dependency chain (in reverse order) is:
-> =
-
-> -> #1 (fs_reclaim){+.+.}-{0:0}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
->        fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
->        might_alloc include/linux/sched/mm.h:318 [inline]
->        slab_pre_alloc_hook mm/slub.c:4055 [inline]
->        slab_alloc_node mm/slub.c:4133 [inline]
->        __do_kmalloc_node mm/slub.c:4282 [inline]
->        __kmalloc_node_noprof+0xb2/0x4d0 mm/slub.c:4289
->        __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
->        sbitmap_init_node+0x2d4/0x670 lib/sbitmap.c:132
->        scsi_realloc_sdev_budget_map+0x2a7/0x460 drivers/scsi/scsi_scan.c=
-:246
->        scsi_add_lun drivers/scsi/scsi_scan.c:1106 [inline]
->        scsi_probe_and_add_lun+0x3173/0x4bd0 drivers/scsi/scsi_scan.c:128=
-7
->        __scsi_add_device+0x228/0x2f0 drivers/scsi/scsi_scan.c:1622
->        ata_scsi_scan_host+0x236/0x740 drivers/ata/libata-scsi.c:4575
->        async_run_entry_fn+0xa8/0x420 kernel/async.c:129
->        process_one_work kernel/workqueue.c:3229 [inline]
->        process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
->        worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> =
-
-> -> #0 (&q->q_usage_counter(io)#37){++++}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3161 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        bio_queue_enter block/blk.h:75 [inline]
->        blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
->        __submit_bio+0x2c6/0x560 block/blk-core.c:629
->        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
->        submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
->        swap_writepage_bdev_async mm/page_io.c:451 [inline]
->        __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
->        swap_writepage+0x8f4/0x1170 mm/page_io.c:289
->        pageout mm/vmscan.c:689 [inline]
->        shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
->        evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
->        try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
->        shrink_one+0x3b9/0x850 mm/vmscan.c:4834
->        shrink_many mm/vmscan.c:4897 [inline]
->        lru_gen_shrink_node mm/vmscan.c:4975 [inline]
->        shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
->        kswapd_shrink_node mm/vmscan.c:6785 [inline]
->        balance_pgdat mm/vmscan.c:6977 [inline]
->        kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> =
-
-> other info that might help us debug this:
-> =
-
->  Possible unsafe locking scenario:
-> =
-
->        CPU0                    CPU1
->        ----                    ----
->   lock(fs_reclaim);
->                                lock(&q->q_usage_counter(io)#37);
->                                lock(fs_reclaim);
->   rlock(&q->q_usage_counter(io)#37);
-> =
-
->  *** DEADLOCK ***
-> =
-
-> 1 lock held by kswapd0/75:
->  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vms=
-can.c:6864 [inline]
->  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 =
-mm/vmscan.c:7246
-> =
-
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 75 Comm: kswapd0 Not tainted 6.13.0-rc1-syzkaller-dir=
-ty #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1=
-.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
->  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
->  check_prev_add kernel/locking/lockdep.c:3161 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->  __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->  bio_queue_enter block/blk.h:75 [inline]
->  blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
->  __submit_bio+0x2c6/0x560 block/blk-core.c:629
->  __submit_bio_noacct_mq block/blk-core.c:710 [inline]
->  submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
->  swap_writepage_bdev_async mm/page_io.c:451 [inline]
->  __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
->  swap_writepage+0x8f4/0x1170 mm/page_io.c:289
->  pageout mm/vmscan.c:689 [inline]
->  shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
->  evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
->  try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
->  shrink_one+0x3b9/0x850 mm/vmscan.c:4834
->  shrink_many mm/vmscan.c:4897 [inline]
->  lru_gen_shrink_node mm/vmscan.c:4975 [inline]
->  shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
->  kswapd_shrink_node mm/vmscan.c:6785 [inline]
->  balance_pgdat mm/vmscan.c:6977 [inline]
->  kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-
+> > > >>
+> > > >> On the other hand, setups that set much lower timeout than
+> > > >> DEFAULT_HUNG_TASK_TIMEOUT=3D120 will have extra CPU activities reg=
+ardless,
+> > > >> just because watchdogs will run more often.
+> > > >>
+> > > >> Tomasz, any opinions?
+> > > >
+> > > > First of all, thanks everyone for looking into this.
+> >
+> > Hi Sergey and Tomasz,
+> >
+> > Sorry for the late reply - I was out the last couple of days. Thanks
+> > Bernd for weighing in and answering the questions!
+> >
+> > > >
+> > > > How about keeping a list of requests in the FIFO order (in other
+> > > > words: first entry is the first to timeout) and whenever the first
+> > > > entry is being removed from the list (aka the request actually
+> > > > completes), re-arming the timer to the timeout of the next request =
+in
+> > > > the list? This way we don't really have any timer firing unless the=
+re
+> > > > is really a request that timed out.
+> >
+> > I think the issue with this is that we likely would end up wasting
+> > more cpu cycles. For a busy FUSE server, there could be hundreds
+> > (thousands?) of requests that happen within the span of
+> > FUSE_TIMEOUT_TIMER_FREQ seconds.
+> >
+> > While working on the patch, one thing I considered was disarming the
+> > timer in the timeout handler fuse_check_timeout() if no requests are
+> > on the list, in order to accomodate for "quiet periods" (eg if the
+> > FUSE server is inactive for a few minutes or hours) but ultimately
+> > decided against it because of the overhead it'd incur per request (eg
+> > check if the timer is disarmed, would most likely need to grab the
+> > fc->lock as well since timer rearming would need to be synchronized
+> > between background and non-background requests, etc.).
+> >
+> > All in all, imo I don't think having the timer trigger every 60
+> > seconds (what FUSE_TIMEOUT_TIMER_FREQ is set to) is too costly.
+> >
+> > >
+> > > Requests are in FIFO order on the list and only head is checked.
+> > > There are 256 hash lists per fuse device for requests currently
+> > > in user space, though.
+> > >
+> > > >
+> > > > (In fact, we could optimize it even further by opportunistically
+> > > > scheduling a timer slightly later and opportunistically handling ti=
+med
+> > > > out requests when other requests are being completed, but this woul=
+d
+> > > > be optimizing for the slow path, so probably an overkill.)
+> > > >
+> > > > As for the length of the request timeout vs the hung task watchdog
+> > > > timeout, my opinion is that we should make sure that the hung task
+> > > > watchdog doesn't hit in any case, simply because a misbehaving
+> > > > userspace process must not be able to panic the kernel. In the
+> > > > blk-core, the blk_io_schedule() function [1] uses
+> > > > sysctl_hung_task_timeout_secs to determine the maximum length of a
+> > > > single uninterruptible sleep. I suppose we could use the same
+> > > > calculation to obtain our timeout number. What does everyone think?
+> > > >
+> > > > [1] https://elixir.bootlin.com/linux/v6.12.1/source/block/blk-core.=
+c#L1232
+> > >
+> > > I think that is a good idea.
+> >
+> > Btw, just something to note, the fuse request timeout has an upper
+> > margin of error associated with it.
+> >
+> > Copying over from the commit message -
+> >
+> > "Please note that these timeouts are not 100% precise. The request may
+> > take an extra FUSE_TIMEOUT_TIMER_FREQ seconds beyond the requested max
+> > timeout due to how it's internally implemented."
+> >
+> > For example, if a server sets the request timeout config to 10
+> > minutes, the server could be aborted after 11 minutes
+> > (FUSE_TIMEOUT_TIMER_FREQ is set to 60 seconds internally) instead of
+> > 10 minutes.
+> >
+>
+> Let me add +Brian Geffon who also was thinking about the right timeout va=
+lue.
+>
+> >
+> > Thanks,
+> > Joanne
+> > >
+> > >
+> > > Thanks,
+> > > Bernd
 
