@@ -1,166 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-36498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49E49E436D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 19:30:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC0C9E461A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 21:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A38B281597
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 18:30:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6B5B2D8C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 20:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BB31A8F74;
-	Wed,  4 Dec 2024 18:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="WkZpB7lI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264011F1316;
+	Wed,  4 Dec 2024 20:18:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC4F28F4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 18:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5976C1F03D1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 20:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733337042; cv=none; b=l+WZC0ZABchfrJBMB66bdY2sK+zQrVV5QkW3zp9YXyY6B+/I+y7M13xuYIB9JDvIRV/06DxptIYnIcT9CRkDzGowMADrjaGPembJ1d2vG8ub8lILaGggSoK3nA4zgfKa/4FxYob2eB2mukifxRp6vL+TzBplJnzRJN/qVQIQEhQ=
+	t=1733343485; cv=none; b=BLk+hENuciVuR03+sjDxjZ3aeoylApKuiLkPdu01HoDZCLf3TrborGFdd4k9krbb8l3vrA5reucL5fyPEuIkyIZRwtOYZrSs2Kk1ltsDf8uq6HlSaHHHyZCVrEOHjT10ReZZIALa4JrvRCw/Ge50uY3rqMqb3/yPRWEagUbd1s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733337042; c=relaxed/simple;
-	bh=nojpG4c1beIpZhf4bvivZiXALWDMVCjD1bi2Z20bOYM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=msbMLkXrgCT0t2A71FM+T12z+rS7cHo/B9J2rWvBhctFsaP5h1xd1ZBVm68hRYB7gGKNFUvQN33thoMGelc3sTfdWdnnF21VjnL0xEI7QbjBI3mem65BVIwzTwksihdM5thabgljHJyDVVvYt7TjuP4/OaORuwJ9rpVTgckHzAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=WkZpB7lI; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a736518eso1300385e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 10:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1733337038; x=1733941838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+c2R/rtBiTMeXkad/LAKBxDDqxrSG652bI00BQUuuZU=;
-        b=WkZpB7lImq5KtcFpf9Oz/AxgYnOmvbumGosGyOQ4/chXg52BmIc4nI4Q25UrDDK0bX
-         rBhz/vJq7zJbmlcJHJ96aCspntPIhxnwRXmq6E5LM1mIiq4DkS55GTSLqbPniywOPwB2
-         QCIzYo3YbSXg6mDC0xrEGVlSG25Xri+k7SO8jWAZUoB9st47DRGybP8JhO3jhcx9Vgpx
-         o1a2z0/Vh51I7q1Z1UK5LlIdEPr+sOluqwztHPID4RAfTirFeGb5AwCc47WT+CRNLm2y
-         a3EtJoBURv2teyFf0YtzSNdSoknLa9p4etPJuiYCVpsWwad11Ga6poQV+gwauPDvn+sd
-         vGPQ==
+	s=arc-20240116; t=1733343485; c=relaxed/simple;
+	bh=NNeyfjKy8ZGP7PYgviKBfqCS/QI22FJoxQGC4XnQdu0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m9D9rCzQ1NH3Q4uuYGK6PlujMoI8arXbznqp2W2aXdzSKgnso6XuG2Lou0CtZLYdrmLWqiu/V2RH7GKASpuK9zQvK75Db+QWeXkUA1CvG+Xs8KzJlWb9gCqFssUynDwabAo5Ja9FJ9Iz/TKt94bGdcBzUWEvGVgH0y4Xv9HuLHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so973275ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 12:18:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733337038; x=1733941838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+c2R/rtBiTMeXkad/LAKBxDDqxrSG652bI00BQUuuZU=;
-        b=lkWArIeMcoTWi4KnfXsrYULWOy/C0XBxWGkFHmAWhdTDzaHlmppW6HCYsZEW0381nd
-         qHTGE/vM4n/Tk7OMU3DnWh9x+0zccYFCegMP3Tc/aPvwFDLojBKert4mj2mGR+Qwaqmh
-         TqLKmZmuq8bCpF0/dD/WDvgr/oT3S0GmxwCIYHbTZp3Y8oq4H5ZSuzwZLyih1wPAP1Bo
-         +wh/fP7b+ssniRhi0MXT0/fcuGFSPwow6B0ZBAg6GdahLkGelIQA4HP2zJJWCkpDKH1S
-         UvFsdTFS/+BuG/Lvs68uZs+hnJCWMIFcAHSsnPARrUraNqNEo1pEmvzD2/u8+KoirkDI
-         NCsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3fUWdsQD5fViXbIa3BzJwqVopTcckomU/K/VEG/rB7n/9bXWGT7HYp8zCJ7Myr7hqCLCo5q/GuNqrFwhO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfpJUVhgnmyVDMM2jW9hTi7p/vPW8vYxZ7J6j3JVSC+3gNyIXn
-	O73WGQIg7gS9TxgX4+vTj0KYdADHDqu0KA5Nj7imdsKw7BVSe3x5MJXra8hi37Y=
-X-Gm-Gg: ASbGncu+siAyS/xxyIIbg6RpAWKvcI5YjrQ7JK+zKuMdqDiw+cuHsZHjRVrVaQr1jh8
-	oGMoaC+tdzfZbCd7DYBnEhtbUsNXQXZIq4TGCyu5zJTwymT5pDad3wKh9TNWimeMiYHMciFA8hN
-	/lYCjRka5f+akNWuGp/lqglsY0YJbXaMhYMH2c4tJYRvfkLOyWAIiCw2IBzdcS+mtHoMptDZZtl
-	8O6AqBGy985/hSvJZnGK0XM9rDUlUmJWGgoFgH0UJo=
-X-Google-Smtp-Source: AGHT+IFu12LYNC/Tx/9klPxHSPQBN9yUlRrYTOt5CkHJCzoKsicqwGPJeTwNeO94pltwtaAxw7Samw==
-X-Received: by 2002:a05:600c:4511:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-434d0a284f2mr58025425e9.28.1733337038406;
-        Wed, 04 Dec 2024 10:30:38 -0800 (PST)
-Received: from DW927H4LGF.lan ([2a09:bac5:37e5:ebe::178:1c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527e8besm32199055e9.13.2024.12.04.10.30.37
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 04 Dec 2024 10:30:38 -0800 (PST)
-From: Oxana Kharitonova <oxana@cloudflare.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	oxana@cloudflare.com,
-	kernel-team@cloudflare.com
-Subject: [PATCH] hung_task: add task->flags, blocked by coredump to log
-Date: Wed,  4 Dec 2024 18:29:53 +0000
-Message-Id: <20241204182953.10854-1-oxana@cloudflare.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1733343483; x=1733948283;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GvYz/F16WGhbDx4cNvT6lI6TdEMFQnM9OQcYijyTMAI=;
+        b=vF0/0eHzVrgSgrFe2Hgs5HaxpF/pIIZ8H3Cdi1okslpKbNKQf4uhg3/thEsBU2xoZR
+         DvKghcm/6wTN7kYaqYTGqByycfI3bNj8rmhGL2SWP07XWntlJI+sqvgn6mf9jRvbYXlX
+         nb53gzSteniIDyVBDrmxvSEu3FRXLwM1ITlL7QbsjMrQSg8/2xi8mNeZZHJz7lBZioWa
+         ZsoBI3VMTPzI6BEidKLLNRQ0++dt+qz+C2gks5OcKGbyfIzinX6+YgnPeXifnN4g/jo4
+         vq+4bP6xNGeSPT1U2Iy6ELADnXMck1ZsDc3AR4MmZXbCvbGAxQ1MsQu03dERdlf9gn25
+         Pr4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhKFUBkxhkcin+xW93LVI49NUVXqzcw+DJjBfQ4HeXXd0o6NjcYLdBiJ1JTPY0Q3Ptdb0j2WBbKQD5p21b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx8FeHRg+faJxSByj8X6M6kpmp5vbTgiO4IlxcvLCNB28pMCXg
+	o9hyySyLe54Muj8CFKxpReDvY1YhrYKEXGUTCejylW3Sx47gIlMpUorvi/0m6nzCsFPyo9MURL3
+	V/FJxVGlJ7ULzN/LYWEoxv7VwoflgNcdpISohVotREMYqIe4ZXTYGqPs=
+X-Google-Smtp-Source: AGHT+IEhH0cr5PTn2QWjKnJaTq5+Nve/ysWwfEdZrM2AyUkDS34xX+n3rmiLxI7NpJNwWzFqTBe2/YDMHcnDgWJGHKQ6KXm6TTL+
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b2d:b0:3a7:c5cb:8bf3 with SMTP id
+ e9e14a558f8ab-3a7f9a3ba65mr102881145ab.9.1733343483592; Wed, 04 Dec 2024
+ 12:18:03 -0800 (PST)
+Date: Wed, 04 Dec 2024 12:18:03 -0800
+In-Reply-To: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6750b8fb.050a0220.17bd51.0074.GAE@google.com>
+Subject: Re: [syzbot] [mm] KASAN: null-ptr-deref Write in sys_io_uring_register
+From: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, tamird@gmail.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-For the processes which are terminated abnormally the kernel can provide 
-a coredump if enabled. When the coredump is performed, the process and 
-all its threads are put into the D state 
-(TASK_UNINTERRUPTIBLE | TASK_FREEZABLE). 
+syzbot has bisected this issue to:
 
-On the other hand, we have kernel thread khungtaskd which monitors the 
-processes in the D state. If the task stuck in the D state more than 
-kernel.hung_task_timeout_secs, the hung_task alert appears in the kernel 
-log.
+commit d2e88c71bdb07f1e5ccffbcc80d747ccd6144b75
+Author: Tamir Duberstein <tamird@gmail.com>
+Date:   Tue Nov 12 19:25:37 2024 +0000
 
-The higher memory usage of a process, the longer it takes to create 
-coredump, the longer tasks are in the D state. We have hung_task alerts 
-for the processes with memory usage above 10Gb. Although, our 
-kernel.hung_task_timeout_secs is 10 sec when the default is 120 sec.
+    xarray: extract helper from __xa_{insert,cmpxchg}
 
-Adding additional information to the log that the task is blocked by 
-coredump will help with monitoring. Another approach might be to 
-completely filter out alerts for such tasks, but in that case we would 
-lose transparency about what is putting pressure on some system 
-resources, e.g. we saw an increase in I/O when coredump occurs due its 
-writing to disk.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17435fc0580000
+start commit:   c245a7a79602 Add linux-next specific files for 20241203
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14c35fc0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c35fc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
 
-Additionally, it would be helpful to have task_struct->flags in the log 
-from the function sched_show_task(). Currently it prints 
-task_struct->thread_info->flags, this seems misleading as the line 
-starts with "task:xxxx".
+Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
+Fixes: d2e88c71bdb0 ("xarray: extract helper from __xa_{insert,cmpxchg}")
 
-Signed-off-by: Oxana Kharitonova <oxana@cloudflare.com>
----
- kernel/hung_task.c  | 2 ++
- kernel/sched/core.c | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index c18717189..953169893 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -147,6 +147,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-                        print_tainted(), init_utsname()->release,
-                        (int)strcspn(init_utsname()->version, " "),
-                        init_utsname()->version);
-+               if (t->flags & PF_POSTCOREDUMP)
-+                       pr_err("      Blocked by coredump.\n");
-                pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
-                        " disables this message.\n");
-                sched_show_task(t);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a..7f3dd4528 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7701,9 +7701,9 @@ void sched_show_task(struct task_struct *p)
-        if (pid_alive(p))
-                ppid = task_pid_nr(rcu_dereference(p->real_parent));
-        rcu_read_unlock();
--       pr_cont(" stack:%-5lu pid:%-5d tgid:%-5d ppid:%-6d flags:0x%08lx\n",
-+       pr_cont(" stack:%-5lu pid:%-5d tgid:%-5d ppid:%-6d task_flags:0x%08lx flags:0x%08lx\n",
-                free, task_pid_nr(p), task_tgid_nr(p),
--               ppid, read_task_thread_flags(p));
-+               ppid, p->flags, read_task_thread_flags(p));
-
-        print_worker_info(KERN_INFO, p);
-        print_stop_info(KERN_INFO, p);
--- 
-2.39.5
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
