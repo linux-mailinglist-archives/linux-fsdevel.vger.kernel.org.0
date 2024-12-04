@@ -1,141 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-36494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154D99E41CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 18:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F302F9E4302
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 19:10:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6DD1631C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 17:36:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0581167034
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 18:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6733A1A8F8E;
-	Wed,  4 Dec 2024 17:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E722391A0;
+	Wed,  4 Dec 2024 18:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AbcuQFsx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UQ88MfQ0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AbcuQFsx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UQ88MfQ0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF621A8F85;
-	Wed,  4 Dec 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCBA239180
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2024 18:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332080; cv=none; b=aw5AxmBBX5C+o4RrP/e9jcHEViyyK4sXhBWzXU7DYIl2Azw+WnpwaFjGRZ+67UnV6GPSlYJY+QHIWj+5xyF0Sr8AsyjQMyUw/moAdwcUW3lBx8zctZETTkp8OWVMHp+IDtJFwQj3XQ1rc5jePZriDAbNmB9gzfYIDlZrvEsUm8Q=
+	t=1733335832; cv=none; b=MnhWRAO0B1nl7cic3GB3BYkrvKEaJ6MhLam3//te5bFXr3IvIeAETXs3DGA+F8AX4AUPBBWeb5gZrBfz1hdFMn6PdSVzMbMUbkLJI5i7r9EWog3Mxwh1yea1dCRjHhH35YjWnN6LoiYP2EEzuzCNsH9n9R+cWpM+dJ2Vhdc6GK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332080; c=relaxed/simple;
-	bh=9MTY6TxMvbh9KZNhLYcEFlackh7HBg5HuBnSWkvOkuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UBqO7Ckyyc4WQJRMvkf6iE6t+jPNH80u7RBpeGJpPLt3ENGOngWUKym9C9xLBk2Wxnw560xJyxY/lZA6gQVQYLew6Q0gI3SW0qPMhOjBefbyWPzXfjdVQCgmoxggHjKhQGCrG++EDw8mH7refYA4YKg23t3IBrGvFO18ir0Fa74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E2931063;
-	Wed,  4 Dec 2024 09:08:25 -0800 (PST)
-Received: from [10.1.31.170] (XHFQ2J9959.cambridge.arm.com [10.1.31.170])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432F93F71E;
-	Wed,  4 Dec 2024 09:07:55 -0800 (PST)
-Message-ID: <b4205df7-e15f-4daf-bf12-720c73e15fa2@arm.com>
-Date: Wed, 4 Dec 2024 17:07:53 +0000
+	s=arc-20240116; t=1733335832; c=relaxed/simple;
+	bh=qsnbtMcDW53WttW8Db8GDkWi6xWRN01H+NvvxSvIAc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fw10nVdnTTFlKhtIJVmiAhkdwP4vgUKRtTQ7/lxgsMmACe6ERx2RnT87JOuwZS5PqOuxEWk9q2qqbtpRSYcKjSIdhbhTajw/G8laN6MukB1nanCEIB1XKDOfQzZKpETNgUPLC1ZNtE2NBAMUHv0W1X5jNollXEylT5+EoZajFvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AbcuQFsx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UQ88MfQ0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AbcuQFsx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UQ88MfQ0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 20DA221119;
+	Wed,  4 Dec 2024 18:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733335829; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=I0pEilZzNMorHBT6XrcsVyt4tybUWY1SpMpNu4fE6ak=;
+	b=AbcuQFsx/kDN0u6QDLh4kNud4ZZfdEJ0vcKmeQVC78ZFQ4RThImJCthb0nnQ0pRkFtnSpl
+	MODLDAhUodyaNMA+7yZQn4rKFW2TV0ErGChNnJ9f1zvx7XAGh41A5ocyWtw2G9V2rkUCxG
+	8L5ons8myTUm9fQ8kCR/xjoeI/fZlbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733335829;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=I0pEilZzNMorHBT6XrcsVyt4tybUWY1SpMpNu4fE6ak=;
+	b=UQ88MfQ0D3o69p7Bvl5Z/Abcn3SIPrOLjH1QU3/13hkNlW1gWKFOsKhf0BjWHP9IWkJfMR
+	wYqEHN5UqxO3jQDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AbcuQFsx;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UQ88MfQ0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733335829; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=I0pEilZzNMorHBT6XrcsVyt4tybUWY1SpMpNu4fE6ak=;
+	b=AbcuQFsx/kDN0u6QDLh4kNud4ZZfdEJ0vcKmeQVC78ZFQ4RThImJCthb0nnQ0pRkFtnSpl
+	MODLDAhUodyaNMA+7yZQn4rKFW2TV0ErGChNnJ9f1zvx7XAGh41A5ocyWtw2G9V2rkUCxG
+	8L5ons8myTUm9fQ8kCR/xjoeI/fZlbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733335829;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=I0pEilZzNMorHBT6XrcsVyt4tybUWY1SpMpNu4fE6ak=;
+	b=UQ88MfQ0D3o69p7Bvl5Z/Abcn3SIPrOLjH1QU3/13hkNlW1gWKFOsKhf0BjWHP9IWkJfMR
+	wYqEHN5UqxO3jQDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 12EFE139C2;
+	Wed,  4 Dec 2024 18:10:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mbM/BBWbUGcdJAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 18:10:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 96A58A08F2; Wed,  4 Dec 2024 19:10:20 +0100 (CET)
+From: Jan Kara <jack@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: <linux-mm@kvack.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	<linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/2] readahead: Reintroduce fix for improper RA window sizing
+Date: Wed,  4 Dec 2024 19:10:14 +0100
+Message-Id: <20241204181016.15273-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
- anonymous_thp
-Content-Language: en-GB
-To: Wenchao Hao <haowenchao22@gmail.com>, David Hildenbrand
- <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
- Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- Dev Jain <dev.jain@arm.com>
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
- <e6199ca4-1f87-4ec5-b886-11482b082931@gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <e6199ca4-1f87-4ec5-b886-11482b082931@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=796; i=jack@suse.cz; h=from:subject; bh=qsnbtMcDW53WttW8Db8GDkWi6xWRN01H+NvvxSvIAc8=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBnUJrxh2WR4y5zp2dErfiVofTkRukMMdLyJLw+giQf JCfXffWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZ1Ca8QAKCRCcnaoHP2RA2bIEB/ 9cEV1Qh1CCAv5Jr8n1aWt6bYv4755A+Rkxo2GNYA1P4lpLocFZ0aNlp0LYMODOTzU13QpIBXU/ch++ 0EY2Ex+NBxHJlDzHLY327/lGa8yrhDqxyqrOxiNaT9eY/595mb9tZSeSjmoVd/JvueBxRQGLbyBc3j 1Wm4sHIW4wBVKBbLQx/Xel/GU2hgW3yTUugXiGQCK51Je0mF0VFmHZa3LZBomC8+seutGtclRpgaO7 lZQIdCOQTX35hbwY5yeSRB9RkIXF6cVzrqEUHk7eZ64ZsQIEXeXD+leNUZUiH06gNy/rXkAmtj8TGY WP2cdGbhWleGMnxctswM9/ciNJpF6y
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 20DA221119
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-+ Dev Jain
+Hello,
 
-On 04/12/2024 14:30, Wenchao Hao wrote:
-> On 2024/12/3 22:17, David Hildenbrand wrote:
->> On 03.12.24 14:49, Wenchao Hao wrote:
->>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
->>> each VMA, but it does not include large pages smaller than PMD size.
->>>
->>> This patch adds the statistics of anonymous huge pages allocated by
->>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
->>>
->>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->>> ---
->>>   fs/proc/task_mmu.c | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>> index 38a5a3e9cba2..b655011627d8 100644
->>> --- a/fs/proc/task_mmu.c
->>> +++ b/fs/proc/task_mmu.c
->>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
->>>           if (!folio_test_swapbacked(folio) && !dirty &&
->>>               !folio_test_dirty(folio))
->>>               mss->lazyfree += size;
->>> +
->>> +        /*
->>> +         * Count large pages smaller than PMD size to anonymous_thp
->>> +         */
->>> +        if (!compound && PageHead(page) && folio_order(folio))
->>> +            mss->anonymous_thp += folio_size(folio);
->>>       }
->>>         if (folio_test_ksm(folio))
->>
->>
->> I think we decided to leave this (and /proc/meminfo) be one of the last
->> interfaces where this is only concerned with PMD-sized ones:
->>
-> 
-> Could you explain why?
-> 
-> When analyzing the impact of mTHP on performance, we need to understand
-> how many pages in the process are actually present as large pages.
-> By comparing this value with the actual memory usage of the process,
-> we can analyze the large page allocation success rate of the process,
-> and further investigate the situation of khugepaged. If the actual
+this small patch series reintroduces a fix of readahead window confusion (and
+thus read throughput reduction) when page_cache_ra_order() ends up failing due
+to folios already present in the page cache. After thinking about this for
+a while I have ended up with a dumb fix that just rechecks if we have something
+to read before calling do_page_cache_ra(). This fixes the problem reported in
+[1]. I still think it doesn't make much sense to update readahead window size
+in read_pages() so patch 1 removes that but the real fix in patch 2 does not
+depend on it.
 
-Note that khugepaged does not yet support collapse to mTHP sizes. Dev Jain
-(CCed) is working on an implementation for that now. If you are planning to look
-at this area, you might want to chat first.
+Patches are based on top of my revert that's in MM tree as of today but I
+expect it lands in Linus' tree very soon.
 
-> proportion of large pages is low, the performance of the process may
-> be affected, which could be directly reflected in the high number of
-> TLB misses and page faults.
-> 
-> However, currently, only PMD-sized large pages are being counted, 
-> which is insufficient.
-> 
->> Documentation/admin-guide/mm/transhuge.rst:
->>
->> The number of PMD-sized anonymous transparent huge pages currently used by the
->> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
->> To identify what applications are using PMD-sized anonymous transparent huge
->> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
->> fields for each mapping. (Note that AnonHugePages only applies to traditional
->> PMD-sized THP for historical reasons and should have been called
->> AnonHugePmdMapped).
->>
-> 
-> Maybe rename this field, then AnonHugePages contains huge page of mTHP?
-> 
-> Thanks,
-> wenchao
-> 
->>
->>
-> 
+								Honza
 
+[1] https://lore.kernel.org/all/49648605-d800-4859-be49-624bbe60519d@gmail.com
 
