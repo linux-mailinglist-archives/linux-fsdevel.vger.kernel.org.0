@@ -1,95 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-36577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFA29E60E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 23:52:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC569E60E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 23:53:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0EC2849C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 22:52:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFCEA1678A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 22:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BD91CDFC1;
-	Thu,  5 Dec 2024 22:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529091CD21C;
+	Thu,  5 Dec 2024 22:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBEA6llR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfQoiVRT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2741C3C15;
-	Thu,  5 Dec 2024 22:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D86F1E522
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 22:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733439144; cv=none; b=SO6xfKFgFCBd/da/KzbFS7MJJePQOE33MEFAqe4Dozdp3D8KaaPKmnXPRJW/x6eBuv6ZYI9YYyOO2bApymh8FyAknk5NGhuv9GWo2wq+Q7WWnAAyutQy4H7bKmrHDRHPaJbLm1wZaU7f7IhuNGV1tqAMiHjEagoI9QJB6noCPRk=
+	t=1733439218; cv=none; b=W1e4AYA0dd4J+Iu2z1QAjt8TVPPevz/Fll2BNiosNk6KnzFRY0EKeXnrmlIvwBbP4nxpPrbCUDdblAWesiEKI7KOLlNL0E4APxB/bXj+Ol+Pvoe8u196Ds3XpUr4kqSQ9R2K50w6i01YCXGJyT4md5Kh42UYNHa+4S2j32qjaIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733439144; c=relaxed/simple;
-	bh=kp+HkUg4Alkp2qK1e7PK2s7s1oCpo8kcFE7HeVQMBnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXDLSezs9oGeqkhkJBQwFD5SERuyR/RbofYxR4ZTpK2w6gmeY/o5y9rRB33RJtHMddercwkMbWLzf7QdUS0/Ro6uZhtGVySD4x2q115840+nz8SsC//a12GLCVbbBf5bbySsK/GhjzNXnfexjwcRVzTyblCT7uyTWU3vBN1Fkng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBEA6llR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D53C4CED1;
-	Thu,  5 Dec 2024 22:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733439144;
-	bh=kp+HkUg4Alkp2qK1e7PK2s7s1oCpo8kcFE7HeVQMBnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MBEA6llROBng98tD+yowL70u10OoQ/zqb725FOk31UwBzkE6H3Ut03gcmZEwZOHVW
-	 Wfvv9fXZJCI+j0rbgN5ZO1IoZCt4LFp9LxbHr8wULnKAjfjauxx0pSoE2zQCKKo2Dl
-	 xnYPTo0QYuxCO8FQrEtQ2/lgGtQvDzuiwLUzskcxpKqL94oru2mIaKYH4eMbHBiMq8
-	 dKl+cPb8wpLsngsV0Th3m8nHEaWY8V7Z7NgBOx+APoPD8xxwFemheoe5u993ShSzSt
-	 moAxlTXI0VxeS1dMOhWoLw/uYsAPBMBPOqSQCn4JKPqoAvilYE4N1Aq4hXJTM2HpWx
-	 yNVElaaQVA0Cg==
-Date: Thu, 5 Dec 2024 14:52:22 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: patches@lists.linux.dev, fstests@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com
-Subject: Re: [PATCH] common/config: use modprobe -w when supported
-Message-ID: <Z1IuphUjdnnRUWCg@bombadil.infradead.org>
-References: <20241205002624.3420504-1-mcgrof@kernel.org>
- <0272e083-8915-407a-9d7f-0c1a253c32d7@redhat.com>
+	s=arc-20240116; t=1733439218; c=relaxed/simple;
+	bh=0YsVcyeGS2G4nIlCLlFgYnnhlzUV5F4RipAMwi+Jgow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NOa0+ACubJB86rjv/DL3of+2zBut3WQ728lO0Tdl1IHSvtxUhjBU5j6SWJIuj9EmLD1vaZAcF+KW5uTTzLMauTrfcHq+HFjn4b/qL3snWAUCWRqo2NEGhDYdzqhssers2asqWRxAZBWYxp/uQLzhojAPwyoDeD28zRgCkZLcKLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfQoiVRT; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4668d12b629so12722971cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 14:53:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733439216; x=1734044016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ae46hA0p8Cg4tuqeTx/mDvCXY17DCkqznqxSaLgOWNI=;
+        b=jfQoiVRTg0bM7F4n1rKMDjPWqaI9XZzlecH9oe82fGeCeSxjUUeu4jg7twxTZvMr64
+         RysdSrqHunhAj70QRGk+t/Aegc1wuC/gb4zckPgOJ1o1bUdBuLco9jcPrgohpWbRI/Gc
+         k/LG/h5FHTKdTEuk3Sc9IKTFL7O35MBpsXKtQUTiXcOEwQVDAmmceG0DsSC4F3UqeFRt
+         xCAGX3xxTk7hyN8z375EHC7RM9ddZFUqWEQABtTuwiCd9z5kz+zgkq068znRBGZdT5GT
+         /ZhpK2KPHyurcHdLfrO39+M/JcBqYX4/AxLAl5CfWnRBh0+MgOqd7u8hiYE/3mnhSUQO
+         2M9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733439216; x=1734044016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ae46hA0p8Cg4tuqeTx/mDvCXY17DCkqznqxSaLgOWNI=;
+        b=EpsOt34lM6+NWFmdQDUQ3YkB9tpQL9jzXfpwRJPzUuquBRU/X3Pck4kVxbGGoyNH4n
+         n6JImS0ykX0Txk24rNVSfuOUsbN3xssj6WCyyicbKlx+JdiYVUEG4gxh8TBaXY6LPmlX
+         LHPveX9DIdS8UmvJMkzj4ooRmiQ/5m+dV/BEiKn4EbbQxONXY6KtYJMrtkffi2WQrs2E
+         v4ilFdTQPs2c4k6mwGzQZa9LS7/PcaoE09B2vxzXiZVo4iyl4nLyAiRDQC3xUCizaq5E
+         nM0fzPwC0UxTdGtBeRXe0U++ev07uiRY8nlZiSQIx/w72cAp2CJu9c+E2Uf6RCC3wwme
+         ppRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCQlLlbXTGXyv41GeiBGjKQLD30ebG8i37W8i4HC+CSRtGyjCtjuuqoyAR6cnkaSSPw+qW/3thnSpSiOA7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Txfo6Kd0lE0Ewj30CG+jnE82SrstnkRNecUL7gI4zX808tmZ
+	FnM+jZpgc/NiedWnAGeYKOPceqru4TydPoZ8ylTw2Hm9CV/KLpsMe4+//sqKtuC4uTTd6F1kMTN
+	7Qn95YPA5AnKGeJdYZTTEC2l03bU=
+X-Gm-Gg: ASbGncuH1Xy83VlUIhd7phjdYoxo/ZJBXd8MQlVfEETpqtBX/FUVf5m9eCH24OkjEkw
+	PPOGbOn8kOtG8txCQ1y77cHLtL6MNzDOiRp/lpoK4rlYzNvY=
+X-Google-Smtp-Source: AGHT+IHolJjQISVOSEyrbnKT8sQrwmKtD8UvJAQmo1YzsWBQwgdfnCnbl46XgcXaUViqbcXKJA+4ycaXSq7u4KZWiLM=
+X-Received: by 2002:a05:622a:199b:b0:466:a61f:9ead with SMTP id
+ d75a77b69052e-46734f7d305mr16948021cf.36.1733439216038; Thu, 05 Dec 2024
+ 14:53:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0272e083-8915-407a-9d7f-0c1a253c32d7@redhat.com>
+References: <20241204164316.219105-1-etmartin4313@gmail.com>
+ <15ff89fd-f1b1-4dc2-9837-467de7ee2ba4@linux.alibaba.com> <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
+In-Reply-To: <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 5 Dec 2024 14:53:25 -0800
+Message-ID: <CAJnrk1YHOEBPZYzaMPQi4h6hPzMmK0w8beBvuOGbamwebYnKmA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Prevent hung task warning if FUSE server gets stuck
+To: Etienne <etmartin4313@gmail.com>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
+	miklos@szeredi.hu, etmartin@cisco.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2024 at 10:35:45PM -0600, Eric Sandeen wrote:
-> but that probably has more to do with the test not realizing
-> /before it starts/ that the module cannot be removed and it
-> should not even try.
+On Thu, Dec 5, 2024 at 9:10=E2=80=AFAM Etienne <etmartin4313@gmail.com> wro=
+te:
+>
+> On Wed, Dec 4, 2024 at 8:51=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.=
+com> wrote:
+> >
+> >
+> >
+> > On 12/5/24 12:43 AM, etmartin4313@gmail.com wrote:
+> > > From: Etienne Martineau <etmartin4313@gmail.com>
+> > >
+> > > If hung task checking is enabled and FUSE server stops responding for=
+ a
+> > > long period of time, the hung task timer may fire towards the FUSE cl=
+ients
+> > > and trigger stack dumps that unnecessarily alarm the user.
+> >
+> > Isn't that expected that users shall be notified that there's something
+> > wrong with the FUSE service (because of either buggy implementation or
+> > malicious purpose)?  Or is it expected that the normal latency of
+> > handling a FUSE request is more than 30 seconds?
+>
+> In one way you're right because seeing those stack dumps tells you
+> right away that something is wrong with a FUSE service.
+> Having said that, with many FUSE services running, those stack dumps
+> are not helpful at pointing out which of the FUSE services is having
+> issues.
+>
+> Maybe we should instead have proper debug in place to dump the FUSE
+> connection so that user can abort via
+> /sys/fs/fuse/connections/'nn'/abort
+> Something like "pr_warn("Fuse connection %u not responding\n", fc->dev);"=
+ maybe?
 
-Right.
+Having some identifying information about which connection is
+unresponsive seems useful, but I don't see a straightforward way of
+implementing this without adding additional per-request overhead.
 
-> Darrick fixed that with:
-> 
-> [PATCH 2/2] xfs/43[4-6]: implement impatient module reloading
+>
+> Also, now that you are pointing out a malicious implementation, I
+> realized that on a system with 'hung_task_panic' set, a non-privileged
+> user can easily trip the hung task timer and force a panic.
+>
+> I just tried the following sequence using FUSE sshfs and without this
+> patch my system went down.
+>
+>  sudo bash -c 'echo 30 > /proc/sys/kernel/hung_task_timeout_secs'
+>  sudo bash -c 'echo 1 > /proc/sys/kernel/hung_task_panic'
+>  sshfs -o allow_other,default_permissions you@localhost:/home/you/test ./=
+mnt
+>  kill -STOP `pidof /usr/lib/openssh/sftp-server`
+>  ls ./mnt/
+>  ^C
 
-Looks good to me.
+I'm not sure if this addresses your particular use case, but there's a
+patch upstream that adds request timeouts
+https://lore.kernel.org/linux-fsdevel/20241114191332.669127-1-joannelkoong@=
+gmail.com/
 
-> but it's starting to feel like a bit of a complex house of cards
-> by now. We might need a more robust framework for determining whether
-> a module is removable /at all/ before we decide to wait patiently
-> for a thing that cannot ever happen?
+This can be set globally via sysctls (eg
+"/proc/sys/fs/fuse/max_request_timeout") or on a per-server basis. If
+the timeout elapses and the request has not been fulfilled (eg
+malicious or buggy fuse server), the kernel will abort the connection
+automatically.
 
-I think the above is a good example of knowing userspace and knowing
-that userspace may be doing something else and we're ok to fail.
-Essentially, module removal is non-deterministic due to how finicky
-and easy it is to bump the refcnt for arbitrary reasons which are
-subsystem specific. The URLs in the commit log I added provide good
-examples of this. It is up to each subsystem to ensure a proper
-quiesce makes sense to ensure userspace won't do something stupid
-later.
 
-If one can control the test environment to quiesce first, then it
-makes sense to patiently remove the module. Otherwise the optional
-impatient removal makes sense.
+Thanks,
+Joanne
 
-  Luis
+>
+> thanks,
+> Etienne
+>
 
