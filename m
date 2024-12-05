@@ -1,250 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-36573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCE49E5FDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 22:15:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE3F9E5FE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 22:17:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE603164CEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 21:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C425F284828
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 21:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACAE1CB337;
-	Thu,  5 Dec 2024 21:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E61C1F02;
+	Thu,  5 Dec 2024 21:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RGSODj+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwEqELve"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9CE1B87C9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 21:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE33B192D69;
+	Thu,  5 Dec 2024 21:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733433312; cv=none; b=mC9OuagK5DOjeud3N/2lqcCvaLiRt7HimC2GTCTQV5irPdH1mzsi67zzfjhYr+UNV4963ksiQnTsTRyHf9WMWHlgKOZycYkU0mkEiuDK2Wqm4K0MsCwXCEJNC0JuOf7BJjeZB8xOr0yPoD/siCQUC19P8ZQv0aoBVbrTQJcLgv8=
+	t=1733433427; cv=none; b=j86nKdAaxK/3cCI4g68myuy5Ex5z7NasmkOllgHQZYTZFxRAeX1uK21TrN5HA0CLtgmjRdmUEapOCnJiKoPAm4gQt60oDYPULhBvoFnq4QxETWFq0pJP+mwNB7IRsieMkg6iRROE0pVRygGsHxvtdWRZGT/dXyodq/1Q+0ftfhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733433312; c=relaxed/simple;
-	bh=h3cshb4rCdaW6s7WqmDad6l3SlGpjsv59lMl5HHGEQE=;
+	s=arc-20240116; t=1733433427; c=relaxed/simple;
+	bh=DWFz2nMdUgz6BVdR0E7KqzZHd4jM7PSnUQhlDIkbdbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTozYb7XwdepFPPwoiAYrwxcPnKjngHZu+Qfb1MO5AgHHPqvCTOric+3Sr3iQAPGc6iRKrc1XyCs6SIhejoYZ9tuqchyj8OccY13RU0GTvrDN7vq6eWlVs5uoVJc9jhtbv3V4BJtbp+AnfPo8FKkheFngVus1wVQOFAbq3LgMgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RGSODj+M; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2155312884fso14692585ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 13:15:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733433310; x=1734038110; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMNOQ/LbvkZ3RF8xsPDD/T0btfy12YyJO+FcJtUBr1I=;
-        b=RGSODj+MxXsXe7fNQ4NdjdmlFWo+q5p2g2XJJv/hlQWs61GvxWZtbiS4FphcnfVaNU
-         6834g7g/SR0NR42VP7f2uMSr6ba/j1L8VwSa4b6i1P2honLSrKu1ay7+eQJ4BGWfiLqT
-         MpCC7zRgfmcEdos1+CAEIoAU7pZh1ujAeAGqOKG/vNy8uHKFfFS01kcrUWLf22UlrImS
-         kCOIBE0mYhL13VfCDLILEPoSFl0FwAS30mOis7mHz3grNDxGSrCeaRUUoxba/MWeHh5O
-         Mwud2Itahm3zDHAQ9RQY4w0t9H0LhtyvlBL1WCZrxsY+bTR0FWQkBya4spPmW3RmcPLp
-         lL2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733433310; x=1734038110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iMNOQ/LbvkZ3RF8xsPDD/T0btfy12YyJO+FcJtUBr1I=;
-        b=RbVIKWM0zJfSXTtjp16B4Ahwl88dWztScXihhwZOZErgD6OeQZOrV3fnFOM5plGOYk
-         mYZWam2k08S3HWTkQZpYLS/8DcYjhn2ZPz06bbqjyMABTZGU1YdKPG12BtvIzrTS9l96
-         hRAZgQ6JjjXisGL4lsU85f5MmJL6YvCoYQupscCEhUaUK4Eqnjx2LQ7/o9r85g9+78kz
-         /A3qnN8FTyB+aFdt75xwcy/X5LN0/AyHmZsxJFnti/gWIcki/VdwJqncw//P8LFb3ZW9
-         XwGD38q86TUsd5Le63wGziX4mKYYJtvpAkaOtpRkbQdWGrrsY0hJzMg4Ep2CwSQ4eUbk
-         4HIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTsipY8ItGwxyv8oQAccS0jFo5pYGG1wVeycr69RlG4pmEJozJ9AwlhwutWLvZBzdjZnbvGbKxYrr8GW28@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjmLT3fia982iGfqrFcNh824B/uVSk2vVaL/qpavIzzA/He2d6
-	GQIgj4zuvhUxalZaqUKvvFoureR9JthulvP3gkmwjpEANIH/u9BXX7XnArbCFOE=
-X-Gm-Gg: ASbGncsol77oWcAfLKGLrqZO5MAeLMMhfcWEB5jvBkj5Cn+jZyTzkG0eupus/whAuXp
-	SzR6BCPZnRFxpc6/AO38z6ahfT4xlNpXg7CsitPRpbabdRBCtSbgC7hcTZyWBJZXjJ4yGSiEvSm
-	/H5NyWxp3o7suhq2L0e3xzPslup6VYOSy7VPVIHjhmVV092FDYBtgjCBJ7MjRUZ+JPXm2zqjkBM
-	ZUz/wIda0ox39yPdBiwpOXlnF2qyDmB99TFLEWtF6MLNGXoQu+2J3eYQLqJiBn8tFNpggt18b0r
-	mvWJ8ZQfNaS0UHmdkFNThTI=
-X-Google-Smtp-Source: AGHT+IE8OGm5O/X2/YMeH3EW08/gwIAqgtqX1jLcQ9PDg4MrtkF2WjvetNDK/FH/k5cKpV5Zgvy7rg==
-X-Received: by 2002:a17:902:c40a:b0:211:ce91:63ea with SMTP id d9443c01a7336-21614d35675mr5837985ad.15.1733433309420;
-        Thu, 05 Dec 2024 13:15:09 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e67244sm16836875ad.86.2024.12.05.13.15.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 13:15:08 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tJJBh-000000076LC-3Vyp;
-	Fri, 06 Dec 2024 08:15:05 +1100
-Date: Fri, 6 Dec 2024 08:15:05 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, ritesh.list@gmail.com,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-Message-ID: <Z1IX2dFida3coOxe@dread.disaster.area>
-References: <20241204154344.3034362-1-john.g.garry@oracle.com>
- <20241204154344.3034362-2-john.g.garry@oracle.com>
- <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HG5jqC625TFOi+WFijo1e1JxJQSDWRPHAr2e46a/Jx2n1MvQ4iE7C0PhDkUptHSKVZHxLxzfb8BmGt+2YlTOCCqlbHZj4hqPs7/a8szPGkiZF1VmBfoEOrtCh5rreXSHGQGFBE709/2Fv4YbLHha9VcR3rQpXR5VmPTx/jMdxPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwEqELve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32840C4CED1;
+	Thu,  5 Dec 2024 21:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733433427;
+	bh=DWFz2nMdUgz6BVdR0E7KqzZHd4jM7PSnUQhlDIkbdbU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=QwEqELveRLRxivhSXoF2Wdey6x9J6yHpqfmhpnjl+df9Q/8VbAT1pXxkuSREUtlni
+	 FqOXBb47qOSLURxDI/cGiAIzHDGXaVDpAHJ0Qe9e7ESRzCXXSAIxBLLtrDoUPMnhPd
+	 cGhiRskkI25uU6G1rAdmH2+rTmDworzl1Jhi//0X833i4qWY+j1CsA8RNQO8Wr7C5V
+	 n3ityKA6o/n2Vb2lV4sU6bQ/RI5tLQo1MJ+SIYNVAVXwKcz+wUgMkFMCD+W5iriuTN
+	 eHCI+GuIedLUmnKeFR3iAQ5KHrUd93Sd3fNyf9PqEJPc3Cag41y9O0rKBpQRqbm5SY
+	 dQkFnyVF21Vtw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E0C88CE096E; Thu,  5 Dec 2024 13:17:05 -0800 (PST)
+Date: Thu, 5 Dec 2024 13:17:05 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <add5e07a-1c15-4a92-8d75-9e18af9f80b3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205141850.GS3387508@ZenIV>
+ <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
+ <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
+ <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
+ <5a5bda20-f53f-40fe-96ab-a5ae4b39a746@paulmck-laptop>
+ <CAGudoHEU_Qkg=SwuFvv=C3cJqDwA_YPxJmwjRWMbgVGdybCMYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEU_Qkg=SwuFvv=C3cJqDwA_YPxJmwjRWMbgVGdybCMYw@mail.gmail.com>
 
-On Thu, Dec 05, 2024 at 10:52:50AM +0000, John Garry wrote:
-> On 04/12/2024 20:35, Dave Chinner wrote:
-> > On Wed, Dec 04, 2024 at 03:43:41PM +0000, John Garry wrote:
-> > > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-> > > 
-> > > Filesystems like ext4 can submit writes in multiples of blocksizes.
-> > > But we still can't allow the writes to be split into multiple BIOs. Hence
-> > > let's check if the iomap_length() is same as iter->len or not.
-> > > 
-> > > It is the responsibility of userspace to ensure that a write does not span
-> > > mixed unwritten and mapped extents (which would lead to multiple BIOs).
-> > 
-> > How is "userspace" supposed to do this?
+On Thu, Dec 05, 2024 at 09:15:14PM +0100, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 9:01 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Dec 05, 2024 at 08:03:24PM +0100, Mateusz Guzik wrote:
+> > > On Thu, Dec 5, 2024 at 7:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
+> > > > > On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > > > >
+> > > > > > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+> > > > > > >  void fd_install(unsigned int fd, struct file *file)
+> > > > > > >  {
+> > > > > > > -     struct files_struct *files = current->files;
+> > > > > > > +     struct files_struct *files;
+> > > > > > >       struct fdtable *fdt;
+> > > > > > >
+> > > > > > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+> > > > > > >               return;
+> > > > > > >
+> > > > > > > +     /*
+> > > > > > > +      * Synchronized with expand_fdtable(), see that routine for an
+> > > > > > > +      * explanation.
+> > > > > > > +      */
+> > > > > > >       rcu_read_lock_sched();
+> > > > > > > +     files = READ_ONCE(current->files);
+> > > > > >
+> > > > > > What are you trying to do with that READ_ONCE()?  current->files
+> > > > > > itself is *not* changed by any of that code; current->files->fdtab is.
+> > > > >
+> > > > > To my understanding this is the idiomatic way of spelling out the
+> > > > > non-existent in Linux smp_consume_load, for the resize_in_progress
+> > > > > flag.
+> > > >
+> > > > In Linus, "smp_consume_load()" is named rcu_dereference().
+> > >
+> > > ok
+> >
+> > And rcu_dereference(), and for that matter memory_order_consume, only
+> > orders the load of the pointer against subsequent dereferences of that
+> > same pointer against dereferences of that same pointer preceding the
+> > store of that pointer.
+> >
+> >         T1                              T2
+> >         a: p->a = 1;                    d: q = rcu_dereference(gp);
+> >         b: r1 = p->b;                   e: r2 = p->a;
+> >         c: rcu_assign_pointer(gp, p);   f: p->b = 42;
+> >
+> > Here, if (and only if!) T2's load into q gets the value stored by
+> > T1, then T1's statements e and f are guaranteed to happen after T2's
+> > statements a and b.  In your patch, I do not see this pattern for the
+> > files->resize_in_progress flag.
+> >
+> > > > > Anyway to elaborate I'm gunning for a setup where the code is
+> > > > > semantically equivalent to having a lock around the work.
+> > > >
+> > > > Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
+> > > > only with later RCU grace periods, such as those implemented by
+> > > > synchronize_rcu().
+> > >
+> > > To my understanding the pre-case is already with the flag set upfront
+> > > and waiting for everyone to finish (which is already taking place in
+> > > stock code) + looking at it within the section.
+> >
+> > I freely confess that I do not understand the purpose of assigning to
+> > files->resize_in_progress both before (pre-existing) and within (added)
+> > expand_fdtable().  If the assignments before and after the call to
+> > expand_fdtable() and the checks were under that lock, that could work,
+> > but removing that lockless check might have performance and scalability
+> > consequences.
+> >
+> > > > > Pretend ->resize_lock exists, then:
+> > > > > fd_install:
+> > > > > files = current->files;
+> > > > > read_lock(files->resize_lock);
+> > > > > fdt = rcu_dereference_sched(files->fdt);
+> > > > > rcu_assign_pointer(fdt->fd[fd], file);
+> > > > > read_unlock(files->resize_lock);
+> > > > >
+> > > > > expand_fdtable:
+> > > > > write_lock(files->resize_lock);
+> > > > > [snip]
+> > > > > rcu_assign_pointer(files->fdt, new_fdt);
+> > > > > write_unlock(files->resize_lock);
+> > > > >
+> > > > > Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
+> > > > > synchronize_rcu do it.
+> > > >
+> > > > OK, good, you did get the grace-period part of the puzzle.
+> > > >
+> > > > Howver, please keep in mind that synchronize_rcu() has significant
+> > > > latency by design.  There is a tradeoff between CPU consumption and
+> > > > latency, and synchronize_rcu() therefore has latencies ranging upwards of
+> > > > several milliseconds (not microseconds or nanoseconds).  I would be very
+> > > > surprised if expand_fdtable() users would be happy with such a long delay.
+> > >
+> > > The call is already there since 2015 and I only know of one case where
+> > > someone took an issue with it (and it could have been sorted out with
+> > > dup2 upfront to grow the table to the desired size). Amusingly I see
+> > > you patched it in 2018 from synchronize_sched to synchronize_rcu.
+> > > Bottom line though is that I'm not *adding* it. latency here. :)
+> >
+> > Are you saying that the smp_rmb() is unnecessary?  It doesn't seem like
+> > you are saying that, because otherwise your patch could simply remove
+> > it without additional code changes.  On the other hand, if it is a key
+> > component of the synchronization, I don't see how that smp_rmb() can be
+> > removed while still preserving that synchronization without adding another
+> > synchronize_rcu() to that function to compensate.
+> >
+> > Now, it might be that you are somehow cleverly reusing the pre-existing
+> > synchronize_rcu(), but I am not immediately seeing how this would work.
+> >
+> > And no, I do not recall making that particular change back in the
+> > day, only that I did change all the calls to synchronize_sched() to
+> > synchronize_rcu().  Please accept my apologies for my having failed
+> > to meet your expectations.  And do not be too surprised if others have
+> > similar expectations of you at some point in the future.  ;-)
+> >
+> > > So assuming the above can be ignored, do you confirm the patch works
+> > > (even if it needs some cosmetic changes)?
+> > >
+> > > The entirety of the patch is about removing smp_rmb in fd_install with
+> > > small code rearrangement, while relying on the machinery which is
+> > > already there.
+> >
+> > The code to be synchronized is fairly small.  So why don't you
+> > create a litmus test and ask herd7?  Please see tools/memory-model for
+> > documentation and other example litmus tests.  This tool does the moral
+> > equivalent of a full state-space search of the litmus tests, telling you
+> > whether your "exists" condition is always, sometimes, or never satisfied.
+> >
 > 
-> If an atomic write spans mixed unwritten and mapped extents, then it should
-> manually zero the unwritten extents beforehand.
+> I think there is quite a degree of talking past each other in this thread.
 > 
-> > 
-> > No existing utility in userspace is aware of atomic write limits or
-> > rtextsize configs, so how does "userspace" ensure everything is
-> > laid out in a manner compatible with atomic writes?
-> > 
-> > e.g. restoring a backup (or other disaster recovery procedures) is
-> > going to have to lay the files out correctly for atomic writes.
-> > backup tools often sparsify the data set and so what gets restored
-> > will not have the same layout as the original data set...
-> 
-> I am happy to support whatever is needed to make atomic writes work over
-> mixed extents if that is really an expected use case and it is a pain for an
-> application writer/admin to deal with this (by manually zeroing extents).
-> 
-> JFYI, I did originally support the extent pre-zeroing for this. That was to
-> support a real-life scenario which we saw where we were attempting atomic
-> writes over mixed extents. The mixed extents were coming from userspace
-> punching holes and then attempting an atomic write over that space. However
-> that was using an early experimental and buggy forcealign; it was buggy as
-> it did not handle punching holes properly - it punched out single blocks and
-> not only full alloc units.
-> 
-> > 
-> > Where's the documentation that outlines all the restrictions on
-> > userspace behaviour to prevent this sort of problem being triggered?
-> 
-> I would provide a man page update.
+> I was not aware of herd7. Testing the thing with it sounds like a plan
+> to get out of it, so I'm going to do it and get back to you in a day
+> or two. Worst case the patch is a bust, best case the fence is already
+> of no use.
 
-I think, at this point, we need an better way of documenting all the
-atomic write stuff in one place. Not just the user interface and
-what is expected of userspace, but also all the things the
-filesystems need to do to ensure atomic writes work correctly. I was
-thinking that a document somewhere in the Documentation/ directory,
-rather than random pieces of information splattered across random man pages
-would be a much better way of explaining all this.
+Very good!  My grouchiness earlier in this thread notwithstanding, I am
+happy to review your litmus tests.  (You will likely need more than one.)
 
-Don't get me wrong - man pages explaining the programmatic API are
-necessary, but there's a whole lot more to understanding and making
-effective use of atomic writes than what has been added to the man
-pages so far.
+And the inevitable unsolicited advice:  Make those litmus tests as small
+as you possibly can.  Full-state-space search is extremely powerful,
+but it does not scale very well.
 
-> > Common operations such as truncate, hole punch,
-> 
-> So how would punch hole be a problem? The atomic write unit max is limited
-> by the alloc unit, and we can only punch out full alloc units.
-
-I was under the impression that this was a feature of the
-force-align code, not a feature of atomic writes. i.e. force-align
-is what ensures the BMBT aligns correctly with the underlying
-extents.
-
-Or did I miss the fact that some of the force-align semantics bleed
-back into the original atomic write patch set?
-
-> > buffered writes,
-> > reflinks, etc will trip over this, so application developers, users
-> > and admins really need to know what they should be doing to avoid
-> > stepping on this landmine...
-> 
-> If this is not a real-life scenario which we expect to see, then I don't see
-> why we would add the complexity to the kernel for this.
-
-I gave you one above - restoring a data set as a result of disaster
-recovery. 
-
-> My motivation for atomic writes support is to support atomically writing
-> large database internal page size. If the database only writes at a fixed
-> internal page size, then we should not see mixed mappings.
-
-Yup, that's the problem here. Once atomic writes are supported by
-the kernel and userspace, all sorts of applications are going to
-start using them for in all sorts of ways you didn't think of.
-
-> But you see potential problems elsewhere ..
-
-That's my job as a senior engineer with 20+ years of experience in
-filesystems and storage related applications. I see far because I
-stand on the shoulders of giants - I don't try to be a giant myself.
-
-Other people become giants by implementing ground-breaking features
-(e.g. like atomic writes), but without the people who can see far
-enough ahead just adding features ends up with an incoherent mess of
-special interest niche features rather than a neatly integrated set
-of widely usable generic features.
-
-e.g. look at MySQL's use of fallocate(hole punch) for transparent
-data compression - nobody had forseen that hole punching would be
-used like this, but it's a massive win for the applications which
-store bulk compressible data in the database even though it does bad
-things to the filesystem.
-
-Spend some time looking outside the proprietary database application
-box and think a little harder about the implications of atomic write
-functionality.  i.e. what happens when we have ubiquitous support
-for guaranteeing only the old or the new data will be seen after
-a crash *without the need for using fsync*.
-
-Think about the implications of that for a minute - for any full
-file overwrite up to the hardware atomic limits, we won't need fsync
-to guarantee the integrity of overwritten data anymore. We only need
-a mechanism to flush the journal and device caches once all the data
-has been written (e.g. syncfs)...
-
-Want to overwrite a bunch of small files safely?  Atomic write the
-new data, then syncfs(). There's no need to run fdatasync after each
-write to ensure individual files are not corrupted if we crash in
-the middle of the operation. Indeed, atomic writes actually provide
-better overwrite integrity semantics that fdatasync as it will be
-all or nothing. fdatasync does not provide that guarantee if we
-crash during the fdatasync operation.
-
-Further, with COW data filesystems like XFS, btrfs and bcachefs, we
-can emulate atomic writes for any size larger than what the hardware
-supports.
-
-At this point we actually provide app developers with what they've
-been repeatedly asking kernel filesystem engineers to provide them
-for the past 20 years: a way of overwriting arbitrary file data
-safely without needing an expensive fdatasync operation on every
-file that gets modified.
-
-Put simply: atomic writes have a huge potential to fundamentally
-change the way applications interact with Linux filesystems and to
-make it *much* simpler for applications to safely overwrite user
-data.  Hence there is an imperitive here to make the foundational
-support for this technology solid and robust because atomic writes
-are going to be with us for the next few decades...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+							Thanx, Paul
 
