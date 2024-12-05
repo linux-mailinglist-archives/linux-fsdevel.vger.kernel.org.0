@@ -1,162 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-36578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC569E60E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 23:53:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DBD9E6124
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 00:10:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFCEA1678A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 22:53:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76EC9282A20
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 23:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529091CD21C;
-	Thu,  5 Dec 2024 22:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FFE1D1724;
+	Thu,  5 Dec 2024 23:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfQoiVRT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTlSgBco"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D86F1E522
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 22:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76EB1CCEED
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 23:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733439218; cv=none; b=W1e4AYA0dd4J+Iu2z1QAjt8TVPPevz/Fll2BNiosNk6KnzFRY0EKeXnrmlIvwBbP4nxpPrbCUDdblAWesiEKI7KOLlNL0E4APxB/bXj+Ol+Pvoe8u196Ds3XpUr4kqSQ9R2K50w6i01YCXGJyT4md5Kh42UYNHa+4S2j32qjaIM=
+	t=1733440246; cv=none; b=jMpJvMrijH7hDWKUjI8Be4sc1dktoJ/pfzY/155hz7+c0Ph3hHY/SxWhmuhNKXKnNQE1Cl7jMcaIiR8kN+6fcQxrLbn+vi+oVhTjDRs9RIqs9Ksu9B/VGeYrgbtTfMgjaunmIiBrMVMe1TodRjL/2SsuxuIIc9urBEYGDqvxbbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733439218; c=relaxed/simple;
-	bh=0YsVcyeGS2G4nIlCLlFgYnnhlzUV5F4RipAMwi+Jgow=;
+	s=arc-20240116; t=1733440246; c=relaxed/simple;
+	bh=R+GQzCdAqqnFNtu4UCJurznl4yKB3zt/Yr+qjAjILGQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NOa0+ACubJB86rjv/DL3of+2zBut3WQ728lO0Tdl1IHSvtxUhjBU5j6SWJIuj9EmLD1vaZAcF+KW5uTTzLMauTrfcHq+HFjn4b/qL3snWAUCWRqo2NEGhDYdzqhssers2asqWRxAZBWYxp/uQLzhojAPwyoDeD28zRgCkZLcKLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfQoiVRT; arc=none smtp.client-ip=209.85.160.174
+	 To:Cc:Content-Type; b=A4YEb8fjlIgVSeW5bO8cCk8/VVb3pWB5kMrtSDzUj/Ulho9mDTusBBfBNBnrgf1NEEKcBzTanCxQwsh+uXoIsGAIQPgJSdtcZ8czNVcM2JiWcbP2/wzP5eYbNzrSyuPZ4uSINgCZuyLfNU/NOvWiYSprqciziTqlfQXrKWfKOwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTlSgBco; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4668d12b629so12722971cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 14:53:37 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4668983b04eso10436551cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 15:10:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733439216; x=1734044016; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733440244; x=1734045044; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ae46hA0p8Cg4tuqeTx/mDvCXY17DCkqznqxSaLgOWNI=;
-        b=jfQoiVRTg0bM7F4n1rKMDjPWqaI9XZzlecH9oe82fGeCeSxjUUeu4jg7twxTZvMr64
-         RysdSrqHunhAj70QRGk+t/Aegc1wuC/gb4zckPgOJ1o1bUdBuLco9jcPrgohpWbRI/Gc
-         k/LG/h5FHTKdTEuk3Sc9IKTFL7O35MBpsXKtQUTiXcOEwQVDAmmceG0DsSC4F3UqeFRt
-         xCAGX3xxTk7hyN8z375EHC7RM9ddZFUqWEQABtTuwiCd9z5kz+zgkq068znRBGZdT5GT
-         /ZhpK2KPHyurcHdLfrO39+M/JcBqYX4/AxLAl5CfWnRBh0+MgOqd7u8hiYE/3mnhSUQO
-         2M9g==
+        bh=i9F1z+J1oYawHbsDWluZhbMbn+9fXArVnXvNJ2pehUw=;
+        b=cTlSgBcoVOjKpcbgCLjXoJph6LZmSLkdh2JD3P0FeWHAmOfFYE+szXrrqTT+JSmBUn
+         WILayhlnIoW+impX390ltXAunPcxjWgdVzu5PiAxuJrK2X+YY7DnTfQYdo2pGiyU+2w9
+         Are5qv9KvuJ6sKDZ7+wZfbDNRGY6dEOzBNcAS/CUsDEW9VG0q7MV/5Hal2uuvKlOAZAC
+         QR0+DPNs844ZzxJmgz5N+jbO5ueRTgvUo6/PCzzWbj0e1sakNDiFSNqUgS3EywN+Zimv
+         Bv4FWf9mlflmLU4TZbnPJ7LC/U5991r8j8HmnLzNh2t3gWhmy1cnSRgfpVFPsK+Xq/oA
+         PvNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733439216; x=1734044016;
+        d=1e100.net; s=20230601; t=1733440244; x=1734045044;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ae46hA0p8Cg4tuqeTx/mDvCXY17DCkqznqxSaLgOWNI=;
-        b=EpsOt34lM6+NWFmdQDUQ3YkB9tpQL9jzXfpwRJPzUuquBRU/X3Pck4kVxbGGoyNH4n
-         n6JImS0ykX0Txk24rNVSfuOUsbN3xssj6WCyyicbKlx+JdiYVUEG4gxh8TBaXY6LPmlX
-         LHPveX9DIdS8UmvJMkzj4ooRmiQ/5m+dV/BEiKn4EbbQxONXY6KtYJMrtkffi2WQrs2E
-         v4ilFdTQPs2c4k6mwGzQZa9LS7/PcaoE09B2vxzXiZVo4iyl4nLyAiRDQC3xUCizaq5E
-         nM0fzPwC0UxTdGtBeRXe0U++ev07uiRY8nlZiSQIx/w72cAp2CJu9c+E2Uf6RCC3wwme
-         ppRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCQlLlbXTGXyv41GeiBGjKQLD30ebG8i37W8i4HC+CSRtGyjCtjuuqoyAR6cnkaSSPw+qW/3thnSpSiOA7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Txfo6Kd0lE0Ewj30CG+jnE82SrstnkRNecUL7gI4zX808tmZ
-	FnM+jZpgc/NiedWnAGeYKOPceqru4TydPoZ8ylTw2Hm9CV/KLpsMe4+//sqKtuC4uTTd6F1kMTN
-	7Qn95YPA5AnKGeJdYZTTEC2l03bU=
-X-Gm-Gg: ASbGncuH1Xy83VlUIhd7phjdYoxo/ZJBXd8MQlVfEETpqtBX/FUVf5m9eCH24OkjEkw
-	PPOGbOn8kOtG8txCQ1y77cHLtL6MNzDOiRp/lpoK4rlYzNvY=
-X-Google-Smtp-Source: AGHT+IHolJjQISVOSEyrbnKT8sQrwmKtD8UvJAQmo1YzsWBQwgdfnCnbl46XgcXaUViqbcXKJA+4ycaXSq7u4KZWiLM=
-X-Received: by 2002:a05:622a:199b:b0:466:a61f:9ead with SMTP id
- d75a77b69052e-46734f7d305mr16948021cf.36.1733439216038; Thu, 05 Dec 2024
- 14:53:36 -0800 (PST)
+        bh=i9F1z+J1oYawHbsDWluZhbMbn+9fXArVnXvNJ2pehUw=;
+        b=I8wSbxt+/F/xSTiAQ5PjMU37Tf5+1Hf8JUjs3rUMYXzjzxa+UnQ7DLa10h2bglfyJK
+         DTgGvPtAQciej8lbWDDepK0+ixhZF4wJWP7pC6yUDq+7JbHT6x4Z0dR34+nI9GzCAJC7
+         VsXPWALOSCApjMoxbpDsXQTYr7OjQamP0qnI9EFRQ7Pbo2eUKOgtPl+aY/8aEM7C3C8Z
+         tnH6/Z4fUR7zzI91M4zAJoDR2gB7ssvDGJ/QQ9t6fCha8Px1dT3RHRwInPh4hUS5FJoI
+         PBh2NEZuDy4X/dO6SyXn9LFwk/BI8wnifn4R4bh8VP0OvQmeiBdFIY9Y7oB6tQgfeE1/
+         8uNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWT5TbEGbMe/sh8phoHa00AAepgZ0BKIucnXDe9T9Eq7BFqZaMpPcaeszQmHlbbX8UYpSO5xUOmFxmTClqh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywzme/mijtSzWoicR8llwsX/qB5doviiv6DTFL/C7Qig+IOXfY
+	dWp2ZtEJBOdmDvnaSVWuavPLTsVHxJvfnvYdgHNrRLibfHw6G0kXVah1NBEDtuO8K1yfTcrX06k
+	1lmjc0U2xKD+17SXCsiGloPI5SfA=
+X-Gm-Gg: ASbGnctm46i0gn+0n+v/TuUPYgg/xTEI87DYeSpOC3EJZq9FVxIYaMw+n/IS6BPr4uT
+	94utamF7qCfEabWfCJwISMuy+bM01lC8GcpB9/cweUS2Xwag=
+X-Google-Smtp-Source: AGHT+IExUnGp9Zguvm0M59FRRXuT59KIapfrqk4kjxZQ3B0oGLVVLl3lqPA8zOUUikynjvM6u2t0yObClJsSPgTuj50=
+X-Received: by 2002:a05:622a:124f:b0:460:e8d3:7bc6 with SMTP id
+ d75a77b69052e-46734f7eb53mr15181681cf.46.1733440243743; Thu, 05 Dec 2024
+ 15:10:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204164316.219105-1-etmartin4313@gmail.com>
- <15ff89fd-f1b1-4dc2-9837-467de7ee2ba4@linux.alibaba.com> <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
-In-Reply-To: <CAMHPp_SwH_sq9vCHMyev6QJbtGFkNL5fpX3ZXSHLF4zz0T3_+w@mail.gmail.com>
+References: <20241114191332.669127-1-joannelkoong@gmail.com>
+ <20241114191332.669127-3-joannelkoong@gmail.com> <20241204131438.GA16709@google.com>
+In-Reply-To: <20241204131438.GA16709@google.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 5 Dec 2024 14:53:25 -0800
-Message-ID: <CAJnrk1YHOEBPZYzaMPQi4h6hPzMmK0w8beBvuOGbamwebYnKmA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Prevent hung task warning if FUSE server gets stuck
-To: Etienne <etmartin4313@gmail.com>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
-	miklos@szeredi.hu, etmartin@cisco.com
+Date: Thu, 5 Dec 2024 15:10:32 -0800
+Message-ID: <CAJnrk1ZOpS5ntzmofuPUN3ctX1t9WixL0bqhcnBRaYcM623keg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
+ for requests
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>, Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 9:10=E2=80=AFAM Etienne <etmartin4313@gmail.com> wro=
-te:
+On Wed, Dec 4, 2024 at 5:14=E2=80=AFAM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
 >
-> On Wed, Dec 4, 2024 at 8:51=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.=
-com> wrote:
+> On (24/11/14 11:13), Joanne Koong wrote:
+> [..]
+> > @@ -920,6 +935,9 @@ struct fuse_conn {
+> >       /** IDR for backing files ids */
+> >       struct idr backing_files_map;
+> >  #endif
+> > +
+> > +     /** Only used if the connection enforces request timeouts */
+> > +     struct fuse_timeout timeout;
+> >  };
+> [..]
+> > @@ -749,6 +750,7 @@ static const struct fs_parameter_spec fuse_fs_param=
+eters[] =3D {
+> >       fsparam_u32     ("max_read",            OPT_MAX_READ),
+> >       fsparam_u32     ("blksize",             OPT_BLKSIZE),
+> >       fsparam_string  ("subtype",             OPT_SUBTYPE),
+> > +     fsparam_u16     ("request_timeout",     OPT_REQUEST_TIMEOUT),
+> >       {}
+> >  };
 > >
+> > @@ -844,6 +846,10 @@ static int fuse_parse_param(struct fs_context *fsc=
+, struct fs_parameter *param)
+> >               ctx->blksize =3D result.uint_32;
+> >               break;
 > >
-> >
-> > On 12/5/24 12:43 AM, etmartin4313@gmail.com wrote:
-> > > From: Etienne Martineau <etmartin4313@gmail.com>
-> > >
-> > > If hung task checking is enabled and FUSE server stops responding for=
- a
-> > > long period of time, the hung task timer may fire towards the FUSE cl=
-ients
-> > > and trigger stack dumps that unnecessarily alarm the user.
-> >
-> > Isn't that expected that users shall be notified that there's something
-> > wrong with the FUSE service (because of either buggy implementation or
-> > malicious purpose)?  Or is it expected that the normal latency of
-> > handling a FUSE request is more than 30 seconds?
+> > +     case OPT_REQUEST_TIMEOUT:
+> > +             ctx->req_timeout =3D result.uint_16;
+> > +             break;
+> > +
 >
-> In one way you're right because seeing those stack dumps tells you
-> right away that something is wrong with a FUSE service.
-> Having said that, with many FUSE services running, those stack dumps
-> are not helpful at pointing out which of the FUSE services is having
-> issues.
->
-> Maybe we should instead have proper debug in place to dump the FUSE
-> connection so that user can abort via
-> /sys/fs/fuse/connections/'nn'/abort
-> Something like "pr_warn("Fuse connection %u not responding\n", fc->dev);"=
- maybe?
+> A quick question: so for this user-space should be updated
+> to request fuse-watchdog on particular connection?  Would
+> it make sense to have a way to simply enforce watchdog on
+> all connections?
 
-Having some identifying information about which connection is
-unresponsive seems useful, but I don't see a straightforward way of
-implementing this without adding additional per-request overhead.
+Hi Sergey,
 
->
-> Also, now that you are pointing out a malicious implementation, I
-> realized that on a system with 'hung_task_panic' set, a non-privileged
-> user can easily trip the hung task timer and force a panic.
->
-> I just tried the following sequence using FUSE sshfs and without this
-> patch my system went down.
->
->  sudo bash -c 'echo 30 > /proc/sys/kernel/hung_task_timeout_secs'
->  sudo bash -c 'echo 1 > /proc/sys/kernel/hung_task_panic'
->  sshfs -o allow_other,default_permissions you@localhost:/home/you/test ./=
-mnt
->  kill -STOP `pidof /usr/lib/openssh/sftp-server`
->  ls ./mnt/
->  ^C
-
-I'm not sure if this addresses your particular use case, but there's a
-patch upstream that adds request timeouts
-https://lore.kernel.org/linux-fsdevel/20241114191332.669127-1-joannelkoong@=
-gmail.com/
-
-This can be set globally via sysctls (eg
-"/proc/sys/fs/fuse/max_request_timeout") or on a per-server basis. If
-the timeout elapses and the request has not been fulfilled (eg
-malicious or buggy fuse server), the kernel will abort the connection
-automatically.
-
-
-Thanks,
-Joanne
-
->
-> thanks,
-> Etienne
->
+The third patch
+(https://lore.kernel.org/linux-fsdevel/20241114191332.669127-4-joannelkoong=
+@gmail.com/)
+in this patchset adds this through the sysctl interface. The sys admin
+can set /proc/sys/fs/fuse/max_request_timeout and this will ensure
+requests don't take longer than this value.
 
