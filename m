@@ -1,374 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-36517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3159E4DF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 08:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A29FB9E4DF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 08:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844252816D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 07:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584232818CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 07:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D331A8F72;
-	Thu,  5 Dec 2024 07:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E8E1ABECD;
+	Thu,  5 Dec 2024 07:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O43+Cj5Y";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Y6NB4nU+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7LstXkJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E722E193419;
-	Thu,  5 Dec 2024 07:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733382390; cv=fail; b=ldc/oFqd52DeGwcTVuDe3Zee2KArGTIBvC2e+NoGGE/7n4M3cn4mypCEpQ/DRn5vCeDvXd9h7vccr1PIVpyIVidGENuYYqmgluOZMYNzIg8TRpI1J1Ga4LMXLk/cAb8pKU+oATNoL3HuTzORbspc25BWc2RtySnHMx2NPxPtC2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733382390; c=relaxed/simple;
-	bh=BjUERLSjtWSYqTPiMMfgK9Hh761/wPL5zn/RzdqX3Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BS4D9nQ8MkElBNGYSZlV1vI+2f3eN4OJEcQzpZPxdCVlfVIadj3oLgVSBZzAGO2jgAaJY9F/aGI0J4x8/2VFkh+GAn2SihihGGt7Z8V2f32rhYdXEE86J9roNEkAdD+JS/sxbz0+q/q4VrppJ5y6Lr/Rt0xRcoUS03vhnFa61aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=O43+Cj5Y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Y6NB4nU+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B52MxuE014882;
-	Thu, 5 Dec 2024 07:06:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=A7knOvb1llEQkRtzYs
-	aHttGTRpi2Dr697jBZ7qYkD0M=; b=O43+Cj5Y6qw/esHnBQvbnXsxJhqo5S8UkZ
-	uIO3rWs5fkte5sVmZuZWt3FoyBWGjYsZAXw4IIJjA5GSW81oYllEG9VYhvSWg+5U
-	5Ve3vyGgvAO3SwLhPPqaF2yHZVRYoKwROezA/s23L3KwXxncs+X0HCowj5ZJWccc
-	cBXNWlAm5lK+pruZqf3uxZ2Bz+px88x+u+wzpk5prc+EtMiUw7iia1dSFj+j/r0a
-	GiFQhMtMjGtXUA59a2H1jPZNNUbv9Td7ZiCeFa5fl+H50NUIqSA4Lm34SAWPrr9T
-	4zmaRc3S9pknp6iA0nLV7TNa/Aam00+W6r1C2oiHMAJXT5isuq8Q==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tk9246e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 07:06:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B55XtEc011704;
-	Thu, 5 Dec 2024 07:06:14 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2176.outbound.protection.outlook.com [104.47.56.176])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s5afdwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 07:06:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UV0LSD8MWWg2wcYyZ5CBwhgEFZRXLXicm4QZlGU7XU3yVtifpvutALFgUyOtRvYIrCmDDsWPPu4q5s8rmf3j+gyBjXZCumOGmDgJK4Vpbui940VG8bs4Zr9YABiW7RC/fVs3qP5es8+yL9s17t/fthUyRkMseO8XZGe2hZ1iR6XtULgfIUGzTN8i6g8apTCD4xEDX+xltJloUzwCtxQq8iIIuQc2/4vfvR2uaFGc15huxS5y8nKz5IEMUNOeosyWjtZon2O0ybZxfBX9G9ynSih3cfak+aIbcYP73bFaVyT4hyjIEtR5aABhFyHQSRihMWzrrN/T5b8TDpM6p5NZag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A7knOvb1llEQkRtzYsaHttGTRpi2Dr697jBZ7qYkD0M=;
- b=RkdcA3KE2Jt0LK35DzsK14WCbPpz2Rvtj+y8tX25eFaaWYuxm8p7Tbm3RpEum5BGxe48rKSs/HSNGggKryACGz/blN5jSaZ+rzf+WFypAoJx9Qtv2jd/wbq5zzig7/Js2PObxf5CJx+M+oGkcXgio0AZkhH7/x1kt/QDjuBA5o/LFXqoL5pOL+klnmDvuraRCp/MUkDD8G7yRiF6jkMRjsVLX248uk1qkNBs7E2w2Xt36qeAma94c/qfUo7agHBvNFa9FRGFMntJzAaqVEywxXwwSlp7q2HWQEFIZDyrkw7imvnHblcyF4Skt+gnKFgSnKFbwfKl8L1FNp91AnxeKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A7knOvb1llEQkRtzYsaHttGTRpi2Dr697jBZ7qYkD0M=;
- b=Y6NB4nU+MmIIQTA7vd82wYGv0NsAQn8HJThFjahth6Jyoh/vH7c1pdcLzhC6K5YF+ZoXfAHMz+1HHwBHKQb+/e5KWZkpoC+h1htbVJDkbp3cEcNkfQ/6jtHMsyOAxNwdVsLWz8qyWztwjDKu7SuoR9Ra1i5zd9DS2gQv+AF9fGo=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by LV3PR10MB7724.namprd10.prod.outlook.com (2603:10b6:408:1b4::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
- 2024 07:06:11 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
- 07:06:10 +0000
-Date: Thu, 5 Dec 2024 07:06:07 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
- read lock
-Message-ID: <853b7230-1939-465c-ad78-88400765b424@lucifer.local>
-References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
- <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
- <20241205001819.derfguaft7oummr6@master>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205001819.derfguaft7oummr6@master>
-X-ClientProxiedBy: LO2P265CA0343.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:d::19) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC2A194C85;
+	Thu,  5 Dec 2024 07:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733382414; cv=none; b=Cas/4wOdhXX62ynh/i/H9KAlHzPhSp5PUepPpvII17H43XkAZr7AstM/kTPvRblFQJzMWceB8pgcBr3FkRtuxuEWR06nrI5wrI5ZKMsh8nKA/GrDFvf+B/BET6ZKjLtHDVYNzxecld5u09FEh3nh2muSEls0x3j/qABJx+ftB5M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733382414; c=relaxed/simple;
+	bh=tbiN7RVlLpB1Ip3vbOmE2HV+9+XTkxu5ArmQsaP6xVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mngQVRCg2ubwA2bPJHTPgQi1tgmpCzwrCChyjcGLy7P3Ztz1wL4pPv+vaUfShSS4lfE0555hU7BRQK5gkp7lg+cXhs2oPJAs+4jKviERf6xYIwUrhpl+rcabkyiHHXcM2MEuwlJ7CbiFiqODsr4JVGG/gkfGyfIF7pvxI9J/ayc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7LstXkJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8469BC4CED1;
+	Thu,  5 Dec 2024 07:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733382413;
+	bh=tbiN7RVlLpB1Ip3vbOmE2HV+9+XTkxu5ArmQsaP6xVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z7LstXkJXZUBNvB6tsK9Wgw589JBEAaS7C8T+vYPVIBk68cKHIxzRqwvgy5dxLuj+
+	 Uqig9mOypdAjYPcwRYera+gWtWDTgVBBN7TM/TcqYhUABe9pUjsWafuJNc5tVpifH4
+	 z2UuIM5+TAkUf+A8Wdnc8UqEbLUFQYtOA2Drbu4eKpA4MuSfIPI9nWTnDH+Zjcm3xQ
+	 OUPIwhV3H3JrPgrNN9Mpcj4BzJUYYrcqKvqz/L1a5ZO5usIT5NLiTcgVHqeL+qZWGR
+	 Svomb5nmP+lgYtekotf0qBqTC3JNQJ9fKEe7pCYAKUPpJ8lhaZxtUhlh3Pr4X1AUQB
+	 SZuGQTglMKbKA==
+Date: Wed, 4 Dec 2024 23:06:53 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, gfs2@lists.linux.dev
+Subject: Re: [syzbot] [iomap?] WARNING in iomap_zero_iter
+Message-ID: <20241205070653.GE7837@frogsfrogsfrogs>
+References: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+ <Z03HgRGByNi1spE0@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|LV3PR10MB7724:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34c2e8c8-3253-4848-92c2-08dd14fb4bc0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TXhu27/Pc7XKjuiWTzQCNk/cRG1jsLTccHmB6bRHjQIWyDwhFRo5x/Aqkaj5?=
- =?us-ascii?Q?7UhNWSyR324X+NIsM0fMZBxZFzknZKpwHP5YHrDjPJSghTVvWNWBsbm/P5Yh?=
- =?us-ascii?Q?QzW8qud3kS5PW2DuuvVKylsm+GEImUMKz24eh7UTf1xyoXZMPtePrb16KX8t?=
- =?us-ascii?Q?Nie7tLcKEZ3ua+RJXKhAJOVhGCASiaUI3+2e6I2fDbfXYfzDZreQDzJKyfYa?=
- =?us-ascii?Q?8kk4D4BZWuoC6IvU8dC+xrd25Hk8ef+G139eHvI0Z6eJTCv0IgERI7YjXX01?=
- =?us-ascii?Q?uQ4o3x0UVDOA9X2xQHuMbHBKRJEJN4d566mSg5vdElvQwA5IACgYHaZqMkNr?=
- =?us-ascii?Q?ejrOncPbcRDAwM+Y7EH1UPTEfyXyHd8xml81IPCbuHGD+Fl2wmfGwS/6+qK7?=
- =?us-ascii?Q?9Q2NjEfMzg1ybodt+RaZ59yKHKIR5QEiVg+SUQzGC2aUh5k6HtzdPXsW3Qbe?=
- =?us-ascii?Q?SSJWiRcwdhj2q0ehnUd0vUKhGKAoo2oYHfYvf2YImTuNslxWdBi7bH6cKWK/?=
- =?us-ascii?Q?7kEhPVogEclOSmjLkeB7KBONGCEhHN/reb2/tu57wwje/YMaebqPlwFjpM7P?=
- =?us-ascii?Q?cKsCYZ/WBlxjv1x1yYUl/Z8nvRxMmfkPRZUd5qV0oHfLMwBHtJ1hr+FpauGW?=
- =?us-ascii?Q?XO9Wu4O1znqCLrHjYxqnGZaLUlzjbNze9NM0cjpKc9qVRQLl1mkm6U+A54Ds?=
- =?us-ascii?Q?TgtsEpUhCI15+0lTQkDREUoHkqE1iB+Qb7GXQrC0SfhFi3ALtypOObnQ/5s1?=
- =?us-ascii?Q?3vwgkmiYXnkMuAAjZDzFUxFB9jiqQTlIHMcmOdpuHef6W7ppK2jjZQ29oz0j?=
- =?us-ascii?Q?kuJE+dLxVQhi/HQ84BeKRHRu8quNwPvUDNxMpFtt6PVfVKsEKWMyE+A1iLcK?=
- =?us-ascii?Q?PyDKoNDmNszqOPKFC81PI4zdQLvbjcU9rx0ScOPacZWbVA9rLKzPaRHsMs4B?=
- =?us-ascii?Q?sbPqIot4qFRF3vUxb06Gcobi6Lkd90911ob6ZJJ6UKLXQrURHrl1FkfBL8Qy?=
- =?us-ascii?Q?E3XYDbOVSpmca1Fn/rn4uT6QfxNzqSSnhmcvBl0qEMYUSyz52XPyHJjo8I1G?=
- =?us-ascii?Q?iFo/fOHM4WkeIQm2HxOIrW+InY/EniBp8Feh2uoo/zItCjEaDVJnNSWTw35D?=
- =?us-ascii?Q?moTW89NDzohrwftNCSyi0mgJ0cKrzHfePrrYH366znydxuJIkspV8TBWVNgG?=
- =?us-ascii?Q?MxORXpXAgECL4xXcAPJ1AbiIlAcdVZdqOc1WFSh2Zo/LBWzHW5/mvl7KvVdM?=
- =?us-ascii?Q?broSJhRqXnBhJCi63w+289jmHusfgT53cBrZZKlY4aLyX4FQzxGf+2zW9Wjg?=
- =?us-ascii?Q?n7b3gdAiIKUbOrVyVFCtv4iPj/wyquvfQC/27LGFp/uhEg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rjpU1N7HyuZmVYPHWGHA2ISdRHei21RyOFmSkGEnY5sxWQRlxOtiQe2vq20W?=
- =?us-ascii?Q?NPTh9AZCswxB4oY+5SE1CpuYpGOrqEJJbx3K0WqWOGGd0snjQ5XMgK2hMeUb?=
- =?us-ascii?Q?ww+orM859QwwQ1bTrX+gLvHfFag49y5XthjyVnTAdbTq0bxG14vXbFHPRAzo?=
- =?us-ascii?Q?tZmjb9QdgyqTr3HpqJwDXKPpyesx0zSj3r6YN2RZgayL2xFXpoSIaQCRKe1P?=
- =?us-ascii?Q?d6FrLXbmX4r2n108x5MPSBGs0WBMr8pL6+2YalfAehoWxqUx5+QxqgRrMTtA?=
- =?us-ascii?Q?EYED2njSWJI+Ydp4FlE6ZLpu/TFPd9emMZD5yOlAut+PvcTauFWbS+9aOIbf?=
- =?us-ascii?Q?EExGW0ClwLdxtykGKTSCSI/Ad6pBXWsTDy6dnFc4asctjjlUdTnbBg5zdSyV?=
- =?us-ascii?Q?48FpJABxJdpOrlwIyFWKVkUOclR/EXB7DOaHS4lZkMJbQ2tdR9DQcRQxeYET?=
- =?us-ascii?Q?NTefXsUx48qZp1DmcSWpHDQ2sgGStVCbh0ahwH9jIYSwb5CCUuhh+VUDapYO?=
- =?us-ascii?Q?8bWu7XjNb0r4xixwH2+wBuA9GbpJWurRv/bWsJvDs0qxuIDV+PCtLOTXtebx?=
- =?us-ascii?Q?RX97VcKiknDq6iR03JgZTnkzo/k71pZzVwH2XFeWXwOtapHPD8IUkVFQBwMk?=
- =?us-ascii?Q?hs1s506wKD6rp4CPK69DQJY9llz0Be1jmKYXARqObq+oKSxDctatOMZ8Tc1O?=
- =?us-ascii?Q?Y4s1aLYD2PIKrR9UTCEZ3F1PqR4+/TM0wNtvPXqzVj8zzec0Ycl/T7V1OGNA?=
- =?us-ascii?Q?gw32etCM/UxZ0sFxr0wxpuXnKVjf/yR49u5TyqgT5fmgHRsnb1OnsDPGsY48?=
- =?us-ascii?Q?C6KuZgoLz0jhoesKjkq26VMDRb+LhaIgYO6vqLoyzo5gDUjSHgTpWp/qQoO/?=
- =?us-ascii?Q?3UhAffA4JvS2FZ7tRdtc23WJ+fTZt1TrzJfMONp4cTLKAJ7c9uEd2I3Cg+QD?=
- =?us-ascii?Q?G84i9DrohZtGNy8qwCTR5kL/Pvt02xa22TpqiYiYef9pVr+J++2e3tddm9VO?=
- =?us-ascii?Q?hFaJsGUu/doOVq1H5KhxJR2dhgKrr3eElSgc0gk+Nmqiie6ZKP8ahSmkljJU?=
- =?us-ascii?Q?5ptsGXdZkrEp2LZdcCUL7z1LpRKzX/1hke/pR1tKoQO1qDL+Sl23YpcVBWkc?=
- =?us-ascii?Q?yls6WdG2tfiNYg7md1v1h638RLm+DMgax6kYAowK2VxFCcy3TTSVDdbBprY7?=
- =?us-ascii?Q?ZDLnxgUhdWUVRBsf32zhgodpXqJ+Tq1eCYkeLTWkTqdEa8bZezTPElQ1ylwO?=
- =?us-ascii?Q?J8hMOcMS3AqRrh2ECAh1F7Alhdg/Sf7AxX4PwihZ5DSMoq91e9ZWbV0XyXCh?=
- =?us-ascii?Q?m9lQNBoO2RuQqM2Cci7LBTIiLpK2ORTs3sDKrprWFtYHQMzw8gZpi79utd9Y?=
- =?us-ascii?Q?nvdw5RDnogb5OIq0Q8V4mCRL01wz0o4/ZnhP1Pf1tC4S82P8pqrI6f2WScxW?=
- =?us-ascii?Q?1neT9xU1KLRc0kTyknjDKm1Q3+e4oAHLiDzt+PLBylt557zBg+scwzdC8Vru?=
- =?us-ascii?Q?s4QEwke3Dj5TZUUgiMRNQGAxNz34IxcVF+sQpbjhDDd+G8wEVzWKaKMbpQvc?=
- =?us-ascii?Q?U2E300qnWJGajvZonctimnnX8+BvF5KpNQwOetE7EOj8lFti0y6/QJXrr2JX?=
- =?us-ascii?Q?3A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	LQGUn/Y8CON2HsF00M2NHEKByb3yw+VveR/qAwGlOBivJfXZdMZnR3soroFSjx4b9z07bwOhpUwzUkcDf3aw+dgGbT6pD9MnMkyTF9Tc5Pgl4vONMiCYj5rykwU5BP3oj+sx/IQnsc3yryShf11GDTC1E4tPL1KsPmu3PGB0+p6x6AJXeYKGSpTWiBJfQ1cURnX5ZrE7FKLqBTSIfu9nRldHao4/i2YUqgWAV+tGIiNOpSkD6Bnt9YnPyAGXOtfvHvX8UPATyzVFhaJoWI4LITjkze5fun2wQbNKlFaOnqlaKzLLS5aByO7BxWX5ocjV9gadjxt8KnYMfqAKQyK9K0rVxlpV9UqXu6h/D41PawfKFtlCnZRT5YXwxgayVn8LWai5XIB/AYQG0WUgc77UiI/1t2wFAxbHFIuQ2VP2DZIQvYs5DXoihJnNE235aK+5pS85rpGTmojJLPNsGluMLJDj6tq0yrg2eWWHEjwI+XBbZPPjeHQN36T7n7XwZsngKEV1cm78bJz8l9gtgNIp87s39odUaTwj4FxuecVe/V8TeqmUfCe7SyZt2x4W8C1KO5xrC5r9wCuc5Wlh0DImozt4H462kA6sJ9NpqypgXY0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34c2e8c8-3253-4848-92c2-08dd14fb4bc0
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 07:06:09.9346
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aSR14DuVd6O3v/akjb5uqCRbsDVfnKhYLajf3iTZ91evZFA+DCKS49oTKCqtEIuGxNDCIK4IKjqXZ833PfuW5CG3+GTuR6enE2aWUnAp8lU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7724
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-05_04,2024-12-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412050053
-X-Proofpoint-ORIG-GUID: HoXOdDMiz3g45J9koD8O6zb4SgLk4JSZ
-X-Proofpoint-GUID: HoXOdDMiz3g45J9koD8O6zb4SgLk4JSZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z03HgRGByNi1spE0@bfoster>
 
-On Thu, Dec 05, 2024 at 12:18:19AM +0000, Wei Yang wrote:
-> On Tue, Dec 03, 2024 at 06:05:10PM +0000, Lorenzo Stoakes wrote:
-> >Right now fs/exec.c invokes expand_downwards(), an otherwise internal
-> >implementation detail of the VMA logic in order to ensure that an arg page
-> >can be obtained by get_user_pages_remote().
-> >
-> >In order to be able to move the stack expansion logic into mm/vma.c in
-> >order to make it available to userland testing we need to find an
->
-> Looks the second "in order" is not necessary.
->
-> Not a native speaker, just my personal feeling.
->
-> >alternative approach here.
+On Mon, Dec 02, 2024 at 09:43:13AM -0500, Brian Foster wrote:
+> CC'd gfs2@lists.linux.dev.
+> 
+> On Sun, Dec 01, 2024 at 05:48:28PM -0800, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> > 
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
+> > 
+> > loop0: detected capacity change from 0 to 32768
+> > gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+> > gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+> > gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
+> > gfs2: fsid=syz:syz.0: first mount done, others may mount
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+> 
+> This is the recently added warning for zeroing folios that start beyond
+> i_size:
+> 
+> 	WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
+> 
+> This was added because iomap zero range was somewhat recently changed to
+> no longer update i_size, which means such writes are at risk of being
+> thrown away. A quick look at the gfs2_fallocate() -> __gfs2_punch_hole()
+> path below shows we make a couple zero range calls around block
+> unaligned boundaries and immediately follow that with a flush of the
+> entire range. If a portion of this starts beyond i_size then writeback
+> will simply throw those folios away.
+> 
+> I think the main question here is whether there is some known/legitimate
+> use case for post-eof zeroing in GFS2 that requires behavior to be
+> revisited on one side or the other, or otherwise if there is an issue
+> with the warning check being racy and thus causing a false positive.
+> 
+> GFS2 folks,
+> 
+> Could you comment on the above wrt GFS2 and post-eof zeroing?
+> 
+> If this isn't some obvious case, hopefully syzbot can spit out a
+> reproducer soon to help get to the bottom of it. Thanks.
 
-Sorry missed this one.
+I can't say much about gfs2, but rebasing the rtreflink patchset atop
+6.13-rc1 also triggered this.
 
-You're right this is clunky (non-native speakers often find this better
-than native speakers to whom clunky turn of phrase can be more easily
-overlooked I imagine).
+The refcount code in xfs isn't designed to allowed shared unwritten
+extents.  If the rt extent size is greater than 1 fsblock, that means
+that FICLONE (after flushing and invalidating pagecache) write zeroes to
+unwritten extents and changes the mapping to written.
 
-Second 'in order to' should be 'to' really, but I'm not sure this is
-important enough to take pains to address, will fix if a respin is
-otherwise needed.
+Unfortunately, if EOF happens to be in the middle of a shared rt extent,
+the file will then have written mappings that start entirely beyond EOF.
+If there's a dirty folio that spans EOF but doesn't cache the entire rt
+extent and someone initiates a write well beyond EOF, the posteof
+prezeroing will see the written mapping, allocate a new folio entirely
+beyond EOF, and trip over this.
 
-> >
-> >We do so by providing the mmap_read_lock_maybe_expand() function which also
-> >helpfully documents what get_arg_page() is doing here and adds an
-> >additional check against VM_GROWSDOWN to make explicit that the stack
-> >expansion logic is only invoked when the VMA is indeed a downward-growing
-> >stack.
-> >
-> >This allows expand_downwards() to become a static function.
-> >
-> >Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
-> >currently user-visible in any way, that is place within an rmap or VMA
-> >tree. It must be a newly allocated VMA.
-> >
-> >This is the case when exec invokes this function.
-> >
-> >Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >---
-> > fs/exec.c          | 14 +++---------
-> > include/linux/mm.h |  5 ++---
-> > mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
-> > 3 files changed, 58 insertions(+), 15 deletions(-)
-> >
-> >diff --git a/fs/exec.c b/fs/exec.c
-> >index 98cb7ba9983c..1e1f79c514de 100644
-> >--- a/fs/exec.c
-> >+++ b/fs/exec.c
-> >@@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
-> > 	/*
-> > 	 * Avoid relying on expanding the stack down in GUP (which
-> > 	 * does not work for STACK_GROWSUP anyway), and just do it
-> >-	 * by hand ahead of time.
-> >+	 * ahead of time.
-> > 	 */
-> >-	if (write && pos < vma->vm_start) {
-> >-		mmap_write_lock(mm);
-> >-		ret = expand_downwards(vma, pos);
-> >-		if (unlikely(ret < 0)) {
-> >-			mmap_write_unlock(mm);
-> >-			return NULL;
-> >-		}
-> >-		mmap_write_downgrade(mm);
-> >-	} else
-> >-		mmap_read_lock(mm);
-> >+	if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
-> >+		return NULL;
-> >
-> > 	/*
-> > 	 * We are doing an exec().  'current' is the process
-> >diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >index 4eb8e62d5c67..48312a934454 100644
-> >--- a/include/linux/mm.h
-> >+++ b/include/linux/mm.h
-> >@@ -3313,6 +3313,8 @@ extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admi
-> > extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
-> > extern void exit_mmap(struct mm_struct *);
-> > int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift);
-> >+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
-> >+				 unsigned long addr, bool write);
-> >
-> > static inline int check_data_rlimit(unsigned long rlim,
-> > 				    unsigned long new,
-> >@@ -3426,9 +3428,6 @@ extern unsigned long stack_guard_gap;
-> > int expand_stack_locked(struct vm_area_struct *vma, unsigned long address);
-> > struct vm_area_struct *expand_stack(struct mm_struct * mm, unsigned long addr);
-> >
-> >-/* CONFIG_STACK_GROWSUP still needs to grow downwards at some places */
-> >-int expand_downwards(struct vm_area_struct *vma, unsigned long address);
-> >-
-> > /* Look up the first VMA which satisfies  addr < vm_end,  NULL if none. */
-> > extern struct vm_area_struct * find_vma(struct mm_struct * mm, unsigned long addr);
-> > extern struct vm_area_struct * find_vma_prev(struct mm_struct * mm, unsigned long addr,
-> >diff --git a/mm/mmap.c b/mm/mmap.c
-> >index f053de1d6fae..4df38d3717ff 100644
-> >--- a/mm/mmap.c
-> >+++ b/mm/mmap.c
-> >@@ -1009,7 +1009,7 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
-> >  * vma is the first one with address < vma->vm_start.  Have to extend vma.
-> >  * mmap_lock held for writing.
-> >  */
-> >-int expand_downwards(struct vm_area_struct *vma, unsigned long address)
-> >+static int expand_downwards(struct vm_area_struct *vma, unsigned long address)
-> > {
-> > 	struct mm_struct *mm = vma->vm_mm;
-> > 	struct vm_area_struct *prev;
-> >@@ -1940,3 +1940,55 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-> > 	/* Shrink the vma to just the new range */
-> > 	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
-> > }
-> >+
-> >+#ifdef CONFIG_MMU
-> >+/*
-> >+ * Obtain a read lock on mm->mmap_lock, if the specified address is below the
-> >+ * start of the VMA, the intent is to perform a write, and it is a
-> >+ * downward-growing stack, then attempt to expand the stack to contain it.
-> >+ *
-> >+ * This function is intended only for obtaining an argument page from an ELF
-> >+ * image, and is almost certainly NOT what you want to use for any other
-> >+ * purpose.
-> >+ *
-> >+ * IMPORTANT - VMA fields are accessed without an mmap lock being held, so the
-> >+ * VMA referenced must not be linked in any user-visible tree, i.e. it must be a
-> >+ * new VMA being mapped.
-> >+ *
-> >+ * The function assumes that addr is either contained within the VMA or below
-> >+ * it, and makes no attempt to validate this value beyond that.
-> >+ *
-> >+ * Returns true if the read lock was obtained and a stack was perhaps expanded,
-> >+ * false if the stack expansion failed.
-> >+ *
-> >+ * On stack expansion the function temporarily acquires an mmap write lock
-> >+ * before downgrading it.
-> >+ */
-> >+bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
-> >+				 struct vm_area_struct *new_vma,
-> >+				 unsigned long addr, bool write)
-> >+{
-> >+	if (!write || addr >= new_vma->vm_start) {
-> >+		mmap_read_lock(mm);
-> >+		return true;
-> >+	}
-> >+
-> >+	if (!(new_vma->vm_flags & VM_GROWSDOWN))
-> >+		return false;
-> >+
->
-> In expand_downwards() we have this checked.
->
-> Maybe we just leave this done in one place is enough?
->
-> >+	mmap_write_lock(mm);
-> >+	if (expand_downwards(new_vma, addr)) {
-> >+		mmap_write_unlock(mm);
-> >+		return false;
-> >+	}
-> >+
-> >+	mmap_write_downgrade(mm);
-> >+	return true;
-> >+}
-> >+#else
-> >+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
-> >+				 unsigned long addr, bool write)
-> >+{
-> >+	return false;
-> >+}
-> >+#endif
-> >--
-> >2.47.1
-> >
->
-> --
-> Wei Yang
-> Help you, Help me
+Seeing as writeback ignores totally posteof folios, the COW code will
+probably have to do BMAPI_ZERO allocations to ensure that we've zeroed
+out any stale data just in case they end up being used for a small file
+extension.  I might have to make ->iomap_begin never return written
+mappings that start after EOF, though I could just fix iomap to skip
+post-EOF written mappings since pagecache doesn't service that anyway.
+
+<shrug>
+
+--D
+
+> Brian
+> 
+> > Modules linked in:
+> > CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> > RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+> > Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
+> > RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
+> > RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
+> > RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
+> > RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
+> > R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
+> > R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
+> > FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <TASK>
+> >  iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
+> >  gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
+> >  __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
+> >  gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
+> >  vfs_fallocate+0x569/0x6e0 fs/open.c:327
+> >  do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
+> >  __do_sys_ioctl fs/ioctl.c:904 [inline]
+> >  __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7efeb7f80809
+> > Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> > RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
+> > RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
+> > RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
+> >  </TASK>
+> > 
+> > 
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > 
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > 
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> > 
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> > 
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> > 
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+> > 
+> 
+> 
 
