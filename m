@@ -1,131 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-36534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF04A9E5720
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:31:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97FF9E5778
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:42:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDD12870A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 13:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C949A1883BF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 13:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA935219A92;
-	Thu,  5 Dec 2024 13:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2983A218E8B;
+	Thu,  5 Dec 2024 13:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4uRJxMz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diU6eNPh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BB6217F36
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 13:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350C0218AA7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 13:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405320; cv=none; b=R4l/OjGJCUYYJNJHG+xrvJ7bG3bxrTIFGGqCVyJQ6JeLyhgz10kckvu6IySZ5tDUvW+ApDdSDcGF9K13x/vJ00i/ZLv1EgqXrHrDuN0dz4uXcAnrZqcFXwPIdwdAKFwgR3NVZHcmMB7bkC2D831bVG/QvFE5bN9XyyDhdftcE2s=
+	t=1733406085; cv=none; b=sz9h56Vl1rvR60QQOagSYvNq+V4K76r0RxFfbP0eUuh3qStlYa0tslQdY5qIkrsAgNmBNxvI3iRrWaAhz23DB54OuXolNyVoKLJ2uwStH3u8/Md+DPv5svJU15FCBez8BY/BjALHlTHI80dvnYPzhCDT/k7cB2ivXaNv1LLEFI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405320; c=relaxed/simple;
-	bh=OAdmKoE7OClq85YvTdKv3yrfsYTy8qOyw/wp/PvRk2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=av/+JrJlgyl0J7PslHb6OJxn+w0zUw8NFq5pU26Y5OVxZTz7SZCJmVtAyzJ61+ChoZQzUXlSLiHhwU/6bogAlaDxxIA0Aue8IQRPj2LNFJ0GeON5lSdQF37MJrRxkRI/h91kkxJt/0l2/YmGbCSZDMherlE0EoMwWRF3ReRr34A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4uRJxMz; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1733406085; c=relaxed/simple;
+	bh=MT4iop78WS7kXQHV1lnkSBtdTDxzy6q5KPmoYCa5UK0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iwpQrCP3ocCA/60KP+DyzqsfFL17veCeGJt5PvNC5i29xjzAeE+MaxULiaqnwuK6vioTFjrqj+uSiBR37ktiAG6qkpsqGrRmSjij6dhL5Cp5u5HXOQKeDp6jAlOYttD5wPjYSOZB5l6W1W4yH8LMlCnvcKnhUGLbtUAZFmrGebw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diU6eNPh; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa62f5cbcffso52476066b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 05:28:38 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724f42c1c38so804960b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2024 05:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733405317; x=1734010117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OAdmKoE7OClq85YvTdKv3yrfsYTy8qOyw/wp/PvRk2s=;
-        b=F4uRJxMzSjEKCz+DUvlRJhMGyFpOzjMGsdEXeAEjdP4GrX1lA0rK9pABh90LrnfaCD
-         UGppY3q1D5q913d5jHT8HVncisKuUUjkiCUI61YSJTiFo+a3Yo0CnqBQADJVifHDky7Y
-         7i+CnpWZaxfL7+GnSJEJy6BqJidP4I4AmINWH03HCgoTKRMQpWO2xp5QyZct7hprjxWF
-         td5vWifgnuX1BVqSExBGMHSM7NmQeqtbQ2LmHqc5dsu2h95cY5b8g7O8ueMNKTfZgafN
-         DEkujv8ZxNCLsmJnSoA+T1DLJC7+6fCmHAjsCRKkzt0bO67oKLwlL1hpMtAbXMCdOZ6n
-         nUcQ==
+        d=gmail.com; s=20230601; t=1733406083; x=1734010883; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
+         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=stPP7YaX8NczBe94EUNJGGQYrsTGF2tS1ZZnY2i0wbc=;
+        b=diU6eNPhM/Y5kSxAN4dPL4FYjF51fH/plBVeJhdvWxj7BtjuaCGmUl76NHKY+NqkAQ
+         CUYJ1iyBED7RJjzffjrl7T5L71vAMthJxmo8Do8I+B6gTdFnIjTy6Yb7SF3qDBj/tOqJ
+         v2NVKWP5Iyhh2NnryjDqG5glVqqrBXhtScfQ/F7/07knxTpezBC6jO5LE67VuOn27Mpd
+         tWHiIsZDOPl2SPtbUWoKm2o92GVtb8NUBCWuCesqK0DW1nKqwQiNGC+oP58bj+E75siG
+         VDL+sKvTGI5hRgB5or/s+3Mfg9TRxE+z8uTPWkjV+qkEkK6UtTI9YQCQ1Bg2vxCRA9Qy
+         plUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733405317; x=1734010117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OAdmKoE7OClq85YvTdKv3yrfsYTy8qOyw/wp/PvRk2s=;
-        b=pTsSnsXX/WjhCpgOD9lc5nS3seRfJ6R5aQ/M+JyOM5ACQvtZ9uazRUOqXNCqu6L46J
-         fBXbtYAD8Bhctuxbj+QcgRd4ftR5qSGIXq4wVoag8cCsBYbWbfSUN+lqpMmQpWIsGdGZ
-         b3RgrE3AdfCTzM4iHCEOKf+Pr68IreH26U+YuJBPzXr88ft1xJrsBTI9ke8eY5ksZYUm
-         qWj8sLMBUaaz6CQIg2/IwAZsul/muwzGDT7phh0H5+4Z4MmrqZ1NFCHLyE8O4nwPXfFV
-         rmez1i93JZhvZpY7kRuOsbp0QYkGXOwzQy1xzxWxpcOJEsrpr3PI1B7wBl4YzVSj62nx
-         SxXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoY3UbIsaZ6JzeihIk/ILWcpKjsn3PaeswC5Ta+9BSbihU/AjspAXo/NuI2uZxzmVbEDxw7uVsKo2xjRlt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV+hyPQ6+3q3ELj8cVc8fTjkNOqt31BBvBN3u/GvY0HEtaxtgw
-	qs2JlWstu93iGL490ZzJLaupRwFnuBGounPyLbvfhmrMAbb+XAiLVf/9h/eOEVz7JQjjr0IcN0g
-	LdCcuRqmrifmAmgUw/bzdWkFcfbU=
-X-Gm-Gg: ASbGncsZz/pNNAZXWd4/n9xlDk+/0gv4vRNaVVpMU7DwozlUz+sqgi1KRa/A2brC0SJ
-	CuksLlqe3H0/gmC1DubkmTVa7pCL0afM=
-X-Google-Smtp-Source: AGHT+IFQtnckRIaoRN79JsA2kgYyftNjiNxDtFVTes/oFbOO/3ussEhO0LHH61DTA0KQCnNA5EJee0o5CpteG4sU+MU=
-X-Received: by 2002:a17:906:3cb2:b0:aa5:3663:64c5 with SMTP id
- a640c23a62f3a-aa62196c3abmr290397266b.22.1733405316412; Thu, 05 Dec 2024
- 05:28:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733406083; x=1734010883;
+        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
+         :message-id:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=stPP7YaX8NczBe94EUNJGGQYrsTGF2tS1ZZnY2i0wbc=;
+        b=KPkklcJa9FKeRtzHGkZgLMs+Rj5gRNTjG6HGwrKWDWdfcrNS/YqCyutnWTymF8hcYz
+         ucN9JjHVMCUsKC6k2kmj4LxDv0Bjqjon0Y53uiriDr0DEgxQu73DNttoNtR0VxQgc3EZ
+         a17WMAHeM/hjdcmy1QmWB+6LXsqJM/7sMfqKno5d7BZrwaVgcav/MJ4AMvUS0C0hpfzs
+         rm6OjTpoUdekf61lWcJGH4/moGKBp7VUXMs6YglMbWipH0WXNkkMvIxEaT0W97YskL+w
+         qyGv5QTfEIsez+0EVweJhthRrkXNfg7oQyV9Om5iiOy1yOOR867rnbq30o71fbScDN7c
+         WS0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVf6+ZdFlZE2NYO+97sVJJ7IYf/F4jGOFcmgNKkf1TMXyO+sC6DaDZCpFrx9ajFH639kv8jnl8JLFyUnLPR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtwwLnq02tOQzl44UPUPsDqVvmSPAApBQg6d/vVwcPLT6iHjrG
+	Wr4OZOYddEcSkGg3lst234JTOuV2Qy1zgwu9h8TVGWWv8uizv9T2
+X-Gm-Gg: ASbGncsPEDsRD3M+a1Uqzw+IBjI9eyWQf+9pIRUjCSiPASNPLNk3ua9XS8/8X1bRFnX
+	1zFjCsEvR6weUiWmVFXpOFx80TKcVG7B99WU5hylQTzrDCYH9VIowU2BKuYvjfjMRgsCAJR4xlO
+	XUvulnY1UpqkposCQWWEL6eHH667ysgrZGU6PTOaLShN5oq5dUJdJAc3aDReY0Gt8ziCmG3jptn
+	gKgzv085DhJJtAf+Z6XgNP5iJ2l//PJ6kt3c4hXGqmsLKD591+yq+q9iJv4lzgdsVx1EyjjY9pa
+	4i+w/Y9CGp5H0DbC3y4/ffCbfF0g23aX9AAz
+X-Google-Smtp-Source: AGHT+IHqy2fB0PSEtlgLnY5uV9xawlm78HfsnB+wjTo6kKRSaGcYU2YxGWLqYyJoarSz/w0en8Z3NQ==
+X-Received: by 2002:a05:6a00:218b:b0:720:75c2:7a92 with SMTP id d2e1a72fcca58-7257fb740b0mr12587584b3a.15.1733406083228;
+        Thu, 05 Dec 2024 05:41:23 -0800 (PST)
+Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a17e8bsm1229477b3a.88.2024.12.05.05.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 05:41:22 -0800 (PST)
+Date: Thu, 05 Dec 2024 22:41:18 +0900
+Message-ID: <m28qsuw8ld.wl-thehajime@gmail.com>
+From: Hajime Tazaki <thehajime@gmail.com>
+To: johannes@sipsolutions.net
+Cc: linux-um@lists.infradead.org,
+	ricarkol@google.com,
+	Liam.Howlett@oracle.com,
+	ebiederm@xmission.com,
+	kees@kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 02/13] x86/um: nommu: elf loader for fdpic
+In-Reply-To: <5b5b50909f7c23f09500d7ecc8b57b46c33ab7b0.camel@sipsolutions.net>
+References: <cover.1733199769.git.thehajime@gmail.com>
+	<215895272109f7b0a4a00625e86b57f39fa13af8.1733199769.git.thehajime@gmail.com>
+	<5b5b50909f7c23f09500d7ecc8b57b46c33ab7b0.camel@sipsolutions.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/26.3 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241128142532.465176-1-amir73il@gmail.com> <20241205125543.gxqjzyeakwbugqwk@quack3>
-In-Reply-To: <20241205125543.gxqjzyeakwbugqwk@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Dec 2024 14:28:25 +0100
-Message-ID: <CAOQ4uxjyFOy0JCPJ2y4Sm-goRK9xtf_6jkWEEq_vzxPO-FmnCA@mail.gmail.com>
-Subject: Re: [PATCH] fs: don't block write during exec on pre-content watched files
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Dec 5, 2024 at 1:55=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 28-11-24 15:25:32, Amir Goldstein wrote:
-> > Commit 2a010c412853 ("fs: don't block i_writecount during exec") remove=
-d
-> > the legacy behavior of getting ETXTBSY on attempt to open and executabl=
-e
-> > file for write while it is being executed.
-> >
-> > This commit was reverted because an application that depends on this
-> > legacy behavior was broken by the change.
-> >
-> > We need to allow HSM writing into executable files while executed to
-> > fill their content on-the-fly.
-> >
-> > To that end, disable the ETXTBSY legacy behavior for files that are
-> > watched by pre-content events.
-> >
-> > This change is not expected to cause regressions with existing systems
-> > which do not have any pre-content event listeners.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> OK, I've picked up the patch to fsnotify_hsm branch with Christian's ack
-> and updated comments from Amir. Still waiting for Josef to give this a
-> final testing from their side but I've pulled the branch into for_next so
-> that it gets some exposure in linux-next as well.
 
-Cool. I just pushed a test to my LTP fan_hsm branch for ETXTBSY.
+On Thu, 05 Dec 2024 01:20:51 +0900,
+Johannes Berg wrote:
+> 
+> On Tue, 2024-12-03 at 13:23 +0900, Hajime Tazaki wrote:
+> > 
+> >  arch/um/include/asm/Kbuild           |  1 +
+> > 
+> >  arch/x86/um/asm/module.h             | 24 ------------------------
+> > 
+> 
+> These changes could be a separate cleanup?
 
-It checks for the expected ETXTBSY with yes or no pre-content watchers,
-but it checks failure to execute a file open for write, not actually to ope=
-n
-a file for write in the context of PRE_ACCESS event during execution.
+agree.  will do it.
 
-So yeh, a test of the actual use case of large lazy populated
-executables from Josef
-is required, but at least we have basic sanity test coverage and now we wil=
-l get
-some extra linux-next testing coverage which is great.
+-- Hajime
 
-Thanks,
-Amir.
 
