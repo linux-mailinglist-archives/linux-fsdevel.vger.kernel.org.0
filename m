@@ -1,82 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-36539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F249E582B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:14:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE4716867E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:14:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15EE219A6A;
-	Thu,  5 Dec 2024 14:14:51 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFD59E585C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:19:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F99D1A28D;
-	Thu,  5 Dec 2024 14:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EBA283495
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:19:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B918021A43F;
+	Thu,  5 Dec 2024 14:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hNvUabuA"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9651584A5B;
+	Thu,  5 Dec 2024 14:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733408091; cv=none; b=jJ4O4DsadBiW1BAtHrUxepE+FduzNWliHYrxUFPMEnKiy9vYQlYrxFfhPUWoFVQhpRBRtB89NSAyCfRzLO6VViBN2yzwcxvlYArffY3nynwkD7572chL5a/CyGYJMbGVInobx7PZ+3TUCMq/2CjzfPY39oZK7o7S24bjWuh4n2g=
+	t=1733408336; cv=none; b=sl5myWjSNrvAes4WLjrmn0m8IobNGhr2uFjBVYLFUaWmIIVfjaokA4wmtIEPhU2aPpN7BEWBjxlr8f6zpEBspS0FOV7aaG7qXOOs503vQKKktc05BNQZOctEtHed/Rc82HGgxtMl/gEZ/ugn7DEHNvnk89bmWxvUyXZ/IQE1QcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733408091; c=relaxed/simple;
-	bh=zRcisYLYETJVPbCJME2b3GkYthIO+pW4YnopYpz7x2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BxXl1RMc6wEdCdCpNns6BYfn6nudFlzKepEwcMNbrHMV3nb7UdyS0NWA2Z+z1hz+TSBxna0RNh9Jeqjudksio8fv3uKVD3AUVZHnOQQvrT0tAENxhK6nlJEag2siQZTfrqjRSUhFihnbSH7SzLRjlGfD61AirChtUQLc9EEdnzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4B5EEbSJ073919;
-	Thu, 5 Dec 2024 23:14:37 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4B5EEbED073916
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 5 Dec 2024 23:14:37 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b992789a-84f5-4f57-88f6-76efedd7d00e@I-love.SAKURA.ne.jp>
-Date: Thu, 5 Dec 2024 23:14:36 +0900
+	s=arc-20240116; t=1733408336; c=relaxed/simple;
+	bh=a2B2Dj4fWLN39XL0GnueLCtei8vr48XbIOnRCnLUHiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vw4pbaX/XwnKI3A2vYyK4GoJ8fHLW0RuW2gN3tmnww3ZrtujrV+os+tvhJZPrShff9bnSgBrpNoLWgtbcKMqr/g+e18CrJvmS50QTLGU0uw40uR0wQpJvWGstmSk11n74mmKgRercaAqZ53x4EowyGRdpSLw2KdhivqrOWSBv3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hNvUabuA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1FnD7vYDvYGjn7VoepL9sooEb2SIm6Bnyb1TmQSbVic=; b=hNvUabuAbI1r+JzxLwFqEocFXs
+	qPBoCxu++XVo2iuuGcS/xsDVrO0//7vSXAzGFHrqNcNGntH4Tg+RRgBIG2tS4jIlwpMiAs3uH/V5H
+	sx7Y2lNy8hybvTlaoA1A2HUs96MeCqvmmQh65+1h5SrrItgJEIukLE8IiWA3/lLcerwdaidSRVtVy
+	S29A5xVLzp829hsRb3Zp8Jdt8YJEuRYannbKNePBhK4INt8xqd6KueJL9ik4m9H9iZ17EoTIRgfVB
+	IDOk0JeAJ7foEK4h/M8ghvxwSKWsTAUddfrHqye9tR+N8NCgNsCyjuI0wRllfoqYfcpW0RCjURRIn
+	9PWZrENg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tJCgs-000000058ni-0FBh;
+	Thu, 05 Dec 2024 14:18:50 +0000
+Date: Thu, 5 Dec 2024 14:18:50 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: paulmck@kernel.org, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <20241205141850.GS3387508@ZenIV>
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH (REPOST)] hfs: don't use BUG() when we can continue
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <ddee2787-dcd9-489d-928b-55a4a95eed6c@I-love.SAKURA.ne.jp>
- <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
- <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205120332.1578562-1-mjguzik@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2024/12/05 22:59, Matthew Wilcox wrote:
-> On Thu, Dec 05, 2024 at 10:45:11PM +0900, Tetsuo Handa wrote:
->> syzkaller can mount crafted filesystem images.
->> Don't crash the kernel when we can continue.
-> 
-> The one in hfs_test_inode() makes sense, but we should never get to
-> hfs_release_folio() or hfs_write_inode() with a bad inode, even with a
-> corrupted fs.  Right?
+On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+>  void fd_install(unsigned int fd, struct file *file)
+>  {
+> -	struct files_struct *files = current->files;
+> +	struct files_struct *files;
+>  	struct fdtable *fdt;
+>  
+>  	if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+>  		return;
+>  
+> +	/*
+> +	 * Synchronized with expand_fdtable(), see that routine for an
+> +	 * explanation.
+> +	 */
+>  	rcu_read_lock_sched();
+> +	files = READ_ONCE(current->files);
 
-Unfortunately, https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-reports that we can reach hfs_write_inode() with a corrupted filesystem.
-If we should never get to hfs_write_inode(), how do we want to handle
-this problem? Is someone familiar with hfs enough to perform an in-kernel
-fsck upon mounting?
-
+What are you trying to do with that READ_ONCE()?  current->files
+itself is *not* changed by any of that code; current->files->fdtab is.
 
