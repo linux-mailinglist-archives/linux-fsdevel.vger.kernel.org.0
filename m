@@ -1,135 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-36506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116509E4B14
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 01:26:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F3A9E4B42
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 01:38:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F47282CFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 00:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3F01881182
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 00:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95F4D53C;
-	Thu,  5 Dec 2024 00:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51912E7E;
+	Thu,  5 Dec 2024 00:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="trKvKWmM"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="avJhwTcR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADF51C36;
-	Thu,  5 Dec 2024 00:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C70D531;
+	Thu,  5 Dec 2024 00:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733358389; cv=none; b=MP8bhd8yIaMdVZExaPq7cJlM/6Hh733rEIphPg+PzRukEyhEIWvxaEKD+WUEU5jsBI91vpyNG0PGcYVSzaBSdvXzYZvRshH3AUe8R0Bwcz63sRcRR9mKR3nsXhuN71clwU3OmYevL/8eEJu5DGIOLkNdJhxArnv82IHqXqijWvc=
+	t=1733359112; cv=none; b=sh31RdNcQ/qjswxdf54/jUJEHZEJEploZZ6I5basA3oXyzykOmnnxlQWMlOw9qbVAc9sVWL5ah7LuIatT1+mLOxdlyZOIPpB4SSfWIjMPhMYgzkQpKyjFykLUW/wfIeo0CyX702gU/RI6jaex2eoTEE+2EN6Qlu7vHu3akKBbAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733358389; c=relaxed/simple;
-	bh=hZq42RBJ1eHg0DT0y6H8DhVwVHSMTJaExIlIRRRKAa8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oC/0oTYsI/ul7eOoDeq/j2zpGnicXouYESIup7G5Rk4GSkewsuF/XP0IRLaZobzf1Ea8zwV40xIK24yc0PUgJVB30BXOXA0uWzA1TidBMF2TTzaTFjSaYGhm/r5/2xdPcFcwpsDdeMfp2Zd3uIm1iTLLfpWsuO7aCDUdGUyvJiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=trKvKWmM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1733359112; c=relaxed/simple;
+	bh=9YVm5TgWSjCYrpLpmtVTO6+TJLEENd0UFDiH4YMYOaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRi/CUo52s1sVP2yUQBaYKrEbG7corfq+mW8Z9rGXquCXXCWy5SpTLDtHr7dTdRMwoOfITvj+/6ZzcmciEUJ0rah1KQ1awTNdIo3zscjH6kVc0RYXzCFriEKI1eu3Lfw3BRAR65wu9oSes5WpKLZkXDwIGmVWpT8S5ekeF+BQBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=avJhwTcR; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=J234ny5yyhrfseHzJ11zzCKLAAps5cwchYksQX/+uLU=; b=trKvKWmMXiTifUOHBUSFzB2Lfk
-	K3VfVSLkAS4ZJlUnxygy4g7Hk6sQNSzVNILE6KDjUuJ7M6DiwdqLoRSNJ9G6nwdOT/XTmPVOcigar
-	h4mONChVuuTQLb+p8HPShV7KLEw/DjLFChry+FvZ8fwl6sBT26YkJ1//zjegdkg8HPoMD5etci5hm
-	bROFjRNZ2N4QwF85hJyWlgK22Y7q82C0QJW3R4h+DEdZY2U0kydwVZKzNnBaIAWSZOVVB+Fbj+uI1
-	Jc7vbduz3sqR4fOmsxnXXXjGKAFLEdAP9eL/qRchcMSAQOah5Re6kGmGfhKfPnxjs+Ly1Q1ZfO293
-	rlRwxr9g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIzhJ-0000000ELpc-2AJI;
-	Thu, 05 Dec 2024 00:26:25 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: patches@lists.linux.dev,
-	fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	gost.dev@samsung.com,
-	sandeen@redhat.com,
-	mcgrof@kernel.org
-Subject: [PATCH] common/config: use modprobe -w when supported
-Date: Wed,  4 Dec 2024 16:26:24 -0800
-Message-ID: <20241205002624.3420504-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Y+oQ0S3ae3U/S6jQx7MGFvQACNYgjF/pNRRinNABr+U=; b=avJhwTcRsgyF38KzhEz/82L23x
+	jjBEnChetTC0jTQmzrlc8kPnox81tZC8a3Ah5PX3Uk8AJ0XiXt0sScmbbR6ltbmZa2A0fHcGaWpXF
+	IYsfk0pUKwjYlI3lOMRUTZyU7bJ1JwicfmJXHZc80HVFSAp7vkJzjBlm9ePYnCQCz+bCHXqHF4KCu
+	aZ4q0G9PRzZKeGePjj2qL2/KobMOHecU8Jz0Zhi9Bmeh4PsT3xQJTAOMuD7sKKYLR2tglHzkXsFh7
+	S0akLWr75xXgL9US362UL7s3Qvpmo10uJT75ZgHhcQA+zJEHcW4+l8pJInBXzQMQvyjhg9rf3PEfC
+	FD20zKOQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIzsy-0000000ENKv-0WGX;
+	Thu, 05 Dec 2024 00:38:28 +0000
+Date: Wed, 4 Dec 2024 16:38:28 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <Z1D2BE2S6FLJ0tTk@infradead.org>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-We had added support for open coding a patient module remover long
-ago on fstests through commit d405c21d40aa1 ("common/module: add patient
-module rmmod support") to fix many flaky tests. This assumed we'd end up
-with modprobe -p -t <msec-timeout> but in the end kmod upstream just
-used modprobe -w <msec-timeout> through the respective kmod commit
-2b98ed888614 ("modprobe: Add --wait").
+On Sun, Dec 01, 2024 at 02:12:24PM +0100, Christian Brauner wrote:
+> Hey,
+> 
+> Some filesystems like kernfs and pidfs support file handles as a
+> convenience to enable the use of name_to_handle_at(2) and
+> open_by_handle_at(2) but don't want to and cannot be reliably exported.
+> Add a flag that allows them to mark their export operations accordingly
+> and make NFS check for its presence.
+> 
+> @Amir, I'll reorder the patches such that this series comes prior to the
+> pidfs file handle series. Doing it that way will mean that there's never
+> a state where pidfs supports file handles while also being exportable.
+> It's probably not a big deal but it's definitely cleaner. It also means
+> the last patch in this series to mark pidfs as non-exportable can be
+> dropped. Instead pidfs export operations will be marked as
+> non-exportable in the patch that they are added in.
 
-Take advantage of the upstream patient module remover support added
-since June 2022, so many distributions should already have support for
-this now.
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
-
-Eric, I saw you mentioning on IRC you didn't understand *why*
-the patient module remover was added. Even though I thought the
-commit log explained it, let me summarize again: fix tons of
-flaky tests which assume module removal is being done correctly.
-It is not and fixing this is a module specific issue like with
-scsi_debug as documented in the commit log bugzilla references.
-So any sane test suite thing relying on module removal should use
-something like modprobe -w <timeout-in-ms>.
-
-  Luis
-
- common/config | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/common/config b/common/config
-index fcff0660b05a..d899129fd5f1 100644
---- a/common/config
-+++ b/common/config
-@@ -264,7 +264,7 @@ export UDEV_SETTLE_PROG
- # Set MODPROBE_PATIENT_RM_TIMEOUT_SECONDS to "forever" if you want the patient
- # modprobe removal to run forever trying to remove a module.
- MODPROBE_REMOVE_PATIENT=""
--modprobe --help >& /dev/null && modprobe --help 2>&1 | grep -q -1 "remove-patiently"
-+modprobe --help >& /dev/null && modprobe --help 2>&1 | grep -q -1 "wait TIMEOUT_MSEC"
- if [[ $? -ne 0 ]]; then
- 	if [[ -z "$MODPROBE_PATIENT_RM_TIMEOUT_SECONDS" ]]; then
- 		# We will open code our own implementation of patient module
-@@ -276,19 +276,19 @@ else
- 	if [[ ! -z "$MODPROBE_PATIENT_RM_TIMEOUT_SECONDS" ]]; then
- 		if [[ "$MODPROBE_PATIENT_RM_TIMEOUT_SECONDS" != "forever" ]]; then
- 			MODPROBE_PATIENT_RM_TIMEOUT_MS="$((MODPROBE_PATIENT_RM_TIMEOUT_SECONDS * 1000))"
--			MODPROBE_RM_PATIENT_TIMEOUT_ARGS="-t $MODPROBE_PATIENT_RM_TIMEOUT_MS"
-+			MODPROBE_RM_PATIENT_TIMEOUT_ARGS="-w $MODPROBE_PATIENT_RM_TIMEOUT_MS"
- 		fi
- 	else
- 		# We export MODPROBE_PATIENT_RM_TIMEOUT_SECONDS here for parity
--		# with environments without support for modprobe -p, but we
-+		# with environments without support for modprobe -w, but we
- 		# only really need it exported right now for environments which
--		# don't have support for modprobe -p to implement our own
-+		# don't have support for modprobe -w to implement our own
- 		# patient module removal support within fstests.
- 		export MODPROBE_PATIENT_RM_TIMEOUT_SECONDS="50"
- 		MODPROBE_PATIENT_RM_TIMEOUT_MS="$((MODPROBE_PATIENT_RM_TIMEOUT_SECONDS * 1000))"
--		MODPROBE_RM_PATIENT_TIMEOUT_ARGS="-t $MODPROBE_PATIENT_RM_TIMEOUT_MS"
-+		MODPROBE_RM_PATIENT_TIMEOUT_ARGS="-w $MODPROBE_PATIENT_RM_TIMEOUT_MS"
- 	fi
--	MODPROBE_REMOVE_PATIENT="modprobe -p $MODPROBE_RM_PATIENT_TIMEOUT_ARGS"
-+	MODPROBE_REMOVE_PATIENT="modprobe $MODPROBE_RM_PATIENT_TIMEOUT_ARGS"
- fi
- export MODPROBE_REMOVE_PATIENT
- 
--- 
-2.45.2
+Can you please invert the polarity?  Marking something as not supporting
+is always awkward.  Clearly marking it as supporting something (and
+writing down in detail what is required for that) is much better, even
+it might cause a little more churn initially.
 
 
