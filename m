@@ -1,122 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-36561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA119E5DF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 19:05:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E80A9E5E5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 19:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C051C188572D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 18:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279D21634B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 18:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017A5227B96;
-	Thu,  5 Dec 2024 18:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C5F22B8D3;
+	Thu,  5 Dec 2024 18:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m07EyLZj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9DgpFgZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510901922FB;
-	Thu,  5 Dec 2024 18:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0344221461;
+	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421894; cv=none; b=eVwKy84WFoklo4rjfR7a71QEec9im5NJ/x3NdDxbd/tOpH000dP7AUITKK2j1qKl7UbmUE6RlpXDVZcUXBW1nLT9NA1mxCOxQ97acKhPOLl/wwv185XgGy+SUkbbD6s6f5XzkoaCIPhdPjT7YjIUqADU5P1HTZBKBDBAxI3RXUw=
+	t=1733424081; cv=none; b=CUBh378js2UwpS2wET5WFe5hx8w4knXmCPwnENItIeE6xs3K6A5cBABSC9Zdf0Fs7lg/QKmKnQ7zCUDOtc2TGRnskrkBVPtgg8DibfIBbw5JUCKsNj5ia176hSnBnpTc+NsuLvCClQKIWSbenm8uzt4wC018v/EnRRRA/hXKTeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421894; c=relaxed/simple;
-	bh=hZtXBo2jdC7H9GEX5zEd/6dIqnpMpPqcvFJELa7vEWQ=;
+	s=arc-20240116; t=1733424081; c=relaxed/simple;
+	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgxpPad9GhnEqH5i9qeUiNTVII3g6IMgZWAruNI1NONfts/Pbsssg+ahbFowfltCq+kXkbpLm/y7Jm/kXQLEXuyPS5UaubnB5VBJFakjbXFs1lZIFYYIApz3WTP/oz70q8azsW2E6580JiVmjEgn/bsOUSobIGFd06lXvGgCuM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m07EyLZj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BABDC4CED1;
-	Thu,  5 Dec 2024 18:04:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rcuae/JRzOXTjbBn/faBUXdYevuwP0QROWK689L4Yuc65XV4HbwNsdfYeqfYozT8RdvzWylCXyyf0Rux0guhvdt5PUNcaYx8wyBMXwYzFhsHYWS+KyfiDZemtp+5dwNEAtrg4PLNih0w8Ssvzdjjtj8LnAi2NevJELfls9Ik35c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9DgpFgZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C01EC4CEDC;
+	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733421894;
-	bh=hZtXBo2jdC7H9GEX5zEd/6dIqnpMpPqcvFJELa7vEWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m07EyLZjU+dhfWLP/mB5cAFfr5igeKowggMRD3cYlKDgXfxZkhZ5UddV/46QQlF6z
-	 3E4O4Yv25mh6PBav+Mh9A+tIqOGX6rB51txBav+RdsY3sXHL7VPamNp3fev0mPSIr/
-	 EiSfDKKiu6JAyc+1LIEfqY/srROvlqGGEpS0TnuAIDfASOtP/L47igrhICFsgzikjx
-	 t7/ilUJdJwCI1gR3UJ9f0DRBQ9+ZyQViV90RV1AiR5PR4j5c5lryss5/V9N6oiDi/T
-	 TkfiY4HaT8ymdtViw6Q8FIW7IVA1N98wQCFfh6IRys0BOdsiLDPuJz+dNvsbX71KkX
-	 +t4SMo43J9pUA==
-Date: Thu, 5 Dec 2024 10:04:51 -0800
-From: Keith Busch <kbusch@kernel.org>
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-	asml.silence@gmail.com, anuj1072538@gmail.com, brauner@kernel.org,
-	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v11 06/10] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <Z1HrQ8lz7vYlRUtX@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241128112240.8867-1-anuj20.g@samsung.com>
- <CGME20241128113109epcas5p46022c85174da65853c85a8848b32f164@epcas5p4.samsung.com>
- <20241128112240.8867-7-anuj20.g@samsung.com>
+	s=k20201202; t=1733424079;
+	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=B9DgpFgZP2hg4PfSRiHH1z8WrSNl2SoVqunygTgEQk68hwNvKX9BgLjYy50x8ePwq
+	 Fjnru7HmOxwrIb9KlP11fdaTMRIyG3awLRQ6HMfVWqyA3d4aJB8CzgK+Mb56JgrMKb
+	 FCCdD9Yg0WK4l+aW5C+P3qdscwyY04GQVwOtUKeovfzuniZpQbKHGQh0edVYXAdxXD
+	 Nmgov/FjslB2NT8PcAIvp9q0kWVII6So1sf3Jrkev7n6S/qS1V1RHD6Xm/0oopVyQD
+	 0GAn6+H+MZTBm751kZPnM379dsjqUNm/1/pxlomNQiJG85grd8EINfJW0ICYnlMGJR
+	 55PP54tjAFqzg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C2EDFCE08E1; Thu,  5 Dec 2024 10:41:17 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:41:17 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205141850.GS3387508@ZenIV>
+ <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241128112240.8867-7-anuj20.g@samsung.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
 
-On Thu, Nov 28, 2024 at 04:52:36PM +0530, Anuj Gupta wrote:
-> Add the ability to pass additional attributes along with read/write.
-> Application can prepare attibute specific information and pass its
-> address using the SQE field:
-> 	__u64	attr_ptr;
+On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+> > >  void fd_install(unsigned int fd, struct file *file)
+> > >  {
+> > > -     struct files_struct *files = current->files;
+> > > +     struct files_struct *files;
+> > >       struct fdtable *fdt;
+> > >
+> > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+> > >               return;
+> > >
+> > > +     /*
+> > > +      * Synchronized with expand_fdtable(), see that routine for an
+> > > +      * explanation.
+> > > +      */
+> > >       rcu_read_lock_sched();
+> > > +     files = READ_ONCE(current->files);
+> >
+> > What are you trying to do with that READ_ONCE()?  current->files
+> > itself is *not* changed by any of that code; current->files->fdtab is.
 > 
-> Along with setting a mask indicating attributes being passed:
-> 	__u64	attr_type_mask;
-> 
-> Overall 64 attributes are allowed and currently one attribute
-> 'IORING_RW_ATTR_FLAG_PI' is supported.
-> 
-> With PI attribute, userspace can pass following information:
-> - flags: integrity check flags IO_INTEGRITY_CHK_{GUARD/APPTAG/REFTAG}
-> - len: length of PI/metadata buffer
-> - addr: address of metadata buffer
-> - seed: seed value for reftag remapping
-> - app_tag: application defined 16b value
-> 
-> Process this information to prepare uio_meta_descriptor and pass it down
-> using kiocb->private.
-> 
-> PI attribute is supported only for direct IO.
-> 
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> ---
->  include/uapi/linux/io_uring.h | 16 +++++++
->  io_uring/io_uring.c           |  2 +
->  io_uring/rw.c                 | 83 ++++++++++++++++++++++++++++++++++-
->  io_uring/rw.h                 | 14 +++++-
->  4 files changed, 112 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index aac9a4f8fa9a..38f0d6b10eaf 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -98,6 +98,10 @@ struct io_uring_sqe {
->  			__u64	addr3;
->  			__u64	__pad2[1];
->  		};
-> +		struct {
-> +			__u64	attr_ptr; /* pointer to attribute information */
-> +			__u64	attr_type_mask; /* bit mask of attributes */
-> +		};
+> To my understanding this is the idiomatic way of spelling out the
+> non-existent in Linux smp_consume_load, for the resize_in_progress
+> flag.
 
-I can't say I'm a fan of how this turned out. I'm merging up the write
-hint stuff, and these new fields occupy where that 16-bit value was
-initially going. Okay, so I guess I need to just add a new attribute
-flag? That might work if I am only appending exactly one extra attribute
-per SQE, but what if I need both PI and Write Hint? Do the attributes
-need to appear in a strict order?
+In Linus, "smp_consume_load()" is named rcu_dereference().
+
+> Anyway to elaborate I'm gunning for a setup where the code is
+> semantically equivalent to having a lock around the work.
+
+Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
+only with later RCU grace periods, such as those implemented by
+synchronize_rcu().
+
+> Pretend ->resize_lock exists, then:
+> fd_install:
+> files = current->files;
+> read_lock(files->resize_lock);
+> fdt = rcu_dereference_sched(files->fdt);
+> rcu_assign_pointer(fdt->fd[fd], file);
+> read_unlock(files->resize_lock);
+> 
+> expand_fdtable:
+> write_lock(files->resize_lock);
+> [snip]
+> rcu_assign_pointer(files->fdt, new_fdt);
+> write_unlock(files->resize_lock);
+> 
+> Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
+> synchronize_rcu do it.
+
+OK, good, you did get the grace-period part of the puzzle.
+
+Howver, please keep in mind that synchronize_rcu() has significant
+latency by design.  There is a tradeoff between CPU consumption and
+latency, and synchronize_rcu() therefore has latencies ranging upwards of
+several milliseconds (not microseconds or nanoseconds).  I would be very
+surprised if expand_fdtable() users would be happy with such a long delay.
+Or are you using some trick to hide this delay?
 
