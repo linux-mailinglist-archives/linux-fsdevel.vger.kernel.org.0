@@ -1,101 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-36542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8F89E58CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:47:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F253D9E58FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78EE2864A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2F5280DD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 14:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A6421A44B;
-	Thu,  5 Dec 2024 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8A321C190;
+	Thu,  5 Dec 2024 14:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6M/a8ym";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IEmGGgre";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6M/a8ym";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IEmGGgre"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XroGXx9l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D91B0F22;
-	Thu,  5 Dec 2024 14:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03074218853;
+	Thu,  5 Dec 2024 14:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410010; cv=none; b=EqXbfrTEcQAM3Rxhi9Di21dIdJeNO7gFWwy/cGjHn/doqZsaZlKSPRrqfGYU1VO4wreT+INsZEOLF0R8Li97CVCq2YKbKPO5WrZBKmjqz1JKGXtavEyGySBSD4Yk8Z6YU/WZ9ODT7Mpf8IDW/nJBci1k+hB5ZzUp/s/vOH+yn54=
+	t=1733410702; cv=none; b=goLR5EhodcIpYcSWsppeicai2tcCGlteILz0CfmTM1cmy6qsmqCQPVrtBEAlFxTcEIADFwfhVisWlyA+X7N2aFw/QQF9qDQRyMHwrv9LFpxn6eRi8NjEej4jTgpgCjnOxcpacxxKZAkNw+wLzjNl/rve7jVsKwiCII/yQkLlhkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410010; c=relaxed/simple;
-	bh=7/gyP7hOadanIjh7Pi5fa0OyGQnE7z/f+zPKtRz7f58=;
+	s=arc-20240116; t=1733410702; c=relaxed/simple;
+	bh=UqrgiOwKrQRuBt063enFRtDuN5GoS9kInSGmW2OytGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnqI+EG5dYU0mPQMkSqqtvWrdR6HStuqq09SG0r2Rl6qn+yxvjnP4UCKHNyPilpdhrlV67XETNoCH5TQYKu8g9FMXTERESLdQ+0321CeXA7yGQKh+1Xg9rIbIa7X3glDasj65t0y5c7mnMao83Vc0ivGLg9Va0zxIzQWuv/hJWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6M/a8ym; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IEmGGgre; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6M/a8ym; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IEmGGgre; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 54C3D1F38C;
-	Thu,  5 Dec 2024 14:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733410006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=A6M/a8ymwuV+4gt/bH8osHYVlljrS72aPfBmZ0V6TY5SKEXrqRDC7hQcpw/I0dq/Dc3bVT
-	8tV0N/QJPpKOdeHuA0xgSNr7p/bCWZRWSK13WDh+P2QWv7dvfxxefGQFVuf766N0BXnUwg
-	HQqWkuv+egS94C28vl3c8uQcZOKAoVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733410006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=IEmGGgrexX9/XxlMlfx0OtB+j3OzPG9mMPBKkWK4kYI3fY5tRZ0+jD1ASUSLAYgc3nQMB7
-	+2clvuD/oN5sDgAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="A6M/a8ym";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IEmGGgre
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733410006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=A6M/a8ymwuV+4gt/bH8osHYVlljrS72aPfBmZ0V6TY5SKEXrqRDC7hQcpw/I0dq/Dc3bVT
-	8tV0N/QJPpKOdeHuA0xgSNr7p/bCWZRWSK13WDh+P2QWv7dvfxxefGQFVuf766N0BXnUwg
-	HQqWkuv+egS94C28vl3c8uQcZOKAoVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733410006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=IEmGGgrexX9/XxlMlfx0OtB+j3OzPG9mMPBKkWK4kYI3fY5tRZ0+jD1ASUSLAYgc3nQMB7
-	+2clvuD/oN5sDgAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48E1D132EB;
-	Thu,  5 Dec 2024 14:46:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KDfCEda8UWcJYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Dec 2024 14:46:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E43CAA08CF; Thu,  5 Dec 2024 15:46:45 +0100 (CET)
-Date: Thu, 5 Dec 2024 15:46:45 +0100
-From: Jan Kara <jack@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fiFNaFpYmg6b7x1650A8E1vivwHjuZIIinfEJobSD45rUwak0k9o9nXJsqDJFi28iPG/JX26gEuwpLgOsSm0HSnWigg6sM12ALClKGzKBpz7J+R6AhUZBWFJdW7SxUcuJoX8kQNRrbL3dEqcZLX9T6FtALENDEUFUmDzivG2pVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XroGXx9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B1BDC4CEDC;
+	Thu,  5 Dec 2024 14:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733410701;
+	bh=UqrgiOwKrQRuBt063enFRtDuN5GoS9kInSGmW2OytGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XroGXx9leBpCCBGlKuPRd4D1Tpz+lkPE8qZnUFozqMMJQizV8cW3RB0pampPYHnvV
+	 7RHv/u2vdQMR4Z7d1l2hu4RDIta5hJlCAMG+s5d271BtXv4bUDOq55GH4TudQtph4+
+	 +FwztL2BmpwpduC/ce1rx5BeSxfGOzULslVciGnE4WkT7mBw/DgmuOB/Ri7zbTKClx
+	 osXcaQ3ztJkvePrwLiq2iTFA1Ba8BGXu2+lLQEhPlAgPb0bKRaPRDhbvMNoAHiqLHn
+	 eUPPJct4cbL9ALFcH/xnaNPNI5/xRP/Umh8wNCEmhcwWrs8O3J3AQk298GvPHv9/b/
+	 XTzhUNipK/qYQ==
+Date: Thu, 5 Dec 2024 15:58:16 +0100
+From: Christian Brauner <brauner@kernel.org>
 To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paulmck@kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, edumazet@google.com,
+Cc: paulmck@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, edumazet@google.com, 
 	linux-kernel@vger.kernel.org
 Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <20241205144645.bv2q6nqua66sql3j@quack3>
+Message-ID: <20241205-kursgewinn-balsam-a3e8bfd1e7d4@brauner>
 References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
  <20241205120332.1578562-1-mjguzik@gmail.com>
 Precedence: bulk
@@ -104,46 +57,11 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20241205120332.1578562-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 54C3D1F38C
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Thu 05-12-24 13:03:32, Mateusz Guzik wrote:
+On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
 > See the added commentary for reasoning.
 > 
 > ->resize_in_progress handling is moved inside of expand_fdtable() for
@@ -152,40 +70,23 @@ On Thu 05-12-24 13:03:32, Mateusz Guzik wrote:
 > Whacks an actual fence on arm64.
 > 
 > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Hum, I don't think this works. What could happen now is:
-
-CPU1					CPU2
-expand_fdtable()			fd_install()
-  files->resize_in_progress = true;
-  ...
-  if (atomic_read(&files->count) > 1)
-    synchronize_rcu();
-  ...
-  rcu_assign_pointer(files->fdt, new_fdt);
-  if (cur_fdt != &files->fdtab)
-          call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-
-					rcu_read_lock_sched()
-
-					fdt = rcu_dereference_sched(files->fdt);
-					/* Fetched old FD table - without
-					 * smp_rmb() the read was reordered */
-  rcu_assign_pointer(files->fdt, new_fdt);
-  /*
-   * Publish everything before we unset ->resize_in_progress, see above
-   * for an explanation.
-   */
-  smp_wmb();
-out:
-  files->resize_in_progress = false;
-					if (unlikely(files->resize_in_progress)) {
-					  - false
-					rcu_assign_pointer(fdt->fd[fd], file);
-					  - store in the old table - boom.
-
-								Honza
-
+> ---
+> 
+> To my reading of commentary above synchronize_rcu() this works fine(tm)
+> and there is even other code relying on the same idea (percpu rwsems
+> (see percpu_down_read for example), maybe there is more).
+> 
+> However, given that barriers like to be tricky and I know about squat of
+> RCU internals, I refer to Paul here.
+> 
+> Paul, does this work? If not, any trivial tweaks to make it so?
+> 
+> I mean smp_rmb looks dodgeable, at worst I made a mistake somewhere and
+> the specific patch does not work.
+> 
+>  fs/file.c | 50 +++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 39 insertions(+), 11 deletions(-)
+> 
 > diff --git a/fs/file.c b/fs/file.c
 > index 019fb9acf91b..d065a24980da 100644
 > --- a/fs/file.c
@@ -197,7 +98,18 @@ out:
 > +	int err = 0;
 >  
 > +	BUG_ON(files->resize_in_progress);
+
+I think this BUG_ON() here is a bit unnecessary.
+
 > +	files->resize_in_progress = true;
+
+Minor: Why move that into expand_fdtable()? Having
+files->resize_in_progress in here doesn't add much more clarity than
+just having it set around expand_fdtable() in the caller.
+
+Leaving it there also makes the patch smaller and clearer to follow as
+you neither need the additional err nor the goto.
+
 >  	spin_unlock(&files->file_lock);
 >  	new_fdt = alloc_fdtable(nr + 1);
 >  
@@ -294,7 +206,4 @@ out:
 > -- 
 > 2.43.0
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
