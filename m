@@ -1,210 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-36546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60199E59B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 16:29:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3326E9E59DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 16:38:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79593169539
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78CE289AFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE43721C9F2;
-	Thu,  5 Dec 2024 15:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491622256F;
+	Thu,  5 Dec 2024 15:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R2y1XW7U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9sU+3iTP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R2y1XW7U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9sU+3iTP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1mz6iC5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C33A268;
-	Thu,  5 Dec 2024 15:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ED0222560;
+	Thu,  5 Dec 2024 15:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412590; cv=none; b=TZHTWV+qRwB9Ev64IYihr9UDueq4bMArKEbYn/N/86XhAi9si0bncLVNKS9maGSmILnqs3Ja2j/Zt5JAZbNd69A4GrIeYHyykzFw7UKJaZeUyzPWItD5OpaWWp0o8tSL3iytAnee9ReJIJ67pAusA+SZDcao4+tPesdZVSXwgkk=
+	t=1733413016; cv=none; b=oXywfXwNS3Wjohd8zxfE37BaCUiWufgZND397CAmxFkEnWPxk0Ix+G2nExNZKxtl9XlM6gwGZfoC62uhY/PWbw6TbOHLZbQ3MXZWUZdLzvTOlSbPxOOl9glnZRirngHnfUtYbmrM3MrzE+giYgRogw2P5rX+vR+b1mr+uptDJt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733412590; c=relaxed/simple;
-	bh=Ri1vtdqrd1HmJUq5VcLDSp53Hksz+SDfwNnxXBNa+Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cspmcuULf1dmXSrF0JS2fII0NUQyKNuxwY8RpmfFW/03hiHnntO1XF6kIcMPVVIjElj3l8Sn2CS1M3PLmg8egYWJW5ZNTsxZxYpHgsGLavt4yNG3v99qQZHk6iOirTsxCSfm6T3H638dqq7HrnCJxNSaJkVYr1Knz6dlHBLH6x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R2y1XW7U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9sU+3iTP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R2y1XW7U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9sU+3iTP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F7B5211D2;
-	Thu,  5 Dec 2024 15:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733412586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
-	b=R2y1XW7UAzPHhWSM1yqPX5wB4MedPnS7yqOp4rEk4efBVgi3gxDzTt6RbFbTGfE4Dm/Ubv
-	SLYrx3uAOO+w19IPh2e4+FQC/AvDVW9FmyjVZqpps7/S4RgW2ZxDY9BCFvlaizOlESn+2V
-	U+yP9A8UrTJQzxtP00bvk7Tc7+ImGaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733412586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
-	b=9sU+3iTPkVTHjHtL1Lp4a95mQ3Jquzx7pT10se231vTPJ6piLNDRT6kNVsWsquIdw2ZbeS
-	y88QZi/usx1EV2BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733412586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
-	b=R2y1XW7UAzPHhWSM1yqPX5wB4MedPnS7yqOp4rEk4efBVgi3gxDzTt6RbFbTGfE4Dm/Ubv
-	SLYrx3uAOO+w19IPh2e4+FQC/AvDVW9FmyjVZqpps7/S4RgW2ZxDY9BCFvlaizOlESn+2V
-	U+yP9A8UrTJQzxtP00bvk7Tc7+ImGaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733412586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
-	b=9sU+3iTPkVTHjHtL1Lp4a95mQ3Jquzx7pT10se231vTPJ6piLNDRT6kNVsWsquIdw2ZbeS
-	y88QZi/usx1EV2BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F198138A5;
-	Thu,  5 Dec 2024 15:29:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jEtJE+rGUWd+bQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Dec 2024 15:29:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A760AA08CF; Thu,  5 Dec 2024 16:29:37 +0100 (CET)
-Date: Thu, 5 Dec 2024 16:29:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, paulmck@kernel.org, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, edumazet@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <20241205152937.v2uf65wcmnkutiqz@quack3>
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
- <20241205144645.bv2q6nqua66sql3j@quack3>
- <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
+	s=arc-20240116; t=1733413016; c=relaxed/simple;
+	bh=9z94k45yOGWBlzaO/l8bkxtHvEoE/wCOjiuqlO3pBEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nemP4BFeff36tPKuSnhqFYy0ICar+LJ6ByO1yo0KJl6oNmdRqW1az7qOeJkyL2lKFpEsHW/MlrW3S5m+XoGpy7Ny7s+Wx25w1NDXQh9Upi42I39WU6TA85lqC5LtCr4u8g+Nm6s9P2y+4O83rYqgZu2SDizefNeGi60MMTGVCUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1mz6iC5; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8e52so1676212a12.1;
+        Thu, 05 Dec 2024 07:36:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733413013; x=1734017813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9z94k45yOGWBlzaO/l8bkxtHvEoE/wCOjiuqlO3pBEo=;
+        b=G1mz6iC5IvClfMTCn7VLBkV5ux5W62hWfod9mrXE0cDxbkd8ddMVVXtudmGMz/ObgY
+         wXWml9nw6Z9Vym9voY2MsItgl7ZoGnrhj9VE9BydxdhP57xLN7zqqnqXlEcJS7EeCJgY
+         d1/YF79I0xe6vFArNCVmPpEAbQRKAouBe5oR8yVYRrsDjsQj8vJuooMlbv6w3geQDFl5
+         1HpqDFxZnW3vp4cBYX1an2xdC20D8lIWQQJOiAJ0R5odkvQ+QsIrCqKtZSqw6qc7Hn77
+         /+yXuBthFDEhMXaToIraOsLzsxwpCuKKED9+Cb1V5idEKj9T44VrzUL64Kp0zyswSyeL
+         sE8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733413013; x=1734017813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9z94k45yOGWBlzaO/l8bkxtHvEoE/wCOjiuqlO3pBEo=;
+        b=t49z6KuItil8QaK1MdMAH+xbSZRM0UsIjqoeYQ8wtWmtF9a7EmHpcaKDyeUzkAMjW5
+         oF4roYmf5f19X3prgLJg/9HrzgLCE0uPbFHQjbhU+0QMDoZGfyoJsRr5sE1JHSwLjcnB
+         pu86WXSp4WIdRJgGuVy0xcbDTE/C6o9cYWHHaqmCQhXR+4k+HBVLo95JuZqIHdE9FgQc
+         TBeR98GYpgBx/lS5eAwOTL57Z+DCYbuizSRoIhLjUM8gg2VIoM3M08+v7J0KexaWkTq4
+         WfR8G1el72RS/k+aJYwIk9JfNBQw76fPhjAy1RnUZO7b3P5btEjz3/vAySZp5czASLYT
+         iVCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBzX9gAavV9AQ5F+/oJduLbRdFt074QfrQGQe5Xv8eMCV2OaIWd1dP5pRVnMZreGu68I54q06jCXhdqurT@vger.kernel.org, AJvYcCXlf1nWU8S9rN5qIPKM6iwQ7tGlPAMgZTWnYnX3HIBAUs9RowUb5ZRq2LQZq3frlJO3sEdCVjTEwpGZ2TFa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxU1AFI9gr0QAyyfpQkGhHJMiRIV9+UFDgYiVgsJGHa+gsLOUc
+	9xeUPFmhApuqQelbvr1nm/v1kUjH65XHCzUf5hha7c/0WUTCJaMKKRbNRcUmkvTP05QWA6dHiIH
+	O1StL/wwn0/BPkUxiM8qQdRRZXesnFg==
+X-Gm-Gg: ASbGnctxpRpfChhlbGlKk0hJL0d84xPBbu3AodWYCWlY0dUg6epL/FFr2B5D9DZpm4e
+	j94MQznTFRejO1NRx/4eVW/wqYk+rZQ==
+X-Google-Smtp-Source: AGHT+IFFkS7ODa/d6Tyg4TwSlGSOoT1sH+VQ2gp9vQS+9CNj9Uyz1+3GOCJUEwhMgjQ4FbBk/9dEPq9Ebx+clhDLpIk=
+X-Received: by 2002:aa7:cd6b:0:b0:5d2:723c:a577 with SMTP id
+ 4fb4d7f45d1cf-5d2723ca981mr2130672a12.14.1733413013473; Thu, 05 Dec 2024
+ 07:36:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com> <20241205144645.bv2q6nqua66sql3j@quack3>
+ <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com> <20241205152937.v2uf65wcmnkutiqz@quack3>
+In-Reply-To: <20241205152937.v2uf65wcmnkutiqz@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 5 Dec 2024 16:36:40 +0100
+Message-ID: <CAGudoHGyFVCjSTjenyO8Y+uPHyhkOCwZrvBW=FyQRDundntFdw@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+To: Jan Kara <jack@suse.cz>
+Cc: paulmck@kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 05-12-24 16:01:07, Mateusz Guzik wrote:
-> On Thu, Dec 5, 2024 at 3:46 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 05-12-24 13:03:32, Mateusz Guzik wrote:
-> > > See the added commentary for reasoning.
-> > >
-> > > ->resize_in_progress handling is moved inside of expand_fdtable() for
-> > > clarity.
-> > >
-> > > Whacks an actual fence on arm64.
-> > >
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> >
-> > Hum, I don't think this works. What could happen now is:
-> >
-> > CPU1                                    CPU2
-> > expand_fdtable()                        fd_install()
-> >   files->resize_in_progress = true;
-> >   ...
-> >   if (atomic_read(&files->count) > 1)
-> >     synchronize_rcu();
-> >   ...
-> >   rcu_assign_pointer(files->fdt, new_fdt);
-> >   if (cur_fdt != &files->fdtab)
-> >           call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-> >
-> >                                         rcu_read_lock_sched()
-> >
-> >                                         fdt = rcu_dereference_sched(files->fdt);
-> >                                         /* Fetched old FD table - without
-> >                                          * smp_rmb() the read was reordered */
-> >   rcu_assign_pointer(files->fdt, new_fdt);
-> >   /*
-> >    * Publish everything before we unset ->resize_in_progress, see above
-> >    * for an explanation.
-> >    */
-> >   smp_wmb();
-> > out:
-> >   files->resize_in_progress = false;
-> >                                         if (unlikely(files->resize_in_progress)) {
-> >                                           - false
-> >                                         rcu_assign_pointer(fdt->fd[fd], file);
-> >                                           - store in the old table - boom.
-> >
-> 
-> I don't believe this ordering is possible because of both
-> synchronize_rcu and the fence before updating resize_in_progress.
-> 
-> Any CPU which could try racing like that had to come in after the
-> synchronize_rcu() call, meaning one of the 3 possibilities:
-> - the flag is true and the fd table is old
-> - the flag is true and the fd table is new
-> - the flag is false and the fd table is new
+On Thu, Dec 5, 2024 at 4:29=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> On Thu 05-12-24 16:01:07, Mateusz Guzik wrote:
+> > Suppose the CPU reordered loads of the flag and the fd table. There is
+> > no ordering in which it can see both the old table and the unset flag.
+>
+> But I disagree here. If the reads are reordered, then the fd table read c=
+an
+> happen during the "flag is true and the fd table is old" state and the fl=
+ag
+> read can happen later in "flag is false and the fd table is new" state.
+> Just as I outlined above...
 
-I agree here.
+In your example all the work happens *after* synchronize_rcu(). The
+thread resizing the table already published the result even before
+calling into it. Furthermore by the time synchronize_rcu returns
+everyone is guaranteed to have issued a full fence. Meaning nobody can
+see the flag as unset.
 
-> Suppose the CPU reordered loads of the flag and the fd table. There is
-> no ordering in which it can see both the old table and the unset flag.
-
-But I disagree here. If the reads are reordered, then the fd table read can
-happen during the "flag is true and the fd table is old" state and the flag
-read can happen later in "flag is false and the fd table is new" state.
-Just as I outlined above...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
