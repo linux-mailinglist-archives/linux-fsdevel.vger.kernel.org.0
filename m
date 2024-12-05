@@ -1,135 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-36509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE88E9E4C9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 04:24:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3809F9E4CBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 04:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753FB1880308
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 03:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865811881336
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 03:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7DB18C903;
-	Thu,  5 Dec 2024 03:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EAA191F8C;
+	Thu,  5 Dec 2024 03:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UhdLCo6C"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LV2+lPjt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E387638C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 03:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9194E18BC19
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Dec 2024 03:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733369036; cv=none; b=PwwkTH2pLggZcrDYL71favLfGaLpXmJtAcpkHYWre4BeuurFr2c3sS7xgXWt62MU9cdIdV/4MZ1H5VYAAGx4sUjWHzB1kpK+3SbmtxXoCGo/pjfOE9SZOgdqSmCsCo1yOfm1+2cDJ1K+hj1Eif4wbxdL590JVim8Dw92DW56X5c=
+	t=1733369629; cv=none; b=DHNZXTSf0uNZrHFEg4dSh7Q7Ofzgw/1jOAC4n2WZrFZPznfzUUjyO1YrHHOuCeptIS9KtdxXv0gDGX1iWgsFTDoppzS5dOlOqXKbnm6VdlYp7RZF+R47b0o/ELxKdRAZ4gMOt7pvG6zHxytmPBzGHZdFFYK5NuByxm+piiYYn88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733369036; c=relaxed/simple;
-	bh=fzmRWM2aqz4onjKaSgqJU0oPs81HOmbtsz5OUsfBpvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFBCGMCNgnOcG9cnsSh1glxH7v+ju7PKWNdXTXnc9rn70fhOfrm9XD2BFF7eLBtbEg8Qp938C7YMMXjn5SWcINMLwYf3DpdYV2wxOks+sMJlsoYWuie+poOjH+Ct4ZaLHi6kRLhupG5SSXjcXSSXBctsSmfMLFG6l4AI3Vqky64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UhdLCo6C; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724ffe64923so548474b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 19:23:54 -0800 (PST)
+	s=arc-20240116; t=1733369629; c=relaxed/simple;
+	bh=2YpfMKIZHCtC1yAwRNTrkyONKJmfX3P1Dgzh962vtHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFoZxqkWOwFxrq077GTYvj/S7AJHl2Xsu1A+S0PHoOrRN4wgCbnKxCsCGU+rQT0uier/IM/O6c/bW20s44w0kPJXJb3GU3KG6E5aVPg1xhAIkG14afEwEQy22PdjJdnak4DcfYEsutUpZHXwCrn0hrk8sKxxpSVbbZKkTxfTUvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LV2+lPjt; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3882273bdfso706441276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2024 19:33:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733369034; x=1733973834; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXz3JBA9LjdiOjWaRBKDYuVw25crlgz8O885soR/KQw=;
-        b=UhdLCo6CZdwAdVwTYi/IN6kDYGIcSd0a80Zk/q1+SHpBe8TnNevs4nrjcmOMC8yMbZ
-         /gHHyo257XYcVKxkkatnWrlwOrsUcBit67S+SGLJbLnOEZrTvSpLQlsqmOQZCuJpQUCq
-         hajt518YlRuDrQ2qK0Pj8n2wYTHXiNhMEJlzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733369034; x=1733973834;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1733369625; x=1733974425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eXz3JBA9LjdiOjWaRBKDYuVw25crlgz8O885soR/KQw=;
-        b=Mmth0V7ZXsr5kalPTALH9HuG0sVeID7BsbnE6fcm7vHo3B4fjSOEtNMeQUFMHL+QYq
-         a1R0/M4xrFb8xlJcUT2zK3rOqeQFqb4hB6RvS2SsqKBfXBwxT6DM1Ew+l2HUEA6+w+6W
-         hw//O4Puhv3DE310zGWNzuyR6b4JRMTU/u3hzso6m9sHDpeG8cY52lzTf7ju5C8hn0X6
-         SMTkJVc6GZYQBCzGQt5AwSadmc6GQYA6rFqohWLB43wcne01NO1H70RzVgIWPLjvd34P
-         XA34JtSgVSKR6BmjwNMXrF6fqNMEnSPl4CiUZrKWuq/+i21HREn8F818zoOI2QlFX7tN
-         aQ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVK9I3ksuJVwM6WJhZERd6eA9hK3DhMPxxIHeOV6bR79eJ6yUK78BlJnzbXccFtz3zPiBvYHwusk3HoLy4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+HYwc1Zlli77DH3ZMMGDr7vHKo4pOYh6zxfu5JJR4cWYZaSpf
-	0bR5HXjaMmob97p0KbUM1yPnblw+yNQ1vyUSQSeIb5j9ZSb+cDb8CiNS07daoQ==
-X-Gm-Gg: ASbGncuERFN3p2w6/SX5hrUrGnz3y+cutG7Js3YJmnU0uWwVwXYosa2tv0jHEpICVnQ
-	59n2sj6/rJqLlJrkoOjSiwGDRIe6+bb9r75INTFdluOpBok6Oz/65oF3a/o1JWxCIGQCXOfgvFs
-	5dMJFwBCeEpjcQr7+o6DMYSCSOEOSDLkQ2MZ4NiClKJ2AxbYQH9yih9J2Pumjgg8+toISaUZVxy
-	yOfM4160PyXQuiBO4Q57z3e4TcO9gM9J+o2D1PU7lCbPaK16zMK
-X-Google-Smtp-Source: AGHT+IEpyrT8eT7RRCqiYETrCdd449xWC/nrsVfWpHb7iaYkZnQKEaRG9GU5eysx1LEGeZo1SmXXTg==
-X-Received: by 2002:a17:903:1790:b0:215:711f:4979 with SMTP id d9443c01a7336-215bd24b939mr134104315ad.35.1733369034282;
-        Wed, 04 Dec 2024 19:23:54 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:84f:5a2a:8b5d:f44f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e5f30fsm2758825ad.74.2024.12.04.19.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 19:23:53 -0800 (PST)
-Date: Thu, 5 Dec 2024 12:23:49 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Brian Geffon <bgeffon@google.com>
-Cc: Tomasz Figa <tfiga@chromium.org>, Joanne Koong <joannelkoong@gmail.com>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Bernd Schubert <bschubert@ddn.com>,
-	"miklos@szeredi.hu" <miklos@szeredi.hu>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
-	"laoar.shao@gmail.com" <laoar.shao@gmail.com>,
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [PATCH RESEND v9 2/3] fuse: add optional kernel-enforced timeout
- for requests
-Message-ID: <20241205032349.GC16709@google.com>
-References: <20241128104437.GB10431@google.com>
- <25e0e716-a4e8-4f72-ad52-29c5d15e1d61@fastmail.fm>
- <20241128110942.GD10431@google.com>
- <8c5d292f-b343-435f-862e-a98910b6a150@ddn.com>
- <20241128115455.GG10431@google.com>
- <CAAFQd5BW+nqZ2-_U_dj+=jLeOK9_FYN7sf_4U9PTTcbw8WJYWQ@mail.gmail.com>
- <ab0c3519-2664-4a23-adfa-d179164e038d@fastmail.fm>
- <CAJnrk1b3n7z3wfbZzUB_zVi3PTfjbZFbiUTfFMfAu61-t-W7Ug@mail.gmail.com>
- <CAAFQd5B+CkvZDSa+tZ0_ZpF0fQRC9ryXsGqm2R-ofvVqNnAJ1Q@mail.gmail.com>
- <CADyq12xSgHVFf4-bxk_9uN5-KJWnCohz1VAZKH4QEKJLJpcUEA@mail.gmail.com>
+        bh=RqqlC+ZUU04wDK2N54+0ftqA1cSI7m49jZLokKLp/0E=;
+        b=LV2+lPjt4zqa+p3asLanKzH/KAN9YuOD1oGdsCw6FQtNOeq7PFsPJO8I8X4zIcUDmd
+         T7VgI8gcSdFEDjzhHMWVR7vTaE3AUoKXxCkZyU2kUOgvKf7PCEhLfXL4eTFtoK0vWiQK
+         L+2FhhgTocjiE17U4gEUoXEpKsSor8m7J4iMyxSJxWKvcDXhZbD2mqCO4NO0A2cluNh1
+         FiG+ZH3PhYBA4UqYfQY6KA8RRUA5pW5MwMcncmhKWhzV4YcCUDef3uqhJV2JELjCbLht
+         wlX1SRH8ORLTADfiIfQXcu6waSGFjC64jTXCxCh+VM02shbKnMtxlWLmPbbxnM6U3w6r
+         5oVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733369625; x=1733974425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RqqlC+ZUU04wDK2N54+0ftqA1cSI7m49jZLokKLp/0E=;
+        b=NH8fFpHgyJCx+FhPnxxoDSG/dzqWFhFst/Hkmk1wN3VN5mF+t4tQthAk/GXnlYem6I
+         FqBMZIWbv1o7Enf4vVtIXFf/ma4rgsD2t1afxN9TIH1wS6Ts2ZwDjaF8QoVwJuP02aqC
+         uKB6Ldlytwh8ZlZabDcNHuIQWeCSQrGKDnvtwh0wRsLpdIlt/ojcpP26hS0V+qZcNa4t
+         xGT6pKkATfH97BjPrL3ssFFqjAvPD0+UPihhKRrlTQsAQeHDp+AYlV8lwM3Dv1XPP4D+
+         Uvc8SySOuo0iTWb7RkORTJ6DKofVmKdcxBX92sMo8rx0PFSh/0afdjjCP7TWNV2Y3lJ+
+         GOdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbEd7qPHAxbqqD74sWB+2Zt0WYFJRc4dRNSbwCYeKnygnnbHo0p0+bJ+uKds956HKVBI10umrLhfgbjYA1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeINuCUGg78Vnpx1nvCg2Lx6dQoOwJFOe4JrCRxqY6zmCZp/aM
+	H9x1iVe5MkaGI8O3JfLb/pH7l6lUh3/VP5ApqN7vWdF8LjxVVHynf5h8upHQhv380QW8qh8Dk+4
+	hTvCcloOrCgzf0AVb1u2cgQ4vDew5ULErh4eB
+X-Gm-Gg: ASbGnctauiyakzv/4txoIJOzKw/3HnGKRR9sGX4Dyok0jJ4jPdJqD5Jv5fYL+cMq73F
+	HhkAWdKFU3tCgtW6uJvsD5Z4yNuUeSQ==
+X-Google-Smtp-Source: AGHT+IFIW0nv4nMp+xB3hRxH7jiqJFLJ+/vbSzLjYlJYf27dkS9U79OHIOtdDmrXE95yoa1diQrswqexP0FD2HzbsL0=
+X-Received: by 2002:a05:6902:10c1:b0:e2b:dbf6:34ca with SMTP id
+ 3f1490d57ef6-e39d43740bdmr7490115276.36.1733369625457; Wed, 04 Dec 2024
+ 19:33:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADyq12xSgHVFf4-bxk_9uN5-KJWnCohz1VAZKH4QEKJLJpcUEA@mail.gmail.com>
+References: <20241112191858.162021-1-mic@digikod.net> <20241112191858.162021-2-mic@digikod.net>
+ <CABi2SkVRJC_7qoU56mDt3Ch7U9GnVeRogUt9wc9=32OtG6aatw@mail.gmail.com>
+ <20241120.Uy8ahtai5oku@digikod.net> <CABi2SkUx=7zummB4JCqEfb37p6MORR88y7S0E_YxJND_8dGaKA@mail.gmail.com>
+ <20241121.uquee7ohRohn@digikod.net>
+In-Reply-To: <20241121.uquee7ohRohn@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 4 Dec 2024 22:33:34 -0500
+Message-ID: <CAHC9VhT9sRXauYX+=21MUdOmfTZL4=sdGQsXojJjjTsdui+F_g@mail.gmail.com>
+Subject: Re: [PATCH v21 1/6] exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Jeff Xu <jeffxu@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Serge Hallyn <serge@hallyn.com>, Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Eric Paris <eparis@redhat.com>, 
+	audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/12/04 09:51), Brian Geffon wrote:
-> > > > >>
-> > > > >> In those cases 1 minute fuse timeout will overshot HUNG_TASK_TIMEOUT
-> > > > >> and then the question is whether HUNG_TASK_PANIC is set.
-> 
-> In my opinion this is a good argument for having the hung task timeout
-> and a fuse timeout independent. The hung task timeout is for hung
-> kernel threads
+On Thu, Nov 21, 2024 at 8:40=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Wed, Nov 20, 2024 at 08:06:07AM -0800, Jeff Xu wrote:
+> > On Wed, Nov 20, 2024 at 1:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > > On Tue, Nov 19, 2024 at 05:17:00PM -0800, Jeff Xu wrote:
+> > > > On Tue, Nov 12, 2024 at 11:22=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <=
+mic@digikod.net> wrote:
 
-Sorry, but no, it's not only for kernel threads.
+...
 
-> in this situation we're potentially taking too long in
-> userspace but that doesn't necessarily mean the system is hung.
+> > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > > index cd57053b4a69..8d9ba5600cf2 100644
+> > > > > --- a/kernel/auditsc.c
+> > > > > +++ b/kernel/auditsc.c
+> > > > > @@ -2662,6 +2662,7 @@ void __audit_bprm(struct linux_binprm *bprm=
+)
+> > > > >
+> > > > >         context->type =3D AUDIT_EXECVE;
+> > > > >         context->execve.argc =3D bprm->argc;
+> > > > > +       context->execve.is_check =3D bprm->is_check;
+> > > >
+> > > > Where is execve.is_check used ?
+> > >
+> > > It is used in bprm_execve(), exposed to the audit framework, and
+> > > potentially used by LSMs.
+> > >
+> > bprm_execve() uses bprm->is_check, not  the context->execve.is_check.
+>
+> Correct, this is only for audit but not used yet.
+>
+> Paul, Eric, do you want me to remove this field, leave it, or extend
+> this patch like this?
+>
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 8d9ba5600cf2..12cf89fa224a 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1290,6 +1290,8 @@ static void audit_log_execve_info(struct audit_cont=
+ext *context,
+>                 }
+>         } while (arg < context->execve.argc);
+>
+> +       audit_log_format(*ab, " check=3D%d", context->execve.is_check);
+> +
+>         /* NOTE: the caller handles the final audit_log_end() call */
+>
+>  out:
 
-And it's not for hung system.  It's for tasks that stuck unreasonably
-long waiting for a particular event or resource.  And those tasks very
-well can be user-space processes, being stuck in syscall waiting for
-something.
+I would prefer to drop the audit changes rather than add a new field
+to the audit record at this point in time.  Once we have a better
+understanding of how things are actually being deployed by distros,
+providers, and admins we can make a more reasoned decision on what we
+should audit with respect to AT_EXECVE_CHECK.
 
-> I think a loop which does an interruptible wait with a timeout of 1/2
-> the hung task timeout would make sense to ensure the hung task timeout
-> doesn't hit.
+Beyond that it looks okay to me from a LSM and audit perspective, so
+feel free to add my ACK once you've dropped the audit bits.
 
-The point here is not to silent watchdog, we might as well just disable
-it and call it a day.  The point here is that fuse can be used (and IS
-in our particular case) as a network filesystem, and the problem can be
-way outside of your system, so spinning in a wait loop doesn't fix any
-problem on that remote system no matter how long we spin, and that's
-what watchdog signals us.
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
 
