@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-36503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC53F9E4A34
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 00:56:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9826B9E4B02
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 01:18:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83261282924
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2024 23:56:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D0A161F7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2024 00:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8191B2196;
-	Wed,  4 Dec 2024 23:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD1763CB;
+	Thu,  5 Dec 2024 00:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kD13ZmRS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrRFyyx0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032C7193091;
-	Wed,  4 Dec 2024 23:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECCB391;
+	Thu,  5 Dec 2024 00:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733356599; cv=none; b=EcUSwOo4lHtiQ/tq+BZabTrvinSmX+FPCbQBbCK4OjpVnv2ss9Uq+UNCaDaXCVLs6plpy2kimTsHa5JEUlCRO52hO41xJcRaLEh/xEh/VzxbqT2qR2Q9kmZz0aCUb53GFG3Znp9Ds38MzPbB2rnOdWE6AhIeDUQCMhBzYNIWCPM=
+	t=1733357905; cv=none; b=kq4sT4eRbJOCHm06XSmxX/MEBYipIU2s4QpFXaUBkPpnkVSwTP2KJJb3su23eLMKydULyTgTPZF/MXWLFEpx+m4PsE++pNIS/nwaIi0aYE3Te6F8pDuZEy99yQOYACwAYc1Aj5OWqD62gj/pYm+Qn+7y7zrFmVmosFVgIGk0ZPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733356599; c=relaxed/simple;
-	bh=JZuTqkMiJci5M6VD9ttBclHzFQ2hopxCrSemkU44NuA=;
+	s=arc-20240116; t=1733357905; c=relaxed/simple;
+	bh=/U8qXy1M4Q4S9yJGPJ32y/rKMzq/gUFbI6KKXJEp9f4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ckt1yrkwSmqRy1LdovHxIYH7EP2AxIO/lQbk/041jmQiswvmTA9gIDuc/sk0/K7IGO3IJTBVHfh3Jf2EdLgzMdk+spHzlSLAEMbS277zxidzGTAQoWLBaT895RU6W3UHrpGrTDEPJLxTXj0NgHnLh0TaYPPyFShj20TwSIZxNuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kD13ZmRS; arc=none smtp.client-ip=209.85.208.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFpRDPEiUnV9Hr4RndWGh5SeGB9EmsQiwDYu16Sd5hURKh92osz5ns/kJ43Outj7luWhHrJE3BZcRpY83tdNKA8e7s6XO9sejGaj0zVkUjB/dYZRm3DuR9uJ54jVjbYDXTRIcZXN/MWHwbekC0p3t0lzs1dafdMCKOn6TKjpdLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrRFyyx0; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so447563a12.0;
-        Wed, 04 Dec 2024 15:56:37 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d0cd67766aso305262a12.2;
+        Wed, 04 Dec 2024 16:18:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733356596; x=1733961396; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733357902; x=1733962702; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vJKz2wj2juop4/IeMZVrYzFBdQURnaygM5UccUrxv6w=;
-        b=kD13ZmRS/mTVptHsHWCY8WYPgv/7ypTSVYJ8O09/eP7vHtQdgi01+g6Dht7mP18N6T
-         Rp8XODDTBi4T+7jQQxJRiA3jxr9rv+w8p9IZRLqxtG+c5ZK8JnceUxB4+zT7ZlYsHN1k
-         XmVdYgCOpQ7WjBjkUxpXu/QJ3+BFUAcgmxz8/l+J3I1+GqFAB9Ve43Du9gIuoNu+6rxy
-         wz3Xu+PYCXhDnjTsAb0TOEueayWXah3MPB2jR3v7GiIFS6w0fOdi4+YQ7IQqMJThiCS4
-         uF8K8xKBAhfjuUGKxLLs0+esRVycoR7qY/1WsIIckSbCv5c9FmxVgEilAwrqGBRj7Cnk
-         YMHg==
+        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
+        b=FrRFyyx0DnRJumDEBfuJz4sHK27Qj7Bezw2pmRm1pxmFFEod9h1ZbNy4jR9erf9ois
+         QUJRLn6PWBbLmWqrVe4sf0ttSKltHNFkbPekuR/0iae1Xq7y7+6dG1Yc/GCSAnyMhRe7
+         YLWFBCa32NaRS6WinLpBRfZSaTTBhbmaM5M2K0dGfGhO9yn4iZuc6ZeMyszpfdM8DgyA
+         INbR5ap9AZVFCIMFhme7ui/Kh1a42sVSHKEyRKnFMtJ7dShZTCePRibDDNquWwIWBm3v
+         Tf4//6DlmCiQlI/c1lMlh5aqlViEioWFoBkrFyHMKnvSAxzjD4Zh6CLpJ2329YeuLUxN
+         150g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733356596; x=1733961396;
+        d=1e100.net; s=20230601; t=1733357902; x=1733962702;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=vJKz2wj2juop4/IeMZVrYzFBdQURnaygM5UccUrxv6w=;
-        b=D3AAUNQvwwkjws0+J4v4bDomNdOnl0G7DtxyOEkHHLhK5ysxY4Z5edSpFAju3pyoDt
-         H1k03KUMm/bcmJe3x+3U329yxRVPurpzkG6Fy7xlYyh1y3yrsjXgh35mbtWRfezquHtV
-         KzgIYUGlaFJuKtgz2wUkxkkbncsuPON2JTH4EfJOsGG6gS+aw06BRgd1V4iNjLFwLV32
-         cTTaNTytOpLRpwjvZbilWLuz8fSDRCPBXaaA+L+vjpGSiz0SRgB+ZfzOKNzsLksyhHDo
-         afx5kQNSbLk6v5dUVlhXT7QLJY+nmGI7TuyyjXRtrDrgQYYlqNyTAUaqezTiGCsFMkaF
-         DbXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtgeHPX59APD+A3xiJvUMDs1SsuW7CI9buphst9PyUqFq6kOthW+Zl0G2zHIKuCMCcAfPBlZSHHWWycaX7@vger.kernel.org, AJvYcCX73lYUeYGXpVfPDdMRkyiEarDGGe7LINYbf/Jsvs35FvSIeDZHK7SgmuGGtDa5QEAVb1Jbubs/8GlnOVrp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Gj5pHIUZlR4mO8hQEuC8aZs5krx5KbB7lTz9pkO0J/HF54kh
-	EbvkUL/7ulissxItG6K8+clu/lhmzD+XGevdiWt+Z4Cn8y9awMbp
-X-Gm-Gg: ASbGncs5iWAbtJlWTzDW1Jh1VizM9qJFZN3+NsXbmrPLu02ifBn0crSlL/doEGm0txC
-	+yYfCDwN2QJZ/IYcLFGjw8UaVOQWLICfSsLlgdCL1TVc8lHRU4+Zf5xpDtw/b4Ip8wOrsYNSHLQ
-	95ywecma8mJiH2uFwtgn11BC5Aeu/fr3Ganoeh4ryGwUvJAgVauHylOQxC3b7VIYmVOsNW4KBt+
-	tWg4xOX/EdPlAB1Sfov+Vr6LcB8JbSTMUR3OJYbPT1TLMs+nQ==
-X-Google-Smtp-Source: AGHT+IH8dzA/+2KKrO1cHwwQZR17w7HCC+oSR5sKhkw++P4LEAldEsyaN/rRyXoeSB1VU7N5URE/zQ==
-X-Received: by 2002:a05:6402:510a:b0:5d0:f9a0:7c1f with SMTP id 4fb4d7f45d1cf-5d10cb817d3mr7963616a12.23.1733356596024;
-        Wed, 04 Dec 2024 15:56:36 -0800 (PST)
+        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
+        b=f5Ic4HIc+n9U+S944PpEIg89iFXpq5I+i6daFSlr68MF2FBaHQeo9wc+YIewlpArfp
+         NuAC5ZIyA4o2GugDK9ju3++6lee8HbAZZ8d01lYeL3RXtAlNHspxO8h1+9+E3iyhheMq
+         nLVTFflehyoRgxLTcaOuZMuP+ntcmkR5QVDHwZG0RaIT3dHFBYoOg8ThpqCmL1emPCBB
+         UTYmayOVfJTwCwza4fPykBPYoimsSeCkEZ4hmLXEboQjByHE/AVdDY/67pWJvoax6S0N
+         RyEyB6Yj3NSLSea+q9uCe0CBiO9okmaY/wOaHL+NkLIM/cmT1oEF3DLEKMm4nRW2fAkw
+         /k3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9b9+1Nx1e4oV14FhLV/diAjiOHMfqfYm4o73DpdFYauGj3+xKCwY1TsYucxBY22y4aCOXag9bO6ut4//p@vger.kernel.org, AJvYcCVcQLSd6aUP4mx5rWN9rsD/kkeVn8z5ulQ8mVbGtm6uKmym2H1Ipfl5hBhTWFyRgyXvXeeTJmoJ7wlfl7fI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn+oXmJAzBmI9AnllHASIlXZu9Vq+EDGT/CRODb+CArx6KhfJh
+	H3eOGbriijuYwQNhUMvuDHYCVxTIVry5rl/UuI3EmQiTWxBtyWC1
+X-Gm-Gg: ASbGncsdHshiiia4jgP8oODBI+QxD/iP/Jf7nY449js285enfHdiNWLfss35fRikjij
+	u5kOn2U6ahWMl//y14Ht35afDRn30dFeiFXL4DGlsHXrVpCOGushCI5vmtjYOogOrfh1dbau5EH
+	TqIEE6Zz7ZieY0/co3Urt5Yw903aVtY9HIaTc0iEdxXAkISP6rouGOdeiunhoqZBJ+lbrT8dNB/
+	ZN04N3EjMkpz/5q+2sJ5rpfbVKzfT2KNU73RR4zjHeIR85ihA==
+X-Google-Smtp-Source: AGHT+IGOxY0n5S9c6n6c0AB0cBoetyxBwtV/KCtKq2kw2LsDGbLYSOjIytcCwsKgi4Po9m/7Ngarhw==
+X-Received: by 2002:a05:6402:510e:b0:5d0:8606:9ba1 with SMTP id 4fb4d7f45d1cf-5d10cb82718mr7579671a12.24.1733357901839;
+        Wed, 04 Dec 2024 16:18:21 -0800 (PST)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c799224sm97394a12.69.2024.12.04.15.56.32
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608c8dsm118497a12.48.2024.12.04.16.18.19
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Dec 2024 15:56:34 -0800 (PST)
-Date: Wed, 4 Dec 2024 23:56:32 +0000
+        Wed, 04 Dec 2024 16:18:20 -0800 (PST)
+Date: Thu, 5 Dec 2024 00:18:19 +0000
 From: Wei Yang <richard.weiyang@gmail.com>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -82,10 +82,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] mm/vma: make more mmap logic userland testable
-Message-ID: <20241204235632.e44hokoy7izmrdtx@master>
+Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
+ read lock
+Message-ID: <20241205001819.derfguaft7oummr6@master>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
+ <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,32 +96,170 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, Dec 03, 2024 at 06:05:07PM +0000, Lorenzo Stoakes wrote:
->This series carries on the work the work started in previous series and
-                        ^^^      ^^^
-
-Duplicated?
-
->continued in commit 52956b0d7fb9 ("mm: isolate mmap internal logic to
->mm/vma.c"), moving the remainder of memory mapping implementation details
->logic into mm/vma.c allowing the bulk of the mapping logic to be unit
->tested.
+On Tue, Dec 03, 2024 at 06:05:10PM +0000, Lorenzo Stoakes wrote:
+>Right now fs/exec.c invokes expand_downwards(), an otherwise internal
+>implementation detail of the VMA logic in order to ensure that an arg page
+>can be obtained by get_user_pages_remote().
 >
->It is highly useful to do so, as this means we can both fundamentally test
->this core logic, and introduce regression tests to ensure any issues
->previously resolved do not recur.
->
->Vitally, this includes the do_brk_flags() function, meaning we have both
->core means of userland mapping memory now testable.
->
->Performance testing was performed after this change given the brk() system
->call's sensitivity to change, and no performance regression was observed.
+>In order to be able to move the stack expansion logic into mm/vma.c in
+>order to make it available to userland testing we need to find an
 
-May I ask what performance test is done?
+Looks the second "in order" is not necessary.
 
+Not a native speaker, just my personal feeling.
+
+>alternative approach here.
+>
+>We do so by providing the mmap_read_lock_maybe_expand() function which also
+>helpfully documents what get_arg_page() is doing here and adds an
+>additional check against VM_GROWSDOWN to make explicit that the stack
+>expansion logic is only invoked when the VMA is indeed a downward-growing
+>stack.
+>
+>This allows expand_downwards() to become a static function.
+>
+>Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
+>currently user-visible in any way, that is place within an rmap or VMA
+>tree. It must be a newly allocated VMA.
+>
+>This is the case when exec invokes this function.
+>
+>Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>---
+> fs/exec.c          | 14 +++---------
+> include/linux/mm.h |  5 ++---
+> mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
+> 3 files changed, 58 insertions(+), 15 deletions(-)
+>
+>diff --git a/fs/exec.c b/fs/exec.c
+>index 98cb7ba9983c..1e1f79c514de 100644
+>--- a/fs/exec.c
+>+++ b/fs/exec.c
+>@@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
+> 	/*
+> 	 * Avoid relying on expanding the stack down in GUP (which
+> 	 * does not work for STACK_GROWSUP anyway), and just do it
+>-	 * by hand ahead of time.
+>+	 * ahead of time.
+> 	 */
+>-	if (write && pos < vma->vm_start) {
+>-		mmap_write_lock(mm);
+>-		ret = expand_downwards(vma, pos);
+>-		if (unlikely(ret < 0)) {
+>-			mmap_write_unlock(mm);
+>-			return NULL;
+>-		}
+>-		mmap_write_downgrade(mm);
+>-	} else
+>-		mmap_read_lock(mm);
+>+	if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
+>+		return NULL;
+> 
+> 	/*
+> 	 * We are doing an exec().  'current' is the process
+>diff --git a/include/linux/mm.h b/include/linux/mm.h
+>index 4eb8e62d5c67..48312a934454 100644
+>--- a/include/linux/mm.h
+>+++ b/include/linux/mm.h
+>@@ -3313,6 +3313,8 @@ extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admi
+> extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
+> extern void exit_mmap(struct mm_struct *);
+> int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift);
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
+>+				 unsigned long addr, bool write);
+> 
+> static inline int check_data_rlimit(unsigned long rlim,
+> 				    unsigned long new,
+>@@ -3426,9 +3428,6 @@ extern unsigned long stack_guard_gap;
+> int expand_stack_locked(struct vm_area_struct *vma, unsigned long address);
+> struct vm_area_struct *expand_stack(struct mm_struct * mm, unsigned long addr);
+> 
+>-/* CONFIG_STACK_GROWSUP still needs to grow downwards at some places */
+>-int expand_downwards(struct vm_area_struct *vma, unsigned long address);
+>-
+> /* Look up the first VMA which satisfies  addr < vm_end,  NULL if none. */
+> extern struct vm_area_struct * find_vma(struct mm_struct * mm, unsigned long addr);
+> extern struct vm_area_struct * find_vma_prev(struct mm_struct * mm, unsigned long addr,
+>diff --git a/mm/mmap.c b/mm/mmap.c
+>index f053de1d6fae..4df38d3717ff 100644
+>--- a/mm/mmap.c
+>+++ b/mm/mmap.c
+>@@ -1009,7 +1009,7 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
+>  * vma is the first one with address < vma->vm_start.  Have to extend vma.
+>  * mmap_lock held for writing.
+>  */
+>-int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+>+static int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+> {
+> 	struct mm_struct *mm = vma->vm_mm;
+> 	struct vm_area_struct *prev;
+>@@ -1940,3 +1940,55 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+> 	/* Shrink the vma to just the new range */
+> 	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
+> }
+>+
+>+#ifdef CONFIG_MMU
+>+/*
+>+ * Obtain a read lock on mm->mmap_lock, if the specified address is below the
+>+ * start of the VMA, the intent is to perform a write, and it is a
+>+ * downward-growing stack, then attempt to expand the stack to contain it.
+>+ *
+>+ * This function is intended only for obtaining an argument page from an ELF
+>+ * image, and is almost certainly NOT what you want to use for any other
+>+ * purpose.
+>+ *
+>+ * IMPORTANT - VMA fields are accessed without an mmap lock being held, so the
+>+ * VMA referenced must not be linked in any user-visible tree, i.e. it must be a
+>+ * new VMA being mapped.
+>+ *
+>+ * The function assumes that addr is either contained within the VMA or below
+>+ * it, and makes no attempt to validate this value beyond that.
+>+ *
+>+ * Returns true if the read lock was obtained and a stack was perhaps expanded,
+>+ * false if the stack expansion failed.
+>+ *
+>+ * On stack expansion the function temporarily acquires an mmap write lock
+>+ * before downgrading it.
+>+ */
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
+>+				 struct vm_area_struct *new_vma,
+>+				 unsigned long addr, bool write)
+>+{
+>+	if (!write || addr >= new_vma->vm_start) {
+>+		mmap_read_lock(mm);
+>+		return true;
+>+	}
+>+
+>+	if (!(new_vma->vm_flags & VM_GROWSDOWN))
+>+		return false;
+>+
+
+In expand_downwards() we have this checked.
+
+Maybe we just leave this done in one place is enough?
+
+>+	mmap_write_lock(mm);
+>+	if (expand_downwards(new_vma, addr)) {
+>+		mmap_write_unlock(mm);
+>+		return false;
+>+	}
+>+
+>+	mmap_write_downgrade(mm);
+>+	return true;
+>+}
+>+#else
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
+>+				 unsigned long addr, bool write)
+>+{
+>+	return false;
+>+}
+>+#endif
+>-- 
+>2.47.1
+>
 
 -- 
 Wei Yang
