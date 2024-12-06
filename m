@@ -1,265 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-36653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E6E9E75D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 17:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE029E75F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 17:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D11A188B100
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C98218878F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F01120E6E1;
-	Fri,  6 Dec 2024 16:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ECD1F3D35;
+	Fri,  6 Dec 2024 16:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gdin9ueQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PHEDuXuL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gdin9ueQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PHEDuXuL"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="VNo1ZZuL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDBD20E33F;
-	Fri,  6 Dec 2024 16:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B181F3D32
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 16:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502075; cv=none; b=Cdzgu5WkVOIPS+mbwQNP2fIWRICHFi6jJgbqTdKYoLldLP3EeobhboXcjvAG/J1xQOl/6d4LWPM+ToguWZYtfkQKX5MA443xngeczQk4NGw9EqAwWwIsbsgjZr3puQ9sYhcwnSRzKgfHx4C7fMiKfbe51vJ8FPYY++O22Ae1bNI=
+	t=1733502605; cv=none; b=ZBUZJ/5/7ZOZmZ5fZWydr3CT/G5MLSwttq8lFL9mO7SDIrOtrJHOrWkBtC0yWEvrIESRHPN+5E/L3JouLYFZh4uOIT1sgCO6xbjIEQZWbVuaa5utctcKazRlT/zJmfjMGE6HKsurQzaYrcOjxa4mtvgFbP/vcGvJY2XpzhAoo2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502075; c=relaxed/simple;
-	bh=ac4pgcLjtxPRBQcq/XNT/VonCW8Bc+VLmRkWv+2y7C0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQhX4NI0PB72Clzu4XK7qS6BWY2NlldH0r6e1dXGIM49OTQbgK/Iqcdz/Qpc07e44gy6ZUHL41xh3mgP/NTjLpe5ZUpCvfcGaNGJyyfn+h5tsUQuQ9UkI/wh1D2QI6yRXTtOV3GU7IF0E40TCy+p5QYNwHaBWkYF+3wjeY1qDpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gdin9ueQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PHEDuXuL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gdin9ueQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PHEDuXuL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C740721151;
-	Fri,  6 Dec 2024 16:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733502071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3hzM6cCpaVd6QqTH/MfEYNophFjHylvkgtDiG7Kv2s=;
-	b=Gdin9ueQ6Ip3/+5Yi0YrcbzUjHk0tA6o/FTam9lpBH8wdOJvXUxR3XKOsy1rLmjMAkd34G
-	6lm1xiGXABUg44MpHB4A6NKmCHUCrX5dnOg2ij2h3tMiP7FiV0wpgDQCgjgxddQTNIeM4K
-	e+57pxbz5yS0SkDLJmCZRExcdIUkzF4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733502071;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3hzM6cCpaVd6QqTH/MfEYNophFjHylvkgtDiG7Kv2s=;
-	b=PHEDuXuL2rODIjvYMfk/az+g55ImIx/wQ7m445IrxyrOgEVV+99IHx0BGQsFnji21jRIIt
-	ZLWgWxvt6WxXBxDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733502071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3hzM6cCpaVd6QqTH/MfEYNophFjHylvkgtDiG7Kv2s=;
-	b=Gdin9ueQ6Ip3/+5Yi0YrcbzUjHk0tA6o/FTam9lpBH8wdOJvXUxR3XKOsy1rLmjMAkd34G
-	6lm1xiGXABUg44MpHB4A6NKmCHUCrX5dnOg2ij2h3tMiP7FiV0wpgDQCgjgxddQTNIeM4K
-	e+57pxbz5yS0SkDLJmCZRExcdIUkzF4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733502071;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3hzM6cCpaVd6QqTH/MfEYNophFjHylvkgtDiG7Kv2s=;
-	b=PHEDuXuL2rODIjvYMfk/az+g55ImIx/wQ7m445IrxyrOgEVV+99IHx0BGQsFnji21jRIIt
-	ZLWgWxvt6WxXBxDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A46B8138A7;
-	Fri,  6 Dec 2024 16:21:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H7keKHckU2eICwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 16:21:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 79EB7A08CD; Fri,  6 Dec 2024 17:21:02 +0100 (CET)
-Date: Fri, 6 Dec 2024 17:21:02 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 12/27] ext4: introduce seq counter for the extent status
- entry
-Message-ID: <20241206162102.w4hw35ims5sdf4ik@quack3>
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-13-yi.zhang@huaweicloud.com>
- <20241204124221.aix7qxjl2n4ya3b7@quack3>
- <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
+	s=arc-20240116; t=1733502605; c=relaxed/simple;
+	bh=iASFRyjG/S6Ebor+z9GMdLWPsB4CFLmC/8GPn6xbuIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r/YqTDpPmh6mexhsVpMWGPOpxMGYxAUgjrF7loQzu/Jxkxp2gSwoaNRIKA3fqTH1tTazRMIK7JVMTUqex0bWni2oKr6hc6gCPqLohhLLbVJAJ/Rz/Ao227UjTOE9YC2S00OlyYpu3FXxfBQYIdli2174pRWc22BRPec3Jrlf6+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=VNo1ZZuL; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so5900417a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2024 08:30:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733502602; x=1734107402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LsbyoNKlnVgtEFVmMOHQGbSnGiUHN7vF1skQ5qsVn1A=;
+        b=VNo1ZZuLW7xNnfZONoo1LY6x6xu/AsFlNVdJYFWXwwa4DCUYfRqeXsa+8rg5n4pCoC
+         lxYxRsm3+ElL+L0M3SWsAVLVc9FPbAsDMSzxx+DAUV0WGNiepfNYDe+7MTQnxyaR/06w
+         dUzeQfL7B/sLsAFvVzUEA8d0COaugw3yLWs+jl4Oi2pk2Q+2voAWK26V4GCgrhj8PRB2
+         5XQiu+KnrGNLfbn3L850HrA0ALSsn3Ov/JgTZSGQGYM83Tma6P4CNc/QgHtv1t2AVNsI
+         c5cSZ8NN6ttbJNSd4hIDPV4yYUdDrGZET4xl5VtJ4Z3RzmSZrfhXXghbU1bPBn+/AJuw
+         F/aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733502602; x=1734107402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LsbyoNKlnVgtEFVmMOHQGbSnGiUHN7vF1skQ5qsVn1A=;
+        b=E9tfGrIGaJO83eVHrwjRlc7e4/pg81Y5Y+RQGNbztvaIV3lSZpaO7D3t90Z2sLf1/7
+         JeEizWQc0w+oQtxkSwXYxlWyEk8kSY5oLhZUDbXn+YSgHExXy/lAUOEsWHXN4ZxrgGIb
+         Bj5tt8tJpkTUK/BmNG1jGWhOJ0m12SJuQbTVujhiup0N7TPVhZH33Xxuuv75WYGBq428
+         AOcKHVN6UHKlWy09DUY5Pwb2BlWiL3nQvQCSgVrocdNGdmd9FoABf5ol69ASNrT3M/Pe
+         bg1HZlfZctreFEc7dj7m98flCJg4lW+tORNhmNW4RMDyj19NzMtPwHoE9peuXTVDQjfk
+         i9kg==
+X-Forwarded-Encrypted: i=1; AJvYcCV06yDC9Ow8jr5GfHj4mNqATGpcDC4cMFE2GYPR2NyABsHtK+M0Y2y/3kWAoJS9QGUR72nfUQzspSG4R3Ek@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYEOEaJy3ZUCfNbW7hcYaUvt12+1GlSIpJ6EH6UfdUXx9x3ABF
+	xGkHTGfKeQEr0uMh5wS5AT+3LpyMcrpRiarkaNY7F3kzA8o5ru0zSxkacxbGMOsJAeXYx7a29GC
+	uE5xuZ9VpR6+0qxhlq4TAmjCI+AbFP7pBTQbuZw==
+X-Gm-Gg: ASbGncvvEXIWzDhtaedQ47VRhDHh0Pgrk4V88phKRhGp7iciW2S6aKRd5txaLtCliIm
+	dYxDFMAkSn/LR/z/q2WpiKL6LARjzMXFE3mGE6v0xIbmoFOniKXhsTBBpR+QN
+X-Google-Smtp-Source: AGHT+IGbY3n2R7iy/JSI5Qz+LHz0BZaCS4Pynm+3V2whRZY+qn9I/oJoXVOUWeyHTfw1THY79nJm/nfDYuqOilG9nz0=
+X-Received: by 2002:a17:906:311a:b0:aa5:3c57:c407 with SMTP id
+ a640c23a62f3a-aa63741d43fmr410899066b.16.1733502601718; Fri, 06 Dec 2024
+ 08:30:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+ <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+In-Reply-To: <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Fri, 6 Dec 2024 17:29:50 +0100
+Message-ID: <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com>
+Subject: Re: 6.12 WARNING in netfs_consume_read_data()
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 06-12-24 16:55:01, Zhang Yi wrote:
-> On 2024/12/4 20:42, Jan Kara wrote:
-> > On Tue 22-10-24 19:10:43, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> In the iomap_write_iter(), the iomap buffered write frame does not hold
-> >> any locks between querying the inode extent mapping info and performing
-> >> page cache writes. As a result, the extent mapping can be changed due to
-> >> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
-> >> write-back process faces a similar problem: concurrent changes can
-> >> invalidate the extent mapping before the I/O is submitted.
-> >>
-> >> Therefore, both of these processes must recheck the mapping info after
-> >> acquiring the folio lock. To address this, similar to XFS, we propose
-> >> introducing an extent sequence number to serve as a validity cookie for
-> >> the extent. We will increment this number whenever the extent status
-> >> tree changes, thereby preparing for the buffered write iomap conversion.
-> >> Besides, it also changes the trace code style to make checkpatch.pl
-> >> happy.
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Overall using some sequence counter makes sense.
-> > 
-> >> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> >> index c786691dabd3..bea4f87db502 100644
-> >> --- a/fs/ext4/extents_status.c
-> >> +++ b/fs/ext4/extents_status.c
-> >> @@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
-> >>  	return es->es_lblk + es->es_len - 1;
-> >>  }
-> >>  
-> >> +static inline void ext4_es_inc_seq(struct inode *inode)
-> >> +{
-> >> +	struct ext4_inode_info *ei = EXT4_I(inode);
-> >> +
-> >> +	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
-> >> +}
-> > 
-> > This looks potentially dangerous because we can loose i_es_seq updates this
-> > way. Like
-> > 
-> > CPU1					CPU2
-> > x = READ_ONCE(ei->i_es_seq)
-> > 					x = READ_ONCE(ei->i_es_seq)
-> > 					WRITE_ONCE(ei->i_es_seq, x + 1)
-> > 					...
-> > 					potentially many times
-> > WRITE_ONCE(ei->i_es_seq, x + 1)
-> >   -> the counter goes back leading to possibly false equality checks
-> > 
-> 
-> In my current implementation, I don't think this race condition can
-> happen since all ext4_es_inc_seq() invocations are under
-> EXT4_I(inode)->i_es_lock. So I think it works fine now, or was I
-> missed something?
+On Fri, Dec 6, 2024 at 4:08=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
+.com> wrote:
+> Similar hangs wth 6.12.2 (vanilla without your "netfs-writeback" branch):
 
-Hum, as far as I've checked, at least the place in ext4_es_insert_extent()
-where you call ext4_es_inc_seq() doesn't hold i_es_lock (yet). If you meant
-to protect the updates by i_es_lock, then move the call sites and please
-add a comment about it. Also it should be enough to do:
+(Correction: this was 6.12.3, not 6.12.2)
 
-WRITE_ONCE(ei->i_es_seq, ei->i_es_seq + 1);
+I tried with 6.12.3 + dhowells/netfs-writeback; David's branch solved
+many problems and it took much longer to trigger the hang, but it
+eventually occurred:
 
-since we cannot be really racing with other writers.
+ INFO: task bash:6599 blocked for more than 122 seconds.
+       Not tainted 6.12.3-cm4all0-hp+ #298
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:bash            state:D stack:0     pid:6599  tgid:6599
+ppid:6598   flags:0x00000006
+ Call Trace:
+  <TASK>
+  __schedule+0xc34/0x4df0
+  ? is_dynamic_key+0x120/0x150
+  ? __pfx___schedule+0x10/0x10
+  ? lock_release+0x206/0x660
+  ? schedule+0x283/0x340
+  ? __pfx_lock_release+0x10/0x10
+  ? schedule+0x1e8/0x340
+  schedule+0xdc/0x340
+  schedule_preempt_disabled+0xa/0x10
+  rwsem_down_read_slowpath+0x6ba/0xd00
+  ? __pfx_rwsem_down_read_slowpath+0x10/0x10
+  ? kernel_text_address+0xb8/0x150
+  ? lock_acquire+0x11f/0x290
+  ? ceph_start_io_read+0x19/0x80
+  down_read+0xcd/0x220
+  ? __pfx_down_read+0x10/0x10
+  ? do_sys_openat2+0x106/0x160
+  ? stack_trace_save+0x96/0xd0
+  ? __pfx_stack_trace_save+0x10/0x10
+  ceph_start_io_read+0x19/0x80
+  ceph_read_iter+0x2e2/0xe70
+  ? __pfx_ceph_read_iter+0x10/0x10
+  ? psi_task_switch+0x256/0x810
+  ? find_held_lock+0x2d/0x110
+  ? lock_release+0x206/0x660
+  ? finish_task_switch.isra.0+0x1db/0xa40
+  vfs_read+0x6e1/0xc40
+  ? lock_acquire+0x11f/0x290
+  ? finish_task_switch.isra.0+0x129/0xa40
+  ? __pfx_vfs_read+0x10/0x10
+  ? finish_task_switch.isra.0+0x225/0xa40
+  ? fdget_pos+0x1b3/0x540
+  ? __pfx___seccomp_filter+0x10/0x10
+  ksys_read+0xee/0x1c0
+  ? __pfx_ksys_read+0x10/0x10
+  ? lock_release+0x206/0x660
+  ? __ceph_do_getattr+0xe8/0x380
+  do_syscall_64+0x64/0x100
+  ? fdget_raw+0x53/0x390
+  ? __do_sys_newfstatat+0x86/0xd0
+  ? __pfx___do_sys_newfstatat+0x10/0x10
+  ? syscall_exit_to_user_mode+0x57/0x120
+  ? do_syscall_64+0x70/0x100
+  ? irqentry_exit_to_user_mode+0x3d/0x100
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7f71fb04f21d
+ RSP: 002b:00007ffdd516a918 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f71fb04f21d
+ RDX: 0000000000003003 RSI: 00005597dc55d4d0 RDI: 0000000000000003
+ RBP: 0000000000003003 R08: 00007f71fb12a020 R09: 00007f71fb12a020
+ R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
+ R13: 00005597dc485340 R14: 00005597dc55d4d0 R15: 00005597be8d7524
+  </TASK>
+ INFO: task bash:6614 blocked for more than 122 seconds.
+       Not tainted 6.12.3-cm4all0-hp+ #298
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:bash            state:D stack:0     pid:6614  tgid:6614
+ppid:6613   flags:0x00000002
+ Call Trace:
+  <TASK>
+  __schedule+0xc34/0x4df0
+  ? __free_insn_slot+0x370/0x3d0
+  ? __pfx___schedule+0x10/0x10
+  ? lock_release+0x206/0x660
+  ? schedule+0x283/0x340
+  ? __pfx_lock_release+0x10/0x10
+  ? schedule+0x1e8/0x340
+  schedule+0xdc/0x340
+  schedule_preempt_disabled+0xa/0x10
+  rwsem_down_read_slowpath+0x6ba/0xd00
+  ? __pfx_rwsem_down_read_slowpath+0x10/0x10
+  ? kasan_save_stack+0x1c/0x40
+  ? kasan_save_track+0x10/0x30
+  ? lock_acquire+0x11f/0x290
+  ? ceph_start_io_read+0x19/0x80
+  ? find_held_lock+0x2d/0x110
+  down_read+0xcd/0x220
+  ? __ceph_caps_issued_mask+0x416/0xa10
+  ? __pfx_down_read+0x10/0x10
+  ceph_start_io_read+0x19/0x80
+  ceph_read_iter+0x2e2/0xe70
+  ? _copy_to_user+0x50/0x70
+  ? __pfx_ceph_read_iter+0x10/0x10
+  ? fdget_raw+0x53/0x390
+  vfs_read+0x6e1/0xc40
+  ? __do_sys_newfstatat+0x86/0xd0
+  ? __pfx___do_sys_newfstatat+0x10/0x10
+  ? __pfx_vfs_read+0x10/0x10
+  ? fdget_pos+0x1b3/0x540
+  ? __pfx___seccomp_filter+0x10/0x10
+  ksys_read+0xee/0x1c0
+  ? __pfx_ksys_read+0x10/0x10
+  do_syscall_64+0x64/0x100
+  ? do_user_addr_fault+0x401/0x8f0
+  ? find_held_lock+0x59/0x110
+  ? find_held_lock+0x2d/0x110
+  ? lock_release+0x206/0x660
+  ? do_user_addr_fault+0x45e/0x8f0
+  ? __pfx_lock_release+0x10/0x10
+  ? do_user_addr_fault+0x401/0x8f0
+  ? do_user_addr_fault+0x463/0x8f0
+  ? irqentry_exit_to_user_mode+0x3d/0x100
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7fa84a43a21d
+ RSP: 002b:00007ffec8720278 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fa84a43a21d
+ RDX: 0000000000003003 RSI: 0000565007f224d0 RDI: 0000000000000003
+ RBP: 0000000000003003 R08: 00007fa84a515020 R09: 00007fa84a515020
+ R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
+ R13: 0000565007e4a340 R14: 0000565007f224d0 R15: 0000565005ba8524
+  </TASK>
 
-> > I think you'll need to use atomic_t and appropriate functions here.
-> > 
-> >> @@ -872,6 +879,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
-> >>  	BUG_ON(end < lblk);
-> >>  	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
-> >>  
-> >> +	ext4_es_inc_seq(inode);
-> > 
-> > I'm somewhat wondering: Are extent status tree modifications the right
-> > place to advance the sequence counter? The counter needs to advance
-> > whenever the mapping information changes. This means that we'd be
-> > needlessly advancing the counter (and thus possibly forcing retries) when
-> > we are just adding new information from ordinary extent tree into cache.
-> > Also someone can be doing extent tree manipulations without touching extent
-> > status tree (if the information was already pruned from there). 
-> 
-> Sorry, I don't quite understand here. IIUC, we can't modify the extent
-> tree without also touching extent status tree; otherwise, the extent
-> status tree will become stale, potentially leading to undesirable and
-> unexpected outcomes later on, as the extent lookup paths rely on and
-> always trust the status tree. If this situation happens, would it be
-> considered a bug? Additionally, I have checked the code but didn't find
-> any concrete cases where this could happen. Was I overlooked something?
+ Showing all locks held in the system:
+ 1 lock held by khungtaskd/163:
+  #0: ffffffffae629b80 (rcu_read_lock){....}-{1:2}, at:
+debug_show_all_locks+0x64/0x280
+ 2 locks held by bash/3365:
+  #0: ffff8881661803e0 (sb_writers#19){....}-{0:0}, at: ksys_write+0xee/0x1=
+c0
+  #1: ffff888192604b18 (&sb->s_type->i_mutex_key#19){....}-{3:3}, at:
+ceph_start_io_write+0x15/0x30
+ 1 lock held by bash/6599:
+  #0: ffff888192604b18 (&sb->s_type->i_mutex_key#19){....}-{3:3}, at:
+ceph_start_io_read+0x19/0x80
+ 1 lock held by bash/6614:
+  #0: ffff888192604b18 (&sb->s_type->i_mutex_key#19){....}-{3:3}, at:
+ceph_start_io_read+0x19/0x80
 
-What I'm worried about is that this seems a bit fragile because e.g. in
-ext4_collapse_range() we do:
-
-ext4_es_remove_extent(inode, start, EXT_MAX_BLOCKS - start)
-<now go and manipulate the extent tree>
-
-So if somebody managed to sneak in between ext4_es_remove_extent() and
-the extent tree manipulation, he could get a block mapping which is shortly
-after invalidated by the extent tree changes. And as I'm checking now,
-writeback code *can* sneak in there because during extent tree
-manipulations we call ext4_datasem_ensure_credits() which can drop
-i_data_sem to restart a transaction.
-
-Now we do writeout & invalidate page cache before we start to do these
-extent tree dances so I don't see how this could lead to *actual* use
-after free issues but it makes me somewhat nervous. So that's why I'd like
-to have some clear rules from which it is obvious that the counter makes
-sure we do not use stale mappings.
-
-> > So I think
-> > needs some very good documentation what are the expectations from the
-> > sequence counter and explanations why they are satisfied so that we don't
-> > break this in the future.
-> 
-> Yeah, it's a good suggestion, where do you suggest putting this
-> documentation, how about in the front of extents_status.c?
-
-I think at the function incrementing the counter would be fine.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
