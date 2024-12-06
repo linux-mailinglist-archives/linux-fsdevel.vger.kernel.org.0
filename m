@@ -1,168 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-36629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A839E6E77
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 13:43:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B789E6E6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 13:41:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EA01888152
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 12:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0182848C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 12:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A9C20126D;
-	Fri,  6 Dec 2024 12:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06BC202F91;
+	Fri,  6 Dec 2024 12:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lG+M9Z3O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TrKShBSJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lG+M9Z3O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TrKShBSJ"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="L5bZM7kv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3/mEvQSe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164F01FCF40;
-	Fri,  6 Dec 2024 12:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EF1202F7D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 12:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733488630; cv=none; b=Y37Ll1MeeNc0oldQ7ztGZLXwM4ufFcmOarf6NRVNozo8Hu+18d7PzqU/DNwZ2N0cNiKSibyKnno982t6ux2MFx2WKHtVopMRh3GPZ9B3rhBM3t0hBk0hfdjDI5kA1erp4L9Apy+3PY+Bu4izZvtmp+6UgnclpfaU5spNq8ELz68=
+	t=1733488872; cv=none; b=RZdAPW76Z95ng7t0VEzkFcuiJhG5IMLmuHT4MaXYT6GP9lBWx2LuR+BXG5nj3QFvYBJ46UrcbaxcdKVe5pHTcxDt1y9218YVwIZ7f6zKv9xFHET3S+S/47r64ZRr8KOjXahe8qWs/AziNZCWgcpMW8DqhM3wNYYW2CYoWKBgnZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733488630; c=relaxed/simple;
-	bh=o6wRrS3k07uBZ5yBKQHBLycycX25rpyqfhX4KmiWlDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2onQvR4ZJZPp6g+fPd14a2BBOGMxf57ngJMGPUJg5TbLzHL+c9MoQxCM8HxtC24Bef7sSPQZ+5FOEo8hPsz1l51WoARK19KWguyfRRDWSpjtu3wGEAFULgPG0P9U3EzzaqKZ2vw/MLnMl37BU7+x0GG+YKRIRR3bToWo+KNzrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lG+M9Z3O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TrKShBSJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lG+M9Z3O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TrKShBSJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 335C11F397;
-	Fri,  6 Dec 2024 12:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733488627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5uE5wJA9vj7KF0w77/4O+vlPlqnKO1saLwErislPea0=;
-	b=lG+M9Z3OLrLsKUDAxHtpA1M6Rz+46AINscgR0kXPIejzsxEBUqnhLt2hBHp7dI2t1XaPpj
-	JZqcKeZ1Lq0UKgaehzTymtVR0Eb7iXTOH57AORFn8tPgYhBVfI3VpSc+o/JQNaTPedwcmY
-	u30sfu2UiWRZg4MVvxWM23ZlUfj2QCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733488627;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5uE5wJA9vj7KF0w77/4O+vlPlqnKO1saLwErislPea0=;
-	b=TrKShBSJNXFDBRgrQ4E9q69zMevrNPWhnVYTHLMAACL726CCBsIiql3/JO9yPGTeTpqRk6
-	0lOIzfO/UEhOPYDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lG+M9Z3O;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TrKShBSJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733488627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5uE5wJA9vj7KF0w77/4O+vlPlqnKO1saLwErislPea0=;
-	b=lG+M9Z3OLrLsKUDAxHtpA1M6Rz+46AINscgR0kXPIejzsxEBUqnhLt2hBHp7dI2t1XaPpj
-	JZqcKeZ1Lq0UKgaehzTymtVR0Eb7iXTOH57AORFn8tPgYhBVfI3VpSc+o/JQNaTPedwcmY
-	u30sfu2UiWRZg4MVvxWM23ZlUfj2QCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733488627;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5uE5wJA9vj7KF0w77/4O+vlPlqnKO1saLwErislPea0=;
-	b=TrKShBSJNXFDBRgrQ4E9q69zMevrNPWhnVYTHLMAACL726CCBsIiql3/JO9yPGTeTpqRk6
-	0lOIzfO/UEhOPYDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64E82138A7;
-	Fri,  6 Dec 2024 12:37:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5VhqB/HvUmeeRgAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Fri, 06 Dec 2024 12:37:05 +0000
-Date: Fri, 6 Dec 2024 23:36:54 +1100
-From: David Disseldorp <ddiss@suse.de>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, "linux-cifs@vger.kernel.org"
- <linux-cifs@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: ksmbd: v6.13-rc1 WARNING at fs/attr.c:300
- setattr_copy+0x1ee/0x200
-Message-ID: <20241206233654.3a3207ba.ddiss@suse.de>
-In-Reply-To: <CAKYAXd8U-kQa5+fg4QvcUeOkAuX128v_VLxNz5=trF85ZONrYA@mail.gmail.com>
-References: <20241206164155.3c80d28e.ddiss@suse.de>
-	<CAKYAXd8U-kQa5+fg4QvcUeOkAuX128v_VLxNz5=trF85ZONrYA@mail.gmail.com>
+	s=arc-20240116; t=1733488872; c=relaxed/simple;
+	bh=t4Fgw8nKOBruWIjpvLkYp2AIC5dy6abm6RTvVXuHm6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lo2T1Dut9M3xGyLPFLyJyzSRUubKt5Lq4+BOZnvblNgyhDwhAU7xfhiI697deT0BVuV5A4sCrtsx4M0NgAFBT8IEkGBhV2Z/7o6w3h67TbE6B7RTT8fyZWcMvsDiNKW+r3BgYpMzNbZQ4PSvZfU7FCM5tNVlRlBXFPTbn69sJz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=L5bZM7kv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3/mEvQSe; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 70653114013D;
+	Fri,  6 Dec 2024 07:41:08 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 06 Dec 2024 07:41:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733488868;
+	 x=1733575268; bh=tXXivK+cdUGnoPSCQQoOlq548346QQ9af7kT7yc5szI=; b=
+	L5bZM7kvXOnkUPpoKhBpNaNRp3WS7T/GRlbcQKzH/H789dMkBUkRTfVwA2lK/XYT
+	bWYiVf0TjlUz78y5itP+z9p1QVE8rYv6gv3WF9U6d0GV38qUqymjivKv53XFcxUp
+	IUjr6wLUewcpVhGeTjIFi8VeVM+sHlGPR2LdtbY51KjJg0zyTUq4wPn7R2npAZku
+	pZRdgkU0+lA+bIfmw0IWg4WDGMIPSKu1pdw0qbAy8quDY+YPhle/ohJcgOpWoA0V
+	WRZJSflL4490WCNYXN7umaRfyr8lpAyaUpW0K191TK+T5sJ5InMjp8/RyUqu+Kbd
+	WWTIdsZXRTRrebxvSfAC8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733488868; x=
+	1733575268; bh=tXXivK+cdUGnoPSCQQoOlq548346QQ9af7kT7yc5szI=; b=3
+	/mEvQSeBzy8f/flfuSUzIXqyAhCW97YYhtDDPzQqFKbskF3ADgUT2H3Y9vlElAb9
+	sx+jrlGBT0hzqMBDkCWM/jC2v9VTDAqDBp7pA3jyWtT662bKpq/Q2Dr1d6hWvFX6
+	vtK0BPK/mBvG9VBdbg3HteAMnXLfJA6aLOLwXDqlvU2631Weg6w7nbDfTuHi5j5O
+	CSM56nouFFhePkqsxz+ZyGssCGfmUxkLHbgQo7ctVrwzS6jTTnaYlb5msJ1VAiBK
+	zNjwSFFfqBX4fOJ2YZJwCrndMsjvKji6r+8CpzDFd+9FHTsSAFIbi4IIhbmh+zYb
+	ue2zvudIywKcnhdJ92vew==
+X-ME-Sender: <xms:4_BSZ63g2dAj3RY08FmIBHPATks5l640VjJ4gt6Q6L-4FFVQ2LLf8A>
+    <xme:4_BSZ9EzEhqM2Nz5SuWL8Ex7_jX3r7XCRPYh7iAlaW6m1nqJqxmFsMMqub_qlo6Uj
+    3mVA6CSJGKzu-Yx>
+X-ME-Received: <xmr:4_BSZy4uWm4RQrAwG5kPHjbF7hfuM6OElzSyoA8YDJYLbkSWmtHfRXEKhw3SpAxqYnvJH-SDqzpimXvrBfaO8U-bgytpN7v42H4oPbqVPTWvWPUS_912>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgdegudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
+    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
+    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeffjeevfeefjefghfef
+    hfeiueffffetledtgffhhfdttdefueevledvleetfeevtdenucffohhmrghinhepkhgvrh
+    hnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsggprh
+    gtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhoshes
+    shiivghrvgguihdrhhhupdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopegumhgrnhhtihhpohhvseihrghnuggvgidrrhhupdhrtghpthht
+    ohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthhfsheslhhishhtshdrlhhinhhu
+    gidruggvvhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghs
+    thhinhhgrdhorhhgpdhrtghpthhtohepshihiigsohhtodegtdegsgegsgejgeehtdektd
+    gsiedvuddttgeitgesshihiihkrghllhgvrhdrrghpphhsphhothhmrghilhdrtghomh
+X-ME-Proxy: <xmx:4_BSZ71pLr0Yuf-zt9h9hahzb5gFIqfY4UJDjSdt6jY7gdPYgOA64A>
+    <xmx:4_BSZ9GXQtxqRyUnkAaDo7qWW88Xpf3dsq-DfYbbBKYF55PlP22HtQ>
+    <xmx:4_BSZ08GU1ARAQaGKtoHjQx_FQ1V5mw_8y-GtUO_5dZ5VCGp-Xb7qw>
+    <xmx:4_BSZyk7dpDgJjtAHGAT3xS3doqyCJ0UdXsaDxIF9wpGcVCWZHf5Dw>
+    <xmx:5PBSZ8BzVUyqqXzsIamKPMatdFlw3Mjc2Er2gWzQUXF7h8NiSbqzYok0>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Dec 2024 07:41:06 -0500 (EST)
+Message-ID: <4b9f34f5-7cfc-40e2-b2a7-ad69d1d81437@fastmail.fm>
+Date: Fri, 6 Dec 2024 13:41:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: syzbot program that crashes netfslib can also crash fuse
+To: Miklos Szeredi <miklos@szeredi.hu>, David Howells <dhowells@redhat.com>
+Cc: Dmitry Antipov <dmantipov@yandex.ru>, Jeff Layton <jlayton@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, lvc-project@linuxtesting.org,
+ syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
+References: <20241202093943.227786-1-dmantipov@yandex.ru>
+ <1100513.1733306199@warthog.procyon.org.uk>
+ <CAJfpeguAw2_3waLEGhPK-LZ_dFfOXO6bHGE=6Yo2xpyet6SYrA@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpeguAw2_3waLEGhPK-LZ_dFfOXO6bHGE=6Yo2xpyet6SYrA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 335C11F397
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Fri, 6 Dec 2024 16:35:18 +0900, Namjae Jeon wrote:
-...
-> > 300                 WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-> >                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--- here.
 
-I should mention, fstests generic/215 atop a 6.13.0-rc1 cifs.ko SMB3
-mount was the trigger for this ksmbd warning.
 
-> > Looking at smb2pdu.c:set_file_basic_info() it's easy enough to see how
-> > we can get here with !ATTR_CTIME alongside ATTR_MTIME.
-> >
-> > The following patch avoids the warning, but I'm not familiar with this
-> > code-path, so please let me know whether or not it makes sense:  
-> mtime and atime will probably not be updated.
+On 12/4/24 13:41, Miklos Szeredi wrote:
+> On Wed, 4 Dec 2024 at 10:56, David Howells <dhowells@redhat.com> wrote:
+>>
+>> Interesting...  The test program also causes fuse to oops (see attached) over
+>> without even getting to netfslib.  The BUG is in iov_iter_revert():
+>>
+>>         if (iov_iter_is_xarray(i) || iter_is_ubuf(i)) {
+>>                 BUG(); /* We should never go beyond the start of the specified
+>>                         * range since we might then be straying into pages that
+>>                         * aren't pinned.
+>>                         */
+> 
+> Can you please test this?
+> 
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1541,8 +1541,10 @@ static int fuse_get_user_pages(struct
+> fuse_args_pages *ap, struct iov_iter *ii,
+>          */
+>         struct page **pages = kzalloc(max_pages * sizeof(struct page *),
+>                                       GFP_KERNEL);
+> -       if (!pages)
+> +       if (!pages) {
+> +               *nbytesp = 0;
+>                 return -ENOMEM;
+> +       }
+> 
+>         while (nbytes < *nbytesp && nr_pages < max_pages) {
+>                 unsigned nfolios, i;
+> 
+> (Also attaching patch without whitespace damage.)
 
-Unless I'm missing something, this patched ksmbd still triggers mtime
-update via the setattr_copy_mgtime()->(ia_valid & ATTR_MTIME_SET) path.
+I had already posted a patch on Monday.
 
-> I will change it so that ATTR_CTIME is also set when changing mtime.
+https://lore.kernel.org/r/20241203-fix-fuse_get_user_pages-v2-1-acce8a29d06b@ddn.com
 
-That should also work. I was turned off that path due to the
-64e7875560270 ("ksmbd: fix oops from fuse driver") ATTR_CTIME changes.
+@David, is that the same sysbot report or another one?
 
-Thanks, David
+
+Thanks,
+Bernd
 
