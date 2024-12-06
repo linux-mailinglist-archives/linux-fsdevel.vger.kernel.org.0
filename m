@@ -1,194 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-36648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9049E74E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:52:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3562F9E7503
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 17:01:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E791886BD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 15:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB78285CC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE87020B81D;
-	Fri,  6 Dec 2024 15:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A71C2066EE;
+	Fri,  6 Dec 2024 16:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z75vERBb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B062171;
-	Fri,  6 Dec 2024 15:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6792FBA20
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 16:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733500318; cv=none; b=mqXh3/IfPFnCfXVWFC8Lg2O9VUjc0HhqNv57lW9D6kXr0frxucBTZEWR/1nw5ZmuWuqDkjQ0AJXHxGeUIk8SXwxVwDRTAS1A99U9Qul/MEV5+hH1NORId+KgsZXcOQ+e9qJLLFsGjSGObjfiLQyk9XL1kCi/g57UFbC/SNM4DSU=
+	t=1733500861; cv=none; b=j86LLz4ID5QiGHxu8kR8JE49VvGUiwmL5CbZNrGdTwPU+iwL9MmiedUjQBFm1KWhJdFCdwWZd5VPYNt9hoo4nuOWSt0ykskn5Bi/6Vj7BK5htNjYI/1425LGIp5Gat1yUmztD5xszV3hgR+Zjn8hqbqT77UYhs1AQ/zi2BARWn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733500318; c=relaxed/simple;
-	bh=wCTL2ZjpQRRY6WMst98GL6ldhXJSLL8p6Tx1prpotTU=;
+	s=arc-20240116; t=1733500861; c=relaxed/simple;
+	bh=HSCGDWcaxbK6HOFBVo52qZ91vHfVIpAQLmjT+vBw4Ao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmBp3UMvmzsNyKAYqjLCeMCfKYmsyICazyESYNF4i9NzfUpVYhTac207ICo24SLm4z5zpp74MEQ1t/U7vAJLPCdKr0T6gcKTjzUOuyY2YumzzowxgQaRJAvp9gYmg0gzjnW2L9pEfwupp3Nj/3zjTalWiBxDMPHFvXJteI/G4Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DDBE1F37E;
-	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
-	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
-	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
-	CjWIsVuhwYpb+6Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
-	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
-	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
-	CjWIsVuhwYpb+6Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BBF613647;
-	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y90ZIpodU2ceAwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:51:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3BEF1A08CD; Fri,  6 Dec 2024 16:51:46 +0100 (CET)
-Date: Fri, 6 Dec 2024 16:51:46 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
-Message-ID: <20241206155146.wmc2flrony62d524@quack3>
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
- <20241204120527.jus6ymhsddxhlqjz@quack3>
- <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lek35Fu5iC6aA+NwN2F7EzqHw1g1f1qacvIDDBDAoVxcTcUxdjqyoGQitAC8bpi/83PE1y+23auPIhp+fw/V2c6NHHj6Kq9joAkn5OY05a/Q6usWli9mA+J+02rNmU1tEHME4AByQDrMA2QSCT5crtu44pve4HyVEJZ7wtJAw/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z75vERBb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B2EC4CED1;
+	Fri,  6 Dec 2024 16:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733500860;
+	bh=HSCGDWcaxbK6HOFBVo52qZ91vHfVIpAQLmjT+vBw4Ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z75vERBbR2GG1Q79Pxa0ev06tRXisCFf8+eo+jxdYlraqUFxcz/J/C2NMzYvffevH
+	 uoUEEHjIRbYtyWARsNe6eL2rK4qxLIz/tgkhhSyrxceIdis5sjdxL1LC6aVcryBIeS
+	 KnVzUIBeS+N0MlMRcq5zejkHH6imkTLBASziAcfhIiV/lRJpdQUfXAV8jxQMzZNhrf
+	 Cwzln3KQHPRs6XTW5/GlrTStk1cprewBKFX6tGAthbR8MUhPq0cLgtw8EJhyNKii3Z
+	 zRfnoKC+vJbg6+2T6jVORY1J/2nrlfZnfKBRniH2O4aOc7uK1CvtR2dftDrAqf6kdY
+	 8r3Cmo9rp/xNw==
+Date: Fri, 6 Dec 2024 17:00:56 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] fanotify: notify on mount attach and detach
+Message-ID: <20241206-aneinander-riefen-a9cc5e26d6ac@brauner>
+References: <20241206151154.60538-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241206151154.60538-1-mszeredi@redhat.com>
 
-On Fri 06-12-24 16:13:14, Zhang Yi wrote:
-> On 2024/12/4 20:05, Jan Kara wrote:
-> > On Tue 22-10-24 19:10:40, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Currently, all five sub-functions of ext4_fallocate() acquire the
-> >> inode's i_rwsem at the beginning and release it before exiting. This
-> >> process can be simplified by factoring out the management of i_rwsem
-> >> into the ext4_fallocate() function.
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Ah, nice. Feel free to add:
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > 
-> > and please ignore my comments about renaming 'out' labels :).
-> > 
-> > 								Honza
-> > 
+On Fri, Dec 06, 2024 at 04:11:52PM +0100, Miklos Szeredi wrote:
+> Add notifications for attaching and detaching mounts.  The following new
+> event masks are added:
 > 
-> ...
+>   FAN_MNT_ATTACH  - Mount was attached
+>   FAN_MNT_DETACH  - Mount was detached
 > 
-> >> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-> >>  
-> >>  	inode_lock(inode);
-> >>  	ret = ext4_convert_inline_data(inode);
-> >> -	inode_unlock(inode);
-> >>  	if (ret)
-> >> -		return ret;
-> >> +		goto out;
-> >>  
-> >>  	if (mode & FALLOC_FL_PUNCH_HOLE)
-> >>  		ret = ext4_punch_hole(file, offset, len);
-> >> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-> >>  		ret = ext4_zero_range(file, offset, len, mode);
-> >>  	else
-> >>  		ret = ext4_do_fallocate(file, offset, len, mode);
-> >> -
-> >> +out:
-> >> +	inode_unlock(inode);
-> >>  	return ret;
-> >>  }
-> >>  
+> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
+> FAN_MNT_DETACH).
 > 
-> I guess you may want to suggest rename this out to out_inode_lock as well.
+> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
+> these fields identifying the affected mounts:
+> 
+>   __u64 mnt_id    - the ID of the mount (see statmount(2))
+> 
+> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
+> and no other type of event can be received with this report type.
+> 
+> Marks are added with FAN_MARK_MNTNS, which records the mount namespace
+> belonging to the supplied path.
+> 
+> Prior to this patch mount namespace changes could be monitored by polling
+> /proc/self/mountinfo, which did not convey any information about what
+> changed.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/mount.h                         |  11 +++
+>  fs/namespace.c                     | 120 ++++++++++++++++++++++-------
+>  fs/notify/fanotify/fanotify.c      |  56 ++++++++++----
+>  fs/notify/fanotify/fanotify.h      |  18 +++++
+>  fs/notify/fanotify/fanotify_user.c |  70 ++++++++++++++++-
+>  fs/notify/fdinfo.c                 |   2 +
+>  fs/notify/fsnotify.c               |  44 +++++++++--
+>  fs/notify/fsnotify.h               |  11 +++
+>  fs/notify/mark.c                   |  14 +++-
+>  fs/pnode.c                         |   4 +-
+>  include/linux/fanotify.h           |  14 ++--
+>  include/linux/fsnotify.h           |  20 +++++
+>  include/linux/fsnotify_backend.h   |  40 +++++++++-
+>  include/linux/mnt_namespace.h      |   5 ++
+>  include/uapi/linux/fanotify.h      |  10 +++
+>  security/selinux/hooks.c           |   4 +
+>  16 files changed, 384 insertions(+), 59 deletions(-)
+> 
+> v2:
+> 	- notify for whole namespace as this seems to be what people prefer
+> 	- move fsnotify() calls outside of mount_lock
+> 	- only report mnt_id, not parent_id
+> 
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 185fc56afc13..a79232a8c908 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -14,6 +14,10 @@ struct mnt_namespace {
+>  	u64			seq;	/* Sequence number to prevent loops */
+>  	wait_queue_head_t poll;
+>  	u64 event;
+> +#ifdef CONFIG_FSNOTIFY
+> +	__u32			n_fsnotify_mask;
+> +	struct fsnotify_mark_connector __rcu *n_fsnotify_marks;
+> +#endif
+>  	unsigned int		nr_mounts; /* # of mounts in the namespace */
+>  	unsigned int		pending_mounts;
+>  	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
+> @@ -77,6 +81,13 @@ struct mount {
+>  	int mnt_expiry_mark;		/* true if marked for expiry */
+>  	struct hlist_head mnt_pins;
+>  	struct hlist_head mnt_stuck_children;
+> +
+> +	/*
+> +	 * for mount notification
+> +	 * FIXME: maybe move to a union with some other fields?
+> +	 */
+> +	struct list_head to_notify; /* singly linked list? */
+> +	struct mnt_namespace *prev_ns;
+>  } __randomize_layout;
+>  
+>  #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 23e81c2a1e3f..b376570544a7 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -139,12 +139,13 @@ static void mnt_ns_tree_add(struct mnt_namespace *ns)
+>  	rb_add(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_less);
+>  }
+>  
+> -static void mnt_ns_release(struct mnt_namespace *ns)
+> +void mnt_ns_release(struct mnt_namespace *ns)
+>  {
+>  	lockdep_assert_not_held(&mnt_ns_tree_lock);
+>  
+>  	/* keep alive for {list,stat}mount() */
+>  	if (refcount_dec_and_test(&ns->passive)) {
+> +		fsnotify_mntns_delete(ns);
+>  		put_user_ns(ns->user_ns);
+>  		kfree(ns);
+>  	}
+> @@ -1119,7 +1120,16 @@ static inline struct mount *node_to_mount(struct rb_node *node)
+>  	return node ? rb_entry(node, struct mount, mnt_node) : NULL;
+>  }
+>  
+> -static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt)
+> +static void queue_notify(struct mnt_namespace *ns, struct mount *m, struct list_head *notif)
+> +{
+> +	/* Optimize the case where there are no watches */
+> +	if (ns->n_fsnotify_marks)
+> +		list_add_tail(&m->to_notify, notif);
+> +	else
+> +		m->prev_ns = m->mnt_ns;
+> +}
+> +
+> +static void __mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt)
+>  {
+>  	struct rb_node **link = &ns->mounts.rb_node;
+>  	struct rb_node *parent = NULL;
+> @@ -1138,10 +1148,37 @@ static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt)
+>  	mnt->mnt.mnt_flags |= MNT_ONRB;
+>  }
+>  
+> +static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt, struct list_head *notif)
+> +{
+> +	__mnt_add_to_ns(ns, mnt);
+> +	queue_notify(ns, mnt, notif);
+> +}
+> +
+> +static void notify_mounts(struct list_head *head)
+> +{
+> +	struct mount *p;
+> +
+> +	while (!list_empty(head)) {
+> +		p = list_first_entry(head, struct mount, to_notify);
+> +		if (!p->prev_ns && p->mnt_ns) {
+> +			fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
+> +		} else if (p->prev_ns && !p->mnt_ns) {
+> +			fsnotify_mnt_detach(p->prev_ns, &p->mnt);
+> +		} else if (p->prev_ns == p->mnt_ns) {
+> +			fsnotify_mnt_move(p->mnt_ns, &p->mnt);
+> +		} else	{
+> +			fsnotify_mnt_detach(p->prev_ns, &p->mnt);
+> +			fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
+> +		}
+> +		p->prev_ns = p->mnt_ns;
+> +		list_del_init(&p->to_notify);
+> +	}
+> +}
+> +
+>  /*
+>   * vfsmount lock must be held for write
+>   */
+> -static void commit_tree(struct mount *mnt)
+> +static void commit_tree(struct mount *mnt, struct list_head *notif)
+>  {
+>  	struct mount *parent = mnt->mnt_parent;
+>  	struct mount *m;
+> @@ -1155,7 +1192,7 @@ static void commit_tree(struct mount *mnt)
+>  		m = list_first_entry(&head, typeof(*m), mnt_list);
+>  		list_del(&m->mnt_list);
+>  
+> -		mnt_add_to_ns(n, m);
+> +		mnt_add_to_ns(n, m, notif);
+>  	}
+>  	n->nr_mounts += n->pending_mounts;
+>  	n->pending_mounts = 0;
+> @@ -1752,7 +1789,7 @@ static bool disconnect_mount(struct mount *mnt, enum umount_tree_flags how)
+>   * mount_lock must be held
+>   * namespace_sem must be held for write
+>   */
+> -static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+> +static void umount_tree(struct mount *mnt, struct list_head *notif, enum umount_tree_flags how)
+>  {
+>  	LIST_HEAD(tmp_list);
+>  	struct mount *p;
+> @@ -1785,11 +1822,12 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>  		list_del_init(&p->mnt_expire);
+>  		list_del_init(&p->mnt_list);
+>  		ns = p->mnt_ns;
+> +		p->mnt_ns = NULL;
+>  		if (ns) {
+>  			ns->nr_mounts--;
+>  			__touch_mnt_namespace(ns);
+> +			queue_notify(ns, p, notif);
+>  		}
+> -		p->mnt_ns = NULL;
+>  		if (how & UMOUNT_SYNC)
+>  			p->mnt.mnt_flags |= MNT_SYNC_UMOUNT;
+>  
+> @@ -1809,7 +1847,7 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>  	}
+>  }
+>  
+> -static void shrink_submounts(struct mount *mnt);
+> +static void shrink_submounts(struct mount *mnt, struct list_head *notif);
+>  
+>  static int do_umount_root(struct super_block *sb)
+>  {
+> @@ -1837,6 +1875,7 @@ static int do_umount_root(struct super_block *sb)
+>  static int do_umount(struct mount *mnt, int flags)
+>  {
+>  	struct super_block *sb = mnt->mnt.mnt_sb;
+> +	LIST_HEAD(notif);
+>  	int retval;
+>  
+>  	retval = security_sb_umount(&mnt->mnt, flags);
+> @@ -1914,20 +1953,21 @@ static int do_umount(struct mount *mnt, int flags)
+>  	if (flags & MNT_DETACH) {
+>  		if (mnt->mnt.mnt_flags & MNT_ONRB ||
+>  		    !list_empty(&mnt->mnt_list))
+> -			umount_tree(mnt, UMOUNT_PROPAGATE);
+> +			umount_tree(mnt, &notif, UMOUNT_PROPAGATE);
+>  		retval = 0;
+>  	} else {
+> -		shrink_submounts(mnt);
+> +		shrink_submounts(mnt, &notif);
+>  		retval = -EBUSY;
+>  		if (!propagate_mount_busy(mnt, 2)) {
+>  			if (mnt->mnt.mnt_flags & MNT_ONRB ||
+>  			    !list_empty(&mnt->mnt_list))
+> -				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
+> +				umount_tree(mnt, &notif, UMOUNT_PROPAGATE|UMOUNT_SYNC);
+>  			retval = 0;
+>  		}
+>  	}
+>  out:
+>  	unlock_mount_hash();
+> +	notify_mounts(&notif);
+>  	namespace_unlock();
+>  	return retval;
+>  }
+> @@ -1946,6 +1986,7 @@ void __detach_mounts(struct dentry *dentry)
+>  {
+>  	struct mountpoint *mp;
+>  	struct mount *mnt;
+> +	LIST_HEAD(notif);
+>  
+>  	namespace_lock();
+>  	lock_mount_hash();
+> @@ -1960,11 +2001,12 @@ void __detach_mounts(struct dentry *dentry)
+>  			umount_mnt(mnt);
+>  			hlist_add_head(&mnt->mnt_umount, &unmounted);
+>  		}
+> -		else umount_tree(mnt, UMOUNT_CONNECTED);
+> +		else umount_tree(mnt, &notif, UMOUNT_CONNECTED);
+>  	}
+>  	put_mountpoint(mp);
+>  out_unlock:
+>  	unlock_mount_hash();
+> +	notify_mounts(&notif);
 
-Right. This one should better be out_inode_lock.
+For unmount we shouldn't need to do this under the namespace semaphore.
+Instead we should be able to do this in namespace_unlock() after we've
+given up the namespace semaphore and making the umount fsnotify
+notification list global. So in the end you can then do sm like:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/namespace.c b/fs/namespace.c
+index b376570544a7..70e67f1490eb 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1733,6 +1733,7 @@ static void namespace_unlock(void)
+        up_write(&namespace_sem);
+
+        shrink_dentry_list(&list);
++       notify_mounts(&notif);
+
+        if (likely(hlist_empty(&head)))
+                return;
+
+Maybe you can even use the @unmounted list for this directly.
+
+I wonder if we can avoid doing the notifications for mount events
+without calling copy_to_user() under the namespace semaphore as well.
+Something we've so far managed to avoid and it would let us sleep
+easier.
 
