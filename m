@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-36661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE1E9E76DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 18:17:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239119E777E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 18:35:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF5E285BC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 17:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035C116BFF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 17:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D331F3D51;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92842206B2;
+	Fri,  6 Dec 2024 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKgt2+7P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u779ivq5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4EB206296;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43656220687;
+	Fri,  6 Dec 2024 17:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733505461; cv=none; b=Bsfd/oDwBi+hjogxueHP/LB5JsND4uQfmKJGcObL3xG4Z4KCf9wpceEaXgNYNnlv686gQrkc/nTyUhLXQV3nc8pQfkQD1Hmg1qKTA/85CfbOHHkmAXA0kmk6T0ZLRxxSBdiKyfFIBP0B9IBjEUNNi22gGvEHAEN+luNuQTBKtc8=
+	t=1733506540; cv=none; b=Vp7bVDJChTUzNVrGaHwYuuWX2dUZg2FhnVQaFtsR78kEo4UWQ5m8bd1AnkIdjbmj9Vp7awkt3RXkttc2Syx3UHGclFMuQOHTUvaO63GTav3VBoobz4KMfVrQAO56oLhonTE9hGUZUhnZavBAWOkA879BTrNH7pdTxqWsugRDqnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733505461; c=relaxed/simple;
-	bh=AuFd9Gw9Dc3IjuRANbTBGi5vZ1aTaRD1b70Nt5M3/Gk=;
+	s=arc-20240116; t=1733506540; c=relaxed/simple;
+	bh=ml4wCe8+4O3h3jjAznKlCNTzTZpIkv4tLb/kiCGnGE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KcI9Hu3bZ6GC12qVHzDr9yRT9zgm8BPNHatLhhckQcxgrCJY2A2GPTIF5vtOXi9vLcEU2aVxx2oKKDnsOVRTIubfjImrmmrwcNp1X7PqaVY7zKCQhZ/9BY6zt426Sd/9ktHZDlLNpVvp+pMIxXPo2N5aYnGZazJJwDu/AaqoNi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKgt2+7P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F30C4CEDC;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9LzzWtwi6wIYZRcP6IvYEfFMWLKzSDpxP5TJ9u396ReYZLsRQK79TqVuY75vj+TjjwgTDaixY8+eSbwepcbomN+HVkcgRAtpFIxCx2l5nMgM9FVPqfRZBkc7jn58nrf3loRbWPZQYaNcgckdiR0Tw5l24eEdKv5y475ctUg04U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u779ivq5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CD5C4CED1;
+	Fri,  6 Dec 2024 17:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733505461;
-	bh=AuFd9Gw9Dc3IjuRANbTBGi5vZ1aTaRD1b70Nt5M3/Gk=;
+	s=k20201202; t=1733506539;
+	bh=ml4wCe8+4O3h3jjAznKlCNTzTZpIkv4tLb/kiCGnGE0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKgt2+7PsmXp/c3SLX5DRDO4UKmcDueQlB6L8vcYDbkTVx6oxX6sdsOVjWa74rYUc
-	 BhJQgqOH9plH5nYy/Hf3ZTUYhIjBtd2RRBIkfcuD/Sl5sefeL049ABTLUDiW/TeLG8
-	 4ntM6J8akUAuppFLoFuLF+WlUgGXFhRU48p7jkskoPe4E4e7+NDZvzrgVVNgpwjSZL
-	 0xXGRimCLcOT1cgnbyrj8jri90dMOmkry36F564cOGqUNmERGzswBng49Ut0xl0Tg8
-	 mpgBsgKMYd4/U80vYNYbYFezO7D6yK+wrEBWrUVowxwA82RmE/r1bvGG6+aaATpQjo
-	 +hVc9EFOIkXOQ==
-Date: Fri, 6 Dec 2024 09:17:40 -0800
+	b=u779ivq5sT3CNXg9/WIqZL8Dhfjqt8n2kva4qkAiMmn7IuEBySJ8LKx9GgjsF/lCe
+	 ZMLQAaSaJETnegUlAVDhYuRE5qJlru62s6F7bPIwhlUCSKNJZssrehe+iicWOD2kGi
+	 HkNEYYV3B+anG1hyIQ2QsqO8qeOecvKHDDlAWhdC/CSp0XzF30cSmmSoWZPaHX/SPY
+	 QJIjiL8nCtqw0t1iKyM046Vhm6htmG9uTA7++pieHnxqGOGFEfRIzuZX2ag2iz279F
+	 o9aeg3bC8vJkMx68pPGQGvRJCEOqNz4goovWwZc2pQT5Xe6anX4GOVPmMzwAPn/68l
+	 XB0FlzqBOEgyg==
+Date: Fri, 6 Dec 2024 09:35:39 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
 	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
 	kirill@shutemov.name, bfoster@redhat.com
-Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-Message-ID: <20241206171740.GD7820@frogsfrogsfrogs>
+Subject: Re: [PATCH 07/12] fs: add RWF_UNCACHED iocb and FOP_UNCACHED
+ file_operations flag
+Message-ID: <20241206173539.GA7816@frogsfrogsfrogs>
 References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-13-axboe@kernel.dk>
+ <20241203153232.92224-9-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,174 +60,122 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203153232.92224-13-axboe@kernel.dk>
+In-Reply-To: <20241203153232.92224-9-axboe@kernel.dk>
 
-On Tue, Dec 03, 2024 at 08:31:47AM -0700, Jens Axboe wrote:
-> If RWF_UNCACHED is set for a write, mark new folios being written with
-> uncached. This is done by passing in the fact that it's an uncached write
-> through the folio pointer. We can only get there when IOCB_UNCACHED was
-> allowed, which can only happen if the file system opts in. Opting in means
-> they need to check for the LSB in the folio pointer to know if it's an
-> uncached write or not. If it is, then FGP_UNCACHED should be used if
-> creating new folios is necessary.
-> 
-> Uncached writes will drop any folios they create upon writeback
-> completion, but leave folios that may exist in that range alone. Since
-> ->write_begin() doesn't currently take any flags, and to avoid needing
-> to change the callback kernel wide, use the foliop being passed in to
-> ->write_begin() to signal if this is an uncached write or not. File
-> systems can then use that to mark newly created folios as uncached.
-> 
-> This provides similar benefits to using RWF_UNCACHED with reads. Testing
-> buffered writes on 32 files:
-> 
-> writing bs 65536, uncached 0
->   1s: 196035MB/sec
->   2s: 132308MB/sec
->   3s: 132438MB/sec
->   4s: 116528MB/sec
->   5s: 103898MB/sec
->   6s: 108893MB/sec
->   7s: 99678MB/sec
->   8s: 106545MB/sec
->   9s: 106826MB/sec
->  10s: 101544MB/sec
->  11s: 111044MB/sec
->  12s: 124257MB/sec
->  13s: 116031MB/sec
->  14s: 114540MB/sec
->  15s: 115011MB/sec
->  16s: 115260MB/sec
->  17s: 116068MB/sec
->  18s: 116096MB/sec
-> 
-> where it's quite obvious where the page cache filled, and performance
-> dropped from to about half of where it started, settling in at around
-> 115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
-> reclaim pages.
-> 
-> Running the same test with uncached buffered writes:
-> 
-> writing bs 65536, uncached 1
->   1s: 198974MB/sec
->   2s: 189618MB/sec
->   3s: 193601MB/sec
->   4s: 188582MB/sec
->   5s: 193487MB/sec
->   6s: 188341MB/sec
->   7s: 194325MB/sec
->   8s: 188114MB/sec
->   9s: 192740MB/sec
->  10s: 189206MB/sec
->  11s: 193442MB/sec
->  12s: 189659MB/sec
->  13s: 191732MB/sec
->  14s: 190701MB/sec
->  15s: 191789MB/sec
->  16s: 191259MB/sec
->  17s: 190613MB/sec
->  18s: 191951MB/sec
-> 
-> and the behavior is fully predictable, performing the same throughout
-> even after the page cache would otherwise have fully filled with dirty
-> data. It's also about 65% faster, and using half the CPU of the system
-> compared to the normal buffered write.
+On Tue, Dec 03, 2024 at 08:31:43AM -0700, Jens Axboe wrote:
+> If a file system supports uncached buffered IO, it may set FOP_UNCACHED
+> and enable RWF_UNCACHED. If RWF_UNCACHED is attempted without the file
+> system supporting it, it'll get errored with -EOPNOTSUPP.
 > 
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->  include/linux/fs.h      |  5 +++++
->  include/linux/pagemap.h |  9 +++++++++
->  mm/filemap.c            | 12 +++++++++++-
->  3 files changed, 25 insertions(+), 1 deletion(-)
+>  include/linux/fs.h      | 14 +++++++++++++-
+>  include/uapi/linux/fs.h |  6 +++++-
+>  2 files changed, 18 insertions(+), 2 deletions(-)
 > 
 > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 40383f5cc6a2..32255473f79d 100644
+> index 7e29433c5ecc..b64a78582f06 100644
 > --- a/include/linux/fs.h
 > +++ b/include/linux/fs.h
-> @@ -2912,6 +2912,11 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
->  				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
->  		if (ret)
->  			return ret;
-> +	} else if (iocb->ki_flags & IOCB_UNCACHED) {
-> +		struct address_space *mapping = iocb->ki_filp->f_mapping;
-> +
-> +		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
-> +					      iocb->ki_pos + count);
+> @@ -322,6 +322,7 @@ struct readahead_control;
+>  #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
+>  #define IOCB_APPEND		(__force int) RWF_APPEND
+>  #define IOCB_ATOMIC		(__force int) RWF_ATOMIC
+> +#define IOCB_UNCACHED		(__force int) RWF_UNCACHED
+>  
+>  /* non-RWF related bits - start at 16 */
+>  #define IOCB_EVENTFD		(1 << 16)
+> @@ -356,7 +357,8 @@ struct readahead_control;
+>  	{ IOCB_SYNC,		"SYNC" }, \
+>  	{ IOCB_NOWAIT,		"NOWAIT" }, \
+>  	{ IOCB_APPEND,		"APPEND" }, \
+> -	{ IOCB_ATOMIC,		"ATOMIC"}, \
+> +	{ IOCB_ATOMIC,		"ATOMIC" }, \
+> +	{ IOCB_UNCACHED,	"UNCACHED" }, \
+>  	{ IOCB_EVENTFD,		"EVENTFD"}, \
+>  	{ IOCB_DIRECT,		"DIRECT" }, \
+>  	{ IOCB_WRITE,		"WRITE" }, \
+> @@ -2127,6 +2129,8 @@ struct file_operations {
+>  #define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
+>  /* Supports asynchronous lock callbacks */
+>  #define FOP_ASYNC_LOCK		((__force fop_flags_t)(1 << 6))
+> +/* File system supports uncached read/write buffered IO */
+> +#define FOP_UNCACHED		((__force fop_flags_t)(1 << 7))
+>  
+>  /* Wrap a directory iterator that needs exclusive inode access */
+>  int wrap_directory_iterator(struct file *, struct dir_context *,
+> @@ -3614,6 +3618,14 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+>  		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
+>  			return -EOPNOTSUPP;
 >  	}
->  
->  	return count;
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index f2d49dccb7c1..e49587c40157 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -14,6 +14,7 @@
->  #include <linux/gfp.h>
->  #include <linux/bitops.h>
->  #include <linux/hardirq.h> /* for in_interrupt() */
-> +#include <linux/writeback.h>
->  #include <linux/hugetlb_inline.h>
->  
->  struct folio_batch;
-> @@ -70,6 +71,14 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
->  	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
->  }
->  
-> +/*
-> + * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
-> + * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
-> + * must check for this and pass FGP_UNCACHED for folio creation.
-> + */
-> +#define foliop_uncached			((struct folio *) 0xfee1c001)
-> +#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
+> +	if (flags & RWF_UNCACHED) {
 
-Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
+Should FMODE_NOREUSE imply RWF_UNCACHED?  I know, I'm dredging this up
+again from v3:
 
-The first one because it's a magic value and can you guarantee that
-0xfee1c001 will never be a pointer to an actual struct folio, even on
-32-bit?
+https://lore.kernel.org/linux-fsdevel/ZzKn4OyHXq5r6eiI@dread.disaster.area/
 
-Second, they're both named "foliop" even though the first one doesn't
-return a (struct folio **) but the second one takes that as an arg.
+but the manpage for fadvise says NOREUSE means "The specified data will
+be accessed only once." and I think that fits what you're doing here.
+And yeah, it's annoying that people keep asking for moar knobs to tweak
+io operations: Let's have a mount option, and a fadvise mode, and a
+fcntl mode, and finally per-io flags!  (mostly kidding)
 
-I think these two macros are only used for ext4 (or really, !iomap)
-support, right?  And that's only to avoid messing with ->write_begin?
-What if you dropped ext4 support instead? :D
+Also, one of your replies referenced a poc to set UNCACHED on NOREUSE
+involving willy and yu.  Where was that?  I've found this:
+
+https://lore.kernel.org/linux-fsdevel/ZzI97bky3Rwzw18C@casper.infradead.org/
+
+but that turned into a documentation discussion.
+
+There were also a few unanswered questions (imo) from the last few
+iterations of this patchset.
+
+If someone issues a lot of small appending uncached writes to a file,
+does that mean the writes and writeback will now be lockstepping each
+other to write out the folio?  Or should programs simply not do that?
+
+What if I wanted to do a bunch of small writes to adjacent bytes,
+amortize writeback over a single disk io, and not wait for reclaim to
+drop the folio?  Admittedly that doesn't really fit with "will be
+accessed only once" so I think "don't do that" is an acceptable answer.
+
+And, I guess if the application really wants fine-grained control then
+it /can/ still pwrite, sync_file_range, and fadvise(WONTNEED).  Though
+that's three syscalls/uring ops/whatever.  But that might be cheaper
+than repeated rewrites.
 
 --D
 
->  /**
->   * filemap_set_wb_err - set a writeback error on an address_space
->   * @mapping: mapping in which to set writeback error
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 826df99e294f..00f3c6c58629 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -4095,7 +4095,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->  	ssize_t written = 0;
+> +		/* file system must support it */
+> +		if (!(ki->ki_filp->f_op->fop_flags & FOP_UNCACHED))
+> +			return -EOPNOTSUPP;
+> +		/* DAX mappings not supported */
+> +		if (IS_DAX(ki->ki_filp->f_mapping->host))
+> +			return -EOPNOTSUPP;
+> +	}
+>  	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
+>  	if (flags & RWF_SYNC)
+>  		kiocb_flags |= IOCB_DSYNC;
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 753971770733..dc77cd8ae1a3 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -332,9 +332,13 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* Atomic Write */
+>  #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
 >  
->  	do {
-> -		struct folio *folio;
-> +		struct folio *folio = NULL;
->  		size_t offset;		/* Offset into folio */
->  		size_t bytes;		/* Bytes to write to folio */
->  		size_t copied;		/* Bytes copied from user */
-> @@ -4123,6 +4123,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->  			break;
->  		}
->  
-> +		/*
-> +		 * If IOCB_UNCACHED is set here, we now the file system
-> +		 * supports it. And hence it'll know to check folip for being
-> +		 * set to this magic value. If so, it's an uncached write.
-> +		 * Whenever ->write_begin() changes prototypes again, this
-> +		 * can go away and just pass iocb or iocb flags.
-> +		 */
-> +		if (iocb->ki_flags & IOCB_UNCACHED)
-> +			folio = foliop_uncached;
+> +/* buffered IO that drops the cache after reading or writing data */
+> +#define RWF_UNCACHED	((__force __kernel_rwf_t)0x00000080)
 > +
->  		status = a_ops->write_begin(file, mapping, pos, bytes,
->  						&folio, &fsdata);
->  		if (unlikely(status < 0))
+>  /* mask of flags supported by the kernel */
+>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+> -			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
+> +			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+> +			 RWF_UNCACHED)
+>  
+>  #define PROCFS_IOCTL_MAGIC 'f'
+>  
 > -- 
 > 2.45.2
 > 
