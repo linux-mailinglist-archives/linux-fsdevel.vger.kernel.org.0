@@ -1,45 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-36615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3989E6961
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:55:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4F1167A07
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 08:55:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0E1E0E00;
-	Fri,  6 Dec 2024 08:55:12 +0000 (UTC)
-X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD259E6987
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 10:00:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251051D9A48;
-	Fri,  6 Dec 2024 08:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6757828325E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:00:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ACE1DDA0F;
+	Fri,  6 Dec 2024 09:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HzaaIgkj"
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED575197548
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 09:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475312; cv=none; b=HTHXQFkkIUayAulQI/01zelu1QwxXDDXKcXK7zES0FAo9YQhlD1HGO9Ev9EncPz6y7dFeITLi61qH9hK+zpqTn9qAI7dgxR45jJpDt074JrXM08DPlxmAA9EN2sKFg2nJ+FuOPccjuyHqy5IODG/S4i9uT5F3Rd7yp6btjsfk6c=
+	t=1733475647; cv=none; b=PQceIsLyfRcBTiSaaMAv2eUfMTJ/QJOtps0t5FBScyuxdcOXUZS7CuDvYyAEcHtyWuCPFW5A6GuQHGQhjkQTV8wx7O8211E4Ms0SpgAnoEOSvKeFSm8CVoW6OtZ24EWSoOLg1ioKlUMUAAx2/xj3XslG1RXVl7UNe7H3nXzIRT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475312; c=relaxed/simple;
-	bh=6amPin9F3atmc7mQBPJ6QiqmXojPFyeez5KUoWEI5FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C5/0Lkwzk57PZ+PvIjCCNsL2JmzK7kZw1R+By0ZKaMqLw/NPyhlgazkXh0dMUMMLJ/uWGNLfDoBcItVjKmd5aCqOwBz0WbYWpz8jYAxmB+haoBiwXBoOr0RPfEyAH7PORw4GHtYmkaVo4WCEnuqrqg6BH4n1jiTm/SWxKkL+kfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4Q772vSsz4f3lVL;
-	Fri,  6 Dec 2024 16:54:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7611F1A07B6;
-	Fri,  6 Dec 2024 16:55:03 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoLlu1Jn6clADw--.11146S3;
-	Fri, 06 Dec 2024 16:55:03 +0800 (CST)
-Message-ID: <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
-Date: Fri, 6 Dec 2024 16:55:01 +0800
+	s=arc-20240116; t=1733475647; c=relaxed/simple;
+	bh=h/jMTotFuxnM0D2p4HTTUDkXP73GNC6bPT53ah0AYjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:From:In-Reply-To:
+	 Content-Type:References; b=X7kl4aR2iUbZyRf+w9zi9nN4Q6ggm0QW4l/wG7zHRLno0U/18H2u5La5H0uvJVAYbgmCJxvGZlB6s0p1m95XGhODrbJYDUDMr8+OEXTKXNuoEE421UrOYWLovUJJxfIqDYLM+AMdScZs9VsJ4yHoJLwTzEETqhlOLXnao8IiffM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HzaaIgkj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241206090032euoutp0173540aea69e4f10bf51c366e10479b90~Oiucomio62049720497euoutp01D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Dec 2024 09:00:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241206090032euoutp0173540aea69e4f10bf51c366e10479b90~Oiucomio62049720497euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733475632;
+	bh=HA8XSRBC3z58+YB/XdZO/a+P0mv6PxJbXV4aXju2atk=;
+	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+	b=HzaaIgkj8DxvSOsBOr1D0l2Q4ywGmOthLXeFo+BkuectJRpyuYQfyOLGU4xjy8+jd
+	 atNE8VndF1GymNOaFxV7q/sR3QUhao3aIMCggPpYR2YcyjYcu8Qr6uGEwG7SF2I5pd
+	 H6YyqlufyGrXgKkKPMO8DqSzpStSWrRomSVaylOI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241206090031eucas1p2a813c3ed1fbd02894040d67b8fa20946~OiucdsgKq2802828028eucas1p2d;
+	Fri,  6 Dec 2024 09:00:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id DD.C6.20821.F2DB2576; Fri,  6
+	Dec 2024 09:00:31 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241206090031eucas1p23196c2e72cd04cc3e53021f485935520~OiucM5pDV1630416304eucas1p2-;
+	Fri,  6 Dec 2024 09:00:31 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241206090031eusmtrp2d7fe022f7cddcbf13f0f62aa2f9df49f~OiucMWp5Y1198711987eusmtrp2b;
+	Fri,  6 Dec 2024 09:00:31 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-73-6752bd2fccfa
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 5D.0B.19920.F2DB2576; Fri,  6
+	Dec 2024 09:00:31 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241206090031eusmtip286041ac4a65551e20b09044aafb68f28~OiucEIvHF3075630756eusmtip2q;
+	Fri,  6 Dec 2024 09:00:31 +0000 (GMT)
+Received: from [106.110.32.87] (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 6 Dec 2024 09:00:30 +0000
+Message-ID: <795962d3-0bab-47d0-9254-df0e98e3a314@samsung.com>
+Date: Fri, 6 Dec 2024 10:00:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,131 +77,91 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/27] ext4: introduce seq counter for the extent status
- entry
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-13-yi.zhang@huaweicloud.com>
- <20241204124221.aix7qxjl2n4ya3b7@quack3>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20241204124221.aix7qxjl2n4ya3b7@quack3>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] common/config: use modprobe -w when supported
+Content-Language: en-GB
+To: Luis Chamberlain <mcgrof@kernel.org>
+CC: <patches@lists.linux.dev>, <fstests@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<sandeen@redhat.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+In-Reply-To: <Z1Ing_noobsMJCRS@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format="flowed"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCnzoLlu1Jn6clADw--.11146S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFy7ZryrWF1kXw4rCr18AFb_yoWrGFyfpF
-	ZIk3Z8tFs8J3WFkryIva17Zr1rGa48GrW7GF9Igw4vka98WFyfKF1UKFWjvF18WrWvqw1j
-	vF4Fk347C3Wjva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOV39vUHpBj+/6lmcbtnLbrFn70kW
+	ixsTnjJaXD5xidFi+hZHB1aPTas62TxebJ7J6PF+31U2j8+b5AJYorhsUlJzMstSi/TtErgy
+	dn3YwVKwnqviUONNpgbGiRxdjJwcEgImEj1PX7GC2EICKxglNt337mLkArK/MEr8erGcGcL5
+	zCix6OM7VpiOW89WMUJ0LGeUmPu1Bq7oTuM5FghnB6PE+ravYFW8AnYSH2/vBbNZBFQk7k+a
+	wAIRF5Q4OfMJmC0qIC9x/9YMdhBbWMBJ4k57GxOIzSwgLtH0ZSXYZhEBDYl9E3qh4t2MEms3
+	CYDYbAKaEvtObgLr5RQwk3i2fhHQLg6gGiuJ6Sc8IcrlJba/ncMM8YCixIyJK1kg7FqJU1tu
+	MYHcLCHwgkPizd1GqC9dJD4+fssOYQtLvDq+BcqWkfi/cz4ThJ0usWTdLKhBBRJ7bs9iBdkr
+	IWAt0XcmByLsKHHsy1IWiDCfxI23ghDn8ElM2jadeQKj6iykgJiF5OFZCA/MQvLAAkaWVYzi
+	qaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIEJ5vS/4592MM599VHvECMTB+MhRgkOZiUR3sqw
+	wHQh3pTEyqrUovz4otKc1OJDjNIcLErivKop8qlCAumJJanZqakFqUUwWSYOTqkGJv8TC6rU
+	DFfPuz//eRLT0RX1RzUYLrdktJfu27Uq/+fn1exrpnJzb+ObYCy2as96AePXonYStbsTNrqt
+	tlrFM/UWy7IXPtwHciT0bQ5GnlP5zFu6M3Ree5ns8p/NJaX2BnHdffsmPZnG+My4Ku9M7rwn
+	T12LTPM+t6g7P3sSuWrxpt/LaraE8O1W+N4zWf/9jWXHtDaKX8ys+bPnLu+1cob9uZu2Vs88
+	y7Px2mGjaJeCGZl/DQN4eM6JK/8NEUqPqPSKn3xU8lhsW9tBDZ/bYoxC/fNS5k3buLrz7h+3
+	9BsMMz9ceffn3OqFRy9Ntpb/V+WnP/XMyVLr7bIpDPsdT288fqL3n2u9VpviDqbrxg1KLMUZ
+	iYZazEXFiQD87yxnnwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7r6e4PSDaYul7M43bKX3WLP3pMs
+	FjcmPGW0uHziEqPF9C2ODqwem1Z1snm82DyT0eP9vqtsHp83yQWwROnZFOWXlqQqZOQXl9gq
+	RRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl7Pqwg6VgPVfFocabTA2MEzm6
+	GDk5JARMJG49W8XYxcjFISSwlFHi0OLzzBAJGYmNX66yQtjCEn+udbFBFH1klPgx+xMLhLOD
+	UeL9gTOMIFW8AnYSH2/vBbNZBFQk7k+awAIRF5Q4OfMJmC0qIC9x/9YMdhBbWMBJ4k57GxOI
+	zSwgLtH0ZSXYNhEBDYl9E3qZQBYwC3QyShy8PQlq9VtGiXVvjoJVsQloSuw7uQlsEqeAmcSz
+	9YsYISZZSCx+c5AdwpaX2P52DtQ/ihIzJq5kgbBrJT7/fcY4gVF0FpIDZyE5ZBaSUbOQjFrA
+	yLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMEa3Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuGt
+	DAtMF+JNSaysSi3Kjy8qzUktPsRoCgylicxSosn5wCSRVxJvaGZgamhiZmlgamlmrCTO63b5
+	fJqQQHpiSWp2ampBahFMHxMHp1QD05ZFUVffcye9miUc3/Tzv8+yCQ+mdLectJZ+syzwdpBN
+	v/guW977XhKuUdPiWK2U5G/fi1I/GfBguSQraz1fhfC9uUyvNz+4VdzX4R0lVlAYzlsl/dk5
+	sm/LhF+rTG7aypR4h0tzf6ryyrzzaVJwreEsVj3u2GPFF120lgl2HM48FfnZcmtydjF3tEMJ
+	56oNxkqPtbf9z3259MS5iJOWZh77A88Y+NhmJM0tkltc0CAZ+UIpk6cpbkuisRSv3sI5B/M2
+	CnpeOLvk7hFzvvsTBZrXZbrXOzj9mHT1dEvE/+avkf9tpm5iVV27c6MdG5PLyrPsTKwX2FX+
+	GD0WuvVq2bwFB/iWiG06K7pX/nmOEktxRqKhFnNRcSIASM5pMVoDAAA=
+X-CMS-MailID: 20241206090031eucas1p23196c2e72cd04cc3e53021f485935520
+X-Msg-Generator: CA
+X-RootMTR: 20241205002632eucas1p1550f6c9513d111b21cb22cacb09ed680
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241205002632eucas1p1550f6c9513d111b21cb22cacb09ed680
+References: <CGME20241205002632eucas1p1550f6c9513d111b21cb22cacb09ed680@eucas1p1.samsung.com>
+	<20241205002624.3420504-1-mcgrof@kernel.org>
+	<95e41652-65c9-4fd7-9cc4-344b90b006b6@samsung.com>
+	<Z1Ing_noobsMJCRS@bombadil.infradead.org>
 
-On 2024/12/4 20:42, Jan Kara wrote:
-> On Tue 22-10-24 19:10:43, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+On 12/5/2024 11:21 PM, Luis Chamberlain wrote:
+> On Thu, Dec 05, 2024 at 08:41:22AM +0100, Daniel Gomez wrote:
+>> On 12/5/2024 1:26 AM, Luis Chamberlain wrote:
+>>> We had added support for open coding a patient module remover long
+>>> ago on fstests through commit d405c21d40aa1 ("common/module: add patient
+>>> module rmmod support") to fix many flaky tests. This assumed we'd end up
+>>> with modprobe -p -t <msec-timeout> but in the end kmod upstream just
 >>
->> In the iomap_write_iter(), the iomap buffered write frame does not hold
->> any locks between querying the inode extent mapping info and performing
->> page cache writes. As a result, the extent mapping can be changed due to
->> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
->> write-back process faces a similar problem: concurrent changes can
->> invalidate the extent mapping before the I/O is submitted.
+>> I can't find modprobe -p and/or -t arguments in the manual. What do they
+>> mean?
+> 
+> I had proposed -p to mean patient module remover with a default timeout
+> set, -t to override. In the end this went upstream instead over a lot of
+> dialog with just -w <timeout>.
+> 
+>> but i can't find the module remover support in kmod.
 >>
->> Therefore, both of these processes must recheck the mapping info after
->> acquiring the folio lock. To address this, similar to XFS, we propose
->> introducing an extent sequence number to serve as a validity cookie for
->> the extent. We will increment this number whenever the extent status
->> tree changes, thereby preparing for the buffered write iomap conversion.
->> Besides, it also changes the trace code style to make checkpatch.pl
->> happy.
 >>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> Nit. I find useful using the long argument instead of the short one (e.g.
+>> --wait instead of -w). as it's usually self-descriptive. But I guess we
+>> don't have that long option for -p and -t?
 > 
-> Overall using some sequence counter makes sense.
-> 
->> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
->> index c786691dabd3..bea4f87db502 100644
->> --- a/fs/ext4/extents_status.c
->> +++ b/fs/ext4/extents_status.c
->> @@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
->>  	return es->es_lblk + es->es_len - 1;
->>  }
->>  
->> +static inline void ext4_es_inc_seq(struct inode *inode)
->> +{
->> +	struct ext4_inode_info *ei = EXT4_I(inode);
->> +
->> +	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
->> +}
-> 
-> This looks potentially dangerous because we can loose i_es_seq updates this
-> way. Like
-> 
-> CPU1					CPU2
-> x = READ_ONCE(ei->i_es_seq)
-> 					x = READ_ONCE(ei->i_es_seq)
-> 					WRITE_ONCE(ei->i_es_seq, x + 1)
-> 					...
-> 					potentially many times
-> WRITE_ONCE(ei->i_es_seq, x + 1)
->   -> the counter goes back leading to possibly false equality checks
-> 
+> It was one or the other that went upstream, we implemented this on
+> fstests upstream as an open coded solution while we wanted for this
+> meachanism to be agreed upon and merged. I just forgot to come back to
+> this after -w was merged and decided upon.
 
-In my current implementation, I don't think this race condition can
-happen since all ext4_es_inc_seq() invocations are under
-EXT4_I(inode)->i_es_lock. So I think it works fine now, or was I
-missed something?
+Thanks for clarifying.
 
-> I think you'll need to use atomic_t and appropriate functions here.
+
 > 
->> @@ -872,6 +879,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  	BUG_ON(end < lblk);
->>  	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
->>  
->> +	ext4_es_inc_seq(inode);
-> 
-> I'm somewhat wondering: Are extent status tree modifications the right
-> place to advance the sequence counter? The counter needs to advance
-> whenever the mapping information changes. This means that we'd be
-> needlessly advancing the counter (and thus possibly forcing retries) when
-> we are just adding new information from ordinary extent tree into cache.
-> Also someone can be doing extent tree manipulations without touching extent
-> status tree (if the information was already pruned from there). 
-
-Sorry, I don't quite understand here. IIUC, we can't modify the extent
-tree without also touching extent status tree; otherwise, the extent
-status tree will become stale, potentially leading to undesirable and
-unexpected outcomes later on, as the extent lookup paths rely on and
-always trust the status tree. If this situation happens, would it be
-considered a bug? Additionally, I have checked the code but didn't find
-any concrete cases where this could happen. Was I overlooked something?
-
-> So I think
-> needs some very good documentation what are the expectations from the
-> sequence counter and explanations why they are satisfied so that we don't
-> break this in the future.
-> 
-
-Yeah, it's a good suggestion, where do you suggest putting this
-documentation, how about in the front of extents_status.c?
-
-Thanks,
-Yi.
+>    Luis
 
 
