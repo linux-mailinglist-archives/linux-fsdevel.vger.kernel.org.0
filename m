@@ -1,134 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-36613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF469E6898
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:13:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78ADE9E68F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 09:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D29E1686AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 08:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9A01886D7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 08:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872B41DF274;
-	Fri,  6 Dec 2024 08:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937CC1E1A31;
+	Fri,  6 Dec 2024 08:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7xy+32A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BDC1D90B6;
-	Fri,  6 Dec 2024 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFA41DF985;
+	Fri,  6 Dec 2024 08:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472805; cv=none; b=Q2Vww0R2yTdpSQenILE9kPRvk02bnAnmzmRScFkVd/g3tGHHZ3MH98Qg5KJcdPWPoITbvjo6TZkyfTY88wTos74jhfUng42j1aqqSc4Ygeo4QJuCVxUxYOG27FOWmHXy8CnDilO/mQ2cZkbrqSk7mRrPlIuEoYZcvC70JRMosec=
+	t=1733473904; cv=none; b=ParK7yKqxxuKcepEk3YZMI+6dqkal4U4cIz18PHKpTrKBivbV/iJll+MEFjmtggRKrjDrfvtvR1IyAvLXV1fRqgD87epWbfL6gflhWpmkrQEiTsxG33zdWzSXmmXrO8YzK6X2mPB+KKQeSy+l0SUf9lNQEoHdL0cG6D7/GxJ/DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472805; c=relaxed/simple;
-	bh=4gH76F3z/S8h4gBs3jqgD7UA9E+zfYeMzGechFnhMng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+uzqHhiMaagN8LFB8s7rpWqyPUfxWlf/G/1qZxTL6nJlSi8PoLHVVfYOXaOHc5z/ISyTwtvRC4+yAy1H/EARvxvR+MlnHi1P2miCM/B0h5DwgLBB1NwIN5Q21+tmvq8JR8PD8PGGqogfIiescnRTb9x7zSGawHfh5JfKBruPDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4PC26DJsz4f3jq4;
-	Fri,  6 Dec 2024 16:13:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DF6F41A0196;
-	Fri,  6 Dec 2024 16:13:16 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHYoYaslJnY_s9Dw--.20633S3;
-	Fri, 06 Dec 2024 16:13:16 +0800 (CST)
-Message-ID: <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
-Date: Fri, 6 Dec 2024 16:13:14 +0800
+	s=arc-20240116; t=1733473904; c=relaxed/simple;
+	bh=JqJYyNs+EZIorojWZ80JEwxFDXIe0wdVEqTThkDqp/c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QwaU7FLOjKc/wIlPNfvriqS7dWiRmtjFXp2mrFldEh05Wb3y1bEOek3s8uTzyrsOPjWaDxAcuSAxkYEtxQYYiPIrUmZXKKI9aesvj2BHVVYr2WwZDas/5FmGiyCxt1anVA8ACZnM6/B5Ptsbev/Jz5kygCU0H15vdKutfdV5Z1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7xy+32A; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fd24730dadso607305a12.1;
+        Fri, 06 Dec 2024 00:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733473901; x=1734078701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaIpQvkdoMLTjaf/6msdYPERNNt0XKX/eslq4dA70x8=;
+        b=P7xy+32AVCx1DIBrbLOY5mux49WxVK1eaFvluvQal7EiXJRRZlw+JpwfjTbEEr1K2J
+         iRZff2yU6oNG0KU5V0P70DVvIP4POe159VO2qb1nTLGnIHVB8FbEOgC7g8lPR2C0Ek0P
+         raN2WsVbfJUwWD/oRHuzLKn5VfMQSrd1FKLvYX3zA9t3trxkJ63j8RBSED2UiFr6z+Oh
+         Rqmk04ISkruNlBIaCs9LlWvsDMKUJ/WkVEyUd12lfTZihrmE5xbTMIOhBcFC7MBL+9kQ
+         71BJ9osLoHRzysvbtEcr9b73cvE+6ctSRenZBbc+LS7/Sb9FJpIB4GGMYSaCPP+EJyg1
+         Hk0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733473901; x=1734078701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gaIpQvkdoMLTjaf/6msdYPERNNt0XKX/eslq4dA70x8=;
+        b=nvT8XuY/xlebapwVwdiaOlAHm+ezIA/HmUXXUOlfvVPe744u0AnNEhaeMbo/208RdO
+         N0/ahrGVw/q3fCWlBj5nEnpu/FJz0hnz4IfihlbkoH1pOWlOeEgoy0D6G6UrcQekDrAy
+         fyN4EwcdcHujlY5EiCulTaA9UF9OrMqS5iLJeMqXg15ukkvKuD+yIW8CcyX/zVno7+M3
+         dvAhx7CWVkHfcF0wuE0LIHiBT2F+OwAXL4GL0NyE39TKeiCPbFz/uUelbyuGoQ05fikV
+         pJOimPA46pLxuNjjeGUnojvIRVcY9wyJO3bscgWakA88WqMdSluWIAclCItK2l1JpVSB
+         rQWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp49PACHJLW7VgYVb2RrZsRoCV73P93SU4vscekwCWDhgkdnlFwZNpJXPO+soTyFJH3olmxkaL@vger.kernel.org, AJvYcCWLduZSO21N3xEUqXr28x6rTsdF5Mdd3p2nxxLJkosHc5CrZ/L3Yfj3e+1tMrgoda0wn0r2bwZShEtu6XQ8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/SFvw1NjbVg8J24AqSxAy2Z3Marbr/TmW8DseNllfSJcbI5OO
+	FYd0u5N2QrrTjogVR+jpkhExWbQA8A+1UcC1lbQpGKwkZwlx8TXT
+X-Gm-Gg: ASbGncspQHGDh9JGxkv79mxRXEhjJSBZyD7aFs1wKuwu6jJBsrpawlsliiXi6X86JY2
+	9EwiI/sF58KYO/TEJGERwduwz9J2qr+PQ20ENdB7MBelQD3aJAcyRM/Ll6YdUxc1e/ke82VJx3M
+	4upkD+Z6Qg+8dNm5iFqwX5+s0ChuM94UuDsmxcK2Sz+E7C2qjVbr13qCxD4YcqYJUDMH/FW4Xxi
+	2rFMGyIbqQSmaY6fIEQ+OBd
+X-Google-Smtp-Source: AGHT+IEvLMZ3ZxPJciJz3ObXqoij4WO4W4Oiw708kBft81mgnEsWCEQn/YsBCCJOK3kpW/swgyQmpg==
+X-Received: by 2002:a05:6a20:7fa6:b0:1d9:1a77:3875 with SMTP id adf61e73a8af0-1e18715fceemr2397434637.42.1733473900638;
+        Fri, 06 Dec 2024 00:31:40 -0800 (PST)
+Received: from localhost.localdomain ([39.144.106.32])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd1568f29esm2550866a12.15.2024.12.06.00.31.37
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 06 Dec 2024 00:31:40 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	david@redhat.com,
+	oliver.sang@intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Yafang Shao <laoar.shao@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] mm/readahead: fix large folio support in async readahead
+Date: Fri,  6 Dec 2024 16:30:25 +0800
+Message-Id: <20241206083025.3478-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
- <20241204120527.jus6ymhsddxhlqjz@quack3>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20241204120527.jus6ymhsddxhlqjz@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHYoYaslJnY_s9Dw--.20633S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF48KF15Zw47XFWxJr1DJrb_yoW8JFy7pF
-	Z5Jay8KF48WF9rGF1vvFs8ZFnYyw4DKr4UXrW8ua4ku3Zxur17KF15KF1UC3Z0yr48Cr40
-	vF4Utry7u3W5A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	0PfPUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 2024/12/4 20:05, Jan Kara wrote:
-> On Tue 22-10-24 19:10:40, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Currently, all five sub-functions of ext4_fallocate() acquire the
->> inode's i_rwsem at the beginning and release it before exiting. This
->> process can be simplified by factoring out the management of i_rwsem
->> into the ext4_fallocate() function.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Ah, nice. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> and please ignore my comments about renaming 'out' labels :).
-> 
-> 								Honza
-> 
+When testing large folio support with XFS on our servers, we observed that
+only a few large folios are mapped when reading large files via mmap.
+After a thorough analysis, I identified it was caused by the
+`/sys/block/*/queue/read_ahead_kb` setting.  On our test servers, this
+parameter is set to 128KB.  After I tune it to 2MB, the large folio can
+work as expected.  However, I believe the large folio behavior should not
+be dependent on the value of read_ahead_kb.  It would be more robust if
+the kernel can automatically adopt to it.
 
-...
+With /sys/block/*/queue/read_ahead_kb set to 128KB and performing a
+sequential read on a 1GB file using MADV_HUGEPAGE, the differences in
+/proc/meminfo are as follows:
 
->> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->>  
->>  	inode_lock(inode);
->>  	ret = ext4_convert_inline_data(inode);
->> -	inode_unlock(inode);
->>  	if (ret)
->> -		return ret;
->> +		goto out;
->>  
->>  	if (mode & FALLOC_FL_PUNCH_HOLE)
->>  		ret = ext4_punch_hole(file, offset, len);
->> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->>  		ret = ext4_zero_range(file, offset, len, mode);
->>  	else
->>  		ret = ext4_do_fallocate(file, offset, len, mode);
->> -
->> +out:
->> +	inode_unlock(inode);
->>  	return ret;
->>  }
->>  
+- before this patch
+  FileHugePages:     18432 kB
+  FilePmdMapped:      4096 kB
 
-I guess you may want to suggest rename this out to out_inode_lock as well.
+- after this patch
+  FileHugePages:   1067008 kB
+  FilePmdMapped:   1048576 kB
 
-Thanks,
-Yi.
+This shows that after applying the patch, the entire 1GB file is mapped to
+huge pages.  The stable list is CCed, as without this patch, large folios
+don't function optimally in the readahead path.
 
+It's worth noting that if read_ahead_kb is set to a larger value that
+isn't aligned with huge page sizes (e.g., 4MB + 128KB), it may still fail
+to map to hugepages.
+
+Link: https://lkml.kernel.org/r/20241108141710.9721-1-laoar.shao@gmail.com
+Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Tested-by: kernel test robot <oliver.sang@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: <stable@vger.kernel.org>
+---
+ mm/readahead.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+Changes:
+v2->v3:
+- Fix the softlockup reported by kernel test robot
+  https://lore.kernel.org/linux-fsdevel/202411292300.61edbd37-lkp@intel.com/
+
+v1->v2: https://lore.kernel.org/linux-mm/20241108141710.9721-1-laoar.shao@gmail.com/
+- Drop the alignment (Matthew)
+- Improve commit log (Andrew)
+
+RFC->v1: https://lore.kernel.org/linux-mm/20241106092114.8408-1-laoar.shao@gmail.com/
+- Simplify the code as suggested by Matthew
+
+RFC: https://lore.kernel.org/linux-mm/20241104143015.34684-1-laoar.shao@gmail.com/
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3dc6c7a128dd..1dc3cffd4843 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -642,7 +642,11 @@ void page_cache_async_ra(struct readahead_control *ractl,
+ 			1UL << order);
+ 	if (index == expected) {
+ 		ra->start += ra->size;
+-		ra->size = get_next_ra_size(ra, max_pages);
++		/*
++		 * In the case of MADV_HUGEPAGE, the actual size might exceed
++		 * the readahead window.
++		 */
++		ra->size = max(ra->size, get_next_ra_size(ra, max_pages));
+ 		ra->async_size = ra->size;
+ 		goto readit;
+ 	}
+-- 
+2.43.5
 
 
