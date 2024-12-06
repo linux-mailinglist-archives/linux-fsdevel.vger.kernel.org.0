@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-36647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-36648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCB99E74E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9049E74E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 16:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19381885C62
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 15:50:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E791886BD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2024 15:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A220DD68;
-	Fri,  6 Dec 2024 15:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE87020B81D;
+	Fri,  6 Dec 2024 15:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pl2fd+k2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UbwZMOnW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pl2fd+k2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UbwZMOnW"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D6E207DFD;
-	Fri,  6 Dec 2024 15:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B062171;
+	Fri,  6 Dec 2024 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733500183; cv=none; b=LoMZVJ0AznWFJgb9EkN+vvt7QZOOMKRLHXgld22/OaiOpnWtR0BdDU9mrlEGBM2oyR4xHKb8PyhcS/uxXrkY/Si3vw610o6xBKgG5QJGle0WOtHOXR0YtBdlyTVF/k9QbPiFb5uGQaSbG+YRwz2XvK9V8EvkOZf4o10KmAb2zEY=
+	t=1733500318; cv=none; b=mqXh3/IfPFnCfXVWFC8Lg2O9VUjc0HhqNv57lW9D6kXr0frxucBTZEWR/1nw5ZmuWuqDkjQ0AJXHxGeUIk8SXwxVwDRTAS1A99U9Qul/MEV5+hH1NORId+KgsZXcOQ+e9qJLLFsGjSGObjfiLQyk9XL1kCi/g57UFbC/SNM4DSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733500183; c=relaxed/simple;
-	bh=nhir8vPoVjasB8UxwEnolQOEqtrjEb0PtSLMlDC0IqM=;
+	s=arc-20240116; t=1733500318; c=relaxed/simple;
+	bh=wCTL2ZjpQRRY6WMst98GL6ldhXJSLL8p6Tx1prpotTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIcQP8aUCPq/HgQ5/zhQjYUBczKwYYuVmVjwA0kbpNzg/lcQ8lbzsBeMeE14MROmSGBP3ZExHpH7oNeE69TGOdBBlEFP8z7RERfS3tDhn5RarwQPi3IMeJQzGq0lDwQ44q3QX40Nfld6lvXQIUUP3BzyouOQHRAAqYU3uKY0pr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pl2fd+k2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UbwZMOnW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pl2fd+k2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UbwZMOnW; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmBp3UMvmzsNyKAYqjLCeMCfKYmsyICazyESYNF4i9NzfUpVYhTac207ICo24SLm4z5zpp74MEQ1t/U7vAJLPCdKr0T6gcKTjzUOuyY2YumzzowxgQaRJAvp9gYmg0gzjnW2L9pEfwupp3Nj/3zjTalWiBxDMPHFvXJteI/G4Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DDEA2115F;
-	Fri,  6 Dec 2024 15:49:39 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DDBE1F37E;
+	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Em9p/t7Cea5R3IVj/iloJ4eCcEajSafg53eL1G+TuA4=;
-	b=Pl2fd+k2PdM9e/s6wVZ6JRuHIUOdwAH41f9qzSjAFBvWAT+frx/S8novwkE7795OQJ7SpE
-	QBQLQFQOYNhGkyBDqPntPMQtRRVzlIYMv7LRV7CQu79LPiIVVgU0hKkWaF6x6+kJz+T0DT
-	dWIVBiOJUCBQre7+Ykb5p7Dxpaq6Y8g=
+	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
+	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
+	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
+	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500179;
+	s=susede2_ed25519; t=1733500314;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Em9p/t7Cea5R3IVj/iloJ4eCcEajSafg53eL1G+TuA4=;
-	b=UbwZMOnWYv6h/hTg+VqeSnAZhPJWzeWHxcxCodON7xKW5ksZAQ/52yc94mSZoW7VPTtDgE
-	l43LFMc2wJSkyZBw==
-Authentication-Results: smtp-out1.suse.de;
+	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
+	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
+	CjWIsVuhwYpb+6Cw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Em9p/t7Cea5R3IVj/iloJ4eCcEajSafg53eL1G+TuA4=;
-	b=Pl2fd+k2PdM9e/s6wVZ6JRuHIUOdwAH41f9qzSjAFBvWAT+frx/S8novwkE7795OQJ7SpE
-	QBQLQFQOYNhGkyBDqPntPMQtRRVzlIYMv7LRV7CQu79LPiIVVgU0hKkWaF6x6+kJz+T0DT
-	dWIVBiOJUCBQre7+Ykb5p7Dxpaq6Y8g=
+	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
+	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
+	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
+	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500179;
+	s=susede2_ed25519; t=1733500314;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Em9p/t7Cea5R3IVj/iloJ4eCcEajSafg53eL1G+TuA4=;
-	b=UbwZMOnWYv6h/hTg+VqeSnAZhPJWzeWHxcxCodON7xKW5ksZAQ/52yc94mSZoW7VPTtDgE
-	l43LFMc2wJSkyZBw==
+	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
+	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
+	CjWIsVuhwYpb+6Cw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53AFC13647;
-	Fri,  6 Dec 2024 15:49:39 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BBF613647;
+	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6D4cFBMdU2c/AgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:49:39 +0000
+	id Y90ZIpodU2ceAwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:51:54 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E8AECA08CD; Fri,  6 Dec 2024 16:49:38 +0100 (CET)
-Date: Fri, 6 Dec 2024 16:49:38 +0100
+	id 3BEF1A08CD; Fri,  6 Dec 2024 16:51:46 +0100 (CET)
+Date: Fri, 6 Dec 2024 16:51:46 +0100
 From: Jan Kara <jack@suse.cz>
 To: Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
@@ -95,13 +95,12 @@ Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
 	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
 	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
 	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 01/27] ext4: remove writable userspace mappings before
- truncating page cache
-Message-ID: <20241206154938.xxosjc5ytbwwvxbp@quack3>
+Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
+Message-ID: <20241206155146.wmc2flrony62d524@quack3>
 References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-2-yi.zhang@huaweicloud.com>
- <20241204111310.3yzbaozrijll4qx5@quack3>
- <d31e0298-edbc-4e2b-9acd-f1191409f149@huaweicloud.com>
+ <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
+ <20241204120527.jus6ymhsddxhlqjz@quack3>
+ <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,10 +109,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d31e0298-edbc-4e2b-9acd-f1191409f149@huaweicloud.com>
-X-Spam-Level: 
+In-Reply-To: <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
+X-Spam-Score: -2.30
 X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
@@ -136,92 +135,57 @@ X-Spamd-Result: default: False [-2.30 / 50.00];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri 06-12-24 15:59:44, Zhang Yi wrote:
-> On 2024/12/4 19:13, Jan Kara wrote:
-> > On Tue 22-10-24 19:10:32, Zhang Yi wrote:
-> >> +static inline void ext4_truncate_folio(struct inode *inode,
-> >> +				       loff_t start, loff_t end)
-> >> +{
-> >> +	unsigned long blocksize = i_blocksize(inode);
-> >> +	struct folio *folio;
-> >> +
-> >> +	if (round_up(start, blocksize) >= round_down(end, blocksize))
-> >> +		return;
-> >> +
-> >> +	folio = filemap_lock_folio(inode->i_mapping, start >> PAGE_SHIFT);
-> >> +	if (IS_ERR(folio))
-> >> +		return;
-> >> +
-> >> +	if (folio_mkclean(folio))
-> >> +		folio_mark_dirty(folio);
-> >> +	folio_unlock(folio);
-> >> +	folio_put(folio);
+On Fri 06-12-24 16:13:14, Zhang Yi wrote:
+> On 2024/12/4 20:05, Jan Kara wrote:
+> > On Tue 22-10-24 19:10:40, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Currently, all five sub-functions of ext4_fallocate() acquire the
+> >> inode's i_rwsem at the beginning and release it before exiting. This
+> >> process can be simplified by factoring out the management of i_rwsem
+> >> into the ext4_fallocate() function.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > > 
-> > I don't think this is enough. In your example from the changelog, this would
-> > leave the page at index 0 dirty and still with 0x5a values in 2048-4096 range.
-> > Then truncate_pagecache_range() does nothing, ext4_alloc_file_blocks()
-> > converts blocks under 2048-4096 to unwritten state. But what handles
-> > zeroing of page cache in 2048-4096 range? ext4_zero_partial_blocks() zeroes
-> > only partial blocks, not full blocks. Am I missing something?
+> > Ah, nice. Feel free to add:
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > and please ignore my comments about renaming 'out' labels :).
+> > 
+> > 								Honza
 > > 
 > 
-> Sorry, I don't understand why truncate_pagecache_range() does nothing? In my
-> example, the variable 'start' is 2048, the variable 'end' is 4096, and the
-> call process truncate_pagecache_range(inode, 2048, 4096-1)->..->
-> truncate_inode_partial_folio()->folio_zero_range() does zeroing the 2048-4096
-> range. I also tested it below, it was zeroed.
+> ...
 > 
->   xfs_io -t -f -c "pwrite -S 0x58 0 4096" -c "mmap -rw 0 4096" \
->                -c "mwrite -S 0x5a 2048 2048" \
->                -c "fzero 2048 2048" -c "close" /mnt/foo
+> >> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+> >>  
+> >>  	inode_lock(inode);
+> >>  	ret = ext4_convert_inline_data(inode);
+> >> -	inode_unlock(inode);
+> >>  	if (ret)
+> >> -		return ret;
+> >> +		goto out;
+> >>  
+> >>  	if (mode & FALLOC_FL_PUNCH_HOLE)
+> >>  		ret = ext4_punch_hole(file, offset, len);
+> >> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+> >>  		ret = ext4_zero_range(file, offset, len, mode);
+> >>  	else
+> >>  		ret = ext4_do_fallocate(file, offset, len, mode);
+> >> -
+> >> +out:
+> >> +	inode_unlock(inode);
+> >>  	return ret;
+> >>  }
+> >>  
 > 
->   od -Ax -t x1z /mnt/foo
->   000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  >XXXXXXXXXXXXXXXX<
->   *
->   000800 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  >................<
->   *
->   001000
+> I guess you may want to suggest rename this out to out_inode_lock as well.
 
-Yeah, sorry. I've got totally confused here. truncate_pagecache_range()
-indeed does all the zeroing we need. Your version of ext4_truncate_folio()
-should do the right thing.
-
-> > If I'm right, I'd keep it simple and just writeout these partial folios with
-> > filemap_write_and_wait_range() and expand the range
-> > truncate_pagecache_range() removes to include these partial folios. The
-> 
-> What I mean is the truncate_pagecache_range() has already covered the partial
-> folios. right?
-
-Right, it should cover the partial folios.
-
-> > overhead won't be big and it isn't like this is some very performance
-> > sensitive path.
-> > 
-> >> +}
-> >> +
-> >> +/*
-> >> + * When truncating a range of folios, if the block size is less than the
-> >> + * page size, the file's mapped partial blocks within one page could be
-> >> + * freed or converted to unwritten. We should call this function to remove
-> >> + * writable userspace mappings so that ext4_page_mkwrite() can be called
-> >> + * during subsequent write access to these folios.
-> >> + */
-> >> +void ext4_truncate_folios_range(struct inode *inode, loff_t start, loff_t end)
-> > 
-> > Maybe call this ext4_truncate_page_cache_block_range()? And assert that
-> > start & end are block aligned. Because this essentially prepares page cache
-> > for manipulation with a block range.
-> 
-> Ha, it's a good idea, I agree with you that move truncate_pagecache_range()
-> and the hunk of flushing in journal data mode into this function. But I don't
-> understand why assert that 'start & end' are block aligned?
-
-Yes, that shouldn't be needed since truncate_pagecache_range() will do the
-right thing.
+Right. This one should better be out_inode_lock.
 
 								Honza
 -- 
